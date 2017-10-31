@@ -1,0 +1,41 @@
+{
+  "name": "threejs-full-es6",
+  "version": "1.0.0",
+  "description": "The famouse ThreeJs library with full examples as es6 module",
+  "main": "gulpfile.js",
+  "scripts": {
+    "help": "gulp help",
+    "patch": "gulp patch-three",
+    "convert": "gulp convert-three",
+    "build": "gulp build-three"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Itee/threejs-full-es6.git"
+  },
+  "keywords": [
+    "threejs",
+    "es6",
+    "examples",
+    "module",
+    "3d"
+  ],
+  "author": "Itee",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Itee/threejs-full-es6/issues"
+  },
+  "homepage": "https://github.com/Itee/threejs-full-es6#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint-config-mdcs": "^4.2.2",
+    "gulp": "^3.9.1",
+    "gulp-batch-replace": "^0.0.0",
+    "gulp-util": "^3.0.8",
+    "rollup": "^0.50.0",
+    "rollup-plugin-buble": "^0.16.0",
+    "rollup-plugin-uglify": "^2.0.1",
+    "run-sequence": "^2.2.0",
+    "three": "^0.87.1"
+  }
+}
