@@ -52,6 +52,9 @@ gulp.task( 'patch-three', ( done ) => {
 
     runSequence(
         [ 'fix-effect-composer', 'create-pass-file' ],
+        'fix-gltfexporter',
+        'fix-amfloader',
+        'fix-xloader',
         done
     )
 
@@ -95,6 +98,41 @@ gulp.task( 'fix-effect-composer', () => {
                .pipe( gulp.dest( './node_modules/three/examples/js/postprocessing' ) )
 
 } )
+
+// Todo: waiting PR accedpted
+gulp.task( 'fix-xloader', () => {
+
+    return gulp.src( './node_modules/three/examples/js/loaders/XLoader.js' )
+               .pipe( replace( [
+                   [ /\bBones = \[];/, '' ]
+               ] ) )
+               .pipe( gulp.dest( './node_modules/three/examples/js/loaders' ) )
+
+})
+
+// Todo: fixed in dev, remove on r88
+gulp.task( 'fix-gltfexporter', () => {
+
+    return gulp.src( './node_modules/three/examples/js/exporters/GLTFExporter.js' )
+               .pipe( replace( [
+                   [ 'function processMesh( mesh ) {', 'function processMesh( mesh ) {\nvar mode;' ],
+                   [ 'objectURL = URL.createObjectURL( blob );', 'var objectURL = URL.createObjectURL( blob );' ],
+                   [ 'base64data = reader.result;', 'var base64data = reader.result;' ]
+               ] ) )
+               .pipe( gulp.dest( './node_modules/three/examples/js/exporters' ) )
+
+})
+
+// Todo: fixed in dev, remove on r88
+gulp.task( 'fix-amfloader', () => {
+
+    return gulp.src( './node_modules/three/examples/js/loaders/AMFLoader.js' )
+               .pipe( replace( [
+                   [ 'matname = matChildEl', 'matName = matChildEl' ]
+               ] ) )
+               .pipe( gulp.dest( './node_modules/three/examples/js/loaders' ) )
+
+})
 
 /////////////////////
 ///// CONVERT ///////

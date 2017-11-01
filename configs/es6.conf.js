@@ -33,11 +33,6 @@ module.exports = {
     ],
     output:    path.join( __dirname, '..', 'sources' ),
     edgeCases: {
-        AMFLoader:                 {
-            replacements: [
-                [ 'matname = matChildEl', 'matName = matChildEl' ]
-            ]
-        },
         //        AnimationClipCreator:      {
         //            output: './src/misc/AnimationClipCreator.js'
         //        },
@@ -72,13 +67,6 @@ module.exports = {
             imports:      [ 'import { _Math } from \'../math/Math\'' ],
             replacements: [
                 [ 'this.uuid = Math.generateUUID();', 'this.uuid = _Math.generateUUID();' ]
-            ]
-        },
-        GLTFExporter:              {
-            replacements: [
-                [ 'function processMesh( mesh ) {', 'function processMesh( mesh ) {\nvar mode = undefined;' ],
-                [ 'objectURL = URL.createObjectURL( blob );', 'var objectURL = URL.createObjectURL( blob );' ],
-                [ 'base64data = reader.result;', 'var base64data = reader.result;' ]
             ]
         },
         Lut:                       {
@@ -150,11 +138,6 @@ module.exports = {
             replacements: [
                 [ 'var WEBVR', 'var WebVR' ]
             ]
-        },
-        XLoader:                   {
-            replacements: [
-                [ 'XLoader.XfileLoadMode.Vartex_init;', 'XLoader.XfileLoadMode.Vartex_init; var' ]
-            ]
-        },
+        }
     }
 }
