@@ -36702,7 +36702,7 @@
   		 * @return {Integer}      Index of the processed mesh in the "meshes" array
   		 */
   		function processMesh( mesh ) {
-  var mode = undefined;
+  var mode;
 
   			if ( !outputJSON.meshes ) {
 
@@ -74410,7 +74410,9 @@
   		}
   		scope.loadingXdata.FrameInfo_Raw[scope.nowFrameName].Geometry = new Geometry();
   		scope.geoStartLv = scope.elementLv;
-  		scope.nowReadMode = XLoader.XfileLoadMode.Vartex_init; scope.loadingXdata.FrameInfo_Raw[scope.nowFrameName].Materials = [];
+  		scope.nowReadMode = XLoader.XfileLoadMode.Vartex_init;
+  		
+  		scope.loadingXdata.FrameInfo_Raw[scope.nowFrameName].Materials = [];
 
   	},
 
