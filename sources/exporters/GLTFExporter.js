@@ -544,7 +544,7 @@ GLTFExporter.prototype = {
 		 * @return {Integer}      Index of the processed mesh in the "meshes" array
 		 */
 		function processMesh( mesh ) {
-var mode = undefined;
+var mode;
 
 			if ( !outputJSON.meshes ) {
 

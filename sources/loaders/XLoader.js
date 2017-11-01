@@ -718,8 +718,8 @@ XLoader.prototype = {
 		}
 		scope.loadingXdata.FrameInfo_Raw[scope.nowFrameName].Geometry = new Geometry();
 		scope.geoStartLv = scope.elementLv;
-		scope.nowReadMode = XLoader.XfileLoadMode.Vartex_init; var
-		Bones = [];
+		scope.nowReadMode = XLoader.XfileLoadMode.Vartex_init;
+		
 		scope.loadingXdata.FrameInfo_Raw[scope.nowFrameName].Materials = [];
 
 	},
