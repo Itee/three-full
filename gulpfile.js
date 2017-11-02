@@ -24,6 +24,7 @@ gulp.task( 'help', ( done ) => {
     log( 'Available commands using:', blue( 'npm run' ) )
     log( blue( 'npm run' ), cyan( 'help' ), ' - Display this help.' )
     log( blue( 'npm run' ), cyan( 'patch' ), ' - Will patch three package to fix some invalid state.', red( '( Must be run only once after installing three package ! )' ) )
+    log( blue( 'npm run' ), cyan( 'clean' ), ' - Will delete builds and sources folders.' )
     log( blue( 'npm run' ), cyan( 'convert' ), ' - Will convert all three files that are not es6 module, to es6 module.' )
     log( blue( 'npm run' ), cyan( 'build' ), ' - Will build three in all module type, for dev and prod environments.' )
 
