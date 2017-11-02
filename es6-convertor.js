@@ -752,10 +752,6 @@ function _getExportsStatementsInES6File ( file ) {
 
         } )
 
-        if ( debug ) {
-            console.log( 'es6Exports: ' + es6Exports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
-
     }
 
     return exportedElements
@@ -779,10 +775,6 @@ function _getExportsStatementsInCJSFile ( file ) {
             Array.prototype.push.apply( exportedElements, results )
 
         } )
-
-        if ( debug ) {
-            console.log( 'commonjsExports: ' + commonjsExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
 
     }
 
@@ -808,10 +800,6 @@ function _getExportsStatementsInJSAssignmentsFile ( file ) {
 
         } )
 
-        if ( debug ) {
-            console.log( 'potentialClassicObjectExports: ' + potentialClassicObjectExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
-
     }
 
     return exportedElements
@@ -835,10 +823,6 @@ function _getExportsStatementsInPrototypedFile ( file ) {
 
         } )
 
-        if ( debug ) {
-            console.log( 'potentialPrototypedObjectExports: ' + potentialPrototypedObjectExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
-
     }
 
     return exportedElements
@@ -861,10 +845,6 @@ function _getExportsStatementInLibFile ( file ) {
 
         } )
 
-        if ( debug ) {
-            console.log( 'potentialLibExports: ' + potentialLibExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
-
     }
 
     return exportedElements
@@ -872,11 +852,6 @@ function _getExportsStatementInLibFile ( file ) {
 }
 
 function _getExportedElementForFile ( filePath ) {
-
-    let debug = true
-    if ( debug ) {
-        console.log( 'Processing: ' + filePath )
-    }
 
     const file            = fs.readFileSync( filePath, 'utf8' )
     const uncommentedFile = file.replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' ) // remove comments
