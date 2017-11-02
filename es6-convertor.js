@@ -226,7 +226,7 @@ function _createFile ( filePath, imports, replacements, exports, outputPath ) {
     // Compute imports
     const formatedImports = _formatImportStatements( filePath, imports ) || ''
     const formatedFile    = _formatReplacementStatements( filePath, replacements )
-    const formatedExports = _formatExportStatements( exports )
+    const formatedExports = _formatExportStatements( filePath, exports )
     const outputFile      = formatedImports + formatedFile + formatedExports
 
     _createFoldersTree( path.dirname( outputPath ) )
@@ -889,7 +889,7 @@ function _getExportsFor ( filePath ) {
 
 }
 
-function _formatExportStatements ( exports ) {
+function _formatExportStatements ( filePath, exports ) {
 
     // Todo[Itee]: Should pack multi exports
 
