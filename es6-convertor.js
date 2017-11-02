@@ -350,204 +350,6 @@ function _createExportMap ( filesPaths ) {
 
 }
 
-function _getExportsFor ( filePath ) {
-
-    // Todo[Itee]: Should be split into sub function for each file type ( es6, iife, etc... ) like getImportsFor
-
-    const exports = _revertExportMap[ filePath ]
-
-    // Formating
-    let formatedExports = '\nexport {'
-    if ( exports.length === 0 ) {
-
-        console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export...' )
-        formatedExports += ' ' + path.basename( filePath, '.js' ) + ' '
-
-    } else if ( exports.length === 1 ) {
-
-        formatedExports += ' ' + exports[ 0 ] + ' '
-
-    } else {
-
-        formatedExports += '\n'
-
-        let exportedObject = undefined
-        for ( let i = 0, numberOfExports = exports.length ; i < numberOfExports ; i++ ) {
-            exportedObject = exports[ i ]
-
-            if ( i === numberOfExports - 1 ) {
-                formatedExports += '\t' + exportedObject + '\n'
-            } else {
-                formatedExports += '\t' + exportedObject + ',\n'
-            }
-
-        }
-
-    }
-    formatedExports += '}\n'
-
-    return formatedExports
-
-}
-
-function _getExportedElementForFile ( filePath ) {
-
-    let debug = false
-    if ( debug ) {
-        console.log( 'Processing: ' + filePath )
-    }
-
-    let exportedElements = []
-
-    const file            = fs.readFileSync( filePath, 'utf8' )
-    // remove comments
-    const uncommentedFile = file.replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' )
-    //                                .replace( /\s*/g, '')
-
-    // Try to find exports for es6 modules
-    const es6Exports = uncommentedFile.match( /export[{\r\n\s]+(\w+[,\r\n\s]*)+[}]?/g )
-    if ( es6Exports ) {
-
-        // Clean
-        es6Exports.forEach( ( value ) => {
-
-            if ( value.indexOf( '//' ) > -1 ) {
-
-                return
-
-            }
-
-            if ( value.indexOf( 'from' ) > -1 ) {
-
-                return
-
-            }
-
-            if ( value.indexOf( 'as' ) > -1 ) {
-
-                value = value.replace( /\w+\sas/g, '' )
-
-            }
-
-            if ( value.indexOf( 'var' ) > -1 ) {
-
-                value = value.replace( /var/g, '' )
-
-            }
-
-            if ( value.indexOf( 'function' ) > -1 ) {
-
-                value = value.replace( /function/g, '' )
-
-            }
-
-            const results = value.replace( /export/g, '' )
-                                 .replace( /[\s\n\r;{}]+/g, '' )
-                                 .split( ',' )
-
-            Array.prototype.push.apply( exportedElements, results )
-
-        } )
-
-        if ( debug ) {
-            console.log( 'es6Exports: ' + es6Exports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
-        return exportedElements
-
-    }
-
-    // Try to find exports for commonjs
-    const commonjsExports = uncommentedFile.match( /module\.exports\s*=\s*\{?[^}]*}?/g )
-    if ( commonjsExports ) {
-
-        // Clean
-        commonjsExports.forEach( ( value ) => {
-
-            const results = value.replace( /module\.exports/g, '' )
-                                 .replace( /[\s\n\r;{}=]+/g, '' )
-                                 .split( ',' )
-
-            Array.prototype.push.apply( exportedElements, results )
-
-        } )
-
-        if ( debug ) {
-            console.log( 'commonjsExports: ' + commonjsExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
-        return exportedElements
-
-    }
-
-    // Try to find potential export from classic javascript object
-    const potentialClassicObjectExports = uncommentedFile.match( /(THREE.(\w+)\s*=\s*)+\s*function/g )
-    if ( potentialClassicObjectExports ) {
-
-        // Clean
-        potentialClassicObjectExports.forEach( ( value ) => {
-
-            const results = value.replace( /THREE\.|\s*=\s*function/g, '' )
-                                 .replace( /\s*/g, '' )
-                                 .split( '=' )
-
-            Array.prototype.push.apply( exportedElements, results )
-
-        } )
-
-        if ( debug ) {
-            console.log( 'potentialClassicObjectExports: ' + potentialClassicObjectExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
-        return exportedElements
-
-    }
-
-    // Try to find potential export from prototype javascript object
-    const potentialPrototypedObjectExports = uncommentedFile.match( /prototype\.constructor\s?=\s?(THREE\.)?(\w)+/g )
-    if ( potentialPrototypedObjectExports ) {
-
-        // Clean
-        potentialPrototypedObjectExports.forEach( ( value ) => {
-
-            const result = value.replace( /prototype\.constructor\s?=\s?/g, '' )
-                                .replace( /THREE\./g, '' )
-
-            exportedElements.push( result )
-
-        } )
-
-        if ( debug ) {
-            console.log( 'potentialPrototypedObjectExports: ' + potentialPrototypedObjectExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
-        return exportedElements
-
-    }
-
-    // Try to find potential export from library style
-    const potentialLibExports = uncommentedFile.match( /THREE.(\w+) = \{/g )
-    if ( potentialLibExports ) {
-
-        // Clean
-        potentialLibExports.forEach( ( value ) => {
-
-            const result = value.replace( /THREE\.| = \{/g, '' )
-
-            exportedElements.push( result )
-
-        } )
-
-        if ( debug ) {
-            console.log( 'potentialLibExports: ' + potentialLibExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
-        return exportedElements
-
-    }
-
-    console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export...' )
-    exportedElements.push( path.basename( filePath, '.js' ) )
-
-    return exportedElements
-
-}
-
 /////////////////////////// IMPORTS ////////////////////////////
 
 function _getAllExtendsStatementIn ( file, filePath ) {
@@ -889,6 +691,213 @@ function _getReplacementsFor ( filePath ) {
     replacements.push( [ /var\s?(\w+)\s?=\s?\1;/g, '' ] )
 
     return replacements
+
+}
+
+
+/////////////////////////// EXPORTS ////////////////////////////
+
+function _getExportsFor ( filePath ) {
+
+    return _revertExportMap[ filePath ]
+
+}
+
+function _getExportedElementForFile ( filePath ) {
+
+    // Todo[Itee]: Should be split into sub function for each file type ( es6, iife, etc... ) like getImportsFor
+
+    let debug = true
+    if ( debug ) {
+        console.log( 'Processing: ' + filePath )
+    }
+
+    let exportedElements = []
+
+    const file            = fs.readFileSync( filePath, 'utf8' )
+    // remove comments
+    const uncommentedFile = file.replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' )
+    //                                .replace( /\s*/g, '')
+
+    // Try to find exports for es6 modules
+    const es6Exports = uncommentedFile.match( /export[{\r\n\s]+(\w+[,\r\n\s]*)+[}]?/g )
+    if ( es6Exports ) {
+
+        // Clean
+        es6Exports.forEach( ( value ) => {
+
+            if ( value.indexOf( '//' ) > -1 ) {
+
+                return
+
+            }
+
+            if ( value.indexOf( 'from' ) > -1 ) {
+
+                return
+
+            }
+
+            if ( value.indexOf( 'as' ) > -1 ) {
+
+                value = value.replace( /\w+\sas/g, '' )
+
+            }
+
+            if ( value.indexOf( 'var' ) > -1 ) {
+
+                value = value.replace( /var/g, '' )
+
+            }
+
+            if ( value.indexOf( 'function' ) > -1 ) {
+
+                value = value.replace( /function/g, '' )
+
+            }
+
+            const results = value.replace( /export/g, '' )
+                                 .replace( /[\s\n\r;{}]+/g, '' )
+                                 .split( ',' )
+
+            Array.prototype.push.apply( exportedElements, results )
+
+        } )
+
+        if ( debug ) {
+            console.log( 'es6Exports: ' + es6Exports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
+        }
+        return exportedElements
+
+    }
+
+    // Try to find exports for commonjs
+    const commonjsExports = uncommentedFile.match( /module\.exports\s*=\s*\{?[^}]*}?/g )
+    if ( commonjsExports ) {
+
+        // Clean
+        commonjsExports.forEach( ( value ) => {
+
+            const results = value.replace( /module\.exports/g, '' )
+                                 .replace( /[\s\n\r;{}=]+/g, '' )
+                                 .split( ',' )
+
+            Array.prototype.push.apply( exportedElements, results )
+
+        } )
+
+        if ( debug ) {
+            console.log( 'commonjsExports: ' + commonjsExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
+        }
+        return exportedElements
+
+    }
+
+    // Try to find potential export from classic javascript object
+    const potentialClassicObjectExports = uncommentedFile.match( /(THREE.(\w+)\s*=\s*)+\s*function/g )
+    if ( potentialClassicObjectExports ) {
+
+        // Clean
+        potentialClassicObjectExports.forEach( ( value ) => {
+
+            const results = value.replace( /THREE\.|\s*=\s*function/g, '' )
+                                 .replace( /\s*/g, '' )
+                                 .split( '=' )
+
+            Array.prototype.push.apply( exportedElements, results )
+
+        } )
+
+        if ( debug ) {
+            console.log( 'potentialClassicObjectExports: ' + potentialClassicObjectExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
+        }
+        return exportedElements
+
+    }
+
+    // Try to find potential export from prototype javascript object
+    const potentialPrototypedObjectExports = uncommentedFile.match( /prototype\.constructor\s?=\s?(THREE\.)?(\w)+/g )
+    if ( potentialPrototypedObjectExports ) {
+
+        // Clean
+        potentialPrototypedObjectExports.forEach( ( value ) => {
+
+            const result = value.replace( /prototype\.constructor\s?=\s?/g, '' )
+                                .replace( /THREE\./g, '' )
+
+            exportedElements.push( result )
+
+        } )
+
+        if ( debug ) {
+            console.log( 'potentialPrototypedObjectExports: ' + potentialPrototypedObjectExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
+        }
+        return exportedElements
+
+    }
+
+    // Try to find potential export from library style
+    const potentialLibExports = uncommentedFile.match( /THREE.(\w+) = \{/g )
+    if ( potentialLibExports ) {
+
+        // Clean
+        potentialLibExports.forEach( ( value ) => {
+
+            const result = value.replace( /THREE\.| = \{/g, '' )
+
+            exportedElements.push( result )
+
+        } )
+
+        if ( debug ) {
+            console.log( 'potentialLibExports: ' + potentialLibExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
+        }
+        return exportedElements
+
+    }
+
+    console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export...' )
+    exportedElements.push( path.basename( filePath, '.js' ) )
+
+    return exportedElements
+
+}
+
+function _formatExportStatements ( exports ) {
+
+    // Todo[Itee]: Should pack multi exports
+
+    // Formating
+    let formatedExports = '\nexport {'
+    if ( exports.length === 0 ) {
+
+        console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export...' )
+        formatedExports += ' ' + path.basename( filePath, '.js' ) + ' '
+
+    } else if ( exports.length === 1 ) {
+
+        formatedExports += ' ' + exports[ 0 ] + ' '
+
+    } else {
+
+        formatedExports += '\n'
+
+        let exportedObject = undefined
+        for ( let i = 0, numberOfExports = exports.length ; i < numberOfExports ; i++ ) {
+            exportedObject = exports[ i ]
+
+            if ( i === numberOfExports - 1 ) {
+                formatedExports += '\t' + exportedObject + '\n'
+            } else {
+                formatedExports += '\t' + exportedObject + ',\n'
+            }
+
+        }
+
+    }
+    formatedExports += '}\n'
+
+    return formatedExports
 
 }
 
