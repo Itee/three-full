@@ -853,23 +853,23 @@ function _getExportedElementForFile ( filePath ) {
 
     // Try to find exports for es6 modules
     const es6Exports = _getExportsStatementsInES6File( file )
-    if ( es6Exports ) { return es6Exports }
+    if ( es6Exports.length > 0 ) { return es6Exports }
 
     // Try to find exports for commonjs
     const commonjsExports = _getExportsStatementsInCJSFile( file )
-    if ( commonjsExports ) { return commonjsExports }
+    if ( commonjsExports.length > 0 ) { return commonjsExports }
 
     // Try to find potential export from assigned javascript object
     const assignementExports = _getExportsStatementsInJSAssignmentsFile( file )
-    if ( assignementExports ) { return assignementExports }
+    if ( assignementExports.length > 0 ) { return assignementExports }
 
     // Try to find potential export from prototype javascript object
     const prototypeExports = _getExportsStatementsInPrototypedFile( file )
-    if ( prototypeExports ) { return prototypeExports }
+    if ( prototypeExports.length > 0 ) { return prototypeExports }
 
     // Try to find potential export from library style
     const libExports = _getExportsStatementInLibFile( file )
-    if ( libExports ) { return libExports }
+    if ( libExports.length > 0 ) { return libExports }
 
     // Fallback with file name in last resore
     console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export...' )
