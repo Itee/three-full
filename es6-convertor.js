@@ -1016,15 +1016,21 @@ function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath,
 
     if ( edgeCase ) {
 
-        if ( edgeCase.imports ) {
+        if ( edgeCase.imports_override ) {
+            data.imports = edgeCase.imports_override
+        } else if ( edgeCase.imports ) {
             Array.prototype.push.apply( data.imports, edgeCase.imports )
         }
 
-        if ( edgeCase.replacements ) {
+        if ( edgeCase.replacements_override ) {
+            data.replacements = edgeCase.replacements_override
+        } else if ( edgeCase.replacements ) {
             Array.prototype.push.apply( data.replacements, edgeCase.replacements )
         }
 
-        if ( edgeCase.exports ) {
+        if ( edgeCase.exports_override ) {
+            data.exports = edgeCase.exports_override
+        } else if ( edgeCase.exports ) {
             Array.prototype.push.apply( data.exports, edgeCase.exports )
         }
 
