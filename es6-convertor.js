@@ -224,7 +224,7 @@ function _createFoldersTree ( folderPath ) {
 function _createFile ( filePath, imports, replacements, exports, outputPath ) {
 
     // Compute imports
-    const formatedImports = _computeRelatifImportStatements( filePath, imports ) || ''
+    const formatedImports = _formatImportStatements( filePath, imports ) || ''
     const formatedFile    = _formatReplacementStatements( filePath, replacements )
     const formatedExports = _formatExportStatements( exports )
     const outputFile      = formatedImports + formatedFile + formatedExports
@@ -504,7 +504,7 @@ function _getAllConstantStatementIn ( file ) {
 
 }
 
-function _computeRelatifImportStatements ( importerFilePath, objectNames ) {
+function _formatImportStatements ( importerFilePath, objectNames ) {
 
     // TODO [Itee]: merge differents import from same file !
     // TODO [Itee]: must take into account the file rerouting in edge cases
@@ -1137,7 +1137,7 @@ Object.assign( Es6.prototype, {
     getAllExports: function getAllExports ( path ) {
 
         // Todo: should be exports
-        return _computeRelatifImportStatements( path, Object.keys( _exportMap ) )
+        return _formatImportStatements( path, Object.keys( _exportMap ) )
 
     },
 
