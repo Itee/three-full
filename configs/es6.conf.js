@@ -37,10 +37,10 @@ module.exports = {
         //            output: './src/misc/AnimationClipCreator.js'
         //        },
         BufferSubdivisionModifier: {
-            imports: [ 'import { Face3 } from \'../core/Face3.js\'' ]
+            imports: [ 'Face3' ]
         },
         ColorNode:                 {
-            imports: [ 'import { NodeMaterial } from \'../../nodes/NodeMaterial\'' ]
+            imports: [ 'NodeMaterial' ]
         },
         CurveExtras:               {
             replacements: [
@@ -61,10 +61,10 @@ module.exports = {
             ]
         },
         EffectComposer:            {
-            imports: [ 'import { CopyShader } from \'../shaders/CopyShader\'' ]
+            imports: [ 'CopyShader' ]
         },
         GLNode:                    {
-            imports:      [ 'import { _Math } from \'../math/Math\'' ],
+            imports:      [ '_Math' ],
             replacements: [
                 [ 'this.uuid = Math.generateUUID();', 'this.uuid = _Math.generateUUID();' ]
             ]
@@ -86,16 +86,16 @@ module.exports = {
             ]
         },
         OceanShaders:              {
-            imports: [ 'import { ShaderLib } from \'../renderers/shaders/ShaderLib.js\'' ]
+            imports: [ 'ShaderLib' ]
         },
         Octree:                    {
-            imports:      [ 'import { Raycaster } from \'./core/Raycaster.js\'' ],
+            imports:      [ 'Raycaster' ],
             replacements: [
                 [ 'instanceof var OctreeNode', 'instanceof OctreeNode' ]
             ]
         },
         ParametricGeometries:      {
-            exports: '\nexport { ParametricGeometries };'
+            exports: [ 'ParametricGeometries' ]
         },
         RGBELoader:                {
             replacements: [
@@ -106,26 +106,26 @@ module.exports = {
         },
         ShaderSkin:                {
             imports: [
-                'import { UniformsUtils } from \'./renderers/shaders/UniformsUtils\'',
-                'import { UniformsLib } from \'./renderers/shaders/UniformsLib\'',
-                'import { ShaderChunk } from \'./renderers/shaders/ShaderChunk\''
+                'UniformsUtils',
+                'UniformsLib',
+                'ShaderChunk'
             ]
         },
         ShaderTerrain:             {
             imports: [
-                'import { UniformsUtils } from \'./renderers/shaders/UniformsUtils\'',
-                'import { UniformsLib } from \'./renderers/shaders/UniformsLib\'',
-                'import { ShaderChunk } from \'./renderers/shaders/ShaderChunk\''
+                'UniformsUtils',
+                'UniformsLib',
+                'ShaderChunk'
             ]
         },
         Vector2Node:               {
-            imports: [ 'import { NodeMaterial } from \'../../nodes/NodeMaterial\'' ]
+            imports: [ 'NodeMaterial' ]
         },
         Vector3Node:               {
-            imports: [ 'import { NodeMaterial } from \'../../nodes/NodeMaterial\'' ]
+            imports: [ 'NodeMaterial' ]
         },
         Vector4Node:               {
-            imports: [ 'import { NodeMaterial } from \'../../nodes/NodeMaterial\'' ]
+            imports: [ 'NodeMaterial' ]
         },
         WebGLDeferredRenderer:     {
             replacements: [
