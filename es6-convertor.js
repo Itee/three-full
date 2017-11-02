@@ -622,9 +622,7 @@ function _getImportsFor ( filePath ) {
     Array.prototype.push.apply( statements, _getAllConstantStatementIn( file ) )
 
     // A class can be inherited and dynamicaly create by new in the same file so we need to check uniqueness
-    statements = statements.filter( _makeUnique )
-
-    return _computeRelatifImportStatements( filePath, statements ) || ''
+    return statements.filter( _makeUnique )
 
 }
 
