@@ -279,7 +279,7 @@ function _createExportMap ( filesPaths ) {
 
                     if ( filePath.indexOf( sourcePathTarget ) > -1 ) {
 
-                        console.error( 'WARNING: Element "' + exportedElement + '" in source' + path.basename( filePath ) + ' is already exported by source ' + path.basename( exportPath ) + ' wich source file is the right exporter ?' )
+                        console.error( 'WARNING: Element "' + exportedElement + '" in source ' + path.basename( filePath ) + ' is already exported by source ' + path.basename( exportPath ) + ' wich source file is the right exporter ?' )
 
                     } else {
 
