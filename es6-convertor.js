@@ -1017,15 +1017,7 @@ function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath,
     if ( edgeCase ) {
 
         if ( edgeCase.imports ) {
-
-            const edgeCaseImports = edgeCase.imports
-
-            let edgeCaseImport = undefined
-            for ( let importIndex = 0, numberOfImports = edgeCaseImports.length ; importIndex < numberOfImports ; importIndex++ ) {
-                edgeCaseImport = edgeCaseImports[ importIndex ]
-                data.imports += edgeCaseImport + '\n'
-            }
-
+            Array.prototype.push.apply( data.imports, edgeCase.imports )
         }
 
         if ( edgeCase.replacements ) {
@@ -1033,7 +1025,7 @@ function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath,
         }
 
         if ( edgeCase.exports ) {
-            data.exports = edgeCase.exports
+            Array.prototype.push.apply( data.exports, edgeCase.exports )
         }
 
         if ( edgeCase.output ) {
