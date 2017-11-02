@@ -223,17 +223,11 @@ function _createFoldersTree ( folderPath ) {
 
 function _createFile ( filePath, imports, replacements, exports, outputPath ) {
 
-    let file = _getFileForPath( filePath )
-
-    let replacement = undefined
-    for ( let replaceIndex = 0, numberOfReplacements = replacements.length ; replaceIndex < numberOfReplacements ; replaceIndex++ ) {
-        replacement = replacements[ replaceIndex ]
-
-        file = file.replace( replacement[ 0 ], replacement[ 1 ] )
-
-    }
-
-    const outputFile = imports + file + exports
+    // Compute imports
+    const formatedImports = _computeRelatifImportStatements( filePath, imports ) || ''
+    const formatedFile    = _formatReplacementStatements( filePath, replacements )
+    const formatedExports = _formatExportStatements( exports )
+    const outputFile      = formatedImports + formatedFile + formatedExports
 
     _createFoldersTree( path.dirname( outputPath ) )
 
@@ -692,6 +686,21 @@ function _getReplacementsFor ( filePath ) {
 
 }
 
+function _formatReplacementStatements ( filePath, replacements ) {
+
+    let file = _getFileForPath( filePath )
+
+    let replacement = undefined
+    for ( let replaceIndex = 0, numberOfReplacements = replacements.length ; replaceIndex < numberOfReplacements ; replaceIndex++ ) {
+        replacement = replacements[ replaceIndex ]
+
+        file = file.replace( replacement[ 0 ], replacement[ 1 ] )
+
+    }
+
+    return file
+
+}
 
 /////////////////////////// EXPORTS ////////////////////////////
 
