@@ -139,7 +139,7 @@ function _excludesFilesPaths ( filePaths, excludes ) {
 
         for ( let i = 0, pathLength = excludes.length ; i < pathLength ; i++ ) {
 
-            if ( path.indexOf( excludes[ i ] ) > -1 ) {
+            if ( path.contains( excludes[ i ] ) ) {
                 return true
             }
 
@@ -275,9 +275,9 @@ function _createExportMap ( filesPaths ) {
 
                 const sourcePathTarget = 'src\\'
 
-                if ( exportPath.indexOf( sourcePathTarget ) > -1 ) {
+                if ( exportPath.contains( sourcePathTarget ) ) {
 
-                    if ( filePath.indexOf( sourcePathTarget ) > -1 ) {
+                    if ( filePath.contains( sourcePathTarget ) ) {
 
                         console.error( 'WARNING: Element "' + exportedElement + '" in source ' + path.basename( filePath ) + ' is already exported by source ' + path.basename( exportPath ) + ' wich source file is the right exporter ?' )
 
@@ -290,7 +290,7 @@ function _createExportMap ( filesPaths ) {
 
                 } else {
 
-                    if ( filePath.indexOf( sourcePathTarget ) > -1 ) {
+                    if ( filePath.contains( sourcePathTarget ) ) {
 
                         _exportMap[ exportedElement ] = filePath
                         console.warn( 'WARNING: Element "' + exportedElement + '" in source ' + path.basename( filePath ) + ' is already exported by example ' + path.basename( exportPath ) + ' replacing by the source file !' )
@@ -713,26 +713,26 @@ function _getExportsStatementsInES6File ( file ) {
 
         // Clean
         es6MatchedExports.forEach( ( value ) => {
-            
-            if ( value.indexOf( 'from' ) > -1 ) {
+
+            if ( value.contains( 'from' ) ) {
 
                 return
 
             }
 
-            if ( value.indexOf( 'as' ) > -1 ) {
+            if ( value.contains( 'as' ) ) {
 
                 value = value.replace( /\w+\sas/g, '' )
 
             }
 
-            if ( value.indexOf( 'var' ) > -1 ) {
+            if ( value.contains( 'var' ) ) {
 
                 value = value.replace( /var/g, '' )
 
             }
 
-            if ( value.indexOf( 'function' ) > -1 ) {
+            if ( value.contains( 'function' ) ) {
 
                 value = value.replace( /function/g, '' )
 
