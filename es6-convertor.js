@@ -853,28 +853,27 @@ function _getExportsStatementInLibFile ( file ) {
 
 function _getExportedElementForFile ( filePath ) {
 
-    const file            = fs.readFileSync( filePath, 'utf8' )
-    const uncommentedFile = file.replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' ) // remove comments
+    const file = _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' ) // remove comments
     //                                .replace( /\s*/g, '')
 
     // Try to find exports for es6 modules
-    const es6Exports = _getExportsStatementsInES6File( uncommentedFile )
+    const es6Exports = _getExportsStatementsInES6File( file )
     if ( es6Exports ) { return es6Exports }
 
     // Try to find exports for commonjs
-    const commonjsExports = _getExportsStatementsInCJSFile( uncommentedFile )
+    const commonjsExports = _getExportsStatementsInCJSFile( file )
     if ( commonjsExports ) { return commonjsExports }
 
     // Try to find potential export from assigned javascript object
-    const assignementExports = _getExportsStatementsInJSAssignmentsFile( uncommentedFile )
+    const assignementExports = _getExportsStatementsInJSAssignmentsFile( file )
     if ( assignementExports ) { return assignementExports }
 
     // Try to find potential export from prototype javascript object
-    const prototypeExports = _getExportsStatementsInPrototypedFile( uncommentedFile )
+    const prototypeExports = _getExportsStatementsInPrototypedFile( file )
     if ( prototypeExports ) { return prototypeExports }
 
     // Try to find potential export from library style
-    const libExports = _getExportsStatementInLibFile( uncommentedFile )
+    const libExports = _getExportsStatementInLibFile( file )
     if ( libExports ) { return libExports }
 
     // Fallback with file name in last resore
