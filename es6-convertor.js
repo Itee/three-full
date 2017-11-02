@@ -704,28 +704,15 @@ function _formatReplacementStatements ( filePath, replacements ) {
 
 /////////////////////////// EXPORTS ////////////////////////////
 
-function _getExportedElementForFile ( filePath ) {
-
-    // Todo[Itee]: Should be split into sub function for each file type ( es6, iife, etc... ) like getImportsFor
-
-    let debug = true
-    if ( debug ) {
-        console.log( 'Processing: ' + filePath )
-    }
+function _getExportsStatementsInES6File ( file ) {
 
     let exportedElements = []
 
-    const file            = fs.readFileSync( filePath, 'utf8' )
-    // remove comments
-    const uncommentedFile = file.replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' )
-    //                                .replace( /\s*/g, '')
-
-    // Try to find exports for es6 modules
-    const es6Exports = uncommentedFile.match( /export[{\r\n\s]+(\w+[,\r\n\s]*)+[}]?/g )
-    if ( es6Exports ) {
+    const es6MatchedExports = file.match( /export[{\r\n\s]+(\w+[,\r\n\s]*)+[}]?/g )
+    if ( es6MatchedExports ) {
 
         // Clean
-        es6Exports.forEach( ( value ) => {
+        es6MatchedExports.forEach( ( value ) => {
 
             if ( value.indexOf( '//' ) > -1 ) {
 
@@ -768,12 +755,18 @@ function _getExportedElementForFile ( filePath ) {
         if ( debug ) {
             console.log( 'es6Exports: ' + es6Exports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
         }
-        return exportedElements
 
     }
 
-    // Try to find exports for commonjs
-    const commonjsExports = uncommentedFile.match( /module\.exports\s*=\s*\{?[^}]*}?/g )
+    return exportedElements
+
+}
+
+function _getExportsStatementsInCJSFile ( file ) {
+
+    let exportedElements = []
+
+    const commonjsExports = file.match( /module\.exports\s*=\s*\{?[^}]*}?/g )
     if ( commonjsExports ) {
 
         // Clean
@@ -790,12 +783,18 @@ function _getExportedElementForFile ( filePath ) {
         if ( debug ) {
             console.log( 'commonjsExports: ' + commonjsExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
         }
-        return exportedElements
 
     }
 
-    // Try to find potential export from classic javascript object
-    const potentialClassicObjectExports = uncommentedFile.match( /(THREE.(\w+)\s*=\s*)+\s*function/g )
+    return exportedElements
+
+}
+
+function _getExportsStatementsInJSAssignmentsFile ( file ) {
+
+    let exportedElements = []
+
+    const potentialClassicObjectExports = file.match( /(THREE.(\w+)\s*=\s*)+\s*function/g )
     if ( potentialClassicObjectExports ) {
 
         // Clean
@@ -812,12 +811,18 @@ function _getExportedElementForFile ( filePath ) {
         if ( debug ) {
             console.log( 'potentialClassicObjectExports: ' + potentialClassicObjectExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
         }
-        return exportedElements
 
     }
 
-    // Try to find potential export from prototype javascript object
-    const potentialPrototypedObjectExports = uncommentedFile.match( /prototype\.constructor\s?=\s?(THREE\.)?(\w)+/g )
+    return exportedElements
+
+}
+
+function _getExportsStatementsInPrototypedFile ( file ) {
+
+    let exportedElements = []
+
+    const potentialPrototypedObjectExports = file.match( /prototype\.constructor\s?=\s?(THREE\.)?(\w)+/g )
     if ( potentialPrototypedObjectExports ) {
 
         // Clean
@@ -833,12 +838,18 @@ function _getExportedElementForFile ( filePath ) {
         if ( debug ) {
             console.log( 'potentialPrototypedObjectExports: ' + potentialPrototypedObjectExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
         }
-        return exportedElements
 
     }
 
-    // Try to find potential export from library style
-    const potentialLibExports = uncommentedFile.match( /THREE.(\w+) = \{/g )
+    return exportedElements
+
+}
+
+function _getExportsStatementInLibFile ( file ) {
+
+    let exportedElements = []
+
+    const potentialLibExports = file.match( /THREE.(\w+) = \{/g )
     if ( potentialLibExports ) {
 
         // Clean
@@ -853,14 +864,47 @@ function _getExportedElementForFile ( filePath ) {
         if ( debug ) {
             console.log( 'potentialLibExports: ' + potentialLibExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
         }
-        return exportedElements
 
     }
 
-    console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export...' )
-    exportedElements.push( path.basename( filePath, '.js' ) )
-
     return exportedElements
+
+}
+
+function _getExportedElementForFile ( filePath ) {
+
+    let debug = true
+    if ( debug ) {
+        console.log( 'Processing: ' + filePath )
+    }
+
+    const file            = fs.readFileSync( filePath, 'utf8' )
+    const uncommentedFile = file.replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' ) // remove comments
+    //                                .replace( /\s*/g, '')
+
+    // Try to find exports for es6 modules
+    const es6Exports = _getExportsStatementsInES6File( uncommentedFile )
+    if ( es6Exports ) { return es6Exports }
+
+    // Try to find exports for commonjs
+    const commonjsExports = _getExportsStatementsInCJSFile( uncommentedFile )
+    if ( commonjsExports ) { return commonjsExports }
+
+    // Try to find potential export from assigned javascript object
+    const assignementExports = _getExportsStatementsInJSAssignmentsFile( uncommentedFile )
+    if ( assignementExports ) { return assignementExports }
+
+    // Try to find potential export from prototype javascript object
+    const prototypeExports = _getExportsStatementsInPrototypedFile( uncommentedFile )
+    if ( prototypeExports ) { return prototypeExports }
+
+    // Try to find potential export from library style
+    const libExports = _getExportsStatementInLibFile( uncommentedFile )
+    if ( libExports ) { return libExports }
+
+    // Fallback with file name in last resore
+    console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export...' )
+    return [ path.basename( filePath, '.js' ) ]
 
 }
 
