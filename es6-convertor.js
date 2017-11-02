@@ -713,13 +713,7 @@ function _getExportsStatementsInES6File ( file ) {
 
         // Clean
         es6MatchedExports.forEach( ( value ) => {
-
-            if ( value.indexOf( '//' ) > -1 ) {
-
-                return
-
-            }
-
+            
             if ( value.indexOf( 'from' ) > -1 ) {
 
                 return
