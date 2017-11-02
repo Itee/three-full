@@ -545,7 +545,8 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
 
         const sourcePath = _exportMap[ objectName ]
         if ( !sourcePath ) {
-            throw new Error( 'Missing export statement for: ' + objectName + ' in ' + importerSpecificPath + ' this is an edge case that will probably need to be managed manually' )
+            console.error( 'Missing export statement for: ' + objectName + ' in ' + importerSpecificPath + ' this is an edge case that will probably need to be managed manually !!!\n' )
+            return
         }
 
         const specificSourcePath = getSpecificPath( sourcePath )
