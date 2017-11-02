@@ -504,6 +504,23 @@ function _getAllConstantStatementIn ( file ) {
 
 }
 
+function _getImportsFor ( filePath ) {
+
+    const file = _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' )
+
+    let statements = []
+
+    Array.prototype.push.apply( statements, _getAllInheritStatementsIn( file, filePath ) )
+    Array.prototype.push.apply( statements, _getAllExtendsStatementIn( file, filePath ) )
+    Array.prototype.push.apply( statements, _getAllNewStatementIn( file, filePath ) )
+    Array.prototype.push.apply( statements, _getAllInstanceOfStatementIn( file, filePath ) )
+    Array.prototype.push.apply( statements, _getAllConstantStatementIn( file ) )
+
+    // A class can be inherited and dynamicaly create by new in the same file so we need to check uniqueness
+    return statements.filter( _makeUnique )
+
+}
+
 function _formatImportStatements ( importerFilePath, objectNames ) {
 
     // TODO [Itee]: merge differents import from same file !
@@ -603,23 +620,6 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
 
 }
 
-function _getImportsFor ( filePath ) {
-
-    const file = _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' )
-
-    let statements = []
-
-    Array.prototype.push.apply( statements, _getAllInheritStatementsIn( file, filePath ) )
-    Array.prototype.push.apply( statements, _getAllExtendsStatementIn( file, filePath ) )
-    Array.prototype.push.apply( statements, _getAllNewStatementIn( file, filePath ) )
-    Array.prototype.push.apply( statements, _getAllInstanceOfStatementIn( file, filePath ) )
-    Array.prototype.push.apply( statements, _getAllConstantStatementIn( file ) )
-
-    // A class can be inherited and dynamicaly create by new in the same file so we need to check uniqueness
-    return statements.filter( _makeUnique )
-
-}
-
 /////////////////////////// REPLACEMENTS ////////////////////////////
 
 function _getReplacementsFor ( filePath ) {
@@ -703,12 +703,6 @@ function _formatReplacementStatements ( filePath, replacements ) {
 }
 
 /////////////////////////// EXPORTS ////////////////////////////
-
-function _getExportsFor ( filePath ) {
-
-    return _revertExportMap[ filePath ]
-
-}
 
 function _getExportedElementForFile ( filePath ) {
 
@@ -867,6 +861,12 @@ function _getExportedElementForFile ( filePath ) {
     exportedElements.push( path.basename( filePath, '.js' ) )
 
     return exportedElements
+
+}
+
+function _getExportsFor ( filePath ) {
+
+    return _revertExportMap[ filePath ]
 
 }
 
