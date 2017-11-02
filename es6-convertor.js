@@ -561,6 +561,7 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
 
     return importStatements.join( '\n' ).concat( '\n' ) // don't forget last feed line
 
+    // Todo: duplicate
     function getSpecificPath ( path ) {
 
         const exampleTarget = 'js\\'
@@ -932,6 +933,7 @@ function _getOutputFor ( filePath, output ) {
     return fullOutputPath
 
     // Todo: make it for real use case from output dir
+    // Todo: duplicate
     function getSpecificPath ( path ) {
 
         const exampleFontsTarget = 'examples\\fonts'
