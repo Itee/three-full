@@ -10,6 +10,7 @@ const runSequence = require( 'run-sequence' )
 const gulp        = require( 'gulp' )
 const util        = require( 'gulp-util' )
 const replace     = require( 'gulp-batch-replace' )
+const del         = require( 'del' )
 const rollup      = require( 'rollup' )
 
 gulp.task( 'help', ( done ) => {
@@ -95,6 +96,19 @@ gulp.task( 'fix-effect-composer', () => {
                .pipe( gulp.dest( './node_modules/three/examples/js/postprocessing' ) )
 
 } )
+
+/////////////////////
+////// CLEAN ////////
+/////////////////////
+
+gulp.task('clean', ( done ) => {
+
+    return del([
+        './builds',
+        './sources'
+    ])
+
+})
 
 /////////////////////
 ///// CONVERT ///////

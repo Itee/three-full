@@ -28,6 +28,7 @@
   "homepage": "https://github.com/Itee/threejs-full-es6#readme",
   "dependencies": {},
   "devDependencies": {
+    "del": "^3.0.0",
     "eslint-config-mdcs": "^4.2.2",
     "gulp": "^3.9.1",
     "gulp-batch-replace": "^0.0.0",
