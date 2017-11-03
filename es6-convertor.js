@@ -139,7 +139,7 @@ function _excludesFilesPaths ( filePaths, excludes ) {
 
         for ( let i = 0, pathLength = excludes.length ; i < pathLength ; i++ ) {
 
-            if ( path.indexOf( excludes[ i ] ) > -1 ) {
+            if ( path.contains( excludes[ i ] ) ) {
                 return true
             }
 
@@ -223,17 +223,11 @@ function _createFoldersTree ( folderPath ) {
 
 function _createFile ( filePath, imports, replacements, exports, outputPath ) {
 
-    let file = _getFileForPath( filePath )
-
-    let replacement = undefined
-    for ( let replaceIndex = 0, numberOfReplacements = replacements.length ; replaceIndex < numberOfReplacements ; replaceIndex++ ) {
-        replacement = replacements[ replaceIndex ]
-
-        file = file.replace( replacement[ 0 ], replacement[ 1 ] )
-
-    }
-
-    const outputFile = imports + file + exports
+    // Compute imports
+    const formatedImports = _formatImportStatements( filePath, imports ) || ''
+    const formatedFile    = _formatReplacementStatements( filePath, replacements )
+    const formatedExports = _formatExportStatements( filePath, exports )
+    const outputFile      = formatedImports + formatedFile + formatedExports
 
     _createFoldersTree( path.dirname( outputPath ) )
 
@@ -262,7 +256,7 @@ function _makeUnique ( value, index, array ) {
 
 /////////////////////////// ES6 CONVERTOR PRIVATE STUFF ////////////////////////////
 
-/////////////////////////// EXPORTS ////////////////////////////
+/////////////////////////// EXPORTS MAPS ////////////////////////////
 
 let _exportMap       = {}
 let _revertExportMap = {}
@@ -281,11 +275,11 @@ function _createExportMap ( filesPaths ) {
 
                 const sourcePathTarget = 'src\\'
 
-                if ( exportPath.indexOf( sourcePathTarget ) > -1 ) {
+                if ( exportPath.contains( sourcePathTarget ) ) {
 
-                    if ( filePath.indexOf( sourcePathTarget ) > -1 ) {
+                    if ( filePath.contains( sourcePathTarget ) ) {
 
-                        console.error( 'WARNING: Element "' + exportedElement + '" in source' + path.basename( filePath ) + ' is already exported by source ' + path.basename( exportPath ) + ' wich source file is the right exporter ?' )
+                        console.error( 'WARNING: Element "' + exportedElement + '" in source ' + path.basename( filePath ) + ' is already exported by source ' + path.basename( exportPath ) + ' wich source file is the right exporter ?' )
 
                     } else {
 
@@ -296,7 +290,7 @@ function _createExportMap ( filesPaths ) {
 
                 } else {
 
-                    if ( filePath.indexOf( sourcePathTarget ) > -1 ) {
+                    if ( filePath.contains( sourcePathTarget ) ) {
 
                         _exportMap[ exportedElement ] = filePath
                         console.warn( 'WARNING: Element "' + exportedElement + '" in source ' + path.basename( filePath ) + ' is already exported by example ' + path.basename( exportPath ) + ' replacing by the source file !' )
@@ -347,204 +341,6 @@ function _createExportMap ( filesPaths ) {
     //        }
     //        return obj
     //    }
-
-}
-
-function _getExportsFor ( filePath ) {
-
-    // Todo[Itee]: Should be split into sub function for each file type ( es6, iife, etc... ) like getImportsFor
-
-    const exports = _revertExportMap[ filePath ]
-
-    // Formating
-    let formatedExports = '\nexport {'
-    if ( exports.length === 0 ) {
-
-        console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export...' )
-        formatedExports += ' ' + path.basename( filePath, '.js' ) + ' '
-
-    } else if ( exports.length === 1 ) {
-
-        formatedExports += ' ' + exports[ 0 ] + ' '
-
-    } else {
-
-        formatedExports += '\n'
-
-        let exportedObject = undefined
-        for ( let i = 0, numberOfExports = exports.length ; i < numberOfExports ; i++ ) {
-            exportedObject = exports[ i ]
-
-            if ( i === numberOfExports - 1 ) {
-                formatedExports += '\t' + exportedObject + '\n'
-            } else {
-                formatedExports += '\t' + exportedObject + ',\n'
-            }
-
-        }
-
-    }
-    formatedExports += '}\n'
-
-    return formatedExports
-
-}
-
-function _getExportedElementForFile ( filePath ) {
-
-    let debug = false
-    if ( debug ) {
-        console.log( 'Processing: ' + filePath )
-    }
-
-    let exportedElements = []
-
-    const file            = fs.readFileSync( filePath, 'utf8' )
-    // remove comments
-    const uncommentedFile = file.replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' )
-    //                                .replace( /\s*/g, '')
-
-    // Try to find exports for es6 modules
-    const es6Exports = uncommentedFile.match( /export[{\r\n\s]+(\w+[,\r\n\s]*)+[}]?/g )
-    if ( es6Exports ) {
-
-        // Clean
-        es6Exports.forEach( ( value ) => {
-
-            if ( value.indexOf( '//' ) > -1 ) {
-
-                return
-
-            }
-
-            if ( value.indexOf( 'from' ) > -1 ) {
-
-                return
-
-            }
-
-            if ( value.indexOf( 'as' ) > -1 ) {
-
-                value = value.replace( /\w+\sas/g, '' )
-
-            }
-
-            if ( value.indexOf( 'var' ) > -1 ) {
-
-                value = value.replace( /var/g, '' )
-
-            }
-
-            if ( value.indexOf( 'function' ) > -1 ) {
-
-                value = value.replace( /function/g, '' )
-
-            }
-
-            const results = value.replace( /export/g, '' )
-                                 .replace( /[\s\n\r;{}]+/g, '' )
-                                 .split( ',' )
-
-            Array.prototype.push.apply( exportedElements, results )
-
-        } )
-
-        if ( debug ) {
-            console.log( 'es6Exports: ' + es6Exports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
-        return exportedElements
-
-    }
-
-    // Try to find exports for commonjs
-    const commonjsExports = uncommentedFile.match( /module\.exports\s*=\s*\{?[^}]*}?/g )
-    if ( commonjsExports ) {
-
-        // Clean
-        commonjsExports.forEach( ( value ) => {
-
-            const results = value.replace( /module\.exports/g, '' )
-                                 .replace( /[\s\n\r;{}=]+/g, '' )
-                                 .split( ',' )
-
-            Array.prototype.push.apply( exportedElements, results )
-
-        } )
-
-        if ( debug ) {
-            console.log( 'commonjsExports: ' + commonjsExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
-        return exportedElements
-
-    }
-
-    // Try to find potential export from classic javascript object
-    const potentialClassicObjectExports = uncommentedFile.match( /(THREE.(\w+)\s*=\s*)+\s*function/g )
-    if ( potentialClassicObjectExports ) {
-
-        // Clean
-        potentialClassicObjectExports.forEach( ( value ) => {
-
-            const results = value.replace( /THREE\.|\s*=\s*function/g, '' )
-                                 .replace( /\s*/g, '' )
-                                 .split( '=' )
-
-            Array.prototype.push.apply( exportedElements, results )
-
-        } )
-
-        if ( debug ) {
-            console.log( 'potentialClassicObjectExports: ' + potentialClassicObjectExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
-        return exportedElements
-
-    }
-
-    // Try to find potential export from prototype javascript object
-    const potentialPrototypedObjectExports = uncommentedFile.match( /prototype\.constructor\s?=\s?(THREE\.)?(\w)+/g )
-    if ( potentialPrototypedObjectExports ) {
-
-        // Clean
-        potentialPrototypedObjectExports.forEach( ( value ) => {
-
-            const result = value.replace( /prototype\.constructor\s?=\s?/g, '' )
-                                .replace( /THREE\./g, '' )
-
-            exportedElements.push( result )
-
-        } )
-
-        if ( debug ) {
-            console.log( 'potentialPrototypedObjectExports: ' + potentialPrototypedObjectExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
-        return exportedElements
-
-    }
-
-    // Try to find potential export from library style
-    const potentialLibExports = uncommentedFile.match( /THREE.(\w+) = \{/g )
-    if ( potentialLibExports ) {
-
-        // Clean
-        potentialLibExports.forEach( ( value ) => {
-
-            const result = value.replace( /THREE\.| = \{/g, '' )
-
-            exportedElements.push( result )
-
-        } )
-
-        if ( debug ) {
-            console.log( 'potentialLibExports: ' + potentialLibExports + ' in ' + path.basename( filePath ) + ' will export: ' + exportedElements )
-        }
-        return exportedElements
-
-    }
-
-    console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export...' )
-    exportedElements.push( path.basename( filePath, '.js' ) )
-
-    return exportedElements
 
 }
 
@@ -708,7 +504,24 @@ function _getAllConstantStatementIn ( file ) {
 
 }
 
-function _computeRelatifImportStatements ( importerFilePath, objectNames ) {
+function _getImportsFor ( filePath ) {
+
+    const file = _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' )
+
+    let statements = []
+
+    Array.prototype.push.apply( statements, _getAllInheritStatementsIn( file, filePath ) )
+    Array.prototype.push.apply( statements, _getAllExtendsStatementIn( file, filePath ) )
+    Array.prototype.push.apply( statements, _getAllNewStatementIn( file, filePath ) )
+    Array.prototype.push.apply( statements, _getAllInstanceOfStatementIn( file, filePath ) )
+    Array.prototype.push.apply( statements, _getAllConstantStatementIn( file ) )
+
+    // A class can be inherited and dynamicaly create by new in the same file so we need to check uniqueness
+    return statements.filter( _makeUnique )
+
+}
+
+function _formatImportStatements ( importerFilePath, objectNames ) {
 
     // TODO [Itee]: merge differents import from same file !
     // TODO [Itee]: must take into account the file rerouting in edge cases
@@ -732,7 +545,8 @@ function _computeRelatifImportStatements ( importerFilePath, objectNames ) {
 
         const sourcePath = _exportMap[ objectName ]
         if ( !sourcePath ) {
-            throw new Error( 'Missing export statement for: ' + objectName + ' in ' + importerSpecificPath + ' this is an edge case that will probably need to be managed manually' )
+            console.error( 'Missing export statement for: ' + objectName + ' in ' + importerSpecificPath + ' this is an edge case that will probably need to be managed manually !!!\n' )
+            return
         }
 
         const specificSourcePath = getSpecificPath( sourcePath )
@@ -748,6 +562,7 @@ function _computeRelatifImportStatements ( importerFilePath, objectNames ) {
 
     return importStatements.join( '\n' ).concat( '\n' ) // don't forget last feed line
 
+    // Todo: duplicate
     function getSpecificPath ( path ) {
 
         const exampleTarget = 'js\\'
@@ -804,25 +619,6 @@ function _computeRelatifImportStatements ( importerFilePath, objectNames ) {
         return relativePart
 
     }
-
-}
-
-function _getImportsFor ( filePath ) {
-
-    const file = _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' )
-
-    let statements = []
-
-    Array.prototype.push.apply( statements, _getAllInheritStatementsIn( file, filePath ) )
-    Array.prototype.push.apply( statements, _getAllExtendsStatementIn( file, filePath ) )
-    Array.prototype.push.apply( statements, _getAllNewStatementIn( file, filePath ) )
-    Array.prototype.push.apply( statements, _getAllInstanceOfStatementIn( file, filePath ) )
-    Array.prototype.push.apply( statements, _getAllConstantStatementIn( file ) )
-
-    // A class can be inherited and dynamicaly create by new in the same file so we need to check uniqueness
-    statements = statements.filter( _makeUnique )
-
-    return _computeRelatifImportStatements( filePath, statements ) || ''
 
 }
 
@@ -892,6 +688,240 @@ function _getReplacementsFor ( filePath ) {
 
 }
 
+function _formatReplacementStatements ( filePath, replacements ) {
+
+    let file = _getFileForPath( filePath )
+
+    let replacement = undefined
+    for ( let replaceIndex = 0, numberOfReplacements = replacements.length ; replaceIndex < numberOfReplacements ; replaceIndex++ ) {
+        replacement = replacements[ replaceIndex ]
+
+        file = file.replace( replacement[ 0 ], replacement[ 1 ] )
+
+    }
+
+    return file
+
+}
+
+/////////////////////////// EXPORTS ////////////////////////////
+
+function _getExportsStatementsInES6File ( file ) {
+
+    let exportedElements = []
+
+    const es6MatchedExports = file.match( /export[{\r\n\s]+(\w+[,\r\n\s]*)+[}]?/g )
+    if ( es6MatchedExports ) {
+
+        // Clean
+        es6MatchedExports.forEach( ( value ) => {
+
+            if ( value.contains( 'from' ) ) {
+
+                return
+
+            }
+
+            if ( value.contains( 'as' ) ) {
+
+                value = value.replace( /\w+\sas/g, '' )
+
+            }
+
+            if ( value.contains( 'var' ) ) {
+
+                value = value.replace( /var/g, '' )
+
+            }
+
+            if ( value.contains( 'function' ) ) {
+
+                value = value.replace( /function/g, '' )
+
+            }
+
+            const results = value.replace( /export/g, '' )
+                                 .replace( /[\s\n\r;{}]+/g, '' )
+                                 .split( ',' )
+
+            Array.prototype.push.apply( exportedElements, results )
+
+        } )
+
+    }
+
+    return exportedElements
+
+}
+
+function _getExportsStatementsInCJSFile ( file ) {
+
+    let exportedElements = []
+
+    const commonjsExports = file.match( /module\.exports\s*=\s*\{?[^}]*}?/g )
+    if ( commonjsExports ) {
+
+        // Clean
+        commonjsExports.forEach( ( value ) => {
+
+            const results = value.replace( /module\.exports/g, '' )
+                                 .replace( /[\s\n\r;{}=]+/g, '' )
+                                 .split( ',' )
+
+            Array.prototype.push.apply( exportedElements, results )
+
+        } )
+
+    }
+
+    return exportedElements
+
+}
+
+function _getExportsStatementsInJSAssignmentsFile ( file ) {
+
+    let exportedElements = []
+
+    const potentialClassicObjectExports = file.match( /(THREE.(\w+)\s*=\s*)+\s*function/g )
+    if ( potentialClassicObjectExports ) {
+
+        // Clean
+        potentialClassicObjectExports.forEach( ( value ) => {
+
+            const results = value.replace( /THREE\.|\s*=\s*function/g, '' )
+                                 .replace( /\s*/g, '' )
+                                 .split( '=' )
+
+            Array.prototype.push.apply( exportedElements, results )
+
+        } )
+
+    }
+
+    return exportedElements
+
+}
+
+function _getExportsStatementsInPrototypedFile ( file ) {
+
+    let exportedElements = []
+
+    const potentialPrototypedObjectExports = file.match( /prototype\.constructor\s?=\s?(THREE\.)?(\w)+/g )
+    if ( potentialPrototypedObjectExports ) {
+
+        // Clean
+        potentialPrototypedObjectExports.forEach( ( value ) => {
+
+            const result = value.replace( /prototype\.constructor\s?=\s?/g, '' )
+                                .replace( /THREE\./g, '' )
+
+            exportedElements.push( result )
+
+        } )
+
+    }
+
+    return exportedElements
+
+}
+
+function _getExportsStatementInLibFile ( file ) {
+
+    let exportedElements = []
+
+    const potentialLibExports = file.match( /THREE.(\w+) = \{/g )
+    if ( potentialLibExports ) {
+
+        // Clean
+        potentialLibExports.forEach( ( value ) => {
+
+            const result = value.replace( /THREE\.| = \{/g, '' )
+
+            exportedElements.push( result )
+
+        } )
+
+    }
+
+    return exportedElements
+
+}
+
+function _getExportedElementForFile ( filePath ) {
+
+    const file = _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' ) // remove comments
+    //                                .replace( /\s*/g, '')
+
+    // Try to find exports for es6 modules
+    const es6Exports = _getExportsStatementsInES6File( file )
+    if ( es6Exports.length > 0 ) { return es6Exports }
+
+    // Try to find exports for commonjs
+    const commonjsExports = _getExportsStatementsInCJSFile( file )
+    if ( commonjsExports.length > 0 ) { return commonjsExports }
+
+    // Try to find potential export from assigned javascript object
+    const assignementExports = _getExportsStatementsInJSAssignmentsFile( file )
+    if ( assignementExports.length > 0 ) { return assignementExports }
+
+    // Try to find potential export from prototype javascript object
+    const prototypeExports = _getExportsStatementsInPrototypedFile( file )
+    if ( prototypeExports.length > 0 ) { return prototypeExports }
+
+    // Try to find potential export from library style
+    const libExports = _getExportsStatementInLibFile( file )
+    if ( libExports.length > 0 ) { return libExports }
+
+    // Fallback with file name in last resore
+    console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export...' )
+    return [ path.basename( filePath, '.js' ) ]
+
+}
+
+function _getExportsFor ( filePath ) {
+
+    return _revertExportMap[ filePath ]
+
+}
+
+function _formatExportStatements ( filePath, exports ) {
+
+    // Todo[Itee]: Should pack multi exports
+
+    // Formating
+    let formatedExports = '\nexport {'
+    if ( exports.length === 0 ) {
+
+        console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export...' )
+        formatedExports += ' ' + path.basename( filePath, '.js' ) + ' '
+
+    } else if ( exports.length === 1 ) {
+
+        formatedExports += ' ' + exports[ 0 ] + ' '
+
+    } else {
+
+        formatedExports += '\n'
+
+        let exportedObject = undefined
+        for ( let i = 0, numberOfExports = exports.length ; i < numberOfExports ; i++ ) {
+            exportedObject = exports[ i ]
+
+            if ( i === numberOfExports - 1 ) {
+                formatedExports += '\t' + exportedObject + '\n'
+            } else {
+                formatedExports += '\t' + exportedObject + ',\n'
+            }
+
+        }
+
+    }
+    formatedExports += '}\n'
+
+    return formatedExports
+
+}
+
 /////////////////////////// OUTPUT ////////////////////////////
 
 function _getOutputFor ( filePath, output ) {
@@ -904,6 +934,7 @@ function _getOutputFor ( filePath, output ) {
     return fullOutputPath
 
     // Todo: make it for real use case from output dir
+    // Todo: duplicate
     function getSpecificPath ( path ) {
 
         const exampleFontsTarget = 'examples\\fonts'
@@ -956,24 +987,22 @@ function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath,
 
     if ( edgeCase ) {
 
-        if ( edgeCase.imports ) {
-
-            const edgeCaseImports = edgeCase.imports
-
-            let edgeCaseImport = undefined
-            for ( let importIndex = 0, numberOfImports = edgeCaseImports.length ; importIndex < numberOfImports ; importIndex++ ) {
-                edgeCaseImport = edgeCaseImports[ importIndex ]
-                data.imports += edgeCaseImport + '\n'
-            }
-
+        if ( edgeCase.imports_override ) {
+            data.imports = edgeCase.imports_override
+        } else if ( edgeCase.imports ) {
+            Array.prototype.push.apply( data.imports, edgeCase.imports )
         }
 
-        if ( edgeCase.replacements ) {
+        if ( edgeCase.replacements_override ) {
+            data.replacements = edgeCase.replacements_override
+        } else if ( edgeCase.replacements ) {
             Array.prototype.push.apply( data.replacements, edgeCase.replacements )
         }
 
-        if ( edgeCase.exports ) {
-            data.exports = edgeCase.exports
+        if ( edgeCase.exports_override ) {
+            data.exports = edgeCase.exports_override
+        } else if ( edgeCase.exports ) {
+            Array.prototype.push.apply( data.exports, edgeCase.exports )
         }
 
         if ( edgeCase.output ) {
@@ -1121,7 +1150,7 @@ Object.assign( Es6.prototype, {
     getAllExports: function getAllExports ( path ) {
 
         // Todo: should be exports
-        return _computeRelatifImportStatements( path, Object.keys( _exportMap ) )
+        return _formatImportStatements( path, Object.keys( _exportMap ) )
 
     },
 

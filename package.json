@@ -6,6 +6,7 @@
   "scripts": {
     "help": "gulp help",
     "patch": "gulp patch-three",
+    "clean": "gulp clean",
     "convert": "gulp convert-three",
     "build": "gulp build-three"
   },
@@ -28,6 +29,7 @@
   "homepage": "https://github.com/Itee/threejs-full-es6#readme",
   "dependencies": {},
   "devDependencies": {
+    "del": "^3.0.0",
     "eslint-config-mdcs": "^4.2.2",
     "gulp": "^3.9.1",
     "gulp-batch-replace": "^0.0.0",
@@ -36,6 +38,6 @@
     "rollup-plugin-buble": "^0.16.0",
     "rollup-plugin-uglify": "^2.0.1",
     "run-sequence": "^2.2.0",
-    "three": "https://github.com/mrdoob/three.js.git#dev"
+    "three": "^0.88.0"
   }
 }
