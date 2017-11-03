@@ -927,8 +927,6 @@ function _getExportsFor ( filePath ) {
 
 function _formatExportStatements ( filePath, exports ) {
 
-    // Todo[Itee]: Should pack multi exports
-
     // Formating
     let formatedExports = '\nexport {'
     if ( exports.length === 0 ) {
