@@ -4,6 +4,7 @@ import { Vector3 } from './math/Vector3.js'
 import { Mesh } from './objects/Mesh.js'
 import { ConvexGeometry } from './geometries/ConvexGeometry.js'
 import { Matrix3 } from './math/Matrix3.js'
+
 /**
  * @author yomboprime https://github.com/yomboprime
  *

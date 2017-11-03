@@ -7,6 +7,7 @@ import { CubeTexture } from '../textures/CubeTexture.js'
 import { FunctionNode } from '../nodes/FunctionNode.js'
 import { ConstNode } from '../nodes/ConstNode.js'
 import { NormalBlending } from '../constants.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

@@ -5,8 +5,11 @@ import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/Geometries.js'
-import { LinearFilter } from '../constants.js'
-import { RGBFormat } from '../constants.js'
+import {
+	LinearFilter,
+	RGBFormat
+} from '../constants.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  */

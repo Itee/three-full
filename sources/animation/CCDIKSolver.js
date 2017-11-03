@@ -10,6 +10,7 @@ import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Line } from '../objects/Line.js'
 import { Matrix4 } from '../math/Matrix4.js'
+
 /**
  * @author takahiro / https://github.com/takahirox
  *

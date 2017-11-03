@@ -2,6 +2,7 @@ import { TempNode } from '../../nodes/TempNode.js'
 import { UVNode } from '../../nodes/accessors/UVNode.js'
 import { Vector2Node } from '../../nodes/inputs/Vector2Node.js'
 import { FunctionNode } from '../../nodes/FunctionNode.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

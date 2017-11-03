@@ -3,8 +3,11 @@ import { Color } from '../math/Color.js'
 import { MeshPhongMaterial } from '../materials/Materials.js'
 import { Vector2 } from '../math/Vector2.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
-import { FrontSide } from '../constants.js'
-import { RepeatWrapping } from '../constants.js'
+import {
+	FrontSide,
+	RepeatWrapping
+} from '../constants.js'
+
 /**
  * Loads a Wavefront .mtl file specifying materials
  *

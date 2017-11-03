@@ -1,5 +1,6 @@
 import { Mesh } from './objects/Mesh.js'
 import { AnimationMixer } from './animation/AnimationMixer.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  */

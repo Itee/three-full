@@ -4,22 +4,27 @@ import { Projector } from '../Three.Legacy.js'
 import { Box2 } from '../math/Box2.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix3 } from '../math/Matrix3.js'
-import { RenderableSprite } from '../renderers/Projector.js'
-import { RenderableLine } from '../renderers/Projector.js'
-import { RenderableFace } from '../renderers/Projector.js'
+import {
+	RenderableSprite,
+	RenderableLine,
+	RenderableFace
+} from '../renderers/Projector.js'
 import { CompressedTexture } from '../textures/CompressedTexture.js'
 import { DataTexture } from '../textures/DataTexture.js'
-import { REVISION } from '../constants.js'
-import { FaceColors } from '../constants.js'
-import { VertexColors } from '../constants.js'
-import { NormalBlending } from '../constants.js'
-import { AdditiveBlending } from '../constants.js'
-import { SubtractiveBlending } from '../constants.js'
-import { MultiplyBlending } from '../constants.js'
-import { UVMapping } from '../constants.js'
-import { SphericalReflectionMapping } from '../constants.js'
-import { RepeatWrapping } from '../constants.js'
-import { MirroredRepeatWrapping } from '../constants.js'
+import {
+	REVISION,
+	FaceColors,
+	VertexColors,
+	NormalBlending,
+	AdditiveBlending,
+	SubtractiveBlending,
+	MultiplyBlending,
+	UVMapping,
+	SphericalReflectionMapping,
+	RepeatWrapping,
+	MirroredRepeatWrapping
+} from '../constants.js'
+
 /**
  * @author mrdoob / http://mrdoob.com/
  */

@@ -3,6 +3,7 @@ import { Object3D } from './core/Object3D.js'
 import { JSONLoader } from './loaders/JSONLoader.js'
 import { BinaryLoader } from './loaders/BinaryLoader.js'
 import { Mesh } from './objects/Mesh.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  */

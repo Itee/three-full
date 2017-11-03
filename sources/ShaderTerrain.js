@@ -3,6 +3,7 @@ import { Vector2 } from './math/Vector2.js'
 import { UniformsUtils } from './renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from './renderers/shaders/UniformsLib.js'
 import { ShaderChunk } from './renderers/shaders/ShaderChunk.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  *

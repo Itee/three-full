@@ -1,11 +1,14 @@
 import { FileLoader } from '../loaders/FileLoader.js'
-import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-import { Uint8BufferAttribute } from '../core/BufferAttribute.js'
-import { Uint16BufferAttribute } from '../core/BufferAttribute.js'
+import {
+	Float32BufferAttribute,
+	Uint8BufferAttribute,
+	Uint16BufferAttribute
+} from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Group } from '../objects/Group.js'
 import { MeshPhongMaterial } from '../materials/Materials.js'
 import { Mesh } from '../objects/Mesh.js'
+
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author Mugen87 / https://github.com/Mugen87

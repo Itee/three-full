@@ -1,4 +1,5 @@
 import { Mesh } from './objects/Mesh.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  */

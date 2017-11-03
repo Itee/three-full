@@ -1,5 +1,6 @@
 import { Vector3Node } from '../../nodes/inputs/Vector3Node.js'
 import { Vector3 } from '../../math/Vector3.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

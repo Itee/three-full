@@ -1,6 +1,7 @@
 import { BufferAttribute } from './core/BufferAttribute.js'
 import { Vector3 } from './math/Vector3.js'
 import { Vector2 } from './math/Vector2.js'
+
 /**
  * @author mrdoob / http://mrdoob.com/
  */

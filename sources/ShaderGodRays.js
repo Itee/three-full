@@ -1,5 +1,6 @@
 import { Vector2 } from './math/Vector2.js'
 import { Color } from './math/Color.js'
+
 /**
  * @author huwb / http://huwbowles.com/
  *

@@ -5,11 +5,14 @@ import { PlaneBufferGeometry } from './geometries/Geometries.js'
 import { ShaderMaterial } from './materials/Materials.js'
 import { WebGLRenderTarget } from './renderers/WebGLRenderTarget.js'
 import { DataTexture } from './textures/DataTexture.js'
-import { ClampToEdgeWrapping } from './constants.js'
-import { NearestFilter } from './constants.js'
-import { FloatType } from './constants.js'
-import { HalfFloatType } from './constants.js'
-import { RGBAFormat } from './constants.js'
+import {
+	ClampToEdgeWrapping,
+	NearestFilter,
+	FloatType,
+	HalfFloatType,
+	RGBAFormat
+} from './constants.js'
+
 /**
  * @author yomboprime https://github.com/yomboprime
  *

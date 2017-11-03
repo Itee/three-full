@@ -1,6 +1,7 @@
 import { Vector3 } from '../math/Vector3.js'
 import { Euler } from '../math/Euler.js'
 import { Quaternion } from '../math/Quaternion.js'
+
 /**
  * @author richt / http://richt.me
  * @author WestLangley / http://github.com/WestLangley

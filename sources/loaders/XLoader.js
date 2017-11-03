@@ -13,8 +13,11 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { SkinnedMesh } from '../objects/SkinnedMesh.js'
 import { Skeleton } from '../objects/Skeleton.js'
 import { Mesh } from '../objects/Mesh.js'
-import { FrontSide } from '../constants.js'
-import { BackSide } from '../constants.js'
+import {
+	FrontSide,
+	BackSide
+} from '../constants.js'
+
 /**
  * @author Jey-en  https://github.com/adrs2002
  *

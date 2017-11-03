@@ -5,8 +5,11 @@ import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/Geometries.js'
 import { DataTexture } from '../textures/DataTexture.js'
-import { FloatType } from '../constants.js'
-import { RGBFormat } from '../constants.js'
+import {
+	FloatType,
+	RGBFormat
+} from '../constants.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  */

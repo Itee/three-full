@@ -2,6 +2,7 @@ import { ShaderPass } from '../../postprocessing/ShaderPass.js'
 import { RawNode } from '../../nodes/RawNode.js'
 import { ScreenNode } from '../../nodes/inputs/ScreenNode.js'
 import { NodeMaterial } from '../../nodes/NodeMaterial.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

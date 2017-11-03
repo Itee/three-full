@@ -1,5 +1,6 @@
 import { Texture } from '../textures/Texture.js'
 import { FileLoader } from '../loaders/FileLoader.js'
+
 /*
  * @author Daosheng Mu / https://github.com/DaoshengMu/
  * @author mrdoob / http://mrdoob.com/

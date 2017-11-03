@@ -1,4 +1,5 @@
 import { FloatNode } from '../../nodes/inputs/FloatNode.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

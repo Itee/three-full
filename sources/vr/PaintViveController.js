@@ -4,11 +4,14 @@ import { CanvasTexture } from '../textures/CanvasTexture.js'
 import { CircleGeometry } from '../geometries/CircleGeometry.js'
 import { MeshBasicMaterial } from '../materials/Materials.js'
 import { Mesh } from '../objects/Mesh.js'
-import { IcosahedronGeometry } from '../geometries/Geometries.js'
+import {
+	IcosahedronGeometry,
+	ShapeGeometry
+} from '../geometries/Geometries.js'
 import { Group } from '../objects/Group.js'
 import { Shape } from '../extras/core/Shape.js'
-import { ShapeGeometry } from '../geometries/Geometries.js'
 import { DoubleSide } from '../constants.js'
+
 /**
  * @author mrdoob / http://mrdoob.com
  */

@@ -3,6 +3,7 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { PointsMaterial } from '../materials/Materials.js'
 import { Points } from '../objects/Points.js'
+
 /**
  * @author Filipe Caixeta / http://filipecaixeta.com.br
  * @author Mugen87 / https://github.com/Mugen87

@@ -1,5 +1,6 @@
 import { Quaternion } from '../math/Quaternion.js'
 import { Vector3 } from '../math/Vector3.js'
+
 /**
  * @author James Baicoianu / http://www.baicoianu.com/
  */

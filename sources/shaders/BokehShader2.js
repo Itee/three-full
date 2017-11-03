@@ -1,4 +1,5 @@
 import { Vector2 } from '../math/Vector2.js'
+
 /**
  * @author zz85 / https://github.com/zz85 | twitter.com/blurspline
  *

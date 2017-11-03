@@ -8,8 +8,11 @@ import { Vector4 } from '../math/Vector4.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { ShaderMaterial } from '../materials/Materials.js'
-import { LinearFilter } from '../constants.js'
-import { RGBFormat } from '../constants.js'
+import {
+	LinearFilter,
+	RGBFormat
+} from '../constants.js'
+
 /**
  * @author Slayvin / http://slayvin.net
  */

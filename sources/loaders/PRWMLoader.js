@@ -1,6 +1,7 @@
 import { FileLoader } from '../loaders/FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
+
 /**
  * @author Kevin Chapelier / https://github.com/kchapelier
  * See https://github.com/kchapelier/PRWM for more informations about this file format

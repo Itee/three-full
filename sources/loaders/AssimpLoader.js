@@ -6,7 +6,10 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { Bone } from '../objects/Bone.js'
 import { Skeleton } from '../objects/Skeleton.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
-import { MeshLambertMaterial } from '../materials/Materials.js'
+import {
+	MeshLambertMaterial,
+	MeshPhongMaterial
+} from '../materials/Materials.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Mesh } from '../objects/Mesh.js'
 import { SkinnedMesh } from '../objects/SkinnedMesh.js'
@@ -14,7 +17,7 @@ import { Vector2 } from '../math/Vector2.js'
 import { Vector4 } from '../math/Vector4.js'
 import { Color } from '../math/Color.js'
 import { Object3D } from '../core/Object3D.js'
-import { MeshPhongMaterial } from '../materials/Materials.js'
+
 /**
  * @author Virtulous / https://virtulo.us/
  */

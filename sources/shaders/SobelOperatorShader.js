@@ -1,4 +1,5 @@
 import { Vector2 } from '../math/Vector2.js'
+
 /**
  * @author Mugen87 / https://github.com/Mugen87
  *

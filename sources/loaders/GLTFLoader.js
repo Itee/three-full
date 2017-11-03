@@ -4,8 +4,10 @@ import { DirectionalLight } from '../lights/DirectionalLight.js'
 import { PointLight } from '../lights/PointLight.js'
 import { SpotLight } from '../lights/SpotLight.js'
 import { AmbientLight } from '../lights/AmbientLight.js'
-import { ShaderMaterial } from '../materials/Materials.js'
-import { MeshStandardMaterial } from '../materials/Materials.js'
+import {
+	ShaderMaterial,
+	MeshStandardMaterial
+} from '../materials/Materials.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
 import { InterleavedBuffer } from '../core/InterleavedBuffer.js'
 import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js'
@@ -27,55 +29,58 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { SkinnedMesh } from '../objects/SkinnedMesh.js'
 import { Skeleton } from '../objects/Skeleton.js'
 import { Scene } from '../scenes/Scene.js'
-import { FrontSide } from '../constants.js'
-import { BackSide } from '../constants.js'
-import { DoubleSide } from '../constants.js'
-import { VertexColors } from '../constants.js'
-import { AddEquation } from '../constants.js'
-import { SubtractEquation } from '../constants.js'
-import { ReverseSubtractEquation } from '../constants.js'
-import { ZeroFactor } from '../constants.js'
-import { OneFactor } from '../constants.js'
-import { SrcColorFactor } from '../constants.js'
-import { OneMinusSrcColorFactor } from '../constants.js'
-import { SrcAlphaFactor } from '../constants.js'
-import { OneMinusSrcAlphaFactor } from '../constants.js'
-import { DstAlphaFactor } from '../constants.js'
-import { OneMinusDstAlphaFactor } from '../constants.js'
-import { DstColorFactor } from '../constants.js'
-import { OneMinusDstColorFactor } from '../constants.js'
-import { SrcAlphaSaturateFactor } from '../constants.js'
-import { NeverDepth } from '../constants.js'
-import { AlwaysDepth } from '../constants.js'
-import { LessDepth } from '../constants.js'
-import { LessEqualDepth } from '../constants.js'
-import { EqualDepth } from '../constants.js'
-import { GreaterEqualDepth } from '../constants.js'
-import { NotEqualDepth } from '../constants.js'
-import { RepeatWrapping } from '../constants.js'
-import { ClampToEdgeWrapping } from '../constants.js'
-import { MirroredRepeatWrapping } from '../constants.js'
-import { NearestFilter } from '../constants.js'
-import { NearestMipMapNearestFilter } from '../constants.js'
-import { NearestMipMapLinearFilter } from '../constants.js'
-import { LinearFilter } from '../constants.js'
-import { LinearMipMapNearestFilter } from '../constants.js'
-import { LinearMipMapLinearFilter } from '../constants.js'
-import { UnsignedByteType } from '../constants.js'
-import { UnsignedShort4444Type } from '../constants.js'
-import { UnsignedShort5551Type } from '../constants.js'
-import { UnsignedShort565Type } from '../constants.js'
-import { AlphaFormat } from '../constants.js'
-import { RGBFormat } from '../constants.js'
-import { RGBAFormat } from '../constants.js'
-import { LuminanceFormat } from '../constants.js'
-import { LuminanceAlphaFormat } from '../constants.js'
-import { InterpolateDiscrete } from '../constants.js'
-import { InterpolateLinear } from '../constants.js'
-import { InterpolateSmooth } from '../constants.js'
-import { TriangleStripDrawMode } from '../constants.js'
-import { TriangleFanDrawMode } from '../constants.js'
-import { sRGBEncoding } from '../constants.js'
+import {
+	FrontSide,
+	BackSide,
+	DoubleSide,
+	VertexColors,
+	AddEquation,
+	SubtractEquation,
+	ReverseSubtractEquation,
+	ZeroFactor,
+	OneFactor,
+	SrcColorFactor,
+	OneMinusSrcColorFactor,
+	SrcAlphaFactor,
+	OneMinusSrcAlphaFactor,
+	DstAlphaFactor,
+	OneMinusDstAlphaFactor,
+	DstColorFactor,
+	OneMinusDstColorFactor,
+	SrcAlphaSaturateFactor,
+	NeverDepth,
+	AlwaysDepth,
+	LessDepth,
+	LessEqualDepth,
+	EqualDepth,
+	GreaterEqualDepth,
+	NotEqualDepth,
+	RepeatWrapping,
+	ClampToEdgeWrapping,
+	MirroredRepeatWrapping,
+	NearestFilter,
+	NearestMipMapNearestFilter,
+	NearestMipMapLinearFilter,
+	LinearFilter,
+	LinearMipMapNearestFilter,
+	LinearMipMapLinearFilter,
+	UnsignedByteType,
+	UnsignedShort4444Type,
+	UnsignedShort5551Type,
+	UnsignedShort565Type,
+	AlphaFormat,
+	RGBFormat,
+	RGBAFormat,
+	LuminanceFormat,
+	LuminanceAlphaFormat,
+	InterpolateDiscrete,
+	InterpolateLinear,
+	InterpolateSmooth,
+	TriangleStripDrawMode,
+	TriangleFanDrawMode,
+	sRGBEncoding
+} from '../constants.js'
+
 /**
  * @author Rich Tibbett / https://github.com/richtr
  * @author mrdoob / http://mrdoob.com/

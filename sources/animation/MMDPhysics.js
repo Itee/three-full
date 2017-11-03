@@ -10,6 +10,7 @@ import { SphereBufferGeometry } from '../geometries/Geometries.js'
 import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
 import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js'
 import { Mesh } from '../objects/Mesh.js'
+
 /**
  * @author takahiro / https://github.com/takahirox
  *

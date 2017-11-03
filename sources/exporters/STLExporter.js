@@ -3,6 +3,7 @@ import { Matrix3 } from '../math/Matrix3.js'
 import { Geometry } from '../core/Geometry.js'
 import { Mesh } from '../objects/Mesh.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
+
 /**
  * @author kovacsv / http://kovacsv.hu/
  * @author mrdoob / http://mrdoob.com/

@@ -1,6 +1,7 @@
 import { InputNode } from '../../nodes/InputNode.js'
 import { Color } from '../../math/Color.js'
 import { NodeMaterial } from '../../nodes/NodeMaterial.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

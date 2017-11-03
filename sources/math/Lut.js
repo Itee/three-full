@@ -1,17 +1,22 @@
 import { Color } from '../math/Color.js'
 import { Texture } from '../textures/Texture.js'
 import { PlaneBufferGeometry } from '../geometries/Geometries.js'
-import { MeshBasicMaterial } from '../materials/Materials.js'
+import {
+	MeshBasicMaterial,
+	SpriteMaterial
+} from '../materials/Materials.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Vector3 } from '../math/Vector3.js'
 import { CanvasTexture } from '../textures/CanvasTexture.js'
-import { SpriteMaterial } from '../materials/Materials.js'
 import { Sprite } from '../objects/Sprite.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Geometry } from '../core/Geometry.js'
 import { Line } from '../objects/Line.js'
-import { DoubleSide } from '../constants.js'
-import { LinearFilter } from '../constants.js'
+import {
+	DoubleSide,
+	LinearFilter
+} from '../constants.js'
+
 /**
  * @author daron1337 / http://daron1337.github.io/
  */

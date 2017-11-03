@@ -1,13 +1,18 @@
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
-import { ShaderMaterial } from '../materials/Materials.js'
+import {
+	ShaderMaterial,
+	MeshBasicMaterial
+} from '../materials/Materials.js'
 import { PlaneBufferGeometry } from '../geometries/Geometries.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Texture } from '../textures/Texture.js'
-import { MeshBasicMaterial } from '../materials/Materials.js'
-import { DoubleSide } from '../constants.js'
-import { LinearFilter } from '../constants.js'
+import {
+	DoubleSide,
+	LinearFilter
+} from '../constants.js'
+
 /**
  * @author arya-s / https://github.com/arya-s
  *

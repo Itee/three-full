@@ -4,6 +4,7 @@ import { TextureLoader } from './loaders/TextureLoader.js'
 import { MeshLambertMaterial } from './materials/Materials.js'
 import { MorphBlendMesh } from './MorphBlendMesh.js'
 import { UVMapping } from './constants.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  */

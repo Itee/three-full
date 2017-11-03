@@ -2,6 +2,7 @@ import { Vector3 } from '../math/Vector3.js'
 import { Geometry } from '../core/Geometry.js'
 import { Face3 } from '../core/Face3.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
+
 /*
  *	@author zz85 / http://twitter.com/blurspline / http://www.lab4games.net/zz85/blog
  *

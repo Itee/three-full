@@ -6,9 +6,12 @@ import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/Geometries.js'
 import { Vector2 } from '../math/Vector2.js'
-import { AdditiveBlending } from '../constants.js'
-import { LinearFilter } from '../constants.js'
-import { RGBAFormat } from '../constants.js'
+import {
+	AdditiveBlending,
+	LinearFilter,
+	RGBAFormat
+} from '../constants.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  */

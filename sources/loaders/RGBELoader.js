@@ -1,6 +1,9 @@
 import { DataTextureLoader } from '../loaders/DataTextureLoader.js'
-import { UnsignedByteType } from '../constants.js'
-import { RGBEFormat } from '../constants.js'
+import {
+	UnsignedByteType,
+	RGBEFormat
+} from '../constants.js'
+
 /**
  * @author Nikos M. / https://github.com/foo123/
  */

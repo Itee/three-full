@@ -21,16 +21,19 @@ import { SkinnedMesh } from '../objects/SkinnedMesh.js'
 import { MMDPhysics } from '../animation/MMDPhysics.js'
 import { AnimationMixer } from '../animation/AnimationMixer.js'
 import { CCDIKSolver } from '../animation/CCDIKSolver.js'
-import { FrontSide } from '../constants.js'
-import { DoubleSide } from '../constants.js'
-import { CustomBlending } from '../constants.js'
-import { SrcAlphaFactor } from '../constants.js'
-import { OneMinusSrcAlphaFactor } from '../constants.js'
-import { DstAlphaFactor } from '../constants.js'
-import { MultiplyOperation } from '../constants.js'
-import { AddOperation } from '../constants.js'
-import { SphericalReflectionMapping } from '../constants.js'
-import { RepeatWrapping } from '../constants.js'
+import {
+	FrontSide,
+	DoubleSide,
+	CustomBlending,
+	SrcAlphaFactor,
+	OneMinusSrcAlphaFactor,
+	DstAlphaFactor,
+	MultiplyOperation,
+	AddOperation,
+	SphericalReflectionMapping,
+	RepeatWrapping
+} from '../constants.js'
+
 /**
  * @author takahiro / https://github.com/takahirox
  *

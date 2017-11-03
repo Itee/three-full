@@ -1,10 +1,12 @@
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Scene } from '../scenes/Scene.js'
-import { ShaderMaterial } from '../materials/Materials.js'
-import { MeshStandardMaterial } from '../materials/Materials.js'
-import { MeshBasicMaterial } from '../materials/Materials.js'
+import {
+	ShaderMaterial,
+	MeshStandardMaterial,
+	MeshBasicMaterial,
+	PointsMaterial
+} from '../materials/Materials.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
-import { PointsMaterial } from '../materials/Materials.js'
 import { LineSegments } from '../objects/LineSegments.js'
 import { LineLoop } from '../objects/LineLoop.js'
 import { Line } from '../objects/Line.js'
@@ -13,9 +15,12 @@ import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Light } from '../lights/Light.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Camera } from '../cameras/Camera.js'
-import { DoubleSide } from '../constants.js'
-import { TriangleStripDrawMode } from '../constants.js'
-import { TriangleFanDrawMode } from '../constants.js'
+import {
+	DoubleSide,
+	TriangleStripDrawMode,
+	TriangleFanDrawMode
+} from '../constants.js'
+
 /**
  * @author fernandojsg / http://fernandojsg.com
  */

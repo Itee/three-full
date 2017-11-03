@@ -1,5 +1,6 @@
 import { SSAARenderPass } from '../postprocessing/SSAARenderPass.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+
 /**
  *
  * Temporal Anti-Aliasing Render Pass

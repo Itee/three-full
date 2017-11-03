@@ -1,17 +1,22 @@
 import { Pass } from '../postprocessing/Pass.js'
 import { Vector2 } from '../math/Vector2.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/Materials.js'
+import {
+	ShaderMaterial,
+	MeshBasicMaterial
+} from '../materials/Materials.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Color } from '../math/Color.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
-import { MeshBasicMaterial } from '../materials/Materials.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/Geometries.js'
-import { AdditiveBlending } from '../constants.js'
-import { LinearFilter } from '../constants.js'
-import { RGBAFormat } from '../constants.js'
+import {
+	AdditiveBlending,
+	LinearFilter,
+	RGBAFormat
+} from '../constants.js'
+
 /**
  * @author spidersharma / http://eduperiment.com/
  * 

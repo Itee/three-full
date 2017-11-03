@@ -2,6 +2,7 @@ import { EventDispatcher } from '../core/EventDispatcher.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Quaternion } from '../math/Quaternion.js'
+
 /**
  * @author Eberhard Graether / http://egraether.com/
  * @author Mark Lundin 	/ http://mark-lundin.com

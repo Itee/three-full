@@ -1,15 +1,20 @@
 import { Pass } from '../postprocessing/Pass.js'
-import { ShaderMaterial } from '../materials/Materials.js'
+import {
+	ShaderMaterial,
+	MeshBasicMaterial
+} from '../materials/Materials.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/Geometries.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { MeshBasicMaterial } from '../materials/Materials.js'
-import { NoBlending } from '../constants.js'
-import { LinearFilter } from '../constants.js'
-import { LinearMipMapLinearFilter } from '../constants.js'
-import { RGBAFormat } from '../constants.js'
+import {
+	NoBlending,
+	LinearFilter,
+	LinearMipMapLinearFilter,
+	RGBAFormat
+} from '../constants.js'
+
 /**
  * @author miibond
  * Generate a texture that represents the luminosity of the current scene, adapted over time

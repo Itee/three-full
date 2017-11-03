@@ -10,6 +10,7 @@ import { SpotLight } from '../lights/SpotLight.js'
 import { HemisphereLight } from '../lights/HemisphereLight.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Group } from '../objects/Group.js'
+
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author Mugen87 / https://github.com/Mugen87

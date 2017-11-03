@@ -1,6 +1,7 @@
 import { FileLoader } from '../loaders/FileLoader.js'
 import { LoaderSupport } from '../loaders/LoaderSupport.js'
 import { MTLLoader } from '../loaders/MTLLoader.js'
+
 /**
   * @author Kai Salmen / https://kaisalmen.de
   * Development repository: https://github.com/kaisalmen/WWOBJLoader

@@ -5,9 +5,11 @@ import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
 import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
 import { AnimationClip } from '../animation/AnimationClip.js'
 import { Matrix4 } from '../math/Matrix4.js'
-import { MeshPhongMaterial } from '../materials/Materials.js'
-import { MeshLambertMaterial } from '../materials/Materials.js'
-import { MeshBasicMaterial } from '../materials/Materials.js'
+import {
+	MeshPhongMaterial,
+	MeshLambertMaterial,
+	MeshBasicMaterial
+} from '../materials/Materials.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Color } from '../math/Color.js'
@@ -27,10 +29,13 @@ import { SkinnedMesh } from '../objects/SkinnedMesh.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Scene } from '../scenes/Scene.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
-import { RepeatWrapping } from '../constants.js'
-import { ClampToEdgeWrapping } from '../constants.js'
+import {
+	RepeatWrapping,
+	ClampToEdgeWrapping
+} from '../constants.js'
 import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 import { Loader } from '../loaders/Loader.js'
+
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author Mugen87 / https://github.com/Mugen87

@@ -1,28 +1,37 @@
 import { MeshBasicMaterial } from '../materials/Materials.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Object3D } from '../core/Object3D.js'
-import { PlaneBufferGeometry } from '../geometries/Geometries.js'
+import {
+	PlaneBufferGeometry,
+	OctahedronGeometry,
+	TorusBufferGeometry
+} from '../geometries/Geometries.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Geometry } from '../core/Geometry.js'
-import { CylinderGeometry } from '../geometries/CylinderGeometry.js'
+import {
+	CylinderGeometry,
+	CylinderBufferGeometry
+} from '../geometries/CylinderGeometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Line } from '../objects/Line.js'
-import { OctahedronGeometry } from '../geometries/Geometries.js'
-import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js'
-import { TorusBufferGeometry } from '../geometries/Geometries.js'
 import { Euler } from '../math/Euler.js'
 import { Quaternion } from '../math/Quaternion.js'
-import { BoxGeometry } from '../geometries/BoxGeometry.js'
-import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
+import {
+	BoxGeometry,
+	BoxBufferGeometry
+} from '../geometries/BoxGeometry.js'
 import { Raycaster } from '../core/Raycaster.js'
 import { Vector2 } from '../math/Vector2.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { FrontSide } from '../constants.js'
-import { DoubleSide } from '../constants.js'
+import {
+	FrontSide,
+	DoubleSide
+} from '../constants.js'
+
 /**
  * @author arodic / https://github.com/arodic
  */

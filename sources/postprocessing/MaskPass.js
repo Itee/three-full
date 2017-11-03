@@ -1,4 +1,5 @@
 import { Pass } from '../postprocessing/Pass.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  */

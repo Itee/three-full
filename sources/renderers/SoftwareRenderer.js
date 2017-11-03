@@ -3,16 +3,23 @@ import { Vector3 } from '../math/Vector3.js'
 import { Projector } from '../Three.Legacy.js'
 import { Vector4 } from '../math/Vector4.js'
 import { Vector2 } from '../math/Vector2.js'
-import { RenderableFace } from '../renderers/Projector.js'
-import { RenderableSprite } from '../renderers/Projector.js'
-import { RenderableLine } from '../renderers/Projector.js'
-import { MeshBasicMaterial } from '../materials/Materials.js'
-import { MeshLambertMaterial } from '../materials/Materials.js'
-import { MeshPhongMaterial } from '../materials/Materials.js'
-import { SpriteMaterial } from '../materials/Materials.js'
+import {
+	RenderableFace,
+	RenderableSprite,
+	RenderableLine
+} from '../renderers/Projector.js'
+import {
+	MeshBasicMaterial,
+	MeshLambertMaterial,
+	MeshPhongMaterial,
+	SpriteMaterial
+} from '../materials/Materials.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
-import { REVISION } from '../constants.js'
-import { FaceColors } from '../constants.js'
+import {
+	REVISION,
+	FaceColors
+} from '../constants.js'
+
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author ryg / http://farbrausch.de/~fg

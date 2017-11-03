@@ -3,6 +3,7 @@ import { FileLoader } from '../loaders/FileLoader.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Face3 } from '../core/Face3.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  */

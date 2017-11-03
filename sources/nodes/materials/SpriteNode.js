@@ -1,5 +1,6 @@
 import { GLNode } from '../../nodes/GLNode.js'
 import { ColorNode } from '../../nodes/inputs/ColorNode.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

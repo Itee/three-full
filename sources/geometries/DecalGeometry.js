@@ -2,6 +2,7 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+
 /**
  * @author Mugen87 / https://github.com/Mugen87
  * @author spite / https://github.com/spite

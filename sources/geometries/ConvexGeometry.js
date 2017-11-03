@@ -2,6 +2,7 @@ import { Geometry } from '../core/Geometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { QuickHull } from '../QuickHull.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+
 /**
  * @author Mugen87 / https://github.com/Mugen87
  */

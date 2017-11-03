@@ -1,6 +1,7 @@
 import { Curve } from '../extras/core/Curve.js'
 import { Vector4 } from '../math/Vector4.js'
 import { Vector3 } from '../math/Vector3.js'
+
 /**
  * @author renej
  * NURBS curve object

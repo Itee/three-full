@@ -6,18 +6,25 @@ import { Vector3 } from '../math/Vector3.js'
 import { Matrix3 } from '../math/Matrix3.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Camera } from '../cameras/Camera.js'
-import { RenderableSprite } from '../renderers/Projector.js'
-import { RenderableLine } from '../renderers/Projector.js'
-import { RenderableFace } from '../renderers/Projector.js'
+import {
+	RenderableSprite,
+	RenderableLine,
+	RenderableFace
+} from '../renderers/Projector.js'
 import { AmbientLight } from '../lights/AmbientLight.js'
 import { DirectionalLight } from '../lights/DirectionalLight.js'
 import { PointLight } from '../lights/PointLight.js'
-import { MeshBasicMaterial } from '../materials/Materials.js'
-import { MeshLambertMaterial } from '../materials/Materials.js'
-import { MeshPhongMaterial } from '../materials/Materials.js'
-import { MeshNormalMaterial } from '../materials/Materials.js'
-import { REVISION } from '../constants.js'
-import { FaceColors } from '../constants.js'
+import {
+	MeshBasicMaterial,
+	MeshLambertMaterial,
+	MeshPhongMaterial,
+	MeshNormalMaterial
+} from '../materials/Materials.js'
+import {
+	REVISION,
+	FaceColors
+} from '../constants.js'
+
 /**
  * @author mrdoob / http://mrdoob.com/
  */

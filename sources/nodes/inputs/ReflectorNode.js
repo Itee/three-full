@@ -3,6 +3,7 @@ import { Matrix4Node } from '../../nodes/inputs/Matrix4Node.js'
 import { PositionNode } from '../../nodes/accessors/PositionNode.js'
 import { OperatorNode } from '../../nodes/math/OperatorNode.js'
 import { TextureNode } from '../../nodes/inputs/TextureNode.js'
+
 var ReflectorNode = function( mirror, camera, options ) {
 
 	TempNode.call( this, 'v4' );

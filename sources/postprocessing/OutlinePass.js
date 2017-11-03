@@ -1,10 +1,12 @@
 import { Pass } from '../postprocessing/Pass.js'
 import { Color } from '../math/Color.js'
 import { Vector2 } from '../math/Vector2.js'
-import { MeshBasicMaterial } from '../materials/Materials.js'
+import {
+	MeshBasicMaterial,
+	MeshDepthMaterial,
+	ShaderMaterial
+} from '../materials/Materials.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { MeshDepthMaterial } from '../materials/Materials.js'
-import { ShaderMaterial } from '../materials/Materials.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
@@ -13,12 +15,15 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Line } from '../objects/Line.js'
 import { Sprite } from '../objects/Sprite.js'
-import { DoubleSide } from '../constants.js'
-import { NoBlending } from '../constants.js'
-import { AdditiveBlending } from '../constants.js'
-import { LinearFilter } from '../constants.js'
-import { RGBAFormat } from '../constants.js'
-import { RGBADepthPacking } from '../constants.js'
+import {
+	DoubleSide,
+	NoBlending,
+	AdditiveBlending,
+	LinearFilter,
+	RGBAFormat,
+	RGBADepthPacking
+} from '../constants.js'
+
 /**
  * @author spidersharma / http://eduperiment.com/
  */

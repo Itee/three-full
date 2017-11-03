@@ -2,6 +2,7 @@ import { Object3D } from '../core/Object3D.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Vector3 } from '../math/Vector3.js'
 import { REVISION } from '../constants.js'
+
 /**
  * Based on http://www.emagix.net/academic/mscs-project/item/camera-sync-with-css3-and-webgl-threejs
  * @author mrdoob / http://mrdoob.com/

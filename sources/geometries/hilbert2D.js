@@ -1,4 +1,5 @@
 import { Vector3 } from '../math/Vector3.js'
+
 /**
  * Hilbert Curve: Generates 2D-Coordinates in a very fast way.
  *

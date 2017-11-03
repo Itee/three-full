@@ -1,6 +1,7 @@
 import { EventDispatcher } from '../core/EventDispatcher.js'
 import { Color } from '../math/Color.js'
 import { REVISION } from '../constants.js'
+
 /**
  * RaytracingRenderer renders by raytracing it's scene. However, it does not
  * compute the pixels itself but it hands off and coordinates the taks for workers.

@@ -1,4 +1,5 @@
 import { Vector3 } from './math/Vector3.js'
+
 /*
  * Cloth Simulation using a relaxed constraints solver
  */

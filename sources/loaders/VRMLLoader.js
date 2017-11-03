@@ -1,6 +1,9 @@
 import { FileLoader } from '../loaders/FileLoader.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
-import { BufferAttribute } from '../core/BufferAttribute.js'
+import {
+	BufferAttribute,
+	Float32BufferAttribute
+} from '../core/BufferAttribute.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Color } from '../math/Color.js'
 import { AmbientLight } from '../lights/AmbientLight.js'
@@ -9,17 +12,21 @@ import { SpotLight } from '../lights/SpotLight.js'
 import { Object3D } from '../core/Object3D.js'
 import { Mesh } from '../objects/Mesh.js'
 import { SphereBufferGeometry } from '../geometries/Geometries.js'
-import { MeshBasicMaterial } from '../materials/Materials.js'
+import {
+	MeshBasicMaterial,
+	MeshPhongMaterial
+} from '../materials/Materials.js'
 import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
 import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Vector2 } from '../math/Vector2.js'
-import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-import { MeshPhongMaterial } from '../materials/Materials.js'
 import { Scene } from '../scenes/Scene.js'
-import { BackSide } from '../constants.js'
-import { DoubleSide } from '../constants.js'
-import { VertexColors } from '../constants.js'
+import {
+	BackSide,
+	DoubleSide,
+	VertexColors
+} from '../constants.js'
+
 /**
  * @author mrdoob / http://mrdoob.com/
  */

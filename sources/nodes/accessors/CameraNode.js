@@ -2,6 +2,7 @@ import { TempNode } from '../../nodes/TempNode.js'
 import { FunctionNode } from '../../nodes/FunctionNode.js'
 import { FloatNode } from '../../nodes/inputs/FloatNode.js'
 import { PositionNode } from '../../nodes/accessors/PositionNode.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

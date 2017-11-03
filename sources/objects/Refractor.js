@@ -9,8 +9,11 @@ import { ShaderMaterial } from '../materials/Materials.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Vector4 } from '../math/Vector4.js'
-import { LinearFilter } from '../constants.js'
-import { RGBFormat } from '../constants.js'
+import {
+	LinearFilter,
+	RGBFormat
+} from '../constants.js'
+
 /**
  * @author Mugen87 / https://github.com/Mugen87
  *

@@ -1,5 +1,6 @@
 import { Vector3 } from './math/Vector3.js'
 import { Color } from './math/Color.js'
+
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author alteredq / http://alteredqualia.com/

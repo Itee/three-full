@@ -6,8 +6,11 @@ import { BufferAttribute } from './core/BufferAttribute.js'
 import { Vector3 } from './math/Vector3.js'
 import { Color } from './math/Color.js'
 import { Points } from './objects/Points.js'
-import { AdditiveBlending } from './constants.js'
-import { RepeatWrapping } from './constants.js'
+import {
+	AdditiveBlending,
+	RepeatWrapping
+} from './constants.js'
+
 /*
  * GPU Particle System
  * @author flimshaw - Charlie Hoey - http://charliehoey.com

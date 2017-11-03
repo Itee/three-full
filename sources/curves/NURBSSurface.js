@@ -1,4 +1,5 @@
 import { Vector4 } from '../math/Vector4.js'
+
 /**
  * @author renej
  * NURBS surface object

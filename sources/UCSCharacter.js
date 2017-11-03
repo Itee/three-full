@@ -5,6 +5,7 @@ import { SkinnedMesh } from './objects/SkinnedMesh.js'
 import { TextureLoader } from './loaders/TextureLoader.js'
 import { MeshLambertMaterial } from './materials/Materials.js'
 import { UVMapping } from './constants.js'
+
 var UCSCharacter = function() {
 
 	var scope = this;

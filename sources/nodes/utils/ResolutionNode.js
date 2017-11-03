@@ -1,4 +1,5 @@
 import { Vector2Node } from '../../nodes/inputs/Vector2Node.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

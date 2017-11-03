@@ -14,10 +14,13 @@ import { Sprite } from '../objects/Sprite.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Geometry } from '../core/Geometry.js'
 import { LineSegments } from '../objects/LineSegments.js'
-import { FrontSide } from '../constants.js'
-import { BackSide } from '../constants.js'
-import { DoubleSide } from '../constants.js'
-import { VertexColors } from '../constants.js'
+import {
+	FrontSide,
+	BackSide,
+	DoubleSide,
+	VertexColors
+} from '../constants.js'
+
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author supereggbert / http://www.paulbrunt.co.uk/

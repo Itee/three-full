@@ -1,5 +1,6 @@
 import { NodeMaterial } from '../../nodes/NodeMaterial.js'
 import { StandardNode } from '../../nodes/materials/StandardNode.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

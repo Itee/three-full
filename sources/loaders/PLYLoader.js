@@ -1,6 +1,7 @@
 import { FileLoader } from '../loaders/FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+
 /**
  * @author Wei Meng / http://about.me/menway
  *

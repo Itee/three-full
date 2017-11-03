@@ -1,8 +1,11 @@
 import { CompressedTextureLoader } from '../loaders/CompressedTextureLoader.js'
-import { RGB_PVRTC_4BPPV1_Format } from '../constants.js'
-import { RGB_PVRTC_2BPPV1_Format } from '../constants.js'
-import { RGBA_PVRTC_4BPPV1_Format } from '../constants.js'
-import { RGBA_PVRTC_2BPPV1_Format } from '../constants.js'
+import {
+	RGB_PVRTC_4BPPV1_Format,
+	RGB_PVRTC_2BPPV1_Format,
+	RGBA_PVRTC_4BPPV1_Format,
+	RGBA_PVRTC_2BPPV1_Format
+} from '../constants.js'
+
 /*
  *	 PVRLoader
  *   Author: pierre lepers

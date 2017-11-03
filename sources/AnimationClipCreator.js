@@ -4,6 +4,7 @@ import { Vector3 } from './math/Vector3.js'
 import { VectorKeyframeTrack } from './animation/tracks/VectorKeyframeTrack.js'
 import { BooleanKeyframeTrack } from './animation/tracks/BooleanKeyframeTrack.js'
 import { ColorKeyframeTrack } from './animation/tracks/ColorKeyframeTrack.js'
+
 /**
  *
  * Creator of typical test AnimationClips / KeyframeTracks

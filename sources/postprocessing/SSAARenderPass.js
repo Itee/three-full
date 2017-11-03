@@ -5,9 +5,12 @@ import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneGeometry } from '../geometries/Geometries.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { AdditiveBlending } from '../constants.js'
-import { LinearFilter } from '../constants.js'
-import { RGBAFormat } from '../constants.js'
+import {
+	AdditiveBlending,
+	LinearFilter,
+	RGBAFormat
+} from '../constants.js'
+
 /**
 *
 * Supersample Anti-Aliasing Render Pass

@@ -1,5 +1,6 @@
 import { DataTexture } from '../textures/DataTexture.js'
 import { RGBFormat } from '../constants.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  * @author mrdoob / http://mrdoob.com/

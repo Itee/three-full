@@ -5,9 +5,12 @@ import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { ShaderMaterial } from '../materials/Materials.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/Geometries.js'
-import { NearestFilter } from '../constants.js'
-import { LinearFilter } from '../constants.js'
-import { RGBAFormat } from '../constants.js'
+import {
+	NearestFilter,
+	LinearFilter,
+	RGBAFormat
+} from '../constants.js'
+
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author marklundin / http://mark-lundin.com/

@@ -3,9 +3,12 @@ import { MeshBasicMaterial } from './materials/Materials.js'
 import { Mesh } from './objects/Mesh.js'
 import { PlaneGeometry } from './geometries/Geometries.js'
 import { Matrix4 } from './math/Matrix4.js'
-import { DoubleSide } from './constants.js'
-import { ClampToEdgeWrapping } from './constants.js'
-import { LinearFilter } from './constants.js'
+import {
+	DoubleSide,
+	ClampToEdgeWrapping,
+	LinearFilter
+} from './constants.js'
+
 /**
  * This class has been made to hold a slice of a volume data
  * @class

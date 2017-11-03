@@ -6,16 +6,19 @@ import { Mesh } from '../objects/Mesh.js'
 import { PlaneGeometry } from '../geometries/Geometries.js'
 import { ShaderMaterial } from '../materials/Materials.js'
 import { Vector3 } from '../math/Vector3.js'
-import { DoubleSide } from '../constants.js'
-import { CustomBlending } from '../constants.js'
-import { AddEquation } from '../constants.js'
-import { ZeroFactor } from '../constants.js'
-import { OneFactor } from '../constants.js'
-import { LinearToneMapping } from '../constants.js'
-import { CubeUVReflectionMapping } from '../constants.js'
-import { LinearFilter } from '../constants.js'
-import { RGBEEncoding } from '../constants.js'
-import { RGBM16Encoding } from '../constants.js'
+import {
+	DoubleSide,
+	CustomBlending,
+	AddEquation,
+	ZeroFactor,
+	OneFactor,
+	LinearToneMapping,
+	CubeUVReflectionMapping,
+	LinearFilter,
+	RGBEEncoding,
+	RGBM16Encoding
+} from '../constants.js'
+
 /**
  * @author Prashant Sharma / spidersharma03
  * @author Ben Houston / bhouston, https://clara.io

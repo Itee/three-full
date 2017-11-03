@@ -1,13 +1,18 @@
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
-import { MeshDepthMaterial } from '../materials/Materials.js'
+import {
+	MeshDepthMaterial,
+	ShaderMaterial
+} from '../materials/Materials.js'
 import { Scene } from '../scenes/Scene.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/Materials.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/Geometries.js'
-import { LinearFilter } from '../constants.js'
-import { RGBFormat } from '../constants.js'
+import {
+	LinearFilter,
+	RGBFormat
+} from '../constants.js'
+
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author greggman / http://games.greggman.com/

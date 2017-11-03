@@ -1,5 +1,6 @@
 import { NodeMaterial } from '../../nodes/NodeMaterial.js'
 import { PhongNode } from '../../nodes/materials/PhongNode.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

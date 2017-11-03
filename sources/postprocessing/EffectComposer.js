@@ -1,10 +1,15 @@
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { ShaderPass } from '../postprocessing/ShaderPass.js'
-import { MaskPass } from '../postprocessing/MaskPass.js'
-import { ClearMaskPass } from '../postprocessing/MaskPass.js'
-import { LinearFilter } from '../constants.js'
-import { RGBAFormat } from '../constants.js'
+import {
+	MaskPass,
+	ClearMaskPass
+} from '../postprocessing/MaskPass.js'
+import {
+	LinearFilter,
+	RGBAFormat
+} from '../constants.js'
 import { CopyShader } from '../shaders/CopyShader.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  */

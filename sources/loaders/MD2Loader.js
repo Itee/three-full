@@ -3,6 +3,7 @@ import { Geometry } from '../core/Geometry.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Face3 } from '../core/Face3.js'
 import { Vector3 } from '../math/Vector3.js'
+
 /**
  * @author mrdoob / http://mrdoob.com/
  */

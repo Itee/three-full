@@ -8,9 +8,12 @@ import { Vector4 } from '../math/Vector4.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { ShaderMaterial } from '../materials/Materials.js'
-import { FrontSide } from '../constants.js'
-import { LinearFilter } from '../constants.js'
-import { RGBFormat } from '../constants.js'
+import {
+	FrontSide,
+	LinearFilter,
+	RGBFormat
+} from '../constants.js'
+
 /**
  * @author jbouny / https://github.com/jbouny
  *

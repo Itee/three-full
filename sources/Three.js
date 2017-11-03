@@ -2,10 +2,14 @@
 
 import './polyfills.js';
 
-export { CCDIKSolver } from './animation/CCDIKSolver.js'
-export { CCDIKHelper } from './animation/CCDIKSolver.js'
-export { MMDPhysics } from './animation/MMDPhysics.js'
-export { MMDPhysicsHelper } from './animation/MMDPhysics.js'
+export {
+	CCDIKSolver,
+	CCDIKHelper
+} from './animation/CCDIKSolver.js'
+export {
+	MMDPhysics,
+	MMDPhysicsHelper
+} from './animation/MMDPhysics.js'
 export { AnimationClipCreator } from './AnimationClipCreator.js'
 export { BufferGeometryUtils } from './BufferGeometryUtils.js'
 export { CinematicCamera } from './cameras/CinematicCamera.js'
@@ -20,27 +24,31 @@ export { OrbitControls } from './controls/OrbitControls.js'
 export { OrthographicTrackballControls } from './controls/OrthographicTrackballControls.js'
 export { PointerLockControls } from './controls/PointerLockControls.js'
 export { TrackballControls } from './controls/TrackballControls.js'
-export { TransformGizmo } from './controls/TransformControls.js'
-export { TransformGizmoTranslate } from './controls/TransformControls.js'
-export { TransformGizmoRotate } from './controls/TransformControls.js'
-export { TransformGizmoScale } from './controls/TransformControls.js'
-export { TransformControls } from './controls/TransformControls.js'
+export {
+	TransformGizmo,
+	TransformGizmoTranslate,
+	TransformGizmoRotate,
+	TransformGizmoScale,
+	TransformControls
+} from './controls/TransformControls.js'
 export { VRControls } from './controls/VRControls.js'
 export { ConvexObjectBreaker } from './ConvexObjectBreaker.js'
-export { GrannyKnot } from './CurveExtras.js'
-export { HeartCurve } from './CurveExtras.js'
-export { VivianiCurve } from './CurveExtras.js'
-export { KnotCurve } from './CurveExtras.js'
-export { HelixCurve } from './CurveExtras.js'
-export { TrefoilKnot } from './CurveExtras.js'
-export { TorusKnot } from './CurveExtras.js'
-export { CinquefoilKnot } from './CurveExtras.js'
-export { TrefoilPolynomialKnot } from './CurveExtras.js'
-export { FigureEightPolynomialKnot } from './CurveExtras.js'
-export { DecoratedTorusKnot4a } from './CurveExtras.js'
-export { DecoratedTorusKnot4b } from './CurveExtras.js'
-export { DecoratedTorusKnot5a } from './CurveExtras.js'
-export { DecoratedTorusKnot5c } from './CurveExtras.js'
+export {
+	GrannyKnot,
+	HeartCurve,
+	VivianiCurve,
+	KnotCurve,
+	HelixCurve,
+	TrefoilKnot,
+	TorusKnot,
+	CinquefoilKnot,
+	TrefoilPolynomialKnot,
+	FigureEightPolynomialKnot,
+	DecoratedTorusKnot4a,
+	DecoratedTorusKnot4b,
+	DecoratedTorusKnot5a,
+	DecoratedTorusKnot5c
+} from './CurveExtras.js'
 export { NURBSCurve } from './curves/NURBSCurve.js'
 export { NURBSSurface } from './curves/NURBSSurface.js'
 export { NURBSUtils } from './curves/NURBSUtils.js'
@@ -58,15 +66,19 @@ export { OBJExporter } from './exporters/OBJExporter.js'
 export { STLBinaryExporter } from './exporters/STLBinaryExporter.js'
 export { STLExporter } from './exporters/STLExporter.js'
 export { TypedGeometryExporter } from './exporters/TypedGeometryExporter.js'
-export { ConvexGeometry } from './geometries/ConvexGeometry.js'
-export { ConvexBufferGeometry } from './geometries/ConvexGeometry.js'
+export {
+	ConvexGeometry,
+	ConvexBufferGeometry
+} from './geometries/ConvexGeometry.js'
 export { DecalGeometry } from './geometries/DecalGeometry.js'
 export { hilbert2D } from './geometries/hilbert2D.js'
 export { hilbert3D } from './geometries/hilbert3D.js'
 export { TeapotBufferGeometry } from './geometries/TeapotBufferGeometry.js'
 export { GPUComputationRenderer } from './GPUComputationRenderer.js'
-export { GPUParticleSystem } from './GPUParticleSystem.js'
-export { GPUParticleContainer } from './GPUParticleSystem.js'
+export {
+	GPUParticleSystem,
+	GPUParticleContainer
+} from './GPUParticleSystem.js'
 export { Gyroscope } from './Gyroscope.js'
 export { ImprovedNoise } from './ImprovedNoise.js'
 export { ThreeMFLoader } from './loaders/3MFLoader.js'
@@ -87,10 +99,12 @@ export { ImageBitmapLoader } from './loaders/ImageBitmapLoader.js'
 export { KMZLoader } from './loaders/KMZLoader.js'
 export { LoaderSupport } from './loaders/LoaderSupport.js'
 export { MD2Loader } from './loaders/MD2Loader.js'
-export { MMDLoader } from './loaders/MMDLoader.js'
-export { MMDAudioManager } from './loaders/MMDLoader.js'
-export { MMDGrantSolver } from './loaders/MMDLoader.js'
-export { MMDHelper } from './loaders/MMDLoader.js'
+export {
+	MMDLoader,
+	MMDAudioManager,
+	MMDGrantSolver,
+	MMDHelper
+} from './loaders/MMDLoader.js'
 export { MTLLoader } from './loaders/MTLLoader.js'
 export { OBJLoader } from './loaders/OBJLoader.js'
 export { OBJLoader2 } from './loaders/OBJLoader2.js'
@@ -100,8 +114,10 @@ export { PlayCanvasLoader } from './loaders/PlayCanvasLoader.js'
 export { PLYLoader } from './loaders/PLYLoader.js'
 export { PRWMLoader } from './loaders/PRWMLoader.js'
 export { PVRLoader } from './loaders/PVRLoader.js'
-export { HDRLoader } from './loaders/RGBELoader.js'
-export { RGBELoader } from './loaders/RGBELoader.js'
+export {
+	HDRLoader,
+	RGBELoader
+} from './loaders/RGBELoader.js'
 export { STLLoader } from './loaders/STLLoader.js'
 export { SVGLoader } from './loaders/SVGLoader.js'
 export { TDSLoader } from './loaders/TDSLoader.js'
@@ -185,9 +201,11 @@ export { ShadowMesh } from './objects/ShadowMesh.js'
 export { Sky } from './objects/Sky.js'
 export { Water } from './objects/Water.js'
 export { Ocean } from './Ocean.js'
-export { Octree } from './Octree.js'
-export { OctreeObjectData } from './Octree.js'
-export { OctreeNode } from './Octree.js'
+export {
+	Octree,
+	OctreeObjectData,
+	OctreeNode
+} from './Octree.js'
 export { PMREMCubeUVPacker } from './pmrem/PMREMCubeUVPacker.js'
 export { PMREMGenerator } from './pmrem/PMREMGenerator.js'
 export { AdaptiveToneMappingPass } from './postprocessing/AdaptiveToneMappingPass.js'
@@ -199,8 +217,10 @@ export { DotScreenPass } from './postprocessing/DotScreenPass.js'
 export { EffectComposer } from './postprocessing/EffectComposer.js'
 export { FilmPass } from './postprocessing/FilmPass.js'
 export { GlitchPass } from './postprocessing/GlitchPass.js'
-export { MaskPass } from './postprocessing/MaskPass.js'
-export { ClearMaskPass } from './postprocessing/MaskPass.js'
+export {
+	MaskPass,
+	ClearMaskPass
+} from './postprocessing/MaskPass.js'
 export { OutlinePass } from './postprocessing/OutlinePass.js'
 export { Pass } from './postprocessing/Pass.js'
 export { RenderPass } from './postprocessing/RenderPass.js'
@@ -216,22 +236,66 @@ export { UnrealBloomPass } from './postprocessing/UnrealBloomPass.js'
 export { PRNG } from './PRNG.js'
 export { QuickHull } from './QuickHull.js'
 export { SpriteCanvasMaterial } from './renderers/CanvasRenderer.js'
-export { CanvasRenderer } from './Three.Legacy.js'
-export { CSS2DObject } from './renderers/CSS2DRenderer.js'
-export { CSS2DRenderer } from './renderers/CSS2DRenderer.js'
-export { CSS3DObject } from './renderers/CSS3DRenderer.js'
-export { CSS3DSprite } from './renderers/CSS3DRenderer.js'
-export { CSS3DRenderer } from './renderers/CSS3DRenderer.js'
-export { RenderableObject } from './renderers/Projector.js'
-export { RenderableFace } from './renderers/Projector.js'
-export { RenderableVertex } from './renderers/Projector.js'
-export { RenderableLine } from './renderers/Projector.js'
-export { RenderableSprite } from './renderers/Projector.js'
-export { Projector } from './Three.Legacy.js'
+export {
+	CanvasRenderer,
+	Projector,
+	GeometryUtils,
+	ImageUtils,
+	CubeGeometry,
+	Face4,
+	LineStrip,
+	LinePieces,
+	MeshFaceMaterial,
+	MultiMaterial,
+	PointCloud,
+	Particle,
+	ParticleSystem,
+	PointCloudMaterial,
+	ParticleBasicMaterial,
+	ParticleSystemMaterial,
+	Vertex,
+	DynamicBufferAttribute,
+	Int8Attribute,
+	Uint8Attribute,
+	Uint8ClampedAttribute,
+	Int16Attribute,
+	Uint16Attribute,
+	Int32Attribute,
+	Uint32Attribute,
+	Float32Attribute,
+	Float64Attribute,
+	ClosedSplineCurve3,
+	SplineCurve3,
+	Spline,
+	AxisHelper,
+	BoundingBoxHelper,
+	EdgesHelper,
+	WireframeHelper,
+	XHRLoader,
+	BinaryTextureLoader
+} from './Three.Legacy.js'
+export {
+	CSS2DObject,
+	CSS2DRenderer
+} from './renderers/CSS2DRenderer.js'
+export {
+	CSS3DObject,
+	CSS3DSprite,
+	CSS3DRenderer
+} from './renderers/CSS3DRenderer.js'
+export {
+	RenderableObject,
+	RenderableFace,
+	RenderableVertex,
+	RenderableLine,
+	RenderableSprite
+} from './renderers/Projector.js'
 export { RaytracingRenderer } from './renderers/RaytracingRenderer.js'
 export { SoftwareRenderer } from './renderers/SoftwareRenderer.js'
-export { SVGObject } from './renderers/SVGRenderer.js'
-export { SVGRenderer } from './renderers/SVGRenderer.js'
+export {
+	SVGObject,
+	SVGRenderer
+} from './renderers/SVGRenderer.js'
 export { WebGLDeferredRenderer } from './renderers/WebGLDeferredRenderer.js'
 export { ShaderGodRays } from './ShaderGodRays.js'
 export { BasicShader } from './shaders/BasicShader.js'
@@ -243,8 +307,10 @@ export { ColorCorrectionShader } from './shaders/ColorCorrectionShader.js'
 export { ColorifyShader } from './shaders/ColorifyShader.js'
 export { ConvolutionShader } from './shaders/ConvolutionShader.js'
 export { CopyShader } from './shaders/CopyShader.js'
-export { DepthLimitedBlurShader } from './shaders/DepthLimitedBlurShader.js'
-export { BlurShaderUtils } from './shaders/DepthLimitedBlurShader.js'
+export {
+	DepthLimitedBlurShader,
+	BlurShaderUtils
+} from './shaders/DepthLimitedBlurShader.js'
 export { DigitalGlitch } from './shaders/DigitalGlitch.js'
 export { DOFMipMapShader } from './shaders/DOFMipMapShader.js'
 export { DotScreenShader } from './shaders/DotScreenShader.js'
@@ -284,8 +350,6 @@ export { SimplexNoise } from './SimplexNoise.js'
 export { TimelinerController } from './TimelinerController.js'
 export { TypedArrayUtils } from './TypedArrayUtils.js'
 export { UCSCharacter } from './UCSCharacter.js'
-export { GeometryUtils } from './Three.Legacy.js'
-export { ImageUtils } from './Three.Legacy.js'
 export { ShadowMapViewer } from './utils/ShadowMapViewer.js'
 export { UVsDebug } from './utils/UVsDebug.js'
 export { VolumeSlice } from './VolumeSlice.js'
@@ -321,141 +385,145 @@ export { CubeCamera } from './cameras/CubeCamera.js'
 export { OrthographicCamera } from './cameras/OrthographicCamera.js'
 export { PerspectiveCamera } from './cameras/PerspectiveCamera.js'
 export { StereoCamera } from './cameras/StereoCamera.js'
-export { REVISION } from './constants.js'
-export { MOUSE } from './constants.js'
-export { CullFaceNone } from './constants.js'
-export { CullFaceBack } from './constants.js'
-export { CullFaceFront } from './constants.js'
-export { CullFaceFrontBack } from './constants.js'
-export { FrontFaceDirectionCW } from './constants.js'
-export { FrontFaceDirectionCCW } from './constants.js'
-export { BasicShadowMap } from './constants.js'
-export { PCFShadowMap } from './constants.js'
-export { PCFSoftShadowMap } from './constants.js'
-export { FrontSide } from './constants.js'
-export { BackSide } from './constants.js'
-export { DoubleSide } from './constants.js'
-export { FlatShading } from './constants.js'
-export { SmoothShading } from './constants.js'
-export { NoColors } from './constants.js'
-export { FaceColors } from './constants.js'
-export { VertexColors } from './constants.js'
-export { NoBlending } from './constants.js'
-export { NormalBlending } from './constants.js'
-export { AdditiveBlending } from './constants.js'
-export { SubtractiveBlending } from './constants.js'
-export { MultiplyBlending } from './constants.js'
-export { CustomBlending } from './constants.js'
-export { AddEquation } from './constants.js'
-export { SubtractEquation } from './constants.js'
-export { ReverseSubtractEquation } from './constants.js'
-export { MinEquation } from './constants.js'
-export { MaxEquation } from './constants.js'
-export { ZeroFactor } from './constants.js'
-export { OneFactor } from './constants.js'
-export { SrcColorFactor } from './constants.js'
-export { OneMinusSrcColorFactor } from './constants.js'
-export { SrcAlphaFactor } from './constants.js'
-export { OneMinusSrcAlphaFactor } from './constants.js'
-export { DstAlphaFactor } from './constants.js'
-export { OneMinusDstAlphaFactor } from './constants.js'
-export { DstColorFactor } from './constants.js'
-export { OneMinusDstColorFactor } from './constants.js'
-export { SrcAlphaSaturateFactor } from './constants.js'
-export { NeverDepth } from './constants.js'
-export { AlwaysDepth } from './constants.js'
-export { LessDepth } from './constants.js'
-export { LessEqualDepth } from './constants.js'
-export { EqualDepth } from './constants.js'
-export { GreaterEqualDepth } from './constants.js'
-export { GreaterDepth } from './constants.js'
-export { NotEqualDepth } from './constants.js'
-export { MultiplyOperation } from './constants.js'
-export { MixOperation } from './constants.js'
-export { AddOperation } from './constants.js'
-export { NoToneMapping } from './constants.js'
-export { LinearToneMapping } from './constants.js'
-export { ReinhardToneMapping } from './constants.js'
-export { Uncharted2ToneMapping } from './constants.js'
-export { CineonToneMapping } from './constants.js'
-export { UVMapping } from './constants.js'
-export { CubeReflectionMapping } from './constants.js'
-export { CubeRefractionMapping } from './constants.js'
-export { EquirectangularReflectionMapping } from './constants.js'
-export { EquirectangularRefractionMapping } from './constants.js'
-export { SphericalReflectionMapping } from './constants.js'
-export { CubeUVReflectionMapping } from './constants.js'
-export { CubeUVRefractionMapping } from './constants.js'
-export { RepeatWrapping } from './constants.js'
-export { ClampToEdgeWrapping } from './constants.js'
-export { MirroredRepeatWrapping } from './constants.js'
-export { NearestFilter } from './constants.js'
-export { NearestMipMapNearestFilter } from './constants.js'
-export { NearestMipMapLinearFilter } from './constants.js'
-export { LinearFilter } from './constants.js'
-export { LinearMipMapNearestFilter } from './constants.js'
-export { LinearMipMapLinearFilter } from './constants.js'
-export { UnsignedByteType } from './constants.js'
-export { ByteType } from './constants.js'
-export { ShortType } from './constants.js'
-export { UnsignedShortType } from './constants.js'
-export { IntType } from './constants.js'
-export { UnsignedIntType } from './constants.js'
-export { FloatType } from './constants.js'
-export { HalfFloatType } from './constants.js'
-export { UnsignedShort4444Type } from './constants.js'
-export { UnsignedShort5551Type } from './constants.js'
-export { UnsignedShort565Type } from './constants.js'
-export { UnsignedInt248Type } from './constants.js'
-export { AlphaFormat } from './constants.js'
-export { RGBFormat } from './constants.js'
-export { RGBAFormat } from './constants.js'
-export { LuminanceFormat } from './constants.js'
-export { LuminanceAlphaFormat } from './constants.js'
-export { RGBEFormat } from './constants.js'
-export { DepthFormat } from './constants.js'
-export { DepthStencilFormat } from './constants.js'
-export { RGB_S3TC_DXT1_Format } from './constants.js'
-export { RGBA_S3TC_DXT1_Format } from './constants.js'
-export { RGBA_S3TC_DXT3_Format } from './constants.js'
-export { RGBA_S3TC_DXT5_Format } from './constants.js'
-export { RGB_PVRTC_4BPPV1_Format } from './constants.js'
-export { RGB_PVRTC_2BPPV1_Format } from './constants.js'
-export { RGBA_PVRTC_4BPPV1_Format } from './constants.js'
-export { RGBA_PVRTC_2BPPV1_Format } from './constants.js'
-export { RGB_ETC1_Format } from './constants.js'
-export { LoopOnce } from './constants.js'
-export { LoopRepeat } from './constants.js'
-export { LoopPingPong } from './constants.js'
-export { InterpolateDiscrete } from './constants.js'
-export { InterpolateLinear } from './constants.js'
-export { InterpolateSmooth } from './constants.js'
-export { ZeroCurvatureEnding } from './constants.js'
-export { ZeroSlopeEnding } from './constants.js'
-export { WrapAroundEnding } from './constants.js'
-export { TrianglesDrawMode } from './constants.js'
-export { TriangleStripDrawMode } from './constants.js'
-export { TriangleFanDrawMode } from './constants.js'
-export { LinearEncoding } from './constants.js'
-export { sRGBEncoding } from './constants.js'
-export { GammaEncoding } from './constants.js'
-export { RGBEEncoding } from './constants.js'
-export { LogLuvEncoding } from './constants.js'
-export { RGBM7Encoding } from './constants.js'
-export { RGBM16Encoding } from './constants.js'
-export { RGBDEncoding } from './constants.js'
-export { BasicDepthPacking } from './constants.js'
-export { RGBADepthPacking } from './constants.js'
-export { Float64BufferAttribute } from './core/BufferAttribute.js'
-export { Float32BufferAttribute } from './core/BufferAttribute.js'
-export { Uint32BufferAttribute } from './core/BufferAttribute.js'
-export { Int32BufferAttribute } from './core/BufferAttribute.js'
-export { Uint16BufferAttribute } from './core/BufferAttribute.js'
-export { Int16BufferAttribute } from './core/BufferAttribute.js'
-export { Uint8ClampedBufferAttribute } from './core/BufferAttribute.js'
-export { Uint8BufferAttribute } from './core/BufferAttribute.js'
-export { Int8BufferAttribute } from './core/BufferAttribute.js'
-export { BufferAttribute } from './core/BufferAttribute.js'
+export {
+	REVISION,
+	MOUSE,
+	CullFaceNone,
+	CullFaceBack,
+	CullFaceFront,
+	CullFaceFrontBack,
+	FrontFaceDirectionCW,
+	FrontFaceDirectionCCW,
+	BasicShadowMap,
+	PCFShadowMap,
+	PCFSoftShadowMap,
+	FrontSide,
+	BackSide,
+	DoubleSide,
+	FlatShading,
+	SmoothShading,
+	NoColors,
+	FaceColors,
+	VertexColors,
+	NoBlending,
+	NormalBlending,
+	AdditiveBlending,
+	SubtractiveBlending,
+	MultiplyBlending,
+	CustomBlending,
+	AddEquation,
+	SubtractEquation,
+	ReverseSubtractEquation,
+	MinEquation,
+	MaxEquation,
+	ZeroFactor,
+	OneFactor,
+	SrcColorFactor,
+	OneMinusSrcColorFactor,
+	SrcAlphaFactor,
+	OneMinusSrcAlphaFactor,
+	DstAlphaFactor,
+	OneMinusDstAlphaFactor,
+	DstColorFactor,
+	OneMinusDstColorFactor,
+	SrcAlphaSaturateFactor,
+	NeverDepth,
+	AlwaysDepth,
+	LessDepth,
+	LessEqualDepth,
+	EqualDepth,
+	GreaterEqualDepth,
+	GreaterDepth,
+	NotEqualDepth,
+	MultiplyOperation,
+	MixOperation,
+	AddOperation,
+	NoToneMapping,
+	LinearToneMapping,
+	ReinhardToneMapping,
+	Uncharted2ToneMapping,
+	CineonToneMapping,
+	UVMapping,
+	CubeReflectionMapping,
+	CubeRefractionMapping,
+	EquirectangularReflectionMapping,
+	EquirectangularRefractionMapping,
+	SphericalReflectionMapping,
+	CubeUVReflectionMapping,
+	CubeUVRefractionMapping,
+	RepeatWrapping,
+	ClampToEdgeWrapping,
+	MirroredRepeatWrapping,
+	NearestFilter,
+	NearestMipMapNearestFilter,
+	NearestMipMapLinearFilter,
+	LinearFilter,
+	LinearMipMapNearestFilter,
+	LinearMipMapLinearFilter,
+	UnsignedByteType,
+	ByteType,
+	ShortType,
+	UnsignedShortType,
+	IntType,
+	UnsignedIntType,
+	FloatType,
+	HalfFloatType,
+	UnsignedShort4444Type,
+	UnsignedShort5551Type,
+	UnsignedShort565Type,
+	UnsignedInt248Type,
+	AlphaFormat,
+	RGBFormat,
+	RGBAFormat,
+	LuminanceFormat,
+	LuminanceAlphaFormat,
+	RGBEFormat,
+	DepthFormat,
+	DepthStencilFormat,
+	RGB_S3TC_DXT1_Format,
+	RGBA_S3TC_DXT1_Format,
+	RGBA_S3TC_DXT3_Format,
+	RGBA_S3TC_DXT5_Format,
+	RGB_PVRTC_4BPPV1_Format,
+	RGB_PVRTC_2BPPV1_Format,
+	RGBA_PVRTC_4BPPV1_Format,
+	RGBA_PVRTC_2BPPV1_Format,
+	RGB_ETC1_Format,
+	LoopOnce,
+	LoopRepeat,
+	LoopPingPong,
+	InterpolateDiscrete,
+	InterpolateLinear,
+	InterpolateSmooth,
+	ZeroCurvatureEnding,
+	ZeroSlopeEnding,
+	WrapAroundEnding,
+	TrianglesDrawMode,
+	TriangleStripDrawMode,
+	TriangleFanDrawMode,
+	LinearEncoding,
+	sRGBEncoding,
+	GammaEncoding,
+	RGBEEncoding,
+	LogLuvEncoding,
+	RGBM7Encoding,
+	RGBM16Encoding,
+	RGBDEncoding,
+	BasicDepthPacking,
+	RGBADepthPacking
+} from './constants.js'
+export {
+	Float64BufferAttribute,
+	Float32BufferAttribute,
+	Uint32BufferAttribute,
+	Int32BufferAttribute,
+	Uint16BufferAttribute,
+	Int16BufferAttribute,
+	Uint8ClampedBufferAttribute,
+	Uint8BufferAttribute,
+	Int8BufferAttribute,
+	BufferAttribute
+} from './core/BufferAttribute.js'
 export { BufferGeometry } from './core/BufferGeometry.js'
 export { Clock } from './core/Clock.js'
 export { DirectGeometry } from './core/DirectGeometry.js'
@@ -474,9 +542,11 @@ export { Uniform } from './core/Uniform.js'
 export { Curve } from './extras/core/Curve.js'
 export { CurvePath } from './extras/core/CurvePath.js'
 export { Font } from './extras/core/Font.js'
-export { CatmullRom } from './extras/core/Interpolations.js'
-export { QuadraticBezier } from './extras/core/Interpolations.js'
-export { CubicBezier } from './extras/core/Interpolations.js'
+export {
+	CatmullRom,
+	QuadraticBezier,
+	CubicBezier
+} from './extras/core/Interpolations.js'
 export { Path } from './extras/core/Path.js'
 export { PathPrototype } from './extras/core/PathPrototype.js'
 export { Shape } from './extras/core/Shape.js'
@@ -494,48 +564,62 @@ export { SplineCurve } from './extras/curves/SplineCurve.js'
 export { ImmediateRenderObject } from './extras/objects/ImmediateRenderObject.js'
 export { SceneUtils } from './extras/SceneUtils.js'
 export { ShapeUtils } from './extras/ShapeUtils.js'
-export { BoxGeometry } from './geometries/BoxGeometry.js'
-export { BoxBufferGeometry } from './geometries/BoxGeometry.js'
-export { CircleGeometry } from './geometries/CircleGeometry.js'
-export { CircleBufferGeometry } from './geometries/CircleGeometry.js'
-export { ConeGeometry } from './geometries/ConeGeometry.js'
-export { ConeBufferGeometry } from './geometries/ConeGeometry.js'
-export { CylinderGeometry } from './geometries/CylinderGeometry.js'
-export { CylinderBufferGeometry } from './geometries/CylinderGeometry.js'
-export { DodecahedronGeometry } from './geometries/DodecahedronGeometry.js'
-export { DodecahedronBufferGeometry } from './geometries/DodecahedronGeometry.js'
+export {
+	BoxGeometry,
+	BoxBufferGeometry
+} from './geometries/BoxGeometry.js'
+export {
+	CircleGeometry,
+	CircleBufferGeometry
+} from './geometries/CircleGeometry.js'
+export {
+	ConeGeometry,
+	ConeBufferGeometry
+} from './geometries/ConeGeometry.js'
+export {
+	CylinderGeometry,
+	CylinderBufferGeometry
+} from './geometries/CylinderGeometry.js'
+export {
+	DodecahedronGeometry,
+	DodecahedronBufferGeometry
+} from './geometries/DodecahedronGeometry.js'
 export { EdgesGeometry } from './geometries/EdgesGeometry.js'
-export { ExtrudeGeometry } from './geometries/ExtrudeGeometry.js'
-export { ExtrudeBufferGeometry } from './geometries/ExtrudeGeometry.js'
-export { WireframeGeometry } from './geometries/Geometries.js'
-export { ParametricGeometry } from './geometries/Geometries.js'
-export { ParametricBufferGeometry } from './geometries/Geometries.js'
-export { TetrahedronGeometry } from './geometries/Geometries.js'
-export { TetrahedronBufferGeometry } from './geometries/Geometries.js'
-export { OctahedronGeometry } from './geometries/Geometries.js'
-export { OctahedronBufferGeometry } from './geometries/Geometries.js'
-export { IcosahedronGeometry } from './geometries/Geometries.js'
-export { IcosahedronBufferGeometry } from './geometries/Geometries.js'
-export { PolyhedronGeometry } from './geometries/Geometries.js'
-export { PolyhedronBufferGeometry } from './geometries/Geometries.js'
-export { TubeGeometry } from './geometries/Geometries.js'
-export { TubeBufferGeometry } from './geometries/Geometries.js'
-export { TorusKnotGeometry } from './geometries/Geometries.js'
-export { TorusKnotBufferGeometry } from './geometries/Geometries.js'
-export { TorusGeometry } from './geometries/Geometries.js'
-export { TorusBufferGeometry } from './geometries/Geometries.js'
-export { TextGeometry } from './geometries/Geometries.js'
-export { TextBufferGeometry } from './geometries/Geometries.js'
-export { SphereGeometry } from './geometries/Geometries.js'
-export { SphereBufferGeometry } from './geometries/Geometries.js'
-export { RingGeometry } from './geometries/Geometries.js'
-export { RingBufferGeometry } from './geometries/Geometries.js'
-export { PlaneGeometry } from './geometries/Geometries.js'
-export { PlaneBufferGeometry } from './geometries/Geometries.js'
-export { LatheGeometry } from './geometries/Geometries.js'
-export { LatheBufferGeometry } from './geometries/Geometries.js'
-export { ShapeGeometry } from './geometries/Geometries.js'
-export { ShapeBufferGeometry } from './geometries/Geometries.js'
+export {
+	ExtrudeGeometry,
+	ExtrudeBufferGeometry
+} from './geometries/ExtrudeGeometry.js'
+export {
+	WireframeGeometry,
+	ParametricGeometry,
+	ParametricBufferGeometry,
+	TetrahedronGeometry,
+	TetrahedronBufferGeometry,
+	OctahedronGeometry,
+	OctahedronBufferGeometry,
+	IcosahedronGeometry,
+	IcosahedronBufferGeometry,
+	PolyhedronGeometry,
+	PolyhedronBufferGeometry,
+	TubeGeometry,
+	TubeBufferGeometry,
+	TorusKnotGeometry,
+	TorusKnotBufferGeometry,
+	TorusGeometry,
+	TorusBufferGeometry,
+	TextGeometry,
+	TextBufferGeometry,
+	SphereGeometry,
+	SphereBufferGeometry,
+	RingGeometry,
+	RingBufferGeometry,
+	PlaneGeometry,
+	PlaneBufferGeometry,
+	LatheGeometry,
+	LatheBufferGeometry,
+	ShapeGeometry,
+	ShapeBufferGeometry
+} from './geometries/Geometries.js'
 export { ArrowHelper } from './helpers/ArrowHelper.js'
 export { AxesHelper } from './helpers/AxesHelper.js'
 export { Box3Helper } from './helpers/Box3Helper.js'
@@ -574,28 +658,32 @@ export { FontLoader } from './loaders/FontLoader.js'
 export { ImageLoader } from './loaders/ImageLoader.js'
 export { JSONLoader } from './loaders/JSONLoader.js'
 export { Loader } from './loaders/Loader.js'
-export { DefaultLoadingManager } from './loaders/LoadingManager.js'
-export { LoadingManager } from './loaders/LoadingManager.js'
+export {
+	DefaultLoadingManager,
+	LoadingManager
+} from './loaders/LoadingManager.js'
 export { MaterialLoader } from './loaders/MaterialLoader.js'
 export { ObjectLoader } from './loaders/ObjectLoader.js'
 export { TextureLoader } from './loaders/TextureLoader.js'
 export { LineBasicMaterial } from './materials/LineBasicMaterial.js'
 export { LineDashedMaterial } from './materials/LineDashedMaterial.js'
 export { Material } from './materials/Material.js'
-export { ShadowMaterial } from './materials/Materials.js'
-export { SpriteMaterial } from './materials/Materials.js'
-export { RawShaderMaterial } from './materials/Materials.js'
-export { ShaderMaterial } from './materials/Materials.js'
-export { PointsMaterial } from './materials/Materials.js'
-export { MeshPhysicalMaterial } from './materials/Materials.js'
-export { MeshStandardMaterial } from './materials/Materials.js'
-export { MeshPhongMaterial } from './materials/Materials.js'
-export { MeshToonMaterial } from './materials/Materials.js'
-export { MeshNormalMaterial } from './materials/Materials.js'
-export { MeshLambertMaterial } from './materials/Materials.js'
-export { MeshDepthMaterial } from './materials/Materials.js'
-export { MeshDistanceMaterial } from './materials/Materials.js'
-export { MeshBasicMaterial } from './materials/Materials.js'
+export {
+	ShadowMaterial,
+	SpriteMaterial,
+	RawShaderMaterial,
+	ShaderMaterial,
+	PointsMaterial,
+	MeshPhysicalMaterial,
+	MeshStandardMaterial,
+	MeshPhongMaterial,
+	MeshToonMaterial,
+	MeshNormalMaterial,
+	MeshLambertMaterial,
+	MeshDepthMaterial,
+	MeshDistanceMaterial,
+	MeshBasicMaterial
+} from './materials/Materials.js'
 export { Box2 } from './math/Box2.js'
 export { Box3 } from './math/Box3.js'
 export { Color } from './math/Color.js'
@@ -674,37 +762,8 @@ export { DataTexture } from './textures/DataTexture.js'
 export { DepthTexture } from './textures/DepthTexture.js'
 export { Texture } from './textures/Texture.js'
 export { VideoTexture } from './textures/VideoTexture.js'
-export { CubeGeometry } from './Three.Legacy.js'
-export { Face4 } from './Three.Legacy.js'
-export { LineStrip } from './Three.Legacy.js'
-export { LinePieces } from './Three.Legacy.js'
-export { MeshFaceMaterial } from './Three.Legacy.js'
-export { MultiMaterial } from './Three.Legacy.js'
-export { PointCloud } from './Three.Legacy.js'
-export { Particle } from './Three.Legacy.js'
-export { ParticleSystem } from './Three.Legacy.js'
-export { PointCloudMaterial } from './Three.Legacy.js'
-export { ParticleBasicMaterial } from './Three.Legacy.js'
-export { ParticleSystemMaterial } from './Three.Legacy.js'
-export { Vertex } from './Three.Legacy.js'
-export { DynamicBufferAttribute } from './Three.Legacy.js'
-export { Int8Attribute } from './Three.Legacy.js'
-export { Uint8Attribute } from './Three.Legacy.js'
-export { Uint8ClampedAttribute } from './Three.Legacy.js'
-export { Int16Attribute } from './Three.Legacy.js'
-export { Uint16Attribute } from './Three.Legacy.js'
-export { Int32Attribute } from './Three.Legacy.js'
-export { Uint32Attribute } from './Three.Legacy.js'
-export { Float32Attribute } from './Three.Legacy.js'
-export { Float64Attribute } from './Three.Legacy.js'
-export { ClosedSplineCurve3 } from './Three.Legacy.js'
-export { SplineCurve3 } from './Three.Legacy.js'
-export { Spline } from './Three.Legacy.js'
-export { AxisHelper } from './Three.Legacy.js'
-export { BoundingBoxHelper } from './Three.Legacy.js'
-export { EdgesHelper } from './Three.Legacy.js'
-export { WireframeHelper } from './Three.Legacy.js'
-export { XHRLoader } from './Three.Legacy.js'
-export { BinaryTextureLoader } from './Three.Legacy.js'
-export { arrayMin } from './utils.js'
-export { arrayMax } from './utils.js'
+export {
+	arrayMin,
+	arrayMax
+} from './utils.js'
+

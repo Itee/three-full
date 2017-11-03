@@ -1,4 +1,5 @@
 import { Vector3 } from '../math/Vector3.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  *

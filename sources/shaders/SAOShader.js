@@ -1,5 +1,6 @@
 import { Vector2 } from '../math/Vector2.js'
 import { Matrix4 } from '../math/Matrix4.js'
+
 var SAOShader = {
 	defines: {
 		'NUM_SAMPLES': 7,

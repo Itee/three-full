@@ -1,6 +1,7 @@
 import { Vector2 } from '../math/Vector2.js'
 import { Geometry } from '../core/Geometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
+
 /* 
  * @author zz85 / http://github.com/zz85
  * @author WestLangley / http://github.com/WestLangley

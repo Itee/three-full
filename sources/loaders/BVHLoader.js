@@ -6,6 +6,7 @@ import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
 import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
 import { AnimationClip } from '../animation/AnimationClip.js'
 import { Skeleton } from '../objects/Skeleton.js'
+
 /**
  * @author herzig / http://github.com/herzig
  * @author Mugen87 / https://github.com/Mugen87

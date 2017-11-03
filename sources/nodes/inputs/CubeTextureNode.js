@@ -1,5 +1,6 @@
 import { InputNode } from '../../nodes/InputNode.js'
 import { ReflectNode } from '../../nodes/accessors/ReflectNode.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

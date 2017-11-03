@@ -1,13 +1,17 @@
 import { FileLoader } from '../loaders/FileLoader.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
-import { MeshPhongMaterial } from '../materials/Materials.js'
-import { MeshLambertMaterial } from '../materials/Materials.js'
+import {
+	MeshPhongMaterial,
+	MeshLambertMaterial
+} from '../materials/Materials.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
-import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import {
+	Float32BufferAttribute,
+	BufferAttribute
+} from '../core/BufferAttribute.js'
 import { Vector4 } from '../math/Vector4.js'
 import { NURBSCurve } from '../curves/NURBSCurve.js'
-import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Group } from '../objects/Group.js'
 import { Bone } from '../objects/Bone.js'
 import { Object3D } from '../core/Object3D.js'
@@ -26,10 +30,13 @@ import { Vector3 } from '../math/Vector3.js'
 import { Skeleton } from '../objects/Skeleton.js'
 import { Color } from '../math/Color.js'
 import { AmbientLight } from '../lights/AmbientLight.js'
-import { VertexColors } from '../constants.js'
-import { EquirectangularReflectionMapping } from '../constants.js'
-import { RepeatWrapping } from '../constants.js'
-import { ClampToEdgeWrapping } from '../constants.js'
+import {
+	VertexColors,
+	EquirectangularReflectionMapping,
+	RepeatWrapping,
+	ClampToEdgeWrapping
+} from '../constants.js'
+
 /**
  * @author Kyle-Larson https://github.com/Kyle-Larson
  * @author Takahiro https://github.com/takahirox

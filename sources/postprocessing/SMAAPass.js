@@ -6,10 +6,13 @@ import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/Geometries.js'
-import { NearestFilter } from '../constants.js'
-import { LinearFilter } from '../constants.js'
-import { RGBFormat } from '../constants.js'
-import { RGBAFormat } from '../constants.js'
+import {
+	NearestFilter,
+	LinearFilter,
+	RGBFormat,
+	RGBAFormat
+} from '../constants.js'
+
 /**
  * @author mpk / http://polko.me/
  */

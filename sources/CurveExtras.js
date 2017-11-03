@@ -1,5 +1,6 @@
 import { Curve } from './extras/core/Curve.js'
 import { Vector3 } from './math/Vector3.js'
+
 /*
  * A bunch of parametric curves
  * @author zz85

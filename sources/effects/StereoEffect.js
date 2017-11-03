@@ -1,4 +1,5 @@
 import { StereoCamera } from '../cameras/StereoCamera.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  * @authod mrdoob / http://mrdoob.com/

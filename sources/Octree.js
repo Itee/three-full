@@ -6,6 +6,7 @@ import { LineSegments } from './objects/LineSegments.js'
 import { Face3 } from './core/Face3.js'
 import { Object3D } from './core/Object3D.js'
 import { Raycaster } from './core/Raycaster.js'
+
 /*!
  *
  * threeoctree.js (r60) / https://github.com/collinhover/threeoctree

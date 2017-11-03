@@ -1,4 +1,5 @@
 import { Vector2 } from '../math/Vector2.js'
+
 /**
  * @author zz85 / http://www.lab4games.net/zz85/blog
  *

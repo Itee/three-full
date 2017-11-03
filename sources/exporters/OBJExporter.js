@@ -5,6 +5,7 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Geometry } from '../core/Geometry.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Line } from '../objects/Line.js'
+
 /**
  * @author mrdoob / http://mrdoob.com/
  */

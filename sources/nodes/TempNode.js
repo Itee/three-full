@@ -1,4 +1,5 @@
 import { GLNode } from '../nodes/GLNode.js'
+
 /**
  * Automatic node cache
  * @author sunag / http://www.sunag.com.br/

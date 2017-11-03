@@ -7,13 +7,16 @@ import { Vector2 } from './math/Vector2.js'
 import { Mesh } from './objects/Mesh.js'
 import { PlaneBufferGeometry } from './geometries/Geometries.js'
 import { DataTexture } from './textures/DataTexture.js'
-import { RepeatWrapping } from './constants.js'
-import { ClampToEdgeWrapping } from './constants.js'
-import { NearestFilter } from './constants.js'
-import { LinearFilter } from './constants.js'
-import { FloatType } from './constants.js'
-import { HalfFloatType } from './constants.js'
-import { RGBAFormat } from './constants.js'
+import {
+	RepeatWrapping,
+	ClampToEdgeWrapping,
+	NearestFilter,
+	LinearFilter,
+	FloatType,
+	HalfFloatType,
+	RGBAFormat
+} from './constants.js'
+
 ﻿var Ocean = function ( renderer, camera, scene, options ) {
 
 	// flag used to trigger parameter changes

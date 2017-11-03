@@ -4,6 +4,7 @@ import { NormalNode } from '../nodes/accessors/NormalNode.js'
 import { TimerNode } from '../nodes/utils/TimerNode.js'
 import { ConstNode } from '../nodes/ConstNode.js'
 import { FunctionNode } from '../nodes/FunctionNode.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

@@ -1,5 +1,6 @@
 import { InputNode } from '../../nodes/InputNode.js'
 import { UVNode } from '../../nodes/accessors/UVNode.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

@@ -7,6 +7,7 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { Mesh } from '../objects/Mesh.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
 import { RepeatWrapping } from '../constants.js'
+
 /**
  * @author Alexander Gessler / http://www.greentoken.de/
  * https://github.com/acgessler

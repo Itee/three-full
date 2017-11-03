@@ -1,8 +1,11 @@
 import { FileLoader } from '../loaders/FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
-import { BufferAttribute } from '../core/BufferAttribute.js'
+import {
+	BufferAttribute,
+	Float32BufferAttribute
+} from '../core/BufferAttribute.js'
 import { Vector3 } from '../math/Vector3.js'
-import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+
 /**
  * @author aleeper / http://adamleeper.com/
  * @author mrdoob / http://mrdoob.com/

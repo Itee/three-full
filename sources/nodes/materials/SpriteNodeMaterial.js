@@ -1,5 +1,6 @@
 import { NodeMaterial } from '../../nodes/NodeMaterial.js'
 import { SpriteNode } from '../../nodes/materials/SpriteNode.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

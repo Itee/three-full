@@ -1,4 +1,5 @@
 import { Vector2 } from '../math/Vector2.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  * @author davidedc / http://www.sketchpatch.net/

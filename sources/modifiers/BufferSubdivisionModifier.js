@@ -2,6 +2,7 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Geometry } from '../core/Geometry.js'
 import { Face3 } from '../core/Face3.js'
+
 /*
  * @author zz85 / http://twitter.com/blurspline / http://www.lab4games.net/zz85/blog
  * @author Matthew Adams / http://www.centerionware.com - added UV support and rewrote to use buffergeometry.

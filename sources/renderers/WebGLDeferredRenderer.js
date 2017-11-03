@@ -8,25 +8,30 @@ import { EffectComposer } from '../postprocessing/EffectComposer.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { ShaderPass } from '../postprocessing/ShaderPass.js'
 import { Scene } from '../scenes/Scene.js'
-import { PlaneBufferGeometry } from '../geometries/Geometries.js'
+import {
+	PlaneBufferGeometry,
+	SphereGeometry
+} from '../geometries/Geometries.js'
 import { Mesh } from '../objects/Mesh.js'
-import { SphereGeometry } from '../geometries/Geometries.js'
 import { Uniform } from '../core/Uniform.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Vector4 } from '../math/Vector4.js'
 import { Color } from '../math/Color.js'
-import { BackSide } from '../constants.js'
-import { NoBlending } from '../constants.js'
-import { AdditiveBlending } from '../constants.js'
-import { GreaterEqualDepth } from '../constants.js'
-import { NearestFilter } from '../constants.js'
-import { LinearFilter } from '../constants.js'
-import { UnsignedByteType } from '../constants.js'
-import { FloatType } from '../constants.js'
-import { UnsignedInt248Type } from '../constants.js'
-import { RGBFormat } from '../constants.js'
-import { RGBAFormat } from '../constants.js'
-import { DepthStencilFormat } from '../constants.js'
+import {
+	BackSide,
+	NoBlending,
+	AdditiveBlending,
+	GreaterEqualDepth,
+	NearestFilter,
+	LinearFilter,
+	UnsignedByteType,
+	FloatType,
+	UnsignedInt248Type,
+	RGBFormat,
+	RGBAFormat,
+	DepthStencilFormat
+} from '../constants.js'
+
 /**
  * @author alteredq / http://alteredqualia.com/
  * @author MPanknin / http://www.redplant.de/

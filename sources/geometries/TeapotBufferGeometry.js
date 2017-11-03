@@ -3,6 +3,7 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector4 } from '../math/Vector4.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
+
 /**
  * @author Eric Haines / http://erichaines.com/
  *

@@ -1,4 +1,5 @@
 import { GLNode } from '../nodes/GLNode.js'
+
 /**
  * @author sunag / http://www.sunag.com.br/
  */

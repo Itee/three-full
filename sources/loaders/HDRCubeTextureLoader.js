@@ -2,15 +2,18 @@ import { RGBELoader } from '../loaders/RGBELoader.js'
 import { CubeTexture } from '../textures/CubeTexture.js'
 import { FileLoader } from '../loaders/FileLoader.js'
 import { DataTexture } from '../textures/DataTexture.js'
-import { NearestFilter } from '../constants.js'
-import { LinearFilter } from '../constants.js'
-import { UnsignedByteType } from '../constants.js'
-import { FloatType } from '../constants.js'
-import { HalfFloatType } from '../constants.js'
-import { RGBFormat } from '../constants.js'
-import { RGBAFormat } from '../constants.js'
-import { LinearEncoding } from '../constants.js'
-import { RGBEEncoding } from '../constants.js'
+import {
+	NearestFilter,
+	LinearFilter,
+	UnsignedByteType,
+	FloatType,
+	HalfFloatType,
+	RGBFormat,
+	RGBAFormat,
+	LinearEncoding,
+	RGBEEncoding
+} from '../constants.js'
+
 /**
 * @author Prashant Sharma / spidersharma03
 * @author Ben Houston / http://clara.io / bhouston

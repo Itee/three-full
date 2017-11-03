@@ -11,8 +11,11 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { Face3 } from '../core/Face3.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
 import { Color } from '../math/Color.js'
-import { DoubleSide } from '../constants.js'
-import { AdditiveBlending } from '../constants.js'
+import {
+	DoubleSide,
+	AdditiveBlending
+} from '../constants.js'
+
 /*
  * Autodesk 3DS threee.js file loader, based on lib3ds.
  *

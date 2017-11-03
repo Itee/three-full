@@ -3,24 +3,29 @@ import { Color } from '../math/Color.js'
 import { Vector2 } from '../math/Vector2.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { DepthTexture } from '../textures/DepthTexture.js'
-import { MeshDepthMaterial } from '../materials/Materials.js'
-import { MeshNormalMaterial } from '../materials/Materials.js'
-import { ShaderMaterial } from '../materials/Materials.js'
+import {
+	MeshDepthMaterial,
+	MeshNormalMaterial,
+	ShaderMaterial
+} from '../materials/Materials.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneGeometry } from '../geometries/Geometries.js'
-import { NoBlending } from '../constants.js'
-import { CustomBlending } from '../constants.js'
-import { AddEquation } from '../constants.js'
-import { ZeroFactor } from '../constants.js'
-import { DstAlphaFactor } from '../constants.js'
-import { DstColorFactor } from '../constants.js'
-import { NearestFilter } from '../constants.js'
-import { LinearFilter } from '../constants.js'
-import { UnsignedShortType } from '../constants.js'
-import { RGBAFormat } from '../constants.js'
-import { RGBADepthPacking } from '../constants.js'
+import {
+	NoBlending,
+	CustomBlending,
+	AddEquation,
+	ZeroFactor,
+	DstAlphaFactor,
+	DstColorFactor,
+	NearestFilter,
+	LinearFilter,
+	UnsignedShortType,
+	RGBAFormat,
+	RGBADepthPacking
+} from '../constants.js'
+
 /**
  * @author ludobaka / ludobaka.github.io
  * SAO implementation inspired from bhouston previous SAO work

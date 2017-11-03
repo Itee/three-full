@@ -1,4 +1,5 @@
 import { Color } from '../math/Color.js'
+
 /**
  * @author bhouston / http://clara.io/
  *

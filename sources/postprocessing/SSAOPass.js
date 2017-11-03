@@ -1,9 +1,12 @@
 import { ShaderPass } from '../postprocessing/ShaderPass.js'
 import { MeshDepthMaterial } from '../materials/Materials.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { NoBlending } from '../constants.js'
-import { LinearFilter } from '../constants.js'
-import { RGBADepthPacking } from '../constants.js'
+import {
+	NoBlending,
+	LinearFilter,
+	RGBADepthPacking
+} from '../constants.js'
+
 'use strict';
 
 /**

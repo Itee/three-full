@@ -6,6 +6,7 @@ import { Group } from '../objects/Group.js'
 import { MeshStandardMaterial } from '../materials/Materials.js'
 import { FileLoader } from '../loaders/FileLoader.js'
 import { VertexColors } from '../constants.js'
+
 /**
   * @author Kai Salmen / https://kaisalmen.de
   * Development repository: https://github.com/kaisalmen/WWOBJLoader
