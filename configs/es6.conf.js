@@ -91,6 +91,11 @@ module.exports = {
                 [ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ]
             ]
         },
+        LoaderSupport:                {
+            replacements: [
+                [ 'if ( var LoaderSupport === undefined ) { var LoaderSupport = {} }', 'var LoaderSupport = {}' ]
+            ]
+        },
         OceanShaders:              {
             imports: [ 'ShaderLib' ]
         },
