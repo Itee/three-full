@@ -392,3 +392,17 @@ gulp.task( 'build-iife-prod', ( done ) => {
 
 } )
 
+//////////////////////
+////// RELEASE ///////
+//////////////////////
+
+gulp.task( 'release', ( done ) => {
+
+    runSequence(
+        'clean',
+        'convert-three',
+        'build-three',
+        done
+    )
+
+} )
