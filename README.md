@@ -9,6 +9,8 @@ Three.js come with lot of examples files, which are curently not usable as ES6 m
 The purpose of this project is to convert all examples files and includes them as part 
 of the library.
 
+**The version 2.0.0 is now available !!!** It support three r88, and reintroduce ColladaLoader.
+
 #### Setup ####
 
 Assuming that npm and node are already installed.
@@ -57,7 +59,6 @@ This is the list of unsupported part of example, which cannot be converted yet.
 * **sea3d folder** //*Duplicate export 'SEA3D', namespace not managed yet*
 * **crossfade folder** //*Scene has already been declared*
 * **RaytracingWorker.js** //*Need to check worker import*
-* **ColladaLoader.js** //*Missing export statement for Polygons*
 * **ParametricGeometries.js** //*Bug TorusKnotCurve from es6-convertor*
 * **RollerCoaster.js** //*invalid default exports with file name from es6-convertor*
 * **OceanShaders.js** //*Need to check how to extends imported lib properly*
@@ -67,6 +68,15 @@ This is the list of unsupported part of example, which cannot be converted yet.
 
 #### <a id="bug"></a>Bugs ####
 - Currently it is imposible to build ES module in production, due to an invalid characters that break uglify rollup plugin.
+
+
+#### Change log ####
+
+##### 2.0.0 :
+
+* Support Three.js r88
+* Reintroduce ColladaLoader in available modules
+* Refactor the convert pipeline
 
 [license-badge]: https://img.shields.io/npm/l/three.svg
 [license-badge-url]: ./LICENSE.md
