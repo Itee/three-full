@@ -23,7 +23,7 @@ module.exports = {
         'draco',                            // draco_decoder use Eval !
         'sea3d',                            // Duplicate export 'SEA3D'
         'crossfade',                        // Scene has already been declared
-        'ColladaLoader.js',                 // Missing export statement for Polygons
+
         'ParametricGeometries.js',          // Bug TorusKnotCurve from es6-exports
         'RollerCoaster.js',                 // invalid default exports with file name from es6-exports
         'OceanShaders.js',                  // Todo: check how to extends imported lib properly
@@ -38,6 +38,12 @@ module.exports = {
         //        },
         BufferSubdivisionModifier: {
             imports: [ 'Face3' ]
+        },
+        ColladaLoader:             {
+            imports: [
+                'DefaultLoadingManager',
+                'Loader'
+            ]
         },
         ColorNode:                 {
             imports: [ 'NodeMaterial' ]
