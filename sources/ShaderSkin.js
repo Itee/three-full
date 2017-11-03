@@ -1,9 +1,9 @@
 import { Color } from './math/Color.js'
 import { Vector4 } from './math/Vector4.js'
 import { Vector3 } from './math/Vector3.js'
-import { UniformsUtils } from './renderers/shaders/UniformsUtils'
-import { UniformsLib } from './renderers/shaders/UniformsLib'
-import { ShaderChunk } from './renderers/shaders/ShaderChunk'
+import { UniformsUtils } from './renderers/shaders/UniformsUtils.js'
+import { UniformsLib } from './renderers/shaders/UniformsLib.js'
+import { ShaderChunk } from './renderers/shaders/ShaderChunk.js'
 /**
  * @author alteredq / http://alteredqualia.com/
  *

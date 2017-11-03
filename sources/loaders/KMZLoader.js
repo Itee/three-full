@@ -1,5 +1,5 @@
 import { FileLoader } from '../loaders/FileLoader.js'
-import { ColladaLoader } from '../loaders/ColladaLoader2.js'
+import { ColladaLoader } from '../loaders/ColladaLoader.js'
 import { Group } from '../objects/Group.js'
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -31,7 +31,7 @@ KMZLoader.prototype = {
 
 	parse: function ( data ) {
 
-		var zip = new JSZip( data );
+		var zip = new JSZip( data ); // eslint-disable-line no-undef
 
 		// console.log( zip );
 

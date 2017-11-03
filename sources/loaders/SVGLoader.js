@@ -23,7 +23,7 @@ SVGLoader.prototype = {
 		var loader = new FileLoader( scope.manager );
 		loader.load( url, function ( svgString ) {
 
-			var doc = parser.parseFromString( svgString, 'image/svg+xml' );  // application/xml
+			var doc = parser.parseFromString( svgString, 'image/svg+xml' ); // application/xml
 
 			onLoad( doc.documentElement );
 

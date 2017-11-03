@@ -71,7 +71,7 @@ MMDPhysics.prototype = {
 
 		var helper = this.helper;
 		var currentPosition = helper.allocThreeVector3();
-		var currentRotation = helper.allocThreeVector3();
+		var currentRotation = helper.allocThreeEuler();
 		var currentScale = helper.allocThreeVector3();
 
 		currentPosition.copy( mesh.position );
@@ -103,7 +103,7 @@ MMDPhysics.prototype = {
 		this.reset();
 
 		helper.freeThreeVector3( currentPosition );
-		helper.freeThreeVector3( currentRotation );
+		helper.freeThreeEuler( currentRotation );
 		helper.freeThreeVector3( currentScale );
 
 	},

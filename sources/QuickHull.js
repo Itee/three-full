@@ -352,7 +352,7 @@ import { Triangle } from './math/Triangle.js'
 
 			// compute the min/max vertex on all six directions
 
-			for ( i = 0, l = this.vertices.length; i < l ; i ++ ) {
+			for ( i = 0, l = this.vertices.length; i < l; i ++ ) {
 
 				var vertex = this.vertices[ i ];
 				var point = vertex.point;
@@ -404,7 +404,7 @@ import { Triangle } from './math/Triangle.js'
 
 			var line3, plane, closestPoint;
 
-			return function computeInitialHull () {
+			return function computeInitialHull() {
 
 				if ( line3 === undefined ) {
 
@@ -474,7 +474,7 @@ import { Triangle } from './math/Triangle.js'
 
 				// 3. The next vertex 'v3' is the one farthest to the plane 'v0', 'v1', 'v2'
 
-				maxDistance = 0;
+				maxDistance = -1;
 				plane.setFromCoplanarPoints( v0.point, v1.point, v2.point );
 
 				for ( i = 0, l = this.vertices.length; i < l; i ++ ) {
@@ -566,7 +566,7 @@ import { Triangle } from './math/Triangle.js'
 
 				for ( i = 0, l = vertices.length; i < l; i ++ ) {
 
-					vertex = vertices[i];
+					vertex = vertices[ i ];
 
 					if ( vertex !== v0 && vertex !== v1 && vertex !== v2 && vertex !== v3 ) {
 
@@ -789,7 +789,6 @@ import { Triangle } from './math/Triangle.js'
 		addVertexToHull: function ( eyeVertex ) {
 
 			var horizon = [];
-			var i, face;
 
 			this.unassigned.clear();
 
@@ -860,7 +859,7 @@ import { Triangle } from './math/Triangle.js'
 
 	Object.assign( Face, {
 
-		create: function( a, b, c ) {
+		create: function ( a, b, c ) {
 
 			var face = new Face();
 
@@ -912,7 +911,7 @@ import { Triangle } from './math/Triangle.js'
 
 			var triangle;
 
-			return function compute () {
+			return function compute() {
 
 				if ( triangle === undefined ) triangle = new Triangle();
 
@@ -1206,7 +1205,7 @@ import { Triangle } from './math/Triangle.js'
 
 		},
 
-		isEmpty: function() {
+		isEmpty: function () {
 
 			return this.head === null;
 

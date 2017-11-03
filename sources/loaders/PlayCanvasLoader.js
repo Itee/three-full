@@ -189,7 +189,7 @@ PlayCanvasLoader.prototype = {
 
 			var parent = model.parents[ i ];
 
-			if ( parent === -1 ) continue;
+			if ( parent === - 1 ) continue;
 
 			model.nodes[ parent ]._object.add( model.nodes[ i ]._object );
 

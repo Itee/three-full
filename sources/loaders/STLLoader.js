@@ -93,7 +93,7 @@ STLLoader.prototype = {
  			}
 
 			// First 5 bytes read "solid"; declare it to be an ASCII STL
-			
+
 			return false;
 
 		}

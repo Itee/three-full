@@ -23,7 +23,7 @@ module.exports = {
         'draco',                            // draco_decoder use Eval !
         'sea3d',                            // Duplicate export 'SEA3D'
         'crossfade',                        // Scene has already been declared
-        'ColladaLoader.js',                 // Missing export statement for Polygons
+
         'ParametricGeometries.js',          // Bug TorusKnotCurve from es6-exports
         'RollerCoaster.js',                 // invalid default exports with file name from es6-exports
         'OceanShaders.js',                  // Todo: check how to extends imported lib properly
@@ -37,10 +37,16 @@ module.exports = {
         //            output: './src/misc/AnimationClipCreator.js'
         //        },
         BufferSubdivisionModifier: {
-            imports: [ 'import { Face3 } from \'../core/Face3.js\'' ]
+            imports: [ 'Face3' ]
+        },
+        ColladaLoader:             {
+            imports: [
+                'DefaultLoadingManager',
+                'Loader'
+            ]
         },
         ColorNode:                 {
-            imports: [ 'import { NodeMaterial } from \'../../nodes/NodeMaterial\'' ]
+            imports: [ 'NodeMaterial' ]
         },
         CurveExtras:               {
             replacements: [
@@ -61,10 +67,10 @@ module.exports = {
             ]
         },
         EffectComposer:            {
-            imports: [ 'import { CopyShader } from \'../shaders/CopyShader\'' ]
+            imports: [ 'CopyShader' ]
         },
         GLNode:                    {
-            imports:      [ 'import { _Math } from \'../math/Math\'' ],
+            imports:      [ '_Math' ],
             replacements: [
                 [ 'this.uuid = Math.generateUUID();', 'this.uuid = _Math.generateUUID();' ]
             ]
@@ -72,6 +78,22 @@ module.exports = {
         Lut:                       {
             replacements: [
                 [ 'ColorMapKeywords = ', 'var ColorMapKeywords = ' ]
+            ]
+        },
+        LegacyGLTFLoader: {
+            imports: [
+                'DefaultLoadingManager',
+                'Loader',
+                'Matrix3',
+                'Vector2',
+                'Vector3',
+                'Vector4',
+                'UniformsUtils',
+                'MeshBasicMaterial',
+                'MeshLambertMaterial',
+                'QuaternionKeyframeTrack',
+                'VectorKeyframeTrack',
+                'AnimationUtils'
             ]
         },
         MarchingCubes:             {
@@ -85,17 +107,22 @@ module.exports = {
                 [ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ]
             ]
         },
+        LoaderSupport:                {
+            replacements: [
+                [ 'if ( var LoaderSupport === undefined ) { var LoaderSupport = {} }', 'var LoaderSupport = {}' ]
+            ]
+        },
         OceanShaders:              {
-            imports: [ 'import { ShaderLib } from \'../renderers/shaders/ShaderLib.js\'' ]
+            imports: [ 'ShaderLib' ]
         },
         Octree:                    {
-            imports:      [ 'import { Raycaster } from \'./core/Raycaster.js\'' ],
+            imports:      [ 'Raycaster' ],
             replacements: [
                 [ 'instanceof var OctreeNode', 'instanceof OctreeNode' ]
             ]
         },
         ParametricGeometries:      {
-            exports: '\nexport { ParametricGeometries };'
+            exports: [ 'ParametricGeometries' ]
         },
         RGBELoader:                {
             replacements: [
@@ -106,26 +133,26 @@ module.exports = {
         },
         ShaderSkin:                {
             imports: [
-                'import { UniformsUtils } from \'./renderers/shaders/UniformsUtils\'',
-                'import { UniformsLib } from \'./renderers/shaders/UniformsLib\'',
-                'import { ShaderChunk } from \'./renderers/shaders/ShaderChunk\''
+                'UniformsUtils',
+                'UniformsLib',
+                'ShaderChunk'
             ]
         },
         ShaderTerrain:             {
             imports: [
-                'import { UniformsUtils } from \'./renderers/shaders/UniformsUtils\'',
-                'import { UniformsLib } from \'./renderers/shaders/UniformsLib\'',
-                'import { ShaderChunk } from \'./renderers/shaders/ShaderChunk\''
+                'UniformsUtils',
+                'UniformsLib',
+                'ShaderChunk'
             ]
         },
         Vector2Node:               {
-            imports: [ 'import { NodeMaterial } from \'../../nodes/NodeMaterial\'' ]
+            imports: [ 'NodeMaterial' ]
         },
         Vector3Node:               {
-            imports: [ 'import { NodeMaterial } from \'../../nodes/NodeMaterial\'' ]
+            imports: [ 'NodeMaterial' ]
         },
         Vector4Node:               {
-            imports: [ 'import { NodeMaterial } from \'../../nodes/NodeMaterial\'' ]
+            imports: [ 'NodeMaterial' ]
         },
         WebGLDeferredRenderer:     {
             replacements: [

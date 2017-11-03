@@ -10,6 +10,7 @@ const runSequence = require( 'run-sequence' )
 const gulp        = require( 'gulp' )
 const util        = require( 'gulp-util' )
 const replace     = require( 'gulp-batch-replace' )
+const del         = require( 'del' )
 const rollup      = require( 'rollup' )
 
 gulp.task( 'help', ( done ) => {
@@ -23,6 +24,7 @@ gulp.task( 'help', ( done ) => {
     log( 'Available commands using:', blue( 'npm run' ) )
     log( blue( 'npm run' ), cyan( 'help' ), ' - Display this help.' )
     log( blue( 'npm run' ), cyan( 'patch' ), ' - Will patch three package to fix some invalid state.', red( '( Must be run only once after installing three package ! )' ) )
+    log( blue( 'npm run' ), cyan( 'clean' ), ' - Will delete builds and sources folders.' )
     log( blue( 'npm run' ), cyan( 'convert' ), ' - Will convert all three files that are not es6 module, to es6 module.' )
     log( blue( 'npm run' ), cyan( 'build' ), ' - Will build three in all module type, for dev and prod environments.' )
 
@@ -52,9 +54,6 @@ gulp.task( 'patch-three', ( done ) => {
 
     runSequence(
         [ 'fix-effect-composer', 'create-pass-file' ],
-        'fix-gltfexporter',
-        'fix-amfloader',
-        'fix-xloader',
         done
     )
 
@@ -99,40 +98,18 @@ gulp.task( 'fix-effect-composer', () => {
 
 } )
 
-// Todo: waiting PR accedpted
-gulp.task( 'fix-xloader', () => {
+/////////////////////
+////// CLEAN ////////
+/////////////////////
 
-    return gulp.src( './node_modules/three/examples/js/loaders/XLoader.js' )
-               .pipe( replace( [
-                   [ /\bBones = \[];/, '' ]
-               ] ) )
-               .pipe( gulp.dest( './node_modules/three/examples/js/loaders' ) )
+gulp.task( 'clean', () => {
 
-})
+    return del( [
+        './builds',
+        './sources'
+    ] )
 
-// Todo: fixed in dev, remove on r88
-gulp.task( 'fix-gltfexporter', () => {
-
-    return gulp.src( './node_modules/three/examples/js/exporters/GLTFExporter.js' )
-               .pipe( replace( [
-                   [ 'function processMesh( mesh ) {', 'function processMesh( mesh ) {\nvar mode;' ],
-                   [ 'objectURL = URL.createObjectURL( blob );', 'var objectURL = URL.createObjectURL( blob );' ],
-                   [ 'base64data = reader.result;', 'var base64data = reader.result;' ]
-               ] ) )
-               .pipe( gulp.dest( './node_modules/three/examples/js/exporters' ) )
-
-})
-
-// Todo: fixed in dev, remove on r88
-gulp.task( 'fix-amfloader', () => {
-
-    return gulp.src( './node_modules/three/examples/js/loaders/AMFLoader.js' )
-               .pipe( replace( [
-                   [ 'matname = matChildEl', 'matName = matChildEl' ]
-               ] ) )
-               .pipe( gulp.dest( './node_modules/three/examples/js/loaders' ) )
-
-})
+} )
 
 /////////////////////
 ///// CONVERT ///////
@@ -415,3 +392,17 @@ gulp.task( 'build-iife-prod', ( done ) => {
 
 } )
 
+//////////////////////
+////// RELEASE ///////
+//////////////////////
+
+gulp.task( 'release', ( done ) => {
+
+    runSequence(
+        'clean',
+        'convert-three',
+        'build-three',
+        done
+    )
+
+} )

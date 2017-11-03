@@ -1,19 +1,20 @@
 import { FileLoader } from '../loaders/FileLoader.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
+import { BufferAttribute } from '../core/BufferAttribute.js'
+import { Vector3 } from '../math/Vector3.js'
 import { Color } from '../math/Color.js'
 import { AmbientLight } from '../lights/AmbientLight.js'
 import { PointLight } from '../lights/PointLight.js'
 import { SpotLight } from '../lights/SpotLight.js'
 import { Object3D } from '../core/Object3D.js'
-import { Vector3 } from '../math/Vector3.js'
 import { Mesh } from '../objects/Mesh.js'
-import { SphereGeometry } from '../geometries/Geometries.js'
+import { SphereBufferGeometry } from '../geometries/Geometries.js'
 import { MeshBasicMaterial } from '../materials/Materials.js'
-import { BoxGeometry } from '../geometries/BoxGeometry.js'
-import { CylinderGeometry } from '../geometries/CylinderGeometry.js'
-import { Geometry } from '../core/Geometry.js'
-import { Face3 } from '../core/Face3.js'
+import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
+import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Vector2 } from '../math/Vector2.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { MeshPhongMaterial } from '../materials/Materials.js'
 import { Scene } from '../scenes/Scene.js'
 import { BackSide } from '../constants.js'
@@ -37,7 +38,7 @@ VRMLLoader.prototype = {
 	isRecordingPoints: false,
 	isRecordingFaces: false,
 	points: [],
-	indexes : [],
+	indexes: [],
 
 	// for Background support
 	isRecordingAngles: false,
@@ -75,43 +76,18 @@ VRMLLoader.prototype = {
 		var textureLoader = new TextureLoader( this.manager );
 		textureLoader.setCrossOrigin( this.crossOrigin );
 
-		var parseV1 = function ( lines, scene ) {
+		function parseV1() {
 
-			console.warn( 'VRML V1.0 not supported yet' );
+			console.warn( 'VRMLLoader: V1.0 not supported yet.' );
 
-		};
+		}
 
-		var parseV2 = function ( lines, scene ) {
+		function parseV2( lines, scene ) {
 
 			var defines = {};
 			var float_pattern = /(\b|\-|\+)([\d\.e]+)/;
 			var float2_pattern = /([\d\.\+\-e]+)\s+([\d\.\+\-e]+)/g;
 			var float3_pattern = /([\d\.\+\-e]+)\s+([\d\.\+\-e]+)\s+([\d\.\+\-e]+)/g;
-
-			/**
-			* Interpolates colors a and b following their relative distance
-			* expressed by t.
-			*
-			* @param float a
-			* @param float b
-			* @param float t
-			* @returns {Color}
-			*/
-			var interpolateColors = function( a, b, t ) {
-
-				var deltaR = a.r - b.r;
-				var deltaG = a.g - b.g;
-				var deltaB = a.b - b.b;
-
-				var c = new Color();
-
-				c.r = a.r - t * deltaR;
-				c.g = a.g - t * deltaG;
-				c.b = a.b - t * deltaB;
-
-				return c;
-
-			};
 
 			/**
 			 * Vertically paints the faces interpolating between the
@@ -133,13 +109,11 @@ VRMLLoader.prototype = {
 			 * @param radius
 			 * @param angles
 			 * @param colors
-			 * @param boolean directionIsDown Whether to work bottom up or top down.
+			 * @param boolean topDown Whether to work top down or bottom up.
 			 */
-			var paintFaces = function ( geometry, radius, angles, colors, directionIsDown ) {
+			function paintFaces( geometry, radius, angles, colors, topDown ) {
 
-				var direction = directionIsDown ? 1 : - 1;
-
-				var faceIndices = [ 'a', 'b', 'c', 'd' ];
+				var direction = ( topDown === true ) ? 1 : - 1;
 
 				var coord = [], A = {}, B = {}, applyColor = false;
 
@@ -156,62 +130,66 @@ VRMLLoader.prototype = {
 
 				}
 
-				// painting the colors on the faces
-				for ( var i = 0; i < geometry.faces.length ; i ++ ) {
+				var index = geometry.index;
+				var positionAttribute = geometry.attributes.position;
+				var colorAttribute = new BufferAttribute( new Float32Array( geometry.attributes.position.count * 3 ), 3 );
 
-					var f = geometry.faces[ i ];
+				var position = new Vector3();
+				var color = new Color();
 
-					var n = ( f instanceof Face3 ) ? 3 : 4;
+				for ( var i = 0; i < index.count; i ++ ) {
 
-					for ( var j = 0; j < n; j ++ ) {
+					var vertexIndex = index.getX( i );
 
-						var vertexIndex = f[ faceIndices[ j ] ];
+					position.fromBufferAttribute( positionAttribute, vertexIndex );
 
-						var p = geometry.vertices[ vertexIndex ];
+					for ( var j = 0; j < colors.length; j ++ ) {
 
-						for ( var index = 0; index < colors.length; index ++ ) {
+						// linear interpolation between aColor and bColor, calculate proportion
+						// A is previous point (angle)
 
-							// linear interpolation between aColor and bColor, calculate proportion
-							// A is previous point (angle)
-							if ( index === 0 ) {
+						if ( j === 0 ) {
 
-								A.x = 0;
-								A.y = directionIsDown ? radius : - 1 * radius;
+							A.x = 0;
+							A.y = ( topDown === true ) ? radius : - 1 * radius;
+
+						} else {
+
+							A.x = coord[ j - 1 ].x;
+							A.y = coord[ j - 1 ].y;
+
+						}
+
+						// B is current point (angle)
+
+						B = coord[ j ];
+
+						if ( B !== undefined ) {
+
+							// p has to be between the points A and B which we interpolate
+
+							applyColor = ( topDown === true ) ? ( position.y <= A.y && position.y > B.y ) : ( position.y >= A.y && position.y < B.y );
+
+							if ( applyColor === true ) {
+
+								var aColor = colors[ j ];
+								var bColor = colors[ j + 1 ];
+
+								// below is simple linear interpolation
+
+								var t = Math.abs( position.y - A.y ) / ( A.y - B.y );
+
+								// to make it faster, you can only calculate this if the y coord changes, the color is the same for points with the same y
+
+								color.copy( aColor ).lerp( bColor, t );
+
+								colorAttribute.setXYZ( vertexIndex, color.r, color.g, color.b );
 
 							} else {
 
-								A.x = coord[ index - 1 ].x;
-								A.y = coord[ index - 1 ].y;
-
-							}
-
-							// B is current point (angle)
-							B = coord[ index ];
-
-							if ( undefined !== B ) {
-
-								// p has to be between the points A and B which we interpolate
-								applyColor = directionIsDown ? p.y <= A.y && p.y > B.y : p.y >= A.y && p.y < B.y;
-
-								if ( applyColor ) {
-
-									var aColor = colors[ index ];
-									var bColor = colors[ index + 1 ];
-
-									// below is simple linear interpolation
-									var t = Math.abs( p.y - A.y ) / ( A.y - B.y );
-
-									// to make it faster, you can only calculate this if the y coord changes, the color is the same for points with the same y
-									var color = interpolateColors( aColor, bColor, t );
-
-									f.vertexColors[ j ] = color;
-
-								}
-
-							} else if ( undefined === f.vertexColors[ j ] ) {
-
-								var colorIndex = directionIsDown ? colors.length - 1 : 0;
-								f.vertexColors[ j ] = colors[ colorIndex ];
+								var colorIndex = ( topDown === true ) ? colors.length - 1 : 0;
+								var c = colors[ colorIndex ];
+								colorAttribute.setXYZ( vertexIndex, c.r, c.g, c.b );
 
 							}
 
@@ -221,11 +199,13 @@ VRMLLoader.prototype = {
 
 				}
 
-			};
+				geometry.addAttribute( 'color', colorAttribute );
+
+			}
 
 			var index = [];
 
-			var parseProperty = function ( node, line ) {
+			function parseProperty( node, line ) {
 
 				var parts = [], part, property = {}, fieldName;
 
@@ -235,9 +215,9 @@ VRMLLoader.prototype = {
 				 */
 				var regex = /[^\s,\[\]]+/g;
 
-				var point, angles, colors;
+				var point;
 
-				while ( null != ( part = regex.exec( line ) ) ) {
+				while ( null !== ( part = regex.exec( line ) ) ) {
 
 					parts.push( part[ 0 ] );
 
@@ -248,28 +228,34 @@ VRMLLoader.prototype = {
 
 				// trigger several recorders
 				switch ( fieldName ) {
+
 					case 'skyAngle':
 					case 'groundAngle':
 						this.recordingFieldname = fieldName;
 						this.isRecordingAngles = true;
 						this.angles = [];
 						break;
+
 					case 'skyColor':
 					case 'groundColor':
 						this.recordingFieldname = fieldName;
 						this.isRecordingColors = true;
 						this.colors = [];
 						break;
+
 					case 'point':
 						this.recordingFieldname = fieldName;
 						this.isRecordingPoints = true;
 						this.points = [];
 						break;
+
 					case 'coordIndex':
 					case 'texCoordIndex':
 						this.recordingFieldname = fieldName;
 						this.isRecordingFaces = true;
 						this.indexes = [];
+						break;
+
 				}
 
 				if ( this.isRecordingFaces ) {
@@ -287,7 +273,7 @@ VRMLLoader.prototype = {
 							}
 
 							// end of current face
-							if ( parts[ ind ] === "-1" ) {
+							if ( parts[ ind ] === '-1' ) {
 
 								if ( index.length > 0 ) {
 
@@ -321,36 +307,40 @@ VRMLLoader.prototype = {
 						index = [];
 
 						this.isRecordingFaces = false;
-						node[this.recordingFieldname] = this.indexes;
+						node[ this.recordingFieldname ] = this.indexes;
 
 					}
 
 				} else if ( this.isRecordingPoints ) {
 
-					if ( node.nodeType == 'Coordinate' )
+					if ( node.nodeType == 'Coordinate' ) {
 
-					while ( null !== ( parts = float3_pattern.exec( line ) ) ) {
+						while ( null !== ( parts = float3_pattern.exec( line ) ) ) {
 
-						point = {
-							x: parseFloat( parts[ 1 ] ),
-							y: parseFloat( parts[ 2 ] ),
-							z: parseFloat( parts[ 3 ] )
-						};
+							point = {
+								x: parseFloat( parts[ 1 ] ),
+								y: parseFloat( parts[ 2 ] ),
+								z: parseFloat( parts[ 3 ] )
+							};
 
-						this.points.push( point );
+							this.points.push( point );
+
+						}
 
 					}
 
-					if ( node.nodeType == 'TextureCoordinate' )
+					if ( node.nodeType == 'TextureCoordinate' ) {
 
-					while ( null !== ( parts = float2_pattern.exec( line ) ) ) {
+						while ( null !== ( parts = float2_pattern.exec( line ) ) ) {
 
-						point = {
-							x: parseFloat( parts[ 1 ] ),
-							y: parseFloat( parts[ 2 ] )
-						};
+							point = {
+								x: parseFloat( parts[ 1 ] ),
+								y: parseFloat( parts[ 2 ] )
+							};
 
-						this.points.push( point );
+							this.points.push( point );
+
+						}
 
 					}
 
@@ -421,9 +411,9 @@ VRMLLoader.prototype = {
 						case 'specularColor':
 						case 'color':
 
-							if ( parts.length != 4 ) {
+							if ( parts.length !== 4 ) {
 
-								console.warn( 'Invalid color format detected for ' + fieldName );
+								console.warn( 'VRMLLoader: Invalid color format detected for %s.', fieldName );
 								break;
 
 							}
@@ -441,9 +431,9 @@ VRMLLoader.prototype = {
 						case 'translation':
 						case 'scale':
 						case 'size':
-							if ( parts.length != 4 ) {
+							if ( parts.length !== 4 ) {
 
-								console.warn( 'Invalid vector format detected for ' + fieldName );
+								console.warn( 'VRMLLoader: Invalid vector format detected for %s.', fieldName );
 								break;
 
 							}
@@ -465,9 +455,9 @@ VRMLLoader.prototype = {
 						case 'transparency':
 						case 'shininess':
 						case 'ambientIntensity':
-							if ( parts.length != 2 ) {
+							if ( parts.length !== 2 ) {
 
-								console.warn( 'Invalid single float value specification detected for ' + fieldName );
+								console.warn( 'VRMLLoader: Invalid single float value specification detected for %s.', fieldName );
 								break;
 
 							}
@@ -477,9 +467,9 @@ VRMLLoader.prototype = {
 							break;
 
 						case 'rotation':
-							if ( parts.length != 5 ) {
+							if ( parts.length !== 5 ) {
 
-								console.warn( 'Invalid quaternion format detected for ' + fieldName );
+								console.warn( 'VRMLLoader: Invalid quaternion format detected for %s.', fieldName );
 								break;
 
 							}
@@ -498,9 +488,9 @@ VRMLLoader.prototype = {
 						case 'solid':
 						case 'colorPerVertex':
 						case 'convex':
-							if ( parts.length != 2 ) {
+							if ( parts.length !== 2 ) {
 
-								console.warn( 'Invalid format detected for ' + fieldName );
+								console.warn( 'VRMLLoader: Invalid format detected for %s.', fieldName );
 								break;
 
 							}
@@ -508,6 +498,7 @@ VRMLLoader.prototype = {
 							property = parts[ 1 ] === 'TRUE' ? true : false;
 
 							break;
+
 					}
 
 					node[ fieldName ] = property;
@@ -516,9 +507,9 @@ VRMLLoader.prototype = {
 
 				return property;
 
-			};
+			}
 
-			var getTree = function ( lines ) {
+			function getTree( lines ) {
 
 				var tree = { 'string': 'Scene', children: [] };
 				var current = tree;
@@ -532,7 +523,7 @@ VRMLLoader.prototype = {
 					var line = lines[ i ];
 
 					// omit whitespace only lines
-					if ( null !== ( result = /^\s+?$/g.exec( line ) ) ) {
+					if ( null !== ( /^\s+?$/g.exec( line ) ) ) {
 
 						continue;
 
@@ -563,7 +554,7 @@ VRMLLoader.prototype = {
 
 						// first subpattern should match the Node name
 
-						var block = { 'nodeType' : matches[ 1 ], 'string': line, 'parent': current, 'children': [], 'comment' : comment };
+						var block = { 'nodeType': matches[ 1 ], 'string': line, 'parent': current, 'children': [], 'comment': comment };
 						current.children.push( block );
 						current = block;
 
@@ -597,11 +588,11 @@ VRMLLoader.prototype = {
 
 				return tree;
 
-			};
+			}
 
-			var parseNode = function ( data, parent ) {
+			function parseNode( data, parent ) {
 
-				// console.log( data );
+				var object;
 
 				if ( typeof data === 'string' ) {
 
@@ -611,7 +602,7 @@ VRMLLoader.prototype = {
 
 						if ( undefined == defines[ defineKey ] ) {
 
-							console.warn( defineKey + ' is not defined.' );
+							console.warn( 'VRMLLoader: %s is not defined.', defineKey );
 
 						} else {
 
@@ -633,7 +624,7 @@ VRMLLoader.prototype = {
 
 							} else if ( defineKey ) {
 
-								var object = defines[ defineKey ].clone();
+								object = defines[ defineKey ].clone();
 								parent.add( object );
 
 							}
@@ -646,77 +637,72 @@ VRMLLoader.prototype = {
 
 				}
 
-				var object = parent;
+				object = parent;
 
-				if(data.string.indexOf("AmbientLight")>-1 && data.nodeType=='PointLight'){
-					//wenn im Namen "AmbientLight" vorkommt und es ein PointLight ist,
-					//diesen Typ in 'AmbientLight' ändern
-					data.nodeType='AmbientLight';
+				if ( data.string.indexOf( 'AmbientLight' ) > - 1 && data.nodeType === 'PointLight' ) {
+
+					data.nodeType = 'AmbientLight';
+
 				}
 
 				var l_visible = data.on !== undefined ? data.on : true;
 				var l_intensity = data.intensity !== undefined ? data.intensity : 1;
 				var l_color = new Color();
-				if ( data.color ) l_color.copy( data.color );
 
-				if('AmbientLight' === data.nodeType){
-					object=new AmbientLight(
-								l_color.getHex(),
-								l_intensity
-								);
-					object.visible=l_visible;
+				if ( data.color ) {
+
+					l_color.copy( data.color );
+
+				}
+
+				if ( data.nodeType === 'AmbientLight' ) {
+
+					object = new AmbientLight( l_color, l_intensity );
+					object.visible = l_visible;
 
 					parent.add( object );
 
-				}
-				else
-				if('PointLight' === data.nodeType){
-						var l_distance =0;	//0="unendlich" ...1000
+				} else if ( data.nodeType === 'PointLight' ) {
 
-						if(data.radius!=undefined && data.radius<1000){
-							//l_radius=data.radius;
-							l_distance=data.radius;
-						}
-						object=new PointLight(
-								l_color.getHex(),
-								l_intensity,
-								l_distance);
-						object.visible=l_visible;
+					var l_distance = 0;
 
-						parent.add( object );
-				}
-				else
-				if('SpotLight' === data.nodeType){
-						var l_intensity=1;
-						var l_distance =0;//0="unendlich"=1000
-						var l_angle=Math.PI/3;
-						var l_penumbra=0.0;//0..1
-						var l_visible=true;
+					if ( data.radius !== undefined && data.radius < 1000 ) {
 
-						if(data.radius!=undefined && data.radius<1000){
-							//l_radius=data.radius;
-							l_distance=data.radius;
-						}
-						if(data.cutOffAngle!=undefined)l_angle=data.cutOffAngle;
+						l_distance = data.radius;
 
-						object = new SpotLight(
-									l_color.getHex(),
-									l_intensity,
-									l_distance,
-									l_angle,
-									l_penumbra
-									);
-						object.visible=l_visible;
-						parent.add( object );
-						/*
-						var lightHelper = new SpotLightHelper( object );
-						parent.parent.add( lightHelper );
-						lightHelper.update();
-						*/
-				}
-				else
+					}
 
-				if ( 'Transform' === data.nodeType || 'Group' === data.nodeType ) {
+					object = new PointLight( l_color, l_intensity, l_distance );
+					object.visible = l_visible;
+
+					parent.add( object );
+
+				} else if ( data.nodeType === 'SpotLight' ) {
+
+					var l_intensity = 1;
+					var l_distance = 0;
+					var l_angle = Math.PI / 3;
+					var l_penumbra = 0;
+					var l_visible = true;
+
+					if ( data.radius !== undefined && data.radius < 1000 ) {
+
+						l_distance = data.radius;
+
+					}
+
+					if ( data.cutOffAngle !== undefined ) {
+
+						l_angle = data.cutOffAngle;
+
+					}
+
+					object = new SpotLight( l_color, l_intensity, l_distance, l_angle, l_penumbra );
+					object.visible = l_visible;
+
+					parent.add( object );
+
+				} else if ( data.nodeType === 'Transform' || data.nodeType === 'Group' ) {
 
 					object = new Object3D();
 
@@ -727,7 +713,7 @@ VRMLLoader.prototype = {
 
 					}
 
-					if ( undefined !== data[ 'translation' ] ) {
+					if ( data.translation !== undefined ) {
 
 						var t = data.translation;
 
@@ -735,7 +721,7 @@ VRMLLoader.prototype = {
 
 					}
 
-					if ( undefined !== data.rotation ) {
+					if ( data.rotation !== undefined ) {
 
 						var r = data.rotation;
 
@@ -743,7 +729,7 @@ VRMLLoader.prototype = {
 
 					}
 
-					if ( undefined !== data.scale ) {
+					if ( data.scale !== undefined ) {
 
 						var s = data.scale;
 
@@ -753,7 +739,7 @@ VRMLLoader.prototype = {
 
 					parent.add( object );
 
-				} else if ( 'Shape' === data.nodeType ) {
+				} else if ( data.nodeType === 'Shape' ) {
 
 					object = new Mesh();
 
@@ -767,7 +753,7 @@ VRMLLoader.prototype = {
 
 					parent.add( object );
 
-				} else if ( 'Background' === data.nodeType ) {
+				} else if ( data.nodeType === 'Background' ) {
 
 					var segments = 20;
 
@@ -775,14 +761,14 @@ VRMLLoader.prototype = {
 
 					var radius = 2e4;
 
-					var skyGeometry = new SphereGeometry( radius, segments, segments );
+					var skyGeometry = new SphereBufferGeometry( radius, segments, segments );
 					var skyMaterial = new MeshBasicMaterial( { fog: false, side: BackSide } );
 
 					if ( data.skyColor.length > 1 ) {
 
 						paintFaces( skyGeometry, radius, data.skyAngle, data.skyColor, true );
 
-						skyMaterial.vertexColors = VertexColors
+						skyMaterial.vertexColors = VertexColors;
 
 					} else {
 
@@ -799,7 +785,7 @@ VRMLLoader.prototype = {
 
 						radius = 1.2e4;
 
-						var groundGeometry = new SphereGeometry( radius, segments, segments, 0, 2 * Math.PI, 0.5 * Math.PI, 1.5 * Math.PI );
+						var groundGeometry = new SphereBufferGeometry( radius, segments, segments, 0, 2 * Math.PI, 0.5 * Math.PI, 1.5 * Math.PI );
 						var groundMaterial = new MeshBasicMaterial( { fog: false, side: BackSide, vertexColors: VertexColors } );
 
 						paintFaces( groundGeometry, radius, data.groundAngle, data.groundColor, false );
@@ -810,72 +796,85 @@ VRMLLoader.prototype = {
 
 				} else if ( /geometry/.exec( data.string ) ) {
 
-					if ( 'Box' === data.nodeType ) {
+					if ( data.nodeType === 'Box' ) {
 
 						var s = data.size;
 
-						parent.geometry = new BoxGeometry( s.x, s.y, s.z );
+						parent.geometry = new BoxBufferGeometry( s.x, s.y, s.z );
 
-					} else if ( 'Cylinder' === data.nodeType ) {
+					} else if ( data.nodeType === 'Cylinder' ) {
 
-						parent.geometry = new CylinderGeometry( data.radius, data.radius, data.height );
+						parent.geometry = new CylinderBufferGeometry( data.radius, data.radius, data.height );
 
-					} else if ( 'Cone' === data.nodeType ) {
+					} else if ( data.nodeType === 'Cone' ) {
 
-						parent.geometry = new CylinderGeometry( data.topRadius, data.bottomRadius, data.height );
+						parent.geometry = new CylinderBufferGeometry( data.topRadius, data.bottomRadius, data.height );
 
-					} else if ( 'Sphere' === data.nodeType ) {
+					} else if ( data.nodeType === 'Sphere' ) {
 
-						parent.geometry = new SphereGeometry( data.radius );
+						parent.geometry = new SphereBufferGeometry( data.radius );
 
-					} else if ( 'IndexedFaceSet' === data.nodeType ) {
+					} else if ( data.nodeType === 'IndexedFaceSet' ) {
 
-						var geometry = new Geometry();
+						var geometry = new BufferGeometry();
 
-						var indexes, uvIndexes, uvs;
+						var positions = [];
+						var uvs = [];
 
-						for ( var i = 0, j = data.children.length; i < j; i ++ ) {
+						var position, uv;
+
+						var i, il, j, jl;
+
+						for ( i = 0, il = data.children.length; i < il; i ++ ) {
 
 							var child = data.children[ i ];
 
-							var vec;
+							// uvs
 
-							if ( 'TextureCoordinate' === child.nodeType ) {
-
-								uvs = child.points;
-
-							}
-
-
-							if ( 'Coordinate' === child.nodeType ) {
+							if ( child.nodeType === 'TextureCoordinate' ) {
 
 								if ( child.points ) {
 
-									for ( var k = 0, l = child.points.length; k < l; k ++ ) {
+									for ( j = 0, jl = child.points.length; j < jl; j ++ ) {
 
-										var point = child.points[ k ];
-
-										vec = new Vector3( point.x, point.y, point.z );
-
-										geometry.vertices.push( vec );
+										uv = child.points[ j ];
+										uvs.push( uv.x, uv.y );
 
 									}
 
 								}
 
-								if ( child.string.indexOf ( 'DEF' ) > -1 ) {
+							}
 
-									var name = /DEF\s+([^\s]+)/.exec( child.string )[ 1 ];
+							// positions
 
-									defines[ name ] = geometry.vertices;
+							if ( child.nodeType === 'Coordinate' ) {
+
+								if ( child.points ) {
+
+									for ( j = 0, jl = child.points.length; j < jl; j ++ ) {
+
+										position = child.points[ j ];
+										positions.push( position.x, position.y, position.z );
+
+									}
 
 								}
 
-								if ( child.string.indexOf ( 'USE' ) > -1 ) {
+								if ( child.string.indexOf( 'DEF' ) > - 1 ) {
+
+									var name = /DEF\s+([^\s]+)/.exec( child.string )[ 1 ];
+
+									defines[ name ] = positions.slice( 0 );
+
+								}
+
+								if ( child.string.indexOf( 'USE' ) > - 1 ) {
 
 									var defineKey = /USE\s+([^\s]+)/.exec( child.string )[ 1 ];
 
-									geometry.vertices = defines[ defineKey ];
+									positions = defines[ defineKey ];
+
 								}
 
 							}
@@ -885,56 +884,61 @@ VRMLLoader.prototype = {
 						var skip = 0;
 
 						// some shapes only have vertices for use in other shapes
+
 						if ( data.coordIndex ) {
 
-							// read this: http://math.hws.edu/eck/cs424/notes2013/16_Threejs_Advanced.html
-							for ( var i = 0, j = data.coordIndex.length; i < j; i ++ ) {
+							var newPositions = [];
+							var newUvs = [];
 
-								indexes = data.coordIndex[ i ]; if ( data.texCoordIndex ) uvIndexes = data.texCoordIndex[ i ];
+							position = new Vector3();
+							uv = new Vector2();
 
-								// vrml support multipoint indexed face sets (more then 3 vertices). You must calculate the composing triangles here
+							for ( i = 0, il = data.coordIndex.length; i < il; i ++ ) {
+
+								var indexes = data.coordIndex[ i ];
+
+								// VRML support multipoint indexed face sets (more then 3 vertices). You must calculate the composing triangles here
+
 								skip = 0;
 
-								// Face3 only works with triangles, but IndexedFaceSet allows shapes with more then three vertices, build them of triangles
 								while ( indexes.length >= 3 && skip < ( indexes.length - 2 ) ) {
 
-									var face = new Face3(
-										indexes[ 0 ],
-										indexes[ skip + (data.ccw ? 1 : 2) ],
-										indexes[ skip + (data.ccw ? 2 : 1) ],
-										null // normal, will be added later
-										// todo: pass in the color, if a color index is present
-									);
+									if ( data.ccw === undefined ) data.ccw = true; // ccw is true by default
 
-									if ( uvs && uvIndexes ) {
-										geometry.faceVertexUvs [0].push( [
-											new Vector2 (
-												uvs[ uvIndexes[ 0 ] ].x ,
-												uvs[ uvIndexes[ 0 ] ].y
-											) ,
-											new Vector2 (
-												uvs[ uvIndexes[ skip + (data.ccw ? 1 : 2) ] ].x ,
-												uvs[ uvIndexes[ skip + (data.ccw ? 1 : 2) ] ].y
-											) ,
-											new Vector2 (
-												uvs[ uvIndexes[ skip + (data.ccw ? 2 : 1) ] ].x ,
-												uvs[ uvIndexes[ skip + (data.ccw ? 2 : 1) ] ].y
-											)
-										] );
-									}
+									var i1 = indexes[ 0 ];
+									var i2 = indexes[ skip + ( data.ccw ? 1 : 2 ) ];
+									var i3 = indexes[ skip + ( data.ccw ? 2 : 1 ) ];
+
+									// create non indexed geometry, necessary for face normal generation
+
+									position.fromArray( positions, i1 * 3 );
+									uv.fromArray( uvs, i1 * 2 );
+									newPositions.push( position.x, position.y, position.z );
+									newUvs.push( uv.x, uv.y );
+
+									position.fromArray( positions, i2 * 3 );
+									uv.fromArray( uvs, i2 * 2 );
+									newPositions.push( position.x, position.y, position.z );
+									newUvs.push( uv.x, uv.y );
+
+									position.fromArray( positions, i3 * 3 );
+									uv.fromArray( uvs, i3 * 2 );
+									newPositions.push( position.x, position.y, position.z );
+									newUvs.push( uv.x, uv.y );
 
 									skip ++;
 
-									geometry.faces.push( face );
-
 								}
 
-
 							}
+
+							positions = newPositions;
+							uvs = newUvs;
 
 						} else {
 
 							// do not add dummy mesh to the scene
+
 							parent.parent.remove( parent );
 
 						}
@@ -948,8 +952,15 @@ VRMLLoader.prototype = {
 						// we need to store it on the geometry for use with defines
 						geometry.solid = data.solid;
 
-						geometry.computeFaceNormals();
-						//geometry.computeVertexNormals(); // does not show
+						geometry.addAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
+
+						if ( uvs.length > 0 ) {
+
+							geometry.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
+
+						}
+
+						geometry.computeVertexNormals();
 						geometry.computeBoundingSphere();
 
 						// see if it's a define
@@ -972,11 +983,11 @@ VRMLLoader.prototype = {
 
 						var child = data.children[ i ];
 
-						if ( 'Material' === child.nodeType ) {
+						if ( child.nodeType === 'Material' ) {
 
 							var material = new MeshPhongMaterial();
 
-							if ( undefined !== child.diffuseColor ) {
+							if ( child.diffuseColor !== undefined ) {
 
 								var d = child.diffuseColor;
 
@@ -984,7 +995,7 @@ VRMLLoader.prototype = {
 
 							}
 
-							if ( undefined !== child.emissiveColor ) {
+							if ( child.emissiveColor !== undefined ) {
 
 								var e = child.emissiveColor;
 
@@ -992,7 +1003,7 @@ VRMLLoader.prototype = {
 
 							}
 
-							if ( undefined !== child.specularColor ) {
+							if ( child.specularColor !== undefined ) {
 
 								var s = child.specularColor;
 
@@ -1000,7 +1011,7 @@ VRMLLoader.prototype = {
 
 							}
 
-							if ( undefined !== child.transparency ) {
+							if ( child.transparency !== undefined ) {
 
 								var t = child.transparency;
 
@@ -1023,11 +1034,11 @@ VRMLLoader.prototype = {
 
 						}
 
-						if ( 'ImageTexture' === child.nodeType ) {
+						if ( child.nodeType === 'ImageTexture' ) {
 
-							var textureName = /"([^"]+)"/.exec(child.children[ 0 ]);
+							var textureName = /"([^"]+)"/.exec( child.children[ 0 ] );
 
-							if (textureName) {
+							if ( textureName ) {
 
 								parent.material.name = textureName[ 1 ];
 
@@ -1049,48 +1060,65 @@ VRMLLoader.prototype = {
 
 				}
 
-			};
+			}
 
 			parseNode( getTree( lines ), scene );
 
-		};
+		}
 
 		var scene = new Scene();
 
 		var lines = data.split( '\n' );
 
 		// some lines do not have breaks
-		for (var i = lines.length -1; i > -1; i--) {
+
+		for ( var i = lines.length - 1; i > - 1; i -- ) {
+
+			var line = lines[ i ];
 
 			// split lines with {..{ or {..[ - some have both
-			if (/{.*[{\[]/.test (lines[i])) {
-				var parts = lines[i].split ('{').join ('{\n').split ('\n');
-				parts.unshift(1);
-				parts.unshift(i);
-				lines.splice.apply(lines, parts);
-			} else
+			if ( /{.*[{\[]/.test( line ) ) {
 
-			// split lines with ]..}
-			if (/\].*}/.test (lines[i])) {
-				var parts = lines[i].split (']').join (']\n').split ('\n');
-				parts.unshift(1);
-				parts.unshift(i);
-				lines.splice.apply(lines, parts);
+				var parts = line.split( '{' ).join( '{\n' ).split( '\n' );
+				parts.unshift( 1 );
+				parts.unshift( i );
+				lines.splice.apply( lines, parts );
+
+			} else if ( /\].*}/.test( line ) ) {
+
+				// split lines with ]..}
+				var parts = line.split( ']' ).join( ']\n' ).split( '\n' );
+				parts.unshift( 1 );
+				parts.unshift( i );
+				lines.splice.apply( lines, parts );
+
 			}
 
-			// split lines with }..}
-			if (/}.*}/.test (lines[i])) {
-				var parts = lines[i].split ('}').join ('}\n').split ('\n');
-				parts.unshift(1);
-				parts.unshift(i);
-				lines.splice.apply(lines, parts);
+			if ( /}.*}/.test( line ) ) {
+
+				// split lines with }..}
+				var parts = line.split( '}' ).join( '}\n' ).split( '\n' );
+				parts.unshift( 1 );
+				parts.unshift( i );
+				lines.splice.apply( lines, parts );
+
 			}
 
-			// force the parser to create Coordinate node for empty coords
-			// coord USE something -> coord USE something Coordinate {}
-			if((lines[i].indexOf ('coord') > -1) && (lines[i].indexOf ('[') < 0) && (lines[i].indexOf ('{') < 0)) {
-				lines[i] += ' Coordinate {}';
+			if ( /^\b[^\s]+\b$/.test( line.trim() ) ) {
+
+				// prevent lines with single words like "coord" or "geometry", see #12209
+				lines[ i + 1 ] = line + ' ' + lines[ i + 1 ].trim();
+				lines.splice( i, 1 );
+
+			} else if ( ( line.indexOf( 'coord' ) > - 1 ) && ( line.indexOf( '[' ) < 0 ) && ( line.indexOf( '{' ) < 0 ) ) {
+
+				// force the parser to create Coordinate node for empty coords
+				// coord USE something -> coord USE something Coordinate {}
+
+				lines[ i ] += ' Coordinate {}';
+
 			}
+
 		}
 
 		var header = lines.shift();

@@ -3,7 +3,7 @@ import { Matrix4Node } from '../../nodes/inputs/Matrix4Node.js'
 import { PositionNode } from '../../nodes/accessors/PositionNode.js'
 import { OperatorNode } from '../../nodes/math/OperatorNode.js'
 import { TextureNode } from '../../nodes/inputs/TextureNode.js'
-var MirrorNode = function( mirror, camera, options ) {
+var ReflectorNode = function( mirror, camera, options ) {
 
 	TempNode.call( this, 'v4' );
 
@@ -11,19 +11,19 @@ var MirrorNode = function( mirror, camera, options ) {
 
 	this.textureMatrix = new Matrix4Node( this.mirror.material.uniforms.textureMatrix.value );
 
-	this.worldPosition = new PositionNode( PositionNode.WORLD );
+	this.localPosition = new PositionNode( PositionNode.LOCAL );
 
-	this.coord = new OperatorNode( this.textureMatrix, this.worldPosition, OperatorNode.MUL );
+	this.coord = new OperatorNode( this.textureMatrix, this.localPosition, OperatorNode.MUL );
 	this.coordResult = new OperatorNode( null, this.coord, OperatorNode.ADD );
 
-	this.texture = new TextureNode( this.mirror.material.uniforms.mirrorSampler.value, this.coord, null, true );
+	this.texture = new TextureNode( this.mirror.material.uniforms.tDiffuse.value, this.coord, null, true );
 
 };
 
-MirrorNode.prototype = Object.create( TempNode.prototype );
-MirrorNode.prototype.constructor = MirrorNode;
+ReflectorNode.prototype = Object.create( TempNode.prototype );
+ReflectorNode.prototype.constructor = ReflectorNode;
 
-MirrorNode.prototype.generate = function( builder, output ) {
+ReflectorNode.prototype.generate = function( builder, output ) {
 
 	var material = builder.material;
 
@@ -42,7 +42,7 @@ MirrorNode.prototype.generate = function( builder, output ) {
 
 	} else {
 
-		console.warn( "MirrorNode is not compatible with " + builder.shader + " shader." );
+		console.warn( "ReflectorNode is not compatible with " + builder.shader + " shader." );
 
 		return builder.format( 'vec4(0.0)', this.type, output );
 
@@ -50,4 +50,4 @@ MirrorNode.prototype.generate = function( builder, output ) {
 
 };
 
-export { MirrorNode }
+export { ReflectorNode }

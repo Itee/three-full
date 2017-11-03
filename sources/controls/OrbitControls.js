@@ -3,8 +3,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Spherical } from '../math/Spherical.js'
 import { Vector2 } from '../math/Vector2.js'
-import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { MOUSE } from '../constants.js'
 /**
  * @author qiao / https://github.com/qiao
@@ -342,7 +340,7 @@ var OrbitControls = function ( object, domElement ) {
 
 			var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
 
-			if ( scope.object instanceof PerspectiveCamera ) {
+			if ( scope.object.isPerspectiveCamera ) {
 
 				// perspective
 				var position = scope.object.position;
@@ -356,7 +354,7 @@ var OrbitControls = function ( object, domElement ) {
 				panLeft( 2 * deltaX * targetDistance / element.clientHeight, scope.object.matrix );
 				panUp( 2 * deltaY * targetDistance / element.clientHeight, scope.object.matrix );
 
-			} else if ( scope.object instanceof OrthographicCamera ) {
+			} else if ( scope.object.isOrthographicCamera ) {
 
 				// orthographic
 				panLeft( deltaX * ( scope.object.right - scope.object.left ) / scope.object.zoom / element.clientWidth, scope.object.matrix );
@@ -376,11 +374,11 @@ var OrbitControls = function ( object, domElement ) {
 
 	function dollyIn( dollyScale ) {
 
-		if ( scope.object instanceof PerspectiveCamera ) {
+		if ( scope.object.isPerspectiveCamera ) {
 
 			scale /= dollyScale;
 
-		} else if ( scope.object instanceof OrthographicCamera ) {
+		} else if ( scope.object.isOrthographicCamera ) {
 
 			scope.object.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, scope.object.zoom * dollyScale ) );
 			scope.object.updateProjectionMatrix();
@@ -397,11 +395,11 @@ var OrbitControls = function ( object, domElement ) {
 
 	function dollyOut( dollyScale ) {
 
-		if ( scope.object instanceof PerspectiveCamera ) {
+		if ( scope.object.isPerspectiveCamera ) {
 
 			scale *= dollyScale;
 
-		} else if ( scope.object instanceof OrthographicCamera ) {
+		} else if ( scope.object.isOrthographicCamera ) {
 
 			scope.object.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, scope.object.zoom / dollyScale ) );
 			scope.object.updateProjectionMatrix();

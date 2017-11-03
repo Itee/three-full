@@ -29,6 +29,8 @@ import { Scene } from '../scenes/Scene.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
 import { RepeatWrapping } from '../constants.js'
 import { ClampToEdgeWrapping } from '../constants.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { Loader } from '../loaders/Loader.js'
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author Mugen87 / https://github.com/Mugen87
@@ -65,7 +67,7 @@ ColladaLoader.prototype = {
 
 		set convertUpAxis( value ) {
 
-			console.log( 'ColladaLoader.options.convertUpAxis: TODO' );
+			console.warn( 'ColladaLoader: options.convertUpAxis() has been removed. Up axis is converted automatically.' );
 
 		}
 
@@ -159,9 +161,15 @@ ColladaLoader.prototype = {
 
 		}
 
+		function generateId() {
+
+			return 'three_default_' + ( count ++ );
+
+		}
+
 		function isEmpty( object ) {
 
-			return  Object.keys( object ).length === 0;
+			return Object.keys( object ).length === 0;
 
 		}
 
@@ -377,13 +385,11 @@ ColladaLoader.prototype = {
 
 					var inputId = sampler.inputs.INPUT;
 					var outputId = sampler.inputs.OUTPUT;
-					var interpolationId = sampler.inputs.INTERPOLATION;
 
 					var inputSource = sources[ inputId ];
 					var outputSource = sources[ outputId ];
-					var interpolationSource = sources[ interpolationId ];
 
-					var animation = buildAnimationChannel( channel, inputSource, outputSource, interpolationSource );
+					var animation = buildAnimationChannel( channel, inputSource, outputSource );
 
 					createKeyframeTracks( animation, tracks );
 
@@ -401,7 +407,7 @@ ColladaLoader.prototype = {
 
 		}
 
-		function buildAnimationChannel( channel, inputSource, outputSource, interpolationSource ) {
+		function buildAnimationChannel( channel, inputSource, outputSource ) {
 
 			var node = library.nodes[ channel.id ];
 			var object3D = getNode( node.id );
@@ -468,7 +474,7 @@ ColladaLoader.prototype = {
 			var animation = {
 				name: object3D.uuid,
 				keyframes: keyframes
-			}
+			};
 
 			return animation;
 
@@ -609,7 +615,7 @@ ColladaLoader.prototype = {
 					prev = getPrev( keyframes, i, property );
 					next = getNext( keyframes, i, property );
 
-					if ( prev === null )  {
+					if ( prev === null ) {
 
 						keyframe.value[ property ] = next.value[ property ];
 						continue;
@@ -757,6 +763,11 @@ ColladaLoader.prototype = {
 						data.skin = parseSkin( child );
 						break;
 
+					case 'morph':
+						data.id = parseId( child.getAttribute( 'source' ) );
+						console.warn( 'ColladaLoader: Morph target animation not supported yet.' );
+						break;
+
 				}
 
 			}
@@ -769,7 +780,7 @@ ColladaLoader.prototype = {
 
 			var data = {
 				sources: {}
-			}
+			};
 
 			for ( var i = 0, l = xml.childNodes.length; i < l; i ++ ) {
 
@@ -808,7 +819,7 @@ ColladaLoader.prototype = {
 
 			var data = {
 				inputs: {}
-			}
+			};
 
 			for ( var i = 0, l = xml.childNodes.length; i < l; i ++ ) {
 
@@ -836,7 +847,7 @@ ColladaLoader.prototype = {
 
 			var data = {
 				inputs: {}
-			}
+			};
 
 			for ( var i = 0, l = xml.childNodes.length; i < l; i ++ ) {
 
@@ -871,16 +882,22 @@ ColladaLoader.prototype = {
 
 		function buildController( data ) {
 
-			var build = {};
-
-			build.id = data.id;
-			build.skin = buildSkin( data.skin );
-
-			// we enhance the 'sources' property of the corresponding geometry with our skin data
+			var build = {
+				id: data.id
+			};
 
 			var geometry = library.geometries[ build.id ];
-			geometry.sources.skinIndices = build.skin.indices;
-			geometry.sources.skinWeights = build.skin.weights;
+
+			if ( data.skin !== undefined ) {
+
+				build.skin = buildSkin( data.skin );
+
+				// we enhance the 'sources' property of the corresponding geometry with our skin data
+
+				geometry.sources.skinIndices = build.skin.indices;
+				geometry.sources.skinWeights = build.skin.weights;
+
+			}
 
 			return build;
 
@@ -1412,7 +1429,7 @@ ColladaLoader.prototype = {
 
 					var extra = textureObject.extra;
 
-					if ( extra !== undefined && extra.technique !== undefined  && isEmpty( extra.technique ) === false ) {
+					if ( extra !== undefined && extra.technique !== undefined && isEmpty( extra.technique ) === false ) {
 
 						var technique = extra.technique;
 
@@ -1881,7 +1898,7 @@ ColladaLoader.prototype = {
 			var primitive = {
 				type: xml.nodeName,
 				material: xml.getAttribute( 'material' ),
-				count:  parseInt( xml.getAttribute( 'count' ) ),
+				count: parseInt( xml.getAttribute( 'count' ) ),
 				inputs: {},
 				stride: 0
 			};
@@ -1980,7 +1997,6 @@ ColladaLoader.prototype = {
 			var materialKeys = [];
 
 			var start = 0, count = 0;
-			var array;
 
 			for ( var p = 0; p < primitives.length; p ++ ) {
 
@@ -2028,7 +2044,7 @@ ColladaLoader.prototype = {
 						case 'VERTEX':
 							for ( var key in vertices ) {
 
-								var id =  vertices[ key ];
+								var id = vertices[ key ];
 
 								switch ( key ) {
 
@@ -2196,7 +2212,7 @@ ColladaLoader.prototype = {
 
 			var data = {
 				name: xml.getAttribute( 'name' ) || '',
-				joints: [],
+				joints: {},
 				links: []
 			};
 
@@ -2218,7 +2234,7 @@ ColladaLoader.prototype = {
 
 			library.kinematicsModels[ xml.getAttribute( 'id' ) ] = data;
 
-		};
+		}
 
 		function buildKinematicsModel( data ) {
 
@@ -2245,7 +2261,7 @@ ColladaLoader.prototype = {
 				switch ( child.nodeName ) {
 
 					case 'joint':
-						data.joints.push( parseKinematicsJoint( child ) );
+						data.joints[ child.getAttribute( 'sid' ) ] = parseKinematicsJoint( child );
 						break;
 
 					case 'link':
@@ -2286,7 +2302,7 @@ ColladaLoader.prototype = {
 		function parseKinematicsJointParameter( xml, data ) {
 
 			var data = {
-				sid:  xml.getAttribute( 'sid' ),
+				sid: xml.getAttribute( 'sid' ),
 				name: xml.getAttribute( 'name' ) || '',
 				axis: new Vector3(),
 				limits: {
@@ -2483,7 +2499,8 @@ ColladaLoader.prototype = {
 					case 'axis':
 						var param = child.getElementsByTagName( 'param' )[ 0 ];
 						data.axis = param.textContent;
-						data.jointIndex = parseInt( data.axis.split( 'joint' ).pop().split( '.' )[ 0 ] );
+						var tmpJointIndex = data.axis.split( 'inst_' ).pop().split( 'axis' )[ 0 ];
+						data.jointIndex = tmpJointIndex.substr( 0, tmpJointIndex.length - 1 );
 						break;
 
 				}
@@ -2547,11 +2564,10 @@ ColladaLoader.prototype = {
 
 			function connect( jointIndex, visualElement ) {
 
-				var visualElementId = visualElement.getAttribute( 'id' );
 				var visualElementName = visualElement.getAttribute( 'name' );
 				var joint = kinematicsModel.joints[ jointIndex ];
 
-				visualScene.traverse( function( object ) {
+				visualScene.traverse( function ( object ) {
 
 					if ( object.name === visualElementName ) {
 
@@ -2566,7 +2582,7 @@ ColladaLoader.prototype = {
 
 				} );
 
-			};
+			}
 
 			var m0 = new Matrix4();
 
@@ -2574,7 +2590,7 @@ ColladaLoader.prototype = {
 
 				joints: kinematicsModel && kinematicsModel.joints,
 
-				getJointValue: function( jointIndex ) {
+				getJointValue: function ( jointIndex ) {
 
 					var jointData = jointMap[ jointIndex ];
 
@@ -2590,7 +2606,7 @@ ColladaLoader.prototype = {
 
 				},
 
-				setJointValue: function( jointIndex, value ) {
+				setJointValue: function ( jointIndex, value ) {
 
 					var jointData = jointMap[ jointIndex ];
 
@@ -2622,7 +2638,7 @@ ColladaLoader.prototype = {
 
 								// if there is a connection of the transform node with a joint, apply the joint value
 
-								if ( transform.sid && transform.sid.indexOf( 'joint' + jointIndex ) !== -1 ) {
+								if ( transform.sid && transform.sid.indexOf( jointIndex ) !== - 1 ) {
 
 									switch ( joint.type ) {
 
@@ -2724,7 +2740,7 @@ ColladaLoader.prototype = {
 						var array = parseFloats( child.textContent );
 						var vector = new Vector3().fromArray( array );
 						var angle = Math.degToRad( array[ 3 ] );
-						transforms.push({
+						transforms.push( {
 							sid: child.getAttribute( 'sid' ),
 							type: child.nodeName,
 							obj: vector,
@@ -2742,13 +2758,33 @@ ColladaLoader.prototype = {
 
 		// nodes
 
+		function prepareNodes( xml ) {
+
+			var elements = xml.getElementsByTagName( 'node' );
+
+			// ensure all node elements have id attributes
+
+			for ( var i = 0; i < elements.length; i ++ ) {
+
+				var element = elements[ i ];
+
+				if ( element.hasAttribute( 'id' ) === false ) {
+
+					element.setAttribute( 'id', generateId() );
+
+				}
+
+			}
+
+		}
+
 		var matrix = new Matrix4();
 		var vector = new Vector3();
 
 		function parseNode( xml ) {
 
 			var data = {
-				name: xml.getAttribute( 'name' ),
+				name: xml.getAttribute( 'name' ) || '',
 				type: xml.getAttribute( 'type' ),
 				id: xml.getAttribute( 'id' ),
 				sid: xml.getAttribute( 'sid' ),
@@ -2771,14 +2807,8 @@ ColladaLoader.prototype = {
 				switch ( child.nodeName ) {
 
 					case 'node':
-
-						if ( child.hasAttribute( 'id' ) ) {
-
-							data.nodes.push( child.getAttribute( 'id' ) );
-							parseNode( child );
-
-						}
-
+						data.nodes.push( child.getAttribute( 'id' ) );
+						parseNode( child );
 						break;
 
 					case 'instance_camera':
@@ -2837,11 +2867,7 @@ ColladaLoader.prototype = {
 
 			}
 
-			if ( xml.hasAttribute( 'id' ) ) {
-
-				library.nodes[ xml.getAttribute( 'id' ) ] = data;
-
-			}
+			library.nodes[ data.id ] = data;
 
 			return data;
 
@@ -2969,7 +2995,7 @@ ColladaLoader.prototype = {
 
 			// setup bone data from visual scene
 
-			root.traverse( function( object ) {
+			root.traverse( function ( object ) {
 
 				if ( object.isBone === true ) {
 
@@ -3243,6 +3269,8 @@ ColladaLoader.prototype = {
 				children: []
 			};
 
+			prepareNodes( xml );
+
 			var elements = getElementsByTagName( xml, 'node' );
 
 			for ( var i = 0; i < elements.length; i ++ ) {
@@ -3368,6 +3396,7 @@ ColladaLoader.prototype = {
 
 		var animations = [];
 		var kinematics = {};
+		var count = 0;
 
 		//
 

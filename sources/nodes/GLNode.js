@@ -1,5 +1,4 @@
-
-import { _Math } from '../math/Math'
+import { _Math } from '../math/Math.js'
 /**
  * @author sunag / http://www.sunag.com.br/
  */
