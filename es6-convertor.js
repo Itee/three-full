@@ -523,7 +523,6 @@ function _getImportsFor ( filePath ) {
 
 function _formatImportStatements ( importerFilePath, objectNames ) {
 
-    // TODO [Itee]: merge differents import from same file !
     // TODO [Itee]: must take into account the file rerouting in edge cases
 
     if ( !importerFilePath ) {
@@ -541,6 +540,7 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
     // Count number of sub folder to return to file path root
     let importerSpecificPath = getSpecificPath( importerFilePath )
 
+    let importsMap = {}
     objectNames.forEach( ( objectName ) => {
 
         const sourcePath = _exportMap[ objectName ]
@@ -556,11 +556,52 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
         const relativePart      = getRelativePartFor( importerDeepLevel.length )
         const relativePath      = relativePart + specificSourcePath
 
-        importStatements.push( 'import { ' + objectName + ' } from \'' + relativePath + '\'' )
+        if( ! importsMap[ relativePath ] ) {
+            importsMap[ relativePath ] = []
+        }
+        importsMap[ relativePath ].push( objectName )
 
     } )
 
-    return importStatements.join( '\n' ).concat( '\n' ) // don't forget last feed line
+    for ( var importPath in importsMap ) {
+
+        let imports = importsMap[ importPath ]
+
+        let formatedImports = 'import {'
+
+        if ( imports.length === 1 ) {
+
+            formatedImports += ' ' + imports[ 0 ] + ' '
+
+        } else  if ( imports.length > 1 ) {
+
+            formatedImports += '\n'
+
+            let importedObject = undefined
+            for ( let i = 0, numberOfImports = imports.length ; i < numberOfImports ; i++ ) {
+                importedObject = imports[ i ]
+
+                if ( i === numberOfImports - 1 ) {
+                    formatedImports += '\t' + importedObject + '\n'
+                } else {
+                    formatedImports += '\t' + importedObject + ',\n'
+                }
+
+            }
+
+
+        } else {
+
+            console.error( 'WARNING: ' + path.basename( importPath ) + ' does not contains imports, fallback to file name export...' )
+
+        }
+        formatedImports += '} from \'' + importPath + '\''
+
+        importStatements.push( formatedImports )
+
+    }
+
+    return importStatements.join( '\n' ).concat( '\n\n' ) // don't forget last feed line
 
     // Todo: duplicate
     function getSpecificPath ( path ) {
