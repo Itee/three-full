@@ -19,9 +19,9 @@ import { Vector3 } from '../math/Vector3.js'
 function hilbert2D( center, size, iterations, v0, v1, v2, v3 ) {
 
 	// Default Vars
-	var center     = undefined !== center ? center : new Vector3( 0, 0, 0 ),
-		size       = undefined !== size ? size : 10,
-		half       = size / 2,
+	var center = undefined !== center ? center : new Vector3( 0, 0, 0 ),
+		size = undefined !== size ? size : 10,
+		half = size / 2,
 		iterations = undefined !== iterations ? iterations : 1,
 		v0 = undefined !== v0 ? v0 : 0,
 		v1 = undefined !== v1 ? v1 : 1,
@@ -48,10 +48,10 @@ function hilbert2D( center, size, iterations, v0, v1, v2, v3 ) {
 
 		var tmp = [];
 
-		Array.prototype.push.apply( tmp, hilbert2D ( vec[ 0 ], half, iterations, v0, v3, v2, v1 ) );
-		Array.prototype.push.apply( tmp, hilbert2D ( vec[ 1 ], half, iterations, v0, v1, v2, v3 ) );
-		Array.prototype.push.apply( tmp, hilbert2D ( vec[ 2 ], half, iterations, v0, v1, v2, v3 ) );
-		Array.prototype.push.apply( tmp, hilbert2D ( vec[ 3 ], half, iterations, v2, v1, v0, v3 ) );
+		Array.prototype.push.apply( tmp, hilbert2D( vec[ 0 ], half, iterations, v0, v3, v2, v1 ) );
+		Array.prototype.push.apply( tmp, hilbert2D( vec[ 1 ], half, iterations, v0, v1, v2, v3 ) );
+		Array.prototype.push.apply( tmp, hilbert2D( vec[ 2 ], half, iterations, v0, v1, v2, v3 ) );
+		Array.prototype.push.apply( tmp, hilbert2D( vec[ 3 ], half, iterations, v2, v1, v0, v3 ) );
 
 		// Return recursive call
 		return tmp;

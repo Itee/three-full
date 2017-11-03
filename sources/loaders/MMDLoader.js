@@ -170,7 +170,7 @@ MMDLoader.prototype.loadVmds = function ( urls, callback, onProgress, onError ) 
 	var vmds = [];
 	urls = urls.slice();
 
-	function run () {
+	function run() {
 
 		var url = urls.shift();
 
@@ -228,7 +228,7 @@ MMDLoader.prototype.loadVpd = function ( url, callback, onProgress, onError, par
 MMDLoader.prototype.parseModel = function ( buffer, modelExtension ) {
 
 	// Should I judge from model data header?
-	switch( modelExtension.toLowerCase() ) {
+	switch ( modelExtension.toLowerCase() ) {
 
 		case 'pmd':
 			return this.parsePmd( buffer );
@@ -343,7 +343,7 @@ MMDLoader.prototype.pourVmdIntoCamera = function ( camera, vmd, name ) {
 				interpolations = interpolations.slice();
 
 				var stride = values.length / times.length;
-				var interpolateStride = ( stride === 3 ) ? 12 : 4;  // 3: Vector3, others: Quaternion or Number
+				var interpolateStride = ( stride === 3 ) ? 12 : 4; // 3: Vector3, others: Quaternion or Number
 
 				var index = 1;
 
@@ -391,7 +391,7 @@ MMDLoader.prototype.pourVmdIntoCamera = function ( camera, vmd, name ) {
 
 		};
 
-		for ( var i = 0; i < orderedMotions.length; i++ ) {
+		for ( var i = 0; i < orderedMotions.length; i ++ ) {
 
 			var m = orderedMotions[ i ];
 
@@ -402,10 +402,10 @@ MMDLoader.prototype.pourVmdIntoCamera = function ( camera, vmd, name ) {
 			var fov = m.fov;
 			var interpolation = m.interpolation;
 
-			position.set( 0, 0, -distance );
+			position.set( 0, 0, - distance );
 			center.set( pos[ 0 ], pos[ 1 ], pos[ 2 ] );
 
-			euler.set( -rot[ 0 ], -rot[ 1 ], -rot[ 2 ] );
+			euler.set( - rot[ 0 ], - rot[ 1 ], - rot[ 2 ] );
 			quaternion.setFromEuler( euler );
 
 			position.add( center );
@@ -457,7 +457,7 @@ MMDLoader.prototype.pourVmdIntoCamera = function ( camera, vmd, name ) {
 		tracks.push( createTrack( '.position', 'VectorKeyframeTrackEx', times, positions, pInterpolations ) );
 		tracks.push( createTrack( '.fov', 'NumberKeyframeTrackEx', times, fovs, fInterpolations ) );
 
-		var clip = new AnimationClip( name === undefined ? Math.generateUUID() : name, -1, tracks );
+		var clip = new AnimationClip( name === undefined ? Math.generateUUID() : name, - 1, tracks );
 
 		if ( camera.center === undefined ) camera.center = new Vector3( 0, 0, 0 );
 		if ( camera.animations === undefined ) camera.animations = [];
@@ -524,7 +524,6 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 	var scope = this;
 	var geometry = new BufferGeometry();
 	var materials = [];
-	var helper = new MMDLoader.DataCreationHelper();
 
 	var buffer = {};
 
@@ -537,7 +536,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 	var initVartices = function () {
 
-		for ( var i = 0; i < model.metadata.vertexCount; i++ ) {
+		for ( var i = 0; i < model.metadata.vertexCount; i ++ ) {
 
 			var v = model.vertices[ i ];
 
@@ -577,7 +576,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 	var initFaces = function () {
 
-		for ( var i = 0; i < model.metadata.faceCount; i++ ) {
+		for ( var i = 0; i < model.metadata.faceCount; i ++ ) {
 
 			var f = model.faces[ i ];
 
@@ -610,7 +609,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 		}
 
-		for ( var i = 0; i < model.metadata.boneCount; i++ ) {
+		for ( var i = 0; i < model.metadata.boneCount; i ++ ) {
 
 			var bone = {};
 			var b = model.bones[ i ];
@@ -621,7 +620,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 			bone.rotq = [ 0, 0, 0, 1 ];
 			bone.scl = [ 1, 1, 1 ];
 
-			if ( bone.parent !== -1 ) {
+			if ( bone.parent !== - 1 ) {
 
 				bone.pos[ 0 ] -= model.bones[ bone.parent ].position[ 0 ];
 				bone.pos[ 1 ] -= model.bones[ bone.parent ].position[ 1 ];
@@ -629,7 +628,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 			}
 
-			bone.rigidBodyType = dictionary[ i ] !== undefined ? dictionary[ i ] : -1;
+			bone.rigidBodyType = dictionary[ i ] !== undefined ? dictionary[ i ] : - 1;
 
 			bones.push( bone );
 
@@ -646,9 +645,9 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 		// TODO: remove duplicated codes between PMD and PMX
 		if ( model.metadata.format === 'pmd' ) {
 
-			for ( var i = 0; i < model.metadata.ikCount; i++ ) {
+			for ( var i = 0; i < model.metadata.ikCount; i ++ ) {
 
-				var ik = model.iks[i];
+				var ik = model.iks[ i ];
 				var param = {};
 
 				param.target = ik.target;
@@ -657,7 +656,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 				param.maxAngle = ik.maxAngle * 4;
 				param.links = [];
 
-				for ( var j = 0; j < ik.links.length; j++ ) {
+				for ( var j = 0; j < ik.links.length; j ++ ) {
 
 					var link = {};
 					link.index = ik.links[ j ].index;
@@ -678,7 +677,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 		} else {
 
-			for ( var i = 0; i < model.metadata.boneCount; i++ ) {
+			for ( var i = 0; i < model.metadata.boneCount; i ++ ) {
 
 				var b = model.bones[ i ];
 				var ik = b.ik;
@@ -697,7 +696,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 				param.maxAngle = ik.maxAngle;
 				param.links = [];
 
-				for ( var j = 0; j < ik.links.length; j++ ) {
+				for ( var j = 0; j < ik.links.length; j ++ ) {
 
 					var link = {};
 					link.index = ik.links[ j ].index;
@@ -736,7 +735,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 		var grants = [];
 
-		for ( var i = 0; i < model.metadata.boneCount; i++ ) {
+		for ( var i = 0; i < model.metadata.boneCount; i ++ ) {
 
 			var b = model.bones[ i ];
 			var grant = b.grant;
@@ -783,7 +782,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 		function updateVertices( attribute, m, ratio ) {
 
-			for ( var i = 0; i < m.elementCount; i++ ) {
+			for ( var i = 0; i < m.elementCount; i ++ ) {
 
 				var v = m.elements[ i ];
 
@@ -808,7 +807,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 		var morphTargets = [];
 		var attributes = [];
 
-		for ( var i = 0; i < model.metadata.morphCount; i++ ) {
+		for ( var i = 0; i < model.metadata.morphCount; i ++ ) {
 
 			var m = model.morphs[ i ];
 			var params = { name: m.name };
@@ -816,7 +815,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 			var attribute = new Float32BufferAttribute( model.metadata.vertexCount * 3, 3 );
 			attribute.name = m.name;
 
-			for ( var j = 0; j < model.metadata.vertexCount * 3; j++ ) {
+			for ( var j = 0; j < model.metadata.vertexCount * 3; j ++ ) {
 
 				attribute.array[ j ] = buffer.vertices[ j ];
 
@@ -832,9 +831,9 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 			} else {
 
-				if ( m.type === 0 ) {    // group
+				if ( m.type === 0 ) { // group
 
-					for ( var j = 0; j < m.elementCount; j++ ) {
+					for ( var j = 0; j < m.elementCount; j ++ ) {
 
 						var m2 = model.morphs[ m.elements[ j ].index ];
 						var ratio = m.elements[ j ].ratio;
@@ -851,35 +850,35 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 					}
 
-				} else if ( m.type === 1 ) {    // vertex
+				} else if ( m.type === 1 ) { // vertex
 
 					updateVertices( attribute, m, 1.0 );
 
-				} else if ( m.type === 2 ) {    // bone
+				} else if ( m.type === 2 ) { // bone
 
 					// TODO: implement
 
-				} else if ( m.type === 3 ) {    // uv
+				} else if ( m.type === 3 ) { // uv
 
 					// TODO: implement
 
-				} else if ( m.type === 4 ) {    // additional uv1
+				} else if ( m.type === 4 ) { // additional uv1
 
 					// TODO: implement
 
-				} else if ( m.type === 5 ) {    // additional uv2
+				} else if ( m.type === 5 ) { // additional uv2
 
 					// TODO: implement
 
-				} else if ( m.type === 6 ) {    // additional uv3
+				} else if ( m.type === 6 ) { // additional uv3
 
 					// TODO: implement
 
-				} else if ( m.type === 7 ) {    // additional uv4
+				} else if ( m.type === 7 ) { // additional uv4
 
 					// TODO: implement
 
-				} else if ( m.type === 8 ) {    // material
+				} else if ( m.type === 8 ) { // material
 
 					// TODO: implement
 
@@ -909,7 +908,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 		if ( scope.textureCrossOrigin !== null ) textureLoader.setCrossOrigin( scope.textureCrossOrigin );
 
-		function loadTexture ( filePath, params ) {
+		function loadTexture( filePath, params ) {
 
 			if ( params === undefined ) {
 
@@ -964,8 +963,8 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 					context.clearRect( 0, 0, width, height );
 					context.translate( width / 2.0, height / 2.0 );
-					context.rotate( 0.5 * Math.PI );  // 90.0 * Math.PI / 180.0
-					context.translate( -width / 2.0, -height / 2.0 );
+					context.rotate( 0.5 * Math.PI ); // 90.0 * Math.PI / 180.0
+					context.translate( - width / 2.0, - height / 2.0 );
 					context.drawImage( image, 0, 0 );
 
 					t.image = context.getImageData( 0, 0, width, height );
@@ -976,7 +975,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 				t.wrapS = RepeatWrapping;
 				t.wrapT = RepeatWrapping;
 
-				for ( var i = 0; i < texture.readyCallbacks.length; i++ ) {
+				for ( var i = 0; i < texture.readyCallbacks.length; i ++ ) {
 
 					texture.readyCallbacks[ i ]( texture );
 
@@ -1012,7 +1011,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 		}
 
-		for ( var i = 0; i < model.metadata.materialCount; i++ ) {
+		for ( var i = 0; i < model.metadata.materialCount; i ++ ) {
 
 			var m = model.materials[ i ];
 			var params = {};
@@ -1073,7 +1072,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 					}
 
-					for ( var j = 0; j < fileNames.length; j++ ) {
+					for ( var j = 0; j < fileNames.length; j ++ ) {
 
 						var n = fileNames[ j ];
 
@@ -1103,7 +1102,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 			} else {
 
-				if ( m.textureIndex !== -1 ) {
+				if ( m.textureIndex !== - 1 ) {
 
 					var n = model.textures[ m.textureIndex ];
 					params.map = loadTexture( n );
@@ -1111,7 +1110,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 				}
 
 				// TODO: support m.envFlag === 3
-				if ( m.envTextureIndex !== -1 && ( m.envFlag === 1 || m.envFlag == 2 ) ) {
+				if ( m.envTextureIndex !== - 1 && ( m.envFlag === 1 || m.envFlag == 2 ) ) {
 
 					var n = model.textures[ m.envTextureIndex ];
 					params.envMap = loadTexture( n, { sphericalReflectionMapping: true } );
@@ -1137,7 +1136,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 		}
 
-		for ( var i = 0; i < materialParams.length; i++ ) {
+		for ( var i = 0; i < materialParams.length; i ++ ) {
 
 			var p = materialParams[ i ];
 			var p2 = model.materials[ i ];
@@ -1166,12 +1165,12 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 				m.faceNum = p.faceNum;
 
 				// Check if this part of the texture image the material uses requires transparency
-				function checkTextureTransparency ( m ) {
+				function checkTextureTransparency( m ) {
 
 					m.map.readyCallbacks.push( function ( t ) {
 
 						// Is there any efficient ways?
-						function createImageData ( image ) {
+						function createImageData( image ) {
 
 							var c = document.createElement( 'canvas' );
 							c.width = image.width;
@@ -1201,7 +1200,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 								var centerUV = { x: 0.0, y: 0.0 };
 
-								for ( var j = 0; j < 3; j++ ) {
+								for ( var j = 0; j < 3; j ++ ) {
 
 									var index = indices[ i * 3 + j ];
 									var uv = { x: uvs[ index * 2 + 0 ], y: uvs[ index * 2 + 1 ] };
@@ -1239,7 +1238,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 						 *   t.wrapT = RepeatWrapping
 						 * TODO: more precise
 						 */
-						function getAlphaByUv ( image, uv ) {
+						function getAlphaByUv( image, uv ) {
 
 							var width = image.width;
 							var height = image.height;
@@ -1303,7 +1302,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 			if ( model.metadata.format === 'pmd' ) {
 
-				function isDefaultToonTexture ( n ) {
+				function isDefaultToonTexture( n ) {
 
 					if ( n.length !== 10 ) {
 
@@ -1324,7 +1323,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 				if ( m.outlineParameters.thickness === 0.0 ) m.outlineParameters.visible = false;
 
-				var toonFileName = ( p2.toonIndex === -1 ) ? 'toon00.bmp' : model.toonTextures[ p2.toonIndex ].fileName;
+				var toonFileName = ( p2.toonIndex === - 1 ) ? 'toon00.bmp' : model.toonTextures[ p2.toonIndex ].fileName;
 				var uuid = loadTexture( toonFileName, { isToonTexture: true, defaultTexturePath: isDefaultToonTexture( toonFileName ) } );
 				m.gradientMap = getTexture( uuid, textures );
 
@@ -1341,7 +1340,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 				var toonFileName, isDefaultToon;
 
-				if ( p2.toonIndex === -1 || p2.toonFlag !== 0 ) {
+				if ( p2.toonIndex === - 1 || p2.toonFlag !== 0 ) {
 
 					var num = p2.toonIndex + 1;
 					toonFileName = 'toon' + ( num < 10 ? '0' + num : num ) + '.bmp';
@@ -1365,7 +1364,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 		if ( model.metadata.format === 'pmx' ) {
 
-			function checkAlphaMorph ( morph, elements ) {
+			function checkAlphaMorph( morph, elements ) {
 
 				if ( morph.type !== 8 ) {
 
@@ -1373,11 +1372,11 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 				}
 
-				for ( var i = 0; i < elements.length; i++ ) {
+				for ( var i = 0; i < elements.length; i ++ ) {
 
 					var e = elements[ i ];
 
-					if ( e.index === -1 ) {
+					if ( e.index === - 1 ) {
 
 						continue;
 
@@ -1395,14 +1394,14 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 			}
 
-			for ( var i = 0; i < model.morphs.length; i++ ) {
+			for ( var i = 0; i < model.morphs.length; i ++ ) {
 
 				var morph = model.morphs[ i ];
 				var elements = morph.elements;
 
 				if ( morph.type === 0 ) {
 
-					for ( var j = 0; j < elements.length; j++ ) {
+					for ( var j = 0; j < elements.length; j ++ ) {
 
 						var morph2 = model.morphs[ elements[ j ].index ];
 						var elements2 = morph2.elements;
@@ -1428,14 +1427,14 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 		var rigidBodies = [];
 		var constraints = [];
 
-		for ( var i = 0; i < model.metadata.rigidBodyCount; i++ ) {
+		for ( var i = 0; i < model.metadata.rigidBodyCount; i ++ ) {
 
 			var b = model.rigidBodies[ i ];
 			var keys = Object.keys( b );
 
 			var p = {};
 
-			for ( var j = 0; j < keys.length; j++ ) {
+			for ( var j = 0; j < keys.length; j ++ ) {
 
 				var key = keys[ j ];
 				p[ key ] = b[ key ];
@@ -1449,7 +1448,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 			 */
 			if ( model.metadata.format === 'pmx' ) {
 
-				if ( p.boneIndex !== -1 ) {
+				if ( p.boneIndex !== - 1 ) {
 
 					var bone = model.bones[ p.boneIndex ];
 					p.position[ 0 ] -= bone.position[ 0 ];
@@ -1464,14 +1463,14 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 		}
 
-		for ( var i = 0; i < model.metadata.constraintCount; i++ ) {
+		for ( var i = 0; i < model.metadata.constraintCount; i ++ ) {
 
 			var c = model.constraints[ i ];
 			var keys = Object.keys( c );
 
 			var p = {};
 
-			for ( var j = 0; j < keys.length; j++ ) {
+			for ( var j = 0; j < keys.length; j ++ ) {
 
 				var key = keys[ j ];
 				p[ key ] = c[ key ];
@@ -1486,7 +1485,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 			 */
 			if ( bodyA.type !== 0 && bodyB.type === 2 ) {
 
-				if ( bodyA.boneIndex !== -1 && bodyB.boneIndex !== -1 &&
+				if ( bodyA.boneIndex !== - 1 && bodyB.boneIndex !== - 1 &&
 				     model.bones[ bodyB.boneIndex ].parentIndex === bodyA.boneIndex ) {
 
 					bodyB.type = 1;
@@ -1555,14 +1554,14 @@ MMDLoader.prototype.createAnimation = function ( mesh, vmd, name ) {
 
 		var pushInterpolation = function ( array, interpolation, index ) {
 
-			array.push( interpolation[ index + 0 ] / 127 );  // x1
-			array.push( interpolation[ index + 8 ] / 127 );  // x2
-			array.push( interpolation[ index + 4 ] / 127 );  // y1
+			array.push( interpolation[ index + 0 ] / 127 ); // x1
+			array.push( interpolation[ index + 8 ] / 127 ); // x2
+			array.push( interpolation[ index + 4 ] / 127 ); // y1
 			array.push( interpolation[ index + 12 ] / 127 ); // y2
 
 		};
 
-		for ( var i = 0; i < orderedMotions.length; i++ ) {
+		for ( var i = 0; i < orderedMotions.length; i ++ ) {
 
 			var times = [];
 			var positions = [];
@@ -1573,7 +1572,7 @@ MMDLoader.prototype.createAnimation = function ( mesh, vmd, name ) {
 			var bone = bones[ i ];
 			var array = orderedMotions[ i ];
 
-			for ( var j = 0; j < array.length; j++ ) {
+			for ( var j = 0; j < array.length; j ++ ) {
 
 				var time = array[ j ].frameNum / 30;
 				var pos = array[ j ].position;
@@ -1613,7 +1612,7 @@ MMDLoader.prototype.createAnimation = function ( mesh, vmd, name ) {
 
 		}
 
-		var clip = new AnimationClip( name === undefined ? Math.generateUUID() : name, -1, tracks );
+		var clip = new AnimationClip( name === undefined ? Math.generateUUID() : name, - 1, tracks );
 
 		if ( mesh.geometry.animations === undefined ) mesh.geometry.animations = [];
 		mesh.geometry.animations.push( clip );
@@ -1632,13 +1631,13 @@ MMDLoader.prototype.createAnimation = function ( mesh, vmd, name ) {
 
 		var tracks = [];
 
-		for ( var i = 0; i < orderedMorphs.length; i++ ) {
+		for ( var i = 0; i < orderedMorphs.length; i ++ ) {
 
 			var times = [];
 			var values = [];
 			var array = orderedMorphs[ i ];
 
-			for ( var j = 0; j < array.length; j++ ) {
+			for ( var j = 0; j < array.length; j ++ ) {
 
 				times.push( array[ j ].frameNum / 30 );
 				values.push( array[ j ].weight );
@@ -1651,7 +1650,7 @@ MMDLoader.prototype.createAnimation = function ( mesh, vmd, name ) {
 
 		}
 
-		var clip = new AnimationClip( name === undefined ? Math.generateUUID() : name + 'Morph', -1, tracks );
+		var clip = new AnimationClip( name === undefined ? Math.generateUUID() : name + 'Morph', - 1, tracks );
 
 		if ( mesh.geometry.animations === undefined ) mesh.geometry.animations = [];
 		mesh.geometry.animations.push( clip );
@@ -1681,9 +1680,9 @@ MMDLoader.DataCreationHelper.prototype = {
 
 		var str = '';
 
-		for ( var i = 0; i < s.length; i++ ) {
+		for ( var i = 0; i < s.length; i ++ ) {
 
-			str += '0x' + ( '0000' + s[ i ].charCodeAt().toString( 16 ) ).substr( -4 );
+			str += '0x' + ( '0000' + s[ i ].charCodeAt().toString( 16 ) ).substr( - 4 );
 
 		}
 
@@ -1695,7 +1694,7 @@ MMDLoader.DataCreationHelper.prototype = {
 
 		var dict = {};
 
-		for ( var i = 0; i < array.length; i++ ) {
+		for ( var i = 0; i < array.length; i ++ ) {
 
 			dict[ array[ i ].name ] = i;
 
@@ -1709,7 +1708,7 @@ MMDLoader.DataCreationHelper.prototype = {
 
 		var result = [];
 
-		for ( var i = 0; i < array.length; i++ ) {
+		for ( var i = 0; i < array.length; i ++ ) {
 
 			result[ i ] = [];
 
@@ -1725,13 +1724,13 @@ MMDLoader.DataCreationHelper.prototype = {
 
 			return a.frameNum - b.frameNum;
 
-		} ) ;
+		} );
 
 	},
 
 	sortMotionArrays: function ( arrays ) {
 
-		for ( var i = 0; i < arrays.length; i++ ) {
+		for ( var i = 0; i < arrays.length; i ++ ) {
 
 			this.sortMotionArray( arrays[ i ] );
 
@@ -1743,7 +1742,7 @@ MMDLoader.DataCreationHelper.prototype = {
 
 		var result = [];
 
-		for ( var i = 0; i < array.length; i++ ) {
+		for ( var i = 0; i < array.length; i ++ ) {
 
 			result.push( array[ i ] );
 
@@ -1755,7 +1754,7 @@ MMDLoader.DataCreationHelper.prototype = {
 
 	createMotionArrays: function ( array, result, dict, key ) {
 
-		for ( var i = 0; i < array.length; i++ ) {
+		for ( var i = 0; i < array.length; i ++ ) {
 
 			var a = array[ i ];
 			var num = dict[ a[ key ] ];
@@ -1810,13 +1809,13 @@ MMDLoader.VectorKeyframeTrackEx.prototype = Object.create( VectorKeyframeTrack.p
 MMDLoader.VectorKeyframeTrackEx.prototype.constructor = MMDLoader.VectorKeyframeTrackEx;
 MMDLoader.VectorKeyframeTrackEx.prototype.TimeBufferType = Float64Array;
 
-MMDLoader.VectorKeyframeTrackEx.prototype.InterpolantFactoryMethodCubicBezier = function( result ) {
+MMDLoader.VectorKeyframeTrackEx.prototype.InterpolantFactoryMethodCubicBezier = function ( result ) {
 
 	return new MMDLoader.CubicBezierInterpolation( this.times, this.values, this.getValueSize(), result, this.interpolationParameters );
 
 };
 
-MMDLoader.VectorKeyframeTrackEx.prototype.setInterpolation = function( interpolation ) {
+MMDLoader.VectorKeyframeTrackEx.prototype.setInterpolation = function ( interpolation ) {
 
 	this.createInterpolant = this.InterpolantFactoryMethodCubicBezier;
 
@@ -1834,13 +1833,13 @@ MMDLoader.QuaternionKeyframeTrackEx.prototype = Object.create( QuaternionKeyfram
 MMDLoader.QuaternionKeyframeTrackEx.prototype.constructor = MMDLoader.QuaternionKeyframeTrackEx;
 MMDLoader.QuaternionKeyframeTrackEx.prototype.TimeBufferType = Float64Array;
 
-MMDLoader.QuaternionKeyframeTrackEx.prototype.InterpolantFactoryMethodCubicBezier = function( result ) {
+MMDLoader.QuaternionKeyframeTrackEx.prototype.InterpolantFactoryMethodCubicBezier = function ( result ) {
 
 	return new MMDLoader.CubicBezierInterpolation( this.times, this.values, this.getValueSize(), result, this.interpolationParameters );
 
 };
 
-MMDLoader.QuaternionKeyframeTrackEx.prototype.setInterpolation = function( interpolation ) {
+MMDLoader.QuaternionKeyframeTrackEx.prototype.setInterpolation = function ( interpolation ) {
 
 	this.createInterpolant = this.InterpolantFactoryMethodCubicBezier;
 
@@ -1858,13 +1857,13 @@ MMDLoader.NumberKeyframeTrackEx.prototype = Object.create( NumberKeyframeTrack.p
 MMDLoader.NumberKeyframeTrackEx.prototype.constructor = MMDLoader.NumberKeyframeTrackEx;
 MMDLoader.NumberKeyframeTrackEx.prototype.TimeBufferType = Float64Array;
 
-MMDLoader.NumberKeyframeTrackEx.prototype.InterpolantFactoryMethodCubicBezier = function( result ) {
+MMDLoader.NumberKeyframeTrackEx.prototype.InterpolantFactoryMethodCubicBezier = function ( result ) {
 
 	return new MMDLoader.CubicBezierInterpolation( this.times, this.values, this.getValueSize(), result, this.interpolationParameters );
 
 };
 
-MMDLoader.NumberKeyframeTrackEx.prototype.setInterpolation = function( interpolation ) {
+MMDLoader.NumberKeyframeTrackEx.prototype.setInterpolation = function ( interpolation ) {
 
 	this.createInterpolant = this.InterpolantFactoryMethodCubicBezier;
 
@@ -1876,12 +1875,12 @@ MMDLoader.CubicBezierInterpolation = function ( parameterPositions, sampleValues
 
 	this.params = params;
 
-}
+};
 
 MMDLoader.CubicBezierInterpolation.prototype = Object.create( LinearInterpolant.prototype );
 MMDLoader.CubicBezierInterpolation.prototype.constructor = MMDLoader.CubicBezierInterpolation;
 
-MMDLoader.CubicBezierInterpolation.prototype.interpolate_ = function( i1, t0, t, t1 ) {
+MMDLoader.CubicBezierInterpolation.prototype.interpolate_ = function ( i1, t0, t, t1 ) {
 
 	var result = this.resultBuffer;
 	var values = this.sampleValues;
@@ -1892,7 +1891,7 @@ MMDLoader.CubicBezierInterpolation.prototype.interpolate_ = function( i1, t0, t,
 
 	var weight1 = ( t - t0 ) / ( t1 - t0 );
 
-	if ( stride === 4 ) {  // Quaternion
+	if ( stride === 4 ) { // Quaternion
 
 		var x1 = this.params[ i1 * 4 + 0 ];
 		var x2 = this.params[ i1 * 4 + 1 ];
@@ -1903,7 +1902,7 @@ MMDLoader.CubicBezierInterpolation.prototype.interpolate_ = function( i1, t0, t,
 
 		Quaternion.slerpFlat( result, 0, values, offset0, values, offset1, ratio );
 
-	} else if ( stride === 3 ) {  // Vector3
+	} else if ( stride === 3 ) { // Vector3
 
 		for ( var i = 0; i !== stride; ++ i ) {
 
@@ -1918,7 +1917,7 @@ MMDLoader.CubicBezierInterpolation.prototype.interpolate_ = function( i1, t0, t,
 
 		}
 
-	} else {  // Number
+	} else { // Number
 
 		var x1 = this.params[ i1 * 4 + 0 ];
 		var x2 = this.params[ i1 * 4 + 1 ];
@@ -1935,7 +1934,7 @@ MMDLoader.CubicBezierInterpolation.prototype.interpolate_ = function( i1, t0, t,
 
 };
 
-MMDLoader.CubicBezierInterpolation.prototype._calculate = function( x1, x2, y1, y2, x ) {
+MMDLoader.CubicBezierInterpolation.prototype._calculate = function ( x1, x2, y1, y2, x ) {
 
 	/*
 	 * Cubic Bezier curves
@@ -1995,7 +1994,7 @@ MMDLoader.CubicBezierInterpolation.prototype._calculate = function( x1, x2, y1, 
 
 		c /= 2.0;
 
-		t += ( ft < 0 ) ? c : -c;
+		t += ( ft < 0 ) ? c : - c;
 		s = 1.0 - t;
 
 	}
@@ -2206,7 +2205,7 @@ MMDHelper.prototype = {
 
 	setPhysicses: function ( params ) {
 
-		for ( var i = 0; i < this.meshes.length; i++ ) {
+		for ( var i = 0; i < this.meshes.length; i ++ ) {
 
 			this.setPhysics( this.meshes[ i ], params );
 
@@ -2259,6 +2258,7 @@ MMDHelper.prototype = {
 				return this.masterPhysics;
 
 			}
+
 		}
 
 		return null;
@@ -2319,7 +2319,7 @@ MMDHelper.prototype = {
 
 	setAnimations: function () {
 
-		for ( var i = 0; i < this.meshes.length; i++ ) {
+		for ( var i = 0; i < this.meshes.length; i ++ ) {
 
 			this.setAnimation( this.meshes[ i ] );
 
@@ -2348,7 +2348,7 @@ MMDHelper.prototype = {
 			var foundAnimation = false;
 			var foundMorphAnimation = false;
 
-			for ( var i = 0; i < mesh.geometry.animations.length; i++ ) {
+			for ( var i = 0; i < mesh.geometry.animations.length; i ++ ) {
 
 				var clip = mesh.geometry.animations[ i ];
 
@@ -2419,7 +2419,7 @@ MMDHelper.prototype = {
 		var audioManager = this.audioManager;
 
 		// check the longest duration
-		for ( var i = 0; i < this.meshes.length; i++ ) {
+		for ( var i = 0; i < this.meshes.length; i ++ ) {
 
 			var mesh = this.meshes[ i ];
 			var mixer = mesh.mixer;
@@ -2430,7 +2430,7 @@ MMDHelper.prototype = {
 
 			}
 
-			for ( var j = 0; j < mixer._actions.length; j++ ) {
+			for ( var j = 0; j < mixer._actions.length; j ++ ) {
 
 				var action = mixer._actions[ j ];
 				max = Math.max( max, action._clip.duration );
@@ -2443,7 +2443,7 @@ MMDHelper.prototype = {
 
 			var mixer = camera.mixer;
 
-			for ( var i = 0; i < mixer._actions.length; i++ ) {
+			for ( var i = 0; i < mixer._actions.length; i ++ ) {
 
 				var action = mixer._actions[ i ];
 				max = Math.max( max, action._clip.duration );
@@ -2465,7 +2465,7 @@ MMDHelper.prototype = {
 		}
 
 		// set the duration
-		for ( var i = 0; i < this.meshes.length; i++ ) {
+		for ( var i = 0; i < this.meshes.length; i ++ ) {
 
 			var mesh = this.meshes[ i ];
 			var mixer = mesh.mixer;
@@ -2476,7 +2476,7 @@ MMDHelper.prototype = {
 
 			}
 
-			for ( var j = 0; j < mixer._actions.length; j++ ) {
+			for ( var j = 0; j < mixer._actions.length; j ++ ) {
 
 				var action = mixer._actions[ j ];
 				action._clip.duration = max;
@@ -2489,7 +2489,7 @@ MMDHelper.prototype = {
 
 			var mixer = camera.mixer;
 
-			for ( var i = 0; i < mixer._actions.length; i++ ) {
+			for ( var i = 0; i < mixer._actions.length; i ++ ) {
 
 				var action = mixer._actions[ i ];
 				action._clip.duration = max;
@@ -2522,7 +2522,7 @@ MMDHelper.prototype = {
 
 		this.controlAudio( delta );
 
-		for ( var i = 0; i < this.meshes.length; i++ ) {
+		for ( var i = 0; i < this.meshes.length; i ++ ) {
 
 			this.animateOneMesh( delta, this.meshes[ i ] );
 
@@ -2653,7 +2653,7 @@ MMDHelper.prototype = {
 
 		var table = {};
 
-		for ( var i = 0; i < bones.length; i++ ) {
+		for ( var i = 0; i < bones.length; i ++ ) {
 
 			table[ bones[ i ].name ] = i;
 
@@ -2662,7 +2662,7 @@ MMDHelper.prototype = {
 		var thV = new Vector3();
 		var thQ = new Quaternion();
 
-		for ( var i = 0; i < bones2.length; i++ ) {
+		for ( var i = 0; i < bones2.length; i ++ ) {
 
 			var b = bones2[ i ];
 			var index = table[ b.name ];
@@ -2713,7 +2713,7 @@ MMDHelper.prototype = {
 
 		mesh.skeleton.backupBones = [];
 
-		for ( var i = 0; i < mesh.skeleton.bones.length; i++ ) {
+		for ( var i = 0; i < mesh.skeleton.bones.length; i ++ ) {
 
 			mesh.skeleton.backupBones.push( mesh.skeleton.bones[ i ].clone() );
 
@@ -2725,7 +2725,7 @@ MMDHelper.prototype = {
 
 		mesh.skeleton.backupBoneIsSaved = true;
 
-		for ( var i = 0; i < mesh.skeleton.bones.length; i++ ) {
+		for ( var i = 0; i < mesh.skeleton.bones.length; i ++ ) {
 
 			var b = mesh.skeleton.backupBones[ i ];
 			var b2 = mesh.skeleton.bones[ i ];
@@ -2746,7 +2746,7 @@ MMDHelper.prototype = {
 
 		mesh.skeleton.backupBoneIsSaved = false;
 
-		for ( var i = 0; i < mesh.skeleton.bones.length; i++ ) {
+		for ( var i = 0; i < mesh.skeleton.bones.length; i ++ ) {
 
 			var b = mesh.skeleton.bones[ i ];
 			var b2 = mesh.skeleton.backupBones[ i ];

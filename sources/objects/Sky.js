@@ -1,8 +1,8 @@
-import { ShaderMaterial } from './materials/Materials.js'
-import { SphereBufferGeometry } from './geometries/Geometries.js'
-import { Mesh } from './objects/Mesh.js'
-import { Vector3 } from './math/Vector3.js'
-import { BackSide } from './constants.js'
+import { Mesh } from '../objects/Mesh.js'
+import { ShaderMaterial } from '../materials/Materials.js'
+import { SphereBufferGeometry } from '../geometries/Geometries.js'
+import { Vector3 } from '../math/Vector3.js'
+import { BackSide } from '../constants.js'
 /**
  * @author zz85 / https://github.com/zz85
  *
@@ -21,25 +21,20 @@ import { BackSide } from './constants.js'
 
 var Sky = function () {
 
-	var skyShader = Sky.SkyShader;
+	var shader = Sky.SkyShader;
 
-	var skyUniforms = UniformsUtils.clone( skyShader.uniforms );
-
-	var skyMat = new ShaderMaterial( {
-		fragmentShader: skyShader.fragmentShader,
-		vertexShader: skyShader.vertexShader,
-		uniforms: skyUniforms,
+	var material = new ShaderMaterial( {
+		fragmentShader: shader.fragmentShader,
+		vertexShader: shader.vertexShader,
+		uniforms: UniformsUtils.clone( shader.uniforms ),
 		side: BackSide
 	} );
 
-	var skyGeo = new SphereBufferGeometry( 450000, 32, 15 );
-	var skyMesh = new Mesh( skyGeo, skyMat );
-
-	// Expose variables
-	this.mesh = skyMesh;
-	this.uniforms = skyUniforms;
+	Mesh.call( this, new SphereBufferGeometry( 1, 32, 15 ), material );
 
 };
+
+Sky.prototype = Object.create( Mesh.prototype );
 
 Sky.SkyShader = {
 

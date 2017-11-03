@@ -2,16 +2,15 @@
  * @author mrdoob / http://mrdoob.com/
  */
 
-import { BackSide } from '../../constants';
-import { OrthographicCamera } from '../../cameras/OrthographicCamera';
-import { PerspectiveCamera } from '../../cameras/PerspectiveCamera';
-import { BoxBufferGeometry } from '../../geometries/BoxGeometry';
-import { PlaneBufferGeometry } from '../../geometries/PlaneGeometry';
-import { MeshBasicMaterial } from '../../materials/MeshBasicMaterial';
-import { ShaderMaterial } from '../../materials/ShaderMaterial';
-import { Color } from '../../math/Color';
-import { Mesh } from '../../objects/Mesh';
-import { ShaderLib } from '../shaders/ShaderLib';
+import { BackSide } from '../../constants.js';
+import { OrthographicCamera } from '../../cameras/OrthographicCamera.js';
+import { BoxBufferGeometry } from '../../geometries/BoxGeometry.js';
+import { PlaneBufferGeometry } from '../../geometries/PlaneGeometry.js';
+import { MeshBasicMaterial } from '../../materials/MeshBasicMaterial.js';
+import { ShaderMaterial } from '../../materials/ShaderMaterial.js';
+import { Color } from '../../math/Color.js';
+import { Mesh } from '../../objects/Mesh.js';
+import { ShaderLib } from '../shaders/ShaderLib.js';
 
 function WebGLBackground( renderer, state, geometries, premultipliedAlpha ) {
 
@@ -55,7 +54,6 @@ function WebGLBackground( renderer, state, geometries, premultipliedAlpha ) {
 						side: BackSide,
 						depthTest: true,
 						depthWrite: false,
-						polygonOffset: true,
 						fog: false
 					} )
 				);
@@ -65,12 +63,7 @@ function WebGLBackground( renderer, state, geometries, premultipliedAlpha ) {
 
 				boxMesh.onBeforeRender = function ( renderer, scene, camera ) {
 
-					var scale = camera.far;
-
-					this.matrixWorld.makeScale( scale, scale, scale );
 					this.matrixWorld.copyPosition( camera.matrixWorld );
-
-					this.material.polygonOffsetUnits = scale * 10;
 
 				};
 

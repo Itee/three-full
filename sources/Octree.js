@@ -1,7 +1,8 @@
 import { Vector3 } from './math/Vector3.js'
-import { BoxGeometry } from './geometries/BoxGeometry.js'
-import { MeshBasicMaterial } from './materials/Materials.js'
+import { BoxHelper } from './helpers/BoxHelper.js'
 import { Mesh } from './objects/Mesh.js'
+import { BoxGeometry } from './geometries/BoxGeometry.js'
+import { LineSegments } from './objects/LineSegments.js'
 import { Face3 } from './core/Face3.js'
 import { Object3D } from './core/Object3D.js'
 import { Raycaster } from './core/Raycaster.js'
@@ -126,8 +127,9 @@ import { Raycaster } from './core/Raycaster.js'
 		
 		if ( this.scene ) {
 			
-			this.visualGeometry = new BoxGeometry( 1, 1, 1 );
-			this.visualMaterial = new MeshBasicMaterial( { color: 0xFF0066, wireframe: true, wireframeLinewidth: 1 } );
+			var helper = new BoxHelper( new Mesh( new BoxGeometry( 1, 1, 1 ) ), 0xff0066 );
+			this.visualGeometry = helper.geometry;
+			this.visualMaterial = helper.material;
 			
 		}
 		
@@ -780,7 +782,7 @@ import { Raycaster } from './core/Raycaster.js'
 		
 		if ( this.tree.scene ) {
 			
-			this.visual = new Mesh( this.tree.visualGeometry, this.tree.visualMaterial );
+			this.visual = new LineSegments( this.tree.visualGeometry, this.tree.visualMaterial );
 			this.visual.scale.set( this.radiusOverlap * 2, this.radiusOverlap * 2, this.radiusOverlap * 2 );
 			this.visual.position.copy( this.position );
 			this.tree.scene.add( this.visual );

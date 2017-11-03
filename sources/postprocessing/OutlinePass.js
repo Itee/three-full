@@ -11,6 +11,8 @@ import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/Geometries.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Vector3 } from '../math/Vector3.js'
+import { Line } from '../objects/Line.js'
+import { Sprite } from '../objects/Sprite.js'
 import { DoubleSide } from '../constants.js'
 import { NoBlending } from '../constants.js'
 import { AdditiveBlending } from '../constants.js'
@@ -205,7 +207,7 @@ OutlinePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		function VisibilityChangeCallBack( object ) {
 
-			if ( object instanceof Mesh ) {
+			if ( object instanceof Mesh || object instanceof Line || object instanceof Sprite ) {
 
 				var bFound = false;
 
@@ -268,6 +270,9 @@ OutlinePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		// Make selected objects invisible
 		this.changeVisibilityOfSelectedObjects( false );
 
+		var currentBackground = this.renderScene.background;
+		this.renderScene.background = null;
+
 		// 1. Draw Non Selected objects in the depth buffer
 		this.renderScene.overrideMaterial = this.depthMaterial;
 		renderer.render( this.renderScene, this.renderCamera, this.renderTargetDepthBuffer, true );
@@ -287,6 +292,8 @@ OutlinePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		renderer.render( this.renderScene, this.renderCamera, this.renderTargetMaskBuffer, true );
 		this.renderScene.overrideMaterial = null;
 		this.changeVisibilityOfNonSelectedObjects( true );
+
+		this.renderScene.background = currentBackground;
 
 		// 2. Downsample to Half resolution
 		this.quad.material = this.materialCopy;

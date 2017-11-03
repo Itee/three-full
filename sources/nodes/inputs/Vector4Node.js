@@ -1,6 +1,6 @@
 import { InputNode } from '../../nodes/InputNode.js'
 import { Vector4 } from '../../math/Vector4.js'
-import { NodeMaterial } from '../../nodes/NodeMaterial'
+import { NodeMaterial } from '../../nodes/NodeMaterial.js'
 /**
  * @author sunag / http://www.sunag.com.br/
  */

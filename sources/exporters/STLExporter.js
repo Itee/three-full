@@ -32,7 +32,7 @@ STLExporter.prototype = {
 					var geometry = object.geometry;
 					var matrixWorld = object.matrixWorld;
 
-					if( geometry instanceof BufferGeometry ) {
+					if ( geometry instanceof BufferGeometry ) {
 
 						geometry = new Geometry().fromBufferGeometry( geometry );
 

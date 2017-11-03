@@ -6,6 +6,7 @@ import { Vector3 } from '../math/Vector3.js'
 import { Color } from '../math/Color.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
+import { MeshBasicMaterial } from '../materials/Materials.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/Geometries.js'
 import { AdditiveBlending } from '../constants.js'
@@ -13,10 +14,10 @@ import { LinearFilter } from '../constants.js'
 import { RGBAFormat } from '../constants.js'
 /**
  * @author spidersharma / http://eduperiment.com/
- Inspired from Unreal Engine::
- https://docs.unrealengine.com/latest/INT/Engine/Rendering/PostProcessEffects/Bloom/
+ * 
+ * Inspired from Unreal Engine
+ * https://docs.unrealengine.com/latest/INT/Engine/Rendering/PostProcessEffects/Bloom/
  */
-
 var UnrealBloomPass = function ( resolution, strength, radius, threshold ) {
 
 	Pass.call( this );
@@ -144,6 +145,8 @@ var UnrealBloomPass = function ( resolution, strength, radius, threshold ) {
 	this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
 	this.scene = new Scene();
 
+	this.basic = new MeshBasicMaterial();
+
 	this.quad = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
 	this.quad.frustumCulled = false; // Avoid getting clipped
 	this.scene.add( this.quad );
@@ -204,11 +207,23 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		if ( maskActive ) renderer.context.disable( renderer.context.STENCIL_TEST );
 
+		// Render input to screen
+
+		if ( this.renderToScreen ) {
+
+			this.quad.material = this.basic;
+			this.basic.map = readBuffer.texture;
+
+			renderer.render( this.scene, this.camera, undefined, true );
+
+		}
+
 		// 1. Extract Bright Areas
 
 		this.highPassUniforms[ "tDiffuse" ].value = readBuffer.texture;
 		this.highPassUniforms[ "luminosityThreshold" ].value = this.threshold;
 		this.quad.material = this.materialHighPassFilter;
+
 		renderer.render( this.scene, this.camera, this.renderTargetBright, true );
 
 		// 2. Blur All the mips progressively
@@ -220,15 +235,11 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 			this.quad.material = this.separableBlurMaterials[ i ];
 
 			this.separableBlurMaterials[ i ].uniforms[ "colorTexture" ].value = inputRenderTarget.texture;
-
 			this.separableBlurMaterials[ i ].uniforms[ "direction" ].value = UnrealBloomPass.BlurDirectionX;
-
 			renderer.render( this.scene, this.camera, this.renderTargetsHorizontal[ i ], true );
 
 			this.separableBlurMaterials[ i ].uniforms[ "colorTexture" ].value = this.renderTargetsHorizontal[ i ].texture;
-
 			this.separableBlurMaterials[ i ].uniforms[ "direction" ].value = UnrealBloomPass.BlurDirectionY;
-
 			renderer.render( this.scene, this.camera, this.renderTargetsVertical[ i ], true );
 
 			inputRenderTarget = this.renderTargetsVertical[ i ];
@@ -241,6 +252,7 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		this.compositeMaterial.uniforms[ "bloomStrength" ].value = this.strength;
 		this.compositeMaterial.uniforms[ "bloomRadius" ].value = this.radius;
 		this.compositeMaterial.uniforms[ "bloomTintColors" ].value = this.bloomTintColors;
+
 		renderer.render( this.scene, this.camera, this.renderTargetsHorizontal[ 0 ], true );
 
 		// Blend it additively over the input texture
@@ -250,7 +262,18 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		if ( maskActive ) renderer.context.enable( renderer.context.STENCIL_TEST );
 
-		renderer.render( this.scene, this.camera, readBuffer, false );
+
+		if ( this.renderToScreen ) {
+
+			renderer.render( this.scene, this.camera, undefined, false );
+
+		} else {
+
+			renderer.render( this.scene, this.camera, readBuffer, false );
+
+		}
+
+		// Restore renderer settings
 
 		renderer.setClearColor( this.oldClearColor, this.oldClearAlpha );
 		renderer.autoClear = oldAutoClear;

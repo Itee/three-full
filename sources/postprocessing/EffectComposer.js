@@ -4,7 +4,7 @@ import { MaskPass } from '../postprocessing/MaskPass.js'
 import { ClearMaskPass } from '../postprocessing/MaskPass.js'
 import { LinearFilter } from '../constants.js'
 import { RGBAFormat } from '../constants.js'
-import { CopyShader } from '../shaders/CopyShader'
+import { CopyShader } from '../shaders/CopyShader.js'
 /**
  * @author alteredq / http://alteredqualia.com/
  */
@@ -22,7 +22,7 @@ var EffectComposer = function ( renderer, renderTarget ) {
 			stencilBuffer: false
 		};
 
-		var size = renderer.getSize();
+		var size = renderer.getDrawingBufferSize();
 		renderTarget = new WebGLRenderTarget( size.width, size.height, parameters );
 		renderTarget.texture.name = 'EffectComposer.rt1';
 
@@ -69,7 +69,7 @@ Object.assign( EffectComposer.prototype, {
 
 		this.passes.push( pass );
 
-		var size = this.renderer.getSize();
+		var size = this.renderer.getDrawingBufferSize();
 		pass.setSize( size.width, size.height );
 
 	},
@@ -134,7 +134,7 @@ Object.assign( EffectComposer.prototype, {
 
 		if ( renderTarget === undefined ) {
 
-			var size = this.renderer.getSize();
+			var size = this.renderer.getDrawingBufferSize();
 
 			renderTarget = this.renderTarget1.clone();
 			renderTarget.setSize( size.width, size.height );

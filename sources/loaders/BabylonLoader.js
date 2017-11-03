@@ -189,6 +189,7 @@ BabylonLoader.prototype = {
 					case 3:
 						light = new HemisphereLight();
 						break;
+
 				}
 
 				light.name = data.name;

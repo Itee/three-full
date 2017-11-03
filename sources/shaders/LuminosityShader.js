@@ -30,6 +30,8 @@ var LuminosityShader = {
 
 	fragmentShader: [
 
+		"#include <common>",
+
 		"uniform sampler2D tDiffuse;",
 
 		"varying vec2 vUv;",
@@ -38,11 +40,9 @@ var LuminosityShader = {
 
 			"vec4 texel = texture2D( tDiffuse, vUv );",
 
-			"vec3 luma = vec3( 0.299, 0.587, 0.114 );",
+			"float l = linearToRelativeLuminance( texel.rgb );",
 
-			"float v = dot( texel.xyz, luma );",
-
-			"gl_FragColor = vec4( v, v, v, texel.w );",
+			"gl_FragColor = vec4( l, l, l, texel.w );",
 
 		"}"
 

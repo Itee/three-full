@@ -22,7 +22,7 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
 
 
-  function DecalGeometry( mesh, position, orientation, size ) {
+	function DecalGeometry( mesh, position, orientation, size ) {
 
   	BufferGeometry.call( this );
 
@@ -58,7 +58,7 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
   	function generate() {
 
-  		var i, j;
+  		var i;
   		var geometry = new BufferGeometry();
   		var decalVertices = [];
 
@@ -117,12 +117,12 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
   		// second, clip the geometry so that it doesn't extend out from the projector
 
-  		decalVertices = clipGeometry( decalVertices, plane.set(   1,   0,   0 ) );
-  		decalVertices = clipGeometry( decalVertices, plane.set( - 1,   0,   0 ) );
-  		decalVertices = clipGeometry( decalVertices, plane.set(   0,   1,   0 ) );
-  		decalVertices = clipGeometry( decalVertices, plane.set(   0, - 1,   0 ) );
-  		decalVertices = clipGeometry( decalVertices, plane.set(   0,   0,   1 ) );
-  		decalVertices = clipGeometry( decalVertices, plane.set(   0,   0, - 1 ) );
+  		decalVertices = clipGeometry( decalVertices, plane.set( 1, 0, 0 ) );
+  		decalVertices = clipGeometry( decalVertices, plane.set( - 1, 0, 0 ) );
+  		decalVertices = clipGeometry( decalVertices, plane.set( 0, 1, 0 ) );
+  		decalVertices = clipGeometry( decalVertices, plane.set( 0, - 1, 0 ) );
+  		decalVertices = clipGeometry( decalVertices, plane.set( 0, 0, 1 ) );
+  		decalVertices = clipGeometry( decalVertices, plane.set( 0, 0, - 1 ) );
 
   		// third, generate final vertices, normals and uvs
 
@@ -336,29 +336,29 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
   	}
 
-  }
+	}
 
-  DecalGeometry.prototype = Object.create( BufferGeometry.prototype );
-  DecalGeometry.prototype.constructor = DecalGeometry;
+	DecalGeometry.prototype = Object.create( BufferGeometry.prototype );
+	DecalGeometry.prototype.constructor = DecalGeometry;
 
-  // helper
+	// helper
 
-  function DecalVertex( position, normal ) {
+	function DecalVertex( position, normal ) {
 
-  	this.position = position;
-  	this.normal = normal;
+		this.position = position;
+		this.normal = normal;
 
-  }
+	}
 
-  DecalVertex.prototype.clone = function() {
+	DecalVertex.prototype.clone = function () {
 
-  	return new DecalVertex( this.position.clone(), this.normal.clone() );
+		return new DecalVertex( this.position.clone(), this.normal.clone() );
 
-  };
+	};
 
-  // export
+	// export
 
-  
+	
 
 
 
