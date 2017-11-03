@@ -80,6 +80,22 @@ module.exports = {
                 [ 'ColorMapKeywords = ', 'var ColorMapKeywords = ' ]
             ]
         },
+        LegacyGLTFLoader: {
+            imports: [
+                'DefaultLoadingManager',
+                'Loader',
+                'Matrix3',
+                'Vector2',
+                'Vector3',
+                'Vector4',
+                'UniformsUtils',
+                'MeshBasicMaterial',
+                'MeshLambertMaterial',
+                'QuaternionKeyframeTrack',
+                'VectorKeyframeTrack',
+                'AnimationUtils'
+            ]
+        },
         MarchingCubes:             {
             replacements: [
                 [ 'edgeTable = new Int32Array', 'var edgeTable = new Int32Array' ],
