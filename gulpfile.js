@@ -102,12 +102,15 @@ gulp.task( 'fix-effect-composer', () => {
 ////// CLEAN ////////
 /////////////////////
 
-gulp.task('clean', () => {
+gulp.task( 'clean', () => {
 
-    return del([
+    return del( [
         './builds',
         './sources'
-    ])
+    ] )
+
+} )
+
 /////////////////////
 ///// CONVERT ///////
 /////////////////////
