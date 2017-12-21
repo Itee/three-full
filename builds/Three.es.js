@@ -87599,7 +87599,7 @@ var ShaderPass = function ( shader, textureID ) {
 
 	} else if ( shader ) {
 
-		this.uniforms = UniformsUtils.clone( shader.uniforms );
+		this.uniforms = UniformsUtils$1.clone( shader.uniforms );
 
 		this.material = new ShaderMaterial( {
 
