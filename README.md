@@ -9,7 +9,7 @@ Three.js come with lot of examples files, which are curently not usable as ES6 m
 The purpose of this project is to convert all examples files and includes them as part 
 of the library.
 
-**The version 2.1.0 is now available !!!** It allow multilines export and import statements.
+**The version 2.1.1 is now available !!!**
 
 #### Setup ####
 
@@ -71,6 +71,10 @@ This is the list of unsupported part of example, which cannot be converted yet.
 
 
 #### Change log ####
+
+##### 2.1.1 :
+
+* Fix missing import statement in ShaderPass
 
 ##### 2.1.0 :
 
