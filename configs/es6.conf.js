@@ -131,6 +131,9 @@ module.exports = {
             ]
 
         },
+        ShaderPass: {
+            imports: [ 'UniformsUtils' ]
+        },
         ShaderSkin:                {
             imports: [
                 'UniformsUtils',
