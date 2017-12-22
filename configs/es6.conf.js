@@ -111,6 +111,9 @@ module.exports = {
 				[ 'triTable = new Int32Array', 'var triTable = new Int32Array' ]
 			]
 		},
+		MMDExporter: {
+			imports: [ 'MMDParser' ]
+		},
 		NURBSCurve: {
 			imports: [ 'NURBSUtils' ]
 		},
