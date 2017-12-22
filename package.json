@@ -9,6 +9,7 @@
     "clean": "gulp clean",
     "convert": "gulp convert-three",
     "build": "gulp build-three",
+    "build-test": "rollup -c configs/rollup.tests.conf.js",
     "release": "gulp release"
   },
   "repository": {
