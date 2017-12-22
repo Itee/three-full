@@ -37,10 +37,7 @@ module.exports = {
 		//            output: './src/misc/AnimationClipCreator.js'
 		//        },
 		'3MFLoader': {
-			imports: [
-				'DefaultLoadingManager',
-				'TextDecoder'
-			]
+			imports: [ 'DefaultLoadingManager' ] // + TextDecoder
 		},
 		AdaptiveToneMappingPass: {
 			imports: [
@@ -51,16 +48,19 @@ module.exports = {
 			]
 		},
 		AMFLoader: {
-			imports: [
-				'DefaultLoadingManager',
-				'TextDecoder'
-			]
+			imports: [ 'DefaultLoadingManager' ] // + TextDecoder
 		},
 		AssimpJSONLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'Loader'
+			]
 		},
 		AssimpLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'Loader'
+			]
 		},
 		AWDLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -136,10 +136,7 @@ module.exports = {
 			imports: [ 'CopyShader' ]
 		},
 		FBXLoader: {
-			imports: [
-				'DefaultLoadingManager',
-				'TextDecoder'
-			] // + ZLib
+			imports: [ 'DefaultLoadingManager' ] // + TextDecoder + ZLib
 		},
 		FilmPass: {
 			imports: [
@@ -163,7 +160,7 @@ module.exports = {
 			]
 		},
 		GLTFExporter: {
-			imports: [ 'TextEncoder' ]
+			imports: [ /* import external TextEncoder */ ]
 		},
 		GLTFLoader: {
 			imports: [
@@ -173,9 +170,8 @@ module.exports = {
 				'MeshBasicMaterial',
 				'ShaderLib',
 				'UniformsUtils',
-				'TextDecoder',
 				'AnimationUtils'
-			]
+			] // + TextDecoder
 		},
 		HDRCubeTextureLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -202,9 +198,8 @@ module.exports = {
 				'MeshLambertMaterial',
 				'QuaternionKeyframeTrack',
 				'VectorKeyframeTrack',
-				'AnimationUtils',
-				'TextDecoder'
-			]
+				'AnimationUtils'
+			] // + TextDecoder
 		},
 		LoaderSupport: {
 			imports: [ 'DefaultLoadingManager' ],
@@ -226,13 +221,10 @@ module.exports = {
 		MD2Loader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
-		MMDExporter: {
-			imports: [ 'MMDParser' ]
-		},
+		MMDExporter: { /* import external MMDParser */ },
 		MMDLoader: {
 			imports: [
-				'DefaultLoadingManager',
-				'MMDParser'
+				'DefaultLoadingManager' // + MMDParser
 			]
 		},
 		MTLLoader: {
@@ -292,10 +284,7 @@ module.exports = {
 			exports: [ 'ParametricGeometries' ]
 		},
 		PCDLoader: {
-			imports: [
-				'DefaultLoadingManager',
-				'TextDecoder'
-			]
+			imports: [ 'DefaultLoadingManager' ] // + TextDecoder
 		},
 		PhongNode: {
 			imports: [
@@ -304,10 +293,7 @@ module.exports = {
 			]
 		},
 		PLYLoader: {
-			imports: [
-				'DefaultLoadingManager',
-				'TextDecoder'
-			]
+			imports: [ 'DefaultLoadingManager' ] // + TextDecoder
 		},
 		PVRLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -328,12 +314,17 @@ module.exports = {
 		},
 		SAOPass: {
 			imports: [
-				'SSAOShader',
+				'SAOShader',
 				'DepthLimitedBlurShader',
 				'CopyShader',
 				'UnpackDepthRGBAShader',
 				'BlurShaderUtils',
 				'UniformsUtils'
+			]
+		},
+		SSAOPass: {
+			imports: [
+				'SSAOShader'
 			]
 		},
 		SavePass: {
@@ -386,9 +377,6 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
-		SSAOPass: {
-			imports: [ 'SSAOShader' ]
-		},
 		StandardNode: {
 			imports: [
 				'UniformsUtils',
@@ -396,10 +384,7 @@ module.exports = {
 			]
 		},
 		STLLoader: {
-			imports: [
-				'DefaultLoadingManager',
-				'TextDecoder'
-			]
+			imports: [ 'DefaultLoadingManager' ] // + TextDecoder
 		},
 		SVGLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -447,6 +432,7 @@ module.exports = {
 		Water: {
 			imports: [
 				'UniformsUtils',
+				'UniformsLib',
 				'ShaderChunk'
 			]
 		},
