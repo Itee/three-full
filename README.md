@@ -9,7 +9,7 @@ Three.js come with lot of examples files, which are curently not usable as ES6 m
 The purpose of this project is to convert all examples files and includes them as part 
 of the library.
 
-**The version 2.1.1 is now available !!!**
+**The version 3.0.0 is now available !!!**
 
 #### Setup ####
 
@@ -65,12 +65,28 @@ This is the list of unsupported part of example, which cannot be converted yet.
 * **RectAreaLightUniformsLib.js** //*...*
 * **NRRDLoader.js** //*Import Volume.js*
 * **Volume.js** //*Use Eval !*
+* **Cloth.js** //*Use global variable from html example file !*
 
 #### <a id="bug"></a>Bugs ####
 - Currently it is imposible to build ES module in production, due to an invalid characters that break uglify rollup plugin.
 
 
 #### Change log ####
+
+##### 3.0.0 :
+
+* Cloth.js: is remove due to bad usage of global variable from his html example file
+* Add two new fix for three package in CameraNode and NodeLib
+* Fix almost all missings imports statements
+* Note: 
+   - MMDExporter and MMDLoader need external dependency from https://github.com/takahirox/mmd-parser
+   - FBXLoader and VTKLoader need external dependency from https://github.com/imaya/zlib.js
+   - TTFLoader need external dependency from https://github.com/nodebox/opentype.js
+
+
+##### 2.2.0 :
+
+* Add tests about every file to check their imports
 
 ##### 2.1.1 :
 
