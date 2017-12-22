@@ -191,7 +191,7 @@ function _filterES6Files ( filePaths ) {
 
     let filteredFilesPath = []
 
-    const es6Regex = new RegExp( /import\s?{[\w\s]+}\s?from\s?|export[{\r\n\s]+(\w+[,\r\n\s]*)+[}]?;?/, 'g' )
+    const es6Regex = new RegExp( /(export\s(default|var))|((import|export)[\r\n\s]*(default)?({[\w\s,]+}\s?(from)?))/, 'g' )
 
     let filePath = undefined
     for ( let filePathIndex = 0, numberOfFilePaths = filePaths.length ; filePathIndex < numberOfFilePaths ; filePathIndex++ ) {
