@@ -163,9 +163,6 @@ module.exports = {
 				[ 'this.uuid = Math.generateUUID();', 'this.uuid = _Math.generateUUID();' ]
 			]
 		},
-		GLTFExporter: {
-			imports: [ /* import external TextEncoder */ ]
-		},
 		GLTFLoader: {
 			imports: [
 				'DefaultLoadingManager',
@@ -225,7 +222,6 @@ module.exports = {
 		MD2Loader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
-		MMDExporter: { /* import external MMDParser */ },
 		MMDLoader: {
 			imports: [
 				'DefaultLoadingManager' // + MMDParser
