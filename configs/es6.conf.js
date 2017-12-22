@@ -111,6 +111,9 @@ module.exports = {
 		NURBSCurve: {
 			imports: [ 'NURBSUtils' ]
 		},
+		NURBSSurface: {
+			imports: [ 'NURBSUtils' ]
+		},
 		OBJLoader2: {
 			replacements: [
 				[ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ]
