@@ -86,6 +86,7 @@ var Three = (function (exports) {
 		this.setURLModifier = function ( transform ) {
 
 			urlModifier = transform;
+			return this;
 
 		};
 

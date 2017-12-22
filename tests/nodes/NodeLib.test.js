@@ -11,44 +11,32 @@ var Three = (function (exports) {
 		DEG2RAD: Math.PI / 180,
 		RAD2DEG: 180 / Math.PI,
 
-		generateUUID: function () {
+		generateUUID: ( function () {
 
-			// http://www.broofa.com/Tools/Math.uuid.htm
-			// Replaced .join with string concatenation (@takahirox)
+			// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
 
-			var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split( '' );
-			var rnd = 0, r;
+			var lut = [];
 
-			return function generateUUID() {
+			for ( var i = 0; i < 256; i ++ ) {
 
-				var uuid = '';
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
 
-				for ( var i = 0; i < 36; i ++ ) {
+			}
 
-					if ( i === 8 || i === 13 || i === 18 || i === 23 ) {
+			return function () {
 
-						uuid += '-';
-
-					} else if ( i === 14 ) {
-
-						uuid += '4';
-
-					} else {
-
-						if ( rnd <= 0x02 ) rnd = 0x2000000 + ( Math.random() * 0x1000000 ) | 0;
-						r = rnd & 0xf;
-						rnd = rnd >> 4;
-						uuid += chars[ ( i === 19 ) ? ( r & 0x3 ) | 0x8 : r ];
-
-					}
-
-				}
-
-				return uuid;
+				var d0 = Math.random() * 0xffffffff | 0;
+				var d1 = Math.random() * 0xffffffff | 0;
+				var d2 = Math.random() * 0xffffffff | 0;
+				var d3 = Math.random() * 0xffffffff | 0;
+				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
+					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
+					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
 
 			};
 
-		}(),
+		} )(),
 
 		clamp: function ( value, min, max ) {
 
@@ -989,7 +977,7 @@ var Three = (function (exports) {
 	 * @author sunag / http://www.sunag.com.br/
 	 */
 
-	var NodeLib$1 = {
+	var NodeLib = {
 
 		nodes: {},
 		keywords: {},
@@ -1016,7 +1004,7 @@ var Three = (function (exports) {
 
 		removeKeyword: function( name ) {
 
-			delete this.keywords[ node ];
+			delete this.keywords[ name ];
 
 		},
 
@@ -1056,55 +1044,55 @@ var Three = (function (exports) {
 	//	Keywords
 	//
 
-	NodeLib$1.addKeyword( 'uv', function() {
+	NodeLib.addKeyword( 'uv', function() {
 
 		return new UVNode();
 
 	} );
 
-	NodeLib$1.addKeyword( 'uv2', function() {
+	NodeLib.addKeyword( 'uv2', function() {
 
 		return new UVNode( 1 );
 
 	} );
 
-	NodeLib$1.addKeyword( 'position', function() {
+	NodeLib.addKeyword( 'position', function() {
 
 		return new PositionNode();
 
 	} );
 
-	NodeLib$1.addKeyword( 'worldPosition', function() {
+	NodeLib.addKeyword( 'worldPosition', function() {
 
 		return new PositionNode( PositionNode.WORLD );
 
 	} );
 
-	NodeLib$1.addKeyword( 'normal', function() {
+	NodeLib.addKeyword( 'normal', function() {
 
 		return new NormalNode();
 
 	} );
 
-	NodeLib$1.addKeyword( 'worldNormal', function() {
+	NodeLib.addKeyword( 'worldNormal', function() {
 
 		return new NormalNode( NormalNode.WORLD );
 
 	} );
 
-	NodeLib$1.addKeyword( 'viewPosition', function() {
+	NodeLib.addKeyword( 'viewPosition', function() {
 
 		return new PositionNode( NormalNode.VIEW );
 
 	} );
 
-	NodeLib$1.addKeyword( 'viewNormal', function() {
+	NodeLib.addKeyword( 'viewNormal', function() {
 
 		return new NormalNode( NormalNode.VIEW );
 
 	} );
 
-	NodeLib$1.addKeyword( 'time', function() {
+	NodeLib.addKeyword( 'time', function() {
 
 		return new TimerNode();
 
@@ -1114,13 +1102,13 @@ var Three = (function (exports) {
 	//	Luma
 	//
 
-	NodeLib$1.add( new ConstNode( "vec3 LUMA vec3(0.2125, 0.7154, 0.0721)" ) );
+	NodeLib.add( new ConstNode( "vec3 LUMA vec3(0.2125, 0.7154, 0.0721)" ) );
 
 	//
 	//	NormalMap
 	//
 
-	NodeLib$1.add( new FunctionNode( [
+	NodeLib.add( new FunctionNode( [
 	// Per-Pixel Tangent Space Normal Mapping
 	// http://hacksoflife.blogspot.ch/2009/11/per-pixel-tangent-space-normal-mapping.html
 	"vec3 perturbNormal2Arb( vec3 eye_pos, vec3 surf_norm, vec3 map, vec2 mUv, vec2 scale ) {",
@@ -1142,7 +1130,7 @@ var Three = (function (exports) {
 	//	Noise
 	//
 
-	NodeLib$1.add( new FunctionNode( [
+	NodeLib.add( new FunctionNode( [
 	"float snoise(vec2 co) {",
 	"	return fract( sin( dot(co.xy, vec2(12.9898,78.233) ) ) * 43758.5453 );",
 	"}"
@@ -1152,7 +1140,7 @@ var Three = (function (exports) {
 	//	Hue
 	//
 
-	NodeLib$1.add( new FunctionNode( [
+	NodeLib.add( new FunctionNode( [
 	"vec3 hue_rgb(vec3 rgb, float adjustment) {",
 	"	const mat3 RGBtoYIQ = mat3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263, 0.211456, -0.522591, 0.311135);",
 	"	const mat3 YIQtoRGB = mat3(1.0, 0.9563, 0.6210, 1.0, -0.2721, -0.6474, 1.0, -1.107, 1.7046);",
@@ -1167,7 +1155,7 @@ var Three = (function (exports) {
 	//	Saturation
 	//
 
-	NodeLib$1.add( new FunctionNode( [
+	NodeLib.add( new FunctionNode( [
 	// Algorithm from Chapter 16 of OpenGL Shading Language
 	"vec3 saturation_rgb(vec3 rgb, float adjustment) {",
 	"	vec3 intensity = vec3(dot(rgb, LUMA));",
@@ -1179,7 +1167,7 @@ var Three = (function (exports) {
 	//	Luminance
 	//
 
-	NodeLib$1.add( new FunctionNode( [
+	NodeLib.add( new FunctionNode( [
 	// Algorithm from Chapter 10 of Graphics Shaders
 	"float luminance_rgb(vec3 rgb) {",
 	"	return dot(rgb, LUMA);",
@@ -1190,7 +1178,7 @@ var Three = (function (exports) {
 	//	Vibrance
 	//
 
-	NodeLib$1.add( new FunctionNode( [
+	NodeLib.add( new FunctionNode( [
 	// Shader by Evan Wallace adapted by @lo-th
 	"vec3 vibrance_rgb(vec3 rgb, float adjustment) {",
 	"	float average = (rgb.r + rgb.g + rgb.b) / 3.0;",
@@ -1200,7 +1188,7 @@ var Three = (function (exports) {
 	"}"
 	].join( "\n" ) ) );
 
-	exports.NodeLib = NodeLib$1;
+	exports.NodeLib = NodeLib;
 
 	return exports;
 

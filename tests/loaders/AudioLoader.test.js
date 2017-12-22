@@ -1,6 +1,10 @@
 var Three = (function (exports) {
 	'use strict';
 
+	/**
+	 * @author mrdoob / http://mrdoob.com/
+	 */
+
 	var context;
 
 	var AudioContext = {
@@ -154,6 +158,7 @@ var Three = (function (exports) {
 		this.setURLModifier = function ( transform ) {
 
 			urlModifier = transform;
+			return this;
 
 		};
 
@@ -328,7 +333,7 @@ var Three = (function (exports) {
 
 				request.addEventListener( 'load', function ( event ) {
 
-					var response = event.target.response;
+					var response = this.response;
 
 					Cache.add( url, response );
 

@@ -130,12 +130,13 @@ var Three = (function (exports) {
 		this.setURLModifier = function ( transform ) {
 
 			urlModifier = transform;
+			return this;
 
 		};
 
 	}
 
-	var DefaultLoadingManager$1 = new LoadingManager();
+	var DefaultLoadingManager = new LoadingManager();
 
 	/**
 	 * @author mrdoob / http://mrdoob.com/
@@ -145,7 +146,7 @@ var Three = (function (exports) {
 
 	function FileLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
 	}
 
@@ -304,7 +305,7 @@ var Three = (function (exports) {
 
 				request.addEventListener( 'load', function ( event ) {
 
-					var response = event.target.response;
+					var response = this.response;
 
 					Cache.add( url, response );
 

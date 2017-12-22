@@ -130,12 +130,13 @@ var Three = (function (exports) {
 		this.setURLModifier = function ( transform ) {
 
 			urlModifier = transform;
+			return this;
 
 		};
 
 	}
 
-	var DefaultLoadingManager$1 = new LoadingManager();
+	var DefaultLoadingManager = new LoadingManager();
 
 	/**
 	 * @author mrdoob / http://mrdoob.com/
@@ -145,7 +146,7 @@ var Three = (function (exports) {
 
 	function FileLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
 	}
 
@@ -304,7 +305,7 @@ var Three = (function (exports) {
 
 				request.addEventListener( 'load', function ( event ) {
 
-					var response = event.target.response;
+					var response = this.response;
 
 					Cache.add( url, response );
 
@@ -454,44 +455,32 @@ var Three = (function (exports) {
 		DEG2RAD: Math.PI / 180,
 		RAD2DEG: 180 / Math.PI,
 
-		generateUUID: function () {
+		generateUUID: ( function () {
 
-			// http://www.broofa.com/Tools/Math.uuid.htm
-			// Replaced .join with string concatenation (@takahirox)
+			// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
 
-			var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split( '' );
-			var rnd = 0, r;
+			var lut = [];
 
-			return function generateUUID() {
+			for ( var i = 0; i < 256; i ++ ) {
 
-				var uuid = '';
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
 
-				for ( var i = 0; i < 36; i ++ ) {
+			}
 
-					if ( i === 8 || i === 13 || i === 18 || i === 23 ) {
+			return function () {
 
-						uuid += '-';
-
-					} else if ( i === 14 ) {
-
-						uuid += '4';
-
-					} else {
-
-						if ( rnd <= 0x02 ) rnd = 0x2000000 + ( Math.random() * 0x1000000 ) | 0;
-						r = rnd & 0xf;
-						rnd = rnd >> 4;
-						uuid += chars[ ( i === 19 ) ? ( r & 0x3 ) | 0x8 : r ];
-
-					}
-
-				}
-
-				return uuid;
+				var d0 = Math.random() * 0xffffffff | 0;
+				var d1 = Math.random() * 0xffffffff | 0;
+				var d2 = Math.random() * 0xffffffff | 0;
+				var d3 = Math.random() * 0xffffffff | 0;
+				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
+					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
+					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
 
 			};
 
-		}(),
+		} )(),
 
 		clamp: function ( value, min, max ) {
 
@@ -3804,7 +3793,9 @@ var Three = (function (exports) {
 	Object3D.DefaultUp = new Vector3( 0, 1, 0 );
 	Object3D.DefaultMatrixAutoUpdate = true;
 
-	Object.assign( Object3D.prototype, EventDispatcher.prototype, {
+	Object3D.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Object3D,
 
 		isObject3D: true,
 
@@ -4332,7 +4323,8 @@ var Three = (function (exports) {
 					geometries: {},
 					materials: {},
 					textures: {},
-					images: {}
+					images: {},
+					shapes: {}
 				};
 
 				output.metadata = {
@@ -4375,6 +4367,30 @@ var Three = (function (exports) {
 			if ( this.geometry !== undefined ) {
 
 				object.geometry = serialize( meta.geometries, this.geometry );
+
+				var parameters = this.geometry.parameters;
+
+				if ( parameters !== undefined && parameters.shapes !== undefined ) {
+
+					var shapes = parameters.shapes;
+
+					if ( Array.isArray( shapes ) ) {
+
+						for ( var i = 0, l = shapes.length; i < l; i ++ ) {
+
+							var shape = shapes[ i ];
+
+							serialize( meta.shapes, shape );
+
+						}
+
+					} else {
+
+						serialize( meta.shapes, shapes );
+
+					}
+
+				}
 
 			}
 
@@ -4420,11 +4436,13 @@ var Three = (function (exports) {
 				var materials = extractFromCache( meta.materials );
 				var textures = extractFromCache( meta.textures );
 				var images = extractFromCache( meta.images );
+				var shapes = extractFromCache( meta.shapes );
 
 				if ( geometries.length > 0 ) output.geometries = geometries;
 				if ( materials.length > 0 ) output.materials = materials;
 				if ( textures.length > 0 ) output.textures = textures;
 				if ( images.length > 0 ) output.images = images;
+				if ( shapes.length > 0 ) output.shapes = shapes;
 
 			}
 
@@ -4517,7 +4535,9 @@ var Three = (function (exports) {
 
 	Group.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
-		constructor: Group
+		constructor: Group,
+
+		isGroup: true
 
 	} );
 
@@ -4700,7 +4720,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( Material.prototype, EventDispatcher.prototype, {
+	Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Material,
 
 		isMaterial: true,
 
@@ -9344,7 +9366,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( BufferGeometry.prototype, EventDispatcher.prototype, {
+	BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: BufferGeometry,
 
 		isBufferGeometry: true,
 
@@ -10527,7 +10551,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( Geometry.prototype, EventDispatcher.prototype, {
+	Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Geometry,
 
 		isGeometry: true,
 
@@ -13441,7 +13467,7 @@ var Three = (function (exports) {
 
 	function ImageLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
 	}
 
@@ -13595,17 +13621,7 @@ var Three = (function (exports) {
 	Texture.DEFAULT_IMAGE = undefined;
 	Texture.DEFAULT_MAPPING = UVMapping;
 
-	Object.defineProperty( Texture.prototype, "needsUpdate", {
-
-		set: function ( value ) {
-
-			if ( value === true ) this.version ++;
-
-		}
-
-	} );
-
-	Object.assign( Texture.prototype, EventDispatcher.prototype, {
+	Texture.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
 
 		constructor: Texture,
 
@@ -13850,13 +13866,23 @@ var Three = (function (exports) {
 
 	} );
 
+	Object.defineProperty( Texture.prototype, "needsUpdate", {
+
+		set: function ( value ) {
+
+			if ( value === true ) this.version ++;
+
+		}
+
+	} );
+
 	/**
 	 * @author mrdoob / http://mrdoob.com/
 	 */
 
 	function TextureLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
 	}
 
@@ -13866,12 +13892,15 @@ var Three = (function (exports) {
 
 		load: function ( url, onLoad, onProgress, onError ) {
 
+			var texture = new Texture();
+
 			var loader = new ImageLoader( this.manager );
 			loader.setCrossOrigin( this.crossOrigin );
 			loader.setPath( this.path );
 
-			var texture = new Texture();
-			texture.image = loader.load( url, function () {
+			loader.load( url, function ( image ) {
+
+				texture.image = image;
 
 				// JPEGs can't have an alpha channel, so memory can be saved by storing them as RGB.
 				var isJPEG = url.search( /\.(jpg|jpeg)$/ ) > 0 || url.search( /^data\:image\/jpeg/ ) === 0;
@@ -13907,6 +13936,50 @@ var Three = (function (exports) {
 
 	} );
 
+	/**
+	 * @author Don McCurdy / https://www.donmccurdy.com
+	 */
+
+	var LoaderUtils = {
+
+		decodeText: function ( array ) {
+
+			if ( typeof TextDecoder !== 'undefined' ) {
+
+				return new TextDecoder().decode( array );
+
+			}
+
+			// Avoid the String.fromCharCode.apply(null, array) shortcut, which
+			// throws a "maximum call stack size exceeded" error for large arrays.
+
+			var s = '';
+
+			for ( var i = 0, il = array.length; i < il; i ++ ) {
+
+				// Implicitly assumes little-endian.
+				s += String.fromCharCode( array[ i ] );
+
+			}
+
+			return s;
+
+		},
+
+		extractUrlBase: function ( url ) {
+
+			var parts = url.split( '/' );
+
+			if ( parts.length === 1 ) return './';
+
+			parts.pop();
+
+			return parts.join( '/' ) + '/';
+
+		}
+
+	};
+
 	/*
 	 * Autodesk 3DS threee.js file loader, based on lib3ds.
 	 *
@@ -13931,8 +14004,6 @@ var Three = (function (exports) {
 		this.materials = [];
 		this.meshes = [];
 
-		this.path = "";
-
 	};
 
 	TDSLoader.prototype = {
@@ -13952,13 +14023,15 @@ var Three = (function (exports) {
 
 			var scope = this;
 
+			var path = this.path !== undefined ? this.path : LoaderUtils.extractUrlBase( url );
+
 			var loader = new FileLoader( this.manager );
 
 			loader.setResponseType( 'arraybuffer' );
 
 			loader.load( url, function ( data ) {
 
-				onLoad( scope.parse( data ) );
+				onLoad( scope.parse( data, path ) );
 
 			}, onProgress, onError );
 
@@ -13972,14 +14045,14 @@ var Three = (function (exports) {
 		 * @param {String} path Path for external resources.
 		 * @return {Object3D} Group loaded from 3ds file.
 		 */
-		parse: function ( arraybuffer ) {
+		parse: function ( arraybuffer, path ) {
 
 			this.group = new Group();
 			this.position = 0;
 			this.materials = [];
 			this.meshes = [];
 
-			this.readFile( arraybuffer );
+			this.readFile( arraybuffer, path );
 
 			for ( var i = 0; i < this.meshes.length; i ++ ) {
 
@@ -13997,7 +14070,7 @@ var Three = (function (exports) {
 		 * @method readFile
 		 * @param {ArrayBuffer} arraybuffer Arraybuffer data to be loaded.
 		 */
-		readFile: function ( arraybuffer ) {
+		readFile: function ( arraybuffer, path ) {
 
 			var data = new DataView( arraybuffer );
 			var chunk = this.readChunk( data );
@@ -14016,7 +14089,7 @@ var Three = (function (exports) {
 					} else if ( next === MDATA ) {
 
 						this.resetPosition( data );
-						this.readMeshData( data );
+						this.readMeshData( data, path );
 
 					} else {
 
@@ -14040,7 +14113,7 @@ var Three = (function (exports) {
 		 * @method readMeshData
 		 * @param {Dataview} data Dataview in use.
 		 */
-		readMeshData: function ( data ) {
+		readMeshData: function ( data, path ) {
 
 			var chunk = this.readChunk( data );
 			var next = this.nextChunk( data, chunk );
@@ -14068,7 +14141,7 @@ var Three = (function (exports) {
 
 					this.debugMessage( 'Material' );
 					this.resetPosition( data );
-					this.readMaterialEntry( data );
+					this.readMaterialEntry( data, path );
 
 				} else {
 
@@ -14124,7 +14197,7 @@ var Three = (function (exports) {
 		 * @method readMaterialEntry
 		 * @param {Dataview} data Dataview in use.
 		 */
-		readMaterialEntry: function ( data ) {
+		readMaterialEntry: function ( data, path ) {
 
 			var chunk = this.readChunk( data );
 			var next = this.nextChunk( data, chunk );
@@ -14183,25 +14256,25 @@ var Three = (function (exports) {
 
 					this.debugMessage( '   ColorMap' );
 					this.resetPosition( data );
-					material.map = this.readMap( data );
+					material.map = this.readMap( data, path );
 
 				} else if ( next === MAT_BUMPMAP ) {
 
 					this.debugMessage( '   BumpMap' );
 					this.resetPosition( data );
-					material.bumpMap = this.readMap( data );
+					material.bumpMap = this.readMap( data, path );
 
 				} else if ( next === MAT_OPACMAP ) {
 
 					this.debugMessage( '   OpacityMap' );
 					this.resetPosition( data );
-					material.alphaMap = this.readMap( data );
+					material.alphaMap = this.readMap( data, path );
 
 				} else if ( next === MAT_SPECMAP ) {
 
 					this.debugMessage( '   SpecularMap' );
 					this.resetPosition( data );
-					material.specularMap = this.readMap( data );
+					material.specularMap = this.readMap( data, path );
 
 				} else {
 
@@ -14470,14 +14543,14 @@ var Three = (function (exports) {
 		 * @param {Dataview} data Dataview in use.
 		 * @return {Texture} Texture read from this data chunk.
 		 */
-		readMap: function ( data ) {
+		readMap: function ( data, path ) {
 
 			var chunk = this.readChunk( data );
 			var next = this.nextChunk( data, chunk );
 			var texture = {};
 
-			var loader = new TextureLoader();
-			loader.setPath( this.path );
+			var loader = new TextureLoader( this.manager );
+			loader.setPath( path );
 
 			while ( next !== 0 ) {
 
@@ -14486,7 +14559,7 @@ var Three = (function (exports) {
 					var name = this.readString( data, 128 );
 					texture = loader.load( name );
 
-					this.debugMessage( '      File: ' + this.path + name );
+					this.debugMessage( '      File: ' + path + name );
 
 				} else if ( next === MAT_MAP_UOFFSET ) {
 
@@ -14807,11 +14880,7 @@ var Three = (function (exports) {
 		 */
 		setPath: function ( path ) {
 
-			if ( path !== undefined ) {
-
-				this.path = path;
-
-			}
+			this.path = path;
 
 			return this;
 

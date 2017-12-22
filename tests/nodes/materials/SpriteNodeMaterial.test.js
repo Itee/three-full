@@ -209,44 +209,32 @@ var Three = (function (exports) {
 		DEG2RAD: Math.PI / 180,
 		RAD2DEG: 180 / Math.PI,
 
-		generateUUID: function () {
+		generateUUID: ( function () {
 
-			// http://www.broofa.com/Tools/Math.uuid.htm
-			// Replaced .join with string concatenation (@takahirox)
+			// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
 
-			var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split( '' );
-			var rnd = 0, r;
+			var lut = [];
 
-			return function generateUUID() {
+			for ( var i = 0; i < 256; i ++ ) {
 
-				var uuid = '';
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
 
-				for ( var i = 0; i < 36; i ++ ) {
+			}
 
-					if ( i === 8 || i === 13 || i === 18 || i === 23 ) {
+			return function () {
 
-						uuid += '-';
-
-					} else if ( i === 14 ) {
-
-						uuid += '4';
-
-					} else {
-
-						if ( rnd <= 0x02 ) rnd = 0x2000000 + ( Math.random() * 0x1000000 ) | 0;
-						r = rnd & 0xf;
-						rnd = rnd >> 4;
-						uuid += chars[ ( i === 19 ) ? ( r & 0x3 ) | 0x8 : r ];
-
-					}
-
-				}
-
-				return uuid;
+				var d0 = Math.random() * 0xffffffff | 0;
+				var d1 = Math.random() * 0xffffffff | 0;
+				var d2 = Math.random() * 0xffffffff | 0;
+				var d3 = Math.random() * 0xffffffff | 0;
+				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
+					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
+					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
 
 			};
 
-		}(),
+		} )(),
 
 		clamp: function ( value, min, max ) {
 
@@ -424,7 +412,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( Material.prototype, EventDispatcher.prototype, {
+	Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Material,
 
 		isMaterial: true,
 
@@ -1319,7 +1309,7 @@ var Three = (function (exports) {
 	 * Uniform Utilities
 	 */
 
-	var UniformsUtils$1 = {
+	var UniformsUtils = {
 
 		merge: function ( uniforms ) {
 
@@ -1469,7 +1459,7 @@ var Three = (function (exports) {
 		this.fragmentShader = source.fragmentShader;
 		this.vertexShader = source.vertexShader;
 
-		this.uniforms = UniformsUtils$1.clone( source.uniforms );
+		this.uniforms = UniformsUtils.clone( source.uniforms );
 
 		this.defines = source.defines;
 
@@ -6442,17 +6432,7 @@ var Three = (function (exports) {
 	Texture.DEFAULT_IMAGE = undefined;
 	Texture.DEFAULT_MAPPING = UVMapping;
 
-	Object.defineProperty( Texture.prototype, "needsUpdate", {
-
-		set: function ( value ) {
-
-			if ( value === true ) this.version ++;
-
-		}
-
-	} );
-
-	Object.assign( Texture.prototype, EventDispatcher.prototype, {
+	Texture.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
 
 		constructor: Texture,
 
@@ -6697,6 +6677,16 @@ var Three = (function (exports) {
 
 	} );
 
+	Object.defineProperty( Texture.prototype, "needsUpdate", {
+
+		set: function ( value ) {
+
+			if ( value === true ) this.version ++;
+
+		}
+
+	} );
+
 	/**
 	 * @author mrdoob / http://mrdoob.com/
 	 */
@@ -6732,6 +6722,463 @@ var Three = (function (exports) {
 		}
 
 	} );
+
+	/**
+	 * @author sunag / http://www.sunag.com.br/
+	 */
+
+	var UVNode = function( index ) {
+
+		TempNode.call( this, 'v2', { shared: false } );
+
+		this.index = index || 0;
+
+	};
+
+	UVNode.vertexDict = [ 'uv', 'uv2' ];
+	UVNode.fragmentDict = [ 'vUv', 'vUv2' ];
+
+	UVNode.prototype = Object.create( TempNode.prototype );
+	UVNode.prototype.constructor = UVNode;
+
+	UVNode.prototype.generate = function( builder, output ) {
+
+		var material = builder.material;
+		var result;
+
+		material.requestAttribs.uv[ this.index ] = true;
+
+		if ( builder.isShader( 'vertex' ) ) result = UVNode.vertexDict[ this.index ];
+		else result = UVNode.fragmentDict[ this.index ];
+
+		return builder.format( result, this.getType( builder ), output );
+
+	};
+
+	/**
+	 * @author sunag / http://www.sunag.com.br/
+	 */
+
+	var NormalNode = function( scope ) {
+
+		TempNode.call( this, 'v3' );
+
+		this.scope = scope || NormalNode.LOCAL;
+
+	};
+
+	NormalNode.LOCAL = 'local';
+	NormalNode.WORLD = 'world';
+	NormalNode.VIEW = 'view';
+
+	NormalNode.prototype = Object.create( TempNode.prototype );
+	NormalNode.prototype.constructor = NormalNode;
+
+	NormalNode.prototype.isShared = function( builder ) {
+
+		switch ( this.scope ) {
+			case NormalNode.WORLD:
+				return true;
+		}
+
+		return false;
+
+	};
+
+	NormalNode.prototype.generate = function( builder, output ) {
+
+		var material = builder.material;
+		var result;
+
+		switch ( this.scope ) {
+
+			case NormalNode.LOCAL:
+
+				material.requestAttribs.normal = true;
+
+				if ( builder.isShader( 'vertex' ) ) result = 'normal';
+				else result = 'vObjectNormal';
+
+				break;
+
+			case NormalNode.WORLD:
+
+				material.requestAttribs.worldNormal = true;
+
+				if ( builder.isShader( 'vertex' ) ) result = '( modelMatrix * vec4( objectNormal, 0.0 ) ).xyz';
+				else result = 'vWNormal';
+
+				break;
+
+			case NormalNode.VIEW:
+
+				result = 'vNormal';
+
+				break;
+
+		}
+
+		return builder.format( result, this.getType( builder ), output );
+
+	};
+
+	/**
+	 * @author sunag / http://www.sunag.com.br/
+	 */
+
+	var FloatNode = function( value ) {
+
+		InputNode.call( this, 'fv1' );
+
+		this.value = [ value || 0 ];
+
+	};
+
+	FloatNode.prototype = Object.create( InputNode.prototype );
+	FloatNode.prototype.constructor = FloatNode;
+
+	Object.defineProperties( FloatNode.prototype, {
+		number: {
+			get: function() {
+
+				return this.value[ 0 ];
+
+			},
+			set: function( val ) {
+
+				this.value[ 0 ] = val;
+
+			}
+		}
+	} );
+
+	/**
+	 * @author sunag / http://www.sunag.com.br/
+	 */
+
+	var TimerNode = function( value, scale ) {
+
+		FloatNode.call( this, value );
+
+		this.requestUpdate = true;
+
+		this.scale = scale !== undefined ? scale : 1;
+
+	};
+
+	TimerNode.prototype = Object.create( FloatNode.prototype );
+	TimerNode.prototype.constructor = TimerNode;
+
+	TimerNode.prototype.updateFrame = function( delta ) {
+
+		this.number += delta * this.scale;
+
+	};
+
+	/**
+	 * @author sunag / http://www.sunag.com.br/
+	 */
+
+	var ConstNode = function( src, useDefine ) {
+
+		TempNode.call( this );
+
+		this.eval( src || ConstNode.PI, useDefine );
+
+	};
+
+	ConstNode.PI = 'PI';
+	ConstNode.PI2 = 'PI2';
+	ConstNode.RECIPROCAL_PI = 'RECIPROCAL_PI';
+	ConstNode.RECIPROCAL_PI2 = 'RECIPROCAL_PI2';
+	ConstNode.LOG2 = 'LOG2';
+	ConstNode.EPSILON = 'EPSILON';
+
+	ConstNode.prototype = Object.create( TempNode.prototype );
+	ConstNode.prototype.constructor = ConstNode;
+
+	ConstNode.prototype.getType = function( builder ) {
+
+		return builder.getTypeByFormat( this.type );
+
+	};
+
+	ConstNode.prototype.eval = function( src, useDefine ) {
+
+		src = ( src || '' ).trim();
+
+		var name, type, value;
+
+		var rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\=?\s?(.*?)(\;|$)/i;
+		var match = src.match( rDeclaration );
+
+		this.useDefine = useDefine;
+
+		if ( match && match.length > 1 ) {
+
+			type = match[ 1 ];
+			name = match[ 2 ];
+			value = match[ 3 ];
+
+		} else {
+
+			name = src;
+			type = 'fv1';
+
+		}
+
+		this.name = name;
+		this.type = type;
+		this.value = value;
+
+	};
+
+	ConstNode.prototype.build = function( builder, output ) {
+
+		if ( output === 'source' ) {
+
+			if ( this.value ) {
+
+				if ( this.useDefine ) {
+
+					return '#define ' + this.name + ' ' + this.value;
+
+				}
+
+				return 'const ' + this.type + ' ' + this.name + ' = ' + this.value + ';';
+
+			}
+
+		} else {
+
+			builder.include( this );
+
+			return builder.format( this.name, this.getType( builder ), output );
+
+		}
+
+	};
+
+	ConstNode.prototype.generate = function( builder, output ) {
+
+		return builder.format( this.name, this.getType( builder ), output );
+
+	};
+
+	/**
+	 * @author sunag / http://www.sunag.com.br/
+	 */
+
+	var NodeLib = {
+
+		nodes: {},
+		keywords: {},
+
+		add: function( node ) {
+
+			this.nodes[ node.name ] = node;
+
+		},
+
+		addKeyword: function( name, callback, cache ) {
+
+			cache = cache !== undefined ? cache : true;
+
+			this.keywords[ name ] = { callback : callback, cache : cache };
+
+		},
+
+		remove: function( node ) {
+
+			delete this.nodes[ node.name ];
+
+		},
+
+		removeKeyword: function( name ) {
+
+			delete this.keywords[ name ];
+
+		},
+
+		get: function( name ) {
+
+			return this.nodes[ name ];
+
+		},
+
+		getKeyword: function( name, material ) {
+
+			return this.keywords[ name ].callback.call( this, material );
+
+		},
+
+		getKeywordData: function( name ) {
+
+			return this.keywords[ name ];
+
+		},
+
+		contains: function( name ) {
+
+			return this.nodes[ name ] != undefined;
+
+		},
+
+		containsKeyword: function( name ) {
+
+			return this.keywords[ name ] != undefined;
+
+		}
+
+	};
+
+	//
+	//	Keywords
+	//
+
+	NodeLib.addKeyword( 'uv', function() {
+
+		return new UVNode();
+
+	} );
+
+	NodeLib.addKeyword( 'uv2', function() {
+
+		return new UVNode( 1 );
+
+	} );
+
+	NodeLib.addKeyword( 'position', function() {
+
+		return new PositionNode();
+
+	} );
+
+	NodeLib.addKeyword( 'worldPosition', function() {
+
+		return new PositionNode( PositionNode.WORLD );
+
+	} );
+
+	NodeLib.addKeyword( 'normal', function() {
+
+		return new NormalNode();
+
+	} );
+
+	NodeLib.addKeyword( 'worldNormal', function() {
+
+		return new NormalNode( NormalNode.WORLD );
+
+	} );
+
+	NodeLib.addKeyword( 'viewPosition', function() {
+
+		return new PositionNode( NormalNode.VIEW );
+
+	} );
+
+	NodeLib.addKeyword( 'viewNormal', function() {
+
+		return new NormalNode( NormalNode.VIEW );
+
+	} );
+
+	NodeLib.addKeyword( 'time', function() {
+
+		return new TimerNode();
+
+	} );
+
+	//
+	//	Luma
+	//
+
+	NodeLib.add( new ConstNode( "vec3 LUMA vec3(0.2125, 0.7154, 0.0721)" ) );
+
+	//
+	//	NormalMap
+	//
+
+	NodeLib.add( new FunctionNode( [
+	// Per-Pixel Tangent Space Normal Mapping
+	// http://hacksoflife.blogspot.ch/2009/11/per-pixel-tangent-space-normal-mapping.html
+	"vec3 perturbNormal2Arb( vec3 eye_pos, vec3 surf_norm, vec3 map, vec2 mUv, vec2 scale ) {",
+	"	vec3 q0 = dFdx( eye_pos );",
+	"	vec3 q1 = dFdy( eye_pos );",
+	"	vec2 st0 = dFdx( mUv.st );",
+	"	vec2 st1 = dFdy( mUv.st );",
+	"	vec3 S = normalize( q0 * st1.t - q1 * st0.t );",
+	"	vec3 T = normalize( -q0 * st1.s + q1 * st0.s );",
+	"	vec3 N = normalize( surf_norm );",
+	"	vec3 mapN = map * 2.0 - 1.0;",
+	"	mapN.xy = scale * mapN.xy;",
+	"	mat3 tsn = mat3( S, T, N );",
+	"	return normalize( tsn * mapN );",
+	"}"
+	].join( "\n" ), null, { derivatives: true } ) );
+
+	//
+	//	Noise
+	//
+
+	NodeLib.add( new FunctionNode( [
+	"float snoise(vec2 co) {",
+	"	return fract( sin( dot(co.xy, vec2(12.9898,78.233) ) ) * 43758.5453 );",
+	"}"
+	].join( "\n" ) ) );
+
+	//
+	//	Hue
+	//
+
+	NodeLib.add( new FunctionNode( [
+	"vec3 hue_rgb(vec3 rgb, float adjustment) {",
+	"	const mat3 RGBtoYIQ = mat3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263, 0.211456, -0.522591, 0.311135);",
+	"	const mat3 YIQtoRGB = mat3(1.0, 0.9563, 0.6210, 1.0, -0.2721, -0.6474, 1.0, -1.107, 1.7046);",
+	"	vec3 yiq = RGBtoYIQ * rgb;",
+	"	float hue = atan(yiq.z, yiq.y) + adjustment;",
+	"	float chroma = sqrt(yiq.z * yiq.z + yiq.y * yiq.y);",
+	"	return YIQtoRGB * vec3(yiq.x, chroma * cos(hue), chroma * sin(hue));",
+	"}"
+	].join( "\n" ) ) );
+
+	//
+	//	Saturation
+	//
+
+	NodeLib.add( new FunctionNode( [
+	// Algorithm from Chapter 16 of OpenGL Shading Language
+	"vec3 saturation_rgb(vec3 rgb, float adjustment) {",
+	"	vec3 intensity = vec3(dot(rgb, LUMA));",
+	"	return mix(intensity, rgb, adjustment);",
+	"}"
+	].join( "\n" ) ) );
+
+	//
+	//	Luminance
+	//
+
+	NodeLib.add( new FunctionNode( [
+	// Algorithm from Chapter 10 of Graphics Shaders
+	"float luminance_rgb(vec3 rgb) {",
+	"	return dot(rgb, LUMA);",
+	"}"
+	].join( "\n" ) ) );
+
+	//
+	//	Vibrance
+	//
+
+	NodeLib.add( new FunctionNode( [
+	// Shader by Evan Wallace adapted by @lo-th
+	"vec3 vibrance_rgb(vec3 rgb, float adjustment) {",
+	"	float average = (rgb.r + rgb.g + rgb.b) / 3.0;",
+	"	float mx = max(rgb.r, max(rgb.g, rgb.b));",
+	"	float amt = (mx - average) * (-3.0 * adjustment);",
+	"	return mix(rgb.rgb, vec3(mx), amt);",
+	"}"
+	].join( "\n" ) ) );
 
 	/**
 	 * @author sunag / http://www.sunag.com.br/
@@ -6934,96 +7381,6 @@ var Three = (function (exports) {
 		}
 
 		this.value = src;
-
-	};
-
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var ConstNode = function( src, useDefine ) {
-
-		TempNode.call( this );
-
-		this.eval( src || ConstNode.PI, useDefine );
-
-	};
-
-	ConstNode.PI = 'PI';
-	ConstNode.PI2 = 'PI2';
-	ConstNode.RECIPROCAL_PI = 'RECIPROCAL_PI';
-	ConstNode.RECIPROCAL_PI2 = 'RECIPROCAL_PI2';
-	ConstNode.LOG2 = 'LOG2';
-	ConstNode.EPSILON = 'EPSILON';
-
-	ConstNode.prototype = Object.create( TempNode.prototype );
-	ConstNode.prototype.constructor = ConstNode;
-
-	ConstNode.prototype.getType = function( builder ) {
-
-		return builder.getTypeByFormat( this.type );
-
-	};
-
-	ConstNode.prototype.eval = function( src, useDefine ) {
-
-		src = ( src || '' ).trim();
-
-		var name, type, value;
-
-		var rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\=?\s?(.*?)(\;|$)/i;
-		var match = src.match( rDeclaration );
-
-		this.useDefine = useDefine;
-
-		if ( match && match.length > 1 ) {
-
-			type = match[ 1 ];
-			name = match[ 2 ];
-			value = match[ 3 ];
-
-		} else {
-
-			name = src;
-			type = 'fv1';
-
-		}
-
-		this.name = name;
-		this.type = type;
-		this.value = value;
-
-	};
-
-	ConstNode.prototype.build = function( builder, output ) {
-
-		if ( output === 'source' ) {
-
-			if ( this.value ) {
-
-				if ( this.useDefine ) {
-
-					return '#define ' + this.name + ' ' + this.value;
-
-				}
-
-				return 'const ' + this.type + ' ' + this.name + ' = ' + this.value + ';';
-
-			}
-
-		} else {
-
-			builder.include( this );
-
-			return builder.format( this.name, this.getType( builder ), output );
-
-		}
-
-	};
-
-	ConstNode.prototype.generate = function( builder, output ) {
-
-		return builder.format( this.name, this.getType( builder ), output );
 
 	};
 
@@ -7592,6 +7949,189 @@ var Three = (function (exports) {
 		if ( source ) {
 
 			included.src = source;
+
+		}
+
+	};
+
+	/**
+	 * Uniforms library for shared webgl shaders
+	 */
+
+	var UniformsLib = {
+
+		common: {
+
+			diffuse: { value: new Color( 0xeeeeee ) },
+			opacity: { value: 1.0 },
+
+			map: { value: null },
+			uvTransform: { value: new Matrix3() },
+
+			alphaMap: { value: null },
+
+		},
+
+		specularmap: {
+
+			specularMap: { value: null },
+
+		},
+
+		envmap: {
+
+			envMap: { value: null },
+			flipEnvMap: { value: - 1 },
+			reflectivity: { value: 1.0 },
+			refractionRatio: { value: 0.98 }
+
+		},
+
+		aomap: {
+
+			aoMap: { value: null },
+			aoMapIntensity: { value: 1 }
+
+		},
+
+		lightmap: {
+
+			lightMap: { value: null },
+			lightMapIntensity: { value: 1 }
+
+		},
+
+		emissivemap: {
+
+			emissiveMap: { value: null }
+
+		},
+
+		bumpmap: {
+
+			bumpMap: { value: null },
+			bumpScale: { value: 1 }
+
+		},
+
+		normalmap: {
+
+			normalMap: { value: null },
+			normalScale: { value: new Vector2( 1, 1 ) }
+
+		},
+
+		displacementmap: {
+
+			displacementMap: { value: null },
+			displacementScale: { value: 1 },
+			displacementBias: { value: 0 }
+
+		},
+
+		roughnessmap: {
+
+			roughnessMap: { value: null }
+
+		},
+
+		metalnessmap: {
+
+			metalnessMap: { value: null }
+
+		},
+
+		gradientmap: {
+
+			gradientMap: { value: null }
+
+		},
+
+		fog: {
+
+			fogDensity: { value: 0.00025 },
+			fogNear: { value: 1 },
+			fogFar: { value: 2000 },
+			fogColor: { value: new Color( 0xffffff ) }
+
+		},
+
+		lights: {
+
+			ambientLightColor: { value: [] },
+
+			directionalLights: { value: [], properties: {
+				direction: {},
+				color: {},
+
+				shadow: {},
+				shadowBias: {},
+				shadowRadius: {},
+				shadowMapSize: {}
+			} },
+
+			directionalShadowMap: { value: [] },
+			directionalShadowMatrix: { value: [] },
+
+			spotLights: { value: [], properties: {
+				color: {},
+				position: {},
+				direction: {},
+				distance: {},
+				coneCos: {},
+				penumbraCos: {},
+				decay: {},
+
+				shadow: {},
+				shadowBias: {},
+				shadowRadius: {},
+				shadowMapSize: {}
+			} },
+
+			spotShadowMap: { value: [] },
+			spotShadowMatrix: { value: [] },
+
+			pointLights: { value: [], properties: {
+				color: {},
+				position: {},
+				decay: {},
+				distance: {},
+
+				shadow: {},
+				shadowBias: {},
+				shadowRadius: {},
+				shadowMapSize: {},
+				shadowCameraNear: {},
+				shadowCameraFar: {}
+			} },
+
+			pointShadowMap: { value: [] },
+			pointShadowMatrix: { value: [] },
+
+			hemisphereLights: { value: [], properties: {
+				direction: {},
+				skyColor: {},
+				groundColor: {}
+			} },
+
+			// TODO (abelnation): RectAreaLight BRDF data needs to be moved from example to main src
+			rectAreaLights: { value: [], properties: {
+				color: {},
+				position: {},
+				width: {},
+				height: {}
+			} }
+
+		},
+
+		points: {
+
+			diffuse: { value: new Color( 0xeeeeee ) },
+			opacity: { value: 1.0 },
+			size: { value: 1.0 },
+			scale: { value: 1.0 },
+			map: { value: null },
+			uvTransform: { value: new Matrix3() }
 
 		}
 

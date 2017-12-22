@@ -1,7 +1,7 @@
 var Three = (function (exports) {
 	'use strict';
 
-	var REVISION = '88';
+	var REVISION = '89';
 
 	var CullFaceNone = 0;
 	var CullFaceBack = 1;
@@ -137,44 +137,32 @@ var Three = (function (exports) {
 		DEG2RAD: Math.PI / 180,
 		RAD2DEG: 180 / Math.PI,
 
-		generateUUID: function () {
+		generateUUID: ( function () {
 
-			// http://www.broofa.com/Tools/Math.uuid.htm
-			// Replaced .join with string concatenation (@takahirox)
+			// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
 
-			var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split( '' );
-			var rnd = 0, r;
+			var lut = [];
 
-			return function generateUUID() {
+			for ( var i = 0; i < 256; i ++ ) {
 
-				var uuid = '';
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
 
-				for ( var i = 0; i < 36; i ++ ) {
+			}
 
-					if ( i === 8 || i === 13 || i === 18 || i === 23 ) {
+			return function () {
 
-						uuid += '-';
-
-					} else if ( i === 14 ) {
-
-						uuid += '4';
-
-					} else {
-
-						if ( rnd <= 0x02 ) rnd = 0x2000000 + ( Math.random() * 0x1000000 ) | 0;
-						r = rnd & 0xf;
-						rnd = rnd >> 4;
-						uuid += chars[ ( i === 19 ) ? ( r & 0x3 ) | 0x8 : r ];
-
-					}
-
-				}
-
-				return uuid;
+				var d0 = Math.random() * 0xffffffff | 0;
+				var d1 = Math.random() * 0xffffffff | 0;
+				var d2 = Math.random() * 0xffffffff | 0;
+				var d3 = Math.random() * 0xffffffff | 0;
+				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
+					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
+					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
 
 			};
 
-		}(),
+		} )(),
 
 		clamp: function ( value, min, max ) {
 
@@ -3557,17 +3545,7 @@ var Three = (function (exports) {
 	Texture.DEFAULT_IMAGE = undefined;
 	Texture.DEFAULT_MAPPING = UVMapping;
 
-	Object.defineProperty( Texture.prototype, "needsUpdate", {
-
-		set: function ( value ) {
-
-			if ( value === true ) this.version ++;
-
-		}
-
-	} );
-
-	Object.assign( Texture.prototype, EventDispatcher.prototype, {
+	Texture.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
 
 		constructor: Texture,
 
@@ -3807,6 +3785,16 @@ var Three = (function (exports) {
 				uv.y = 1 - uv.y;
 
 			}
+
+		}
+
+	} );
+
+	Object.defineProperty( Texture.prototype, "needsUpdate", {
+
+		set: function ( value ) {
+
+			if ( value === true ) this.version ++;
 
 		}
 
@@ -7460,7 +7448,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( WebGLRenderTarget.prototype, EventDispatcher.prototype, {
+	WebGLRenderTarget.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: WebGLRenderTarget,
 
 		isWebGLRenderTarget: true,
 
@@ -7576,7 +7566,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( Material.prototype, EventDispatcher.prototype, {
+	Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Material,
 
 		isMaterial: true,
 
@@ -10164,7 +10156,9 @@ var Three = (function (exports) {
 	Object3D.DefaultUp = new Vector3( 0, 1, 0 );
 	Object3D.DefaultMatrixAutoUpdate = true;
 
-	Object.assign( Object3D.prototype, EventDispatcher.prototype, {
+	Object3D.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Object3D,
 
 		isObject3D: true,
 
@@ -10692,7 +10686,8 @@ var Three = (function (exports) {
 					geometries: {},
 					materials: {},
 					textures: {},
-					images: {}
+					images: {},
+					shapes: {}
 				};
 
 				output.metadata = {
@@ -10735,6 +10730,30 @@ var Three = (function (exports) {
 			if ( this.geometry !== undefined ) {
 
 				object.geometry = serialize( meta.geometries, this.geometry );
+
+				var parameters = this.geometry.parameters;
+
+				if ( parameters !== undefined && parameters.shapes !== undefined ) {
+
+					var shapes = parameters.shapes;
+
+					if ( Array.isArray( shapes ) ) {
+
+						for ( var i = 0, l = shapes.length; i < l; i ++ ) {
+
+							var shape = shapes[ i ];
+
+							serialize( meta.shapes, shape );
+
+						}
+
+					} else {
+
+						serialize( meta.shapes, shapes );
+
+					}
+
+				}
 
 			}
 
@@ -10780,11 +10799,13 @@ var Three = (function (exports) {
 				var materials = extractFromCache( meta.materials );
 				var textures = extractFromCache( meta.textures );
 				var images = extractFromCache( meta.images );
+				var shapes = extractFromCache( meta.shapes );
 
 				if ( geometries.length > 0 ) output.geometries = geometries;
 				if ( materials.length > 0 ) output.materials = materials;
 				if ( textures.length > 0 ) output.textures = textures;
 				if ( images.length > 0 ) output.images = images;
+				if ( shapes.length > 0 ) output.shapes = shapes;
 
 			}
 
@@ -11175,7 +11196,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( Geometry.prototype, EventDispatcher.prototype, {
+	Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Geometry,
 
 		isGeometry: true,
 
@@ -13301,7 +13324,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( BufferGeometry.prototype, EventDispatcher.prototype, {
+	BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: BufferGeometry,
 
 		isBufferGeometry: true,
 
@@ -17390,14 +17415,14 @@ var Three = (function (exports) {
 	function getTexelDecodingFunction( functionName, encoding ) {
 
 		var components = getEncodingComponents( encoding );
-		return "vec4 " + functionName + "( vec4 value ) { return " + components[ 0 ] + "ToLinear" + components[ 1 ] + "; }";
+		return 'vec4 ' + functionName + '( vec4 value ) { return ' + components[ 0 ] + 'ToLinear' + components[ 1 ] + '; }';
 
 	}
 
 	function getTexelEncodingFunction( functionName, encoding ) {
 
 		var components = getEncodingComponents( encoding );
-		return "vec4 " + functionName + "( vec4 value ) { return LinearTo" + components[ 0 ] + components[ 1 ] + "; }";
+		return 'vec4 ' + functionName + '( vec4 value ) { return LinearTo' + components[ 0 ] + components[ 1 ] + '; }';
 
 	}
 
@@ -17408,19 +17433,19 @@ var Three = (function (exports) {
 		switch ( toneMapping ) {
 
 			case LinearToneMapping:
-				toneMappingName = "Linear";
+				toneMappingName = 'Linear';
 				break;
 
 			case ReinhardToneMapping:
-				toneMappingName = "Reinhard";
+				toneMappingName = 'Reinhard';
 				break;
 
 			case Uncharted2ToneMapping:
-				toneMappingName = "Uncharted2";
+				toneMappingName = 'Uncharted2';
 				break;
 
 			case CineonToneMapping:
-				toneMappingName = "OptimizedCineon";
+				toneMappingName = 'OptimizedCineon';
 				break;
 
 			default:
@@ -17428,7 +17453,7 @@ var Three = (function (exports) {
 
 		}
 
-		return "vec3 " + functionName + "( vec3 color ) { return " + toneMappingName + "ToneMapping( color ); }";
+		return 'vec3 ' + functionName + '( vec3 color ) { return ' + toneMappingName + 'ToneMapping( color ); }';
 
 	}
 
@@ -17821,9 +17846,9 @@ var Three = (function (exports) {
 				parameters.shadowMapEnabled ? '#define USE_SHADOWMAP' : '',
 				parameters.shadowMapEnabled ? '#define ' + shadowMapTypeDefine : '',
 
-				parameters.premultipliedAlpha ? "#define PREMULTIPLIED_ALPHA" : '',
+				parameters.premultipliedAlpha ? '#define PREMULTIPLIED_ALPHA' : '',
 
-				parameters.physicallyCorrectLights ? "#define PHYSICALLY_CORRECT_LIGHTS" : '',
+				parameters.physicallyCorrectLights ? '#define PHYSICALLY_CORRECT_LIGHTS' : '',
 
 				parameters.logarithmicDepthBuffer ? '#define USE_LOGDEPTHBUF' : '',
 				parameters.logarithmicDepthBuffer && extensions.get( 'EXT_frag_depth' ) ? '#define USE_LOGDEPTHBUF_EXT' : '',
@@ -17833,9 +17858,9 @@ var Three = (function (exports) {
 				'uniform mat4 viewMatrix;',
 				'uniform vec3 cameraPosition;',
 
-				( parameters.toneMapping !== NoToneMapping ) ? "#define TONE_MAPPING" : '',
+				( parameters.toneMapping !== NoToneMapping ) ? '#define TONE_MAPPING' : '',
 				( parameters.toneMapping !== NoToneMapping ) ? ShaderChunk[ 'tonemapping_pars_fragment' ] : '', // this code is required here because it is used by the toneMapping() function defined below
-				( parameters.toneMapping !== NoToneMapping ) ? getToneMappingFunction( "toneMapping", parameters.toneMapping ) : '',
+				( parameters.toneMapping !== NoToneMapping ) ? getToneMappingFunction( 'toneMapping', parameters.toneMapping ) : '',
 
 				parameters.dithering ? '#define DITHERING' : '',
 
@@ -17843,9 +17868,9 @@ var Three = (function (exports) {
 				parameters.mapEncoding ? getTexelDecodingFunction( 'mapTexelToLinear', parameters.mapEncoding ) : '',
 				parameters.envMapEncoding ? getTexelDecodingFunction( 'envMapTexelToLinear', parameters.envMapEncoding ) : '',
 				parameters.emissiveMapEncoding ? getTexelDecodingFunction( 'emissiveMapTexelToLinear', parameters.emissiveMapEncoding ) : '',
-				parameters.outputEncoding ? getTexelEncodingFunction( "linearToOutputTexel", parameters.outputEncoding ) : '',
+				parameters.outputEncoding ? getTexelEncodingFunction( 'linearToOutputTexel', parameters.outputEncoding ) : '',
 
-				parameters.depthPacking ? "#define DEPTH_PACKING " + material.depthPacking : '',
+				parameters.depthPacking ? '#define DEPTH_PACKING ' + material.depthPacking : '',
 
 				'\n'
 
@@ -18337,6 +18362,7 @@ var Three = (function (exports) {
 	function WebGLTextures( _gl, extensions, state, properties, capabilities, utils, infoMemory ) {
 
 		var _isWebGL2 = ( typeof WebGL2RenderingContext !== 'undefined' && _gl instanceof window.WebGL2RenderingContext );
+		var _videoTextures = {};
 
 		//
 
@@ -18431,8 +18457,13 @@ var Three = (function (exports) {
 
 			deallocateTexture( texture );
 
-			infoMemory.textures --;
+			if ( texture.isVideoTexture ) {
 
+				delete _videoTextures[ texture.id ];
+
+			}
+
+			infoMemory.textures --;
 
 		}
 
@@ -18733,6 +18764,12 @@ var Three = (function (exports) {
 				texture.addEventListener( 'dispose', onTextureDispose );
 
 				textureProperties.__webglTexture = _gl.createTexture();
+
+				if ( texture.isVideoTexture ) {
+
+					_videoTextures[ texture.id ] = texture;
+
+				}
 
 				infoMemory.textures ++;
 
@@ -19115,11 +19152,22 @@ var Three = (function (exports) {
 
 		}
 
+		function updateVideoTextures() {
+
+			for ( var id in _videoTextures ) {
+
+				_videoTextures[ id ].update();
+
+			}
+
+		}
+
 		this.setTexture2D = setTexture2D;
 		this.setTextureCube = setTextureCube;
 		this.setTextureCubeDynamic = setTextureCubeDynamic;
 		this.setupRenderTarget = setupRenderTarget;
 		this.updateRenderTargetMipmap = updateRenderTargetMipmap;
+		this.updateVideoTextures = updateVideoTextures;
 
 	}
 
@@ -19812,13 +19860,16 @@ var Three = (function (exports) {
 
 		}
 
-		function setMaterial( material ) {
+		function setMaterial( material, frontFaceCW ) {
 
 			material.side === DoubleSide
 				? disable( gl.CULL_FACE )
 				: enable( gl.CULL_FACE );
 
-			setFlipSided( material.side === BackSide );
+			var flipSided = ( material.side === BackSide );
+			if ( frontFaceCW ) flipSided = ! flipSided;
+
+			setFlipSided( flipSided );
 
 			material.transparent === true
 				? setBlending( material.blending, material.blendEquation, material.blendSrc, material.blendDst, material.blendEquationAlpha, material.blendSrcAlpha, material.blendDstAlpha, material.premultipliedAlpha )
@@ -20489,6 +20540,8 @@ var Three = (function (exports) {
 		var device = null;
 		var frameData = null;
 
+		var poseTarget = null;
+
 		if ( typeof window !== 'undefined' && 'VRFrameData' in window ) {
 
 			frameData = new window.VRFrameData();
@@ -20496,9 +20549,6 @@ var Three = (function (exports) {
 		}
 
 		var matrixWorldInverse = new Matrix4();
-
-		var standingMatrix = new Matrix4();
-		var standingMatrixInverse = new Matrix4();
 
 		var cameraL = new PerspectiveCamera();
 		cameraL.bounds = new Vector4( 0.0, 0.0, 0.5, 1.0 );
@@ -20546,7 +20596,6 @@ var Three = (function (exports) {
 		//
 
 		this.enabled = false;
-		this.standing = false;
 
 		this.getDevice = function () {
 
@@ -20557,6 +20606,12 @@ var Three = (function (exports) {
 		this.setDevice = function ( value ) {
 
 			if ( value !== undefined ) device = value;
+
+		};
+
+		this.setPoseTarget = function ( object ) {
+
+			if ( object !== undefined ) poseTarget = object;
 
 		};
 
@@ -20572,36 +20627,25 @@ var Three = (function (exports) {
 			//
 
 			var pose = frameData.pose;
+			var poseObject = poseTarget !== null ? poseTarget : camera;
 
 			if ( pose.position !== null ) {
 
-				camera.position.fromArray( pose.position );
+				poseObject.position.fromArray( pose.position );
 
 			} else {
 
-				camera.position.set( 0, 0, 0 );
+				poseObject.position.set( 0, 0, 0 );
 
 			}
 
 			if ( pose.orientation !== null ) {
 
-				camera.quaternion.fromArray( pose.orientation );
+				poseObject.quaternion.fromArray( pose.orientation );
 
 			}
 
-			camera.updateMatrixWorld();
-
-			var stageParameters = device.stageParameters;
-
-			if ( this.standing && stageParameters ) {
-
-				standingMatrix.fromArray( stageParameters.sittingToStandingTransform );
-				standingMatrixInverse.getInverse( standingMatrix );
-
-				camera.matrixWorld.multiply( standingMatrix );
-				camera.matrixWorldInverse.multiply( standingMatrixInverse );
-
-			}
+			poseObject.updateMatrixWorld();
 
 			if ( device.isPresenting === false ) return camera;
 
@@ -20619,14 +20663,7 @@ var Three = (function (exports) {
 			cameraL.matrixWorldInverse.fromArray( frameData.leftViewMatrix );
 			cameraR.matrixWorldInverse.fromArray( frameData.rightViewMatrix );
 
-			if ( this.standing && stageParameters ) {
-
-				cameraL.matrixWorldInverse.multiply( standingMatrixInverse );
-				cameraR.matrixWorldInverse.multiply( standingMatrixInverse );
-
-			}
-
-			var parent = camera.parent;
+			var parent = poseObject.parent;
 
 			if ( parent !== null ) {
 
@@ -20673,12 +20710,6 @@ var Three = (function (exports) {
 			}
 
 			return cameraVR;
-
-		};
-
-		this.getStandingMatrix = function () {
-
-			return standingMatrix;
 
 		};
 
@@ -21080,7 +21111,8 @@ var Three = (function (exports) {
 			_stencil = parameters.stencil !== undefined ? parameters.stencil : true,
 			_antialias = parameters.antialias !== undefined ? parameters.antialias : false,
 			_premultipliedAlpha = parameters.premultipliedAlpha !== undefined ? parameters.premultipliedAlpha : true,
-			_preserveDrawingBuffer = parameters.preserveDrawingBuffer !== undefined ? parameters.preserveDrawingBuffer : false;
+			_preserveDrawingBuffer = parameters.preserveDrawingBuffer !== undefined ? parameters.preserveDrawingBuffer : false,
+			_powerPreference = parameters.powerPreference !== undefined ? parameters.powerPreference : 'default';
 
 		var lightsArray = [];
 		var shadowsArray = [];
@@ -21226,8 +21258,14 @@ var Three = (function (exports) {
 				stencil: _stencil,
 				antialias: _antialias,
 				premultipliedAlpha: _premultipliedAlpha,
-				preserveDrawingBuffer: _preserveDrawingBuffer
+				preserveDrawingBuffer: _preserveDrawingBuffer,
+				powerPreference: _powerPreference
 			};
+
+			// event listeners must be registered before WebGL context is created, see #12753
+
+			_canvas.addEventListener( 'webglcontextlost', onContextLost, false );
+			_canvas.addEventListener( 'webglcontextrestored', onContextRestore, false );
 
 			_gl = _context || _canvas.getContext( 'webgl', contextAttributes ) || _canvas.getContext( 'experimental-webgl', contextAttributes );
 
@@ -21235,11 +21273,11 @@ var Three = (function (exports) {
 
 				if ( _canvas.getContext( 'webgl' ) !== null ) {
 
-					throw 'Error creating WebGL context with your selected attributes.';
+					throw new Error( 'Error creating WebGL context with your selected attributes.' );
 
 				} else {
 
-					throw 'Error creating WebGL context.';
+					throw new Error( 'Error creating WebGL context.' );
 
 				}
 
@@ -21257,12 +21295,9 @@ var Three = (function (exports) {
 
 			}
 
-			_canvas.addEventListener( 'webglcontextlost', onContextLost, false );
-			_canvas.addEventListener( 'webglcontextrestored', onContextRestore, false );
-
 		} catch ( error ) {
 
-			console.error( 'THREE.WebGLRenderer: ' + error );
+			console.error( 'THREE.WebGLRenderer: ' + error.message );
 
 		}
 
@@ -21703,7 +21738,9 @@ var Three = (function (exports) {
 
 		this.renderBufferDirect = function ( camera, fog, geometry, material, object, group ) {
 
-			state.setMaterial( material );
+			var frontFaceCW = ( object.isMesh && object.matrixWorld.determinant() < 0 );
+
+			state.setMaterial( material, frontFaceCW );
 
 			var program = setProgram( camera, fog, material, object );
 			var geometryProgram = geometry.id + '_' + program.id + '_' + ( material.wireframe === true );
@@ -22053,7 +22090,7 @@ var Three = (function (exports) {
 			if ( isAnimating ) return;
 
 			var device = vr.getDevice();
-			
+
 			if ( device && device.isPresenting ) {
 
 				device.requestAnimationFrame( loop );
@@ -22073,7 +22110,7 @@ var Three = (function (exports) {
 			if ( onAnimationFrame !== null ) onAnimationFrame( time );
 
 			var device = vr.getDevice();
-			
+
 			if ( device && device.isPresenting ) {
 
 				device.requestAnimationFrame( loop );
@@ -22148,6 +22185,10 @@ var Three = (function (exports) {
 				currentRenderList.sort();
 
 			}
+
+			//
+
+			textures.updateVideoTextures();
 
 			//
 
@@ -22448,7 +22489,9 @@ var Three = (function (exports) {
 
 			if ( object.isImmediateRenderObject ) {
 
-				state.setMaterial( material );
+				var frontFaceCW = ( object.isMesh && object.matrixWorld.determinant() < 0 );
+
+				state.setMaterial( material, frontFaceCW );
 
 				var program = setProgram( camera, scene.fog, material, object );
 

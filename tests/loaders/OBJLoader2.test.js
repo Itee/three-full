@@ -130,12 +130,13 @@ var Three = (function (exports) {
 		this.setURLModifier = function ( transform ) {
 
 			urlModifier = transform;
+			return this;
 
 		};
 
 	}
 
-	var DefaultLoadingManager$1 = new LoadingManager();
+	var DefaultLoadingManager = new LoadingManager();
 
 	/**
 	 * @author mrdoob / http://mrdoob.com/
@@ -145,7 +146,7 @@ var Three = (function (exports) {
 
 	function FileLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
 	}
 
@@ -304,7 +305,7 @@ var Three = (function (exports) {
 
 				request.addEventListener( 'load', function ( event ) {
 
-					var response = event.target.response;
+					var response = this.response;
 
 					Cache.add( url, response );
 
@@ -454,44 +455,32 @@ var Three = (function (exports) {
 		DEG2RAD: Math.PI / 180,
 		RAD2DEG: 180 / Math.PI,
 
-		generateUUID: function () {
+		generateUUID: ( function () {
 
-			// http://www.broofa.com/Tools/Math.uuid.htm
-			// Replaced .join with string concatenation (@takahirox)
+			// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
 
-			var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split( '' );
-			var rnd = 0, r;
+			var lut = [];
 
-			return function generateUUID() {
+			for ( var i = 0; i < 256; i ++ ) {
 
-				var uuid = '';
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
 
-				for ( var i = 0; i < 36; i ++ ) {
+			}
 
-					if ( i === 8 || i === 13 || i === 18 || i === 23 ) {
+			return function () {
 
-						uuid += '-';
-
-					} else if ( i === 14 ) {
-
-						uuid += '4';
-
-					} else {
-
-						if ( rnd <= 0x02 ) rnd = 0x2000000 + ( Math.random() * 0x1000000 ) | 0;
-						r = rnd & 0xf;
-						rnd = rnd >> 4;
-						uuid += chars[ ( i === 19 ) ? ( r & 0x3 ) | 0x8 : r ];
-
-					}
-
-				}
-
-				return uuid;
+				var d0 = Math.random() * 0xffffffff | 0;
+				var d1 = Math.random() * 0xffffffff | 0;
+				var d2 = Math.random() * 0xffffffff | 0;
+				var d3 = Math.random() * 0xffffffff | 0;
+				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
+					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
+					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
 
 			};
 
-		}(),
+		} )(),
 
 		clamp: function ( value, min, max ) {
 
@@ -6774,7 +6763,9 @@ var Three = (function (exports) {
 	Object3D.DefaultUp = new Vector3( 0, 1, 0 );
 	Object3D.DefaultMatrixAutoUpdate = true;
 
-	Object.assign( Object3D.prototype, EventDispatcher.prototype, {
+	Object3D.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Object3D,
 
 		isObject3D: true,
 
@@ -7302,7 +7293,8 @@ var Three = (function (exports) {
 					geometries: {},
 					materials: {},
 					textures: {},
-					images: {}
+					images: {},
+					shapes: {}
 				};
 
 				output.metadata = {
@@ -7345,6 +7337,30 @@ var Three = (function (exports) {
 			if ( this.geometry !== undefined ) {
 
 				object.geometry = serialize( meta.geometries, this.geometry );
+
+				var parameters = this.geometry.parameters;
+
+				if ( parameters !== undefined && parameters.shapes !== undefined ) {
+
+					var shapes = parameters.shapes;
+
+					if ( Array.isArray( shapes ) ) {
+
+						for ( var i = 0, l = shapes.length; i < l; i ++ ) {
+
+							var shape = shapes[ i ];
+
+							serialize( meta.shapes, shape );
+
+						}
+
+					} else {
+
+						serialize( meta.shapes, shapes );
+
+					}
+
+				}
 
 			}
 
@@ -7390,11 +7406,13 @@ var Three = (function (exports) {
 				var materials = extractFromCache( meta.materials );
 				var textures = extractFromCache( meta.textures );
 				var images = extractFromCache( meta.images );
+				var shapes = extractFromCache( meta.shapes );
 
 				if ( geometries.length > 0 ) output.geometries = geometries;
 				if ( materials.length > 0 ) output.materials = materials;
 				if ( textures.length > 0 ) output.textures = textures;
 				if ( images.length > 0 ) output.images = images;
+				if ( shapes.length > 0 ) output.shapes = shapes;
 
 			}
 
@@ -7523,7 +7541,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( BufferGeometry.prototype, EventDispatcher.prototype, {
+	BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: BufferGeometry,
 
 		isBufferGeometry: true,
 
@@ -9969,7 +9989,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( Material.prototype, EventDispatcher.prototype, {
+	Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Material,
 
 		isMaterial: true,
 
@@ -12007,7 +12029,7 @@ var Three = (function (exports) {
 
 	function MaterialLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 		this.textures = {};
 
 	}
@@ -12178,7 +12200,9 @@ var Three = (function (exports) {
 
 	Group.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
-		constructor: Group
+		constructor: Group,
+
+		isGroup: true
 
 	} );
 
@@ -12461,7 +12485,7 @@ var Three = (function (exports) {
 			if ( urlParts.length < 2 ) {
 
 				this.path = null;
-				this.name = this.name = url;
+				this.name = url;
 				this.url = url;
 
 			} else {
@@ -13125,13 +13149,8 @@ var Three = (function (exports) {
 		 * @param {Object} payload Raw mesh description (buffers, params, materials) used to build one to many meshes.
 		 */
 		WorkerRunnerRefImpl.prototype.processMessage = function ( payload ) {
-			var logger = new ConsoleLogger();
-			if ( Validator.isValid( payload.logger ) ) {
-
-				logger.setEnabled( payload.logger.enabled );
-				logger.setDebug( payload.logger.debug );
-
-			}
+			var logEnabled = payload.logger.enabled;
+			var logDebug = payload.logger.enabled;
 			if ( payload.cmd === 'run' ) {
 
 				var callbacks = {
@@ -13139,19 +13158,20 @@ var Three = (function (exports) {
 						self.postMessage( payload );
 					},
 					callbackProgress: function ( text ) {
-						logger.logDebug( 'WorkerRunner: progress: ' + text );
+						if ( logEnabled && logDebug ) console.debug( 'WorkerRunner: progress: ' + text );
 					}
 				};
 
 				// Parser is expected to be named as such
-				var parser = new Parser( logger );
+				var parser = new Parser();
+				if ( typeof parser[ 'setLogConfig' ] === 'function' ) parser.setLogConfig( logEnabled, logDebug );
 				this.applyProperties( parser, payload.params );
 				this.applyProperties( parser, payload.materials );
 				this.applyProperties( parser, callbacks );
 				parser.workerScope = self;
 				parser.parse( payload.data.input, payload.data.options );
 
-				logger.logInfo( 'WorkerRunner: Run complete!' );
+				if ( logEnabled ) console.log( 'WorkerRunner: Run complete!' );
 
 				callbacks.callbackBuilder( {
 					cmd: 'complete',
@@ -13160,7 +13180,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				logger.logError( 'WorkerRunner: Received unknown command: ' + payload.cmd );
+				console.error( 'WorkerRunner: Received unknown command: ' + payload.cmd );
 
 			}
 		};
@@ -13177,9 +13197,158 @@ var Three = (function (exports) {
 	 */
 	LoaderSupport.WorkerSupport = (function () {
 
-		var WORKER_SUPPORT_VERSION = '1.1.1';
+		var WORKER_SUPPORT_VERSION = '2.0.1';
 
 		var Validator = LoaderSupport.Validator;
+
+		var LoaderWorker = (function () {
+
+			function LoaderWorker( logger ) {
+				this.logger = Validator.verifyInput( logger, new LoaderSupport.ConsoleLogger() );
+				this._reset();
+			}
+
+			LoaderWorker.prototype._reset = function () {
+				this.worker = null;
+				this.runnerImplName = null;
+				this.callbacks = {
+					builder: null,
+					onLoad: null
+				};
+				this.terminateRequested = false;
+				this.queuedMessage = null;
+				this.started = false;
+			};
+
+			LoaderWorker.prototype.initWorker = function ( code, runnerImplName ) {
+				this.runnerImplName = runnerImplName;
+				var blob = new Blob( [ code ], { type: 'application/javascript' } );
+				this.worker = new Worker( window.URL.createObjectURL( blob ) );
+				this.worker.onmessage = this._receiveWorkerMessage;
+
+				// set referemce to this, then processing in worker scope within "_receiveWorkerMessage" can access members
+				this.worker.runtimeRef = this;
+
+				// process stored queuedMessage
+				this._postMessage();
+			};
+
+			/**
+			 * Executed in worker scope
+	 		 */
+			LoaderWorker.prototype._receiveWorkerMessage = function ( e ) {
+				var payload = e.data;
+				switch ( payload.cmd ) {
+					case 'meshData':
+					case 'materialData':
+					case 'imageData':
+						this.runtimeRef.callbacks.builder( payload );
+						break;
+
+					case 'complete':
+						this.runtimeRef.queuedMessage = null;
+						this.started = false;
+						this.runtimeRef.callbacks.onLoad( payload.msg );
+
+						if ( this.runtimeRef.terminateRequested ) {
+
+							this.runtimeRef.logger.logInfo( 'WorkerSupport [' + this.runtimeRef.runnerImplName + ']: Run is complete. Terminating application on request!' );
+							this.runtimeRef._terminate();
+
+						}
+						break;
+
+					case 'error':
+						this.runtimeRef.logger.logError( 'WorkerSupport [' + this.runtimeRef.runnerImplName + ']: Reported error: ' + payload.msg );
+						this.runtimeRef.queuedMessage = null;
+						this.started = false;
+						this.runtimeRef.callbacks.onLoad( payload.msg );
+
+						if ( this.runtimeRef.terminateRequested ) {
+
+							this.runtimeRef.logger.logInfo( 'WorkerSupport [' + this.runtimeRef.runnerImplName + ']: Run reported error. Terminating application on request!' );
+							this.runtimeRef._terminate();
+
+						}
+						break;
+
+					default:
+						this.runtimeRef.logger.logError( 'WorkerSupport [' + this.runtimeRef.runnerImplName + ']: Received unknown command: ' + payload.cmd );
+						break;
+
+				}
+			};
+
+			LoaderWorker.prototype.setCallbacks = function ( builder, onLoad ) {
+				this.callbacks.builder = Validator.verifyInput( builder, this.callbacks.builder );
+				this.callbacks.onLoad = Validator.verifyInput( onLoad, this.callbacks.onLoad );
+			};
+
+			LoaderWorker.prototype.run = function( payload ) {
+				if ( Validator.isValid( this.queuedMessage ) ) {
+
+					console.warn( 'Already processing message. Rejecting new run instruction' );
+					return;
+
+				} else {
+
+					this.queuedMessage = payload;
+					this.started = true;
+
+				}
+				if ( ! Validator.isValid( this.callbacks.builder ) ) throw 'Unable to run as no "builder" callback is set.';
+				if ( ! Validator.isValid( this.callbacks.onLoad ) ) throw 'Unable to run as no "onLoad" callback is set.';
+				if ( payload.cmd !== 'run' ) payload.cmd = 'run';
+				if ( Validator.isValid( payload.logger ) ) {
+
+					payload.logger.enabled = Validator.verifyInput( payload.logger.enabled, true );
+					payload.logger.debug = Validator.verifyInput( payload.logger.debug, false );
+
+				} else {
+
+					payload.logger = {
+						enabled: true,
+						debug: false
+					};
+
+				}
+				this._postMessage();
+			};
+
+			LoaderWorker.prototype._postMessage = function () {
+				if ( Validator.isValid( this.queuedMessage ) && Validator.isValid( this.worker ) ) {
+
+					if ( this.queuedMessage.data.input instanceof ArrayBuffer ) {
+
+						this.worker.postMessage( this.queuedMessage, [ this.queuedMessage.data.input ] );
+
+					} else {
+
+						this.worker.postMessage( this.queuedMessage );
+
+					}
+
+				}
+			};
+
+			LoaderWorker.prototype.setTerminateRequested = function ( terminateRequested ) {
+				this.terminateRequested = terminateRequested === true;
+				if ( this.terminateRequested && Validator.isValid( this.worker ) && ! Validator.isValid( this.queuedMessage ) && this.started ) {
+
+					this.logger.logInfo( 'Worker is terminated immediately as it is not running!' );
+					this._terminate();
+
+				}
+			};
+
+			LoaderWorker.prototype._terminate = function () {
+				this.worker.terminate();
+				this._reset();
+			};
+
+			return LoaderWorker;
+
+		})();
 
 		function WorkerSupport( logger ) {
 			this.logger = Validator.verifyInput( logger, new LoaderSupport.ConsoleLogger() );
@@ -13190,17 +13359,7 @@ var Three = (function (exports) {
 			if ( window.Blob === undefined  ) throw "This browser does not support Blob!";
 			if ( typeof window.URL.createObjectURL !== 'function'  ) throw "This browser does not support Object creation from URL!";
 
-			this.worker = null;
-			this.workerCode = null;
-			this.loading = true;
-			this.queuedMessage = null;
-			this.running = false;
-			this.terminateRequested = false;
-
-			this.callbacks = {
-				builder: null,
-				onLoad: null
-			};
+			this.loaderWorker = new LoaderWorker( this.logger );
 		}
 
 		/**
@@ -13208,139 +13367,64 @@ var Three = (function (exports) {
 		 * @memberOf LoaderSupport.WorkerSupport
 		 *
 		 * @param {Function} functionCodeBuilder Function that is invoked with funcBuildObject and funcBuildSingelton that allows stringification of objects and singletons.
-		 * @param {boolean} forceWorkerReload Force re-build of the worker code.
 		 * @param {String[]} libLocations URL of libraries that shall be added to worker code relative to libPath
 		 * @param {String} libPath Base path used for loading libraries
 		 * @param {LoaderSupport.WorkerRunnerRefImpl} runnerImpl The default worker parser wrapper implementation (communication and execution). An extended class could be passed here.
 		 */
-		WorkerSupport.prototype.validate = function ( functionCodeBuilder, forceWorkerReload, libLocations, libPath, runnerImpl ) {
-			this.running = false;
-			if ( forceWorkerReload ) {
+		WorkerSupport.prototype.validate = function ( functionCodeBuilder, libLocations, libPath, runnerImpl ) {
+			if ( Validator.isValid( this.loaderWorker.worker ) ) return;
 
-				this.worker = null;
-				this.workerCode = null;
-				this.loading = true;
-				this.queuedMessage = null;
-				this.callbacks.builder = null;
-				this.callbacks.onLoad = null;
+			this.logger.logInfo( 'WorkerSupport: Building worker code...' );
+			this.logger.logTimeStart( 'buildWebWorkerCode' );
+
+			if ( Validator.isValid( runnerImpl ) ) {
+
+				this.logger.logInfo( 'WorkerSupport: Using "' + runnerImpl.name + '" as Runncer class for worker.' );
+
+			} else {
+
+				runnerImpl = LoaderSupport.WorkerRunnerRefImpl;
+				this.logger.logInfo( 'WorkerSupport: Using DEFAULT "LoaderSupport.WorkerRunnerRefImpl" as Runncer class for worker.' );
 
 			}
 
-			if ( ! Validator.isValid( this.worker ) ) {
+			var userWorkerCode = functionCodeBuilder( buildObject, buildSingelton );
+			userWorkerCode += buildSingelton( runnerImpl.name, runnerImpl.name, runnerImpl );
+			userWorkerCode += 'new ' + runnerImpl.name + '();\n\n';
 
-				this.logger.logInfo( 'WorkerSupport: Building worker code...' );
-				this.logger.logTimeStart( 'buildWebWorkerCode' );
+			var scope = this;
+			if ( Validator.isValid( libLocations ) && libLocations.length > 0 ) {
 
-				var workerRunner;
-				if ( Validator.isValid( runnerImpl ) ) {
+				var libsContent = '';
+				var loadAllLibraries = function ( path, locations ) {
+					if ( locations.length === 0 ) {
 
-					this.logger.logInfo( 'WorkerSupport: Using "' + runnerImpl.name + '" as Runncer class for worker.' );
-					workerRunner = runnerImpl;
+						scope.loaderWorker.initWorker( libsContent + userWorkerCode, scope.logger, runnerImpl.name );
+						scope.logger.logTimeEnd( 'buildWebWorkerCode' );
 
-				} else {
+					} else {
 
-					this.logger.logInfo( 'WorkerSupport: Using DEFAULT "LoaderSupport.WorkerRunnerRefImpl" as Runncer class for worker.' );
-					workerRunner = LoaderSupport.WorkerRunnerRefImpl;
+						var loadedLib = function ( contentAsString ) {
+							libsContent += contentAsString;
+							loadAllLibraries( path, locations );
+						};
 
-				}
-
-				var scope = this;
-				var buildWorkerCode = function ( baseWorkerCode ) {
-					scope.workerCode = baseWorkerCode;
-					if ( workerRunner == LoaderSupport.WorkerRunnerRefImpl ) {
-
-						scope.workerCode += buildObject( 'Validator', LoaderSupport.Validator );
-						scope.workerCode += buildSingelton( 'ConsoleLogger', 'ConsoleLogger', LoaderSupport.ConsoleLogger );
+						var fileLoader = new FileLoader();
+						fileLoader.setPath( path );
+						fileLoader.setResponseType( 'text' );
+						fileLoader.load( locations[ 0 ], loadedLib );
+						locations.shift();
 
 					}
-					scope.workerCode += functionCodeBuilder( buildObject, buildSingelton );
-					scope.workerCode += buildSingelton( workerRunner.name, workerRunner.name, workerRunner );
-					scope.workerCode += 'new ' + workerRunner.name + '();\n\n';
-
-					var blob = new Blob( [ scope.workerCode ], { type: 'application/javascript' } );
-					scope.worker = new Worker( window.URL.createObjectURL( blob ) );
-					scope.logger.logTimeEnd( 'buildWebWorkerCode' );
-
-					var receiveWorkerMessage = function ( e ) {
-						var payload = e.data;
-
-						switch ( payload.cmd ) {
-							case 'meshData':
-							case 'materialData':
-							case 'imageData':
-								scope.callbacks.builder( payload );
-								break;
-
-							case 'complete':
-								scope.callbacks.onLoad( payload.msg );
-								scope.running = false;
-
-								if ( scope.terminateRequested ) {
-
-									scope.logger.logInfo( 'WorkerSupport [' + workerRunner + ']: Run is complete. Terminating application on request!' );
-									scope.terminateWorker();
-
-								}
-								break;
-
-							case 'error':
-								scope.logger.logError( 'WorkerSupport [' + workerRunner + ']: Reported error: ' + payload.msg );
-								break;
-
-							default:
-								scope.logger.logError( 'WorkerSupport [' + workerRunner + ']: Received unknown command: ' + payload.cmd );
-								break;
-
-						}
-					};
-					scope.worker.addEventListener( 'message', receiveWorkerMessage, false );
-					scope.loading = false;
-					scope._postMessage();
 				};
+				loadAllLibraries( libPath, libLocations );
 
-				if ( Validator.isValid( libLocations ) && libLocations.length > 0 ) {
+			} else {
 
-					var libsContent = '';
-					var loadAllLibraries = function ( path, locations ) {
-						if ( locations.length === 0 ) {
+				this.loaderWorker.initWorker( userWorkerCode, this.logger, runnerImpl.name );
+				this.logger.logTimeEnd( 'buildWebWorkerCode' );
 
-							buildWorkerCode( libsContent );
-
-						} else {
-
-							var loadedLib = function ( contentAsString ) {
-								libsContent += contentAsString;
-								loadAllLibraries( path, locations );
-							};
-
-							var fileLoader = new FileLoader();
-							fileLoader.setPath( path );
-							fileLoader.setResponseType( 'text' );
-							fileLoader.load( locations[ 0 ], loadedLib );
-							locations.shift();
-
-						}
-					};
-					loadAllLibraries( libPath, libLocations );
-
-				} else {
-
-					buildWorkerCode( '' );
-
-				}
 			}
-		};
-
-		/**
-		 * Terminate the worker and the code.
-		 * @memberOf LoaderSupport.WorkerSupport
-		 */
-		WorkerSupport.prototype.terminateWorker = function () {
-			if ( Validator.isValid( this.worker ) ) {
-				this.worker.terminate();
-			}
-			this.worker = null;
-			this.workerCode = null;
 		};
 
 		/**
@@ -13351,10 +13435,27 @@ var Three = (function (exports) {
 		 * @param {Function} onLoad The function that is called when parsing is complete.
 		 */
 		WorkerSupport.prototype.setCallbacks = function ( builder, onLoad ) {
-			this.callbacks = {
-				builder: builder,
-				onLoad: onLoad
-			};
+			this.loaderWorker.setCallbacks( builder, onLoad );
+		};
+
+		/**
+		 * Runs the parser with the provided configuration.
+		 * @memberOf LoaderSupport.WorkerSupport
+		 *
+		 * @param {Object} payload Raw mesh description (buffers, params, materials) used to build one to many meshes.
+		 */
+		WorkerSupport.prototype.run = function ( payload ) {
+			this.loaderWorker.run( payload );
+		};
+
+		/**
+		 * Request termination of worker once parser is finished.
+		 * @memberOf LoaderSupport.WorkerSupport
+		 *
+		 * @param {boolean} terminateRequested True or false.
+		 */
+		WorkerSupport.prototype.setTerminateRequested = function ( terminateRequested ) {
+			this.loaderWorker.setTerminateRequested( terminateRequested );
 		};
 
 		var buildObject = function ( fullName, object ) {
@@ -13413,41 +13514,8 @@ var Three = (function (exports) {
 			return objectString;
 		};
 
-		/**
-		 * Request termination of worker once parser is finished.
-		 * @memberOf LoaderSupport.WorkerSupport
-		 *
-		 * @param {boolean} terminateRequested True or false.
-		 */
-		WorkerSupport.prototype.setTerminateRequested = function ( terminateRequested ) {
-			this.terminateRequested = terminateRequested === true;
-		};
-
-		/**
-		 * Runs the parser with the provided configuration.
-		 * @memberOf LoaderSupport.WorkerSupport
-		 *
-		 * @param {Object} payload Raw mesh description (buffers, params, materials) used to build one to many meshes.
-		 */
-		WorkerSupport.prototype.run = function ( payload ) {
-			if ( ! Validator.isValid( this.callbacks.builder ) ) throw 'Unable to run as no "builder" callback is set.';
-			if ( ! Validator.isValid( this.callbacks.onLoad ) ) throw 'Unable to run as no "onLoad" callback is set.';
-			if ( Validator.isValid( this.worker ) || this.loading ) {
-				if ( payload.cmd !== 'run' ) payload.cmd = 'run';
-				this.queuedMessage = payload;
-				this.running = true;
-				this._postMessage();
-
-			}
-		};
-
-		WorkerSupport.prototype._postMessage = function () {
-			if ( ! this.loading && Validator.isValid( this.queuedMessage ) ) {
-				this.worker.postMessage( this.queuedMessage );
-			}
-		};
-
 		return WorkerSupport;
+
 	})();
 
 	/**
@@ -13456,7 +13524,7 @@ var Three = (function (exports) {
 	 *   prepareWorkers
 	 *   enqueueForRun
 	 *   processQueue
-	 *   deregister
+	 *   tearDown (to force stop)
 	 *
 	 * @class
 	 *
@@ -13465,7 +13533,7 @@ var Three = (function (exports) {
 	 */
 	LoaderSupport.WorkerDirector = (function () {
 
-		var LOADER_WORKER_DIRECTOR_VERSION = '2.0.0';
+		var LOADER_WORKER_DIRECTOR_VERSION = '2.1.0';
 
 		var Validator = LoaderSupport.Validator;
 
@@ -13485,10 +13553,13 @@ var Three = (function (exports) {
 			this.workerDescription = {
 				classDef: classDef,
 				globalCallbacks: {},
-				workerSupports: []
+				workerSupports: {}
 			};
 			this.objectsCompleted = 0;
 			this.instructionQueue = [];
+			this.instructionQueuePointer = 0;
+
+			this.callbackOnFinishedProcessing = null;
 		}
 
 		/**
@@ -13533,30 +13604,21 @@ var Three = (function (exports) {
 			if ( Validator.isValid( globalCallbacks ) ) this.workerDescription.globalCallbacks = globalCallbacks;
 			this.maxQueueSize = Math.min( maxQueueSize, MAX_QUEUE_SIZE );
 			this.maxWebWorkers = Math.min( maxWebWorkers, MAX_WEB_WORKER );
+			this.maxWebWorkers = Math.min( this.maxWebWorkers, this.maxQueueSize );
 			this.objectsCompleted = 0;
 			this.instructionQueue = [];
+			this.instructionQueuePointer = 0;
 
-			var start = this.workerDescription.workerSupports.length;
-			var i;
-			if ( start < this.maxWebWorkers ) {
+			for ( var instanceNo = 0; instanceNo < this.maxWebWorkers; instanceNo++ ) {
 
-				for ( i = start; i < this.maxWebWorkers; i++ ) {
+				this.workerDescription.workerSupports[ instanceNo ] = {
+					instanceNo: instanceNo,
+					inUse: false,
+					terminateRequested: false,
+					workerSupport: new LoaderSupport.WorkerSupport( this.logger ),
+					loader: null
+				};
 
-					this.workerDescription.workerSupports[ i ] = {
-						workerSupport: new LoaderSupport.WorkerSupport( this.logger ),
-						loader: null
-					};
-
-				}
-
-			} else {
-
-				for ( i = start - 1; i >= this.maxWebWorkers; i-- ) {
-
-					this.workerDescription.workerSupports[ i ].workerSupport.setRequestTerminate( true );
-					this.workerDescription.workerSupports.pop();
-
-				}
 			}
 		};
 
@@ -13573,46 +13635,67 @@ var Three = (function (exports) {
 		};
 
 		/**
+		 * Returns if any workers are running.
+		 *
+		 * @memberOf LoaderSupport.WorkerDirector
+		 * @returns {boolean}
+		 */
+		WorkerDirector.prototype.isRunning = function () {
+			var wsKeys = Object.keys( this.workerDescription.workerSupports );
+			return ( ( this.instructionQueue.length > 0 && this.instructionQueuePointer < this.instructionQueue.length ) || wsKeys.length > 0 );
+		};
+
+		/**
 		 * Process the instructionQueue until it is depleted.
 		 * @memberOf LoaderSupport.WorkerDirector
 		 */
 		WorkerDirector.prototype.processQueue = function () {
-			if ( this.instructionQueue.length === 0 ) return;
+			var prepData, supportDesc;
+			for ( var instanceNo in this.workerDescription.workerSupports ) {
 
-			var length = Math.min( this.maxWebWorkers, this.instructionQueue.length );
-			for ( var i = 0; i < length; i++ ) {
+				supportDesc = this.workerDescription.workerSupports[ instanceNo ];
+				if ( ! supportDesc.inUse ) {
 
-				this._kickWorkerRun( this.instructionQueue[ 0 ], i );
-				this.instructionQueue.shift();
+					if ( this.instructionQueuePointer < this.instructionQueue.length ) {
+
+						prepData = this.instructionQueue[ this.instructionQueuePointer ];
+						this._kickWorkerRun( prepData, supportDesc );
+						this.instructionQueuePointer++;
+
+					} else {
+
+						this._deregister( supportDesc );
+
+					}
+
+				}
+
+			}
+
+			if ( ! this.isRunning() && this.callbackOnFinishedProcessing !== null ) {
+
+				this.callbackOnFinishedProcessing();
+				this.callbackOnFinishedProcessing = null;
 
 			}
 		};
 
-		WorkerDirector.prototype._kickWorkerRun = function( prepData, workerInstanceNo ) {
+		WorkerDirector.prototype._kickWorkerRun = function( prepData, supportDesc ) {
+			supportDesc.inUse = true;
+			supportDesc.workerSupport.setTerminateRequested( supportDesc.terminateRequested );
+
+			this.logger.logInfo( '\nAssigning next item from queue to worker (queue length: ' + this.instructionQueue.length + ')\n\n' );
+
 			var scope = this;
-			var directorOnLoad = function ( event ) {
-				scope.objectsCompleted++;
-
-				var nextPrepData = scope.instructionQueue[ 0 ];
-				if ( Validator.isValid( nextPrepData ) ) {
-
-					scope.instructionQueue.shift();
-					scope.logger.logInfo( '\nAssigning next item from queue to worker (queue length: ' + scope.instructionQueue.length + ')\n\n' );
-					scope._kickWorkerRun( nextPrepData, event.detail.instanceNo );
-
-				} else if ( scope.instructionQueue.length === 0 ) {
-
-					scope.deregister();
-
-				}
-			};
-
 			var prepDataCallbacks = prepData.getCallbacks();
 			var globalCallbacks = this.workerDescription.globalCallbacks;
 			var wrapperOnLoad = function ( event ) {
 				if ( Validator.isValid( globalCallbacks.onLoad ) ) globalCallbacks.onLoad( event );
 				if ( Validator.isValid( prepDataCallbacks.onLoad ) ) prepDataCallbacks.onLoad( event );
-				directorOnLoad( event );
+				scope.objectsCompleted++;
+				supportDesc.inUse = false;
+
+				scope.processQueue();
 			};
 
 			var wrapperOnProgress = function ( event ) {
@@ -13625,8 +13708,7 @@ var Three = (function (exports) {
 				if ( Validator.isValid( prepDataCallbacks.onMeshAlter ) ) prepDataCallbacks.onMeshAlter( event );
 			};
 
-			var supportTuple = this.workerDescription.workerSupports[ workerInstanceNo ];
-			supportTuple.loader = this._buildLoader( workerInstanceNo );
+			supportDesc.loader = this._buildLoader( supportDesc.instanceNo );
 
 			var updatedCallbacks = new LoaderSupport.Callbacks();
 			updatedCallbacks.setCallbackOnLoad( wrapperOnLoad );
@@ -13634,13 +13716,13 @@ var Three = (function (exports) {
 			updatedCallbacks.setCallbackOnMeshAlter( wrapperOnMeshAlter );
 			prepData.callbacks = updatedCallbacks;
 
-			supportTuple.loader.run( prepData, supportTuple.workerSupport );
+			supportDesc.loader.run( prepData, supportDesc.workerSupport );
 		};
 
 		WorkerDirector.prototype._buildLoader = function ( instanceNo ) {
 			var classDef = this.workerDescription.classDef;
 			var loader = Object.create( classDef.prototype );
-			this.workerDescription.classDef.call( loader, null, this.logger );
+			this.workerDescription.classDef.call( loader, DefaultLoadingManager, this.logger );
 
 			// verify that all required functions are implemented
 			if ( ! loader.hasOwnProperty( 'instanceNo' ) ) throw classDef.name + ' has no property "instanceNo".';
@@ -13650,36 +13732,47 @@ var Three = (function (exports) {
 
 				throw classDef.name + ' has no property "workerSupport".';
 
-			} else if ( ! classDef.workerSupport instanceof LoaderSupport.WorkerSupport ) {
-
-				throw classDef.name + '.workerSupport is not of type "LoaderSupport.WorkerSupport".';
-
 			}
 			if ( typeof loader.run !== 'function'  ) throw classDef.name + ' has no function "run".';
+			if ( ! loader.hasOwnProperty( 'callbacks' ) || ! Validator.isValid( loader.callbacks ) ) {
 
+				this.logger.logWarn( classDef.name + ' has an invalid property "callbacks". Will change to "LoaderSupport.Callbacks"' );
+				loader.callbacks = new LoaderSupport.Callbacks();
+
+			}
 			return loader;
+		};
+
+		WorkerDirector.prototype._deregister = function ( supportDesc ) {
+			if ( Validator.isValid( supportDesc ) ) {
+
+				supportDesc.workerSupport.setTerminateRequested( true );
+				this.logger.logInfo( 'Requested termination of worker #' + supportDesc.instanceNo + '.' );
+
+				var loaderCallbacks = supportDesc.loader.callbacks;
+				if ( Validator.isValid( loaderCallbacks.onProgress ) ) loaderCallbacks.onProgress( { detail: { text: '' } } );
+				delete this.workerDescription.workerSupports[ supportDesc.instanceNo ];
+
+			}
 		};
 
 		/**
 		 * Terminate all workers.
 		 * @memberOf LoaderSupport.WorkerDirector
+		 *
+		 * @param {callback} callbackOnFinishedProcessing Function called once all workers finished processing.
 		 */
-		WorkerDirector.prototype.deregister = function () {
+		WorkerDirector.prototype.tearDown = function ( callbackOnFinishedProcessing ) {
 			this.logger.logInfo( 'WorkerDirector received the deregister call. Terminating all workers!' );
 
-			for ( var i = 0, length = this.workerDescription.workerSupports.length; i < length; i++ ) {
+			this.instructionQueuePointer = this.instructionQueue.length;
+			this.callbackOnFinishedProcessing = Validator.verifyInput( callbackOnFinishedProcessing, null );
 
-				var supportTuple = this.workerDescription.workerSupports[ i ];
-				supportTuple.workerSupport.setTerminateRequested( true );
-				this.logger.logInfo( 'Requested termination of worker.' );
+			for ( var name in this.workerDescription.workerSupports ) {
 
-				var loaderCallbacks = supportTuple.loader.callbacks;
-				if ( Validator.isValid( loaderCallbacks.onProgress ) ) loaderCallbacks.onProgress( { detail: { text: '' } } );
+				this.workerDescription.workerSupports[ name ].terminateRequested = true;
 
 			}
-
-			this.workerDescription.workerSupports = [];
-			this.instructionQueue = [];
 		};
 
 		return WorkerDirector;
@@ -13692,7 +13785,7 @@ var Three = (function (exports) {
 
 	function ImageLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
 	}
 
@@ -13846,17 +13939,7 @@ var Three = (function (exports) {
 	Texture.DEFAULT_IMAGE = undefined;
 	Texture.DEFAULT_MAPPING = UVMapping;
 
-	Object.defineProperty( Texture.prototype, "needsUpdate", {
-
-		set: function ( value ) {
-
-			if ( value === true ) this.version ++;
-
-		}
-
-	} );
-
-	Object.assign( Texture.prototype, EventDispatcher.prototype, {
+	Texture.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
 
 		constructor: Texture,
 
@@ -14101,13 +14184,23 @@ var Three = (function (exports) {
 
 	} );
 
+	Object.defineProperty( Texture.prototype, "needsUpdate", {
+
+		set: function ( value ) {
+
+			if ( value === true ) this.version ++;
+
+		}
+
+	} );
+
 	/**
 	 * @author mrdoob / http://mrdoob.com/
 	 */
 
 	function TextureLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
 	}
 
@@ -14117,12 +14210,15 @@ var Three = (function (exports) {
 
 		load: function ( url, onLoad, onProgress, onError ) {
 
+			var texture = new Texture();
+
 			var loader = new ImageLoader( this.manager );
 			loader.setCrossOrigin( this.crossOrigin );
 			loader.setPath( this.path );
 
-			var texture = new Texture();
-			texture.image = loader.load( url, function () {
+			loader.load( url, function ( image ) {
+
+				texture.image = image;
 
 				// JPEGs can't have an alpha channel, so memory can be saved by storing them as RGB.
 				var isJPEG = url.search( /\.(jpg|jpeg)$/ ) > 0 || url.search( /^data\:image\/jpeg/ ) === 0;
@@ -14719,6 +14815,8 @@ var Three = (function (exports) {
 
 
 
+	if ( LoaderSupport === undefined ) console.error( '"LoaderSupport" is not available. "OBJLoader2" requires it. Please include "LoaderSupport.js" in your HTML.' );
+
 	/**
 	 * Use this class to load OBJ data from files or to parse OBJ data from an arraybuffer
 	 * @class
@@ -14728,9 +14826,10 @@ var Three = (function (exports) {
 	 */
 	var OBJLoader2 = (function () {
 
-		var OBJLOADER2_VERSION = '2.1.2';
+		var OBJLOADER2_VERSION = '2.2.1';
 		var LoaderBase = LoaderSupport.LoaderBase;
 		var Validator = LoaderSupport.Validator;
+		var ConsoleLogger = LoaderSupport.ConsoleLogger;
 
 		OBJLoader2.prototype = Object.create( LoaderSupport.LoaderBase.prototype );
 		OBJLoader2.prototype.constructor = OBJLoader2;
@@ -14838,10 +14937,6 @@ var Three = (function (exports) {
 				this.workerSupport = workerSupportExternal;
 				this.logger = workerSupportExternal.logger;
 
-			} else {
-
-				this.terminateWorkerOnLoad = true;
-
 			}
 			var scope = this;
 			var onMaterialsLoaded = function ( materials ) {
@@ -14888,7 +14983,8 @@ var Three = (function (exports) {
 		OBJLoader2.prototype.parse = function ( content ) {
 			this.logger.logTimeStart( 'OBJLoader2 parse: ' + this.modelName );
 
-			var parser = new Parser( this.logger );
+			var parser = new Parser();
+			parser.setLogConfig( this.logger.enabled, this.logger.debug );
 			parser.setMaterialPerSmoothingGroup( this.materialPerSmoothingGroup );
 			parser.setUseIndices( this.useIndices );
 			parser.setDisregardNormals( this.disregardNormals );
@@ -14951,7 +15047,6 @@ var Three = (function (exports) {
 						}
 					}
 				);
-				if ( scope.terminateWorkerOnLoad ) scope.workerSupport.terminateWorker();
 				scope.logger.logTimeEnd( 'OBJLoader2 parseAsync: ' + scope.modelName );
 			};
 			var scopedOnMeshLoaded = function ( payload ) {
@@ -14969,6 +15064,8 @@ var Three = (function (exports) {
 				workerCode += '/**\n';
 				workerCode += '  * This code was constructed by OBJLoader2 buildCode.\n';
 				workerCode += '  */\n\n';
+				workerCode += funcBuildObject( 'Validator', Validator );
+				workerCode += funcBuildSingelton( 'ConsoleLogger', 'ConsoleLogger', ConsoleLogger );
 				workerCode += funcBuildSingelton( 'LoaderBase', 'LoaderBase', LoaderBase );
 				workerCode += funcBuildObject( 'Consts', Consts );
 				workerCode += funcBuildSingelton( 'Parser', 'Parser', Parser );
@@ -14979,6 +15076,7 @@ var Three = (function (exports) {
 			};
 			this.workerSupport.validate( buildCode, false );
 			this.workerSupport.setCallbacks( scopedOnMeshLoaded, scopedOnLoad );
+			if ( scope.terminateWorkerOnLoad ) this.workerSupport.setTerminateRequested( true );
 
 			var materialNames = {};
 			var materials = this.builder.getMaterials();
@@ -15007,8 +15105,7 @@ var Three = (function (exports) {
 						input: content,
 						options: null
 					}
-				},
-				[ content.buffer ]
+				}
 			);
 		};
 
@@ -15042,7 +15139,9 @@ var Three = (function (exports) {
 		 */
 		var Parser = (function () {
 
-			function Parser( logger ) {
+			var ConsoleLogger = LoaderSupport.ConsoleLogger;
+
+			function Parser() {
 				this.callbackProgress = null;
 				this.callbackBuilder = null;
 
@@ -15060,9 +15159,8 @@ var Three = (function (exports) {
 					faces: 0,
 					doubleIndicesCount: 0
 				};
-				this.logger = logger;
+				this.logger = new ConsoleLogger();
 				this.totalBytes = 0;
-				this.reachedFaces = false;
 			}
 
 			Parser.prototype.setUseAsync = function ( useAsync ) {
@@ -15093,6 +15191,11 @@ var Three = (function (exports) {
 
 			Parser.prototype.setCallbackProgress = function ( callbackProgress ) {
 				this.callbackProgress = callbackProgress;
+			};
+
+			Parser.prototype.setLogConfig = function ( enabled, debug ) {
+				this.logger.setEnabled( enabled );
+				this.logger.setDebug( debug );
 			};
 
 			Parser.prototype.configure = function () {
@@ -15263,28 +15366,7 @@ var Three = (function (exports) {
 
 				switch ( buffer[ 0 ] ) {
 					case Consts.LINE_V:
-						// object complete instance required if reached faces already (= reached next block of v)
-						if ( this.reachedFaces ) {
-
-							if ( this.rawMesh.colors.length > 0 && this.rawMesh.colors.length !== this.rawMesh.vertices.length ) {
-
-								throw 'Vertex Colors were detected, but vertex count and color count do not match!';
-
-							}
-							// only when new vertices after faces are detected complete new mesh is prepared (reset offsets, etc)
-							this.processCompletedMesh( this.rawMesh.objectName, this.rawMesh.groupName, currentByte, true );
-							this.reachedFaces = false;
-
-						}
-						if ( bufferPointer === 4 ) {
-
-							this.rawMesh.pushVertex( buffer );
-
-						} else {
-
-							this.rawMesh.pushVertexAndVertextColors( buffer );
-
-						}
+						this.rawMesh.pushVertex( buffer, bufferPointer > 4 );
 						break;
 
 					case Consts.LINE_VT:
@@ -15296,7 +15378,6 @@ var Three = (function (exports) {
 						break;
 
 					case Consts.LINE_F:
-						this.reachedFaces = true;
 						this.rawMesh.processFaces( buffer, bufferPointer, countSlashes( slashSpacePattern, slashSpacePatternPointer ) );
 						break;
 
@@ -15310,12 +15391,15 @@ var Three = (function (exports) {
 						break;
 
 					case Consts.LINE_G:
-						this.processCompletedMesh( this.rawMesh.objectName, concatStringBuffer( buffer, bufferPointer, slashSpacePattern ), currentByte, false );
+						// 'g' leads to creation of mesh if valid data (faces declaration was done before), otherwise only groupName gets set
+						this.processCompletedMesh( currentByte );
+						this.rawMesh.pushGroup( concatStringBuffer( buffer, bufferPointer, slashSpacePattern ) );
 						flushStringBuffer( buffer, bufferPointer );
 						break;
 
 					case Consts.LINE_O:
-						this.processCompletedMesh( concatStringBuffer( buffer, bufferPointer, slashSpacePattern ), this.rawMesh.groupName, currentByte, false );
+						// 'o' is pure meta-information and does not result in creation of new meshes
+						this.rawMesh.pushObject( concatStringBuffer( buffer, bufferPointer, slashSpacePattern ) );
 						flushStringBuffer( buffer, bufferPointer );
 						break;
 
@@ -15348,43 +15432,40 @@ var Three = (function (exports) {
 					'\n\tReal RawMeshSubGroup count: ' + report.subGroups;
 			};
 
-			Parser.prototype.processCompletedMesh = function ( objectName, groupName, currentByte, beginNewObject ) {
+			Parser.prototype.processCompletedMesh = function ( currentByte ) {
 				var result = this.rawMesh.finalize();
 				if ( Validator.isValid( result ) ) {
 
-					this.inputObjectCount++;
+					if ( this.rawMesh.colors.length > 0 && this.rawMesh.colors.length !== this.rawMesh.vertices.length ) {
+
+						throw 'Vertex Colors were detected, but vertex count and color count do not match!';
+
+					}
 					if ( this.logger.isDebug() ) this.logger.logDebug( this.createRawMeshReport( this.rawMesh, this.inputObjectCount ) );
+					this.inputObjectCount++;
+
 					this.buildMesh( result, currentByte );
 					var progressBytesPercent = currentByte / this.totalBytes;
 					this.callbackProgress( 'Completed [o: ' + this.rawMesh.objectName + ' g:' + this.rawMesh.groupName + '] Total progress: ' + ( progressBytesPercent * 100 ).toFixed( 2 ) + '%', progressBytesPercent );
-					this.rawMesh = beginNewObject ? this.rawMesh.newInstanceResetOffsets() : this.rawMesh.newInstanceKeepOffsets();
+					this.rawMesh.reset( this.rawMesh.smoothingGroup.splitMaterials );
 
+					return true;
+
+				} else {
+
+					return false;
 				}
-				// Always update group an object name in case they have changed and are valid
-				if ( this.rawMesh.objectName !== objectName && Validator.isValid( objectName ) ) this.rawMesh.pushObject( objectName );
-				if ( this.rawMesh.groupName !== groupName && Validator.isValid( groupName ) ) this.rawMesh.pushGroup( groupName );
 			};
 
 			Parser.prototype.finalize = function ( currentByte ) {
 				this.logger.logInfo( 'Global output object count: ' + this.outputObjectCount );
-				var result = Validator.isValid( this.rawMesh ) ? this.rawMesh.finalize() : null;
-				if ( Validator.isValid( result ) ) {
+				if ( this.processCompletedMesh( currentByte ) && this.logger.isEnabled() ) {
 
-					this.inputObjectCount++;
-					if ( this.logger.isDebug() ) this.logger.logDebug( this.createRawMeshReport( this.rawMesh, this.inputObjectCount ) );
-					this.buildMesh( result, currentByte );
-
-					if ( this.logger.isEnabled() ) {
-
-						var parserFinalReport = 'Overall counts: ' +
-							'\n\tVertices: ' + this.counts.vertices +
-							'\n\tFaces: ' + this.counts.faces +
-							'\n\tMultiple definitions: ' + this.counts.doubleIndicesCount;
-						this.logger.logInfo( parserFinalReport );
-
-					}
-					var progressBytesPercent = currentByte / this.totalBytes;
-					this.callbackProgress( 'Completed Parsing: 100.00%', progressBytesPercent );
+					var parserFinalReport = 'Overall counts: ' +
+						'\n\tVertices: ' + this.counts.vertices +
+						'\n\tFaces: ' + this.counts.faces +
+						'\n\tMultiple definitions: ' + this.counts.doubleIndicesCount;
+					this.logger.logInfo( parserFinalReport );
 
 				}
 			};
@@ -15539,11 +15620,11 @@ var Three = (function (exports) {
 					if ( this.logger.isDebug() ) {
 						var materialIndexLine = Validator.isValid( selectedMaterialIndex ) ? '\n\t\tmaterialIndex: ' + selectedMaterialIndex : '';
 						var createdReport = 'Output Object no.: ' + this.outputObjectCount +
-							'\n\t\tobjectName: ' + rawObjectDescription.objectName +
 							'\n\t\tgroupName: ' + rawObjectDescription.groupName +
-							'\n\t\tmaterialName: ' + rawObjectDescription.materialName +
 							materialIndexLine +
+							'\n\t\tmaterialName: ' + rawObjectDescription.materialName +
 							'\n\t\tsmoothingGroup: ' + rawObjectDescription.smoothingGroup +
+							'\n\t\tobjectName: ' + rawObjectDescription.objectName +
 							'\n\t\t#vertices: ' + rawObjectDescription.vertices.length / 3 +
 							'\n\t\t#indices: ' + rawObjectDescription.indices.length +
 							'\n\t\t#colors: ' + rawObjectDescription.colors.length / 3 +
@@ -15595,82 +15676,51 @@ var Three = (function (exports) {
 		 */
 		var RawMesh = (function () {
 
-			function RawMesh( materialPerSmoothingGroup, useIndices, disregardNormals, activeMtlName ) {
-				this.globalVertexOffset = 1;
-				this.globalUvOffset = 1;
-				this.globalNormalOffset = 1;
-
+			function RawMesh( materialPerSmoothingGroup, useIndices, disregardNormals ) {
 				this.vertices = [];
 				this.colors = [];
 				this.normals = [];
 				this.uvs = [];
 
-				// faces are stored according combined index of group, material and smoothingGroup (0 or not)
-				this.activeMtlName = Validator.verifyInput( activeMtlName, '' );
+				this.useIndices = useIndices === true;
+				this.disregardNormals = disregardNormals === true;
+
 				this.objectName = '';
 				this.groupName = '';
+				this.activeMtlName = '';
 				this.mtllibName = '';
+				this.reset( materialPerSmoothingGroup );
+			}
+
+			RawMesh.prototype.reset = function ( materialPerSmoothingGroup ) {
+				// faces are stored according combined index of group, material and smoothingGroup (0 or not)
+				this.subGroups = [];
+				this.subGroupInUse = null;
 				this.smoothingGroup = {
 					splitMaterials: materialPerSmoothingGroup === true,
 					normalized: -1,
 					real: -1
 				};
-				this.useIndices = useIndices === true;
-				this.disregardNormals = disregardNormals === true;
-
-				this.mtlCount = 0;
-				this.smoothingGroupCount = 0;
-
-				this.subGroups = [];
-				this.subGroupInUse = null;
 				// this default index is required as it is possible to define faces without 'g' or 'usemtl'
 				this.pushSmoothingGroup( 1 );
 
 				this.doubleIndicesCount = 0;
 				this.faceCount = 0;
-			}
-
-			RawMesh.prototype.newInstanceResetOffsets = function () {
-				var newRawObject = new RawMesh( this.smoothingGroup.splitMaterials, this.useIndices, this.disregardNormals, this.activeMtlName );
-
-				// move indices forward
-				newRawObject.globalVertexOffset = this.globalVertexOffset + this.vertices.length / 3;
-				newRawObject.globalUvOffset = this.globalUvOffset + this.uvs.length / 2;
-				newRawObject.globalNormalOffset = this.globalNormalOffset + this.normals.length / 3;
-
-				return newRawObject;
+				this.mtlCount = 0;
+				this.smoothingGroupCount = 0;
 			};
 
-			RawMesh.prototype.newInstanceKeepOffsets = function () {
-				var newRawObject = new RawMesh( this.smoothingGroup.splitMaterials, this.useIndices, this.disregardNormals, this.activeMtlName );
-				// keep objectName
-				newRawObject.pushObject( this.objectName );
-
-				// keep current buffers and indices forward
-				newRawObject.vertices = this.vertices;
-				newRawObject.colors = this.colors;
-				newRawObject.uvs = this.uvs;
-				newRawObject.normals = this.normals;
-				newRawObject.globalVertexOffset = this.globalVertexOffset;
-				newRawObject.globalUvOffset = this.globalUvOffset;
-				newRawObject.globalNormalOffset = this.globalNormalOffset;
-
-				return newRawObject;
-			};
-
-			RawMesh.prototype.pushVertex = function ( buffer ) {
+			RawMesh.prototype.pushVertex = function ( buffer, haveVertexColors ) {
 				this.vertices.push( parseFloat( buffer[ 1 ] ) );
 				this.vertices.push( parseFloat( buffer[ 2 ] ) );
 				this.vertices.push( parseFloat( buffer[ 3 ] ) );
-			};
+				if ( haveVertexColors ) {
 
-			RawMesh.prototype.pushVertexAndVertextColors = function ( buffer ) {
-				this.vertices.push( parseFloat( buffer[ 1 ] ) );
-				this.vertices.push( parseFloat( buffer[ 2 ] ) );
-				this.vertices.push( parseFloat( buffer[ 3 ] ) );
-				this.colors.push( parseFloat( buffer[ 4 ] ) );
-				this.colors.push( parseFloat( buffer[ 5 ] ) );
-				this.colors.push( parseFloat( buffer[ 6 ] ) );
+					this.colors.push( parseFloat( buffer[ 4 ] ) );
+					this.colors.push( parseFloat( buffer[ 5 ] ) );
+					this.colors.push( parseFloat( buffer[ 6 ] ) );
+
+				}
 			};
 
 			RawMesh.prototype.pushUv = function ( buffer ) {
@@ -15684,16 +15734,16 @@ var Three = (function (exports) {
 				this.normals.push( parseFloat( buffer[ 3 ] ) );
 			};
 
+			RawMesh.prototype.pushGroup = function ( groupName ) {
+				this.groupName = Validator.verifyInput( groupName, '' );
+			};
+
 			RawMesh.prototype.pushObject = function ( objectName ) {
 				this.objectName = Validator.verifyInput( objectName, '' );
 			};
 
 			RawMesh.prototype.pushMtllib = function ( mtllibName ) {
 				this.mtllibName = Validator.verifyInput( mtllibName, '' );
-			};
-
-			RawMesh.prototype.pushGroup = function ( groupName ) {
-				this.groupName = Validator.verifyInput( groupName, '' );
 			};
 
 			RawMesh.prototype.pushUsemtl = function ( mtlName ) {
@@ -15740,7 +15790,7 @@ var Three = (function (exports) {
 				// "f vertex ..."
 				if ( slashesCount === 0 ) {
 
-					for ( i = 2, length = bufferLength - 1; i < length; i ++ ) {
+					for ( i = 2, length = bufferLength; i < length; i ++ ) {
 
 						this.buildFace( buffer[ 1 ] );
 						this.buildFace( buffer[ i ] );
@@ -15784,20 +15834,22 @@ var Three = (function (exports) {
 				}
 			};
 
+
 			RawMesh.prototype.buildFace = function ( faceIndexV, faceIndexU, faceIndexN ) {
 				var sgiu = this.subGroupInUse;
 				if ( this.disregardNormals ) faceIndexN = undefined;
 				var scope = this;
 				var updateRawObjectDescriptionInUse = function () {
 
-					var indexPointerV = ( parseInt( faceIndexV ) - scope.globalVertexOffset ) * 3;
-					var indexPointerC = scope.colors.length > 0 ? indexPointerV : null;
+					var faceIndexVi = parseInt( faceIndexV );
+					var indexPointerV = 3 * ( faceIndexVi > 0 ? faceIndexVi - 1 : faceIndexVi + scope.vertices.length / 3 );
 
 					var vertices = sgiu.vertices;
 					vertices.push( scope.vertices[ indexPointerV++ ] );
 					vertices.push( scope.vertices[ indexPointerV++ ] );
 					vertices.push( scope.vertices[ indexPointerV ] );
 
+					var indexPointerC = scope.colors.length > 0 ? indexPointerV : null;
 					if ( indexPointerC !== null ) {
 
 						var colors = sgiu.colors;
@@ -15809,7 +15861,8 @@ var Three = (function (exports) {
 
 					if ( faceIndexU ) {
 
-						var indexPointerU = ( parseInt( faceIndexU ) - scope.globalUvOffset ) * 2;
+						var faceIndexUi = parseInt( faceIndexU );
+						var indexPointerU = 2 * ( faceIndexUi > 0 ? faceIndexUi - 1 : faceIndexUi + scope.uvs.length / 2 );
 						var uvs = sgiu.uvs;
 						uvs.push( scope.uvs[ indexPointerU++ ] );
 						uvs.push( scope.uvs[ indexPointerU ] );
@@ -15817,7 +15870,8 @@ var Three = (function (exports) {
 					}
 					if ( faceIndexN ) {
 
-						var indexPointerN = ( parseInt( faceIndexN ) - scope.globalNormalOffset ) * 3;
+						var faceIndexNi = parseInt( faceIndexN );
+						var indexPointerN = 3 * ( faceIndexNi > 0 ? faceIndexNi - 1 : faceIndexNi + scope.normals.length / 3 );
 						var normals = sgiu.normals;
 						normals.push( scope.normals[ indexPointerN++ ] );
 						normals.push( scope.normals[ indexPointerN++ ] );
@@ -16051,12 +16105,11 @@ var Three = (function (exports) {
 		 * @memberOf OBJLoader2
 		 *
 		 * @param {string} url URL to the file
-		 * @param {string} name The name of the object
 		 * @param {Object} content The file content as arraybuffer or text
 		 * @param {function} callbackOnLoad
 		 * @param {string} [crossOrigin] CORS value
 		 */
-		OBJLoader2.prototype.loadMtl = function ( url, name, content, callbackOnLoad, crossOrigin ) {
+		OBJLoader2.prototype.loadMtl = function ( url, content, callbackOnLoad, crossOrigin ) {
 			var resource = new LoaderSupport.ResourceDescriptor( url, 'MTL' );
 			resource.setContent( content );
 			this._loadMtl( resource, callbackOnLoad, crossOrigin );
@@ -16071,6 +16124,7 @@ var Three = (function (exports) {
 		 * @param {string} [crossOrigin] CORS value
 		 */
 		OBJLoader2.prototype._loadMtl = function ( resource, callbackOnLoad, crossOrigin ) {
+			if ( MTLLoader === undefined ) console.error( '"MTLLoader" is not available. "OBJLoader2" requires it for loading MTL files.' );
 			if ( Validator.isValid( resource ) ) this.logger.logTimeStart( 'Loading MTL: ' + resource.name );
 
 			var materials = [];
@@ -16115,7 +16169,7 @@ var Three = (function (exports) {
 
 					var onError = function ( event ) {
 						var output = 'Error occurred while downloading "' + resource.url + '"';
-						this.logger.logError( output + ': ' + event );
+						scope.logger.logError( output + ': ' + event );
 						throw output;
 					};
 
