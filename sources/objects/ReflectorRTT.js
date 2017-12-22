@@ -1,8 +1,8 @@
 import { Reflector } from '../objects/Reflector.js'
 
-var ReflectorRTT = function ( width, height, options ) {
+var ReflectorRTT = function ( geometry, options ) {
 
-	Reflector.call( this, width, height, options );
+	Reflector.call( this, geometry, options );
 
 	this.geometry.setDrawRange( 0, 0 ); // avoid rendering geometry
 

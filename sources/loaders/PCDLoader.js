@@ -4,6 +4,7 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { PointsMaterial } from '../materials/Materials.js'
 import { Points } from '../objects/Points.js'
 import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { LoaderUtils } from '../loaders/LoaderUtils.js'
 
 /**
  * @author Filipe Caixeta / http://filipecaixeta.com.br
@@ -42,28 +43,6 @@ PCDLoader.prototype = {
 	},
 
 	parse: function ( data, url ) {
-
-		function binaryToStr( data ) {
-
-			var charArray = new Uint8Array( data );
-
-			if ( window.TextDecoder !== undefined ) {
-
-				return new TextDecoder().decode( charArray );
-
-			}
-
-			var text = '';
-
-			for ( var i = 0, l = data.byteLength; i < l; i ++ ) {
-
-				text += String.fromCharCode( charArray[ i ] );
-
-			}
-
-			return text;
-
-		}
 
 		function parseHeader( data ) {
 
@@ -174,7 +153,7 @@ PCDLoader.prototype = {
 
 		}
 
-		var textData = binaryToStr( data );
+		var textData = LoaderUtils.decodeText( data );
 
 		// parse header (always ascii format)
 

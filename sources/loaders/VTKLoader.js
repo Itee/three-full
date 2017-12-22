@@ -7,6 +7,7 @@ import { Vector3 } from '../math/Vector3.js'
 import { Face3 } from '../core/Face3.js'
 import { Color } from '../math/Color.js'
 import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { LoaderUtils } from '../loaders/LoaderUtils.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -1196,7 +1197,7 @@ Object.assign( VTKLoader.prototype, EventDispatcher.prototype, {
 		}
 
 		// get the 5 first lines of the files to check if there is the key word binary
-		var meta = String.fromCharCode.apply( null, new Uint8Array( data, 0, 250 ) ).split( '\n' );
+		var meta = LoaderUtils.decodeText( new Uint8Array( data, 0, 250 ) ).split( '\n' );
 
 		if ( meta[ 0 ].indexOf( 'xml' ) !== - 1 ) {
 

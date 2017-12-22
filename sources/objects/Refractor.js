@@ -1,5 +1,4 @@
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/Geometries.js'
 import { Color } from '../math/Color.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { Plane } from '../math/Plane.js'
@@ -20,9 +19,9 @@ import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
  *
  */
 
-var Refractor = function ( width, height, options ) {
+var Refractor = function ( geometry, options ) {
 
-	Mesh.call( this, new PlaneBufferGeometry( width, height ) );
+	Mesh.call( this, geometry );
 
 	this.type = 'Refractor';
 

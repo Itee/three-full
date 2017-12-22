@@ -6,6 +6,7 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Mesh } from '../objects/Mesh.js'
 import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { LoaderUtils } from '../loaders/LoaderUtils.js'
 
 /*
  * @author tamarintech / https://tamarintech.com
@@ -23,7 +24,6 @@ import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
  *
  * Materials now supported, material colors supported
  * Zip support, requires jszip
- * TextDecoder polyfill required by some browsers (particularly IE, Edge)
  * No constellation support (yet)!
  *
  */
@@ -96,14 +96,7 @@ AMFLoader.prototype = {
 
 			}
 
-			if ( window.TextDecoder === undefined ) {
-
-				console.log( 'AMFLoader: TextDecoder not present. Please use TextDecoder polyfill.' );
-				return null;
-
-			}
-
-			var fileText = new TextDecoder( 'utf-8' ).decode( view );
+			var fileText = LoaderUtils.decodeText( view );
 			var xmlData = new DOMParser().parseFromString( fileText, 'application/xml' );
 
 			if ( xmlData.documentElement.nodeName.toLowerCase() !== 'amf' ) {

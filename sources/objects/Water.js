@@ -1,5 +1,4 @@
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/Geometries.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Color } from '../math/Color.js'
 import { Plane } from '../math/Plane.js'
@@ -26,9 +25,9 @@ import { ShaderChunk } from '../renderers/shaders/ShaderChunk.js'
  * @author Jonas Wagner / http://29a.ch/ && http://29a.ch/slides/2012/webglwater/ : Water shader explanations in WebGL
  */
 
-var Water = function ( width, height, options ) {
+var Water = function ( geometry, options ) {
 
-	Mesh.call( this, new PlaneBufferGeometry( width, height ) );
+	Mesh.call( this, geometry );
 
 	var scope = this;
 
@@ -94,7 +93,6 @@ var Water = function ( width, height, options ) {
 				time: { value: 0.0 },
 				size: { value: 1.0 },
 				distortionScale: { value: 20.0 },
-				noiseScale: { value: 1.0 },
 				textureMatrix: { value: new Matrix4() },
 				sunColor: { value: new Color( 0x7F7F7F ) },
 				sunDirection: { value: new Vector3( 0.70707, 0.70707, 0 ) },

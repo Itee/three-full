@@ -18,6 +18,7 @@ import { Vector4 } from '../math/Vector4.js'
 import { Color } from '../math/Color.js'
 import { Object3D } from '../core/Object3D.js'
 import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { LoaderUtils } from '../loaders/LoaderUtils.js'
 import { Loader } from '../loaders/Loader.js'
 
 /**
@@ -40,7 +41,7 @@ AssimpLoader.prototype = {
 
 		var scope = this;
 
-		var path = Loader.prototype.extractUrlBase( url );
+		var path = LoaderUtils.extractUrlBase( url );
 
 		var loader = new FileLoader( this.manager );
 		loader.setResponseType( 'arraybuffer' );
