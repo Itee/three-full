@@ -31,6 +31,8 @@ import {
 	RGBAFormat,
 	DepthStencilFormat
 } from '../constants.js'
+import { CopyShader } from '../shaders/CopyShader.js'
+import { FXAAShader } from '../shaders/FXAAShader.js'
 
 /**
  * @author alteredq / http://alteredqualia.com/

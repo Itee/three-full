@@ -1,6 +1,7 @@
 import { FileLoader } from '../loaders/FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * @author Kevin Chapelier / https://github.com/kchapelier

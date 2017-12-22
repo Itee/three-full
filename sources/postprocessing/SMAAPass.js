@@ -12,6 +12,8 @@ import {
 	RGBFormat,
 	RGBAFormat
 } from '../constants.js'
+import { SMAAShader } from '../shaders/SMAAShader.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
 /**
  * @author mpk / http://polko.me/

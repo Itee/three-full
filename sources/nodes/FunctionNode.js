@@ -1,4 +1,5 @@
 import { TempNode } from '../nodes/TempNode.js'
+import { NodeLib } from '../nodes/NodeLib.js'
 
 /**
  * @author sunag / http://www.sunag.com.br/

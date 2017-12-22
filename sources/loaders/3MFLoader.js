@@ -6,6 +6,7 @@ import { MeshPhongMaterial } from '../materials/Materials.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Group } from '../objects/Group.js'
 import { VertexColors } from '../constants.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * @author technohippy / https://github.com/technohippy

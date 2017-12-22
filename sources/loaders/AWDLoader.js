@@ -8,6 +8,7 @@ import { Bone } from '../objects/Bone.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * Author: Pierre Lepers

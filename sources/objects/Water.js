@@ -13,6 +13,9 @@ import {
 	LinearFilter,
 	RGBFormat
 } from '../constants.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
+import { ShaderChunk } from '../renderers/shaders/ShaderChunk.js'
 
 /**
  * @author jbouny / https://github.com/jbouny

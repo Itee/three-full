@@ -6,7 +6,10 @@ import { SpotLight } from '../lights/SpotLight.js'
 import { AmbientLight } from '../lights/AmbientLight.js'
 import {
 	ShaderMaterial,
-	MeshStandardMaterial
+	MeshStandardMaterial,
+	MeshPhongMaterial,
+	MeshLambertMaterial,
+	MeshBasicMaterial
 } from '../materials/Materials.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
 import { InterleavedBuffer } from '../core/InterleavedBuffer.js'
@@ -80,6 +83,10 @@ import {
 	TriangleFanDrawMode,
 	sRGBEncoding
 } from '../constants.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { AnimationUtils } from '../animation/AnimationUtils.js'
 
 /**
  * @author Rich Tibbett / https://github.com/richtr

@@ -1,4 +1,5 @@
-
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { Cache } from '../loaders/Cache.js'
 
 /**
  * @author thespite / http://clicktorelease.com/

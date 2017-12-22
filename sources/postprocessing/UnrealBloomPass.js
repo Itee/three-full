@@ -16,6 +16,9 @@ import {
 	LinearFilter,
 	RGBAFormat
 } from '../constants.js'
+import { LuminosityHighPassShader } from '../shaders/LuminosityHighPassShader.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { CopyShader } from '../shaders/CopyShader.js'
 
 /**
  * @author spidersharma / http://eduperiment.com/

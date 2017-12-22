@@ -17,6 +17,7 @@ import {
 	FrontSide,
 	BackSide
 } from '../constants.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * @author Jey-en  https://github.com/adrs2002

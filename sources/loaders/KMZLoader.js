@@ -1,6 +1,7 @@
 import { FileLoader } from '../loaders/FileLoader.js'
 import { ColladaLoader } from '../loaders/ColladaLoader.js'
 import { Group } from '../objects/Group.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/

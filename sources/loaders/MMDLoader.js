@@ -33,6 +33,7 @@ import {
 	SphericalReflectionMapping,
 	RepeatWrapping
 } from '../constants.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * @author takahiro / https://github.com/takahirox

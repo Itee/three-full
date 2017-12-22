@@ -26,6 +26,7 @@ import {
 	DoubleSide,
 	VertexColors
 } from '../constants.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/

@@ -15,6 +15,7 @@ import {
 	DoubleSide,
 	AdditiveBlending
 } from '../constants.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /*
  * Autodesk 3DS threee.js file loader, based on lib3ds.

@@ -36,6 +36,7 @@ import {
 	RepeatWrapping,
 	ClampToEdgeWrapping
 } from '../constants.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * @author Kyle-Larson https://github.com/Kyle-Larson

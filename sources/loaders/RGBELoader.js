@@ -3,6 +3,7 @@ import {
 	UnsignedByteType,
 	RGBEFormat
 } from '../constants.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * @author Nikos M. / https://github.com/foo123/

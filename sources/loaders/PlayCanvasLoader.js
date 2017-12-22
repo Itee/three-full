@@ -8,6 +8,7 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Group } from '../objects/Group.js'
 import { MeshPhongMaterial } from '../materials/Materials.js'
 import { Mesh } from '../objects/Mesh.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/

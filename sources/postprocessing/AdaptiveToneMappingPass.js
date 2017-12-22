@@ -14,6 +14,10 @@ import {
 	LinearMipMapLinearFilter,
 	RGBAFormat
 } from '../constants.js'
+import { CopyShader } from '../shaders/CopyShader.js'
+import { LuminosityShader } from '../shaders/LuminosityShader.js'
+import { ToneMapShader } from '../shaders/ToneMapShader.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
 /**
  * @author miibond

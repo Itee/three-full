@@ -16,6 +16,8 @@ import {
 	HalfFloatType,
 	RGBAFormat
 } from './constants.js'
+import { ShaderLib } from './renderers/shaders/ShaderLib.js'
+import { UniformsUtils } from './renderers/shaders/UniformsUtils.js'
 
 ﻿var Ocean = function ( renderer, camera, scene, options ) {
 

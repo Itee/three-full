@@ -5,6 +5,7 @@ import { Group } from '../objects/Group.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Mesh } from '../objects/Mesh.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /*
  * @author tamarintech / https://tamarintech.com

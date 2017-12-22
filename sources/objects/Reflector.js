@@ -12,6 +12,7 @@ import {
 	LinearFilter,
 	RGBFormat
 } from '../constants.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
 /**
  * @author Slayvin / http://slayvin.net

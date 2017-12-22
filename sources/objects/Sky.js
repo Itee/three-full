@@ -3,6 +3,7 @@ import { ShaderMaterial } from '../materials/Materials.js'
 import { SphereBufferGeometry } from '../geometries/Geometries.js'
 import { Vector3 } from '../math/Vector3.js'
 import { BackSide } from '../constants.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
 /**
  * @author zz85 / https://github.com/zz85

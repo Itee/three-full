@@ -5,6 +5,7 @@ import {
 	Float32BufferAttribute
 } from '../core/BufferAttribute.js'
 import { Vector3 } from '../math/Vector3.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * @author aleeper / http://adamleeper.com/

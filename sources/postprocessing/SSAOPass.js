@@ -6,6 +6,7 @@ import {
 	LinearFilter,
 	RGBADepthPacking
 } from '../constants.js'
+import { SSAOShader } from '../shaders/SSAOShader.js'
 
 'use strict';
 

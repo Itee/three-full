@@ -1,4 +1,5 @@
 import { TextureNode } from '../../nodes/inputs/TextureNode.js'
+import { InputNode } from '../../nodes/InputNode.js'
 
 /**
  * @author sunag / http://www.sunag.com.br/

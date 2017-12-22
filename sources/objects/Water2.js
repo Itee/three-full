@@ -10,6 +10,8 @@ import { Refractor } from '../objects/Refractor.js'
 import { ShaderMaterial } from '../materials/Materials.js'
 import { Vector4 } from '../math/Vector4.js'
 import { RepeatWrapping } from '../constants.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 
 /**
  * @author Mugen87 / https://github.com/Mugen87

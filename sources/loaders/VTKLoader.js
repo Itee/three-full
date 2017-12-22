@@ -6,6 +6,7 @@ import { Geometry } from '../core/Geometry.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Face3 } from '../core/Face3.js'
 import { Color } from '../math/Color.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/

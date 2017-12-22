@@ -9,6 +9,8 @@ import {
 	FloatType,
 	RGBFormat
 } from '../constants.js'
+import { DigitalGlitch } from '../shaders/DigitalGlitch.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
 /**
  * @author alteredq / http://alteredqualia.com/

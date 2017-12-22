@@ -5,6 +5,7 @@ import {
 	RGBA_PVRTC_4BPPV1_Format,
 	RGBA_PVRTC_2BPPV1_Format
 } from '../constants.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /*
  *	 PVRLoader

@@ -13,6 +13,7 @@ import {
 	LinearEncoding,
 	RGBEEncoding
 } from '../constants.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
 * @author Prashant Sharma / spidersharma03

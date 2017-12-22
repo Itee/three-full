@@ -25,6 +25,14 @@ import {
 	RGBAFormat,
 	RGBADepthPacking
 } from '../constants.js'
+import { SAOShader } from '../shaders/SAOShader.js'
+import {
+	DepthLimitedBlurShader,
+	BlurShaderUtils
+} from '../shaders/DepthLimitedBlurShader.js'
+import { CopyShader } from '../shaders/CopyShader.js'
+import { UnpackDepthRGBAShader } from '../shaders/UnpackDepthRGBAShader.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
 /**
  * @author ludobaka / ludobaka.github.io

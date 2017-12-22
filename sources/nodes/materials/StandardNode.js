@@ -3,6 +3,8 @@ import { ColorNode } from '../../nodes/inputs/ColorNode.js'
 import { FloatNode } from '../../nodes/inputs/FloatNode.js'
 import { RoughnessToBlinnExponentNode } from '../../nodes/utils/RoughnessToBlinnExponentNode.js'
 import { UVNode } from '../../nodes/accessors/UVNode.js'
+import { UniformsUtils } from '../../renderers/shaders/UniformsUtils.js'
+import { UniformsLib } from '../../renderers/shaders/UniformsLib.js'
 
 /**
  * @author sunag / http://www.sunag.com.br/

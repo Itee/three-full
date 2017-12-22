@@ -186,13 +186,13 @@ function GPUComputationRenderer( sizeX, sizeY, renderer ) {
 			this.renderTexture( variable.initialValueTexture, variable.renderTargets[ 1 ] );
 
 			// Adds dependencies uniforms to the ShaderMaterial
-			var material = iable.material;
+			var material = variable.material;
 			var uniforms = material.uniforms;
 			if ( variable.dependencies !== null ) {
 
 				for ( var d = 0; d < variable.dependencies.length; d++ ) {
 
-					var depVar = iable.dependencies[ d ];
+					var depVar = variable.dependencies[ d ];
 
 					if ( depVar.name !== variable.name ) {
 
@@ -238,10 +238,10 @@ function GPUComputationRenderer( sizeX, sizeY, renderer ) {
 			// Sets texture dependencies uniforms
 			if ( variable.dependencies !== null ) {
 
-				var uniforms = iable.material.uniforms;
-				for ( var d = 0, dl = iable.dependencies.length; d < dl; d++ ) {
+				var uniforms = variable.material.uniforms;
+				for ( var d = 0, dl = variable.dependencies.length; d < dl; d++ ) {
 
-					var depVar = iable.dependencies[ d ];
+					var depVar = variable.dependencies[ d ];
 
 					uniforms[ depVar.name ].value = depVar.renderTargets[ currentTextureIndex ].texture;
 

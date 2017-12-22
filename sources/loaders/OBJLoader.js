@@ -6,6 +6,7 @@ import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { MeshPhongMaterial } from '../materials/Materials.js'
 import { Mesh } from '../objects/Mesh.js'
 import { LineSegments } from '../objects/LineSegments.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/

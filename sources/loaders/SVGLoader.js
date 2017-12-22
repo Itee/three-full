@@ -1,4 +1,5 @@
 import { FileLoader } from '../loaders/FileLoader.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/

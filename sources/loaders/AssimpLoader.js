@@ -17,6 +17,8 @@ import { Vector2 } from '../math/Vector2.js'
 import { Vector4 } from '../math/Vector4.js'
 import { Color } from '../math/Color.js'
 import { Object3D } from '../core/Object3D.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { Loader } from '../loaders/Loader.js'
 
 /**
  * @author Virtulous / https://virtulo.us/

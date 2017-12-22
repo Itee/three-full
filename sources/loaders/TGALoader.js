@@ -1,5 +1,6 @@
 import { Texture } from '../textures/Texture.js'
 import { FileLoader } from '../loaders/FileLoader.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /*
  * @author Daosheng Mu / https://github.com/DaoshengMu/

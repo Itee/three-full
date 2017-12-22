@@ -1,5 +1,7 @@
 import { GLNode } from '../../nodes/GLNode.js'
 import { ColorNode } from '../../nodes/inputs/ColorNode.js'
+import { UniformsUtils } from '../../renderers/shaders/UniformsUtils.js'
+import { UniformsLib } from '../../renderers/shaders/UniformsLib.js'
 
 /**
  * @author sunag / http://www.sunag.com.br/

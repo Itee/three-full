@@ -1,6 +1,7 @@
 import { Color } from '../math/Color.js'
 import { ShaderMaterial } from '../materials/Materials.js'
 import { BackSide } from '../constants.js'
+import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
 
 /**
  * @author takahirox / http://github.com/takahirox/

@@ -7,6 +7,7 @@ import {
 	FrontSide,
 	RepeatWrapping
 } from '../constants.js'
+import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 /**
  * Loads a Wavefront .mtl file specifying materials

@@ -12,6 +12,7 @@ import {
 	DoubleSide,
 	LinearFilter
 } from '../constants.js'
+import { UnpackDepthRGBAShader } from '../shaders/UnpackDepthRGBAShader.js'
 
 /**
  * @author arya-s / https://github.com/arya-s

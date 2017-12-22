@@ -15,6 +15,8 @@ import {
 	RGBFormat,
 	RGBADepthPacking
 } from '../constants.js'
+import { BokehShader } from '../shaders/BokehShader.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
 /**
  * Depth-of-field post-process with bokeh shader

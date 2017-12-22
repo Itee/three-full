@@ -12,6 +12,8 @@ import {
 	LinearFilter,
 	RGBFormat
 } from '../constants.js'
+import { BokehShader } from '../shaders/BokehShader.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/

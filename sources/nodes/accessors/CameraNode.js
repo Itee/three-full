@@ -60,8 +60,8 @@ CameraNode.prototype.setScope = function( scope ) {
 
 		case CameraNode.DEPTH:
 
-			this.near = new FloatNode( camera ? camera.near : 1 );
-			this.far = new FloatNode( camera ? camera.far : 1200 );
+			this.near = new FloatNode( this.camera ? this.camera.near : 1 );
+			this.far = new FloatNode( this.camera ? this.camera.far : 1200 );
 
 			break;
 
@@ -144,8 +144,8 @@ CameraNode.prototype.updateFrame = function( delta ) {
 
 		case CameraNode.DEPTH:
 
-			this.near.number = camera.near;
-			this.far.number = camera.far;
+			this.near.number = this.camera.near;
+			this.far.number = this.camera.far;
 
 			break;
 

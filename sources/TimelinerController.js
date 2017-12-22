@@ -1,6 +1,7 @@
 import { AnimationMixer } from './animation/AnimationMixer.js'
 import { AnimationClip } from './animation/AnimationClip.js'
 import { PropertyBinding } from './animation/PropertyBinding.js'
+import { AnimationUtils } from './animation/AnimationUtils.js'
 
 /**
  * Controller class for the Timeliner GUI.
