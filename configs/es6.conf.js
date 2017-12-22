@@ -148,6 +148,13 @@ module.exports = {
 				'ShaderChunk'
 			]
 		},
+		UnrealBloomPass: {
+			imports: [
+				'LuminosityHighPassShader',
+				'UniformsUtils',
+				'CopyShader'
+			]
+		},
 		Vector2Node: {
 			imports: [ 'NodeMaterial' ]
 		},
