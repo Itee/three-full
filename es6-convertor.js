@@ -684,7 +684,7 @@ function _getReplacementsFor ( filePath ) {
         replacements.push( [ regex2, replacement2 ] )
 
         // THREE.HDRLoader = THREE.RGBELoader = function ( manager ) {
-        const regex1       = new RegExp( ' = var', 'g' )
+        const regex1       = new RegExp( ' = var ', 'g' )
         const replacement1 = ' = '
         replacements.push( [ regex1, replacement1 ] )
 

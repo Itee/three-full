@@ -321,7 +321,7 @@ module.exports = {
 		RGBELoader: {
 			imports: [ 'DefaultLoadingManager' ],
 			replacements: [
-				[ 'var HDRLoader =  RGBELoader', 'var RGBELoader' ],
+				[ 'var HDRLoader = RGBELoader', 'var RGBELoader' ],
 				[ /(return null;[\s\n\r]+};)/g, '$1\nvar HDRLoader = RGBELoader;\n\n' ],
 			]
 
