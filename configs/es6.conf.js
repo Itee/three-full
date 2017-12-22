@@ -119,6 +119,9 @@ module.exports = {
 				[ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ]
 			]
 		},
+		OutlineEffect: {
+			imports: [ 'ShaderLib' ]
+		},
 		LoaderSupport: {
 			replacements: [
 				[ 'if ( var LoaderSupport === undefined ) { var LoaderSupport = {} }', 'var LoaderSupport = {}' ]
