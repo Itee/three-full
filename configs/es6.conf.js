@@ -37,11 +37,11 @@ module.exports = {
 	],
 	output: path.join( __dirname, '..', 'sources' ),
 	edgeCases: {
-		//        AnimationClipCreator:      {
-		//            output: './src/misc/AnimationClipCreator.js'
-		//        },
 		'3MFLoader': {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		AdaptiveToneMappingPass: {
 			imports: [
@@ -52,17 +52,22 @@ module.exports = {
 			]
 		},
 		AMFLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		AssimpJSONLoader: {
 			imports: [
 				'DefaultLoadingManager',
+				'LoaderUtils',
 				'Loader'
 			]
 		},
 		AssimpLoader: {
 			imports: [
 				'DefaultLoadingManager',
+				'LoaderUtils',
 				'Loader'
 			]
 		},
@@ -73,7 +78,10 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		BinaryLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		BloomPass: {
 			imports: [
@@ -103,6 +111,7 @@ module.exports = {
 		ColladaLoader: {
 			imports: [
 				'DefaultLoadingManager',
+				'LoaderUtils',
 				'Loader'
 			]
 		},
@@ -139,8 +148,14 @@ module.exports = {
 		EffectComposer: {
 			imports: [ 'CopyShader' ]
 		},
-		FBXLoader: {
+		EXRLoader: {
 			imports: [ 'DefaultLoadingManager' ]
+		},
+		FBXLoader: {
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		FilmPass: {
 			imports: [
@@ -150,6 +165,9 @@ module.exports = {
 		},
 		FunctionNode: {
 			imports: [ 'NodeLib' ]
+		},
+		GCodeLoader: {
+			imports: [ 'DefaultLoadingManager' ]
 		},
 		GlitchPass: {
 			imports: [
@@ -171,6 +189,7 @@ module.exports = {
 				'MeshBasicMaterial',
 				'ShaderLib',
 				'UniformsUtils',
+				'LoaderUtils',
 				'AnimationUtils'
 			]
 		},
@@ -199,7 +218,8 @@ module.exports = {
 				'MeshLambertMaterial',
 				'QuaternionKeyframeTrack',
 				'VectorKeyframeTrack',
-				'AnimationUtils'
+				'AnimationUtils',
+				'LoaderUtils'
 			]
 		},
 		LoaderSupport: {
@@ -224,7 +244,8 @@ module.exports = {
 		},
 		MMDLoader: {
 			imports: [
-				'DefaultLoadingManager'
+				'DefaultLoadingManager',
+				'LoaderUtils'
 			]
 		},
 		MTLLoader: {
@@ -284,7 +305,10 @@ module.exports = {
 			exports: [ 'ParametricGeometries' ]
 		},
 		PCDLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		PhongNode: {
 			imports: [
@@ -293,7 +317,10 @@ module.exports = {
 			]
 		},
 		PLYLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		PVRLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -384,13 +411,19 @@ module.exports = {
 			]
 		},
 		STLLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		SVGLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		TDSLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		TexturePass: {
 			imports: [
@@ -402,7 +435,10 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		TimelinerController: {
-			imports: [ 'AnimationUtils' ]
+			imports: [
+				'AnimationUtils',
+				'Timeliner'
+			]
 		},
 		TTFLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -427,7 +463,10 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		VTKLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		Water: {
 			imports: [
