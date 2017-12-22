@@ -39,6 +39,12 @@ module.exports = {
 		BufferSubdivisionModifier: {
 			imports: [ 'Face3' ]
 		},
+		CinematicCamera: {
+			imports: [
+				'BokehShader',
+				'UniformsUtils'
+			]
+		},
 		ColladaLoader: {
 			imports: [
 				'DefaultLoadingManager',
