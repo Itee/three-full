@@ -906,10 +906,17 @@ function _getExportedElementForFile ( filePath ) {
     //                                .replace( /\s*/g, '')
 
     // Try to find exports for es6 modules
-    const es6Exports = _getExportsStatementsInES6File( file )
-    if ( es6Exports.length > 0 ) { return es6Exports }
+    // Todo: need to sort different file type before
+	const es6Regex = new RegExp( /(export\s(default|var))|((import|export)[\r\n\s]*(default)?({[\w\s,]+}\s?(from)?))/, 'g' )
+	if ( file.match( es6Regex ) ) {
 
-    // Try to find exports for commonjs
+		const es6Exports = _getExportsStatementsInES6File( file )
+		if ( es6Exports.length > 0 ) {
+			console.log(filePath + ' will es6Exports ' + es6Exports)
+			return es6Exports
+		}
+
+    }
     const commonjsExports = _getExportsStatementsInCJSFile( file )
     if ( commonjsExports.length > 0 ) { return commonjsExports }
 
