@@ -53,7 +53,7 @@ gulp.task( 'help', ( done ) => {
 gulp.task( 'patch-three', ( done ) => {
 
     runSequence(
-        [ 'fix-effect-composer', 'create-pass-file' ],
+        [ 'fix-effect-composer', 'create-pass-file', 'fix-node-lib', 'fix-camera-node' ],
         done
     )
 
