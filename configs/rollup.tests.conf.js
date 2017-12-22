@@ -1125,16 +1125,6 @@ export default [
 		}
 	},
 	{
-		input: 'sources/extras/core/PathPrototype.js',
-		plugins: [ glsl() ],
-		indent: '\t',
-		output: {
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/extras/core/PathPrototype.test.js'
-		}
-	},
-	{
 		input: 'sources/extras/core/Shape.js',
 		plugins: [ glsl() ],
 		indent: '\t',
@@ -4778,16 +4768,6 @@ export default [
 			format: 'iife',
 			name: 'Three',
 			file: 'tests/utils/GeometryUtils.test.js'
-		}
-	},
-	{
-		input: 'sources/utils/ImageUtils.js',
-		plugins: [ glsl() ],
-		indent: '\t',
-		output: {
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/utils/ImageUtils.test.js'
 		}
 	},
 	{
