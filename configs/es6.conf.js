@@ -23,6 +23,7 @@ module.exports = {
 		'draco',                            // draco_decoder use Eval !
 		'sea3d',                            // Duplicate export 'SEA3D'
 		'crossfade',                        // Scene has already been declared
+		'Cloth.js',							// Use global variable from example html ! Need to be refactored
 
 		'ParametricGeometries.js',          // Bug TorusKnotCurve from es6-exports
 		'RollerCoaster.js',                 // invalid default exports with file name from es6-exports
