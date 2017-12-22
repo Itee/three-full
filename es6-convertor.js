@@ -917,6 +917,13 @@ function _getExportedElementForFile ( filePath ) {
 		}
 
     }
+
+    const amdRegex = new RegExp( /define\.amd/, 'g' )
+	if ( file.match( amdRegex ) ) {
+		console.error( 'WARNING: ' + path.basename( filePath ) + ' is unable to be process... It is an AMD module. Sorry for the disagreement.' )
+		return [ path.basename( filePath, '.js' ) ]
+	}
+
     const commonjsExports = _getExportsStatementsInCJSFile( file )
     if ( commonjsExports.length > 0 ) { return commonjsExports }
 
