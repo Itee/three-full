@@ -32,7 +32,8 @@ module.exports = {
 		'OceanShaders.js',                  // Todo: check how to extends imported lib properly
 		'RectAreaLightUniformsLib.js',      //
 		'Volume.js',                        // damned eval
-		'NRRDLoader.js'                     // Import Volume.js
+		'NRRDLoader.js',                    // Import Volume.js
+		'XLoader.js'                     	// amd module
 	],
 	output: path.join( __dirname, '..', 'sources' ),
 	edgeCases: {
@@ -456,9 +457,6 @@ module.exports = {
 			replacements: [
 				[ 'var WEBVR', 'var WebVR' ]
 			]
-		},
-		XLoader: {
-			imports: [ 'DefaultLoadingManager' ]
 		}
 	}
 }

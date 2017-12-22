@@ -2336,16 +2336,16 @@ export default [
 			file: 'tests/loaders/VTKLoader.test.js'
 		}
 	},
-	{
-		input: 'sources/loaders/XLoader.js',
-		plugins: [ glsl() ],
-		indent: '\t',
-		output: {
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/loaders/XLoader.test.js'
-		}
-	},
+//	{
+//		input: 'sources/loaders/XLoader.js',
+//		plugins: [ glsl() ],
+//		indent: '\t',
+//		output: {
+//			format: 'iife',
+//			name: 'Three',
+//			file: 'tests/loaders/XLoader.test.js'
+//		}
+//	},
 
 	// materials
 	{
