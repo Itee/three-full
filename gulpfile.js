@@ -89,6 +89,25 @@ gulp.task( 'create-pass-file', ( done ) => {
 
 } )
 
+gulp.task( 'fix-node-lib', () => {
+
+    return gulp.src( './node_modules/three/examples/js/nodes/NodeLib.js' )
+               .pipe( replace( [ [ 'delete this.keywords[ node ];', 'delete this.keywords[ name ];' ] ] ) )
+               .pipe( gulp.dest( './node_modules/three/examples/js/nodes' ) )
+
+} )
+
+gulp.task( 'fix-camera-node', () => {
+
+    return gulp.src( './node_modules/three/examples/js/nodes/accessors/CameraNode.js' )
+               .pipe( replace( [ [ 'camera ? camera.near : 1', 'this.camera ? this.camera.near : 1' ] ] ) )
+               .pipe( replace( [ [ 'camera ? camera.far : 1200', 'this.camera ? this.camera.far : 1200' ] ] ) )
+               .pipe( replace( [ [ 'this.near.number = camera.near;', 'this.near.number = this.camera.near;' ] ] ) )
+               .pipe( replace( [ [ 'this.far.number = camera.far;', 'this.far.number = this.camera.far;' ] ] ) )
+               .pipe( gulp.dest( './node_modules/three/examples/js/nodes/accessors' ) )
+
+} )
+
 gulp.task( 'fix-effect-composer', () => {
 
     return gulp.src( './node_modules/three/examples/js/postprocessing/EffectComposer.js' )
