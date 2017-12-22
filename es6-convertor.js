@@ -137,15 +137,27 @@ function _excludesFilesPaths ( filePaths, excludes ) {
 
     function isExclude ( path ) {
 
+        let isExclude = false
+        let excludePattern = undefined
         for ( let i = 0, pathLength = excludes.length ; i < pathLength ; i++ ) {
 
-            if ( path.contains( excludes[ i ] ) ) {
-                return true
+			excludePattern = excludes[ i ]
+
+            // In case this is a file name it must fully match
+            if( excludePattern.indexOf('.') > -1 ) {
+
+			    const fileName = path.replace(/^.*(\\|\/|\:)/, '')
+                if(fileName === excludePattern) {
+					isExclude = true
+                }
+
+            } else if ( path.contains( excludePattern ) ) {
+				isExclude = true
             }
 
         }
 
-        return false
+        return isExclude
 
     }
 
