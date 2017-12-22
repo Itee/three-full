@@ -489,6 +489,7 @@ function _getAllConstantStatementIn ( file ) {
 
     const constantFilePath = _exportMap[ 'REVISION' ]
     const constants        = _revertExportMap[ constantFilePath ]
+	if ( !constants ) { throw new Error( 'No constants for: ' + constantFilePath ) }
 
     // Find
     let matchedStatements = []
