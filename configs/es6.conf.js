@@ -17,6 +17,9 @@ module.exports = {
 		'Three.js',
 		'polyfills.js',
 		'libs',
+		'Curves.js',						// Ignore intermediary exporter files
+		'Geometries.js',					// Ignore intermediary exporter files
+		'Materials.js',						// Ignore intermediary exporter files
 
 		'RaytracingWorker.js',
 		'ctm',                              // Todo: Need to check worker import
