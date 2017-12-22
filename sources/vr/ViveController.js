@@ -1,5 +1,4 @@
 import { Object3D } from '../core/Object3D.js'
-import { Matrix4 } from '../math/Matrix4.js'
 
 /**
  * @author mrdoob / http://mrdoob.com
@@ -43,7 +42,6 @@ var ViveController = function ( id ) {
 	}
 
 	this.matrixAutoUpdate = false;
-	this.standingMatrix = new Matrix4();
 
 	this.getGamepad = function () {
 
@@ -75,7 +73,6 @@ var ViveController = function ( id ) {
 			if ( pose.position !== null ) scope.position.fromArray( pose.position );
 			if ( pose.orientation !== null ) scope.quaternion.fromArray( pose.orientation );
 			scope.matrix.compose( scope.position, scope.quaternion, scope.scale );
-			scope.matrix.multiplyMatrices( scope.standingMatrix, scope.matrix );
 			scope.matrixWorldNeedsUpdate = true;
 			scope.visible = true;
 

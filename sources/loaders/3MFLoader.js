@@ -7,6 +7,7 @@ import { Mesh } from '../objects/Mesh.js'
 import { Group } from '../objects/Group.js'
 import { VertexColors } from '../constants.js'
 import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { LoaderUtils } from '../loaders/LoaderUtils.js'
 
 /**
  * @author technohippy / https://github.com/technohippy
@@ -98,23 +99,16 @@ ThreeMFLoader.prototype = {
 
 			}
 
-			if ( window.TextDecoder === undefined ) {
-
-				console.error( 'ThreeMFLoader: TextDecoder not present. Please use a TextDecoder polyfill.' );
-				return null;
-
-			}
-
-			var relsView = new DataView( zip.file( relsName ).asArrayBuffer() );
-			var relsFileText = new TextDecoder( 'utf-8' ).decode( relsView );
+			var relsView = new Uint8Array( zip.file( relsName ).asArrayBuffer() );
+			var relsFileText = LoaderUtils.decodeText( relsView );
 			rels = parseRelsXml( relsFileText );
 
 			for ( var i = 0; i < modelPartNames.length; i ++ ) {
 
 				var modelPart = modelPartNames[ i ];
-				var view = new DataView( zip.file( modelPart ).asArrayBuffer() );
+				var view = new Uint8Array( zip.file( modelPart ).asArrayBuffer() );
 
-				var fileText = new TextDecoder( 'utf-8' ).decode( view );
+				var fileText = LoaderUtils.decodeText( view );
 				var xmlData = new DOMParser().parseFromString( fileText, 'application/xml' );
 
 				if ( xmlData.documentElement.nodeName.toLowerCase() !== 'model' ) {

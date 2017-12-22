@@ -85,7 +85,7 @@ var Three = (function (exports) {
 
 	} );
 
-	var REVISION = '88';
+	var REVISION = '89';
 
 	var CullFaceNone = 0;
 	var CullFaceBack = 1;
@@ -221,44 +221,32 @@ var Three = (function (exports) {
 		DEG2RAD: Math.PI / 180,
 		RAD2DEG: 180 / Math.PI,
 
-		generateUUID: function () {
+		generateUUID: ( function () {
 
-			// http://www.broofa.com/Tools/Math.uuid.htm
-			// Replaced .join with string concatenation (@takahirox)
+			// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
 
-			var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split( '' );
-			var rnd = 0, r;
+			var lut = [];
 
-			return function generateUUID() {
+			for ( var i = 0; i < 256; i ++ ) {
 
-				var uuid = '';
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
 
-				for ( var i = 0; i < 36; i ++ ) {
+			}
 
-					if ( i === 8 || i === 13 || i === 18 || i === 23 ) {
+			return function () {
 
-						uuid += '-';
-
-					} else if ( i === 14 ) {
-
-						uuid += '4';
-
-					} else {
-
-						if ( rnd <= 0x02 ) rnd = 0x2000000 + ( Math.random() * 0x1000000 ) | 0;
-						r = rnd & 0xf;
-						rnd = rnd >> 4;
-						uuid += chars[ ( i === 19 ) ? ( r & 0x3 ) | 0x8 : r ];
-
-					}
-
-				}
-
-				return uuid;
+				var d0 = Math.random() * 0xffffffff | 0;
+				var d1 = Math.random() * 0xffffffff | 0;
+				var d2 = Math.random() * 0xffffffff | 0;
+				var d3 = Math.random() * 0xffffffff | 0;
+				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
+					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
+					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
 
 			};
 
-		}(),
+		} )(),
 
 		clamp: function ( value, min, max ) {
 
@@ -436,7 +424,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( Material.prototype, EventDispatcher.prototype, {
+	Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Material,
 
 		isMaterial: true,
 
@@ -5765,17 +5755,7 @@ var Three = (function (exports) {
 	Texture.DEFAULT_IMAGE = undefined;
 	Texture.DEFAULT_MAPPING = UVMapping;
 
-	Object.defineProperty( Texture.prototype, "needsUpdate", {
-
-		set: function ( value ) {
-
-			if ( value === true ) this.version ++;
-
-		}
-
-	} );
-
-	Object.assign( Texture.prototype, EventDispatcher.prototype, {
+	Texture.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
 
 		constructor: Texture,
 
@@ -6015,6 +5995,16 @@ var Three = (function (exports) {
 				uv.y = 1 - uv.y;
 
 			}
+
+		}
+
+	} );
+
+	Object.defineProperty( Texture.prototype, "needsUpdate", {
+
+		set: function ( value ) {
+
+			if ( value === true ) this.version ++;
 
 		}
 
@@ -9084,7 +9074,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( WebGLRenderTarget.prototype, EventDispatcher.prototype, {
+	WebGLRenderTarget.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: WebGLRenderTarget,
 
 		isWebGLRenderTarget: true,
 
@@ -11269,7 +11261,9 @@ var Three = (function (exports) {
 	Object3D.DefaultUp = new Vector3( 0, 1, 0 );
 	Object3D.DefaultMatrixAutoUpdate = true;
 
-	Object.assign( Object3D.prototype, EventDispatcher.prototype, {
+	Object3D.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Object3D,
 
 		isObject3D: true,
 
@@ -11797,7 +11791,8 @@ var Three = (function (exports) {
 					geometries: {},
 					materials: {},
 					textures: {},
-					images: {}
+					images: {},
+					shapes: {}
 				};
 
 				output.metadata = {
@@ -11840,6 +11835,30 @@ var Three = (function (exports) {
 			if ( this.geometry !== undefined ) {
 
 				object.geometry = serialize( meta.geometries, this.geometry );
+
+				var parameters = this.geometry.parameters;
+
+				if ( parameters !== undefined && parameters.shapes !== undefined ) {
+
+					var shapes = parameters.shapes;
+
+					if ( Array.isArray( shapes ) ) {
+
+						for ( var i = 0, l = shapes.length; i < l; i ++ ) {
+
+							var shape = shapes[ i ];
+
+							serialize( meta.shapes, shape );
+
+						}
+
+					} else {
+
+						serialize( meta.shapes, shapes );
+
+					}
+
+				}
 
 			}
 
@@ -11885,11 +11904,13 @@ var Three = (function (exports) {
 				var materials = extractFromCache( meta.materials );
 				var textures = extractFromCache( meta.textures );
 				var images = extractFromCache( meta.images );
+				var shapes = extractFromCache( meta.shapes );
 
 				if ( geometries.length > 0 ) output.geometries = geometries;
 				if ( materials.length > 0 ) output.materials = materials;
 				if ( textures.length > 0 ) output.textures = textures;
 				if ( images.length > 0 ) output.images = images;
+				if ( shapes.length > 0 ) output.shapes = shapes;
 
 			}
 
@@ -12280,7 +12301,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( Geometry.prototype, EventDispatcher.prototype, {
+	Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Geometry,
 
 		isGeometry: true,
 
@@ -14406,7 +14429,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( BufferGeometry.prototype, EventDispatcher.prototype, {
+	BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: BufferGeometry,
 
 		isBufferGeometry: true,
 
@@ -18259,14 +18284,14 @@ var Three = (function (exports) {
 	function getTexelDecodingFunction( functionName, encoding ) {
 
 		var components = getEncodingComponents( encoding );
-		return "vec4 " + functionName + "( vec4 value ) { return " + components[ 0 ] + "ToLinear" + components[ 1 ] + "; }";
+		return 'vec4 ' + functionName + '( vec4 value ) { return ' + components[ 0 ] + 'ToLinear' + components[ 1 ] + '; }';
 
 	}
 
 	function getTexelEncodingFunction( functionName, encoding ) {
 
 		var components = getEncodingComponents( encoding );
-		return "vec4 " + functionName + "( vec4 value ) { return LinearTo" + components[ 0 ] + components[ 1 ] + "; }";
+		return 'vec4 ' + functionName + '( vec4 value ) { return LinearTo' + components[ 0 ] + components[ 1 ] + '; }';
 
 	}
 
@@ -18277,19 +18302,19 @@ var Three = (function (exports) {
 		switch ( toneMapping ) {
 
 			case LinearToneMapping:
-				toneMappingName = "Linear";
+				toneMappingName = 'Linear';
 				break;
 
 			case ReinhardToneMapping:
-				toneMappingName = "Reinhard";
+				toneMappingName = 'Reinhard';
 				break;
 
 			case Uncharted2ToneMapping:
-				toneMappingName = "Uncharted2";
+				toneMappingName = 'Uncharted2';
 				break;
 
 			case CineonToneMapping:
-				toneMappingName = "OptimizedCineon";
+				toneMappingName = 'OptimizedCineon';
 				break;
 
 			default:
@@ -18297,7 +18322,7 @@ var Three = (function (exports) {
 
 		}
 
-		return "vec3 " + functionName + "( vec3 color ) { return " + toneMappingName + "ToneMapping( color ); }";
+		return 'vec3 ' + functionName + '( vec3 color ) { return ' + toneMappingName + 'ToneMapping( color ); }';
 
 	}
 
@@ -18690,9 +18715,9 @@ var Three = (function (exports) {
 				parameters.shadowMapEnabled ? '#define USE_SHADOWMAP' : '',
 				parameters.shadowMapEnabled ? '#define ' + shadowMapTypeDefine : '',
 
-				parameters.premultipliedAlpha ? "#define PREMULTIPLIED_ALPHA" : '',
+				parameters.premultipliedAlpha ? '#define PREMULTIPLIED_ALPHA' : '',
 
-				parameters.physicallyCorrectLights ? "#define PHYSICALLY_CORRECT_LIGHTS" : '',
+				parameters.physicallyCorrectLights ? '#define PHYSICALLY_CORRECT_LIGHTS' : '',
 
 				parameters.logarithmicDepthBuffer ? '#define USE_LOGDEPTHBUF' : '',
 				parameters.logarithmicDepthBuffer && extensions.get( 'EXT_frag_depth' ) ? '#define USE_LOGDEPTHBUF_EXT' : '',
@@ -18702,9 +18727,9 @@ var Three = (function (exports) {
 				'uniform mat4 viewMatrix;',
 				'uniform vec3 cameraPosition;',
 
-				( parameters.toneMapping !== NoToneMapping ) ? "#define TONE_MAPPING" : '',
+				( parameters.toneMapping !== NoToneMapping ) ? '#define TONE_MAPPING' : '',
 				( parameters.toneMapping !== NoToneMapping ) ? ShaderChunk[ 'tonemapping_pars_fragment' ] : '', // this code is required here because it is used by the toneMapping() function defined below
-				( parameters.toneMapping !== NoToneMapping ) ? getToneMappingFunction( "toneMapping", parameters.toneMapping ) : '',
+				( parameters.toneMapping !== NoToneMapping ) ? getToneMappingFunction( 'toneMapping', parameters.toneMapping ) : '',
 
 				parameters.dithering ? '#define DITHERING' : '',
 
@@ -18712,9 +18737,9 @@ var Three = (function (exports) {
 				parameters.mapEncoding ? getTexelDecodingFunction( 'mapTexelToLinear', parameters.mapEncoding ) : '',
 				parameters.envMapEncoding ? getTexelDecodingFunction( 'envMapTexelToLinear', parameters.envMapEncoding ) : '',
 				parameters.emissiveMapEncoding ? getTexelDecodingFunction( 'emissiveMapTexelToLinear', parameters.emissiveMapEncoding ) : '',
-				parameters.outputEncoding ? getTexelEncodingFunction( "linearToOutputTexel", parameters.outputEncoding ) : '',
+				parameters.outputEncoding ? getTexelEncodingFunction( 'linearToOutputTexel', parameters.outputEncoding ) : '',
 
-				parameters.depthPacking ? "#define DEPTH_PACKING " + material.depthPacking : '',
+				parameters.depthPacking ? '#define DEPTH_PACKING ' + material.depthPacking : '',
 
 				'\n'
 
@@ -19206,6 +19231,7 @@ var Three = (function (exports) {
 	function WebGLTextures( _gl, extensions, state, properties, capabilities, utils, infoMemory ) {
 
 		var _isWebGL2 = ( typeof WebGL2RenderingContext !== 'undefined' && _gl instanceof window.WebGL2RenderingContext );
+		var _videoTextures = {};
 
 		//
 
@@ -19300,8 +19326,13 @@ var Three = (function (exports) {
 
 			deallocateTexture( texture );
 
-			infoMemory.textures --;
+			if ( texture.isVideoTexture ) {
 
+				delete _videoTextures[ texture.id ];
+
+			}
+
+			infoMemory.textures --;
 
 		}
 
@@ -19602,6 +19633,12 @@ var Three = (function (exports) {
 				texture.addEventListener( 'dispose', onTextureDispose );
 
 				textureProperties.__webglTexture = _gl.createTexture();
+
+				if ( texture.isVideoTexture ) {
+
+					_videoTextures[ texture.id ] = texture;
+
+				}
 
 				infoMemory.textures ++;
 
@@ -19984,11 +20021,22 @@ var Three = (function (exports) {
 
 		}
 
+		function updateVideoTextures() {
+
+			for ( var id in _videoTextures ) {
+
+				_videoTextures[ id ].update();
+
+			}
+
+		}
+
 		this.setTexture2D = setTexture2D;
 		this.setTextureCube = setTextureCube;
 		this.setTextureCubeDynamic = setTextureCubeDynamic;
 		this.setupRenderTarget = setupRenderTarget;
 		this.updateRenderTargetMipmap = updateRenderTargetMipmap;
+		this.updateVideoTextures = updateVideoTextures;
 
 	}
 
@@ -20681,13 +20729,16 @@ var Three = (function (exports) {
 
 		}
 
-		function setMaterial( material ) {
+		function setMaterial( material, frontFaceCW ) {
 
 			material.side === DoubleSide
 				? disable( gl.CULL_FACE )
 				: enable( gl.CULL_FACE );
 
-			setFlipSided( material.side === BackSide );
+			var flipSided = ( material.side === BackSide );
+			if ( frontFaceCW ) flipSided = ! flipSided;
+
+			setFlipSided( flipSided );
 
 			material.transparent === true
 				? setBlending( material.blending, material.blendEquation, material.blendSrc, material.blendDst, material.blendEquationAlpha, material.blendSrcAlpha, material.blendDstAlpha, material.premultipliedAlpha )
@@ -21358,6 +21409,8 @@ var Three = (function (exports) {
 		var device = null;
 		var frameData = null;
 
+		var poseTarget = null;
+
 		if ( typeof window !== 'undefined' && 'VRFrameData' in window ) {
 
 			frameData = new window.VRFrameData();
@@ -21365,9 +21418,6 @@ var Three = (function (exports) {
 		}
 
 		var matrixWorldInverse = new Matrix4();
-
-		var standingMatrix = new Matrix4();
-		var standingMatrixInverse = new Matrix4();
 
 		var cameraL = new PerspectiveCamera();
 		cameraL.bounds = new Vector4( 0.0, 0.0, 0.5, 1.0 );
@@ -21415,7 +21465,6 @@ var Three = (function (exports) {
 		//
 
 		this.enabled = false;
-		this.standing = false;
 
 		this.getDevice = function () {
 
@@ -21426,6 +21475,12 @@ var Three = (function (exports) {
 		this.setDevice = function ( value ) {
 
 			if ( value !== undefined ) device = value;
+
+		};
+
+		this.setPoseTarget = function ( object ) {
+
+			if ( object !== undefined ) poseTarget = object;
 
 		};
 
@@ -21441,36 +21496,25 @@ var Three = (function (exports) {
 			//
 
 			var pose = frameData.pose;
+			var poseObject = poseTarget !== null ? poseTarget : camera;
 
 			if ( pose.position !== null ) {
 
-				camera.position.fromArray( pose.position );
+				poseObject.position.fromArray( pose.position );
 
 			} else {
 
-				camera.position.set( 0, 0, 0 );
+				poseObject.position.set( 0, 0, 0 );
 
 			}
 
 			if ( pose.orientation !== null ) {
 
-				camera.quaternion.fromArray( pose.orientation );
+				poseObject.quaternion.fromArray( pose.orientation );
 
 			}
 
-			camera.updateMatrixWorld();
-
-			var stageParameters = device.stageParameters;
-
-			if ( this.standing && stageParameters ) {
-
-				standingMatrix.fromArray( stageParameters.sittingToStandingTransform );
-				standingMatrixInverse.getInverse( standingMatrix );
-
-				camera.matrixWorld.multiply( standingMatrix );
-				camera.matrixWorldInverse.multiply( standingMatrixInverse );
-
-			}
+			poseObject.updateMatrixWorld();
 
 			if ( device.isPresenting === false ) return camera;
 
@@ -21488,14 +21532,7 @@ var Three = (function (exports) {
 			cameraL.matrixWorldInverse.fromArray( frameData.leftViewMatrix );
 			cameraR.matrixWorldInverse.fromArray( frameData.rightViewMatrix );
 
-			if ( this.standing && stageParameters ) {
-
-				cameraL.matrixWorldInverse.multiply( standingMatrixInverse );
-				cameraR.matrixWorldInverse.multiply( standingMatrixInverse );
-
-			}
-
-			var parent = camera.parent;
+			var parent = poseObject.parent;
 
 			if ( parent !== null ) {
 
@@ -21542,12 +21579,6 @@ var Three = (function (exports) {
 			}
 
 			return cameraVR;
-
-		};
-
-		this.getStandingMatrix = function () {
-
-			return standingMatrix;
 
 		};
 
@@ -21949,7 +21980,8 @@ var Three = (function (exports) {
 			_stencil = parameters.stencil !== undefined ? parameters.stencil : true,
 			_antialias = parameters.antialias !== undefined ? parameters.antialias : false,
 			_premultipliedAlpha = parameters.premultipliedAlpha !== undefined ? parameters.premultipliedAlpha : true,
-			_preserveDrawingBuffer = parameters.preserveDrawingBuffer !== undefined ? parameters.preserveDrawingBuffer : false;
+			_preserveDrawingBuffer = parameters.preserveDrawingBuffer !== undefined ? parameters.preserveDrawingBuffer : false,
+			_powerPreference = parameters.powerPreference !== undefined ? parameters.powerPreference : 'default';
 
 		var lightsArray = [];
 		var shadowsArray = [];
@@ -22095,8 +22127,14 @@ var Three = (function (exports) {
 				stencil: _stencil,
 				antialias: _antialias,
 				premultipliedAlpha: _premultipliedAlpha,
-				preserveDrawingBuffer: _preserveDrawingBuffer
+				preserveDrawingBuffer: _preserveDrawingBuffer,
+				powerPreference: _powerPreference
 			};
+
+			// event listeners must be registered before WebGL context is created, see #12753
+
+			_canvas.addEventListener( 'webglcontextlost', onContextLost, false );
+			_canvas.addEventListener( 'webglcontextrestored', onContextRestore, false );
 
 			_gl = _context || _canvas.getContext( 'webgl', contextAttributes ) || _canvas.getContext( 'experimental-webgl', contextAttributes );
 
@@ -22104,11 +22142,11 @@ var Three = (function (exports) {
 
 				if ( _canvas.getContext( 'webgl' ) !== null ) {
 
-					throw 'Error creating WebGL context with your selected attributes.';
+					throw new Error( 'Error creating WebGL context with your selected attributes.' );
 
 				} else {
 
-					throw 'Error creating WebGL context.';
+					throw new Error( 'Error creating WebGL context.' );
 
 				}
 
@@ -22126,12 +22164,9 @@ var Three = (function (exports) {
 
 			}
 
-			_canvas.addEventListener( 'webglcontextlost', onContextLost, false );
-			_canvas.addEventListener( 'webglcontextrestored', onContextRestore, false );
-
 		} catch ( error ) {
 
-			console.error( 'THREE.WebGLRenderer: ' + error );
+			console.error( 'THREE.WebGLRenderer: ' + error.message );
 
 		}
 
@@ -22572,7 +22607,9 @@ var Three = (function (exports) {
 
 		this.renderBufferDirect = function ( camera, fog, geometry, material, object, group ) {
 
-			state.setMaterial( material );
+			var frontFaceCW = ( object.isMesh && object.matrixWorld.determinant() < 0 );
+
+			state.setMaterial( material, frontFaceCW );
 
 			var program = setProgram( camera, fog, material, object );
 			var geometryProgram = geometry.id + '_' + program.id + '_' + ( material.wireframe === true );
@@ -22922,7 +22959,7 @@ var Three = (function (exports) {
 			if ( isAnimating ) return;
 
 			var device = vr.getDevice();
-			
+
 			if ( device && device.isPresenting ) {
 
 				device.requestAnimationFrame( loop );
@@ -22942,7 +22979,7 @@ var Three = (function (exports) {
 			if ( onAnimationFrame !== null ) onAnimationFrame( time );
 
 			var device = vr.getDevice();
-			
+
 			if ( device && device.isPresenting ) {
 
 				device.requestAnimationFrame( loop );
@@ -23017,6 +23054,10 @@ var Three = (function (exports) {
 				currentRenderList.sort();
 
 			}
+
+			//
+
+			textures.updateVideoTextures();
 
 			//
 
@@ -23317,7 +23358,9 @@ var Three = (function (exports) {
 
 			if ( object.isImmediateRenderObject ) {
 
-				state.setMaterial( material );
+				var frontFaceCW = ( object.isMesh && object.matrixWorld.determinant() < 0 );
+
+				state.setMaterial( material, frontFaceCW );
 
 				var program = setProgram( camera, scene.fog, material, object );
 
@@ -26051,6 +26094,815 @@ var Three = (function (exports) {
 	TorusBufferGeometry.prototype.constructor = TorusBufferGeometry;
 
 	/**
+	 * @author Mugen87 / https://github.com/Mugen87
+	 * Port from https://github.com/mapbox/earcut (v2.1.2)
+	 */
+
+	var Earcut = {
+
+		triangulate: function ( data, holeIndices, dim ) {
+
+			dim = dim || 2;
+
+			var hasHoles = holeIndices && holeIndices.length,
+				outerLen = hasHoles ? holeIndices[ 0 ] * dim : data.length,
+				outerNode = linkedList( data, 0, outerLen, dim, true ),
+				triangles = [];
+
+			if ( ! outerNode ) return triangles;
+
+			var minX, minY, maxX, maxY, x, y, invSize;
+
+			if ( hasHoles ) outerNode = eliminateHoles( data, holeIndices, outerNode, dim );
+
+			// if the shape is not too simple, we'll use z-order curve hash later; calculate polygon bbox
+
+			if ( data.length > 80 * dim ) {
+
+				minX = maxX = data[ 0 ];
+				minY = maxY = data[ 1 ];
+
+				for ( var i = dim; i < outerLen; i += dim ) {
+
+					x = data[ i ];
+					y = data[ i + 1 ];
+					if ( x < minX ) minX = x;
+					if ( y < minY ) minY = y;
+					if ( x > maxX ) maxX = x;
+					if ( y > maxY ) maxY = y;
+
+				}
+
+				// minX, minY and invSize are later used to transform coords into integers for z-order calculation
+
+				invSize = Math.max( maxX - minX, maxY - minY );
+				invSize = invSize !== 0 ? 1 / invSize : 0;
+
+			}
+
+			earcutLinked( outerNode, triangles, dim, minX, minY, invSize );
+
+			return triangles;
+
+		}
+
+	};
+
+	// create a circular doubly linked list from polygon points in the specified winding order
+
+	function linkedList( data, start, end, dim, clockwise ) {
+
+		var i, last;
+
+		if ( clockwise === ( signedArea( data, start, end, dim ) > 0 ) ) {
+
+			for ( i = start; i < end; i += dim ) last = insertNode( i, data[ i ], data[ i + 1 ], last );
+
+		} else {
+
+			for ( i = end - dim; i >= start; i -= dim ) last = insertNode( i, data[ i ], data[ i + 1 ], last );
+
+		}
+
+		if ( last && equals( last, last.next ) ) {
+
+			removeNode( last );
+			last = last.next;
+
+		}
+
+		return last;
+
+	}
+
+	// eliminate colinear or duplicate points
+
+	function filterPoints( start, end ) {
+
+		if ( ! start ) return start;
+		if ( ! end ) end = start;
+
+		var p = start, again;
+
+		do {
+
+			again = false;
+
+			if ( ! p.steiner && ( equals( p, p.next ) || area( p.prev, p, p.next ) === 0 ) ) {
+
+				removeNode( p );
+				p = end = p.prev;
+				if ( p === p.next ) break;
+				again = true;
+
+			} else {
+
+				p = p.next;
+
+			}
+
+		} while ( again || p !== end );
+
+		return end;
+
+	}
+
+	// main ear slicing loop which triangulates a polygon (given as a linked list)
+
+	function earcutLinked( ear, triangles, dim, minX, minY, invSize, pass ) {
+
+		if ( ! ear ) return;
+
+		// interlink polygon nodes in z-order
+
+		if ( ! pass && invSize ) indexCurve( ear, minX, minY, invSize );
+
+		var stop = ear, prev, next;
+
+		// iterate through ears, slicing them one by one
+
+		while ( ear.prev !== ear.next ) {
+
+			prev = ear.prev;
+			next = ear.next;
+
+			if ( invSize ? isEarHashed( ear, minX, minY, invSize ) : isEar( ear ) ) {
+
+				// cut off the triangle
+				triangles.push( prev.i / dim );
+				triangles.push( ear.i / dim );
+				triangles.push( next.i / dim );
+
+				removeNode( ear );
+
+				// skipping the next vertice leads to less sliver triangles
+				ear = next.next;
+				stop = next.next;
+
+				continue;
+
+			}
+
+			ear = next;
+
+			// if we looped through the whole remaining polygon and can't find any more ears
+
+			if ( ear === stop ) {
+
+				// try filtering points and slicing again
+
+				if ( ! pass ) {
+
+					earcutLinked( filterPoints( ear ), triangles, dim, minX, minY, invSize, 1 );
+
+					// if this didn't work, try curing all small self-intersections locally
+
+				} else if ( pass === 1 ) {
+
+					ear = cureLocalIntersections( ear, triangles, dim );
+					earcutLinked( ear, triangles, dim, minX, minY, invSize, 2 );
+
+				// as a last resort, try splitting the remaining polygon into two
+
+				} else if ( pass === 2 ) {
+
+					splitEarcut( ear, triangles, dim, minX, minY, invSize );
+
+				}
+
+				break;
+
+			}
+
+		}
+
+	}
+
+	// check whether a polygon node forms a valid ear with adjacent nodes
+
+	function isEar( ear ) {
+
+		var a = ear.prev,
+			b = ear,
+			c = ear.next;
+
+		if ( area( a, b, c ) >= 0 ) return false; // reflex, can't be an ear
+
+		// now make sure we don't have other points inside the potential ear
+		var p = ear.next.next;
+
+		while ( p !== ear.prev ) {
+
+			if ( pointInTriangle( a.x, a.y, b.x, b.y, c.x, c.y, p.x, p.y ) && area( p.prev, p, p.next ) >= 0 ) {
+
+				return false;
+
+			}
+
+			p = p.next;
+
+		}
+
+		return true;
+
+	}
+
+	function isEarHashed( ear, minX, minY, invSize ) {
+
+		var a = ear.prev,
+			b = ear,
+			c = ear.next;
+
+		if ( area( a, b, c ) >= 0 ) return false; // reflex, can't be an ear
+
+		// triangle bbox; min & max are calculated like this for speed
+
+		var minTX = a.x < b.x ? ( a.x < c.x ? a.x : c.x ) : ( b.x < c.x ? b.x : c.x ),
+			minTY = a.y < b.y ? ( a.y < c.y ? a.y : c.y ) : ( b.y < c.y ? b.y : c.y ),
+			maxTX = a.x > b.x ? ( a.x > c.x ? a.x : c.x ) : ( b.x > c.x ? b.x : c.x ),
+			maxTY = a.y > b.y ? ( a.y > c.y ? a.y : c.y ) : ( b.y > c.y ? b.y : c.y );
+
+		// z-order range for the current triangle bbox;
+
+		var minZ = zOrder( minTX, minTY, minX, minY, invSize ),
+			maxZ = zOrder( maxTX, maxTY, minX, minY, invSize );
+
+		// first look for points inside the triangle in increasing z-order
+
+		var p = ear.nextZ;
+
+		while ( p && p.z <= maxZ ) {
+
+			if ( p !== ear.prev && p !== ear.next &&
+					pointInTriangle( a.x, a.y, b.x, b.y, c.x, c.y, p.x, p.y ) &&
+					area( p.prev, p, p.next ) >= 0 ) return false;
+			p = p.nextZ;
+
+		}
+
+		// then look for points in decreasing z-order
+
+		p = ear.prevZ;
+
+		while ( p && p.z >= minZ ) {
+
+			if ( p !== ear.prev && p !== ear.next &&
+					pointInTriangle( a.x, a.y, b.x, b.y, c.x, c.y, p.x, p.y ) &&
+					area( p.prev, p, p.next ) >= 0 ) return false;
+
+			p = p.prevZ;
+
+		}
+
+		return true;
+
+	}
+
+	// go through all polygon nodes and cure small local self-intersections
+
+	function cureLocalIntersections( start, triangles, dim ) {
+
+		var p = start;
+
+		do {
+
+			var a = p.prev, b = p.next.next;
+
+			if ( ! equals( a, b ) && intersects( a, p, p.next, b ) && locallyInside( a, b ) && locallyInside( b, a ) ) {
+
+				triangles.push( a.i / dim );
+				triangles.push( p.i / dim );
+				triangles.push( b.i / dim );
+
+				// remove two nodes involved
+
+				removeNode( p );
+				removeNode( p.next );
+
+				p = start = b;
+
+			}
+
+			p = p.next;
+
+		} while ( p !== start );
+
+		return p;
+
+	}
+
+	// try splitting polygon into two and triangulate them independently
+
+	function splitEarcut( start, triangles, dim, minX, minY, invSize ) {
+
+		// look for a valid diagonal that divides the polygon into two
+
+		var a = start;
+
+		do {
+
+			var b = a.next.next;
+
+			while ( b !== a.prev ) {
+
+				if ( a.i !== b.i && isValidDiagonal( a, b ) ) {
+
+					// split the polygon in two by the diagonal
+
+					var c = splitPolygon( a, b );
+
+					// filter colinear points around the cuts
+
+					a = filterPoints( a, a.next );
+					c = filterPoints( c, c.next );
+
+					// run earcut on each half
+
+					earcutLinked( a, triangles, dim, minX, minY, invSize );
+					earcutLinked( c, triangles, dim, minX, minY, invSize );
+					return;
+
+				}
+
+				b = b.next;
+
+			}
+
+			a = a.next;
+
+		} while ( a !== start );
+
+	}
+
+	// link every hole into the outer loop, producing a single-ring polygon without holes
+
+	function eliminateHoles( data, holeIndices, outerNode, dim ) {
+
+		var queue = [], i, len, start, end, list;
+
+		for ( i = 0, len = holeIndices.length; i < len; i ++ ) {
+
+			start = holeIndices[ i ] * dim;
+			end = i < len - 1 ? holeIndices[ i + 1 ] * dim : data.length;
+			list = linkedList( data, start, end, dim, false );
+			if ( list === list.next ) list.steiner = true;
+			queue.push( getLeftmost( list ) );
+
+		}
+
+		queue.sort( compareX );
+
+		// process holes from left to right
+
+		for ( i = 0; i < queue.length; i ++ ) {
+
+			eliminateHole( queue[ i ], outerNode );
+			outerNode = filterPoints( outerNode, outerNode.next );
+
+		}
+
+		return outerNode;
+
+	}
+
+	function compareX( a, b ) {
+
+		return a.x - b.x;
+
+	}
+
+	// find a bridge between vertices that connects hole with an outer ring and and link it
+
+	function eliminateHole( hole, outerNode ) {
+
+		outerNode = findHoleBridge( hole, outerNode );
+
+		if ( outerNode ) {
+
+			var b = splitPolygon( outerNode, hole );
+
+			filterPoints( b, b.next );
+
+		}
+
+	}
+
+	// David Eberly's algorithm for finding a bridge between hole and outer polygon
+
+	function findHoleBridge( hole, outerNode ) {
+
+		var p = outerNode,
+			hx = hole.x,
+			hy = hole.y,
+			qx = - Infinity,
+			m;
+
+		// find a segment intersected by a ray from the hole's leftmost point to the left;
+		// segment's endpoint with lesser x will be potential connection point
+
+		do {
+
+			if ( hy <= p.y && hy >= p.next.y && p.next.y !== p.y ) {
+
+				var x = p.x + ( hy - p.y ) * ( p.next.x - p.x ) / ( p.next.y - p.y );
+
+				if ( x <= hx && x > qx ) {
+
+					qx = x;
+
+					if ( x === hx ) {
+
+						if ( hy === p.y ) return p;
+						if ( hy === p.next.y ) return p.next;
+
+					}
+
+					m = p.x < p.next.x ? p : p.next;
+
+				}
+
+			}
+
+			p = p.next;
+
+		} while ( p !== outerNode );
+
+		if ( ! m ) return null;
+
+		if ( hx === qx ) return m.prev; // hole touches outer segment; pick lower endpoint
+
+		// look for points inside the triangle of hole point, segment intersection and endpoint;
+		// if there are no points found, we have a valid connection;
+		// otherwise choose the point of the minimum angle with the ray as connection point
+
+		var stop = m,
+			mx = m.x,
+			my = m.y,
+			tanMin = Infinity,
+			tan;
+
+		p = m.next;
+
+		while ( p !== stop ) {
+
+			if ( hx >= p.x && p.x >= mx && hx !== p.x &&
+							pointInTriangle( hy < my ? hx : qx, hy, mx, my, hy < my ? qx : hx, hy, p.x, p.y ) ) {
+
+				tan = Math.abs( hy - p.y ) / ( hx - p.x ); // tangential
+
+				if ( ( tan < tanMin || ( tan === tanMin && p.x > m.x ) ) && locallyInside( p, hole ) ) {
+
+					m = p;
+					tanMin = tan;
+
+				}
+
+			}
+
+			p = p.next;
+
+		}
+
+		return m;
+
+	}
+
+	// interlink polygon nodes in z-order
+
+	function indexCurve( start, minX, minY, invSize ) {
+
+		var p = start;
+
+		do {
+
+			if ( p.z === null ) p.z = zOrder( p.x, p.y, minX, minY, invSize );
+			p.prevZ = p.prev;
+			p.nextZ = p.next;
+			p = p.next;
+
+		} while ( p !== start );
+
+		p.prevZ.nextZ = null;
+		p.prevZ = null;
+
+		sortLinked( p );
+
+	}
+
+	// Simon Tatham's linked list merge sort algorithm
+	// http://www.chiark.greenend.org.uk/~sgtatham/algorithms/listsort.html
+
+	function sortLinked( list ) {
+
+		var i, p, q, e, tail, numMerges, pSize, qSize, inSize = 1;
+
+		do {
+
+			p = list;
+			list = null;
+			tail = null;
+			numMerges = 0;
+
+			while ( p ) {
+
+				numMerges ++;
+				q = p;
+				pSize = 0;
+
+				for ( i = 0; i < inSize; i ++ ) {
+
+					pSize ++;
+					q = q.nextZ;
+					if ( ! q ) break;
+
+				}
+
+				qSize = inSize;
+
+				while ( pSize > 0 || ( qSize > 0 && q ) ) {
+
+					if ( pSize !== 0 && ( qSize === 0 || ! q || p.z <= q.z ) ) {
+
+						e = p;
+						p = p.nextZ;
+						pSize --;
+
+					} else {
+
+						e = q;
+						q = q.nextZ;
+						qSize --;
+
+					}
+
+					if ( tail ) tail.nextZ = e;
+					else list = e;
+
+					e.prevZ = tail;
+					tail = e;
+
+				}
+
+				p = q;
+
+			}
+
+			tail.nextZ = null;
+			inSize *= 2;
+
+		} while ( numMerges > 1 );
+
+		return list;
+
+	}
+
+	// z-order of a point given coords and inverse of the longer side of data bbox
+
+	function zOrder( x, y, minX, minY, invSize ) {
+
+		// coords are transformed into non-negative 15-bit integer range
+
+		x = 32767 * ( x - minX ) * invSize;
+		y = 32767 * ( y - minY ) * invSize;
+
+		x = ( x | ( x << 8 ) ) & 0x00FF00FF;
+		x = ( x | ( x << 4 ) ) & 0x0F0F0F0F;
+		x = ( x | ( x << 2 ) ) & 0x33333333;
+		x = ( x | ( x << 1 ) ) & 0x55555555;
+
+		y = ( y | ( y << 8 ) ) & 0x00FF00FF;
+		y = ( y | ( y << 4 ) ) & 0x0F0F0F0F;
+		y = ( y | ( y << 2 ) ) & 0x33333333;
+		y = ( y | ( y << 1 ) ) & 0x55555555;
+
+		return x | ( y << 1 );
+
+	}
+
+	// find the leftmost node of a polygon ring
+
+	function getLeftmost( start ) {
+
+		var p = start, leftmost = start;
+
+		do {
+
+			if ( p.x < leftmost.x ) leftmost = p;
+			p = p.next;
+
+		} while ( p !== start );
+
+		return leftmost;
+
+	}
+
+	// check if a point lies within a convex triangle
+
+	function pointInTriangle( ax, ay, bx, by, cx, cy, px, py ) {
+
+		return ( cx - px ) * ( ay - py ) - ( ax - px ) * ( cy - py ) >= 0 &&
+		 ( ax - px ) * ( by - py ) - ( bx - px ) * ( ay - py ) >= 0 &&
+		 ( bx - px ) * ( cy - py ) - ( cx - px ) * ( by - py ) >= 0;
+
+	}
+
+	// check if a diagonal between two polygon nodes is valid (lies in polygon interior)
+
+	function isValidDiagonal( a, b ) {
+
+		return a.next.i !== b.i && a.prev.i !== b.i && ! intersectsPolygon( a, b ) &&
+			locallyInside( a, b ) && locallyInside( b, a ) && middleInside( a, b );
+
+	}
+
+	// signed area of a triangle
+
+	function area( p, q, r ) {
+
+		return ( q.y - p.y ) * ( r.x - q.x ) - ( q.x - p.x ) * ( r.y - q.y );
+
+	}
+
+	// check if two points are equal
+
+	function equals( p1, p2 ) {
+
+		return p1.x === p2.x && p1.y === p2.y;
+
+	}
+
+	// check if two segments intersect
+
+	function intersects( p1, q1, p2, q2 ) {
+
+		if ( ( equals( p1, q1 ) && equals( p2, q2 ) ) ||
+				( equals( p1, q2 ) && equals( p2, q1 ) ) ) return true;
+
+		return area( p1, q1, p2 ) > 0 !== area( p1, q1, q2 ) > 0 &&
+					 area( p2, q2, p1 ) > 0 !== area( p2, q2, q1 ) > 0;
+
+	}
+
+	// check if a polygon diagonal intersects any polygon segments
+
+	function intersectsPolygon( a, b ) {
+
+		var p = a;
+
+		do {
+
+			if ( p.i !== a.i && p.next.i !== a.i && p.i !== b.i && p.next.i !== b.i &&
+							intersects( p, p.next, a, b ) ) {
+
+				return true;
+
+			}
+
+			p = p.next;
+
+		} while ( p !== a );
+
+		return false;
+
+	}
+
+	// check if a polygon diagonal is locally inside the polygon
+
+	function locallyInside( a, b ) {
+
+		return area( a.prev, a, a.next ) < 0 ?
+			area( a, b, a.next ) >= 0 && area( a, a.prev, b ) >= 0 :
+			area( a, b, a.prev ) < 0 || area( a, a.next, b ) < 0;
+
+	}
+
+	// check if the middle point of a polygon diagonal is inside the polygon
+
+	function middleInside( a, b ) {
+
+		var p = a,
+			inside = false,
+			px = ( a.x + b.x ) / 2,
+			py = ( a.y + b.y ) / 2;
+
+		do {
+
+			if ( ( ( p.y > py ) !== ( p.next.y > py ) ) && p.next.y !== p.y &&
+							( px < ( p.next.x - p.x ) * ( py - p.y ) / ( p.next.y - p.y ) + p.x ) ) {
+
+				inside = ! inside;
+
+			}
+
+			p = p.next;
+
+		} while ( p !== a );
+
+		return inside;
+
+	}
+
+	// link two polygon vertices with a bridge; if the vertices belong to the same ring, it splits polygon into two;
+	// if one belongs to the outer ring and another to a hole, it merges it into a single ring
+
+	function splitPolygon( a, b ) {
+
+		var a2 = new Node( a.i, a.x, a.y ),
+			b2 = new Node( b.i, b.x, b.y ),
+			an = a.next,
+			bp = b.prev;
+
+		a.next = b;
+		b.prev = a;
+
+		a2.next = an;
+		an.prev = a2;
+
+		b2.next = a2;
+		a2.prev = b2;
+
+		bp.next = b2;
+		b2.prev = bp;
+
+		return b2;
+
+	}
+
+	// create a node and optionally link it with previous one (in a circular doubly linked list)
+
+	function insertNode( i, x, y, last ) {
+
+		var p = new Node( i, x, y );
+
+		if ( ! last ) {
+
+			p.prev = p;
+			p.next = p;
+
+		} else {
+
+			p.next = last.next;
+			p.prev = last;
+			last.next.prev = p;
+			last.next = p;
+
+		}
+
+		return p;
+
+	}
+
+	function removeNode( p ) {
+
+		p.next.prev = p.prev;
+		p.prev.next = p.next;
+
+		if ( p.prevZ ) p.prevZ.nextZ = p.nextZ;
+		if ( p.nextZ ) p.nextZ.prevZ = p.prevZ;
+
+	}
+
+	function Node( i, x, y ) {
+
+		// vertice index in coordinates array
+		this.i = i;
+
+		// vertex coordinates
+		this.x = x;
+		this.y = y;
+
+		// previous and next vertice nodes in a polygon ring
+		this.prev = null;
+		this.next = null;
+
+		// z-order curve value
+		this.z = null;
+
+		// previous and next nodes in z-order
+		this.prevZ = null;
+		this.nextZ = null;
+
+		// indicates whether this is a steiner point
+		this.steiner = false;
+
+	}
+
+	function signedArea( data, start, end, dim ) {
+
+		var sum = 0;
+
+		for ( var i = start, j = end - dim; i < end; i += dim ) {
+
+			sum += ( data[ j ] - data[ i ] ) * ( data[ i + 1 ] + data[ j + 1 ] );
+			j = i;
+
+		}
+
+		return sum;
+
+	}
+
+	/**
 	 * @author zz85 / http://www.lab4games.net/zz85/blog
 	 */
 
@@ -26073,173 +26925,11 @@ var Three = (function (exports) {
 
 		},
 
-		triangulate: ( function () {
+		isClockWise: function ( pts ) {
 
-			/**
-			 * This code is a quick port of code written in C++ which was submitted to
-			 * flipcode.com by John W. Ratcliff  // July 22, 2000
-			 * See original code and more information here:
-			 * http://www.flipcode.com/archives/Efficient_Polygon_Triangulation.shtml
-			 *
-			 * ported to actionscript by Zevan Rosser
-			 * www.actionsnippet.com
-			 *
-			 * ported to javascript by Joshua Koo
-			 * http://www.lab4games.net/zz85/blog
-			 *
-			 */
+			return ShapeUtils.area( pts ) < 0;
 
-			function snip( contour, u, v, w, n, verts ) {
-
-				var p;
-				var ax, ay, bx, by;
-				var cx, cy, px, py;
-
-				ax = contour[ verts[ u ] ].x;
-				ay = contour[ verts[ u ] ].y;
-
-				bx = contour[ verts[ v ] ].x;
-				by = contour[ verts[ v ] ].y;
-
-				cx = contour[ verts[ w ] ].x;
-				cy = contour[ verts[ w ] ].y;
-
-				if ( ( bx - ax ) * ( cy - ay ) - ( by - ay ) * ( cx - ax ) <= 0 ) return false;
-
-				var aX, aY, bX, bY, cX, cY;
-				var apx, apy, bpx, bpy, cpx, cpy;
-				var cCROSSap, bCROSScp, aCROSSbp;
-
-				aX = cx - bx; aY = cy - by;
-				bX = ax - cx; bY = ay - cy;
-				cX = bx - ax; cY = by - ay;
-
-				for ( p = 0; p < n; p ++ ) {
-
-					px = contour[ verts[ p ] ].x;
-					py = contour[ verts[ p ] ].y;
-
-					if ( ( ( px === ax ) && ( py === ay ) ) ||
-						 ( ( px === bx ) && ( py === by ) ) ||
-						 ( ( px === cx ) && ( py === cy ) ) )	continue;
-
-					apx = px - ax; apy = py - ay;
-					bpx = px - bx; bpy = py - by;
-					cpx = px - cx; cpy = py - cy;
-
-					// see if p is inside triangle abc
-
-					aCROSSbp = aX * bpy - aY * bpx;
-					cCROSSap = cX * apy - cY * apx;
-					bCROSScp = bX * cpy - bY * cpx;
-
-					if ( ( aCROSSbp >= - Number.EPSILON ) && ( bCROSScp >= - Number.EPSILON ) && ( cCROSSap >= - Number.EPSILON ) ) return false;
-
-				}
-
-				return true;
-
-			}
-
-			// takes in an contour array and returns
-
-			return function triangulate( contour, indices ) {
-
-				var n = contour.length;
-
-				if ( n < 3 ) return null;
-
-				var result = [],
-					verts = [],
-					vertIndices = [];
-
-				/* we want a counter-clockwise polygon in verts */
-
-				var u, v, w;
-
-				if ( ShapeUtils.area( contour ) > 0.0 ) {
-
-					for ( v = 0; v < n; v ++ ) verts[ v ] = v;
-
-				} else {
-
-					for ( v = 0; v < n; v ++ ) verts[ v ] = ( n - 1 ) - v;
-
-				}
-
-				var nv = n;
-
-				/*  remove nv - 2 vertices, creating 1 triangle every time */
-
-				var count = 2 * nv; /* error detection */
-
-				for ( v = nv - 1; nv > 2; ) {
-
-					/* if we loop, it is probably a non-simple polygon */
-
-					if ( ( count -- ) <= 0 ) {
-
-						//** Triangulate: ERROR - probable bad polygon!
-
-						//throw ( "Warning, unable to triangulate polygon!" );
-						//return null;
-						// Sometimes warning is fine, especially polygons are triangulated in reverse.
-						console.warn( 'THREE.ShapeUtils: Unable to triangulate polygon! in triangulate()' );
-
-						if ( indices ) return vertIndices;
-						return result;
-
-					}
-
-					/* three consecutive vertices in current polygon, <u,v,w> */
-
-					u = v; if ( nv <= u ) u = 0; /* previous */
-					v = u + 1; if ( nv <= v ) v = 0; /* new v    */
-					w = v + 1; if ( nv <= w ) w = 0; /* next     */
-
-					if ( snip( contour, u, v, w, nv, verts ) ) {
-
-						var a, b, c, s, t;
-
-						/* true names of the vertices */
-
-						a = verts[ u ];
-						b = verts[ v ];
-						c = verts[ w ];
-
-						/* output Triangle */
-
-						result.push( [ contour[ a ],
-							contour[ b ],
-							contour[ c ] ] );
-
-
-						vertIndices.push( [ verts[ u ], verts[ v ], verts[ w ] ] );
-
-						/* remove v from the remaining polygon */
-
-						for ( s = v, t = v + 1; t < nv; s ++, t ++ ) {
-
-							verts[ s ] = verts[ t ];
-
-						}
-
-						nv --;
-
-						/* reset error detection counter */
-
-						count = 2 * nv;
-
-					}
-
-				}
-
-				if ( indices ) return vertIndices;
-				return result;
-
-			};
-
-		} )(),
+		},
 
 		triangulateShape: function ( contour, holes ) {
 
@@ -26255,488 +26945,50 @@ var Three = (function (exports) {
 
 			}
 
+			function addContour( vertices, contour ) {
+
+				for ( var i = 0; i < contour.length; i ++ ) {
+
+					vertices.push( contour[ i ].x );
+					vertices.push( contour[ i ].y );
+
+				}
+
+			}
+
+			var vertices = []; // flat array of vertices like [ x0,y0, x1,y1, x2,y2, ... ]
+			var holeIndices = []; // array of hole indices
+			var faces = []; // final array of vertex indices like [ [ a,b,d ], [ b,c,d ] ]
+
 			removeDupEndPts( contour );
+			addContour( vertices, contour );
+
+			//
+
+			var holeIndex = contour.length;
 			holes.forEach( removeDupEndPts );
 
-			function point_in_segment_2D_colin( inSegPt1, inSegPt2, inOtherPt ) {
+			for ( i = 0; i < holes.length; i ++ ) {
 
-				// inOtherPt needs to be collinear to the inSegment
-				if ( inSegPt1.x !== inSegPt2.x ) {
-
-					if ( inSegPt1.x < inSegPt2.x ) {
-
-						return	( ( inSegPt1.x <= inOtherPt.x ) && ( inOtherPt.x <= inSegPt2.x ) );
-
-					} else {
-
-						return	( ( inSegPt2.x <= inOtherPt.x ) && ( inOtherPt.x <= inSegPt1.x ) );
-
-					}
-
-				} else {
-
-					if ( inSegPt1.y < inSegPt2.y ) {
-
-						return	( ( inSegPt1.y <= inOtherPt.y ) && ( inOtherPt.y <= inSegPt2.y ) );
-
-					} else {
-
-						return	( ( inSegPt2.y <= inOtherPt.y ) && ( inOtherPt.y <= inSegPt1.y ) );
-
-					}
-
-				}
+				holeIndices.push( holeIndex );
+				holeIndex += holes[ i ].length;
+				addContour( vertices, holes[ i ] );
 
 			}
 
-			function intersect_segments_2D( inSeg1Pt1, inSeg1Pt2, inSeg2Pt1, inSeg2Pt2, inExcludeAdjacentSegs ) {
+			//
 
-				var seg1dx = inSeg1Pt2.x - inSeg1Pt1.x, seg1dy = inSeg1Pt2.y - inSeg1Pt1.y;
-				var seg2dx = inSeg2Pt2.x - inSeg2Pt1.x, seg2dy = inSeg2Pt2.y - inSeg2Pt1.y;
+			var triangles = Earcut.triangulate( vertices, holeIndices );
 
-				var seg1seg2dx = inSeg1Pt1.x - inSeg2Pt1.x;
-				var seg1seg2dy = inSeg1Pt1.y - inSeg2Pt1.y;
+			//
 
-				var limit		= seg1dy * seg2dx - seg1dx * seg2dy;
-				var perpSeg1	= seg1dy * seg1seg2dx - seg1dx * seg1seg2dy;
+			for ( var i = 0; i < triangles.length; i += 3 ) {
 
-				if ( Math.abs( limit ) > Number.EPSILON ) {
-
-					// not parallel
-
-					var perpSeg2;
-					if ( limit > 0 ) {
-
-						if ( ( perpSeg1 < 0 ) || ( perpSeg1 > limit ) ) 		return [];
-						perpSeg2 = seg2dy * seg1seg2dx - seg2dx * seg1seg2dy;
-						if ( ( perpSeg2 < 0 ) || ( perpSeg2 > limit ) ) 		return [];
-
-					} else {
-
-						if ( ( perpSeg1 > 0 ) || ( perpSeg1 < limit ) ) 		return [];
-						perpSeg2 = seg2dy * seg1seg2dx - seg2dx * seg1seg2dy;
-						if ( ( perpSeg2 > 0 ) || ( perpSeg2 < limit ) ) 		return [];
-
-					}
-
-					// i.e. to reduce rounding errors
-					// intersection at endpoint of segment#1?
-					if ( perpSeg2 === 0 ) {
-
-						if ( ( inExcludeAdjacentSegs ) &&
-							 ( ( perpSeg1 === 0 ) || ( perpSeg1 === limit ) ) )		return [];
-						return [ inSeg1Pt1 ];
-
-					}
-					if ( perpSeg2 === limit ) {
-
-						if ( ( inExcludeAdjacentSegs ) &&
-							 ( ( perpSeg1 === 0 ) || ( perpSeg1 === limit ) ) )		return [];
-						return [ inSeg1Pt2 ];
-
-					}
-					// intersection at endpoint of segment#2?
-					if ( perpSeg1 === 0 )		return [ inSeg2Pt1 ];
-					if ( perpSeg1 === limit )	return [ inSeg2Pt2 ];
-
-					// return real intersection point
-					var factorSeg1 = perpSeg2 / limit;
-					return	[ { x: inSeg1Pt1.x + factorSeg1 * seg1dx, y: inSeg1Pt1.y + factorSeg1 * seg1dy } ];
-
-				} else {
-
-					// parallel or collinear
-					if ( ( perpSeg1 !== 0 ) ||
-						 ( seg2dy * seg1seg2dx !== seg2dx * seg1seg2dy ) ) 			return [];
-
-					// they are collinear or degenerate
-					var seg1Pt = ( ( seg1dx === 0 ) && ( seg1dy === 0 ) );	// segment1 is just a point?
-					var seg2Pt = ( ( seg2dx === 0 ) && ( seg2dy === 0 ) );	// segment2 is just a point?
-					// both segments are points
-					if ( seg1Pt && seg2Pt ) {
-
-						if ( ( inSeg1Pt1.x !== inSeg2Pt1.x ) ||
-							 ( inSeg1Pt1.y !== inSeg2Pt1.y ) )		return [];	// they are distinct  points
-						return [ inSeg1Pt1 ];	// they are the same point
-
-					}
-					// segment#1  is a single point
-					if ( seg1Pt ) {
-
-						if ( ! point_in_segment_2D_colin( inSeg2Pt1, inSeg2Pt2, inSeg1Pt1 ) )		return [];		// but not in segment#2
-						return [ inSeg1Pt1 ];
-
-					}
-					// segment#2  is a single point
-					if ( seg2Pt ) {
-
-						if ( ! point_in_segment_2D_colin( inSeg1Pt1, inSeg1Pt2, inSeg2Pt1 ) )		return [];		// but not in segment#1
-						return [ inSeg2Pt1 ];
-
-					}
-
-					// they are collinear segments, which might overlap
-					var seg1min, seg1max, seg1minVal, seg1maxVal;
-					var seg2min, seg2max, seg2minVal, seg2maxVal;
-					if ( seg1dx !== 0 ) {
-
-						// the segments are NOT on a vertical line
-						if ( inSeg1Pt1.x < inSeg1Pt2.x ) {
-
-							seg1min = inSeg1Pt1; seg1minVal = inSeg1Pt1.x;
-							seg1max = inSeg1Pt2; seg1maxVal = inSeg1Pt2.x;
-
-						} else {
-
-							seg1min = inSeg1Pt2; seg1minVal = inSeg1Pt2.x;
-							seg1max = inSeg1Pt1; seg1maxVal = inSeg1Pt1.x;
-
-						}
-						if ( inSeg2Pt1.x < inSeg2Pt2.x ) {
-
-							seg2min = inSeg2Pt1; seg2minVal = inSeg2Pt1.x;
-							seg2max = inSeg2Pt2; seg2maxVal = inSeg2Pt2.x;
-
-						} else {
-
-							seg2min = inSeg2Pt2; seg2minVal = inSeg2Pt2.x;
-							seg2max = inSeg2Pt1; seg2maxVal = inSeg2Pt1.x;
-
-						}
-
-					} else {
-
-						// the segments are on a vertical line
-						if ( inSeg1Pt1.y < inSeg1Pt2.y ) {
-
-							seg1min = inSeg1Pt1; seg1minVal = inSeg1Pt1.y;
-							seg1max = inSeg1Pt2; seg1maxVal = inSeg1Pt2.y;
-
-						} else {
-
-							seg1min = inSeg1Pt2; seg1minVal = inSeg1Pt2.y;
-							seg1max = inSeg1Pt1; seg1maxVal = inSeg1Pt1.y;
-
-						}
-						if ( inSeg2Pt1.y < inSeg2Pt2.y ) {
-
-							seg2min = inSeg2Pt1; seg2minVal = inSeg2Pt1.y;
-							seg2max = inSeg2Pt2; seg2maxVal = inSeg2Pt2.y;
-
-						} else {
-
-							seg2min = inSeg2Pt2; seg2minVal = inSeg2Pt2.y;
-							seg2max = inSeg2Pt1; seg2maxVal = inSeg2Pt1.y;
-
-						}
-
-					}
-					if ( seg1minVal <= seg2minVal ) {
-
-						if ( seg1maxVal < seg2minVal )	return [];
-						if ( seg1maxVal === seg2minVal )	{
-
-							if ( inExcludeAdjacentSegs )		return [];
-							return [ seg2min ];
-
-						}
-						if ( seg1maxVal <= seg2maxVal )	return [ seg2min, seg1max ];
-						return	[ seg2min, seg2max ];
-
-					} else {
-
-						if ( seg1minVal > seg2maxVal )	return [];
-						if ( seg1minVal === seg2maxVal )	{
-
-							if ( inExcludeAdjacentSegs )		return [];
-							return [ seg1min ];
-
-						}
-						if ( seg1maxVal <= seg2maxVal )	return [ seg1min, seg1max ];
-						return	[ seg1min, seg2max ];
-
-					}
-
-				}
+				faces.push( triangles.slice( i, i + 3 ) );
 
 			}
 
-			function isPointInsideAngle( inVertex, inLegFromPt, inLegToPt, inOtherPt ) {
-
-				// The order of legs is important
-
-				// translation of all points, so that Vertex is at (0,0)
-				var legFromPtX	= inLegFromPt.x - inVertex.x, legFromPtY = inLegFromPt.y - inVertex.y;
-				var legToPtX	= inLegToPt.x	- inVertex.x, legToPtY = inLegToPt.y	- inVertex.y;
-				var otherPtX	= inOtherPt.x	- inVertex.x, otherPtY = inOtherPt.y	- inVertex.y;
-
-				// main angle >0: < 180 deg.; 0: 180 deg.; <0: > 180 deg.
-				var from2toAngle	= legFromPtX * legToPtY - legFromPtY * legToPtX;
-				var from2otherAngle	= legFromPtX * otherPtY - legFromPtY * otherPtX;
-
-				if ( Math.abs( from2toAngle ) > Number.EPSILON ) {
-
-					// angle != 180 deg.
-
-					var other2toAngle		= otherPtX * legToPtY - otherPtY * legToPtX;
-					// console.log( "from2to: " + from2toAngle + ", from2other: " + from2otherAngle + ", other2to: " + other2toAngle );
-
-					if ( from2toAngle > 0 ) {
-
-						// main angle < 180 deg.
-						return	( ( from2otherAngle >= 0 ) && ( other2toAngle >= 0 ) );
-
-					} else {
-
-						// main angle > 180 deg.
-						return	( ( from2otherAngle >= 0 ) || ( other2toAngle >= 0 ) );
-
-					}
-
-				} else {
-
-					// angle == 180 deg.
-					// console.log( "from2to: 180 deg., from2other: " + from2otherAngle  );
-					return	( from2otherAngle > 0 );
-
-				}
-
-			}
-
-
-			function removeHoles( contour, holes ) {
-
-				var shape = contour.concat(); // work on this shape
-				var hole;
-
-				function isCutLineInsideAngles( inShapeIdx, inHoleIdx ) {
-
-					// Check if hole point lies within angle around shape point
-					var lastShapeIdx = shape.length - 1;
-
-					var prevShapeIdx = inShapeIdx - 1;
-					if ( prevShapeIdx < 0 )			prevShapeIdx = lastShapeIdx;
-
-					var nextShapeIdx = inShapeIdx + 1;
-					if ( nextShapeIdx > lastShapeIdx )	nextShapeIdx = 0;
-
-					var insideAngle = isPointInsideAngle( shape[ inShapeIdx ], shape[ prevShapeIdx ], shape[ nextShapeIdx ], hole[ inHoleIdx ] );
-					if ( ! insideAngle ) {
-
-						// console.log( "Vertex (Shape): " + inShapeIdx + ", Point: " + hole[inHoleIdx].x + "/" + hole[inHoleIdx].y );
-						return	false;
-
-					}
-
-					// Check if shape point lies within angle around hole point
-					var lastHoleIdx = hole.length - 1;
-
-					var prevHoleIdx = inHoleIdx - 1;
-					if ( prevHoleIdx < 0 )			prevHoleIdx = lastHoleIdx;
-
-					var nextHoleIdx = inHoleIdx + 1;
-					if ( nextHoleIdx > lastHoleIdx )	nextHoleIdx = 0;
-
-					insideAngle = isPointInsideAngle( hole[ inHoleIdx ], hole[ prevHoleIdx ], hole[ nextHoleIdx ], shape[ inShapeIdx ] );
-					if ( ! insideAngle ) {
-
-						// console.log( "Vertex (Hole): " + inHoleIdx + ", Point: " + shape[inShapeIdx].x + "/" + shape[inShapeIdx].y );
-						return	false;
-
-					}
-
-					return	true;
-
-				}
-
-				function intersectsShapeEdge( inShapePt, inHolePt ) {
-
-					// checks for intersections with shape edges
-					var sIdx, nextIdx, intersection;
-					for ( sIdx = 0; sIdx < shape.length; sIdx ++ ) {
-
-						nextIdx = sIdx + 1; nextIdx %= shape.length;
-						intersection = intersect_segments_2D( inShapePt, inHolePt, shape[ sIdx ], shape[ nextIdx ], true );
-						if ( intersection.length > 0 )		return	true;
-
-					}
-
-					return	false;
-
-				}
-
-				var indepHoles = [];
-
-				function intersectsHoleEdge( inShapePt, inHolePt ) {
-
-					// checks for intersections with hole edges
-					var ihIdx, chkHole,
-						hIdx, nextIdx, intersection;
-					for ( ihIdx = 0; ihIdx < indepHoles.length; ihIdx ++ ) {
-
-						chkHole = holes[ indepHoles[ ihIdx ] ];
-						for ( hIdx = 0; hIdx < chkHole.length; hIdx ++ ) {
-
-							nextIdx = hIdx + 1; nextIdx %= chkHole.length;
-							intersection = intersect_segments_2D( inShapePt, inHolePt, chkHole[ hIdx ], chkHole[ nextIdx ], true );
-							if ( intersection.length > 0 )		return	true;
-
-						}
-
-					}
-					return	false;
-
-				}
-
-				var holeIndex, shapeIndex,
-					shapePt, holePt,
-					holeIdx, cutKey, failedCuts = [],
-					tmpShape1, tmpShape2,
-					tmpHole1, tmpHole2;
-
-				for ( var h = 0, hl = holes.length; h < hl; h ++ ) {
-
-					indepHoles.push( h );
-
-				}
-
-				var minShapeIndex = 0;
-				var counter = indepHoles.length * 2;
-				while ( indepHoles.length > 0 ) {
-
-					counter --;
-					if ( counter < 0 ) {
-
-						console.log( 'THREE.ShapeUtils: Infinite Loop! Holes left:" + indepHoles.length + ", Probably Hole outside Shape!' );
-						break;
-
-					}
-
-					// search for shape-vertex and hole-vertex,
-					// which can be connected without intersections
-					for ( shapeIndex = minShapeIndex; shapeIndex < shape.length; shapeIndex ++ ) {
-
-						shapePt = shape[ shapeIndex ];
-						holeIndex	= - 1;
-
-						// search for hole which can be reached without intersections
-						for ( var h = 0; h < indepHoles.length; h ++ ) {
-
-							holeIdx = indepHoles[ h ];
-
-							// prevent multiple checks
-							cutKey = shapePt.x + ':' + shapePt.y + ':' + holeIdx;
-							if ( failedCuts[ cutKey ] !== undefined )			continue;
-
-							hole = holes[ holeIdx ];
-							for ( var h2 = 0; h2 < hole.length; h2 ++ ) {
-
-								holePt = hole[ h2 ];
-								if ( ! isCutLineInsideAngles( shapeIndex, h2 ) )		continue;
-								if ( intersectsShapeEdge( shapePt, holePt ) )		continue;
-								if ( intersectsHoleEdge( shapePt, holePt ) )		continue;
-
-								holeIndex = h2;
-								indepHoles.splice( h, 1 );
-
-								tmpShape1 = shape.slice( 0, shapeIndex + 1 );
-								tmpShape2 = shape.slice( shapeIndex );
-								tmpHole1 = hole.slice( holeIndex );
-								tmpHole2 = hole.slice( 0, holeIndex + 1 );
-
-								shape = tmpShape1.concat( tmpHole1 ).concat( tmpHole2 ).concat( tmpShape2 );
-
-								minShapeIndex = shapeIndex;
-
-								// Debug only, to show the selected cuts
-								// glob_CutLines.push( [ shapePt, holePt ] );
-
-								break;
-
-							}
-							if ( holeIndex >= 0 )	break;		// hole-vertex found
-
-							failedCuts[ cutKey ] = true;			// remember failure
-
-						}
-						if ( holeIndex >= 0 )	break;		// hole-vertex found
-
-					}
-
-				}
-
-				return shape; 			/* shape with no holes */
-
-			}
-
-
-			var i, il, f, face,
-				key, index,
-				allPointsMap = {};
-
-			// To maintain reference to old shape, one must match coordinates, or offset the indices from original arrays. It's probably easier to do the first.
-
-			var allpoints = contour.concat();
-
-			for ( var h = 0, hl = holes.length; h < hl; h ++ ) {
-
-				Array.prototype.push.apply( allpoints, holes[ h ] );
-
-			}
-
-			//console.log( "allpoints",allpoints, allpoints.length );
-
-			// prepare all points map
-
-			for ( i = 0, il = allpoints.length; i < il; i ++ ) {
-
-				key = allpoints[ i ].x + ':' + allpoints[ i ].y;
-
-				if ( allPointsMap[ key ] !== undefined ) {
-
-					console.warn( 'THREE.ShapeUtils: Duplicate point', key, i );
-
-				}
-
-				allPointsMap[ key ] = i;
-
-			}
-
-			// remove holes by cutting paths to holes and adding them to the shape
-			var shapeWithoutHoles = removeHoles( contour, holes );
-
-			var triangles = ShapeUtils.triangulate( shapeWithoutHoles, false ); // True returns indices for points of spooled shape
-			//console.log( "triangles",triangles, triangles.length );
-
-			// check all face vertices against all points map
-
-			for ( i = 0, il = triangles.length; i < il; i ++ ) {
-
-				face = triangles[ i ];
-
-				for ( f = 0; f < 3; f ++ ) {
-
-					key = face[ f ].x + ':' + face[ f ].y;
-
-					index = allPointsMap[ key ];
-
-					if ( index !== undefined ) {
-
-						face[ f ] = index;
-
-					}
-
-				}
-
-			}
-
-			return triangles.concat();
-
-		},
-
-		isClockWise: function ( pts ) {
-
-			return ShapeUtils.area( pts ) < 0;
+			return faces;
 
 		}
 
@@ -27484,7 +27736,7 @@ var Three = (function (exports) {
 
 			this.setIndex( indicesArray );
 			this.addAttribute( 'position', new Float32BufferAttribute( verticesArray, 3 ) );
-			this.addAttribute( 'uv', new Float32BufferAttribute( options.arrays.uv, 2 ) );
+			this.addAttribute( 'uv', new Float32BufferAttribute( uvArray, 2 ) );
 
 		}
 
@@ -28124,6 +28376,16 @@ var Three = (function (exports) {
 	ShapeGeometry.prototype = Object.create( Geometry.prototype );
 	ShapeGeometry.prototype.constructor = ShapeGeometry;
 
+	ShapeGeometry.prototype.toJSON = function () {
+
+		var data = Geometry.prototype.toJSON.call( this );
+
+		var shapes = this.parameters.shapes;
+
+		return toJSON( shapes, data );
+
+	};
+
 	// ShapeBufferGeometry
 
 	function ShapeBufferGeometry( shapes, curveSegments ) {
@@ -28258,6 +28520,42 @@ var Three = (function (exports) {
 
 	ShapeBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 	ShapeBufferGeometry.prototype.constructor = ShapeBufferGeometry;
+
+	ShapeBufferGeometry.prototype.toJSON = function () {
+
+		var data = BufferGeometry.prototype.toJSON.call( this );
+
+		var shapes = this.parameters.shapes;
+
+		return toJSON( shapes, data );
+
+	};
+
+	//
+
+	function toJSON( shapes, data ) {
+
+		data.shapes = [];
+
+		if ( Array.isArray( shapes ) ) {
+
+			for ( var i = 0, l = shapes.length; i < l; i ++ ) {
+
+				var shape = shapes[ i ];
+
+				data.shapes.push( shape.uuid );
+
+			}
+
+		} else {
+
+			data.shapes.push( shapes.uuid );
+
+		}
+
+		return data;
+
+	}
 
 	/**
 	 * @author WestLangley / http://github.com/WestLangley
@@ -29008,7 +29306,7 @@ var Three = (function (exports) {
 	 * Full-screen textured quad shader
 	 */
 
-	var CopyShader$1 = {
+	var CopyShader = {
 
 		uniforms: {
 
@@ -29083,7 +29381,7 @@ var Three = (function (exports) {
 
 		// dependencies
 
-		if ( CopyShader$1 === undefined ) {
+		if ( CopyShader === undefined ) {
 
 			console.error( 'EffectComposer relies on CopyShader' );
 
@@ -29095,7 +29393,7 @@ var Three = (function (exports) {
 
 		}
 
-		this.copyPass = new ShaderPass( CopyShader$1 );
+		this.copyPass = new ShaderPass( CopyShader );
 
 	};
 
@@ -29230,6 +29528,1122 @@ var Three = (function (exports) {
 	Uniform.prototype.clone = function () {
 
 		return new Uniform( this.value.clone === undefined ? this.value : this.value.clone() );
+
+	};
+
+	/**
+	 * @author alteredq / http://alteredqualia.com/
+	 * @author davidedc / http://www.sketchpatch.net/
+	 *
+	 * NVIDIA FXAA by Timothy Lottes
+	 * http://timothylottes.blogspot.com/2011/06/fxaa3-source-released.html
+	 * - WebGL port by @supereggbert
+	 * http://www.glge.org/demos/fxaa/
+	 */
+
+	var FXAAShader = {
+
+		uniforms: {
+
+			"tDiffuse":   { value: null },
+			"resolution": { value: new Vector2( 1 / 1024, 1 / 512 ) }
+
+		},
+
+		vertexShader: [
+
+			"varying vec2 vUv;",
+
+			"void main() {",
+
+				"vUv = uv;",
+				"gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+
+			"}"
+
+		].join( "\n" ),
+
+		fragmentShader: [
+	        "precision highp float;",
+	        "",
+	        "uniform sampler2D tDiffuse;",
+	        "",
+	        "uniform vec2 resolution;",
+	        "",
+	        "varying vec2 vUv;",
+	        "",
+	        "// FXAA 3.11 implementation by NVIDIA, ported to WebGL by Agost Biro (biro@archilogic.com)",
+	        "",
+	        "//----------------------------------------------------------------------------------",
+	        "// File:        es3-kepler\FXAA\assets\shaders/FXAA_DefaultES.frag",
+	        "// SDK Version: v3.00",
+	        "// Email:       gameworks@nvidia.com",
+	        "// Site:        http://developer.nvidia.com/",
+	        "//",
+	        "// Copyright (c) 2014-2015, NVIDIA CORPORATION. All rights reserved.",
+	        "//",
+	        "// Redistribution and use in source and binary forms, with or without",
+	        "// modification, are permitted provided that the following conditions",
+	        "// are met:",
+	        "//  * Redistributions of source code must retain the above copyright",
+	        "//    notice, this list of conditions and the following disclaimer.",
+	        "//  * Redistributions in binary form must reproduce the above copyright",
+	        "//    notice, this list of conditions and the following disclaimer in the",
+	        "//    documentation and/or other materials provided with the distribution.",
+	        "//  * Neither the name of NVIDIA CORPORATION nor the names of its",
+	        "//    contributors may be used to endorse or promote products derived",
+	        "//    from this software without specific prior written permission.",
+	        "//",
+	        "// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY",
+	        "// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE",
+	        "// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR",
+	        "// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR",
+	        "// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,",
+	        "// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,",
+	        "// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR",
+	        "// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY",
+	        "// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT",
+	        "// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE",
+	        "// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+	        "//",
+	        "//----------------------------------------------------------------------------------",
+	        "",
+	        "#define FXAA_PC 1",
+	        "#define FXAA_GLSL_100 1",
+	        "#define FXAA_QUALITY_PRESET 12",
+	        "",
+	        "#define FXAA_GREEN_AS_LUMA 1",
+	        "",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#ifndef FXAA_PC_CONSOLE",
+	        "    //",
+	        "    // The console algorithm for PC is included",
+	        "    // for developers targeting really low spec machines.",
+	        "    // Likely better to just run FXAA_PC, and use a really low preset.",
+	        "    //",
+	        "    #define FXAA_PC_CONSOLE 0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#ifndef FXAA_GLSL_120",
+	        "    #define FXAA_GLSL_120 0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#ifndef FXAA_GLSL_130",
+	        "    #define FXAA_GLSL_130 0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#ifndef FXAA_HLSL_3",
+	        "    #define FXAA_HLSL_3 0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#ifndef FXAA_HLSL_4",
+	        "    #define FXAA_HLSL_4 0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#ifndef FXAA_HLSL_5",
+	        "    #define FXAA_HLSL_5 0",
+	        "#endif",
+	        "/*==========================================================================*/",
+	        "#ifndef FXAA_GREEN_AS_LUMA",
+	        "    //",
+	        "    // For those using non-linear color,",
+	        "    // and either not able to get luma in alpha, or not wanting to,",
+	        "    // this enables FXAA to run using green as a proxy for luma.",
+	        "    // So with this enabled, no need to pack luma in alpha.",
+	        "    //",
+	        "    // This will turn off AA on anything which lacks some amount of green.",
+	        "    // Pure red and blue or combination of only R and B, will get no AA.",
+	        "    //",
+	        "    // Might want to lower the settings for both,",
+	        "    //    fxaaConsoleEdgeThresholdMin",
+	        "    //    fxaaQualityEdgeThresholdMin",
+	        "    // In order to insure AA does not get turned off on colors",
+	        "    // which contain a minor amount of green.",
+	        "    //",
+	        "    // 1 = On.",
+	        "    // 0 = Off.",
+	        "    //",
+	        "    #define FXAA_GREEN_AS_LUMA 0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#ifndef FXAA_EARLY_EXIT",
+	        "    //",
+	        "    // Controls algorithm's early exit path.",
+	        "    // On PS3 turning this ON adds 2 cycles to the shader.",
+	        "    // On 360 turning this OFF adds 10ths of a millisecond to the shader.",
+	        "    // Turning this off on console will result in a more blurry image.",
+	        "    // So this defaults to on.",
+	        "    //",
+	        "    // 1 = On.",
+	        "    // 0 = Off.",
+	        "    //",
+	        "    #define FXAA_EARLY_EXIT 1",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#ifndef FXAA_DISCARD",
+	        "    //",
+	        "    // Only valid for PC OpenGL currently.",
+	        "    // Probably will not work when FXAA_GREEN_AS_LUMA = 1.",
+	        "    //",
+	        "    // 1 = Use discard on pixels which don't need AA.",
+	        "    //     For APIs which enable concurrent TEX+ROP from same surface.",
+	        "    // 0 = Return unchanged color on pixels which don't need AA.",
+	        "    //",
+	        "    #define FXAA_DISCARD 0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#ifndef FXAA_FAST_PIXEL_OFFSET",
+	        "    //",
+	        "    // Used for GLSL 120 only.",
+	        "    //",
+	        "    // 1 = GL API supports fast pixel offsets",
+	        "    // 0 = do not use fast pixel offsets",
+	        "    //",
+	        "    #ifdef GL_EXT_gpu_shader4",
+	        "        #define FXAA_FAST_PIXEL_OFFSET 1",
+	        "    #endif",
+	        "    #ifdef GL_NV_gpu_shader5",
+	        "        #define FXAA_FAST_PIXEL_OFFSET 1",
+	        "    #endif",
+	        "    #ifdef GL_ARB_gpu_shader5",
+	        "        #define FXAA_FAST_PIXEL_OFFSET 1",
+	        "    #endif",
+	        "    #ifndef FXAA_FAST_PIXEL_OFFSET",
+	        "        #define FXAA_FAST_PIXEL_OFFSET 0",
+	        "    #endif",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#ifndef FXAA_GATHER4_ALPHA",
+	        "    //",
+	        "    // 1 = API supports gather4 on alpha channel.",
+	        "    // 0 = API does not support gather4 on alpha channel.",
+	        "    //",
+	        "    #if (FXAA_HLSL_5 == 1)",
+	        "        #define FXAA_GATHER4_ALPHA 1",
+	        "    #endif",
+	        "    #ifdef GL_ARB_gpu_shader5",
+	        "        #define FXAA_GATHER4_ALPHA 1",
+	        "    #endif",
+	        "    #ifdef GL_NV_gpu_shader5",
+	        "        #define FXAA_GATHER4_ALPHA 1",
+	        "    #endif",
+	        "    #ifndef FXAA_GATHER4_ALPHA",
+	        "        #define FXAA_GATHER4_ALPHA 0",
+	        "    #endif",
+	        "#endif",
+	        "",
+	        "",
+	        "/*============================================================================",
+	        "                        FXAA QUALITY - TUNING KNOBS",
+	        "------------------------------------------------------------------------------",
+	        "NOTE the other tuning knobs are now in the shader function inputs!",
+	        "============================================================================*/",
+	        "#ifndef FXAA_QUALITY_PRESET",
+	        "    //",
+	        "    // Choose the quality preset.",
+	        "    // This needs to be compiled into the shader as it effects code.",
+	        "    // Best option to include multiple presets is to",
+	        "    // in each shader define the preset, then include this file.",
+	        "    //",
+	        "    // OPTIONS",
+	        "    // -----------------------------------------------------------------------",
+	        "    // 10 to 15 - default medium dither (10=fastest, 15=highest quality)",
+	        "    // 20 to 29 - less dither, more expensive (20=fastest, 29=highest quality)",
+	        "    // 39       - no dither, very expensive",
+	        "    //",
+	        "    // NOTES",
+	        "    // -----------------------------------------------------------------------",
+	        "    // 12 = slightly faster then FXAA 3.9 and higher edge quality (default)",
+	        "    // 13 = about same speed as FXAA 3.9 and better than 12",
+	        "    // 23 = closest to FXAA 3.9 visually and performance wise",
+	        "    //  _ = the lowest digit is directly related to performance",
+	        "    // _  = the highest digit is directly related to style",
+	        "    //",
+	        "    #define FXAA_QUALITY_PRESET 12",
+	        "#endif",
+	        "",
+	        "",
+	        "/*============================================================================",
+	        "",
+	        "                           FXAA QUALITY - PRESETS",
+	        "",
+	        "============================================================================*/",
+	        "",
+	        "/*============================================================================",
+	        "                     FXAA QUALITY - MEDIUM DITHER PRESETS",
+	        "============================================================================*/",
+	        "#if (FXAA_QUALITY_PRESET == 10)",
+	        "    #define FXAA_QUALITY_PS 3",
+	        "    #define FXAA_QUALITY_P0 1.5",
+	        "    #define FXAA_QUALITY_P1 3.0",
+	        "    #define FXAA_QUALITY_P2 12.0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_QUALITY_PRESET == 11)",
+	        "    #define FXAA_QUALITY_PS 4",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.5",
+	        "    #define FXAA_QUALITY_P2 3.0",
+	        "    #define FXAA_QUALITY_P3 12.0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_QUALITY_PRESET == 12)",
+	        "    #define FXAA_QUALITY_PS 5",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.5",
+	        "    #define FXAA_QUALITY_P2 2.0",
+	        "    #define FXAA_QUALITY_P3 4.0",
+	        "    #define FXAA_QUALITY_P4 12.0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_QUALITY_PRESET == 13)",
+	        "    #define FXAA_QUALITY_PS 6",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.5",
+	        "    #define FXAA_QUALITY_P2 2.0",
+	        "    #define FXAA_QUALITY_P3 2.0",
+	        "    #define FXAA_QUALITY_P4 4.0",
+	        "    #define FXAA_QUALITY_P5 12.0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_QUALITY_PRESET == 14)",
+	        "    #define FXAA_QUALITY_PS 7",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.5",
+	        "    #define FXAA_QUALITY_P2 2.0",
+	        "    #define FXAA_QUALITY_P3 2.0",
+	        "    #define FXAA_QUALITY_P4 2.0",
+	        "    #define FXAA_QUALITY_P5 4.0",
+	        "    #define FXAA_QUALITY_P6 12.0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_QUALITY_PRESET == 15)",
+	        "    #define FXAA_QUALITY_PS 8",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.5",
+	        "    #define FXAA_QUALITY_P2 2.0",
+	        "    #define FXAA_QUALITY_P3 2.0",
+	        "    #define FXAA_QUALITY_P4 2.0",
+	        "    #define FXAA_QUALITY_P5 2.0",
+	        "    #define FXAA_QUALITY_P6 4.0",
+	        "    #define FXAA_QUALITY_P7 12.0",
+	        "#endif",
+	        "",
+	        "/*============================================================================",
+	        "                     FXAA QUALITY - LOW DITHER PRESETS",
+	        "============================================================================*/",
+	        "#if (FXAA_QUALITY_PRESET == 20)",
+	        "    #define FXAA_QUALITY_PS 3",
+	        "    #define FXAA_QUALITY_P0 1.5",
+	        "    #define FXAA_QUALITY_P1 2.0",
+	        "    #define FXAA_QUALITY_P2 8.0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_QUALITY_PRESET == 21)",
+	        "    #define FXAA_QUALITY_PS 4",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.5",
+	        "    #define FXAA_QUALITY_P2 2.0",
+	        "    #define FXAA_QUALITY_P3 8.0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_QUALITY_PRESET == 22)",
+	        "    #define FXAA_QUALITY_PS 5",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.5",
+	        "    #define FXAA_QUALITY_P2 2.0",
+	        "    #define FXAA_QUALITY_P3 2.0",
+	        "    #define FXAA_QUALITY_P4 8.0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_QUALITY_PRESET == 23)",
+	        "    #define FXAA_QUALITY_PS 6",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.5",
+	        "    #define FXAA_QUALITY_P2 2.0",
+	        "    #define FXAA_QUALITY_P3 2.0",
+	        "    #define FXAA_QUALITY_P4 2.0",
+	        "    #define FXAA_QUALITY_P5 8.0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_QUALITY_PRESET == 24)",
+	        "    #define FXAA_QUALITY_PS 7",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.5",
+	        "    #define FXAA_QUALITY_P2 2.0",
+	        "    #define FXAA_QUALITY_P3 2.0",
+	        "    #define FXAA_QUALITY_P4 2.0",
+	        "    #define FXAA_QUALITY_P5 3.0",
+	        "    #define FXAA_QUALITY_P6 8.0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_QUALITY_PRESET == 25)",
+	        "    #define FXAA_QUALITY_PS 8",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.5",
+	        "    #define FXAA_QUALITY_P2 2.0",
+	        "    #define FXAA_QUALITY_P3 2.0",
+	        "    #define FXAA_QUALITY_P4 2.0",
+	        "    #define FXAA_QUALITY_P5 2.0",
+	        "    #define FXAA_QUALITY_P6 4.0",
+	        "    #define FXAA_QUALITY_P7 8.0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_QUALITY_PRESET == 26)",
+	        "    #define FXAA_QUALITY_PS 9",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.5",
+	        "    #define FXAA_QUALITY_P2 2.0",
+	        "    #define FXAA_QUALITY_P3 2.0",
+	        "    #define FXAA_QUALITY_P4 2.0",
+	        "    #define FXAA_QUALITY_P5 2.0",
+	        "    #define FXAA_QUALITY_P6 2.0",
+	        "    #define FXAA_QUALITY_P7 4.0",
+	        "    #define FXAA_QUALITY_P8 8.0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_QUALITY_PRESET == 27)",
+	        "    #define FXAA_QUALITY_PS 10",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.5",
+	        "    #define FXAA_QUALITY_P2 2.0",
+	        "    #define FXAA_QUALITY_P3 2.0",
+	        "    #define FXAA_QUALITY_P4 2.0",
+	        "    #define FXAA_QUALITY_P5 2.0",
+	        "    #define FXAA_QUALITY_P6 2.0",
+	        "    #define FXAA_QUALITY_P7 2.0",
+	        "    #define FXAA_QUALITY_P8 4.0",
+	        "    #define FXAA_QUALITY_P9 8.0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_QUALITY_PRESET == 28)",
+	        "    #define FXAA_QUALITY_PS 11",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.5",
+	        "    #define FXAA_QUALITY_P2 2.0",
+	        "    #define FXAA_QUALITY_P3 2.0",
+	        "    #define FXAA_QUALITY_P4 2.0",
+	        "    #define FXAA_QUALITY_P5 2.0",
+	        "    #define FXAA_QUALITY_P6 2.0",
+	        "    #define FXAA_QUALITY_P7 2.0",
+	        "    #define FXAA_QUALITY_P8 2.0",
+	        "    #define FXAA_QUALITY_P9 4.0",
+	        "    #define FXAA_QUALITY_P10 8.0",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_QUALITY_PRESET == 29)",
+	        "    #define FXAA_QUALITY_PS 12",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.5",
+	        "    #define FXAA_QUALITY_P2 2.0",
+	        "    #define FXAA_QUALITY_P3 2.0",
+	        "    #define FXAA_QUALITY_P4 2.0",
+	        "    #define FXAA_QUALITY_P5 2.0",
+	        "    #define FXAA_QUALITY_P6 2.0",
+	        "    #define FXAA_QUALITY_P7 2.0",
+	        "    #define FXAA_QUALITY_P8 2.0",
+	        "    #define FXAA_QUALITY_P9 2.0",
+	        "    #define FXAA_QUALITY_P10 4.0",
+	        "    #define FXAA_QUALITY_P11 8.0",
+	        "#endif",
+	        "",
+	        "/*============================================================================",
+	        "                     FXAA QUALITY - EXTREME QUALITY",
+	        "============================================================================*/",
+	        "#if (FXAA_QUALITY_PRESET == 39)",
+	        "    #define FXAA_QUALITY_PS 12",
+	        "    #define FXAA_QUALITY_P0 1.0",
+	        "    #define FXAA_QUALITY_P1 1.0",
+	        "    #define FXAA_QUALITY_P2 1.0",
+	        "    #define FXAA_QUALITY_P3 1.0",
+	        "    #define FXAA_QUALITY_P4 1.0",
+	        "    #define FXAA_QUALITY_P5 1.5",
+	        "    #define FXAA_QUALITY_P6 2.0",
+	        "    #define FXAA_QUALITY_P7 2.0",
+	        "    #define FXAA_QUALITY_P8 2.0",
+	        "    #define FXAA_QUALITY_P9 2.0",
+	        "    #define FXAA_QUALITY_P10 4.0",
+	        "    #define FXAA_QUALITY_P11 8.0",
+	        "#endif",
+	        "",
+	        "",
+	        "",
+	        "/*============================================================================",
+	        "",
+	        "                                API PORTING",
+	        "",
+	        "============================================================================*/",
+	        "#if (FXAA_GLSL_100 == 1) || (FXAA_GLSL_120 == 1) || (FXAA_GLSL_130 == 1)",
+	        "    #define FxaaBool bool",
+	        "    #define FxaaDiscard discard",
+	        "    #define FxaaFloat float",
+	        "    #define FxaaFloat2 vec2",
+	        "    #define FxaaFloat3 vec3",
+	        "    #define FxaaFloat4 vec4",
+	        "    #define FxaaHalf float",
+	        "    #define FxaaHalf2 vec2",
+	        "    #define FxaaHalf3 vec3",
+	        "    #define FxaaHalf4 vec4",
+	        "    #define FxaaInt2 ivec2",
+	        "    #define FxaaSat(x) clamp(x, 0.0, 1.0)",
+	        "    #define FxaaTex sampler2D",
+	        "#else",
+	        "    #define FxaaBool bool",
+	        "    #define FxaaDiscard clip(-1)",
+	        "    #define FxaaFloat float",
+	        "    #define FxaaFloat2 float2",
+	        "    #define FxaaFloat3 float3",
+	        "    #define FxaaFloat4 float4",
+	        "    #define FxaaHalf half",
+	        "    #define FxaaHalf2 half2",
+	        "    #define FxaaHalf3 half3",
+	        "    #define FxaaHalf4 half4",
+	        "    #define FxaaSat(x) saturate(x)",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_GLSL_100 == 1)",
+	        "  #define FxaaTexTop(t, p) texture2D(t, p, 0.0)",
+	        "  #define FxaaTexOff(t, p, o, r) texture2D(t, p + (o * r), 0.0)",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_GLSL_120 == 1)",
+	        "    // Requires,",
+	        "    //  #version 120",
+	        "    // And at least,",
+	        "    //  #extension GL_EXT_gpu_shader4 : enable",
+	        "    //  (or set FXAA_FAST_PIXEL_OFFSET 1 to work like DX9)",
+	        "    #define FxaaTexTop(t, p) texture2DLod(t, p, 0.0)",
+	        "    #if (FXAA_FAST_PIXEL_OFFSET == 1)",
+	        "        #define FxaaTexOff(t, p, o, r) texture2DLodOffset(t, p, 0.0, o)",
+	        "    #else",
+	        "        #define FxaaTexOff(t, p, o, r) texture2DLod(t, p + (o * r), 0.0)",
+	        "    #endif",
+	        "    #if (FXAA_GATHER4_ALPHA == 1)",
+	        "        // use #extension GL_ARB_gpu_shader5 : enable",
+	        "        #define FxaaTexAlpha4(t, p) textureGather(t, p, 3)",
+	        "        #define FxaaTexOffAlpha4(t, p, o) textureGatherOffset(t, p, o, 3)",
+	        "        #define FxaaTexGreen4(t, p) textureGather(t, p, 1)",
+	        "        #define FxaaTexOffGreen4(t, p, o) textureGatherOffset(t, p, o, 1)",
+	        "    #endif",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_GLSL_130 == 1)",
+	        "    // Requires \"#version 130\" or better",
+	        "    #define FxaaTexTop(t, p) textureLod(t, p, 0.0)",
+	        "    #define FxaaTexOff(t, p, o, r) textureLodOffset(t, p, 0.0, o)",
+	        "    #if (FXAA_GATHER4_ALPHA == 1)",
+	        "        // use #extension GL_ARB_gpu_shader5 : enable",
+	        "        #define FxaaTexAlpha4(t, p) textureGather(t, p, 3)",
+	        "        #define FxaaTexOffAlpha4(t, p, o) textureGatherOffset(t, p, o, 3)",
+	        "        #define FxaaTexGreen4(t, p) textureGather(t, p, 1)",
+	        "        #define FxaaTexOffGreen4(t, p, o) textureGatherOffset(t, p, o, 1)",
+	        "    #endif",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_HLSL_3 == 1)",
+	        "    #define FxaaInt2 float2",
+	        "    #define FxaaTex sampler2D",
+	        "    #define FxaaTexTop(t, p) tex2Dlod(t, float4(p, 0.0, 0.0))",
+	        "    #define FxaaTexOff(t, p, o, r) tex2Dlod(t, float4(p + (o * r), 0, 0))",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_HLSL_4 == 1)",
+	        "    #define FxaaInt2 int2",
+	        "    struct FxaaTex { SamplerState smpl; Texture2D tex; };",
+	        "    #define FxaaTexTop(t, p) t.tex.SampleLevel(t.smpl, p, 0.0)",
+	        "    #define FxaaTexOff(t, p, o, r) t.tex.SampleLevel(t.smpl, p, 0.0, o)",
+	        "#endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "#if (FXAA_HLSL_5 == 1)",
+	        "    #define FxaaInt2 int2",
+	        "    struct FxaaTex { SamplerState smpl; Texture2D tex; };",
+	        "    #define FxaaTexTop(t, p) t.tex.SampleLevel(t.smpl, p, 0.0)",
+	        "    #define FxaaTexOff(t, p, o, r) t.tex.SampleLevel(t.smpl, p, 0.0, o)",
+	        "    #define FxaaTexAlpha4(t, p) t.tex.GatherAlpha(t.smpl, p)",
+	        "    #define FxaaTexOffAlpha4(t, p, o) t.tex.GatherAlpha(t.smpl, p, o)",
+	        "    #define FxaaTexGreen4(t, p) t.tex.GatherGreen(t.smpl, p)",
+	        "    #define FxaaTexOffGreen4(t, p, o) t.tex.GatherGreen(t.smpl, p, o)",
+	        "#endif",
+	        "",
+	        "",
+	        "/*============================================================================",
+	        "                   GREEN AS LUMA OPTION SUPPORT FUNCTION",
+	        "============================================================================*/",
+	        "#if (FXAA_GREEN_AS_LUMA == 0)",
+	        "    FxaaFloat FxaaLuma(FxaaFloat4 rgba) { return rgba.w; }",
+	        "#else",
+	        "    FxaaFloat FxaaLuma(FxaaFloat4 rgba) { return rgba.y; }",
+	        "#endif",
+	        "",
+	        "",
+	        "",
+	        "",
+	        "/*============================================================================",
+	        "",
+	        "                             FXAA3 QUALITY - PC",
+	        "",
+	        "============================================================================*/",
+	        "#if (FXAA_PC == 1)",
+	        "/*--------------------------------------------------------------------------*/",
+	        "FxaaFloat4 FxaaPixelShader(",
+	        "    //",
+	        "    // Use noperspective interpolation here (turn off perspective interpolation).",
+	        "    // {xy} = center of pixel",
+	        "    FxaaFloat2 pos,",
+	        "    //",
+	        "    // Used only for FXAA Console, and not used on the 360 version.",
+	        "    // Use noperspective interpolation here (turn off perspective interpolation).",
+	        "    // {xy_} = upper left of pixel",
+	        "    // {_zw} = lower right of pixel",
+	        "    FxaaFloat4 fxaaConsolePosPos,",
+	        "    //",
+	        "    // Input color texture.",
+	        "    // {rgb_} = color in linear or perceptual color space",
+	        "    // if (FXAA_GREEN_AS_LUMA == 0)",
+	        "    //     {__a} = luma in perceptual color space (not linear)",
+	        "    FxaaTex tex,",
+	        "    //",
+	        "    // Only used on the optimized 360 version of FXAA Console.",
+	        "    // For everything but 360, just use the same input here as for \"tex\".",
+	        "    // For 360, same texture, just alias with a 2nd sampler.",
+	        "    // This sampler needs to have an exponent bias of -1.",
+	        "    FxaaTex fxaaConsole360TexExpBiasNegOne,",
+	        "    //",
+	        "    // Only used on the optimized 360 version of FXAA Console.",
+	        "    // For everything but 360, just use the same input here as for \"tex\".",
+	        "    // For 360, same texture, just alias with a 3nd sampler.",
+	        "    // This sampler needs to have an exponent bias of -2.",
+	        "    FxaaTex fxaaConsole360TexExpBiasNegTwo,",
+	        "    //",
+	        "    // Only used on FXAA Quality.",
+	        "    // This must be from a constant/uniform.",
+	        "    // {x_} = 1.0/screenWidthInPixels",
+	        "    // {_y} = 1.0/screenHeightInPixels",
+	        "    FxaaFloat2 fxaaQualityRcpFrame,",
+	        "    //",
+	        "    // Only used on FXAA Console.",
+	        "    // This must be from a constant/uniform.",
+	        "    // This effects sub-pixel AA quality and inversely sharpness.",
+	        "    //   Where N ranges between,",
+	        "    //     N = 0.50 (default)",
+	        "    //     N = 0.33 (sharper)",
+	        "    // {x__} = -N/screenWidthInPixels",
+	        "    // {_y_} = -N/screenHeightInPixels",
+	        "    // {_z_} =  N/screenWidthInPixels",
+	        "    // {__w} =  N/screenHeightInPixels",
+	        "    FxaaFloat4 fxaaConsoleRcpFrameOpt,",
+	        "    //",
+	        "    // Only used on FXAA Console.",
+	        "    // Not used on 360, but used on PS3 and PC.",
+	        "    // This must be from a constant/uniform.",
+	        "    // {x__} = -2.0/screenWidthInPixels",
+	        "    // {_y_} = -2.0/screenHeightInPixels",
+	        "    // {_z_} =  2.0/screenWidthInPixels",
+	        "    // {__w} =  2.0/screenHeightInPixels",
+	        "    FxaaFloat4 fxaaConsoleRcpFrameOpt2,",
+	        "    //",
+	        "    // Only used on FXAA Console.",
+	        "    // Only used on 360 in place of fxaaConsoleRcpFrameOpt2.",
+	        "    // This must be from a constant/uniform.",
+	        "    // {x__} =  8.0/screenWidthInPixels",
+	        "    // {_y_} =  8.0/screenHeightInPixels",
+	        "    // {_z_} = -4.0/screenWidthInPixels",
+	        "    // {__w} = -4.0/screenHeightInPixels",
+	        "    FxaaFloat4 fxaaConsole360RcpFrameOpt2,",
+	        "    //",
+	        "    // Only used on FXAA Quality.",
+	        "    // This used to be the FXAA_QUALITY_SUBPIX define.",
+	        "    // It is here now to allow easier tuning.",
+	        "    // Choose the amount of sub-pixel aliasing removal.",
+	        "    // This can effect sharpness.",
+	        "    //   1.00 - upper limit (softer)",
+	        "    //   0.75 - default amount of filtering",
+	        "    //   0.50 - lower limit (sharper, less sub-pixel aliasing removal)",
+	        "    //   0.25 - almost off",
+	        "    //   0.00 - completely off",
+	        "    FxaaFloat fxaaQualitySubpix,",
+	        "    //",
+	        "    // Only used on FXAA Quality.",
+	        "    // This used to be the FXAA_QUALITY_EDGE_THRESHOLD define.",
+	        "    // It is here now to allow easier tuning.",
+	        "    // The minimum amount of local contrast required to apply algorithm.",
+	        "    //   0.333 - too little (faster)",
+	        "    //   0.250 - low quality",
+	        "    //   0.166 - default",
+	        "    //   0.125 - high quality",
+	        "    //   0.063 - overkill (slower)",
+	        "    FxaaFloat fxaaQualityEdgeThreshold,",
+	        "    //",
+	        "    // Only used on FXAA Quality.",
+	        "    // This used to be the FXAA_QUALITY_EDGE_THRESHOLD_MIN define.",
+	        "    // It is here now to allow easier tuning.",
+	        "    // Trims the algorithm from processing darks.",
+	        "    //   0.0833 - upper limit (default, the start of visible unfiltered edges)",
+	        "    //   0.0625 - high quality (faster)",
+	        "    //   0.0312 - visible limit (slower)",
+	        "    // Special notes when using FXAA_GREEN_AS_LUMA,",
+	        "    //   Likely want to set this to zero.",
+	        "    //   As colors that are mostly not-green",
+	        "    //   will appear very dark in the green channel!",
+	        "    //   Tune by looking at mostly non-green content,",
+	        "    //   then start at zero and increase until aliasing is a problem.",
+	        "    FxaaFloat fxaaQualityEdgeThresholdMin,",
+	        "    //",
+	        "    // Only used on FXAA Console.",
+	        "    // This used to be the FXAA_CONSOLE_EDGE_SHARPNESS define.",
+	        "    // It is here now to allow easier tuning.",
+	        "    // This does not effect PS3, as this needs to be compiled in.",
+	        "    //   Use FXAA_CONSOLE_PS3_EDGE_SHARPNESS for PS3.",
+	        "    //   Due to the PS3 being ALU bound,",
+	        "    //   there are only three safe values here: 2 and 4 and 8.",
+	        "    //   These options use the shaders ability to a free *|/ by 2|4|8.",
+	        "    // For all other platforms can be a non-power of two.",
+	        "    //   8.0 is sharper (default!!!)",
+	        "    //   4.0 is softer",
+	        "    //   2.0 is really soft (good only for vector graphics inputs)",
+	        "    FxaaFloat fxaaConsoleEdgeSharpness,",
+	        "    //",
+	        "    // Only used on FXAA Console.",
+	        "    // This used to be the FXAA_CONSOLE_EDGE_THRESHOLD define.",
+	        "    // It is here now to allow easier tuning.",
+	        "    // This does not effect PS3, as this needs to be compiled in.",
+	        "    //   Use FXAA_CONSOLE_PS3_EDGE_THRESHOLD for PS3.",
+	        "    //   Due to the PS3 being ALU bound,",
+	        "    //   there are only two safe values here: 1/4 and 1/8.",
+	        "    //   These options use the shaders ability to a free *|/ by 2|4|8.",
+	        "    // The console setting has a different mapping than the quality setting.",
+	        "    // Other platforms can use other values.",
+	        "    //   0.125 leaves less aliasing, but is softer (default!!!)",
+	        "    //   0.25 leaves more aliasing, and is sharper",
+	        "    FxaaFloat fxaaConsoleEdgeThreshold,",
+	        "    //",
+	        "    // Only used on FXAA Console.",
+	        "    // This used to be the FXAA_CONSOLE_EDGE_THRESHOLD_MIN define.",
+	        "    // It is here now to allow easier tuning.",
+	        "    // Trims the algorithm from processing darks.",
+	        "    // The console setting has a different mapping than the quality setting.",
+	        "    // This only applies when FXAA_EARLY_EXIT is 1.",
+	        "    // This does not apply to PS3,",
+	        "    // PS3 was simplified to avoid more shader instructions.",
+	        "    //   0.06 - faster but more aliasing in darks",
+	        "    //   0.05 - default",
+	        "    //   0.04 - slower and less aliasing in darks",
+	        "    // Special notes when using FXAA_GREEN_AS_LUMA,",
+	        "    //   Likely want to set this to zero.",
+	        "    //   As colors that are mostly not-green",
+	        "    //   will appear very dark in the green channel!",
+	        "    //   Tune by looking at mostly non-green content,",
+	        "    //   then start at zero and increase until aliasing is a problem.",
+	        "    FxaaFloat fxaaConsoleEdgeThresholdMin,",
+	        "    //",
+	        "    // Extra constants for 360 FXAA Console only.",
+	        "    // Use zeros or anything else for other platforms.",
+	        "    // These must be in physical constant registers and NOT immedates.",
+	        "    // Immedates will result in compiler un-optimizing.",
+	        "    // {xyzw} = float4(1.0, -1.0, 0.25, -0.25)",
+	        "    FxaaFloat4 fxaaConsole360ConstDir",
+	        ") {",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    FxaaFloat2 posM;",
+	        "    posM.x = pos.x;",
+	        "    posM.y = pos.y;",
+	        "    #if (FXAA_GATHER4_ALPHA == 1)",
+	        "        #if (FXAA_DISCARD == 0)",
+	        "            FxaaFloat4 rgbyM = FxaaTexTop(tex, posM);",
+	        "            #if (FXAA_GREEN_AS_LUMA == 0)",
+	        "                #define lumaM rgbyM.w",
+	        "            #else",
+	        "                #define lumaM rgbyM.y",
+	        "            #endif",
+	        "        #endif",
+	        "        #if (FXAA_GREEN_AS_LUMA == 0)",
+	        "            FxaaFloat4 luma4A = FxaaTexAlpha4(tex, posM);",
+	        "            FxaaFloat4 luma4B = FxaaTexOffAlpha4(tex, posM, FxaaInt2(-1, -1));",
+	        "        #else",
+	        "            FxaaFloat4 luma4A = FxaaTexGreen4(tex, posM);",
+	        "            FxaaFloat4 luma4B = FxaaTexOffGreen4(tex, posM, FxaaInt2(-1, -1));",
+	        "        #endif",
+	        "        #if (FXAA_DISCARD == 1)",
+	        "            #define lumaM luma4A.w",
+	        "        #endif",
+	        "        #define lumaE luma4A.z",
+	        "        #define lumaS luma4A.x",
+	        "        #define lumaSE luma4A.y",
+	        "        #define lumaNW luma4B.w",
+	        "        #define lumaN luma4B.z",
+	        "        #define lumaW luma4B.x",
+	        "    #else",
+	        "        FxaaFloat4 rgbyM = FxaaTexTop(tex, posM);",
+	        "        #if (FXAA_GREEN_AS_LUMA == 0)",
+	        "            #define lumaM rgbyM.w",
+	        "        #else",
+	        "            #define lumaM rgbyM.y",
+	        "        #endif",
+	        "        #if (FXAA_GLSL_100 == 1)",
+	        "          FxaaFloat lumaS = FxaaLuma(FxaaTexOff(tex, posM, FxaaFloat2( 0.0, 1.0), fxaaQualityRcpFrame.xy));",
+	        "          FxaaFloat lumaE = FxaaLuma(FxaaTexOff(tex, posM, FxaaFloat2( 1.0, 0.0), fxaaQualityRcpFrame.xy));",
+	        "          FxaaFloat lumaN = FxaaLuma(FxaaTexOff(tex, posM, FxaaFloat2( 0.0,-1.0), fxaaQualityRcpFrame.xy));",
+	        "          FxaaFloat lumaW = FxaaLuma(FxaaTexOff(tex, posM, FxaaFloat2(-1.0, 0.0), fxaaQualityRcpFrame.xy));",
+	        "        #else",
+	        "          FxaaFloat lumaS = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2( 0, 1), fxaaQualityRcpFrame.xy));",
+	        "          FxaaFloat lumaE = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2( 1, 0), fxaaQualityRcpFrame.xy));",
+	        "          FxaaFloat lumaN = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2( 0,-1), fxaaQualityRcpFrame.xy));",
+	        "          FxaaFloat lumaW = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(-1, 0), fxaaQualityRcpFrame.xy));",
+	        "        #endif",
+	        "    #endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    FxaaFloat maxSM = max(lumaS, lumaM);",
+	        "    FxaaFloat minSM = min(lumaS, lumaM);",
+	        "    FxaaFloat maxESM = max(lumaE, maxSM);",
+	        "    FxaaFloat minESM = min(lumaE, minSM);",
+	        "    FxaaFloat maxWN = max(lumaN, lumaW);",
+	        "    FxaaFloat minWN = min(lumaN, lumaW);",
+	        "    FxaaFloat rangeMax = max(maxWN, maxESM);",
+	        "    FxaaFloat rangeMin = min(minWN, minESM);",
+	        "    FxaaFloat rangeMaxScaled = rangeMax * fxaaQualityEdgeThreshold;",
+	        "    FxaaFloat range = rangeMax - rangeMin;",
+	        "    FxaaFloat rangeMaxClamped = max(fxaaQualityEdgeThresholdMin, rangeMaxScaled);",
+	        "    FxaaBool earlyExit = range < rangeMaxClamped;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    if(earlyExit)",
+	        "        #if (FXAA_DISCARD == 1)",
+	        "            FxaaDiscard;",
+	        "        #else",
+	        "            return rgbyM;",
+	        "        #endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    #if (FXAA_GATHER4_ALPHA == 0)",
+	        "        #if (FXAA_GLSL_100 == 1)",
+	        "          FxaaFloat lumaNW = FxaaLuma(FxaaTexOff(tex, posM, FxaaFloat2(-1.0,-1.0), fxaaQualityRcpFrame.xy));",
+	        "          FxaaFloat lumaSE = FxaaLuma(FxaaTexOff(tex, posM, FxaaFloat2( 1.0, 1.0), fxaaQualityRcpFrame.xy));",
+	        "          FxaaFloat lumaNE = FxaaLuma(FxaaTexOff(tex, posM, FxaaFloat2( 1.0,-1.0), fxaaQualityRcpFrame.xy));",
+	        "          FxaaFloat lumaSW = FxaaLuma(FxaaTexOff(tex, posM, FxaaFloat2(-1.0, 1.0), fxaaQualityRcpFrame.xy));",
+	        "        #else",
+	        "          FxaaFloat lumaNW = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(-1,-1), fxaaQualityRcpFrame.xy));",
+	        "          FxaaFloat lumaSE = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2( 1, 1), fxaaQualityRcpFrame.xy));",
+	        "          FxaaFloat lumaNE = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2( 1,-1), fxaaQualityRcpFrame.xy));",
+	        "          FxaaFloat lumaSW = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(-1, 1), fxaaQualityRcpFrame.xy));",
+	        "        #endif",
+	        "    #else",
+	        "        FxaaFloat lumaNE = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(1, -1), fxaaQualityRcpFrame.xy));",
+	        "        FxaaFloat lumaSW = FxaaLuma(FxaaTexOff(tex, posM, FxaaInt2(-1, 1), fxaaQualityRcpFrame.xy));",
+	        "    #endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    FxaaFloat lumaNS = lumaN + lumaS;",
+	        "    FxaaFloat lumaWE = lumaW + lumaE;",
+	        "    FxaaFloat subpixRcpRange = 1.0/range;",
+	        "    FxaaFloat subpixNSWE = lumaNS + lumaWE;",
+	        "    FxaaFloat edgeHorz1 = (-2.0 * lumaM) + lumaNS;",
+	        "    FxaaFloat edgeVert1 = (-2.0 * lumaM) + lumaWE;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    FxaaFloat lumaNESE = lumaNE + lumaSE;",
+	        "    FxaaFloat lumaNWNE = lumaNW + lumaNE;",
+	        "    FxaaFloat edgeHorz2 = (-2.0 * lumaE) + lumaNESE;",
+	        "    FxaaFloat edgeVert2 = (-2.0 * lumaN) + lumaNWNE;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    FxaaFloat lumaNWSW = lumaNW + lumaSW;",
+	        "    FxaaFloat lumaSWSE = lumaSW + lumaSE;",
+	        "    FxaaFloat edgeHorz4 = (abs(edgeHorz1) * 2.0) + abs(edgeHorz2);",
+	        "    FxaaFloat edgeVert4 = (abs(edgeVert1) * 2.0) + abs(edgeVert2);",
+	        "    FxaaFloat edgeHorz3 = (-2.0 * lumaW) + lumaNWSW;",
+	        "    FxaaFloat edgeVert3 = (-2.0 * lumaS) + lumaSWSE;",
+	        "    FxaaFloat edgeHorz = abs(edgeHorz3) + edgeHorz4;",
+	        "    FxaaFloat edgeVert = abs(edgeVert3) + edgeVert4;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    FxaaFloat subpixNWSWNESE = lumaNWSW + lumaNESE;",
+	        "    FxaaFloat lengthSign = fxaaQualityRcpFrame.x;",
+	        "    FxaaBool horzSpan = edgeHorz >= edgeVert;",
+	        "    FxaaFloat subpixA = subpixNSWE * 2.0 + subpixNWSWNESE;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    if(!horzSpan) lumaN = lumaW;",
+	        "    if(!horzSpan) lumaS = lumaE;",
+	        "    if(horzSpan) lengthSign = fxaaQualityRcpFrame.y;",
+	        "    FxaaFloat subpixB = (subpixA * (1.0/12.0)) - lumaM;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    FxaaFloat gradientN = lumaN - lumaM;",
+	        "    FxaaFloat gradientS = lumaS - lumaM;",
+	        "    FxaaFloat lumaNN = lumaN + lumaM;",
+	        "    FxaaFloat lumaSS = lumaS + lumaM;",
+	        "    FxaaBool pairN = abs(gradientN) >= abs(gradientS);",
+	        "    FxaaFloat gradient = max(abs(gradientN), abs(gradientS));",
+	        "    if(pairN) lengthSign = -lengthSign;",
+	        "    FxaaFloat subpixC = FxaaSat(abs(subpixB) * subpixRcpRange);",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    FxaaFloat2 posB;",
+	        "    posB.x = posM.x;",
+	        "    posB.y = posM.y;",
+	        "    FxaaFloat2 offNP;",
+	        "    offNP.x = (!horzSpan) ? 0.0 : fxaaQualityRcpFrame.x;",
+	        "    offNP.y = ( horzSpan) ? 0.0 : fxaaQualityRcpFrame.y;",
+	        "    if(!horzSpan) posB.x += lengthSign * 0.5;",
+	        "    if( horzSpan) posB.y += lengthSign * 0.5;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    FxaaFloat2 posN;",
+	        "    posN.x = posB.x - offNP.x * FXAA_QUALITY_P0;",
+	        "    posN.y = posB.y - offNP.y * FXAA_QUALITY_P0;",
+	        "    FxaaFloat2 posP;",
+	        "    posP.x = posB.x + offNP.x * FXAA_QUALITY_P0;",
+	        "    posP.y = posB.y + offNP.y * FXAA_QUALITY_P0;",
+	        "    FxaaFloat subpixD = ((-2.0)*subpixC) + 3.0;",
+	        "    FxaaFloat lumaEndN = FxaaLuma(FxaaTexTop(tex, posN));",
+	        "    FxaaFloat subpixE = subpixC * subpixC;",
+	        "    FxaaFloat lumaEndP = FxaaLuma(FxaaTexTop(tex, posP));",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    if(!pairN) lumaNN = lumaSS;",
+	        "    FxaaFloat gradientScaled = gradient * 1.0/4.0;",
+	        "    FxaaFloat lumaMM = lumaM - lumaNN * 0.5;",
+	        "    FxaaFloat subpixF = subpixD * subpixE;",
+	        "    FxaaBool lumaMLTZero = lumaMM < 0.0;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    lumaEndN -= lumaNN * 0.5;",
+	        "    lumaEndP -= lumaNN * 0.5;",
+	        "    FxaaBool doneN = abs(lumaEndN) >= gradientScaled;",
+	        "    FxaaBool doneP = abs(lumaEndP) >= gradientScaled;",
+	        "    if(!doneN) posN.x -= offNP.x * FXAA_QUALITY_P1;",
+	        "    if(!doneN) posN.y -= offNP.y * FXAA_QUALITY_P1;",
+	        "    FxaaBool doneNP = (!doneN) || (!doneP);",
+	        "    if(!doneP) posP.x += offNP.x * FXAA_QUALITY_P1;",
+	        "    if(!doneP) posP.y += offNP.y * FXAA_QUALITY_P1;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    if(doneNP) {",
+	        "        if(!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));",
+	        "        if(!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));",
+	        "        if(!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;",
+	        "        if(!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;",
+	        "        doneN = abs(lumaEndN) >= gradientScaled;",
+	        "        doneP = abs(lumaEndP) >= gradientScaled;",
+	        "        if(!doneN) posN.x -= offNP.x * FXAA_QUALITY_P2;",
+	        "        if(!doneN) posN.y -= offNP.y * FXAA_QUALITY_P2;",
+	        "        doneNP = (!doneN) || (!doneP);",
+	        "        if(!doneP) posP.x += offNP.x * FXAA_QUALITY_P2;",
+	        "        if(!doneP) posP.y += offNP.y * FXAA_QUALITY_P2;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "        #if (FXAA_QUALITY_PS > 3)",
+	        "        if(doneNP) {",
+	        "            if(!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));",
+	        "            if(!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));",
+	        "            if(!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;",
+	        "            if(!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;",
+	        "            doneN = abs(lumaEndN) >= gradientScaled;",
+	        "            doneP = abs(lumaEndP) >= gradientScaled;",
+	        "            if(!doneN) posN.x -= offNP.x * FXAA_QUALITY_P3;",
+	        "            if(!doneN) posN.y -= offNP.y * FXAA_QUALITY_P3;",
+	        "            doneNP = (!doneN) || (!doneP);",
+	        "            if(!doneP) posP.x += offNP.x * FXAA_QUALITY_P3;",
+	        "            if(!doneP) posP.y += offNP.y * FXAA_QUALITY_P3;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "            #if (FXAA_QUALITY_PS > 4)",
+	        "            if(doneNP) {",
+	        "                if(!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));",
+	        "                if(!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));",
+	        "                if(!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;",
+	        "                if(!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;",
+	        "                doneN = abs(lumaEndN) >= gradientScaled;",
+	        "                doneP = abs(lumaEndP) >= gradientScaled;",
+	        "                if(!doneN) posN.x -= offNP.x * FXAA_QUALITY_P4;",
+	        "                if(!doneN) posN.y -= offNP.y * FXAA_QUALITY_P4;",
+	        "                doneNP = (!doneN) || (!doneP);",
+	        "                if(!doneP) posP.x += offNP.x * FXAA_QUALITY_P4;",
+	        "                if(!doneP) posP.y += offNP.y * FXAA_QUALITY_P4;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "                #if (FXAA_QUALITY_PS > 5)",
+	        "                if(doneNP) {",
+	        "                    if(!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));",
+	        "                    if(!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));",
+	        "                    if(!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;",
+	        "                    if(!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;",
+	        "                    doneN = abs(lumaEndN) >= gradientScaled;",
+	        "                    doneP = abs(lumaEndP) >= gradientScaled;",
+	        "                    if(!doneN) posN.x -= offNP.x * FXAA_QUALITY_P5;",
+	        "                    if(!doneN) posN.y -= offNP.y * FXAA_QUALITY_P5;",
+	        "                    doneNP = (!doneN) || (!doneP);",
+	        "                    if(!doneP) posP.x += offNP.x * FXAA_QUALITY_P5;",
+	        "                    if(!doneP) posP.y += offNP.y * FXAA_QUALITY_P5;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "                    #if (FXAA_QUALITY_PS > 6)",
+	        "                    if(doneNP) {",
+	        "                        if(!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));",
+	        "                        if(!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));",
+	        "                        if(!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;",
+	        "                        if(!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;",
+	        "                        doneN = abs(lumaEndN) >= gradientScaled;",
+	        "                        doneP = abs(lumaEndP) >= gradientScaled;",
+	        "                        if(!doneN) posN.x -= offNP.x * FXAA_QUALITY_P6;",
+	        "                        if(!doneN) posN.y -= offNP.y * FXAA_QUALITY_P6;",
+	        "                        doneNP = (!doneN) || (!doneP);",
+	        "                        if(!doneP) posP.x += offNP.x * FXAA_QUALITY_P6;",
+	        "                        if(!doneP) posP.y += offNP.y * FXAA_QUALITY_P6;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "                        #if (FXAA_QUALITY_PS > 7)",
+	        "                        if(doneNP) {",
+	        "                            if(!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));",
+	        "                            if(!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));",
+	        "                            if(!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;",
+	        "                            if(!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;",
+	        "                            doneN = abs(lumaEndN) >= gradientScaled;",
+	        "                            doneP = abs(lumaEndP) >= gradientScaled;",
+	        "                            if(!doneN) posN.x -= offNP.x * FXAA_QUALITY_P7;",
+	        "                            if(!doneN) posN.y -= offNP.y * FXAA_QUALITY_P7;",
+	        "                            doneNP = (!doneN) || (!doneP);",
+	        "                            if(!doneP) posP.x += offNP.x * FXAA_QUALITY_P7;",
+	        "                            if(!doneP) posP.y += offNP.y * FXAA_QUALITY_P7;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    #if (FXAA_QUALITY_PS > 8)",
+	        "    if(doneNP) {",
+	        "        if(!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));",
+	        "        if(!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));",
+	        "        if(!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;",
+	        "        if(!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;",
+	        "        doneN = abs(lumaEndN) >= gradientScaled;",
+	        "        doneP = abs(lumaEndP) >= gradientScaled;",
+	        "        if(!doneN) posN.x -= offNP.x * FXAA_QUALITY_P8;",
+	        "        if(!doneN) posN.y -= offNP.y * FXAA_QUALITY_P8;",
+	        "        doneNP = (!doneN) || (!doneP);",
+	        "        if(!doneP) posP.x += offNP.x * FXAA_QUALITY_P8;",
+	        "        if(!doneP) posP.y += offNP.y * FXAA_QUALITY_P8;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "        #if (FXAA_QUALITY_PS > 9)",
+	        "        if(doneNP) {",
+	        "            if(!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));",
+	        "            if(!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));",
+	        "            if(!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;",
+	        "            if(!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;",
+	        "            doneN = abs(lumaEndN) >= gradientScaled;",
+	        "            doneP = abs(lumaEndP) >= gradientScaled;",
+	        "            if(!doneN) posN.x -= offNP.x * FXAA_QUALITY_P9;",
+	        "            if(!doneN) posN.y -= offNP.y * FXAA_QUALITY_P9;",
+	        "            doneNP = (!doneN) || (!doneP);",
+	        "            if(!doneP) posP.x += offNP.x * FXAA_QUALITY_P9;",
+	        "            if(!doneP) posP.y += offNP.y * FXAA_QUALITY_P9;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "            #if (FXAA_QUALITY_PS > 10)",
+	        "            if(doneNP) {",
+	        "                if(!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));",
+	        "                if(!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));",
+	        "                if(!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;",
+	        "                if(!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;",
+	        "                doneN = abs(lumaEndN) >= gradientScaled;",
+	        "                doneP = abs(lumaEndP) >= gradientScaled;",
+	        "                if(!doneN) posN.x -= offNP.x * FXAA_QUALITY_P10;",
+	        "                if(!doneN) posN.y -= offNP.y * FXAA_QUALITY_P10;",
+	        "                doneNP = (!doneN) || (!doneP);",
+	        "                if(!doneP) posP.x += offNP.x * FXAA_QUALITY_P10;",
+	        "                if(!doneP) posP.y += offNP.y * FXAA_QUALITY_P10;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "                #if (FXAA_QUALITY_PS > 11)",
+	        "                if(doneNP) {",
+	        "                    if(!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));",
+	        "                    if(!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));",
+	        "                    if(!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;",
+	        "                    if(!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;",
+	        "                    doneN = abs(lumaEndN) >= gradientScaled;",
+	        "                    doneP = abs(lumaEndP) >= gradientScaled;",
+	        "                    if(!doneN) posN.x -= offNP.x * FXAA_QUALITY_P11;",
+	        "                    if(!doneN) posN.y -= offNP.y * FXAA_QUALITY_P11;",
+	        "                    doneNP = (!doneN) || (!doneP);",
+	        "                    if(!doneP) posP.x += offNP.x * FXAA_QUALITY_P11;",
+	        "                    if(!doneP) posP.y += offNP.y * FXAA_QUALITY_P11;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "                    #if (FXAA_QUALITY_PS > 12)",
+	        "                    if(doneNP) {",
+	        "                        if(!doneN) lumaEndN = FxaaLuma(FxaaTexTop(tex, posN.xy));",
+	        "                        if(!doneP) lumaEndP = FxaaLuma(FxaaTexTop(tex, posP.xy));",
+	        "                        if(!doneN) lumaEndN = lumaEndN - lumaNN * 0.5;",
+	        "                        if(!doneP) lumaEndP = lumaEndP - lumaNN * 0.5;",
+	        "                        doneN = abs(lumaEndN) >= gradientScaled;",
+	        "                        doneP = abs(lumaEndP) >= gradientScaled;",
+	        "                        if(!doneN) posN.x -= offNP.x * FXAA_QUALITY_P12;",
+	        "                        if(!doneN) posN.y -= offNP.y * FXAA_QUALITY_P12;",
+	        "                        doneNP = (!doneN) || (!doneP);",
+	        "                        if(!doneP) posP.x += offNP.x * FXAA_QUALITY_P12;",
+	        "                        if(!doneP) posP.y += offNP.y * FXAA_QUALITY_P12;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "                    }",
+	        "                    #endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "                }",
+	        "                #endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "            }",
+	        "            #endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "        }",
+	        "        #endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    }",
+	        "    #endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "                        }",
+	        "                        #endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "                    }",
+	        "                    #endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "                }",
+	        "                #endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "            }",
+	        "            #endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "        }",
+	        "        #endif",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    }",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    FxaaFloat dstN = posM.x - posN.x;",
+	        "    FxaaFloat dstP = posP.x - posM.x;",
+	        "    if(!horzSpan) dstN = posM.y - posN.y;",
+	        "    if(!horzSpan) dstP = posP.y - posM.y;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    FxaaBool goodSpanN = (lumaEndN < 0.0) != lumaMLTZero;",
+	        "    FxaaFloat spanLength = (dstP + dstN);",
+	        "    FxaaBool goodSpanP = (lumaEndP < 0.0) != lumaMLTZero;",
+	        "    FxaaFloat spanLengthRcp = 1.0/spanLength;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    FxaaBool directionN = dstN < dstP;",
+	        "    FxaaFloat dst = min(dstN, dstP);",
+	        "    FxaaBool goodSpan = directionN ? goodSpanN : goodSpanP;",
+	        "    FxaaFloat subpixG = subpixF * subpixF;",
+	        "    FxaaFloat pixelOffset = (dst * (-spanLengthRcp)) + 0.5;",
+	        "    FxaaFloat subpixH = subpixG * fxaaQualitySubpix;",
+	        "/*--------------------------------------------------------------------------*/",
+	        "    FxaaFloat pixelOffsetGood = goodSpan ? pixelOffset : 0.0;",
+	        "    FxaaFloat pixelOffsetSubpix = max(pixelOffsetGood, subpixH);",
+	        "    if(!horzSpan) posM.x += pixelOffsetSubpix * lengthSign;",
+	        "    if( horzSpan) posM.y += pixelOffsetSubpix * lengthSign;",
+	        "    #if (FXAA_DISCARD == 1)",
+	        "        return FxaaTexTop(tex, posM);",
+	        "    #else",
+	        "        return FxaaFloat4(FxaaTexTop(tex, posM).xyz, lumaM);",
+	        "    #endif",
+	        "}",
+	        "/*==========================================================================*/",
+	        "#endif",
+	        "",
+	        "void main() {",
+	        "  gl_FragColor = FxaaPixelShader(",
+	        "    vUv,",
+	        "    vec4(0.0),",
+	        "    tDiffuse,",
+	        "    tDiffuse,",
+	        "    tDiffuse,",
+	        "    resolution,",
+	        "    vec4(0.0),",
+	        "    vec4(0.0),",
+	        "    vec4(0.0),",
+	        "    0.75,",
+	        "    0.166,",
+	        "    0.0833,",
+	        "    0.0,",
+	        "    0.0,",
+	        "    0.0,",
+	        "    vec4(0.0)",
+	        "  );",
+	        "",
+	        "  // TODO avoid querying texture twice for same texel",
+	        "  gl_FragColor.a = texture2D(tDiffuse, vUv).a;",
+	        "}"
+		].join("\n")
 
 	};
 

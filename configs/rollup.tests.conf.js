@@ -63,16 +63,16 @@ export default [
 			file: 'tests/Car.test.js'
 		}
 	},
-	{
-		input: 'sources/Cloth.js',
-		plugins: [ glsl() ],
-		indent: '\t',
-		output: {
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/Cloth.test.js'
-		}
-	},
+//	{
+//		input: 'sources/Cloth.js',
+//		plugins: [ glsl() ],
+//		indent: '\t',
+//		output: {
+//			format: 'iife',
+//			name: 'Three',
+//			file: 'tests/Cloth.test.js'
+//		}
+//	},
 	{
 		input: 'sources/ConvexObjectBreaker.js',
 		plugins: [ glsl() ],
@@ -1122,16 +1122,6 @@ export default [
 			format: 'iife',
 			name: 'Three',
 			file: 'tests/extras/core/Path.test.js'
-		}
-	},
-	{
-		input: 'sources/extras/core/PathPrototype.js',
-		plugins: [ glsl() ],
-		indent: '\t',
-		output: {
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/extras/core/PathPrototype.test.js'
 		}
 	},
 	{
@@ -2336,16 +2326,16 @@ export default [
 			file: 'tests/loaders/VTKLoader.test.js'
 		}
 	},
-	{
-		input: 'sources/loaders/XLoader.js',
-		plugins: [ glsl() ],
-		indent: '\t',
-		output: {
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/loaders/XLoader.test.js'
-		}
-	},
+//	{
+//		input: 'sources/loaders/XLoader.js',
+//		plugins: [ glsl() ],
+//		indent: '\t',
+//		output: {
+//			format: 'iife',
+//			name: 'Three',
+//			file: 'tests/loaders/XLoader.test.js'
+//		}
+//	},
 
 	// materials
 	{
@@ -4778,16 +4768,6 @@ export default [
 			format: 'iife',
 			name: 'Three',
 			file: 'tests/utils/GeometryUtils.test.js'
-		}
-	},
-	{
-		input: 'sources/utils/ImageUtils.js',
-		plugins: [ glsl() ],
-		indent: '\t',
-		output: {
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/utils/ImageUtils.test.js'
 		}
 	},
 	{

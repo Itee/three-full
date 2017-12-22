@@ -11,44 +11,32 @@ var Three = (function (exports) {
 		DEG2RAD: Math.PI / 180,
 		RAD2DEG: 180 / Math.PI,
 
-		generateUUID: function () {
+		generateUUID: ( function () {
 
-			// http://www.broofa.com/Tools/Math.uuid.htm
-			// Replaced .join with string concatenation (@takahirox)
+			// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
 
-			var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split( '' );
-			var rnd = 0, r;
+			var lut = [];
 
-			return function generateUUID() {
+			for ( var i = 0; i < 256; i ++ ) {
 
-				var uuid = '';
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
 
-				for ( var i = 0; i < 36; i ++ ) {
+			}
 
-					if ( i === 8 || i === 13 || i === 18 || i === 23 ) {
+			return function () {
 
-						uuid += '-';
-
-					} else if ( i === 14 ) {
-
-						uuid += '4';
-
-					} else {
-
-						if ( rnd <= 0x02 ) rnd = 0x2000000 + ( Math.random() * 0x1000000 ) | 0;
-						r = rnd & 0xf;
-						rnd = rnd >> 4;
-						uuid += chars[ ( i === 19 ) ? ( r & 0x3 ) | 0x8 : r ];
-
-					}
-
-				}
-
-				return uuid;
+				var d0 = Math.random() * 0xffffffff | 0;
+				var d1 = Math.random() * 0xffffffff | 0;
+				var d2 = Math.random() * 0xffffffff | 0;
+				var d3 = Math.random() * 0xffffffff | 0;
+				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
+					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
+					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
 
 			};
 
-		}(),
+		} )(),
 
 		clamp: function ( value, min, max ) {
 
@@ -406,7 +394,7 @@ var Three = (function (exports) {
 	 * @author sunag / http://www.sunag.com.br/
 	 */
 
-	var InputNode$1 = function( type, params ) {
+	var InputNode = function( type, params ) {
 
 		params = params || {};
 		params.shared = params.shared !== undefined ? params.shared : false;
@@ -415,10 +403,10 @@ var Three = (function (exports) {
 
 	};
 
-	InputNode$1.prototype = Object.create( TempNode.prototype );
-	InputNode$1.prototype.constructor = InputNode$1;
+	InputNode.prototype = Object.create( TempNode.prototype );
+	InputNode.prototype.constructor = InputNode;
 
-	InputNode$1.prototype.generate = function( builder, output, uuid, type, ns, needsUpdate ) {
+	InputNode.prototype.generate = function( builder, output, uuid, type, ns, needsUpdate ) {
 
 		var material = builder.material;
 
@@ -489,7 +477,7 @@ var Three = (function (exports) {
 
 	var TextureNode = function( value, coord, bias, project ) {
 
-		InputNode$1.call( this, 'v4', { shared : true } );
+		InputNode.call( this, 'v4', { shared : true } );
 
 		this.value = value;
 		this.coord = coord || new UVNode();
@@ -498,12 +486,12 @@ var Three = (function (exports) {
 
 	};
 
-	TextureNode.prototype = Object.create( InputNode$1.prototype );
+	TextureNode.prototype = Object.create( InputNode.prototype );
 	TextureNode.prototype.constructor = TextureNode;
 
 	TextureNode.prototype.getTexture = function( builder, output ) {
 
-		return InputNode$1.prototype.generate.call( this, builder, output, this.value.uuid, 't' );
+		return InputNode.prototype.generate.call( this, builder, output, this.value.uuid, 't' );
 
 	};
 

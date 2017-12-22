@@ -4,6 +4,7 @@ import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Face3 } from '../core/Face3.js'
 import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { LoaderUtils } from '../loaders/LoaderUtils.js'
 
 /**
  * @author alteredq / http://alteredqualia.com/
@@ -39,8 +40,8 @@ BinaryLoader.prototype = {
 
 		// todo: unify load API to for easier SceneLoader use
 
-		var texturePath = this.texturePath || Loader.prototype.extractUrlBase( url );
-		var binaryPath = this.binaryPath || Loader.prototype.extractUrlBase( url );
+		var texturePath = this.texturePath || LoaderUtils.extractUrlBase( url );
+		var binaryPath = this.binaryPath || LoaderUtils.extractUrlBase( url );
 
 		// #1 load JS part via web worker
 
@@ -252,17 +253,7 @@ BinaryLoader.prototype = {
 
 			function parseString( data, offset, length ) {
 
-				var charArray = new Uint8Array( data, offset, length );
-
-				var text = "";
-
-				for ( var i = 0; i < length; i ++ ) {
-
-					text += String.fromCharCode( charArray[ i ] );
-
-				}
-
-				return text;
+				return LoaderUtils.decodeText( new Uint8Array( data, offset, length ) );
 
 			}
 

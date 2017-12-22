@@ -8,6 +8,7 @@ import { Mesh } from '../objects/Mesh.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
 import { RepeatWrapping } from '../constants.js'
 import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { LoaderUtils } from '../loaders/LoaderUtils.js'
 import { Loader } from '../loaders/Loader.js'
 
 /**
@@ -39,7 +40,7 @@ AssimpJSONLoader.prototype = {
 
 		var scope = this;
 
-		var path = Loader.prototype.extractUrlBase( url );
+		var path = LoaderUtils.extractUrlBase( url );
 
 		var loader = new FileLoader( this.manager );
 		loader.load( url, function ( text ) {
@@ -229,6 +230,13 @@ AssimpJSONLoader.prototype = {
 					case '$mat.shadingm':
 						// aiShadingMode_Flat
 						material.flatShading = ( value === 1 ) ? true : false;
+						break;
+
+					case '$mat.opacity':
+						if ( value < 1 ) {
+							material.opacity = value;
+							material.transparent = true;
+						}
 						break;
 
 				}

@@ -137,15 +137,27 @@ function _excludesFilesPaths ( filePaths, excludes ) {
 
     function isExclude ( path ) {
 
+        let isExclude = false
+        let excludePattern = undefined
         for ( let i = 0, pathLength = excludes.length ; i < pathLength ; i++ ) {
 
-            if ( path.contains( excludes[ i ] ) ) {
-                return true
+			excludePattern = excludes[ i ]
+
+            // In case this is a file name it must fully match
+            if( excludePattern.indexOf('.') > -1 ) {
+
+			    const fileName = path.replace(/^.*(\\|\/|\:)/, '')
+                if(fileName === excludePattern) {
+					isExclude = true
+                }
+
+            } else if ( path.contains( excludePattern ) ) {
+				isExclude = true
             }
 
         }
 
-        return false
+        return isExclude
 
     }
 
@@ -179,7 +191,7 @@ function _filterES6Files ( filePaths ) {
 
     let filteredFilesPath = []
 
-    const es6Regex = new RegExp( /import\s?{[\w\s]+}\s?from\s?|export[{\r\n\s]+(\w+[,\r\n\s]*)+[}]?;?/, 'g' )
+    const es6Regex = new RegExp( /(export\s(default|var))|((import|export)[\r\n\s]*(default)?({[\w\s,]+}\s?(from)?))/, 'g' )
 
     let filePath = undefined
     for ( let filePathIndex = 0, numberOfFilePaths = filePaths.length ; filePathIndex < numberOfFilePaths ; filePathIndex++ ) {
@@ -477,6 +489,7 @@ function _getAllConstantStatementIn ( file ) {
 
     const constantFilePath = _exportMap[ 'REVISION' ]
     const constants        = _revertExportMap[ constantFilePath ]
+	if ( !constants ) { throw new Error( 'No constants for: ' + constantFilePath ) }
 
     // Find
     let matchedStatements = []
@@ -894,10 +907,24 @@ function _getExportedElementForFile ( filePath ) {
     //                                .replace( /\s*/g, '')
 
     // Try to find exports for es6 modules
-    const es6Exports = _getExportsStatementsInES6File( file )
-    if ( es6Exports.length > 0 ) { return es6Exports }
+    // Todo: need to sort different file type before
+	const es6Regex = new RegExp( /(export\s(default|var))|((import|export)[\r\n\s]*(default)?({[\w\s,]+}\s?(from)?))/, 'g' )
+	if ( file.match( es6Regex ) ) {
 
-    // Try to find exports for commonjs
+		const es6Exports = _getExportsStatementsInES6File( file )
+		if ( es6Exports.length > 0 ) {
+			console.log(filePath + ' will es6Exports ' + es6Exports)
+			return es6Exports
+		}
+
+    }
+
+    const amdRegex = new RegExp( /define\.amd/, 'g' )
+	if ( file.match( amdRegex ) ) {
+		console.error( 'WARNING: ' + path.basename( filePath ) + ' is unable to be process... It is an AMD module. Sorry for the disagreement.' )
+		return [ path.basename( filePath, '.js' ) ]
+	}
+
     const commonjsExports = _getExportsStatementsInCJSFile( file )
     if ( commonjsExports.length > 0 ) { return commonjsExports }
 
@@ -1164,9 +1191,9 @@ Object.assign( Es6.prototype, {
 
             } else if ( availableFilesPaths.includes( filePath ) ) {
 
-                let imports      = ''
+                let imports      = []
                 let replacements = []
-                let exports      = ''
+                let exports      = []
                 let outputPath   = _getOutputFor( filePath, output )
 
                 console.log( 'Copy:    ' + filePath + '\nto       ' + outputPath + '\n' )

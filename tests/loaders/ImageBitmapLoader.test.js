@@ -2,78 +2,164 @@ var Three = (function (exports) {
 	'use strict';
 
 	/**
-	 * @author thespite / http://clicktorelease.com/
+	 * @author mrdoob / http://mrdoob.com/
 	 */
 
-	function detectCreateImageBitmap ( optionsList ) {
+	var Cache = {
 
-		var url = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+		enabled: false,
 
-		return new Promise( function ( resolve, reject ) {
+		files: {},
 
-			if ( ! ( 'createImageBitmap' in window ) ) {
+		add: function ( key, file ) {
 
-				reject();
-				return;
+			if ( this.enabled === false ) return;
 
-			}
+			// console.log( 'THREE.Cache', 'Adding key:', key );
 
-			fetch( url ).then( function ( res ) {
+			this.files[ key ] = file;
 
-				return res.blob();
+		},
 
-			} ).then( function ( blob ) {
+		get: function ( key ) {
 
-				var pendingImages = [];
+			if ( this.enabled === false ) return;
 
-				for ( var i = 0; i < optionsList.length; i ++ ) {
+			// console.log( 'THREE.Cache', 'Checking key:', key );
 
-					var pendingImage = optionsList[ i ] === undefined
-						? createImageBitmap( blob )
-						: createImageBitmap( blob, optionsList[ i ] );
+			return this.files[ key ];
 
-					pendingImages.push( pendingImage );
+		},
+
+		remove: function ( key ) {
+
+			delete this.files[ key ];
+
+		},
+
+		clear: function () {
+
+			this.files = {};
+
+		}
+
+	};
+
+	/**
+	 * @author mrdoob / http://mrdoob.com/
+	 */
+
+	function LoadingManager( onLoad, onProgress, onError ) {
+
+		var scope = this;
+
+		var isLoading = false;
+		var itemsLoaded = 0;
+		var itemsTotal = 0;
+		var urlModifier = undefined;
+
+		this.onStart = undefined;
+		this.onLoad = onLoad;
+		this.onProgress = onProgress;
+		this.onError = onError;
+
+		this.itemStart = function ( url ) {
+
+			itemsTotal ++;
+
+			if ( isLoading === false ) {
+
+				if ( scope.onStart !== undefined ) {
+
+					scope.onStart( url, itemsLoaded, itemsTotal );
 
 				}
 
-				Promise.all( pendingImages ).then( function () {
+			}
 
-					resolve();
+			isLoading = true;
 
-				} ).catch( function () {
+		};
 
-					reject();
+		this.itemEnd = function ( url ) {
 
-				} );
+			itemsLoaded ++;
 
-			} );
+			if ( scope.onProgress !== undefined ) {
 
-		} );
+				scope.onProgress( url, itemsLoaded, itemsTotal );
+
+			}
+
+			if ( itemsLoaded === itemsTotal ) {
+
+				isLoading = false;
+
+				if ( scope.onLoad !== undefined ) {
+
+					scope.onLoad();
+
+				}
+
+			}
+
+		};
+
+		this.itemError = function ( url ) {
+
+			if ( scope.onError !== undefined ) {
+
+				scope.onError( url );
+
+			}
+
+		};
+
+		this.resolveURL = function ( url ) {
+
+			if ( urlModifier ) {
+
+				return urlModifier( url );
+
+			}
+
+			return url;
+
+		};
+
+		this.setURLModifier = function ( transform ) {
+
+			urlModifier = transform;
+			return this;
+
+		};
 
 	}
 
-	var canUseImageBitmap = detectCreateImageBitmap( [ undefined ] );
+	var DefaultLoadingManager = new LoadingManager();
 
-	var canUseImageBitmapOptions = detectCreateImageBitmap( [
-		{ imageOrientation: 'none', premultiplyAlpha: 'none' },
-		{ imageOrientation: 'flipY', premultiplyAlpha: 'none' },
-		{ imageOrientation: 'none', premultiplyAlpha: 'premultiply' },
-		{ imageOrientation: 'flipY', premultiplyAlpha: 'premultiply' }
-	] );
+	/**
+	 * @author thespite / http://clicktorelease.com/
+	 */
 
+	function ImageBitmapLoader( manager ) {
 
-	var ImageBitmapLoader = function ( manager ) {
+		if ( typeof createImageBitmap === 'undefined' ) {
 
-		canUseImageBitmap.catch( function () {
+			console.warn( 'THREE.ImageBitmapLoader: createImageBitmap() not supported.' );
 
-			console.warn( 'ImageBitmapLoader: createImageBitmap() not supported.' );
+		}
 
-		} );
+		if ( typeof fetch === 'undefined' ) {
+
+			console.warn( 'THREE.ImageBitmapLoader: fetch() not supported.' );
+
+		}
 
 		this.manager = manager !== undefined ? manager : DefaultLoadingManager;
 		this.options = undefined;
 
-	};
+	}
 
 	ImageBitmapLoader.prototype = {
 
@@ -81,13 +167,8 @@ var Three = (function (exports) {
 
 		setOptions: function setOptions( options ) {
 
-			canUseImageBitmapOptions.catch( function () {
-
-				console.warn( 'ImageBitmapLoader: createImageBitmap() options not supported.' );
-
-			} );
-
 			this.options = options;
+
 			return this;
 
 		},
@@ -124,9 +205,7 @@ var Three = (function (exports) {
 
 			} ).then( function ( blob ) {
 
-				return scope.options === undefined
-					? createImageBitmap( blob )
-					: createImageBitmap( blob, scope.options );
+				return createImageBitmap( blob, scope.options );
 
 			} ).then( function ( imageBitmap ) {
 
@@ -144,6 +223,19 @@ var Three = (function (exports) {
 				scope.manager.itemError( url );
 
 			} );
+
+		},
+
+		setCrossOrigin: function ( /* value */ ) {
+
+			return this;
+
+		},
+
+		setPath: function ( value ) {
+
+			this.path = value;
+			return this;
 
 		}
 

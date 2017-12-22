@@ -1,7 +1,7 @@
 var Three = (function (exports) {
 	'use strict';
 
-	var REVISION = '88';
+	var REVISION = '89';
 
 	var CullFaceNone = 0;
 	var CullFaceBack = 1;
@@ -1386,13 +1386,16 @@ var Three = (function (exports) {
 
 		}
 
-		function setMaterial( material ) {
+		function setMaterial( material, frontFaceCW ) {
 
 			material.side === DoubleSide
 				? disable( gl.CULL_FACE )
 				: enable( gl.CULL_FACE );
 
-			setFlipSided( material.side === BackSide );
+			var flipSided = ( material.side === BackSide );
+			if ( frontFaceCW ) flipSided = ! flipSided;
+
+			setFlipSided( flipSided );
 
 			material.transparent === true
 				? setBlending( material.blending, material.blendEquation, material.blendSrc, material.blendDst, material.blendEquationAlpha, material.blendSrcAlpha, material.blendDstAlpha, material.premultipliedAlpha )
@@ -1695,44 +1698,32 @@ var Three = (function (exports) {
 		DEG2RAD: Math.PI / 180,
 		RAD2DEG: 180 / Math.PI,
 
-		generateUUID: function () {
+		generateUUID: ( function () {
 
-			// http://www.broofa.com/Tools/Math.uuid.htm
-			// Replaced .join with string concatenation (@takahirox)
+			// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
 
-			var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split( '' );
-			var rnd = 0, r;
+			var lut = [];
 
-			return function generateUUID() {
+			for ( var i = 0; i < 256; i ++ ) {
 
-				var uuid = '';
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
 
-				for ( var i = 0; i < 36; i ++ ) {
+			}
 
-					if ( i === 8 || i === 13 || i === 18 || i === 23 ) {
+			return function () {
 
-						uuid += '-';
-
-					} else if ( i === 14 ) {
-
-						uuid += '4';
-
-					} else {
-
-						if ( rnd <= 0x02 ) rnd = 0x2000000 + ( Math.random() * 0x1000000 ) | 0;
-						r = rnd & 0xf;
-						rnd = rnd >> 4;
-						uuid += chars[ ( i === 19 ) ? ( r & 0x3 ) | 0x8 : r ];
-
-					}
-
-				}
-
-				return uuid;
+				var d0 = Math.random() * 0xffffffff | 0;
+				var d1 = Math.random() * 0xffffffff | 0;
+				var d2 = Math.random() * 0xffffffff | 0;
+				var d3 = Math.random() * 0xffffffff | 0;
+				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
+					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
+					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
 
 			};
 
-		}(),
+		} )(),
 
 		clamp: function ( value, min, max ) {
 
@@ -2382,7 +2373,8 @@ var Three = (function (exports) {
 			_stencil = parameters.stencil !== undefined ? parameters.stencil : true,
 			_antialias = parameters.antialias !== undefined ? parameters.antialias : false,
 			_premultipliedAlpha = parameters.premultipliedAlpha !== undefined ? parameters.premultipliedAlpha : true,
-			_preserveDrawingBuffer = parameters.preserveDrawingBuffer !== undefined ? parameters.preserveDrawingBuffer : false;
+			_preserveDrawingBuffer = parameters.preserveDrawingBuffer !== undefined ? parameters.preserveDrawingBuffer : false,
+			_powerPreference = parameters.powerPreference !== undefined ? parameters.powerPreference : 'default';
 
 		// initialize
 
@@ -2396,8 +2388,14 @@ var Three = (function (exports) {
 				stencil: _stencil,
 				antialias: _antialias,
 				premultipliedAlpha: _premultipliedAlpha,
-				preserveDrawingBuffer: _preserveDrawingBuffer
+				preserveDrawingBuffer: _preserveDrawingBuffer,
+				powerPreference: _powerPreference
 			};
+
+			// event listeners must be registered before WebGL context is created, see #12753
+
+			_canvas.addEventListener( 'webglcontextlost', onContextLost, false );
+			_canvas.addEventListener( 'webglcontextrestored', function () { } );
 
 			gl = _context || _canvas.getContext( 'webgl2', attributes );
 
@@ -2405,21 +2403,19 @@ var Three = (function (exports) {
 
 				if ( _canvas.getContext( 'webgl2' ) !== null ) {
 
-					throw 'Error creating WebGL2 context with your selected attributes.';
+					throw new Error( 'Error creating WebGL2 context with your selected attributes.' );
 
 				} else {
 
-					throw 'Error creating WebGL2 context.';
+					throw new Error( 'Error creating WebGL2 context.' );
 
 				}
 
 			}
 
-			_canvas.addEventListener( 'webglcontextlost', onContextLost, false );
-
 		} catch ( error ) {
 
-			console.error( 'THREE.WebGL2Renderer: ' + error );
+			console.error( 'THREE.WebGL2Renderer: ' + error.message );
 
 		}
 

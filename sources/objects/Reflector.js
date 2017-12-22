@@ -1,5 +1,4 @@
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/Geometries.js'
 import { Color } from '../math/Color.js'
 import { Plane } from '../math/Plane.js'
 import { Vector3 } from '../math/Vector3.js'
@@ -18,9 +17,9 @@ import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
  * @author Slayvin / http://slayvin.net
  */
 
-var Reflector = function ( width, height, options ) {
+var Reflector = function ( geometry, options ) {
 
-	Mesh.call( this, new PlaneBufferGeometry( width, height ) );
+	Mesh.call( this, geometry );
 
 	this.type = 'Reflector';
 

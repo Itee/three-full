@@ -91,10 +91,11 @@ export { BVHLoader } from './loaders/BVHLoader.js'
 export { ColladaLoader } from './loaders/ColladaLoader.js'
 export { DDSLoader } from './loaders/DDSLoader.js'
 export { LegacyGLTFLoader } from './loaders/deprecated/LegacyGLTFLoader.js'
+export { EXRLoader } from './loaders/EXRLoader.js'
 export { FBXLoader } from './loaders/FBXLoader.js'
+export { GCodeLoader } from './loaders/GCodeLoader.js'
 export { GLTFLoader } from './loaders/GLTFLoader.js'
 export { HDRCubeTextureLoader } from './loaders/HDRCubeTextureLoader.js'
-export { ImageBitmapLoader } from './loaders/ImageBitmapLoader.js'
 export { KMZLoader } from './loaders/KMZLoader.js'
 export { LoaderSupport } from './loaders/LoaderSupport.js'
 export { MD2Loader } from './loaders/MD2Loader.js'
@@ -125,7 +126,6 @@ export { TTFLoader } from './loaders/TTFLoader.js'
 export { UTF8Loader } from './loaders/UTF8Loader.js'
 export { VRMLLoader } from './loaders/VRMLLoader.js'
 export { VTKLoader } from './loaders/VTKLoader.js'
-export { XLoader } from './loaders/XLoader.js'
 export { MarchingCubes } from './MarchingCubes.js'
 export { ColorConverter } from './math/ColorConverter.js'
 export { Lut } from './math/Lut.js'
@@ -239,7 +239,6 @@ export {
 	CanvasRenderer,
 	Projector,
 	GeometryUtils,
-	ImageUtils,
 	CubeGeometry,
 	Face4,
 	LineStrip,
@@ -271,7 +270,8 @@ export {
 	EdgesHelper,
 	WireframeHelper,
 	XHRLoader,
-	BinaryTextureLoader
+	BinaryTextureLoader,
+	ImageUtils
 } from './Three.Legacy.js'
 export {
 	CSS2DObject,
@@ -363,8 +363,6 @@ export { AnimationMixer } from './animation/AnimationMixer.js'
 export { AnimationObjectGroup } from './animation/AnimationObjectGroup.js'
 export { AnimationUtils } from './animation/AnimationUtils.js'
 export { KeyframeTrack } from './animation/KeyframeTrack.js'
-export { KeyframeTrackConstructor } from './animation/KeyframeTrackConstructor.js'
-export { KeyframeTrackPrototype } from './animation/KeyframeTrackPrototype.js'
 export { PropertyBinding } from './animation/PropertyBinding.js'
 export { PropertyMixer } from './animation/PropertyMixer.js'
 export { BooleanKeyframeTrack } from './animation/tracks/BooleanKeyframeTrack.js'
@@ -547,19 +545,21 @@ export {
 	CubicBezier
 } from './extras/core/Interpolations.js'
 export { Path } from './extras/core/Path.js'
-export { PathPrototype } from './extras/core/PathPrototype.js'
 export { Shape } from './extras/core/Shape.js'
 export { ShapePath } from './extras/core/ShapePath.js'
 export { ArcCurve } from './extras/curves/ArcCurve.js'
 export { CatmullRomCurve3 } from './extras/curves/CatmullRomCurve3.js'
 export { CubicBezierCurve } from './extras/curves/CubicBezierCurve.js'
 export { CubicBezierCurve3 } from './extras/curves/CubicBezierCurve3.js'
-export { EllipseCurve } from './extras/curves/EllipseCurve.js'
-export { LineCurve } from './extras/curves/LineCurve.js'
-export { LineCurve3 } from './extras/curves/LineCurve3.js'
-export { QuadraticBezierCurve } from './extras/curves/QuadraticBezierCurve.js'
-export { QuadraticBezierCurve3 } from './extras/curves/QuadraticBezierCurve3.js'
-export { SplineCurve } from './extras/curves/SplineCurve.js'
+export {
+	EllipseCurve,
+	LineCurve,
+	LineCurve3,
+	QuadraticBezierCurve,
+	QuadraticBezierCurve3,
+	SplineCurve
+} from './extras/curves/Curves.js'
+export { Earcut } from './extras/Earcut.js'
 export { ImmediateRenderObject } from './extras/objects/ImmediateRenderObject.js'
 export { SceneUtils } from './extras/SceneUtils.js'
 export { ShapeUtils } from './extras/ShapeUtils.js'
@@ -654,9 +654,11 @@ export { CubeTextureLoader } from './loaders/CubeTextureLoader.js'
 export { DataTextureLoader } from './loaders/DataTextureLoader.js'
 export { FileLoader } from './loaders/FileLoader.js'
 export { FontLoader } from './loaders/FontLoader.js'
+export { ImageBitmapLoader } from './loaders/ImageBitmapLoader.js'
 export { ImageLoader } from './loaders/ImageLoader.js'
 export { JSONLoader } from './loaders/JSONLoader.js'
 export { Loader } from './loaders/Loader.js'
+export { LoaderUtils } from './loaders/LoaderUtils.js'
 export {
 	DefaultLoadingManager,
 	LoadingManager

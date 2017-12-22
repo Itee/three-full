@@ -2,6 +2,7 @@ import { FileLoader } from '../loaders/FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { LoaderUtils } from '../loaders/LoaderUtils.js'
 
 /**
  * @author Wei Meng / http://about.me/menway
@@ -65,28 +66,6 @@ PLYLoader.prototype = {
 	},
 
 	parse: function ( data ) {
-
-		function bin2str( buf ) {
-
-			var array_buffer = new Uint8Array( buf );
-
-			if ( window.TextDecoder !== undefined ) {
-
-				return new TextDecoder().decode( array_buffer );
-
-			}
-
-			var str = '';
-
-			for ( var i = 0, il = buf.byteLength; i < il; i ++ ) {
-
-				str += String.fromCharCode( array_buffer[ i ] ); // implicitly assumes little-endian
-
-			}
-
-			return str;
-
-		}
 
 		function parseHeader( data ) {
 
@@ -488,7 +467,7 @@ PLYLoader.prototype = {
 
 		if ( data instanceof ArrayBuffer ) {
 
-			var text = bin2str( data );
+			var text = LoaderUtils.decodeText( new Uint8Array( data ) );
 			var header = parseHeader( text );
 
 			geometry = header.format === 'ascii' ? parseASCII( text, header ) : parseBinary( data, header );

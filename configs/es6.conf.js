@@ -17,6 +17,9 @@ module.exports = {
 		'Three.js',
 		'polyfills.js',
 		'libs',
+		//		'Curves.js',						// Ignore intermediary exporter files
+		//		'Geometries.js',					// Ignore intermediary exporter files
+		//		'Materials.js',						// Ignore intermediary exporter files
 
 		'RaytracingWorker.js',
 		'ctm',                              // Todo: Need to check worker import
@@ -24,21 +27,21 @@ module.exports = {
 		'sea3d',                            // Duplicate export 'SEA3D'
 		'crossfade',                        // Scene has already been declared
 		'Cloth.js',							// Use global variable from example html ! Need to be refactored
-
 		'ParametricGeometries.js',          // Bug TorusKnotCurve from es6-exports
 		'RollerCoaster.js',                 // invalid default exports with file name from es6-exports
 		'OceanShaders.js',                  // Todo: check how to extends imported lib properly
 		'RectAreaLightUniformsLib.js',      //
 		'Volume.js',                        // damned eval
-		'NRRDLoader.js'                     // Import Volume.js
+		'NRRDLoader.js',                    // Import Volume.js
+		'XLoader.js'                     	// amd module
 	],
 	output: path.join( __dirname, '..', 'sources' ),
 	edgeCases: {
-		//        AnimationClipCreator:      {
-		//            output: './src/misc/AnimationClipCreator.js'
-		//        },
 		'3MFLoader': {
-			imports: [ 'DefaultLoadingManager' ] // + TextDecoder
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		AdaptiveToneMappingPass: {
 			imports: [
@@ -49,17 +52,22 @@ module.exports = {
 			]
 		},
 		AMFLoader: {
-			imports: [ 'DefaultLoadingManager' ] // + TextDecoder
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		AssimpJSONLoader: {
 			imports: [
 				'DefaultLoadingManager',
+				'LoaderUtils',
 				'Loader'
 			]
 		},
 		AssimpLoader: {
 			imports: [
 				'DefaultLoadingManager',
+				'LoaderUtils',
 				'Loader'
 			]
 		},
@@ -70,7 +78,10 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		BinaryLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		BloomPass: {
 			imports: [
@@ -100,6 +111,7 @@ module.exports = {
 		ColladaLoader: {
 			imports: [
 				'DefaultLoadingManager',
+				'LoaderUtils',
 				'Loader'
 			]
 		},
@@ -136,8 +148,14 @@ module.exports = {
 		EffectComposer: {
 			imports: [ 'CopyShader' ]
 		},
+		EXRLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
 		FBXLoader: {
-			imports: [ 'DefaultLoadingManager' ] // + TextDecoder + ZLib
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		FilmPass: {
 			imports: [
@@ -147,6 +165,9 @@ module.exports = {
 		},
 		FunctionNode: {
 			imports: [ 'NodeLib' ]
+		},
+		GCodeLoader: {
+			imports: [ 'DefaultLoadingManager' ]
 		},
 		GlitchPass: {
 			imports: [
@@ -160,9 +181,6 @@ module.exports = {
 				[ 'this.uuid = Math.generateUUID();', 'this.uuid = _Math.generateUUID();' ]
 			]
 		},
-		GLTFExporter: {
-			imports: [ /* import external TextEncoder */ ]
-		},
 		GLTFLoader: {
 			imports: [
 				'DefaultLoadingManager',
@@ -171,8 +189,9 @@ module.exports = {
 				'MeshBasicMaterial',
 				'ShaderLib',
 				'UniformsUtils',
+				'LoaderUtils',
 				'AnimationUtils'
-			] // + TextDecoder
+			]
 		},
 		HDRCubeTextureLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -199,8 +218,9 @@ module.exports = {
 				'MeshLambertMaterial',
 				'QuaternionKeyframeTrack',
 				'VectorKeyframeTrack',
-				'AnimationUtils'
-			] // + TextDecoder
+				'AnimationUtils',
+				'LoaderUtils'
+			]
 		},
 		LoaderSupport: {
 			imports: [ 'DefaultLoadingManager' ],
@@ -222,10 +242,10 @@ module.exports = {
 		MD2Loader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
-		MMDExporter: { /* import external MMDParser */ },
 		MMDLoader: {
 			imports: [
-				'DefaultLoadingManager' // + MMDParser
+				'DefaultLoadingManager',
+				'LoaderUtils'
 			]
 		},
 		MTLLoader: {
@@ -285,7 +305,10 @@ module.exports = {
 			exports: [ 'ParametricGeometries' ]
 		},
 		PCDLoader: {
-			imports: [ 'DefaultLoadingManager' ] // + TextDecoder
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		PhongNode: {
 			imports: [
@@ -294,7 +317,10 @@ module.exports = {
 			]
 		},
 		PLYLoader: {
-			imports: [ 'DefaultLoadingManager' ] // + TextDecoder
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		PVRLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -385,13 +411,19 @@ module.exports = {
 			]
 		},
 		STLLoader: {
-			imports: [ 'DefaultLoadingManager' ] // + TextDecoder
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		SVGLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		TDSLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		TexturePass: {
 			imports: [
@@ -403,10 +435,13 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		TimelinerController: {
-			imports: [ 'AnimationUtils' ]
+			imports: [
+				'AnimationUtils',
+				'Timeliner'
+			]
 		},
 		TTFLoader: {
-			imports: [ 'DefaultLoadingManager' ] // + opentype
+			imports: [ 'DefaultLoadingManager' ]
 		},
 		UnrealBloomPass: {
 			imports: [
@@ -428,7 +463,10 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		VTKLoader: {
-			imports: [ 'DefaultLoadingManager' ] // + ZLib
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
 		Water: {
 			imports: [
@@ -458,9 +496,6 @@ module.exports = {
 			replacements: [
 				[ 'var WEBVR', 'var WebVR' ]
 			]
-		},
-		XLoader: {
-			imports: [ 'DefaultLoadingManager' ]
 		}
 	}
 }

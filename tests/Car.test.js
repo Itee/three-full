@@ -11,44 +11,32 @@ var Three = (function (exports) {
 		DEG2RAD: Math.PI / 180,
 		RAD2DEG: 180 / Math.PI,
 
-		generateUUID: function () {
+		generateUUID: ( function () {
 
-			// http://www.broofa.com/Tools/Math.uuid.htm
-			// Replaced .join with string concatenation (@takahirox)
+			// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
 
-			var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split( '' );
-			var rnd = 0, r;
+			var lut = [];
 
-			return function generateUUID() {
+			for ( var i = 0; i < 256; i ++ ) {
 
-				var uuid = '';
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
 
-				for ( var i = 0; i < 36; i ++ ) {
+			}
 
-					if ( i === 8 || i === 13 || i === 18 || i === 23 ) {
+			return function () {
 
-						uuid += '-';
-
-					} else if ( i === 14 ) {
-
-						uuid += '4';
-
-					} else {
-
-						if ( rnd <= 0x02 ) rnd = 0x2000000 + ( Math.random() * 0x1000000 ) | 0;
-						r = rnd & 0xf;
-						rnd = rnd >> 4;
-						uuid += chars[ ( i === 19 ) ? ( r & 0x3 ) | 0x8 : r ];
-
-					}
-
-				}
-
-				return uuid;
+				var d0 = Math.random() * 0xffffffff | 0;
+				var d1 = Math.random() * 0xffffffff | 0;
+				var d2 = Math.random() * 0xffffffff | 0;
+				var d3 = Math.random() * 0xffffffff | 0;
+				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
+					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
+					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
 
 			};
 
-		}(),
+		} )(),
 
 		clamp: function ( value, min, max ) {
 
@@ -3361,7 +3349,9 @@ var Three = (function (exports) {
 	Object3D.DefaultUp = new Vector3( 0, 1, 0 );
 	Object3D.DefaultMatrixAutoUpdate = true;
 
-	Object.assign( Object3D.prototype, EventDispatcher.prototype, {
+	Object3D.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Object3D,
 
 		isObject3D: true,
 
@@ -3889,7 +3879,8 @@ var Three = (function (exports) {
 					geometries: {},
 					materials: {},
 					textures: {},
-					images: {}
+					images: {},
+					shapes: {}
 				};
 
 				output.metadata = {
@@ -3932,6 +3923,30 @@ var Three = (function (exports) {
 			if ( this.geometry !== undefined ) {
 
 				object.geometry = serialize( meta.geometries, this.geometry );
+
+				var parameters = this.geometry.parameters;
+
+				if ( parameters !== undefined && parameters.shapes !== undefined ) {
+
+					var shapes = parameters.shapes;
+
+					if ( Array.isArray( shapes ) ) {
+
+						for ( var i = 0, l = shapes.length; i < l; i ++ ) {
+
+							var shape = shapes[ i ];
+
+							serialize( meta.shapes, shape );
+
+						}
+
+					} else {
+
+						serialize( meta.shapes, shapes );
+
+					}
+
+				}
 
 			}
 
@@ -3977,11 +3992,13 @@ var Three = (function (exports) {
 				var materials = extractFromCache( meta.materials );
 				var textures = extractFromCache( meta.textures );
 				var images = extractFromCache( meta.images );
+				var shapes = extractFromCache( meta.shapes );
 
 				if ( geometries.length > 0 ) output.geometries = geometries;
 				if ( materials.length > 0 ) output.materials = materials;
 				if ( textures.length > 0 ) output.textures = textures;
 				if ( images.length > 0 ) output.images = images;
+				if ( shapes.length > 0 ) output.shapes = shapes;
 
 			}
 
@@ -4794,12 +4811,13 @@ var Three = (function (exports) {
 		this.setURLModifier = function ( transform ) {
 
 			urlModifier = transform;
+			return this;
 
 		};
 
 	}
 
-	var DefaultLoadingManager$1 = new LoadingManager();
+	var DefaultLoadingManager = new LoadingManager();
 
 	/**
 	 * @author mrdoob / http://mrdoob.com/
@@ -4809,7 +4827,7 @@ var Three = (function (exports) {
 
 	function FileLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
 	}
 
@@ -4968,7 +4986,7 @@ var Three = (function (exports) {
 
 				request.addEventListener( 'load', function ( event ) {
 
-					var response = event.target.response;
+					var response = this.response;
 
 					Cache.add( url, response );
 
@@ -5173,7 +5191,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( Material.prototype, EventDispatcher.prototype, {
+	Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Material,
 
 		isMaterial: true,
 
@@ -7344,7 +7364,7 @@ var Three = (function (exports) {
 
 	function MaterialLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 		this.textures = {};
 
 	}
@@ -7507,7 +7527,7 @@ var Three = (function (exports) {
 
 	function ImageLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
 	}
 
@@ -7661,17 +7681,7 @@ var Three = (function (exports) {
 	Texture.DEFAULT_IMAGE = undefined;
 	Texture.DEFAULT_MAPPING = UVMapping;
 
-	Object.defineProperty( Texture.prototype, "needsUpdate", {
-
-		set: function ( value ) {
-
-			if ( value === true ) this.version ++;
-
-		}
-
-	} );
-
-	Object.assign( Texture.prototype, EventDispatcher.prototype, {
+	Texture.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
 
 		constructor: Texture,
 
@@ -7916,13 +7926,23 @@ var Three = (function (exports) {
 
 	} );
 
+	Object.defineProperty( Texture.prototype, "needsUpdate", {
+
+		set: function ( value ) {
+
+			if ( value === true ) this.version ++;
+
+		}
+
+	} );
+
 	/**
 	 * @author mrdoob / http://mrdoob.com/
 	 */
 
 	function TextureLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
 	}
 
@@ -7932,12 +7952,15 @@ var Three = (function (exports) {
 
 		load: function ( url, onLoad, onProgress, onError ) {
 
+			var texture = new Texture();
+
 			var loader = new ImageLoader( this.manager );
 			loader.setCrossOrigin( this.crossOrigin );
 			loader.setPath( this.path );
 
-			var texture = new Texture();
-			texture.image = loader.load( url, function () {
+			loader.load( url, function ( image ) {
+
+				texture.image = image;
 
 				// JPEGs can't have an alpha channel, so memory can be saved by storing them as RGB.
 				var isJPEG = url.search( /\.(jpg|jpeg)$/ ) > 0 || url.search( /^data\:image\/jpeg/ ) === 0;
@@ -8021,18 +8044,6 @@ var Three = (function (exports) {
 	Object.assign( Loader$1.prototype, {
 
 		crossOrigin: undefined,
-
-		extractUrlBase: function ( url ) {
-
-			var parts = url.split( '/' );
-
-			if ( parts.length === 1 ) return './';
-
-			parts.pop();
-
-			return parts.join( '/' ) + '/';
-
-		},
 
 		initMaterials: function ( materials, texturePath, crossOrigin ) {
 
@@ -8305,168 +8316,113 @@ var Three = (function (exports) {
 	} );
 
 	/**
-	 * @author tschw
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
+	 * @author Don McCurdy / https://www.donmccurdy.com
 	 */
 
-	var AnimationUtils = {
+	var LoaderUtils = {
 
-		// same as Array.prototype.slice, but also works on typed arrays
-		arraySlice: function ( array, from, to ) {
+		decodeText: function ( array ) {
 
-			if ( AnimationUtils.isTypedArray( array ) ) {
+			if ( typeof TextDecoder !== 'undefined' ) {
 
-				// in ios9 array.subarray(from, undefined) will return empty array
-				// but array.subarray(from) or array.subarray(from, len) is correct
-				return new array.constructor( array.subarray( from, to !== undefined ? to : array.length ) );
+				return new TextDecoder().decode( array );
 
 			}
 
-			return array.slice( from, to );
+			// Avoid the String.fromCharCode.apply(null, array) shortcut, which
+			// throws a "maximum call stack size exceeded" error for large arrays.
+
+			var s = '';
+
+			for ( var i = 0, il = array.length; i < il; i ++ ) {
+
+				// Implicitly assumes little-endian.
+				s += String.fromCharCode( array[ i ] );
+
+			}
+
+			return s;
 
 		},
 
-		// converts an array to a specific type
-		convertArray: function ( array, type, forceClone ) {
+		extractUrlBase: function ( url ) {
 
-			if ( ! array || // let 'undefined' and 'null' pass
-					! forceClone && array.constructor === type ) return array;
+			var parts = url.split( '/' );
 
-			if ( typeof type.BYTES_PER_ELEMENT === 'number' ) {
+			if ( parts.length === 1 ) return './';
 
-				return new type( array ); // create typed array
+			parts.pop();
 
-			}
-
-			return Array.prototype.slice.call( array ); // create Array
-
-		},
-
-		isTypedArray: function ( object ) {
-
-			return ArrayBuffer.isView( object ) &&
-					! ( object instanceof DataView );
-
-		},
-
-		// returns an array by which times and values can be sorted
-		getKeyframeOrder: function ( times ) {
-
-			function compareTime( i, j ) {
-
-				return times[ i ] - times[ j ];
-
-			}
-
-			var n = times.length;
-			var result = new Array( n );
-			for ( var i = 0; i !== n; ++ i ) result[ i ] = i;
-
-			result.sort( compareTime );
-
-			return result;
-
-		},
-
-		// uses the array previously returned by 'getKeyframeOrder' to sort data
-		sortedArray: function ( values, stride, order ) {
-
-			var nValues = values.length;
-			var result = new values.constructor( nValues );
-
-			for ( var i = 0, dstOffset = 0; dstOffset !== nValues; ++ i ) {
-
-				var srcOffset = order[ i ] * stride;
-
-				for ( var j = 0; j !== stride; ++ j ) {
-
-					result[ dstOffset ++ ] = values[ srcOffset + j ];
-
-				}
-
-			}
-
-			return result;
-
-		},
-
-		// function for parsing AOS keyframe formats
-		flattenJSON: function ( jsonKeys, times, values, valuePropertyName ) {
-
-			var i = 1, key = jsonKeys[ 0 ];
-
-			while ( key !== undefined && key[ valuePropertyName ] === undefined ) {
-
-				key = jsonKeys[ i ++ ];
-
-			}
-
-			if ( key === undefined ) return; // no data
-
-			var value = key[ valuePropertyName ];
-			if ( value === undefined ) return; // no data
-
-			if ( Array.isArray( value ) ) {
-
-				do {
-
-					value = key[ valuePropertyName ];
-
-					if ( value !== undefined ) {
-
-						times.push( key.time );
-						values.push.apply( values, value ); // push all elements
-
-					}
-
-					key = jsonKeys[ i ++ ];
-
-				} while ( key !== undefined );
-
-			} else if ( value.toArray !== undefined ) {
-
-				// ...assume THREE.Math-ish
-
-				do {
-
-					value = key[ valuePropertyName ];
-
-					if ( value !== undefined ) {
-
-						times.push( key.time );
-						value.toArray( values, values.length );
-
-					}
-
-					key = jsonKeys[ i ++ ];
-
-				} while ( key !== undefined );
-
-			} else {
-
-				// otherwise push as-is
-
-				do {
-
-					value = key[ valuePropertyName ];
-
-					if ( value !== undefined ) {
-
-						times.push( key.time );
-						values.push( value );
-
-					}
-
-					key = jsonKeys[ i ++ ];
-
-				} while ( key !== undefined );
-
-			}
+			return parts.join( '/' ) + '/';
 
 		}
 
 	};
+
+	/**
+	 *
+	 * A Track that interpolates Strings
+	 *
+	 *
+	 * @author Ben Houston / http://clara.io/
+	 * @author David Sarno / http://lighthaus.us/
+	 * @author tschw
+	 */
+
+	function StringKeyframeTrack( name, times, values, interpolation ) {
+
+		KeyframeTrack.call( this, name, times, values, interpolation );
+
+	}
+
+	StringKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrack.prototype ), {
+
+		constructor: StringKeyframeTrack,
+
+		ValueTypeName: 'string',
+		ValueBufferType: Array,
+
+		DefaultInterpolation: InterpolateDiscrete,
+
+		InterpolantFactoryMethodLinear: undefined,
+
+		InterpolantFactoryMethodSmooth: undefined
+
+	} );
+
+	/**
+	 *
+	 * A Track of Boolean keyframe values.
+	 *
+	 *
+	 * @author Ben Houston / http://clara.io/
+	 * @author David Sarno / http://lighthaus.us/
+	 * @author tschw
+	 */
+
+	function BooleanKeyframeTrack( name, times, values ) {
+
+		KeyframeTrack.call( this, name, times, values );
+
+	}
+
+	BooleanKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrack.prototype ), {
+
+		constructor: BooleanKeyframeTrack,
+
+		ValueTypeName: 'bool',
+		ValueBufferType: Array,
+
+		DefaultInterpolation: InterpolateDiscrete,
+
+		InterpolantFactoryMethodLinear: undefined,
+		InterpolantFactoryMethodSmooth: undefined
+
+		// Note: Actually this track could have a optimized / compressed
+		// representation of a single value and a custom interpolant that
+		// computes "firstValue ^ isOdd( index )".
+
+	} );
 
 	/**
 	 * Abstract base class of interpolants over parametric samples.
@@ -8726,6 +8682,137 @@ var Three = (function (exports) {
 	} );
 
 	/**
+	 * Spherical linear unit quaternion interpolant.
+	 *
+	 * @author tschw
+	 */
+
+	function QuaternionLinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
+
+		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
+
+	}
+
+	QuaternionLinearInterpolant.prototype = Object.assign( Object.create( Interpolant.prototype ), {
+
+		constructor: QuaternionLinearInterpolant,
+
+		interpolate_: function ( i1, t0, t, t1 ) {
+
+			var result = this.resultBuffer,
+				values = this.sampleValues,
+				stride = this.valueSize,
+
+				offset = i1 * stride,
+
+				alpha = ( t - t0 ) / ( t1 - t0 );
+
+			for ( var end = offset + stride; offset !== end; offset += 4 ) {
+
+				Quaternion.slerpFlat( result, 0, values, offset - stride, values, offset, alpha );
+
+			}
+
+			return result;
+
+		}
+
+	} );
+
+	/**
+	 *
+	 * A Track of quaternion keyframe values.
+	 *
+	 * @author Ben Houston / http://clara.io/
+	 * @author David Sarno / http://lighthaus.us/
+	 * @author tschw
+	 */
+
+	function QuaternionKeyframeTrack( name, times, values, interpolation ) {
+
+		KeyframeTrack.call( this, name, times, values, interpolation );
+
+	}
+
+	QuaternionKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrack.prototype ), {
+
+		constructor: QuaternionKeyframeTrack,
+
+		ValueTypeName: 'quaternion',
+
+		// ValueBufferType is inherited
+
+		DefaultInterpolation: InterpolateLinear,
+
+		InterpolantFactoryMethodLinear: function ( result ) {
+
+			return new QuaternionLinearInterpolant( this.times, this.values, this.getValueSize(), result );
+
+		},
+
+		InterpolantFactoryMethodSmooth: undefined // not yet implemented
+
+	} );
+
+	/**
+	 *
+	 * A Track of keyframe values that represent color.
+	 *
+	 *
+	 * @author Ben Houston / http://clara.io/
+	 * @author David Sarno / http://lighthaus.us/
+	 * @author tschw
+	 */
+
+	function ColorKeyframeTrack( name, times, values, interpolation ) {
+
+		KeyframeTrack.call( this, name, times, values, interpolation );
+
+	}
+
+	ColorKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrack.prototype ), {
+
+		constructor: ColorKeyframeTrack,
+
+		ValueTypeName: 'color'
+
+		// ValueBufferType is inherited
+
+		// DefaultInterpolation is inherited
+
+		// Note: Very basic implementation and nothing special yet.
+		// However, this is the place for color space parameterization.
+
+	} );
+
+	/**
+	 *
+	 * A Track of numeric keyframe values.
+	 *
+	 * @author Ben Houston / http://clara.io/
+	 * @author David Sarno / http://lighthaus.us/
+	 * @author tschw
+	 */
+
+	function NumberKeyframeTrack( name, times, values, interpolation ) {
+
+		KeyframeTrack.call( this, name, times, values, interpolation );
+
+	}
+
+	NumberKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrack.prototype ), {
+
+		constructor: NumberKeyframeTrack,
+
+		ValueTypeName: 'number'
+
+		// ValueBufferType is inherited
+
+		// DefaultInterpolation is inherited
+
+	} );
+
+	/**
 	 * Fast and simple cubic spline interpolant.
 	 *
 	 * It was derived from a Hermitian construction setting the first derivative
@@ -8941,604 +9028,169 @@ var Three = (function (exports) {
 
 	} );
 
-	var KeyframeTrackPrototype;
-
-	KeyframeTrackPrototype = {
-
-		TimeBufferType: Float32Array,
-		ValueBufferType: Float32Array,
-
-		DefaultInterpolation: InterpolateLinear,
-
-		InterpolantFactoryMethodDiscrete: function ( result ) {
-
-			return new DiscreteInterpolant( this.times, this.values, this.getValueSize(), result );
-
-		},
-
-		InterpolantFactoryMethodLinear: function ( result ) {
-
-			return new LinearInterpolant( this.times, this.values, this.getValueSize(), result );
-
-		},
-
-		InterpolantFactoryMethodSmooth: function ( result ) {
-
-			return new CubicInterpolant( this.times, this.values, this.getValueSize(), result );
-
-		},
-
-		setInterpolation: function ( interpolation ) {
-
-			var factoryMethod;
-
-			switch ( interpolation ) {
-
-				case InterpolateDiscrete:
-
-					factoryMethod = this.InterpolantFactoryMethodDiscrete;
-
-					break;
-
-				case InterpolateLinear:
-
-					factoryMethod = this.InterpolantFactoryMethodLinear;
-
-					break;
-
-				case InterpolateSmooth:
-
-					factoryMethod = this.InterpolantFactoryMethodSmooth;
-
-					break;
-
-			}
-
-			if ( factoryMethod === undefined ) {
-
-				var message = "unsupported interpolation for " +
-						this.ValueTypeName + " keyframe track named " + this.name;
-
-				if ( this.createInterpolant === undefined ) {
-
-					// fall back to default, unless the default itself is messed up
-					if ( interpolation !== this.DefaultInterpolation ) {
-
-						this.setInterpolation( this.DefaultInterpolation );
-
-					} else {
-
-						throw new Error( message ); // fatal, in this case
-
-					}
-
-				}
-
-				console.warn( 'THREE.KeyframeTrackPrototype:', message );
-				return;
-
-			}
-
-			this.createInterpolant = factoryMethod;
-
-		},
-
-		getInterpolation: function () {
-
-			switch ( this.createInterpolant ) {
-
-				case this.InterpolantFactoryMethodDiscrete:
-
-					return InterpolateDiscrete;
-
-				case this.InterpolantFactoryMethodLinear:
-
-					return InterpolateLinear;
-
-				case this.InterpolantFactoryMethodSmooth:
-
-					return InterpolateSmooth;
-
-			}
-
-		},
-
-		getValueSize: function () {
-
-			return this.values.length / this.times.length;
-
-		},
-
-		// move all keyframes either forwards or backwards in time
-		shift: function ( timeOffset ) {
-
-			if ( timeOffset !== 0.0 ) {
-
-				var times = this.times;
-
-				for ( var i = 0, n = times.length; i !== n; ++ i ) {
-
-					times[ i ] += timeOffset;
-
-				}
-
-			}
-
-			return this;
-
-		},
-
-		// scale all keyframe times by a factor (useful for frame <-> seconds conversions)
-		scale: function ( timeScale ) {
-
-			if ( timeScale !== 1.0 ) {
-
-				var times = this.times;
-
-				for ( var i = 0, n = times.length; i !== n; ++ i ) {
-
-					times[ i ] *= timeScale;
-
-				}
-
-			}
-
-			return this;
-
-		},
-
-		// removes keyframes before and after animation without changing any values within the range [startTime, endTime].
-		// IMPORTANT: We do not shift around keys to the start of the track time, because for interpolated keys this will change their values
-		trim: function ( startTime, endTime ) {
-
-			var times = this.times,
-				nKeys = times.length,
-				from = 0,
-				to = nKeys - 1;
-
-			while ( from !== nKeys && times[ from ] < startTime ) ++ from;
-			while ( to !== - 1 && times[ to ] > endTime ) -- to;
-
-			++ to; // inclusive -> exclusive bound
-
-			if ( from !== 0 || to !== nKeys ) {
-
-				// empty tracks are forbidden, so keep at least one keyframe
-				if ( from >= to ) to = Math.max( to, 1 ), from = to - 1;
-
-				var stride = this.getValueSize();
-				this.times = AnimationUtils.arraySlice( times, from, to );
-				this.values = AnimationUtils.arraySlice( this.values, from * stride, to * stride );
-
-			}
-
-			return this;
-
-		},
-
-		// ensure we do not get a GarbageInGarbageOut situation, make sure tracks are at least minimally viable
-		validate: function () {
-
-			var valid = true;
-
-			var valueSize = this.getValueSize();
-			if ( valueSize - Math.floor( valueSize ) !== 0 ) {
-
-				console.error( 'THREE.KeyframeTrackPrototype: Invalid value size in track.', this );
-				valid = false;
-
-			}
-
-			var times = this.times,
-				values = this.values,
-
-				nKeys = times.length;
-
-			if ( nKeys === 0 ) {
-
-				console.error( 'THREE.KeyframeTrackPrototype: Track is empty.', this );
-				valid = false;
-
-			}
-
-			var prevTime = null;
-
-			for ( var i = 0; i !== nKeys; i ++ ) {
-
-				var currTime = times[ i ];
-
-				if ( typeof currTime === 'number' && isNaN( currTime ) ) {
-
-					console.error( 'THREE.KeyframeTrackPrototype: Time is not a valid number.', this, i, currTime );
-					valid = false;
-					break;
-
-				}
-
-				if ( prevTime !== null && prevTime > currTime ) {
-
-					console.error( 'THREE.KeyframeTrackPrototype: Out of order keys.', this, i, currTime, prevTime );
-					valid = false;
-					break;
-
-				}
-
-				prevTime = currTime;
-
-			}
-
-			if ( values !== undefined ) {
-
-				if ( AnimationUtils.isTypedArray( values ) ) {
-
-					for ( var i = 0, n = values.length; i !== n; ++ i ) {
-
-						var value = values[ i ];
-
-						if ( isNaN( value ) ) {
-
-							console.error( 'THREE.KeyframeTrackPrototype: Value is not a valid number.', this, i, value );
-							valid = false;
-							break;
-
-						}
-
-					}
-
-				}
-
-			}
-
-			return valid;
-
-		},
-
-		// removes equivalent sequential keys as common in morph target sequences
-		// (0,0,0,0,1,1,1,0,0,0,0,0,0,0) --> (0,0,1,1,0,0)
-		optimize: function () {
-
-			var times = this.times,
-				values = this.values,
-				stride = this.getValueSize(),
-
-				smoothInterpolation = this.getInterpolation() === InterpolateSmooth,
-
-				writeIndex = 1,
-				lastIndex = times.length - 1;
-
-			for ( var i = 1; i < lastIndex; ++ i ) {
-
-				var keep = false;
-
-				var time = times[ i ];
-				var timeNext = times[ i + 1 ];
-
-				// remove adjacent keyframes scheduled at the same time
-
-				if ( time !== timeNext && ( i !== 1 || time !== time[ 0 ] ) ) {
-
-					if ( ! smoothInterpolation ) {
-
-						// remove unnecessary keyframes same as their neighbors
-
-						var offset = i * stride,
-							offsetP = offset - stride,
-							offsetN = offset + stride;
-
-						for ( var j = 0; j !== stride; ++ j ) {
-
-							var value = values[ offset + j ];
-
-							if ( value !== values[ offsetP + j ] ||
-									value !== values[ offsetN + j ] ) {
-
-								keep = true;
-								break;
-
-							}
-
-						}
-
-					} else keep = true;
-
-				}
-
-				// in-place compaction
-
-				if ( keep ) {
-
-					if ( i !== writeIndex ) {
-
-						times[ writeIndex ] = times[ i ];
-
-						var readOffset = i * stride,
-							writeOffset = writeIndex * stride;
-
-						for ( var j = 0; j !== stride; ++ j )
-
-							values[ writeOffset + j ] = values[ readOffset + j ];
-
-					}
-
-					++ writeIndex;
-
-				}
-
-			}
-
-			// flush last keyframe (compaction looks ahead)
-
-			if ( lastIndex > 0 ) {
-
-				times[ writeIndex ] = times[ lastIndex ];
-
-				for ( var readOffset = lastIndex * stride, writeOffset = writeIndex * stride, j = 0; j !== stride; ++ j )
-
-					values[ writeOffset + j ] = values[ readOffset + j ];
-
-				++ writeIndex;
-
-			}
-
-			if ( writeIndex !== times.length ) {
-
-				this.times = AnimationUtils.arraySlice( times, 0, writeIndex );
-				this.values = AnimationUtils.arraySlice( values, 0, writeIndex * stride );
-
-			}
-
-			return this;
-
-		}
-
-	};
-
-	function KeyframeTrackConstructor( name, times, values, interpolation ) {
-
-		if ( name === undefined ) throw new Error( 'track name is undefined' );
-
-		if ( times === undefined || times.length === 0 ) {
-
-			throw new Error( 'no keyframes in track named ' + name );
-
-		}
-
-		this.name = name;
-
-		this.times = AnimationUtils.convertArray( times, this.TimeBufferType );
-		this.values = AnimationUtils.convertArray( values, this.ValueBufferType );
-
-		this.setInterpolation( interpolation || this.DefaultInterpolation );
-
-		this.validate();
-		this.optimize();
-
-	}
-
 	/**
-	 *
-	 * A Track of vectored keyframe values.
-	 *
-	 *
+	 * @author tschw
 	 * @author Ben Houston / http://clara.io/
 	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
 	 */
 
-	function VectorKeyframeTrack( name, times, values, interpolation ) {
+	var AnimationUtils = {
 
-		KeyframeTrackConstructor.call( this, name, times, values, interpolation );
+		// same as Array.prototype.slice, but also works on typed arrays
+		arraySlice: function ( array, from, to ) {
 
-	}
+			if ( AnimationUtils.isTypedArray( array ) ) {
 
-	VectorKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrackPrototype ), {
+				// in ios9 array.subarray(from, undefined) will return empty array
+				// but array.subarray(from) or array.subarray(from, len) is correct
+				return new array.constructor( array.subarray( from, to !== undefined ? to : array.length ) );
 
-		constructor: VectorKeyframeTrack,
+			}
 
-		ValueTypeName: 'vector'
+			return array.slice( from, to );
 
-		// ValueBufferType is inherited
+		},
 
-		// DefaultInterpolation is inherited
+		// converts an array to a specific type
+		convertArray: function ( array, type, forceClone ) {
 
-	} );
+			if ( ! array || // let 'undefined' and 'null' pass
+					! forceClone && array.constructor === type ) return array;
 
-	/**
-	 * Spherical linear unit quaternion interpolant.
-	 *
-	 * @author tschw
-	 */
+			if ( typeof type.BYTES_PER_ELEMENT === 'number' ) {
 
-	function QuaternionLinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
+				return new type( array ); // create typed array
 
-		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
+			}
 
-	}
+			return Array.prototype.slice.call( array ); // create Array
 
-	QuaternionLinearInterpolant.prototype = Object.assign( Object.create( Interpolant.prototype ), {
+		},
 
-		constructor: QuaternionLinearInterpolant,
+		isTypedArray: function ( object ) {
 
-		interpolate_: function ( i1, t0, t, t1 ) {
+			return ArrayBuffer.isView( object ) &&
+					! ( object instanceof DataView );
 
-			var result = this.resultBuffer,
-				values = this.sampleValues,
-				stride = this.valueSize,
+		},
 
-				offset = i1 * stride,
+		// returns an array by which times and values can be sorted
+		getKeyframeOrder: function ( times ) {
 
-				alpha = ( t - t0 ) / ( t1 - t0 );
+			function compareTime( i, j ) {
 
-			for ( var end = offset + stride; offset !== end; offset += 4 ) {
+				return times[ i ] - times[ j ];
 
-				Quaternion.slerpFlat( result, 0, values, offset - stride, values, offset, alpha );
+			}
+
+			var n = times.length;
+			var result = new Array( n );
+			for ( var i = 0; i !== n; ++ i ) result[ i ] = i;
+
+			result.sort( compareTime );
+
+			return result;
+
+		},
+
+		// uses the array previously returned by 'getKeyframeOrder' to sort data
+		sortedArray: function ( values, stride, order ) {
+
+			var nValues = values.length;
+			var result = new values.constructor( nValues );
+
+			for ( var i = 0, dstOffset = 0; dstOffset !== nValues; ++ i ) {
+
+				var srcOffset = order[ i ] * stride;
+
+				for ( var j = 0; j !== stride; ++ j ) {
+
+					result[ dstOffset ++ ] = values[ srcOffset + j ];
+
+				}
 
 			}
 
 			return result;
 
-		}
-
-	} );
-
-	/**
-	 *
-	 * A Track of quaternion keyframe values.
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
-
-	function QuaternionKeyframeTrack( name, times, values, interpolation ) {
-
-		KeyframeTrackConstructor.call( this, name, times, values, interpolation );
-
-	}
-
-	QuaternionKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrackPrototype ), {
-
-		constructor: QuaternionKeyframeTrack,
-
-		ValueTypeName: 'quaternion',
-
-		// ValueBufferType is inherited
-
-		DefaultInterpolation: InterpolateLinear,
-
-		InterpolantFactoryMethodLinear: function ( result ) {
-
-			return new QuaternionLinearInterpolant( this.times, this.values, this.getValueSize(), result );
-
 		},
 
-		InterpolantFactoryMethodSmooth: undefined // not yet implemented
+		// function for parsing AOS keyframe formats
+		flattenJSON: function ( jsonKeys, times, values, valuePropertyName ) {
 
-	} );
+			var i = 1, key = jsonKeys[ 0 ];
 
-	/**
-	 *
-	 * A Track of numeric keyframe values.
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
+			while ( key !== undefined && key[ valuePropertyName ] === undefined ) {
 
-	function NumberKeyframeTrack( name, times, values, interpolation ) {
+				key = jsonKeys[ i ++ ];
 
-		KeyframeTrackConstructor.call( this, name, times, values, interpolation );
+			}
 
-	}
+			if ( key === undefined ) return; // no data
 
-	NumberKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrackPrototype ), {
+			var value = key[ valuePropertyName ];
+			if ( value === undefined ) return; // no data
 
-		constructor: NumberKeyframeTrack,
+			if ( Array.isArray( value ) ) {
 
-		ValueTypeName: 'number'
+				do {
 
-		// ValueBufferType is inherited
+					value = key[ valuePropertyName ];
 
-		// DefaultInterpolation is inherited
+					if ( value !== undefined ) {
 
-	} );
+						times.push( key.time );
+						values.push.apply( values, value ); // push all elements
 
-	/**
-	 *
-	 * A Track that interpolates Strings
-	 *
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
+					}
 
-	function StringKeyframeTrack( name, times, values, interpolation ) {
+					key = jsonKeys[ i ++ ];
 
-		KeyframeTrackConstructor.call( this, name, times, values, interpolation );
+				} while ( key !== undefined );
 
-	}
+			} else if ( value.toArray !== undefined ) {
 
-	StringKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrackPrototype ), {
+				// ...assume THREE.Math-ish
 
-		constructor: StringKeyframeTrack,
+				do {
 
-		ValueTypeName: 'string',
-		ValueBufferType: Array,
+					value = key[ valuePropertyName ];
 
-		DefaultInterpolation: InterpolateDiscrete,
+					if ( value !== undefined ) {
 
-		InterpolantFactoryMethodLinear: undefined,
+						times.push( key.time );
+						value.toArray( values, values.length );
 
-		InterpolantFactoryMethodSmooth: undefined
+					}
 
-	} );
+					key = jsonKeys[ i ++ ];
 
-	/**
-	 *
-	 * A Track of Boolean keyframe values.
-	 *
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
+				} while ( key !== undefined );
 
-	function BooleanKeyframeTrack( name, times, values ) {
+			} else {
 
-		KeyframeTrackConstructor.call( this, name, times, values );
+				// otherwise push as-is
 
-	}
+				do {
 
-	BooleanKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrackPrototype ), {
+					value = key[ valuePropertyName ];
 
-		constructor: BooleanKeyframeTrack,
+					if ( value !== undefined ) {
 
-		ValueTypeName: 'bool',
-		ValueBufferType: Array,
+						times.push( key.time );
+						values.push( value );
 
-		DefaultInterpolation: InterpolateDiscrete,
+					}
 
-		InterpolantFactoryMethodLinear: undefined,
-		InterpolantFactoryMethodSmooth: undefined
+					key = jsonKeys[ i ++ ];
 
-		// Note: Actually this track could have a optimized / compressed
-		// representation of a single value and a custom interpolant that
-		// computes "firstValue ^ isOdd( index )".
+				} while ( key !== undefined );
 
-	} );
+			}
 
-	/**
-	 *
-	 * A Track of keyframe values that represent color.
-	 *
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
+		}
 
-	function ColorKeyframeTrack( name, times, values, interpolation ) {
-
-		KeyframeTrackConstructor.call( this, name, times, values, interpolation );
-
-	}
-
-	ColorKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrackPrototype ), {
-
-		constructor: ColorKeyframeTrack,
-
-		ValueTypeName: 'color'
-
-		// ValueBufferType is inherited
-
-		// DefaultInterpolation is inherited
-
-
-		// Note: Very basic implementation and nothing special yet.
-		// However, this is the place for color space parameterization.
-
-	} );
+	};
 
 	/**
 	 *
@@ -9552,12 +9204,20 @@ var Three = (function (exports) {
 
 	function KeyframeTrack( name, times, values, interpolation ) {
 
-		KeyframeTrackConstructor.apply( this, name, times, values, interpolation );
+		if ( name === undefined ) throw new Error( 'THREE.KeyframeTrack: track name is undefined' );
+		if ( times === undefined || times.length === 0 ) throw new Error( 'THREE.KeyframeTrack: no keyframes in track named ' + name );
+
+		this.name = name;
+
+		this.times = AnimationUtils.convertArray( times, this.TimeBufferType );
+		this.values = AnimationUtils.convertArray( values, this.ValueBufferType );
+
+		this.setInterpolation( interpolation || this.DefaultInterpolation );
+
+		this.validate();
+		this.optimize();
 
 	}
-
-	KeyframeTrack.prototype = KeyframeTrackPrototype;
-	KeyframeTrackPrototype.constructor = KeyframeTrack;
 
 	// Static methods:
 
@@ -9570,7 +9230,7 @@ var Three = (function (exports) {
 
 			if ( json.type === undefined ) {
 
-				throw new Error( 'track type undefined, can not parse' );
+				throw new Error( 'THREE.KeyframeTrack: track type undefined, can not parse' );
 
 			}
 
@@ -9677,9 +9337,407 @@ var Three = (function (exports) {
 
 			}
 
-			throw new Error( 'Unsupported typeName: ' + typeName );
+			throw new Error( 'THREE.KeyframeTrack: Unsupported typeName: ' + typeName );
 
 		}
+
+	} );
+
+	Object.assign( KeyframeTrack.prototype, {
+
+		constructor: KeyframeTrack,
+
+		TimeBufferType: Float32Array,
+
+		ValueBufferType: Float32Array,
+
+		DefaultInterpolation: InterpolateLinear,
+
+		InterpolantFactoryMethodDiscrete: function ( result ) {
+
+			return new DiscreteInterpolant( this.times, this.values, this.getValueSize(), result );
+
+		},
+
+		InterpolantFactoryMethodLinear: function ( result ) {
+
+			return new LinearInterpolant( this.times, this.values, this.getValueSize(), result );
+
+		},
+
+		InterpolantFactoryMethodSmooth: function ( result ) {
+
+			return new CubicInterpolant( this.times, this.values, this.getValueSize(), result );
+
+		},
+
+		setInterpolation: function ( interpolation ) {
+
+			var factoryMethod;
+
+			switch ( interpolation ) {
+
+				case InterpolateDiscrete:
+
+					factoryMethod = this.InterpolantFactoryMethodDiscrete;
+
+					break;
+
+				case InterpolateLinear:
+
+					factoryMethod = this.InterpolantFactoryMethodLinear;
+
+					break;
+
+				case InterpolateSmooth:
+
+					factoryMethod = this.InterpolantFactoryMethodSmooth;
+
+					break;
+
+			}
+
+			if ( factoryMethod === undefined ) {
+
+				var message = "unsupported interpolation for " +
+					this.ValueTypeName + " keyframe track named " + this.name;
+
+				if ( this.createInterpolant === undefined ) {
+
+					// fall back to default, unless the default itself is messed up
+					if ( interpolation !== this.DefaultInterpolation ) {
+
+						this.setInterpolation( this.DefaultInterpolation );
+
+					} else {
+
+						throw new Error( message ); // fatal, in this case
+
+					}
+
+				}
+
+				console.warn( 'THREE.KeyframeTrack:', message );
+				return;
+
+			}
+
+			this.createInterpolant = factoryMethod;
+
+		},
+
+		getInterpolation: function () {
+
+			switch ( this.createInterpolant ) {
+
+				case this.InterpolantFactoryMethodDiscrete:
+
+					return InterpolateDiscrete;
+
+				case this.InterpolantFactoryMethodLinear:
+
+					return InterpolateLinear;
+
+				case this.InterpolantFactoryMethodSmooth:
+
+					return InterpolateSmooth;
+
+			}
+
+		},
+
+		getValueSize: function () {
+
+			return this.values.length / this.times.length;
+
+		},
+
+		// move all keyframes either forwards or backwards in time
+		shift: function ( timeOffset ) {
+
+			if ( timeOffset !== 0.0 ) {
+
+				var times = this.times;
+
+				for ( var i = 0, n = times.length; i !== n; ++ i ) {
+
+					times[ i ] += timeOffset;
+
+				}
+
+			}
+
+			return this;
+
+		},
+
+		// scale all keyframe times by a factor (useful for frame <-> seconds conversions)
+		scale: function ( timeScale ) {
+
+			if ( timeScale !== 1.0 ) {
+
+				var times = this.times;
+
+				for ( var i = 0, n = times.length; i !== n; ++ i ) {
+
+					times[ i ] *= timeScale;
+
+				}
+
+			}
+
+			return this;
+
+		},
+
+		// removes keyframes before and after animation without changing any values within the range [startTime, endTime].
+		// IMPORTANT: We do not shift around keys to the start of the track time, because for interpolated keys this will change their values
+		trim: function ( startTime, endTime ) {
+
+			var times = this.times,
+				nKeys = times.length,
+				from = 0,
+				to = nKeys - 1;
+
+			while ( from !== nKeys && times[ from ] < startTime ) {
+
+				++ from;
+
+			}
+
+			while ( to !== - 1 && times[ to ] > endTime ) {
+
+				-- to;
+
+			}
+
+			++ to; // inclusive -> exclusive bound
+
+			if ( from !== 0 || to !== nKeys ) {
+
+				// empty tracks are forbidden, so keep at least one keyframe
+				if ( from >= to ) to = Math.max( to, 1 ), from = to - 1;
+
+				var stride = this.getValueSize();
+				this.times = AnimationUtils.arraySlice( times, from, to );
+				this.values = AnimationUtils.arraySlice( this.values, from * stride, to * stride );
+
+			}
+
+			return this;
+
+		},
+
+		// ensure we do not get a GarbageInGarbageOut situation, make sure tracks are at least minimally viable
+		validate: function () {
+
+			var valid = true;
+
+			var valueSize = this.getValueSize();
+			if ( valueSize - Math.floor( valueSize ) !== 0 ) {
+
+				console.error( 'THREE.KeyframeTrack: Invalid value size in track.', this );
+				valid = false;
+
+			}
+
+			var times = this.times,
+				values = this.values,
+
+				nKeys = times.length;
+
+			if ( nKeys === 0 ) {
+
+				console.error( 'THREE.KeyframeTrack: Track is empty.', this );
+				valid = false;
+
+			}
+
+			var prevTime = null;
+
+			for ( var i = 0; i !== nKeys; i ++ ) {
+
+				var currTime = times[ i ];
+
+				if ( typeof currTime === 'number' && isNaN( currTime ) ) {
+
+					console.error( 'THREE.KeyframeTrack: Time is not a valid number.', this, i, currTime );
+					valid = false;
+					break;
+
+				}
+
+				if ( prevTime !== null && prevTime > currTime ) {
+
+					console.error( 'THREE.KeyframeTrack: Out of order keys.', this, i, currTime, prevTime );
+					valid = false;
+					break;
+
+				}
+
+				prevTime = currTime;
+
+			}
+
+			if ( values !== undefined ) {
+
+				if ( AnimationUtils.isTypedArray( values ) ) {
+
+					for ( var i = 0, n = values.length; i !== n; ++ i ) {
+
+						var value = values[ i ];
+
+						if ( isNaN( value ) ) {
+
+							console.error( 'THREE.KeyframeTrack: Value is not a valid number.', this, i, value );
+							valid = false;
+							break;
+
+						}
+
+					}
+
+				}
+
+			}
+
+			return valid;
+
+		},
+
+		// removes equivalent sequential keys as common in morph target sequences
+		// (0,0,0,0,1,1,1,0,0,0,0,0,0,0) --> (0,0,1,1,0,0)
+		optimize: function () {
+
+			var times = this.times,
+				values = this.values,
+				stride = this.getValueSize(),
+
+				smoothInterpolation = this.getInterpolation() === InterpolateSmooth,
+
+				writeIndex = 1,
+				lastIndex = times.length - 1;
+
+			for ( var i = 1; i < lastIndex; ++ i ) {
+
+				var keep = false;
+
+				var time = times[ i ];
+				var timeNext = times[ i + 1 ];
+
+				// remove adjacent keyframes scheduled at the same time
+
+				if ( time !== timeNext && ( i !== 1 || time !== time[ 0 ] ) ) {
+
+					if ( ! smoothInterpolation ) {
+
+						// remove unnecessary keyframes same as their neighbors
+
+						var offset = i * stride,
+							offsetP = offset - stride,
+							offsetN = offset + stride;
+
+						for ( var j = 0; j !== stride; ++ j ) {
+
+							var value = values[ offset + j ];
+
+							if ( value !== values[ offsetP + j ] ||
+								value !== values[ offsetN + j ] ) {
+
+								keep = true;
+								break;
+
+							}
+
+						}
+
+					} else {
+
+						keep = true;
+
+					}
+
+				}
+
+				// in-place compaction
+
+				if ( keep ) {
+
+					if ( i !== writeIndex ) {
+
+						times[ writeIndex ] = times[ i ];
+
+						var readOffset = i * stride,
+							writeOffset = writeIndex * stride;
+
+						for ( var j = 0; j !== stride; ++ j ) {
+
+							values[ writeOffset + j ] = values[ readOffset + j ];
+
+						}
+
+					}
+
+					++ writeIndex;
+
+				}
+
+			}
+
+			// flush last keyframe (compaction looks ahead)
+
+			if ( lastIndex > 0 ) {
+
+				times[ writeIndex ] = times[ lastIndex ];
+
+				for ( var readOffset = lastIndex * stride, writeOffset = writeIndex * stride, j = 0; j !== stride; ++ j ) {
+
+					values[ writeOffset + j ] = values[ readOffset + j ];
+
+				}
+
+				++ writeIndex;
+
+			}
+
+			if ( writeIndex !== times.length ) {
+
+				this.times = AnimationUtils.arraySlice( times, 0, writeIndex );
+				this.values = AnimationUtils.arraySlice( values, 0, writeIndex * stride );
+
+			}
+
+			return this;
+
+		}
+
+	} );
+
+	/**
+	 *
+	 * A Track of vectored keyframe values.
+	 *
+	 *
+	 * @author Ben Houston / http://clara.io/
+	 * @author David Sarno / http://lighthaus.us/
+	 * @author tschw
+	 */
+
+	function VectorKeyframeTrack( name, times, values, interpolation ) {
+
+		KeyframeTrack.call( this, name, times, values, interpolation );
+
+	}
+
+	VectorKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrack.prototype ), {
+
+		constructor: VectorKeyframeTrack,
+
+		ValueTypeName: 'vector'
+
+		// ValueBufferType is inherited
+
+		// DefaultInterpolation is inherited
 
 	} );
 
@@ -11412,7 +11470,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( Geometry.prototype, EventDispatcher.prototype, {
+	Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Geometry,
 
 		isGeometry: true,
 
@@ -12816,7 +12876,7 @@ var Three = (function (exports) {
 
 		}
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
 		this.withCredentials = false;
 
@@ -12828,7 +12888,7 @@ var Three = (function (exports) {
 
 			var scope = this;
 
-			var texturePath = this.texturePath && ( typeof this.texturePath === "string" ) ? this.texturePath : Loader$1.prototype.extractUrlBase( url );
+			var texturePath = this.texturePath && ( typeof this.texturePath === 'string' ) ? this.texturePath : LoaderUtils.extractUrlBase( url );
 
 			var loader = new FileLoader( this.manager );
 			loader.setWithCredentials( this.withCredentials );
@@ -13398,8 +13458,8 @@ var Three = (function (exports) {
 
 			// todo: unify load API to for easier SceneLoader use
 
-			var texturePath = this.texturePath || Loader.prototype.extractUrlBase( url );
-			var binaryPath = this.binaryPath || Loader.prototype.extractUrlBase( url );
+			var texturePath = this.texturePath || LoaderUtils.extractUrlBase( url );
+			var binaryPath = this.binaryPath || LoaderUtils.extractUrlBase( url );
 
 			// #1 load JS part via web worker
 
@@ -13611,17 +13671,7 @@ var Three = (function (exports) {
 
 				function parseString( data, offset, length ) {
 
-					var charArray = new Uint8Array( data, offset, length );
-
-					var text = "";
-
-					for ( var i = 0; i < length; i ++ ) {
-
-						text += String.fromCharCode( charArray[ i ] );
-
-					}
-
-					return text;
+					return LoaderUtils.decodeText( new Uint8Array( data, offset, length ) );
 
 				}
 
@@ -15932,7 +15982,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( BufferGeometry.prototype, EventDispatcher.prototype, {
+	BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: BufferGeometry,
 
 		isBufferGeometry: true,
 

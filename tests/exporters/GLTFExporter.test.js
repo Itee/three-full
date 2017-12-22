@@ -11,44 +11,32 @@ var Three = (function (exports) {
 		DEG2RAD: Math.PI / 180,
 		RAD2DEG: 180 / Math.PI,
 
-		generateUUID: function () {
+		generateUUID: ( function () {
 
-			// http://www.broofa.com/Tools/Math.uuid.htm
-			// Replaced .join with string concatenation (@takahirox)
+			// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
 
-			var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split( '' );
-			var rnd = 0, r;
+			var lut = [];
 
-			return function generateUUID() {
+			for ( var i = 0; i < 256; i ++ ) {
 
-				var uuid = '';
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
 
-				for ( var i = 0; i < 36; i ++ ) {
+			}
 
-					if ( i === 8 || i === 13 || i === 18 || i === 23 ) {
+			return function () {
 
-						uuid += '-';
-
-					} else if ( i === 14 ) {
-
-						uuid += '4';
-
-					} else {
-
-						if ( rnd <= 0x02 ) rnd = 0x2000000 + ( Math.random() * 0x1000000 ) | 0;
-						r = rnd & 0xf;
-						rnd = rnd >> 4;
-						uuid += chars[ ( i === 19 ) ? ( r & 0x3 ) | 0x8 : r ];
-
-					}
-
-				}
-
-				return uuid;
+				var d0 = Math.random() * 0xffffffff | 0;
+				var d1 = Math.random() * 0xffffffff | 0;
+				var d2 = Math.random() * 0xffffffff | 0;
+				var d3 = Math.random() * 0xffffffff | 0;
+				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
+					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
+					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
 
 			};
 
-		}(),
+		} )(),
 
 		clamp: function ( value, min, max ) {
 
@@ -6331,7 +6319,9 @@ var Three = (function (exports) {
 	Object3D.DefaultUp = new Vector3( 0, 1, 0 );
 	Object3D.DefaultMatrixAutoUpdate = true;
 
-	Object.assign( Object3D.prototype, EventDispatcher.prototype, {
+	Object3D.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Object3D,
 
 		isObject3D: true,
 
@@ -6859,7 +6849,8 @@ var Three = (function (exports) {
 					geometries: {},
 					materials: {},
 					textures: {},
-					images: {}
+					images: {},
+					shapes: {}
 				};
 
 				output.metadata = {
@@ -6902,6 +6893,30 @@ var Three = (function (exports) {
 			if ( this.geometry !== undefined ) {
 
 				object.geometry = serialize( meta.geometries, this.geometry );
+
+				var parameters = this.geometry.parameters;
+
+				if ( parameters !== undefined && parameters.shapes !== undefined ) {
+
+					var shapes = parameters.shapes;
+
+					if ( Array.isArray( shapes ) ) {
+
+						for ( var i = 0, l = shapes.length; i < l; i ++ ) {
+
+							var shape = shapes[ i ];
+
+							serialize( meta.shapes, shape );
+
+						}
+
+					} else {
+
+						serialize( meta.shapes, shapes );
+
+					}
+
+				}
 
 			}
 
@@ -6947,11 +6962,13 @@ var Three = (function (exports) {
 				var materials = extractFromCache( meta.materials );
 				var textures = extractFromCache( meta.textures );
 				var images = extractFromCache( meta.images );
+				var shapes = extractFromCache( meta.shapes );
 
 				if ( geometries.length > 0 ) output.geometries = geometries;
 				if ( materials.length > 0 ) output.materials = materials;
 				if ( textures.length > 0 ) output.textures = textures;
 				if ( images.length > 0 ) output.images = images;
+				if ( shapes.length > 0 ) output.shapes = shapes;
 
 			}
 
@@ -7080,7 +7097,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( BufferGeometry.prototype, EventDispatcher.prototype, {
+	BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: BufferGeometry,
 
 		isBufferGeometry: true,
 
@@ -8284,6 +8303,7 @@ var Three = (function (exports) {
 
 
 
+	var RGBAFormat = 1023;
 
 
 
@@ -8301,8 +8321,7 @@ var Three = (function (exports) {
 
 
 
-
-
+	var InterpolateDiscrete = 2300;
 
 
 
@@ -8386,7 +8405,9 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( Material.prototype, EventDispatcher.prototype, {
+	Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Material,
 
 		isMaterial: true,
 
@@ -12212,12 +12233,388 @@ var Three = (function (exports) {
 	} );
 
 	/**
+	 * @author mikael emtinger / http://gomo.se/
+	 * @author alteredq / http://alteredqualia.com/
+	 * @author michael guerrero / http://realitymeltdown.com
+	 * @author ikerr / http://verold.com
+	 */
+
+	function Skeleton( bones, boneInverses ) {
+
+		// copy the bone array
+
+		bones = bones || [];
+
+		this.bones = bones.slice( 0 );
+		this.boneMatrices = new Float32Array( this.bones.length * 16 );
+
+		// use the supplied bone inverses or calculate the inverses
+
+		if ( boneInverses === undefined ) {
+
+			this.calculateInverses();
+
+		} else {
+
+			if ( this.bones.length === boneInverses.length ) {
+
+				this.boneInverses = boneInverses.slice( 0 );
+
+			} else {
+
+				console.warn( 'THREE.Skeleton boneInverses is the wrong length.' );
+
+				this.boneInverses = [];
+
+				for ( var i = 0, il = this.bones.length; i < il; i ++ ) {
+
+					this.boneInverses.push( new Matrix4() );
+
+				}
+
+			}
+
+		}
+
+	}
+
+	Object.assign( Skeleton.prototype, {
+
+		calculateInverses: function () {
+
+			this.boneInverses = [];
+
+			for ( var i = 0, il = this.bones.length; i < il; i ++ ) {
+
+				var inverse = new Matrix4();
+
+				if ( this.bones[ i ] ) {
+
+					inverse.getInverse( this.bones[ i ].matrixWorld );
+
+				}
+
+				this.boneInverses.push( inverse );
+
+			}
+
+		},
+
+		pose: function () {
+
+			var bone, i, il;
+
+			// recover the bind-time world matrices
+
+			for ( i = 0, il = this.bones.length; i < il; i ++ ) {
+
+				bone = this.bones[ i ];
+
+				if ( bone ) {
+
+					bone.matrixWorld.getInverse( this.boneInverses[ i ] );
+
+				}
+
+			}
+
+			// compute the local matrices, positions, rotations and scales
+
+			for ( i = 0, il = this.bones.length; i < il; i ++ ) {
+
+				bone = this.bones[ i ];
+
+				if ( bone ) {
+
+					if ( bone.parent && bone.parent.isBone ) {
+
+						bone.matrix.getInverse( bone.parent.matrixWorld );
+						bone.matrix.multiply( bone.matrixWorld );
+
+					} else {
+
+						bone.matrix.copy( bone.matrixWorld );
+
+					}
+
+					bone.matrix.decompose( bone.position, bone.quaternion, bone.scale );
+
+				}
+
+			}
+
+		},
+
+		update: ( function () {
+
+			var offsetMatrix = new Matrix4();
+			var identityMatrix = new Matrix4();
+
+			return function update() {
+
+				var bones = this.bones;
+				var boneInverses = this.boneInverses;
+				var boneMatrices = this.boneMatrices;
+				var boneTexture = this.boneTexture;
+
+				// flatten bone matrices to array
+
+				for ( var i = 0, il = bones.length; i < il; i ++ ) {
+
+					// compute the offset between the current and the original transform
+
+					var matrix = bones[ i ] ? bones[ i ].matrixWorld : identityMatrix;
+
+					offsetMatrix.multiplyMatrices( matrix, boneInverses[ i ] );
+					offsetMatrix.toArray( boneMatrices, i * 16 );
+
+				}
+
+				if ( boneTexture !== undefined ) {
+
+					boneTexture.needsUpdate = true;
+
+				}
+
+			};
+
+		} )(),
+
+		clone: function () {
+
+			return new Skeleton( this.bones, this.boneInverses );
+
+		}
+
+	} );
+
+	/**
+	 * @author mikael emtinger / http://gomo.se/
+	 * @author alteredq / http://alteredqualia.com/
+	 * @author ikerr / http://verold.com
+	 */
+
+	function Bone() {
+
+		Object3D.call( this );
+
+		this.type = 'Bone';
+
+	}
+
+	Bone.prototype = Object.assign( Object.create( Object3D.prototype ), {
+
+		constructor: Bone,
+
+		isBone: true
+
+	} );
+
+	/**
+	 * @author mikael emtinger / http://gomo.se/
+	 * @author alteredq / http://alteredqualia.com/
+	 * @author ikerr / http://verold.com
+	 */
+
+	function SkinnedMesh( geometry, material ) {
+
+		Mesh.call( this, geometry, material );
+
+		this.type = 'SkinnedMesh';
+
+		this.bindMode = 'attached';
+		this.bindMatrix = new Matrix4();
+		this.bindMatrixInverse = new Matrix4();
+
+		var bones = this.initBones();
+		var skeleton = new Skeleton( bones );
+
+		this.bind( skeleton, this.matrixWorld );
+
+		this.normalizeSkinWeights();
+
+	}
+
+	SkinnedMesh.prototype = Object.assign( Object.create( Mesh.prototype ), {
+
+		constructor: SkinnedMesh,
+
+		isSkinnedMesh: true,
+
+		initBones: function () {
+
+			var bones = [], bone, gbone;
+			var i, il;
+
+			if ( this.geometry && this.geometry.bones !== undefined ) {
+
+				// first, create array of 'Bone' objects from geometry data
+
+				for ( i = 0, il = this.geometry.bones.length; i < il; i ++ ) {
+
+					gbone = this.geometry.bones[ i ];
+
+					// create new 'Bone' object
+
+					bone = new Bone();
+					bones.push( bone );
+
+					// apply values
+
+					bone.name = gbone.name;
+					bone.position.fromArray( gbone.pos );
+					bone.quaternion.fromArray( gbone.rotq );
+					if ( gbone.scl !== undefined ) bone.scale.fromArray( gbone.scl );
+
+				}
+
+				// second, create bone hierarchy
+
+				for ( i = 0, il = this.geometry.bones.length; i < il; i ++ ) {
+
+					gbone = this.geometry.bones[ i ];
+
+					if ( ( gbone.parent !== - 1 ) && ( gbone.parent !== null ) && ( bones[ gbone.parent ] !== undefined ) ) {
+
+						// subsequent bones in the hierarchy
+
+						bones[ gbone.parent ].add( bones[ i ] );
+
+					} else {
+
+						// topmost bone, immediate child of the skinned mesh
+
+						this.add( bones[ i ] );
+
+					}
+
+				}
+
+			}
+
+			// now the bones are part of the scene graph and children of the skinned mesh.
+			// let's update the corresponding matrices
+
+			this.updateMatrixWorld( true );
+
+			return bones;
+
+		},
+
+		bind: function ( skeleton, bindMatrix ) {
+
+			this.skeleton = skeleton;
+
+			if ( bindMatrix === undefined ) {
+
+				this.updateMatrixWorld( true );
+
+				this.skeleton.calculateInverses();
+
+				bindMatrix = this.matrixWorld;
+
+			}
+
+			this.bindMatrix.copy( bindMatrix );
+			this.bindMatrixInverse.getInverse( bindMatrix );
+
+		},
+
+		pose: function () {
+
+			this.skeleton.pose();
+
+		},
+
+		normalizeSkinWeights: function () {
+
+			var scale, i;
+
+			if ( this.geometry && this.geometry.isGeometry ) {
+
+				for ( i = 0; i < this.geometry.skinWeights.length; i ++ ) {
+
+					var sw = this.geometry.skinWeights[ i ];
+
+					scale = 1.0 / sw.manhattanLength();
+
+					if ( scale !== Infinity ) {
+
+						sw.multiplyScalar( scale );
+
+					} else {
+
+						sw.set( 1, 0, 0, 0 ); // do something reasonable
+
+					}
+
+				}
+
+			} else if ( this.geometry && this.geometry.isBufferGeometry ) {
+
+				var vec = new Vector4();
+
+				var skinWeight = this.geometry.attributes.skinWeight;
+
+				for ( i = 0; i < skinWeight.count; i ++ ) {
+
+					vec.x = skinWeight.getX( i );
+					vec.y = skinWeight.getY( i );
+					vec.z = skinWeight.getZ( i );
+					vec.w = skinWeight.getW( i );
+
+					scale = 1.0 / vec.manhattanLength();
+
+					if ( scale !== Infinity ) {
+
+						vec.multiplyScalar( scale );
+
+					} else {
+
+						vec.set( 1, 0, 0, 0 ); // do something reasonable
+
+					}
+
+					skinWeight.setXYZW( i, vec.x, vec.y, vec.z, vec.w );
+
+				}
+
+			}
+
+		},
+
+		updateMatrixWorld: function ( force ) {
+
+			Mesh.prototype.updateMatrixWorld.call( this, force );
+
+			if ( this.bindMode === 'attached' ) {
+
+				this.bindMatrixInverse.getInverse( this.matrixWorld );
+
+			} else if ( this.bindMode === 'detached' ) {
+
+				this.bindMatrixInverse.getInverse( this.bindMatrix );
+
+			} else {
+
+				console.warn( 'THREE.SkinnedMesh: Unrecognized bindMode: ' + this.bindMode );
+
+			}
+
+		},
+
+		clone: function () {
+
+			return new this.constructor( this.geometry, this.material ).copy( this );
+
+		}
+
+	} );
+
+	/**
 	 * @author fernandojsg / http://fernandojsg.com
 	 */
 
-	//------------------------------------------------------------------------------
-	// Constants
-	//------------------------------------------------------------------------------
 	var WEBGL_CONSTANTS = {
 		POINTS: 0x0000,
 		LINES: 0x0001,
@@ -12252,9 +12649,13 @@ var Three = (function (exports) {
 		1008: WEBGL_CONSTANTS.LINEAR_MIPMAP_LINEAR
 	};
 
-	//------------------------------------------------------------------------------
-	// GLTF Exporter
-	//------------------------------------------------------------------------------
+	var PATH_PROPERTIES = {
+		scale: 'scale',
+		position: 'translation',
+		quaternion: 'rotation',
+		morphTargetInfluences: 'weights'
+	};
+
 	var GLTFExporter = function () {};
 
 	GLTFExporter.prototype = {
@@ -12266,18 +12667,25 @@ var Three = (function (exports) {
 		 * @param  {Scene or [Scenes]} input   Scene or Array of Scenes
 		 * @param  {Function} onDone  Callback on completed
 		 * @param  {Object} options options
-		 *                          trs: Exports position, rotation and scale instead of matrix
-		 *                          binary: Exports `.glb` as ArrayBuffer, instead of `.gltf` as JSON
 		 */
 		parse: function ( input, onDone, options ) {
 
 			var DEFAULT_OPTIONS = {
 				trs: false,
 				onlyVisible: true,
-				truncateDrawRange: true
+				truncateDrawRange: true,
+				embedImages: true,
+				animations: []
 			};
 
 			options = Object.assign( {}, DEFAULT_OPTIONS, options );
+
+			if ( options.animations.length > 0 ) {
+
+				// Only TRS properties, and not matrices, may be targeted by animation.
+				options.trs = true;
+
+			}
 
 			var outputJSON = {
 
@@ -12292,12 +12700,16 @@ var Three = (function (exports) {
 
 			var byteOffset = 0;
 			var dataViews = [];
+			var nodeMap = {};
+			var skins = [];
 			var cachedData = {
 
 				images: {},
 				materials: {}
 
 			};
+
+			var cachedCanvas;
 
 			/**
 			 * Compare two arrays
@@ -12331,9 +12743,9 @@ var Three = (function (exports) {
 
 				}
 
-				var buffer = new ArrayBuffer( text.length * 2 ); // 2 bytes per character.
+				var buffer = new ArrayBuffer( text.length );
 
-				var bufferView = new Uint16Array( buffer );
+				var bufferView = new Uint8Array( buffer );
 
 				for ( var i = 0; i < text.length; ++ i ) {
 
@@ -12346,8 +12758,8 @@ var Three = (function (exports) {
 			}
 
 			/**
-			 * Get the min and he max vectors from the given attribute
-			 * @param  {WebGLAttribute} attribute Attribute to find the min/max
+			 * Get the min and max vectors from the given attribute
+			 * @param  {BufferAttribute} attribute Attribute to find the min/max
 			 * @return {Object} Object containing the `min` and `max` values (As an array of attribute.itemSize components)
 			 */
 			function getMinMax( attribute ) {
@@ -12442,12 +12854,14 @@ var Three = (function (exports) {
 
 			/**
 			 * Process and generate a BufferView
-			 * @param  {[type]} data [description]
-			 * @return {[type]}      [description]
+			 * @param  {BufferAttribute} data
+			 * @param  {number} componentType
+			 * @param  {number} start
+			 * @param  {number} count
+			 * @param  {number} target (Optional) Target usage of the BufferView
+			 * @return {Object}
 			 */
-			function processBufferView( data, componentType, start, count ) {
-
-				var isVertexAttributes = componentType === WEBGL_CONSTANTS.FLOAT;
+			function processBufferView( data, componentType, start, count, target ) {
 
 				if ( ! outputJSON.bufferViews ) {
 
@@ -12464,11 +12878,18 @@ var Three = (function (exports) {
 
 					buffer: processBuffer( data, componentType, start, count ),
 					byteOffset: byteOffset,
-					byteLength: byteLength,
-					byteStride: data.itemSize * componentSize,
-					target: isVertexAttributes ? WEBGL_CONSTANTS.ARRAY_BUFFER : WEBGL_CONSTANTS.ELEMENT_ARRAY_BUFFER
+					byteLength: byteLength
 
 				};
+
+				if ( target !== undefined ) gltfBufferView.target = target;
+
+				if ( target === WEBGL_CONSTANTS.ARRAY_BUFFER ) {
+
+					// Only define byteStride for vertex attributes.
+					gltfBufferView.byteStride = data.itemSize * componentSize;
+
+				}
 
 				byteOffset += byteLength;
 
@@ -12488,7 +12909,8 @@ var Three = (function (exports) {
 
 			/**
 			 * Process attribute to generate an accessor
-			 * @param  {WebGLAttribute} attribute Attribute to process
+			 * @param  {BufferAttribute} attribute Attribute to process
+			 * @param  {BufferGeometry} geometry (Optional) Geometry used for truncated draw range
 			 * @return {Integer}           Index of the processed accessor on the "accessors" array
 			 */
 			function processAccessor( attribute, geometry ) {
@@ -12499,14 +12921,15 @@ var Three = (function (exports) {
 
 				}
 
-				var types = [
+				var types = {
 
-					'SCALAR',
-					'VEC2',
-					'VEC3',
-					'VEC4'
+					1: 'SCALAR',
+					2: 'VEC2',
+					3: 'VEC3',
+					4: 'VEC4',
+					16: 'MAT4'
 
-				];
+				};
 
 				var componentType;
 
@@ -12535,14 +12958,25 @@ var Three = (function (exports) {
 				var count = attribute.count;
 
 				// @TODO Indexed buffer geometry with drawRange not supported yet
-				if ( options.truncateDrawRange && geometry.index === null ) {
+				if ( options.truncateDrawRange && geometry !== undefined && geometry.index === null ) {
 
 					start = geometry.drawRange.start;
 					count = geometry.drawRange.count !== Infinity ? geometry.drawRange.count : attribute.count;
 
 				}
 
-				var bufferView = processBufferView( attribute, componentType, start, count );
+				var bufferViewTarget;
+
+				// If geometry isn't provided, don't infer the target usage of the bufferView. For
+				// animation samplers, target must not be set.
+				if ( geometry !== undefined ) {
+
+					var isVertexAttributes = componentType === WEBGL_CONSTANTS.FLOAT;
+					bufferViewTarget = isVertexAttributes ? WEBGL_CONSTANTS.ARRAY_BUFFER : WEBGL_CONSTANTS.ELEMENT_ARRAY_BUFFER;
+
+				}
+
+				var bufferView = processBufferView( attribute, componentType, start, count, bufferViewTarget );
 
 				var gltfAccessor = {
 
@@ -12552,7 +12986,7 @@ var Three = (function (exports) {
 					count: count,
 					max: minMax.max,
 					min: minMax.min,
-					type: types[ attribute.itemSize - 1 ]
+					type: types[ attribute.itemSize ]
 
 				};
 
@@ -12581,15 +13015,31 @@ var Three = (function (exports) {
 
 				}
 
-				var gltfImage = {};
+				var mimeType = map.format === RGBAFormat ? 'image/png' : 'image/jpeg';
+				var gltfImage = {mimeType: mimeType};
 
 				if ( options.embedImages ) {
 
-					// @TODO { bufferView, mimeType }
+					var canvas = cachedCanvas = cachedCanvas || document.createElement( 'canvas' );
+					canvas.width = map.image.width;
+					canvas.height = map.image.height;
+					var ctx = canvas.getContext( '2d' );
+
+					if ( map.flipY === true ) {
+
+						ctx.translate( 0, map.image.height );
+						ctx.scale( 1, -1 );
+
+					}
+
+					ctx.drawImage( map.image, 0, 0 );
+
+					// @TODO Embed in { bufferView } if options.binary set.
+
+					gltfImage.uri = canvas.toDataURL( mimeType );
 
 				} else {
 
-					// @TODO base64 based on options
 					gltfImage.uri = map.image.src;
 
 				}
@@ -12723,7 +13173,7 @@ var Three = (function (exports) {
 
 					gltfMaterial.pbrMetallicRoughness.baseColorTexture = {
 
-						index: processTexture( material.map )
+						index: processTexture( material.map )
 
 					};
 
@@ -12749,7 +13199,7 @@ var Three = (function (exports) {
 
 						gltfMaterial.emissiveTexture = {
 
-							index: processTexture( material.emissiveMap )
+							index: processTexture( material.emissiveMap )
 
 						};
 
@@ -12762,7 +13212,7 @@ var Three = (function (exports) {
 
 					gltfMaterial.normalTexture = {
 
-						index: processTexture( material.normalMap )
+						index: processTexture( material.normalMap )
 
 					};
 
@@ -12785,7 +13235,7 @@ var Three = (function (exports) {
 
 					gltfMaterial.occlusionTexture = {
 
-						index: processTexture( material.aoMap )
+						index: processTexture( material.aoMap )
 
 					};
 
@@ -12798,11 +13248,12 @@ var Three = (function (exports) {
 				}
 
 				// alphaMode
-				if ( material.transparent ) {
+				if ( material.transparent || material.alphaTest > 0.0 ) {
 
-					gltfMaterial.alphaMode = 'MASK'; // @FIXME We should detect MASK or BLEND
+					gltfMaterial.alphaMode = material.opacity < 1.0 ? 'BLEND' : 'MASK';
 
-					if ( material.alphaTest !== 0.5 ) {
+					// Write alphaCutoff if it's non-zero and different from the default (0.5).
+					if ( material.alphaTest > 0.0 && material.alphaTest !== 0.5 ) {
 
 						gltfMaterial.alphaCutoff = material.alphaTest;
 
@@ -12936,7 +13387,35 @@ var Three = (function (exports) {
 
 					var attribute = geometry.attributes[ attributeName ];
 					attributeName = nameConversion[ attributeName ] || attributeName.toUpperCase();
-					gltfAttributes[ attributeName ] = processAccessor( attribute, geometry );
+
+					if ( attributeName.substr( 0, 5 ) !== 'MORPH' ) {
+
+						gltfAttributes[ attributeName ] = processAccessor( attribute, geometry );
+
+					}
+
+				}
+
+				// Morph targets
+				if ( mesh.morphTargetInfluences !== undefined && mesh.morphTargetInfluences.length > 0 ) {
+
+					gltfMesh.primitives[ 0 ].targets = [];
+
+					for ( var i = 0; i < mesh.morphTargetInfluences.length; ++ i ) {
+
+						var target = {};
+
+						for ( var attributeName in geometry.morphAttributes ) {
+
+							var attribute = geometry.morphAttributes[ attributeName ][ i ];
+							attributeName = nameConversion[ attributeName ] || attributeName.toUpperCase();
+							target[ attributeName ] = processAccessor( attribute, geometry );
+
+						}
+
+						gltfMesh.primitives[ 0 ].targets.push( target );
+
+					}
 
 				}
 
@@ -13004,6 +13483,123 @@ var Three = (function (exports) {
 			}
 
 			/**
+			 * Creates glTF animation entry from AnimationClip object.
+			 *
+			 * Status:
+			 * - Only properties listed in PATH_PROPERTIES may be animated.
+			 * - Only LINEAR and STEP interpolation currently supported.
+			 *
+			 * @param {AnimationClip} clip
+			 * @param {Object3D} root
+			 * @return {number}
+			 */
+			function processAnimation ( clip, root ) {
+
+				if ( ! outputJSON.animations ) {
+
+					outputJSON.animations = [];
+
+				}
+
+				var channels = [];
+				var samplers = [];
+
+				for ( var i = 0; i < clip.tracks.length; ++ i ) {
+
+					var track = clip.tracks[ i ];
+					var trackBinding = PropertyBinding.parseTrackName( track.name );
+					var trackNode = PropertyBinding.findNode( root, trackBinding.nodeName );
+					var trackProperty = PATH_PROPERTIES[ trackBinding.propertyName ];
+
+					if ( ! trackNode || ! trackProperty ) {
+
+						console.warn( 'GLTFExporter: Could not export the animation track "%s".', track.name );
+						return null;
+
+					}
+
+					var inputItemSize = 1;
+					var outputItemSize = track.values.length / track.times.length;
+
+					if ( trackProperty === PATH_PROPERTIES.morphTargetInfluences ) {
+
+						outputItemSize /= trackNode.morphTargetInfluences.length;
+
+					}
+
+					samplers.push( {
+
+						input: processAccessor( new BufferAttribute( track.times, inputItemSize ) ),
+						output: processAccessor( new BufferAttribute( track.values, outputItemSize ) ),
+						interpolation: track.interpolation === InterpolateDiscrete ? 'STEP' : 'LINEAR'
+
+					} );
+
+					channels.push( {
+
+						sampler: samplers.length - 1,
+						target: {
+							node: nodeMap[ trackNode.uuid ],
+							path: trackProperty
+						}
+
+					} );
+
+				}
+
+				outputJSON.animations.push( {
+
+					name: clip.name || 'clip_' + outputJSON.animations.length,
+					samplers: samplers,
+					channels: channels
+
+				} );
+
+				return outputJSON.animations.length - 1;
+
+			}
+
+			function processSkin( object ) {
+
+				var node = outputJSON.nodes[ nodeMap[ object.uuid ] ];
+
+				var skeleton = object.skeleton;
+				var rootJoint = object.skeleton.bones[ 0 ];
+
+				if ( rootJoint === undefined ) return null;
+
+				var joints = [];
+				var inverseBindMatrices = new Float32Array( skeleton.bones.length * 16 );
+
+				for ( var i = 0; i < skeleton.bones.length; ++ i ) {
+
+					joints.push( nodeMap[ skeleton.bones[ i ].uuid ] );
+
+					skeleton.boneInverses[ i ].toArray( inverseBindMatrices, i * 16 );
+
+				}
+
+				if ( outputJSON.skins === undefined ) {
+
+					outputJSON.skins = [];
+
+				}
+
+				outputJSON.skins.push( {
+
+					inverseBindMatrices: processAccessor( new BufferAttribute( inverseBindMatrices, 16 ) ),
+					joints: joints,
+					skeleton: nodeMap[ rootJoint.uuid ]
+
+				} );
+
+				var skinIndex = node.skin = outputJSON.skins.length - 1;
+
+				return skinIndex;
+
+			}
+
+			/**
 			 * Process Object3D node
 			 * @param  {Object3D} node Object3D to processNode
 			 * @return {Integer}      Index of the node in the nodes list
@@ -13039,7 +13635,7 @@ var Three = (function (exports) {
 
 					if ( ! equalArray( position, [ 0, 0, 0 ] ) ) {
 
-						gltfNode.position = position;
+						gltfNode.translation = position;
 
 					}
 
@@ -13092,6 +13688,12 @@ var Three = (function (exports) {
 
 				}
 
+				if ( object instanceof SkinnedMesh ) {
+
+					skins.push( object );
+
+				}
+
 				if ( object.children.length > 0 ) {
 
 					var children = [];
@@ -13125,7 +13727,9 @@ var Three = (function (exports) {
 
 				outputJSON.nodes.push( gltfNode );
 
-				return outputJSON.nodes.length - 1;
+				var nodeIndex = nodeMap[ object.uuid ] = outputJSON.nodes.length - 1;
+
+				return nodeIndex;
 
 			}
 
@@ -13228,6 +13832,18 @@ var Three = (function (exports) {
 				if ( objectsWithoutScene.length > 0 ) {
 
 					processObjects( objectsWithoutScene );
+
+				}
+
+				for ( var i = 0; i < skins.length; ++ i ) {
+
+					processSkin( skins[ i ] );
+
+				}
+
+				for ( var i = 0; i < options.animations.length; ++ i ) {
+
+					processAnimation( options.animations[ i ], input[ 0 ] );
 
 				}
 

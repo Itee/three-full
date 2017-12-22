@@ -1,79 +1,29 @@
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
-import { Cache } from '../loaders/Cache.js'
-
 /**
  * @author thespite / http://clicktorelease.com/
  */
 
-function detectCreateImageBitmap ( optionsList ) {
-
-	var url = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
-
-	return new Promise( function ( resolve, reject ) {
-
-		if ( ! ( 'createImageBitmap' in window ) ) {
-
-			reject();
-			return;
-
-		}
-
-		fetch( url ).then( function ( res ) {
-
-			return res.blob();
-
-		} ).then( function ( blob ) {
-
-			var pendingImages = [];
-
-			for ( var i = 0; i < optionsList.length; i ++ ) {
-
-				var pendingImage = optionsList[ i ] === undefined
-					? createImageBitmap( blob )
-					: createImageBitmap( blob, optionsList[ i ] );
-
-				pendingImages.push( pendingImage );
-
-			}
-
-			Promise.all( pendingImages ).then( function () {
-
-				resolve();
-
-			} ).catch( function () {
-
-				reject();
-
-			} );
-
-		} );
-
-	} );
-
-}
-
-var canUseImageBitmap = detectCreateImageBitmap( [ undefined ] );
-
-var canUseImageBitmapOptions = detectCreateImageBitmap( [
-	{ imageOrientation: 'none', premultiplyAlpha: 'none' },
-	{ imageOrientation: 'flipY', premultiplyAlpha: 'none' },
-	{ imageOrientation: 'none', premultiplyAlpha: 'premultiply' },
-	{ imageOrientation: 'flipY', premultiplyAlpha: 'premultiply' }
-] );
+import { Cache } from './Cache.js';
+import { DefaultLoadingManager } from './LoadingManager.js';
 
 
-var ImageBitmapLoader = function ( manager ) {
+function ImageBitmapLoader( manager ) {
 
-	canUseImageBitmap.catch( function () {
+	if ( typeof createImageBitmap === 'undefined' ) {
 
-		console.warn( 'ImageBitmapLoader: createImageBitmap() not supported.' );
+		console.warn( 'THREE.ImageBitmapLoader: createImageBitmap() not supported.' );
 
-	} );
+	}
+
+	if ( typeof fetch === 'undefined' ) {
+
+		console.warn( 'THREE.ImageBitmapLoader: fetch() not supported.' );
+
+	}
 
 	this.manager = manager !== undefined ? manager : DefaultLoadingManager;
 	this.options = undefined;
 
-};
+}
 
 ImageBitmapLoader.prototype = {
 
@@ -81,13 +31,8 @@ ImageBitmapLoader.prototype = {
 
 	setOptions: function setOptions( options ) {
 
-		canUseImageBitmapOptions.catch( function () {
-
-			console.warn( 'ImageBitmapLoader: createImageBitmap() options not supported.' );
-
-		} );
-
 		this.options = options;
+
 		return this;
 
 	},
@@ -124,9 +69,7 @@ ImageBitmapLoader.prototype = {
 
 		} ).then( function ( blob ) {
 
-			return scope.options === undefined
-				? createImageBitmap( blob )
-				: createImageBitmap( blob, scope.options );
+			return createImageBitmap( blob, scope.options );
 
 		} ).then( function ( imageBitmap ) {
 
@@ -145,8 +88,21 @@ ImageBitmapLoader.prototype = {
 
 		} );
 
+	},
+
+	setCrossOrigin: function ( /* value */ ) {
+
+		return this;
+
+	},
+
+	setPath: function ( value ) {
+
+		this.path = value;
+		return this;
+
 	}
 
 };
 
-export { ImageBitmapLoader }
+export { ImageBitmapLoader };

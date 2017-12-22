@@ -34,6 +34,7 @@ import {
 	RepeatWrapping
 } from '../constants.js'
 import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { LoaderUtils } from '../loaders/LoaderUtils.js'
 
 /**
  * @author takahiro / https://github.com/takahirox
@@ -138,7 +139,7 @@ MMDLoader.prototype.loadModel = function ( url, callback, onProgress, onError ) 
 
 	var scope = this;
 
-	var texturePath = this.extractUrlBase( url );
+	var texturePath = LoaderUtils.extractUrlBase( url );
 	var modelExtension = this.extractExtension( url );
 
 	this.loadFileAsBuffer( url, function ( buffer ) {

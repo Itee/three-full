@@ -88,6 +88,7 @@ import { UniformsUtils } from '../../renderers/shaders/UniformsUtils.js'
 import { QuaternionKeyframeTrack } from '../../animation/tracks/QuaternionKeyframeTrack.js'
 import { VectorKeyframeTrack } from '../../animation/tracks/VectorKeyframeTrack.js'
 import { AnimationUtils } from '../../animation/AnimationUtils.js'
+import { LoaderUtils } from '../../loaders/LoaderUtils.js'
 
 /**
  * @author Rich Tibbett / https://github.com/richtr
@@ -114,7 +115,7 @@ var LegacyGLTFLoader = ( function () {
 
 			var scope = this;
 
-			var path = this.path && ( typeof this.path === "string" ) ? this.path : Loader.prototype.extractUrlBase( url );
+			var path = this.path && ( typeof this.path === "string" ) ? this.path : LoaderUtils.extractUrlBase( url );
 
 			var loader = new FileLoader( scope.manager );
 
@@ -145,7 +146,7 @@ var LegacyGLTFLoader = ( function () {
 			var content;
 			var extensions = {};
 
-			var magic = convertUint8ArrayToString( new Uint8Array( data, 0, 4 ) );
+			var magic = LoaderUtils.decodeText( new Uint8Array( data, 0, 4 ) );
 
 			if ( magic === BINARY_EXTENSION_HEADER_DEFAULTS.magic ) {
 
@@ -154,7 +155,7 @@ var LegacyGLTFLoader = ( function () {
 
 			} else {
 
-				content = convertUint8ArrayToString( new Uint8Array( data ) );
+				content = LoaderUtils.decodeText( new Uint8Array( data ) );
 
 			}
 
@@ -449,7 +450,7 @@ var LegacyGLTFLoader = ( function () {
 		var headerView = new DataView( data, 0, BINARY_EXTENSION_HEADER_LENGTH );
 
 		var header = {
-			magic: convertUint8ArrayToString( new Uint8Array( data.slice( 0, 4 ) ) ),
+			magic: LoaderUtils.decodeText( new Uint8Array( data.slice( 0, 4 ) ) ),
 			version: headerView.getUint32( 4, true ),
 			length: headerView.getUint32( 8, true ),
 			contentLength: headerView.getUint32( 12, true ),
@@ -471,7 +472,7 @@ var LegacyGLTFLoader = ( function () {
 		var contentArray = new Uint8Array( data, BINARY_EXTENSION_HEADER_LENGTH, header.contentLength );
 
 		this.header = header;
-		this.content = convertUint8ArrayToString( contentArray );
+		this.content = LoaderUtils.decodeText( contentArray );
 		this.body = data.slice( BINARY_EXTENSION_HEADER_LENGTH + header.contentLength, header.length );
 
 	}
@@ -481,7 +482,7 @@ var LegacyGLTFLoader = ( function () {
 		var bufferView = bufferViews[ shader.extensions[ EXTENSIONS.KHR_BINARY_GLTF ].bufferView ];
 		var array = new Uint8Array( bufferView );
 
-		return convertUint8ArrayToString( array );
+		return LoaderUtils.decodeText( array );
 
 	};
 
@@ -489,7 +490,7 @@ var LegacyGLTFLoader = ( function () {
 
 		var metadata = source.extensions[ EXTENSIONS.KHR_BINARY_GLTF ];
 		var bufferView = bufferViews[ metadata.bufferView ];
-		var stringData = convertUint8ArrayToString( new Uint8Array( bufferView ) );
+		var stringData = LoaderUtils.decodeText( new Uint8Array( bufferView ) );
 
 		return 'data:' + metadata.mimeType + ';base64,' + btoa( stringData );
 
@@ -752,29 +753,6 @@ var LegacyGLTFLoader = ( function () {
 
 		// Relative URL
 		return ( path || '' ) + url;
-
-	}
-
-	function convertUint8ArrayToString( array ) {
-
-		if ( window.TextDecoder !== undefined ) {
-
-			return new TextDecoder().decode( array );
-
-		}
-
-		// Avoid the String.fromCharCode.apply(null, array) shortcut, which
-		// throws a "maximum call stack size exceeded" error for large arrays.
-
-		var s = '';
-
-		for ( var i = 0, il = array.length; i < il; i ++ ) {
-
-			s += String.fromCharCode( array[ i ] );
-
-		}
-
-		return s;
 
 	}
 

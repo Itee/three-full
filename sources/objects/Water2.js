@@ -1,5 +1,4 @@
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/Geometries.js'
 import { Color } from '../math/Color.js'
 import { Vector2 } from '../math/Vector2.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
@@ -22,9 +21,9 @@ import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
  *
  */
 
-var Water = function ( width, height, options ) {
+var Water = function ( geometry, options ) {
 
-	Mesh.call( this, new PlaneBufferGeometry( width, height ) );
+	Mesh.call( this, geometry );
 
 	this.type = 'Water';
 
@@ -69,13 +68,13 @@ var Water = function ( width, height, options ) {
 
 	}
 
-	var reflector = new Reflector( width, height, {
+	var reflector = new Reflector( geometry, {
 		textureWidth: textureWidth,
 		textureHeight: textureHeight,
 		clipBias: clipBias
 	} );
 
-	var refractor = new Refractor( width, height, {
+	var refractor = new Refractor( geometry, {
 		textureWidth: textureWidth,
 		textureHeight: textureHeight,
 		clipBias: clipBias

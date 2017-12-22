@@ -53,7 +53,8 @@ function WebGLRenderer( parameters ) {
 		_stencil = parameters.stencil !== undefined ? parameters.stencil : true,
 		_antialias = parameters.antialias !== undefined ? parameters.antialias : false,
 		_premultipliedAlpha = parameters.premultipliedAlpha !== undefined ? parameters.premultipliedAlpha : true,
-		_preserveDrawingBuffer = parameters.preserveDrawingBuffer !== undefined ? parameters.preserveDrawingBuffer : false;
+		_preserveDrawingBuffer = parameters.preserveDrawingBuffer !== undefined ? parameters.preserveDrawingBuffer : false,
+		_powerPreference = parameters.powerPreference !== undefined ? parameters.powerPreference : 'default';
 
 	var lightsArray = [];
 	var shadowsArray = [];
@@ -199,8 +200,14 @@ function WebGLRenderer( parameters ) {
 			stencil: _stencil,
 			antialias: _antialias,
 			premultipliedAlpha: _premultipliedAlpha,
-			preserveDrawingBuffer: _preserveDrawingBuffer
+			preserveDrawingBuffer: _preserveDrawingBuffer,
+			powerPreference: _powerPreference
 		};
+
+		// event listeners must be registered before WebGL context is created, see #12753
+
+		_canvas.addEventListener( 'webglcontextlost', onContextLost, false );
+		_canvas.addEventListener( 'webglcontextrestored', onContextRestore, false );
 
 		_gl = _context || _canvas.getContext( 'webgl', contextAttributes ) || _canvas.getContext( 'experimental-webgl', contextAttributes );
 
@@ -208,11 +215,11 @@ function WebGLRenderer( parameters ) {
 
 			if ( _canvas.getContext( 'webgl' ) !== null ) {
 
-				throw 'Error creating WebGL context with your selected attributes.';
+				throw new Error( 'Error creating WebGL context with your selected attributes.' );
 
 			} else {
 
-				throw 'Error creating WebGL context.';
+				throw new Error( 'Error creating WebGL context.' );
 
 			}
 
@@ -230,12 +237,9 @@ function WebGLRenderer( parameters ) {
 
 		}
 
-		_canvas.addEventListener( 'webglcontextlost', onContextLost, false );
-		_canvas.addEventListener( 'webglcontextrestored', onContextRestore, false );
-
 	} catch ( error ) {
 
-		console.error( 'THREE.WebGLRenderer: ' + error );
+		console.error( 'THREE.WebGLRenderer: ' + error.message );
 
 	}
 
@@ -676,7 +680,9 @@ function WebGLRenderer( parameters ) {
 
 	this.renderBufferDirect = function ( camera, fog, geometry, material, object, group ) {
 
-		state.setMaterial( material );
+		var frontFaceCW = ( object.isMesh && object.matrixWorld.determinant() < 0 );
+
+		state.setMaterial( material, frontFaceCW );
 
 		var program = setProgram( camera, fog, material, object );
 		var geometryProgram = geometry.id + '_' + program.id + '_' + ( material.wireframe === true );
@@ -1026,7 +1032,7 @@ function WebGLRenderer( parameters ) {
 		if ( isAnimating ) return;
 
 		var device = vr.getDevice();
-		
+
 		if ( device && device.isPresenting ) {
 
 			device.requestAnimationFrame( loop );
@@ -1046,7 +1052,7 @@ function WebGLRenderer( parameters ) {
 		if ( onAnimationFrame !== null ) onAnimationFrame( time );
 
 		var device = vr.getDevice();
-		
+
 		if ( device && device.isPresenting ) {
 
 			device.requestAnimationFrame( loop );
@@ -1121,6 +1127,10 @@ function WebGLRenderer( parameters ) {
 			currentRenderList.sort();
 
 		}
+
+		//
+
+		textures.updateVideoTextures();
 
 		//
 
@@ -1421,7 +1431,9 @@ function WebGLRenderer( parameters ) {
 
 		if ( object.isImmediateRenderObject ) {
 
-			state.setMaterial( material );
+			var frontFaceCW = ( object.isMesh && object.matrixWorld.determinant() < 0 );
+
+			state.setMaterial( material, frontFaceCW );
 
 			var program = setProgram( camera, scene.fog, material, object );
 
