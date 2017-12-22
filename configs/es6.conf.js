@@ -81,6 +81,9 @@ module.exports = {
 				[ 'this.uuid = Math.generateUUID();', 'this.uuid = _Math.generateUUID();' ]
 			]
 		},
+		GLTFExporter: {
+			imports: [ 'TextEncoder' ]
+		},
 		Lut: {
 			replacements: [
 				[ 'ColorMapKeywords = ', 'var ColorMapKeywords = ' ]
