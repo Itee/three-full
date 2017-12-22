@@ -9,7 +9,7 @@ Three.js come with lot of examples files, which are curently not usable as ES6 m
 The purpose of this project is to convert all examples files and includes them as part 
 of the library.
 
-**The version 3.0.0 is now available !!!**
+**The version 4.0.0 is now available under Three r89 !!!**
 
 #### Setup ####
 
@@ -72,6 +72,14 @@ This is the list of unsupported part of example, which cannot be converted yet.
 
 
 #### Change log ####
+
+##### 4.0.0 :
+    
+* XLoader.js: is now ignored due to AMD module
+* Add Earcut, Curves, EXRLoader, GCodeLoader, LoaderUtils
+* Remove KeyframeTrackConstructor, KeyframeTrackPrototype, PathPrototype and ImageUtils
+* Update imports statements
+
 
 ##### 3.0.0 :
 
