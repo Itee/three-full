@@ -36,8 +36,59 @@ module.exports = {
 		//        AnimationClipCreator:      {
 		//            output: './src/misc/AnimationClipCreator.js'
 		//        },
+		'3MFLoader': {
+			imports: [
+				'DefaultLoadingManager',
+				'TextDecoder'
+			]
+		},
+		AdaptiveToneMappingPass: {
+			imports: [
+				'CopyShader',
+				'LuminosityShader',
+				'ToneMapShader',
+				'UniformsUtils'
+			]
+		},
+		AMFLoader: {
+			imports: [
+				'DefaultLoadingManager',
+				'TextDecoder'
+			]
+		},
+		AssimpJSONLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
+		AssimpLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
+		AWDLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
+		BabylonLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
+		BinaryLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
+		BloomPass: {
+			imports: [
+				'CopyShader',
+				'ConvolutionShader',
+				'UniformsUtils'
+			]
+		},
+		BokehPass: {
+			imports: [
+				'BokehShader',
+				'UniformsUtils'
+			]
+		},
 		BufferSubdivisionModifier: {
 			imports: [ 'Face3' ]
+		},
+		BVHLoader: {
+			imports: [ 'DefaultLoadingManager' ]
 		},
 		CinematicCamera: {
 			imports: [
@@ -53,6 +104,9 @@ module.exports = {
 		},
 		ColorNode: {
 			imports: [ 'NodeMaterial' ]
+		},
+		CubeTexturePass: {
+			imports: [ 'ShaderLib' ]
 		},
 		CurveExtras: {
 			replacements: [
@@ -72,8 +126,35 @@ module.exports = {
 				[ 'Curves.DecoratedTorusKnot5c = DecoratedTorusKnot5c;', '' ]
 			]
 		},
+		DotScreenPass: {
+			imports: [
+				'DotScreenShader',
+				'UniformsUtils'
+			]
+		},
 		EffectComposer: {
 			imports: [ 'CopyShader' ]
+		},
+		FBXLoader: {
+			imports: [
+				'DefaultLoadingManager',
+				'TextDecoder'
+			] // + ZLib
+		},
+		FilmPass: {
+			imports: [
+				'FilmShader',
+				'UniformsUtils'
+			]
+		},
+		FunctionNode: {
+			imports: [ 'NodeLib' ]
+		},
+		GlitchPass: {
+			imports: [
+				'DigitalGlitch',
+				'UniformsUtils'
+			]
 		},
 		GLNode: {
 			imports: [ '_Math' ],
@@ -84,10 +165,29 @@ module.exports = {
 		GLTFExporter: {
 			imports: [ 'TextEncoder' ]
 		},
-		Lut: {
-			replacements: [
-				[ 'ColorMapKeywords = ', 'var ColorMapKeywords = ' ]
+		GLTFLoader: {
+			imports: [
+				'DefaultLoadingManager',
+				'MeshPhongMaterial',
+				'MeshLambertMaterial',
+				'MeshBasicMaterial',
+				'ShaderLib',
+				'UniformsUtils',
+				'TextDecoder',
+				'AnimationUtils'
 			]
+		},
+		HDRCubeTextureLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
+		ImageBitmapLoader: {
+			imports: [
+				'DefaultLoadingManager',
+				'Cache'
+			]
+		},
+		KMZLoader: {
+			imports: [ 'DefaultLoadingManager' ]
 		},
 		LegacyGLTFLoader: {
 			imports: [
@@ -102,7 +202,19 @@ module.exports = {
 				'MeshLambertMaterial',
 				'QuaternionKeyframeTrack',
 				'VectorKeyframeTrack',
-				'AnimationUtils'
+				'AnimationUtils',
+				'TextDecoder'
+			]
+		},
+		LoaderSupport: {
+			imports: [ 'DefaultLoadingManager' ],
+			replacements: [
+				[ 'if ( var LoaderSupport === undefined ) { var LoaderSupport = {} }', 'var LoaderSupport = {}' ]
+			]
+		},
+		Lut: {
+			replacements: [
+				[ 'ColorMapKeywords = ', 'var ColorMapKeywords = ' ]
 			]
 		},
 		MarchingCubes: {
@@ -111,8 +223,23 @@ module.exports = {
 				[ 'triTable = new Int32Array', 'var triTable = new Int32Array' ]
 			]
 		},
+		MD2Loader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
 		MMDExporter: {
 			imports: [ 'MMDParser' ]
+		},
+		MMDLoader: {
+			imports: [
+				'DefaultLoadingManager',
+				'MMDParser'
+			]
+		},
+		MTLLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
+		NodeMaterial: {
+			imports: [ 'NodeLib' ]
 		},
 		NURBSCurve: {
 			imports: [ 'NURBSUtils' ]
@@ -120,18 +247,31 @@ module.exports = {
 		NURBSSurface: {
 			imports: [ 'NURBSUtils' ]
 		},
+		OBJLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
 		OBJLoader2: {
 			replacements: [
 				[ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ]
 			]
 		},
+		Ocean: {
+			imports: [
+				'ShaderLib',
+				'UniformsUtils'
+			]
+		},
 		OutlineEffect: {
 			imports: [ 'ShaderLib' ]
 		},
-		LoaderSupport: {
-			replacements: [
-				[ 'if ( var LoaderSupport === undefined ) { var LoaderSupport = {} }', 'var LoaderSupport = {}' ]
-			]
+		PDBLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
+		PlayCanvasLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
+		PRWMLoader: {
+			imports: [ 'DefaultLoadingManager' ]
 		},
 		OceanShaders: {
 			imports: [ 'ShaderLib' ]
@@ -142,15 +282,68 @@ module.exports = {
 				[ 'instanceof var OctreeNode', 'instanceof OctreeNode' ]
 			]
 		},
+		OutlinePass: {
+			imports: [
+				'CopyShader',
+				'UniformsUtils'
+			]
+		},
 		ParametricGeometries: {
 			exports: [ 'ParametricGeometries' ]
 		},
+		PCDLoader: {
+			imports: [
+				'DefaultLoadingManager',
+				'TextDecoder'
+			]
+		},
+		PhongNode: {
+			imports: [
+				'UniformsUtils',
+				'UniformsLib'
+			]
+		},
+		PLYLoader: {
+			imports: [
+				'DefaultLoadingManager',
+				'TextDecoder'
+			]
+		},
+		PVRLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
+		Refractor: {
+			imports: [ 'UniformsUtils' ]
+		},
+		Reflector: {
+			imports: [ 'UniformsUtils' ]
+		},
 		RGBELoader: {
+			imports: [ 'DefaultLoadingManager' ],
 			replacements: [
 				[ 'var HDRLoader =  RGBELoader', 'var RGBELoader' ],
 				[ /(return null;[\s\n\r]+};)/g, '$1\nvar HDRLoader = RGBELoader;\n\n' ],
 			]
 
+		},
+		SAOPass: {
+			imports: [
+				'SSAOShader',
+				'DepthLimitedBlurShader',
+				'CopyShader',
+				'UnpackDepthRGBAShader',
+				'BlurShaderUtils',
+				'UniformsUtils'
+			]
+		},
+		SavePass: {
+			imports: [
+				'CopyShader',
+				'UniformsUtils'
+			]
+		},
+		ScreenNode: {
+			imports: [ 'InputNode' ]
 		},
 		ShaderPass: {
 			imports: [ 'UniformsUtils' ]
@@ -169,6 +362,66 @@ module.exports = {
 				'ShaderChunk'
 			]
 		},
+		ShadowMapViewer: {
+			imports: [ 'UnpackDepthRGBAShader' ]
+		},
+		Sky: {
+			imports: [ 'UniformsUtils' ]
+		},
+		SMAAPass: {
+			imports: [
+				'SMAAShader',
+				'UniformsUtils'
+			]
+		},
+		SpriteNode: {
+			imports: [
+				'UniformsUtils',
+				'UniformsLib'
+			]
+		},
+		SSAARenderPass: {
+			imports: [
+				'CopyShader',
+				'UniformsUtils'
+			]
+		},
+		SSAOPass: {
+			imports: [ 'SSAOShader' ]
+		},
+		StandardNode: {
+			imports: [
+				'UniformsUtils',
+				'UniformsLib'
+			]
+		},
+		STLLoader: {
+			imports: [
+				'DefaultLoadingManager',
+				'TextDecoder'
+			]
+		},
+		SVGLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
+		TDSLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
+		TexturePass: {
+			imports: [
+				'CopyShader',
+				'UniformsUtils'
+			]
+		},
+		TGALoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
+		TimelinerController: {
+			imports: [ 'AnimationUtils' ]
+		},
+		TTFLoader: {
+			imports: [ 'DefaultLoadingManager' ] // + opentype
+		},
 		UnrealBloomPass: {
 			imports: [
 				'LuminosityHighPassShader',
@@ -185,7 +438,29 @@ module.exports = {
 		Vector4Node: {
 			imports: [ 'NodeMaterial' ]
 		},
+		VRMLLoader: {
+			imports: [ 'DefaultLoadingManager' ]
+		},
+		VTKLoader: {
+			imports: [ 'DefaultLoadingManager' ] // + ZLib
+		},
+		Water: {
+			imports: [
+				'UniformsUtils',
+				'ShaderChunk'
+			]
+		},
+		Water2: {
+			imports: [
+				'UniformsUtils',
+				'UniformsLib'
+			]
+		},
 		WebGLDeferredRenderer: {
+			imports: [
+				'CopyShader',
+				'FXAAShader'
+			],
 			replacements: [
 				[ 'DeferredShaderChunk = ', 'var DeferredShaderChunk = ' ],
 				[ 'ShaderDeferredCommon = ', 'var ShaderDeferredCommon = ' ],
@@ -196,6 +471,9 @@ module.exports = {
 			replacements: [
 				[ 'var WEBVR', 'var WebVR' ]
 			]
+		},
+		XLoader: {
+			imports: [ 'DefaultLoadingManager' ]
 		}
 	}
 }
