@@ -1190,9 +1190,9 @@ Object.assign( Es6.prototype, {
 
             } else if ( availableFilesPaths.includes( filePath ) ) {
 
-                let imports      = ''
+                let imports      = []
                 let replacements = []
-                let exports      = ''
+                let exports      = []
                 let outputPath   = _getOutputFor( filePath, output )
 
                 console.log( 'Copy:    ' + filePath + '\nto       ' + outputPath + '\n' )
