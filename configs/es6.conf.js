@@ -108,6 +108,9 @@ module.exports = {
 				[ 'triTable = new Int32Array', 'var triTable = new Int32Array' ]
 			]
 		},
+		NURBSCurve: {
+			imports: [ 'NURBSUtils' ]
+		},
 		OBJLoader2: {
 			replacements: [
 				[ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ]
