@@ -52,10 +52,20 @@ gulp.task( 'help', ( done ) => {
 
 gulp.task( 'patch-three', ( done ) => {
 
-    runSequence(
-        [ 'fix-effect-composer', 'create-pass-file', 'fix-node-lib', 'fix-camera-node' ],
-        done
-    )
+	runSequence(
+		[
+			'fix-effect-composer',
+			'create-pass-file',
+			'create-node-lib-declaration-file',
+			'create-node-lib-implementation-file',
+			'fix-node-lib-export',
+			'create-function-node-declaration-file',
+			'create-function-node-implementation-file',
+			'fix-function-node-export',
+			'fix-camera-node'
+		],
+		done
+	)
 
 } )
 
@@ -89,7 +99,88 @@ gulp.task( 'create-pass-file', ( done ) => {
 
 } )
 
-gulp.task( 'fix-node-lib', () => {
+gulp.task( 'create-node-lib-declaration-file', ( done ) => {
+
+	const stringFile = '/**\n' +
+		' * @author [Tristan Valcke]{@link https://github.com/Itee}\n' +
+		' * @author sunag / http://www.sunag.com.br/\n' +
+		' */\n' +
+		'\n' +
+		'var NodeLib = {\n' +
+		'\n' +
+		'\tnodes: {},\n' +
+		'\tkeywords: {},\n' +
+		'\n' +
+		'\tadd: function( node ) {\n' +
+		'\n' +
+		'\t\tthis.nodes[ node.name ] = node;\n' +
+		'\n' +
+		'\t},\n' +
+		'\n' +
+		'\taddKeyword: function( name, callback, cache ) {\n' +
+		'\n' +
+		'\t\tcache = cache !== undefined ? cache : true;\n' +
+		'\n' +
+		'\t\tthis.keywords[ name ] = { callback : callback, cache : cache };\n' +
+		'\n' +
+		'\t},\n' +
+		'\n' +
+		'\tremove: function( node ) {\n' +
+		'\n' +
+		'\t\tdelete this.nodes[ node.name ];\n' +
+		'\n' +
+		'\t},\n' +
+		'\n' +
+		'\tremoveKeyword: function( name ) {\n' +
+		'\n' +
+		'\t\tdelete this.keywords[ name ];\n' +
+		'\n' +
+		'\t},\n' +
+		'\n' +
+		'\tget: function( name ) {\n' +
+		'\n' +
+		'\t\treturn this.nodes[ name ];\n' +
+		'\n' +
+		'\t},\n' +
+		'\n' +
+		'\tgetKeyword: function( name, material ) {\n' +
+		'\n' +
+		'\t\treturn this.keywords[ name ].callback.call( this, material );\n' +
+		'\n' +
+		'\t},\n' +
+		'\n' +
+		'\tgetKeywordData: function( name ) {\n' +
+		'\n' +
+		'\t\treturn this.keywords[ name ];\n' +
+		'\n' +
+		'\t},\n' +
+		'\n' +
+		'\tcontains: function( name ) {\n' +
+		'\n' +
+		'\t\treturn this.nodes[ name ] != undefined;\n' +
+		'\n' +
+		'\t},\n' +
+		'\n' +
+		'\tcontainsKeyword: function( name ) {\n' +
+		'\n' +
+		'\t\treturn this.keywords[ name ] != undefined;\n' +
+		'\n' +
+		'\t}\n' +
+		'\n' +
+		'};\n' +
+		'\n' +
+		'export { NodeLib }\n'
+
+	fs.writeFile( "./node_modules/three/examples/js/nodes/NodeLib_Declaration.js", stringFile, ( error ) => {
+
+		if ( error ) {
+			return console.error( error )
+		}
+
+		console.log( "NodeLib_Declaration.js was saved!" )
+		done()
+
+	} );
 
     return gulp.src( './node_modules/three/examples/js/nodes/NodeLib.js' )
                .pipe( replace( [ [ 'delete this.keywords[ node ];', 'delete this.keywords[ name ];' ] ] ) )
