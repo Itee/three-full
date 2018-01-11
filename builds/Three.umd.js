@@ -83792,7 +83792,7 @@
    * @author sunag / http://www.sunag.com.br/
    */
 
-  var TempNode$1 = function( type, params ) {
+  var TempNode = function( type, params ) {
 
   	GLNode.call( this, type );
 
@@ -83803,10 +83803,10 @@
 
   };
 
-  TempNode$1.prototype = Object.create( GLNode.prototype );
-  TempNode$1.prototype.constructor = TempNode$1;
+  TempNode.prototype = Object.create( GLNode.prototype );
+  TempNode.prototype.constructor = TempNode;
 
-  TempNode$1.prototype.build = function( builder, output, uuid, ns ) {
+  TempNode.prototype.build = function( builder, output, uuid, ns ) {
 
   	output = output || this.getType( builder );
 
@@ -83861,7 +83861,7 @@
 
   		} else {
 
-  			name = TempNode$1.prototype.generate.call( this, builder, output, uuid, data.output, ns );
+  			name = TempNode.prototype.generate.call( this, builder, output, uuid, data.output, ns );
 
   			var code = this.generate( builder, type, uuid );
 
@@ -83878,19 +83878,19 @@
 
   };
 
-  TempNode$1.prototype.isShared = function( builder, output ) {
+  TempNode.prototype.isShared = function( builder, output ) {
 
   	return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
 
   };
 
-  TempNode$1.prototype.isUnique = function( builder, output ) {
+  TempNode.prototype.isUnique = function( builder, output ) {
 
   	return this.unique;
 
   };
 
-  TempNode$1.prototype.getUuid = function( unique ) {
+  TempNode.prototype.getUuid = function( unique ) {
 
   	var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
 
@@ -83900,7 +83900,7 @@
 
   };
 
-  TempNode$1.prototype.getTemp = function( builder, uuid ) {
+  TempNode.prototype.getTemp = function( builder, uuid ) {
 
   	uuid = uuid || this.uuid;
 
@@ -83911,7 +83911,7 @@
 
   };
 
-  TempNode$1.prototype.generate = function( builder, output, uuid, type, ns ) {
+  TempNode.prototype.generate = function( builder, output, uuid, type, ns ) {
 
   	if ( ! this.isShared( builder, output ) ) { console.error( "TempNode is not shared!" ); }
 
@@ -83935,10 +83935,84 @@
   	this.isMethod = typeof includesOrType !== "string";
   	this.useKeywords = true;
 
-  	TempNode$1.call( this, this.isMethod ? null : includesOrType );
+  	TempNode.call( this, this.isMethod ? null : includesOrType );
 
   	if ( this.isMethod ) { this.eval( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ); }
   	else { this.eval( src, extensionsOrIncludes, keywordsOrExtensions ); }
+
+  };
+
+  FunctionNode.rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\((.*?)\)/i;
+  FunctionNode.rProperties = /[a-z_0-9]+/ig;
+
+  FunctionNode.prototype = Object.create( TempNode.prototype );
+  FunctionNode.prototype.constructor = FunctionNode;
+
+  FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
+  	var this$1 = this;
+
+
+  	src = ( src || '' ).trim();
+
+  	this.includes = includes || [];
+  	this.extensions = extensions || {};
+  	this.keywords = keywords || {};
+
+  	if ( this.isMethod ) {
+
+  		var match = src.match( FunctionNode.rDeclaration );
+
+  		this.inputs = [];
+
+  		if ( match && match.length == 4 ) {
+
+  			this.type = match[ 1 ];
+  			this.name = match[ 2 ];
+
+  			var inputs = match[ 3 ].match( FunctionNode.rProperties );
+
+  			if ( inputs ) {
+
+  				var i = 0;
+
+  				while ( i < inputs.length ) {
+
+  					var qualifier = inputs[ i ++ ];
+  					var type, name;
+
+  					if ( qualifier == 'in' || qualifier == 'out' || qualifier == 'inout' ) {
+
+  						type = inputs[ i ++ ];
+
+  					} else {
+
+  						type = qualifier;
+  						qualifier = '';
+
+  					}
+
+  					name = inputs[ i ++ ];
+
+  					this$1.inputs.push( {
+  						name : name,
+  						type : type,
+  						qualifier : qualifier
+  					} );
+
+  				}
+
+  			}
+
+  		} else {
+
+  			this.type = '';
+  			this.name = '';
+
+  		}
+
+  	}
+
+  	this.value = src;
 
   };
 
@@ -84016,7 +84090,7 @@
 
   var UVNode = function( index ) {
 
-  	TempNode$1.call( this, 'v2', { shared: false } );
+  	TempNode.call( this, 'v2', { shared: false } );
 
   	this.index = index || 0;
 
@@ -84025,7 +84099,7 @@
   UVNode.vertexDict = [ 'uv', 'uv2' ];
   UVNode.fragmentDict = [ 'vUv', 'vUv2' ];
 
-  UVNode.prototype = Object.create( TempNode$1.prototype );
+  UVNode.prototype = Object.create( TempNode.prototype );
   UVNode.prototype.constructor = UVNode;
 
   UVNode.prototype.generate = function( builder, output ) {
@@ -84048,7 +84122,7 @@
 
   var PositionNode = function( scope ) {
 
-  	TempNode$1.call( this, 'v3' );
+  	TempNode.call( this, 'v3' );
 
   	this.scope = scope || PositionNode.LOCAL;
 
@@ -84059,7 +84133,7 @@
   PositionNode.VIEW = 'view';
   PositionNode.PROJECTION = 'projection';
 
-  PositionNode.prototype = Object.create( TempNode$1.prototype );
+  PositionNode.prototype = Object.create( TempNode.prototype );
   PositionNode.prototype.constructor = PositionNode;
 
   PositionNode.prototype.getType = function( builder ) {
@@ -84136,7 +84210,7 @@
 
   var NormalNode = function( scope ) {
 
-  	TempNode$1.call( this, 'v3' );
+  	TempNode.call( this, 'v3' );
 
   	this.scope = scope || NormalNode.LOCAL;
 
@@ -84146,7 +84220,7 @@
   NormalNode.WORLD = 'world';
   NormalNode.VIEW = 'view';
 
-  NormalNode.prototype = Object.create( TempNode$1.prototype );
+  NormalNode.prototype = Object.create( TempNode.prototype );
   NormalNode.prototype.constructor = NormalNode;
 
   NormalNode.prototype.isShared = function( builder ) {
@@ -84206,11 +84280,11 @@
   	params = params || {};
   	params.shared = params.shared !== undefined ? params.shared : false;
 
-  	TempNode$1.call( this, type, params );
+  	TempNode.call( this, type, params );
 
   };
 
-  InputNode.prototype = Object.create( TempNode$1.prototype );
+  InputNode.prototype = Object.create( TempNode.prototype );
   InputNode.prototype.constructor = InputNode;
 
   InputNode.prototype.generate = function( builder, output, uuid, type, ns, needsUpdate ) {
@@ -84305,7 +84379,7 @@
 
   var ConstNode = function( src, useDefine ) {
 
-  	TempNode$1.call( this );
+  	TempNode.call( this );
 
   	this.eval( src || ConstNode.PI, useDefine );
 
@@ -84318,7 +84392,7 @@
   ConstNode.LOG2 = 'LOG2';
   ConstNode.EPSILON = 'EPSILON';
 
-  ConstNode.prototype = Object.create( TempNode$1.prototype );
+  ConstNode.prototype = Object.create( TempNode.prototype );
   ConstNode.prototype.constructor = ConstNode;
 
   ConstNode.prototype.getType = function( builder ) {
@@ -84555,12 +84629,6 @@
    */
 
   // Fix circular dependency, see #2
-  FunctionNode.rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\((.*?)\)/i;
-  FunctionNode.rProperties = /[a-z_0-9]+/ig;
-
-  FunctionNode.prototype = Object.create( TempNode.prototype );
-  FunctionNode.prototype.constructor = FunctionNode;
-
   FunctionNode.prototype.isShared = function( builder, output ) {
 
   	return ! this.isMethod;
@@ -84680,74 +84748,6 @@
 
   };
 
-  FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
-  	var this$1 = this;
-
-
-  	src = ( src || '' ).trim();
-
-  	this.includes = includes || [];
-  	this.extensions = extensions || {};
-  	this.keywords = keywords || {};
-
-  	if ( this.isMethod ) {
-
-  		var match = src.match( FunctionNode.rDeclaration );
-
-  		this.inputs = [];
-
-  		if ( match && match.length == 4 ) {
-
-  			this.type = match[ 1 ];
-  			this.name = match[ 2 ];
-
-  			var inputs = match[ 3 ].match( FunctionNode.rProperties );
-
-  			if ( inputs ) {
-
-  				var i = 0;
-
-  				while ( i < inputs.length ) {
-
-  					var qualifier = inputs[ i ++ ];
-  					var type, name;
-
-  					if ( qualifier == 'in' || qualifier == 'out' || qualifier == 'inout' ) {
-
-  						type = inputs[ i ++ ];
-
-  					} else {
-
-  						type = qualifier;
-  						qualifier = '';
-
-  					}
-
-  					name = inputs[ i ++ ];
-
-  					this$1.inputs.push( {
-  						name : name,
-  						type : type,
-  						qualifier : qualifier
-  					} );
-
-  				}
-
-  			}
-
-  		} else {
-
-  			this.type = '';
-  			this.name = '';
-
-  		}
-
-  	}
-
-  	this.value = src;
-
-  };
-
   /**
    * @author [Tristan Valcke]{@link https://github.com/Itee}
    * @author sunag / http://www.sunag.com.br/
@@ -84760,7 +84760,7 @@
 
   var CameraNode = function( scope, camera ) {
 
-  	TempNode$1.call( this, 'v3' );
+  	TempNode.call( this, 'v3' );
 
   	this.setScope( scope || CameraNode.POSITION );
   	this.setCamera( camera );
@@ -84782,7 +84782,7 @@
   CameraNode.DEPTH = 'depth';
   CameraNode.TO_VERTEX = 'toVertex';
 
-  CameraNode.prototype = Object.create( TempNode$1.prototype );
+  CameraNode.prototype = Object.create( TempNode.prototype );
   CameraNode.prototype.constructor = CameraNode;
 
   CameraNode.prototype.setCamera = function( camera ) {
@@ -84910,7 +84910,7 @@
 
   var ColorsNode = function( index ) {
 
-  	TempNode$1.call( this, 'v4', { shared: false } );
+  	TempNode.call( this, 'v4', { shared: false } );
 
   	this.index = index || 0;
 
@@ -84919,7 +84919,7 @@
   ColorsNode.vertexDict = [ 'color', 'color2' ];
   ColorsNode.fragmentDict = [ 'vColor', 'vColor2' ];
 
-  ColorsNode.prototype = Object.create( TempNode$1.prototype );
+  ColorsNode.prototype = Object.create( TempNode.prototype );
   ColorsNode.prototype.constructor = ColorsNode;
 
   ColorsNode.prototype.generate = function( builder, output ) {
@@ -84942,11 +84942,11 @@
 
   var LightNode = function() {
 
-  	TempNode$1.call( this, 'v3', { shared: false } );
+  	TempNode.call( this, 'v3', { shared: false } );
 
   };
 
-  LightNode.prototype = Object.create( TempNode$1.prototype );
+  LightNode.prototype = Object.create( TempNode.prototype );
   LightNode.prototype.constructor = LightNode;
 
   LightNode.prototype.generate = function( builder, output ) {
@@ -84971,7 +84971,7 @@
 
   var ReflectNode = function( scope ) {
 
-  	TempNode$1.call( this, 'v3', { unique: true } );
+  	TempNode.call( this, 'v3', { unique: true } );
 
   	this.scope = scope || ReflectNode.CUBE;
 
@@ -84981,7 +84981,7 @@
   ReflectNode.SPHERE = 'sphere';
   ReflectNode.VECTOR = 'vector';
 
-  ReflectNode.prototype = Object.create( TempNode$1.prototype );
+  ReflectNode.prototype = Object.create( TempNode.prototype );
   ReflectNode.prototype.constructor = ReflectNode;
 
   ReflectNode.prototype.getType = function( builder ) {
@@ -85040,13 +85040,13 @@
 
   var ScreenUVNode = function( resolution ) {
 
-  	TempNode$1.call( this, 'v2' );
+  	TempNode.call( this, 'v2' );
 
   	this.resolution = resolution;
 
   };
 
-  ScreenUVNode.prototype = Object.create( TempNode$1.prototype );
+  ScreenUVNode.prototype = Object.create( TempNode.prototype );
   ScreenUVNode.prototype.constructor = ScreenUVNode;
 
   ScreenUVNode.prototype.generate = function( builder, output ) {
@@ -85115,13 +85115,13 @@
 
   var FunctionCallNode = function( func, inputs ) {
 
-  	TempNode$1.call( this );
+  	TempNode.call( this );
 
   	this.setFunction( func, inputs );
 
   };
 
-  FunctionCallNode.prototype = Object.create( TempNode$1.prototype );
+  FunctionCallNode.prototype = Object.create( TempNode.prototype );
   FunctionCallNode.prototype.constructor = FunctionCallNode;
 
   FunctionCallNode.prototype.setFunction = function( func, inputs ) {
@@ -86178,7 +86178,7 @@
 
   var OperatorNode = function( a, b, op ) {
 
-  	TempNode$1.call( this );
+  	TempNode.call( this );
 
   	this.a = a;
   	this.b = b;
@@ -86191,7 +86191,7 @@
   OperatorNode.MUL = '*';
   OperatorNode.DIV = '/';
 
-  OperatorNode.prototype = Object.create( TempNode$1.prototype );
+  OperatorNode.prototype = Object.create( TempNode.prototype );
   OperatorNode.prototype.constructor = OperatorNode;
 
   OperatorNode.prototype.getType = function( builder ) {
@@ -86299,7 +86299,7 @@
 
   var ReflectorNode = function( mirror, camera, options ) {
 
-  	TempNode$1.call( this, 'v4' );
+  	TempNode.call( this, 'v4' );
 
   	this.mirror = mirror;
 
@@ -86314,7 +86314,7 @@
 
   };
 
-  ReflectorNode.prototype = Object.create( TempNode$1.prototype );
+  ReflectorNode.prototype = Object.create( TempNode.prototype );
   ReflectorNode.prototype.constructor = ReflectorNode;
 
   ReflectorNode.prototype.generate = function( builder, output ) {
@@ -86913,7 +86913,7 @@
 
   var RoughnessToBlinnExponentNode = function() {
 
-  	TempNode$1.call( this, 'fv1' );
+  	TempNode.call( this, 'fv1' );
 
   };
 
@@ -86931,7 +86931,7 @@
   "}"
   ].join( "\n" ) );
 
-  RoughnessToBlinnExponentNode.prototype = Object.create( TempNode$1.prototype );
+  RoughnessToBlinnExponentNode.prototype = Object.create( TempNode.prototype );
   RoughnessToBlinnExponentNode.prototype.constructor = RoughnessToBlinnExponentNode;
 
   RoughnessToBlinnExponentNode.prototype.generate = function( builder, output ) {
@@ -87392,7 +87392,7 @@
 
   var Math1Node = function( a, method ) {
 
-  	TempNode$1.call( this );
+  	TempNode.call( this );
 
   	this.a = a;
 
@@ -87425,7 +87425,7 @@
   Math1Node.NEGATE = 'negate';
   Math1Node.INVERT = 'invert';
 
-  Math1Node.prototype = Object.create( TempNode$1.prototype );
+  Math1Node.prototype = Object.create( TempNode.prototype );
   Math1Node.prototype.constructor = Math1Node;
 
   Math1Node.prototype.getType = function( builder ) {
@@ -87472,7 +87472,7 @@
 
   var Math2Node = function( a, b, method ) {
 
-  	TempNode$1.call( this );
+  	TempNode.call( this );
 
   	this.a = a;
   	this.b = b;
@@ -87491,7 +87491,7 @@
   Math2Node.CROSS = 'cross';
   Math2Node.POW = 'pow';
 
-  Math2Node.prototype = Object.create( TempNode$1.prototype );
+  Math2Node.prototype = Object.create( TempNode.prototype );
   Math2Node.prototype.constructor = Math2Node;
 
   Math2Node.prototype.getInputType = function( builder ) {
@@ -87569,7 +87569,7 @@
 
   var Math3Node = function( a, b, c, method ) {
 
-  	TempNode$1.call( this );
+  	TempNode.call( this );
 
   	this.a = a;
   	this.b = b;
@@ -87584,7 +87584,7 @@
   Math3Node.SMOOTHSTEP = 'smoothstep';
   Math3Node.FACEFORWARD = 'faceforward';
 
-  Math3Node.prototype = Object.create( TempNode$1.prototype );
+  Math3Node.prototype = Object.create( TempNode.prototype );
   Math3Node.prototype.constructor = Math3Node;
 
   Math3Node.prototype.getType = function( builder ) {
@@ -87759,7 +87759,7 @@
 
   var BlurNode = function( value, coord, radius, size ) {
 
-  	TempNode$1.call( this, 'v4' );
+  	TempNode.call( this, 'v4' );
 
   	this.requestUpdate = true;
 
@@ -87808,7 +87808,7 @@
   "}"
   ].join( "\n" ) );
 
-  BlurNode.prototype = Object.create( TempNode$1.prototype );
+  BlurNode.prototype = Object.create( TempNode.prototype );
   BlurNode.prototype.constructor = BlurNode;
 
   BlurNode.prototype.updateFrame = function( delta ) {
@@ -87874,7 +87874,7 @@
 
   var BumpNode = function( value, coord, scale ) {
 
-  	TempNode$1.call( this, 'v3' );
+  	TempNode.call( this, 'v3' );
 
   	this.value = value;
   	this.coord = coord || new UVNode();
@@ -87893,7 +87893,7 @@
   "}"
   ].join( "\n" ), null, { derivatives: true } );
 
-  BumpNode.prototype = Object.create( TempNode$1.prototype );
+  BumpNode.prototype = Object.create( TempNode.prototype );
   BumpNode.prototype.constructor = BumpNode;
 
   BumpNode.prototype.generate = function( builder, output ) {
@@ -87924,7 +87924,7 @@
 
   var ColorAdjustmentNode = function( rgb, adjustment, method ) {
 
-  	TempNode$1.call( this, 'v3' );
+  	TempNode.call( this, 'v3' );
 
   	this.rgb = rgb;
   	this.adjustment = adjustment;
@@ -87939,7 +87939,7 @@
   ColorAdjustmentNode.BRIGHTNESS = 'brightness';
   ColorAdjustmentNode.CONTRAST = 'contrast';
 
-  ColorAdjustmentNode.prototype = Object.create( TempNode$1.prototype );
+  ColorAdjustmentNode.prototype = Object.create( TempNode.prototype );
   ColorAdjustmentNode.prototype.constructor = ColorAdjustmentNode;
 
   ColorAdjustmentNode.prototype.generate = function( builder, output ) {
@@ -87995,7 +87995,7 @@
 
   var JoinNode = function( x, y, z, w ) {
 
-  	TempNode$1.call( this, 'fv1' );
+  	TempNode.call( this, 'fv1' );
 
   	this.x = x;
   	this.y = y;
@@ -88006,7 +88006,7 @@
 
   JoinNode.inputs = [ 'x', 'y', 'z', 'w' ];
 
-  JoinNode.prototype = Object.create( TempNode$1.prototype );
+  JoinNode.prototype = Object.create( TempNode.prototype );
   JoinNode.prototype.constructor = JoinNode;
 
   JoinNode.prototype.getNumElements = function() {
@@ -88069,13 +88069,13 @@
 
   var LuminanceNode = function( rgb ) {
 
-  	TempNode$1.call( this, 'fv1' );
+  	TempNode.call( this, 'fv1' );
 
   	this.rgb = rgb;
 
   };
 
-  LuminanceNode.prototype = Object.create( TempNode$1.prototype );
+  LuminanceNode.prototype = Object.create( TempNode.prototype );
   LuminanceNode.prototype.constructor = LuminanceNode;
 
   LuminanceNode.prototype.generate = function( builder, output ) {
@@ -88092,13 +88092,13 @@
 
   var NoiseNode = function( coord ) {
 
-  	TempNode$1.call( this, 'fv1' );
+  	TempNode.call( this, 'fv1' );
 
   	this.coord = coord;
 
   };
 
-  NoiseNode.prototype = Object.create( TempNode$1.prototype );
+  NoiseNode.prototype = Object.create( TempNode.prototype );
   NoiseNode.prototype.constructor = NoiseNode;
 
   NoiseNode.prototype.generate = function( builder, output ) {
@@ -88115,7 +88115,7 @@
 
   var NormalMapNode = function( value, uv, scale, normal, position ) {
 
-  	TempNode$1.call( this, 'v3' );
+  	TempNode.call( this, 'v3' );
 
   	this.value = value;
   	this.scale = scale || new FloatNode( 1 );
@@ -88125,7 +88125,7 @@
 
   };
 
-  NormalMapNode.prototype = Object.create( TempNode$1.prototype );
+  NormalMapNode.prototype = Object.create( TempNode.prototype );
   NormalMapNode.prototype.constructor = NormalMapNode;
 
   NormalMapNode.prototype.generate = function( builder, output ) {
@@ -127998,7 +127998,7 @@
   exports.NodeMaterial = NodeMaterial;
   exports.NodePass = NodePass;
   exports.RawNode = RawNode;
-  exports.TempNode = TempNode$1;
+  exports.TempNode = TempNode;
   exports.BlurNode = BlurNode;
   exports.BumpNode = BumpNode;
   exports.ColorAdjustmentNode = ColorAdjustmentNode;

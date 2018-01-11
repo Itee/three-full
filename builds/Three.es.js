@@ -83786,7 +83786,7 @@ GLNode.prototype.getType = function( builder, output ) {
  * @author sunag / http://www.sunag.com.br/
  */
 
-var TempNode$1 = function( type, params ) {
+var TempNode = function( type, params ) {
 
 	GLNode.call( this, type );
 
@@ -83797,10 +83797,10 @@ var TempNode$1 = function( type, params ) {
 
 };
 
-TempNode$1.prototype = Object.create( GLNode.prototype );
-TempNode$1.prototype.constructor = TempNode$1;
+TempNode.prototype = Object.create( GLNode.prototype );
+TempNode.prototype.constructor = TempNode;
 
-TempNode$1.prototype.build = function( builder, output, uuid, ns ) {
+TempNode.prototype.build = function( builder, output, uuid, ns ) {
 
 	output = output || this.getType( builder );
 
@@ -83855,7 +83855,7 @@ TempNode$1.prototype.build = function( builder, output, uuid, ns ) {
 
 		} else {
 
-			name = TempNode$1.prototype.generate.call( this, builder, output, uuid, data.output, ns );
+			name = TempNode.prototype.generate.call( this, builder, output, uuid, data.output, ns );
 
 			var code = this.generate( builder, type, uuid );
 
@@ -83872,19 +83872,19 @@ TempNode$1.prototype.build = function( builder, output, uuid, ns ) {
 
 };
 
-TempNode$1.prototype.isShared = function( builder, output ) {
+TempNode.prototype.isShared = function( builder, output ) {
 
 	return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
 
 };
 
-TempNode$1.prototype.isUnique = function( builder, output ) {
+TempNode.prototype.isUnique = function( builder, output ) {
 
 	return this.unique;
 
 };
 
-TempNode$1.prototype.getUuid = function( unique ) {
+TempNode.prototype.getUuid = function( unique ) {
 
 	var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
 
@@ -83894,7 +83894,7 @@ TempNode$1.prototype.getUuid = function( unique ) {
 
 };
 
-TempNode$1.prototype.getTemp = function( builder, uuid ) {
+TempNode.prototype.getTemp = function( builder, uuid ) {
 
 	uuid = uuid || this.uuid;
 
@@ -83905,7 +83905,7 @@ TempNode$1.prototype.getTemp = function( builder, uuid ) {
 
 };
 
-TempNode$1.prototype.generate = function( builder, output, uuid, type, ns ) {
+TempNode.prototype.generate = function( builder, output, uuid, type, ns ) {
 
 	if ( ! this.isShared( builder, output ) ) { console.error( "TempNode is not shared!" ); }
 
@@ -83929,10 +83929,84 @@ var FunctionNode = function( src, includesOrType, extensionsOrIncludes, keywords
 	this.isMethod = typeof includesOrType !== "string";
 	this.useKeywords = true;
 
-	TempNode$1.call( this, this.isMethod ? null : includesOrType );
+	TempNode.call( this, this.isMethod ? null : includesOrType );
 
 	if ( this.isMethod ) { this.eval( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ); }
 	else { this.eval( src, extensionsOrIncludes, keywordsOrExtensions ); }
+
+};
+
+FunctionNode.rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\((.*?)\)/i;
+FunctionNode.rProperties = /[a-z_0-9]+/ig;
+
+FunctionNode.prototype = Object.create( TempNode.prototype );
+FunctionNode.prototype.constructor = FunctionNode;
+
+FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
+	var this$1 = this;
+
+
+	src = ( src || '' ).trim();
+
+	this.includes = includes || [];
+	this.extensions = extensions || {};
+	this.keywords = keywords || {};
+
+	if ( this.isMethod ) {
+
+		var match = src.match( FunctionNode.rDeclaration );
+
+		this.inputs = [];
+
+		if ( match && match.length == 4 ) {
+
+			this.type = match[ 1 ];
+			this.name = match[ 2 ];
+
+			var inputs = match[ 3 ].match( FunctionNode.rProperties );
+
+			if ( inputs ) {
+
+				var i = 0;
+
+				while ( i < inputs.length ) {
+
+					var qualifier = inputs[ i ++ ];
+					var type, name;
+
+					if ( qualifier == 'in' || qualifier == 'out' || qualifier == 'inout' ) {
+
+						type = inputs[ i ++ ];
+
+					} else {
+
+						type = qualifier;
+						qualifier = '';
+
+					}
+
+					name = inputs[ i ++ ];
+
+					this$1.inputs.push( {
+						name : name,
+						type : type,
+						qualifier : qualifier
+					} );
+
+				}
+
+			}
+
+		} else {
+
+			this.type = '';
+			this.name = '';
+
+		}
+
+	}
+
+	this.value = src;
 
 };
 
@@ -84010,7 +84084,7 @@ var NodeLib = {
 
 var UVNode = function( index ) {
 
-	TempNode$1.call( this, 'v2', { shared: false } );
+	TempNode.call( this, 'v2', { shared: false } );
 
 	this.index = index || 0;
 
@@ -84019,7 +84093,7 @@ var UVNode = function( index ) {
 UVNode.vertexDict = [ 'uv', 'uv2' ];
 UVNode.fragmentDict = [ 'vUv', 'vUv2' ];
 
-UVNode.prototype = Object.create( TempNode$1.prototype );
+UVNode.prototype = Object.create( TempNode.prototype );
 UVNode.prototype.constructor = UVNode;
 
 UVNode.prototype.generate = function( builder, output ) {
@@ -84042,7 +84116,7 @@ UVNode.prototype.generate = function( builder, output ) {
 
 var PositionNode = function( scope ) {
 
-	TempNode$1.call( this, 'v3' );
+	TempNode.call( this, 'v3' );
 
 	this.scope = scope || PositionNode.LOCAL;
 
@@ -84053,7 +84127,7 @@ PositionNode.WORLD = 'world';
 PositionNode.VIEW = 'view';
 PositionNode.PROJECTION = 'projection';
 
-PositionNode.prototype = Object.create( TempNode$1.prototype );
+PositionNode.prototype = Object.create( TempNode.prototype );
 PositionNode.prototype.constructor = PositionNode;
 
 PositionNode.prototype.getType = function( builder ) {
@@ -84130,7 +84204,7 @@ PositionNode.prototype.generate = function( builder, output ) {
 
 var NormalNode = function( scope ) {
 
-	TempNode$1.call( this, 'v3' );
+	TempNode.call( this, 'v3' );
 
 	this.scope = scope || NormalNode.LOCAL;
 
@@ -84140,7 +84214,7 @@ NormalNode.LOCAL = 'local';
 NormalNode.WORLD = 'world';
 NormalNode.VIEW = 'view';
 
-NormalNode.prototype = Object.create( TempNode$1.prototype );
+NormalNode.prototype = Object.create( TempNode.prototype );
 NormalNode.prototype.constructor = NormalNode;
 
 NormalNode.prototype.isShared = function( builder ) {
@@ -84200,11 +84274,11 @@ var InputNode = function( type, params ) {
 	params = params || {};
 	params.shared = params.shared !== undefined ? params.shared : false;
 
-	TempNode$1.call( this, type, params );
+	TempNode.call( this, type, params );
 
 };
 
-InputNode.prototype = Object.create( TempNode$1.prototype );
+InputNode.prototype = Object.create( TempNode.prototype );
 InputNode.prototype.constructor = InputNode;
 
 InputNode.prototype.generate = function( builder, output, uuid, type, ns, needsUpdate ) {
@@ -84299,7 +84373,7 @@ TimerNode.prototype.updateFrame = function( delta ) {
 
 var ConstNode = function( src, useDefine ) {
 
-	TempNode$1.call( this );
+	TempNode.call( this );
 
 	this.eval( src || ConstNode.PI, useDefine );
 
@@ -84312,7 +84386,7 @@ ConstNode.RECIPROCAL_PI2 = 'RECIPROCAL_PI2';
 ConstNode.LOG2 = 'LOG2';
 ConstNode.EPSILON = 'EPSILON';
 
-ConstNode.prototype = Object.create( TempNode$1.prototype );
+ConstNode.prototype = Object.create( TempNode.prototype );
 ConstNode.prototype.constructor = ConstNode;
 
 ConstNode.prototype.getType = function( builder ) {
@@ -84549,12 +84623,6 @@ NodeLib.add( new FunctionNode( [
  */
 
 // Fix circular dependency, see #2
-FunctionNode.rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\((.*?)\)/i;
-FunctionNode.rProperties = /[a-z_0-9]+/ig;
-
-FunctionNode.prototype = Object.create( TempNode.prototype );
-FunctionNode.prototype.constructor = FunctionNode;
-
 FunctionNode.prototype.isShared = function( builder, output ) {
 
 	return ! this.isMethod;
@@ -84674,74 +84742,6 @@ FunctionNode.prototype.generate = function( builder, output ) {
 
 };
 
-FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
-	var this$1 = this;
-
-
-	src = ( src || '' ).trim();
-
-	this.includes = includes || [];
-	this.extensions = extensions || {};
-	this.keywords = keywords || {};
-
-	if ( this.isMethod ) {
-
-		var match = src.match( FunctionNode.rDeclaration );
-
-		this.inputs = [];
-
-		if ( match && match.length == 4 ) {
-
-			this.type = match[ 1 ];
-			this.name = match[ 2 ];
-
-			var inputs = match[ 3 ].match( FunctionNode.rProperties );
-
-			if ( inputs ) {
-
-				var i = 0;
-
-				while ( i < inputs.length ) {
-
-					var qualifier = inputs[ i ++ ];
-					var type, name;
-
-					if ( qualifier == 'in' || qualifier == 'out' || qualifier == 'inout' ) {
-
-						type = inputs[ i ++ ];
-
-					} else {
-
-						type = qualifier;
-						qualifier = '';
-
-					}
-
-					name = inputs[ i ++ ];
-
-					this$1.inputs.push( {
-						name : name,
-						type : type,
-						qualifier : qualifier
-					} );
-
-				}
-
-			}
-
-		} else {
-
-			this.type = '';
-			this.name = '';
-
-		}
-
-	}
-
-	this.value = src;
-
-};
-
 /**
  * @author [Tristan Valcke]{@link https://github.com/Itee}
  * @author sunag / http://www.sunag.com.br/
@@ -84754,7 +84754,7 @@ FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
 
 var CameraNode = function( scope, camera ) {
 
-	TempNode$1.call( this, 'v3' );
+	TempNode.call( this, 'v3' );
 
 	this.setScope( scope || CameraNode.POSITION );
 	this.setCamera( camera );
@@ -84776,7 +84776,7 @@ CameraNode.POSITION = 'position';
 CameraNode.DEPTH = 'depth';
 CameraNode.TO_VERTEX = 'toVertex';
 
-CameraNode.prototype = Object.create( TempNode$1.prototype );
+CameraNode.prototype = Object.create( TempNode.prototype );
 CameraNode.prototype.constructor = CameraNode;
 
 CameraNode.prototype.setCamera = function( camera ) {
@@ -84904,7 +84904,7 @@ CameraNode.prototype.updateFrame = function( delta ) {
 
 var ColorsNode = function( index ) {
 
-	TempNode$1.call( this, 'v4', { shared: false } );
+	TempNode.call( this, 'v4', { shared: false } );
 
 	this.index = index || 0;
 
@@ -84913,7 +84913,7 @@ var ColorsNode = function( index ) {
 ColorsNode.vertexDict = [ 'color', 'color2' ];
 ColorsNode.fragmentDict = [ 'vColor', 'vColor2' ];
 
-ColorsNode.prototype = Object.create( TempNode$1.prototype );
+ColorsNode.prototype = Object.create( TempNode.prototype );
 ColorsNode.prototype.constructor = ColorsNode;
 
 ColorsNode.prototype.generate = function( builder, output ) {
@@ -84936,11 +84936,11 @@ ColorsNode.prototype.generate = function( builder, output ) {
 
 var LightNode = function() {
 
-	TempNode$1.call( this, 'v3', { shared: false } );
+	TempNode.call( this, 'v3', { shared: false } );
 
 };
 
-LightNode.prototype = Object.create( TempNode$1.prototype );
+LightNode.prototype = Object.create( TempNode.prototype );
 LightNode.prototype.constructor = LightNode;
 
 LightNode.prototype.generate = function( builder, output ) {
@@ -84965,7 +84965,7 @@ LightNode.prototype.generate = function( builder, output ) {
 
 var ReflectNode = function( scope ) {
 
-	TempNode$1.call( this, 'v3', { unique: true } );
+	TempNode.call( this, 'v3', { unique: true } );
 
 	this.scope = scope || ReflectNode.CUBE;
 
@@ -84975,7 +84975,7 @@ ReflectNode.CUBE = 'cube';
 ReflectNode.SPHERE = 'sphere';
 ReflectNode.VECTOR = 'vector';
 
-ReflectNode.prototype = Object.create( TempNode$1.prototype );
+ReflectNode.prototype = Object.create( TempNode.prototype );
 ReflectNode.prototype.constructor = ReflectNode;
 
 ReflectNode.prototype.getType = function( builder ) {
@@ -85034,13 +85034,13 @@ ReflectNode.prototype.generate = function( builder, output ) {
 
 var ScreenUVNode = function( resolution ) {
 
-	TempNode$1.call( this, 'v2' );
+	TempNode.call( this, 'v2' );
 
 	this.resolution = resolution;
 
 };
 
-ScreenUVNode.prototype = Object.create( TempNode$1.prototype );
+ScreenUVNode.prototype = Object.create( TempNode.prototype );
 ScreenUVNode.prototype.constructor = ScreenUVNode;
 
 ScreenUVNode.prototype.generate = function( builder, output ) {
@@ -85109,13 +85109,13 @@ AttributeNode.prototype.generate = function( builder, output ) {
 
 var FunctionCallNode = function( func, inputs ) {
 
-	TempNode$1.call( this );
+	TempNode.call( this );
 
 	this.setFunction( func, inputs );
 
 };
 
-FunctionCallNode.prototype = Object.create( TempNode$1.prototype );
+FunctionCallNode.prototype = Object.create( TempNode.prototype );
 FunctionCallNode.prototype.constructor = FunctionCallNode;
 
 FunctionCallNode.prototype.setFunction = function( func, inputs ) {
@@ -86172,7 +86172,7 @@ Matrix4Node.prototype.constructor = Matrix4Node;
 
 var OperatorNode = function( a, b, op ) {
 
-	TempNode$1.call( this );
+	TempNode.call( this );
 
 	this.a = a;
 	this.b = b;
@@ -86185,7 +86185,7 @@ OperatorNode.SUB = '-';
 OperatorNode.MUL = '*';
 OperatorNode.DIV = '/';
 
-OperatorNode.prototype = Object.create( TempNode$1.prototype );
+OperatorNode.prototype = Object.create( TempNode.prototype );
 OperatorNode.prototype.constructor = OperatorNode;
 
 OperatorNode.prototype.getType = function( builder ) {
@@ -86293,7 +86293,7 @@ TextureNode.prototype.generate = function( builder, output ) {
 
 var ReflectorNode = function( mirror, camera, options ) {
 
-	TempNode$1.call( this, 'v4' );
+	TempNode.call( this, 'v4' );
 
 	this.mirror = mirror;
 
@@ -86308,7 +86308,7 @@ var ReflectorNode = function( mirror, camera, options ) {
 
 };
 
-ReflectorNode.prototype = Object.create( TempNode$1.prototype );
+ReflectorNode.prototype = Object.create( TempNode.prototype );
 ReflectorNode.prototype.constructor = ReflectorNode;
 
 ReflectorNode.prototype.generate = function( builder, output ) {
@@ -86907,7 +86907,7 @@ NodeMaterial.addShortcuts( SpriteNodeMaterial.prototype, 'node',
 
 var RoughnessToBlinnExponentNode = function() {
 
-	TempNode$1.call( this, 'fv1' );
+	TempNode.call( this, 'fv1' );
 
 };
 
@@ -86925,7 +86925,7 @@ RoughnessToBlinnExponentNode.getSpecularMIPLevel = new FunctionNode( [
 "}"
 ].join( "\n" ) );
 
-RoughnessToBlinnExponentNode.prototype = Object.create( TempNode$1.prototype );
+RoughnessToBlinnExponentNode.prototype = Object.create( TempNode.prototype );
 RoughnessToBlinnExponentNode.prototype.constructor = RoughnessToBlinnExponentNode;
 
 RoughnessToBlinnExponentNode.prototype.generate = function( builder, output ) {
@@ -87386,7 +87386,7 @@ NodeMaterial.addShortcuts( StandardNodeMaterial.prototype, 'node',
 
 var Math1Node = function( a, method ) {
 
-	TempNode$1.call( this );
+	TempNode.call( this );
 
 	this.a = a;
 
@@ -87419,7 +87419,7 @@ Math1Node.LENGTH = 'length';
 Math1Node.NEGATE = 'negate';
 Math1Node.INVERT = 'invert';
 
-Math1Node.prototype = Object.create( TempNode$1.prototype );
+Math1Node.prototype = Object.create( TempNode.prototype );
 Math1Node.prototype.constructor = Math1Node;
 
 Math1Node.prototype.getType = function( builder ) {
@@ -87466,7 +87466,7 @@ Math1Node.prototype.generate = function( builder, output ) {
 
 var Math2Node = function( a, b, method ) {
 
-	TempNode$1.call( this );
+	TempNode.call( this );
 
 	this.a = a;
 	this.b = b;
@@ -87485,7 +87485,7 @@ Math2Node.DOT = 'dot';
 Math2Node.CROSS = 'cross';
 Math2Node.POW = 'pow';
 
-Math2Node.prototype = Object.create( TempNode$1.prototype );
+Math2Node.prototype = Object.create( TempNode.prototype );
 Math2Node.prototype.constructor = Math2Node;
 
 Math2Node.prototype.getInputType = function( builder ) {
@@ -87563,7 +87563,7 @@ Math2Node.prototype.generate = function( builder, output ) {
 
 var Math3Node = function( a, b, c, method ) {
 
-	TempNode$1.call( this );
+	TempNode.call( this );
 
 	this.a = a;
 	this.b = b;
@@ -87578,7 +87578,7 @@ Math3Node.REFRACT = 'refract';
 Math3Node.SMOOTHSTEP = 'smoothstep';
 Math3Node.FACEFORWARD = 'faceforward';
 
-Math3Node.prototype = Object.create( TempNode$1.prototype );
+Math3Node.prototype = Object.create( TempNode.prototype );
 Math3Node.prototype.constructor = Math3Node;
 
 Math3Node.prototype.getType = function( builder ) {
@@ -87753,7 +87753,7 @@ NodePass.prototype.build = function() {
 
 var BlurNode = function( value, coord, radius, size ) {
 
-	TempNode$1.call( this, 'v4' );
+	TempNode.call( this, 'v4' );
 
 	this.requestUpdate = true;
 
@@ -87802,7 +87802,7 @@ BlurNode.fBlurY = new FunctionNode( [
 "}"
 ].join( "\n" ) );
 
-BlurNode.prototype = Object.create( TempNode$1.prototype );
+BlurNode.prototype = Object.create( TempNode.prototype );
 BlurNode.prototype.constructor = BlurNode;
 
 BlurNode.prototype.updateFrame = function( delta ) {
@@ -87868,7 +87868,7 @@ BlurNode.prototype.generate = function( builder, output ) {
 
 var BumpNode = function( value, coord, scale ) {
 
-	TempNode$1.call( this, 'v3' );
+	TempNode.call( this, 'v3' );
 
 	this.value = value;
 	this.coord = coord || new UVNode();
@@ -87887,7 +87887,7 @@ BumpNode.fBumpToNormal = new FunctionNode( [
 "}"
 ].join( "\n" ), null, { derivatives: true } );
 
-BumpNode.prototype = Object.create( TempNode$1.prototype );
+BumpNode.prototype = Object.create( TempNode.prototype );
 BumpNode.prototype.constructor = BumpNode;
 
 BumpNode.prototype.generate = function( builder, output ) {
@@ -87918,7 +87918,7 @@ BumpNode.prototype.generate = function( builder, output ) {
 
 var ColorAdjustmentNode = function( rgb, adjustment, method ) {
 
-	TempNode$1.call( this, 'v3' );
+	TempNode.call( this, 'v3' );
 
 	this.rgb = rgb;
 	this.adjustment = adjustment;
@@ -87933,7 +87933,7 @@ ColorAdjustmentNode.VIBRANCE = 'vibrance';
 ColorAdjustmentNode.BRIGHTNESS = 'brightness';
 ColorAdjustmentNode.CONTRAST = 'contrast';
 
-ColorAdjustmentNode.prototype = Object.create( TempNode$1.prototype );
+ColorAdjustmentNode.prototype = Object.create( TempNode.prototype );
 ColorAdjustmentNode.prototype.constructor = ColorAdjustmentNode;
 
 ColorAdjustmentNode.prototype.generate = function( builder, output ) {
@@ -87989,7 +87989,7 @@ ColorAdjustmentNode.prototype.generate = function( builder, output ) {
 
 var JoinNode = function( x, y, z, w ) {
 
-	TempNode$1.call( this, 'fv1' );
+	TempNode.call( this, 'fv1' );
 
 	this.x = x;
 	this.y = y;
@@ -88000,7 +88000,7 @@ var JoinNode = function( x, y, z, w ) {
 
 JoinNode.inputs = [ 'x', 'y', 'z', 'w' ];
 
-JoinNode.prototype = Object.create( TempNode$1.prototype );
+JoinNode.prototype = Object.create( TempNode.prototype );
 JoinNode.prototype.constructor = JoinNode;
 
 JoinNode.prototype.getNumElements = function() {
@@ -88063,13 +88063,13 @@ JoinNode.prototype.generate = function( builder, output ) {
 
 var LuminanceNode = function( rgb ) {
 
-	TempNode$1.call( this, 'fv1' );
+	TempNode.call( this, 'fv1' );
 
 	this.rgb = rgb;
 
 };
 
-LuminanceNode.prototype = Object.create( TempNode$1.prototype );
+LuminanceNode.prototype = Object.create( TempNode.prototype );
 LuminanceNode.prototype.constructor = LuminanceNode;
 
 LuminanceNode.prototype.generate = function( builder, output ) {
@@ -88086,13 +88086,13 @@ LuminanceNode.prototype.generate = function( builder, output ) {
 
 var NoiseNode = function( coord ) {
 
-	TempNode$1.call( this, 'fv1' );
+	TempNode.call( this, 'fv1' );
 
 	this.coord = coord;
 
 };
 
-NoiseNode.prototype = Object.create( TempNode$1.prototype );
+NoiseNode.prototype = Object.create( TempNode.prototype );
 NoiseNode.prototype.constructor = NoiseNode;
 
 NoiseNode.prototype.generate = function( builder, output ) {
@@ -88109,7 +88109,7 @@ NoiseNode.prototype.generate = function( builder, output ) {
 
 var NormalMapNode = function( value, uv, scale, normal, position ) {
 
-	TempNode$1.call( this, 'v3' );
+	TempNode.call( this, 'v3' );
 
 	this.value = value;
 	this.scale = scale || new FloatNode( 1 );
@@ -88119,7 +88119,7 @@ var NormalMapNode = function( value, uv, scale, normal, position ) {
 
 };
 
-NormalMapNode.prototype = Object.create( TempNode$1.prototype );
+NormalMapNode.prototype = Object.create( TempNode.prototype );
 NormalMapNode.prototype.constructor = NormalMapNode;
 
 NormalMapNode.prototype.generate = function( builder, output ) {
@@ -127832,4 +127832,4 @@ VideoTexture.prototype = Object.assign( Object.create( Texture$1.prototype ), {
 
 // Made by ES6 Convertor
 
-export { CCDIKSolver, CCDIKHelper, MMDPhysics, MMDPhysicsHelper, AnimationClipCreator, BufferGeometryUtils, CinematicCamera, Car, DeviceOrientationControls, DragControls, EditorControls, FirstPersonControls, FlyControls, OrbitControls, OrthographicTrackballControls, PointerLockControls, TrackballControls, TransformGizmo, TransformGizmoTranslate, TransformGizmoRotate, TransformGizmoScale, TransformControls, VRControls, ConvexObjectBreaker, GrannyKnot, HeartCurve, VivianiCurve, KnotCurve, HelixCurve, TrefoilKnot, TorusKnot, CinquefoilKnot, TrefoilPolynomialKnot, FigureEightPolynomialKnot, DecoratedTorusKnot4a, DecoratedTorusKnot4b, DecoratedTorusKnot5a, DecoratedTorusKnot5c, NURBSCurve, NURBSSurface, NURBSUtils, Detector, AnaglyphEffect, AsciiEffect, OutlineEffect, ParallaxBarrierEffect, PeppersGhostEffect, StereoEffect, VREffect, GLTFExporter, MMDExporter, OBJExporter, STLBinaryExporter, STLExporter, TypedGeometryExporter, ConvexGeometry, ConvexBufferGeometry, DecalGeometry, hilbert2D, hilbert3D, TeapotBufferGeometry, GPUComputationRenderer, GPUParticleSystem, GPUParticleContainer, Gyroscope, ImprovedNoise, ThreeMFLoader, AMFLoader, AssimpJSONLoader, AssimpLoader, AWDLoader, BabylonLoader, BinaryLoader, BVHLoader, ColladaLoader, DDSLoader, LegacyGLTFLoader, EXRLoader, FBXLoader, GCodeLoader, GLTFLoader, HDRCubeTextureLoader, KMZLoader, LoaderSupport, MD2Loader, MMDLoader, MMDAudioManager, MMDGrantSolver, MMDHelper, MTLLoader, OBJLoader, OBJLoader2, PCDLoader, PDBLoader, PlayCanvasLoader, PLYLoader, PRWMLoader, PVRLoader, HDRLoader, RGBELoader, STLLoader, SVGLoader, TDSLoader, TGALoader, TTFLoader, UTF8Loader, VRMLLoader, VTKLoader, MarchingCubes, ColorConverter, Lut, MD2Character, MD2CharacterComplex, BufferSubdivisionModifier, ExplodeModifier, SimplifyModifier, SubdivisionModifier, TessellateModifier, MorphAnimMesh, MorphBlendMesh, CameraNode, ColorsNode, LightNode, NormalNode, PositionNode, ReflectNode, ScreenUVNode, UVNode, AttributeNode, ConstNode, FunctionCallNode, FunctionNode, GLNode, InputNode, ColorNode, CubeTextureNode, FloatNode, IntNode, Matrix4Node, ReflectorNode, ScreenNode, TextureNode, Vector2Node, Vector3Node, Vector4Node, PhongNode, PhongNodeMaterial, SpriteNode, SpriteNodeMaterial, StandardNode, StandardNodeMaterial, Math1Node, Math2Node, Math3Node, OperatorNode, NodeBuilder, NodeLib, NodeMaterial, NodePass, RawNode, TempNode$1 as TempNode, BlurNode, BumpNode, ColorAdjustmentNode, JoinNode, LuminanceNode, NoiseNode, NormalMapNode, ResolutionNode, RoughnessToBlinnExponentNode, SwitchNode, TimerNode, UVTransformNode, VelocityNode, VarNode, Reflector, ReflectorRTT, Refractor, ShadowMesh, Sky, Water, Ocean, Octree, OctreeObjectData, OctreeNode, PMREMCubeUVPacker, PMREMGenerator, AdaptiveToneMappingPass, BloomPass, BokehPass, ClearPass, CubeTexturePass, DotScreenPass, EffectComposer, FilmPass, GlitchPass, MaskPass, ClearMaskPass, OutlinePass, Pass, RenderPass, SAOPass, SavePass, ShaderPass, SMAAPass, SSAARenderPass, SSAOPass, TAARenderPass, TexturePass, UnrealBloomPass, PRNG, QuickHull, SpriteCanvasMaterial, CanvasRenderer$1 as CanvasRenderer, Projector, GeometryUtils, BoxGeometry as CubeGeometry, Face4, LineStrip, LinePieces, MeshFaceMaterial, MultiMaterial, PointCloud, Particle, ParticleSystem, PointCloudMaterial, ParticleBasicMaterial, ParticleSystemMaterial, Vertex, DynamicBufferAttribute, Int8Attribute, Uint8Attribute, Uint8ClampedAttribute, Int16Attribute, Uint16Attribute, Int32Attribute, Uint32Attribute, Float32Attribute, Float64Attribute, ClosedSplineCurve3, SplineCurve3, Spline, AxisHelper, BoundingBoxHelper, EdgesHelper, WireframeHelper, XHRLoader, BinaryTextureLoader, ImageUtils, CSS2DObject, CSS2DRenderer, CSS3DObject, CSS3DSprite, CSS3DRenderer, RenderableObject, RenderableFace, RenderableVertex, RenderableLine, RenderableSprite, RaytracingRenderer, SoftwareRenderer, SVGObject, SVGRenderer, WebGLDeferredRenderer, ShaderGodRays, BasicShader, BleachBypassShader, BlendShader, BokehShader, BrightnessContrastShader, ColorCorrectionShader, ColorifyShader, ConvolutionShader, CopyShader, DepthLimitedBlurShader, BlurShaderUtils, DigitalGlitch, DOFMipMapShader, DotScreenShader, FilmShader, FocusShader, FreiChenShader, FresnelShader, FXAAShader, GammaCorrectionShader, HorizontalBlurShader, HorizontalTiltShiftShader, HueSaturationShader, KaleidoShader, LuminosityHighPassShader, LuminosityShader, MirrorShader, NormalMapShader, ParallaxShader, RGBShiftShader, SAOShader, SepiaShader, SMAAShader, SobelOperatorShader, SSAOShader, TechnicolorShader, ToneMapShader, TriangleBlurShader, UnpackDepthRGBAShader, VerticalBlurShader, VerticalTiltShiftShader, VignetteShader, WaterRefractionShader, ShaderSkin, ShaderTerrain, ShaderToon, SimplexNoise, TimelinerController, TypedArrayUtils, UCSCharacter, ShadowMapViewer, UVsDebug, VolumeSlice, DaydreamController, GearVRController, PaintViveController, ViveController, WebVR, AnimationAction, AnimationClip$1 as AnimationClip, AnimationMixer, AnimationObjectGroup, AnimationUtils, KeyframeTrack, PropertyBinding$1 as PropertyBinding, PropertyMixer, BooleanKeyframeTrack, ColorKeyframeTrack, NumberKeyframeTrack$1 as NumberKeyframeTrack, QuaternionKeyframeTrack$1 as QuaternionKeyframeTrack, StringKeyframeTrack, VectorKeyframeTrack$1 as VectorKeyframeTrack, Audio, AudioAnalyser, AudioContext, AudioListener, PositionalAudio, ArrayCamera, Camera, CubeCamera, OrthographicCamera, PerspectiveCamera, StereoCamera, REVISION, MOUSE, CullFaceNone, CullFaceBack, CullFaceFront, CullFaceFrontBack, FrontFaceDirectionCW, FrontFaceDirectionCCW, BasicShadowMap, PCFShadowMap, PCFSoftShadowMap, FrontSide, BackSide, DoubleSide, FlatShading, SmoothShading, NoColors, FaceColors, VertexColors, NoBlending, NormalBlending, AdditiveBlending, SubtractiveBlending, MultiplyBlending, CustomBlending, AddEquation, SubtractEquation, ReverseSubtractEquation, MinEquation, MaxEquation, ZeroFactor, OneFactor, SrcColorFactor, OneMinusSrcColorFactor, SrcAlphaFactor, OneMinusSrcAlphaFactor, DstAlphaFactor, OneMinusDstAlphaFactor, DstColorFactor, OneMinusDstColorFactor, SrcAlphaSaturateFactor, NeverDepth, AlwaysDepth, LessDepth, LessEqualDepth, EqualDepth, GreaterEqualDepth, GreaterDepth, NotEqualDepth, MultiplyOperation, MixOperation, AddOperation, NoToneMapping, LinearToneMapping, ReinhardToneMapping, Uncharted2ToneMapping, CineonToneMapping, UVMapping, CubeReflectionMapping, CubeRefractionMapping, EquirectangularReflectionMapping, EquirectangularRefractionMapping, SphericalReflectionMapping, CubeUVReflectionMapping, CubeUVRefractionMapping, RepeatWrapping, ClampToEdgeWrapping, MirroredRepeatWrapping, NearestFilter, NearestMipMapNearestFilter, NearestMipMapLinearFilter, LinearFilter, LinearMipMapNearestFilter, LinearMipMapLinearFilter, UnsignedByteType, ByteType, ShortType, UnsignedShortType, IntType, UnsignedIntType, FloatType, HalfFloatType, UnsignedShort4444Type, UnsignedShort5551Type, UnsignedShort565Type, UnsignedInt248Type, AlphaFormat, RGBFormat, RGBAFormat, LuminanceFormat, LuminanceAlphaFormat, RGBEFormat, DepthFormat, DepthStencilFormat, RGB_S3TC_DXT1_Format, RGBA_S3TC_DXT1_Format, RGBA_S3TC_DXT3_Format, RGBA_S3TC_DXT5_Format, RGB_PVRTC_4BPPV1_Format, RGB_PVRTC_2BPPV1_Format, RGBA_PVRTC_4BPPV1_Format, RGBA_PVRTC_2BPPV1_Format, RGB_ETC1_Format, LoopOnce, LoopRepeat, LoopPingPong, InterpolateDiscrete, InterpolateLinear, InterpolateSmooth, ZeroCurvatureEnding, ZeroSlopeEnding, WrapAroundEnding, TrianglesDrawMode, TriangleStripDrawMode, TriangleFanDrawMode, LinearEncoding, sRGBEncoding, GammaEncoding, RGBEEncoding, LogLuvEncoding, RGBM7Encoding, RGBM16Encoding, RGBDEncoding, BasicDepthPacking, RGBADepthPacking, Float64BufferAttribute, Float32BufferAttribute, Uint32BufferAttribute, Int32BufferAttribute, Uint16BufferAttribute, Int16BufferAttribute, Uint8ClampedBufferAttribute, Uint8BufferAttribute, Int8BufferAttribute, BufferAttribute, BufferGeometry, Clock, DirectGeometry, EventDispatcher, Face3, Geometry, InstancedBufferAttribute, InstancedBufferGeometry, InstancedInterleavedBuffer, InterleavedBuffer, InterleavedBufferAttribute, Layers, Object3D, Raycaster, Uniform, Curve, CurvePath, Font, CatmullRom, QuadraticBezier, CubicBezier, Path, Shape, ShapePath, ArcCurve, CatmullRomCurve3, CubicBezierCurve, CubicBezierCurve3, EllipseCurve, LineCurve, LineCurve3, QuadraticBezierCurve, QuadraticBezierCurve3, SplineCurve, Earcut, ImmediateRenderObject, SceneUtils, ShapeUtils, BoxGeometry, BoxBufferGeometry, CircleGeometry, CircleBufferGeometry, ConeGeometry, ConeBufferGeometry, CylinderGeometry, CylinderBufferGeometry, DodecahedronGeometry, DodecahedronBufferGeometry, EdgesGeometry, ExtrudeGeometry, ExtrudeBufferGeometry, WireframeGeometry, ParametricGeometry, ParametricBufferGeometry, TetrahedronGeometry, TetrahedronBufferGeometry, OctahedronGeometry, OctahedronBufferGeometry, IcosahedronGeometry, IcosahedronBufferGeometry, PolyhedronGeometry, PolyhedronBufferGeometry, TubeGeometry, TubeBufferGeometry, TorusKnotGeometry, TorusKnotBufferGeometry, TorusGeometry, TorusBufferGeometry, TextGeometry, TextBufferGeometry, SphereGeometry, SphereBufferGeometry, RingGeometry, RingBufferGeometry, PlaneGeometry, PlaneBufferGeometry, LatheGeometry, LatheBufferGeometry, ShapeGeometry, ShapeBufferGeometry, ArrowHelper, AxesHelper, Box3Helper, BoxHelper, CameraHelper, DirectionalLightHelper, FaceNormalsHelper, GridHelper, HemisphereLightHelper, PlaneHelper, PointLightHelper, PolarGridHelper, RectAreaLightHelper, SkeletonHelper, SpotLightHelper, VertexNormalsHelper, AmbientLight, DirectionalLight, DirectionalLightShadow, HemisphereLight, Light, LightShadow, PointLight, RectAreaLight, SpotLight, SpotLightShadow, AnimationLoader, AudioLoader, BufferGeometryLoader, Cache, CompressedTextureLoader, CubeTextureLoader, DataTextureLoader, FileLoader, FontLoader, ImageBitmapLoader, ImageLoader, JSONLoader, Loader$1 as Loader, LoaderUtils, DefaultLoadingManager, LoadingManager, MaterialLoader, ObjectLoader, TextureLoader, LineBasicMaterial, LineDashedMaterial, Material, ShadowMaterial, SpriteMaterial, RawShaderMaterial, ShaderMaterial, PointsMaterial, MeshPhysicalMaterial, MeshStandardMaterial, MeshPhongMaterial, MeshToonMaterial, MeshNormalMaterial, MeshLambertMaterial, MeshDepthMaterial, MeshDistanceMaterial, MeshBasicMaterial, Box2, Box3, Color, Cylindrical, Euler, Frustum, Interpolant$1 as Interpolant, CubicInterpolant, DiscreteInterpolant, LinearInterpolant, QuaternionLinearInterpolant, Line3, _Math, Matrix3$1 as Matrix3, Matrix4, Plane, Quaternion, Ray, Sphere, Spherical, Triangle, Vector2$1 as Vector2, Vector3$1 as Vector3, Vector4$1 as Vector4, Bone, Group, LensFlare, Line, LineLoop, LineSegments, LOD, Mesh, Points, Skeleton, SkinnedMesh, Sprite, ShaderChunk, ShaderLib, UniformsLib, UniformsUtils, WebGLAttributes, WebGLBackground, WebGLBufferRenderer, WebGLCapabilities, WebGLClipping, WebGLExtensions, WebGLFlareRenderer, WebGLGeometries, WebGLIndexedBufferRenderer, WebGLLights, WebGLMorphtargets, WebGLObjects, WebGLProgram, WebGLPrograms, WebGLProperties, WebGLRenderLists, WebGLShader, WebGLShadowMap, WebGLSpriteRenderer, WebGLState, WebGLTextures, WebGLUniforms, WebGLUtils, WebGL2Renderer, WebGLRenderer, WebGLRenderTarget, WebGLRenderTargetCube, WebVRManager, Fog, FogExp2, Scene, CanvasTexture, CompressedTexture, CubeTexture, DataTexture, DepthTexture, Texture$1 as Texture, VideoTexture, arrayMin, arrayMax };
+export { CCDIKSolver, CCDIKHelper, MMDPhysics, MMDPhysicsHelper, AnimationClipCreator, BufferGeometryUtils, CinematicCamera, Car, DeviceOrientationControls, DragControls, EditorControls, FirstPersonControls, FlyControls, OrbitControls, OrthographicTrackballControls, PointerLockControls, TrackballControls, TransformGizmo, TransformGizmoTranslate, TransformGizmoRotate, TransformGizmoScale, TransformControls, VRControls, ConvexObjectBreaker, GrannyKnot, HeartCurve, VivianiCurve, KnotCurve, HelixCurve, TrefoilKnot, TorusKnot, CinquefoilKnot, TrefoilPolynomialKnot, FigureEightPolynomialKnot, DecoratedTorusKnot4a, DecoratedTorusKnot4b, DecoratedTorusKnot5a, DecoratedTorusKnot5c, NURBSCurve, NURBSSurface, NURBSUtils, Detector, AnaglyphEffect, AsciiEffect, OutlineEffect, ParallaxBarrierEffect, PeppersGhostEffect, StereoEffect, VREffect, GLTFExporter, MMDExporter, OBJExporter, STLBinaryExporter, STLExporter, TypedGeometryExporter, ConvexGeometry, ConvexBufferGeometry, DecalGeometry, hilbert2D, hilbert3D, TeapotBufferGeometry, GPUComputationRenderer, GPUParticleSystem, GPUParticleContainer, Gyroscope, ImprovedNoise, ThreeMFLoader, AMFLoader, AssimpJSONLoader, AssimpLoader, AWDLoader, BabylonLoader, BinaryLoader, BVHLoader, ColladaLoader, DDSLoader, LegacyGLTFLoader, EXRLoader, FBXLoader, GCodeLoader, GLTFLoader, HDRCubeTextureLoader, KMZLoader, LoaderSupport, MD2Loader, MMDLoader, MMDAudioManager, MMDGrantSolver, MMDHelper, MTLLoader, OBJLoader, OBJLoader2, PCDLoader, PDBLoader, PlayCanvasLoader, PLYLoader, PRWMLoader, PVRLoader, HDRLoader, RGBELoader, STLLoader, SVGLoader, TDSLoader, TGALoader, TTFLoader, UTF8Loader, VRMLLoader, VTKLoader, MarchingCubes, ColorConverter, Lut, MD2Character, MD2CharacterComplex, BufferSubdivisionModifier, ExplodeModifier, SimplifyModifier, SubdivisionModifier, TessellateModifier, MorphAnimMesh, MorphBlendMesh, CameraNode, ColorsNode, LightNode, NormalNode, PositionNode, ReflectNode, ScreenUVNode, UVNode, AttributeNode, ConstNode, FunctionCallNode, FunctionNode, GLNode, InputNode, ColorNode, CubeTextureNode, FloatNode, IntNode, Matrix4Node, ReflectorNode, ScreenNode, TextureNode, Vector2Node, Vector3Node, Vector4Node, PhongNode, PhongNodeMaterial, SpriteNode, SpriteNodeMaterial, StandardNode, StandardNodeMaterial, Math1Node, Math2Node, Math3Node, OperatorNode, NodeBuilder, NodeLib, NodeMaterial, NodePass, RawNode, TempNode, BlurNode, BumpNode, ColorAdjustmentNode, JoinNode, LuminanceNode, NoiseNode, NormalMapNode, ResolutionNode, RoughnessToBlinnExponentNode, SwitchNode, TimerNode, UVTransformNode, VelocityNode, VarNode, Reflector, ReflectorRTT, Refractor, ShadowMesh, Sky, Water, Ocean, Octree, OctreeObjectData, OctreeNode, PMREMCubeUVPacker, PMREMGenerator, AdaptiveToneMappingPass, BloomPass, BokehPass, ClearPass, CubeTexturePass, DotScreenPass, EffectComposer, FilmPass, GlitchPass, MaskPass, ClearMaskPass, OutlinePass, Pass, RenderPass, SAOPass, SavePass, ShaderPass, SMAAPass, SSAARenderPass, SSAOPass, TAARenderPass, TexturePass, UnrealBloomPass, PRNG, QuickHull, SpriteCanvasMaterial, CanvasRenderer$1 as CanvasRenderer, Projector, GeometryUtils, BoxGeometry as CubeGeometry, Face4, LineStrip, LinePieces, MeshFaceMaterial, MultiMaterial, PointCloud, Particle, ParticleSystem, PointCloudMaterial, ParticleBasicMaterial, ParticleSystemMaterial, Vertex, DynamicBufferAttribute, Int8Attribute, Uint8Attribute, Uint8ClampedAttribute, Int16Attribute, Uint16Attribute, Int32Attribute, Uint32Attribute, Float32Attribute, Float64Attribute, ClosedSplineCurve3, SplineCurve3, Spline, AxisHelper, BoundingBoxHelper, EdgesHelper, WireframeHelper, XHRLoader, BinaryTextureLoader, ImageUtils, CSS2DObject, CSS2DRenderer, CSS3DObject, CSS3DSprite, CSS3DRenderer, RenderableObject, RenderableFace, RenderableVertex, RenderableLine, RenderableSprite, RaytracingRenderer, SoftwareRenderer, SVGObject, SVGRenderer, WebGLDeferredRenderer, ShaderGodRays, BasicShader, BleachBypassShader, BlendShader, BokehShader, BrightnessContrastShader, ColorCorrectionShader, ColorifyShader, ConvolutionShader, CopyShader, DepthLimitedBlurShader, BlurShaderUtils, DigitalGlitch, DOFMipMapShader, DotScreenShader, FilmShader, FocusShader, FreiChenShader, FresnelShader, FXAAShader, GammaCorrectionShader, HorizontalBlurShader, HorizontalTiltShiftShader, HueSaturationShader, KaleidoShader, LuminosityHighPassShader, LuminosityShader, MirrorShader, NormalMapShader, ParallaxShader, RGBShiftShader, SAOShader, SepiaShader, SMAAShader, SobelOperatorShader, SSAOShader, TechnicolorShader, ToneMapShader, TriangleBlurShader, UnpackDepthRGBAShader, VerticalBlurShader, VerticalTiltShiftShader, VignetteShader, WaterRefractionShader, ShaderSkin, ShaderTerrain, ShaderToon, SimplexNoise, TimelinerController, TypedArrayUtils, UCSCharacter, ShadowMapViewer, UVsDebug, VolumeSlice, DaydreamController, GearVRController, PaintViveController, ViveController, WebVR, AnimationAction, AnimationClip$1 as AnimationClip, AnimationMixer, AnimationObjectGroup, AnimationUtils, KeyframeTrack, PropertyBinding$1 as PropertyBinding, PropertyMixer, BooleanKeyframeTrack, ColorKeyframeTrack, NumberKeyframeTrack$1 as NumberKeyframeTrack, QuaternionKeyframeTrack$1 as QuaternionKeyframeTrack, StringKeyframeTrack, VectorKeyframeTrack$1 as VectorKeyframeTrack, Audio, AudioAnalyser, AudioContext, AudioListener, PositionalAudio, ArrayCamera, Camera, CubeCamera, OrthographicCamera, PerspectiveCamera, StereoCamera, REVISION, MOUSE, CullFaceNone, CullFaceBack, CullFaceFront, CullFaceFrontBack, FrontFaceDirectionCW, FrontFaceDirectionCCW, BasicShadowMap, PCFShadowMap, PCFSoftShadowMap, FrontSide, BackSide, DoubleSide, FlatShading, SmoothShading, NoColors, FaceColors, VertexColors, NoBlending, NormalBlending, AdditiveBlending, SubtractiveBlending, MultiplyBlending, CustomBlending, AddEquation, SubtractEquation, ReverseSubtractEquation, MinEquation, MaxEquation, ZeroFactor, OneFactor, SrcColorFactor, OneMinusSrcColorFactor, SrcAlphaFactor, OneMinusSrcAlphaFactor, DstAlphaFactor, OneMinusDstAlphaFactor, DstColorFactor, OneMinusDstColorFactor, SrcAlphaSaturateFactor, NeverDepth, AlwaysDepth, LessDepth, LessEqualDepth, EqualDepth, GreaterEqualDepth, GreaterDepth, NotEqualDepth, MultiplyOperation, MixOperation, AddOperation, NoToneMapping, LinearToneMapping, ReinhardToneMapping, Uncharted2ToneMapping, CineonToneMapping, UVMapping, CubeReflectionMapping, CubeRefractionMapping, EquirectangularReflectionMapping, EquirectangularRefractionMapping, SphericalReflectionMapping, CubeUVReflectionMapping, CubeUVRefractionMapping, RepeatWrapping, ClampToEdgeWrapping, MirroredRepeatWrapping, NearestFilter, NearestMipMapNearestFilter, NearestMipMapLinearFilter, LinearFilter, LinearMipMapNearestFilter, LinearMipMapLinearFilter, UnsignedByteType, ByteType, ShortType, UnsignedShortType, IntType, UnsignedIntType, FloatType, HalfFloatType, UnsignedShort4444Type, UnsignedShort5551Type, UnsignedShort565Type, UnsignedInt248Type, AlphaFormat, RGBFormat, RGBAFormat, LuminanceFormat, LuminanceAlphaFormat, RGBEFormat, DepthFormat, DepthStencilFormat, RGB_S3TC_DXT1_Format, RGBA_S3TC_DXT1_Format, RGBA_S3TC_DXT3_Format, RGBA_S3TC_DXT5_Format, RGB_PVRTC_4BPPV1_Format, RGB_PVRTC_2BPPV1_Format, RGBA_PVRTC_4BPPV1_Format, RGBA_PVRTC_2BPPV1_Format, RGB_ETC1_Format, LoopOnce, LoopRepeat, LoopPingPong, InterpolateDiscrete, InterpolateLinear, InterpolateSmooth, ZeroCurvatureEnding, ZeroSlopeEnding, WrapAroundEnding, TrianglesDrawMode, TriangleStripDrawMode, TriangleFanDrawMode, LinearEncoding, sRGBEncoding, GammaEncoding, RGBEEncoding, LogLuvEncoding, RGBM7Encoding, RGBM16Encoding, RGBDEncoding, BasicDepthPacking, RGBADepthPacking, Float64BufferAttribute, Float32BufferAttribute, Uint32BufferAttribute, Int32BufferAttribute, Uint16BufferAttribute, Int16BufferAttribute, Uint8ClampedBufferAttribute, Uint8BufferAttribute, Int8BufferAttribute, BufferAttribute, BufferGeometry, Clock, DirectGeometry, EventDispatcher, Face3, Geometry, InstancedBufferAttribute, InstancedBufferGeometry, InstancedInterleavedBuffer, InterleavedBuffer, InterleavedBufferAttribute, Layers, Object3D, Raycaster, Uniform, Curve, CurvePath, Font, CatmullRom, QuadraticBezier, CubicBezier, Path, Shape, ShapePath, ArcCurve, CatmullRomCurve3, CubicBezierCurve, CubicBezierCurve3, EllipseCurve, LineCurve, LineCurve3, QuadraticBezierCurve, QuadraticBezierCurve3, SplineCurve, Earcut, ImmediateRenderObject, SceneUtils, ShapeUtils, BoxGeometry, BoxBufferGeometry, CircleGeometry, CircleBufferGeometry, ConeGeometry, ConeBufferGeometry, CylinderGeometry, CylinderBufferGeometry, DodecahedronGeometry, DodecahedronBufferGeometry, EdgesGeometry, ExtrudeGeometry, ExtrudeBufferGeometry, WireframeGeometry, ParametricGeometry, ParametricBufferGeometry, TetrahedronGeometry, TetrahedronBufferGeometry, OctahedronGeometry, OctahedronBufferGeometry, IcosahedronGeometry, IcosahedronBufferGeometry, PolyhedronGeometry, PolyhedronBufferGeometry, TubeGeometry, TubeBufferGeometry, TorusKnotGeometry, TorusKnotBufferGeometry, TorusGeometry, TorusBufferGeometry, TextGeometry, TextBufferGeometry, SphereGeometry, SphereBufferGeometry, RingGeometry, RingBufferGeometry, PlaneGeometry, PlaneBufferGeometry, LatheGeometry, LatheBufferGeometry, ShapeGeometry, ShapeBufferGeometry, ArrowHelper, AxesHelper, Box3Helper, BoxHelper, CameraHelper, DirectionalLightHelper, FaceNormalsHelper, GridHelper, HemisphereLightHelper, PlaneHelper, PointLightHelper, PolarGridHelper, RectAreaLightHelper, SkeletonHelper, SpotLightHelper, VertexNormalsHelper, AmbientLight, DirectionalLight, DirectionalLightShadow, HemisphereLight, Light, LightShadow, PointLight, RectAreaLight, SpotLight, SpotLightShadow, AnimationLoader, AudioLoader, BufferGeometryLoader, Cache, CompressedTextureLoader, CubeTextureLoader, DataTextureLoader, FileLoader, FontLoader, ImageBitmapLoader, ImageLoader, JSONLoader, Loader$1 as Loader, LoaderUtils, DefaultLoadingManager, LoadingManager, MaterialLoader, ObjectLoader, TextureLoader, LineBasicMaterial, LineDashedMaterial, Material, ShadowMaterial, SpriteMaterial, RawShaderMaterial, ShaderMaterial, PointsMaterial, MeshPhysicalMaterial, MeshStandardMaterial, MeshPhongMaterial, MeshToonMaterial, MeshNormalMaterial, MeshLambertMaterial, MeshDepthMaterial, MeshDistanceMaterial, MeshBasicMaterial, Box2, Box3, Color, Cylindrical, Euler, Frustum, Interpolant$1 as Interpolant, CubicInterpolant, DiscreteInterpolant, LinearInterpolant, QuaternionLinearInterpolant, Line3, _Math, Matrix3$1 as Matrix3, Matrix4, Plane, Quaternion, Ray, Sphere, Spherical, Triangle, Vector2$1 as Vector2, Vector3$1 as Vector3, Vector4$1 as Vector4, Bone, Group, LensFlare, Line, LineLoop, LineSegments, LOD, Mesh, Points, Skeleton, SkinnedMesh, Sprite, ShaderChunk, ShaderLib, UniformsLib, UniformsUtils, WebGLAttributes, WebGLBackground, WebGLBufferRenderer, WebGLCapabilities, WebGLClipping, WebGLExtensions, WebGLFlareRenderer, WebGLGeometries, WebGLIndexedBufferRenderer, WebGLLights, WebGLMorphtargets, WebGLObjects, WebGLProgram, WebGLPrograms, WebGLProperties, WebGLRenderLists, WebGLShader, WebGLShadowMap, WebGLSpriteRenderer, WebGLState, WebGLTextures, WebGLUniforms, WebGLUtils, WebGL2Renderer, WebGLRenderer, WebGLRenderTarget, WebGLRenderTargetCube, WebVRManager, Fog, FogExp2, Scene, CanvasTexture, CompressedTexture, CubeTexture, DataTexture, DepthTexture, Texture$1 as Texture, VideoTexture, arrayMin, arrayMax };
