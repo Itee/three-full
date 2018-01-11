@@ -12206,13 +12206,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	  * @author Kai Salmen / https://kaisalmen.de
-	  * Development repository: https://github.com/kaisalmen/WWOBJLoader
-	  */
-
-	'use strict';
-
 	var LoaderSupport = {};
 
 	/**

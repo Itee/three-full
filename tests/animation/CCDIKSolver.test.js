@@ -18108,6 +18108,9 @@ var Three = (function (exports) {
 			var bones = this.mesh.skeleton.bones;
 			var iks = this.mesh.geometry.iks;
 
+			var boneParams = this.mesh.geometry.bones;
+
+			// for reference overhead reduction in loop
 			var math = Math;
 
 			this.mesh.updateMatrixWorld( true );

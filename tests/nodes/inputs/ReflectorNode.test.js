@@ -2973,6 +2973,8 @@ var Three = (function (exports) {
 
 	ReflectorNode.prototype.generate = function( builder, output ) {
 
+		var material = builder.material;
+
 		if ( builder.isShader( 'fragment' ) ) {
 
 			this.coordResult.a = this.offset;

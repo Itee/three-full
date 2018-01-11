@@ -9,7 +9,7 @@ Three.js come with lot of examples files, which are curently not usable as ES6 m
 The purpose of this project is to convert all examples files and includes them as part 
 of the library.
 
-**The version 4.0.0 is now available under Three r89 !!!**
+**The version 4.1.0 is now available under Three r89 !!!**
 
 #### Setup ####
 
@@ -68,10 +68,18 @@ This is the list of unsupported part of example, which cannot be converted yet.
 * **Cloth.js** //*Use global variable from html example file !*
 
 #### <a id="bug"></a>Bugs ####
-- Currently it is imposible to build ES module in production, due to an invalid characters that break uglify rollup plugin.
+- No known bug
 
 
 #### Change log ####
+
+##### 4.1.0 :
+
+* Allow to build es module under production environment
+* Fix NodeLib circular dependency with FunctionNode
+* Fix node warning about unhandled promise rejection
+* Fix rollup warning about indent option moved under output options
+* Clean up sources
 
 ##### 4.0.0 :
     

@@ -1,6 +1,6 @@
 const path        = require( 'path' )
 const buble       = require( 'rollup-plugin-buble' )
-const uglify      = require( 'rollup-plugin-uglify' )
+const uglify      = require( 'rollup-plugin-uglify-es' )
 
 // const onProduction = process.env.BUILD || false
 // const wantSourceMap = process.env.SOURCEMAP || false

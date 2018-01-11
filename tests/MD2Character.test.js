@@ -18493,6 +18493,9 @@ var Three = (function (exports) {
 					this.meshWeapon.activeAction = null;
 				}
 
+				var geometry = this.meshWeapon.geometry,
+					animations = geometry.animations;
+
 				var action = this.mixer.clipAction( clipName, this.meshWeapon );
 				if( action ) {
 

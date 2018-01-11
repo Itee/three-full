@@ -426,6 +426,8 @@ var Three = (function (exports) {
 
 	FunctionCallNode.prototype.generate = function( builder, output ) {
 
+		var material = builder.material;
+
 		var type = this.getType( builder );
 		var func = this.value;
 

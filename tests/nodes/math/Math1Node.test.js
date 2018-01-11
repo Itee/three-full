@@ -445,6 +445,8 @@ var Three = (function (exports) {
 
 	Math1Node.prototype.generate = function( builder, output ) {
 
+		var material = builder.material;
+
 		var type = this.getType( builder );
 
 		var result = this.a.build( builder, type );

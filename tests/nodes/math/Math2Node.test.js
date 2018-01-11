@@ -448,6 +448,8 @@ var Three = (function (exports) {
 
 	Math2Node.prototype.generate = function( builder, output ) {
 
+		var material = builder.material;
+
 		var type = this.getInputType( builder );
 
 		var a, b,

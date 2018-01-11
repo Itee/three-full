@@ -8232,9 +8232,6 @@ var Three = (function (exports) {
 
 	var TeapotBufferGeometry = function ( size, segments, bottom, lid, body, fitLid, blinn ) {
 
-		"use strict";
-
-		// 32 * 4 * 4 Bezier spline patches
 		var teapotPatches = [
 	/*rim*/
 	0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,

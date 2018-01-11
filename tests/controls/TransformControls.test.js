@@ -18574,15 +18574,7 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author arodic / https://github.com/arodic
-	 */
-
-
-
-		'use strict';
-
-		var GizmoMaterial = function ( parameters ) {
+	var GizmoMaterial = function ( parameters ) {
 
 			MeshBasicMaterial.call( this );
 

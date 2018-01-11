@@ -13980,19 +13980,6 @@ var Three = (function (exports) {
 
 	};
 
-	/*
-	 * Autodesk 3DS threee.js file loader, based on lib3ds.
-	 *
-	 * Loads geometry with uv and materials basic properties with texture support.
-	 *
-	 * @author @tentone
-	 * @author @timknip
-	 * @class TDSLoader
-	 * @constructor
-	 */
-
-	'use strict';
-
 	var TDSLoader = function ( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

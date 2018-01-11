@@ -29,6 +29,9 @@ import {
  * @author fernandojsg / http://fernandojsg.com
  */
 
+//------------------------------------------------------------------------------
+// Constants
+//------------------------------------------------------------------------------
 var WEBGL_CONSTANTS = {
 	POINTS: 0x0000,
 	LINES: 0x0001,
@@ -70,6 +73,9 @@ var PATH_PROPERTIES = {
 	morphTargetInfluences: 'weights'
 };
 
+//------------------------------------------------------------------------------
+// GLTF Exporter
+//------------------------------------------------------------------------------
 var GLTFExporter = function () {};
 
 GLTFExporter.prototype = {
@@ -927,7 +933,7 @@ GLTFExporter.prototype = {
 
 				if ( ! trackNode || ! trackProperty ) {
 
-					console.warn( 'GLTFExporter: Could not export the animation track "%s".', track.name );
+					console.warn( 'GLTFExporter: Could not export animation track "%s".', track.name );
 					return null;
 
 				}

@@ -429,6 +429,8 @@ var Three = (function (exports) {
 
 	Math3Node.prototype.generate = function( builder, output ) {
 
+		var material = builder.material;
+
 		var type = this.getType( builder );
 
 		var a, b, c,
