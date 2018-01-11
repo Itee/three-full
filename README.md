@@ -9,7 +9,7 @@ Three.js come with lot of examples files, which are curently not usable as ES6 m
 The purpose of this project is to convert all examples files and includes them as part 
 of the library.
 
-**The version 4.1.0 is now available under Three r89 !!!**
+**The version 4.1.1 is now available under Three r89 !!!**
 
 #### Setup ####
 
@@ -73,10 +73,13 @@ This is the list of unsupported part of example, which cannot be converted yet.
 
 #### Change log ####
 
+##### 4.1.1 :
+
+* Fix NodeLib circular dependency with FunctionNode
+
 ##### 4.1.0 :
 
 * Allow to build es module under production environment
-* Fix NodeLib circular dependency with FunctionNode
 * Fix node warning about unhandled promise rejection
 * Fix rollup warning about indent option moved under output options
 * Clean up sources
