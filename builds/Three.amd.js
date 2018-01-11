@@ -61,7 +61,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		Object.assign = function ( target ) {
 
-  			'use strict';
   			var arguments$1 = arguments;
 
 
@@ -18373,6 +18372,9 @@ define(['exports'], function (exports) { 'use strict';
   		var bones = this.mesh.skeleton.bones;
   		var iks = this.mesh.geometry.iks;
 
+  		var boneParams = this.mesh.geometry.bones;
+
+  		// for reference overhead reduction in loop
   		var math = Math;
 
   		this.mesh.updateMatrixWorld( true );
@@ -20605,7 +20607,7 @@ define(['exports'], function (exports) { 'use strict';
 
   	constructor: DiscreteInterpolant,
 
-  	interpolate_: function ( i1 /*, t0, t, t1 */ ) {
+  	interpolate_: function ( i1 /* t0, t, t1 */ ) {
 
   		return this.copySampleValue_( i1 - 1 );
 
@@ -29836,15 +29838,7 @@ define(['exports'], function (exports) { 'use strict';
   TrackballControls.prototype = Object.create( EventDispatcher.prototype );
   TrackballControls.prototype.constructor = TrackballControls;
 
-  /**
-   * @author arodic / https://github.com/arodic
-   */
-
-
-
-  	'use strict';
-
-  	var GizmoMaterial = function ( parameters ) {
+  var GizmoMaterial = function ( parameters ) {
 
   		MeshBasicMaterial.call( this );
 
@@ -35873,6 +35867,8 @@ define(['exports'], function (exports) { 'use strict';
 
   		var shaderID = shaderIDs[ originalMaterial.type ];
   		var originalUniforms, originalVertexShader;
+  		var outlineParameters = originalMaterial.outlineParameters;
+
   		if ( shaderID !== undefined ) {
 
   			var shader = ShaderLib[ shaderID ];
@@ -37658,6 +37654,9 @@ define(['exports'], function (exports) { 'use strict';
    * @author fernandojsg / http://fernandojsg.com
    */
 
+  //------------------------------------------------------------------------------
+  // Constants
+  //------------------------------------------------------------------------------
   var WEBGL_CONSTANTS = {
   	POINTS: 0x0000,
   	LINES: 0x0001,
@@ -37699,6 +37698,9 @@ define(['exports'], function (exports) { 'use strict';
   	morphTargetInfluences: 'weights'
   };
 
+  //------------------------------------------------------------------------------
+  // GLTF Exporter
+  //------------------------------------------------------------------------------
   var GLTFExporter = function () {};
 
   GLTFExporter.prototype = {
@@ -38556,7 +38558,7 @@ define(['exports'], function (exports) { 'use strict';
 
   				if ( ! trackNode || ! trackProperty ) {
 
-  					console.warn( 'GLTFExporter: Could not export the animation track "%s".', track.name );
+  					console.warn( 'GLTFExporter: Could not export animation track "%s".', track.name );
   					return null;
 
   				}
@@ -40252,9 +40254,6 @@ define(['exports'], function (exports) { 'use strict';
 
   var TeapotBufferGeometry = function ( size, segments, bottom, lid, body, fitLid, blinn ) {
 
-  	"use strict";
-
-  	// 32 * 4 * 4 Bezier spline patches
   	var teapotPatches = [
   /*rim*/
   0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,
@@ -43958,6 +43957,7 @@ define(['exports'], function (exports) { 'use strict';
   						var skeletonRoot = scene.findNode( this$1.mBones[ i ].mName );
   						if ( ! skeletonRoot ) { return; }
   						var threeSkeletonRoot = skeletonRoot.toTHREE( scene );
+  						var threeSkeletonRootParent = threeSkeletonRoot.parent;
   						var threeSkeletonRootBone = cloneTreeToBones( threeSkeletonRoot, scene );
   						this$1.threeNode.add( threeSkeletonRootBone );
   						var bone = findMatchingBone( threeSkeletonRootBone, this$1.mBones[ i ].mName );
@@ -58402,8 +58402,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	}
 
-  'use strict';
-
   /**
    * GCodeLoader is used to load gcode files usually used for 3D printing or CNC applications.
    *
@@ -60277,6 +60275,7 @@ define(['exports'], function (exports) { 'use strict';
   	GLTFParser.prototype.loadMaterial = function ( materialIndex ) {
 
   		var parser = this;
+  		var json = this.json;
   		var extensions = this.extensions;
   		var materialDef = this.json.materials[ materialIndex ];
 
@@ -60575,6 +60574,7 @@ define(['exports'], function (exports) { 'use strict';
   	GLTFParser.prototype.loadMesh = function ( meshIndex ) {
 
   		var scope = this;
+  		var json = this.json;
   		var extensions = this.extensions;
 
   		var meshDef = this.json.meshes[ meshIndex ];
@@ -60806,6 +60806,8 @@ define(['exports'], function (exports) { 'use strict';
   	 */
   	GLTFParser.prototype.loadAnimation = function ( animationIndex ) {
 
+  		var json = this.json;
+
   		var animationDef = this.json.animations[ animationIndex ];
 
   		return this.getMultiDependencies( [
@@ -60956,6 +60958,7 @@ define(['exports'], function (exports) { 'use strict';
   	 */
   	GLTFParser.prototype.loadNode = function ( nodeIndex ) {
 
+  		var json = this.json;
   		var extensions = this.extensions;
 
   		var meshReferences = this.json.meshReferences;
@@ -61858,13 +61861,6 @@ define(['exports'], function (exports) { 'use strict';
   	}
 
   };
-
-  /**
-    * @author Kai Salmen / https://kaisalmen.de
-    * Development repository: https://github.com/kaisalmen/WWOBJLoader
-    */
-
-  'use strict';
 
   var LoaderSupport = {};
 
@@ -69238,11 +69234,22 @@ define(['exports'], function (exports) { 'use strict';
   				if ( g.isLocal ) {
 
   					// TODO: implement
-  					
+  					if ( g.affectPosition ) {
+
+  					}
+
+  					// TODO: implement
+  					if ( g.affectRotation ) {
+
+  					}
 
   				} else {
 
   					// TODO: implement
+  					if ( g.affectPosition ) {
+
+  					}
+
   					if ( g.affectRotation ) {
 
   						q.set( 0, 0, 0, 1 );
@@ -71166,15 +71173,6 @@ define(['exports'], function (exports) { 'use strict';
   	return OBJLoader;
 
   } )();
-
-  /**
-    * @author Kai Salmen / https://kaisalmen.de
-    * Development repository: https://github.com/kaisalmen/WWOBJLoader
-    */
-
-  'use strict';
-
-
 
   if ( LoaderSupport === undefined ) { console.error( '"LoaderSupport" is not available. "OBJLoader2" requires it. Please include "LoaderSupport.js" in your HTML.' ); }
 
@@ -73716,16 +73714,7 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-  /**
-   * @author Kevin Chapelier / https://github.com/kchapelier
-   * See https://github.com/kchapelier/PRWM for more informations about this file format
-   */
-
-
-
-  	'use strict';
-
-  	var bigEndianPlatform = null;
+  var bigEndianPlatform = null;
 
   	/**
   	 * Check if the endianness of the platform is big-endian (most significant bit first)
@@ -74604,19 +74593,6 @@ define(['exports'], function (exports) { 'use strict';
   	}
 
   };
-
-  /*
-   * Autodesk 3DS threee.js file loader, based on lib3ds.
-   *
-   * Loads geometry with uv and materials basic properties with texture support.
-   *
-   * @author @tentone
-   * @author @timknip
-   * @class TDSLoader
-   * @constructor
-   */
-
-  'use strict';
 
   var TDSLoader = function ( manager ) {
 
@@ -80392,6 +80368,8 @@ define(['exports'], function (exports) { 'use strict';
   		contextTitle.font = 'Normal ' + this.legend.labels.fontsize * 1.2 + 'px ' + this.legend.labels.fontface;
 
   		var metrics = contextTitle.measureText( this.legend.labels.title.toString() + this.legend.labels.um.toString() );
+  		var textWidth = metrics.width;
+
   		contextTitle.fillStyle   = 'rgba(' + backgroundColor.r + ',' + backgroundColor.g + ',' + backgroundColor.b + ',' + backgroundColor.a + ')';
 
   		contextTitle.strokeStyle = 'rgba(' + borderColor.r + ',' + borderColor.g + ',' + borderColor.b + ',' + borderColor.a + ')';
@@ -80470,6 +80448,8 @@ define(['exports'], function (exports) { 'use strict';
   				contextTick.font = 'Normal ' + this$1.legend.labels.fontsize + 'px ' + this$1.legend.labels.fontface;
 
   				var metrics = contextTick.measureText( value.toString() );
+  				var textWidth = metrics.width;
+
   				contextTick.fillStyle   = 'rgba(' + backgroundColor.r + ',' + backgroundColor.g + ',' + backgroundColor.b + ',' + backgroundColor.a + ')';
 
   				contextTick.strokeStyle = 'rgba(' + borderColor.r + ',' + borderColor.g + ',' + borderColor.b + ',' + borderColor.a + ')';
@@ -80759,6 +80739,9 @@ define(['exports'], function (exports) { 'use strict';
   				this.meshWeapon.activeAction.stop();
   				this.meshWeapon.activeAction = null;
   			}
+
+  			var geometry = this.meshWeapon.geometry,
+  				animations = geometry.animations;
 
   			var action = this.mixer.clipAction( clipName, this.meshWeapon );
   			if( action ) {
@@ -83805,7 +83788,7 @@ define(['exports'], function (exports) { 'use strict';
    * @author sunag / http://www.sunag.com.br/
    */
 
-  var TempNode = function( type, params ) {
+  var TempNode$1 = function( type, params ) {
 
   	GLNode.call( this, type );
 
@@ -83816,10 +83799,10 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-  TempNode.prototype = Object.create( GLNode.prototype );
-  TempNode.prototype.constructor = TempNode;
+  TempNode$1.prototype = Object.create( GLNode.prototype );
+  TempNode$1.prototype.constructor = TempNode$1;
 
-  TempNode.prototype.build = function( builder, output, uuid, ns ) {
+  TempNode$1.prototype.build = function( builder, output, uuid, ns ) {
 
   	output = output || this.getType( builder );
 
@@ -83874,7 +83857,7 @@ define(['exports'], function (exports) { 'use strict';
 
   		} else {
 
-  			name = TempNode.prototype.generate.call( this, builder, output, uuid, data.output, ns );
+  			name = TempNode$1.prototype.generate.call( this, builder, output, uuid, data.output, ns );
 
   			var code = this.generate( builder, type, uuid );
 
@@ -83891,19 +83874,19 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-  TempNode.prototype.isShared = function( builder, output ) {
+  TempNode$1.prototype.isShared = function( builder, output ) {
 
   	return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
 
   };
 
-  TempNode.prototype.isUnique = function( builder, output ) {
+  TempNode$1.prototype.isUnique = function( builder, output ) {
 
   	return this.unique;
 
   };
 
-  TempNode.prototype.getUuid = function( unique ) {
+  TempNode$1.prototype.getUuid = function( unique ) {
 
   	var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
 
@@ -83913,7 +83896,7 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-  TempNode.prototype.getTemp = function( builder, uuid ) {
+  TempNode$1.prototype.getTemp = function( builder, uuid ) {
 
   	uuid = uuid || this.uuid;
 
@@ -83924,7 +83907,7 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-  TempNode.prototype.generate = function( builder, output, uuid, type, ns ) {
+  TempNode$1.prototype.generate = function( builder, output, uuid, type, ns ) {
 
   	if ( ! this.isShared( builder, output ) ) { console.error( "TempNode is not shared!" ); }
 
@@ -83936,12 +83919,100 @@ define(['exports'], function (exports) { 'use strict';
   };
 
   /**
+   * @author [Tristan Valcke]{@link https://github.com/Itee}
+   * @author sunag / http://www.sunag.com.br/
+   * @thanks bhouston / https://clara.io/
+   */
+
+  var FunctionNode = function( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ) {
+
+  	src = src || '';
+
+  	this.isMethod = typeof includesOrType !== "string";
+  	this.useKeywords = true;
+
+  	TempNode$1.call( this, this.isMethod ? null : includesOrType );
+
+  	if ( this.isMethod ) { this.eval( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ); }
+  	else { this.eval( src, extensionsOrIncludes, keywordsOrExtensions ); }
+
+  };
+
+  /**
+   * @author [Tristan Valcke]{@link https://github.com/Itee}
+   * @author sunag / http://www.sunag.com.br/
+   */
+
+  var NodeLib = {
+
+  	nodes: {},
+  	keywords: {},
+
+  	add: function( node ) {
+
+  		this.nodes[ node.name ] = node;
+
+  	},
+
+  	addKeyword: function( name, callback, cache ) {
+
+  		cache = cache !== undefined ? cache : true;
+
+  		this.keywords[ name ] = { callback : callback, cache : cache };
+
+  	},
+
+  	remove: function( node ) {
+
+  		delete this.nodes[ node.name ];
+
+  	},
+
+  	removeKeyword: function( name ) {
+
+  		delete this.keywords[ name ];
+
+  	},
+
+  	get: function( name ) {
+
+  		return this.nodes[ name ];
+
+  	},
+
+  	getKeyword: function( name, material ) {
+
+  		return this.keywords[ name ].callback.call( this, material );
+
+  	},
+
+  	getKeywordData: function( name ) {
+
+  		return this.keywords[ name ];
+
+  	},
+
+  	contains: function( name ) {
+
+  		return this.nodes[ name ] != undefined;
+
+  	},
+
+  	containsKeyword: function( name ) {
+
+  		return this.keywords[ name ] != undefined;
+
+  	}
+
+  };
+
+  /**
    * @author sunag / http://www.sunag.com.br/
    */
 
   var UVNode = function( index ) {
 
-  	TempNode.call( this, 'v2', { shared: false } );
+  	TempNode$1.call( this, 'v2', { shared: false } );
 
   	this.index = index || 0;
 
@@ -83950,7 +84021,7 @@ define(['exports'], function (exports) { 'use strict';
   UVNode.vertexDict = [ 'uv', 'uv2' ];
   UVNode.fragmentDict = [ 'vUv', 'vUv2' ];
 
-  UVNode.prototype = Object.create( TempNode.prototype );
+  UVNode.prototype = Object.create( TempNode$1.prototype );
   UVNode.prototype.constructor = UVNode;
 
   UVNode.prototype.generate = function( builder, output ) {
@@ -83973,7 +84044,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var PositionNode = function( scope ) {
 
-  	TempNode.call( this, 'v3' );
+  	TempNode$1.call( this, 'v3' );
 
   	this.scope = scope || PositionNode.LOCAL;
 
@@ -83984,7 +84055,7 @@ define(['exports'], function (exports) { 'use strict';
   PositionNode.VIEW = 'view';
   PositionNode.PROJECTION = 'projection';
 
-  PositionNode.prototype = Object.create( TempNode.prototype );
+  PositionNode.prototype = Object.create( TempNode$1.prototype );
   PositionNode.prototype.constructor = PositionNode;
 
   PositionNode.prototype.getType = function( builder ) {
@@ -84061,7 +84132,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var NormalNode = function( scope ) {
 
-  	TempNode.call( this, 'v3' );
+  	TempNode$1.call( this, 'v3' );
 
   	this.scope = scope || NormalNode.LOCAL;
 
@@ -84071,7 +84142,7 @@ define(['exports'], function (exports) { 'use strict';
   NormalNode.WORLD = 'world';
   NormalNode.VIEW = 'view';
 
-  NormalNode.prototype = Object.create( TempNode.prototype );
+  NormalNode.prototype = Object.create( TempNode$1.prototype );
   NormalNode.prototype.constructor = NormalNode;
 
   NormalNode.prototype.isShared = function( builder ) {
@@ -84131,11 +84202,11 @@ define(['exports'], function (exports) { 'use strict';
   	params = params || {};
   	params.shared = params.shared !== undefined ? params.shared : false;
 
-  	TempNode.call( this, type, params );
+  	TempNode$1.call( this, type, params );
 
   };
 
-  InputNode.prototype = Object.create( TempNode.prototype );
+  InputNode.prototype = Object.create( TempNode$1.prototype );
   InputNode.prototype.constructor = InputNode;
 
   InputNode.prototype.generate = function( builder, output, uuid, type, ns, needsUpdate ) {
@@ -84230,7 +84301,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var ConstNode = function( src, useDefine ) {
 
-  	TempNode.call( this );
+  	TempNode$1.call( this );
 
   	this.eval( src || ConstNode.PI, useDefine );
 
@@ -84243,7 +84314,7 @@ define(['exports'], function (exports) { 'use strict';
   ConstNode.LOG2 = 'LOG2';
   ConstNode.EPSILON = 'EPSILON';
 
-  ConstNode.prototype = Object.create( TempNode.prototype );
+  ConstNode.prototype = Object.create( TempNode$1.prototype );
   ConstNode.prototype.constructor = ConstNode;
 
   ConstNode.prototype.getType = function( builder ) {
@@ -84315,72 +84386,11 @@ define(['exports'], function (exports) { 'use strict';
   };
 
   /**
+   * @author [Tristan Valcke]{@link https://github.com/Itee}
    * @author sunag / http://www.sunag.com.br/
    */
 
-  var NodeLib = {
-
-  	nodes: {},
-  	keywords: {},
-
-  	add: function( node ) {
-
-  		this.nodes[ node.name ] = node;
-
-  	},
-
-  	addKeyword: function( name, callback, cache ) {
-
-  		cache = cache !== undefined ? cache : true;
-
-  		this.keywords[ name ] = { callback : callback, cache : cache };
-
-  	},
-
-  	remove: function( node ) {
-
-  		delete this.nodes[ node.name ];
-
-  	},
-
-  	removeKeyword: function( name ) {
-
-  		delete this.keywords[ name ];
-
-  	},
-
-  	get: function( name ) {
-
-  		return this.nodes[ name ];
-
-  	},
-
-  	getKeyword: function( name, material ) {
-
-  		return this.keywords[ name ].callback.call( this, material );
-
-  	},
-
-  	getKeywordData: function( name ) {
-
-  		return this.keywords[ name ];
-
-  	},
-
-  	contains: function( name ) {
-
-  		return this.nodes[ name ] != undefined;
-
-  	},
-
-  	containsKeyword: function( name ) {
-
-  		return this.keywords[ name ] != undefined;
-
-  	}
-
-  };
-
+  // Fix circular dependency, see #2
   //
   //	Keywords
   //
@@ -84450,21 +84460,21 @@ define(['exports'], function (exports) { 'use strict';
   //
 
   NodeLib.add( new FunctionNode( [
-  // Per-Pixel Tangent Space Normal Mapping
-  // http://hacksoflife.blogspot.ch/2009/11/per-pixel-tangent-space-normal-mapping.html
-  "vec3 perturbNormal2Arb( vec3 eye_pos, vec3 surf_norm, vec3 map, vec2 mUv, vec2 scale ) {",
-  "	vec3 q0 = dFdx( eye_pos );",
-  "	vec3 q1 = dFdy( eye_pos );",
-  "	vec2 st0 = dFdx( mUv.st );",
-  "	vec2 st1 = dFdy( mUv.st );",
-  "	vec3 S = normalize( q0 * st1.t - q1 * st0.t );",
-  "	vec3 T = normalize( -q0 * st1.s + q1 * st0.s );",
-  "	vec3 N = normalize( surf_norm );",
-  "	vec3 mapN = map * 2.0 - 1.0;",
-  "	mapN.xy = scale * mapN.xy;",
-  "	mat3 tsn = mat3( S, T, N );",
-  "	return normalize( tsn * mapN );",
-  "}"
+  	// Per-Pixel Tangent Space Normal Mapping
+  	// http://hacksoflife.blogspot.ch/2009/11/per-pixel-tangent-space-normal-mapping.html
+  	"vec3 perturbNormal2Arb( vec3 eye_pos, vec3 surf_norm, vec3 map, vec2 mUv, vec2 scale ) {",
+  	"	vec3 q0 = dFdx( eye_pos );",
+  	"	vec3 q1 = dFdy( eye_pos );",
+  	"	vec2 st0 = dFdx( mUv.st );",
+  	"	vec2 st1 = dFdy( mUv.st );",
+  	"	vec3 S = normalize( q0 * st1.t - q1 * st0.t );",
+  	"	vec3 T = normalize( -q0 * st1.s + q1 * st0.s );",
+  	"	vec3 N = normalize( surf_norm );",
+  	"	vec3 mapN = map * 2.0 - 1.0;",
+  	"	mapN.xy = scale * mapN.xy;",
+  	"	mat3 tsn = mat3( S, T, N );",
+  	"	return normalize( tsn * mapN );",
+  	"}"
   ].join( "\n" ), null, { derivatives: true } ) );
 
   //
@@ -84472,9 +84482,9 @@ define(['exports'], function (exports) { 'use strict';
   //
 
   NodeLib.add( new FunctionNode( [
-  "float snoise(vec2 co) {",
-  "	return fract( sin( dot(co.xy, vec2(12.9898,78.233) ) ) * 43758.5453 );",
-  "}"
+  	"float snoise(vec2 co) {",
+  	"	return fract( sin( dot(co.xy, vec2(12.9898,78.233) ) ) * 43758.5453 );",
+  	"}"
   ].join( "\n" ) ) );
 
   //
@@ -84482,14 +84492,14 @@ define(['exports'], function (exports) { 'use strict';
   //
 
   NodeLib.add( new FunctionNode( [
-  "vec3 hue_rgb(vec3 rgb, float adjustment) {",
-  "	const mat3 RGBtoYIQ = mat3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263, 0.211456, -0.522591, 0.311135);",
-  "	const mat3 YIQtoRGB = mat3(1.0, 0.9563, 0.6210, 1.0, -0.2721, -0.6474, 1.0, -1.107, 1.7046);",
-  "	vec3 yiq = RGBtoYIQ * rgb;",
-  "	float hue = atan(yiq.z, yiq.y) + adjustment;",
-  "	float chroma = sqrt(yiq.z * yiq.z + yiq.y * yiq.y);",
-  "	return YIQtoRGB * vec3(yiq.x, chroma * cos(hue), chroma * sin(hue));",
-  "}"
+  	"vec3 hue_rgb(vec3 rgb, float adjustment) {",
+  	"	const mat3 RGBtoYIQ = mat3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263, 0.211456, -0.522591, 0.311135);",
+  	"	const mat3 YIQtoRGB = mat3(1.0, 0.9563, 0.6210, 1.0, -0.2721, -0.6474, 1.0, -1.107, 1.7046);",
+  	"	vec3 yiq = RGBtoYIQ * rgb;",
+  	"	float hue = atan(yiq.z, yiq.y) + adjustment;",
+  	"	float chroma = sqrt(yiq.z * yiq.z + yiq.y * yiq.y);",
+  	"	return YIQtoRGB * vec3(yiq.x, chroma * cos(hue), chroma * sin(hue));",
+  	"}"
   ].join( "\n" ) ) );
 
   //
@@ -84497,11 +84507,11 @@ define(['exports'], function (exports) { 'use strict';
   //
 
   NodeLib.add( new FunctionNode( [
-  // Algorithm from Chapter 16 of OpenGL Shading Language
-  "vec3 saturation_rgb(vec3 rgb, float adjustment) {",
-  "	vec3 intensity = vec3(dot(rgb, LUMA));",
-  "	return mix(intensity, rgb, adjustment);",
-  "}"
+  	// Algorithm from Chapter 16 of OpenGL Shading Language
+  	"vec3 saturation_rgb(vec3 rgb, float adjustment) {",
+  	"	vec3 intensity = vec3(dot(rgb, LUMA));",
+  	"	return mix(intensity, rgb, adjustment);",
+  	"}"
   ].join( "\n" ) ) );
 
   //
@@ -84509,10 +84519,10 @@ define(['exports'], function (exports) { 'use strict';
   //
 
   NodeLib.add( new FunctionNode( [
-  // Algorithm from Chapter 10 of Graphics Shaders
-  "float luminance_rgb(vec3 rgb) {",
-  "	return dot(rgb, LUMA);",
-  "}"
+  	// Algorithm from Chapter 10 of Graphics Shaders
+  	"float luminance_rgb(vec3 rgb) {",
+  	"	return dot(rgb, LUMA);",
+  	"}"
   ].join( "\n" ) ) );
 
   //
@@ -84520,34 +84530,27 @@ define(['exports'], function (exports) { 'use strict';
   //
 
   NodeLib.add( new FunctionNode( [
-  // Shader by Evan Wallace adapted by @lo-th
-  "vec3 vibrance_rgb(vec3 rgb, float adjustment) {",
-  "	float average = (rgb.r + rgb.g + rgb.b) / 3.0;",
-  "	float mx = max(rgb.r, max(rgb.g, rgb.b));",
-  "	float amt = (mx - average) * (-3.0 * adjustment);",
-  "	return mix(rgb.rgb, vec3(mx), amt);",
-  "}"
+  	// Shader by Evan Wallace adapted by @lo-th
+  	"vec3 vibrance_rgb(vec3 rgb, float adjustment) {",
+  	"	float average = (rgb.r + rgb.g + rgb.b) / 3.0;",
+  	"	float mx = max(rgb.r, max(rgb.g, rgb.b));",
+  	"	float amt = (mx - average) * (-3.0 * adjustment);",
+  	"	return mix(rgb.rgb, vec3(mx), amt);",
+  	"}"
   ].join( "\n" ) ) );
 
   /**
+   * @author [Tristan Valcke]{@link https://github.com/Itee}
+   * @author sunag / http://www.sunag.com.br/
+   */
+
+  /**
+   * @author [Tristan Valcke]{@link https://github.com/Itee}
    * @author sunag / http://www.sunag.com.br/
    * @thanks bhouston / https://clara.io/
    */
 
-  var FunctionNode = function( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ) {
-
-  	src = src || '';
-
-  	this.isMethod = typeof includesOrType !== "string";
-  	this.useKeywords = true;
-
-  	TempNode.call( this, this.isMethod ? null : includesOrType );
-
-  	if ( this.isMethod ) { this.eval( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ); }
-  	else { this.eval( src, extensionsOrIncludes, keywordsOrExtensions ); }
-
-  };
-
+  // Fix circular dependency, see #2
   FunctionNode.rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\((.*?)\)/i;
   FunctionNode.rProperties = /[a-z_0-9]+/ig;
 
@@ -84742,12 +84745,18 @@ define(['exports'], function (exports) { 'use strict';
   };
 
   /**
+   * @author [Tristan Valcke]{@link https://github.com/Itee}
+   * @author sunag / http://www.sunag.com.br/
+   * @thanks bhouston / https://clara.io/
+   */
+
+  /**
    * @author sunag / http://www.sunag.com.br/
    */
 
   var CameraNode = function( scope, camera ) {
 
-  	TempNode.call( this, 'v3' );
+  	TempNode$1.call( this, 'v3' );
 
   	this.setScope( scope || CameraNode.POSITION );
   	this.setCamera( camera );
@@ -84769,7 +84778,7 @@ define(['exports'], function (exports) { 'use strict';
   CameraNode.DEPTH = 'depth';
   CameraNode.TO_VERTEX = 'toVertex';
 
-  CameraNode.prototype = Object.create( TempNode.prototype );
+  CameraNode.prototype = Object.create( TempNode$1.prototype );
   CameraNode.prototype.constructor = CameraNode;
 
   CameraNode.prototype.setCamera = function( camera ) {
@@ -84843,6 +84852,7 @@ define(['exports'], function (exports) { 'use strict';
 
   CameraNode.prototype.generate = function( builder, output ) {
 
+  	var material = builder.material;
   	var result;
 
   	switch ( this.scope ) {
@@ -84896,7 +84906,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var ColorsNode = function( index ) {
 
-  	TempNode.call( this, 'v4', { shared: false } );
+  	TempNode$1.call( this, 'v4', { shared: false } );
 
   	this.index = index || 0;
 
@@ -84905,7 +84915,7 @@ define(['exports'], function (exports) { 'use strict';
   ColorsNode.vertexDict = [ 'color', 'color2' ];
   ColorsNode.fragmentDict = [ 'vColor', 'vColor2' ];
 
-  ColorsNode.prototype = Object.create( TempNode.prototype );
+  ColorsNode.prototype = Object.create( TempNode$1.prototype );
   ColorsNode.prototype.constructor = ColorsNode;
 
   ColorsNode.prototype.generate = function( builder, output ) {
@@ -84928,11 +84938,11 @@ define(['exports'], function (exports) { 'use strict';
 
   var LightNode = function() {
 
-  	TempNode.call( this, 'v3', { shared: false } );
+  	TempNode$1.call( this, 'v3', { shared: false } );
 
   };
 
-  LightNode.prototype = Object.create( TempNode.prototype );
+  LightNode.prototype = Object.create( TempNode$1.prototype );
   LightNode.prototype.constructor = LightNode;
 
   LightNode.prototype.generate = function( builder, output ) {
@@ -84957,7 +84967,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var ReflectNode = function( scope ) {
 
-  	TempNode.call( this, 'v3', { unique: true } );
+  	TempNode$1.call( this, 'v3', { unique: true } );
 
   	this.scope = scope || ReflectNode.CUBE;
 
@@ -84967,7 +84977,7 @@ define(['exports'], function (exports) { 'use strict';
   ReflectNode.SPHERE = 'sphere';
   ReflectNode.VECTOR = 'vector';
 
-  ReflectNode.prototype = Object.create( TempNode.prototype );
+  ReflectNode.prototype = Object.create( TempNode$1.prototype );
   ReflectNode.prototype.constructor = ReflectNode;
 
   ReflectNode.prototype.getType = function( builder ) {
@@ -85026,17 +85036,18 @@ define(['exports'], function (exports) { 'use strict';
 
   var ScreenUVNode = function( resolution ) {
 
-  	TempNode.call( this, 'v2' );
+  	TempNode$1.call( this, 'v2' );
 
   	this.resolution = resolution;
 
   };
 
-  ScreenUVNode.prototype = Object.create( TempNode.prototype );
+  ScreenUVNode.prototype = Object.create( TempNode$1.prototype );
   ScreenUVNode.prototype.constructor = ScreenUVNode;
 
   ScreenUVNode.prototype.generate = function( builder, output ) {
 
+  	var material = builder.material;
   	var result;
 
   	if ( builder.isShader( 'fragment' ) ) {
@@ -85100,13 +85111,13 @@ define(['exports'], function (exports) { 'use strict';
 
   var FunctionCallNode = function( func, inputs ) {
 
-  	TempNode.call( this );
+  	TempNode$1.call( this );
 
   	this.setFunction( func, inputs );
 
   };
 
-  FunctionCallNode.prototype = Object.create( TempNode.prototype );
+  FunctionCallNode.prototype = Object.create( TempNode$1.prototype );
   FunctionCallNode.prototype.constructor = FunctionCallNode;
 
   FunctionCallNode.prototype.setFunction = function( func, inputs ) {
@@ -85131,6 +85142,8 @@ define(['exports'], function (exports) { 'use strict';
   FunctionCallNode.prototype.generate = function( builder, output ) {
   	var this$1 = this;
 
+
+  	var material = builder.material;
 
   	var type = this.getType( builder );
   	var func = this.value;
@@ -85169,6 +85182,8 @@ define(['exports'], function (exports) { 'use strict';
   RawNode.prototype.constructor = RawNode;
 
   GLNode.prototype.generate = function( builder ) {
+
+  	var material = builder.material;
 
   	var data = this.value.parseAndBuildCode( builder, this.type );
 
@@ -86159,7 +86174,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var OperatorNode = function( a, b, op ) {
 
-  	TempNode.call( this );
+  	TempNode$1.call( this );
 
   	this.a = a;
   	this.b = b;
@@ -86172,7 +86187,7 @@ define(['exports'], function (exports) { 'use strict';
   OperatorNode.MUL = '*';
   OperatorNode.DIV = '/';
 
-  OperatorNode.prototype = Object.create( TempNode.prototype );
+  OperatorNode.prototype = Object.create( TempNode$1.prototype );
   OperatorNode.prototype.constructor = OperatorNode;
 
   OperatorNode.prototype.getType = function( builder ) {
@@ -86280,7 +86295,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var ReflectorNode = function( mirror, camera, options ) {
 
-  	TempNode.call( this, 'v4' );
+  	TempNode$1.call( this, 'v4' );
 
   	this.mirror = mirror;
 
@@ -86295,10 +86310,12 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-  ReflectorNode.prototype = Object.create( TempNode.prototype );
+  ReflectorNode.prototype = Object.create( TempNode$1.prototype );
   ReflectorNode.prototype.constructor = ReflectorNode;
 
   ReflectorNode.prototype.generate = function( builder, output ) {
+
+  	var material = builder.material;
 
   	if ( builder.isShader( 'fragment' ) ) {
 
@@ -86892,7 +86909,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var RoughnessToBlinnExponentNode = function() {
 
-  	TempNode.call( this, 'fv1' );
+  	TempNode$1.call( this, 'fv1' );
 
   };
 
@@ -86910,7 +86927,7 @@ define(['exports'], function (exports) { 'use strict';
   "}"
   ].join( "\n" ) );
 
-  RoughnessToBlinnExponentNode.prototype = Object.create( TempNode.prototype );
+  RoughnessToBlinnExponentNode.prototype = Object.create( TempNode$1.prototype );
   RoughnessToBlinnExponentNode.prototype.constructor = RoughnessToBlinnExponentNode;
 
   RoughnessToBlinnExponentNode.prototype.generate = function( builder, output ) {
@@ -87194,7 +87211,7 @@ define(['exports'], function (exports) { 'use strict';
 
   		output.push(
   			// accumulation
-  			'material.specularRoughness = clamp( roughnessFactor, DEFAULT_SPECULAR_COEFFICIENT, 1.0 );' // disney's remapping of [ 0, 1 ] roughness to [ 0.001, 1 ]
+  			'material.specularRoughness = clamp( roughnessFactor, DEFAULT_SPECULAR_COEFFICIENT, 1.0 );' // disney's remapping of [ 0 1 ] roughness to [ 0.001, 1 ]
   		);
 
   		if ( clearCoat ) {
@@ -87371,7 +87388,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var Math1Node = function( a, method ) {
 
-  	TempNode.call( this );
+  	TempNode$1.call( this );
 
   	this.a = a;
 
@@ -87404,7 +87421,7 @@ define(['exports'], function (exports) { 'use strict';
   Math1Node.NEGATE = 'negate';
   Math1Node.INVERT = 'invert';
 
-  Math1Node.prototype = Object.create( TempNode.prototype );
+  Math1Node.prototype = Object.create( TempNode$1.prototype );
   Math1Node.prototype.constructor = Math1Node;
 
   Math1Node.prototype.getType = function( builder ) {
@@ -87419,6 +87436,8 @@ define(['exports'], function (exports) { 'use strict';
   };
 
   Math1Node.prototype.generate = function( builder, output ) {
+
+  	var material = builder.material;
 
   	var type = this.getType( builder );
 
@@ -87449,7 +87468,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var Math2Node = function( a, b, method ) {
 
-  	TempNode.call( this );
+  	TempNode$1.call( this );
 
   	this.a = a;
   	this.b = b;
@@ -87468,7 +87487,7 @@ define(['exports'], function (exports) { 'use strict';
   Math2Node.CROSS = 'cross';
   Math2Node.POW = 'pow';
 
-  Math2Node.prototype = Object.create( TempNode.prototype );
+  Math2Node.prototype = Object.create( TempNode$1.prototype );
   Math2Node.prototype.constructor = Math2Node;
 
   Math2Node.prototype.getInputType = function( builder ) {
@@ -87500,6 +87519,8 @@ define(['exports'], function (exports) { 'use strict';
   };
 
   Math2Node.prototype.generate = function( builder, output ) {
+
+  	var material = builder.material;
 
   	var type = this.getInputType( builder );
 
@@ -87544,7 +87565,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var Math3Node = function( a, b, c, method ) {
 
-  	TempNode.call( this );
+  	TempNode$1.call( this );
 
   	this.a = a;
   	this.b = b;
@@ -87559,7 +87580,7 @@ define(['exports'], function (exports) { 'use strict';
   Math3Node.SMOOTHSTEP = 'smoothstep';
   Math3Node.FACEFORWARD = 'faceforward';
 
-  Math3Node.prototype = Object.create( TempNode.prototype );
+  Math3Node.prototype = Object.create( TempNode$1.prototype );
   Math3Node.prototype.constructor = Math3Node;
 
   Math3Node.prototype.getType = function( builder ) {
@@ -87576,6 +87597,8 @@ define(['exports'], function (exports) { 'use strict';
   };
 
   Math3Node.prototype.generate = function( builder, output ) {
+
+  	var material = builder.material;
 
   	var type = this.getType( builder );
 
@@ -87732,7 +87755,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var BlurNode = function( value, coord, radius, size ) {
 
-  	TempNode.call( this, 'v4' );
+  	TempNode$1.call( this, 'v4' );
 
   	this.requestUpdate = true;
 
@@ -87781,7 +87804,7 @@ define(['exports'], function (exports) { 'use strict';
   "}"
   ].join( "\n" ) );
 
-  BlurNode.prototype = Object.create( TempNode.prototype );
+  BlurNode.prototype = Object.create( TempNode$1.prototype );
   BlurNode.prototype.constructor = BlurNode;
 
   BlurNode.prototype.updateFrame = function( delta ) {
@@ -87847,7 +87870,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var BumpNode = function( value, coord, scale ) {
 
-  	TempNode.call( this, 'v3' );
+  	TempNode$1.call( this, 'v3' );
 
   	this.value = value;
   	this.coord = coord || new UVNode();
@@ -87866,7 +87889,7 @@ define(['exports'], function (exports) { 'use strict';
   "}"
   ].join( "\n" ), null, { derivatives: true } );
 
-  BumpNode.prototype = Object.create( TempNode.prototype );
+  BumpNode.prototype = Object.create( TempNode$1.prototype );
   BumpNode.prototype.constructor = BumpNode;
 
   BumpNode.prototype.generate = function( builder, output ) {
@@ -87897,7 +87920,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var ColorAdjustmentNode = function( rgb, adjustment, method ) {
 
-  	TempNode.call( this, 'v3' );
+  	TempNode$1.call( this, 'v3' );
 
   	this.rgb = rgb;
   	this.adjustment = adjustment;
@@ -87912,7 +87935,7 @@ define(['exports'], function (exports) { 'use strict';
   ColorAdjustmentNode.BRIGHTNESS = 'brightness';
   ColorAdjustmentNode.CONTRAST = 'contrast';
 
-  ColorAdjustmentNode.prototype = Object.create( TempNode.prototype );
+  ColorAdjustmentNode.prototype = Object.create( TempNode$1.prototype );
   ColorAdjustmentNode.prototype.constructor = ColorAdjustmentNode;
 
   ColorAdjustmentNode.prototype.generate = function( builder, output ) {
@@ -87968,7 +87991,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var JoinNode = function( x, y, z, w ) {
 
-  	TempNode.call( this, 'fv1' );
+  	TempNode$1.call( this, 'fv1' );
 
   	this.x = x;
   	this.y = y;
@@ -87979,7 +88002,7 @@ define(['exports'], function (exports) { 'use strict';
 
   JoinNode.inputs = [ 'x', 'y', 'z', 'w' ];
 
-  JoinNode.prototype = Object.create( TempNode.prototype );
+  JoinNode.prototype = Object.create( TempNode$1.prototype );
   JoinNode.prototype.constructor = JoinNode;
 
   JoinNode.prototype.getNumElements = function() {
@@ -88014,6 +88037,8 @@ define(['exports'], function (exports) { 'use strict';
   	var this$1 = this;
 
 
+  	var material = builder.material;
+
   	var type = this.getType( builder );
   	var length = this.getNumElements();
 
@@ -88040,13 +88065,13 @@ define(['exports'], function (exports) { 'use strict';
 
   var LuminanceNode = function( rgb ) {
 
-  	TempNode.call( this, 'fv1' );
+  	TempNode$1.call( this, 'fv1' );
 
   	this.rgb = rgb;
 
   };
 
-  LuminanceNode.prototype = Object.create( TempNode.prototype );
+  LuminanceNode.prototype = Object.create( TempNode$1.prototype );
   LuminanceNode.prototype.constructor = LuminanceNode;
 
   LuminanceNode.prototype.generate = function( builder, output ) {
@@ -88063,13 +88088,13 @@ define(['exports'], function (exports) { 'use strict';
 
   var NoiseNode = function( coord ) {
 
-  	TempNode.call( this, 'fv1' );
+  	TempNode$1.call( this, 'fv1' );
 
   	this.coord = coord;
 
   };
 
-  NoiseNode.prototype = Object.create( TempNode.prototype );
+  NoiseNode.prototype = Object.create( TempNode$1.prototype );
   NoiseNode.prototype.constructor = NoiseNode;
 
   NoiseNode.prototype.generate = function( builder, output ) {
@@ -88086,7 +88111,7 @@ define(['exports'], function (exports) { 'use strict';
 
   var NormalMapNode = function( value, uv, scale, normal, position ) {
 
-  	TempNode.call( this, 'v3' );
+  	TempNode$1.call( this, 'v3' );
 
   	this.value = value;
   	this.scale = scale || new FloatNode( 1 );
@@ -88096,10 +88121,12 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-  NormalMapNode.prototype = Object.create( TempNode.prototype );
+  NormalMapNode.prototype = Object.create( TempNode$1.prototype );
   NormalMapNode.prototype.constructor = NormalMapNode;
 
   NormalMapNode.prototype.generate = function( builder, output ) {
+
+  	var material = builder.material;
 
   	builder.include( 'perturbNormal2Arb' );
 
@@ -90049,20 +90076,7 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-  /*!
-   *
-   * threeoctree.js (r60) / https://github.com/collinhover/threeoctree
-   * (sparse) dynamic 3D spatial representation structure for fast searches.
-   *
-   * @author Collin Hover / http://collinhover.com/
-   * based on Dynamic Octree by Piko3D @ http://www.piko3d.com/ and Octree by Marek Pawlowski @ pawlowski.it
-   *
-   */
-   
-
-  	"use strict";
-  	
-  	/*===================================================
+  /*===================================================
 
   	utility
 
@@ -93556,6 +93570,7 @@ define(['exports'], function (exports) { 'use strict';
 
   		this.oldClearColor.copy( renderer.getClearColor() );
   		this.oldClearAlpha = renderer.getClearAlpha();
+  		var oldAutoClear = renderer.autoClear;
   		renderer.autoClear = false;
 
   		renderer.setClearColor( 0xffffff );
@@ -96986,8 +97001,6 @@ define(['exports'], function (exports) { 'use strict';
   	].join( "\n" )
 
   };
-
-  'use strict';
 
   /**
    * Screen-space ambient occlusion pass.
@@ -110016,7 +110029,7 @@ define(['exports'], function (exports) { 'use strict';
   		console.error( 'THREE.Matrix3: .multiplyVector3Array() has been removed.' );
 
   	},
-  	applyToBuffer: function ( buffer /*, offset, length */ ) {
+  	applyToBuffer: function ( buffer /* offset, length */ ) {
 
   		console.warn( 'THREE.Matrix3: .applyToBuffer() has been removed. Use matrix.applyToBufferAttribute( attribute ) instead.' );
   		return this.applyToBufferAttribute( buffer );
@@ -110122,7 +110135,7 @@ define(['exports'], function (exports) { 'use strict';
   		console.error( 'THREE.Matrix4: .rotateByAxis() has been removed.' );
 
   	},
-  	applyToBuffer: function ( buffer /*, offset, length */ ) {
+  	applyToBuffer: function ( buffer /* offset, length */ ) {
 
   		console.warn( 'THREE.Matrix4: .applyToBuffer() has been removed. Use matrix.applyToBufferAttribute( attribute ) instead.' );
   		return this.applyToBufferAttribute( buffer );
@@ -124893,13 +124906,7 @@ define(['exports'], function (exports) { 'use strict';
   								cpx0 = laste.x;
   								cpy0 = laste.y;
 
-  								for ( var i2 = 1; i2 <= divisions; i2 ++ ) {
-
-  									var t = i2 / divisions;
-  									QuadraticBezier( t, cpx0, cpx1, cpx );
-  									QuadraticBezier( t, cpy0, cpy1, cpy );
-
-  								}
+  								
 
   							}
 
@@ -124923,13 +124930,7 @@ define(['exports'], function (exports) { 'use strict';
   								cpx0 = laste.x;
   								cpy0 = laste.y;
 
-  								for ( var i2 = 1; i2 <= divisions; i2 ++ ) {
-
-  									var t = i2 / divisions;
-  									CubicBezier( t, cpx0, cpx1, cpx2, cpx );
-  									CubicBezier( t, cpy0, cpy1, cpy2, cpy );
-
-  								}
+  								
 
   							}
 
@@ -127993,7 +127994,7 @@ define(['exports'], function (exports) { 'use strict';
   exports.NodeMaterial = NodeMaterial;
   exports.NodePass = NodePass;
   exports.RawNode = RawNode;
-  exports.TempNode = TempNode;
+  exports.TempNode = TempNode$1;
   exports.BlurNode = BlurNode;
   exports.BumpNode = BumpNode;
   exports.ColorAdjustmentNode = ColorAdjustmentNode;
