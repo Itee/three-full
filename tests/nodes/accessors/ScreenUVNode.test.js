@@ -407,6 +407,7 @@ var Three = (function (exports) {
 
 	ScreenUVNode.prototype.generate = function( builder, output ) {
 
+		var material = builder.material;
 		var result;
 
 		if ( builder.isShader( 'fragment' ) ) {

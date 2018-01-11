@@ -13959,6 +13959,7 @@ var Three = (function (exports) {
 							var skeletonRoot = scene.findNode( this.mBones[ i ].mName );
 							if ( ! skeletonRoot ) return;
 							var threeSkeletonRoot = skeletonRoot.toTHREE( scene );
+							var threeSkeletonRootParent = threeSkeletonRoot.parent;
 							var threeSkeletonRootBone = cloneTreeToBones( threeSkeletonRoot, scene );
 							this.threeNode.add( threeSkeletonRootBone );
 							var bone = findMatchingBone( threeSkeletonRootBone, this.mBones[ i ].mName );

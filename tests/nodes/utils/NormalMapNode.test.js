@@ -645,6 +645,8 @@ var Three = (function (exports) {
 
 	NormalMapNode.prototype.generate = function( builder, output ) {
 
+		var material = builder.material;
+
 		builder.include( 'perturbNormal2Arb' );
 
 		if ( builder.isShader( 'fragment' ) ) {

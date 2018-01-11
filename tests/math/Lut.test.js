@@ -18708,6 +18708,8 @@ var Three = (function (exports) {
 			contextTitle.font = 'Normal ' + this.legend.labels.fontsize * 1.2 + 'px ' + this.legend.labels.fontface;
 
 			var metrics = contextTitle.measureText( this.legend.labels.title.toString() + this.legend.labels.um.toString() );
+			var textWidth = metrics.width;
+
 			contextTitle.fillStyle   = 'rgba(' + backgroundColor.r + ',' + backgroundColor.g + ',' + backgroundColor.b + ',' + backgroundColor.a + ')';
 
 			contextTitle.strokeStyle = 'rgba(' + borderColor.r + ',' + borderColor.g + ',' + borderColor.b + ',' + borderColor.a + ')';
@@ -18786,6 +18788,8 @@ var Three = (function (exports) {
 					contextTick.font = 'Normal ' + this.legend.labels.fontsize + 'px ' + this.legend.labels.fontface;
 
 					var metrics = contextTick.measureText( value.toString() );
+					var textWidth = metrics.width;
+
 					contextTick.fillStyle   = 'rgba(' + backgroundColor.r + ',' + backgroundColor.g + ',' + backgroundColor.b + ',' + backgroundColor.a + ')';
 
 					contextTick.strokeStyle = 'rgba(' + borderColor.r + ',' + borderColor.g + ',' + borderColor.b + ',' + borderColor.a + ')';

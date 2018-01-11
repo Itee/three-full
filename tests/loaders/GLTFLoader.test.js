@@ -18495,6 +18495,7 @@ var Three = (function (exports) {
 		GLTFParser.prototype.loadMaterial = function ( materialIndex ) {
 
 			var parser = this;
+			var json = this.json;
 			var extensions = this.extensions;
 			var materialDef = this.json.materials[ materialIndex ];
 
@@ -18793,6 +18794,7 @@ var Three = (function (exports) {
 		GLTFParser.prototype.loadMesh = function ( meshIndex ) {
 
 			var scope = this;
+			var json = this.json;
 			var extensions = this.extensions;
 
 			var meshDef = this.json.meshes[ meshIndex ];
@@ -19024,6 +19026,8 @@ var Three = (function (exports) {
 		 */
 		GLTFParser.prototype.loadAnimation = function ( animationIndex ) {
 
+			var json = this.json;
+
 			var animationDef = this.json.animations[ animationIndex ];
 
 			return this.getMultiDependencies( [
@@ -19174,6 +19178,7 @@ var Three = (function (exports) {
 		 */
 		GLTFParser.prototype.loadNode = function ( nodeIndex ) {
 
+			var json = this.json;
 			var extensions = this.extensions;
 
 			var meshReferences = this.json.meshReferences;

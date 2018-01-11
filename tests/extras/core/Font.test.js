@@ -6180,13 +6180,7 @@ var Three = (function (exports) {
 									cpx0 = laste.x;
 									cpy0 = laste.y;
 
-									for ( var i2 = 1; i2 <= divisions; i2 ++ ) {
-
-										var t = i2 / divisions;
-										QuadraticBezier( t, cpx0, cpx1, cpx );
-										QuadraticBezier( t, cpy0, cpy1, cpy );
-
-									}
+									
 
 								}
 
@@ -6210,13 +6204,7 @@ var Three = (function (exports) {
 									cpx0 = laste.x;
 									cpy0 = laste.y;
 
-									for ( var i2 = 1; i2 <= divisions; i2 ++ ) {
-
-										var t = i2 / divisions;
-										CubicBezier( t, cpx0, cpx1, cpx2, cpx );
-										CubicBezier( t, cpy0, cpy1, cpy2, cpy );
-
-									}
+									
 
 								}
 

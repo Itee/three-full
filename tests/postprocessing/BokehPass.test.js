@@ -18710,6 +18710,7 @@ var Three = (function (exports) {
 
 			this.oldClearColor.copy( renderer.getClearColor() );
 			this.oldClearAlpha = renderer.getClearAlpha();
+			var oldAutoClear = renderer.autoClear;
 			renderer.autoClear = false;
 
 			renderer.setClearColor( 0xffffff );

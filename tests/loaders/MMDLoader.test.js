@@ -26235,6 +26235,9 @@ var Three = (function (exports) {
 			var bones = this.mesh.skeleton.bones;
 			var iks = this.mesh.geometry.iks;
 
+			var boneParams = this.mesh.geometry.bones;
+
+			// for reference overhead reduction in loop
 			var math = Math;
 
 			this.mesh.updateMatrixWorld( true );
@@ -28669,11 +28672,22 @@ var Three = (function (exports) {
 					if ( g.isLocal ) {
 
 						// TODO: implement
-						
+						if ( g.affectPosition ) {
+
+						}
+
+						// TODO: implement
+						if ( g.affectRotation ) {
+
+						}
 
 					} else {
 
 						// TODO: implement
+						if ( g.affectPosition ) {
+
+						}
+
 						if ( g.affectRotation ) {
 
 							q.set( 0, 0, 0, 1 );

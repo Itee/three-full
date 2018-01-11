@@ -12206,13 +12206,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	  * @author Kai Salmen / https://kaisalmen.de
-	  * Development repository: https://github.com/kaisalmen/WWOBJLoader
-	  */
-
-	'use strict';
-
 	var LoaderSupport = {};
 
 	/**
@@ -14805,15 +14798,6 @@ var Three = (function (exports) {
 		}
 
 	};
-
-	/**
-	  * @author Kai Salmen / https://kaisalmen.de
-	  * Development repository: https://github.com/kaisalmen/WWOBJLoader
-	  */
-
-	'use strict';
-
-
 
 	if ( LoaderSupport === undefined ) console.error( '"LoaderSupport" is not available. "OBJLoader2" requires it. Please include "LoaderSupport.js" in your HTML.' );
 

@@ -438,6 +438,8 @@ var Three = (function (exports) {
 
 	JoinNode.prototype.generate = function( builder, output ) {
 
+		var material = builder.material;
+
 		var type = this.getType( builder );
 		var length = this.getNumElements();
 

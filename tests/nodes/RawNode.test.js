@@ -272,6 +272,8 @@ var Three = (function (exports) {
 
 	GLNode.prototype.generate = function( builder ) {
 
+		var material = builder.material;
+
 		var data = this.value.parseAndBuildCode( builder, this.type );
 
 		var code = data.code + '\n';

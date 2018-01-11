@@ -8620,16 +8620,7 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author Kevin Chapelier / https://github.com/kchapelier
-	 * See https://github.com/kchapelier/PRWM for more informations about this file format
-	 */
-
-
-
-		'use strict';
-
-		var bigEndianPlatform = null;
+	var bigEndianPlatform = null;
 
 		/**
 		 * Check if the endianness of the platform is big-endian (most significant bit first)

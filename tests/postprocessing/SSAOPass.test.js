@@ -18771,8 +18771,6 @@ var Three = (function (exports) {
 
 	};
 
-	'use strict';
-
 	/**
 	 * Screen-space ambient occlusion pass.
 	 *

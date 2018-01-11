@@ -6576,6 +6576,8 @@ var Three = (function (exports) {
 
 			var shaderID = shaderIDs[ originalMaterial.type ];
 			var originalUniforms, originalVertexShader;
+			var outlineParameters = originalMaterial.outlineParameters;
+
 			if ( shaderID !== undefined ) {
 
 				var shader = ShaderLib[ shaderID ];

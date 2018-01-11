@@ -260,7 +260,7 @@ var Three = (function (exports) {
 	 * @author sunag / http://www.sunag.com.br/
 	 */
 
-	var TempNode = function( type, params ) {
+	var TempNode$1 = function( type, params ) {
 
 		GLNode.call( this, type );
 
@@ -271,10 +271,10 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype = Object.create( GLNode.prototype );
-	TempNode.prototype.constructor = TempNode;
+	TempNode$1.prototype = Object.create( GLNode.prototype );
+	TempNode$1.prototype.constructor = TempNode$1;
 
-	TempNode.prototype.build = function( builder, output, uuid, ns ) {
+	TempNode$1.prototype.build = function( builder, output, uuid, ns ) {
 
 		output = output || this.getType( builder );
 
@@ -329,7 +329,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				name = TempNode.prototype.generate.call( this, builder, output, uuid, data.output, ns );
+				name = TempNode$1.prototype.generate.call( this, builder, output, uuid, data.output, ns );
 
 				var code = this.generate( builder, type, uuid );
 
@@ -346,19 +346,19 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.isShared = function( builder, output ) {
+	TempNode$1.prototype.isShared = function( builder, output ) {
 
 		return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
 
 	};
 
-	TempNode.prototype.isUnique = function( builder, output ) {
+	TempNode$1.prototype.isUnique = function( builder, output ) {
 
 		return this.unique;
 
 	};
 
-	TempNode.prototype.getUuid = function( unique ) {
+	TempNode$1.prototype.getUuid = function( unique ) {
 
 		var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
 
@@ -368,7 +368,7 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.getTemp = function( builder, uuid ) {
+	TempNode$1.prototype.getTemp = function( builder, uuid ) {
 
 		uuid = uuid || this.uuid;
 
@@ -379,7 +379,7 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.generate = function( builder, output, uuid, type, ns ) {
+	TempNode$1.prototype.generate = function( builder, output, uuid, type, ns ) {
 
 		if ( ! this.isShared( builder, output ) ) console.error( "TempNode is not shared!" );
 
@@ -391,12 +391,100 @@ var Three = (function (exports) {
 	};
 
 	/**
+	 * @author [Tristan Valcke]{@link https://github.com/Itee}
+	 * @author sunag / http://www.sunag.com.br/
+	 * @thanks bhouston / https://clara.io/
+	 */
+
+	var FunctionNode = function( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ) {
+
+		src = src || '';
+
+		this.isMethod = typeof includesOrType !== "string";
+		this.useKeywords = true;
+
+		TempNode$1.call( this, this.isMethod ? null : includesOrType );
+
+		if ( this.isMethod ) this.eval( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions );
+		else this.eval( src, extensionsOrIncludes, keywordsOrExtensions );
+
+	};
+
+	/**
+	 * @author [Tristan Valcke]{@link https://github.com/Itee}
+	 * @author sunag / http://www.sunag.com.br/
+	 */
+
+	var NodeLib = {
+
+		nodes: {},
+		keywords: {},
+
+		add: function( node ) {
+
+			this.nodes[ node.name ] = node;
+
+		},
+
+		addKeyword: function( name, callback, cache ) {
+
+			cache = cache !== undefined ? cache : true;
+
+			this.keywords[ name ] = { callback : callback, cache : cache };
+
+		},
+
+		remove: function( node ) {
+
+			delete this.nodes[ node.name ];
+
+		},
+
+		removeKeyword: function( name ) {
+
+			delete this.keywords[ name ];
+
+		},
+
+		get: function( name ) {
+
+			return this.nodes[ name ];
+
+		},
+
+		getKeyword: function( name, material ) {
+
+			return this.keywords[ name ].callback.call( this, material );
+
+		},
+
+		getKeywordData: function( name ) {
+
+			return this.keywords[ name ];
+
+		},
+
+		contains: function( name ) {
+
+			return this.nodes[ name ] != undefined;
+
+		},
+
+		containsKeyword: function( name ) {
+
+			return this.keywords[ name ] != undefined;
+
+		}
+
+	};
+
+	/**
 	 * @author sunag / http://www.sunag.com.br/
 	 */
 
 	var UVNode = function( index ) {
 
-		TempNode.call( this, 'v2', { shared: false } );
+		TempNode$1.call( this, 'v2', { shared: false } );
 
 		this.index = index || 0;
 
@@ -405,7 +493,7 @@ var Three = (function (exports) {
 	UVNode.vertexDict = [ 'uv', 'uv2' ];
 	UVNode.fragmentDict = [ 'vUv', 'vUv2' ];
 
-	UVNode.prototype = Object.create( TempNode.prototype );
+	UVNode.prototype = Object.create( TempNode$1.prototype );
 	UVNode.prototype.constructor = UVNode;
 
 	UVNode.prototype.generate = function( builder, output ) {
@@ -428,7 +516,7 @@ var Three = (function (exports) {
 
 	var PositionNode = function( scope ) {
 
-		TempNode.call( this, 'v3' );
+		TempNode$1.call( this, 'v3' );
 
 		this.scope = scope || PositionNode.LOCAL;
 
@@ -439,7 +527,7 @@ var Three = (function (exports) {
 	PositionNode.VIEW = 'view';
 	PositionNode.PROJECTION = 'projection';
 
-	PositionNode.prototype = Object.create( TempNode.prototype );
+	PositionNode.prototype = Object.create( TempNode$1.prototype );
 	PositionNode.prototype.constructor = PositionNode;
 
 	PositionNode.prototype.getType = function( builder ) {
@@ -516,7 +604,7 @@ var Three = (function (exports) {
 
 	var NormalNode = function( scope ) {
 
-		TempNode.call( this, 'v3' );
+		TempNode$1.call( this, 'v3' );
 
 		this.scope = scope || NormalNode.LOCAL;
 
@@ -526,7 +614,7 @@ var Three = (function (exports) {
 	NormalNode.WORLD = 'world';
 	NormalNode.VIEW = 'view';
 
-	NormalNode.prototype = Object.create( TempNode.prototype );
+	NormalNode.prototype = Object.create( TempNode$1.prototype );
 	NormalNode.prototype.constructor = NormalNode;
 
 	NormalNode.prototype.isShared = function( builder ) {
@@ -586,11 +674,11 @@ var Three = (function (exports) {
 		params = params || {};
 		params.shared = params.shared !== undefined ? params.shared : false;
 
-		TempNode.call( this, type, params );
+		TempNode$1.call( this, type, params );
 
 	};
 
-	InputNode.prototype = Object.create( TempNode.prototype );
+	InputNode.prototype = Object.create( TempNode$1.prototype );
 	InputNode.prototype.constructor = InputNode;
 
 	InputNode.prototype.generate = function( builder, output, uuid, type, ns, needsUpdate ) {
@@ -685,7 +773,7 @@ var Three = (function (exports) {
 
 	var ConstNode = function( src, useDefine ) {
 
-		TempNode.call( this );
+		TempNode$1.call( this );
 
 		this.eval( src || ConstNode.PI, useDefine );
 
@@ -698,7 +786,7 @@ var Three = (function (exports) {
 	ConstNode.LOG2 = 'LOG2';
 	ConstNode.EPSILON = 'EPSILON';
 
-	ConstNode.prototype = Object.create( TempNode.prototype );
+	ConstNode.prototype = Object.create( TempNode$1.prototype );
 	ConstNode.prototype.constructor = ConstNode;
 
 	ConstNode.prototype.getType = function( builder ) {
@@ -770,72 +858,11 @@ var Three = (function (exports) {
 	};
 
 	/**
+	 * @author [Tristan Valcke]{@link https://github.com/Itee}
 	 * @author sunag / http://www.sunag.com.br/
 	 */
 
-	var NodeLib = {
-
-		nodes: {},
-		keywords: {},
-
-		add: function( node ) {
-
-			this.nodes[ node.name ] = node;
-
-		},
-
-		addKeyword: function( name, callback, cache ) {
-
-			cache = cache !== undefined ? cache : true;
-
-			this.keywords[ name ] = { callback : callback, cache : cache };
-
-		},
-
-		remove: function( node ) {
-
-			delete this.nodes[ node.name ];
-
-		},
-
-		removeKeyword: function( name ) {
-
-			delete this.keywords[ name ];
-
-		},
-
-		get: function( name ) {
-
-			return this.nodes[ name ];
-
-		},
-
-		getKeyword: function( name, material ) {
-
-			return this.keywords[ name ].callback.call( this, material );
-
-		},
-
-		getKeywordData: function( name ) {
-
-			return this.keywords[ name ];
-
-		},
-
-		contains: function( name ) {
-
-			return this.nodes[ name ] != undefined;
-
-		},
-
-		containsKeyword: function( name ) {
-
-			return this.keywords[ name ] != undefined;
-
-		}
-
-	};
-
+	// Fix circular dependency, see #2
 	//
 	//	Keywords
 	//
@@ -905,21 +932,21 @@ var Three = (function (exports) {
 	//
 
 	NodeLib.add( new FunctionNode( [
-	// Per-Pixel Tangent Space Normal Mapping
-	// http://hacksoflife.blogspot.ch/2009/11/per-pixel-tangent-space-normal-mapping.html
-	"vec3 perturbNormal2Arb( vec3 eye_pos, vec3 surf_norm, vec3 map, vec2 mUv, vec2 scale ) {",
-	"	vec3 q0 = dFdx( eye_pos );",
-	"	vec3 q1 = dFdy( eye_pos );",
-	"	vec2 st0 = dFdx( mUv.st );",
-	"	vec2 st1 = dFdy( mUv.st );",
-	"	vec3 S = normalize( q0 * st1.t - q1 * st0.t );",
-	"	vec3 T = normalize( -q0 * st1.s + q1 * st0.s );",
-	"	vec3 N = normalize( surf_norm );",
-	"	vec3 mapN = map * 2.0 - 1.0;",
-	"	mapN.xy = scale * mapN.xy;",
-	"	mat3 tsn = mat3( S, T, N );",
-	"	return normalize( tsn * mapN );",
-	"}"
+		// Per-Pixel Tangent Space Normal Mapping
+		// http://hacksoflife.blogspot.ch/2009/11/per-pixel-tangent-space-normal-mapping.html
+		"vec3 perturbNormal2Arb( vec3 eye_pos, vec3 surf_norm, vec3 map, vec2 mUv, vec2 scale ) {",
+		"	vec3 q0 = dFdx( eye_pos );",
+		"	vec3 q1 = dFdy( eye_pos );",
+		"	vec2 st0 = dFdx( mUv.st );",
+		"	vec2 st1 = dFdy( mUv.st );",
+		"	vec3 S = normalize( q0 * st1.t - q1 * st0.t );",
+		"	vec3 T = normalize( -q0 * st1.s + q1 * st0.s );",
+		"	vec3 N = normalize( surf_norm );",
+		"	vec3 mapN = map * 2.0 - 1.0;",
+		"	mapN.xy = scale * mapN.xy;",
+		"	mat3 tsn = mat3( S, T, N );",
+		"	return normalize( tsn * mapN );",
+		"}"
 	].join( "\n" ), null, { derivatives: true } ) );
 
 	//
@@ -927,9 +954,9 @@ var Three = (function (exports) {
 	//
 
 	NodeLib.add( new FunctionNode( [
-	"float snoise(vec2 co) {",
-	"	return fract( sin( dot(co.xy, vec2(12.9898,78.233) ) ) * 43758.5453 );",
-	"}"
+		"float snoise(vec2 co) {",
+		"	return fract( sin( dot(co.xy, vec2(12.9898,78.233) ) ) * 43758.5453 );",
+		"}"
 	].join( "\n" ) ) );
 
 	//
@@ -937,14 +964,14 @@ var Three = (function (exports) {
 	//
 
 	NodeLib.add( new FunctionNode( [
-	"vec3 hue_rgb(vec3 rgb, float adjustment) {",
-	"	const mat3 RGBtoYIQ = mat3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263, 0.211456, -0.522591, 0.311135);",
-	"	const mat3 YIQtoRGB = mat3(1.0, 0.9563, 0.6210, 1.0, -0.2721, -0.6474, 1.0, -1.107, 1.7046);",
-	"	vec3 yiq = RGBtoYIQ * rgb;",
-	"	float hue = atan(yiq.z, yiq.y) + adjustment;",
-	"	float chroma = sqrt(yiq.z * yiq.z + yiq.y * yiq.y);",
-	"	return YIQtoRGB * vec3(yiq.x, chroma * cos(hue), chroma * sin(hue));",
-	"}"
+		"vec3 hue_rgb(vec3 rgb, float adjustment) {",
+		"	const mat3 RGBtoYIQ = mat3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263, 0.211456, -0.522591, 0.311135);",
+		"	const mat3 YIQtoRGB = mat3(1.0, 0.9563, 0.6210, 1.0, -0.2721, -0.6474, 1.0, -1.107, 1.7046);",
+		"	vec3 yiq = RGBtoYIQ * rgb;",
+		"	float hue = atan(yiq.z, yiq.y) + adjustment;",
+		"	float chroma = sqrt(yiq.z * yiq.z + yiq.y * yiq.y);",
+		"	return YIQtoRGB * vec3(yiq.x, chroma * cos(hue), chroma * sin(hue));",
+		"}"
 	].join( "\n" ) ) );
 
 	//
@@ -952,11 +979,11 @@ var Three = (function (exports) {
 	//
 
 	NodeLib.add( new FunctionNode( [
-	// Algorithm from Chapter 16 of OpenGL Shading Language
-	"vec3 saturation_rgb(vec3 rgb, float adjustment) {",
-	"	vec3 intensity = vec3(dot(rgb, LUMA));",
-	"	return mix(intensity, rgb, adjustment);",
-	"}"
+		// Algorithm from Chapter 16 of OpenGL Shading Language
+		"vec3 saturation_rgb(vec3 rgb, float adjustment) {",
+		"	vec3 intensity = vec3(dot(rgb, LUMA));",
+		"	return mix(intensity, rgb, adjustment);",
+		"}"
 	].join( "\n" ) ) );
 
 	//
@@ -964,10 +991,10 @@ var Three = (function (exports) {
 	//
 
 	NodeLib.add( new FunctionNode( [
-	// Algorithm from Chapter 10 of Graphics Shaders
-	"float luminance_rgb(vec3 rgb) {",
-	"	return dot(rgb, LUMA);",
-	"}"
+		// Algorithm from Chapter 10 of Graphics Shaders
+		"float luminance_rgb(vec3 rgb) {",
+		"	return dot(rgb, LUMA);",
+		"}"
 	].join( "\n" ) ) );
 
 	//
@@ -975,34 +1002,27 @@ var Three = (function (exports) {
 	//
 
 	NodeLib.add( new FunctionNode( [
-	// Shader by Evan Wallace adapted by @lo-th
-	"vec3 vibrance_rgb(vec3 rgb, float adjustment) {",
-	"	float average = (rgb.r + rgb.g + rgb.b) / 3.0;",
-	"	float mx = max(rgb.r, max(rgb.g, rgb.b));",
-	"	float amt = (mx - average) * (-3.0 * adjustment);",
-	"	return mix(rgb.rgb, vec3(mx), amt);",
-	"}"
+		// Shader by Evan Wallace adapted by @lo-th
+		"vec3 vibrance_rgb(vec3 rgb, float adjustment) {",
+		"	float average = (rgb.r + rgb.g + rgb.b) / 3.0;",
+		"	float mx = max(rgb.r, max(rgb.g, rgb.b));",
+		"	float amt = (mx - average) * (-3.0 * adjustment);",
+		"	return mix(rgb.rgb, vec3(mx), amt);",
+		"}"
 	].join( "\n" ) ) );
 
 	/**
+	 * @author [Tristan Valcke]{@link https://github.com/Itee}
+	 * @author sunag / http://www.sunag.com.br/
+	 */
+
+	/**
+	 * @author [Tristan Valcke]{@link https://github.com/Itee}
 	 * @author sunag / http://www.sunag.com.br/
 	 * @thanks bhouston / https://clara.io/
 	 */
 
-	var FunctionNode = function( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ) {
-
-		src = src || '';
-
-		this.isMethod = typeof includesOrType !== "string";
-		this.useKeywords = true;
-
-		TempNode.call( this, this.isMethod ? null : includesOrType );
-
-		if ( this.isMethod ) this.eval( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions );
-		else this.eval( src, extensionsOrIncludes, keywordsOrExtensions );
-
-	};
-
+	// Fix circular dependency, see #2
 	FunctionNode.rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\((.*?)\)/i;
 	FunctionNode.rProperties = /[a-z_0-9]+/ig;
 
@@ -1189,12 +1209,18 @@ var Three = (function (exports) {
 	};
 
 	/**
+	 * @author [Tristan Valcke]{@link https://github.com/Itee}
+	 * @author sunag / http://www.sunag.com.br/
+	 * @thanks bhouston / https://clara.io/
+	 */
+
+	/**
 	 * @author sunag / http://www.sunag.com.br/
 	 */
 
 	var CameraNode = function( scope, camera ) {
 
-		TempNode.call( this, 'v3' );
+		TempNode$1.call( this, 'v3' );
 
 		this.setScope( scope || CameraNode.POSITION );
 		this.setCamera( camera );
@@ -1216,7 +1242,7 @@ var Three = (function (exports) {
 	CameraNode.DEPTH = 'depth';
 	CameraNode.TO_VERTEX = 'toVertex';
 
-	CameraNode.prototype = Object.create( TempNode.prototype );
+	CameraNode.prototype = Object.create( TempNode$1.prototype );
 	CameraNode.prototype.constructor = CameraNode;
 
 	CameraNode.prototype.setCamera = function( camera ) {
@@ -1290,6 +1316,7 @@ var Three = (function (exports) {
 
 	CameraNode.prototype.generate = function( builder, output ) {
 
+		var material = builder.material;
 		var result;
 
 		switch ( this.scope ) {
