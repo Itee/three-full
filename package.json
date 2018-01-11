@@ -1,6 +1,6 @@
 {
   "name": "threejs-full-es6",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "The famouse ThreeJs library with full examples as es6 module",
   "main": "gulpfile.js",
   "scripts": {
