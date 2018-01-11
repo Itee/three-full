@@ -63,16 +63,6 @@ export default [
 			file: 'tests/Car.test.js'
 		}
 	},
-//	{
-//		input: 'sources/Cloth.js',
-//		plugins: [ glsl() ],
-//		indent: '\t',
-//		output: {
-//			format: 'iife',
-//			name: 'Three',
-//			file: 'tests/Cloth.test.js'
-//		}
-//	},
 	{
 		input: 'sources/ConvexObjectBreaker.js',
 		plugins: [ glsl() ],
