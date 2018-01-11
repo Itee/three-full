@@ -260,7 +260,7 @@ var Three = (function (exports) {
 	 * @author sunag / http://www.sunag.com.br/
 	 */
 
-	var TempNode$1 = function( type, params ) {
+	var TempNode = function( type, params ) {
 
 		GLNode.call( this, type );
 
@@ -271,10 +271,10 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode$1.prototype = Object.create( GLNode.prototype );
-	TempNode$1.prototype.constructor = TempNode$1;
+	TempNode.prototype = Object.create( GLNode.prototype );
+	TempNode.prototype.constructor = TempNode;
 
-	TempNode$1.prototype.build = function( builder, output, uuid, ns ) {
+	TempNode.prototype.build = function( builder, output, uuid, ns ) {
 
 		output = output || this.getType( builder );
 
@@ -329,7 +329,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				name = TempNode$1.prototype.generate.call( this, builder, output, uuid, data.output, ns );
+				name = TempNode.prototype.generate.call( this, builder, output, uuid, data.output, ns );
 
 				var code = this.generate( builder, type, uuid );
 
@@ -346,19 +346,19 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode$1.prototype.isShared = function( builder, output ) {
+	TempNode.prototype.isShared = function( builder, output ) {
 
 		return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
 
 	};
 
-	TempNode$1.prototype.isUnique = function( builder, output ) {
+	TempNode.prototype.isUnique = function( builder, output ) {
 
 		return this.unique;
 
 	};
 
-	TempNode$1.prototype.getUuid = function( unique ) {
+	TempNode.prototype.getUuid = function( unique ) {
 
 		var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
 
@@ -368,7 +368,7 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode$1.prototype.getTemp = function( builder, uuid ) {
+	TempNode.prototype.getTemp = function( builder, uuid ) {
 
 		uuid = uuid || this.uuid;
 
@@ -379,7 +379,7 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode$1.prototype.generate = function( builder, output, uuid, type, ns ) {
+	TempNode.prototype.generate = function( builder, output, uuid, type, ns ) {
 
 		if ( ! this.isShared( builder, output ) ) console.error( "TempNode is not shared!" );
 
@@ -396,7 +396,7 @@ var Three = (function (exports) {
 
 	var UVNode = function( index ) {
 
-		TempNode$1.call( this, 'v2', { shared: false } );
+		TempNode.call( this, 'v2', { shared: false } );
 
 		this.index = index || 0;
 
@@ -405,7 +405,7 @@ var Three = (function (exports) {
 	UVNode.vertexDict = [ 'uv', 'uv2' ];
 	UVNode.fragmentDict = [ 'vUv', 'vUv2' ];
 
-	UVNode.prototype = Object.create( TempNode$1.prototype );
+	UVNode.prototype = Object.create( TempNode.prototype );
 	UVNode.prototype.constructor = UVNode;
 
 	UVNode.prototype.generate = function( builder, output ) {
@@ -431,11 +431,11 @@ var Three = (function (exports) {
 		params = params || {};
 		params.shared = params.shared !== undefined ? params.shared : false;
 
-		TempNode$1.call( this, type, params );
+		TempNode.call( this, type, params );
 
 	};
 
-	InputNode.prototype = Object.create( TempNode$1.prototype );
+	InputNode.prototype = Object.create( TempNode.prototype );
 	InputNode.prototype.constructor = InputNode;
 
 	InputNode.prototype.generate = function( builder, output, uuid, type, ns, needsUpdate ) {
@@ -5665,7 +5665,7 @@ var Three = (function (exports) {
 
 	var PositionNode = function( scope ) {
 
-		TempNode$1.call( this, 'v3' );
+		TempNode.call( this, 'v3' );
 
 		this.scope = scope || PositionNode.LOCAL;
 
@@ -5676,7 +5676,7 @@ var Three = (function (exports) {
 	PositionNode.VIEW = 'view';
 	PositionNode.PROJECTION = 'projection';
 
-	PositionNode.prototype = Object.create( TempNode$1.prototype );
+	PositionNode.prototype = Object.create( TempNode.prototype );
 	PositionNode.prototype.constructor = PositionNode;
 
 	PositionNode.prototype.getType = function( builder ) {
@@ -6770,10 +6770,82 @@ var Three = (function (exports) {
 		this.isMethod = typeof includesOrType !== "string";
 		this.useKeywords = true;
 
-		TempNode$1.call( this, this.isMethod ? null : includesOrType );
+		TempNode.call( this, this.isMethod ? null : includesOrType );
 
 		if ( this.isMethod ) this.eval( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions );
 		else this.eval( src, extensionsOrIncludes, keywordsOrExtensions );
+
+	};
+
+	FunctionNode.rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\((.*?)\)/i;
+	FunctionNode.rProperties = /[a-z_0-9]+/ig;
+
+	FunctionNode.prototype = Object.create( TempNode.prototype );
+	FunctionNode.prototype.constructor = FunctionNode;
+
+	FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
+
+		src = ( src || '' ).trim();
+
+		this.includes = includes || [];
+		this.extensions = extensions || {};
+		this.keywords = keywords || {};
+
+		if ( this.isMethod ) {
+
+			var match = src.match( FunctionNode.rDeclaration );
+
+			this.inputs = [];
+
+			if ( match && match.length == 4 ) {
+
+				this.type = match[ 1 ];
+				this.name = match[ 2 ];
+
+				var inputs = match[ 3 ].match( FunctionNode.rProperties );
+
+				if ( inputs ) {
+
+					var i = 0;
+
+					while ( i < inputs.length ) {
+
+						var qualifier = inputs[ i ++ ];
+						var type, name;
+
+						if ( qualifier == 'in' || qualifier == 'out' || qualifier == 'inout' ) {
+
+							type = inputs[ i ++ ];
+
+						} else {
+
+							type = qualifier;
+							qualifier = '';
+
+						}
+
+						name = inputs[ i ++ ];
+
+						this.inputs.push( {
+							name : name,
+							type : type,
+							qualifier : qualifier
+						} );
+
+					}
+
+				}
+
+			} else {
+
+				this.type = '';
+				this.name = '';
+
+			}
+
+		}
+
+		this.value = src;
 
 	};
 
@@ -6851,7 +6923,7 @@ var Three = (function (exports) {
 
 	var NormalNode = function( scope ) {
 
-		TempNode$1.call( this, 'v3' );
+		TempNode.call( this, 'v3' );
 
 		this.scope = scope || NormalNode.LOCAL;
 
@@ -6861,7 +6933,7 @@ var Three = (function (exports) {
 	NormalNode.WORLD = 'world';
 	NormalNode.VIEW = 'view';
 
-	NormalNode.prototype = Object.create( TempNode$1.prototype );
+	NormalNode.prototype = Object.create( TempNode.prototype );
 	NormalNode.prototype.constructor = NormalNode;
 
 	NormalNode.prototype.isShared = function( builder ) {
@@ -6971,7 +7043,7 @@ var Three = (function (exports) {
 
 	var ConstNode = function( src, useDefine ) {
 
-		TempNode$1.call( this );
+		TempNode.call( this );
 
 		this.eval( src || ConstNode.PI, useDefine );
 
@@ -6984,7 +7056,7 @@ var Three = (function (exports) {
 	ConstNode.LOG2 = 'LOG2';
 	ConstNode.EPSILON = 'EPSILON';
 
-	ConstNode.prototype = Object.create( TempNode$1.prototype );
+	ConstNode.prototype = Object.create( TempNode.prototype );
 	ConstNode.prototype.constructor = ConstNode;
 
 	ConstNode.prototype.getType = function( builder ) {
@@ -7221,12 +7293,6 @@ var Three = (function (exports) {
 	 */
 
 	// Fix circular dependency, see #2
-	FunctionNode.rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\((.*?)\)/i;
-	FunctionNode.rProperties = /[a-z_0-9]+/ig;
-
-	FunctionNode.prototype = Object.create( TempNode.prototype );
-	FunctionNode.prototype.constructor = FunctionNode;
-
 	FunctionNode.prototype.isShared = function( builder, output ) {
 
 		return ! this.isMethod;
@@ -7337,72 +7403,6 @@ var Three = (function (exports) {
 			return builder.format( "(" + src + ")", this.getType( builder ), output );
 
 		}
-
-	};
-
-	FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
-
-		src = ( src || '' ).trim();
-
-		this.includes = includes || [];
-		this.extensions = extensions || {};
-		this.keywords = keywords || {};
-
-		if ( this.isMethod ) {
-
-			var match = src.match( FunctionNode.rDeclaration );
-
-			this.inputs = [];
-
-			if ( match && match.length == 4 ) {
-
-				this.type = match[ 1 ];
-				this.name = match[ 2 ];
-
-				var inputs = match[ 3 ].match( FunctionNode.rProperties );
-
-				if ( inputs ) {
-
-					var i = 0;
-
-					while ( i < inputs.length ) {
-
-						var qualifier = inputs[ i ++ ];
-						var type, name;
-
-						if ( qualifier == 'in' || qualifier == 'out' || qualifier == 'inout' ) {
-
-							type = inputs[ i ++ ];
-
-						} else {
-
-							type = qualifier;
-							qualifier = '';
-
-						}
-
-						name = inputs[ i ++ ];
-
-						this.inputs.push( {
-							name : name,
-							type : type,
-							qualifier : qualifier
-						} );
-
-					}
-
-				}
-
-			} else {
-
-				this.type = '';
-				this.name = '';
-
-			}
-
-		}
-
-		this.value = src;
 
 	};
 
@@ -8005,7 +8005,7 @@ var Three = (function (exports) {
 
 	var BlurNode = function( value, coord, radius, size ) {
 
-		TempNode$1.call( this, 'v4' );
+		TempNode.call( this, 'v4' );
 
 		this.requestUpdate = true;
 
@@ -8054,7 +8054,7 @@ var Three = (function (exports) {
 	"}"
 	].join( "\n" ) );
 
-	BlurNode.prototype = Object.create( TempNode$1.prototype );
+	BlurNode.prototype = Object.create( TempNode.prototype );
 	BlurNode.prototype.constructor = BlurNode;
 
 	BlurNode.prototype.updateFrame = function( delta ) {
