@@ -411,6 +411,78 @@ gulp.task( 'create-function-node-declaration-file', ( done ) => {
 		'\n' +
 		'};\n' +
 		'\n' +
+		'FunctionNode.rDeclaration = /^([a-z_0-9]+)\\s([a-z_0-9]+)\\s?\\((.*?)\\)/i;\n' +
+		'FunctionNode.rProperties = /[a-z_0-9]+/ig;\n' +
+		'\n' +
+		'FunctionNode.prototype = Object.create( TempNode.prototype );\n' +
+		'FunctionNode.prototype.constructor = FunctionNode;\n' +
+		'\n' +
+		'FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {\n' +
+		'\n' +
+		'\tsrc = ( src || \'\' ).trim();\n' +
+		'\n' +
+		'\tthis.includes = includes || [];\n' +
+		'\tthis.extensions = extensions || {};\n' +
+		'\tthis.keywords = keywords || {};\n' +
+		'\n' +
+		'\tif ( this.isMethod ) {\n' +
+		'\n' +
+		'\t\tvar match = src.match( FunctionNode.rDeclaration );\n' +
+		'\n' +
+		'\t\tthis.inputs = [];\n' +
+		'\n' +
+		'\t\tif ( match && match.length == 4 ) {\n' +
+		'\n' +
+		'\t\t\tthis.type = match[ 1 ];\n' +
+		'\t\t\tthis.name = match[ 2 ];\n' +
+		'\n' +
+		'\t\t\tvar inputs = match[ 3 ].match( FunctionNode.rProperties );\n' +
+		'\n' +
+		'\t\t\tif ( inputs ) {\n' +
+		'\n' +
+		'\t\t\t\tvar i = 0;\n' +
+		'\n' +
+		'\t\t\t\twhile ( i < inputs.length ) {\n' +
+		'\n' +
+		'\t\t\t\t\tvar qualifier = inputs[ i ++ ];\n' +
+		'\t\t\t\t\tvar type, name;\n' +
+		'\n' +
+		'\t\t\t\t\tif ( qualifier == \'in\' || qualifier == \'out\' || qualifier == \'inout\' ) {\n' +
+		'\n' +
+		'\t\t\t\t\t\ttype = inputs[ i ++ ];\n' +
+		'\n' +
+		'\t\t\t\t\t} else {\n' +
+		'\n' +
+		'\t\t\t\t\t\ttype = qualifier;\n' +
+		'\t\t\t\t\t\tqualifier = \'\';\n' +
+		'\n' +
+		'\t\t\t\t\t}\n' +
+		'\n' +
+		'\t\t\t\t\tname = inputs[ i ++ ];\n' +
+		'\n' +
+		'\t\t\t\t\tthis.inputs.push( {\n' +
+		'\t\t\t\t\t\tname : name,\n' +
+		'\t\t\t\t\t\ttype : type,\n' +
+		'\t\t\t\t\t\tqualifier : qualifier\n' +
+		'\t\t\t\t\t} );\n' +
+		'\n' +
+		'\t\t\t\t}\n' +
+		'\n' +
+		'\t\t\t}\n' +
+		'\n' +
+		'\t\t} else {\n' +
+		'\n' +
+		'\t\t\tthis.type = \'\';\n' +
+		'\t\t\tthis.name = \'\';\n' +
+		'\n' +
+		'\t\t}\n' +
+		'\n' +
+		'\t}\n' +
+		'\n' +
+		'\tthis.value = src;\n' +
+		'\n' +
+		'};\n' +
+		'\n' +
 		'export { FunctionNode }\n'
 
 	fs.writeFile( "./node_modules/three/examples/js/nodes/FunctionNode_Declaration.js", stringFile, ( error ) => {
@@ -438,12 +510,6 @@ gulp.task( 'create-function-node-implementation-file', ( done ) => {
 		'\n' +
 		'// Fix circular dependency, see #2\n' +
 		'import { NodeLib } from \'../nodes/NodeLib.js\'\n' +
-		'\n' +
-		'FunctionNode.rDeclaration = /^([a-z_0-9]+)\\s([a-z_0-9]+)\\s?\\((.*?)\\)/i;\n' +
-		'FunctionNode.rProperties = /[a-z_0-9]+/ig;\n' +
-		'\n' +
-		'FunctionNode.prototype = Object.create( TempNode.prototype );\n' +
-		'FunctionNode.prototype.constructor = FunctionNode;\n' +
 		'\n' +
 		'FunctionNode.prototype.isShared = function( builder, output ) {\n' +
 		'\n' +
@@ -555,72 +621,6 @@ gulp.task( 'create-function-node-implementation-file', ( done ) => {
 		'\t\treturn builder.format( "(" + src + ")", this.getType( builder ), output );\n' +
 		'\n' +
 		'\t}\n' +
-		'\n' +
-		'};\n' +
-		'\n' +
-		'FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {\n' +
-		'\n' +
-		'\tsrc = ( src || \'\' ).trim();\n' +
-		'\n' +
-		'\tthis.includes = includes || [];\n' +
-		'\tthis.extensions = extensions || {};\n' +
-		'\tthis.keywords = keywords || {};\n' +
-		'\n' +
-		'\tif ( this.isMethod ) {\n' +
-		'\n' +
-		'\t\tvar match = src.match( FunctionNode.rDeclaration );\n' +
-		'\n' +
-		'\t\tthis.inputs = [];\n' +
-		'\n' +
-		'\t\tif ( match && match.length == 4 ) {\n' +
-		'\n' +
-		'\t\t\tthis.type = match[ 1 ];\n' +
-		'\t\t\tthis.name = match[ 2 ];\n' +
-		'\n' +
-		'\t\t\tvar inputs = match[ 3 ].match( FunctionNode.rProperties );\n' +
-		'\n' +
-		'\t\t\tif ( inputs ) {\n' +
-		'\n' +
-		'\t\t\t\tvar i = 0;\n' +
-		'\n' +
-		'\t\t\t\twhile ( i < inputs.length ) {\n' +
-		'\n' +
-		'\t\t\t\t\tvar qualifier = inputs[ i ++ ];\n' +
-		'\t\t\t\t\tvar type, name;\n' +
-		'\n' +
-		'\t\t\t\t\tif ( qualifier == \'in\' || qualifier == \'out\' || qualifier == \'inout\' ) {\n' +
-		'\n' +
-		'\t\t\t\t\t\ttype = inputs[ i ++ ];\n' +
-		'\n' +
-		'\t\t\t\t\t} else {\n' +
-		'\n' +
-		'\t\t\t\t\t\ttype = qualifier;\n' +
-		'\t\t\t\t\t\tqualifier = \'\';\n' +
-		'\n' +
-		'\t\t\t\t\t}\n' +
-		'\n' +
-		'\t\t\t\t\tname = inputs[ i ++ ];\n' +
-		'\n' +
-		'\t\t\t\t\tthis.inputs.push( {\n' +
-		'\t\t\t\t\t\tname : name,\n' +
-		'\t\t\t\t\t\ttype : type,\n' +
-		'\t\t\t\t\t\tqualifier : qualifier\n' +
-		'\t\t\t\t\t} );\n' +
-		'\n' +
-		'\t\t\t\t}\n' +
-		'\n' +
-		'\t\t\t}\n' +
-		'\n' +
-		'\t\t} else {\n' +
-		'\n' +
-		'\t\t\tthis.type = \'\';\n' +
-		'\t\t\tthis.name = \'\';\n' +
-		'\n' +
-		'\t\t}\n' +
-		'\n' +
-		'\t}\n' +
-		'\n' +
-		'\tthis.value = src;\n' +
 		'\n' +
 		'};\n' +
 		'\n' +
