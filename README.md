@@ -9,7 +9,7 @@ Three.js r89 come with lot of examples files, which are curently not usable as E
 The purpose of this project is to convert all examples files and includes them as part 
 of the library.
 
-**The version 4.2.0 is now available !!!**
+**The version 4.2.1 is now available !!!**
 
 #### Setup ####
 
@@ -133,6 +133,10 @@ This is the list of unsupported part of example, which cannot be converted yet.
 
 
 #### Change log ####
+
+##### 4.2.1 :
+
+* Ignore some dev files for npm
 
 ##### 4.2.0 :
 
