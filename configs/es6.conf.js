@@ -163,9 +163,6 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
-		FunctionNode: {
-			imports: [ 'NodeLib' ]
-		},
 		GCodeLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
