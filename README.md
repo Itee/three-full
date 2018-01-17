@@ -5,11 +5,11 @@ threejs-full-es6
 
 #### Extended Three JavaScript 3D library ####
 
-Three.js come with lot of examples files, which are curently not usable as ES6 module. 
+Three.js r89 come with lot of examples files, which are curently not usable as ES6 module. 
 The purpose of this project is to convert all examples files and includes them as part 
 of the library.
 
-**The version 4.1.1 is now available under Three r89 !!!**
+**The version 4.2.0 is now available !!!**
 
 #### Setup ####
 
@@ -22,7 +22,68 @@ npm install --save threejs-full-es6
 
 #### Usage ####
 
-Like Three.js but with more, more and more available stuff
+Like Three.js but with more, more and more available stuff.
+
+###### Using ES6: ######
+
+````javascript
+import { WhatIWant } from 'node_modules/threejs-full-es6/builds/Three.es.js'
+// equivalent to
+import { WhatIWant } from 'threejs-full-es6'
+ 
+// or directly from sources folder
+ 
+import { Ocean } from 'node_modules/threejs-full-es6/sources/Ocean'
+````
+
+###### Using Node/CommonJS: ######
+````javascript
+var Three = require('node_modules/threejs-full-es6/builds/Three.cjs.js')
+````
+
+
+###### Using AMD: ######
+
+````javascript
+require(['node_modules/threejs-full-es6/builds/Three.amd.js'], 
+    function( Three ){
+    
+        //...
+        
+});
+````
+
+###### Using UMD: ######
+
+````javascript
+require(['node_modules/threejs-full-es6/builds/Three.amd.js'], 
+    function( Three ){
+    
+        //...
+        
+});
+````
+
+###### From HTML (not recommended): ######
+
+````
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Three Full Es6</title>
+    </head>
+    <body>
+        <script src="node_modules/threejs-full-es6/builds/Three.iife.js"></script>
+        <script>
+            alert('Three.REVISION: ' + Three.REVISION)
+        </script>
+    </body>
+</html>
+````
+
+Note: You should copy the file in right server location to serve it correctly, and use Three.iife.min.js under production ! Importing the all library in HTML page should be avoided, use a proper module bundler like webpack or rollup using es6 module syntaxe !
+
 
 #### Commands ####
 In case you want participate, you need to known some commands below:
@@ -72,6 +133,10 @@ This is the list of unsupported part of example, which cannot be converted yet.
 
 
 #### Change log ####
+
+##### 4.2.0 :
+
+* Change main entry point of package to Three.es.js
 
 ##### 4.1.1 :
 
