@@ -38,22 +38,16 @@ import { Ocean } from 'node_modules/threejs-full-es6/sources/Ocean'
 
 ###### Using Node/CommonJS: ######
 ````javascript
-var Three = require('node_modules/threejs-full-es6/builds/Three.cjs.js')
-````
-
-
-###### Using AMD: ######
-
-````javascript
-require(['node_modules/threejs-full-es6/builds/Three.amd.js'], 
-    function( Three ){
-    
-        //...
-        
-});
+const Three = require('node_modules/threejs-full-es6/builds/Three.cjs.js')
 ````
 
 ###### Using UMD: ######
+
+````javascript
+const Three = require('node_modules/threejs-full-es6/builds/Three.umd.js')
+````
+
+###### Using AMD: ######
 
 ````javascript
 require(['node_modules/threejs-full-es6/builds/Three.amd.js'], 
