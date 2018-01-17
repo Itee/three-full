@@ -193,12 +193,6 @@ module.exports = {
 		HDRCubeTextureLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
-		ImageBitmapLoader: {
-			imports: [
-				'DefaultLoadingManager',
-				'Cache'
-			]
-		},
 		KMZLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
