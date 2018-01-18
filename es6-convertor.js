@@ -1038,10 +1038,7 @@ function _getOutputFor ( filePath, output ) {
 
 /////////////////////////// EDGE CASES ////////////////////////////
 
-function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath, edgeCases ) {
-
-    const baseName = path.basename( filePath, '.js' )
-    const edgeCase = edgeCases[ baseName ]
+function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath, edgeCase ) {
 
     let data = {
         imports:      imports,
