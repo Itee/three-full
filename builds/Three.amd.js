@@ -18062,32 +18062,12 @@ define(['exports'], function (exports) { 'use strict';
    * @author mrdoob / http://mrdoob.com/
    */
 
-  function LineSegments( geometry, material ) {
-
-  	Line.call( this, geometry, material );
-
-  	this.type = 'LineSegments';
-
-  }
-
-  LineSegments.prototype = Object.assign( Object.create( Line.prototype ), {
-
-  	constructor: LineSegments,
-
-  	isLineSegments: true
-
-  } );
-
-  /**
-   * @author mrdoob / http://mrdoob.com/
-   */
-
   function Line( geometry, material, mode ) {
 
   	if ( mode === 1 ) {
 
-  		console.warn( 'THREE.Line: parameter THREE.LinePieces no longer supported. Created THREE.LineSegments instead.' );
-  		return new LineSegments( geometry, material );
+  		console.error( 'THREE.Line: parameter THREE.LinePieces no longer supported. Created THREE.LineSegments instead.' );
+  		
 
   	}
 
@@ -37061,6 +37041,26 @@ define(['exports'], function (exports) { 'use strict';
   	}
 
   };
+
+  /**
+   * @author mrdoob / http://mrdoob.com/
+   */
+
+  function LineSegments( geometry, material ) {
+
+  	Line.call( this, geometry, material );
+
+  	this.type = 'LineSegments';
+
+  }
+
+  LineSegments.prototype = Object.assign( Object.create( Line.prototype ), {
+
+  	constructor: LineSegments,
+
+  	isLineSegments: true
+
+  } );
 
   /**
    * @author mgreter / http://github.com/mgreter
