@@ -10,20 +10,47 @@ const path = require( 'path' )
 
 ////////////////////////// CONDITIONAL UTILS /////////////////////////////
 
+/**
+ * Extend the String prototype if contains not exist.
+ * It allow to check if the string contains or not a target string
+ *
+ * @type {Function}
+ * @param {string} target - The string to match in current string
+ * @return {boolean}
+ */
 String.prototype.contains = String.prototype.contains || function ( target ) { return this.indexOf( target ) > -1 }
 
+/**
+ * Check if the parameter is of type string
+ *
+ * @param {any} value - The value to check the string type
+ * @return {boolean}
+ */
 function isString ( value ) {
 
     return ( typeof value === 'string' )
 
 }
 
+/**
+ * Check if the parameter is NOT of type string
+ *
+ * @param {any} value - The value to check the non string type
+ * @return {boolean}
+ */
 function isNotString ( value ) {
 
     return ( !isString( value ) )
 
 }
 
+/**
+ * Check if the parameter is an array of string.
+ * Note: An array of empty string will return true.
+ *
+ * @param {any} values - The value to check if it is an array of string
+ * @return {boolean} - True if array of string, false otherwise
+ */
 function isArrayOfString ( values ) {
 
     if ( !Array.isArray( values ) ) { return false }
@@ -57,6 +84,13 @@ function _getFileForPath ( filePath ) {
 
 }
 
+/**
+ * Return all the files paths under filePaths in a recursive way.
+ *
+ * @param filePaths - An array of string, representing the base path where looking for get all files paths
+ * @return {Array.<string>} - An array of files paths
+ * @private
+ */
 function _getFilesPathsUnder ( filePaths ) {
 
     let files = []
@@ -116,6 +150,14 @@ function _getFilesPathsUnder ( filePaths ) {
 
 }
 
+/**
+ * Will create an array without the strings in filePaths that are matched in excludes paths
+ *
+ * @param {Array.<string>} filePaths - An array of string to clean
+ * @param {Array.<string>} excludes - The paths to remove
+ * @return {Array.<string>} The cleaned filePaths of excludes paths
+ * @private
+ */
 function _excludesFilesPaths ( filePaths, excludes ) {
 
     let filteredFilesPath = []
@@ -163,6 +205,13 @@ function _excludesFilesPaths ( filePaths, excludes ) {
 
 }
 
+/**
+ * Will filter file paths an keep only js files
+ *
+ * @param {Array.<string>} filePaths - An array of path to filter
+ * @return {Array.<string>} The filtered path with only javascript files
+ * @private
+ */
 function _filterJavascriptFiles ( filePaths ) {
 
     let filteredFilesPath = []
@@ -249,7 +298,7 @@ function _createFile ( filePath, imports, replacements, exports, outputPath ) {
 
 function _copyFile ( filePath, outputPath ) {
 
-    let file = _getFileForPath( filePath )
+    const file = _getFileForPath( filePath )
 
     _createFoldersTree( path.dirname( outputPath ) )
 
@@ -913,7 +962,7 @@ function _getExportedElementForFile ( filePath ) {
 
 		const es6Exports = _getExportsStatementsInES6File( file )
 		if ( es6Exports.length > 0 ) {
-			console.log(filePath + ' will es6Exports ' + es6Exports)
+			console.log(filePath + ' will export ' + es6Exports)
 			return es6Exports
 		}
 

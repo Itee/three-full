@@ -139,6 +139,12 @@ module.exports = {
 				[ 'Curves.DecoratedTorusKnot5c = DecoratedTorusKnot5c;', '' ]
 			]
 		},
+		Detector: {
+			replacements: [
+				[/if \( typeof module === 'object' \) {/g, ''],
+				[ /module\.exports\s*=\s*\{?[^}]*}?/g, '']
+			]
+		},
 		DotScreenPass: {
 			imports: [
 				'DotScreenShader',
@@ -162,9 +168,6 @@ module.exports = {
 				'FilmShader',
 				'UniformsUtils'
 			]
-		},
-		FunctionNode: {
-			imports: [ 'NodeLib' ]
 		},
 		GCodeLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -195,12 +198,6 @@ module.exports = {
 		},
 		HDRCubeTextureLoader: {
 			imports: [ 'DefaultLoadingManager' ]
-		},
-		ImageBitmapLoader: {
-			imports: [
-				'DefaultLoadingManager',
-				'Cache'
-			]
 		},
 		KMZLoader: {
 			imports: [ 'DefaultLoadingManager' ]
