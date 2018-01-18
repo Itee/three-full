@@ -271,12 +271,24 @@ function _makeUnique ( value, index, array ) {
 
 let _exportMap       = {}
 let _revertExportMap = {}
+let _pathMap = {} // TODO
 
-function _createExportMap ( filesPaths ) {
+function _createExportMap ( filesPaths, edgeCases ) {
 
     filesPaths.forEach( ( filePath ) => {
 
         const exportedElements = _getExportedElementForFile( filePath )
+
+        // In case we change the output location of the file we need to update his path to this final location
+		const baseName = path.basename( filePath, '.js' )
+		const edgeCase = edgeCases[ baseName ]
+		const outputEdgeCase = ( edgeCase ) ? edgeCase['originOverride'] : undefined
+        if( outputEdgeCase !== undefined ) {
+
+			filePath = outputEdgeCase
+
+        }
+
         exportedElements.forEach( ( exportedElement ) => {
 
             if ( _exportMap[ exportedElement ] ) {
@@ -1165,7 +1177,8 @@ Object.assign( Es6.prototype, {
         const jsFiles             = _filterJavascriptFiles( availableFilesPaths )
         const filesToConvert      = _filterES6Files( jsFiles )
 
-        _createExportMap( jsFiles )
+//        _createExportMap( jsFiles, {} )
+        _createExportMap( jsFiles, edgeCases )
 
         console.log( '\n' )
 
