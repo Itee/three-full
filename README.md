@@ -129,9 +129,13 @@ This is the list of unsupported part of example, which cannot be converted yet.
 #### Change log ####
 
 
-##### 4.2.2 :
+##### 4.2.3 :
 
 * Fix Detector module.export code snippet
+
+##### 4.2.2 :
+
+* README.md fix wrong copy/paste
 
 ##### 4.2.1 :
 
