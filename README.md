@@ -129,6 +129,11 @@ This is the list of unsupported part of example, which cannot be converted yet.
 #### Change log ####
 
 
+##### 4.2.4 :
+
+* Fix Line/LineSegments circular dependency 
+( Be aware: Line constructor don't return LineSegments in case of wrong arguments, and log an error instead of a warning )
+
 ##### 4.2.3 :
 
 * Fix Detector module.export code snippet

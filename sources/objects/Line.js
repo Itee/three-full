@@ -5,7 +5,7 @@ import { Object3D } from '../core/Object3D.js';
 import { Vector3 } from '../math/Vector3.js';
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
 import { BufferGeometry } from '../core/BufferGeometry.js';
-import { LineSegments } from './LineSegments.js';
+
 
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -15,8 +15,8 @@ function Line( geometry, material, mode ) {
 
 	if ( mode === 1 ) {
 
-		console.warn( 'THREE.Line: parameter THREE.LinePieces no longer supported. Created THREE.LineSegments instead.' );
-		return new LineSegments( geometry, material );
+		console.error( 'THREE.Line: parameter THREE.LinePieces no longer supported. Created THREE.LineSegments instead.' );
+		
 
 	}
 
