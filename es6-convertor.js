@@ -1176,30 +1176,41 @@ Object.assign( Es6.prototype, {
         for ( let filePathIndex = 0, numberOfFilePaths = allFilesPaths.length ; filePathIndex < numberOfFilePaths ; filePathIndex++ ) {
 
             const filePath = allFilesPaths[ filePathIndex ]
+			const baseName = path.basename( filePath, '.js' )
+			const edgeCase = edgeCases[ baseName ]
+
+			// In case we change the output location of the file we need to update his path to this final location
+			const inputFileOverride = _getInputFilePathOverride( filePath, edgeCase )
 
             if ( filesToConvert.includes( filePath ) ) {
 
                 let imports      = _getImportsFor( filePath )
                 let replacements = _getReplacementsFor( filePath )
                 let exports      = _getExportsFor( filePath )
-                let outputPath   = _getOutputFor( filePath, output )
+                let outputPath   = _getOutputFor( inputFileOverride, output )
 
-                console.log( 'Convert: ' + filePath + '\nto       ' + outputPath + '\n' )
+                const data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCase )
+
+                if ( inputFileOverride !== filePath ) {
+					console.log( 'Convert: ' + inputFileOverride + ' (overrided)\nto       ' + outputPath + '\n' )
+				} else {
+					console.log( 'Convert: ' + filePath + '\nto       ' + outputPath + '\n' )
+				}
+
+				_createFile( filePath, inputFileOverride, data.imports, data.replacements, data.exports, data.output )
+
+
 
                 const data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCases )
                 _createFile( filePath, data.imports, data.replacements, data.exports, data.output )
 
-            } else if ( availableFilesPaths.includes( filePath ) ) {
+			} else if ( availableFilesPaths.includes( filePath ) ) {
 
-                let imports      = []
-                let replacements = []
-                let exports      = []
-                let outputPath   = _getOutputFor( filePath, output )
+				const outputPath   = _getOutputFor( filePath, output )
 
-                console.log( 'Copy:    ' + filePath + '\nto       ' + outputPath + '\n' )
+				console.log( 'Copy:    ' + filePath + '\nto       ' + outputPath + '\n' )
 
-                const data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCases )
-                _copyFile( filePath, data.output )
+				_copyFile( filePath, outputPath )
 
             } else {
 
@@ -1210,6 +1221,28 @@ Object.assign( Es6.prototype, {
         }
 
         callback()
+
+		function _getInputFilePathOverride( filePath, edgeCase ) {
+
+            if( !edgeCase ) {
+                return filePath
+            }
+
+			let inputFilePathOverride = filePath
+
+			const originOverride = edgeCase[ 'originOverride' ]
+			if ( originOverride ) {
+
+				const dirName = path.dirname( filePath )
+				const indexOfThree = dirName.indexOf( 'three' )
+				const basePath = dirName.slice( 0, indexOfThree )
+				inputFilePathOverride = path.join( basePath, originOverride )
+
+			}
+
+			return inputFilePathOverride
+
+		}
 
     },
 
