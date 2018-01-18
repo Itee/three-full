@@ -233,12 +233,11 @@ function _createFoldersTree ( folderPath ) {
 
 }
 
-function _createFile ( filePath, imports, replacements, exports, outputPath ) {
+function _createFile ( filePath, inputFilePathOverride, imports, replacements, exports, outputPath ) {
 
-    // Compute imports
-    const formatedImports = _formatImportStatements( filePath, imports ) || ''
-    const formatedFile    = _formatReplacementStatements( filePath, replacements )
-    const formatedExports = _formatExportStatements( filePath, exports )
+	const formatedImports = _formatImportStatements( inputFilePathOverride || filePath, imports ) || ''
+	const formatedFile    = _formatReplacementStatements( filePath, replacements )
+	const formatedExports = _formatExportStatements( inputFilePathOverride || filePath, exports )
     const outputFile      = formatedImports + formatedFile + formatedExports
 
     _createFoldersTree( path.dirname( outputPath ) )
