@@ -1209,9 +1209,22 @@ Object.assign( Es6.prototype, {
 				_createFile( filePath, inputFileOverride, data.imports, data.replacements, data.exports, data.output )
 
 
+			} else if ( jsFiles.includes( filePath ) ) {
 
-                const data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCases )
-                _createFile( filePath, data.imports, data.replacements, data.exports, data.output )
+                const imports      = _getImportsFor( filePath )
+                const replacements = _getReplacementsFor( filePath )
+                const exports      = []
+                const outputPath   = _getOutputFor( inputFileOverride, output )
+
+                const data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCase )
+
+                if ( inputFileOverride !== filePath ) {
+                    console.log( 'Update: ' + inputFileOverride + ' (overrided)\nto       ' + outputPath + '\n' )
+                } else {
+                    console.log( 'Update: ' + filePath + '\nto       ' + outputPath + '\n' )
+                }
+
+                _createFile( filePath, inputFileOverride, data.imports, data.replacements, data.exports, data.output )
 
 			} else if ( availableFilesPaths.includes( filePath ) ) {
 
