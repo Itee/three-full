@@ -34440,13 +34440,6 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-  // browserify support
-  if ( typeof module === 'object' ) {
-
-  	module.exports = Detector;
-
-  }
-
   /**
    * @author mrdoob / http://mrdoob.com/
    */
@@ -127832,7 +127825,7 @@ define(['exports'], function (exports) { 'use strict';
 
   } );
 
-  // Made by ES6 Convertor
+  // Made by Itee (https://github.com/Itee) with ES6 Convertor script
 
   exports.CCDIKSolver = CCDIKSolver;
   exports.CCDIKHelper = CCDIKHelper;
