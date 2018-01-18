@@ -139,6 +139,12 @@ module.exports = {
 				[ 'Curves.DecoratedTorusKnot5c = DecoratedTorusKnot5c;', '' ]
 			]
 		},
+		Detector: {
+			replacements: [
+				[/if \( typeof module === 'object' \) {/g, ''],
+				[ /module\.exports\s*=\s*\{?[^}]*}?/g, '']
+			]
+		},
 		DotScreenPass: {
 			imports: [
 				'DotScreenShader',
