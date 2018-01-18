@@ -249,7 +249,7 @@ function _createFile ( filePath, imports, replacements, exports, outputPath ) {
 
 function _copyFile ( filePath, outputPath ) {
 
-    let file = _getFileForPath( filePath )
+    const file = _getFileForPath( filePath )
 
     _createFoldersTree( path.dirname( outputPath ) )
 
