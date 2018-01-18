@@ -7,8 +7,17 @@
 	<body>
 		<script src="LineSegments.test.js"></script>
 		<script>
-			var line = new Three.LineSegments()
-            alert(line)
+            try {
+
+                var lineSegments = new Three.LineSegments()
+                var lineSegments2 = new Three.LineSegments()
+                lineSegments2.add( lineSegments )
+
+                console.log( 'LineSegments: Ok' )
+
+            } catch ( err ) {
+                console.log( err );
+            }
 		</script>
 	</body>
 </html>
