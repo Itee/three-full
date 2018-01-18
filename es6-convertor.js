@@ -913,7 +913,7 @@ function _getExportedElementForFile ( filePath ) {
 
 		const es6Exports = _getExportsStatementsInES6File( file )
 		if ( es6Exports.length > 0 ) {
-			console.log(filePath + ' will es6Exports ' + es6Exports)
+			console.log(filePath + ' will export ' + es6Exports)
 			return es6Exports
 		}
 
