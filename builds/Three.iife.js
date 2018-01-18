@@ -34441,13 +34441,6 @@ var Three = (function (exports) {
 
   };
 
-  // browserify support
-  if ( typeof module === 'object' ) {
-
-  	module.exports = Detector;
-
-  }
-
   /**
    * @author mrdoob / http://mrdoob.com/
    */
@@ -127833,7 +127826,7 @@ var Three = (function (exports) {
 
   } );
 
-  // Made by ES6 Convertor
+  // Made by Itee (https://github.com/Itee) with ES6 Convertor script
 
   exports.CCDIKSolver = CCDIKSolver;
   exports.CCDIKHelper = CCDIKHelper;
