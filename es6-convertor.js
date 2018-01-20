@@ -227,6 +227,29 @@ function _getFileType( file ) {
     return "unknown"
 
 }
+
+function _getInputFilePathOverride( filePath, edgeCase ) {
+
+    if( !edgeCase ) {
+        return filePath
+    }
+
+    let inputFilePathOverride = filePath
+
+    const originOverride = edgeCase[ 'originOverride' ]
+    if ( originOverride ) {
+
+        const dirName = path.dirname( filePath )
+        const indexOfThree = dirName.indexOf( 'three' )
+        const basePath = dirName.slice( 0, indexOfThree )
+        inputFilePathOverride = path.join( basePath, originOverride )
+
+    }
+
+    return inputFilePathOverride
+
+}
+
 function _filterJavascriptFiles ( filePaths ) {
 
     let filteredFilesPath = []
