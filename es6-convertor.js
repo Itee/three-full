@@ -336,7 +336,7 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
         }
 
         const edgeCase         = edgeCases[ baseName ]
-        const exportedElements = _getExportedElementForFile( filePath )
+        const exportedElements = _getExportsFor( filePath )
         const overrideFilePath = _getInputFilePathOverride( filePath, edgeCase )
         const outputPath       = _getOutputFor( overrideFilePath, outputBasePath )
 
@@ -463,7 +463,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
                 file:   file,
                 output: outputPath
             } )
-            exports      = _getExportedElementForFile( filePath )
+            exports      = _getExportsFor( filePath )
             replacements = _getReplacementsFor( filePath, outputPath )
 
             const data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCase )
@@ -1149,7 +1149,7 @@ function _getExportsStatementInLibFile ( file ) {
 
 }
 
-function _getExportedElementForFile ( filePath ) {
+function _getExportsFor ( filePath ) {
 
     const file = _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' ) // remove comments
     //                                .replace( /\s*/g, '')
