@@ -15,6 +15,7 @@ module.exports = {
 	excludes: [
 		'build',
 		'Three.js',
+		'Three.Legacy.js',
 		'polyfills.js',
 		'libs',
 		//		'Curves.js',						// Ignore intermediary exporter files
