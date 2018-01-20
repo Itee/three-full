@@ -324,6 +324,7 @@ function _makeUnique ( value, index, array ) {
 
 let _exportMap       = {}
 let _revertExportMap = {}
+let _fileMap         = {}
 
 function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
@@ -425,8 +426,6 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
 function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
 
-    let fileMap = {}
-
     let fileExtension = undefined
     let baseName      = undefined
     let edgeCase      = undefined
@@ -468,12 +467,12 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
 
             const data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCase )
 
-            if ( fileMap[ baseName ] ) {
+            if ( _fileMap[ baseName ] ) {
                 console.error( 'The key ' + baseName + ' already exist in the map ! Skip it.' )
                 return
             }
 
-            fileMap[ baseName ] = {
+            _fileMap[ baseName ] = {
                 path:         filePath,
                 input:        overrideFilePath,
                 isJavascript: ( fileExtension === '.js' ),
@@ -487,7 +486,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
 
         } else {
 
-            fileMap[ baseName ] = {
+            _fileMap[ baseName ] = {
                 path:         filePath,
                 isJavascript: isJavascript,
                 file:         file,
@@ -497,8 +496,6 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
         }
 
     } )
-
-    return fileMap
 
 }
 
@@ -1443,23 +1440,22 @@ Object.assign( Es6.prototype, {
         const availableFilesPaths = _excludesFilesPaths( allFilesPaths, excludes )
         const jsFiles             = _filterJavascriptFiles( availableFilesPaths )
         _createExportMap( jsFiles, edgeCases, output )
-
-        const filesMap = _createFilesMap( availableFilesPaths, edgeCases, output )
+        _createFilesMap( availableFilesPaths, edgeCases, output )
 
         //
         //
 
         let fileDatas = undefined
 
-        for ( let key in filesMap ) {
+        for ( let key in _fileMap ) {
 
-            if ( !filesMap.hasOwnProperty( key ) ) { continue }
+            if ( !_fileMap.hasOwnProperty( key ) ) { continue }
 
             if ( key === "FunctionNode_Implementation" ) {
                 console.log( 'debug' )
             }
 
-            fileDatas = filesMap[ key ]
+            fileDatas = _fileMap[ key ]
 
             if ( fileDatas.isJavascript ) {
 
