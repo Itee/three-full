@@ -993,6 +993,32 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
     // Todo: duplicate
     function getSpecificPath ( path ) {
 
+        const exampleTarget = 'src\\'
+        const sourceTarget  = 'sources\\'
+
+        let indexOfExampleTarget = path.indexOf( exampleTarget )
+        let indexOfSourceTarget  = path.indexOf( sourceTarget )
+        let specificPath         = undefined
+        if ( indexOfExampleTarget > -1 ) {
+
+            specificPath = path.slice( indexOfExampleTarget + exampleTarget.length )
+
+        } else if ( indexOfSourceTarget > -1 ) {
+
+            specificPath = path.slice( indexOfSourceTarget + sourceTarget.length )
+
+        } else {
+
+            throw new Error( "Unable to find specific path part for: " + path )
+
+        }
+
+        return specificPath.replace( /\\/g, '/' )
+
+    }
+
+    function getSpecificPath_old ( path ) {
+
         const exampleTarget = 'js\\'
         const sourceTarget  = 'src\\'
 
