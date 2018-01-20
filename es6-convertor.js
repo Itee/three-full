@@ -361,107 +361,6 @@ function _makeUnique ( value, index, array ) {
 
 let _exportMap       = {}
 let _revertExportMap = {}
-let _revertPathMap   = {}
-
-function _createRevertOverridePathMap ( filesPaths, edgeCases ) {
-
-    let baseName         = undefined
-    let edgeCase         = undefined
-    let overrideFilePath = undefined
-
-    filesPaths.forEach( ( filePath ) => {
-
-        baseName              = path.basename( filePath, '.js' )
-        edgeCase              = edgeCases[ baseName ]
-        overrideFilePath = _getInputFilePathOverride( filePath, edgeCase )
-
-        // Feed _revertPathMap with filePath and override counter part to allow to get right file under _getFileForPath
-        _revertPathMap[ baseName ] = {
-            original: filePath,
-            override: overrideFilePath
-        }
-
-    } )
-
-}
-
-        exportedElements.forEach( ( exportedElement ) => {
-
-            if ( _exportMap[ exportedElement ] ) {
-
-                // Keep source path when possible
-                const exportPath = _exportMap[ exportedElement ]
-
-                const sourcePathTarget = 'src\\'
-
-                if ( exportPath.contains( sourcePathTarget ) ) {
-
-                    if ( filePath.contains( sourcePathTarget ) ) {
-
-                        console.error( 'WARNING: Element "' + exportedElement + '" in source ' + path.basename( filePath ) + ' is already exported by source ' + path.basename( exportPath ) + ' wich source file is the right exporter ?' )
-
-                    } else {
-
-                        // stay like this
-                        console.warn( 'WARNING: Element "' + exportedElement + '" in example ' + path.basename( filePath ) + ' is already exported by source ' + path.basename( exportPath ) + ' just ignoring the example export !' )
-
-                    }
-
-                } else {
-
-                    if ( filePath.contains( sourcePathTarget ) ) {
-
-                        _exportMap[ exportedElement ] = filePath
-                        console.warn( 'WARNING: Element "' + exportedElement + '" in source ' + path.basename( filePath ) + ' is already exported by example ' + path.basename( exportPath ) + ' replacing by the source file !' )
-
-                    } else {
-
-                        console.error( 'WARNING: Element "' + exportedElement + '" in example ' + path.basename( filePath ) + ' is already exported by example ' + path.basename( exportPath ) + ' wich example file is the right exporter ?' )
-
-                    }
-
-                }
-
-                return
-
-            }
-
-            _exportMap[ exportedElement ] = filePath
-
-        } )
-
-        _revertExportMap[ filePath ] = exportedElements
-
-    } )
-
-    // LOG
-    //    console.log( 'exportMap:' + JSON.stringify( orderKeys( _exportMap ), null, 4 ) );
-    //    console.log( 'revertExportMap:' + JSON.stringify( orderKeys( _revertExportMap ), null, 4 ) );
-    //    function orderKeys ( obj ) {
-    //
-    //        var keys = Object.keys( obj ).sort( function keyOrder ( k1, k2 ) {
-    //            if ( k1 < k2 ) {
-    //                return -1
-    //            } else if ( k1 > k2 ) {
-    //                return +1
-    //            } else {
-    //                return 0
-    //            }
-    //        } )
-    //
-    //        var i, after = {}
-    //        for ( i = 0 ; i < keys.length ; i++ ) {
-    //            after[ keys[ i ] ] = obj[ keys[ i ] ]
-    //            delete obj[ keys[ i ] ]
-    //        }
-    //
-    //        for ( i = 0 ; i < keys.length ; i++ ) {
-    //            obj[ keys[ i ] ] = after[ keys[ i ] ]
-    //        }
-    //        return obj
-    //    }
-
-}
 
 function _createExportMap2 ( filesPaths, edgeCases, outputBasePath ) {
 
@@ -1624,7 +1523,7 @@ Object.assign( Es6.prototype, {
         callback()
 
     },
-    
+
     getAllExports: function getAllExports ( path ) {
 
         // Todo: should be exports
