@@ -54,6 +54,9 @@ function _getFileForPath ( filePath ) {
     }
 
     return fs.readFileSync( filePath, 'utf8' )
+function _getUncommentedFileForPath( filePath ) {
+
+    return _getFileForPath ( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/g, '$1' )
 
 }
 
