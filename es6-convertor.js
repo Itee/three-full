@@ -1202,7 +1202,10 @@ function _getExportsStatementsInES6File ( file ) {
 
     let exportedElements = []
 
-    const es6MatchedExports = file.match( /export[{\r\n\s]+(\w+[,\r\n\s]*)+[}]?/g )
+    // Todo: May be it should be splitted by export type... direct, named, default, as etc...
+    const es6MatchedExports = file.match( /export(?:[^s]|)(?:(?:\s*{([\w\s,]+)}\s*)(?:(?:from)?\s?['"]([./]+[\w.]+['"]);?)?|(var\s+.+))/g )
+//    const es6MatchedExports = file.match( /export(?:[^s]|)(\s*{(?:[\w\s,])+}\s*)(?:(?:from)?\s?['"][./]+[\w.]+['"];?)?/g )
+//    const es6MatchedExports = file.match( /export[{\r\n\s]+(\w+[,\r\n\s]*)+[}]?/g )
     if ( es6MatchedExports ) {
 
         // Clean
@@ -1210,6 +1213,17 @@ function _getExportsStatementsInES6File ( file ) {
 
             if ( value.contains( 'from' ) ) {
 
+                const splitOnFrom = value.split('from')
+                const exports = splitOnFrom[0]
+                    .replace( /export/g, '' )
+                    .replace( /[\s\n\r;{}]+/g, '' )
+//                    .split( ',' )
+
+                const exportFile = splitOnFrom[1].replace( /[\s'";]+/g, '' )
+
+
+                // Todo: allow exports like 'foo, bar, baz' and parse it when create exports statements
+                Array.prototype.push.apply( exportedElements, [ [exports, 'from', exportFile] ] )
                 return
 
             }
@@ -1222,7 +1236,9 @@ function _getExportsStatementsInES6File ( file ) {
 
             if ( value.contains( 'var' ) ) {
 
-                value = value.replace( /var/g, '' )
+                value = value.replace( /export/g, '' )
+                             .replace( /var/g, '' )
+                             .replace( /\s*=\s*.+/g, '' )
 
             }
 
@@ -1351,7 +1367,7 @@ function _getExportedElementForFile ( filePath ) {
 
 		const es6Exports = _getExportsStatementsInES6File( file )
 		if ( es6Exports.length > 0 ) {
-			console.log(filePath + ' will es6Exports ' + es6Exports)
+//			console.log(filePath + ' will export ' + es6Exports)
 			return es6Exports
 		}
 
@@ -1393,34 +1409,67 @@ function _getExportsFor ( filePath ) {
 function _formatExportStatements ( filePath, exports ) {
 
     // Formating
-    let formatedExports = '\nexport {'
-    if ( exports.length === 0 ) {
+    let formatedExports = ''
 
-        console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export...' )
-        formatedExports += ' ' + path.basename( filePath, '.js' ) + ' '
+            // First check for specified exports
+    let specificExports = []
+    let regularExports = []
 
-    } else if ( exports.length === 1 ) {
+    exports.forEach( exports => {
 
-        formatedExports += ' ' + exports[ 0 ] + ' '
+        ( Array.isArray(exports) ) ? specificExports.push( exports ) : regularExports.push( exports )
 
-    } else {
+    })
 
-        formatedExports += '\n'
+    if ( specificExports.length === 0 && regularExports.length === 0 ) {
 
-        let exportedObject = undefined
-        for ( let i = 0, numberOfExports = exports.length ; i < numberOfExports ; i++ ) {
-            exportedObject = exports[ i ]
+        console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export... It must be an Es6 file with it own exports !' )
+        return ''
 
-            if ( i === numberOfExports - 1 ) {
-                formatedExports += '\t' + exportedObject + '\n'
-            } else {
-                formatedExports += '\t' + exportedObject + ',\n'
-            }
+    }
+
+    // Process specific exports
+    for ( let i = 0, numbSpecExp = specificExports.length ; i < numbSpecExp ; i++ ) {
+
+        const exports          = specificExports[ i ]
+        const exportedClass    = exports[ 0 ]
+        const exportAction     = exports[ 1 ]
+        const exportComplement = exports[ 2 ]
+
+        if ( exportAction === 'from' ) {
+
+            formatedExports += 'export { ' + exports[ 0 ] + ' } from "' + exportComplement + '"' + '\n'
+
+        } else if ( exportAction === 'as' ) {
+
+            formatedExports += 'export { ' + exports[ 0 ] + ' as ' + exportComplement + ' } ' + '\n'
+
+        } else {
+
+            // Todo: export { Foo as Bar } from 'Baz'
+            throw new Error( 'Invalid specified export action !' )
 
         }
 
     }
-    formatedExports += '}\n'
+
+    // Process regular exports
+    const numberOfExports = regularExports.length
+    if ( numberOfExports === 1 ) {
+
+        formatedExports += '\nexport { ' + exports[ 0 ] + ' }\n'
+
+    } else if ( numberOfExports > 1 ) {
+
+        formatedExports += '\nexport {'
+        for ( let i = 0 ; i < numberOfExports ; i++ ) {
+
+            formatedExports += ( i === numberOfExports - 1 ) ? '\t' + regularExports[i] + '\n' : '\t' + regularExports[i] + ',\n'
+
+        }
+        formatedExports += '}\n'
+
+    }
 
     return formatedExports
 
