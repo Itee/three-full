@@ -439,6 +439,8 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
     let exports          = undefined
     let outputPath       = undefined
 
+    let data = undefined
+
     filesPaths.forEach( ( filePath ) => {
 
         fileExtension = path.extname( filePath )
@@ -465,7 +467,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
             exports      = _getExportsFor( filePath )
             replacements = _getReplacementsFor( filePath, outputPath )
 
-            const data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCase )
+            data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCase )
 
             if ( _fileMap[ baseName ] ) {
                 console.error( 'The key ' + baseName + ' already exist in the map ! Skip it.' )
