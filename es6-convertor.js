@@ -347,8 +347,9 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
         edgeCase      = edgeCases[ baseName ] || {}
         file          = _getUncommentedFileForPath( filePath )
 
-        if ( baseName === 'constants' ) {
-            console.log( 'debug' )
+        if( baseName === 'constants' ) {
+            var debug = 1
+        }
 
         exports = _getExportsFor( file )
         if ( !exports ) {
@@ -1457,6 +1458,7 @@ Object.assign( Es6.prototype, {
         const allFilesPaths       = _getFilesPathsUnder( inputs )
         const availableFilesPaths = _excludesFilesPaths( allFilesPaths, excludes )
         const jsFiles             = _filterJavascriptFiles( availableFilesPaths )
+
         _createExportMap( jsFiles, edgeCases, output )
         _createFilesMap( availableFilesPaths, edgeCases, output )
 
@@ -1470,7 +1472,7 @@ Object.assign( Es6.prototype, {
             if ( !_fileMap.hasOwnProperty( key ) ) { continue }
 
             if ( key === "FunctionNode_Implementation" ) {
-                console.log( 'debug' )
+                var debug = 1
             }
 
             fileDatas = _fileMap[ key ]
