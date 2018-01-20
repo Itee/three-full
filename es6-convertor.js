@@ -48,23 +48,12 @@ function _fileExistForPath ( filePath ) {
 
 function _getFileForPath ( filePath ) {
 
-    // Here the filePath is in reallity the overrided counterpart so get the original path instead
-    const baseName = path.basename( filePath, '.js' )
-    const paths    = _revertPathMap[ baseName ]
-
-    let originalFlePath = undefined
-    if ( paths ) {
-        originalFlePath = paths.original
-    } else {
-        originalFlePath = filePath
-    }
-
     // In case files doesn't exist
-    if ( !fs.existsSync( originalFlePath ) ) {
-        throw new Error( 'Invalid file path "' + originalFlePath + '" file does not exist !' )
+    if ( !fs.existsSync( filePath ) ) {
+        throw new Error( 'Invalid file path "' + filePath + '" file does not exist !' )
     }
 
-    return fs.readFileSync( originalFlePath, 'utf8' )
+    return fs.readFileSync( filePath, 'utf8' )
 
 }
 
