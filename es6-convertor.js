@@ -863,7 +863,26 @@ function _getAllConstantStatementIn ( file ) {
 
 }
 
-function _getImportsFor ( filePath ) {
+function _getImportsFor ( fileDatas ) {
+
+    const file       = fileDatas.file
+    const outputPath = fileDatas.output
+
+    let statements = []
+
+    Array.prototype.push.apply( statements, _getAllImportsStatementIn( file, outputPath ) )
+    Array.prototype.push.apply( statements, _getAllInheritStatementsIn( file, outputPath ) )
+    Array.prototype.push.apply( statements, _getAllExtendsStatementIn( file, outputPath ) )
+    Array.prototype.push.apply( statements, _getAllNewStatementIn( file, outputPath ) )
+    Array.prototype.push.apply( statements, _getAllInstanceOfStatementIn( file, outputPath ) )
+    Array.prototype.push.apply( statements, _getAllConstantStatementIn( file ) )
+
+    // A class can be inherited and dynamicaly create by new in the same file so we need to check uniqueness
+    return statements.filter( _makeUnique )
+
+}
+
+function _getImportsFor_old ( filePath ) {
 
     const file = _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' )
 
