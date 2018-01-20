@@ -320,11 +320,27 @@ function _createFoldersTree ( folderPath ) {
 
 }
 
-function _createFile ( filePath, inputFilePathOverride, imports, replacements, exports, outputPath ) {
+function _convertFile ( fileDatas ) {
 
-	const formatedImports = _formatImportStatements( inputFilePathOverride || filePath, imports ) || ''
-	const formatedFile    = _formatReplacementStatements( filePath, replacements )
-	const formatedExports = _formatExportStatements( inputFilePathOverride || filePath, exports )
+    const outputPath = fileDatas.output
+
+    const formatedImports = _formatImportStatements( outputPath, fileDatas.imports )
+    const formatedFile    = _formatReplacementStatements( fileDatas.file, fileDatas.replacements )
+    const formatedExports = _formatExportStatements( outputPath, fileDatas.exports )
+    const outputFile      = formatedImports + formatedFile + formatedExports
+
+    _createFoldersTree( path.dirname( outputPath ) )
+
+    fs.writeFileSync( outputPath, outputFile )
+
+
+}
+
+function _createFile_old ( filePath, inputFilePathOverride, imports, replacements, exports, outputPath ) {
+
+    const formatedImports = _formatImportStatements( inputFilePathOverride || filePath, imports ) || ''
+    const formatedFile    = _formatReplacementStatements( filePath, replacements )
+    const formatedExports = _formatExportStatements( inputFilePathOverride || filePath, exports )
     const outputFile      = formatedImports + formatedFile + formatedExports
 
     _createFoldersTree( path.dirname( outputPath ) )
