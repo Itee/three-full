@@ -336,19 +336,6 @@ function _convertFile ( fileDatas ) {
 
 }
 
-function _createFile_old ( filePath, inputFilePathOverride, imports, replacements, exports, outputPath ) {
-
-    const formatedImports = _formatImportStatements( inputFilePathOverride || filePath, imports ) || ''
-    const formatedFile    = _formatReplacementStatements( filePath, replacements )
-    const formatedExports = _formatExportStatements( inputFilePathOverride || filePath, exports )
-    const outputFile      = formatedImports + formatedFile + formatedExports
-
-    _createFoldersTree( path.dirname( outputPath ) )
-
-    fs.writeFileSync( outputPath, outputFile )
-
-}
-
 function _copyFile ( fileDatas ) {
 
     const outputPath = fileDatas.output
@@ -356,16 +343,6 @@ function _copyFile ( fileDatas ) {
     _createFoldersTree( path.dirname( outputPath ) )
 
     fs.writeFileSync( outputPath, fileDatas.file )
-
-}
-
-function _copyFile_old ( filePath, outputPath ) {
-
-    let file = _getFileForPath( filePath )
-
-    _createFoldersTree( path.dirname( outputPath ) )
-
-    fs.writeFileSync( outputPath, file )
 
 }
 
@@ -882,23 +859,6 @@ function _getImportsFor ( fileDatas ) {
 
 }
 
-function _getImportsFor_old ( filePath ) {
-
-    const file = _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' )
-
-    let statements = []
-
-    Array.prototype.push.apply( statements, _getAllInheritStatementsIn( file, filePath ) )
-    Array.prototype.push.apply( statements, _getAllExtendsStatementIn( file, filePath ) )
-    Array.prototype.push.apply( statements, _getAllNewStatementIn( file, filePath ) )
-    Array.prototype.push.apply( statements, _getAllInstanceOfStatementIn( file, filePath ) )
-    Array.prototype.push.apply( statements, _getAllConstantStatementIn( file ) )
-
-    // A class can be inherited and dynamicaly create by new in the same file so we need to check uniqueness
-    return statements.filter( _makeUnique )
-
-}
-
 function _formatImportStatements ( importerFilePath, objectNames ) {
 
     // TODO [Itee]: must take into account the file rerouting in edge cases
@@ -994,32 +954,6 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
 
         const exampleTarget = 'src\\'
         const sourceTarget  = 'sources\\'
-
-        let indexOfExampleTarget = path.indexOf( exampleTarget )
-        let indexOfSourceTarget  = path.indexOf( sourceTarget )
-        let specificPath         = undefined
-        if ( indexOfExampleTarget > -1 ) {
-
-            specificPath = path.slice( indexOfExampleTarget + exampleTarget.length )
-
-        } else if ( indexOfSourceTarget > -1 ) {
-
-            specificPath = path.slice( indexOfSourceTarget + sourceTarget.length )
-
-        } else {
-
-            throw new Error( "Unable to find specific path part for: " + path )
-
-        }
-
-        return specificPath.replace( /\\/g, '/' )
-
-    }
-
-    function getSpecificPath_old ( path ) {
-
-        const exampleTarget = 'js\\'
-        const sourceTarget  = 'src\\'
 
         let indexOfExampleTarget = path.indexOf( exampleTarget )
         let indexOfSourceTarget  = path.indexOf( sourceTarget )
@@ -1690,80 +1624,7 @@ Object.assign( Es6.prototype, {
         callback()
 
     },
-
-    convert_old: function convert ( callback ) {
-
-        const filesToConvert      = _filterES6Files( jsFiles )
-
-//        _createExportMap( jsFiles, {} )
-        _createExportMap( jsFiles, edgeCases )
-
-        console.log( '\n' )
-
-        for ( let filePathIndex = 0, numberOfFilePaths = allFilesPaths.length ; filePathIndex < numberOfFilePaths ; filePathIndex++ ) {
-
-            const filePath = allFilesPaths[ filePathIndex ]
-			const baseName = path.basename( filePath, '.js' )
-			const edgeCase = edgeCases[ baseName ]
-
-			// In case we change the output location of the file we need to update his path to this final location
-			const inputFileOverride = _getInputFilePathOverride( filePath, edgeCase )
-
-            if ( filesToConvert.includes( filePath ) ) {
-
-                let imports      = _getImportsFor( filePath )
-                let replacements = _getReplacementsFor( filePath )
-                let exports      = _getExportsFor( filePath )
-                let outputPath   = _getOutputFor( inputFileOverride, output )
-
-                const data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCase )
-
-                if ( inputFileOverride !== filePath ) {
-					console.log( 'Convert: ' + inputFileOverride + ' (overrided)\nto       ' + outputPath + '\n' )
-				} else {
-					console.log( 'Convert: ' + filePath + '\nto       ' + outputPath + '\n' )
-				}
-
-				_createFile( filePath, inputFileOverride, data.imports, data.replacements, data.exports, data.output )
-
-
-			} else if ( jsFiles.includes( filePath ) ) {
-
-                const imports      = _getImportsFor( filePath )
-                const replacements = _getReplacementsFor( filePath )
-                const exports      = []
-                const outputPath   = _getOutputFor( inputFileOverride, output )
-
-                const data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCase )
-
-                if ( inputFileOverride !== filePath ) {
-                    console.log( 'Update: ' + inputFileOverride + ' (overrided)\nto       ' + outputPath + '\n' )
-                } else {
-                    console.log( 'Update: ' + filePath + '\nto       ' + outputPath + '\n' )
-                }
-
-                _createFile( filePath, inputFileOverride, data.imports, data.replacements, data.exports, data.output )
-
-			} else if ( availableFilesPaths.includes( filePath ) ) {
-
-				const outputPath   = _getOutputFor( filePath, output )
-
-				console.log( 'Copy:    ' + filePath + '\nto       ' + outputPath + '\n' )
-
-				_copyFile( filePath, outputPath )
-
-            } else {
-
-                console.log( 'Skip:    ' + filePath + '\n' )
-
-            }
-
-        }
-
-        callback()
-
-    },
-
+    
     getAllExports: function getAllExports ( path ) {
 
         // Todo: should be exports
