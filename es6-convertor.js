@@ -326,6 +326,31 @@ let _exportMap       = {}
 let _revertExportMap = {}
 let _fileMap         = {}
 
+function _createDataMap ( filesPaths, edgeCases, outputBasePath ) {
+
+    let fileExtension = undefined
+    let baseName      = undefined
+    let edgeCase      = undefined
+    let file          = undefined
+    let isJavascript  = undefined
+
+    let overrideFilePath = undefined
+    let outputPath       = undefined
+    let fileType         = undefined
+    let imports          = undefined
+    let exports          = undefined
+    let replacements     = undefined
+
+    let data = undefined
+
+    filesPaths.forEach( ( filePath ) => {
+
+
+
+    } )
+
+}
+
 function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
     let fileExtension = undefined
