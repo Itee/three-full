@@ -328,18 +328,28 @@ let _fileMap         = {}
 
 function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
+    let fileExtension = undefined
+    let baseName      = undefined
+    let edgeCase      = undefined
+    let file = undefined
+
+    let exports = undefined
+    let overrideFilePath = undefined
+    let outputPath       = undefined
+
     filesPaths.forEach( ( filePath ) => {
 
-        const baseName = path.basename( filePath, '.js' )
+        fileExtension = path.extname( filePath )
+        baseName      = path.basename( filePath, fileExtension )
+        edgeCase      = edgeCases[ baseName ]
+        file = _getUncommentedFileForPath( filePath )
 
         if ( baseName === 'constants' ) {
             console.log( 'debug' )
         }
 
-        const edgeCase         = edgeCases[ baseName ]
-        const exportedElements = _getExportsFor( filePath )
-        const overrideFilePath = _getInputFilePathOverride( filePath, edgeCase )
-        const outputPath       = _getOutputFor( overrideFilePath, outputBasePath )
+        overrideFilePath = _getInputFilePathOverride( filePath, edgeCase )
+        outputPath       = _getOutputFor( overrideFilePath, outputBasePath )
 
         exportedElements.forEach( ( exportedElement ) => {
 
