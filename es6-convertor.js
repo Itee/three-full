@@ -384,23 +384,29 @@ function _makeUnique ( value, index, array ) {
 
 let _exportMap       = {}
 let _revertExportMap = {}
-let _pathMap = {} // TODO
+let _revertPathMap   = {}
 
-function _createExportMap ( filesPaths, edgeCases ) {
+function _createRevertOverridePathMap ( filesPaths, edgeCases ) {
+
+    let baseName         = undefined
+    let edgeCase         = undefined
+    let overrideFilePath = undefined
 
     filesPaths.forEach( ( filePath ) => {
 
-        const exportedElements = _getExportedElementForFile( filePath )
+        baseName              = path.basename( filePath, '.js' )
+        edgeCase              = edgeCases[ baseName ]
+        overrideFilePath = _getInputFilePathOverride( filePath, edgeCase )
 
-        // In case we change the output location of the file we need to update his path to this final location
-		const baseName = path.basename( filePath, '.js' )
-		const edgeCase = edgeCases[ baseName ]
-		const outputEdgeCase = ( edgeCase ) ? edgeCase['originOverride'] : undefined
-        if( outputEdgeCase !== undefined ) {
-
-			filePath = outputEdgeCase
-
+        // Feed _revertPathMap with filePath and override counter part to allow to get right file under _getFileForPath
+        _revertPathMap[ baseName ] = {
+            original: filePath,
+            override: overrideFilePath
         }
+
+    } )
+
+}
 
         exportedElements.forEach( ( exportedElement ) => {
 
