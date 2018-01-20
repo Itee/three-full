@@ -1077,16 +1077,27 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
 }
 
 /////////////////////////// REPLACEMENTS ////////////////////////////
-
-function _getReplacementsFor ( filePath ) {
-
-    // Todo[Itee]: Should be split into sub function for each file type ( es6, iife, etc... ) like getImportsFor
+function _getEs6ReplacementsFor () {
 
     let replacements = []
 
-    // Replace main class by a var
+    replacements.push( [ /import\s+(?:(?:({[\w\s,]+})|([\w,*-]+))\s+)+from.+/g, '' ] )
+    replacements.push( [ /export var/g, 'var' ] )
+    replacements.push( [ /export function/g, 'function' ] )
+    replacements.push( [ /export(?:[^s]|)(\s*{(?:[\w\s,])+}\s*)(?:(?:from)?\s?['"][./]+[\w.]+['"];?)?/g, '' ] )
+//    replacements.push( [ /export([^s]|)\s*{(?:[\w\s,])+}\s*(?!\s?from)/g, '' ] )
+//    replacements.push( [ /export[^s](?:([\w*{}\n\r\t, ]+)\s*);*/g, '' ] )
+
+    return replacements
+
+}
+
+function _getExportsReplacementsFor ( filePath ) {
+
     const exports = _revertExportMap[ filePath ]
     if ( !exports ) { throw new Error( 'No exports for: ' + filePath ) }
+
+    let replacements = []
 
     for ( let i = 0, numberOfExports = exports.length ; i < numberOfExports ; i++ ) {
 
@@ -1096,6 +1107,7 @@ function _getReplacementsFor ( filePath ) {
         const replacement2 = 'var ' + exportedObject + ' ='
         replacements.push( [ regex2, replacement2 ] )
 
+        // Todo: externalize below
         // THREE.HDRLoader = THREE.RGBELoader = function ( manager ) {
         const regex1       = new RegExp( ' = var ', 'g' )
         const replacement1 = ' = '
@@ -1103,9 +1115,17 @@ function _getReplacementsFor ( filePath ) {
 
     }
 
+    return replacements
+
+}
+
+function _getIifeReplacementsFor ( filePath ) {
+
+    let replacements = []
+
     // Replace IIFE
     const file = _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' ) // remove comments
-                                            .replace( /\s+/g, '' )   // Remoce spaces
+                                            .replace( /\s+/g, '' )   // Remove spaces
 
     // Check if this iife is a main englobing function or inner function
     const matchIife = file.match( /^\(\s*function\s*\(\s*(\w+)?\s*\)\s*\{/g ) || []
@@ -1132,19 +1152,37 @@ function _getReplacementsFor ( filePath ) {
 
     }
 
-    // Finally replace all THREE occurence
-    replacements.push( [ /THREE\./g, '' ] )
+    return replacements
 
-    // Replace assignement to itself
-    replacements.push( [ /var\s?(\w+)\s?=\s?\1;/g, '' ] )
+}
+
+function _getThreeReplacementsFor () {
+
+    return [[ /THREE\./g, '' ]]
+
+}
+
+function _getAutoAssignementReplacementsFor () {
+
+    return [[ /var\s?(\w+)\s?=\s?\1;/g, '' ]]
+
+}
+
+function _getReplacementsFor ( filePath, outputPath ) {
+
+    let replacements = []
+
+    Array.prototype.push.apply( replacements, _getEs6ReplacementsFor() )
+    Array.prototype.push.apply( replacements, _getExportsReplacementsFor( outputPath ) )
+    Array.prototype.push.apply( replacements, _getIifeReplacementsFor( filePath ) )
+    Array.prototype.push.apply( replacements, _getThreeReplacementsFor() )
+    Array.prototype.push.apply( replacements, _getAutoAssignementReplacementsFor() )
 
     return replacements
 
 }
 
-function _formatReplacementStatements ( filePath, replacements ) {
-
-    let file = _getFileForPath( filePath )
+function _formatReplacementStatements ( file, replacements ) {
 
     let replacement = undefined
     for ( let replaceIndex = 0, numberOfReplacements = replacements.length ; replaceIndex < numberOfReplacements ; replaceIndex++ ) {
