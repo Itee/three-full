@@ -902,7 +902,6 @@ function _getImportsFor_old ( filePath ) {
 function _formatImportStatements ( importerFilePath, objectNames ) {
 
     // TODO [Itee]: must take into account the file rerouting in edge cases
-
     if ( !importerFilePath ) {
         console.error( 'Invalid argument importerFilePath' )
         return null
@@ -1762,28 +1761,6 @@ Object.assign( Es6.prototype, {
         }
 
         callback()
-
-		function _getInputFilePathOverride( filePath, edgeCase ) {
-
-            if( !edgeCase ) {
-                return filePath
-            }
-
-			let inputFilePathOverride = filePath
-
-			const originOverride = edgeCase[ 'originOverride' ]
-			if ( originOverride ) {
-
-				const dirName = path.dirname( filePath )
-				const indexOfThree = dirName.indexOf( 'three' )
-				const basePath = dirName.slice( 0, indexOfThree )
-				inputFilePathOverride = path.join( basePath, originOverride )
-
-			}
-
-			return inputFilePathOverride
-
-		}
 
     },
 
