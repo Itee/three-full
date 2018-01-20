@@ -183,9 +183,12 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
-		FunctionNode: {
-			imports: [ 'NodeLib' ]
-		},
+        FunctionNode_Implementation: {
+            imports_override: [
+                ['FunctionNode', 'from', './FunctionNode_Declaration'],
+                'NodeLib'
+            ]
+        },
 		GCodeLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
@@ -296,6 +299,17 @@ module.exports = {
 		MTLLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
+        NodeLib_Implementation: {
+            imports_override: [
+                [ 'NodeLib', 'from', './NodeLib_Declaration' ],
+                'UVNode',
+                'PositionNode',
+                'NormalNode',
+                'TimerNode',
+                'ConstNode',
+                'FunctionNode'
+            ]
+        },
 		NodeMaterial: {
 			imports: [ 'NodeLib' ]
 		},
