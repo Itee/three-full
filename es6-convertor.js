@@ -381,8 +381,7 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
         }
 
-        overrideFilePath = _getInputFilePathOverride( filePath, edgeCase )
-        outputPath       = _getOutputFor( overrideFilePath, outputBasePath )
+        outputPath       = _getOutputFor( filePath, outputBasePath, edgeCase[ 'outputOverride' ] )
 
         exports.forEach( ( exportedElement ) => {
 
@@ -493,11 +492,9 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
 
         if ( isJavascript ) {
 
-            edgeCase = edgeCases[ baseName ] || {}
-
-            overrideFilePath = _getInputFilePathOverride( filePath, edgeCase )
-            outputPath       = _getOutputFor( overrideFilePath, outputBasePath )
-            fileType         = _getFileType( file )
+            edgeCase   = edgeCases[ baseName ] || {}
+            outputPath = _getOutputFor( filePath, outputBasePath, edgeCase[ 'outputOverride' ] )
+            fileType   = _getFileType( file )
 
             // Processing exports
             exports = _getExportsFor( file )
@@ -1300,12 +1297,17 @@ function _formatExportStatements ( filePath, exports ) {
 
 /////////////////////////// OUTPUT ////////////////////////////
 
-function _getOutputFor ( filePath, output ) {
+function _getOutputFor ( filePath, outputBasePath, outputOverride ) {
+
+    if( outputOverride )
+    {
+        return path.join( outputBasePath, outputOverride )
+    }
 
     const dirName        = path.dirname( filePath )
     const specificPart   = getSpecificPath( dirName )
     const baseName       = path.basename( filePath )
-    const fullOutputPath = path.join( output, specificPart, baseName )
+    const fullOutputPath = path.join( outputBasePath, specificPart, baseName )
 
     return fullOutputPath
 
