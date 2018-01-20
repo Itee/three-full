@@ -346,12 +346,20 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
         if ( baseName === 'constants' ) {
             console.log( 'debug' )
+
+        exports = _getExportsFor( file )
+        if ( !exports ) {
+
+            // Fallback with file name in last resore
+            console.error( 'WARNING: ' + baseName + ' does not contains explicit or implicit export, fallback to file name as export...' )
+            exports = [ baseName ]
+
         }
 
         overrideFilePath = _getInputFilePathOverride( filePath, edgeCase )
         outputPath       = _getOutputFor( overrideFilePath, outputBasePath )
 
-        exportedElements.forEach( ( exportedElement ) => {
+        exports.forEach( ( exportedElement ) => {
 
             // Check case where export is an array with 'from' or 'as'
             if ( Array.isArray( exportedElement ) ) {
@@ -401,7 +409,7 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
         } )
 
-        _revertExportMap[ outputPath ] = exportedElements
+        _revertExportMap[ outputPath ] = exports
 
     } )
 
