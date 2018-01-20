@@ -1651,9 +1651,49 @@ Object.assign( Es6.prototype, {
         const output    = this.output
         const edgeCases = this.edgeCases
 
-        const allFilesPaths       = _getFilesPathsUnder( inputs, [] )
+        const allFilesPaths       = _getFilesPathsUnder( inputs )
         const availableFilesPaths = _excludesFilesPaths( allFilesPaths, excludes )
         const jsFiles             = _filterJavascriptFiles( availableFilesPaths )
+        _createExportMap2( jsFiles, edgeCases, output )
+
+        const filesMap            = _createFilesMap( availableFilesPaths, edgeCases, output )
+
+        //
+        //
+
+        let fileDatas = undefined
+
+        for (let key in filesMap) {
+
+            if( !filesMap.hasOwnProperty( key ) ) { continue }
+
+            if( key === "FunctionNode_Implementation") {
+                console.log('debug')
+            }
+
+            fileDatas = filesMap[key]
+
+            if ( fileDatas.isJavascript ) {
+
+//                console.log('Convert: ' + fileDatas.path)
+                _convertFile ( fileDatas )
+
+            } else {
+
+//                console.log('Copy:    ' + fileDatas.path)
+                _copyFile( fileDatas )
+
+            }
+
+
+        }
+
+        callback()
+
+    },
+
+    convert_old: function convert ( callback ) {
+
         const filesToConvert      = _filterES6Files( jsFiles )
 
 //        _createExportMap( jsFiles, {} )
