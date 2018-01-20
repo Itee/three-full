@@ -349,7 +349,17 @@ function _createFile_old ( filePath, inputFilePathOverride, imports, replacement
 
 }
 
-function _copyFile ( filePath, outputPath ) {
+function _copyFile ( fileDatas ) {
+
+    const outputPath = fileDatas.output
+
+    _createFoldersTree( path.dirname( outputPath ) )
+
+    fs.writeFileSync( outputPath, fileDatas.file )
+
+}
+
+function _copyFile_old ( filePath, outputPath ) {
 
     let file = _getFileForPath( filePath )
 
