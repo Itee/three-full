@@ -474,19 +474,21 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
             outputPath       = _getOutputFor( overrideFilePath, outputBasePath )
             fileType         = _getFileType( file )
 
-            imports      = _getImportsFor( {
-                file:   file,
-                output: outputPath
-            } )
-
+            // Processing exports
             exports = _getExportsFor( file )
             if ( !exports ) {
 
                 // Fallback with file name in last resore
                 console.error( 'WARNING: ' + baseName + ' does not contains explicit or implicit export, fallback to file name as export...' )
-                exports = baseName
+                exports = [ baseName ]
 
             }
+
+            imports      = _getImportsFor( {
+                file:   file,
+                exports: exports,
+                output: outputPath
+            } )
 
             replacements = _getReplacementsFor( filePath, outputPath )
 
