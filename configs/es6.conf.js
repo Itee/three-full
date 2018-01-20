@@ -228,12 +228,6 @@ module.exports = {
 		HDRCubeTextureLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
-		ImageBitmapLoader: {
-			imports: [
-				'DefaultLoadingManager',
-				'Cache'
-			]
-		},
 		ImprovedNoise: {
 			originOverride: 'three/src/misc/ImprovedNoise.js'
 		},
