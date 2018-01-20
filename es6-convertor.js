@@ -528,7 +528,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
 
 /////////////////////////// IMPORTS ////////////////////////////
 
-function _getAllImportsStatementIn ( file, filePath ) {
+function _getAllImportsStatementIn ( file, exports ) {
 
     let statements = []
 
@@ -548,8 +548,8 @@ function _getAllImportsStatementIn ( file, filePath ) {
                   result = results[ i ]
 
                   // Check if import matching does no concerne inner class
-                  if ( _exportMap[ result ] === filePath ) {
-                      results.splice( i, 1 )
+                  if ( exports.includes( result ) ) {
+                      return
                   }
 
                   if ( !result ) {
@@ -568,7 +568,7 @@ function _getAllImportsStatementIn ( file, filePath ) {
 
 }
 
-function _getAllExtendsStatementIn ( file, filePath ) {
+function _getAllExtendsStatementIn ( file, exports ) {
 
     let statements = []
 
@@ -589,11 +589,7 @@ function _getAllExtendsStatementIn ( file, filePath ) {
                   result = results[ i ]
 
                   // Check if import matching does no concerne inner class
-                  if ( _exportMap[ result ] === filePath ) {
-                      results.splice( i, 1 )
-                  }
-
-                  if ( !result ) {
+                  if ( !result || exports.includes( result ) ) {
                       results.splice( i, 1 )
                   }
 
@@ -605,14 +601,11 @@ function _getAllExtendsStatementIn ( file, filePath ) {
 
           } )
 
-    // By direct prototype assignement
-    // See BufferSubdivisionModifier
-
     return statements
 
 }
 
-function _getAllInheritStatementsIn ( file, filePath ) {
+function _getAllInheritStatementsIn ( file, exports ) {
 
     let statements = []
 
@@ -631,7 +624,7 @@ function _getAllInheritStatementsIn ( file, filePath ) {
               for ( let i = 0, resultLength = results.length ; i < resultLength ; i++ ) {
                   result = results[ i ]
 
-                  if ( _exportMap[ result ] === filePath ) {
+                  if ( !result || exports.includes( result ) ) {
                       results.splice( i, 1 )
                   }
 
@@ -647,7 +640,7 @@ function _getAllInheritStatementsIn ( file, filePath ) {
 
 }
 
-function _getAllNewStatementIn ( file, filePath ) {
+function _getAllNewStatementIn ( file, exports ) {
 
     let statements = []
 
@@ -659,7 +652,7 @@ function _getAllNewStatementIn ( file, filePath ) {
                                   .replace( /\s+/g, '' )
 
               // Check if the new statement is not about the exported object !
-              if ( _exportMap[ result ] === filePath ) {
+              if( exports.includes(result) ) {
                   return
               }
 
@@ -671,7 +664,7 @@ function _getAllNewStatementIn ( file, filePath ) {
 
 }
 
-function _getAllInstanceOfStatementIn ( file, filePath ) {
+function _getAllInstanceOfStatementIn ( file, exports ) {
 
     let statements = []
 
@@ -683,7 +676,7 @@ function _getAllInstanceOfStatementIn ( file, filePath ) {
                                   .replace( /\s+/g, '' )
 
               // Check if the new statement is not about the exported object !
-              if ( _exportMap[ result ] === filePath ) {
+              if( exports.includes(result) ) {
                   return
               }
 
@@ -730,15 +723,16 @@ function _getAllConstantStatementIn ( file ) {
 function _getImportsFor ( fileDatas ) {
 
     const file       = fileDatas.file
+    const exports = fileDatas.exports
     const outputPath = fileDatas.output
 
     let statements = []
 
-    Array.prototype.push.apply( statements, _getAllImportsStatementIn( file, outputPath ) )
-    Array.prototype.push.apply( statements, _getAllInheritStatementsIn( file, outputPath ) )
-    Array.prototype.push.apply( statements, _getAllExtendsStatementIn( file, outputPath ) )
-    Array.prototype.push.apply( statements, _getAllNewStatementIn( file, outputPath ) )
-    Array.prototype.push.apply( statements, _getAllInstanceOfStatementIn( file, outputPath ) )
+    Array.prototype.push.apply( statements, _getAllImportsStatementIn( file, exports ) )
+    Array.prototype.push.apply( statements, _getAllInheritStatementsIn( file, exports ) )
+    Array.prototype.push.apply( statements, _getAllExtendsStatementIn( file, exports ) )
+    Array.prototype.push.apply( statements, _getAllNewStatementIn( file, exports ) )
+    Array.prototype.push.apply( statements, _getAllInstanceOfStatementIn( file, exports ) )
     Array.prototype.push.apply( statements, _getAllConstantStatementIn( file ) )
 
     // A class can be inherited and dynamicaly create by new in the same file so we need to check uniqueness
