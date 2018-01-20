@@ -491,7 +491,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
                 output: outputPath
             } )
 
-            replacements = _getReplacementsFor( filePath, outputPath )
+            replacements = _getReplacementsFor( file, exports )
 
             data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCase )
 
@@ -905,10 +905,7 @@ function _getEs6ReplacementsFor () {
 
 }
 
-function _getExportsReplacementsFor ( filePath ) {
-
-    const exports = _revertExportMap[ filePath ]
-    if ( !exports ) { throw new Error( 'No exports for: ' + filePath ) }
+function _getExportsReplacementsFor ( exports ) {
 
     let replacements = []
 
@@ -932,23 +929,20 @@ function _getExportsReplacementsFor ( filePath ) {
 
 }
 
-function _getIifeReplacementsFor ( filePath ) {
+function _getIifeReplacementsFor ( file ) {
 
+    const unspacedFile = file.replace( /\s+/g, '' )
     let replacements = []
 
-    // Replace IIFE
-    const file = _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' ) // remove comments
-                                            .replace( /\s+/g, '' )   // Remove spaces
-
     // Check if this iife is a main englobing function or inner function
-    const matchIife = file.match( /^\(\s*function\s*\(\s*(\w+)?\s*\)\s*\{/g ) || []
+    const matchIife = unspacedFile.match( /^\(\s*function\s*\(\s*(\w+)?\s*\)\s*\{/g ) || []
     if ( matchIife.length > 0 ) {
 
         replacements.push( [ /\(\s*function\s*\(\s*(\w+)?\s*\)\s*\{/, '' ] )
 
         // Check for end type with params or not
-        const matchParametrizedEndIife = file.match( /}\s*\)\s*\(\s*[\w.=\s]*(\|\|\s*\{\})?\s*\);?$/ ) || []
-        const matchEmptyEndIife        = file.match( /}\s*\(\s*[\w]*\s*\)\s*\);?$/ ) || []
+        const matchParametrizedEndIife = unspacedFile.match( /}\s*\)\s*\(\s*[\w.=\s]*(\|\|\s*\{\})?\s*\);?$/ ) || []
+        const matchEmptyEndIife        = unspacedFile.match( /}\s*\(\s*[\w]*\s*\)\s*\);?$/ ) || []
         if ( matchParametrizedEndIife.length > 0 ) {
 
             replacements.push( [ /}\s*\)\s*\(\s*[\w.=\s]*(\|\|\s*\{\})?\s*\);?/, '' ] )
@@ -981,13 +975,13 @@ function _getAutoAssignementReplacementsFor () {
 
 }
 
-function _getReplacementsFor ( filePath, outputPath ) {
+function _getReplacementsFor ( file, exports ) {
 
     let replacements = []
 
     Array.prototype.push.apply( replacements, _getEs6ReplacementsFor() )
-    Array.prototype.push.apply( replacements, _getExportsReplacementsFor( outputPath ) )
-    Array.prototype.push.apply( replacements, _getIifeReplacementsFor( filePath ) )
+    Array.prototype.push.apply( replacements, _getExportsReplacementsFor( exports ) )
+    Array.prototype.push.apply( replacements, _getIifeReplacementsFor( file ) )
     Array.prototype.push.apply( replacements, _getThreeReplacementsFor() )
     Array.prototype.push.apply( replacements, _getAutoAssignementReplacementsFor() )
 
