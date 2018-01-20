@@ -366,8 +366,8 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
         fileExtension = path.extname( filePath )
         baseName      = path.basename( filePath, fileExtension )
-        edgeCase      = edgeCases[ baseName ]
-        file = _getUncommentedFileForPath( filePath )
+        edgeCase      = edgeCases[ baseName ] || {}
+        file          = _getUncommentedFileForPath( filePath )
 
         if ( baseName === 'constants' ) {
             console.log( 'debug' )
@@ -493,7 +493,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
 
         if ( isJavascript ) {
 
-            edgeCase = edgeCases[ baseName ]
+            edgeCase = edgeCases[ baseName ] || {}
 
             overrideFilePath = _getInputFilePathOverride( filePath, edgeCase )
             outputPath       = _getOutputFor( overrideFilePath, outputBasePath )
