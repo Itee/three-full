@@ -1541,18 +1541,21 @@ function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath,
             data.imports = edgeCase.imports_override
         } else if ( edgeCase.imports ) {
             Array.prototype.push.apply( data.imports, edgeCase.imports )
+            data.imports.filter( _makeUnique )
         }
 
         if ( edgeCase.replacements_override ) {
             data.replacements = edgeCase.replacements_override
         } else if ( edgeCase.replacements ) {
             Array.prototype.push.apply( data.replacements, edgeCase.replacements )
+            data.replacements.filter( _makeUnique )
         }
 
         if ( edgeCase.exports_override ) {
             data.exports = edgeCase.exports_override
         } else if ( edgeCase.exports ) {
             Array.prototype.push.apply( data.exports, edgeCase.exports )
+            data.exports.filter( _makeUnique )
         }
 
         if ( edgeCase.output ) {
