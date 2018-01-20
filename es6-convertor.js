@@ -664,6 +664,46 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
 
 /////////////////////////// IMPORTS ////////////////////////////
 
+function _getAllImportsStatementIn ( file, filePath ) {
+
+    let statements = []
+
+    const matchs = file.match( /import\s+(?:(?:({[\w\s,]+})|([\w,*-]+))\s+)+from/g ) || []
+    matchs.filter( _makeUnique )
+          .forEach( ( value ) => {
+
+              const results = value.replace( 'import', '' )
+                                   .replace( 'from', '' )
+                                   .replace( /[{}]/g, '' )
+                                   .replace( /\s+/g, '' )
+                                   .split( ',' )
+
+              // Check if the extends statement is not about the exported object !
+              let result = undefined
+              for ( let i = results.length - 1 ; i >= 0 ; --i ) {
+                  result = results[ i ]
+
+                  // Check if import matching does no concerne inner class
+                  if ( _exportMap[ result ] === filePath ) {
+                      results.splice( i, 1 )
+                  }
+
+                  if ( !result ) {
+                      results.splice( i, 1 )
+                  }
+
+              }
+
+              if ( results.length > 0 ) {
+                  Array.prototype.push.apply( statements, results )
+              }
+
+          } )
+
+    return statements
+
+}
+
 function _getAllExtendsStatementIn ( file, filePath ) {
 
     let statements = []
