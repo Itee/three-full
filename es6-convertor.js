@@ -526,7 +526,6 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
 
             _fileMap[ baseName ] = {
                 path:         filePath,
-                input:        overrideFilePath,
                 isJavascript: ( fileExtension === '.js' ),
                 fileType:     fileType,
                 file:         file,
