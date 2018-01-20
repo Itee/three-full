@@ -720,6 +720,7 @@ gulp.task( 'convert-three', ( done ) => {
 	   .convert( () => {
 
 		   copyPolyfills()
+		   copyShaderChunk()
 		   updateThreeExports()
 
 		   done()
@@ -729,6 +730,12 @@ gulp.task( 'convert-three', ( done ) => {
 	function copyPolyfills() {
 
 		fs.writeFileSync( './sources/polyfills.js', fs.readFileSync( './node_modules/three/src/polyfills.js', 'utf8' ) )
+
+	}
+
+	function copyShaderChunk() {
+
+		fs.writeFileSync( './sources/renderers/shaders/ShaderChunk.js', fs.readFileSync( './node_modules/three/src/renderers/shaders/ShaderChunk.js', 'utf8' ) )
 
 	}
 
