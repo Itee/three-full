@@ -585,6 +585,83 @@ function _createExportMap2 ( filesPaths, edgeCases, outputBasePath ) {
     //    }
 
 }
+
+function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
+
+    let fileMap = {}
+
+    let fileExtension = undefined
+    let baseName      = undefined
+    let edgeCase      = undefined
+    let file          = undefined
+    let isJavascript  = undefined
+
+    let overrideFilePath = undefined
+    let fileType         = undefined
+    let imports          = undefined
+    let replacements     = undefined
+    let exports          = undefined
+    let outputPath       = undefined
+
+    filesPaths.forEach( ( filePath ) => {
+
+        fileExtension = path.extname( filePath )
+        baseName      = path.basename( filePath, fileExtension )
+        file          = _getUncommentedFileForPath( filePath )
+        isJavascript  = ( fileExtension === '.js' )
+
+        if( isJavascript ) {
+
+            if( baseName === "constants" ) {
+                console.log("debug")
+            }
+
+            edgeCase      = edgeCases[ baseName ]
+
+            overrideFilePath = _getInputFilePathOverride( filePath, edgeCase )
+            outputPath       = _getOutputFor( overrideFilePath, outputBasePath )
+            fileType         = _getFileType( file )
+
+            imports          = _getImportsFor( {file: file, output: outputPath} )
+            exports          = _getExportedElementForFile( filePath )
+            replacements     = _getReplacementsFor( filePath, outputPath )
+
+            const data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCase )
+
+            if( fileMap[ baseName ] ) {
+                console.error('The key ' + baseName + ' already exist in the map ! Skip it.')
+                return
+            }
+
+            fileMap[ baseName ] = {
+                path:         filePath,
+                input:        overrideFilePath,
+                isJavascript: ( fileExtension === '.js' ),
+                fileType:     fileType,
+                file:         file,
+                imports:      data.imports,
+                replacements: data.replacements,
+                exports:      data.exports,
+                output:       data.output
+            }
+
+        } else {
+
+            fileMap[ baseName ] = {
+                path:         filePath,
+                isJavascript: isJavascript,
+                file:         file,
+                output:       _getOutputFor( filePath, outputBasePath )
+            }
+
+        }
+
+    } )
+
+    return fileMap
+
+}
+
 /////////////////////////// IMPORTS ////////////////////////////
 
 function _getAllExtendsStatementIn ( file, filePath ) {
