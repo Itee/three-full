@@ -464,7 +464,16 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
                 file:   file,
                 output: outputPath
             } )
-            exports      = _getExportsFor( filePath )
+
+            exports = _getExportsFor( file )
+            if ( !exports ) {
+
+                // Fallback with file name in last resore
+                console.error( 'WARNING: ' + baseName + ' does not contains explicit or implicit export, fallback to file name as export...' )
+                exports = baseName
+
+            }
+
             replacements = _getReplacementsFor( filePath, outputPath )
 
             data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCase )
@@ -1148,19 +1157,14 @@ function _getExportsStatementInLibFile ( file ) {
 
 }
 
-function _getExportsFor ( filePath ) {
+function _getExportsFor ( file ) {
 
-    const file = _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' ) // remove comments
-    //                                .replace( /\s*/g, '')
-
-    // Try to find exports for es6 modules
     // Todo: need to sort different file type before
     const es6Regex = new RegExp( /(export\s(default|var))|((import|export)[\r\n\s]*(default)?({[\w\s,]+}\s?(from)?))/, 'g' )
     if ( file.match( es6Regex ) ) {
 
         const es6Exports = _getExportsStatementsInES6File( file )
         if ( es6Exports.length > 0 ) {
-            //			console.log(filePath + ' will export ' + es6Exports)
             return es6Exports
         }
 
@@ -1187,9 +1191,7 @@ function _getExportsFor ( filePath ) {
     const libExports = _getExportsStatementInLibFile( file )
     if ( libExports.length > 0 ) { return libExports }
 
-    // Fallback with file name in last resore
-    console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export...' )
-    return [ path.basename( filePath, '.js' ) ]
+    return null
 
 }
 
