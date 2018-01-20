@@ -361,7 +361,7 @@ function _makeUnique ( value, index, array ) {
 let _exportMap       = {}
 let _revertExportMap = {}
 
-function _createExportMap2 ( filesPaths, edgeCases, outputBasePath ) {
+function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
     filesPaths.forEach( ( filePath ) => {
 
@@ -1484,7 +1484,7 @@ Object.assign( Es6.prototype, {
         const allFilesPaths       = _getFilesPathsUnder( inputs )
         const availableFilesPaths = _excludesFilesPaths( allFilesPaths, excludes )
         const jsFiles             = _filterJavascriptFiles( availableFilesPaths )
-        _createExportMap2( jsFiles, edgeCases, output )
+        _createExportMap( jsFiles, edgeCases, output )
 
         const filesMap = _createFilesMap( availableFilesPaths, edgeCases, output )
 
