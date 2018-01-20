@@ -921,23 +921,32 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
     let importsMap = {}
     objectNames.forEach( ( objectName ) => {
 
-        const sourcePath = _exportMap[ objectName ]
-        if ( !sourcePath ) {
-            console.error( 'Missing export statement for: ' + objectName + ' in ' + importerSpecificPath + ' this is an edge case that will probably need to be managed manually !!!\n' )
-            return
+        if ( Array.isArray(objectName)) {
+
+            importsMap[ objectName[2] ] = []
+            importsMap[ objectName[2] ].push( objectName[0] )
+
+        } else {
+
+            const sourcePath = _exportMap[ objectName ]
+            if ( !sourcePath ) {
+                console.error( 'Missing export statement for: ' + objectName + ' in ' + importerSpecificPath + ' this is an edge case that will probably need to be managed manually !!!\n' )
+                return
+            }
+
+            const specificSourcePath = getSpecificPath( sourcePath )
+
+            compareAndRemoveDuplicates( importerSpecificPath, specificSourcePath )
+            const importerDeepLevel = importerSpecificPath.match( /\//g ) || []
+            const relativePart      = getRelativePartFor( importerDeepLevel.length )
+            const relativePath      = relativePart + specificSourcePath
+
+            if( ! importsMap[ relativePath ] ) {
+                importsMap[ relativePath ] = []
+            }
+            importsMap[ relativePath ].push( objectName )
+
         }
-
-        const specificSourcePath = getSpecificPath( sourcePath )
-
-        compareAndRemoveDuplicates( importerSpecificPath, specificSourcePath )
-        const importerDeepLevel = importerSpecificPath.match( /\//g ) || []
-        const relativePart      = getRelativePartFor( importerDeepLevel.length )
-        const relativePath      = relativePart + specificSourcePath
-
-        if( ! importsMap[ relativePath ] ) {
-            importsMap[ relativePath ] = []
-        }
-        importsMap[ relativePath ].push( objectName )
 
     } )
 
