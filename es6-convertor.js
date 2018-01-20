@@ -263,31 +263,6 @@ function _filterJavascriptFiles ( filePaths ) {
 
 }
 
-function _filterES6Files ( filePaths ) {
-
-    let filteredFilesPath = []
-
-    const es6Regex = new RegExp( /(export\s(default|var))|((import|export)[\r\n\s]*(default)?({[\w\s,]+}\s?(from)?))/, 'g' )
-
-    let filePath = undefined
-    for ( let filePathIndex = 0, numberOfFilePaths = filePaths.length ; filePathIndex < numberOfFilePaths ; filePathIndex++ ) {
-
-        filePath = filePaths[ filePathIndex ]
-
-        const file = _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/gm, '' )
-        if ( file.match( es6Regex ) ) {
-            console.log( 'Filter:  ' + filePath )
-            continue
-        }
-
-        filteredFilesPath.push( filePath )
-
-    }
-
-    return filteredFilesPath
-
-}
-
 function _createFoldersTree ( folderPath ) {
 
     const sep     = path.sep
@@ -1216,12 +1191,6 @@ function _getExportedElementForFile ( filePath ) {
     // Fallback with file name in last resore
     console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export...' )
     return [ path.basename( filePath, '.js' ) ]
-
-}
-
-function _getExportsFor ( filePath ) {
-
-    return _revertExportMap[ filePath ]
 
 }
 
