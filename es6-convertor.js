@@ -180,6 +180,53 @@ function _excludesFilesPaths ( filePaths, excludes ) {
 
 }
 
+function _getFileType( file ) {
+
+    // Todo: use regex as global
+    // Todo: use Object.freeze about fileType
+
+    const es6Regex              = new RegExp( /(export\s(default|var))|((import|export)[\r\n\s]*(default)?({[\w\s,]+}\s?(from)?))/, 'g' )
+    const amdRegex              = new RegExp( /define\.amd/, 'g' )
+    const cjsRegex              = new RegExp( /module\.exports\s*=\s*\{?[^}]*}?/g )
+    const classicObjectRegex    = new RegExp( /(THREE.(\w+)\s*=\s*)+\s*function/g )
+    const prototypedObjectRegex = new RegExp( /prototype\.constructor\s?=\s?(THREE\.)?(\w)+/g )
+    const libRegex              = new RegExp( /THREE.(\w+) = \{/g )
+
+    let fileType = undefined
+
+    const es6Match = file.match( es6Regex )
+    if( es6Match && es6Match.length > 0 ) {
+        return "es6"
+    }
+
+    const amdMatch = file.match( amdRegex )
+    if( amdMatch && amdMatch.length > 0 ) {
+        return "amd"
+    }
+
+    const cjsMatch = file.match( cjsRegex )
+    if( cjsMatch && cjsMatch.length > 0 ) {
+        return "cjs"
+    }
+
+    const classicObjectMatch = file.match( classicObjectRegex )
+    if( classicObjectMatch && classicObjectMatch.length > 0  ) {
+        return "classic"
+    }
+
+    const prototypedObjectMatch = file.match( prototypedObjectRegex )
+    if( prototypedObjectMatch && prototypedObjectMatch.length > 0  ) {
+        return "prototype"
+    }
+
+    const libMatch = file.match( libRegex )
+    if( libMatch && libMatch.length > 0  ) {
+        return "lib"
+    }
+
+    return "unknown"
+
+}
 function _filterJavascriptFiles ( filePaths ) {
 
     let filteredFilesPath = []
