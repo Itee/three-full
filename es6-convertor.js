@@ -225,13 +225,13 @@ function _getInputFilePathOverride ( filePath, edgeCase ) {
 
     let inputFilePathOverride = filePath
 
-    const originOverride = edgeCase[ 'originOverride' ]
-    if ( originOverride ) {
+    const outputOverride = edgeCase[ 'outputOverride' ]
+    if ( outputOverride ) {
 
         const dirName         = path.dirname( filePath )
         const indexOfThree    = dirName.indexOf( 'three' )
         const basePath        = dirName.slice( 0, indexOfThree )
-        inputFilePathOverride = path.join( basePath, originOverride )
+        inputFilePathOverride = path.join( basePath, outputOverride )
 
     }
 

@@ -59,7 +59,7 @@ module.exports = {
 			]
 		},
 		AnimationClipCreator: {
-			originOverride: 'three/src/animation/AnimationClipCreator.js'
+			outputOverride: 'three/src/animation/AnimationClipCreator.js'
 		},
 		AssimpJSONLoader: {
 			imports: [
@@ -101,7 +101,7 @@ module.exports = {
 			]
 		},
 		BufferGeometryUtils: {
-			originOverride: 'three/src/utils/BufferGeometryUtils.js'
+			outputOverride: 'three/src/utils/BufferGeometryUtils.js'
 		},
 		BufferSubdivisionModifier: {
 			imports: [ 'Face3' ]
@@ -110,7 +110,7 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		Car: {
-			originOverride: 'three/src/objects/Car.js'
+			outputOverride: 'three/src/objects/Car.js'
 		},
 		CinematicCamera: {
 			imports: [
@@ -129,13 +129,13 @@ module.exports = {
 			imports: [ 'NodeMaterial' ]
 		},
 		ConvexObjectBreaker: {
-			originOverride: 'three/src/modifiers/ConvexObjectBreaker.js'
+			outputOverride: 'three/src/modifiers/ConvexObjectBreaker.js'
 		},
 		CubeTexturePass: {
 			imports: [ 'ShaderLib' ]
 		},
 		Curve: {
-			originOverride: 'three/src/curves/Curve.js'
+			outputOverride: 'three/src/curves/Curve.js'
 		},
 		CurveExtras: {
 			replacements: [
@@ -154,10 +154,10 @@ module.exports = {
 				[ 'Curves.DecoratedTorusKnot5a = DecoratedTorusKnot5a;', '' ],
 				[ 'Curves.DecoratedTorusKnot5c = DecoratedTorusKnot5c;', '' ]
 			],
-			originOverride: 'three/src/curves/CurveExtras.js'
+			outputOverride: 'three/src/curves/CurveExtras.js'
 		},
 		Detector: {
-			originOverride: 'three/src/helpers/Detector.js'
+			outputOverride: 'three/src/helpers/Detector.js'
 		},
 		DotScreenPass: {
 			imports: [
@@ -217,19 +217,19 @@ module.exports = {
 			]
 		},
 		GPUComputationRenderer: {
-			originOverride: 'three/src/renderers/GPUComputationRenderer.js'
+			outputOverride: 'three/src/renderers/GPUComputationRenderer.js'
 		},
 		GPUParticleSystem: {
-			originOverride: 'three/src/objects/GPUParticleSystem.js'
+			outputOverride: 'three/src/objects/GPUParticleSystem.js'
 		},
 		Gyroscope: {
-			originOverride: 'three/src/objects/Gyroscope.js'
+			outputOverride: 'three/src/objects/Gyroscope.js'
 		},
 		HDRCubeTextureLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		ImprovedNoise: {
-			originOverride: 'three/src/misc/ImprovedNoise.js'
+			outputOverride: 'three/src/misc/ImprovedNoise.js'
 		},
 		KMZLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -267,16 +267,16 @@ module.exports = {
 				[ 'edgeTable = new Int32Array', 'var edgeTable = new Int32Array' ],
 				[ 'triTable = new Int32Array', 'var triTable = new Int32Array' ]
 			],
-			originOverride: 'three/src/objects/MarchingCubes.js'
+			outputOverride: 'three/src/objects/MarchingCubes.js'
 		},
 		MD2Loader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		MD2Character: {
-			originOverride: 'three/src/objects/MD2Character.js'
+			outputOverride: 'three/src/objects/MD2Character.js'
 		},
 		MD2CharacterComplex: {
-			originOverride: 'three/src/objects/MD2CharacterComplex.js'
+			outputOverride: 'three/src/objects/MD2CharacterComplex.js'
 		},
 		MMDLoader: {
 			imports: [
@@ -285,10 +285,10 @@ module.exports = {
 			]
 		},
 		MorphAnimMesh: {
-			originOverride: 'three/src/objects/MorphAnimMesh.js'
+			outputOverride: 'three/src/objects/MorphAnimMesh.js'
 		},
 		MorphBlendMesh: {
-			originOverride: 'three/src/objects/MorphBlendMesh.js'
+			outputOverride: 'three/src/objects/MorphBlendMesh.js'
 		},
 		MTLLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -326,7 +326,7 @@ module.exports = {
 				'ShaderLib',
 				'UniformsUtils'
 			],
-			originOverride: 'three/src/objects/Ocean.js'
+			outputOverride: 'three/src/objects/Ocean.js'
 		},
 		OceanShaders: {
 			imports: [ 'ShaderLib' ]
@@ -336,7 +336,7 @@ module.exports = {
 			replacements: [
 				[ 'instanceof var OctreeNode', 'instanceof OctreeNode' ]
 			],
-			originOverride: 'three/src/utils/Octree.js'
+			outputOverride: 'three/src/utils/Octree.js'
 		},
 		OutlineEffect: {
 			imports: [ 'ShaderLib' ]
@@ -354,7 +354,7 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		PRNG: {
-			originOverride: 'three/src/utils/PRNG.js'
+			outputOverride: 'three/src/utils/PRNG.js'
 		},
 		PRWMLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -384,7 +384,7 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		QuickHull: {
-			originOverride: 'three/src/utils/QuickHull.js'
+			outputOverride: 'three/src/utils/QuickHull.js'
 		},
 		Refractor: {
 			imports: [ 'UniformsUtils' ]
@@ -425,7 +425,7 @@ module.exports = {
 			imports: [ 'InputNode' ]
 		},
 		ShaderGodRays: {
-			originOverride: 'three/src/shaders/ShaderGodRays.js'
+			outputOverride: 'three/src/shaders/ShaderGodRays.js'
 		},
 		ShaderPass: {
 			imports: [ 'UniformsUtils' ]
@@ -436,7 +436,7 @@ module.exports = {
 				'UniformsLib',
 				'ShaderChunk'
 			],
-			originOverride: 'three/src/shaders/ShaderSkin.js'
+			outputOverride: 'three/src/shaders/ShaderSkin.js'
 		},
 		ShaderTerrain: {
 			imports: [
@@ -444,16 +444,16 @@ module.exports = {
 				'UniformsLib',
 				'ShaderChunk'
 			],
-			originOverride: 'three/src/shaders/ShaderTerrain.js'
+			outputOverride: 'three/src/shaders/ShaderTerrain.js'
 		},
 		ShaderToon: {
-			originOverride: 'three/src/shaders/ShaderToon.js'
+			outputOverride: 'three/src/shaders/ShaderToon.js'
 		},
 		ShadowMapViewer: {
 			imports: [ 'UnpackDepthRGBAShader' ]
 		},
 		SimplexNoise: {
-			originOverride: 'three/src/misc/SimplexNoise.js'
+			outputOverride: 'three/src/misc/SimplexNoise.js'
 		},
 		Sky: {
 			imports: [ 'UniformsUtils' ]
@@ -511,7 +511,7 @@ module.exports = {
 				'AnimationUtils',
 				'Timeliner'
 			],
-			originOverride: 'three/src/animation/TimelinerController.js'
+			outputOverride: 'three/src/animation/TimelinerController.js'
 		},
 		TTFLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -521,10 +521,10 @@ module.exports = {
 				'AnimationUtils',
 				'Timeliner'
 			],
-			originOverride: 'three/src/utils/TypedArrayUtils.js'
+			outputOverride: 'three/src/utils/TypedArrayUtils.js'
 		},
 		UCSCharacter: {
-			originOverride: 'three/src/objects/UCSCharacter.js'
+			outputOverride: 'three/src/objects/UCSCharacter.js'
 		},
 		UnrealBloomPass: {
 			imports: [
@@ -543,7 +543,7 @@ module.exports = {
 			imports: [ 'NodeMaterial' ]
 		},
 		VolumeSlice: {
-			originOverride: 'three/src/audio/VolumeSlice.js'
+			outputOverride: 'three/src/audio/VolumeSlice.js'
 		},
 		VRMLLoader: {
 			imports: [ 'DefaultLoadingManager' ]
