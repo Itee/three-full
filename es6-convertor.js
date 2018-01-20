@@ -450,10 +450,6 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
 
         if ( isJavascript ) {
 
-            if ( baseName === "constants" ) {
-                console.log( "debug" )
-            }
-
             edgeCase = edgeCases[ baseName ]
 
             overrideFilePath = _getInputFilePathOverride( filePath, edgeCase )
