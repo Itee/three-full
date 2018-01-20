@@ -59,7 +59,7 @@ module.exports = {
 			]
 		},
 		AnimationClipCreator: {
-			outputOverride: 'three/src/animation/AnimationClipCreator.js'
+			outputOverride: 'animation/AnimationClipCreator.js'
 		},
 		AssimpJSONLoader: {
 			imports: [
@@ -101,7 +101,7 @@ module.exports = {
 			]
 		},
 		BufferGeometryUtils: {
-			outputOverride: 'three/src/utils/BufferGeometryUtils.js'
+			outputOverride: 'utils/BufferGeometryUtils.js'
 		},
 		BufferSubdivisionModifier: {
 			imports: [ 'Face3' ]
@@ -110,7 +110,7 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		Car: {
-			outputOverride: 'three/src/objects/Car.js'
+			outputOverride: 'objects/Car.js'
 		},
 		CinematicCamera: {
 			imports: [
@@ -129,13 +129,13 @@ module.exports = {
 			imports: [ 'NodeMaterial' ]
 		},
 		ConvexObjectBreaker: {
-			outputOverride: 'three/src/modifiers/ConvexObjectBreaker.js'
+			outputOverride: 'modifiers/ConvexObjectBreaker.js'
 		},
 		CubeTexturePass: {
 			imports: [ 'ShaderLib' ]
 		},
 		Curve: {
-			outputOverride: 'three/src/curves/Curve.js'
+			outputOverride: 'curves/Curve.js'
 		},
 		CurveExtras: {
 			replacements: [
@@ -154,10 +154,10 @@ module.exports = {
 				[ 'Curves.DecoratedTorusKnot5a = DecoratedTorusKnot5a;', '' ],
 				[ 'Curves.DecoratedTorusKnot5c = DecoratedTorusKnot5c;', '' ]
 			],
-			outputOverride: 'three/src/curves/CurveExtras.js'
+			outputOverride: 'curves/CurveExtras.js'
 		},
 		Detector: {
-			outputOverride: 'three/src/helpers/Detector.js'
+			outputOverride: 'helpers/Detector.js'
 		},
 		DotScreenPass: {
 			imports: [
@@ -217,19 +217,19 @@ module.exports = {
 			]
 		},
 		GPUComputationRenderer: {
-			outputOverride: 'three/src/renderers/GPUComputationRenderer.js'
+			outputOverride: 'renderers/GPUComputationRenderer.js'
 		},
 		GPUParticleSystem: {
-			outputOverride: 'three/src/objects/GPUParticleSystem.js'
+			outputOverride: 'objects/GPUParticleSystem.js'
 		},
 		Gyroscope: {
-			outputOverride: 'three/src/objects/Gyroscope.js'
+			outputOverride: 'objects/Gyroscope.js'
 		},
 		HDRCubeTextureLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		ImprovedNoise: {
-			outputOverride: 'three/src/misc/ImprovedNoise.js'
+			outputOverride: 'misc/ImprovedNoise.js'
 		},
 		KMZLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -267,16 +267,16 @@ module.exports = {
 				[ 'edgeTable = new Int32Array', 'var edgeTable = new Int32Array' ],
 				[ 'triTable = new Int32Array', 'var triTable = new Int32Array' ]
 			],
-			outputOverride: 'three/src/objects/MarchingCubes.js'
+			outputOverride: 'objects/MarchingCubes.js'
 		},
 		MD2Loader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		MD2Character: {
-			outputOverride: 'three/src/objects/MD2Character.js'
+			outputOverride: 'objects/MD2Character.js'
 		},
 		MD2CharacterComplex: {
-			outputOverride: 'three/src/objects/MD2CharacterComplex.js'
+			outputOverride: 'objects/MD2CharacterComplex.js'
 		},
 		MMDLoader: {
 			imports: [
@@ -285,10 +285,10 @@ module.exports = {
 			]
 		},
 		MorphAnimMesh: {
-			outputOverride: 'three/src/objects/MorphAnimMesh.js'
+			outputOverride: 'objects/MorphAnimMesh.js'
 		},
 		MorphBlendMesh: {
-			outputOverride: 'three/src/objects/MorphBlendMesh.js'
+			outputOverride: 'objects/MorphBlendMesh.js'
 		},
 		MTLLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -326,7 +326,7 @@ module.exports = {
 				'ShaderLib',
 				'UniformsUtils'
 			],
-			outputOverride: 'three/src/objects/Ocean.js'
+			outputOverride: 'objects/Ocean.js'
 		},
 		OceanShaders: {
 			imports: [ 'ShaderLib' ]
@@ -336,7 +336,7 @@ module.exports = {
 			replacements: [
 				[ 'instanceof var OctreeNode', 'instanceof OctreeNode' ]
 			],
-			outputOverride: 'three/src/utils/Octree.js'
+			outputOverride: 'utils/Octree.js'
 		},
 		OutlineEffect: {
 			imports: [ 'ShaderLib' ]
@@ -354,7 +354,7 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		PRNG: {
-			outputOverride: 'three/src/utils/PRNG.js'
+			outputOverride: 'utils/PRNG.js'
 		},
 		PRWMLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -384,7 +384,7 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		QuickHull: {
-			outputOverride: 'three/src/utils/QuickHull.js'
+			outputOverride: 'utils/QuickHull.js'
 		},
 		Refractor: {
 			imports: [ 'UniformsUtils' ]
@@ -425,7 +425,7 @@ module.exports = {
 			imports: [ 'InputNode' ]
 		},
 		ShaderGodRays: {
-			outputOverride: 'three/src/shaders/ShaderGodRays.js'
+			outputOverride: 'shaders/ShaderGodRays.js'
 		},
 		ShaderPass: {
 			imports: [ 'UniformsUtils' ]
@@ -436,7 +436,7 @@ module.exports = {
 				'UniformsLib',
 				'ShaderChunk'
 			],
-			outputOverride: 'three/src/shaders/ShaderSkin.js'
+			outputOverride: 'shaders/ShaderSkin.js'
 		},
 		ShaderTerrain: {
 			imports: [
@@ -444,16 +444,16 @@ module.exports = {
 				'UniformsLib',
 				'ShaderChunk'
 			],
-			outputOverride: 'three/src/shaders/ShaderTerrain.js'
+			outputOverride: 'shaders/ShaderTerrain.js'
 		},
 		ShaderToon: {
-			outputOverride: 'three/src/shaders/ShaderToon.js'
+			outputOverride: 'shaders/ShaderToon.js'
 		},
 		ShadowMapViewer: {
 			imports: [ 'UnpackDepthRGBAShader' ]
 		},
 		SimplexNoise: {
-			outputOverride: 'three/src/misc/SimplexNoise.js'
+			outputOverride: 'misc/SimplexNoise.js'
 		},
 		Sky: {
 			imports: [ 'UniformsUtils' ]
@@ -511,7 +511,7 @@ module.exports = {
 				'AnimationUtils',
 				'Timeliner'
 			],
-			outputOverride: 'three/src/animation/TimelinerController.js'
+			outputOverride: 'animation/TimelinerController.js'
 		},
 		TTFLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -521,10 +521,10 @@ module.exports = {
 				'AnimationUtils',
 				'Timeliner'
 			],
-			outputOverride: 'three/src/utils/TypedArrayUtils.js'
+			outputOverride: 'utils/TypedArrayUtils.js'
 		},
 		UCSCharacter: {
-			outputOverride: 'three/src/objects/UCSCharacter.js'
+			outputOverride: 'objects/UCSCharacter.js'
 		},
 		UnrealBloomPass: {
 			imports: [
@@ -543,7 +543,7 @@ module.exports = {
 			imports: [ 'NodeMaterial' ]
 		},
 		VolumeSlice: {
-			outputOverride: 'three/src/audio/VolumeSlice.js'
+			outputOverride: 'audio/VolumeSlice.js'
 		},
 		VRMLLoader: {
 			imports: [ 'DefaultLoadingManager' ]
