@@ -110,6 +110,9 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		Car: {
+            imports: [
+                '_Math'
+            ],
 			outputOverride: 'objects/Car.js'
 		},
 		CinematicCamera: {
@@ -122,8 +125,12 @@ module.exports = {
 			imports: [
 				'DefaultLoadingManager',
 				'LoaderUtils',
-				'Loader'
+				'Loader',
+				'_Math'
 			]
+		},
+		ColorConverter: {
+			imports: [ '_Math' ]
 		},
 		ColorNode: {
 			imports: [ 'NodeMaterial' ]
@@ -159,12 +166,17 @@ module.exports = {
 		Detector: {
 			outputOverride: 'helpers/Detector.js'
 		},
-		DotScreenPass: {
-			imports: [
-				'DotScreenShader',
-				'UniformsUtils'
-			]
-		},
+        DeviceOrientationControls: {
+            imports: [
+                '_Math'
+            ]
+        },
+        DotScreenPass: {
+            imports: [
+                'DotScreenShader',
+                'UniformsUtils'
+            ]
+        },
 		EffectComposer: {
 			imports: [ 'CopyShader' ]
 		},
@@ -174,13 +186,19 @@ module.exports = {
 		FBXLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils'
+				'LoaderUtils',
+				'_Math'
 			]
 		},
 		FilmPass: {
 			imports: [
 				'FilmShader',
 				'UniformsUtils'
+			]
+		},
+        FirstPersonControls: {
+			imports: [
+				'_Math'
 			]
 		},
         FunctionNode_Implementation: {
@@ -195,7 +213,8 @@ module.exports = {
 		GlitchPass: {
 			imports: [
 				'DigitalGlitch',
-				'UniformsUtils'
+				'UniformsUtils',
+				'_Math'
 			]
 		},
 		GLNode: {
@@ -203,6 +222,11 @@ module.exports = {
 			replacements: [
 				[ 'this.uuid = Math.generateUUID();', 'this.uuid = _Math.generateUUID();' ]
 			]
+		},
+		GLTFExporter: {
+            imports: [
+                '_Math'
+            ]
 		},
 		GLTFLoader: {
 			imports: [
@@ -213,13 +237,15 @@ module.exports = {
 				'ShaderLib',
 				'UniformsUtils',
 				'LoaderUtils',
-				'AnimationUtils'
+				'AnimationUtils',
+				'_Math'
 			]
 		},
 		GPUComputationRenderer: {
 			outputOverride: 'renderers/GPUComputationRenderer.js'
 		},
 		GPUParticleSystem: {
+            imports: [ '_Math' ],
 			outputOverride: 'objects/GPUParticleSystem.js'
 		},
 		Gyroscope: {
@@ -248,7 +274,8 @@ module.exports = {
 				'QuaternionKeyframeTrack',
 				'VectorKeyframeTrack',
 				'AnimationUtils',
-				'LoaderUtils'
+				'LoaderUtils',
+				'_Math'
 			]
 		},
 		LoaderSupport: {
@@ -276,18 +303,30 @@ module.exports = {
 			outputOverride: 'objects/MD2Character.js'
 		},
 		MD2CharacterComplex: {
+            imports: [
+                '_Math'
+            ],
 			outputOverride: 'objects/MD2CharacterComplex.js'
+		},
+		MMDExporter: {
+            imports: [
+                '_Math'
+            ]
 		},
 		MMDLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils'
+				'LoaderUtils',
+				'_Math'
 			]
 		},
 		MorphAnimMesh: {
 			outputOverride: 'objects/MorphAnimMesh.js'
 		},
 		MorphBlendMesh: {
+            imports: [
+                '_Math'
+            ],
 			outputOverride: 'objects/MorphBlendMesh.js'
 		},
 		MTLLoader: {
@@ -332,7 +371,10 @@ module.exports = {
 			imports: [ 'ShaderLib' ]
 		},
 		Octree: {
-			imports: [ 'Raycaster' ],
+			imports: [
+				'Raycaster',
+				'_Math'
+			],
 			replacements: [
 				[ 'instanceof var OctreeNode', 'instanceof OctreeNode' ]
 			],
@@ -387,10 +429,16 @@ module.exports = {
 			outputOverride: 'utils/QuickHull.js'
 		},
 		Refractor: {
-			imports: [ 'UniformsUtils' ]
+            imports: [
+                'UniformsUtils',
+                '_Math'
+            ]
 		},
 		Reflector: {
-			imports: [ 'UniformsUtils' ]
+			imports: [
+				'UniformsUtils',
+				'_Math'
+			]
 		},
 		RGBELoader: {
 			imports: [ 'DefaultLoadingManager' ],
@@ -513,8 +561,14 @@ module.exports = {
 			],
 			outputOverride: 'animation/TimelinerController.js'
 		},
+		TempNode: {
+			imports: [ '_Math' ]
+		},
 		TTFLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'_Math'
+			]
 		},
 		TypedArrayUtils: {
 			imports: [
@@ -551,14 +605,16 @@ module.exports = {
 		VTKLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils'
+				'LoaderUtils',
+				'_Math'
 			]
 		},
 		Water: {
 			imports: [
 				'UniformsUtils',
 				'UniformsLib',
-				'ShaderChunk'
+				'ShaderChunk',
+				'_Math'
 			]
 		},
 		Water2: {
