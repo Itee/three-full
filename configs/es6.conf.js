@@ -110,6 +110,9 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		Car: {
+            imports: [
+                '_Math'
+            ],
 			outputOverride: 'objects/Car.js'
 		},
 		CinematicCamera: {
