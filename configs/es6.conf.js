@@ -274,7 +274,8 @@ module.exports = {
 				'QuaternionKeyframeTrack',
 				'VectorKeyframeTrack',
 				'AnimationUtils',
-				'LoaderUtils'
+				'LoaderUtils',
+				'_Math'
 			]
 		},
 		LoaderSupport: {
