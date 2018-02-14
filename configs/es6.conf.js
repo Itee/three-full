@@ -303,6 +303,9 @@ module.exports = {
 			outputOverride: 'objects/MD2Character.js'
 		},
 		MD2CharacterComplex: {
+            imports: [
+                '_Math'
+            ],
 			outputOverride: 'objects/MD2CharacterComplex.js'
 		},
 		MMDLoader: {
