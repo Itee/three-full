@@ -330,7 +330,10 @@ module.exports = {
 			outputOverride: 'objects/MorphBlendMesh.js'
 		},
 		MTLLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'Loader'
+			]
 		},
         NodeLib_Implementation: {
             imports_override: [
