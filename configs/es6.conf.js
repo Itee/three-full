@@ -245,6 +245,7 @@ module.exports = {
 			outputOverride: 'renderers/GPUComputationRenderer.js'
 		},
 		GPUParticleSystem: {
+            imports: [ '_Math' ],
 			outputOverride: 'objects/GPUParticleSystem.js'
 		},
 		Gyroscope: {
