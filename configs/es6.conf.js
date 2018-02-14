@@ -429,7 +429,10 @@ module.exports = {
 			outputOverride: 'utils/QuickHull.js'
 		},
 		Refractor: {
-			imports: [ 'UniformsUtils' ]
+            imports: [
+                'UniformsUtils',
+                '_Math'
+            ]
 		},
 		Reflector: {
 			imports: [ 'UniformsUtils' ]
