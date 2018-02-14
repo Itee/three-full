@@ -300,6 +300,7 @@ function _makeUnique ( value, index, array ) {
 
 /////////////////////////// EXPORTS MAPS ////////////////////////////
 
+let _output          = ''
 let _exportMap       = {}
 let _revertExportMap = {}
 let _fileMap         = {}
@@ -742,21 +743,14 @@ function _getImportsFor ( fileDatas ) {
 
 function _formatImportStatements ( importerFilePath, objectNames ) {
 
-    // TODO [Itee]: must take into account the file rerouting in edge cases
-    if ( !importerFilePath ) {
-        console.error( 'Invalid argument importerFilePath' )
-        return null
-    }
-
-    if ( !objectNames ) {
-        console.error( 'Invalid argument objectNames' )
-        return null
-    }
-
     let importStatements = []
 
+
     // Count number of sub folder to return to file path root
-    let importerSpecificPath = getSpecificPath( importerFilePath )
+    let importerSpecificPath = importerFilePath.replace( _output, "" )
+                                               .replace( /\\/g, '/' )
+
+    let importerSpecificPath_old = getSpecificPath( importerFilePath )
 
     let importsMap = {}
     objectNames.forEach( ( objectName ) => {
@@ -774,9 +768,19 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
                 return
             }
 
-            const specificSourcePath = getSpecificPath( sourcePath )
+            let specificSourcePath = sourcePath.replace( _output, "" )
+                                               .replace( /\\/g, '/' )
 
-            compareAndRemoveDuplicates( importerSpecificPath, specificSourcePath )
+            const specificSourcePath_old = getSpecificPath( sourcePath )
+
+//            compareAndRemoveCommonsPath()
+            while ( importerSpecificPath.substring( 0, 1 ) === specificSourcePath.substring( 0, 1 ) ) {
+
+                importerSpecificPath = importerSpecificPath.substring( 1 )
+                specificSourcePath = specificSourcePath.substring( 1 )
+
+            }
+
             const importerDeepLevel = importerSpecificPath.match( /\//g ) || []
             const relativePart      = getRelativePartFor( importerDeepLevel.length )
             const relativePath      = relativePart + specificSourcePath
@@ -1446,7 +1450,7 @@ Object.assign( Es6.prototype, {
 
         const inputs    = this.inputs
         const excludes  = this.excludes
-        const output    = this.output
+        const output    = _output = this.output
         const edgeCases = this.edgeCases
 
         const allFilesPaths       = _getFilesPathsUnder( inputs )
