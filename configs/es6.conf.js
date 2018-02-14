@@ -316,7 +316,8 @@ module.exports = {
 		MMDLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils'
+				'LoaderUtils',
+				'_Math'
 			]
 		},
 		MorphAnimMesh: {
