@@ -565,7 +565,10 @@ module.exports = {
 			imports: [ '_Math' ]
 		},
 		TTFLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'_Math'
+			]
 		},
 		TypedArrayUtils: {
 			imports: [
