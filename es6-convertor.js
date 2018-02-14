@@ -786,6 +786,17 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
             }
             importsMap[ relativePath ].push( objectName )
 
+            function compareAndRemoveCommonsPath() {
+
+                while ( importerSpecificPath.substring( 0, 1 ) === specificSourcePath.substring( 0, 1 ) ) {
+
+                    importerSpecificPath = importerSpecificPath.substring( 1 )
+                    specificSourcePath = specificSourcePath.substring( 1 )
+
+                }
+
+            }
+
         }
 
     } )
@@ -853,17 +864,6 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
         }
 
         return specificPath.replace( /\\/g, '/' )
-
-    }
-
-    function compareAndRemoveDuplicates ( path1, path2 ) {
-
-        while ( path1.substring( 0, 1 ) === path2.substring( 0, 1 ) ) {
-
-            path1 = path1.substring( 1 )
-            path2 = path2.substring( 1 )
-
-        }
 
     }
 
