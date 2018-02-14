@@ -969,7 +969,10 @@ function _getIifeReplacementsFor ( file ) {
 
 function _getThreeReplacementsFor () {
 
-    return [ [ /THREE\./g, '' ] ]
+    return [
+        [ /THREE\.Math/g, '_Math' ],
+        [ /THREE\./g, '' ]
+    ]
 
 }
 
