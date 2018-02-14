@@ -213,7 +213,8 @@ module.exports = {
 		GlitchPass: {
 			imports: [
 				'DigitalGlitch',
-				'UniformsUtils'
+				'UniformsUtils',
+				'_Math'
 			]
 		},
 		GLNode: {
