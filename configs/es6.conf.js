@@ -371,7 +371,10 @@ module.exports = {
 			imports: [ 'ShaderLib' ]
 		},
 		Octree: {
-			imports: [ 'Raycaster' ],
+			imports: [
+				'Raycaster',
+				'_Math'
+			],
 			replacements: [
 				[ 'instanceof var OctreeNode', 'instanceof OctreeNode' ]
 			],
