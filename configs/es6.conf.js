@@ -435,7 +435,10 @@ module.exports = {
             ]
 		},
 		Reflector: {
-			imports: [ 'UniformsUtils' ]
+			imports: [
+				'UniformsUtils',
+				'_Math'
+			]
 		},
 		RGBELoader: {
 			imports: [ 'DefaultLoadingManager' ],
