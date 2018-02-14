@@ -561,6 +561,9 @@ module.exports = {
 			],
 			outputOverride: 'animation/TimelinerController.js'
 		},
+		TempNode: {
+			imports: [ '_Math' ]
+		},
 		TTFLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
