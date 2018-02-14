@@ -188,6 +188,11 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
+        FirstPersonControls: {
+			imports: [
+				'_Math'
+			]
+		},
         FunctionNode_Implementation: {
             imports_override: [
                 ['FunctionNode', 'from', './FunctionNode_Declaration'],
