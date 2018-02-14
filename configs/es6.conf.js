@@ -605,7 +605,8 @@ module.exports = {
 		VTKLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils'
+				'LoaderUtils',
+				'_Math'
 			]
 		},
 		Water: {
