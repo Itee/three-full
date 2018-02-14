@@ -186,7 +186,8 @@ module.exports = {
 		FBXLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils'
+				'LoaderUtils',
+				'_Math'
 			]
 		},
 		FilmPass: {
