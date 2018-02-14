@@ -237,7 +237,8 @@ module.exports = {
 				'ShaderLib',
 				'UniformsUtils',
 				'LoaderUtils',
-				'AnimationUtils'
+				'AnimationUtils',
+				'_Math'
 			]
 		},
 		GPUComputationRenderer: {
