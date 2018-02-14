@@ -324,6 +324,9 @@ module.exports = {
 			outputOverride: 'objects/MorphAnimMesh.js'
 		},
 		MorphBlendMesh: {
+            imports: [
+                '_Math'
+            ],
 			outputOverride: 'objects/MorphBlendMesh.js'
 		},
 		MTLLoader: {
