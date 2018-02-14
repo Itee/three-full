@@ -159,12 +159,17 @@ module.exports = {
 		Detector: {
 			outputOverride: 'helpers/Detector.js'
 		},
-		DotScreenPass: {
-			imports: [
-				'DotScreenShader',
-				'UniformsUtils'
-			]
-		},
+        DeviceOrientationControls: {
+            imports: [
+                '_Math'
+            ]
+        },
+        DotScreenPass: {
+            imports: [
+                'DotScreenShader',
+                'UniformsUtils'
+            ]
+        },
 		EffectComposer: {
 			imports: [ 'CopyShader' ]
 		},
