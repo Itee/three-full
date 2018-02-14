@@ -129,6 +129,9 @@ module.exports = {
 				'_Math'
 			]
 		},
+		ColorConverter: {
+			imports: [ '_Math' ]
+		},
 		ColorNode: {
 			imports: [ 'NodeMaterial' ]
 		},
