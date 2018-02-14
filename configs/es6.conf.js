@@ -223,6 +223,11 @@ module.exports = {
 				[ 'this.uuid = Math.generateUUID();', 'this.uuid = _Math.generateUUID();' ]
 			]
 		},
+		GLTFExporter: {
+            imports: [
+                '_Math'
+            ]
+		},
 		GLTFLoader: {
 			imports: [
 				'DefaultLoadingManager',
