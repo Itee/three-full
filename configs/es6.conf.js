@@ -613,7 +613,8 @@ module.exports = {
 			imports: [
 				'UniformsUtils',
 				'UniformsLib',
-				'ShaderChunk'
+				'ShaderChunk',
+				'_Math'
 			]
 		},
 		Water2: {
