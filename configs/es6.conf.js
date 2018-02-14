@@ -125,7 +125,8 @@ module.exports = {
 			imports: [
 				'DefaultLoadingManager',
 				'LoaderUtils',
-				'Loader'
+				'Loader',
+				'_Math'
 			]
 		},
 		ColorNode: {
