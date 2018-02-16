@@ -289,6 +289,8 @@ module.exports = {
 		hilbert2D: {
             exportsOverride: [ 'hilbert2D' ],
 		},
+		hilbert3D: {
+            exportsOverride: [ 'hilbert3D' ],
 		},
 		ImprovedNoise: {
 			outputOverride: 'misc/ImprovedNoise.js'
