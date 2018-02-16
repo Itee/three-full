@@ -2900,6 +2900,16 @@ export default [
 		}
 	},
 	{
+		input: 'sources/nodes/inputs/Matrix3Node.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/nodes/inputs/Matrix3Node.test.js'
+		}
+	},
+	{
 		input: 'sources/nodes/inputs/Matrix4Node.js',
 		plugins: [ glsl() ],
 		output: {
