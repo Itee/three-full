@@ -4509,6 +4509,16 @@ export default [
 		}
 	},
 	{
+		input: 'sources/shaders/PixelShader.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/shaders/PixelShader.test.js'
+		}
+	},
+	{
 		input: 'sources/shaders/RGBShiftShader.js',
 		plugins: [ glsl() ],
 		output: {
