@@ -440,6 +440,11 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
         file          = _getUncommentedFileForPath( filePath )
         isJavascript  = ( fileExtension === '.js' )
 
+        if ( _fileMap[ baseName ] ) {
+            console.error( 'The key ' + baseName + ' already exist in the file map ! Is there a duplicate file ??? Skip it !' )
+            return
+        }
+
         if ( isJavascript ) {
 
             edgeCase   = edgeCases[ baseName ] || {}
@@ -465,11 +470,6 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
             replacements = _getReplacementsFor( file, exports )
 
             data = _applyEdgeCases( filePath, imports, replacements, exports, outputPath, edgeCase )
-
-            if ( _fileMap[ baseName ] ) {
-                console.error( 'The key ' + baseName + ' already exist in the map ! Skip it.' )
-                return
-            }
 
             _fileMap[ baseName ] = {
                 path:         filePath,
