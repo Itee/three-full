@@ -327,7 +327,10 @@ module.exports = {
 			exportsOverride: [ 'ImprovedNoise' ],
 			outputOverride: 'misc/ImprovedNoise.js'
 		},
-		KMZLoader: {
+        Interpolation: {
+            outputOverride: 'core/Interpolation.js'
+        },
+        KMZLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		LegacyGLTFLoader: {
