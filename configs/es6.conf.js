@@ -459,7 +459,8 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		PRNG: {
-			outputOverride: 'utils/PRNG.js'
+			outputOverride: 'utils/PRNG.js',
+            exportsOverride: [ 'PRNG' ]
 		},
 		PRWMLoader: {
 			imports: [ 'DefaultLoadingManager' ]
