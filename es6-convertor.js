@@ -1151,7 +1151,7 @@ function _formatExportStatements ( filePath, exports ) {
 
     } else if ( numberOfExports > 1 ) {
 
-        formatedExports += '\nexport {'
+        formatedExports += '\nexport {\n'
         for ( let i = 0 ; i < numberOfExports ; i++ ) {
 
             formatedExports += ( i === numberOfExports - 1 ) ? '\t' + regularExports[ i ] + '\n' : '\t' + regularExports[ i ] + ',\n'
