@@ -1274,7 +1274,7 @@ function _formatExportStatements ( filePath, exports ) {
 
 /////////////////////////// OUTPUT ////////////////////////////
 
-function _getOutputFor ( filePath, outputBasePath, outputOverride ) {
+function _getOutputFor ( filePath, outputBasePath, outputOverride = undefined ) {
 
     if ( outputOverride ) {
         return path.join( outputBasePath, outputOverride )
