@@ -511,7 +511,13 @@ module.exports = {
 		PVRLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
-		QuickHull: {
+        QuadraticBezierCurve: {
+            outputOverride: 'curves/QuadraticBezierCurve.js'
+        },
+        QuadraticBezierCurve3: {
+            outputOverride: 'curves/QuadraticBezierCurve3.js'
+        },
+        QuickHull: {
             exportsOverride: [ 'QuickHull' ],
 			outputOverride: 'utils/QuickHull.js'
 		},
