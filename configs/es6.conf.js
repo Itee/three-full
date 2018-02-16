@@ -492,7 +492,10 @@ module.exports = {
         Pass: {
             exportsOverride: [ 'Pass' ]
 		},
-		PDBLoader: {
+        Path: {
+            outputOverride: 'core/Path.js'
+        },
+        PDBLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		PlayCanvasLoader: {
