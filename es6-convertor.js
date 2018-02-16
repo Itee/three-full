@@ -379,12 +379,12 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
                     if ( filePath.contains( sourcePathTarget ) ) {
 
-                        console.error( 'WARNING: Element "' + exportedElement + '" in source ' + path.basename( filePath ) + ' is already exported by source ' + path.basename( exportPath ) + ' wich source file is the right exporter ?' )
+                        console.error( 'WARNING: Element "' + exportedElement + '" in source ' + path.basename( filePath ) + ' is already exported by source ' + path.basename( exportPath ) + '! Unable to determine which source file is the right exporter !!!' )
 
                     } else {
 
                         // stay like this
-                        console.warn( 'WARNING: Element "' + exportedElement + '" in example ' + path.basename( filePath ) + ' is already exported by source ' + path.basename( exportPath ) + ' just ignoring the example export !' )
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in example ' + path.basename( filePath ) + ' is already exported by source ' + path.basename( exportPath ) + '. Ignoring the example export !' )
 
                     }
 
@@ -392,12 +392,12 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
                     if ( filePath.contains( sourcePathTarget ) ) {
 
-                        _exportMap[ exportedElement ] = filePath
+                        _exportMap[ exportedElement ] = outputPath
                         console.warn( 'WARNING: Element "' + exportedElement + '" in source ' + path.basename( filePath ) + ' is already exported by example ' + path.basename( exportPath ) + ' replacing by the source file !' )
 
                     } else {
 
-                        console.error( 'WARNING: Element "' + exportedElement + '" in example ' + path.basename( filePath ) + ' is already exported by example ' + path.basename( exportPath ) + ' wich example file is the right exporter ?' )
+                        console.error( 'WARNING: Element "' + exportedElement + '" in example ' + path.basename( filePath ) + ' is already exported by example ' + path.basename( exportPath ) + '! Unable to determine which example file is the right exporter !!!' )
 
                     }
 
