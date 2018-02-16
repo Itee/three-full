@@ -1837,6 +1837,16 @@ export default [
 		}
 	},
 	{
+		input: 'sources/loaders/KTXLoader.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/loaders/KTXLoader.test.js'
+		}
+	},
+	{
 		input: 'sources/loaders/Loader.js',
 		plugins: [ glsl() ],
 		output: {
