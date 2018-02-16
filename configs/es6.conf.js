@@ -245,6 +245,9 @@ module.exports = {
 				'_Math'
 			]
 		},
+		Font: {
+            outputOverride: 'core/Font.js'
+		},
         FunctionNode_Implementation: {
             importsOverride: [
                 ['FunctionNode', 'from', './FunctionNode_Declaration'],
