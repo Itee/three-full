@@ -718,18 +718,18 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
 
     objectNames.forEach( ( objectName ) => {
 
-        const exporterFilePath = _exportMap[ objectName ]
-        if ( !exporterFilePath ) {
-            console.error( 'Missing export statement for: ' + objectName + ' in ' + importerFilePath + ' this is an edge case that will probably need to be managed manually !!!' )
-            return
-        }
-
         if ( Array.isArray( objectName ) ) {
 
             importsMap[ objectName[ 2 ] ] = []
             importsMap[ objectName[ 2 ] ].push( objectName[ 0 ] )
 
         } else {
+
+            const exporterFilePath = _exportMap[ objectName ]
+            if ( !exporterFilePath ) {
+                console.error( 'Missing export statement for: ' + objectName + ' in ' + importerFilePath + ' this is an edge case that will probably need to be managed manually !!!' )
+                return
+            }
 
             // Compute relative path from importer to exporter
             const importerDirectoryName      = path.dirname( importerFilePath )
