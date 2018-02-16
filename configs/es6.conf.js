@@ -72,6 +72,9 @@ module.exports = {
 		AnimationClipCreator: {
 			outputOverride: 'animation/AnimationClipCreator.js'
 		},
+		ArcCurve: {
+			outputOverride: 'curves/ArcCurve.js'
+		},
 		AssimpJSONLoader: {
 			imports: [
 				'DefaultLoadingManager',
