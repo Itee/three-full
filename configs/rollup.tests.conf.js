@@ -814,196 +814,196 @@ export default [
 
 	// extras
 	{
-		input: 'sources/extras/Earcut.js',
+		input: 'sources/misc/Earcut.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/Earcut.test.js'
+			file: 'tests/misc/Earcut.test.js'
 		}
 	},
 	{
-		input: 'sources/extras/ShapeUtils.js',
+		input: 'sources/utils/ShapeUtils.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/ShapeUtils.test.js'
+			file: 'tests/utils/ShapeUtils.test.js'
 		}
 	},
-	// extras/core
+	// core
 	{
-		input: 'sources/extras/core/CurvePath.js',
+		input: 'sources/core/CurvePath.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/core/CurvePath.test.js'
-		}
-	},
-	{
-		input: 'sources/extras/core/Font.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/extras/core/Font.test.js'
+			file: 'tests/core/CurvePath.test.js'
 		}
 	},
 	{
-		input: 'sources/extras/core/Interpolations.js',
+		input: 'sources/core/Font.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/core/Interpolations.test.js'
+			file: 'tests/core/Font.test.js'
 		}
 	},
 	{
-		input: 'sources/extras/core/Path.js',
+		input: 'sources/core/Interpolations.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/core/Path.test.js'
+			file: 'tests/core/Interpolations.test.js'
 		}
 	},
 	{
-		input: 'sources/extras/core/Shape.js',
+		input: 'sources/core/Path.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/core/Shape.test.js'
+			file: 'tests/core/Path.test.js'
 		}
 	},
 	{
-		input: 'sources/extras/core/ShapePath.js',
+		input: 'sources/core/Shape.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/core/ShapePath.test.js'
-		}
-	},
-	// extras/curves
-	{
-		input: 'sources/extras/curves/ArcCurve.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/extras/curves/ArcCurve.test.js'
+			file: 'tests/core/Shape.test.js'
 		}
 	},
 	{
-		input: 'sources/extras/curves/CatmullRomCurve3.js',
+		input: 'sources/core/ShapePath.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/curves/CatmullRomCurve3.test.js'
+			file: 'tests/core/ShapePath.test.js'
+		}
+	},
+	// curves
+	{
+		input: 'sources/curves/ArcCurve.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/curves/ArcCurve.test.js'
 		}
 	},
 	{
-		input: 'sources/extras/curves/CubicBezierCurve.js',
+		input: 'sources/curves/CatmullRomCurve3.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/curves/CubicBezierCurve.test.js'
+			file: 'tests/curves/CatmullRomCurve3.test.js'
 		}
 	},
 	{
-		input: 'sources/extras/curves/CubicBezierCurve3.js',
+		input: 'sources/curves/CubicBezierCurve.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/curves/CubicBezierCurve3.test.js'
+			file: 'tests/curves/CubicBezierCurve.test.js'
 		}
 	},
 	{
-		input: 'sources/extras/curves/EllipseCurve.js',
+		input: 'sources/curves/CubicBezierCurve3.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/curves/EllipseCurve.test.js'
+			file: 'tests/curves/CubicBezierCurve3.test.js'
 		}
 	},
 	{
-		input: 'sources/extras/curves/LineCurve.js',
+		input: 'sources/curves/EllipseCurve.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/curves/LineCurve.test.js'
+			file: 'tests/curves/EllipseCurve.test.js'
 		}
 	},
 	{
-		input: 'sources/extras/curves/LineCurve3.js',
+		input: 'sources/curves/LineCurve.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/curves/LineCurve3.test.js'
+			file: 'tests/curves/LineCurve.test.js'
 		}
 	},
 	{
-		input: 'sources/extras/curves/QuadraticBezierCurve.js',
+		input: 'sources/curves/LineCurve3.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/curves/QuadraticBezierCurve.test.js'
+			file: 'tests/curves/LineCurve3.test.js'
 		}
 	},
 	{
-		input: 'sources/extras/curves/QuadraticBezierCurve3.js',
+		input: 'sources/curves/QuadraticBezierCurve.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/curves/QuadraticBezierCurve3.test.js'
+			file: 'tests/curves/QuadraticBezierCurve.test.js'
 		}
 	},
 	{
-		input: 'sources/extras/curves/SplineCurve.js',
+		input: 'sources/curves/QuadraticBezierCurve3.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/curves/SplineCurve.test.js'
+			file: 'tests/curves/QuadraticBezierCurve3.test.js'
 		}
 	},
-	// extras/objects
 	{
-		input: 'sources/extras/objects/ImmediateRenderObject.js',
+		input: 'sources/curves/SplineCurve.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/objects/ImmediateRenderObject.test.js'
+			file: 'tests/curves/SplineCurve.test.js'
+		}
+	},
+	// objects
+	{
+		input: 'sources/objects/ImmediateRenderObject.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/objects/ImmediateRenderObject.test.js'
 		}
 	},
 

@@ -72,6 +72,9 @@ module.exports = {
 		AnimationClipCreator: {
 			outputOverride: 'animation/AnimationClipCreator.js'
 		},
+		ArcCurve: {
+			outputOverride: 'curves/ArcCurve.js'
+		},
 		AssimpJSONLoader: {
 			imports: [
 				'DefaultLoadingManager',
@@ -138,7 +141,10 @@ module.exports = {
             ],
 			outputOverride: 'objects/Car.js'
 		},
-		CinematicCamera: {
+        CatmullRomCurve3: {
+            outputOverride: 'curves/CatmullRomCurve3.js'
+        },
+        CinematicCamera: {
 			imports: [
 				'BokehShader',
 				'UniformsUtils'
@@ -164,7 +170,13 @@ module.exports = {
 		CubeTexturePass: {
 			imports: [ 'ShaderLib' ]
 		},
-		Curve: {
+        CubicBezierCurve: {
+            outputOverride: 'curves/CubicBezierCurve.js'
+        },
+        CubicBezierCurve3: {
+            outputOverride: 'curves/CubicBezierCurve3.js'
+        },
+        Curve: {
 			outputOverride: 'curves/Curve.js'
 		},
 		CurveExtras: {
@@ -186,7 +198,10 @@ module.exports = {
 			],
 			outputOverride: 'curves/CurveExtras.js'
 		},
-		Detector: {
+        CurvePath: {
+            outputOverride: 'core/CurvePath.js'
+        },
+        Detector: {
 			outputOverride: 'helpers/Detector.js'
 		},
         DeviceOrientationControls: {
@@ -200,10 +215,16 @@ module.exports = {
                 'UniformsUtils'
             ]
         },
+		Earcut: {
+            outputOverride: 'misc/Earcut.js'
+        },
 		EffectComposer: {
 			imports: [ 'CopyShader' ]
 		},
-		EXRLoader: {
+        EllipseCurve: {
+            outputOverride: 'curves/EllipseCurve.js'
+        },
+        EXRLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		FBXLoader: {
@@ -223,6 +244,9 @@ module.exports = {
 			imports: [
 				'_Math'
 			]
+		},
+		Font: {
+            outputOverride: 'core/Font.js'
 		},
         FunctionNode_Implementation: {
             importsOverride: [
@@ -296,11 +320,17 @@ module.exports = {
 		hilbert3D: {
             exportsOverride: [ 'hilbert3D' ],
 		},
-		ImprovedNoise: {
+        ImmediateRenderObject: {
+            outputOverride: 'objects/ImmediateRenderObject.js'
+        },
+        ImprovedNoise: {
 			exportsOverride: [ 'ImprovedNoise' ],
 			outputOverride: 'misc/ImprovedNoise.js'
 		},
-		KMZLoader: {
+        Interpolations: {
+            outputOverride: 'core/Interpolations.js'
+        },
+        KMZLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		LegacyGLTFLoader: {
@@ -322,7 +352,13 @@ module.exports = {
 			],
             exportsOverride: [ 'LegacyGLTFLoader' ]
 		},
-		LoaderSupport: {
+        LineCurve: {
+            outputOverride: 'curves/LineCurve.js'
+        },
+        LineCurve3: {
+            outputOverride: 'curves/LineCurve3.js'
+        },
+        LoaderSupport: {
 			imports: [ 'DefaultLoadingManager' ],
 			replacements: [
 				[ 'if ( var LoaderSupport === undefined ) { var LoaderSupport = {} }', 'var LoaderSupport = {}' ]
@@ -456,7 +492,10 @@ module.exports = {
         Pass: {
             exportsOverride: [ 'Pass' ]
 		},
-		PDBLoader: {
+        Path: {
+            outputOverride: 'core/Path.js'
+        },
+        PDBLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		PlayCanvasLoader: {
@@ -493,7 +532,13 @@ module.exports = {
 		PVRLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
-		QuickHull: {
+        QuadraticBezierCurve: {
+            outputOverride: 'curves/QuadraticBezierCurve.js'
+        },
+        QuadraticBezierCurve3: {
+            outputOverride: 'curves/QuadraticBezierCurve3.js'
+        },
+        QuickHull: {
             exportsOverride: [ 'QuickHull' ],
 			outputOverride: 'utils/QuickHull.js'
 		},
@@ -579,7 +624,16 @@ module.exports = {
 		ShadowMapViewer: {
 			imports: [ 'UnpackDepthRGBAShader' ]
 		},
-		SimplexNoise: {
+        Shape: {
+            outputOverride: 'core/Shape.js'
+        },
+		ShapePath: {
+            outputOverride: 'core/ShapePath.js'
+        },
+		ShapeUtils: {
+            outputOverride: 'utils/ShapeUtils.js'
+        },
+        SimplexNoise: {
 			outputOverride: 'misc/SimplexNoise.js',
             exportsOverride: [ 'SimplexNoise' ]
 		},
@@ -596,7 +650,10 @@ module.exports = {
         SMAAShader: {
             exportsOverride: [ 'SMAAShader' ]
 		},
-		SpriteNode: {
+        SplineCurve: {
+            outputOverride: 'curves/SplineCurve.js'
+        },
+        SpriteNode: {
 			imports: [
 				'UniformsUtils',
 				'UniformsLib'
