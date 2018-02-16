@@ -4094,6 +4094,16 @@ export default [
 		}
 	},
 	{
+		input: 'sources/renderers/webgl/WebGLRenderStates.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/renderers/webgl/WebGLRenderStates.test.js'
+		}
+	},
+	{
 		input: 'sources/renderers/webgl/WebGLShader.js',
 		plugins: [ glsl() ],
 		output: {
