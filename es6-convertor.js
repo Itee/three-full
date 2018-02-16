@@ -1291,8 +1291,8 @@ function _getOutputFor ( filePath, outputBasePath, outputOverride = undefined ) 
     // Todo: duplicate
     function getSpecificPath ( path ) {
 
-        const exampleFontsTarget = 'examples\\fonts'
-        const exampleJsTarget    = 'examples\\js'
+        const exampleFontsTarget = 'three\\examples\\fonts'
+        const exampleJsTarget    = 'three\\examples\\js'
         const sourceTarget       = 'three\\src'
 
         let indexOfExampleFontsTarget = path.indexOf( exampleFontsTarget )
