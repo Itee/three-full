@@ -221,7 +221,10 @@ module.exports = {
 		EffectComposer: {
 			imports: [ 'CopyShader' ]
 		},
-		EXRLoader: {
+        EllipseCurve: {
+            outputOverride: 'curves/EllipseCurve.js'
+        },
+        EXRLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		FBXLoader: {
