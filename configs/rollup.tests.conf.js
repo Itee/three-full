@@ -1727,15 +1727,25 @@ export default [
 		}
 	},
 	{
-		input: 'sources/loaders/FBXLoader.js',
+		input: 'sources/loaders/EXRLoader.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/loaders/FBXLoader.test.js'
+			file: 'tests/loaders/EXRLoader.test.js'
 		}
 	},
+    {
+        input: 'sources/loaders/FBXLoader.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/loaders/FBXLoader.test.js'
+        }
+    },
 	{
 		input: 'sources/loaders/FileLoader.js',
 		plugins: [ glsl() ],
