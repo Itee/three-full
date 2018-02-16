@@ -4823,6 +4823,16 @@ export default [
         }
     },
     {
+        input: 'sources/utils/SceneUtils.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/utils/SceneUtils.test.js'
+        }
+    },
+    {
         input: 'sources/utils/ShadowMapViewer.js',
         plugins: [ glsl() ],
         output: {
