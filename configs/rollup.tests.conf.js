@@ -1100,16 +1100,6 @@ export default [
 			file: 'tests/geometries/ExtrudeGeometry.test.js'
 		}
 	},
-//	{
-//		input: 'sources/geometries/Geometries.js',
-//		plugins: [ glsl() ],
-//		output: {
-//			indent: '\t',
-//			format: 'iife',
-//			name: 'Three',
-//			file: 'tests/geometries/Geometries.test.js'
-//		}
-//	},
 	{
 		input: 'sources/geometries/hilbert2D.js',
 		plugins: [ glsl() ],
@@ -3941,16 +3931,6 @@ export default [
 			format: 'iife',
 			name: 'Three',
 			file: 'tests/renderers/webgl/WebGLExtensions.test.js'
-		}
-	},
-	{
-		input: 'sources/renderers/webgl/WebGLFlareRenderer.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/renderers/webgl/WebGLFlareRenderer.test.js'
 		}
 	},
 	{
