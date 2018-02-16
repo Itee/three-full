@@ -238,7 +238,21 @@ module.exports = {
 				'UniformsUtils',
 				'LoaderUtils',
 				'AnimationUtils',
-				'_Math'
+				'_Math',
+				'Matrix3',
+				'Vector3',
+				'Vector4',
+				'Texture',
+				'Material',
+				'NumberKeyframeTrack',
+				'QuaternionKeyframeTrack',
+				'VectorKeyframeTrack'
+			],
+			replacements: [
+				['GLTFLoader = (', 'var GLTFLoader = (']
+			],
+            exportsOverride: [
+            	'GLTFLoader'
 			]
 		},
 		GPUComputationRenderer: {
