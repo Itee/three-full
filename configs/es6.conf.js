@@ -202,7 +202,7 @@ module.exports = {
 			]
 		},
         FunctionNode_Implementation: {
-            imports_override: [
+            importsOverride: [
                 ['FunctionNode', 'from', './FunctionNode_Declaration'],
                 'NodeLib'
             ]
@@ -336,7 +336,7 @@ module.exports = {
 			]
 		},
         NodeLib_Implementation: {
-            imports_override: [
+            importsOverride: [
                 [ 'NodeLib', 'from', './NodeLib_Declaration' ],
                 'UVNode',
                 'PositionNode',
