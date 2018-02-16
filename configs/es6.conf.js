@@ -372,6 +372,17 @@ module.exports = {
 		NodeMaterial: {
 			imports: [ 'NodeLib' ]
 		},
+        NodeMaterialLoader: {
+			imports: [
+				'DefaultLoadingManager',
+			],
+			replacements: [
+				['NodeMaterialLoaderUtils = {', 'var NodeMaterialLoaderUtils = {']
+			],
+			exports: [
+				'NodeMaterialLoaderUtils'
+			]
+		},
 		NodePass: {
 			imports: [
 				'_Math'
