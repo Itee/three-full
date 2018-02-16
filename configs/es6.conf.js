@@ -315,7 +315,8 @@ module.exports = {
 				'AnimationUtils',
 				'LoaderUtils',
 				'_Math'
-			]
+			],
+            exportsOverride: [ 'LegacyGLTFLoader' ]
 		},
 		LoaderSupport: {
 			imports: [ 'DefaultLoadingManager' ],
