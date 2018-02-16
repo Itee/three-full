@@ -650,7 +650,10 @@ module.exports = {
         SMAAShader: {
             exportsOverride: [ 'SMAAShader' ]
 		},
-		SpriteNode: {
+        SplineCurve: {
+            outputOverride: 'curves/SplineCurve.js'
+        },
+        SpriteNode: {
 			imports: [
 				'UniformsUtils',
 				'UniformsLib'
