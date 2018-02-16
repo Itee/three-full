@@ -286,6 +286,10 @@ module.exports = {
 		HDRCubeTextureLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
+		hilbert2D: {
+            exportsOverride: [ 'hilbert2D' ],
+		},
+		},
 		ImprovedNoise: {
 			outputOverride: 'misc/ImprovedNoise.js'
 		},
