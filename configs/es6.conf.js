@@ -112,6 +112,13 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
+        BokehShader2: {
+            replacements:    [
+                [ 'BokehShader', 'BokehShader2' ],
+                [ 'BokehShader2 = {', 'var BokehShader2 = {' ]
+            ],
+            exportsOverride: [ 'BokehShader2' ]
+        },
 		BufferGeometryUtils: {
 			outputOverride: 'utils/BufferGeometryUtils.js'
 		},
