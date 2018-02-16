@@ -372,6 +372,11 @@ module.exports = {
 		NodeMaterial: {
 			imports: [ 'NodeLib' ]
 		},
+		NodePass: {
+			imports: [
+				'_Math'
+			]
+		},
 		NURBSCurve: {
 			imports: [ 'NURBSUtils' ]
 		},
