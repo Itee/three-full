@@ -1436,11 +1436,11 @@ Object.assign( Es6.prototype, {
 
         let fileDatas = undefined
 
-        for ( let key in _fileMap ) {
+        for ( let fileName in _fileMap ) {
 
-            if ( !_fileMap.hasOwnProperty( key ) ) { continue }
+            if ( !_fileMap.hasOwnProperty( fileName ) ) { continue }
 
-            fileDatas = _fileMap[ key ]
+            fileDatas = _fileMap[ fileName ]
 
             if ( fileDatas.isJavascript ) {
 
