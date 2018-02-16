@@ -346,7 +346,7 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
         edgeCase      = edgeCases[ baseName ] || {}
         file          = _getUncommentedFileForPath( filePath )
 
-        exports = _getExportsFor( file )
+        exports = _getExportsFor( file, edgeCase[ 'exportsOverride' ] )
         if ( !exports ) {
 
             // Fallback with file name in last resore
@@ -1067,7 +1067,11 @@ function _getExportsStatementInLibFile ( file ) {
 
 }
 
-function _getExportsFor ( file ) {
+function _getExportsFor ( file, exportsOverride = undefined ) {
+
+    if( exportsOverride ) {
+        return exportsOverride
+    }
 
     // Todo: need to sort different file type before
     const es6Regex = new RegExp( /(export\s(default|var))|((import|export)[\r\n\s]*(default)?({[\w\s,]+}\s?(from)?))/, 'g' )
@@ -1240,8 +1244,8 @@ function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath,
 
     if ( edgeCase ) {
 
-        if ( edgeCase.imports_override ) {
-            data.imports = edgeCase.imports_override
+        if ( edgeCase.importsOverride ) {
+            data.imports = edgeCase.importsOverride
         } else if ( edgeCase.imports ) {
             Array.prototype.push.apply( data.imports, edgeCase.imports )
             data.imports.filter( _makeUnique )
@@ -1254,8 +1258,8 @@ function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath,
             data.replacements.filter( _makeUnique )
         }
 
-        if ( edgeCase.exports_override ) {
-            data.exports = edgeCase.exports_override
+        if ( edgeCase.exportsOverride ) {
+            data.exports = edgeCase.exportsOverride
         } else if ( edgeCase.exports ) {
             Array.prototype.push.apply( data.exports, edgeCase.exports )
             data.exports.filter( _makeUnique )

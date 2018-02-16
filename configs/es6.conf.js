@@ -22,7 +22,11 @@ module.exports = {
 		'Geometries.js',					// Ignore intermediary exporter files
 		'Materials.js',						// Ignore intermediary exporter files
 
-		'RaytracingWorker.js',
+		'.DS_Store',						// Ignore DS_Store from r90
+
+		'RaytracingWorker.js',				// Ignore worker
+		'OffscreenCanvas.js',				// Ignore worker
+
 		'ctm',                              // Todo: Need to check worker import
 		'draco',                            // draco_decoder use Eval !
 		'sea3d',                            // Duplicate export 'SEA3D'
@@ -84,7 +88,8 @@ module.exports = {
 		BinaryLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils'
+				'LoaderUtils',
+				'Loader'
 			]
 		},
 		BloomPass: {
@@ -104,7 +109,11 @@ module.exports = {
 			outputOverride: 'utils/BufferGeometryUtils.js'
 		},
 		BufferSubdivisionModifier: {
-			imports: [ 'Face3' ]
+			imports: [
+				'Face3',
+				'Vector3',
+				'Vector2'
+			]
 		},
 		BVHLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -202,7 +211,7 @@ module.exports = {
 			]
 		},
         FunctionNode_Implementation: {
-            imports_override: [
+            importsOverride: [
                 ['FunctionNode', 'from', './FunctionNode_Declaration'],
                 'NodeLib'
             ]
@@ -238,7 +247,21 @@ module.exports = {
 				'UniformsUtils',
 				'LoaderUtils',
 				'AnimationUtils',
-				'_Math'
+				'_Math',
+				'Matrix3',
+				'Vector3',
+				'Vector4',
+				'Texture',
+				'Material',
+				'NumberKeyframeTrack',
+				'QuaternionKeyframeTrack',
+				'VectorKeyframeTrack'
+			],
+			replacements: [
+				['GLTFLoader = (', 'var GLTFLoader = (']
+			],
+            exportsOverride: [
+            	'GLTFLoader'
 			]
 		},
 		GPUComputationRenderer: {
@@ -336,7 +359,7 @@ module.exports = {
 			]
 		},
         NodeLib_Implementation: {
-            imports_override: [
+            importsOverride: [
                 [ 'NodeLib', 'from', './NodeLib_Declaration' ],
                 'UVNode',
                 'PositionNode',
@@ -348,6 +371,22 @@ module.exports = {
         },
 		NodeMaterial: {
 			imports: [ 'NodeLib' ]
+		},
+        NodeMaterialLoader: {
+			imports: [
+				'DefaultLoadingManager',
+			],
+			replacements: [
+				['NodeMaterialLoaderUtils = {', 'var NodeMaterialLoaderUtils = {']
+			],
+			exports: [
+				'NodeMaterialLoaderUtils'
+			]
+		},
+		NodePass: {
+			imports: [
+				'_Math'
+			]
 		},
 		NURBSCurve: {
 			imports: [ 'NURBSUtils' ]
@@ -559,8 +598,7 @@ module.exports = {
 		},
 		TimelinerController: {
 			imports: [
-				'AnimationUtils',
-				'Timeliner'
+				'AnimationUtils'
 			],
 			outputOverride: 'animation/TimelinerController.js'
 		},
