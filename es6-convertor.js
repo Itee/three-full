@@ -714,14 +714,8 @@ function _getImportsFor ( fileDatas ) {
 function _formatImportStatements ( importerFilePath, objectNames ) {
 
     let importStatements = []
-
-    // Count number of sub folder to return to file path root
-    let importerSpecificPath = importerFilePath.replace( _output, "" )
-                                               .replace( /\\/g, '/' )
-
-    let importerSpecificPath_old = getSpecificPath( importerFilePath )
-
     let importsMap = {}
+
     objectNames.forEach( ( objectName ) => {
 
         if ( Array.isArray( objectName ) ) {
@@ -737,12 +731,14 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
                 return
             }
 
+            // Count number of sub folder to return to file path root
+            let importerSpecificPath = importerFilePath.replace( _output, "" )
+                                                       .replace( /\\/g, '/' )
+
             let specificSourcePath = sourcePath.replace( _output, "" )
                                                .replace( /\\/g, '/' )
 
-            const specificSourcePath_old = getSpecificPath( sourcePath )
-
-            //            compareAndRemoveCommonsPath()
+            // Compare and remove commons parts of path s
             while ( importerSpecificPath.substring( 0, 1 ) === specificSourcePath.substring( 0, 1 ) ) {
 
                 importerSpecificPath = importerSpecificPath.substring( 1 )
