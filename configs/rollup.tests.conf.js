@@ -814,13 +814,13 @@ export default [
 
 	// extras
 	{
-		input: 'sources/extras/SceneUtils.js',
+		input: 'sources/extras/Earcut.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/SceneUtils.test.js'
+			file: 'tests/extras/Earcut.test.js'
 		}
 	},
 	{
