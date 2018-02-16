@@ -22,8 +22,11 @@ module.exports = {
 		'Geometries.js',					// Ignore intermediary exporter files
 		'Materials.js',						// Ignore intermediary exporter files
 
-		'RaytracingWorker.js',
 		'.DS_Store',						// Ignore DS_Store from r90
+
+		'RaytracingWorker.js',				// Ignore worker
+		'OffscreenCanvas.js',				// Ignore worker
+
 		'ctm',                              // Todo: Need to check worker import
 		'draco',                            // draco_decoder use Eval !
 		'sea3d',                            // Duplicate export 'SEA3D'
