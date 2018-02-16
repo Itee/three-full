@@ -42,7 +42,7 @@ module.exports = {
 		'Cloth.js',							// Use global variable from example html ! Need to be refactored
 		'ParametricGeometries.js',          // Bug TorusKnotCurve from es6-exports
 		'OceanShaders.js',                  // Todo: check how to extends imported lib properly
-		'RectAreaLightUniformsLib.js',      //
+		'RectAreaLightUniformsLib.js',      // Todo: check how to extends imported lib properly
 		'Volume.js',                        // damned eval
 		'NRRDLoader.js',                    // Import Volume.js
 		'XLoader.js'                     	// amd module
