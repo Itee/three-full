@@ -13,29 +13,36 @@ module.exports = {
 		path.join( __dirname, '..', 'node_modules', 'three', 'src' )
 	],
 	excludes: [
+
+		// Specific Three stuff to ignore
 		'build',
+        'libs',
 		'Three.js',
 		'Three.Legacy.js',
 		'polyfills.js',
-		'libs',
-		'Curves.js',						// Ignore intermediary exporter files
-		'Geometries.js',					// Ignore intermediary exporter files
-		'Materials.js',						// Ignore intermediary exporter files
+        '.DS_Store',						// Ignore DS_Store from r90
 
-		'.DS_Store',						// Ignore DS_Store from r90
+        // Intermediary exporter files
+		'Curves.js',
+		'Geometries.js',
+		'Materials.js',
 
+
+		// Worker
 		'RaytracingWorker.js',				// Ignore worker
 		'OffscreenCanvas.js',				// Ignore worker
+        'ctm',                              // Todo: Need to check worker import
 
-		'ctm',                              // Todo: Need to check worker import
+		// Folder
 		'draco',                            // draco_decoder use Eval !
 		'sea3d',                            // Duplicate export 'SEA3D'
 		'crossfade',                        // Scene has already been declared
+
+		// Specific file
 		'Cloth.js',							// Use global variable from example html ! Need to be refactored
 		'ParametricGeometries.js',          // Bug TorusKnotCurve from es6-exports
-		'RollerCoaster.js',                 // invalid default exports with file name from es6-exports
 		'OceanShaders.js',                  // Todo: check how to extends imported lib properly
-		'RectAreaLightUniformsLib.js',      //
+		'RectAreaLightUniformsLib.js',      // Todo: check how to extends imported lib properly
 		'Volume.js',                        // damned eval
 		'NRRDLoader.js',                    // Import Volume.js
 		'XLoader.js'                     	// amd module
@@ -489,6 +496,16 @@ module.exports = {
 				[ /(return null;[\s\n\r]+};)/g, '$1\nvar HDRLoader = RGBELoader;\n\n' ],
 			]
 
+		},
+        RollerCoaster: {
+			exportsOverride: [
+				'RollerCoasterGeometry',
+				'RollerCoasterLiftersGeometry',
+				'RollerCoasterShadowGeometry',
+				'SkyGeometry',
+				'TreesGeometry'
+			],
+			outputOverride: 'objects/RollerCoaster.js'
 		},
 		SAOPass: {
 			imports: [
