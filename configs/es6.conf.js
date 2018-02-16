@@ -624,7 +624,16 @@ module.exports = {
 		ShadowMapViewer: {
 			imports: [ 'UnpackDepthRGBAShader' ]
 		},
-		SimplexNoise: {
+        Shape: {
+            outputOverride: 'core/Shape.js'
+        },
+		ShapePath: {
+            outputOverride: 'core/ShapePath.js'
+        },
+		ShapeUtils: {
+            outputOverride: 'utils/ShapeUtils.js'
+        },
+        SimplexNoise: {
 			outputOverride: 'misc/SimplexNoise.js',
             exportsOverride: [ 'SimplexNoise' ]
 		},
