@@ -449,6 +449,9 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
+        Pass: {
+            exportsOverride: [ 'Pass' ]
+		},
 		PDBLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
