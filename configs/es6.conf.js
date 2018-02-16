@@ -504,7 +504,8 @@ module.exports = {
 				'RollerCoasterShadowGeometry',
 				'SkyGeometry',
 				'TreesGeometry'
-			]
+			],
+			outputOverride: 'objects/RollerCoaster.js'
 		},
 		SAOPass: {
 			imports: [
