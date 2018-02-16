@@ -736,8 +736,11 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
             const exporterDirectoryName      = path.dirname( exporterFilePath )
             const exporterBaseName           = path.basename( exporterFilePath )
             const relativePath               = path.relative( importerDirectoryName, exporterDirectoryName )
-            const relativeFilePath           = path.join( relativePath, exporterBaseName )
+            const firstChar                  = relativePath[ 0 ]
+            const notStartWithDot            = (firstChar !== '.')
+            const relativeFilePath           = (notStartWithDot) ? './' + path.join( relativePath, exporterBaseName ) : path.join( relativePath, exporterBaseName )
             const relativeFilePathNormalized = relativeFilePath.replace( /\\/g, '/' )
+
 
             if ( !importsMap[ relativeFilePathNormalized ] ) {
                 importsMap[ relativeFilePathNormalized ] = []
