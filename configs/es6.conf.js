@@ -262,7 +262,8 @@ module.exports = {
 				'Material',
 				'NumberKeyframeTrack',
 				'QuaternionKeyframeTrack',
-				'VectorKeyframeTrack'
+				'VectorKeyframeTrack',
+				'PropertyBinding'
 			],
 			replacements: [
 				['GLTFLoader = (', 'var GLTFLoader = (']
