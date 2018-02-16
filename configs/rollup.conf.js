@@ -95,4 +95,5 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
             strict:  true
         }
     }
+
 }

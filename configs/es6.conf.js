@@ -15,13 +15,18 @@ module.exports = {
 	excludes: [
 		'build',
 		'Three.js',
+		'Three.Legacy.js',
 		'polyfills.js',
 		'libs',
-		//		'Curves.js',						// Ignore intermediary exporter files
-		//		'Geometries.js',					// Ignore intermediary exporter files
-		//		'Materials.js',						// Ignore intermediary exporter files
+		'Curves.js',						// Ignore intermediary exporter files
+		'Geometries.js',					// Ignore intermediary exporter files
+		'Materials.js',						// Ignore intermediary exporter files
 
-		'RaytracingWorker.js',
+		'.DS_Store',						// Ignore DS_Store from r90
+
+		'RaytracingWorker.js',				// Ignore worker
+		'OffscreenCanvas.js',				// Ignore worker
+
 		'ctm',                              // Todo: Need to check worker import
 		'draco',                            // draco_decoder use Eval !
 		'sea3d',                            // Duplicate export 'SEA3D'
@@ -57,6 +62,9 @@ module.exports = {
 				'LoaderUtils'
 			]
 		},
+		AnimationClipCreator: {
+			outputOverride: 'animation/AnimationClipCreator.js'
+		},
 		AssimpJSONLoader: {
 			imports: [
 				'DefaultLoadingManager',
@@ -80,7 +88,8 @@ module.exports = {
 		BinaryLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils'
+				'LoaderUtils',
+				'Loader'
 			]
 		},
 		BloomPass: {
@@ -96,11 +105,24 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
+		BufferGeometryUtils: {
+			outputOverride: 'utils/BufferGeometryUtils.js'
+		},
 		BufferSubdivisionModifier: {
-			imports: [ 'Face3' ]
+			imports: [
+				'Face3',
+				'Vector3',
+				'Vector2'
+			]
 		},
 		BVHLoader: {
 			imports: [ 'DefaultLoadingManager' ]
+		},
+		Car: {
+            imports: [
+                '_Math'
+            ],
+			outputOverride: 'objects/Car.js'
 		},
 		CinematicCamera: {
 			imports: [
@@ -112,14 +134,24 @@ module.exports = {
 			imports: [
 				'DefaultLoadingManager',
 				'LoaderUtils',
-				'Loader'
+				'Loader',
+				'_Math'
 			]
+		},
+		ColorConverter: {
+			imports: [ '_Math' ]
 		},
 		ColorNode: {
 			imports: [ 'NodeMaterial' ]
 		},
+		ConvexObjectBreaker: {
+			outputOverride: 'modifiers/ConvexObjectBreaker.js'
+		},
 		CubeTexturePass: {
 			imports: [ 'ShaderLib' ]
+		},
+		Curve: {
+			outputOverride: 'curves/Curve.js'
 		},
 		CurveExtras: {
 			replacements: [
@@ -137,20 +169,23 @@ module.exports = {
 				[ 'Curves.DecoratedTorusKnot4b = DecoratedTorusKnot4b;', '' ],
 				[ 'Curves.DecoratedTorusKnot5a = DecoratedTorusKnot5a;', '' ],
 				[ 'Curves.DecoratedTorusKnot5c = DecoratedTorusKnot5c;', '' ]
-			]
+			],
+			outputOverride: 'curves/CurveExtras.js'
 		},
 		Detector: {
-			replacements: [
-				[/if \( typeof module === 'object' \) {/g, ''],
-				[ /module\.exports\s*=\s*\{?[^}]*}?/g, '']
-			]
+			outputOverride: 'helpers/Detector.js'
 		},
-		DotScreenPass: {
-			imports: [
-				'DotScreenShader',
-				'UniformsUtils'
-			]
-		},
+        DeviceOrientationControls: {
+            imports: [
+                '_Math'
+            ]
+        },
+        DotScreenPass: {
+            imports: [
+                'DotScreenShader',
+                'UniformsUtils'
+            ]
+        },
 		EffectComposer: {
 			imports: [ 'CopyShader' ]
 		},
@@ -160,7 +195,8 @@ module.exports = {
 		FBXLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils'
+				'LoaderUtils',
+				'_Math'
 			]
 		},
 		FilmPass: {
@@ -169,13 +205,25 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
+        FirstPersonControls: {
+			imports: [
+				'_Math'
+			]
+		},
+        FunctionNode_Implementation: {
+            importsOverride: [
+                ['FunctionNode', 'from', './FunctionNode_Declaration'],
+                'NodeLib'
+            ]
+        },
 		GCodeLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		GlitchPass: {
 			imports: [
 				'DigitalGlitch',
-				'UniformsUtils'
+				'UniformsUtils',
+				'_Math'
 			]
 		},
 		GLNode: {
@@ -183,6 +231,11 @@ module.exports = {
 			replacements: [
 				[ 'this.uuid = Math.generateUUID();', 'this.uuid = _Math.generateUUID();' ]
 			]
+		},
+		GLTFExporter: {
+            imports: [
+                '_Math'
+            ]
 		},
 		GLTFLoader: {
 			imports: [
@@ -193,11 +246,39 @@ module.exports = {
 				'ShaderLib',
 				'UniformsUtils',
 				'LoaderUtils',
-				'AnimationUtils'
+				'AnimationUtils',
+				'_Math',
+				'Matrix3',
+				'Vector3',
+				'Vector4',
+				'Texture',
+				'Material',
+				'NumberKeyframeTrack',
+				'QuaternionKeyframeTrack',
+				'VectorKeyframeTrack'
+			],
+			replacements: [
+				['GLTFLoader = (', 'var GLTFLoader = (']
+			],
+            exportsOverride: [
+            	'GLTFLoader'
 			]
+		},
+		GPUComputationRenderer: {
+			outputOverride: 'renderers/GPUComputationRenderer.js'
+		},
+		GPUParticleSystem: {
+            imports: [ '_Math' ],
+			outputOverride: 'objects/GPUParticleSystem.js'
+		},
+		Gyroscope: {
+			outputOverride: 'objects/Gyroscope.js'
 		},
 		HDRCubeTextureLoader: {
 			imports: [ 'DefaultLoadingManager' ]
+		},
+		ImprovedNoise: {
+			outputOverride: 'misc/ImprovedNoise.js'
 		},
 		KMZLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -216,7 +297,8 @@ module.exports = {
 				'QuaternionKeyframeTrack',
 				'VectorKeyframeTrack',
 				'AnimationUtils',
-				'LoaderUtils'
+				'LoaderUtils',
+				'_Math'
 			]
 		},
 		LoaderSupport: {
@@ -234,22 +316,77 @@ module.exports = {
 			replacements: [
 				[ 'edgeTable = new Int32Array', 'var edgeTable = new Int32Array' ],
 				[ 'triTable = new Int32Array', 'var triTable = new Int32Array' ]
-			]
+			],
+			outputOverride: 'objects/MarchingCubes.js'
 		},
 		MD2Loader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
+		MD2Character: {
+			outputOverride: 'objects/MD2Character.js'
+		},
+		MD2CharacterComplex: {
+            imports: [
+                '_Math'
+            ],
+			outputOverride: 'objects/MD2CharacterComplex.js'
+		},
+		MMDExporter: {
+            imports: [
+                '_Math'
+            ]
+		},
 		MMDLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils'
+				'LoaderUtils',
+				'_Math'
 			]
 		},
-		MTLLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+		MorphAnimMesh: {
+			outputOverride: 'objects/MorphAnimMesh.js'
 		},
+		MorphBlendMesh: {
+            imports: [
+                '_Math'
+            ],
+			outputOverride: 'objects/MorphBlendMesh.js'
+		},
+		MTLLoader: {
+			imports: [
+				'DefaultLoadingManager',
+				'Loader'
+			]
+		},
+        NodeLib_Implementation: {
+            importsOverride: [
+                [ 'NodeLib', 'from', './NodeLib_Declaration' ],
+                'UVNode',
+                'PositionNode',
+                'NormalNode',
+                'TimerNode',
+                'ConstNode',
+                'FunctionNode'
+            ]
+        },
 		NodeMaterial: {
 			imports: [ 'NodeLib' ]
+		},
+        NodeMaterialLoader: {
+			imports: [
+				'DefaultLoadingManager',
+			],
+			replacements: [
+				['NodeMaterialLoaderUtils = {', 'var NodeMaterialLoaderUtils = {']
+			],
+			exports: [
+				'NodeMaterialLoaderUtils'
+			]
+		},
+		NodePass: {
+			imports: [
+				'_Math'
+			]
 		},
 		NURBSCurve: {
 			imports: [ 'NURBSUtils' ]
@@ -269,10 +406,30 @@ module.exports = {
 			imports: [
 				'ShaderLib',
 				'UniformsUtils'
-			]
+			],
+			outputOverride: 'objects/Ocean.js'
+		},
+		OceanShaders: {
+			imports: [ 'ShaderLib' ]
+		},
+		Octree: {
+			imports: [
+				'Raycaster',
+				'_Math'
+			],
+			replacements: [
+				[ 'instanceof var OctreeNode', 'instanceof OctreeNode' ]
+			],
+			outputOverride: 'utils/Octree.js'
 		},
 		OutlineEffect: {
 			imports: [ 'ShaderLib' ]
+		},
+		OutlinePass: {
+			imports: [
+				'CopyShader',
+				'UniformsUtils'
+			]
 		},
 		PDBLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -280,23 +437,11 @@ module.exports = {
 		PlayCanvasLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
+		PRNG: {
+			outputOverride: 'utils/PRNG.js'
+		},
 		PRWMLoader: {
 			imports: [ 'DefaultLoadingManager' ]
-		},
-		OceanShaders: {
-			imports: [ 'ShaderLib' ]
-		},
-		Octree: {
-			imports: [ 'Raycaster' ],
-			replacements: [
-				[ 'instanceof var OctreeNode', 'instanceof OctreeNode' ]
-			]
-		},
-		OutlinePass: {
-			imports: [
-				'CopyShader',
-				'UniformsUtils'
-			]
 		},
 		ParametricGeometries: {
 			exports: [ 'ParametricGeometries' ]
@@ -322,11 +467,20 @@ module.exports = {
 		PVRLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
+		QuickHull: {
+			outputOverride: 'utils/QuickHull.js'
+		},
 		Refractor: {
-			imports: [ 'UniformsUtils' ]
+            imports: [
+                'UniformsUtils',
+                '_Math'
+            ]
 		},
 		Reflector: {
-			imports: [ 'UniformsUtils' ]
+			imports: [
+				'UniformsUtils',
+				'_Math'
+			]
 		},
 		RGBELoader: {
 			imports: [ 'DefaultLoadingManager' ],
@@ -360,6 +514,9 @@ module.exports = {
 		ScreenNode: {
 			imports: [ 'InputNode' ]
 		},
+		ShaderGodRays: {
+			outputOverride: 'shaders/ShaderGodRays.js'
+		},
 		ShaderPass: {
 			imports: [ 'UniformsUtils' ]
 		},
@@ -368,17 +525,25 @@ module.exports = {
 				'UniformsUtils',
 				'UniformsLib',
 				'ShaderChunk'
-			]
+			],
+			outputOverride: 'shaders/ShaderSkin.js'
 		},
 		ShaderTerrain: {
 			imports: [
 				'UniformsUtils',
 				'UniformsLib',
 				'ShaderChunk'
-			]
+			],
+			outputOverride: 'shaders/ShaderTerrain.js'
+		},
+		ShaderToon: {
+			outputOverride: 'shaders/ShaderToon.js'
 		},
 		ShadowMapViewer: {
 			imports: [ 'UnpackDepthRGBAShader' ]
+		},
+		SimplexNoise: {
+			outputOverride: 'misc/SimplexNoise.js'
 		},
 		Sky: {
 			imports: [ 'UniformsUtils' ]
@@ -433,12 +598,28 @@ module.exports = {
 		},
 		TimelinerController: {
 			imports: [
-				'AnimationUtils',
-				'Timeliner'
-			]
+				'AnimationUtils'
+			],
+			outputOverride: 'animation/TimelinerController.js'
+		},
+		TempNode: {
+			imports: [ '_Math' ]
 		},
 		TTFLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'_Math'
+			]
+		},
+		TypedArrayUtils: {
+			imports: [
+				'AnimationUtils',
+				'Timeliner'
+			],
+			outputOverride: 'utils/TypedArrayUtils.js'
+		},
+		UCSCharacter: {
+			outputOverride: 'objects/UCSCharacter.js'
 		},
 		UnrealBloomPass: {
 			imports: [
@@ -456,20 +637,25 @@ module.exports = {
 		Vector4Node: {
 			imports: [ 'NodeMaterial' ]
 		},
+		VolumeSlice: {
+			outputOverride: 'audio/VolumeSlice.js'
+		},
 		VRMLLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		VTKLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils'
+				'LoaderUtils',
+				'_Math'
 			]
 		},
 		Water: {
 			imports: [
 				'UniformsUtils',
 				'UniformsLib',
-				'ShaderChunk'
+				'ShaderChunk',
+				'_Math'
 			]
 		},
 		Water2: {
