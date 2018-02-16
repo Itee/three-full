@@ -1,10 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function LoadingManager( onLoad, onProgress, onError ) {
 
 		var scope = this;

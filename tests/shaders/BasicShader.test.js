@@ -1,12 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://www.mrdoob.com
-	 *
-	 * Simple test shader
-	 */
-
 	var BasicShader = {
 
 		uniforms: {},

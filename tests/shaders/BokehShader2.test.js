@@ -1,13 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author egraether / http://egraether.com/
-	 * @author zz85 / http://www.lab4games.net/zz85/blog
-	 */
-
 	function Vector2( x, y ) {
 
 		this.x = x || 0;
@@ -134,7 +127,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -177,7 +170,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -465,7 +458,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector2: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector2: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -492,19 +485,7 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author zz85 / https://github.com/zz85 | twitter.com/blurspline
-	 *
-	 * Depth-of-field shader with bokeh
-	 * ported from GLSL shader by Martins Upitis
-	 * http://blenderartists.org/forum/showthread.php?237488-GLSL-depth-of-field-with-bokeh-v2-4-(update)
-	 *
-	 * Requires #define RINGS and SAMPLES integers
-	 */
-
-
-
-	var BokehShader = {
+	var BokehShader2 = {
 
 		uniforms: {
 
@@ -572,9 +553,7 @@ var Three = (function (exports) {
 			"uniform float fstop; //f-stop value",
 			"uniform bool showFocus; //show debug focus point and focal range (red = focal point, green = focal range)",
 
-			"/*",
-			"make sure that these two values are the same for your camera, otherwise distances will be wrong.",
-			"*/",
+			"",
 
 			"uniform float znear; // camera clipping start",
 			"uniform float zfar; // camera clipping end",
@@ -624,11 +603,7 @@ var Three = (function (exports) {
 			"uniform bool depthblur; // blur the depth buffer",
 			"float dbsize = 1.25; // depth blur size",
 
-			"/*",
-			"next part is experimental",
-			"not looking good with small sample and ring count",
-			"looks okay starting from samples = 4, rings = 4",
-			"*/",
+			"",
 
 			"uniform bool pentagon; //use pentagon as bokeh shape?",
 			"float feather = 0.4; //pentagon shape feather",
@@ -820,14 +795,14 @@ var Three = (function (exports) {
 					"int ringsamples;",
 
 					"for (int i = 1; i <= rings; i++) {",
-						"/*unboxstart*/",
+						"",
 						"ringsamples = i * samples;",
 
 						"for (int j = 0 ; j < maxringsamples ; j++) {",
 							"if (j >= ringsamples) break;",
 							"s += gather(float(i), float(j), ringsamples, col, w, h, blur);",
 						"}",
-						"/*unboxend*/",
+						"",
 					"}",
 
 					"col /= s; //divide by sample count",
@@ -849,7 +824,7 @@ var Three = (function (exports) {
 
 	};
 
-	exports.BokehShader = BokehShader;
+	exports.BokehShader2 = BokehShader2;
 
 	return exports;
 

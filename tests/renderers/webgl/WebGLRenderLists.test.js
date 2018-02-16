@@ -1,10 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function painterSortStable( a, b ) {
 
 		if ( a.renderOrder !== b.renderOrder ) {
@@ -134,7 +130,7 @@ var Three = (function (exports) {
 
 			if ( list === undefined ) {
 
-				// console.log( 'THREE.WebGLRenderLists:', hash );
+				// console.log( 'WebGLRenderLists:', hash );
 
 				list = new WebGLRenderList();
 				lists[ hash ] = list;

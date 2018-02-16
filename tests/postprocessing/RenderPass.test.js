@@ -15,10 +15,6 @@ var Three = (function (exports) {
 		}
 	} );
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 */
-
 	var RenderPass = function ( scene, camera, overrideMaterial, clearColor, clearAlpha ) {
 
 		Pass.call( this );

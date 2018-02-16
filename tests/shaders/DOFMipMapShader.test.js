@@ -1,14 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * Depth-of-field shader using mipmaps
-	 * - from Matt Handley @applmak
-	 * - requires power-of-2 sized render target with enabled mipmaps
-	 */
-
 	var DOFMipMapShader = {
 
 		uniforms: {

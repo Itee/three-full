@@ -1,10 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var Cache = {
 
 		enabled: false,
@@ -15,7 +11,7 @@ var Three = (function (exports) {
 
 			if ( this.enabled === false ) return;
 
-			// console.log( 'THREE.Cache', 'Adding key:', key );
+			// console.log( 'Cache', 'Adding key:', key );
 
 			this.files[ key ] = file;
 
@@ -25,7 +21,7 @@ var Three = (function (exports) {
 
 			if ( this.enabled === false ) return;
 
-			// console.log( 'THREE.Cache', 'Checking key:', key );
+			// console.log( 'Cache', 'Checking key:', key );
 
 			return this.files[ key ];
 
@@ -44,10 +40,6 @@ var Three = (function (exports) {
 		}
 
 	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	function LoadingManager( onLoad, onProgress, onError ) {
 
@@ -137,10 +129,6 @@ var Three = (function (exports) {
 	}
 
 	var DefaultLoadingManager = new LoadingManager();
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	var loading = {};
 
@@ -329,7 +317,7 @@ var Three = (function (exports) {
 						// Some browsers return HTTP Status 0 when using non-http protocol
 						// e.g. 'file://' or 'data://'. Handle as success.
 
-						console.warn( 'THREE.FileLoader: HTTP Status 0 received.' );
+						console.warn( 'FileLoader: HTTP Status 0 received.' );
 
 						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
 
@@ -449,97 +437,24 @@ var Three = (function (exports) {
 	var BackSide = 1;
 	var DoubleSide = 2;
 	var FlatShading = 1;
-
 	var NoColors = 0;
-
 	var VertexColors = 2;
-
 	var NormalBlending = 1;
-
-
-
-
 	var AddEquation = 100;
-
-
-
-
-
-
-
-
 	var SrcAlphaFactor = 204;
 	var OneMinusSrcAlphaFactor = 205;
-
-
-
-
-
-
-
-
 	var LessEqualDepth = 3;
-
-
-
-
 	var MultiplyOperation = 0;
-
-
-
-
-
-
-
 	var UVMapping = 300;
-
-
 	var EquirectangularReflectionMapping = 303;
-
-
-
-
 	var RepeatWrapping = 1000;
 	var ClampToEdgeWrapping = 1001;
 	var MirroredRepeatWrapping = 1002;
-
-
-
 	var LinearFilter = 1006;
-
 	var LinearMipMapLinearFilter = 1008;
 	var UnsignedByteType = 1009;
-
-
-
-
-
-
-
-
-
-
-
-
 	var RGBFormat = 1022;
 	var RGBAFormat = 1023;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	var InterpolateDiscrete = 2300;
 	var InterpolateLinear = 2301;
 	var InterpolateSmooth = 2302;
@@ -547,21 +462,7 @@ var Three = (function (exports) {
 	var ZeroSlopeEnding = 2401;
 	var WrapAroundEnding = 2402;
 	var TrianglesDrawMode = 0;
-
-
 	var LinearEncoding = 3000;
-
-
-
-
-
-
-
-	var BasicDepthPacking = 3200;
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	function ImageLoader( manager ) {
 
@@ -613,13 +514,7 @@ var Three = (function (exports) {
 
 			}, false );
 
-			/*
-			image.addEventListener( 'progress', function ( event ) {
-
-				if ( onProgress ) onProgress( event );
-
-			}, false );
-			*/
+			
 
 			image.addEventListener( 'error', function ( event ) {
 
@@ -659,10 +554,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * https://github.com/mrdoob/eventdispatcher.js/
-	 */
 
 	function EventDispatcher() {}
 
@@ -744,11 +635,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -766,7 +652,7 @@ var Three = (function (exports) {
 
 			}
 
-			return function () {
+			return function generateUUID() {
 
 				var d0 = Math.random() * 0xffffffff | 0;
 				var d1 = Math.random() * 0xffffffff | 0;
@@ -891,13 +777,6 @@ var Three = (function (exports) {
 		}
 
 	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author egraether / http://egraether.com/
-	 * @author zz85 / http://www.lab4games.net/zz85/blog
-	 */
 
 	function Vector2( x, y ) {
 
@@ -1025,7 +904,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -1068,7 +947,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -1356,7 +1235,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector2: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector2: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -1383,19 +1262,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author jordi_ros / http://plattsoft.com
-	 * @author D1plo1d / http://github.com/D1plo1d
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author timknip / http://www.floorplanner.com/
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Matrix4() {
 
 		this.elements = [
@@ -1409,7 +1275,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix4: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix4: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -1537,7 +1403,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				console.error( 'THREE.Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
+				console.error( 'Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -1757,7 +1623,7 @@ var Three = (function (exports) {
 
 			if ( n !== undefined ) {
 
-				console.warn( 'THREE.Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
+				console.warn( 'Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
 				return this.multiplyMatrices( m, n );
 
 			}
@@ -1948,7 +1814,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix4: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix4: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -2201,7 +2067,7 @@ var Three = (function (exports) {
 
 			if ( far === undefined ) {
 
-				console.warn( 'THREE.Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
+				console.warn( 'Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
 
 			}
 
@@ -2304,13 +2170,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Quaternion( x, y, z, w ) {
 
@@ -2503,7 +2362,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				throw new Error( 'THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+				throw new Error( 'Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -2700,7 +2559,9 @@ var Three = (function (exports) {
 
 		inverse: function () {
 
-			return this.conjugate().normalize();
+			// quaternion is assumed to have unit length
+
+			return this.conjugate();
 
 		},
 
@@ -2766,7 +2627,7 @@ var Three = (function (exports) {
 
 			if ( p !== undefined ) {
 
-				console.warn( 'THREE.Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
+				console.warn( 'Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
 				return this.multiplyQuaternions( q, p );
 
 			}
@@ -2911,15 +2772,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author kile / http://kile.stravaganza.org/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -3024,7 +2876,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -3071,7 +2923,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -3108,7 +2960,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
 				return this.multiplyVectors( v, w );
 
 			}
@@ -3149,7 +3001,7 @@ var Three = (function (exports) {
 
 				if ( ! ( euler && euler.isEuler ) ) {
 
-					console.error( 'THREE.Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+					console.error( 'Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 				}
 
@@ -3249,7 +3101,7 @@ var Three = (function (exports) {
 
 		transformDirection: function ( m ) {
 
-			// input: THREE.Matrix4 affine matrix
+			// input: Matrix4 affine matrix
 			// vector interpreted as a direction
 
 			var x = this.x, y = this.y, z = this.z;
@@ -3443,7 +3295,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
 				return this.crossVectors( v, w );
 
 			}
@@ -3621,7 +3473,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector3: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector3: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -3635,13 +3487,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 * @author tschw
-	 */
-
 	function Matrix3() {
 
 		this.elements = [
@@ -3654,7 +3499,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix3: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix3: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -3819,7 +3664,7 @@ var Three = (function (exports) {
 
 			if ( matrix && matrix.isMatrix4 ) {
 
-				console.error( "THREE.Matrix3: .getInverse() no longer takes a Matrix4 argument." );
+				console.error( "Matrix3: .getInverse() no longer takes a Matrix4 argument." );
 
 			}
 
@@ -3838,7 +3683,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix3: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix3: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -4019,12 +3864,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author szimek / https://github.com/szimek/
-	 */
-
 	var textureId = 0;
 
 	function Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
@@ -4064,7 +3903,7 @@ var Three = (function (exports) {
 		this.flipY = true;
 		this.unpackAlignment = 4;	// valid values: 1, 2, 4, 8 (see http://www.khronos.org/opengles/sdk/docs/man/xhtml/glPixelStorei.xml)
 
-		// Values of encoding !== THREE.LinearEncoding only supported on map, envMap and emissiveMap.
+		// Values of encoding !== LinearEncoding only supported on map, envMap and emissiveMap.
 		//
 		// Also changing the encoding after already used by a Material will not automatically make the Material
 		// update.  You need to explicitly call Material.needsUpdate to trigger it to recompile.
@@ -4206,7 +4045,7 @@ var Three = (function (exports) {
 
 			if ( this.image !== undefined ) {
 
-				// TODO: Move to THREE.Image
+				// TODO: Move to Image
 
 				var image = this.image;
 
@@ -4333,10 +4172,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function TextureLoader( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -4393,11 +4228,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 */
-
 	var materialId = 0;
 
 	function Material() {
@@ -4415,7 +4245,7 @@ var Three = (function (exports) {
 		this.blending = NormalBlending;
 		this.side = FrontSide;
 		this.flatShading = false;
-		this.vertexColors = NoColors; // THREE.NoColors, THREE.VertexColors, THREE.FaceColors
+		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 		this.opacity = 1;
 		this.transparent = false;
@@ -4434,6 +4264,8 @@ var Three = (function (exports) {
 		this.clippingPlanes = null;
 		this.clipIntersection = false;
 		this.clipShadows = false;
+
+		this.shadowSide = null;
 
 		this.colorWrite = true;
 
@@ -4476,7 +4308,7 @@ var Three = (function (exports) {
 
 				if ( newValue === undefined ) {
 
-					console.warn( "THREE.Material: '" + key + "' parameter is undefined." );
+					console.warn( "Material: '" + key + "' parameter is undefined." );
 					continue;
 
 				}
@@ -4484,7 +4316,7 @@ var Three = (function (exports) {
 				// for backward compatability if shading is set in the constructor
 				if ( key === 'shading' ) {
 
-					console.warn( 'THREE.' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
+					console.warn( '' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
 					this.flatShading = ( newValue === FlatShading ) ? true : false;
 					continue;
 
@@ -4494,7 +4326,7 @@ var Three = (function (exports) {
 
 				if ( currentValue === undefined ) {
 
-					console.warn( "THREE." + this.type + ": '" + key + "' is not a property of this material." );
+					console.warn( "" + this.type + ": '" + key + "' is not a property of this material." );
 					continue;
 
 				}
@@ -4742,6 +4574,8 @@ var Three = (function (exports) {
 
 			this.clippingPlanes = dstPlanes;
 
+			this.shadowSide = source.shadowSide;
+
 			return this;
 
 		},
@@ -4753,10 +4587,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
 		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
@@ -4787,7 +4617,7 @@ var Three = (function (exports) {
 
 		if ( g === undefined && b === undefined ) {
 
-			// r is THREE.Color, hex or string
+			// r is Color, hex or string
 			return this.set( r );
 
 		}
@@ -4903,7 +4733,7 @@ var Three = (function (exports) {
 
 				if ( parseFloat( string ) < 1 ) {
 
-					console.warn( 'THREE.Color: Alpha component of ' + style + ' will be ignored.' );
+					console.warn( 'Color: Alpha component of ' + style + ' will be ignored.' );
 
 				}
 
@@ -5015,7 +4845,7 @@ var Three = (function (exports) {
 				} else {
 
 					// unknown color
-					console.warn( 'THREE.Color: Unknown color ' + style );
+					console.warn( 'Color: Unknown color ' + style );
 
 				}
 
@@ -5273,606 +5103,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 *
-	 * parameters = {
-	 *  color: <THREE.Color>,
-	 *  opacity: <float>
-	 * }
-	 */
-
-	function ShadowMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'ShadowMaterial';
-
-		this.color = new Color( 0x000000 );
-		this.opacity = 1.0;
-
-		this.lights = true;
-		this.transparent = true;
-
-		this.setValues( parameters );
-
-	}
-
-	ShadowMaterial.prototype = Object.create( Material.prototype );
-	ShadowMaterial.prototype.constructor = ShadowMaterial;
-
-	ShadowMaterial.prototype.isShadowMaterial = true;
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *	uvOffset: new THREE.Vector2(),
-	 *	uvScale: new THREE.Vector2()
-	 * }
-	 */
-
-	function SpriteMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'SpriteMaterial';
-
-		this.color = new Color( 0xffffff );
-		this.map = null;
-
-		this.rotation = 0;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	SpriteMaterial.prototype = Object.create( Material.prototype );
-	SpriteMaterial.prototype.constructor = SpriteMaterial;
-	SpriteMaterial.prototype.isSpriteMaterial = true;
-
-	SpriteMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-		this.map = source.map;
-
-		this.rotation = source.rotation;
-
-		return this;
-
-	};
-
-	/**
-	 * Uniform Utilities
-	 */
-
-	var UniformsUtils = {
-
-		merge: function ( uniforms ) {
-
-			var merged = {};
-
-			for ( var u = 0; u < uniforms.length; u ++ ) {
-
-				var tmp = this.clone( uniforms[ u ] );
-
-				for ( var p in tmp ) {
-
-					merged[ p ] = tmp[ p ];
-
-				}
-
-			}
-
-			return merged;
-
-		},
-
-		clone: function ( uniforms_src ) {
-
-			var uniforms_dst = {};
-
-			for ( var u in uniforms_src ) {
-
-				uniforms_dst[ u ] = {};
-
-				for ( var p in uniforms_src[ u ] ) {
-
-					var parameter_src = uniforms_src[ u ][ p ];
-
-					if ( parameter_src && ( parameter_src.isColor ||
-						parameter_src.isMatrix3 || parameter_src.isMatrix4 ||
-						parameter_src.isVector2 || parameter_src.isVector3 || parameter_src.isVector4 ||
-						parameter_src.isTexture ) ) {
-
-						uniforms_dst[ u ][ p ] = parameter_src.clone();
-
-					} else if ( Array.isArray( parameter_src ) ) {
-
-						uniforms_dst[ u ][ p ] = parameter_src.slice();
-
-					} else {
-
-						uniforms_dst[ u ][ p ] = parameter_src;
-
-					}
-
-				}
-
-			}
-
-			return uniforms_dst;
-
-		}
-
-	};
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  defines: { "label" : "value" },
-	 *  uniforms: { "parameter1": { value: 1.0 }, "parameter2": { value2: 2 } },
-	 *
-	 *  fragmentShader: <string>,
-	 *  vertexShader: <string>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  lights: <bool>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
-
-	function ShaderMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'ShaderMaterial';
-
-		this.defines = {};
-		this.uniforms = {};
-
-		this.vertexShader = 'void main() {\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}';
-		this.fragmentShader = 'void main() {\n\tgl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}';
-
-		this.linewidth = 1;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-
-		this.fog = false; // set to use scene fog
-		this.lights = false; // set to use scene lights
-		this.clipping = false; // set to use user-defined clipping planes
-
-		this.skinning = false; // set to use skinning attribute streams
-		this.morphTargets = false; // set to use morph targets
-		this.morphNormals = false; // set to use morph normals
-
-		this.extensions = {
-			derivatives: false, // set to use derivatives
-			fragDepth: false, // set to use fragment depth values
-			drawBuffers: false, // set to use draw buffers
-			shaderTextureLOD: false // set to use shader texture LOD
-		};
-
-		// When rendered geometry doesn't include these attributes but the material does,
-		// use these default values in WebGL. This avoids errors when buffer data is missing.
-		this.defaultAttributeValues = {
-			'color': [ 1, 1, 1 ],
-			'uv': [ 0, 0 ],
-			'uv2': [ 0, 0 ]
-		};
-
-		this.index0AttributeName = undefined;
-
-		if ( parameters !== undefined ) {
-
-			if ( parameters.attributes !== undefined ) {
-
-				console.error( 'THREE.ShaderMaterial: attributes should now be defined in THREE.BufferGeometry instead.' );
-
-			}
-
-			this.setValues( parameters );
-
-		}
-
-	}
-
-	ShaderMaterial.prototype = Object.create( Material.prototype );
-	ShaderMaterial.prototype.constructor = ShaderMaterial;
-
-	ShaderMaterial.prototype.isShaderMaterial = true;
-
-	ShaderMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.fragmentShader = source.fragmentShader;
-		this.vertexShader = source.vertexShader;
-
-		this.uniforms = UniformsUtils.clone( source.uniforms );
-
-		this.defines = source.defines;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		this.lights = source.lights;
-		this.clipping = source.clipping;
-
-		this.skinning = source.skinning;
-
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		this.extensions = source.extensions;
-
-		return this;
-
-	};
-
-	ShaderMaterial.prototype.toJSON = function ( meta ) {
-
-		var data = Material.prototype.toJSON.call( this, meta );
-
-		data.uniforms = this.uniforms;
-		data.vertexShader = this.vertexShader;
-		data.fragmentShader = this.fragmentShader;
-
-		return data;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
-	function RawShaderMaterial( parameters ) {
-
-		ShaderMaterial.call( this, parameters );
-
-		this.type = 'RawShaderMaterial';
-
-	}
-
-	RawShaderMaterial.prototype = Object.create( ShaderMaterial.prototype );
-	RawShaderMaterial.prototype.constructor = RawShaderMaterial;
-
-	RawShaderMaterial.prototype.isRawShaderMaterial = true;
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  size: <float>,
-	 *  sizeAttenuation: <bool>
-	 * }
-	 */
-
-	function PointsMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'PointsMaterial';
-
-		this.color = new Color( 0xffffff );
-
-		this.map = null;
-
-		this.size = 1;
-		this.sizeAttenuation = true;
-
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	PointsMaterial.prototype = Object.create( Material.prototype );
-	PointsMaterial.prototype.constructor = PointsMaterial;
-
-	PointsMaterial.prototype.isPointsMaterial = true;
-
-	PointsMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-
-		this.map = source.map;
-
-		this.size = source.size;
-		this.sizeAttenuation = source.sizeAttenuation;
-
-		return this;
-
-	};
-
-	/**
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  roughness: <float>,
-	 *  metalness: <float>,
-	 *  opacity: <float>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  lightMap: new THREE.Texture( <Image> ),
-	 *  lightMapIntensity: <float>
-	 *
-	 *  aoMap: new THREE.Texture( <Image> ),
-	 *  aoMapIntensity: <float>
-	 *
-	 *  emissive: <hex>,
-	 *  emissiveIntensity: <float>
-	 *  emissiveMap: new THREE.Texture( <Image> ),
-	 *
-	 *  bumpMap: new THREE.Texture( <Image> ),
-	 *  bumpScale: <float>,
-	 *
-	 *  normalMap: new THREE.Texture( <Image> ),
-	 *  normalScale: <Vector2>,
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>,
-	 *
-	 *  roughnessMap: new THREE.Texture( <Image> ),
-	 *
-	 *  metalnessMap: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  envMap: new THREE.CubeTexture( [posx, negx, posy, negy, posz, negz] ),
-	 *  envMapIntensity: <float>
-	 *
-	 *  refractionRatio: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
-
-	function MeshStandardMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.defines = { 'STANDARD': '' };
-
-		this.type = 'MeshStandardMaterial';
-
-		this.color = new Color( 0xffffff ); // diffuse
-		this.roughness = 0.5;
-		this.metalness = 0.5;
-
-		this.map = null;
-
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.emissive = new Color( 0x000000 );
-		this.emissiveIntensity = 1.0;
-		this.emissiveMap = null;
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.roughnessMap = null;
-
-		this.metalnessMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.envMapIntensity = 1.0;
-
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshStandardMaterial.prototype = Object.create( Material.prototype );
-	MeshStandardMaterial.prototype.constructor = MeshStandardMaterial;
-
-	MeshStandardMaterial.prototype.isMeshStandardMaterial = true;
-
-	MeshStandardMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.defines = { 'STANDARD': '' };
-
-		this.color.copy( source.color );
-		this.roughness = source.roughness;
-		this.metalness = source.metalness;
-
-		this.map = source.map;
-
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
-
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
-
-		this.emissive.copy( source.emissive );
-		this.emissiveMap = source.emissiveMap;
-		this.emissiveIntensity = source.emissiveIntensity;
-
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
-
-		this.normalMap = source.normalMap;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.roughnessMap = source.roughnessMap;
-
-		this.metalnessMap = source.metalnessMap;
-
-		this.alphaMap = source.alphaMap;
-
-		this.envMap = source.envMap;
-		this.envMapIntensity = source.envMapIntensity;
-
-		this.refractionRatio = source.refractionRatio;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
-	/**
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *  reflectivity: <float>
-	 * }
-	 */
-
-	function MeshPhysicalMaterial( parameters ) {
-
-		MeshStandardMaterial.call( this );
-
-		this.defines = { 'PHYSICAL': '' };
-
-		this.type = 'MeshPhysicalMaterial';
-
-		this.reflectivity = 0.5; // maps to F0 = 0.04
-
-		this.clearCoat = 0.0;
-		this.clearCoatRoughness = 0.0;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshPhysicalMaterial.prototype = Object.create( MeshStandardMaterial.prototype );
-	MeshPhysicalMaterial.prototype.constructor = MeshPhysicalMaterial;
-
-	MeshPhysicalMaterial.prototype.isMeshPhysicalMaterial = true;
-
-	MeshPhysicalMaterial.prototype.copy = function ( source ) {
-
-		MeshStandardMaterial.prototype.copy.call( this, source );
-
-		this.defines = { 'PHYSICAL': '' };
-
-		this.reflectivity = source.reflectivity;
-
-		this.clearCoat = source.clearCoat;
-		this.clearCoatRoughness = source.clearCoatRoughness;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  specular: <hex>,
-	 *  shininess: <float>,
-	 *  opacity: <float>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  lightMap: new THREE.Texture( <Image> ),
-	 *  lightMapIntensity: <float>
-	 *
-	 *  aoMap: new THREE.Texture( <Image> ),
-	 *  aoMapIntensity: <float>
-	 *
-	 *  emissive: <hex>,
-	 *  emissiveIntensity: <float>
-	 *  emissiveMap: new THREE.Texture( <Image> ),
-	 *
-	 *  bumpMap: new THREE.Texture( <Image> ),
-	 *  bumpScale: <float>,
-	 *
-	 *  normalMap: new THREE.Texture( <Image> ),
-	 *  normalScale: <Vector2>,
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>,
-	 *
-	 *  specularMap: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  envMap: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
-	 *  combine: THREE.Multiply,
-	 *  reflectivity: <float>,
-	 *  refractionRatio: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
-
 	function MeshPhongMaterial( parameters ) {
 
 		Material.call( this );
@@ -5984,167 +5214,6 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author takahirox / http://github.com/takahirox
-	 *
-	 * parameters = {
-	 *  gradientMap: new THREE.Texture( <Image> )
-	 * }
-	 */
-
-	function MeshToonMaterial( parameters ) {
-
-		MeshPhongMaterial.call( this );
-
-		this.defines = { 'TOON': '' };
-
-		this.type = 'MeshToonMaterial';
-
-		this.gradientMap = null;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshToonMaterial.prototype = Object.create( MeshPhongMaterial.prototype );
-	MeshToonMaterial.prototype.constructor = MeshToonMaterial;
-
-	MeshToonMaterial.prototype.isMeshToonMaterial = true;
-
-	MeshToonMaterial.prototype.copy = function ( source ) {
-
-		MeshPhongMaterial.prototype.copy.call( this, source );
-
-		this.gradientMap = source.gradientMap;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *  opacity: <float>,
-	 *
-	 *  bumpMap: new THREE.Texture( <Image> ),
-	 *  bumpScale: <float>,
-	 *
-	 *  normalMap: new THREE.Texture( <Image> ),
-	 *  normalScale: <Vector2>,
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
-
-	function MeshNormalMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshNormalMaterial';
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshNormalMaterial.prototype = Object.create( Material.prototype );
-	MeshNormalMaterial.prototype.constructor = MeshNormalMaterial;
-
-	MeshNormalMaterial.prototype.isMeshNormalMaterial = true;
-
-	MeshNormalMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
-
-		this.normalMap = source.normalMap;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  lightMap: new THREE.Texture( <Image> ),
-	 *  lightMapIntensity: <float>
-	 *
-	 *  aoMap: new THREE.Texture( <Image> ),
-	 *  aoMapIntensity: <float>
-	 *
-	 *  emissive: <hex>,
-	 *  emissiveIntensity: <float>
-	 *  emissiveMap: new THREE.Texture( <Image> ),
-	 *
-	 *  specularMap: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  envMap: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
-	 *  combine: THREE.Multiply,
-	 *  reflectivity: <float>,
-	 *  refractionRatio: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
-
 	function MeshLambertMaterial( parameters ) {
 
 		Material.call( this );
@@ -6231,383 +5300,6 @@ var Three = (function (exports) {
 		return this;
 
 	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author bhouston / https://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *
-	 *  opacity: <float>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>
-	 * }
-	 */
-
-	function MeshDepthMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshDepthMaterial';
-
-		this.depthPacking = BasicDepthPacking;
-
-		this.skinning = false;
-		this.morphTargets = false;
-
-		this.map = null;
-
-		this.alphaMap = null;
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshDepthMaterial.prototype = Object.create( Material.prototype );
-	MeshDepthMaterial.prototype.constructor = MeshDepthMaterial;
-
-	MeshDepthMaterial.prototype.isMeshDepthMaterial = true;
-
-	MeshDepthMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.depthPacking = source.depthPacking;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-
-		this.map = source.map;
-
-		this.alphaMap = source.alphaMap;
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		return this;
-
-	};
-
-	/**
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *
-	 *  referencePosition: <float>,
-	 *  nearDistance: <float>,
-	 *  farDistance: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>
-	 *
-	 * }
-	 */
-
-	function MeshDistanceMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshDistanceMaterial';
-
-		this.referencePosition = new Vector3();
-		this.nearDistance = 1;
-		this.farDistance = 1000;
-
-		this.skinning = false;
-		this.morphTargets = false;
-
-		this.map = null;
-
-		this.alphaMap = null;
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshDistanceMaterial.prototype = Object.create( Material.prototype );
-	MeshDistanceMaterial.prototype.constructor = MeshDistanceMaterial;
-
-	MeshDistanceMaterial.prototype.isMeshDistanceMaterial = true;
-
-	MeshDistanceMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.referencePosition.copy( source.referencePosition );
-		this.nearDistance = source.nearDistance;
-		this.farDistance = source.farDistance;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-
-		this.map = source.map;
-
-		this.alphaMap = source.alphaMap;
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  lightMap: new THREE.Texture( <Image> ),
-	 *  lightMapIntensity: <float>
-	 *
-	 *  aoMap: new THREE.Texture( <Image> ),
-	 *  aoMapIntensity: <float>
-	 *
-	 *  specularMap: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  envMap: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
-	 *  combine: THREE.Multiply,
-	 *  reflectivity: <float>,
-	 *  refractionRatio: <float>,
-	 *
-	 *  depthTest: <bool>,
-	 *  depthWrite: <bool>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>
-	 * }
-	 */
-
-	function MeshBasicMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshBasicMaterial';
-
-		this.color = new Color( 0xffffff ); // emissive
-
-		this.map = null;
-
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.specularMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.combine = MultiplyOperation;
-		this.reflectivity = 1;
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
-
-		this.skinning = false;
-		this.morphTargets = false;
-
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshBasicMaterial.prototype = Object.create( Material.prototype );
-	MeshBasicMaterial.prototype.constructor = MeshBasicMaterial;
-
-	MeshBasicMaterial.prototype.isMeshBasicMaterial = true;
-
-	MeshBasicMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-
-		this.map = source.map;
-
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
-
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
-
-		this.specularMap = source.specularMap;
-
-		this.alphaMap = source.alphaMap;
-
-		this.envMap = source.envMap;
-		this.combine = source.combine;
-		this.reflectivity = source.reflectivity;
-		this.refractionRatio = source.refractionRatio;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *
-	 *  linewidth: <float>,
-	 *  linecap: "round",
-	 *  linejoin: "round"
-	 * }
-	 */
-
-	function LineBasicMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'LineBasicMaterial';
-
-		this.color = new Color( 0xffffff );
-
-		this.linewidth = 1;
-		this.linecap = 'round';
-		this.linejoin = 'round';
-
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	LineBasicMaterial.prototype = Object.create( Material.prototype );
-	LineBasicMaterial.prototype.constructor = LineBasicMaterial;
-
-	LineBasicMaterial.prototype.isLineBasicMaterial = true;
-
-	LineBasicMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-
-		this.linewidth = source.linewidth;
-		this.linecap = source.linecap;
-		this.linejoin = source.linejoin;
-
-		return this;
-
-	};
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *
-	 *  linewidth: <float>,
-	 *
-	 *  scale: <float>,
-	 *  dashSize: <float>,
-	 *  gapSize: <float>
-	 * }
-	 */
-
-	function LineDashedMaterial( parameters ) {
-
-		LineBasicMaterial.call( this );
-
-		this.type = 'LineDashedMaterial';
-
-		this.scale = 1;
-		this.dashSize = 3;
-		this.gapSize = 1;
-
-		this.setValues( parameters );
-
-	}
-
-	LineDashedMaterial.prototype = Object.create( LineBasicMaterial.prototype );
-	LineDashedMaterial.prototype.constructor = LineDashedMaterial;
-
-	LineDashedMaterial.prototype.isLineDashedMaterial = true;
-
-	LineDashedMaterial.prototype.copy = function ( source ) {
-
-		LineBasicMaterial.prototype.copy.call( this, source );
-
-		this.scale = source.scale;
-		this.dashSize = source.dashSize;
-		this.gapSize = source.gapSize;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Euler( x, y, z, order ) {
 
@@ -6841,7 +5533,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.warn( 'THREE.Euler: .setFromRotationMatrix() given unsupported order: ' + order );
+				console.warn( 'Euler: .setFromRotationMatrix() given unsupported order: ' + order );
 
 			}
 
@@ -6947,11 +5639,6 @@ var Three = (function (exports) {
 		onChangeCallback: function () {}
 
 	} );
-
-	/**
-	 * @author bhouston / http://clara.io
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	function Sphere( center, radius ) {
 
@@ -7112,11 +5799,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
 
 	function Box3( min, max ) {
 
@@ -7483,6 +6165,107 @@ var Three = (function (exports) {
 
 		},
 
+		intersectsTriangle: ( function () {
+
+			// triangle centered vertices
+			var v0 = new Vector3();
+			var v1 = new Vector3();
+			var v2 = new Vector3();
+
+			// triangle edge vectors
+			var f0 = new Vector3();
+			var f1 = new Vector3();
+			var f2 = new Vector3();
+
+			var testAxis = new Vector3();
+
+			var center = new Vector3();
+			var extents = new Vector3();
+
+			var triangleNormal = new Vector3();
+
+			function satForAxes( axes ) {
+
+				var i, j;
+
+				for ( i = 0, j = axes.length - 3; i <= j; i += 3 ) {
+
+					testAxis.fromArray( axes, i );
+					// project the aabb onto the seperating axis
+					var r = extents.x * Math.abs( testAxis.x ) + extents.y * Math.abs( testAxis.y ) + extents.z * Math.abs( testAxis.z );
+					// project all 3 vertices of the triangle onto the seperating axis
+					var p0 = v0.dot( testAxis );
+					var p1 = v1.dot( testAxis );
+					var p2 = v2.dot( testAxis );
+					// actual test, basically see if either of the most extreme of the triangle points intersects r
+					if ( Math.max( - Math.max( p0, p1, p2 ), Math.min( p0, p1, p2 ) ) > r ) {
+
+						// points of the projected triangle are outside the projected half-length of the aabb
+						// the axis is seperating and we can exit
+						return false;
+
+					}
+
+				}
+
+				return true;
+
+			}
+
+			return function intersectsTriangle( triangle ) {
+
+				if ( this.isEmpty() ) {
+
+					return false;
+
+				}
+
+				// compute box center and extents
+				this.getCenter( center );
+				extents.subVectors( this.max, center );
+
+				// translate triangle to aabb origin
+				v0.subVectors( triangle.a, center );
+				v1.subVectors( triangle.b, center );
+				v2.subVectors( triangle.c, center );
+
+				// compute edge vectors for triangle
+				f0.subVectors( v1, v0 );
+				f1.subVectors( v2, v1 );
+				f2.subVectors( v0, v2 );
+
+				// test against axes that are given by cross product combinations of the edges of the triangle and the edges of the aabb
+				// make an axis testing of each of the 3 sides of the aabb against each of the 3 sides of the triangle = 9 axis of separation
+				// axis_ij = u_i x f_j (u0, u1, u2 = face normals of aabb = x,y,z axes vectors since aabb is axis aligned)
+				var axes = [
+					0, - f0.z, f0.y, 0, - f1.z, f1.y, 0, - f2.z, f2.y,
+					f0.z, 0, - f0.x, f1.z, 0, - f1.x, f2.z, 0, - f2.x,
+					- f0.y, f0.x, 0, - f1.y, f1.x, 0, - f2.y, f2.x, 0
+				];
+				if ( ! satForAxes( axes ) ) {
+
+					return false;
+
+				}
+
+				// test 3 face normals from the aabb
+				axes = [ 1, 0, 0, 0, 1, 0, 0, 0, 1 ];
+				if ( ! satForAxes( axes ) ) {
+
+					return false;
+
+				}
+
+				// finally testing the face normal of the triangle
+				// use already existing triangle edge vectors here
+				triangleNormal.crossVectors( f0, f1 );
+				axes = [ triangleNormal.x, triangleNormal.y, triangleNormal.z ];
+				return satForAxes( axes );
+
+			};
+
+		} )(),
+
 		clampPoint: function ( point, optionalTarget ) {
 
 			var result = optionalTarget || new Vector3();
@@ -7594,14 +6377,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
 
 	function Vector4( x, y, z, w ) {
 
@@ -7721,7 +6496,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -7772,7 +6547,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector4: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector4: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -8207,7 +6982,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector4: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector4: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -8222,15 +6997,11 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function BufferAttribute( array, itemSize, normalized ) {
 
 		if ( Array.isArray( array ) ) {
 
-			throw new TypeError( 'THREE.BufferAttribute: array should be a Typed Array.' );
+			throw new TypeError( 'BufferAttribute: array should be a Typed Array.' );
 
 		}
 
@@ -8269,7 +7040,7 @@ var Three = (function (exports) {
 
 			if ( Array.isArray( array ) ) {
 
-				throw new TypeError( 'THREE.BufferAttribute: array should be a Typed Array.' );
+				throw new TypeError( 'BufferAttribute: array should be a Typed Array.' );
 
 			}
 
@@ -8332,7 +7103,7 @@ var Three = (function (exports) {
 
 				if ( color === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyColorsArray(): color is undefined', i );
+					console.warn( 'BufferAttribute.copyColorsArray(): color is undefined', i );
 					color = new Color();
 
 				}
@@ -8375,7 +7146,7 @@ var Three = (function (exports) {
 
 				if ( vector === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyVector2sArray(): vector is undefined', i );
+					console.warn( 'BufferAttribute.copyVector2sArray(): vector is undefined', i );
 					vector = new Vector2();
 
 				}
@@ -8399,7 +7170,7 @@ var Three = (function (exports) {
 
 				if ( vector === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyVector3sArray(): vector is undefined', i );
+					console.warn( 'BufferAttribute.copyVector3sArray(): vector is undefined', i );
 					vector = new Vector3();
 
 				}
@@ -8424,7 +7195,7 @@ var Three = (function (exports) {
 
 				if ( vector === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyVector4sArray(): vector is undefined', i );
+					console.warn( 'BufferAttribute.copyVector4sArray(): vector is undefined', i );
 					vector = new Vector4();
 
 				}
@@ -8649,9 +7420,7 @@ var Three = (function (exports) {
 	Float64BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float64BufferAttribute.prototype.constructor = Float64BufferAttribute;
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
+	//
 
 	function DirectGeometry() {
 
@@ -8834,7 +7603,7 @@ var Three = (function (exports) {
 
 					} else {
 
-						console.warn( 'THREE.DirectGeometry.fromGeometry(): Undefined vertexUv ', i );
+						console.warn( 'DirectGeometry.fromGeometry(): Undefined vertexUv ', i );
 
 						this.uvs.push( new Vector2(), new Vector2(), new Vector2() );
 
@@ -8852,7 +7621,7 @@ var Three = (function (exports) {
 
 					} else {
 
-						console.warn( 'THREE.DirectGeometry.fromGeometry(): Undefined vertexUv2 ', i );
+						console.warn( 'DirectGeometry.fromGeometry(): Undefined vertexUv2 ', i );
 
 						this.uvs2.push( new Vector2(), new Vector2(), new Vector2() );
 
@@ -8908,10 +7677,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function Layers() {
 
 		this.mask = 1 | 0;
@@ -8951,14 +7716,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author elephantatwork / www.elephantatwork.ch
-	 */
 
 	var object3DId = 0;
 
@@ -9297,7 +8054,7 @@ var Three = (function (exports) {
 
 			if ( object === this ) {
 
-				console.error( "THREE.Object3D.add: object can't be added as a child of itself.", object );
+				console.error( "Object3D.add: object can't be added as a child of itself.", object );
 				return this;
 
 			}
@@ -9317,7 +8074,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.error( "THREE.Object3D.add: object not an instance of THREE.Object3D.", object );
+				console.error( "Object3D.add: object not an instance of Object3D.", object );
 
 			}
 
@@ -9771,10 +8528,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function arrayMax( array ) {
 
 		if ( array.length === 0 ) return - Infinity;
@@ -9790,11 +8543,6 @@ var Three = (function (exports) {
 		return max;
 
 	}
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	var bufferGeometryId = 1; // BufferGeometry uses odd numbers as Id
 
@@ -9851,7 +8599,7 @@ var Three = (function (exports) {
 
 			if ( ! ( attribute && attribute.isBufferAttribute ) && ! ( attribute && attribute.isInterleavedBufferAttribute ) ) {
 
-				console.warn( 'THREE.BufferGeometry: .addAttribute() now expects ( name, attribute ).' );
+				console.warn( 'BufferGeometry: .addAttribute() now expects ( name, attribute ).' );
 
 				this.addAttribute( name, new BufferAttribute( arguments[ 1 ], arguments[ 2 ] ) );
 
@@ -9861,7 +8609,7 @@ var Three = (function (exports) {
 
 			if ( name === 'index' ) {
 
-				console.warn( 'THREE.BufferGeometry.addAttribute: Use .setIndex() for index attribute.' );
+				console.warn( 'BufferGeometry.addAttribute: Use .setIndex() for index attribute.' );
 				this.setIndex( attribute );
 
 				return;
@@ -10071,7 +8819,7 @@ var Three = (function (exports) {
 
 		setFromObject: function ( object ) {
 
-			// console.log( 'THREE.BufferGeometry.setFromObject(). Converting', object, this );
+			// console.log( 'BufferGeometry.setFromObject(). Converting', object, this );
 
 			var geometry = object.geometry;
 
@@ -10391,7 +9139,7 @@ var Three = (function (exports) {
 
 			if ( isNaN( this.boundingBox.min.x ) || isNaN( this.boundingBox.min.y ) || isNaN( this.boundingBox.min.z ) ) {
 
-				console.error( 'THREE.BufferGeometry.computeBoundingBox: Computed min/max have NaN values. The "position" attribute is likely to have NaN values.', this );
+				console.error( 'BufferGeometry.computeBoundingBox: Computed min/max have NaN values. The "position" attribute is likely to have NaN values.', this );
 
 			}
 
@@ -10437,7 +9185,7 @@ var Three = (function (exports) {
 
 					if ( isNaN( this.boundingSphere.radius ) ) {
 
-						console.error( 'THREE.BufferGeometry.computeBoundingSphere(): Computed radius is NaN. The "position" attribute is likely to have NaN values.', this );
+						console.error( 'BufferGeometry.computeBoundingSphere(): Computed radius is NaN. The "position" attribute is likely to have NaN values.', this );
 
 					}
 
@@ -10578,7 +9326,7 @@ var Three = (function (exports) {
 
 			if ( ! ( geometry && geometry.isBufferGeometry ) ) {
 
-				console.error( 'THREE.BufferGeometry.merge(): geometry not an instance of THREE.BufferGeometry.', geometry );
+				console.error( 'BufferGeometry.merge(): geometry not an instance of BufferGeometry.', geometry );
 				return;
 
 			}
@@ -10639,7 +9387,7 @@ var Three = (function (exports) {
 
 			if ( this.index === null ) {
 
-				console.warn( 'THREE.BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
 				return this;
 
 			}
@@ -10767,29 +9515,7 @@ var Three = (function (exports) {
 
 		clone: function () {
 
-			/*
-			 // Handle primitives
-
-			 var parameters = this.parameters;
-
-			 if ( parameters !== undefined ) {
-
-			 var values = [];
-
-			 for ( var key in parameters ) {
-
-			 values.push( parameters[ key ] );
-
-			 }
-
-			 var geometry = Object.create( this.constructor.prototype );
-			 this.constructor.apply( geometry, values );
-			 return geometry;
-
-			 }
-
-			 return new this.constructor().copy( this );
-			 */
+			
 
 			return new BufferGeometry().copy( this );
 
@@ -10900,41 +9626,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author zz85 / http://www.lab4games.net/zz85/blog
-	 * Extensible curve object
-	 *
-	 * Some common of curve methods:
-	 * .getPoint( t, optionalTarget ), .getTangent( t )
-	 * .getPointAt( u, optionalTarget ), .getTangentAt( u )
-	 * .getPoints(), .getSpacedPoints()
-	 * .getLength()
-	 * .updateArcLengths()
-	 *
-	 * This following curves inherit from THREE.Curve:
-	 *
-	 * -- 2D curves --
-	 * THREE.ArcCurve
-	 * THREE.CubicBezierCurve
-	 * THREE.EllipseCurve
-	 * THREE.LineCurve
-	 * THREE.QuadraticBezierCurve
-	 * THREE.SplineCurve
-	 *
-	 * -- 3D curves --
-	 * THREE.CatmullRomCurve3
-	 * THREE.CubicBezierCurve3
-	 * THREE.LineCurve3
-	 * THREE.QuadraticBezierCurve3
-	 *
-	 * A series of curves can be represented as a THREE.CurvePath.
-	 *
-	 **/
-
-	/**************************************************************
-	 *	Abstract Curve base class
-	 **************************************************************/
-
 	function Curve() {
 
 		this.type = 'Curve';
@@ -10948,9 +9639,9 @@ var Three = (function (exports) {
 		// Virtual base class method to overwrite and implement in subclasses
 		//	- t [0 .. 1]
 
-		getPoint: function ( /* t, optionalTarget */ ) {
+		getPoint: function (  ) {
 
-			console.warn( 'THREE.Curve: .getPoint() not implemented.' );
+			console.warn( 'Curve: .getPoint() not implemented.' );
 			return null;
 
 		},
@@ -11319,30 +10010,9 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author renej
-	 * NURBS utils
-	 *
-	 * See NURBSCurve and NURBSSurface.
-	 *
-	 **/
-
-
-	/**************************************************************
-	 *	NURBS Utils
-	 **************************************************************/
-
 	var NURBSUtils = {
 
-		/*
-		Finds knot vector span.
-
-		p : degree
-		u : parametric value
-		U : knot vector
 		
-		returns the span
-		*/
 		findSpan: function( p,  u,  U ) {
 
 			var n = U.length - p - 1;
@@ -11384,16 +10054,7 @@ var Three = (function (exports) {
 		},
 	    
 			
-		/*
-		Calculate basis functions. See The NURBS Book, page 70, algorithm A2.2
-	   
-		span : span in which u lies
-		u    : parametric point
-		p    : degree
-		U    : knot vector
 		
-		returns array[p+1] with basis functions values.
-		*/
 		calcBasisFunctions: function( span, u, p, U ) {
 
 			var N = [];
@@ -11427,16 +10088,7 @@ var Three = (function (exports) {
 		},
 
 
-		/*
-		Calculate B-Spline curve points. See The NURBS Book, page 82, algorithm A3.1.
-	 
-		p : degree of B-Spline
-		U : knot vector
-		P : control points (x, y, z, w)
-		u : parametric point
-
-		returns point for given u
-		*/
+		
 		calcBSplinePoint: function( p, U, P, u ) {
 
 			var span = this.findSpan( p, u, U );
@@ -11460,17 +10112,7 @@ var Three = (function (exports) {
 		},
 
 
-		/*
-		Calculate basis functions derivatives. See The NURBS Book, page 72, algorithm A2.3.
-
-		span : span in which u lies
-		u    : parametric point
-		p    : degree
-		n    : number of derivatives to calculate
-		U    : knot vector
-
-		returns array[n+1][p+1] with basis functions derivatives
-		*/
+		
 		calcBasisFunctionDerivatives: function( span,  u,  p,  n,  U ) {
 
 			var zeroArr = [];
@@ -11590,17 +10232,7 @@ var Three = (function (exports) {
 		},
 
 
-		/*
-			Calculate derivatives of a B-Spline. See The NURBS Book, page 93, algorithm A3.2.
-
-			p  : degree
-			U  : knot vector
-			P  : control points
-			u  : Parametric points
-			nd : number of derivatives
-
-			returns array[d+1] with derivatives
-			*/
+		
 		calcBSplineDerivatives: function( p,  U,  P,  u,  nd ) {
 
 			var du = nd < p ? nd : p;
@@ -11646,11 +10278,7 @@ var Three = (function (exports) {
 		},
 
 
-		/*
-		Calculate "K over I"
-
-		returns k!/(i!(k-i)!)
-		*/
+		
 		calcKoverI: function( k, i ) {
 
 			var nom = 1;
@@ -11680,13 +10308,7 @@ var Three = (function (exports) {
 		},
 
 
-		/*
-		Calculate derivatives (0-nd) of rational curve. See The NURBS Book, page 127, algorithm A4.2.
-
-		Pders : result of function calcBSplineDerivatives
-
-		returns array with derivatives for rational curve.
-		*/
+		
 		calcRationalCurveDerivatives: function ( Pders ) {
 
 			var nd = Pders.length;
@@ -11722,17 +10344,7 @@ var Three = (function (exports) {
 		},
 
 
-		/*
-		Calculate NURBS curve derivatives. See The NURBS Book, page 127, algorithm A4.2.
-
-		p  : degree
-		U  : knot vector
-		P  : control points in homogeneous space
-		u  : parametric points
-		nd : number of derivatives
-
-		returns array with derivatives.
-		*/
+		
 		calcNURBSDerivatives: function( p,  U,  P,  u,  nd ) {
 
 			var Pders = this.calcBSplineDerivatives( p, U, P, u, nd );
@@ -11741,16 +10353,7 @@ var Three = (function (exports) {
 		},
 
 
-		/*
-		Calculate rational B-Spline surface point. See The NURBS Book, page 134, algorithm A4.3.
-	 
-		p1, p2 : degrees of B-Spline surface
-		U1, U2 : knot vectors
-		P      : control points (x, y, z, w)
-		u, v   : parametric values
-
-		returns point for given (u, v)
-		*/
+		
 		calcSurfacePoint: function( p, q, U, V, P, u, v ) {
 
 			var uspan = this.findSpan( p, u, U );
@@ -11789,22 +10392,7 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author renej
-	 * NURBS curve object
-	 *
-	 * Derives from Curve, overriding getPoint and getTangent.
-	 *
-	 * Implementation is based on (x, y [, z=0 [, w=1]]) control points with w=weight.
-	 *
-	 **/
-
-
-	/**************************************************************
-	 *	NURBS curve
-	 **************************************************************/
-
-	var NURBSCurve = function ( degree, knots /* array of reals */, controlPoints /* array of Vector(2|3|4) */, startKnot /* index in knots */, endKnot /* index in knots */ ) {
+	var NURBSCurve = function ( degree, knots , controlPoints , startKnot , endKnot  ) {
 
 		Curve.call( this );
 
@@ -11859,10 +10447,6 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function Group() {
 
 		Object3D.call( this );
@@ -11879,12 +10463,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author ikerr / http://verold.com
-	 */
-
 	function Bone() {
 
 		Object3D.call( this );
@@ -11900,12 +10478,6 @@ var Three = (function (exports) {
 		isBone: true
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author WestLangley / http://github.com/WestLangley
-	*/
 
 	function Camera() {
 
@@ -11967,13 +10539,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author greggman / http://games.greggman.com/
-	 * @author zz85 / http://www.lab4games.net/zz85/blog
-	 * @author tschw
-	 */
-
 	function PerspectiveCamera( fov, aspect, near, far ) {
 
 		Camera.call( this );
@@ -12024,14 +10589,7 @@ var Three = (function (exports) {
 
 		},
 
-		/**
-		 * Sets the FOV by focal length in respect to the current .filmGauge.
-		 *
-		 * The default film gauge is 35, so that the focal length can be specified for
-		 * a 35mm (full frame) camera.
-		 *
-		 * Values for focal length and film gauge must have the same unit.
-		 */
+		
 		setFocalLength: function ( focalLength ) {
 
 			// see http://www.bobatkins.com/photography/technical/field_of_view.html
@@ -12042,9 +10600,7 @@ var Three = (function (exports) {
 
 		},
 
-		/**
-		 * Calculates the focal length from the current .fov and .filmGauge.
-		 */
+		
 		getFocalLength: function () {
 
 			var vExtentSlope = Math.tan( _Math.DEG2RAD * 0.5 * this.fov );
@@ -12074,41 +10630,7 @@ var Three = (function (exports) {
 
 		},
 
-		/**
-		 * Sets an offset in a larger frustum. This is useful for multi-window or
-		 * multi-monitor/multi-machine setups.
-		 *
-		 * For example, if you have 3x2 monitors and each monitor is 1920x1080 and
-		 * the monitors are in grid like this
-		 *
-		 *   +---+---+---+
-		 *   | A | B | C |
-		 *   +---+---+---+
-		 *   | D | E | F |
-		 *   +---+---+---+
-		 *
-		 * then for each monitor you would call it like this
-		 *
-		 *   var w = 1920;
-		 *   var h = 1080;
-		 *   var fullWidth = w * 3;
-		 *   var fullHeight = h * 2;
-		 *
-		 *   --A--
-		 *   camera.setOffset( fullWidth, fullHeight, w * 0, h * 0, w, h );
-		 *   --B--
-		 *   camera.setOffset( fullWidth, fullHeight, w * 1, h * 0, w, h );
-		 *   --C--
-		 *   camera.setOffset( fullWidth, fullHeight, w * 2, h * 0, w, h );
-		 *   --D--
-		 *   camera.setOffset( fullWidth, fullHeight, w * 0, h * 1, w, h );
-		 *   --E--
-		 *   camera.setOffset( fullWidth, fullHeight, w * 1, h * 1, w, h );
-		 *   --F--
-		 *   camera.setOffset( fullWidth, fullHeight, w * 2, h * 1, w, h );
-		 *
-		 *   Note there is no reason monitors have to be the same size or in a grid.
-		 */
+		
 		setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 
 			this.aspect = fullWidth / fullHeight;
@@ -12203,11 +10725,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author arose / http://github.com/arose
-	 */
 
 	function OrthographicCamera( left, right, top, bottom, near, far ) {
 
@@ -12344,11 +10861,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 */
-
 	function Light( color, intensity ) {
 
 		Object3D.call( this );
@@ -12400,10 +10912,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	function LightShadow( camera ) {
 
@@ -12457,11 +10965,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
-
 	function PointLight( color, intensity, distance, decay ) {
 
 		Light.call( this, color, intensity );
@@ -12472,14 +10975,14 @@ var Three = (function (exports) {
 			get: function () {
 
 				// intensity = power per solid angle.
-				// ref: equation (15) from http://www.frostbite.com/wp-content/uploads/2014/11/course_notes_moving_frostbite_to_pbr.pdf
+				// ref: equation (15) from https://seblagarde.files.wordpress.com/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf
 				return this.intensity * 4 * Math.PI;
 
 			},
 			set: function ( power ) {
 
 				// intensity = power per solid angle.
-				// ref: equation (15) from http://www.frostbite.com/wp-content/uploads/2014/11/course_notes_moving_frostbite_to_pbr.pdf
+				// ref: equation (15) from https://seblagarde.files.wordpress.com/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf
 				this.intensity = power / ( 4 * Math.PI );
 
 			}
@@ -12513,10 +11016,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function DirectionalLightShadow( ) {
 
 		LightShadow.call( this, new OrthographicCamera( - 5, 5, 5, - 5, 0.5, 500 ) );
@@ -12528,11 +11027,6 @@ var Three = (function (exports) {
 		constructor: DirectionalLightShadow
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 */
 
 	function DirectionalLight( color, intensity ) {
 
@@ -12569,10 +11063,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function SpotLightShadow() {
 
 		LightShadow.call( this, new PerspectiveCamera( 50, 1, 0.5, 500 ) );
@@ -12606,10 +11096,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 */
-
 	function SpotLight( color, intensity, distance, angle, penumbra, decay ) {
 
 		Light.call( this, color, intensity );
@@ -12625,14 +11111,14 @@ var Three = (function (exports) {
 			get: function () {
 
 				// intensity = power per solid angle.
-				// ref: equation (17) from http://www.frostbite.com/wp-content/uploads/2014/11/course_notes_moving_frostbite_to_pbr.pdf
+				// ref: equation (17) from https://seblagarde.files.wordpress.com/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf
 				return this.intensity * Math.PI;
 
 			},
 			set: function ( power ) {
 
 				// intensity = power per solid angle.
-				// ref: equation (17) from http://www.frostbite.com/wp-content/uploads/2014/11/course_notes_moving_frostbite_to_pbr.pdf
+				// ref: equation (17) from https://seblagarde.files.wordpress.com/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf
 				this.intensity = power / Math.PI;
 
 			}
@@ -12671,10 +11157,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Ray( origin, direction ) {
 
@@ -13202,10 +11684,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author bhouston / http://clara.io
-	 */
-
 	function Line3( start, end ) {
 
 		this.start = ( start !== undefined ) ? start : new Vector3();
@@ -13326,10 +11804,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Plane( normal, constant ) {
 
@@ -13552,11 +12026,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author bhouston / http://clara.io
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function Triangle( a, b, c ) {
 
 		this.a = ( a !== undefined ) ? a : new Vector3();
@@ -13739,6 +12208,12 @@ var Three = (function (exports) {
 
 		},
 
+		intersectsBox: function ( box ) {
+
+			return box.intersectsTriangle( this );
+
+		},
+
 		closestPointToPoint: function () {
 
 			var plane = new Plane();
@@ -13804,11 +12279,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 */
-
 	function Face3( a, b, c, normal, color, materialIndex ) {
 
 		this.a = a;
@@ -13862,12 +12332,84 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author jonobr1 / http://jonobr1.com/
-	 */
+	function MeshBasicMaterial( parameters ) {
+
+		Material.call( this );
+
+		this.type = 'MeshBasicMaterial';
+
+		this.color = new Color( 0xffffff ); // emissive
+
+		this.map = null;
+
+		this.lightMap = null;
+		this.lightMapIntensity = 1.0;
+
+		this.aoMap = null;
+		this.aoMapIntensity = 1.0;
+
+		this.specularMap = null;
+
+		this.alphaMap = null;
+
+		this.envMap = null;
+		this.combine = MultiplyOperation;
+		this.reflectivity = 1;
+		this.refractionRatio = 0.98;
+
+		this.wireframe = false;
+		this.wireframeLinewidth = 1;
+		this.wireframeLinecap = 'round';
+		this.wireframeLinejoin = 'round';
+
+		this.skinning = false;
+		this.morphTargets = false;
+
+		this.lights = false;
+
+		this.setValues( parameters );
+
+	}
+
+	MeshBasicMaterial.prototype = Object.create( Material.prototype );
+	MeshBasicMaterial.prototype.constructor = MeshBasicMaterial;
+
+	MeshBasicMaterial.prototype.isMeshBasicMaterial = true;
+
+	MeshBasicMaterial.prototype.copy = function ( source ) {
+
+		Material.prototype.copy.call( this, source );
+
+		this.color.copy( source.color );
+
+		this.map = source.map;
+
+		this.lightMap = source.lightMap;
+		this.lightMapIntensity = source.lightMapIntensity;
+
+		this.aoMap = source.aoMap;
+		this.aoMapIntensity = source.aoMapIntensity;
+
+		this.specularMap = source.specularMap;
+
+		this.alphaMap = source.alphaMap;
+
+		this.envMap = source.envMap;
+		this.combine = source.combine;
+		this.reflectivity = source.reflectivity;
+		this.refractionRatio = source.refractionRatio;
+
+		this.wireframe = source.wireframe;
+		this.wireframeLinewidth = source.wireframeLinewidth;
+		this.wireframeLinecap = source.wireframeLinecap;
+		this.wireframeLinejoin = source.wireframeLinejoin;
+
+		this.skinning = source.skinning;
+		this.morphTargets = source.morphTargets;
+
+		return this;
+
+	};
 
 	function Mesh( geometry, material ) {
 
@@ -14248,13 +12790,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author michael guerrero / http://realitymeltdown.com
-	 * @author ikerr / http://verold.com
-	 */
-
 	function Skeleton( bones, boneInverses ) {
 
 		// copy the bone array
@@ -14278,7 +12813,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.warn( 'THREE.Skeleton boneInverses is the wrong length.' );
+				console.warn( 'Skeleton boneInverses is the wrong length.' );
 
 				this.boneInverses = [];
 
@@ -14400,15 +12935,27 @@ var Three = (function (exports) {
 
 			return new Skeleton( this.bones, this.boneInverses );
 
+		},
+
+		getBoneByName: function ( name ) {
+
+			for ( var i = 0, il = this.bones.length; i < il; i ++ ) {
+
+				var bone = this.bones[ i ];
+
+				if ( bone.name === name ) {
+
+					return bone;
+
+				}
+
+			}
+
+			return undefined;
+
 		}
 
 	} );
-
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author ikerr / http://verold.com
-	 */
 
 	function SkinnedMesh( geometry, material ) {
 
@@ -14591,7 +13138,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.warn( 'THREE.SkinnedMesh: Unrecognized bindMode: ' + this.bindMode );
+				console.warn( 'SkinnedMesh: Unrecognized bindMode: ' + this.bindMode );
 
 			}
 
@@ -14605,16 +13152,124 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
+	function LineBasicMaterial( parameters ) {
+
+		Material.call( this );
+
+		this.type = 'LineBasicMaterial';
+
+		this.color = new Color( 0xffffff );
+
+		this.linewidth = 1;
+		this.linecap = 'round';
+		this.linejoin = 'round';
+
+		this.lights = false;
+
+		this.setValues( parameters );
+
+	}
+
+	LineBasicMaterial.prototype = Object.create( Material.prototype );
+	LineBasicMaterial.prototype.constructor = LineBasicMaterial;
+
+	LineBasicMaterial.prototype.isLineBasicMaterial = true;
+
+	LineBasicMaterial.prototype.copy = function ( source ) {
+
+		Material.prototype.copy.call( this, source );
+
+		this.color.copy( source.color );
+
+		this.linewidth = source.linewidth;
+		this.linecap = source.linecap;
+		this.linejoin = source.linejoin;
+
+		return this;
+
+	};
+
+	function LineSegments( geometry, material ) {
+
+		Line.call( this, geometry, material );
+
+		this.type = 'LineSegments';
+
+	}
+
+	LineSegments.prototype = Object.assign( Object.create( Line.prototype ), {
+
+		constructor: LineSegments,
+
+		isLineSegments: true,
+
+		computeLineDistances: ( function () {
+
+			var start = new Vector3();
+			var end = new Vector3();
+
+			return function computeLineDistances() {
+
+				var geometry = this.geometry;
+
+				if ( geometry.isBufferGeometry ) {
+
+					// we assume non-indexed geometry
+
+					if ( geometry.index === null ) {
+
+						var positionAttribute = geometry.attributes.position;
+						var lineDistances = [];
+
+						for ( var i = 0, l = positionAttribute.count; i < l; i += 2 ) {
+
+							start.fromBufferAttribute( positionAttribute, i );
+							end.fromBufferAttribute( positionAttribute, i + 1 );
+
+							lineDistances[ i ] = ( i === 0 ) ? 0 : lineDistances[ i - 1 ];
+							lineDistances[ i + 1 ] = lineDistances[ i ] + start.distanceTo( end );
+
+						}
+
+						geometry.addAttribute( 'lineDistance', new Float32BufferAttribute( lineDistances, 1 ) );
+
+					} else {
+
+						console.warn( 'LineSegments.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+
+					}
+
+				} else if ( geometry.isGeometry ) {
+
+					var vertices = geometry.vertices;
+					var lineDistances = geometry.lineDistances;
+
+					for ( var i = 0, l = vertices.length; i < l; i += 2 ) {
+
+						start.copy( vertices[ i ] );
+						end.copy( vertices[ i + 1 ] );
+
+						lineDistances[ i ] = ( i === 0 ) ? 0 : lineDistances[ i - 1 ];
+						lineDistances[ i + 1 ] = lineDistances[ i ] + start.distanceTo( end );
+
+					}
+
+				}
+
+				return this;
+
+			};
+
+		}() )
+
+	} );
 
 	function Line( geometry, material, mode ) {
 
 		if ( mode === 1 ) {
 
-			console.error( 'THREE.Line: parameter THREE.LinePieces no longer supported. Created THREE.LineSegments instead.' );
-			
+			console.warn( 'Line: parameter LinePieces no longer supported. Created LineSegments instead.' );
+			return new LineSegments( geometry, material );
 
 		}
 
@@ -14632,6 +13287,64 @@ var Three = (function (exports) {
 		constructor: Line,
 
 		isLine: true,
+
+		computeLineDistances: ( function () {
+
+			var start = new Vector3();
+			var end = new Vector3();
+
+			return function computeLineDistances() {
+
+				var geometry = this.geometry;
+
+				if ( geometry.isBufferGeometry ) {
+
+					// we assume non-indexed geometry
+
+					if ( geometry.index === null ) {
+
+						var positionAttribute = geometry.attributes.position;
+						var lineDistances = [ 0 ];
+
+						for ( var i = 1, l = positionAttribute.count; i < l; i ++ ) {
+
+							start.fromBufferAttribute( positionAttribute, i - 1 );
+							end.fromBufferAttribute( positionAttribute, i );
+
+							lineDistances[ i ] = lineDistances[ i - 1 ];
+							lineDistances[ i ] += start.distanceTo( end );
+
+						}
+
+						geometry.addAttribute( 'lineDistance', new Float32BufferAttribute( lineDistances, 1 ) );
+
+					} else {
+
+						console.warn( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+
+					}
+
+				} else if ( geometry.isGeometry ) {
+
+					var vertices = geometry.vertices;
+					var lineDistances = geometry.lineDistances;
+
+					lineDistances[ 0 ] = 0;
+
+					for ( var i = 1, l = vertices.length; i < l; i ++ ) {
+
+						lineDistances[ i ] = lineDistances[ i - 1 ];
+						lineDistances[ i ] += vertices[ i - 1 ].distanceTo( vertices[ i ] );
+
+					}
+
+				}
+
+				return this;
+
+			};
+
+		}() ),
 
 		raycast: ( function () {
 
@@ -14790,10 +13503,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function AmbientLight( color, intensity ) {
 
 		Light.call( this, color, intensity );
@@ -14811,16 +13520,6 @@ var Three = (function (exports) {
 		isAmbientLight: true
 
 	} );
-
-	/**
-	 *
-	 * A Track that interpolates Strings
-	 *
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
 
 	function StringKeyframeTrack( name, times, values, interpolation ) {
 
@@ -14842,16 +13541,6 @@ var Three = (function (exports) {
 		InterpolantFactoryMethodSmooth: undefined
 
 	} );
-
-	/**
-	 *
-	 * A Track of Boolean keyframe values.
-	 *
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
 
 	function BooleanKeyframeTrack( name, times, values ) {
 
@@ -14876,28 +13565,6 @@ var Three = (function (exports) {
 		// computes "firstValue ^ isOdd( index )".
 
 	} );
-
-	/**
-	 * Abstract base class of interpolants over parametric samples.
-	 *
-	 * The parameter domain is one dimensional, typically the time or a path
-	 * along a curve defined by the data.
-	 *
-	 * The sample values can have any dimensionality and derived classes may
-	 * apply special interpretations to the data.
-	 *
-	 * This class provides the interval seek in a Template Method, deferring
-	 * the actual interpolation to derived classes.
-	 *
-	 * Time complexity is O(1) for linear access crossing at most two points
-	 * and O(log N) for random access, where N is the number of positions.
-	 *
-	 * References:
-	 *
-	 * 		http://www.oodesign.com/template-method-pattern.html
-	 *
-	 * @author tschw
-	 */
 
 	function Interpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
@@ -15108,14 +13775,14 @@ var Three = (function (exports) {
 
 		// Template methods for derived classes:
 
-		interpolate_: function ( /* i1, t0, t, t1 */ ) {
+		interpolate_: function (  ) {
 
 			throw new Error( 'call to abstract method' );
 			// implementations shall return this.resultBuffer
 
 		},
 
-		intervalChanged_: function ( /* i1, t0, t1 */ ) {
+		intervalChanged_: function (  ) {
 
 			// empty
 
@@ -15133,12 +13800,6 @@ var Three = (function (exports) {
 		afterEnd_: Interpolant.prototype.copySampleValue_,
 
 	} );
-
-	/**
-	 * Spherical linear unit quaternion interpolant.
-	 *
-	 * @author tschw
-	 */
 
 	function QuaternionLinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
@@ -15172,15 +13833,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 *
-	 * A Track of quaternion keyframe values.
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
-
 	function QuaternionKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -15207,16 +13859,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 *
-	 * A Track of keyframe values that represent color.
-	 *
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
-
 	function ColorKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -15238,15 +13880,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 *
-	 * A Track of numeric keyframe values.
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
-
 	function NumberKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -15264,16 +13897,6 @@ var Three = (function (exports) {
 		// DefaultInterpolation is inherited
 
 	} );
-
-	/**
-	 * Fast and simple cubic spline interpolant.
-	 *
-	 * It was derived from a Hermitian construction setting the first derivative
-	 * at each sample position to the linear slope between neighboring positions
-	 * over their parameter interval.
-	 *
-	 * @author tschw
-	 */
 
 	function CubicInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
@@ -15415,10 +14038,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author tschw
-	 */
-
 	function LinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -15455,14 +14074,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 *
-	 * Interpolant that evaluates to the sample value at the position preceeding
-	 * the parameter.
-	 *
-	 * @author tschw
-	 */
-
 	function DiscreteInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -15473,19 +14084,13 @@ var Three = (function (exports) {
 
 		constructor: DiscreteInterpolant,
 
-		interpolate_: function ( i1 /*, t0, t, t1 */ ) {
+		interpolate_: function ( i1  ) {
 
 			return this.copySampleValue_( i1 - 1 );
 
 		}
 
 	} );
-
-	/**
-	 * @author tschw
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 */
 
 	var AnimationUtils = {
 
@@ -15603,7 +14208,7 @@ var Three = (function (exports) {
 
 			} else if ( value.toArray !== undefined ) {
 
-				// ...assume THREE.Math-ish
+				// ...assume Math-ish
 
 				do {
 
@@ -15645,20 +14250,10 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 *
-	 * A timed sequence of keyframes for a specific property.
-	 *
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
-
 	function KeyframeTrack( name, times, values, interpolation ) {
 
-		if ( name === undefined ) throw new Error( 'THREE.KeyframeTrack: track name is undefined' );
-		if ( times === undefined || times.length === 0 ) throw new Error( 'THREE.KeyframeTrack: no keyframes in track named ' + name );
+		if ( name === undefined ) throw new Error( 'KeyframeTrack: track name is undefined' );
+		if ( times === undefined || times.length === 0 ) throw new Error( 'KeyframeTrack: no keyframes in track named ' + name );
 
 		this.name = name;
 
@@ -15683,7 +14278,7 @@ var Three = (function (exports) {
 
 			if ( json.type === undefined ) {
 
-				throw new Error( 'THREE.KeyframeTrack: track type undefined, can not parse' );
+				throw new Error( 'KeyframeTrack: track type undefined, can not parse' );
 
 			}
 
@@ -15790,7 +14385,7 @@ var Three = (function (exports) {
 
 			}
 
-			throw new Error( 'THREE.KeyframeTrack: Unsupported typeName: ' + typeName );
+			throw new Error( 'KeyframeTrack: Unsupported typeName: ' + typeName );
 
 		}
 
@@ -15870,7 +14465,7 @@ var Three = (function (exports) {
 
 				}
 
-				console.warn( 'THREE.KeyframeTrack:', message );
+				console.warn( 'KeyframeTrack:', message );
 				return;
 
 			}
@@ -15989,7 +14584,7 @@ var Three = (function (exports) {
 			var valueSize = this.getValueSize();
 			if ( valueSize - Math.floor( valueSize ) !== 0 ) {
 
-				console.error( 'THREE.KeyframeTrack: Invalid value size in track.', this );
+				console.error( 'KeyframeTrack: Invalid value size in track.', this );
 				valid = false;
 
 			}
@@ -16001,7 +14596,7 @@ var Three = (function (exports) {
 
 			if ( nKeys === 0 ) {
 
-				console.error( 'THREE.KeyframeTrack: Track is empty.', this );
+				console.error( 'KeyframeTrack: Track is empty.', this );
 				valid = false;
 
 			}
@@ -16014,7 +14609,7 @@ var Three = (function (exports) {
 
 				if ( typeof currTime === 'number' && isNaN( currTime ) ) {
 
-					console.error( 'THREE.KeyframeTrack: Time is not a valid number.', this, i, currTime );
+					console.error( 'KeyframeTrack: Time is not a valid number.', this, i, currTime );
 					valid = false;
 					break;
 
@@ -16022,7 +14617,7 @@ var Three = (function (exports) {
 
 				if ( prevTime !== null && prevTime > currTime ) {
 
-					console.error( 'THREE.KeyframeTrack: Out of order keys.', this, i, currTime, prevTime );
+					console.error( 'KeyframeTrack: Out of order keys.', this, i, currTime, prevTime );
 					valid = false;
 					break;
 
@@ -16042,7 +14637,7 @@ var Three = (function (exports) {
 
 						if ( isNaN( value ) ) {
 
-							console.error( 'THREE.KeyframeTrack: Value is not a valid number.', this, i, value );
+							console.error( 'KeyframeTrack: Value is not a valid number.', this, i, value );
 							valid = false;
 							break;
 
@@ -16166,16 +14761,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 *
-	 * A Track of vectored keyframe values.
-	 *
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
-
 	function VectorKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -16193,14 +14778,6 @@ var Three = (function (exports) {
 		// DefaultInterpolation is inherited
 
 	} );
-
-	/**
-	 *
-	 * Reusable set of Tracks that represent an animation.
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 */
 
 	function AnimationClip( name, duration, tracks ) {
 
@@ -16378,7 +14955,7 @@ var Three = (function (exports) {
 
 			if ( ! animation ) {
 
-				console.error( 'THREE.AnimationClip: No animation in JSONLoader data.' );
+				console.error( 'AnimationClip: No animation in JSONLoader data.' );
 				return null;
 
 			}
@@ -16543,10 +15120,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author Don McCurdy / https://www.donmccurdy.com
-	 */
-
 	var LoaderUtils = {
 
 		decodeText: function ( array ) {
@@ -16569,7 +15142,8 @@ var Three = (function (exports) {
 
 			}
 
-			return s;
+			// Merges multi-byte utf-8 characters.
+			return decodeURIComponent( escape( s ) );
 
 		},
 
@@ -16587,39 +15161,7 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author Kyle-Larson https://github.com/Kyle-Larson
-	 * @author Takahiro https://github.com/takahirox
-	 * @author Lewy Blue https://github.com/looeee
-	 *
-	 * Loader loads FBX file and generates Group representing FBX scene.
-	 * Requires FBX file to be >= 7.0 and in ASCII or to be any version in Binary format.
-	 *
-	 * Supports:
-	 * 	Mesh Generation (Positional Data)
-	 * 	Normal Data (Per Vertex Drawing Instance)
-	 *	UV Data (Per Vertex Drawing Instance)
-	 *	Skinning
-	 *	Animation
-	 * 	- Separated Animations based on stacks.
-	 * 	- Skeletal & Non-Skeletal Animations
-	 *	NURBS (Open, Closed and Periodic forms)
-	 *
-	 * Needs Support:
-	 *	Euler rotation order
-	 *
-	 *
-	 * FBX format references:
-	 * 	https://wiki.blender.org/index.php/User:Mont29/Foundation/FBX_File_Structure
-	 *
-	 * 	Binary format specification:
-	 *		https://code.blender.org/2013/08/fbx-binary-file-format-specification/
-	 *		https://wiki.rogiken.org/specifications/file-format/fbx/ (more detail but Japanese)
-	 */
-
-
-
-		var FBXLoader = function ( manager ) {
+	var FBXLoader = function ( manager ) {
 
 			this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
@@ -16710,7 +15252,7 @@ var Three = (function (exports) {
 
 			if ( 'Connections' in FBXTree ) {
 
-				var rawConnections = FBXTree.Connections.properties.connections;
+				var rawConnections = FBXTree.Connections.connections;
 
 				rawConnections.forEach( function ( rawConnection ) {
 
@@ -16750,20 +15292,17 @@ var Three = (function (exports) {
 
 		}
 
-		// Parse FBXTree.Objects.subNodes.Video for embedded image data
-		// These images are connected to textures in FBXTree.Objects.subNodes.Textures
-		// via FBXTree.Connections. Note that images can be duplicated here, in which case only one
-		// may have a .Content field - we'll check for this and duplicate the data in the imageMap
+		// Parse FBXTree.Objects.Video for embedded image data
+		// These images are connected to textures in FBXTree.Objects.Textures
+		// via FBXTree.Connections.
 		function parseImages( FBXTree ) {
 
-			var imageMap = new Map();
+			var images = {};
+			var blobs = {};
 
-			var names = {};
-			var duplicates = [];
+			if ( 'Video' in FBXTree.Objects ) {
 
-			if ( 'Video' in FBXTree.Objects.subNodes ) {
-
-				var videoNodes = FBXTree.Objects.subNodes.Video;
+				var videoNodes = FBXTree.Objects.Video;
 
 				for ( var nodeID in videoNodes ) {
 
@@ -16771,22 +15310,21 @@ var Three = (function (exports) {
 
 					var id = parseInt( nodeID );
 
-					// check whether the file name is used by another videoNode
-					// and if so keep a record of both ids as a duplicate pair [ id1, id2 ]
-					if ( videoNode.properties.fileName in names ) {
+					images[ id ] = videoNode.Filename;
 
-						duplicates.push( [ id, names[ videoNode.properties.fileName ] ] );
+					// raw image data is in videoNode.Content
+					if ( 'Content' in videoNode ) {
 
-					}
+						var arrayBufferContent = ( videoNode.Content instanceof ArrayBuffer ) && ( videoNode.Content.byteLength > 0 );
+						var base64Content = ( typeof videoNode.Content === 'string' ) && ( videoNode.Content !== '' );
 
-					names[ videoNode.properties.fileName ] = id;
+						if ( arrayBufferContent || base64Content ) {
 
-					// raw image data is in videoNode.properties.Content
-					if ( 'Content' in videoNode.properties && videoNode.properties.Content !== '' ) {
+							var image = parseImage( videoNodes[ nodeID ] );
 
-						var image = parseImage( videoNodes[ nodeID ] );
+							blobs[ videoNode.Filename ] = image;
 
-						imageMap.set( id, image );
+						}
 
 					}
 
@@ -16794,36 +15332,24 @@ var Three = (function (exports) {
 
 			}
 
+			for ( var id in images ) {
 
-			// check each duplicate pair - if only one is in the image map then
-			// create an entry for the other id containing the same image data
-			// Note: it seems to be possible for entries to have the same file name but different
-			// content, we won't overwrite these
-			duplicates.forEach( function ( duplicatePair ) {
+				var filename = images[ id ];
 
-				if ( imageMap.has( duplicatePair[ 0 ] ) && ! imageMap.has( duplicatePair[ 1 ] ) ) {
+				if ( blobs[ filename ] !== undefined ) images[ id ] = blobs[ filename ];
+				else images[ id ] = images[ id ].split( '\\' ).pop();
 
-					var image = imageMap.get( duplicatePair[ 0 ] );
-					imageMap.set( duplicatePair[ 1 ], image );
+			}
 
-				} else if ( imageMap.has( duplicatePair[ 1 ] ) && ! imageMap.has( duplicatePair[ 0 ] ) ) {
-
-					var image = imageMap.get( duplicatePair[ 1 ] );
-					imageMap.set( duplicatePair[ 0 ], image );
-
-				}
-
-			} );
-
-			return imageMap;
+			return images;
 
 		}
 
-		// Parse embedded image data in FBXTree.Video.properties.Content
+		// Parse embedded image data in FBXTree.Video.Content
 		function parseImage( videoNode ) {
 
-			var content = videoNode.properties.Content;
-			var fileName = videoNode.properties.RelativeFilename || videoNode.properties.Filename;
+			var content = videoNode.Content;
+			var fileName = videoNode.RelativeFilename || videoNode.Filename;
 			var extension = fileName.slice( fileName.lastIndexOf( '.' ) + 1 ).toLowerCase();
 
 			var type;
@@ -16871,19 +15397,19 @@ var Three = (function (exports) {
 
 		}
 
-		// Parse nodes in FBXTree.Objects.subNodes.Texture
+		// Parse nodes in FBXTree.Objects.Texture
 		// These contain details such as UV scaling, cropping, rotation etc and are connected
-		// to images in FBXTree.Objects.subNodes.Video
-		function parseTextures( FBXTree, loader, imageMap, connections ) {
+		// to images in FBXTree.Objects.Video
+		function parseTextures( FBXTree, loader, images, connections ) {
 
 			var textureMap = new Map();
 
-			if ( 'Texture' in FBXTree.Objects.subNodes ) {
+			if ( 'Texture' in FBXTree.Objects ) {
 
-				var textureNodes = FBXTree.Objects.subNodes.Texture;
+				var textureNodes = FBXTree.Objects.Texture;
 				for ( var nodeID in textureNodes ) {
 
-					var texture = parseTexture( textureNodes[ nodeID ], loader, imageMap, connections );
+					var texture = parseTexture( textureNodes[ nodeID ], loader, images, connections );
 					textureMap.set( parseInt( nodeID ), texture );
 
 				}
@@ -16894,17 +15420,17 @@ var Three = (function (exports) {
 
 		}
 
-		// Parse individual node in FBXTree.Objects.subNodes.Texture
-		function parseTexture( textureNode, loader, imageMap, connections ) {
+		// Parse individual node in FBXTree.Objects.Texture
+		function parseTexture( textureNode, loader, images, connections ) {
 
-			var texture = loadTexture( textureNode, loader, imageMap, connections );
+			var texture = loadTexture( textureNode, loader, images, connections );
 
 			texture.ID = textureNode.id;
 
 			texture.name = textureNode.attrName;
 
-			var wrapModeU = textureNode.properties.WrapModeU;
-			var wrapModeV = textureNode.properties.WrapModeV;
+			var wrapModeU = textureNode.WrapModeU;
+			var wrapModeV = textureNode.WrapModeV;
 
 			var valueU = wrapModeU !== undefined ? wrapModeU.value : 0;
 			var valueV = wrapModeV !== undefined ? wrapModeV.value : 0;
@@ -16915,9 +15441,9 @@ var Three = (function (exports) {
 			texture.wrapS = valueU === 0 ? RepeatWrapping : ClampToEdgeWrapping;
 			texture.wrapT = valueV === 0 ? RepeatWrapping : ClampToEdgeWrapping;
 
-			if ( 'Scaling' in textureNode.properties ) {
+			if ( 'Scaling' in textureNode ) {
 
-				var values = textureNode.properties.Scaling.value;
+				var values = textureNode.Scaling.value;
 
 				texture.repeat.x = values[ 0 ];
 				texture.repeat.y = values[ 1 ];
@@ -16929,48 +15455,23 @@ var Three = (function (exports) {
 		}
 
 		// load a texture specified as a blob or data URI, or via an external URL using TextureLoader
-		function loadTexture( textureNode, loader, imageMap, connections ) {
+		function loadTexture( textureNode, loader, images, connections ) {
 
 			var fileName;
 
-			var filePath = textureNode.properties.FileName;
-			var relativeFilePath = textureNode.properties.RelativeFilename;
+			var currentPath = loader.path;
 
 			var children = connections.get( textureNode.id ).children;
 
-			if ( children !== undefined && children.length > 0 && imageMap.has( children[ 0 ].ID ) ) {
+			if ( children !== undefined && children.length > 0 && images[ children[ 0 ].ID ] !== undefined ) {
 
-				fileName = imageMap.get( children[ 0 ].ID );
+				fileName = images[ children[ 0 ].ID ];
 
-			}
-			// check that relative path is not an actually an absolute path and if so use it to load texture
-			else if ( relativeFilePath !== undefined && relativeFilePath[ 0 ] !== '/' && relativeFilePath.match( /^[a-zA-Z]:/ ) === null ) {
+				if ( fileName.indexOf( 'blob:' ) === 0 || fileName.indexOf( 'data:' ) === 0 ) {
 
-				fileName = relativeFilePath;
-
-			}
-			// texture specified by absolute path
-			else {
-
-				var split = filePath.split( /[\\\/]/ );
-
-				if ( split.length > 0 ) {
-
-					fileName = split[ split.length - 1 ];
-
-				} else {
-
-					fileName = filePath;
+					loader.setPath( undefined );
 
 				}
-
-			}
-
-			var currentPath = loader.path;
-
-			if ( fileName.indexOf( 'blob:' ) === 0 || fileName.indexOf( 'data:' ) === 0 ) {
-
-				loader.setPath( undefined );
 
 			}
 
@@ -16982,17 +15483,19 @@ var Three = (function (exports) {
 
 		}
 
-		// Parse nodes in FBXTree.Objects.subNodes.Material
+		// Parse nodes in FBXTree.Objects.Material
 		function parseMaterials( FBXTree, textureMap, connections ) {
 
 			var materialMap = new Map();
 
-			if ( 'Material' in FBXTree.Objects.subNodes ) {
+			if ( 'Material' in FBXTree.Objects ) {
 
-				var materialNodes = FBXTree.Objects.subNodes.Material;
+				var materialNodes = FBXTree.Objects.Material;
+
 				for ( var nodeID in materialNodes ) {
 
 					var material = parseMaterial( FBXTree, materialNodes[ nodeID ], textureMap, connections );
+
 					if ( material !== null ) materialMap.set( parseInt( nodeID ), material );
 
 				}
@@ -17003,14 +15506,14 @@ var Three = (function (exports) {
 
 		}
 
-		// Parse single node in FBXTree.Objects.subNodes.Material
-		// Materials are connected to texture maps in FBXTree.Objects.subNodes.Textures
+		// Parse single node in FBXTree.Objects.Material
+		// Materials are connected to texture maps in FBXTree.Objects.Textures
 		// FBX format currently only supports Lambert and Phong shading models
 		function parseMaterial( FBXTree, materialNode, textureMap, connections ) {
 
 			var ID = materialNode.id;
 			var name = materialNode.attrName;
-			var type = materialNode.properties.ShadingModel;
+			var type = materialNode.ShadingModel;
 
 			//Case where FBX wraps shading model in property object.
 			if ( typeof type === 'object' ) {
@@ -17022,7 +15525,7 @@ var Three = (function (exports) {
 			// Ignore unused materials which don't have any connections.
 			if ( ! connections.has( ID ) ) return null;
 
-			var parameters = parseParameters( FBXTree, materialNode.properties, textureMap, ID, connections );
+			var parameters = parseParameters( FBXTree, materialNode, textureMap, ID, connections );
 
 			var material;
 
@@ -17061,7 +15564,7 @@ var Three = (function (exports) {
 			}
 			if ( properties.Diffuse ) {
 
-				parameters.color = parseColor( properties.Diffuse );
+				parameters.color = new Color().fromArray( properties.Diffuse.value );
 
 			}
 			if ( properties.DisplacementFactor ) {
@@ -17076,7 +15579,7 @@ var Three = (function (exports) {
 			}
 			if ( properties.Specular ) {
 
-				parameters.specular = parseColor( properties.Specular );
+				parameters.specular = new Color().fromArray( properties.Specular.value );
 
 			}
 			if ( properties.Shininess ) {
@@ -17086,7 +15589,7 @@ var Three = (function (exports) {
 			}
 			if ( properties.Emissive ) {
 
-				parameters.emissive = parseColor( properties.Emissive );
+				parameters.emissive = new Color().fromArray( properties.Emissive.value );
 
 			}
 			if ( properties.EmissiveFactor ) {
@@ -17166,7 +15669,7 @@ var Three = (function (exports) {
 		function getTexture( FBXTree, textureMap, id, connections ) {
 
 			// if the texture is a layered texture, just use the first layer and issue a warning
-			if ( 'LayeredTexture' in FBXTree.Objects.subNodes && id in FBXTree.Objects.subNodes.LayeredTexture ) {
+			if ( 'LayeredTexture' in FBXTree.Objects && id in FBXTree.Objects.LayeredTexture ) {
 
 				console.warn( 'FBXLoader: layered textures are not supported in three.js. Discarding all but first layer.' );
 				id = connections.get( id ).children[ 0 ].ID;
@@ -17177,16 +15680,16 @@ var Three = (function (exports) {
 
 		}
 
-		// Parse nodes in FBXTree.Objects.subNodes.Deformer
+		// Parse nodes in FBXTree.Objects.Deformer
 		// Deformer node can contain skinning or Vertex Cache animation data, however only skinning is supported here
 		// Generates map of Skeleton-like objects for use later when generating and binding skeletons.
 		function parseDeformers( FBXTree, connections ) {
 
 			var skeletons = {};
 
-			if ( 'Deformer' in FBXTree.Objects.subNodes ) {
+			if ( 'Deformer' in FBXTree.Objects ) {
 
-				var DeformerNodes = FBXTree.Objects.subNodes.Deformer;
+				var DeformerNodes = FBXTree.Objects.Deformer;
 
 				for ( var nodeID in DeformerNodes ) {
 
@@ -17214,7 +15717,7 @@ var Three = (function (exports) {
 
 		}
 
-		// Parse single nodes in FBXTree.Objects.subNodes.Deformer
+		// Parse single nodes in FBXTree.Objects.Deformer
 		// The top level deformer nodes have type 'Skin' and subDeformer nodes have type 'Cluster'
 		// Each skin node represents a skeleton and each cluster node represents a bone
 		function parseSkeleton( connections, deformerNodes ) {
@@ -17232,19 +15735,16 @@ var Three = (function (exports) {
 					ID: child.ID,
 					indices: [],
 					weights: [],
-
-					// the global initial transform of the geometry node this bone is connected to
-					transform: new Matrix4().fromArray( subDeformerNode.subNodes.Transform.properties.a ),
-
-					// the global initial transform of this bone
-					transformLink: new Matrix4().fromArray( subDeformerNode.subNodes.TransformLink.properties.a ),
+					transform: new Matrix4().fromArray( subDeformerNode.Transform.a ),
+					transformLink: new Matrix4().fromArray( subDeformerNode.TransformLink.a ),
+					linkMode: subDeformerNode.Mode,
 
 				};
 
-				if ( 'Indexes' in subDeformerNode.subNodes ) {
+				if ( 'Indexes' in subDeformerNode ) {
 
-					rawBone.indices = subDeformerNode.subNodes.Indexes.properties.a;
-					rawBone.weights = subDeformerNode.subNodes.Weights.properties.a;
+					rawBone.indices = subDeformerNode.Indexes.a;
+					rawBone.weights = subDeformerNode.Weights.a;
 
 				}
 
@@ -17261,19 +15761,22 @@ var Three = (function (exports) {
 
 		}
 
-		// Parse nodes in FBXTree.Objects.subNodes.Geometry
+		// Parse nodes in FBXTree.Objects.Geometry
 		function parseGeometries( FBXTree, connections, skeletons ) {
 
 			var geometryMap = new Map();
 
-			if ( 'Geometry' in FBXTree.Objects.subNodes ) {
+			if ( 'Geometry' in FBXTree.Objects ) {
 
-				var geometryNodes = FBXTree.Objects.subNodes.Geometry;
+				var geometryNodes = FBXTree.Objects.Geometry;
+
+
 
 				for ( var nodeID in geometryNodes ) {
 
 					var relationships = connections.get( parseInt( nodeID ) );
 					var geo = parseGeometry( FBXTree, relationships, geometryNodes[ nodeID ], skeletons );
+
 					geometryMap.set( parseInt( nodeID ), geo );
 
 				}
@@ -17284,7 +15787,7 @@ var Three = (function (exports) {
 
 		}
 
-		// Parse single node in FBXTree.Objects.subNodes.Geometry
+		// Parse single node in FBXTree.Objects.Geometry
 		function parseGeometry( FBXTree, relationships, geometryNode, skeletons ) {
 
 			switch ( geometryNode.attrType ) {
@@ -17301,12 +15804,13 @@ var Three = (function (exports) {
 
 		}
 
-		// Parse single node mesh geometry in FBXTree.Objects.subNodes.Geometry
+
+		// Parse single node mesh geometry in FBXTree.Objects.Geometry
 		function parseMeshGeometry( FBXTree, relationships, geometryNode, skeletons ) {
 
 			var modelNodes = relationships.parents.map( function ( parent ) {
 
-				return FBXTree.Objects.subNodes.Model[ parent.ID ];
+				return FBXTree.Objects.Model[ parent.ID ];
 
 			} );
 
@@ -17330,18 +15834,18 @@ var Three = (function (exports) {
 			// For now just assume one model and get the preRotations from that
 			var modelNode = modelNodes[ 0 ];
 
-			if ( 'GeometricRotation' in modelNode.properties ) {
+			if ( 'GeometricRotation' in modelNode ) {
 
-				var array = modelNode.properties.GeometricRotation.value.map( Math.degToRad );
+				var array = modelNode.GeometricRotation.value.map( _Math.degToRad );
 				array[ 3 ] = 'ZYX';
 
 				preTransform.makeRotationFromEuler( new Euler().fromArray( array ) );
 
 			}
 
-			if ( 'GeometricTranslation' in modelNode.properties ) {
+			if ( 'GeometricTranslation' in modelNode ) {
 
-				preTransform.setPosition( new Vector3().fromArray( modelNode.properties.GeometricTranslation.value ) );
+				preTransform.setPosition( new Vector3().fromArray( modelNode.GeometricTranslation.value ) );
 
 			}
 
@@ -17349,13 +15853,11 @@ var Three = (function (exports) {
 
 		}
 
-		// Generate a BufferGeometry from a node in FBXTree.Objects.subNodes.Geometry
+		// Generate a BufferGeometry from a node in FBXTree.Objects.Geometry
 		function genGeometry( FBXTree, relationships, geometryNode, skeleton, preTransform ) {
 
-			var subNodes = geometryNode.subNodes;
-
-			var vertexPositions = subNodes.Vertices.properties.a;
-			var vertexIndices = subNodes.PolygonVertexIndex.properties.a;
+			var vertexPositions = geometryNode.Vertices.a;
+			var vertexIndices = geometryNode.PolygonVertexIndex.a;
 
 			// create arrays to hold the final data used to build the buffergeometry
 			var vertexBuffer = [];
@@ -17366,31 +15868,31 @@ var Three = (function (exports) {
 			var vertexWeightsBuffer = [];
 			var weightsIndicesBuffer = [];
 
-			if ( subNodes.LayerElementColor ) {
+			if ( geometryNode.LayerElementColor ) {
 
-				var colorInfo = getColors( subNodes.LayerElementColor[ 0 ] );
-
-			}
-
-			if ( subNodes.LayerElementMaterial ) {
-
-				var materialInfo = getMaterials( subNodes.LayerElementMaterial[ 0 ] );
+				var colorInfo = getColors( geometryNode.LayerElementColor[ 0 ] );
 
 			}
 
-			if ( subNodes.LayerElementNormal ) {
+			if ( geometryNode.LayerElementMaterial ) {
 
-				var normalInfo = getNormals( subNodes.LayerElementNormal[ 0 ] );
+				var materialInfo = getMaterials( geometryNode.LayerElementMaterial[ 0 ] );
 
 			}
 
-			if ( subNodes.LayerElementUV ) {
+			if ( geometryNode.LayerElementNormal ) {
+
+				var normalInfo = getNormals( geometryNode.LayerElementNormal[ 0 ] );
+
+			}
+
+			if ( geometryNode.LayerElementUV ) {
 
 				var uvInfo = [];
 				var i = 0;
-				while ( subNodes.LayerElementUV[ i ] ) {
+				while ( geometryNode.LayerElementUV[ i ] ) {
 
-					uvInfo.push( getUVs( subNodes.LayerElementUV[ i ] ) );
+					uvInfo.push( getUVs( geometryNode.LayerElementUV[ i ] ) );
 					i ++;
 
 				}
@@ -17684,8 +16186,6 @@ var Three = (function (exports) {
 					}
 
 					polygonIndex ++;
-
-					endOfFace = false;
 					faceLength = 0;
 
 					// reset arrays for the next face
@@ -17728,7 +16228,12 @@ var Three = (function (exports) {
 
 			if ( normalBuffer.length > 0 ) {
 
-				geo.addAttribute( 'normal', new Float32BufferAttribute( normalBuffer, 3 ) );
+				var normalAttribute = new Float32BufferAttribute( normalBuffer, 3 );
+
+				var normalMatrix = new Matrix3().getNormalMatrix( preTransform );
+				normalMatrix.applyToBufferAttribute( normalAttribute );
+
+				geo.addAttribute( 'normal', normalAttribute );
 
 			}
 
@@ -17796,22 +16301,22 @@ var Three = (function (exports) {
 		}
 
 
-		// Parse normal from FBXTree.Objects.subNodes.Geometry.subNodes.LayerElementNormal if it exists
+		// Parse normal from FBXTree.Objects.Geometry.LayerElementNormal if it exists
 		function getNormals( NormalNode ) {
 
-			var mappingType = NormalNode.properties.MappingInformationType;
-			var referenceType = NormalNode.properties.ReferenceInformationType;
-			var buffer = NormalNode.subNodes.Normals.properties.a;
+			var mappingType = NormalNode.MappingInformationType;
+			var referenceType = NormalNode.ReferenceInformationType;
+			var buffer = NormalNode.Normals.a;
 			var indexBuffer = [];
 			if ( referenceType === 'IndexToDirect' ) {
 
-				if ( 'NormalIndex' in NormalNode.subNodes ) {
+				if ( 'NormalIndex' in NormalNode ) {
 
-					indexBuffer = NormalNode.subNodes.NormalIndex.properties.a;
+					indexBuffer = NormalNode.NormalIndex.a;
 
-				} else if ( 'NormalsIndex' in NormalNode.subNodes ) {
+				} else if ( 'NormalsIndex' in NormalNode ) {
 
-					indexBuffer = NormalNode.subNodes.NormalsIndex.properties.a;
+					indexBuffer = NormalNode.NormalsIndex.a;
 
 				}
 
@@ -17827,16 +16332,16 @@ var Three = (function (exports) {
 
 		}
 
-		// Parse UVs from FBXTree.Objects.subNodes.Geometry.subNodes.LayerElementUV if it exists
+		// Parse UVs from FBXTree.Objects.Geometry.LayerElementUV if it exists
 		function getUVs( UVNode ) {
 
-			var mappingType = UVNode.properties.MappingInformationType;
-			var referenceType = UVNode.properties.ReferenceInformationType;
-			var buffer = UVNode.subNodes.UV.properties.a;
+			var mappingType = UVNode.MappingInformationType;
+			var referenceType = UVNode.ReferenceInformationType;
+			var buffer = UVNode.UV.a;
 			var indexBuffer = [];
 			if ( referenceType === 'IndexToDirect' ) {
 
-				indexBuffer = UVNode.subNodes.UVIndex.properties.a;
+				indexBuffer = UVNode.UVIndex.a;
 
 			}
 
@@ -17850,16 +16355,16 @@ var Three = (function (exports) {
 
 		}
 
-		// Parse Vertex Colors from FBXTree.Objects.subNodes.Geometry.subNodes.LayerElementColor if it exists
+		// Parse Vertex Colors from FBXTree.Objects.Geometry.LayerElementColor if it exists
 		function getColors( ColorNode ) {
 
-			var mappingType = ColorNode.properties.MappingInformationType;
-			var referenceType = ColorNode.properties.ReferenceInformationType;
-			var buffer = ColorNode.subNodes.Colors.properties.a;
+			var mappingType = ColorNode.MappingInformationType;
+			var referenceType = ColorNode.ReferenceInformationType;
+			var buffer = ColorNode.Colors.a;
 			var indexBuffer = [];
 			if ( referenceType === 'IndexToDirect' ) {
 
-				indexBuffer = ColorNode.subNodes.ColorIndex.properties.a;
+				indexBuffer = ColorNode.ColorIndex.a;
 
 			}
 
@@ -17873,11 +16378,11 @@ var Three = (function (exports) {
 
 		}
 
-		// Parse mapping and material data in FBXTree.Objects.subNodes.Geometry.subNodes.LayerElementMaterial if it exists
+		// Parse mapping and material data in FBXTree.Objects.Geometry.LayerElementMaterial if it exists
 		function getMaterials( MaterialNode ) {
 
-			var mappingType = MaterialNode.properties.MappingInformationType;
-			var referenceType = MaterialNode.properties.ReferenceInformationType;
+			var mappingType = MaterialNode.MappingInformationType;
+			var referenceType = MaterialNode.ReferenceInformationType;
 
 			if ( mappingType === 'NoMappingInformation' ) {
 
@@ -17891,7 +16396,7 @@ var Three = (function (exports) {
 
 			}
 
-			var materialIndexBuffer = MaterialNode.subNodes.Materials.properties.a;
+			var materialIndexBuffer = MaterialNode.Materials.a;
 
 			// Since materials are stored as indices, there's a bit of a mismatch between FBX and what
 			// we expect.So we create an intermediate buffer that points to the index in the buffer,
@@ -18007,7 +16512,7 @@ var Three = (function (exports) {
 
 		}
 
-		// Generate a NurbGeometry from a node in FBXTree.Objects.subNodes.Geometry
+		// Generate a NurbGeometry from a node in FBXTree.Objects.Geometry
 		function parseNurbsGeometry( geometryNode ) {
 
 			if ( NURBSCurve === undefined ) {
@@ -18017,20 +16522,20 @@ var Three = (function (exports) {
 
 			}
 
-			var order = parseInt( geometryNode.properties.Order );
+			var order = parseInt( geometryNode.Order );
 
 			if ( isNaN( order ) ) {
 
-				console.error( 'FBXLoader: Invalid Order %s given for geometry ID: %s', geometryNode.properties.Order, geometryNode.id );
+				console.error( 'FBXLoader: Invalid Order %s given for geometry ID: %s', geometryNode.Order, geometryNode.id );
 				return new BufferGeometry();
 
 			}
 
 			var degree = order - 1;
 
-			var knots = geometryNode.subNodes.KnotVector.properties.a;
+			var knots = geometryNode.KnotVector.a;
 			var controlPoints = [];
-			var pointsValues = geometryNode.subNodes.Points.properties.a;
+			var pointsValues = geometryNode.Points.a;
 
 			for ( var i = 0, l = pointsValues.length; i < l; i += 4 ) {
 
@@ -18040,11 +16545,11 @@ var Three = (function (exports) {
 
 			var startKnot, endKnot;
 
-			if ( geometryNode.properties.Form === 'Closed' ) {
+			if ( geometryNode.Form === 'Closed' ) {
 
 				controlPoints.push( controlPoints[ 0 ] );
 
-			} else if ( geometryNode.properties.Form === 'Periodic' ) {
+			} else if ( geometryNode.Form === 'Periodic' ) {
 
 				startKnot = degree;
 				endKnot = knots.length - 1 - startKnot;
@@ -18082,7 +16587,7 @@ var Three = (function (exports) {
 
 			var modelMap = parseModels( FBXTree, skeletons, geometryMap, materialMap, connections );
 
-			var modelNodes = FBXTree.Objects.subNodes.Model;
+			var modelNodes = FBXTree.Objects.Model;
 
 			modelMap.forEach( function ( model ) {
 
@@ -18107,10 +16612,9 @@ var Three = (function (exports) {
 
 			} );
 
+			bindSkeleton( FBXTree, skeletons, geometryMap, modelMap, connections );
 
-			bindSkeleton( FBXTree, skeletons, geometryMap, modelMap, connections, sceneGraph );
-
-			addAnimations( FBXTree, connections, sceneGraph, modelMap );
+			addAnimations( FBXTree, connections, sceneGraph );
 
 			createAmbientLight( FBXTree, sceneGraph );
 
@@ -18118,11 +16622,11 @@ var Three = (function (exports) {
 
 		}
 
-		// parse nodes in FBXTree.Objects.subNodes.Model
+		// parse nodes in FBXTree.Objects.Model
 		function parseModels( FBXTree, skeletons, geometryMap, materialMap, connections ) {
 
 			var modelMap = new Map();
-			var modelNodes = FBXTree.Objects.subNodes.Model;
+			var modelNodes = FBXTree.Objects.Model;
 
 			for ( var nodeID in modelNodes ) {
 
@@ -18186,6 +16690,7 @@ var Three = (function (exports) {
 
 							var subBone = bone;
 							bone = new Bone();
+							bone.matrixWorld.copy( rawBone.transformLink );
 
 							// set name and id here - otherwise in cases where "subBone" is created it will not have a name / id
 							bone.name = PropertyBinding.sanitizeNodeName( name );
@@ -18221,11 +16726,11 @@ var Three = (function (exports) {
 
 			relationships.children.forEach( function ( child ) {
 
-				var attr = FBXTree.Objects.subNodes.NodeAttribute[ child.ID ];
+				var attr = FBXTree.Objects.NodeAttribute[ child.ID ];
 
-				if ( attr !== undefined && attr.properties !== undefined ) {
+				if ( attr !== undefined ) {
 
-					cameraAttribute = attr.properties;
+					cameraAttribute = attr;
 
 				}
 
@@ -18278,10 +16783,13 @@ var Three = (function (exports) {
 
 				}
 
+				var focalLength = cameraAttribute.FocalLength ? cameraAttribute.FocalLength.value : null;
+
 				switch ( type ) {
 
 					case 0: // Perspective
 						model = new PerspectiveCamera( fov, aspect, nearClippingPlane, farClippingPlane );
+						if ( focalLength !== null ) model.setFocalLength( focalLength );
 						break;
 
 					case 1: // Orthographic
@@ -18309,11 +16817,11 @@ var Three = (function (exports) {
 
 			relationships.children.forEach( function ( child ) {
 
-				var attr = FBXTree.Objects.subNodes.NodeAttribute[ child.ID ];
+				var attr = FBXTree.Objects.NodeAttribute[ child.ID ];
 
-				if ( attr !== undefined && attr.properties !== undefined ) {
+				if ( attr !== undefined ) {
 
-					lightAttribute = attr.properties;
+					lightAttribute = attr;
 
 				}
 
@@ -18342,7 +16850,7 @@ var Three = (function (exports) {
 
 				if ( lightAttribute.Color !== undefined ) {
 
-					color = parseColor( lightAttribute.Color );
+					color = new Color().fromArray( lightAttribute.Color.value );
 
 				}
 
@@ -18388,7 +16896,7 @@ var Three = (function (exports) {
 
 						if ( lightAttribute.InnerAngle !== undefined ) {
 
-							angle = Math.degToRad( lightAttribute.InnerAngle.value );
+							angle = _Math.degToRad( lightAttribute.InnerAngle.value );
 
 						}
 
@@ -18398,7 +16906,7 @@ var Three = (function (exports) {
 							// TODO: this is not correct - FBX calculates outer and inner angle in degrees
 							// with OuterAngle > InnerAngle && OuterAngle <= Math.PI
 							// while three.js uses a penumbra between (0, 1) to attenuate the inner angle
-							penumbra = Math.degToRad( lightAttribute.OuterAngle.value );
+							penumbra = _Math.degToRad( lightAttribute.OuterAngle.value );
 							penumbra = Math.max( penumbra, 1 );
 
 						}
@@ -18510,12 +17018,12 @@ var Three = (function (exports) {
 
 		}
 
-		// Parse ambient color in FBXTree.GlobalSettings.properties - if it's not set to black (default), create an ambient light
+		// Parse ambient color in FBXTree.GlobalSettings - if it's not set to black (default), create an ambient light
 		function createAmbientLight( FBXTree, sceneGraph ) {
 
-			if ( 'GlobalSettings' in FBXTree && 'AmbientColor' in FBXTree.GlobalSettings.properties ) {
+			if ( 'GlobalSettings' in FBXTree && 'AmbientColor' in FBXTree.GlobalSettings ) {
 
-				var ambientColor = FBXTree.GlobalSettings.properties.AmbientColor.value;
+				var ambientColor = FBXTree.GlobalSettings.AmbientColor.value;
 				var r = ambientColor[ 0 ];
 				var g = ambientColor[ 1 ];
 				var b = ambientColor[ 2 ];
@@ -18533,7 +17041,7 @@ var Three = (function (exports) {
 
 		function setLookAtProperties( FBXTree, model, modelNode, connections, sceneGraph ) {
 
-			if ( 'LookAtProperty' in modelNode.properties ) {
+			if ( 'LookAtProperty' in modelNode ) {
 
 				var children = connections.get( model.ID ).children;
 
@@ -18541,11 +17049,11 @@ var Three = (function (exports) {
 
 					if ( child.relationship === 'LookAtProperty' ) {
 
-						var lookAtTarget = FBXTree.Objects.subNodes.Model[ child.ID ];
+						var lookAtTarget = FBXTree.Objects.Model[ child.ID ];
 
-						if ( 'Lcl_Translation' in lookAtTarget.properties ) {
+						if ( 'Lcl_Translation' in lookAtTarget ) {
 
-							var pos = lookAtTarget.properties.Lcl_Translation.value;
+							var pos = lookAtTarget.Lcl_Translation.value;
 
 							// DirectionalLight, SpotLight
 							if ( model.target !== undefined ) {
@@ -18573,7 +17081,7 @@ var Three = (function (exports) {
 		function setModelTransforms( FBXTree, model, modelNode ) {
 
 			// http://help.autodesk.com/view/FBX/2017/ENU/?guid=__cpp_ref_class_fbx_euler_html
-			if ( 'RotationOrder' in modelNode.properties ) {
+			if ( 'RotationOrder' in modelNode ) {
 
 				var enums = [
 					'XYZ', // default
@@ -18585,7 +17093,7 @@ var Three = (function (exports) {
 					'SphericXYZ',
 				];
 
-				var value = parseInt( modelNode.properties.RotationOrder.value, 10 );
+				var value = parseInt( modelNode.RotationOrder.value, 10 );
 
 				if ( value > 0 && value < 6 ) {
 
@@ -18602,29 +17110,29 @@ var Three = (function (exports) {
 
 			}
 
-			if ( 'Lcl_Translation' in modelNode.properties ) {
+			if ( 'Lcl_Translation' in modelNode ) {
 
-				model.position.fromArray( modelNode.properties.Lcl_Translation.value );
+				model.position.fromArray( modelNode.Lcl_Translation.value );
 
 			}
 
-			if ( 'Lcl_Rotation' in modelNode.properties ) {
+			if ( 'Lcl_Rotation' in modelNode ) {
 
-				var rotation = modelNode.properties.Lcl_Rotation.value.map( Math.degToRad );
+				var rotation = modelNode.Lcl_Rotation.value.map( _Math.degToRad );
 				rotation.push( 'ZYX' );
 				model.rotation.fromArray( rotation );
 
 			}
 
-			if ( 'Lcl_Scaling' in modelNode.properties ) {
+			if ( 'Lcl_Scaling' in modelNode ) {
 
-				model.scale.fromArray( modelNode.properties.Lcl_Scaling.value );
+				model.scale.fromArray( modelNode.Lcl_Scaling.value );
 
 			}
 
-			if ( 'PreRotation' in modelNode.properties ) {
+			if ( 'PreRotation' in modelNode ) {
 
-				var array = modelNode.properties.PreRotation.value.map( Math.degToRad );
+				var array = modelNode.PreRotation.value.map( _Math.degToRad );
 				array[ 3 ] = 'ZYX';
 
 				var preRotations = new Euler().fromArray( array );
@@ -18638,69 +17146,14 @@ var Three = (function (exports) {
 
 		}
 
-		function bindSkeleton( FBXTree, skeletons, geometryMap, modelMap, connections, sceneGraph ) {
+		function bindSkeleton( FBXTree, skeletons, geometryMap, modelMap, connections ) {
 
-			// Now with the bones created, we can update the skeletons and bind them to the skinned meshes.
-			sceneGraph.updateMatrixWorld( true );
-
-			var worldMatrices = new Map();
-
-			// Put skeleton into bind pose.
-			if ( 'Pose' in FBXTree.Objects.subNodes ) {
-
-				var BindPoseNode = FBXTree.Objects.subNodes.Pose;
-
-				for ( var nodeID in BindPoseNode ) {
-
-					if ( BindPoseNode[ nodeID ].attrType === 'BindPose' ) {
-
-						var poseNodes = BindPoseNode[ nodeID ].subNodes.PoseNode;
-
-						if ( Array.isArray( poseNodes ) ) {
-
-							poseNodes.forEach( function ( node ) {
-
-								var rawMatWrd = new Matrix4().fromArray( node.subNodes.Matrix.properties.a );
-								worldMatrices.set( parseInt( node.properties.Node ), rawMatWrd );
-
-							} );
-
-						} else {
-
-							var rawMatWrd = new Matrix4().fromArray( poseNodes.subNodes.Matrix.properties.a );
-							worldMatrices.set( parseInt( poseNodes.properties.Node ), rawMatWrd );
-
-						}
-
-					}
-
-				}
-
-			}
+			var bindMatrices = parsePoseNodes( FBXTree );
 
 			for ( var ID in skeletons ) {
 
 				var skeleton = skeletons[ ID ];
 
-				skeleton.bones.forEach( function ( bone, i ) {
-
-					// if the bone's initial transform is set in a poseNode, copy that
-					if ( worldMatrices.has( bone.ID ) ) {
-
-						var mat = worldMatrices.get( bone.ID );
-						bone.matrixWorld.copy( mat );
-
-					}
-					// otherwise use the transform from the rawBone
-					else {
-
-						bone.matrixWorld.copy( skeleton.rawBones[ i ].transformLink );
-
-					}
-
-				} );
-
-				// Now that skeleton is in bind pose, bind to model.
 				var parents = connections.get( parseInt( skeleton.ID ) ).parents;
 
 				parents.forEach( function ( parent ) {
@@ -18716,7 +17169,7 @@ var Three = (function (exports) {
 
 								var model = modelMap.get( geoConnParent.ID );
 
-								model.bind( new Skeleton( skeleton.bones ), model.matrixWorld );
+								model.bind( new Skeleton( skeleton.bones ), bindMatrices[ geoConnParent.ID ] );
 
 							}
 
@@ -18728,16 +17181,51 @@ var Three = (function (exports) {
 
 			}
 
-			//Skeleton is now bound, return objects to starting world positions.
-			sceneGraph.updateMatrixWorld( true );
+		}
+
+		function parsePoseNodes( FBXTree ) {
+
+			var bindMatrices = {};
+
+			if ( 'Pose' in FBXTree.Objects ) {
+
+				var BindPoseNode = FBXTree.Objects.Pose;
+
+				for ( var nodeID in BindPoseNode ) {
+
+					if ( BindPoseNode[ nodeID ].attrType === 'BindPose' ) {
+
+						var poseNodes = BindPoseNode[ nodeID ].PoseNode;
+
+						if ( Array.isArray( poseNodes ) ) {
+
+							poseNodes.forEach( function ( poseNode ) {
+
+								bindMatrices[ poseNode.Node ] = new Matrix4().fromArray( poseNode.Matrix.a );
+
+							} );
+
+						} else {
+
+							bindMatrices[ poseNodes.Node ] = new Matrix4().fromArray( poseNodes.Matrix.a );
+
+						}
+
+					}
+
+				}
+
+			}
+
+			return bindMatrices;
 
 		}
 
 		function parseAnimations( FBXTree, connections ) {
 
-			// since the actual transformation data is stored in FBXTree.Objects.subNodes.AnimationCurve,
+			// since the actual transformation data is stored in FBXTree.Objects.AnimationCurve,
 			// if this is undefined we can safely assume there are no animations
-			if ( FBXTree.Objects.subNodes.AnimationCurve === undefined ) return undefined;
+			if ( FBXTree.Objects.AnimationCurve === undefined ) return undefined;
 
 			var curveNodesMap = parseAnimationCurveNodes( FBXTree );
 
@@ -18750,12 +17238,12 @@ var Three = (function (exports) {
 
 		}
 
-		// parse nodes in FBXTree.Objects.subNodes.AnimationCurveNode
+		// parse nodes in FBXTree.Objects.AnimationCurveNode
 		// each AnimationCurveNode holds data for an animation transform for a model (e.g. left arm rotation )
 		// and is referenced by an AnimationLayer
 		function parseAnimationCurveNodes( FBXTree ) {
 
-			var rawCurveNodes = FBXTree.Objects.subNodes.AnimationCurveNode;
+			var rawCurveNodes = FBXTree.Objects.AnimationCurveNode;
 
 			var curveNodesMap = new Map();
 
@@ -18773,9 +17261,9 @@ var Three = (function (exports) {
 
 					};
 
-				}
+					curveNodesMap.set( curveNode.id, curveNode );
 
-				curveNodesMap.set( curveNode.id, curveNode );
+				}
 
 			}
 
@@ -18783,20 +17271,20 @@ var Three = (function (exports) {
 
 		}
 
-		// parse nodes in  FBXTree.Objects.subNodes.AnimationCurve and connect them up to
+		// parse nodes in FBXTree.Objects.AnimationCurve and connect them up to
 		// previously parsed AnimationCurveNodes. Each AnimationCurve holds data for a single animated
 		// axis ( e.g. times and values of x rotation)
 		function parseAnimationCurves( FBXTree, connections, curveNodesMap ) {
 
-			var rawCurves = FBXTree.Objects.subNodes.AnimationCurve;
+			var rawCurves = FBXTree.Objects.AnimationCurve;
 
 			for ( var nodeID in rawCurves ) {
 
 				var animationCurve = {
 
 					id: rawCurves[ nodeID ].id,
-					times: rawCurves[ nodeID ].subNodes.KeyTime.properties.a.map( convertFBXTimeToSeconds ),
-					values: rawCurves[ nodeID ].subNodes.KeyValueFloat.properties.a,
+					times: rawCurves[ nodeID ].KeyTime.a.map( convertFBXTimeToSeconds ),
+					values: rawCurves[ nodeID ].KeyValueFloat.a,
 
 				};
 
@@ -18834,12 +17322,12 @@ var Three = (function (exports) {
 
 		}
 
-		// parse nodes in FBXTree.Objects.subNodes.AnimationLayer. Each layers holds references
+		// parse nodes in FBXTree.Objects.AnimationLayer. Each layers holds references
 		// to various AnimationCurveNodes and is referenced by an AnimationStack node
 		// note: theoretically a stack can multiple layers, however in practice there always seems to be one per stack
 		function parseAnimationLayers( FBXTree, connections, curveNodesMap ) {
 
-			var rawLayers = FBXTree.Objects.subNodes.AnimationLayer;
+			var rawLayers = FBXTree.Objects.AnimationLayer;
 
 			var layersMap = new Map();
 
@@ -18860,42 +17348,49 @@ var Three = (function (exports) {
 
 							var curveNode = curveNodesMap.get( child.ID );
 
-							if ( layerCurveNodes[ i ] === undefined ) {
+							// check that the curves are defined for at least one axis, otherwise ignore the curveNode
+							if ( curveNode.curves.x !== undefined || curveNode.curves.y !== undefined || curveNode.curves.z !== undefined ) {
 
-								var modelID;
+								if ( layerCurveNodes[ i ] === undefined ) {
 
-								connections.get( child.ID ).parents.forEach( function ( parent ) {
+									var modelID;
 
-									if ( parent.relationship !== undefined ) modelID = parent.ID;
+									connections.get( child.ID ).parents.forEach( function ( parent ) {
 
-								} );
+										if ( parent.relationship !== undefined ) modelID = parent.ID;
 
-								var rawModel = FBXTree.Objects.subNodes.Model[ modelID.toString() ];
+									} );
 
-								var node = {
+									var rawModel = FBXTree.Objects.Model[ modelID.toString() ];
 
-									modelName: PropertyBinding.sanitizeNodeName( rawModel.attrName ),
-									initialPosition: [ 0, 0, 0 ],
-									initialRotation: [ 0, 0, 0 ],
-									initialScale: [ 1, 1, 1 ],
+									var node = {
 
-								};
+										modelName: PropertyBinding.sanitizeNodeName( rawModel.attrName ),
+										initialPosition: [ 0, 0, 0 ],
+										initialRotation: [ 0, 0, 0 ],
+										initialScale: [ 1, 1, 1 ],
 
-								if ( 'Lcl_Translation' in rawModel.properties ) node.initialPosition = rawModel.properties.Lcl_Translation.value;
+									};
 
-								if ( 'Lcl_Rotation' in rawModel.properties ) node.initialRotation = rawModel.properties.Lcl_Rotation.value;
+									if ( 'Lcl_Translation' in rawModel ) node.initialPosition = rawModel.Lcl_Translation.value;
 
-								if ( 'Lcl_Scaling' in rawModel.properties ) node.initialScale = rawModel.properties.Lcl_Scaling.value;
+									if ( 'Lcl_Rotation' in rawModel ) node.initialRotation = rawModel.Lcl_Rotation.value;
 
-								// if the animated model is pre rotated, we'll have to apply the pre rotations to every
-								// animation value as well
-								if ( 'PreRotation' in rawModel.properties ) node.preRotations = rawModel.properties.PreRotation.value;
+									if ( 'Lcl_Scaling' in rawModel ) node.initialScale = rawModel.Lcl_Scaling.value;
 
-								layerCurveNodes[ i ] = node;
+									// if the animated model is pre rotated, we'll have to apply the pre rotations to every
+									// animation value as well
+									if ( 'PreRotation' in rawModel ) node.preRotations = rawModel.PreRotation.value;
+
+									layerCurveNodes[ i ] = node;
+
+								}
+
+								layerCurveNodes[ i ][ curveNode.attr ] = curveNode;
 
 							}
 
-							layerCurveNodes[ i ][ curveNode.attr ] = curveNode;
+
 
 						}
 
@@ -18911,11 +17406,11 @@ var Three = (function (exports) {
 
 		}
 
-		// parse nodes in FBXTree.Objects.subNodes.AnimationStack. These are the top level node in the animation
+		// parse nodes in FBXTree.Objects.AnimationStack. These are the top level node in the animation
 		// hierarchy. Each Stack node will be used to create a AnimationClip
 		function parseAnimStacks( FBXTree, connections, layersMap ) {
 
-			var rawStacks = FBXTree.Objects.subNodes.AnimationStack;
+			var rawStacks = FBXTree.Objects.AnimationStack;
 
 			// connect the stacks (clips) up to the layers
 			var rawClips = {};
@@ -18956,6 +17451,7 @@ var Three = (function (exports) {
 
 			if ( rawClips === undefined ) return;
 
+
 			for ( var key in rawClips ) {
 
 				var rawClip = rawClips[ key ];
@@ -18986,21 +17482,21 @@ var Three = (function (exports) {
 
 			var tracks = [];
 
-			if ( rawTracks.T !== undefined ) {
+			if ( rawTracks.T !== undefined && Object.keys( rawTracks.T.curves ).length > 0 ) {
 
 				var positionTrack = generateVectorTrack( rawTracks.modelName, rawTracks.T.curves, rawTracks.initialPosition, 'position' );
 				if ( positionTrack !== undefined ) tracks.push( positionTrack );
 
 			}
 
-			if ( rawTracks.R !== undefined ) {
+			if ( rawTracks.R !== undefined && Object.keys( rawTracks.R.curves ).length > 0 ) {
 
 				var rotationTrack = generateRotationTrack( rawTracks.modelName, rawTracks.R.curves, rawTracks.initialRotation, rawTracks.preRotations );
 				if ( rotationTrack !== undefined ) tracks.push( rotationTrack );
 
 			}
 
-			if ( rawTracks.S !== undefined ) {
+			if ( rawTracks.S !== undefined && Object.keys( rawTracks.S.curves ).length > 0 ) {
 
 				var scaleTrack = generateVectorTrack( rawTracks.modelName, rawTracks.S.curves, rawTracks.initialScale, 'scale' );
 				if ( scaleTrack !== undefined ) tracks.push( scaleTrack );
@@ -19022,16 +17518,16 @@ var Three = (function (exports) {
 
 		function generateRotationTrack( modelName, curves, initialValue, preRotations ) {
 
-			if ( curves.x !== undefined ) curves.x.values = curves.x.values.map( Math.degToRad );
-			if ( curves.y !== undefined ) curves.y.values = curves.y.values.map( Math.degToRad );
-			if ( curves.z !== undefined ) curves.z.values = curves.z.values.map( Math.degToRad );
+			if ( curves.x !== undefined ) curves.x.values = curves.x.values.map( _Math.degToRad );
+			if ( curves.y !== undefined ) curves.y.values = curves.y.values.map( _Math.degToRad );
+			if ( curves.z !== undefined ) curves.z.values = curves.z.values.map( _Math.degToRad );
 
 			var times = getTimesForAllAxes( curves );
 			var values = getKeyframeTrackValues( times, curves, initialValue );
 
 			if ( preRotations !== undefined ) {
 
-				preRotations = preRotations.map( Math.degToRad );
+				preRotations = preRotations.map( _Math.degToRad );
 				preRotations.push( 'ZYX' );
 
 				preRotations = new Euler().fromArray( preRotations );
@@ -19223,7 +17719,7 @@ var Three = (function (exports) {
 
 					} else if ( matchEnd ) {
 
-						self.nodeEnd();
+						self.popStack();
 
 					} else if ( line.match( /^[^\s\t}]/ ) ) {
 
@@ -19249,8 +17745,9 @@ var Three = (function (exports) {
 
 				} );
 
-				var node = { 'name': nodeName, properties: {}, 'subNodes': {} };
+				var node = { name: nodeName };
 				var attrs = this.parseNodeAttr( nodeAttrs );
+
 				var currentNode = this.getCurrentNode();
 
 				// a top node
@@ -19261,59 +17758,39 @@ var Three = (function (exports) {
 				} else { // a subnode
 
 					// if the subnode already exists, append it
-					if ( nodeName in currentNode.subNodes ) {
+					if ( nodeName in currentNode ) {
 
-						var tmp = currentNode.subNodes[ nodeName ];
+					// special case Pose needs PoseNodes as an array
+						if ( nodeName === 'PoseNode' ) {
 
-						if ( this.isFlattenNode( currentNode.subNodes[ nodeName ] ) ) {
+							currentNode.PoseNode.push( node );
 
-							if ( attrs.id === '' ) {
+						} else if ( currentNode[ nodeName ].id !== undefined ) {
 
-								currentNode.subNodes[ nodeName ] = [];
-								currentNode.subNodes[ nodeName ].push( tmp );
-
-							} else {
-
-								currentNode.subNodes[ nodeName ] = {};
-								currentNode.subNodes[ nodeName ][ tmp.id ] = tmp;
-
-							}
+							currentNode[ nodeName ] = {};
+							currentNode[ nodeName ][ currentNode[ nodeName ].id ] = currentNode[ nodeName ];
 
 						}
 
-						if ( attrs.id === '' ) {
+						if ( attrs.id !== '' ) currentNode[ nodeName ][ attrs.id ] = node;
 
-							currentNode.subNodes[ nodeName ].push( node );
+					} else if ( typeof attrs.id === 'number' ) {
 
-						} else {
+						currentNode[ nodeName ] = {};
+						currentNode[ nodeName ][ attrs.id ] = node;
 
-							currentNode.subNodes[ nodeName ][ attrs.id ] = node;
+					} else if ( nodeName !== 'Properties70' ) {
 
-						}
-
-					} else if ( typeof attrs.id === 'number' || attrs.id.match( /^\d+$/ ) ) {
-
-						currentNode.subNodes[ nodeName ] = {};
-						currentNode.subNodes[ nodeName ][ attrs.id ] = node;
-
-					} else {
-
-						currentNode.subNodes[ nodeName ] = node;
+						if ( nodeName === 'PoseNode' )	currentNode[ nodeName ] = [ node ];
+						else currentNode[ nodeName ] = node;
 
 					}
 
 				}
 
-
-				// for this	↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-				// NodeAttribute: 1001463072, "NodeAttribute::", "LimbNode" {
-				if ( nodeAttrs ) {
-
-					node.id = attrs.id;
-					node.attrName = attrs.name;
-					node.attrType = attrs.type;
-
-				}
+				if ( typeof attrs.id === 'number' ) node.id = attrs.id;
+				if ( attrs.name !== '' ) node.attrName = attrs.name;
+				if ( attrs.type !== '' ) node.attrType = attrs.type;
 
 				this.pushStack( node );
 
@@ -19355,7 +17832,7 @@ var Three = (function (exports) {
 
 				// for special case: base64 image data follows "Content: ," line
 				//	Content: ,
-				//	 "iVB..."
+				//	 "/9j/4RDaRXhpZgAATU0A..."
 				if ( propName === 'Content' && propValue === ',' ) {
 
 					propValue = contentLine.replace( /"/g, '' ).replace( /,$/, '' ).trim();
@@ -19365,17 +17842,10 @@ var Three = (function (exports) {
 				var currentNode = this.getCurrentNode();
 				var parentName = currentNode.name;
 
-				// special case where the parent node is something like "Properties70"
-				// these children nodes must treated carefully
-				if ( parentName !== undefined ) {
+				if ( parentName === 'Properties70' ) {
 
-					var propMatch = parentName.match( /Properties(\d)+/ );
-					if ( propMatch ) {
-
-						this.parseNodeSpecialProperty( line, propName, propValue );
-						return;
-
-					}
+					this.parseNodeSpecialProperty( line, propName, propValue );
+					return;
 
 				}
 
@@ -19398,56 +17868,35 @@ var Three = (function (exports) {
 					propValue = [ from, to ];
 					append( propValue, rest );
 
-					if ( currentNode.properties[ propName ] === undefined ) {
+					if ( currentNode[ propName ] === undefined ) {
 
-						currentNode.properties[ propName ] = [];
+						currentNode[ propName ] = [];
 
 					}
 
 				}
 
 				// Node
-				if ( propName === 'Node' ) {
+				if ( propName === 'Node' ) currentNode.id = propValue;
 
-					var id = parseInt( propValue );
-					currentNode.properties.id = id;
-					currentNode.id = id;
+				// connections
+				if ( propName in currentNode && Array.isArray( currentNode[ propName ] ) ) {
 
-				}
-
-				// already exists in properties, then append this
-				if ( propName in currentNode.properties ) {
-
-					if ( Array.isArray( currentNode.properties[ propName ] ) ) {
-
-						currentNode.properties[ propName ].push( propValue );
-
-					} else {
-
-						currentNode.properties[ propName ] += propValue;
-
-					}
+					currentNode[ propName ].push( propValue );
 
 				} else {
 
-					if ( Array.isArray( currentNode.properties[ propName ] ) ) {
-
-						currentNode.properties[ propName ].push( propValue );
-
-					} else {
-
-						currentNode.properties[ propName ] = propValue;
-
-					}
+					if ( propName !== 'a' ) currentNode[ propName ] = propValue;
+					else currentNode.a = propValue;
 
 				}
 
-				this.setCurrentProp( currentNode.properties, propName );
+				this.setCurrentProp( currentNode, propName );
 
 				// convert string to array, unless it ends in ',' in which case more will be added to it
 				if ( propName === 'a' && propValue.slice( - 1 ) !== ',' ) {
 
-					currentNode.properties.a = parseNumberArray( propValue );
+					currentNode.a = parseNumberArray( propValue );
 
 				}
 
@@ -19455,19 +17904,21 @@ var Three = (function (exports) {
 
 			parseNodePropertyContinued: function ( line ) {
 
-				this.currentProp[ this.currentPropName ] += line;
+				var currentNode = this.getCurrentNode();
+
+				currentNode.a += line;
 
 				// if the line doesn't end in ',' we have reached the end of the property value
 				// so convert the string to an array
 				if ( line.slice( - 1 ) !== ',' ) {
 
-					var currentNode = this.getCurrentNode();
-					currentNode.properties.a = parseNumberArray( currentNode.properties.a );
+					currentNode.a = parseNumberArray( currentNode.a );
 
 				}
 
 			},
 
+			// parse "Property70"
 			parseNodeSpecialProperty: function ( line, propName, propValue ) {
 
 				// split this
@@ -19486,22 +17937,20 @@ var Three = (function (exports) {
 				var innerPropFlag = props[ 3 ];
 				var innerPropValue = props[ 4 ];
 
-				// cast value to its type
+				// cast values where needed, otherwise leave as strings
 				switch ( innerPropType1 ) {
 
 					case 'int':
 					case 'enum':
 					case 'bool':
 					case 'ULongLong':
-						innerPropValue = parseInt( innerPropValue );
-						break;
-
 					case 'double':
 					case 'Number':
 					case 'FieldOfView':
 						innerPropValue = parseFloat( innerPropValue );
 						break;
 
+					case 'Color':
 					case 'ColorRGB':
 					case 'Vector3D':
 					case 'Lcl_Translation':
@@ -19513,7 +17962,7 @@ var Three = (function (exports) {
 				}
 
 				// CAUTION: these props must append to parent's parent
-				this.getPrevNode().properties[ innerPropName ] = {
+				this.getPrevNode()[ innerPropName ] = {
 
 					'type': innerPropType1,
 					'type2': innerPropType2,
@@ -19522,21 +17971,9 @@ var Three = (function (exports) {
 
 				};
 
-				this.setCurrentProp( this.getPrevNode().properties, innerPropName );
+				this.setCurrentProp( this.getPrevNode(), innerPropName );
 
 			},
-
-			nodeEnd: function () {
-
-				this.popStack();
-
-			},
-
-			isFlattenNode: function ( node ) {
-
-				return ( 'subNodes' in node && 'properties' in node ) ? true : false;
-
-			}
 
 		} );
 
@@ -19590,7 +18027,10 @@ var Three = (function (exports) {
 
 			},
 
+			// recursively parse nodes until the end of the file is reached
 			parseNode: function ( reader, version ) {
+
+				var node = {};
 
 				// The first three data sizes depends on version.
 				var endOffset = ( version >= 7500 ) ? reader.getUint64() : reader.getUint32();
@@ -19618,193 +18058,150 @@ var Three = (function (exports) {
 				var attrName = propertyList.length > 1 ? propertyList[ 1 ] : '';
 				var attrType = propertyList.length > 2 ? propertyList[ 2 ] : '';
 
-				var subNodes = {};
-				var properties = {};
-
-				var isSingleProperty = false;
-
 				// check if this node represents just a single property
 				// like (name, 0) set or (name2, [0, 1, 2]) set of {name: 0, name2: [0, 1, 2]}
-				if ( numProperties === 1 && reader.getOffset() === endOffset ) {
-
-					isSingleProperty = true;
-
-				}
+				node.singleProperty = ( numProperties === 1 && reader.getOffset() === endOffset ) ? true : false;
 
 				while ( endOffset > reader.getOffset() ) {
 
-					var node = this.parseNode( reader, version );
+					var subNode = this.parseNode( reader, version );
 
-					if ( node === null ) continue;
+					if ( subNode !== null ) this.parseSubNode( name, node, subNode );
 
-					// special case: child node is single property
-					if ( node.singleProperty === true ) {
+				}
 
-						var value = node.propertyList[ 0 ];
+				node.propertyList = propertyList; // raw property list used by parent
 
-						if ( Array.isArray( value ) ) {
+				if ( typeof id === 'number' ) node.id = id;
+				if ( attrName !== '' ) node.attrName = attrName;
+				if ( attrType !== '' ) node.attrType = attrType;
+				if ( name !== '' ) node.name = name;
 
-							subNodes[ node.name ] = node;
+				return node;
 
-							node.properties.a = value;
+			},
 
-						} else {
+			parseSubNode: function ( name, node, subNode ) {
 
-							properties[ node.name ] = value;
+				// special case: child node is single property
+				if ( subNode.singleProperty === true ) {
 
-						}
+					var value = subNode.propertyList[ 0 ];
 
-						continue;
+					if ( Array.isArray( value ) ) {
 
-					}
+						node[ subNode.name ] = subNode;
 
-					// parse connections
-					if ( name === 'Connections' && node.name === 'C' ) {
-
-						var array = [];
-
-						node.propertyList.forEach( function ( property, i ) {
-
-							array[ i - 1 ] = property;
-
-						} );
-
-						if ( properties.connections === undefined ) {
-
-							properties.connections = [];
-
-						}
-
-						properties.connections.push( array );
-
-						continue;
-
-					}
-
-					// special case: child node is Properties\d+
-					// move child node's properties to this node.
-					if ( node.name === 'Properties70' ) {
-
-						var keys = Object.keys( node.properties );
-
-						keys.forEach( function ( key ) {
-
-							properties[ key ] = node.properties[ key ];
-
-						} );
-
-						continue;
-
-					}
-
-					// parse 'properties70'
-					if ( name === 'Properties70' && node.name === 'P' ) {
-
-						var innerPropName = node.propertyList[ 0 ];
-						var innerPropType1 = node.propertyList[ 1 ];
-						var innerPropType2 = node.propertyList[ 2 ];
-						var innerPropFlag = node.propertyList[ 3 ];
-						var innerPropValue;
-
-						if ( innerPropName.indexOf( 'Lcl ' ) === 0 ) innerPropName = innerPropName.replace( 'Lcl ', 'Lcl_' );
-						if ( innerPropType1.indexOf( 'Lcl ' ) === 0 ) innerPropType1 = innerPropType1.replace( 'Lcl ', 'Lcl_' );
-
-						if ( innerPropType1 === 'ColorRGB' || innerPropType1 === 'Vector' || innerPropType1 === 'Vector3D' || innerPropType1.indexOf( 'Lcl_' ) === 0 ) {
-
-							innerPropValue = [
-								node.propertyList[ 4 ],
-								node.propertyList[ 5 ],
-								node.propertyList[ 6 ]
-							];
-
-						} else {
-
-							innerPropValue = node.propertyList[ 4 ];
-
-						}
-
-						// this will be copied to parent, see above
-						properties[ innerPropName ] = {
-
-							'type': innerPropType1,
-							'type2': innerPropType2,
-							'flag': innerPropFlag,
-							'value': innerPropValue
-
-						};
-
-						continue;
-
-					}
-
-					if ( subNodes[ node.name ] === undefined ) {
-
-						if ( typeof node.id === 'number' ) {
-
-							subNodes[ node.name ] = {};
-							subNodes[ node.name ][ node.id ] = node;
-
-						} else {
-
-							subNodes[ node.name ] = node;
-
-						}
+						subNode.a = value;
 
 					} else {
 
-						if ( node.id === '' ) {
+						node[ subNode.name ] = value;
 
-							if ( ! Array.isArray( subNodes[ node.name ] ) ) {
+					}
 
-								subNodes[ node.name ] = [ subNodes[ node.name ] ];
+				} else if ( name === 'Connections' && subNode.name === 'C' ) {
 
-							}
+					var array = [];
 
-							subNodes[ node.name ].push( node );
+					subNode.propertyList.forEach( function ( property, i ) {
 
-						} else {
+						// first Connection is FBX type (OO, OP, etc.). We'll discard these
+						if ( i !== 0 ) array.push( property );
 
-							if ( subNodes[ node.name ][ node.id ] === undefined ) {
+					} );
 
-								subNodes[ node.name ][ node.id ] = node;
+					if ( node.connections === undefined ) {
 
-							} else {
+						node.connections = [];
 
-								// conflict id. irregular?
-								if ( ! Array.isArray( subNodes[ node.name ][ node.id ] ) ) {
+					}
 
-									subNodes[ node.name ][ node.id ] = [ subNodes[ node.name ][ node.id ] ];
+					node.connections.push( array );
 
-								}
+				} else if ( subNode.name === 'Properties70' ) {
 
-								subNodes[ node.name ][ node.id ].push( node );
+					var keys = Object.keys( subNode );
 
-							}
+					keys.forEach( function ( key ) {
+
+						node[ key ] = subNode[ key ];
+
+					} );
+
+				} else if ( name === 'Properties70' && subNode.name === 'P' ) {
+
+					var innerPropName = subNode.propertyList[ 0 ];
+					var innerPropType1 = subNode.propertyList[ 1 ];
+					var innerPropType2 = subNode.propertyList[ 2 ];
+					var innerPropFlag = subNode.propertyList[ 3 ];
+					var innerPropValue;
+
+					if ( innerPropName.indexOf( 'Lcl ' ) === 0 ) innerPropName = innerPropName.replace( 'Lcl ', 'Lcl_' );
+					if ( innerPropType1.indexOf( 'Lcl ' ) === 0 ) innerPropType1 = innerPropType1.replace( 'Lcl ', 'Lcl_' );
+
+					if ( innerPropType1 === 'Color' || innerPropType1 === 'ColorRGB' || innerPropType1 === 'Vector' || innerPropType1 === 'Vector3D' || innerPropType1.indexOf( 'Lcl_' ) === 0 ) {
+
+						innerPropValue = [
+							subNode.propertyList[ 4 ],
+							subNode.propertyList[ 5 ],
+							subNode.propertyList[ 6 ]
+						];
+
+					} else {
+
+						innerPropValue = subNode.propertyList[ 4 ];
+
+					}
+
+					// this will be copied to parent, see above
+					node[ innerPropName ] = {
+
+						'type': innerPropType1,
+						'type2': innerPropType2,
+						'flag': innerPropFlag,
+						'value': innerPropValue
+
+					};
+
+				} else if ( node[ subNode.name ] === undefined ) {
+
+					if ( typeof subNode.id === 'number' ) {
+
+						node[ subNode.name ] = {};
+						node[ subNode.name ][ subNode.id ] = subNode;
+
+					} else {
+
+						node[ subNode.name ] = subNode;
+
+					}
+
+				} else {
+
+					if ( subNode.name === 'PoseNode' ) {
+
+						if ( ! Array.isArray( node[ subNode.name ] ) ) {
+
+							node[ subNode.name ] = [ node[ subNode.name ] ];
 
 						}
+
+						node[ subNode.name ].push( subNode );
+
+					} else if ( node[ subNode.name ][ subNode.id ] === undefined ) {
+
+						node[ subNode.name ][ subNode.id ] = subNode;
 
 					}
 
 				}
-
-				return {
-
-					singleProperty: isSingleProperty,
-					id: id,
-					attrName: attrName,
-					attrType: attrType,
-					name: name,
-					properties: properties,
-					propertyList: propertyList, // raw property list used by parent
-					subNodes: subNodes
-
-				};
 
 			},
 
 			parseProperty: function ( reader ) {
 
-				var type = reader.getChar();
+				var type = reader.getString( 1 );
 
 				switch ( type ) {
 
@@ -19871,7 +18268,7 @@ var Three = (function (exports) {
 
 						if ( window.Zlib === undefined ) {
 
-							throw new Error( 'FBXLoader: External library Inflate.min.js required, obtain or import from https://github.com/imaya/zlib.js' );
+							console.error( 'FBXLoader: External library Inflate.min.js required, obtain or import from https://github.com/imaya/zlib.js' );
 
 						}
 
@@ -19959,28 +18356,6 @@ var Three = (function (exports) {
 
 			},
 
-			getInt8: function () {
-
-				var value = this.dv.getInt8( this.offset );
-				this.offset += 1;
-				return value;
-
-			},
-
-			getInt8Array: function ( size ) {
-
-				var a = [];
-
-				for ( var i = 0; i < size; i ++ ) {
-
-					a.push( this.getInt8() );
-
-				}
-
-				return a;
-
-			},
-
 			getUint8: function () {
 
 				var value = this.dv.getUint8( this.offset );
@@ -19989,61 +18364,11 @@ var Three = (function (exports) {
 
 			},
 
-			getUint8Array: function ( size ) {
-
-				var a = [];
-
-				for ( var i = 0; i < size; i ++ ) {
-
-					a.push( this.getUint8() );
-
-				}
-
-				return a;
-
-			},
-
 			getInt16: function () {
 
 				var value = this.dv.getInt16( this.offset, this.littleEndian );
 				this.offset += 2;
 				return value;
-
-			},
-
-			getInt16Array: function ( size ) {
-
-				var a = [];
-
-				for ( var i = 0; i < size; i ++ ) {
-
-					a.push( this.getInt16() );
-
-				}
-
-				return a;
-
-			},
-
-			getUint16: function () {
-
-				var value = this.dv.getUint16( this.offset, this.littleEndian );
-				this.offset += 2;
-				return value;
-
-			},
-
-			getUint16Array: function ( size ) {
-
-				var a = [];
-
-				for ( var i = 0; i < size; i ++ ) {
-
-					a.push( this.getUint16() );
-
-				}
-
-				return a;
 
 			},
 
@@ -20074,20 +18399,6 @@ var Three = (function (exports) {
 				var value = this.dv.getUint32( this.offset, this.littleEndian );
 				this.offset += 4;
 				return value;
-
-			},
-
-			getUint32Array: function ( size ) {
-
-				var a = [];
-
-				for ( var i = 0; i < size; i ++ ) {
-
-					a.push( this.getUint32() );
-
-				}
-
-				return a;
 
 			},
 
@@ -20165,20 +18476,6 @@ var Three = (function (exports) {
 
 			},
 
-			getUint64Array: function ( size ) {
-
-				var a = [];
-
-				for ( var i = 0; i < size; i ++ ) {
-
-					a.push( this.getUint64() );
-
-				}
-
-				return a;
-
-			},
-
 			getFloat32: function () {
 
 				var value = this.dv.getFloat32( this.offset, this.littleEndian );
@@ -20231,19 +18528,20 @@ var Three = (function (exports) {
 
 			},
 
-			getChar: function () {
-
-				return String.fromCharCode( this.getUint8() );
-
-			},
-
 			getString: function ( size ) {
 
-				var s = LoaderUtils.decodeText( this.getUint8Array( size ) );
+				var a = new Uint8Array( size );
 
-				this.skip( size );
+				for ( var i = 0; i < size; i ++ ) {
 
-				return s;
+					a[ i ] = this.getUint8();
+
+				}
+
+				var nullByte = a.indexOf( 0 );
+				if ( nullByte >= 0 ) a = a.slice( 0, nullByte );
+
+				return LoaderUtils.decodeText( a );
 
 			}
 
@@ -20337,21 +18635,6 @@ var Three = (function (exports) {
 
 		}
 
-		function parseColor( property ) {
-
-			var color = new Color();
-
-			if ( property.type === 'Color' ) {
-
-				return color.setScalar( property.value );
-
-			}
-
-			return color.fromArray( property.value );
-
-		}
-
-		// Converts ArrayBuffer to String.
 		function convertArrayBufferToString( buffer, from, to ) {
 
 			if ( from === undefined ) from = 0;

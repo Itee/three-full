@@ -1,14 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * Depth-of-field shader with bokeh
-	 * ported from GLSL shader by Martins Upitis
-	 * http://artmartinsh.blogspot.com/2010/02/glsl-lens-blur-filter-with-bokeh.html
-	 */
-
 	var BokehShader = {
 
 		defines: {
@@ -73,7 +65,7 @@ var Three = (function (exports) {
 			"	#if PERSPECTIVE_CAMERA == 1",
 			"	return perspectiveDepthToViewZ( depth, nearClip, farClip );",
 			"	#else",
-			"	return orthoDepthToViewZ( depth, nearClip, farClip );",
+			"	return orthographicDepthToViewZ( depth, nearClip, farClip );",
 			"	#endif",
 			"}",
 			

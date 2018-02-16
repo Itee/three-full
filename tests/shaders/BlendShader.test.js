@@ -1,12 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * Blend two textures
-	 */
-
 	var BlendShader = {
 
 		uniforms: {

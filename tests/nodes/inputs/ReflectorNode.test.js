@@ -1,11 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -23,7 +18,7 @@ var Three = (function (exports) {
 
 			}
 
-			return function () {
+			return function generateUUID() {
 
 				var d0 = Math.random() * 0xffffffff | 0;
 				var d1 = Math.random() * 0xffffffff | 0;
@@ -149,22 +144,22 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var GLNode = function( type ) {
+	var GLNode = function ( type ) {
 
 		this.uuid = _Math.generateUUID();
 
+		this.name = "";
 		this.allows = {};
-		this.requestUpdate = false;
 
 		this.type = type;
 
+		this.userData = {};
+
 	};
 
-	GLNode.prototype.parse = function( builder, context ) {
+	GLNode.prototype.isNode = true;
+
+	GLNode.prototype.parse = function ( builder, context ) {
 
 		context = context || {};
 
@@ -183,7 +178,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.parseAndBuildCode = function( builder, output, context ) {
+	GLNode.prototype.parseAndBuildCode = function ( builder, output, context ) {
 
 		context = context || {};
 
@@ -193,13 +188,13 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.buildCode = function( builder, output, context ) {
+	GLNode.prototype.buildCode = function ( builder, output, context ) {
 
 		context = context || {};
 
 		var material = builder.material;
 
-		var data = { result : this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
+		var data = { result: this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
 
 		if ( builder.isShader( 'vertex' ) ) data.code = material.clearVertexNode();
 		else data.code = material.clearFragmentNode();
@@ -210,7 +205,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.build = function( builder, output, uuid ) {
+	GLNode.prototype.build = function ( builder, output, uuid ) {
 
 		output = output || this.getType( builder, output );
 
@@ -224,9 +219,15 @@ var Three = (function (exports) {
 
 		}
 
-		if ( this.requestUpdate && material.requestUpdate.indexOf( this ) === - 1 ) {
+		if ( material.nodes.indexOf( this ) === - 1 ) {
 
-			material.requestUpdate.push( this );
+			material.nodes.push( this );
+
+		}
+
+		if ( this.updateFrame !== undefined && material.updaters.indexOf( this ) === - 1 ) {
+
+			material.updaters.push( this );
 
 		}
 
@@ -234,7 +235,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.appendDepsNode = function( builder, data, output ) {
+	GLNode.prototype.appendDepsNode = function ( builder, data, output ) {
 
 		data.deps = ( data.deps || 0 ) + 1;
 
@@ -249,18 +250,56 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.getType = function( builder, output ) {
+	GLNode.prototype.getType = function ( builder, output ) {
 
 		return output === 'sampler2D' || output === 'samplerCube' ? output : this.type;
 
 	};
 
-	/**
-	 * Automatic node cache
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	GLNode.prototype.getJSONNode = function ( meta ) {
 
-	var TempNode = function( type, params ) {
+		var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+		if ( ! isRootObject && meta.nodes[ this.uuid ] !== undefined ) {
+
+			return meta.nodes[ this.uuid ];
+
+		}
+
+	};
+
+	GLNode.prototype.createJSONNode = function ( meta ) {
+
+		var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+		var data = {};
+
+		if ( typeof this.nodeType !== "string" ) throw new Error( "Node does not allow serialization." );
+
+		data.uuid = this.uuid;
+		data.type = this.nodeType + "Node";
+
+		if ( this.name !== "" ) data.name = this.name;
+
+		if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
+
+		if ( ! isRootObject ) {
+
+			meta.nodes[ this.uuid ] = data;
+
+		}
+
+		return data;
+
+	};
+
+	GLNode.prototype.toJSON = function ( meta ) {
+
+		return this.getJSONNode( meta ) || this.createJSONNode( meta );
+
+	};
+
+	var TempNode = function ( type, params ) {
 
 		GLNode.call( this, type );
 
@@ -274,7 +313,7 @@ var Three = (function (exports) {
 	TempNode.prototype = Object.create( GLNode.prototype );
 	TempNode.prototype.constructor = TempNode;
 
-	TempNode.prototype.build = function( builder, output, uuid, ns ) {
+	TempNode.prototype.build = function ( builder, output, uuid, ns ) {
 
 		output = output || this.getType( builder );
 
@@ -286,7 +325,7 @@ var Three = (function (exports) {
 
 			if ( isUnique && this.constructor.uuid === undefined ) {
 
-				this.constructor.uuid = Math.generateUUID();
+				this.constructor.uuid = _Math.generateUUID();
 
 			}
 
@@ -346,19 +385,19 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.isShared = function( builder, output ) {
+	TempNode.prototype.isShared = function ( builder, output ) {
 
 		return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
 
 	};
 
-	TempNode.prototype.isUnique = function( builder, output ) {
+	TempNode.prototype.isUnique = function ( builder, output ) {
 
 		return this.unique;
 
 	};
 
-	TempNode.prototype.getUuid = function( unique ) {
+	TempNode.prototype.getUuid = function ( unique ) {
 
 		var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
 
@@ -368,7 +407,7 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.getTemp = function( builder, uuid ) {
+	TempNode.prototype.getTemp = function ( builder, uuid ) {
 
 		uuid = uuid || this.uuid;
 
@@ -379,7 +418,7 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.generate = function( builder, output, uuid, type, ns ) {
+	TempNode.prototype.generate = function ( builder, output, uuid, type, ns ) {
 
 		if ( ! this.isShared( builder, output ) ) console.error( "TempNode is not shared!" );
 
@@ -390,61 +429,67 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var InputNode = function( type, params ) {
+	var InputNode = function ( type, params ) {
 
 		params = params || {};
 		params.shared = params.shared !== undefined ? params.shared : false;
 
 		TempNode.call( this, type, params );
 
+		this.readonly = false;
+
 	};
 
 	InputNode.prototype = Object.create( TempNode.prototype );
 	InputNode.prototype.constructor = InputNode;
 
-	InputNode.prototype.generate = function( builder, output, uuid, type, ns, needsUpdate ) {
+	InputNode.prototype.isReadonly = function ( builder ) {
+
+		return this.readonly;
+
+	};
+
+	InputNode.prototype.generate = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
 		var material = builder.material;
 
 		uuid = builder.getUuid( uuid || this.getUuid() );
 		type = type || this.getType( builder );
 
-		var data = material.getDataNode( uuid );
+		var data = material.getDataNode( uuid ),
+			readonly = this.isReadonly( builder ) && this.generateReadonly !== undefined;
 
-		if ( builder.isShader( 'vertex' ) ) {
+		if ( readonly ) {
 
-			if ( ! data.vertex ) {
-
-				data.vertex = material.createVertexUniform( type, this.value, ns, needsUpdate );
-
-			}
-
-			return builder.format( data.vertex.name, type, output );
+			return this.generateReadonly( builder, output, uuid, type, ns, needsUpdate );
 
 		} else {
 
-			if ( ! data.fragment ) {
+			if ( builder.isShader( 'vertex' ) ) {
 
-				data.fragment = material.createFragmentUniform( type, this.value, ns, needsUpdate );
+				if ( ! data.vertex ) {
+
+					data.vertex = material.createVertexUniform( type, this.value, ns, needsUpdate );
+
+				}
+
+				return builder.format( data.vertex.name, type, output );
+
+			} else {
+
+				if ( ! data.fragment ) {
+
+					data.fragment = material.createFragmentUniform( type, this.value, ns, needsUpdate );
+
+				}
+
+				return builder.format( data.fragment.name, type, output );
 
 			}
-
-			return builder.format( data.fragment.name, type, output );
 
 		}
 
 	};
-
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Quaternion( x, y, z, w ) {
 
@@ -637,7 +682,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				throw new Error( 'THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+				throw new Error( 'Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -834,7 +879,9 @@ var Three = (function (exports) {
 
 		inverse: function () {
 
-			return this.conjugate().normalize();
+			// quaternion is assumed to have unit length
+
+			return this.conjugate();
 
 		},
 
@@ -900,7 +947,7 @@ var Three = (function (exports) {
 
 			if ( p !== undefined ) {
 
-				console.warn( 'THREE.Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
+				console.warn( 'Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
 				return this.multiplyQuaternions( q, p );
 
 			}
@@ -1045,15 +1092,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author kile / http://kile.stravaganza.org/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -1158,7 +1196,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -1205,7 +1243,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -1242,7 +1280,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
 				return this.multiplyVectors( v, w );
 
 			}
@@ -1283,7 +1321,7 @@ var Three = (function (exports) {
 
 				if ( ! ( euler && euler.isEuler ) ) {
 
-					console.error( 'THREE.Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+					console.error( 'Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 				}
 
@@ -1383,7 +1421,7 @@ var Three = (function (exports) {
 
 		transformDirection: function ( m ) {
 
-			// input: THREE.Matrix4 affine matrix
+			// input: Matrix4 affine matrix
 			// vector interpreted as a direction
 
 			var x = this.x, y = this.y, z = this.z;
@@ -1577,7 +1615,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
 				return this.crossVectors( v, w );
 
 			}
@@ -1755,7 +1793,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector3: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector3: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -1768,19 +1806,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author jordi_ros / http://plattsoft.com
-	 * @author D1plo1d / http://github.com/D1plo1d
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author timknip / http://www.floorplanner.com/
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
 
 	function Matrix4() {
 
@@ -1795,7 +1820,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix4: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix4: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -1923,7 +1948,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				console.error( 'THREE.Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
+				console.error( 'Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -2143,7 +2168,7 @@ var Three = (function (exports) {
 
 			if ( n !== undefined ) {
 
-				console.warn( 'THREE.Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
+				console.warn( 'Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
 				return this.multiplyMatrices( m, n );
 
 			}
@@ -2334,7 +2359,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix4: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix4: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -2587,7 +2612,7 @@ var Three = (function (exports) {
 
 			if ( far === undefined ) {
 
-				console.warn( 'THREE.Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
+				console.warn( 'Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
 
 			}
 
@@ -2691,11 +2716,7 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var Matrix4Node = function( matrix ) {
+	var Matrix4Node = function ( matrix ) {
 
 		InputNode.call( this, 'm4' );
 
@@ -2705,12 +2726,33 @@ var Three = (function (exports) {
 
 	Matrix4Node.prototype = Object.create( InputNode.prototype );
 	Matrix4Node.prototype.constructor = Matrix4Node;
+	Matrix4Node.prototype.nodeType = "Matrix4";
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	Matrix4Node.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
-	var PositionNode = function( scope ) {
+		return builder.format( "mat4( " + this.value.elements.join( ", " ) + " )", type, output );
+
+	};
+
+	Matrix4Node.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.elements = this.value.elements.concat();
+
+			if ( this.readonly === true ) data.readonly = true;
+
+		}
+
+		return data;
+
+	};
+
+	var PositionNode = function ( scope ) {
 
 		TempNode.call( this, 'v3' );
 
@@ -2725,31 +2767,36 @@ var Three = (function (exports) {
 
 	PositionNode.prototype = Object.create( TempNode.prototype );
 	PositionNode.prototype.constructor = PositionNode;
+	PositionNode.prototype.nodeType = "Position";
 
-	PositionNode.prototype.getType = function( builder ) {
+	PositionNode.prototype.getType = function ( builder ) {
 
 		switch ( this.scope ) {
+
 			case PositionNode.PROJECTION:
 				return 'v4';
+
 		}
 
 		return this.type;
 
 	};
 
-	PositionNode.prototype.isShared = function( builder ) {
+	PositionNode.prototype.isShared = function ( builder ) {
 
 		switch ( this.scope ) {
+
 			case PositionNode.LOCAL:
 			case PositionNode.WORLD:
 				return false;
+
 		}
 
 		return true;
 
 	};
 
-	PositionNode.prototype.generate = function( builder, output ) {
+	PositionNode.prototype.generate = function ( builder, output ) {
 
 		var material = builder.material;
 		var result;
@@ -2758,7 +2805,7 @@ var Three = (function (exports) {
 
 			case PositionNode.LOCAL:
 
-				material.requestAttribs.position = true;
+				material.requires.position = true;
 
 				if ( builder.isShader( 'vertex' ) ) result = 'transformed';
 				else result = 'vPosition';
@@ -2767,7 +2814,7 @@ var Three = (function (exports) {
 
 			case PositionNode.WORLD:
 
-				material.requestAttribs.worldPosition = true;
+				material.requires.worldPosition = true;
 
 				if ( builder.isShader( 'vertex' ) ) result = 'vWPosition';
 				else result = 'vWPosition';
@@ -2794,11 +2841,23 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	PositionNode.prototype.toJSON = function ( meta ) {
 
-	var OperatorNode = function( a, b, op ) {
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.scope = this.scope;
+
+		}
+
+		return data;
+
+	};
+
+	var OperatorNode = function ( a, b, op ) {
 
 		TempNode.call( this );
 
@@ -2815,8 +2874,9 @@ var Three = (function (exports) {
 
 	OperatorNode.prototype = Object.create( TempNode.prototype );
 	OperatorNode.prototype.constructor = OperatorNode;
+	OperatorNode.prototype.nodeType = "Operator";
 
-	OperatorNode.prototype.getType = function( builder ) {
+	OperatorNode.prototype.getType = function ( builder ) {
 
 		var a = this.a.getType( builder );
 		var b = this.b.getType( builder );
@@ -2837,7 +2897,7 @@ var Three = (function (exports) {
 
 	};
 
-	OperatorNode.prototype.generate = function( builder, output ) {
+	OperatorNode.prototype.generate = function ( builder, output ) {
 
 		var material = builder.material,
 			data = material.getDataNode( this.uuid );
@@ -2851,11 +2911,25 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	OperatorNode.prototype.toJSON = function ( meta ) {
 
-	var UVNode = function( index ) {
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.a = this.a.toJSON( meta ).uuid;
+			data.b = this.b.toJSON( meta ).uuid;
+			data.op = this.op;
+
+		}
+
+		return data;
+
+	};
+
+	var UVNode = function ( index ) {
 
 		TempNode.call( this, 'v2', { shared: false } );
 
@@ -2868,13 +2942,14 @@ var Three = (function (exports) {
 
 	UVNode.prototype = Object.create( TempNode.prototype );
 	UVNode.prototype.constructor = UVNode;
+	UVNode.prototype.nodeType = "UV";
 
-	UVNode.prototype.generate = function( builder, output ) {
+	UVNode.prototype.generate = function ( builder, output ) {
 
 		var material = builder.material;
 		var result;
 
-		material.requestAttribs.uv[ this.index ] = true;
+		material.requires.uv[ this.index ] = true;
 
 		if ( builder.isShader( 'vertex' ) ) result = UVNode.vertexDict[ this.index ];
 		else result = UVNode.fragmentDict[ this.index ];
@@ -2883,13 +2958,25 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	UVNode.prototype.toJSON = function ( meta ) {
 
-	var TextureNode = function( value, coord, bias, project ) {
+		var data = this.getJSONNode( meta );
 
-		InputNode.call( this, 'v4', { shared : true } );
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.index = this.index;
+
+		}
+
+		return data;
+
+	};
+
+	var TextureNode = function ( value, coord, bias, project ) {
+
+		InputNode.call( this, 'v4', { shared: true } );
 
 		this.value = value;
 		this.coord = coord || new UVNode();
@@ -2900,14 +2987,15 @@ var Three = (function (exports) {
 
 	TextureNode.prototype = Object.create( InputNode.prototype );
 	TextureNode.prototype.constructor = TextureNode;
+	TextureNode.prototype.nodeType = "Texture";
 
-	TextureNode.prototype.getTexture = function( builder, output ) {
+	TextureNode.prototype.getTexture = function ( builder, output ) {
 
 		return InputNode.prototype.generate.call( this, builder, output, this.value.uuid, 't' );
 
 	};
 
-	TextureNode.prototype.generate = function( builder, output ) {
+	TextureNode.prototype.generate = function ( builder, output ) {
 
 		if ( output === 'sampler2D' ) {
 
@@ -2951,9 +3039,40 @@ var Three = (function (exports) {
 
 	};
 
-	var ReflectorNode = function( mirror, camera, options ) {
+	TextureNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			if ( this.value ) data.value = this.value.uuid;
+
+			data.coord = this.coord.toJSON( meta ).uuid;
+			data.project = this.project;
+
+			if ( this.bias ) data.bias = this.bias.toJSON( meta ).uuid;
+
+		}
+
+		return data;
+
+	};
+
+	var ReflectorNode = function ( mirror ) {
 
 		TempNode.call( this, 'v4' );
+
+		if ( mirror ) this.setMirror( mirror );
+
+	};
+
+	ReflectorNode.prototype = Object.create( TempNode.prototype );
+	ReflectorNode.prototype.constructor = ReflectorNode;
+	ReflectorNode.prototype.nodeType = "Reflector";
+
+	ReflectorNode.prototype.setMirror = function ( mirror ) {
 
 		this.mirror = mirror;
 
@@ -2968,10 +3087,7 @@ var Three = (function (exports) {
 
 	};
 
-	ReflectorNode.prototype = Object.create( TempNode.prototype );
-	ReflectorNode.prototype.constructor = ReflectorNode;
-
-	ReflectorNode.prototype.generate = function( builder, output ) {
+	ReflectorNode.prototype.generate = function ( builder, output ) {
 
 		var material = builder.material;
 
@@ -2995,6 +3111,24 @@ var Three = (function (exports) {
 			return builder.format( 'vec4(0.0)', this.type, output );
 
 		}
+
+	};
+
+	ReflectorNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.mirror = this.mirror.uuid;
+
+			if ( this.offset ) data.offset = this.offset.toJSON( meta ).uuid;
+
+		}
+
+		return data;
 
 	};
 

@@ -1,13 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://mrdoob.com
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Based on @tojiro's vr-samples-utils.js
-	 */
-
 	var WebVR = {
 
 		createButton: function ( renderer ) {
@@ -93,6 +86,12 @@ var Three = (function (exports) {
 				window.addEventListener( 'vrdisplaypresentchange', function ( event ) {
 
 					button.textContent = event.display.isPresenting ? 'EXIT VR' : 'ENTER VR';
+
+				}, false );
+
+				window.addEventListener( 'vrdisplayactivate', function ( event ) {
+
+					event.display.requestPresent( [ { source: renderer.domElement } ] );
 
 				}, false );
 

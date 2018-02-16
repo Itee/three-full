@@ -1,454 +1,115 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
+	function EventDispatcher() {}
 
-	var Cache = {
+	Object.assign( EventDispatcher.prototype, {
 
-		enabled: false,
+		addEventListener: function ( type, listener ) {
 
-		files: {},
+			if ( this._listeners === undefined ) this._listeners = {};
 
-		add: function ( key, file ) {
+			var listeners = this._listeners;
 
-			if ( this.enabled === false ) return;
+			if ( listeners[ type ] === undefined ) {
 
-			// console.log( 'THREE.Cache', 'Adding key:', key );
+				listeners[ type ] = [];
 
-			this.files[ key ] = file;
+			}
 
-		},
+			if ( listeners[ type ].indexOf( listener ) === - 1 ) {
 
-		get: function ( key ) {
+				listeners[ type ].push( listener );
 
-			if ( this.enabled === false ) return;
-
-			// console.log( 'THREE.Cache', 'Checking key:', key );
-
-			return this.files[ key ];
+			}
 
 		},
 
-		remove: function ( key ) {
+		hasEventListener: function ( type, listener ) {
 
-			delete this.files[ key ];
+			if ( this._listeners === undefined ) return false;
+
+			var listeners = this._listeners;
+
+			return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
 
 		},
 
-		clear: function () {
+		removeEventListener: function ( type, listener ) {
 
-			this.files = {};
+			if ( this._listeners === undefined ) return;
 
-		}
+			var listeners = this._listeners;
+			var listenerArray = listeners[ type ];
 
-	};
+			if ( listenerArray !== undefined ) {
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
+				var index = listenerArray.indexOf( listener );
 
-	function LoadingManager( onLoad, onProgress, onError ) {
+				if ( index !== - 1 ) {
 
-		var scope = this;
-
-		var isLoading = false;
-		var itemsLoaded = 0;
-		var itemsTotal = 0;
-		var urlModifier = undefined;
-
-		this.onStart = undefined;
-		this.onLoad = onLoad;
-		this.onProgress = onProgress;
-		this.onError = onError;
-
-		this.itemStart = function ( url ) {
-
-			itemsTotal ++;
-
-			if ( isLoading === false ) {
-
-				if ( scope.onStart !== undefined ) {
-
-					scope.onStart( url, itemsLoaded, itemsTotal );
+					listenerArray.splice( index, 1 );
 
 				}
 
 			}
 
-			isLoading = true;
+		},
 
-		};
+		dispatchEvent: function ( event ) {
 
-		this.itemEnd = function ( url ) {
+			if ( this._listeners === undefined ) return;
 
-			itemsLoaded ++;
+			var listeners = this._listeners;
+			var listenerArray = listeners[ event.type ];
 
-			if ( scope.onProgress !== undefined ) {
+			if ( listenerArray !== undefined ) {
 
-				scope.onProgress( url, itemsLoaded, itemsTotal );
+				event.target = this;
 
-			}
+				var array = listenerArray.slice( 0 );
 
-			if ( itemsLoaded === itemsTotal ) {
+				for ( var i = 0, l = array.length; i < l; i ++ ) {
 
-				isLoading = false;
-
-				if ( scope.onLoad !== undefined ) {
-
-					scope.onLoad();
+					array[ i ].call( this, event );
 
 				}
 
 			}
-
-		};
-
-		this.itemError = function ( url ) {
-
-			if ( scope.onError !== undefined ) {
-
-				scope.onError( url );
-
-			}
-
-		};
-
-		this.resolveURL = function ( url ) {
-
-			if ( urlModifier ) {
-
-				return urlModifier( url );
-
-			}
-
-			return url;
-
-		};
-
-		this.setURLModifier = function ( transform ) {
-
-			urlModifier = transform;
-			return this;
-
-		};
-
-	}
-
-	var DefaultLoadingManager = new LoadingManager();
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
-	var loading = {};
-
-	function FileLoader( manager ) {
-
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
-
-	}
-
-	Object.assign( FileLoader.prototype, {
-
-		load: function ( url, onLoad, onProgress, onError ) {
-
-			if ( url === undefined ) url = '';
-
-			if ( this.path !== undefined ) url = this.path + url;
-
-			url = this.manager.resolveURL( url );
-
-			var scope = this;
-
-			var cached = Cache.get( url );
-
-			if ( cached !== undefined ) {
-
-				scope.manager.itemStart( url );
-
-				setTimeout( function () {
-
-					if ( onLoad ) onLoad( cached );
-
-					scope.manager.itemEnd( url );
-
-				}, 0 );
-
-				return cached;
-
-			}
-
-			// Check if request is duplicate
-
-			if ( loading[ url ] !== undefined ) {
-
-				loading[ url ].push( {
-
-					onLoad: onLoad,
-					onProgress: onProgress,
-					onError: onError
-
-				} );
-
-				return;
-
-			}
-
-			// Check for data: URI
-			var dataUriRegex = /^data:(.*?)(;base64)?,(.*)$/;
-			var dataUriRegexResult = url.match( dataUriRegex );
-
-			// Safari can not handle Data URIs through XMLHttpRequest so process manually
-			if ( dataUriRegexResult ) {
-
-				var mimeType = dataUriRegexResult[ 1 ];
-				var isBase64 = !! dataUriRegexResult[ 2 ];
-				var data = dataUriRegexResult[ 3 ];
-
-				data = window.decodeURIComponent( data );
-
-				if ( isBase64 ) data = window.atob( data );
-
-				try {
-
-					var response;
-					var responseType = ( this.responseType || '' ).toLowerCase();
-
-					switch ( responseType ) {
-
-						case 'arraybuffer':
-						case 'blob':
-
-							var view = new Uint8Array( data.length );
-
-							for ( var i = 0; i < data.length; i ++ ) {
-
-								view[ i ] = data.charCodeAt( i );
-
-							}
-
-							if ( responseType === 'blob' ) {
-
-								response = new Blob( [ view.buffer ], { type: mimeType } );
-
-							} else {
-
-								response = view.buffer;
-
-							}
-
-							break;
-
-						case 'document':
-
-							var parser = new DOMParser();
-							response = parser.parseFromString( data, mimeType );
-
-							break;
-
-						case 'json':
-
-							response = JSON.parse( data );
-
-							break;
-
-						default: // 'text' or other
-
-							response = data;
-
-							break;
-
-					}
-
-					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
-
-						if ( onLoad ) onLoad( response );
-
-						scope.manager.itemEnd( url );
-
-					}, 0 );
-
-				} catch ( error ) {
-
-					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
-
-						if ( onError ) onError( error );
-
-						scope.manager.itemEnd( url );
-						scope.manager.itemError( url );
-
-					}, 0 );
-
-				}
-
-			} else {
-
-				// Initialise array for duplicate requests
-
-				loading[ url ] = [];
-
-				loading[ url ].push( {
-
-					onLoad: onLoad,
-					onProgress: onProgress,
-					onError: onError
-
-				} );
-
-				var request = new XMLHttpRequest();
-
-				request.open( 'GET', url, true );
-
-				request.addEventListener( 'load', function ( event ) {
-
-					var response = this.response;
-
-					Cache.add( url, response );
-
-					var callbacks = loading[ url ];
-
-					delete loading[ url ];
-
-					if ( this.status === 200 ) {
-
-						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-							var callback = callbacks[ i ];
-							if ( callback.onLoad ) callback.onLoad( response );
-
-						}
-
-						scope.manager.itemEnd( url );
-
-					} else if ( this.status === 0 ) {
-
-						// Some browsers return HTTP Status 0 when using non-http protocol
-						// e.g. 'file://' or 'data://'. Handle as success.
-
-						console.warn( 'THREE.FileLoader: HTTP Status 0 received.' );
-
-						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-							var callback = callbacks[ i ];
-							if ( callback.onLoad ) callback.onLoad( response );
-
-						}
-
-						scope.manager.itemEnd( url );
-
-					} else {
-
-						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-							var callback = callbacks[ i ];
-							if ( callback.onError ) callback.onError( event );
-
-						}
-
-						scope.manager.itemEnd( url );
-						scope.manager.itemError( url );
-
-					}
-
-				}, false );
-
-				request.addEventListener( 'progress', function ( event ) {
-
-					var callbacks = loading[ url ];
-
-					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-						var callback = callbacks[ i ];
-						if ( callback.onProgress ) callback.onProgress( event );
-
-					}
-
-				}, false );
-
-				request.addEventListener( 'error', function ( event ) {
-
-					var callbacks = loading[ url ];
-
-					delete loading[ url ];
-
-					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-						var callback = callbacks[ i ];
-						if ( callback.onError ) callback.onError( event );
-
-					}
-
-					scope.manager.itemEnd( url );
-					scope.manager.itemError( url );
-
-				}, false );
-
-				if ( this.responseType !== undefined ) request.responseType = this.responseType;
-				if ( this.withCredentials !== undefined ) request.withCredentials = this.withCredentials;
-
-				if ( request.overrideMimeType ) request.overrideMimeType( this.mimeType !== undefined ? this.mimeType : 'text/plain' );
-
-				for ( var header in this.requestHeader ) {
-
-					request.setRequestHeader( header, this.requestHeader[ header ] );
-
-				}
-
-				request.send( null );
-
-			}
-
-			scope.manager.itemStart( url );
-
-			return request;
-
-		},
-
-		setPath: function ( value ) {
-
-			this.path = value;
-			return this;
-
-		},
-
-		setResponseType: function ( value ) {
-
-			this.responseType = value;
-			return this;
-
-		},
-
-		setWithCredentials: function ( value ) {
-
-			this.withCredentials = value;
-			return this;
-
-		},
-
-		setMimeType: function ( value ) {
-
-			this.mimeType = value;
-			return this;
-
-		},
-
-		setRequestHeader: function ( value ) {
-
-			this.requestHeader = value;
-			return this;
 
 		}
 
 	} );
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
+	var FrontSide = 0;
+	var BackSide = 1;
+	var DoubleSide = 2;
+	var FlatShading = 1;
+	var NoColors = 0;
+	var FaceColors = 1;
+	var VertexColors = 2;
+	var NoBlending = 0;
+	var NormalBlending = 1;
+	var AdditiveBlending = 2;
+	var SubtractiveBlending = 3;
+	var MultiplyBlending = 4;
+	var CustomBlending = 5;
+	var AddEquation = 100;
+	var SrcAlphaFactor = 204;
+	var OneMinusSrcAlphaFactor = 205;
+	var LessEqualDepth = 3;
+	var MultiplyOperation = 0;
+	var UVMapping = 300;
+	var RepeatWrapping = 1000;
+	var ClampToEdgeWrapping = 1001;
+	var MirroredRepeatWrapping = 1002;
+	var LinearFilter = 1006;
+	var LinearMipMapLinearFilter = 1008;
+	var UnsignedByteType = 1009;
+	var RGBFormat = 1022;
+	var RGBAFormat = 1023;
+	var TrianglesDrawMode = 0;
+	var LinearEncoding = 3000;
 
 	var _Math = {
 
@@ -467,7 +128,7 @@ var Three = (function (exports) {
 
 			}
 
-			return function () {
+			return function generateUUID() {
 
 				var d0 = Math.random() * 0xffffffff | 0;
 				var d1 = Math.random() * 0xffffffff | 0;
@@ -593,18 +254,1559 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author jordi_ros / http://plattsoft.com
-	 * @author D1plo1d / http://github.com/D1plo1d
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author timknip / http://www.floorplanner.com/
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
+	var materialId = 0;
+
+	function Material() {
+
+		Object.defineProperty( this, 'id', { value: materialId ++ } );
+
+		this.uuid = _Math.generateUUID();
+
+		this.name = '';
+		this.type = 'Material';
+
+		this.fog = true;
+		this.lights = true;
+
+		this.blending = NormalBlending;
+		this.side = FrontSide;
+		this.flatShading = false;
+		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
+
+		this.opacity = 1;
+		this.transparent = false;
+
+		this.blendSrc = SrcAlphaFactor;
+		this.blendDst = OneMinusSrcAlphaFactor;
+		this.blendEquation = AddEquation;
+		this.blendSrcAlpha = null;
+		this.blendDstAlpha = null;
+		this.blendEquationAlpha = null;
+
+		this.depthFunc = LessEqualDepth;
+		this.depthTest = true;
+		this.depthWrite = true;
+
+		this.clippingPlanes = null;
+		this.clipIntersection = false;
+		this.clipShadows = false;
+
+		this.shadowSide = null;
+
+		this.colorWrite = true;
+
+		this.precision = null; // override the renderer's default precision for this material
+
+		this.polygonOffset = false;
+		this.polygonOffsetFactor = 0;
+		this.polygonOffsetUnits = 0;
+
+		this.dithering = false;
+
+		this.alphaTest = 0;
+		this.premultipliedAlpha = false;
+
+		this.overdraw = 0; // Overdrawn pixels (typically between 0 and 1) for fixing antialiasing gaps in CanvasRenderer
+
+		this.visible = true;
+
+		this.userData = {};
+
+		this.needsUpdate = true;
+
+	}
+
+	Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Material,
+
+		isMaterial: true,
+
+		onBeforeCompile: function () {},
+
+		setValues: function ( values ) {
+
+			if ( values === undefined ) return;
+
+			for ( var key in values ) {
+
+				var newValue = values[ key ];
+
+				if ( newValue === undefined ) {
+
+					console.warn( "Material: '" + key + "' parameter is undefined." );
+					continue;
+
+				}
+
+				// for backward compatability if shading is set in the constructor
+				if ( key === 'shading' ) {
+
+					console.warn( '' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
+					this.flatShading = ( newValue === FlatShading ) ? true : false;
+					continue;
+
+				}
+
+				var currentValue = this[ key ];
+
+				if ( currentValue === undefined ) {
+
+					console.warn( "" + this.type + ": '" + key + "' is not a property of this material." );
+					continue;
+
+				}
+
+				if ( currentValue && currentValue.isColor ) {
+
+					currentValue.set( newValue );
+
+				} else if ( ( currentValue && currentValue.isVector3 ) && ( newValue && newValue.isVector3 ) ) {
+
+					currentValue.copy( newValue );
+
+				} else if ( key === 'overdraw' ) {
+
+					// ensure overdraw is backwards-compatible with legacy boolean type
+					this[ key ] = Number( newValue );
+
+				} else {
+
+					this[ key ] = newValue;
+
+				}
+
+			}
+
+		},
+
+		toJSON: function ( meta ) {
+
+			var isRoot = ( meta === undefined || typeof meta === 'string' );
+
+			if ( isRoot ) {
+
+				meta = {
+					textures: {},
+					images: {}
+				};
+
+			}
+
+			var data = {
+				metadata: {
+					version: 4.5,
+					type: 'Material',
+					generator: 'Material.toJSON'
+				}
+			};
+
+			// standard Material serialization
+			data.uuid = this.uuid;
+			data.type = this.type;
+
+			if ( this.name !== '' ) data.name = this.name;
+
+			if ( this.color && this.color.isColor ) data.color = this.color.getHex();
+
+			if ( this.roughness !== undefined ) data.roughness = this.roughness;
+			if ( this.metalness !== undefined ) data.metalness = this.metalness;
+
+			if ( this.emissive && this.emissive.isColor ) data.emissive = this.emissive.getHex();
+			if ( this.emissiveIntensity !== 1 ) data.emissiveIntensity = this.emissiveIntensity;
+
+			if ( this.specular && this.specular.isColor ) data.specular = this.specular.getHex();
+			if ( this.shininess !== undefined ) data.shininess = this.shininess;
+			if ( this.clearCoat !== undefined ) data.clearCoat = this.clearCoat;
+			if ( this.clearCoatRoughness !== undefined ) data.clearCoatRoughness = this.clearCoatRoughness;
+
+			if ( this.map && this.map.isTexture ) data.map = this.map.toJSON( meta ).uuid;
+			if ( this.alphaMap && this.alphaMap.isTexture ) data.alphaMap = this.alphaMap.toJSON( meta ).uuid;
+			if ( this.lightMap && this.lightMap.isTexture ) data.lightMap = this.lightMap.toJSON( meta ).uuid;
+			if ( this.bumpMap && this.bumpMap.isTexture ) {
+
+				data.bumpMap = this.bumpMap.toJSON( meta ).uuid;
+				data.bumpScale = this.bumpScale;
+
+			}
+			if ( this.normalMap && this.normalMap.isTexture ) {
+
+				data.normalMap = this.normalMap.toJSON( meta ).uuid;
+				data.normalScale = this.normalScale.toArray();
+
+			}
+			if ( this.displacementMap && this.displacementMap.isTexture ) {
+
+				data.displacementMap = this.displacementMap.toJSON( meta ).uuid;
+				data.displacementScale = this.displacementScale;
+				data.displacementBias = this.displacementBias;
+
+			}
+			if ( this.roughnessMap && this.roughnessMap.isTexture ) data.roughnessMap = this.roughnessMap.toJSON( meta ).uuid;
+			if ( this.metalnessMap && this.metalnessMap.isTexture ) data.metalnessMap = this.metalnessMap.toJSON( meta ).uuid;
+
+			if ( this.emissiveMap && this.emissiveMap.isTexture ) data.emissiveMap = this.emissiveMap.toJSON( meta ).uuid;
+			if ( this.specularMap && this.specularMap.isTexture ) data.specularMap = this.specularMap.toJSON( meta ).uuid;
+
+			if ( this.envMap && this.envMap.isTexture ) {
+
+				data.envMap = this.envMap.toJSON( meta ).uuid;
+				data.reflectivity = this.reflectivity; // Scale behind envMap
+
+			}
+
+			if ( this.gradientMap && this.gradientMap.isTexture ) {
+
+				data.gradientMap = this.gradientMap.toJSON( meta ).uuid;
+
+			}
+
+			if ( this.size !== undefined ) data.size = this.size;
+			if ( this.sizeAttenuation !== undefined ) data.sizeAttenuation = this.sizeAttenuation;
+
+			if ( this.blending !== NormalBlending ) data.blending = this.blending;
+			if ( this.flatShading === true ) data.flatShading = this.flatShading;
+			if ( this.side !== FrontSide ) data.side = this.side;
+			if ( this.vertexColors !== NoColors ) data.vertexColors = this.vertexColors;
+
+			if ( this.opacity < 1 ) data.opacity = this.opacity;
+			if ( this.transparent === true ) data.transparent = this.transparent;
+
+			data.depthFunc = this.depthFunc;
+			data.depthTest = this.depthTest;
+			data.depthWrite = this.depthWrite;
+
+			// rotation (SpriteMaterial)
+			if ( this.rotation !== 0 ) data.rotation = this.rotation;
+
+			if ( this.linewidth !== 1 ) data.linewidth = this.linewidth;
+			if ( this.dashSize !== undefined ) data.dashSize = this.dashSize;
+			if ( this.gapSize !== undefined ) data.gapSize = this.gapSize;
+			if ( this.scale !== undefined ) data.scale = this.scale;
+
+			if ( this.dithering === true ) data.dithering = true;
+
+			if ( this.alphaTest > 0 ) data.alphaTest = this.alphaTest;
+			if ( this.premultipliedAlpha === true ) data.premultipliedAlpha = this.premultipliedAlpha;
+
+			if ( this.wireframe === true ) data.wireframe = this.wireframe;
+			if ( this.wireframeLinewidth > 1 ) data.wireframeLinewidth = this.wireframeLinewidth;
+			if ( this.wireframeLinecap !== 'round' ) data.wireframeLinecap = this.wireframeLinecap;
+			if ( this.wireframeLinejoin !== 'round' ) data.wireframeLinejoin = this.wireframeLinejoin;
+
+			if ( this.morphTargets === true ) data.morphTargets = true;
+			if ( this.skinning === true ) data.skinning = true;
+
+			if ( this.visible === false ) data.visible = false;
+			if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
+
+			// TODO: Copied from Object3D.toJSON
+
+			function extractFromCache( cache ) {
+
+				var values = [];
+
+				for ( var key in cache ) {
+
+					var data = cache[ key ];
+					delete data.metadata;
+					values.push( data );
+
+				}
+
+				return values;
+
+			}
+
+			if ( isRoot ) {
+
+				var textures = extractFromCache( meta.textures );
+				var images = extractFromCache( meta.images );
+
+				if ( textures.length > 0 ) data.textures = textures;
+				if ( images.length > 0 ) data.images = images;
+
+			}
+
+			return data;
+
+		},
+
+		clone: function () {
+
+			return new this.constructor().copy( this );
+
+		},
+
+		copy: function ( source ) {
+
+			this.name = source.name;
+
+			this.fog = source.fog;
+			this.lights = source.lights;
+
+			this.blending = source.blending;
+			this.side = source.side;
+			this.flatShading = source.flatShading;
+			this.vertexColors = source.vertexColors;
+
+			this.opacity = source.opacity;
+			this.transparent = source.transparent;
+
+			this.blendSrc = source.blendSrc;
+			this.blendDst = source.blendDst;
+			this.blendEquation = source.blendEquation;
+			this.blendSrcAlpha = source.blendSrcAlpha;
+			this.blendDstAlpha = source.blendDstAlpha;
+			this.blendEquationAlpha = source.blendEquationAlpha;
+
+			this.depthFunc = source.depthFunc;
+			this.depthTest = source.depthTest;
+			this.depthWrite = source.depthWrite;
+
+			this.colorWrite = source.colorWrite;
+
+			this.precision = source.precision;
+
+			this.polygonOffset = source.polygonOffset;
+			this.polygonOffsetFactor = source.polygonOffsetFactor;
+			this.polygonOffsetUnits = source.polygonOffsetUnits;
+
+			this.dithering = source.dithering;
+
+			this.alphaTest = source.alphaTest;
+			this.premultipliedAlpha = source.premultipliedAlpha;
+
+			this.overdraw = source.overdraw;
+
+			this.visible = source.visible;
+			this.userData = JSON.parse( JSON.stringify( source.userData ) );
+
+			this.clipShadows = source.clipShadows;
+			this.clipIntersection = source.clipIntersection;
+
+			var srcPlanes = source.clippingPlanes,
+				dstPlanes = null;
+
+			if ( srcPlanes !== null ) {
+
+				var n = srcPlanes.length;
+				dstPlanes = new Array( n );
+
+				for ( var i = 0; i !== n; ++ i )
+					dstPlanes[ i ] = srcPlanes[ i ].clone();
+
+			}
+
+			this.clippingPlanes = dstPlanes;
+
+			this.shadowSide = source.shadowSide;
+
+			return this;
+
+		},
+
+		dispose: function () {
+
+			this.dispatchEvent( { type: 'dispose' } );
+
+		}
+
+	} );
+
+	function Vector2( x, y ) {
+
+		this.x = x || 0;
+		this.y = y || 0;
+
+	}
+
+	Object.defineProperties( Vector2.prototype, {
+
+		"width": {
+
+			get: function () {
+
+				return this.x;
+
+			},
+
+			set: function ( value ) {
+
+				this.x = value;
+
+			}
+
+		},
+
+		"height": {
+
+			get: function () {
+
+				return this.y;
+
+			},
+
+			set: function ( value ) {
+
+				this.y = value;
+
+			}
+
+		}
+
+	} );
+
+	Object.assign( Vector2.prototype, {
+
+		isVector2: true,
+
+		set: function ( x, y ) {
+
+			this.x = x;
+			this.y = y;
+
+			return this;
+
+		},
+
+		setScalar: function ( scalar ) {
+
+			this.x = scalar;
+			this.y = scalar;
+
+			return this;
+
+		},
+
+		setX: function ( x ) {
+
+			this.x = x;
+
+			return this;
+
+		},
+
+		setY: function ( y ) {
+
+			this.y = y;
+
+			return this;
+
+		},
+
+		setComponent: function ( index, value ) {
+
+			switch ( index ) {
+
+				case 0: this.x = value; break;
+				case 1: this.y = value; break;
+				default: throw new Error( 'index is out of range: ' + index );
+
+			}
+
+			return this;
+
+		},
+
+		getComponent: function ( index ) {
+
+			switch ( index ) {
+
+				case 0: return this.x;
+				case 1: return this.y;
+				default: throw new Error( 'index is out of range: ' + index );
+
+			}
+
+		},
+
+		clone: function () {
+
+			return new this.constructor( this.x, this.y );
+
+		},
+
+		copy: function ( v ) {
+
+			this.x = v.x;
+			this.y = v.y;
+
+			return this;
+
+		},
+
+		add: function ( v, w ) {
+
+			if ( w !== undefined ) {
+
+				console.warn( 'Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				return this.addVectors( v, w );
+
+			}
+
+			this.x += v.x;
+			this.y += v.y;
+
+			return this;
+
+		},
+
+		addScalar: function ( s ) {
+
+			this.x += s;
+			this.y += s;
+
+			return this;
+
+		},
+
+		addVectors: function ( a, b ) {
+
+			this.x = a.x + b.x;
+			this.y = a.y + b.y;
+
+			return this;
+
+		},
+
+		addScaledVector: function ( v, s ) {
+
+			this.x += v.x * s;
+			this.y += v.y * s;
+
+			return this;
+
+		},
+
+		sub: function ( v, w ) {
+
+			if ( w !== undefined ) {
+
+				console.warn( 'Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				return this.subVectors( v, w );
+
+			}
+
+			this.x -= v.x;
+			this.y -= v.y;
+
+			return this;
+
+		},
+
+		subScalar: function ( s ) {
+
+			this.x -= s;
+			this.y -= s;
+
+			return this;
+
+		},
+
+		subVectors: function ( a, b ) {
+
+			this.x = a.x - b.x;
+			this.y = a.y - b.y;
+
+			return this;
+
+		},
+
+		multiply: function ( v ) {
+
+			this.x *= v.x;
+			this.y *= v.y;
+
+			return this;
+
+		},
+
+		multiplyScalar: function ( scalar ) {
+
+			this.x *= scalar;
+			this.y *= scalar;
+
+			return this;
+
+		},
+
+		divide: function ( v ) {
+
+			this.x /= v.x;
+			this.y /= v.y;
+
+			return this;
+
+		},
+
+		divideScalar: function ( scalar ) {
+
+			return this.multiplyScalar( 1 / scalar );
+
+		},
+
+		applyMatrix3: function ( m ) {
+
+			var x = this.x, y = this.y;
+			var e = m.elements;
+
+			this.x = e[ 0 ] * x + e[ 3 ] * y + e[ 6 ];
+			this.y = e[ 1 ] * x + e[ 4 ] * y + e[ 7 ];
+
+			return this;
+
+		},
+
+		min: function ( v ) {
+
+			this.x = Math.min( this.x, v.x );
+			this.y = Math.min( this.y, v.y );
+
+			return this;
+
+		},
+
+		max: function ( v ) {
+
+			this.x = Math.max( this.x, v.x );
+			this.y = Math.max( this.y, v.y );
+
+			return this;
+
+		},
+
+		clamp: function ( min, max ) {
+
+			// assumes min < max, componentwise
+
+			this.x = Math.max( min.x, Math.min( max.x, this.x ) );
+			this.y = Math.max( min.y, Math.min( max.y, this.y ) );
+
+			return this;
+
+		},
+
+		clampScalar: function () {
+
+			var min = new Vector2();
+			var max = new Vector2();
+
+			return function clampScalar( minVal, maxVal ) {
+
+				min.set( minVal, minVal );
+				max.set( maxVal, maxVal );
+
+				return this.clamp( min, max );
+
+			};
+
+		}(),
+
+		clampLength: function ( min, max ) {
+
+			var length = this.length();
+
+			return this.divideScalar( length || 1 ).multiplyScalar( Math.max( min, Math.min( max, length ) ) );
+
+		},
+
+		floor: function () {
+
+			this.x = Math.floor( this.x );
+			this.y = Math.floor( this.y );
+
+			return this;
+
+		},
+
+		ceil: function () {
+
+			this.x = Math.ceil( this.x );
+			this.y = Math.ceil( this.y );
+
+			return this;
+
+		},
+
+		round: function () {
+
+			this.x = Math.round( this.x );
+			this.y = Math.round( this.y );
+
+			return this;
+
+		},
+
+		roundToZero: function () {
+
+			this.x = ( this.x < 0 ) ? Math.ceil( this.x ) : Math.floor( this.x );
+			this.y = ( this.y < 0 ) ? Math.ceil( this.y ) : Math.floor( this.y );
+
+			return this;
+
+		},
+
+		negate: function () {
+
+			this.x = - this.x;
+			this.y = - this.y;
+
+			return this;
+
+		},
+
+		dot: function ( v ) {
+
+			return this.x * v.x + this.y * v.y;
+
+		},
+
+		lengthSq: function () {
+
+			return this.x * this.x + this.y * this.y;
+
+		},
+
+		length: function () {
+
+			return Math.sqrt( this.x * this.x + this.y * this.y );
+
+		},
+
+		manhattanLength: function () {
+
+			return Math.abs( this.x ) + Math.abs( this.y );
+
+		},
+
+		normalize: function () {
+
+			return this.divideScalar( this.length() || 1 );
+
+		},
+
+		angle: function () {
+
+			// computes the angle in radians with respect to the positive x-axis
+
+			var angle = Math.atan2( this.y, this.x );
+
+			if ( angle < 0 ) angle += 2 * Math.PI;
+
+			return angle;
+
+		},
+
+		distanceTo: function ( v ) {
+
+			return Math.sqrt( this.distanceToSquared( v ) );
+
+		},
+
+		distanceToSquared: function ( v ) {
+
+			var dx = this.x - v.x, dy = this.y - v.y;
+			return dx * dx + dy * dy;
+
+		},
+
+		manhattanDistanceTo: function ( v ) {
+
+			return Math.abs( this.x - v.x ) + Math.abs( this.y - v.y );
+
+		},
+
+		setLength: function ( length ) {
+
+			return this.normalize().multiplyScalar( length );
+
+		},
+
+		lerp: function ( v, alpha ) {
+
+			this.x += ( v.x - this.x ) * alpha;
+			this.y += ( v.y - this.y ) * alpha;
+
+			return this;
+
+		},
+
+		lerpVectors: function ( v1, v2, alpha ) {
+
+			return this.subVectors( v2, v1 ).multiplyScalar( alpha ).add( v1 );
+
+		},
+
+		equals: function ( v ) {
+
+			return ( ( v.x === this.x ) && ( v.y === this.y ) );
+
+		},
+
+		fromArray: function ( array, offset ) {
+
+			if ( offset === undefined ) offset = 0;
+
+			this.x = array[ offset ];
+			this.y = array[ offset + 1 ];
+
+			return this;
+
+		},
+
+		toArray: function ( array, offset ) {
+
+			if ( array === undefined ) array = [];
+			if ( offset === undefined ) offset = 0;
+
+			array[ offset ] = this.x;
+			array[ offset + 1 ] = this.y;
+
+			return array;
+
+		},
+
+		fromBufferAttribute: function ( attribute, index, offset ) {
+
+			if ( offset !== undefined ) {
+
+				console.warn( 'Vector2: offset has been removed from .fromBufferAttribute().' );
+
+			}
+
+			this.x = attribute.getX( index );
+			this.y = attribute.getY( index );
+
+			return this;
+
+		},
+
+		rotateAround: function ( center, angle ) {
+
+			var c = Math.cos( angle ), s = Math.sin( angle );
+
+			var x = this.x - center.x;
+			var y = this.y - center.y;
+
+			this.x = x * c - y * s + center.x;
+			this.y = x * s + y * c + center.y;
+
+			return this;
+
+		}
+
+	} );
+
+	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
+		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
+		'brown': 0xA52A2A, 'burlywood': 0xDEB887, 'cadetblue': 0x5F9EA0, 'chartreuse': 0x7FFF00, 'chocolate': 0xD2691E, 'coral': 0xFF7F50,
+		'cornflowerblue': 0x6495ED, 'cornsilk': 0xFFF8DC, 'crimson': 0xDC143C, 'cyan': 0x00FFFF, 'darkblue': 0x00008B, 'darkcyan': 0x008B8B,
+		'darkgoldenrod': 0xB8860B, 'darkgray': 0xA9A9A9, 'darkgreen': 0x006400, 'darkgrey': 0xA9A9A9, 'darkkhaki': 0xBDB76B, 'darkmagenta': 0x8B008B,
+		'darkolivegreen': 0x556B2F, 'darkorange': 0xFF8C00, 'darkorchid': 0x9932CC, 'darkred': 0x8B0000, 'darksalmon': 0xE9967A, 'darkseagreen': 0x8FBC8F,
+		'darkslateblue': 0x483D8B, 'darkslategray': 0x2F4F4F, 'darkslategrey': 0x2F4F4F, 'darkturquoise': 0x00CED1, 'darkviolet': 0x9400D3,
+		'deeppink': 0xFF1493, 'deepskyblue': 0x00BFFF, 'dimgray': 0x696969, 'dimgrey': 0x696969, 'dodgerblue': 0x1E90FF, 'firebrick': 0xB22222,
+		'floralwhite': 0xFFFAF0, 'forestgreen': 0x228B22, 'fuchsia': 0xFF00FF, 'gainsboro': 0xDCDCDC, 'ghostwhite': 0xF8F8FF, 'gold': 0xFFD700,
+		'goldenrod': 0xDAA520, 'gray': 0x808080, 'green': 0x008000, 'greenyellow': 0xADFF2F, 'grey': 0x808080, 'honeydew': 0xF0FFF0, 'hotpink': 0xFF69B4,
+		'indianred': 0xCD5C5C, 'indigo': 0x4B0082, 'ivory': 0xFFFFF0, 'khaki': 0xF0E68C, 'lavender': 0xE6E6FA, 'lavenderblush': 0xFFF0F5, 'lawngreen': 0x7CFC00,
+		'lemonchiffon': 0xFFFACD, 'lightblue': 0xADD8E6, 'lightcoral': 0xF08080, 'lightcyan': 0xE0FFFF, 'lightgoldenrodyellow': 0xFAFAD2, 'lightgray': 0xD3D3D3,
+		'lightgreen': 0x90EE90, 'lightgrey': 0xD3D3D3, 'lightpink': 0xFFB6C1, 'lightsalmon': 0xFFA07A, 'lightseagreen': 0x20B2AA, 'lightskyblue': 0x87CEFA,
+		'lightslategray': 0x778899, 'lightslategrey': 0x778899, 'lightsteelblue': 0xB0C4DE, 'lightyellow': 0xFFFFE0, 'lime': 0x00FF00, 'limegreen': 0x32CD32,
+		'linen': 0xFAF0E6, 'magenta': 0xFF00FF, 'maroon': 0x800000, 'mediumaquamarine': 0x66CDAA, 'mediumblue': 0x0000CD, 'mediumorchid': 0xBA55D3,
+		'mediumpurple': 0x9370DB, 'mediumseagreen': 0x3CB371, 'mediumslateblue': 0x7B68EE, 'mediumspringgreen': 0x00FA9A, 'mediumturquoise': 0x48D1CC,
+		'mediumvioletred': 0xC71585, 'midnightblue': 0x191970, 'mintcream': 0xF5FFFA, 'mistyrose': 0xFFE4E1, 'moccasin': 0xFFE4B5, 'navajowhite': 0xFFDEAD,
+		'navy': 0x000080, 'oldlace': 0xFDF5E6, 'olive': 0x808000, 'olivedrab': 0x6B8E23, 'orange': 0xFFA500, 'orangered': 0xFF4500, 'orchid': 0xDA70D6,
+		'palegoldenrod': 0xEEE8AA, 'palegreen': 0x98FB98, 'paleturquoise': 0xAFEEEE, 'palevioletred': 0xDB7093, 'papayawhip': 0xFFEFD5, 'peachpuff': 0xFFDAB9,
+		'peru': 0xCD853F, 'pink': 0xFFC0CB, 'plum': 0xDDA0DD, 'powderblue': 0xB0E0E6, 'purple': 0x800080, 'rebeccapurple': 0x663399, 'red': 0xFF0000, 'rosybrown': 0xBC8F8F,
+		'royalblue': 0x4169E1, 'saddlebrown': 0x8B4513, 'salmon': 0xFA8072, 'sandybrown': 0xF4A460, 'seagreen': 0x2E8B57, 'seashell': 0xFFF5EE,
+		'sienna': 0xA0522D, 'silver': 0xC0C0C0, 'skyblue': 0x87CEEB, 'slateblue': 0x6A5ACD, 'slategray': 0x708090, 'slategrey': 0x708090, 'snow': 0xFFFAFA,
+		'springgreen': 0x00FF7F, 'steelblue': 0x4682B4, 'tan': 0xD2B48C, 'teal': 0x008080, 'thistle': 0xD8BFD8, 'tomato': 0xFF6347, 'turquoise': 0x40E0D0,
+		'violet': 0xEE82EE, 'wheat': 0xF5DEB3, 'white': 0xFFFFFF, 'whitesmoke': 0xF5F5F5, 'yellow': 0xFFFF00, 'yellowgreen': 0x9ACD32 };
+
+	function Color( r, g, b ) {
+
+		if ( g === undefined && b === undefined ) {
+
+			// r is Color, hex or string
+			return this.set( r );
+
+		}
+
+		return this.setRGB( r, g, b );
+
+	}
+
+	Object.assign( Color.prototype, {
+
+		isColor: true,
+
+		r: 1, g: 1, b: 1,
+
+		set: function ( value ) {
+
+			if ( value && value.isColor ) {
+
+				this.copy( value );
+
+			} else if ( typeof value === 'number' ) {
+
+				this.setHex( value );
+
+			} else if ( typeof value === 'string' ) {
+
+				this.setStyle( value );
+
+			}
+
+			return this;
+
+		},
+
+		setScalar: function ( scalar ) {
+
+			this.r = scalar;
+			this.g = scalar;
+			this.b = scalar;
+
+			return this;
+
+		},
+
+		setHex: function ( hex ) {
+
+			hex = Math.floor( hex );
+
+			this.r = ( hex >> 16 & 255 ) / 255;
+			this.g = ( hex >> 8 & 255 ) / 255;
+			this.b = ( hex & 255 ) / 255;
+
+			return this;
+
+		},
+
+		setRGB: function ( r, g, b ) {
+
+			this.r = r;
+			this.g = g;
+			this.b = b;
+
+			return this;
+
+		},
+
+		setHSL: function () {
+
+			function hue2rgb( p, q, t ) {
+
+				if ( t < 0 ) t += 1;
+				if ( t > 1 ) t -= 1;
+				if ( t < 1 / 6 ) return p + ( q - p ) * 6 * t;
+				if ( t < 1 / 2 ) return q;
+				if ( t < 2 / 3 ) return p + ( q - p ) * 6 * ( 2 / 3 - t );
+				return p;
+
+			}
+
+			return function setHSL( h, s, l ) {
+
+				// h,s,l ranges are in 0.0 - 1.0
+				h = _Math.euclideanModulo( h, 1 );
+				s = _Math.clamp( s, 0, 1 );
+				l = _Math.clamp( l, 0, 1 );
+
+				if ( s === 0 ) {
+
+					this.r = this.g = this.b = l;
+
+				} else {
+
+					var p = l <= 0.5 ? l * ( 1 + s ) : l + s - ( l * s );
+					var q = ( 2 * l ) - p;
+
+					this.r = hue2rgb( q, p, h + 1 / 3 );
+					this.g = hue2rgb( q, p, h );
+					this.b = hue2rgb( q, p, h - 1 / 3 );
+
+				}
+
+				return this;
+
+			};
+
+		}(),
+
+		setStyle: function ( style ) {
+
+			function handleAlpha( string ) {
+
+				if ( string === undefined ) return;
+
+				if ( parseFloat( string ) < 1 ) {
+
+					console.warn( 'Color: Alpha component of ' + style + ' will be ignored.' );
+
+				}
+
+			}
+
+
+			var m;
+
+			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
+
+				// rgb / hsl
+
+				var color;
+				var name = m[ 1 ];
+				var components = m[ 2 ];
+
+				switch ( name ) {
+
+					case 'rgb':
+					case 'rgba':
+
+						if ( color = /^(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*([0-9]*\.?[0-9]+)\s*)?$/.exec( components ) ) {
+
+							// rgb(255,0,0) rgba(255,0,0,0.5)
+							this.r = Math.min( 255, parseInt( color[ 1 ], 10 ) ) / 255;
+							this.g = Math.min( 255, parseInt( color[ 2 ], 10 ) ) / 255;
+							this.b = Math.min( 255, parseInt( color[ 3 ], 10 ) ) / 255;
+
+							handleAlpha( color[ 5 ] );
+
+							return this;
+
+						}
+
+						if ( color = /^(\d+)\%\s*,\s*(\d+)\%\s*,\s*(\d+)\%\s*(,\s*([0-9]*\.?[0-9]+)\s*)?$/.exec( components ) ) {
+
+							// rgb(100%,0%,0%) rgba(100%,0%,0%,0.5)
+							this.r = Math.min( 100, parseInt( color[ 1 ], 10 ) ) / 100;
+							this.g = Math.min( 100, parseInt( color[ 2 ], 10 ) ) / 100;
+							this.b = Math.min( 100, parseInt( color[ 3 ], 10 ) ) / 100;
+
+							handleAlpha( color[ 5 ] );
+
+							return this;
+
+						}
+
+						break;
+
+					case 'hsl':
+					case 'hsla':
+
+						if ( color = /^([0-9]*\.?[0-9]+)\s*,\s*(\d+)\%\s*,\s*(\d+)\%\s*(,\s*([0-9]*\.?[0-9]+)\s*)?$/.exec( components ) ) {
+
+							// hsl(120,50%,50%) hsla(120,50%,50%,0.5)
+							var h = parseFloat( color[ 1 ] ) / 360;
+							var s = parseInt( color[ 2 ], 10 ) / 100;
+							var l = parseInt( color[ 3 ], 10 ) / 100;
+
+							handleAlpha( color[ 5 ] );
+
+							return this.setHSL( h, s, l );
+
+						}
+
+						break;
+
+				}
+
+			} else if ( m = /^\#([A-Fa-f0-9]+)$/.exec( style ) ) {
+
+				// hex color
+
+				var hex = m[ 1 ];
+				var size = hex.length;
+
+				if ( size === 3 ) {
+
+					// #ff0
+					this.r = parseInt( hex.charAt( 0 ) + hex.charAt( 0 ), 16 ) / 255;
+					this.g = parseInt( hex.charAt( 1 ) + hex.charAt( 1 ), 16 ) / 255;
+					this.b = parseInt( hex.charAt( 2 ) + hex.charAt( 2 ), 16 ) / 255;
+
+					return this;
+
+				} else if ( size === 6 ) {
+
+					// #ff0000
+					this.r = parseInt( hex.charAt( 0 ) + hex.charAt( 1 ), 16 ) / 255;
+					this.g = parseInt( hex.charAt( 2 ) + hex.charAt( 3 ), 16 ) / 255;
+					this.b = parseInt( hex.charAt( 4 ) + hex.charAt( 5 ), 16 ) / 255;
+
+					return this;
+
+				}
+
+			}
+
+			if ( style && style.length > 0 ) {
+
+				// color keywords
+				var hex = ColorKeywords[ style ];
+
+				if ( hex !== undefined ) {
+
+					// red
+					this.setHex( hex );
+
+				} else {
+
+					// unknown color
+					console.warn( 'Color: Unknown color ' + style );
+
+				}
+
+			}
+
+			return this;
+
+		},
+
+		clone: function () {
+
+			return new this.constructor( this.r, this.g, this.b );
+
+		},
+
+		copy: function ( color ) {
+
+			this.r = color.r;
+			this.g = color.g;
+			this.b = color.b;
+
+			return this;
+
+		},
+
+		copyGammaToLinear: function ( color, gammaFactor ) {
+
+			if ( gammaFactor === undefined ) gammaFactor = 2.0;
+
+			this.r = Math.pow( color.r, gammaFactor );
+			this.g = Math.pow( color.g, gammaFactor );
+			this.b = Math.pow( color.b, gammaFactor );
+
+			return this;
+
+		},
+
+		copyLinearToGamma: function ( color, gammaFactor ) {
+
+			if ( gammaFactor === undefined ) gammaFactor = 2.0;
+
+			var safeInverse = ( gammaFactor > 0 ) ? ( 1.0 / gammaFactor ) : 1.0;
+
+			this.r = Math.pow( color.r, safeInverse );
+			this.g = Math.pow( color.g, safeInverse );
+			this.b = Math.pow( color.b, safeInverse );
+
+			return this;
+
+		},
+
+		convertGammaToLinear: function () {
+
+			var r = this.r, g = this.g, b = this.b;
+
+			this.r = r * r;
+			this.g = g * g;
+			this.b = b * b;
+
+			return this;
+
+		},
+
+		convertLinearToGamma: function () {
+
+			this.r = Math.sqrt( this.r );
+			this.g = Math.sqrt( this.g );
+			this.b = Math.sqrt( this.b );
+
+			return this;
+
+		},
+
+		getHex: function () {
+
+			return ( this.r * 255 ) << 16 ^ ( this.g * 255 ) << 8 ^ ( this.b * 255 ) << 0;
+
+		},
+
+		getHexString: function () {
+
+			return ( '000000' + this.getHex().toString( 16 ) ).slice( - 6 );
+
+		},
+
+		getHSL: function ( optionalTarget ) {
+
+			// h,s,l ranges are in 0.0 - 1.0
+
+			var hsl = optionalTarget || { h: 0, s: 0, l: 0 };
+
+			var r = this.r, g = this.g, b = this.b;
+
+			var max = Math.max( r, g, b );
+			var min = Math.min( r, g, b );
+
+			var hue, saturation;
+			var lightness = ( min + max ) / 2.0;
+
+			if ( min === max ) {
+
+				hue = 0;
+				saturation = 0;
+
+			} else {
+
+				var delta = max - min;
+
+				saturation = lightness <= 0.5 ? delta / ( max + min ) : delta / ( 2 - max - min );
+
+				switch ( max ) {
+
+					case r: hue = ( g - b ) / delta + ( g < b ? 6 : 0 ); break;
+					case g: hue = ( b - r ) / delta + 2; break;
+					case b: hue = ( r - g ) / delta + 4; break;
+
+				}
+
+				hue /= 6;
+
+			}
+
+			hsl.h = hue;
+			hsl.s = saturation;
+			hsl.l = lightness;
+
+			return hsl;
+
+		},
+
+		getStyle: function () {
+
+			return 'rgb(' + ( ( this.r * 255 ) | 0 ) + ',' + ( ( this.g * 255 ) | 0 ) + ',' + ( ( this.b * 255 ) | 0 ) + ')';
+
+		},
+
+		offsetHSL: function ( h, s, l ) {
+
+			var hsl = this.getHSL();
+
+			hsl.h += h; hsl.s += s; hsl.l += l;
+
+			this.setHSL( hsl.h, hsl.s, hsl.l );
+
+			return this;
+
+		},
+
+		add: function ( color ) {
+
+			this.r += color.r;
+			this.g += color.g;
+			this.b += color.b;
+
+			return this;
+
+		},
+
+		addColors: function ( color1, color2 ) {
+
+			this.r = color1.r + color2.r;
+			this.g = color1.g + color2.g;
+			this.b = color1.b + color2.b;
+
+			return this;
+
+		},
+
+		addScalar: function ( s ) {
+
+			this.r += s;
+			this.g += s;
+			this.b += s;
+
+			return this;
+
+		},
+
+		sub: function ( color ) {
+
+			this.r = Math.max( 0, this.r - color.r );
+			this.g = Math.max( 0, this.g - color.g );
+			this.b = Math.max( 0, this.b - color.b );
+
+			return this;
+
+		},
+
+		multiply: function ( color ) {
+
+			this.r *= color.r;
+			this.g *= color.g;
+			this.b *= color.b;
+
+			return this;
+
+		},
+
+		multiplyScalar: function ( s ) {
+
+			this.r *= s;
+			this.g *= s;
+			this.b *= s;
+
+			return this;
+
+		},
+
+		lerp: function ( color, alpha ) {
+
+			this.r += ( color.r - this.r ) * alpha;
+			this.g += ( color.g - this.g ) * alpha;
+			this.b += ( color.b - this.b ) * alpha;
+
+			return this;
+
+		},
+
+		equals: function ( c ) {
+
+			return ( c.r === this.r ) && ( c.g === this.g ) && ( c.b === this.b );
+
+		},
+
+		fromArray: function ( array, offset ) {
+
+			if ( offset === undefined ) offset = 0;
+
+			this.r = array[ offset ];
+			this.g = array[ offset + 1 ];
+			this.b = array[ offset + 2 ];
+
+			return this;
+
+		},
+
+		toArray: function ( array, offset ) {
+
+			if ( array === undefined ) array = [];
+			if ( offset === undefined ) offset = 0;
+
+			array[ offset ] = this.r;
+			array[ offset + 1 ] = this.g;
+			array[ offset + 2 ] = this.b;
+
+			return array;
+
+		},
+
+		toJSON: function () {
+
+			return this.getHex();
+
+		}
+
+	} );
+
+	function MeshStandardMaterial( parameters ) {
+
+		Material.call( this );
+
+		this.defines = { 'STANDARD': '' };
+
+		this.type = 'MeshStandardMaterial';
+
+		this.color = new Color( 0xffffff ); // diffuse
+		this.roughness = 0.5;
+		this.metalness = 0.5;
+
+		this.map = null;
+
+		this.lightMap = null;
+		this.lightMapIntensity = 1.0;
+
+		this.aoMap = null;
+		this.aoMapIntensity = 1.0;
+
+		this.emissive = new Color( 0x000000 );
+		this.emissiveIntensity = 1.0;
+		this.emissiveMap = null;
+
+		this.bumpMap = null;
+		this.bumpScale = 1;
+
+		this.normalMap = null;
+		this.normalScale = new Vector2( 1, 1 );
+
+		this.displacementMap = null;
+		this.displacementScale = 1;
+		this.displacementBias = 0;
+
+		this.roughnessMap = null;
+
+		this.metalnessMap = null;
+
+		this.alphaMap = null;
+
+		this.envMap = null;
+		this.envMapIntensity = 1.0;
+
+		this.refractionRatio = 0.98;
+
+		this.wireframe = false;
+		this.wireframeLinewidth = 1;
+		this.wireframeLinecap = 'round';
+		this.wireframeLinejoin = 'round';
+
+		this.skinning = false;
+		this.morphTargets = false;
+		this.morphNormals = false;
+
+		this.setValues( parameters );
+
+	}
+
+	MeshStandardMaterial.prototype = Object.create( Material.prototype );
+	MeshStandardMaterial.prototype.constructor = MeshStandardMaterial;
+
+	MeshStandardMaterial.prototype.isMeshStandardMaterial = true;
+
+	MeshStandardMaterial.prototype.copy = function ( source ) {
+
+		Material.prototype.copy.call( this, source );
+
+		this.defines = { 'STANDARD': '' };
+
+		this.color.copy( source.color );
+		this.roughness = source.roughness;
+		this.metalness = source.metalness;
+
+		this.map = source.map;
+
+		this.lightMap = source.lightMap;
+		this.lightMapIntensity = source.lightMapIntensity;
+
+		this.aoMap = source.aoMap;
+		this.aoMapIntensity = source.aoMapIntensity;
+
+		this.emissive.copy( source.emissive );
+		this.emissiveMap = source.emissiveMap;
+		this.emissiveIntensity = source.emissiveIntensity;
+
+		this.bumpMap = source.bumpMap;
+		this.bumpScale = source.bumpScale;
+
+		this.normalMap = source.normalMap;
+		this.normalScale.copy( source.normalScale );
+
+		this.displacementMap = source.displacementMap;
+		this.displacementScale = source.displacementScale;
+		this.displacementBias = source.displacementBias;
+
+		this.roughnessMap = source.roughnessMap;
+
+		this.metalnessMap = source.metalnessMap;
+
+		this.alphaMap = source.alphaMap;
+
+		this.envMap = source.envMap;
+		this.envMapIntensity = source.envMapIntensity;
+
+		this.refractionRatio = source.refractionRatio;
+
+		this.wireframe = source.wireframe;
+		this.wireframeLinewidth = source.wireframeLinewidth;
+		this.wireframeLinecap = source.wireframeLinecap;
+		this.wireframeLinejoin = source.wireframeLinejoin;
+
+		this.skinning = source.skinning;
+		this.morphTargets = source.morphTargets;
+		this.morphNormals = source.morphNormals;
+
+		return this;
+
+	};
+
+	function LineBasicMaterial( parameters ) {
+
+		Material.call( this );
+
+		this.type = 'LineBasicMaterial';
+
+		this.color = new Color( 0xffffff );
+
+		this.linewidth = 1;
+		this.linecap = 'round';
+		this.linejoin = 'round';
+
+		this.lights = false;
+
+		this.setValues( parameters );
+
+	}
+
+	LineBasicMaterial.prototype = Object.create( Material.prototype );
+	LineBasicMaterial.prototype.constructor = LineBasicMaterial;
+
+	LineBasicMaterial.prototype.isLineBasicMaterial = true;
+
+	LineBasicMaterial.prototype.copy = function ( source ) {
+
+		Material.prototype.copy.call( this, source );
+
+		this.color.copy( source.color );
+
+		this.linewidth = source.linewidth;
+		this.linecap = source.linecap;
+		this.linejoin = source.linejoin;
+
+		return this;
+
+	};
+
+	function PointsMaterial( parameters ) {
+
+		Material.call( this );
+
+		this.type = 'PointsMaterial';
+
+		this.color = new Color( 0xffffff );
+
+		this.map = null;
+
+		this.size = 1;
+		this.sizeAttenuation = true;
+
+		this.lights = false;
+
+		this.setValues( parameters );
+
+	}
+
+	PointsMaterial.prototype = Object.create( Material.prototype );
+	PointsMaterial.prototype.constructor = PointsMaterial;
+
+	PointsMaterial.prototype.isPointsMaterial = true;
+
+	PointsMaterial.prototype.copy = function ( source ) {
+
+		Material.prototype.copy.call( this, source );
+
+		this.color.copy( source.color );
+
+		this.map = source.map;
+
+		this.size = source.size;
+		this.sizeAttenuation = source.sizeAttenuation;
+
+		return this;
+
+	};
 
 	function Matrix4() {
 
@@ -619,7 +1821,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix4: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix4: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -747,7 +1949,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				console.error( 'THREE.Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
+				console.error( 'Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -967,7 +2169,7 @@ var Three = (function (exports) {
 
 			if ( n !== undefined ) {
 
-				console.warn( 'THREE.Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
+				console.warn( 'Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
 				return this.multiplyMatrices( m, n );
 
 			}
@@ -1158,7 +2360,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix4: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix4: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -1411,7 +2613,7 @@ var Three = (function (exports) {
 
 			if ( far === undefined ) {
 
-				console.warn( 'THREE.Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
+				console.warn( 'Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
 
 			}
 
@@ -1514,13 +2716,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Quaternion( x, y, z, w ) {
 
@@ -1713,7 +2908,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				throw new Error( 'THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+				throw new Error( 'Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -1910,7 +3105,9 @@ var Three = (function (exports) {
 
 		inverse: function () {
 
-			return this.conjugate().normalize();
+			// quaternion is assumed to have unit length
+
+			return this.conjugate();
 
 		},
 
@@ -1976,7 +3173,7 @@ var Three = (function (exports) {
 
 			if ( p !== undefined ) {
 
-				console.warn( 'THREE.Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
+				console.warn( 'Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
 				return this.multiplyQuaternions( q, p );
 
 			}
@@ -2121,15 +3318,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author kile / http://kile.stravaganza.org/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -2234,7 +3422,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -2281,7 +3469,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -2318,7 +3506,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
 				return this.multiplyVectors( v, w );
 
 			}
@@ -2359,7 +3547,7 @@ var Three = (function (exports) {
 
 				if ( ! ( euler && euler.isEuler ) ) {
 
-					console.error( 'THREE.Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+					console.error( 'Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 				}
 
@@ -2459,7 +3647,7 @@ var Three = (function (exports) {
 
 		transformDirection: function ( m ) {
 
-			// input: THREE.Matrix4 affine matrix
+			// input: Matrix4 affine matrix
 			// vector interpreted as a direction
 
 			var x = this.x, y = this.y, z = this.z;
@@ -2653,7 +3841,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
 				return this.crossVectors( v, w );
 
 			}
@@ -2831,7 +4019,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector3: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector3: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -2844,11 +4032,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author bhouston / http://clara.io
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	function Sphere( center, radius ) {
 
@@ -3009,11 +4192,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
 
 	function Box3( min, max ) {
 
@@ -3380,6 +4558,107 @@ var Three = (function (exports) {
 
 		},
 
+		intersectsTriangle: ( function () {
+
+			// triangle centered vertices
+			var v0 = new Vector3();
+			var v1 = new Vector3();
+			var v2 = new Vector3();
+
+			// triangle edge vectors
+			var f0 = new Vector3();
+			var f1 = new Vector3();
+			var f2 = new Vector3();
+
+			var testAxis = new Vector3();
+
+			var center = new Vector3();
+			var extents = new Vector3();
+
+			var triangleNormal = new Vector3();
+
+			function satForAxes( axes ) {
+
+				var i, j;
+
+				for ( i = 0, j = axes.length - 3; i <= j; i += 3 ) {
+
+					testAxis.fromArray( axes, i );
+					// project the aabb onto the seperating axis
+					var r = extents.x * Math.abs( testAxis.x ) + extents.y * Math.abs( testAxis.y ) + extents.z * Math.abs( testAxis.z );
+					// project all 3 vertices of the triangle onto the seperating axis
+					var p0 = v0.dot( testAxis );
+					var p1 = v1.dot( testAxis );
+					var p2 = v2.dot( testAxis );
+					// actual test, basically see if either of the most extreme of the triangle points intersects r
+					if ( Math.max( - Math.max( p0, p1, p2 ), Math.min( p0, p1, p2 ) ) > r ) {
+
+						// points of the projected triangle are outside the projected half-length of the aabb
+						// the axis is seperating and we can exit
+						return false;
+
+					}
+
+				}
+
+				return true;
+
+			}
+
+			return function intersectsTriangle( triangle ) {
+
+				if ( this.isEmpty() ) {
+
+					return false;
+
+				}
+
+				// compute box center and extents
+				this.getCenter( center );
+				extents.subVectors( this.max, center );
+
+				// translate triangle to aabb origin
+				v0.subVectors( triangle.a, center );
+				v1.subVectors( triangle.b, center );
+				v2.subVectors( triangle.c, center );
+
+				// compute edge vectors for triangle
+				f0.subVectors( v1, v0 );
+				f1.subVectors( v2, v1 );
+				f2.subVectors( v0, v2 );
+
+				// test against axes that are given by cross product combinations of the edges of the triangle and the edges of the aabb
+				// make an axis testing of each of the 3 sides of the aabb against each of the 3 sides of the triangle = 9 axis of separation
+				// axis_ij = u_i x f_j (u0, u1, u2 = face normals of aabb = x,y,z axes vectors since aabb is axis aligned)
+				var axes = [
+					0, - f0.z, f0.y, 0, - f1.z, f1.y, 0, - f2.z, f2.y,
+					f0.z, 0, - f0.x, f1.z, 0, - f1.x, f2.z, 0, - f2.x,
+					- f0.y, f0.x, 0, - f1.y, f1.x, 0, - f2.y, f2.x, 0
+				];
+				if ( ! satForAxes( axes ) ) {
+
+					return false;
+
+				}
+
+				// test 3 face normals from the aabb
+				axes = [ 1, 0, 0, 0, 1, 0, 0, 0, 1 ];
+				if ( ! satForAxes( axes ) ) {
+
+					return false;
+
+				}
+
+				// finally testing the face normal of the triangle
+				// use already existing triangle edge vectors here
+				triangleNormal.crossVectors( f0, f1 );
+				axes = [ triangleNormal.x, triangleNormal.y, triangleNormal.z ];
+				return satForAxes( axes );
+
+			};
+
+		} )(),
+
 		clampPoint: function ( point, optionalTarget ) {
 
 			var result = optionalTarget || new Vector3();
@@ -3491,98 +4770,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * https://github.com/mrdoob/eventdispatcher.js/
-	 */
-
-	function EventDispatcher() {}
-
-	Object.assign( EventDispatcher.prototype, {
-
-		addEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) this._listeners = {};
-
-			var listeners = this._listeners;
-
-			if ( listeners[ type ] === undefined ) {
-
-				listeners[ type ] = [];
-
-			}
-
-			if ( listeners[ type ].indexOf( listener ) === - 1 ) {
-
-				listeners[ type ].push( listener );
-
-			}
-
-		},
-
-		hasEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) return false;
-
-			var listeners = this._listeners;
-
-			return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
-
-		},
-
-		removeEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) return;
-
-			var listeners = this._listeners;
-			var listenerArray = listeners[ type ];
-
-			if ( listenerArray !== undefined ) {
-
-				var index = listenerArray.indexOf( listener );
-
-				if ( index !== - 1 ) {
-
-					listenerArray.splice( index, 1 );
-
-				}
-
-			}
-
-		},
-
-		dispatchEvent: function ( event ) {
-
-			if ( this._listeners === undefined ) return;
-
-			var listeners = this._listeners;
-			var listenerArray = listeners[ event.type ];
-
-			if ( listenerArray !== undefined ) {
-
-				event.target = this;
-
-				var array = listenerArray.slice( 0 );
-
-				for ( var i = 0, l = array.length; i < l; i ++ ) {
-
-					array[ i ].call( this, event );
-
-				}
-
-			}
-
-		}
-
-	} );
-
-	/**
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
 
 	function Vector4( x, y, z, w ) {
 
@@ -3702,7 +4889,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -3753,7 +4940,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector4: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector4: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -4188,7 +5375,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector4: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector4: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -4203,1025 +5390,11 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author egraether / http://egraether.com/
-	 * @author zz85 / http://www.lab4games.net/zz85/blog
-	 */
-
-	function Vector2( x, y ) {
-
-		this.x = x || 0;
-		this.y = y || 0;
-
-	}
-
-	Object.defineProperties( Vector2.prototype, {
-
-		"width": {
-
-			get: function () {
-
-				return this.x;
-
-			},
-
-			set: function ( value ) {
-
-				this.x = value;
-
-			}
-
-		},
-
-		"height": {
-
-			get: function () {
-
-				return this.y;
-
-			},
-
-			set: function ( value ) {
-
-				this.y = value;
-
-			}
-
-		}
-
-	} );
-
-	Object.assign( Vector2.prototype, {
-
-		isVector2: true,
-
-		set: function ( x, y ) {
-
-			this.x = x;
-			this.y = y;
-
-			return this;
-
-		},
-
-		setScalar: function ( scalar ) {
-
-			this.x = scalar;
-			this.y = scalar;
-
-			return this;
-
-		},
-
-		setX: function ( x ) {
-
-			this.x = x;
-
-			return this;
-
-		},
-
-		setY: function ( y ) {
-
-			this.y = y;
-
-			return this;
-
-		},
-
-		setComponent: function ( index, value ) {
-
-			switch ( index ) {
-
-				case 0: this.x = value; break;
-				case 1: this.y = value; break;
-				default: throw new Error( 'index is out of range: ' + index );
-
-			}
-
-			return this;
-
-		},
-
-		getComponent: function ( index ) {
-
-			switch ( index ) {
-
-				case 0: return this.x;
-				case 1: return this.y;
-				default: throw new Error( 'index is out of range: ' + index );
-
-			}
-
-		},
-
-		clone: function () {
-
-			return new this.constructor( this.x, this.y );
-
-		},
-
-		copy: function ( v ) {
-
-			this.x = v.x;
-			this.y = v.y;
-
-			return this;
-
-		},
-
-		add: function ( v, w ) {
-
-			if ( w !== undefined ) {
-
-				console.warn( 'THREE.Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
-				return this.addVectors( v, w );
-
-			}
-
-			this.x += v.x;
-			this.y += v.y;
-
-			return this;
-
-		},
-
-		addScalar: function ( s ) {
-
-			this.x += s;
-			this.y += s;
-
-			return this;
-
-		},
-
-		addVectors: function ( a, b ) {
-
-			this.x = a.x + b.x;
-			this.y = a.y + b.y;
-
-			return this;
-
-		},
-
-		addScaledVector: function ( v, s ) {
-
-			this.x += v.x * s;
-			this.y += v.y * s;
-
-			return this;
-
-		},
-
-		sub: function ( v, w ) {
-
-			if ( w !== undefined ) {
-
-				console.warn( 'THREE.Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
-				return this.subVectors( v, w );
-
-			}
-
-			this.x -= v.x;
-			this.y -= v.y;
-
-			return this;
-
-		},
-
-		subScalar: function ( s ) {
-
-			this.x -= s;
-			this.y -= s;
-
-			return this;
-
-		},
-
-		subVectors: function ( a, b ) {
-
-			this.x = a.x - b.x;
-			this.y = a.y - b.y;
-
-			return this;
-
-		},
-
-		multiply: function ( v ) {
-
-			this.x *= v.x;
-			this.y *= v.y;
-
-			return this;
-
-		},
-
-		multiplyScalar: function ( scalar ) {
-
-			this.x *= scalar;
-			this.y *= scalar;
-
-			return this;
-
-		},
-
-		divide: function ( v ) {
-
-			this.x /= v.x;
-			this.y /= v.y;
-
-			return this;
-
-		},
-
-		divideScalar: function ( scalar ) {
-
-			return this.multiplyScalar( 1 / scalar );
-
-		},
-
-		applyMatrix3: function ( m ) {
-
-			var x = this.x, y = this.y;
-			var e = m.elements;
-
-			this.x = e[ 0 ] * x + e[ 3 ] * y + e[ 6 ];
-			this.y = e[ 1 ] * x + e[ 4 ] * y + e[ 7 ];
-
-			return this;
-
-		},
-
-		min: function ( v ) {
-
-			this.x = Math.min( this.x, v.x );
-			this.y = Math.min( this.y, v.y );
-
-			return this;
-
-		},
-
-		max: function ( v ) {
-
-			this.x = Math.max( this.x, v.x );
-			this.y = Math.max( this.y, v.y );
-
-			return this;
-
-		},
-
-		clamp: function ( min, max ) {
-
-			// assumes min < max, componentwise
-
-			this.x = Math.max( min.x, Math.min( max.x, this.x ) );
-			this.y = Math.max( min.y, Math.min( max.y, this.y ) );
-
-			return this;
-
-		},
-
-		clampScalar: function () {
-
-			var min = new Vector2();
-			var max = new Vector2();
-
-			return function clampScalar( minVal, maxVal ) {
-
-				min.set( minVal, minVal );
-				max.set( maxVal, maxVal );
-
-				return this.clamp( min, max );
-
-			};
-
-		}(),
-
-		clampLength: function ( min, max ) {
-
-			var length = this.length();
-
-			return this.divideScalar( length || 1 ).multiplyScalar( Math.max( min, Math.min( max, length ) ) );
-
-		},
-
-		floor: function () {
-
-			this.x = Math.floor( this.x );
-			this.y = Math.floor( this.y );
-
-			return this;
-
-		},
-
-		ceil: function () {
-
-			this.x = Math.ceil( this.x );
-			this.y = Math.ceil( this.y );
-
-			return this;
-
-		},
-
-		round: function () {
-
-			this.x = Math.round( this.x );
-			this.y = Math.round( this.y );
-
-			return this;
-
-		},
-
-		roundToZero: function () {
-
-			this.x = ( this.x < 0 ) ? Math.ceil( this.x ) : Math.floor( this.x );
-			this.y = ( this.y < 0 ) ? Math.ceil( this.y ) : Math.floor( this.y );
-
-			return this;
-
-		},
-
-		negate: function () {
-
-			this.x = - this.x;
-			this.y = - this.y;
-
-			return this;
-
-		},
-
-		dot: function ( v ) {
-
-			return this.x * v.x + this.y * v.y;
-
-		},
-
-		lengthSq: function () {
-
-			return this.x * this.x + this.y * this.y;
-
-		},
-
-		length: function () {
-
-			return Math.sqrt( this.x * this.x + this.y * this.y );
-
-		},
-
-		manhattanLength: function () {
-
-			return Math.abs( this.x ) + Math.abs( this.y );
-
-		},
-
-		normalize: function () {
-
-			return this.divideScalar( this.length() || 1 );
-
-		},
-
-		angle: function () {
-
-			// computes the angle in radians with respect to the positive x-axis
-
-			var angle = Math.atan2( this.y, this.x );
-
-			if ( angle < 0 ) angle += 2 * Math.PI;
-
-			return angle;
-
-		},
-
-		distanceTo: function ( v ) {
-
-			return Math.sqrt( this.distanceToSquared( v ) );
-
-		},
-
-		distanceToSquared: function ( v ) {
-
-			var dx = this.x - v.x, dy = this.y - v.y;
-			return dx * dx + dy * dy;
-
-		},
-
-		manhattanDistanceTo: function ( v ) {
-
-			return Math.abs( this.x - v.x ) + Math.abs( this.y - v.y );
-
-		},
-
-		setLength: function ( length ) {
-
-			return this.normalize().multiplyScalar( length );
-
-		},
-
-		lerp: function ( v, alpha ) {
-
-			this.x += ( v.x - this.x ) * alpha;
-			this.y += ( v.y - this.y ) * alpha;
-
-			return this;
-
-		},
-
-		lerpVectors: function ( v1, v2, alpha ) {
-
-			return this.subVectors( v2, v1 ).multiplyScalar( alpha ).add( v1 );
-
-		},
-
-		equals: function ( v ) {
-
-			return ( ( v.x === this.x ) && ( v.y === this.y ) );
-
-		},
-
-		fromArray: function ( array, offset ) {
-
-			if ( offset === undefined ) offset = 0;
-
-			this.x = array[ offset ];
-			this.y = array[ offset + 1 ];
-
-			return this;
-
-		},
-
-		toArray: function ( array, offset ) {
-
-			if ( array === undefined ) array = [];
-			if ( offset === undefined ) offset = 0;
-
-			array[ offset ] = this.x;
-			array[ offset + 1 ] = this.y;
-
-			return array;
-
-		},
-
-		fromBufferAttribute: function ( attribute, index, offset ) {
-
-			if ( offset !== undefined ) {
-
-				console.warn( 'THREE.Vector2: offset has been removed from .fromBufferAttribute().' );
-
-			}
-
-			this.x = attribute.getX( index );
-			this.y = attribute.getY( index );
-
-			return this;
-
-		},
-
-		rotateAround: function ( center, angle ) {
-
-			var c = Math.cos( angle ), s = Math.sin( angle );
-
-			var x = this.x - center.x;
-			var y = this.y - center.y;
-
-			this.x = x * c - y * s + center.x;
-			this.y = x * s + y * c + center.y;
-
-			return this;
-
-		}
-
-	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
-	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
-		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
-		'brown': 0xA52A2A, 'burlywood': 0xDEB887, 'cadetblue': 0x5F9EA0, 'chartreuse': 0x7FFF00, 'chocolate': 0xD2691E, 'coral': 0xFF7F50,
-		'cornflowerblue': 0x6495ED, 'cornsilk': 0xFFF8DC, 'crimson': 0xDC143C, 'cyan': 0x00FFFF, 'darkblue': 0x00008B, 'darkcyan': 0x008B8B,
-		'darkgoldenrod': 0xB8860B, 'darkgray': 0xA9A9A9, 'darkgreen': 0x006400, 'darkgrey': 0xA9A9A9, 'darkkhaki': 0xBDB76B, 'darkmagenta': 0x8B008B,
-		'darkolivegreen': 0x556B2F, 'darkorange': 0xFF8C00, 'darkorchid': 0x9932CC, 'darkred': 0x8B0000, 'darksalmon': 0xE9967A, 'darkseagreen': 0x8FBC8F,
-		'darkslateblue': 0x483D8B, 'darkslategray': 0x2F4F4F, 'darkslategrey': 0x2F4F4F, 'darkturquoise': 0x00CED1, 'darkviolet': 0x9400D3,
-		'deeppink': 0xFF1493, 'deepskyblue': 0x00BFFF, 'dimgray': 0x696969, 'dimgrey': 0x696969, 'dodgerblue': 0x1E90FF, 'firebrick': 0xB22222,
-		'floralwhite': 0xFFFAF0, 'forestgreen': 0x228B22, 'fuchsia': 0xFF00FF, 'gainsboro': 0xDCDCDC, 'ghostwhite': 0xF8F8FF, 'gold': 0xFFD700,
-		'goldenrod': 0xDAA520, 'gray': 0x808080, 'green': 0x008000, 'greenyellow': 0xADFF2F, 'grey': 0x808080, 'honeydew': 0xF0FFF0, 'hotpink': 0xFF69B4,
-		'indianred': 0xCD5C5C, 'indigo': 0x4B0082, 'ivory': 0xFFFFF0, 'khaki': 0xF0E68C, 'lavender': 0xE6E6FA, 'lavenderblush': 0xFFF0F5, 'lawngreen': 0x7CFC00,
-		'lemonchiffon': 0xFFFACD, 'lightblue': 0xADD8E6, 'lightcoral': 0xF08080, 'lightcyan': 0xE0FFFF, 'lightgoldenrodyellow': 0xFAFAD2, 'lightgray': 0xD3D3D3,
-		'lightgreen': 0x90EE90, 'lightgrey': 0xD3D3D3, 'lightpink': 0xFFB6C1, 'lightsalmon': 0xFFA07A, 'lightseagreen': 0x20B2AA, 'lightskyblue': 0x87CEFA,
-		'lightslategray': 0x778899, 'lightslategrey': 0x778899, 'lightsteelblue': 0xB0C4DE, 'lightyellow': 0xFFFFE0, 'lime': 0x00FF00, 'limegreen': 0x32CD32,
-		'linen': 0xFAF0E6, 'magenta': 0xFF00FF, 'maroon': 0x800000, 'mediumaquamarine': 0x66CDAA, 'mediumblue': 0x0000CD, 'mediumorchid': 0xBA55D3,
-		'mediumpurple': 0x9370DB, 'mediumseagreen': 0x3CB371, 'mediumslateblue': 0x7B68EE, 'mediumspringgreen': 0x00FA9A, 'mediumturquoise': 0x48D1CC,
-		'mediumvioletred': 0xC71585, 'midnightblue': 0x191970, 'mintcream': 0xF5FFFA, 'mistyrose': 0xFFE4E1, 'moccasin': 0xFFE4B5, 'navajowhite': 0xFFDEAD,
-		'navy': 0x000080, 'oldlace': 0xFDF5E6, 'olive': 0x808000, 'olivedrab': 0x6B8E23, 'orange': 0xFFA500, 'orangered': 0xFF4500, 'orchid': 0xDA70D6,
-		'palegoldenrod': 0xEEE8AA, 'palegreen': 0x98FB98, 'paleturquoise': 0xAFEEEE, 'palevioletred': 0xDB7093, 'papayawhip': 0xFFEFD5, 'peachpuff': 0xFFDAB9,
-		'peru': 0xCD853F, 'pink': 0xFFC0CB, 'plum': 0xDDA0DD, 'powderblue': 0xB0E0E6, 'purple': 0x800080, 'rebeccapurple': 0x663399, 'red': 0xFF0000, 'rosybrown': 0xBC8F8F,
-		'royalblue': 0x4169E1, 'saddlebrown': 0x8B4513, 'salmon': 0xFA8072, 'sandybrown': 0xF4A460, 'seagreen': 0x2E8B57, 'seashell': 0xFFF5EE,
-		'sienna': 0xA0522D, 'silver': 0xC0C0C0, 'skyblue': 0x87CEEB, 'slateblue': 0x6A5ACD, 'slategray': 0x708090, 'slategrey': 0x708090, 'snow': 0xFFFAFA,
-		'springgreen': 0x00FF7F, 'steelblue': 0x4682B4, 'tan': 0xD2B48C, 'teal': 0x008080, 'thistle': 0xD8BFD8, 'tomato': 0xFF6347, 'turquoise': 0x40E0D0,
-		'violet': 0xEE82EE, 'wheat': 0xF5DEB3, 'white': 0xFFFFFF, 'whitesmoke': 0xF5F5F5, 'yellow': 0xFFFF00, 'yellowgreen': 0x9ACD32 };
-
-	function Color( r, g, b ) {
-
-		if ( g === undefined && b === undefined ) {
-
-			// r is THREE.Color, hex or string
-			return this.set( r );
-
-		}
-
-		return this.setRGB( r, g, b );
-
-	}
-
-	Object.assign( Color.prototype, {
-
-		isColor: true,
-
-		r: 1, g: 1, b: 1,
-
-		set: function ( value ) {
-
-			if ( value && value.isColor ) {
-
-				this.copy( value );
-
-			} else if ( typeof value === 'number' ) {
-
-				this.setHex( value );
-
-			} else if ( typeof value === 'string' ) {
-
-				this.setStyle( value );
-
-			}
-
-			return this;
-
-		},
-
-		setScalar: function ( scalar ) {
-
-			this.r = scalar;
-			this.g = scalar;
-			this.b = scalar;
-
-			return this;
-
-		},
-
-		setHex: function ( hex ) {
-
-			hex = Math.floor( hex );
-
-			this.r = ( hex >> 16 & 255 ) / 255;
-			this.g = ( hex >> 8 & 255 ) / 255;
-			this.b = ( hex & 255 ) / 255;
-
-			return this;
-
-		},
-
-		setRGB: function ( r, g, b ) {
-
-			this.r = r;
-			this.g = g;
-			this.b = b;
-
-			return this;
-
-		},
-
-		setHSL: function () {
-
-			function hue2rgb( p, q, t ) {
-
-				if ( t < 0 ) t += 1;
-				if ( t > 1 ) t -= 1;
-				if ( t < 1 / 6 ) return p + ( q - p ) * 6 * t;
-				if ( t < 1 / 2 ) return q;
-				if ( t < 2 / 3 ) return p + ( q - p ) * 6 * ( 2 / 3 - t );
-				return p;
-
-			}
-
-			return function setHSL( h, s, l ) {
-
-				// h,s,l ranges are in 0.0 - 1.0
-				h = _Math.euclideanModulo( h, 1 );
-				s = _Math.clamp( s, 0, 1 );
-				l = _Math.clamp( l, 0, 1 );
-
-				if ( s === 0 ) {
-
-					this.r = this.g = this.b = l;
-
-				} else {
-
-					var p = l <= 0.5 ? l * ( 1 + s ) : l + s - ( l * s );
-					var q = ( 2 * l ) - p;
-
-					this.r = hue2rgb( q, p, h + 1 / 3 );
-					this.g = hue2rgb( q, p, h );
-					this.b = hue2rgb( q, p, h - 1 / 3 );
-
-				}
-
-				return this;
-
-			};
-
-		}(),
-
-		setStyle: function ( style ) {
-
-			function handleAlpha( string ) {
-
-				if ( string === undefined ) return;
-
-				if ( parseFloat( string ) < 1 ) {
-
-					console.warn( 'THREE.Color: Alpha component of ' + style + ' will be ignored.' );
-
-				}
-
-			}
-
-
-			var m;
-
-			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
-
-				// rgb / hsl
-
-				var color;
-				var name = m[ 1 ];
-				var components = m[ 2 ];
-
-				switch ( name ) {
-
-					case 'rgb':
-					case 'rgba':
-
-						if ( color = /^(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*([0-9]*\.?[0-9]+)\s*)?$/.exec( components ) ) {
-
-							// rgb(255,0,0) rgba(255,0,0,0.5)
-							this.r = Math.min( 255, parseInt( color[ 1 ], 10 ) ) / 255;
-							this.g = Math.min( 255, parseInt( color[ 2 ], 10 ) ) / 255;
-							this.b = Math.min( 255, parseInt( color[ 3 ], 10 ) ) / 255;
-
-							handleAlpha( color[ 5 ] );
-
-							return this;
-
-						}
-
-						if ( color = /^(\d+)\%\s*,\s*(\d+)\%\s*,\s*(\d+)\%\s*(,\s*([0-9]*\.?[0-9]+)\s*)?$/.exec( components ) ) {
-
-							// rgb(100%,0%,0%) rgba(100%,0%,0%,0.5)
-							this.r = Math.min( 100, parseInt( color[ 1 ], 10 ) ) / 100;
-							this.g = Math.min( 100, parseInt( color[ 2 ], 10 ) ) / 100;
-							this.b = Math.min( 100, parseInt( color[ 3 ], 10 ) ) / 100;
-
-							handleAlpha( color[ 5 ] );
-
-							return this;
-
-						}
-
-						break;
-
-					case 'hsl':
-					case 'hsla':
-
-						if ( color = /^([0-9]*\.?[0-9]+)\s*,\s*(\d+)\%\s*,\s*(\d+)\%\s*(,\s*([0-9]*\.?[0-9]+)\s*)?$/.exec( components ) ) {
-
-							// hsl(120,50%,50%) hsla(120,50%,50%,0.5)
-							var h = parseFloat( color[ 1 ] ) / 360;
-							var s = parseInt( color[ 2 ], 10 ) / 100;
-							var l = parseInt( color[ 3 ], 10 ) / 100;
-
-							handleAlpha( color[ 5 ] );
-
-							return this.setHSL( h, s, l );
-
-						}
-
-						break;
-
-				}
-
-			} else if ( m = /^\#([A-Fa-f0-9]+)$/.exec( style ) ) {
-
-				// hex color
-
-				var hex = m[ 1 ];
-				var size = hex.length;
-
-				if ( size === 3 ) {
-
-					// #ff0
-					this.r = parseInt( hex.charAt( 0 ) + hex.charAt( 0 ), 16 ) / 255;
-					this.g = parseInt( hex.charAt( 1 ) + hex.charAt( 1 ), 16 ) / 255;
-					this.b = parseInt( hex.charAt( 2 ) + hex.charAt( 2 ), 16 ) / 255;
-
-					return this;
-
-				} else if ( size === 6 ) {
-
-					// #ff0000
-					this.r = parseInt( hex.charAt( 0 ) + hex.charAt( 1 ), 16 ) / 255;
-					this.g = parseInt( hex.charAt( 2 ) + hex.charAt( 3 ), 16 ) / 255;
-					this.b = parseInt( hex.charAt( 4 ) + hex.charAt( 5 ), 16 ) / 255;
-
-					return this;
-
-				}
-
-			}
-
-			if ( style && style.length > 0 ) {
-
-				// color keywords
-				var hex = ColorKeywords[ style ];
-
-				if ( hex !== undefined ) {
-
-					// red
-					this.setHex( hex );
-
-				} else {
-
-					// unknown color
-					console.warn( 'THREE.Color: Unknown color ' + style );
-
-				}
-
-			}
-
-			return this;
-
-		},
-
-		clone: function () {
-
-			return new this.constructor( this.r, this.g, this.b );
-
-		},
-
-		copy: function ( color ) {
-
-			this.r = color.r;
-			this.g = color.g;
-			this.b = color.b;
-
-			return this;
-
-		},
-
-		copyGammaToLinear: function ( color, gammaFactor ) {
-
-			if ( gammaFactor === undefined ) gammaFactor = 2.0;
-
-			this.r = Math.pow( color.r, gammaFactor );
-			this.g = Math.pow( color.g, gammaFactor );
-			this.b = Math.pow( color.b, gammaFactor );
-
-			return this;
-
-		},
-
-		copyLinearToGamma: function ( color, gammaFactor ) {
-
-			if ( gammaFactor === undefined ) gammaFactor = 2.0;
-
-			var safeInverse = ( gammaFactor > 0 ) ? ( 1.0 / gammaFactor ) : 1.0;
-
-			this.r = Math.pow( color.r, safeInverse );
-			this.g = Math.pow( color.g, safeInverse );
-			this.b = Math.pow( color.b, safeInverse );
-
-			return this;
-
-		},
-
-		convertGammaToLinear: function () {
-
-			var r = this.r, g = this.g, b = this.b;
-
-			this.r = r * r;
-			this.g = g * g;
-			this.b = b * b;
-
-			return this;
-
-		},
-
-		convertLinearToGamma: function () {
-
-			this.r = Math.sqrt( this.r );
-			this.g = Math.sqrt( this.g );
-			this.b = Math.sqrt( this.b );
-
-			return this;
-
-		},
-
-		getHex: function () {
-
-			return ( this.r * 255 ) << 16 ^ ( this.g * 255 ) << 8 ^ ( this.b * 255 ) << 0;
-
-		},
-
-		getHexString: function () {
-
-			return ( '000000' + this.getHex().toString( 16 ) ).slice( - 6 );
-
-		},
-
-		getHSL: function ( optionalTarget ) {
-
-			// h,s,l ranges are in 0.0 - 1.0
-
-			var hsl = optionalTarget || { h: 0, s: 0, l: 0 };
-
-			var r = this.r, g = this.g, b = this.b;
-
-			var max = Math.max( r, g, b );
-			var min = Math.min( r, g, b );
-
-			var hue, saturation;
-			var lightness = ( min + max ) / 2.0;
-
-			if ( min === max ) {
-
-				hue = 0;
-				saturation = 0;
-
-			} else {
-
-				var delta = max - min;
-
-				saturation = lightness <= 0.5 ? delta / ( max + min ) : delta / ( 2 - max - min );
-
-				switch ( max ) {
-
-					case r: hue = ( g - b ) / delta + ( g < b ? 6 : 0 ); break;
-					case g: hue = ( b - r ) / delta + 2; break;
-					case b: hue = ( r - g ) / delta + 4; break;
-
-				}
-
-				hue /= 6;
-
-			}
-
-			hsl.h = hue;
-			hsl.s = saturation;
-			hsl.l = lightness;
-
-			return hsl;
-
-		},
-
-		getStyle: function () {
-
-			return 'rgb(' + ( ( this.r * 255 ) | 0 ) + ',' + ( ( this.g * 255 ) | 0 ) + ',' + ( ( this.b * 255 ) | 0 ) + ')';
-
-		},
-
-		offsetHSL: function ( h, s, l ) {
-
-			var hsl = this.getHSL();
-
-			hsl.h += h; hsl.s += s; hsl.l += l;
-
-			this.setHSL( hsl.h, hsl.s, hsl.l );
-
-			return this;
-
-		},
-
-		add: function ( color ) {
-
-			this.r += color.r;
-			this.g += color.g;
-			this.b += color.b;
-
-			return this;
-
-		},
-
-		addColors: function ( color1, color2 ) {
-
-			this.r = color1.r + color2.r;
-			this.g = color1.g + color2.g;
-			this.b = color1.b + color2.b;
-
-			return this;
-
-		},
-
-		addScalar: function ( s ) {
-
-			this.r += s;
-			this.g += s;
-			this.b += s;
-
-			return this;
-
-		},
-
-		sub: function ( color ) {
-
-			this.r = Math.max( 0, this.r - color.r );
-			this.g = Math.max( 0, this.g - color.g );
-			this.b = Math.max( 0, this.b - color.b );
-
-			return this;
-
-		},
-
-		multiply: function ( color ) {
-
-			this.r *= color.r;
-			this.g *= color.g;
-			this.b *= color.b;
-
-			return this;
-
-		},
-
-		multiplyScalar: function ( s ) {
-
-			this.r *= s;
-			this.g *= s;
-			this.b *= s;
-
-			return this;
-
-		},
-
-		lerp: function ( color, alpha ) {
-
-			this.r += ( color.r - this.r ) * alpha;
-			this.g += ( color.g - this.g ) * alpha;
-			this.b += ( color.b - this.b ) * alpha;
-
-			return this;
-
-		},
-
-		equals: function ( c ) {
-
-			return ( c.r === this.r ) && ( c.g === this.g ) && ( c.b === this.b );
-
-		},
-
-		fromArray: function ( array, offset ) {
-
-			if ( offset === undefined ) offset = 0;
-
-			this.r = array[ offset ];
-			this.g = array[ offset + 1 ];
-			this.b = array[ offset + 2 ];
-
-			return this;
-
-		},
-
-		toArray: function ( array, offset ) {
-
-			if ( array === undefined ) array = [];
-			if ( offset === undefined ) offset = 0;
-
-			array[ offset ] = this.r;
-			array[ offset + 1 ] = this.g;
-			array[ offset + 2 ] = this.b;
-
-			return array;
-
-		},
-
-		toJSON: function () {
-
-			return this.getHex();
-
-		}
-
-	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function BufferAttribute( array, itemSize, normalized ) {
 
 		if ( Array.isArray( array ) ) {
 
-			throw new TypeError( 'THREE.BufferAttribute: array should be a Typed Array.' );
+			throw new TypeError( 'BufferAttribute: array should be a Typed Array.' );
 
 		}
 
@@ -5260,7 +5433,7 @@ var Three = (function (exports) {
 
 			if ( Array.isArray( array ) ) {
 
-				throw new TypeError( 'THREE.BufferAttribute: array should be a Typed Array.' );
+				throw new TypeError( 'BufferAttribute: array should be a Typed Array.' );
 
 			}
 
@@ -5323,7 +5496,7 @@ var Three = (function (exports) {
 
 				if ( color === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyColorsArray(): color is undefined', i );
+					console.warn( 'BufferAttribute.copyColorsArray(): color is undefined', i );
 					color = new Color();
 
 				}
@@ -5366,7 +5539,7 @@ var Three = (function (exports) {
 
 				if ( vector === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyVector2sArray(): vector is undefined', i );
+					console.warn( 'BufferAttribute.copyVector2sArray(): vector is undefined', i );
 					vector = new Vector2();
 
 				}
@@ -5390,7 +5563,7 @@ var Three = (function (exports) {
 
 				if ( vector === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyVector3sArray(): vector is undefined', i );
+					console.warn( 'BufferAttribute.copyVector3sArray(): vector is undefined', i );
 					vector = new Vector3();
 
 				}
@@ -5415,7 +5588,7 @@ var Three = (function (exports) {
 
 				if ( vector === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyVector4sArray(): vector is undefined', i );
+					console.warn( 'BufferAttribute.copyVector4sArray(): vector is undefined', i );
 					vector = new Vector4();
 
 				}
@@ -5640,9 +5813,7 @@ var Three = (function (exports) {
 	Float64BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float64BufferAttribute.prototype.constructor = Float64BufferAttribute;
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
+	//
 
 	function DirectGeometry() {
 
@@ -5825,7 +5996,7 @@ var Three = (function (exports) {
 
 					} else {
 
-						console.warn( 'THREE.DirectGeometry.fromGeometry(): Undefined vertexUv ', i );
+						console.warn( 'DirectGeometry.fromGeometry(): Undefined vertexUv ', i );
 
 						this.uvs.push( new Vector2(), new Vector2(), new Vector2() );
 
@@ -5843,7 +6014,7 @@ var Three = (function (exports) {
 
 					} else {
 
-						console.warn( 'THREE.DirectGeometry.fromGeometry(): Undefined vertexUv2 ', i );
+						console.warn( 'DirectGeometry.fromGeometry(): Undefined vertexUv2 ', i );
 
 						this.uvs2.push( new Vector2(), new Vector2(), new Vector2() );
 
@@ -5898,12 +6069,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Euler( x, y, z, order ) {
 
@@ -6137,7 +6302,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.warn( 'THREE.Euler: .setFromRotationMatrix() given unsupported order: ' + order );
+				console.warn( 'Euler: .setFromRotationMatrix() given unsupported order: ' + order );
 
 			}
 
@@ -6244,10 +6409,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function Layers() {
 
 		this.mask = 1 | 0;
@@ -6288,13 +6449,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 * @author tschw
-	 */
-
 	function Matrix3() {
 
 		this.elements = [
@@ -6307,7 +6461,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix3: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix3: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -6472,7 +6626,7 @@ var Three = (function (exports) {
 
 			if ( matrix && matrix.isMatrix4 ) {
 
-				console.error( "THREE.Matrix3: .getInverse() no longer takes a Matrix4 argument." );
+				console.error( "Matrix3: .getInverse() no longer takes a Matrix4 argument." );
 
 			}
 
@@ -6491,7 +6645,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix3: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix3: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -6671,14 +6825,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author elephantatwork / www.elephantatwork.ch
-	 */
 
 	var object3DId = 0;
 
@@ -7017,7 +7163,7 @@ var Three = (function (exports) {
 
 			if ( object === this ) {
 
-				console.error( "THREE.Object3D.add: object can't be added as a child of itself.", object );
+				console.error( "Object3D.add: object can't be added as a child of itself.", object );
 				return this;
 
 			}
@@ -7037,7 +7183,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.error( "THREE.Object3D.add: object not an instance of THREE.Object3D.", object );
+				console.error( "Object3D.add: object not an instance of Object3D.", object );
 
 			}
 
@@ -7491,10 +7637,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function arrayMax( array ) {
 
 		if ( array.length === 0 ) return - Infinity;
@@ -7510,11 +7652,6 @@ var Three = (function (exports) {
 		return max;
 
 	}
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	var bufferGeometryId = 1; // BufferGeometry uses odd numbers as Id
 
@@ -7571,7 +7708,7 @@ var Three = (function (exports) {
 
 			if ( ! ( attribute && attribute.isBufferAttribute ) && ! ( attribute && attribute.isInterleavedBufferAttribute ) ) {
 
-				console.warn( 'THREE.BufferGeometry: .addAttribute() now expects ( name, attribute ).' );
+				console.warn( 'BufferGeometry: .addAttribute() now expects ( name, attribute ).' );
 
 				this.addAttribute( name, new BufferAttribute( arguments[ 1 ], arguments[ 2 ] ) );
 
@@ -7581,7 +7718,7 @@ var Three = (function (exports) {
 
 			if ( name === 'index' ) {
 
-				console.warn( 'THREE.BufferGeometry.addAttribute: Use .setIndex() for index attribute.' );
+				console.warn( 'BufferGeometry.addAttribute: Use .setIndex() for index attribute.' );
 				this.setIndex( attribute );
 
 				return;
@@ -7791,7 +7928,7 @@ var Three = (function (exports) {
 
 		setFromObject: function ( object ) {
 
-			// console.log( 'THREE.BufferGeometry.setFromObject(). Converting', object, this );
+			// console.log( 'BufferGeometry.setFromObject(). Converting', object, this );
 
 			var geometry = object.geometry;
 
@@ -8111,7 +8248,7 @@ var Three = (function (exports) {
 
 			if ( isNaN( this.boundingBox.min.x ) || isNaN( this.boundingBox.min.y ) || isNaN( this.boundingBox.min.z ) ) {
 
-				console.error( 'THREE.BufferGeometry.computeBoundingBox: Computed min/max have NaN values. The "position" attribute is likely to have NaN values.', this );
+				console.error( 'BufferGeometry.computeBoundingBox: Computed min/max have NaN values. The "position" attribute is likely to have NaN values.', this );
 
 			}
 
@@ -8157,7 +8294,7 @@ var Three = (function (exports) {
 
 					if ( isNaN( this.boundingSphere.radius ) ) {
 
-						console.error( 'THREE.BufferGeometry.computeBoundingSphere(): Computed radius is NaN. The "position" attribute is likely to have NaN values.', this );
+						console.error( 'BufferGeometry.computeBoundingSphere(): Computed radius is NaN. The "position" attribute is likely to have NaN values.', this );
 
 					}
 
@@ -8298,7 +8435,7 @@ var Three = (function (exports) {
 
 			if ( ! ( geometry && geometry.isBufferGeometry ) ) {
 
-				console.error( 'THREE.BufferGeometry.merge(): geometry not an instance of THREE.BufferGeometry.', geometry );
+				console.error( 'BufferGeometry.merge(): geometry not an instance of BufferGeometry.', geometry );
 				return;
 
 			}
@@ -8359,7 +8496,7 @@ var Three = (function (exports) {
 
 			if ( this.index === null ) {
 
-				console.warn( 'THREE.BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
 				return this;
 
 			}
@@ -8487,29 +8624,7 @@ var Three = (function (exports) {
 
 		clone: function () {
 
-			/*
-			 // Handle primitives
-
-			 var parameters = this.parameters;
-
-			 if ( parameters !== undefined ) {
-
-			 var values = [];
-
-			 for ( var key in parameters ) {
-
-			 values.push( parameters[ key ] );
-
-			 }
-
-			 var geometry = Object.create( this.constructor.prototype );
-			 this.constructor.apply( geometry, values );
-			 return geometry;
-
-			 }
-
-			 return new this.constructor().copy( this );
-			 */
+			
 
 			return new BufferGeometry().copy( this );
 
@@ -8619,10 +8734,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Ray( origin, direction ) {
 
@@ -9150,10 +9261,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author bhouston / http://clara.io
-	 */
-
 	function Line3( start, end ) {
 
 		this.start = ( start !== undefined ) ? start : new Vector3();
@@ -9274,10 +9381,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Plane( normal, constant ) {
 
@@ -9500,11 +9603,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author bhouston / http://clara.io
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function Triangle( a, b, c ) {
 
 		this.a = ( a !== undefined ) ? a : new Vector3();
@@ -9687,6 +9785,12 @@ var Three = (function (exports) {
 
 		},
 
+		intersectsBox: function ( box ) {
+
+			return box.intersectsTriangle( this );
+
+		},
+
 		closestPointToPoint: function () {
 
 			var plane = new Plane();
@@ -9752,11 +9856,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 */
-
 	function Face3( a, b, c, normal, color, materialIndex ) {
 
 		this.a = a;
@@ -9809,516 +9908,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	var FrontSide = 0;
-	var BackSide = 1;
-	var DoubleSide = 2;
-	var FlatShading = 1;
-
-	var NoColors = 0;
-
-	var VertexColors = 2;
-
-	var NormalBlending = 1;
-
-
-
-
-	var AddEquation = 100;
-
-
-
-
-
-
-
-
-	var SrcAlphaFactor = 204;
-	var OneMinusSrcAlphaFactor = 205;
-
-
-
-
-
-
-
-
-	var LessEqualDepth = 3;
-
-
-
-
-	var MultiplyOperation = 0;
-
-
-
-
-
-
-
-	var UVMapping = 300;
-
-
-
-
-
-
-
-	var RepeatWrapping = 1000;
-	var ClampToEdgeWrapping = 1001;
-	var MirroredRepeatWrapping = 1002;
-
-
-
-	var LinearFilter = 1006;
-
-	var LinearMipMapLinearFilter = 1008;
-	var UnsignedByteType = 1009;
-
-
-
-
-
-
-
-
-
-
-
-
-	var RGBFormat = 1022;
-	var RGBAFormat = 1023;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	var TrianglesDrawMode = 0;
-
-
-	var LinearEncoding = 3000;
-
-
-
-
-
-
-
-	var BasicDepthPacking = 3200;
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 */
-
-	var materialId = 0;
-
-	function Material() {
-
-		Object.defineProperty( this, 'id', { value: materialId ++ } );
-
-		this.uuid = _Math.generateUUID();
-
-		this.name = '';
-		this.type = 'Material';
-
-		this.fog = true;
-		this.lights = true;
-
-		this.blending = NormalBlending;
-		this.side = FrontSide;
-		this.flatShading = false;
-		this.vertexColors = NoColors; // THREE.NoColors, THREE.VertexColors, THREE.FaceColors
-
-		this.opacity = 1;
-		this.transparent = false;
-
-		this.blendSrc = SrcAlphaFactor;
-		this.blendDst = OneMinusSrcAlphaFactor;
-		this.blendEquation = AddEquation;
-		this.blendSrcAlpha = null;
-		this.blendDstAlpha = null;
-		this.blendEquationAlpha = null;
-
-		this.depthFunc = LessEqualDepth;
-		this.depthTest = true;
-		this.depthWrite = true;
-
-		this.clippingPlanes = null;
-		this.clipIntersection = false;
-		this.clipShadows = false;
-
-		this.colorWrite = true;
-
-		this.precision = null; // override the renderer's default precision for this material
-
-		this.polygonOffset = false;
-		this.polygonOffsetFactor = 0;
-		this.polygonOffsetUnits = 0;
-
-		this.dithering = false;
-
-		this.alphaTest = 0;
-		this.premultipliedAlpha = false;
-
-		this.overdraw = 0; // Overdrawn pixels (typically between 0 and 1) for fixing antialiasing gaps in CanvasRenderer
-
-		this.visible = true;
-
-		this.userData = {};
-
-		this.needsUpdate = true;
-
-	}
-
-	Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
-
-		constructor: Material,
-
-		isMaterial: true,
-
-		onBeforeCompile: function () {},
-
-		setValues: function ( values ) {
-
-			if ( values === undefined ) return;
-
-			for ( var key in values ) {
-
-				var newValue = values[ key ];
-
-				if ( newValue === undefined ) {
-
-					console.warn( "THREE.Material: '" + key + "' parameter is undefined." );
-					continue;
-
-				}
-
-				// for backward compatability if shading is set in the constructor
-				if ( key === 'shading' ) {
-
-					console.warn( 'THREE.' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
-					this.flatShading = ( newValue === FlatShading ) ? true : false;
-					continue;
-
-				}
-
-				var currentValue = this[ key ];
-
-				if ( currentValue === undefined ) {
-
-					console.warn( "THREE." + this.type + ": '" + key + "' is not a property of this material." );
-					continue;
-
-				}
-
-				if ( currentValue && currentValue.isColor ) {
-
-					currentValue.set( newValue );
-
-				} else if ( ( currentValue && currentValue.isVector3 ) && ( newValue && newValue.isVector3 ) ) {
-
-					currentValue.copy( newValue );
-
-				} else if ( key === 'overdraw' ) {
-
-					// ensure overdraw is backwards-compatible with legacy boolean type
-					this[ key ] = Number( newValue );
-
-				} else {
-
-					this[ key ] = newValue;
-
-				}
-
-			}
-
-		},
-
-		toJSON: function ( meta ) {
-
-			var isRoot = ( meta === undefined || typeof meta === 'string' );
-
-			if ( isRoot ) {
-
-				meta = {
-					textures: {},
-					images: {}
-				};
-
-			}
-
-			var data = {
-				metadata: {
-					version: 4.5,
-					type: 'Material',
-					generator: 'Material.toJSON'
-				}
-			};
-
-			// standard Material serialization
-			data.uuid = this.uuid;
-			data.type = this.type;
-
-			if ( this.name !== '' ) data.name = this.name;
-
-			if ( this.color && this.color.isColor ) data.color = this.color.getHex();
-
-			if ( this.roughness !== undefined ) data.roughness = this.roughness;
-			if ( this.metalness !== undefined ) data.metalness = this.metalness;
-
-			if ( this.emissive && this.emissive.isColor ) data.emissive = this.emissive.getHex();
-			if ( this.emissiveIntensity !== 1 ) data.emissiveIntensity = this.emissiveIntensity;
-
-			if ( this.specular && this.specular.isColor ) data.specular = this.specular.getHex();
-			if ( this.shininess !== undefined ) data.shininess = this.shininess;
-			if ( this.clearCoat !== undefined ) data.clearCoat = this.clearCoat;
-			if ( this.clearCoatRoughness !== undefined ) data.clearCoatRoughness = this.clearCoatRoughness;
-
-			if ( this.map && this.map.isTexture ) data.map = this.map.toJSON( meta ).uuid;
-			if ( this.alphaMap && this.alphaMap.isTexture ) data.alphaMap = this.alphaMap.toJSON( meta ).uuid;
-			if ( this.lightMap && this.lightMap.isTexture ) data.lightMap = this.lightMap.toJSON( meta ).uuid;
-			if ( this.bumpMap && this.bumpMap.isTexture ) {
-
-				data.bumpMap = this.bumpMap.toJSON( meta ).uuid;
-				data.bumpScale = this.bumpScale;
-
-			}
-			if ( this.normalMap && this.normalMap.isTexture ) {
-
-				data.normalMap = this.normalMap.toJSON( meta ).uuid;
-				data.normalScale = this.normalScale.toArray();
-
-			}
-			if ( this.displacementMap && this.displacementMap.isTexture ) {
-
-				data.displacementMap = this.displacementMap.toJSON( meta ).uuid;
-				data.displacementScale = this.displacementScale;
-				data.displacementBias = this.displacementBias;
-
-			}
-			if ( this.roughnessMap && this.roughnessMap.isTexture ) data.roughnessMap = this.roughnessMap.toJSON( meta ).uuid;
-			if ( this.metalnessMap && this.metalnessMap.isTexture ) data.metalnessMap = this.metalnessMap.toJSON( meta ).uuid;
-
-			if ( this.emissiveMap && this.emissiveMap.isTexture ) data.emissiveMap = this.emissiveMap.toJSON( meta ).uuid;
-			if ( this.specularMap && this.specularMap.isTexture ) data.specularMap = this.specularMap.toJSON( meta ).uuid;
-
-			if ( this.envMap && this.envMap.isTexture ) {
-
-				data.envMap = this.envMap.toJSON( meta ).uuid;
-				data.reflectivity = this.reflectivity; // Scale behind envMap
-
-			}
-
-			if ( this.gradientMap && this.gradientMap.isTexture ) {
-
-				data.gradientMap = this.gradientMap.toJSON( meta ).uuid;
-
-			}
-
-			if ( this.size !== undefined ) data.size = this.size;
-			if ( this.sizeAttenuation !== undefined ) data.sizeAttenuation = this.sizeAttenuation;
-
-			if ( this.blending !== NormalBlending ) data.blending = this.blending;
-			if ( this.flatShading === true ) data.flatShading = this.flatShading;
-			if ( this.side !== FrontSide ) data.side = this.side;
-			if ( this.vertexColors !== NoColors ) data.vertexColors = this.vertexColors;
-
-			if ( this.opacity < 1 ) data.opacity = this.opacity;
-			if ( this.transparent === true ) data.transparent = this.transparent;
-
-			data.depthFunc = this.depthFunc;
-			data.depthTest = this.depthTest;
-			data.depthWrite = this.depthWrite;
-
-			// rotation (SpriteMaterial)
-			if ( this.rotation !== 0 ) data.rotation = this.rotation;
-
-			if ( this.linewidth !== 1 ) data.linewidth = this.linewidth;
-			if ( this.dashSize !== undefined ) data.dashSize = this.dashSize;
-			if ( this.gapSize !== undefined ) data.gapSize = this.gapSize;
-			if ( this.scale !== undefined ) data.scale = this.scale;
-
-			if ( this.dithering === true ) data.dithering = true;
-
-			if ( this.alphaTest > 0 ) data.alphaTest = this.alphaTest;
-			if ( this.premultipliedAlpha === true ) data.premultipliedAlpha = this.premultipliedAlpha;
-
-			if ( this.wireframe === true ) data.wireframe = this.wireframe;
-			if ( this.wireframeLinewidth > 1 ) data.wireframeLinewidth = this.wireframeLinewidth;
-			if ( this.wireframeLinecap !== 'round' ) data.wireframeLinecap = this.wireframeLinecap;
-			if ( this.wireframeLinejoin !== 'round' ) data.wireframeLinejoin = this.wireframeLinejoin;
-
-			if ( this.morphTargets === true ) data.morphTargets = true;
-			if ( this.skinning === true ) data.skinning = true;
-
-			if ( this.visible === false ) data.visible = false;
-			if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
-
-			// TODO: Copied from Object3D.toJSON
-
-			function extractFromCache( cache ) {
-
-				var values = [];
-
-				for ( var key in cache ) {
-
-					var data = cache[ key ];
-					delete data.metadata;
-					values.push( data );
-
-				}
-
-				return values;
-
-			}
-
-			if ( isRoot ) {
-
-				var textures = extractFromCache( meta.textures );
-				var images = extractFromCache( meta.images );
-
-				if ( textures.length > 0 ) data.textures = textures;
-				if ( images.length > 0 ) data.images = images;
-
-			}
-
-			return data;
-
-		},
-
-		clone: function () {
-
-			return new this.constructor().copy( this );
-
-		},
-
-		copy: function ( source ) {
-
-			this.name = source.name;
-
-			this.fog = source.fog;
-			this.lights = source.lights;
-
-			this.blending = source.blending;
-			this.side = source.side;
-			this.flatShading = source.flatShading;
-			this.vertexColors = source.vertexColors;
-
-			this.opacity = source.opacity;
-			this.transparent = source.transparent;
-
-			this.blendSrc = source.blendSrc;
-			this.blendDst = source.blendDst;
-			this.blendEquation = source.blendEquation;
-			this.blendSrcAlpha = source.blendSrcAlpha;
-			this.blendDstAlpha = source.blendDstAlpha;
-			this.blendEquationAlpha = source.blendEquationAlpha;
-
-			this.depthFunc = source.depthFunc;
-			this.depthTest = source.depthTest;
-			this.depthWrite = source.depthWrite;
-
-			this.colorWrite = source.colorWrite;
-
-			this.precision = source.precision;
-
-			this.polygonOffset = source.polygonOffset;
-			this.polygonOffsetFactor = source.polygonOffsetFactor;
-			this.polygonOffsetUnits = source.polygonOffsetUnits;
-
-			this.dithering = source.dithering;
-
-			this.alphaTest = source.alphaTest;
-			this.premultipliedAlpha = source.premultipliedAlpha;
-
-			this.overdraw = source.overdraw;
-
-			this.visible = source.visible;
-			this.userData = JSON.parse( JSON.stringify( source.userData ) );
-
-			this.clipShadows = source.clipShadows;
-			this.clipIntersection = source.clipIntersection;
-
-			var srcPlanes = source.clippingPlanes,
-				dstPlanes = null;
-
-			if ( srcPlanes !== null ) {
-
-				var n = srcPlanes.length;
-				dstPlanes = new Array( n );
-
-				for ( var i = 0; i !== n; ++ i )
-					dstPlanes[ i ] = srcPlanes[ i ].clone();
-
-			}
-
-			this.clippingPlanes = dstPlanes;
-
-			return this;
-
-		},
-
-		dispose: function () {
-
-			this.dispatchEvent( { type: 'dispose' } );
-
-		}
-
-	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  lightMap: new THREE.Texture( <Image> ),
-	 *  lightMapIntensity: <float>
-	 *
-	 *  aoMap: new THREE.Texture( <Image> ),
-	 *  aoMapIntensity: <float>
-	 *
-	 *  specularMap: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  envMap: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
-	 *  combine: THREE.Multiply,
-	 *  reflectivity: <float>,
-	 *  refractionRatio: <float>,
-	 *
-	 *  depthTest: <bool>,
-	 *  depthWrite: <bool>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>
-	 * }
-	 */
 
 	function MeshBasicMaterial( parameters ) {
 
@@ -10398,13 +9987,6 @@ var Three = (function (exports) {
 		return this;
 
 	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author jonobr1 / http://jonobr1.com/
-	 */
 
 	function Mesh( geometry, material ) {
 
@@ -10785,1247 +10367,884 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 *
-	 * parameters = {
-	 *  color: <THREE.Color>,
-	 *  opacity: <float>
-	 * }
-	 */
+	function Line( geometry, material, mode ) {
 
-	function ShadowMaterial( parameters ) {
+		if ( mode === 1 ) {
 
-		Material.call( this );
+			console.warn( 'Line: parameter LinePieces no longer supported. Created LineSegments instead.' );
+			return new LineSegments( geometry, material );
 
-		this.type = 'ShadowMaterial';
+		}
 
-		this.color = new Color( 0x000000 );
-		this.opacity = 1.0;
+		Object3D.call( this );
 
-		this.lights = true;
-		this.transparent = true;
+		this.type = 'Line';
 
-		this.setValues( parameters );
+		this.geometry = geometry !== undefined ? geometry : new BufferGeometry();
+		this.material = material !== undefined ? material : new LineBasicMaterial( { color: Math.random() * 0xffffff } );
 
 	}
 
-	ShadowMaterial.prototype = Object.create( Material.prototype );
-	ShadowMaterial.prototype.constructor = ShadowMaterial;
+	Line.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
-	ShadowMaterial.prototype.isShadowMaterial = true;
+		constructor: Line,
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *	uvOffset: new THREE.Vector2(),
-	 *	uvScale: new THREE.Vector2()
-	 * }
-	 */
+		isLine: true,
 
-	function SpriteMaterial( parameters ) {
+		computeLineDistances: ( function () {
 
-		Material.call( this );
+			var start = new Vector3();
+			var end = new Vector3();
 
-		this.type = 'SpriteMaterial';
+			return function computeLineDistances() {
 
-		this.color = new Color( 0xffffff );
-		this.map = null;
+				var geometry = this.geometry;
 
-		this.rotation = 0;
+				if ( geometry.isBufferGeometry ) {
 
-		this.fog = false;
-		this.lights = false;
+					// we assume non-indexed geometry
 
-		this.setValues( parameters );
+					if ( geometry.index === null ) {
 
-	}
+						var positionAttribute = geometry.attributes.position;
+						var lineDistances = [ 0 ];
 
-	SpriteMaterial.prototype = Object.create( Material.prototype );
-	SpriteMaterial.prototype.constructor = SpriteMaterial;
-	SpriteMaterial.prototype.isSpriteMaterial = true;
+						for ( var i = 1, l = positionAttribute.count; i < l; i ++ ) {
 
-	SpriteMaterial.prototype.copy = function ( source ) {
+							start.fromBufferAttribute( positionAttribute, i - 1 );
+							end.fromBufferAttribute( positionAttribute, i );
 
-		Material.prototype.copy.call( this, source );
+							lineDistances[ i ] = lineDistances[ i - 1 ];
+							lineDistances[ i ] += start.distanceTo( end );
 
-		this.color.copy( source.color );
-		this.map = source.map;
+						}
 
-		this.rotation = source.rotation;
-
-		return this;
-
-	};
-
-	/**
-	 * Uniform Utilities
-	 */
-
-	var UniformsUtils = {
-
-		merge: function ( uniforms ) {
-
-			var merged = {};
-
-			for ( var u = 0; u < uniforms.length; u ++ ) {
-
-				var tmp = this.clone( uniforms[ u ] );
-
-				for ( var p in tmp ) {
-
-					merged[ p ] = tmp[ p ];
-
-				}
-
-			}
-
-			return merged;
-
-		},
-
-		clone: function ( uniforms_src ) {
-
-			var uniforms_dst = {};
-
-			for ( var u in uniforms_src ) {
-
-				uniforms_dst[ u ] = {};
-
-				for ( var p in uniforms_src[ u ] ) {
-
-					var parameter_src = uniforms_src[ u ][ p ];
-
-					if ( parameter_src && ( parameter_src.isColor ||
-						parameter_src.isMatrix3 || parameter_src.isMatrix4 ||
-						parameter_src.isVector2 || parameter_src.isVector3 || parameter_src.isVector4 ||
-						parameter_src.isTexture ) ) {
-
-						uniforms_dst[ u ][ p ] = parameter_src.clone();
-
-					} else if ( Array.isArray( parameter_src ) ) {
-
-						uniforms_dst[ u ][ p ] = parameter_src.slice();
+						geometry.addAttribute( 'lineDistance', new Float32BufferAttribute( lineDistances, 1 ) );
 
 					} else {
 
-						uniforms_dst[ u ][ p ] = parameter_src;
+						console.warn( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+
+					}
+
+				} else if ( geometry.isGeometry ) {
+
+					var vertices = geometry.vertices;
+					var lineDistances = geometry.lineDistances;
+
+					lineDistances[ 0 ] = 0;
+
+					for ( var i = 1, l = vertices.length; i < l; i ++ ) {
+
+						lineDistances[ i ] = lineDistances[ i - 1 ];
+						lineDistances[ i ] += vertices[ i - 1 ].distanceTo( vertices[ i ] );
 
 					}
 
 				}
 
-			}
+				return this;
 
-			return uniforms_dst;
+			};
+
+		}() ),
+
+		raycast: ( function () {
+
+			var inverseMatrix = new Matrix4();
+			var ray = new Ray();
+			var sphere = new Sphere();
+
+			return function raycast( raycaster, intersects ) {
+
+				var precision = raycaster.linePrecision;
+				var precisionSq = precision * precision;
+
+				var geometry = this.geometry;
+				var matrixWorld = this.matrixWorld;
+
+				// Checking boundingSphere distance to ray
+
+				if ( geometry.boundingSphere === null ) geometry.computeBoundingSphere();
+
+				sphere.copy( geometry.boundingSphere );
+				sphere.applyMatrix4( matrixWorld );
+
+				if ( raycaster.ray.intersectsSphere( sphere ) === false ) return;
+
+				//
+
+				inverseMatrix.getInverse( matrixWorld );
+				ray.copy( raycaster.ray ).applyMatrix4( inverseMatrix );
+
+				var vStart = new Vector3();
+				var vEnd = new Vector3();
+				var interSegment = new Vector3();
+				var interRay = new Vector3();
+				var step = ( this && this.isLineSegments ) ? 2 : 1;
+
+				if ( geometry.isBufferGeometry ) {
+
+					var index = geometry.index;
+					var attributes = geometry.attributes;
+					var positions = attributes.position.array;
+
+					if ( index !== null ) {
+
+						var indices = index.array;
+
+						for ( var i = 0, l = indices.length - 1; i < l; i += step ) {
+
+							var a = indices[ i ];
+							var b = indices[ i + 1 ];
+
+							vStart.fromArray( positions, a * 3 );
+							vEnd.fromArray( positions, b * 3 );
+
+							var distSq = ray.distanceSqToSegment( vStart, vEnd, interRay, interSegment );
+
+							if ( distSq > precisionSq ) continue;
+
+							interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
+
+							var distance = raycaster.ray.origin.distanceTo( interRay );
+
+							if ( distance < raycaster.near || distance > raycaster.far ) continue;
+
+							intersects.push( {
+
+								distance: distance,
+								// What do we want? intersection point on the ray or on the segment??
+								// point: raycaster.ray.at( distance ),
+								point: interSegment.clone().applyMatrix4( this.matrixWorld ),
+								index: i,
+								face: null,
+								faceIndex: null,
+								object: this
+
+							} );
+
+						}
+
+					} else {
+
+						for ( var i = 0, l = positions.length / 3 - 1; i < l; i += step ) {
+
+							vStart.fromArray( positions, 3 * i );
+							vEnd.fromArray( positions, 3 * i + 3 );
+
+							var distSq = ray.distanceSqToSegment( vStart, vEnd, interRay, interSegment );
+
+							if ( distSq > precisionSq ) continue;
+
+							interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
+
+							var distance = raycaster.ray.origin.distanceTo( interRay );
+
+							if ( distance < raycaster.near || distance > raycaster.far ) continue;
+
+							intersects.push( {
+
+								distance: distance,
+								// What do we want? intersection point on the ray or on the segment??
+								// point: raycaster.ray.at( distance ),
+								point: interSegment.clone().applyMatrix4( this.matrixWorld ),
+								index: i,
+								face: null,
+								faceIndex: null,
+								object: this
+
+							} );
+
+						}
+
+					}
+
+				} else if ( geometry.isGeometry ) {
+
+					var vertices = geometry.vertices;
+					var nbVertices = vertices.length;
+
+					for ( var i = 0; i < nbVertices - 1; i += step ) {
+
+						var distSq = ray.distanceSqToSegment( vertices[ i ], vertices[ i + 1 ], interRay, interSegment );
+
+						if ( distSq > precisionSq ) continue;
+
+						interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
+
+						var distance = raycaster.ray.origin.distanceTo( interRay );
+
+						if ( distance < raycaster.near || distance > raycaster.far ) continue;
+
+						intersects.push( {
+
+							distance: distance,
+							// What do we want? intersection point on the ray or on the segment??
+							// point: raycaster.ray.at( distance ),
+							point: interSegment.clone().applyMatrix4( this.matrixWorld ),
+							index: i,
+							face: null,
+							faceIndex: null,
+							object: this
+
+						} );
+
+					}
+
+				}
+
+			};
+
+		}() ),
+
+		clone: function () {
+
+			return new this.constructor( this.geometry, this.material ).copy( this );
+
+		}
+
+	} );
+
+	function LineSegments( geometry, material ) {
+
+		Line.call( this, geometry, material );
+
+		this.type = 'LineSegments';
+
+	}
+
+	LineSegments.prototype = Object.assign( Object.create( Line.prototype ), {
+
+		constructor: LineSegments,
+
+		isLineSegments: true,
+
+		computeLineDistances: ( function () {
+
+			var start = new Vector3();
+			var end = new Vector3();
+
+			return function computeLineDistances() {
+
+				var geometry = this.geometry;
+
+				if ( geometry.isBufferGeometry ) {
+
+					// we assume non-indexed geometry
+
+					if ( geometry.index === null ) {
+
+						var positionAttribute = geometry.attributes.position;
+						var lineDistances = [];
+
+						for ( var i = 0, l = positionAttribute.count; i < l; i += 2 ) {
+
+							start.fromBufferAttribute( positionAttribute, i );
+							end.fromBufferAttribute( positionAttribute, i + 1 );
+
+							lineDistances[ i ] = ( i === 0 ) ? 0 : lineDistances[ i - 1 ];
+							lineDistances[ i + 1 ] = lineDistances[ i ] + start.distanceTo( end );
+
+						}
+
+						geometry.addAttribute( 'lineDistance', new Float32BufferAttribute( lineDistances, 1 ) );
+
+					} else {
+
+						console.warn( 'LineSegments.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+
+					}
+
+				} else if ( geometry.isGeometry ) {
+
+					var vertices = geometry.vertices;
+					var lineDistances = geometry.lineDistances;
+
+					for ( var i = 0, l = vertices.length; i < l; i += 2 ) {
+
+						start.copy( vertices[ i ] );
+						end.copy( vertices[ i + 1 ] );
+
+						lineDistances[ i ] = ( i === 0 ) ? 0 : lineDistances[ i - 1 ];
+						lineDistances[ i + 1 ] = lineDistances[ i ] + start.distanceTo( end );
+
+					}
+
+				}
+
+				return this;
+
+			};
+
+		}() )
+
+	} );
+
+	function Points( geometry, material ) {
+
+		Object3D.call( this );
+
+		this.type = 'Points';
+
+		this.geometry = geometry !== undefined ? geometry : new BufferGeometry();
+		this.material = material !== undefined ? material : new PointsMaterial( { color: Math.random() * 0xffffff } );
+
+	}
+
+	Points.prototype = Object.assign( Object.create( Object3D.prototype ), {
+
+		constructor: Points,
+
+		isPoints: true,
+
+		raycast: ( function () {
+
+			var inverseMatrix = new Matrix4();
+			var ray = new Ray();
+			var sphere = new Sphere();
+
+			return function raycast( raycaster, intersects ) {
+
+				var object = this;
+				var geometry = this.geometry;
+				var matrixWorld = this.matrixWorld;
+				var threshold = raycaster.params.Points.threshold;
+
+				// Checking boundingSphere distance to ray
+
+				if ( geometry.boundingSphere === null ) geometry.computeBoundingSphere();
+
+				sphere.copy( geometry.boundingSphere );
+				sphere.applyMatrix4( matrixWorld );
+				sphere.radius += threshold;
+
+				if ( raycaster.ray.intersectsSphere( sphere ) === false ) return;
+
+				//
+
+				inverseMatrix.getInverse( matrixWorld );
+				ray.copy( raycaster.ray ).applyMatrix4( inverseMatrix );
+
+				var localThreshold = threshold / ( ( this.scale.x + this.scale.y + this.scale.z ) / 3 );
+				var localThresholdSq = localThreshold * localThreshold;
+				var position = new Vector3();
+
+				function testPoint( point, index ) {
+
+					var rayPointDistanceSq = ray.distanceSqToPoint( point );
+
+					if ( rayPointDistanceSq < localThresholdSq ) {
+
+						var intersectPoint = ray.closestPointToPoint( point );
+						intersectPoint.applyMatrix4( matrixWorld );
+
+						var distance = raycaster.ray.origin.distanceTo( intersectPoint );
+
+						if ( distance < raycaster.near || distance > raycaster.far ) return;
+
+						intersects.push( {
+
+							distance: distance,
+							distanceToRay: Math.sqrt( rayPointDistanceSq ),
+							point: intersectPoint.clone(),
+							index: index,
+							face: null,
+							object: object
+
+						} );
+
+					}
+
+				}
+
+				if ( geometry.isBufferGeometry ) {
+
+					var index = geometry.index;
+					var attributes = geometry.attributes;
+					var positions = attributes.position.array;
+
+					if ( index !== null ) {
+
+						var indices = index.array;
+
+						for ( var i = 0, il = indices.length; i < il; i ++ ) {
+
+							var a = indices[ i ];
+
+							position.fromArray( positions, a * 3 );
+
+							testPoint( position, a );
+
+						}
+
+					} else {
+
+						for ( var i = 0, l = positions.length / 3; i < l; i ++ ) {
+
+							position.fromArray( positions, i * 3 );
+
+							testPoint( position, i );
+
+						}
+
+					}
+
+				} else {
+
+					var vertices = geometry.vertices;
+
+					for ( var i = 0, l = vertices.length; i < l; i ++ ) {
+
+						testPoint( vertices[ i ], i );
+
+					}
+
+				}
+
+			};
+
+		}() ),
+
+		clone: function () {
+
+			return new this.constructor( this.geometry, this.material ).copy( this );
+
+		}
+
+	} );
+
+	var Cache = {
+
+		enabled: false,
+
+		files: {},
+
+		add: function ( key, file ) {
+
+			if ( this.enabled === false ) return;
+
+			// console.log( 'Cache', 'Adding key:', key );
+
+			this.files[ key ] = file;
+
+		},
+
+		get: function ( key ) {
+
+			if ( this.enabled === false ) return;
+
+			// console.log( 'Cache', 'Checking key:', key );
+
+			return this.files[ key ];
+
+		},
+
+		remove: function ( key ) {
+
+			delete this.files[ key ];
+
+		},
+
+		clear: function () {
+
+			this.files = {};
 
 		}
 
 	};
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  defines: { "label" : "value" },
-	 *  uniforms: { "parameter1": { value: 1.0 }, "parameter2": { value2: 2 } },
-	 *
-	 *  fragmentShader: <string>,
-	 *  vertexShader: <string>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  lights: <bool>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
+	function LoadingManager( onLoad, onProgress, onError ) {
 
-	function ShaderMaterial( parameters ) {
+		var scope = this;
 
-		Material.call( this );
+		var isLoading = false;
+		var itemsLoaded = 0;
+		var itemsTotal = 0;
+		var urlModifier = undefined;
 
-		this.type = 'ShaderMaterial';
+		this.onStart = undefined;
+		this.onLoad = onLoad;
+		this.onProgress = onProgress;
+		this.onError = onError;
 
-		this.defines = {};
-		this.uniforms = {};
+		this.itemStart = function ( url ) {
 
-		this.vertexShader = 'void main() {\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}';
-		this.fragmentShader = 'void main() {\n\tgl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}';
+			itemsTotal ++;
 
-		this.linewidth = 1;
+			if ( isLoading === false ) {
 
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
+				if ( scope.onStart !== undefined ) {
 
-		this.fog = false; // set to use scene fog
-		this.lights = false; // set to use scene lights
-		this.clipping = false; // set to use user-defined clipping planes
+					scope.onStart( url, itemsLoaded, itemsTotal );
 
-		this.skinning = false; // set to use skinning attribute streams
-		this.morphTargets = false; // set to use morph targets
-		this.morphNormals = false; // set to use morph normals
-
-		this.extensions = {
-			derivatives: false, // set to use derivatives
-			fragDepth: false, // set to use fragment depth values
-			drawBuffers: false, // set to use draw buffers
-			shaderTextureLOD: false // set to use shader texture LOD
-		};
-
-		// When rendered geometry doesn't include these attributes but the material does,
-		// use these default values in WebGL. This avoids errors when buffer data is missing.
-		this.defaultAttributeValues = {
-			'color': [ 1, 1, 1 ],
-			'uv': [ 0, 0 ],
-			'uv2': [ 0, 0 ]
-		};
-
-		this.index0AttributeName = undefined;
-
-		if ( parameters !== undefined ) {
-
-			if ( parameters.attributes !== undefined ) {
-
-				console.error( 'THREE.ShaderMaterial: attributes should now be defined in THREE.BufferGeometry instead.' );
+				}
 
 			}
 
-			this.setValues( parameters );
+			isLoading = true;
+
+		};
+
+		this.itemEnd = function ( url ) {
+
+			itemsLoaded ++;
+
+			if ( scope.onProgress !== undefined ) {
+
+				scope.onProgress( url, itemsLoaded, itemsTotal );
+
+			}
+
+			if ( itemsLoaded === itemsTotal ) {
+
+				isLoading = false;
+
+				if ( scope.onLoad !== undefined ) {
+
+					scope.onLoad();
+
+				}
+
+			}
+
+		};
+
+		this.itemError = function ( url ) {
+
+			if ( scope.onError !== undefined ) {
+
+				scope.onError( url );
+
+			}
+
+		};
+
+		this.resolveURL = function ( url ) {
+
+			if ( urlModifier ) {
+
+				return urlModifier( url );
+
+			}
+
+			return url;
+
+		};
+
+		this.setURLModifier = function ( transform ) {
+
+			urlModifier = transform;
+			return this;
+
+		};
+
+	}
+
+	var DefaultLoadingManager = new LoadingManager();
+
+	var loading = {};
+
+	function FileLoader( manager ) {
+
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+
+	}
+
+	Object.assign( FileLoader.prototype, {
+
+		load: function ( url, onLoad, onProgress, onError ) {
+
+			if ( url === undefined ) url = '';
+
+			if ( this.path !== undefined ) url = this.path + url;
+
+			url = this.manager.resolveURL( url );
+
+			var scope = this;
+
+			var cached = Cache.get( url );
+
+			if ( cached !== undefined ) {
+
+				scope.manager.itemStart( url );
+
+				setTimeout( function () {
+
+					if ( onLoad ) onLoad( cached );
+
+					scope.manager.itemEnd( url );
+
+				}, 0 );
+
+				return cached;
+
+			}
+
+			// Check if request is duplicate
+
+			if ( loading[ url ] !== undefined ) {
+
+				loading[ url ].push( {
+
+					onLoad: onLoad,
+					onProgress: onProgress,
+					onError: onError
+
+				} );
+
+				return;
+
+			}
+
+			// Check for data: URI
+			var dataUriRegex = /^data:(.*?)(;base64)?,(.*)$/;
+			var dataUriRegexResult = url.match( dataUriRegex );
+
+			// Safari can not handle Data URIs through XMLHttpRequest so process manually
+			if ( dataUriRegexResult ) {
+
+				var mimeType = dataUriRegexResult[ 1 ];
+				var isBase64 = !! dataUriRegexResult[ 2 ];
+				var data = dataUriRegexResult[ 3 ];
+
+				data = window.decodeURIComponent( data );
+
+				if ( isBase64 ) data = window.atob( data );
+
+				try {
+
+					var response;
+					var responseType = ( this.responseType || '' ).toLowerCase();
+
+					switch ( responseType ) {
+
+						case 'arraybuffer':
+						case 'blob':
+
+							var view = new Uint8Array( data.length );
+
+							for ( var i = 0; i < data.length; i ++ ) {
+
+								view[ i ] = data.charCodeAt( i );
+
+							}
+
+							if ( responseType === 'blob' ) {
+
+								response = new Blob( [ view.buffer ], { type: mimeType } );
+
+							} else {
+
+								response = view.buffer;
+
+							}
+
+							break;
+
+						case 'document':
+
+							var parser = new DOMParser();
+							response = parser.parseFromString( data, mimeType );
+
+							break;
+
+						case 'json':
+
+							response = JSON.parse( data );
+
+							break;
+
+						default: // 'text' or other
+
+							response = data;
+
+							break;
+
+					}
+
+					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
+					window.setTimeout( function () {
+
+						if ( onLoad ) onLoad( response );
+
+						scope.manager.itemEnd( url );
+
+					}, 0 );
+
+				} catch ( error ) {
+
+					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
+					window.setTimeout( function () {
+
+						if ( onError ) onError( error );
+
+						scope.manager.itemEnd( url );
+						scope.manager.itemError( url );
+
+					}, 0 );
+
+				}
+
+			} else {
+
+				// Initialise array for duplicate requests
+
+				loading[ url ] = [];
+
+				loading[ url ].push( {
+
+					onLoad: onLoad,
+					onProgress: onProgress,
+					onError: onError
+
+				} );
+
+				var request = new XMLHttpRequest();
+
+				request.open( 'GET', url, true );
+
+				request.addEventListener( 'load', function ( event ) {
+
+					var response = this.response;
+
+					Cache.add( url, response );
+
+					var callbacks = loading[ url ];
+
+					delete loading[ url ];
+
+					if ( this.status === 200 ) {
+
+						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
+
+							var callback = callbacks[ i ];
+							if ( callback.onLoad ) callback.onLoad( response );
+
+						}
+
+						scope.manager.itemEnd( url );
+
+					} else if ( this.status === 0 ) {
+
+						// Some browsers return HTTP Status 0 when using non-http protocol
+						// e.g. 'file://' or 'data://'. Handle as success.
+
+						console.warn( 'FileLoader: HTTP Status 0 received.' );
+
+						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
+
+							var callback = callbacks[ i ];
+							if ( callback.onLoad ) callback.onLoad( response );
+
+						}
+
+						scope.manager.itemEnd( url );
+
+					} else {
+
+						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
+
+							var callback = callbacks[ i ];
+							if ( callback.onError ) callback.onError( event );
+
+						}
+
+						scope.manager.itemEnd( url );
+						scope.manager.itemError( url );
+
+					}
+
+				}, false );
+
+				request.addEventListener( 'progress', function ( event ) {
+
+					var callbacks = loading[ url ];
+
+					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
+
+						var callback = callbacks[ i ];
+						if ( callback.onProgress ) callback.onProgress( event );
+
+					}
+
+				}, false );
+
+				request.addEventListener( 'error', function ( event ) {
+
+					var callbacks = loading[ url ];
+
+					delete loading[ url ];
+
+					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
+
+						var callback = callbacks[ i ];
+						if ( callback.onError ) callback.onError( event );
+
+					}
+
+					scope.manager.itemEnd( url );
+					scope.manager.itemError( url );
+
+				}, false );
+
+				if ( this.responseType !== undefined ) request.responseType = this.responseType;
+				if ( this.withCredentials !== undefined ) request.withCredentials = this.withCredentials;
+
+				if ( request.overrideMimeType ) request.overrideMimeType( this.mimeType !== undefined ? this.mimeType : 'text/plain' );
+
+				for ( var header in this.requestHeader ) {
+
+					request.setRequestHeader( header, this.requestHeader[ header ] );
+
+				}
+
+				request.send( null );
+
+			}
+
+			scope.manager.itemStart( url );
+
+			return request;
+
+		},
+
+		setPath: function ( value ) {
+
+			this.path = value;
+			return this;
+
+		},
+
+		setResponseType: function ( value ) {
+
+			this.responseType = value;
+			return this;
+
+		},
+
+		setWithCredentials: function ( value ) {
+
+			this.withCredentials = value;
+			return this;
+
+		},
+
+		setMimeType: function ( value ) {
+
+			this.mimeType = value;
+			return this;
+
+		},
+
+		setRequestHeader: function ( value ) {
+
+			this.requestHeader = value;
+			return this;
 
 		}
 
-	}
-
-	ShaderMaterial.prototype = Object.create( Material.prototype );
-	ShaderMaterial.prototype.constructor = ShaderMaterial;
-
-	ShaderMaterial.prototype.isShaderMaterial = true;
-
-	ShaderMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.fragmentShader = source.fragmentShader;
-		this.vertexShader = source.vertexShader;
-
-		this.uniforms = UniformsUtils.clone( source.uniforms );
-
-		this.defines = source.defines;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		this.lights = source.lights;
-		this.clipping = source.clipping;
-
-		this.skinning = source.skinning;
-
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		this.extensions = source.extensions;
-
-		return this;
-
-	};
-
-	ShaderMaterial.prototype.toJSON = function ( meta ) {
-
-		var data = Material.prototype.toJSON.call( this, meta );
-
-		data.uniforms = this.uniforms;
-		data.vertexShader = this.vertexShader;
-		data.fragmentShader = this.fragmentShader;
-
-		return data;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
-	function RawShaderMaterial( parameters ) {
-
-		ShaderMaterial.call( this, parameters );
-
-		this.type = 'RawShaderMaterial';
-
-	}
-
-	RawShaderMaterial.prototype = Object.create( ShaderMaterial.prototype );
-	RawShaderMaterial.prototype.constructor = RawShaderMaterial;
-
-	RawShaderMaterial.prototype.isRawShaderMaterial = true;
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  size: <float>,
-	 *  sizeAttenuation: <bool>
-	 * }
-	 */
-
-	function PointsMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'PointsMaterial';
-
-		this.color = new Color( 0xffffff );
-
-		this.map = null;
-
-		this.size = 1;
-		this.sizeAttenuation = true;
-
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	PointsMaterial.prototype = Object.create( Material.prototype );
-	PointsMaterial.prototype.constructor = PointsMaterial;
-
-	PointsMaterial.prototype.isPointsMaterial = true;
-
-	PointsMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-
-		this.map = source.map;
-
-		this.size = source.size;
-		this.sizeAttenuation = source.sizeAttenuation;
-
-		return this;
-
-	};
-
-	/**
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  roughness: <float>,
-	 *  metalness: <float>,
-	 *  opacity: <float>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  lightMap: new THREE.Texture( <Image> ),
-	 *  lightMapIntensity: <float>
-	 *
-	 *  aoMap: new THREE.Texture( <Image> ),
-	 *  aoMapIntensity: <float>
-	 *
-	 *  emissive: <hex>,
-	 *  emissiveIntensity: <float>
-	 *  emissiveMap: new THREE.Texture( <Image> ),
-	 *
-	 *  bumpMap: new THREE.Texture( <Image> ),
-	 *  bumpScale: <float>,
-	 *
-	 *  normalMap: new THREE.Texture( <Image> ),
-	 *  normalScale: <Vector2>,
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>,
-	 *
-	 *  roughnessMap: new THREE.Texture( <Image> ),
-	 *
-	 *  metalnessMap: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  envMap: new THREE.CubeTexture( [posx, negx, posy, negy, posz, negz] ),
-	 *  envMapIntensity: <float>
-	 *
-	 *  refractionRatio: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
-
-	function MeshStandardMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.defines = { 'STANDARD': '' };
-
-		this.type = 'MeshStandardMaterial';
-
-		this.color = new Color( 0xffffff ); // diffuse
-		this.roughness = 0.5;
-		this.metalness = 0.5;
-
-		this.map = null;
-
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.emissive = new Color( 0x000000 );
-		this.emissiveIntensity = 1.0;
-		this.emissiveMap = null;
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.roughnessMap = null;
-
-		this.metalnessMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.envMapIntensity = 1.0;
-
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshStandardMaterial.prototype = Object.create( Material.prototype );
-	MeshStandardMaterial.prototype.constructor = MeshStandardMaterial;
-
-	MeshStandardMaterial.prototype.isMeshStandardMaterial = true;
-
-	MeshStandardMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.defines = { 'STANDARD': '' };
-
-		this.color.copy( source.color );
-		this.roughness = source.roughness;
-		this.metalness = source.metalness;
-
-		this.map = source.map;
-
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
-
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
-
-		this.emissive.copy( source.emissive );
-		this.emissiveMap = source.emissiveMap;
-		this.emissiveIntensity = source.emissiveIntensity;
-
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
-
-		this.normalMap = source.normalMap;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.roughnessMap = source.roughnessMap;
-
-		this.metalnessMap = source.metalnessMap;
-
-		this.alphaMap = source.alphaMap;
-
-		this.envMap = source.envMap;
-		this.envMapIntensity = source.envMapIntensity;
-
-		this.refractionRatio = source.refractionRatio;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
-	/**
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *  reflectivity: <float>
-	 * }
-	 */
-
-	function MeshPhysicalMaterial( parameters ) {
-
-		MeshStandardMaterial.call( this );
-
-		this.defines = { 'PHYSICAL': '' };
-
-		this.type = 'MeshPhysicalMaterial';
-
-		this.reflectivity = 0.5; // maps to F0 = 0.04
-
-		this.clearCoat = 0.0;
-		this.clearCoatRoughness = 0.0;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshPhysicalMaterial.prototype = Object.create( MeshStandardMaterial.prototype );
-	MeshPhysicalMaterial.prototype.constructor = MeshPhysicalMaterial;
-
-	MeshPhysicalMaterial.prototype.isMeshPhysicalMaterial = true;
-
-	MeshPhysicalMaterial.prototype.copy = function ( source ) {
-
-		MeshStandardMaterial.prototype.copy.call( this, source );
-
-		this.defines = { 'PHYSICAL': '' };
-
-		this.reflectivity = source.reflectivity;
-
-		this.clearCoat = source.clearCoat;
-		this.clearCoatRoughness = source.clearCoatRoughness;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  specular: <hex>,
-	 *  shininess: <float>,
-	 *  opacity: <float>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  lightMap: new THREE.Texture( <Image> ),
-	 *  lightMapIntensity: <float>
-	 *
-	 *  aoMap: new THREE.Texture( <Image> ),
-	 *  aoMapIntensity: <float>
-	 *
-	 *  emissive: <hex>,
-	 *  emissiveIntensity: <float>
-	 *  emissiveMap: new THREE.Texture( <Image> ),
-	 *
-	 *  bumpMap: new THREE.Texture( <Image> ),
-	 *  bumpScale: <float>,
-	 *
-	 *  normalMap: new THREE.Texture( <Image> ),
-	 *  normalScale: <Vector2>,
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>,
-	 *
-	 *  specularMap: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  envMap: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
-	 *  combine: THREE.Multiply,
-	 *  reflectivity: <float>,
-	 *  refractionRatio: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
-
-	function MeshPhongMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshPhongMaterial';
-
-		this.color = new Color( 0xffffff ); // diffuse
-		this.specular = new Color( 0x111111 );
-		this.shininess = 30;
-
-		this.map = null;
-
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.emissive = new Color( 0x000000 );
-		this.emissiveIntensity = 1.0;
-		this.emissiveMap = null;
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.specularMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.combine = MultiplyOperation;
-		this.reflectivity = 1;
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshPhongMaterial.prototype = Object.create( Material.prototype );
-	MeshPhongMaterial.prototype.constructor = MeshPhongMaterial;
-
-	MeshPhongMaterial.prototype.isMeshPhongMaterial = true;
-
-	MeshPhongMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-		this.specular.copy( source.specular );
-		this.shininess = source.shininess;
-
-		this.map = source.map;
-
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
-
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
-
-		this.emissive.copy( source.emissive );
-		this.emissiveMap = source.emissiveMap;
-		this.emissiveIntensity = source.emissiveIntensity;
-
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
-
-		this.normalMap = source.normalMap;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.specularMap = source.specularMap;
-
-		this.alphaMap = source.alphaMap;
-
-		this.envMap = source.envMap;
-		this.combine = source.combine;
-		this.reflectivity = source.reflectivity;
-		this.refractionRatio = source.refractionRatio;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
-	/**
-	 * @author takahirox / http://github.com/takahirox
-	 *
-	 * parameters = {
-	 *  gradientMap: new THREE.Texture( <Image> )
-	 * }
-	 */
-
-	function MeshToonMaterial( parameters ) {
-
-		MeshPhongMaterial.call( this );
-
-		this.defines = { 'TOON': '' };
-
-		this.type = 'MeshToonMaterial';
-
-		this.gradientMap = null;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshToonMaterial.prototype = Object.create( MeshPhongMaterial.prototype );
-	MeshToonMaterial.prototype.constructor = MeshToonMaterial;
-
-	MeshToonMaterial.prototype.isMeshToonMaterial = true;
-
-	MeshToonMaterial.prototype.copy = function ( source ) {
-
-		MeshPhongMaterial.prototype.copy.call( this, source );
-
-		this.gradientMap = source.gradientMap;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *  opacity: <float>,
-	 *
-	 *  bumpMap: new THREE.Texture( <Image> ),
-	 *  bumpScale: <float>,
-	 *
-	 *  normalMap: new THREE.Texture( <Image> ),
-	 *  normalScale: <Vector2>,
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
-
-	function MeshNormalMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshNormalMaterial';
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshNormalMaterial.prototype = Object.create( Material.prototype );
-	MeshNormalMaterial.prototype.constructor = MeshNormalMaterial;
-
-	MeshNormalMaterial.prototype.isMeshNormalMaterial = true;
-
-	MeshNormalMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
-
-		this.normalMap = source.normalMap;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  lightMap: new THREE.Texture( <Image> ),
-	 *  lightMapIntensity: <float>
-	 *
-	 *  aoMap: new THREE.Texture( <Image> ),
-	 *  aoMapIntensity: <float>
-	 *
-	 *  emissive: <hex>,
-	 *  emissiveIntensity: <float>
-	 *  emissiveMap: new THREE.Texture( <Image> ),
-	 *
-	 *  specularMap: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  envMap: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
-	 *  combine: THREE.Multiply,
-	 *  reflectivity: <float>,
-	 *  refractionRatio: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
-
-	function MeshLambertMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshLambertMaterial';
-
-		this.color = new Color( 0xffffff ); // diffuse
-
-		this.map = null;
-
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.emissive = new Color( 0x000000 );
-		this.emissiveIntensity = 1.0;
-		this.emissiveMap = null;
-
-		this.specularMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.combine = MultiplyOperation;
-		this.reflectivity = 1;
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshLambertMaterial.prototype = Object.create( Material.prototype );
-	MeshLambertMaterial.prototype.constructor = MeshLambertMaterial;
-
-	MeshLambertMaterial.prototype.isMeshLambertMaterial = true;
-
-	MeshLambertMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-
-		this.map = source.map;
-
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
-
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
-
-		this.emissive.copy( source.emissive );
-		this.emissiveMap = source.emissiveMap;
-		this.emissiveIntensity = source.emissiveIntensity;
-
-		this.specularMap = source.specularMap;
-
-		this.alphaMap = source.alphaMap;
-
-		this.envMap = source.envMap;
-		this.combine = source.combine;
-		this.reflectivity = source.reflectivity;
-		this.refractionRatio = source.refractionRatio;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author bhouston / https://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *
-	 *  opacity: <float>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>
-	 * }
-	 */
-
-	function MeshDepthMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshDepthMaterial';
-
-		this.depthPacking = BasicDepthPacking;
-
-		this.skinning = false;
-		this.morphTargets = false;
-
-		this.map = null;
-
-		this.alphaMap = null;
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshDepthMaterial.prototype = Object.create( Material.prototype );
-	MeshDepthMaterial.prototype.constructor = MeshDepthMaterial;
-
-	MeshDepthMaterial.prototype.isMeshDepthMaterial = true;
-
-	MeshDepthMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.depthPacking = source.depthPacking;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-
-		this.map = source.map;
-
-		this.alphaMap = source.alphaMap;
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		return this;
-
-	};
-
-	/**
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *
-	 *  referencePosition: <float>,
-	 *  nearDistance: <float>,
-	 *  farDistance: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>
-	 *
-	 * }
-	 */
-
-	function MeshDistanceMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshDistanceMaterial';
-
-		this.referencePosition = new Vector3();
-		this.nearDistance = 1;
-		this.farDistance = 1000;
-
-		this.skinning = false;
-		this.morphTargets = false;
-
-		this.map = null;
-
-		this.alphaMap = null;
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshDistanceMaterial.prototype = Object.create( Material.prototype );
-	MeshDistanceMaterial.prototype.constructor = MeshDistanceMaterial;
-
-	MeshDistanceMaterial.prototype.isMeshDistanceMaterial = true;
-
-	MeshDistanceMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.referencePosition.copy( source.referencePosition );
-		this.nearDistance = source.nearDistance;
-		this.farDistance = source.farDistance;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-
-		this.map = source.map;
-
-		this.alphaMap = source.alphaMap;
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *
-	 *  linewidth: <float>,
-	 *  linecap: "round",
-	 *  linejoin: "round"
-	 * }
-	 */
-
-	function LineBasicMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'LineBasicMaterial';
-
-		this.color = new Color( 0xffffff );
-
-		this.linewidth = 1;
-		this.linecap = 'round';
-		this.linejoin = 'round';
-
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	LineBasicMaterial.prototype = Object.create( Material.prototype );
-	LineBasicMaterial.prototype.constructor = LineBasicMaterial;
-
-	LineBasicMaterial.prototype.isLineBasicMaterial = true;
-
-	LineBasicMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-
-		this.linewidth = source.linewidth;
-		this.linecap = source.linecap;
-		this.linejoin = source.linejoin;
-
-		return this;
-
-	};
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *
-	 *  linewidth: <float>,
-	 *
-	 *  scale: <float>,
-	 *  dashSize: <float>,
-	 *  gapSize: <float>
-	 * }
-	 */
-
-	function LineDashedMaterial( parameters ) {
-
-		LineBasicMaterial.call( this );
-
-		this.type = 'LineDashedMaterial';
-
-		this.scale = 1;
-		this.dashSize = 3;
-		this.gapSize = 1;
-
-		this.setValues( parameters );
-
-	}
-
-	LineDashedMaterial.prototype = Object.create( LineBasicMaterial.prototype );
-	LineDashedMaterial.prototype.constructor = LineDashedMaterial;
-
-	LineDashedMaterial.prototype.isLineDashedMaterial = true;
-
-	LineDashedMaterial.prototype.copy = function ( source ) {
-
-		LineBasicMaterial.prototype.copy.call( this, source );
-
-		this.scale = source.scale;
-		this.dashSize = source.dashSize;
-		this.gapSize = source.gapSize;
-
-		return this;
-
-	};
-
-
-
-	var Materials = Object.freeze({
-		ShadowMaterial: ShadowMaterial,
-		SpriteMaterial: SpriteMaterial,
-		RawShaderMaterial: RawShaderMaterial,
-		ShaderMaterial: ShaderMaterial,
-		PointsMaterial: PointsMaterial,
-		MeshPhysicalMaterial: MeshPhysicalMaterial,
-		MeshStandardMaterial: MeshStandardMaterial,
-		MeshPhongMaterial: MeshPhongMaterial,
-		MeshToonMaterial: MeshToonMaterial,
-		MeshNormalMaterial: MeshNormalMaterial,
-		MeshLambertMaterial: MeshLambertMaterial,
-		MeshDepthMaterial: MeshDepthMaterial,
-		MeshDistanceMaterial: MeshDistanceMaterial,
-		MeshBasicMaterial: MeshBasicMaterial,
-		LineDashedMaterial: LineDashedMaterial,
-		LineBasicMaterial: LineBasicMaterial,
-		Material: Material
-	});
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
+	} );
 
 	function MaterialLoader( manager ) {
 
@@ -12063,7 +11282,7 @@ var Three = (function (exports) {
 
 				if ( textures[ name ] === undefined ) {
 
-					console.warn( 'THREE.MaterialLoader: Undefined texture', name );
+					console.warn( 'MaterialLoader: Undefined texture', name );
 
 				}
 
@@ -12118,7 +11337,7 @@ var Three = (function (exports) {
 
 			// Deprecated
 
-			if ( json.shading !== undefined ) material.flatShading = json.shading === 1; // THREE.FlatShading
+			if ( json.shading !== undefined ) material.flatShading = json.shading === 1; // FlatShading
 
 			// for PointsMaterial
 
@@ -12186,10 +11405,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function Group() {
 
 		Object3D.call( this );
@@ -12208,40 +11423,20 @@ var Three = (function (exports) {
 
 	var LoaderSupport = {};
 
-	/**
-	 * Validation functions.
-	 * @class
-	 */
+
 	LoaderSupport.Validator = {
-		/**
-		 * If given input is null or undefined, false is returned otherwise true.
-		 *
-		 * @param input Can be anything
-		 * @returns {boolean}
-		 */
+		
 		isValid: function( input ) {
 			return ( input !== null && input !== undefined );
 		},
-		/**
-		 * If given input is null or undefined, the defaultValue is returned otherwise the given input.
-		 *
-		 * @param input Can be anything
-		 * @param defaultValue Can be anything
-		 * @returns {*}
-		 */
+		
 		verifyInput: function( input, defaultValue ) {
 			return ( input === null || input === undefined ) ? defaultValue : input;
 		}
 	};
 
 
-	/**
-	 * Logging wrapper for console.
-	 * @class
-	 *
-	 * @param {boolean} enabled=true Tell if logger is enabled.
-	 * @param {boolean} debug=false Toggle debug logging.
-	 */
+
 	LoaderSupport.ConsoleLogger = (function () {
 
 		function ConsoleLogger( enabled, debug ) {
@@ -12249,113 +11444,78 @@ var Three = (function (exports) {
 			this.debug = debug === true;
 		}
 
-		/**
-		 * Enable or disable debug logging.
-		 * @memberOf LoaderSupport.ConsoleLogger
-		 *
-		 * @param {boolean} debug True or False
-		 */
+		
 		ConsoleLogger.prototype.setDebug = function ( debug ) {
 			this.debug = debug === true;
 		};
 
-		/**
-		 * Returns if is enabled and debug.
-		 * @memberOf LoaderSupport.ConsoleLogger
-		 *
-		 * @returns {boolean}
-		 */
+		
 		ConsoleLogger.prototype.isDebug = function () {
 			return this.isEnabled() && this.debug;
 		};
 
-		/**
-		 * Enable or disable info, debug and time logging.
-		 * @memberOf LoaderSupport.ConsoleLogger
-		 *
-		 * @param {boolean} enabled True or False
-		 */
+		
 		ConsoleLogger.prototype.setEnabled = function ( enabled ) {
 			this.enabled = enabled === true;
 		};
 
-		/**
-		 * Returns if is enabled.
-		 * @memberOf LoaderSupport.ConsoleLogger
-		 *
-		 * @returns {boolean}
-		 */
+		
 		ConsoleLogger.prototype.isEnabled = function () {
 			return this.enabled;
 		};
 
-		/**
-		 * Log a debug message if enabled and debug is set.
-		 * @memberOf LoaderSupport.ConsoleLogger
-		 *
-		 * @param {string} message Message to log
-		 */
-		ConsoleLogger.prototype.logDebug = function ( message ) {
-			if ( this.enabled && this.debug ) console.info( message );
+		
+		ConsoleLogger.prototype.logDebug = function ( message, additional ) {
+			if ( this.enabled && this.debug ) {
+
+				this._createStatement( message, 'Additional content:', additional, function ( output ) { console.debug( output ); } );
+
+			}
 		};
 
-		/**
-		 * Log an info message if enabled.
-		 * @memberOf LoaderSupport.ConsoleLogger
-		 *
-		 * @param {string} message Message to log
-		 */
-		ConsoleLogger.prototype.logInfo = function ( message ) {
-			if ( this.enabled ) console.info( message );
+		
+		ConsoleLogger.prototype.logInfo = function ( message, additional ) {
+			if ( this.enabled ) {
+
+				this._createStatement( message, 'Additional content:', additional, function ( output ) { console.info( output ); } );
+
+			}
 		};
 
-		/**
-		 * Log a warn message (always).
-		 * @memberOf LoaderSupport.ConsoleLogger
-		 *
-		 * @param {string} message Message to log
-		 */
-		ConsoleLogger.prototype.logWarn = function ( message ) {
-			console.warn( message );
+		
+		ConsoleLogger.prototype.logWarn = function ( message, additional ) {
+			this._createStatement( message, 'Additional content:', additional, function ( output ) { console.warn( output ); } );
 		};
 
-		/**
-		 * Log an error message (always).
-		 * @memberOf LoaderSupport.ConsoleLogger
-		 *
-		 * @param {string} message Message to log
-		 */
-		ConsoleLogger.prototype.logError = function ( message ) {
-			console.error( message );
+		
+		ConsoleLogger.prototype.logError = function ( message, additional ) {
+			this._createStatement( message, 'Additional content:', additional, function ( output ) { console.error( output ); } );
 		};
 
-		/**
-		 * Start time measurement with provided id.
-		 * @memberOf LoaderSupport.ConsoleLogger
-		 *
-		 * @param {string} id Time identification
-		 */
+		
 		ConsoleLogger.prototype.logTimeStart = function ( id ) {
 			if ( this.enabled ) console.time( id );
 		};
 
-		/**
-		 * Stop time measurement started with provided id.
-		 * @memberOf LoaderSupport.ConsoleLogger
-		 *
-		 * @param {string} id Time identification
-		 */
+		
 		ConsoleLogger.prototype.logTimeEnd = function ( id ) {
 			if ( this.enabled ) console.timeEnd( id );
+		};
+
+		ConsoleLogger.prototype._createStatement = function ( message, addHeader, additional, logFunction ) {
+			var output = message;
+			if ( Array.isArray( additional ) ) {
+
+				output += '\n' + addHeader + '\n' + additional.join( '\n' );
+
+			}
+			logFunction( output );
 		};
 
 		return ConsoleLogger;
 	})();
 
-	/**
-	 * Callbacks utilized by loaders and builder.
-	 * @class
-	 */
+
 	LoaderSupport.Callbacks = (function () {
 
 		var Validator = LoaderSupport.Validator;
@@ -12367,43 +11527,22 @@ var Three = (function (exports) {
 			this.onLoadMaterials = null;
 		}
 
-		/**
-		 * Register callback function that is invoked by internal function "announceProgress" to print feedback.
-		 * @memberOf LoaderSupport.Callbacks
-		 *
-		 * @param {callback} callbackOnProgress Callback function for described functionality
-		 */
+		
 		Callbacks.prototype.setCallbackOnProgress = function ( callbackOnProgress ) {
 			this.onProgress = Validator.verifyInput( callbackOnProgress, this.onProgress );
 		};
 
-		/**
-		 * Register callback function that is called every time a mesh was loaded.
-		 * Use {@link LoaderSupport.LoadedMeshUserOverride} for alteration instructions (geometry, material or disregard mesh).
-		 * @memberOf LoaderSupport.Callbacks
-		 *
-		 * @param {callback} callbackOnMeshAlter Callback function for described functionality
-		 */
+		
 		Callbacks.prototype.setCallbackOnMeshAlter = function ( callbackOnMeshAlter ) {
 			this.onMeshAlter = Validator.verifyInput( callbackOnMeshAlter, this.onMeshAlter );
 		};
 
-		/**
-		 * Register callback function that is called once loading of the complete OBJ file is completed.
-		 * @memberOf LoaderSupport.Callbacks
-		 *
-		 * @param {callback} callbackOnLoad Callback function for described functionality
-		 */
+		
 		Callbacks.prototype.setCallbackOnLoad = function ( callbackOnLoad ) {
 			this.onLoad = Validator.verifyInput( callbackOnLoad, this.onLoad );
 		};
 
-		/**
-		 * Register callback function that is called when materials have been loaded.
-		 * @memberOf LoaderSupport.Callbacks
-		 *
-		 * @param {callback} callbackOnLoadMaterials Callback function for described functionality
-		 */
+		
 		Callbacks.prototype.setCallbackOnLoadMaterials = function ( callbackOnLoadMaterials ) {
 			this.onLoadMaterials = Validator.verifyInput( callbackOnLoadMaterials, this.onLoadMaterials );
 		};
@@ -12412,13 +11551,7 @@ var Three = (function (exports) {
 	})();
 
 
-	/**
-	 * Object to return by callback onMeshAlter. Used to disregard a certain mesh or to return one to many meshes.
-	 * @class
-	 *
-	 * @param {boolean} disregardMesh=false Tell implementation to completely disregard this mesh
-	 * @param {boolean} disregardMesh=false Tell implementation that mesh(es) have been altered or added
-	 */
+
 	LoaderSupport.LoadedMeshUserOverride = (function () {
 
 		function LoadedMeshUserOverride( disregardMesh, alteredMesh ) {
@@ -12427,32 +11560,18 @@ var Three = (function (exports) {
 			this.meshes = [];
 		}
 
-		/**
-		 * Add a mesh created within callback.
-		 *
-		 * @memberOf OBJLoader2.LoadedMeshUserOverride
-		 *
-		 * @param {Mesh} mesh
-		 */
+		
 		LoadedMeshUserOverride.prototype.addMesh = function ( mesh ) {
 			this.meshes.push( mesh );
 			this.alteredMesh = true;
 		};
 
-		/**
-		 * Answers if mesh shall be disregarded completely.
-		 *
-		 * @returns {boolean}
-		 */
+		
 		LoadedMeshUserOverride.prototype.isDisregardMesh = function () {
 			return this.disregardMesh;
 		};
 
-		/**
-		 * Answers if new mesh(es) were created.
-		 *
-		 * @returns {boolean}
-		 */
+		
 		LoadedMeshUserOverride.prototype.providesAlteredMeshes = function () {
 			return this.alteredMesh;
 		};
@@ -12461,13 +11580,7 @@ var Three = (function (exports) {
 	})();
 
 
-	/**
-	 * A resource description used by {@link LoaderSupport.PrepData} and others.
-	 * @class
-	 *
-	 * @param {string} url URL to the file
-	 * @param {string} extension The file extension (type)
-	 */
+
 	LoaderSupport.ResourceDescriptor = (function () {
 
 		var Validator = LoaderSupport.Validator;
@@ -12493,12 +11606,7 @@ var Three = (function (exports) {
 			this.content = null;
 		}
 
-		/**
-		 * Set the content of this resource (String)
-		 * @memberOf LoaderSupport.ResourceDescriptor
-		 *
-		 * @param {Object} content The file content as arraybuffer or text
-		 */
+		
 		ResourceDescriptor.prototype.setContent = function ( content ) {
 			this.content = Validator.verifyInput( content, null );
 		};
@@ -12507,10 +11615,7 @@ var Three = (function (exports) {
 	})();
 
 
-	/**
-	 * Configuration instructions to be used by run method.
-	 * @class
-	 */
+
 	LoaderSupport.PrepData = (function () {
 
 		var Validator = LoaderSupport.Validator;
@@ -12527,92 +11632,47 @@ var Three = (function (exports) {
 			this.useAsync = false;
 		}
 
-		/**
-		 * Set the node where the loaded objects will be attached directly.
-		 * @memberOf LoaderSupport.PrepData
-		 *
-		 * @param {Object3D} streamMeshesTo Object already attached to scenegraph where new meshes will be attached to
-		 */
+		
 		PrepData.prototype.setStreamMeshesTo = function ( streamMeshesTo ) {
 			this.streamMeshesTo = Validator.verifyInput( streamMeshesTo, null );
 		};
 
-		/**
-		 * Tells whether a material shall be created per smoothing group.
-		 * @memberOf LoaderSupport.PrepData
-		 *
-		 * @param {boolean} materialPerSmoothingGroup=false
-		 */
+		
 		PrepData.prototype.setMaterialPerSmoothingGroup = function ( materialPerSmoothingGroup ) {
 			this.materialPerSmoothingGroup = materialPerSmoothingGroup === true;
 		};
 
-		/**
-		 * Tells whether indices should be used
-		 * @memberOf LoaderSupport.PrepData
-		 *
-		 * @param {boolean} useIndices=false
-		 */
+		
 		PrepData.prototype.setUseIndices = function ( useIndices ) {
 			this.useIndices = useIndices === true;
 		};
 
-		/**
-		 * Tells whether normals should be completely disregarded and regenerated.
-		 * @memberOf LoaderSupport.PrepData
-		 *
-		 * @param {boolean} disregardNormals=false
-		 */
+		
 		PrepData.prototype.setDisregardNormals = function ( disregardNormals ) {
 			this.disregardNormals = disregardNormals === true;
 		};
 
-		/**
-		 * Returns all callbacks as {@link LoaderSupport.Callbacks}
-		 * @memberOf LoaderSupport.PrepData
-		 *
-		 * @returns {LoaderSupport.Callbacks}
-		 */
+		
 		PrepData.prototype.getCallbacks = function () {
 			return this.callbacks;
 		};
 
-		/**
-		 * Sets the CORS string to be used.
-		 * @memberOf LoaderSupport.PrepData
-		 *
-		 * @param {string} crossOrigin CORS value
-		 */
+		
 		PrepData.prototype.setCrossOrigin = function ( crossOrigin ) {
 			this.crossOrigin = crossOrigin;
 		};
 
-		/**
-		 * Add a resource description.
-		 * @memberOf LoaderSupport.PrepData
-		 *
-		 * @param {LoaderSupport.ResourceDescriptor}
-		 */
+		
 		PrepData.prototype.addResource = function ( resource ) {
 			this.resources.push( resource );
 		};
 
-		/**
-		 * If true uses async loading with worker, if false loads data synchronously.
-		 * @memberOf LoaderSupport.PrepData
-		 *
-		 * @param {boolean} useAsync
-		 */
+		
 		PrepData.prototype.setUseAsync = function ( useAsync ) {
 			this.useAsync = useAsync === true;
 		};
 
-		/**
-		 * Clones this object and returns it afterwards.
-		 * @memberOf LoaderSupport.PrepData
-		 *
-		 * @returns {@link LoaderSupport.PrepData}
-		 */
+		
 		PrepData.prototype.clone = function () {
 			var clone = new LoaderSupport.PrepData( this.modelName );
 			clone.resources = this.resources;
@@ -12629,11 +11689,7 @@ var Three = (function (exports) {
 		return PrepData;
 	})();
 
-	/**
-	 * Builds one or many Mesh from one raw set of Arraybuffers, materialGroup descriptions and further parameters.
-	 * Supports vertex, vertexColor, normal, uv and index buffers.
-	 * @class
-	 */
+
 	LoaderSupport.Builder = (function () {
 
 		var LOADER_BUILDER_VERSION = '1.1.1';
@@ -12646,14 +11702,42 @@ var Three = (function (exports) {
 			this.logger.logInfo( 'Using LoaderSupport.Builder version: ' + LOADER_BUILDER_VERSION );
 			this.callbacks = new LoaderSupport.Callbacks();
 			this.materials = [];
+			this._createDefaultMaterials();
 		}
 
-		/**
-		 * Set materials loaded by any supplier of an Array of {@link Material}.
-		 * @memberOf LoaderSupport.Builder
-		 *
-		 * @param {Material[]} materials Array of {@link Material}
-		 */
+		Builder.prototype._createDefaultMaterials = function () {
+			var defaultMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
+			defaultMaterial.name = 'defaultMaterial';
+
+			var defaultVertexColorMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
+			defaultVertexColorMaterial.name = 'defaultVertexColorMaterial';
+			defaultVertexColorMaterial.vertexColors = VertexColors;
+
+			var defaultLineMaterial = new LineBasicMaterial();
+			defaultLineMaterial.name = 'defaultLineMaterial';
+
+			var defaultPointMaterial = new PointsMaterial( { size: 1, sizeAttenuation: false } );
+			defaultPointMaterial.name = 'defaultPointMaterial';
+
+			var runtimeMaterials = {};
+			runtimeMaterials[ defaultMaterial.name ] = defaultMaterial;
+			runtimeMaterials[ defaultVertexColorMaterial.name ] = defaultVertexColorMaterial;
+			runtimeMaterials[ defaultLineMaterial.name ] = defaultLineMaterial;
+			runtimeMaterials[ defaultPointMaterial.name ] = defaultPointMaterial;
+
+			this.updateMaterials(
+				{
+					cmd: 'materialData',
+					materials: {
+						materialCloneInstructions: null,
+						serializedMaterials: null,
+						runtimeMaterials: runtimeMaterials
+					}
+				}
+			);
+		};
+
+		
 		Builder.prototype.setMaterials = function ( materials ) {
 			var payload = {
 				cmd: 'materialData',
@@ -12673,13 +11757,7 @@ var Three = (function (exports) {
 			if ( Validator.isValid( callbacks.onLoadMaterials ) ) this.callbacks.setCallbackOnLoadMaterials( callbacks.onLoadMaterials );
 		};
 
-		/**
-		 * Delegates processing of the payload (mesh building or material update) to the corresponding functions (BW-compatibility).
-		 * @memberOf LoaderSupport.Builder
-		 *
-		 * @param {Object} payload Raw Mesh or Material descriptions.
-		 * @returns {Mesh[]} mesh Array of {@link Mesh} or null in case of material update
-		 */
+		
 		Builder.prototype.processPayload = function ( payload ) {
 			if ( payload.cmd === 'meshData' ) {
 
@@ -12693,13 +11771,7 @@ var Three = (function (exports) {
 			}
 		};
 
-		/**
-		 * Builds one or multiple meshes from the data described in the payload (buffers, params, material info).
-		 * @memberOf LoaderSupport.Builder
-		 *
-		 * @param {Object} meshPayload Raw mesh description (buffers, params, materials) used to build one to many meshes.
-		 * @returns {Mesh[]} mesh Array of {@link Mesh}
-		 */
+		
 		Builder.prototype.buildMeshes = function ( meshPayload ) {
 			var meshName = meshPayload.params.meshName;
 
@@ -12761,6 +11833,7 @@ var Three = (function (exports) {
 			var callbackOnMeshAlter = this.callbacks.onMeshAlter;
 			var callbackOnMeshAlterResult;
 			var useOrgMesh = true;
+			var geometryType = Validator.verifyInput( meshPayload.geometryType, 0 );
 			if ( Validator.isValid( callbackOnMeshAlter ) ) {
 
 				callbackOnMeshAlterResult = callbackOnMeshAlter(
@@ -12768,7 +11841,8 @@ var Three = (function (exports) {
 						detail: {
 							meshName: meshName,
 							bufferGeometry: bufferGeometry,
-							material: material
+							material: material,
+							geometryType: geometryType
 						}
 					}
 				);
@@ -12790,7 +11864,20 @@ var Three = (function (exports) {
 			}
 			if ( useOrgMesh ) {
 
-				mesh = new Mesh( bufferGeometry, material );
+				if ( meshPayload.computeBoundingSphere ) bufferGeometry.computeBoundingSphere();
+				if ( geometryType === 0 ) {
+
+					mesh = new Mesh( bufferGeometry, material );
+
+				} else if ( geometryType === 1) {
+
+					mesh = new LineSegments( bufferGeometry, material );
+
+				} else {
+
+					mesh = new Points( bufferGeometry, material );
+
+				}
 				mesh.name = meshName;
 				meshes.push( mesh );
 
@@ -12833,12 +11920,7 @@ var Three = (function (exports) {
 			return meshes;
 		};
 
-		/**
-		 * Updates the materials with contained material objects (sync) or from alteration instructions (async).
-		 * @memberOf LoaderSupport.Builder
-		 *
-		 * @param {Object} materialPayload Material update instructions
-		 */
+		
 		Builder.prototype.updateMaterials = function ( materialPayload ) {
 			var material, materialName;
 			var materialCloneInstructions = materialPayload.materials.materialCloneInstructions;
@@ -12846,19 +11928,27 @@ var Three = (function (exports) {
 
 				var materialNameOrg = materialCloneInstructions.materialNameOrg;
 				var materialOrg = this.materials[ materialNameOrg ];
-				material = materialOrg.clone();
 
-				materialName = materialCloneInstructions.materialName;
-				material.name = materialName;
+				if ( Validator.isValid( materialNameOrg ) ) {
 
-				var materialProperties = materialCloneInstructions.materialProperties;
-				for ( var key in materialProperties ) {
+					material = materialOrg.clone();
 
-					if ( material.hasOwnProperty( key ) && materialProperties.hasOwnProperty( key ) ) material[ key ] = materialProperties[ key ];
+					materialName = materialCloneInstructions.materialName;
+					material.name = materialName;
+
+					var materialProperties = materialCloneInstructions.materialProperties;
+					for ( var key in materialProperties ) {
+
+						if ( material.hasOwnProperty( key ) && materialProperties.hasOwnProperty( key ) ) material[ key ] = materialProperties[ key ];
+
+					}
+					this.materials[ materialName ] = material;
+
+				} else {
+
+					this.logger.logWarn( 'Requested material "' + materialNameOrg + '" is not available!' );
 
 				}
-				this.materials[ materialName ] = material;
-
 			}
 
 			var materials = materialPayload.materials.serializedMaterials;
@@ -12894,11 +11984,7 @@ var Three = (function (exports) {
 			}
 		};
 
-		/**
-		 * Returns the mapping object of material name and corresponding jsonified material.
-		 *
-		 * @returns {Object} Map of Materials in JSON representation
-		 */
+		
 		Builder.prototype.getMaterialsJSON = function () {
 			var materialsJSON = {};
 			var material;
@@ -12911,11 +11997,7 @@ var Three = (function (exports) {
 			return materialsJSON;
 		};
 
-		/**
-		 * Returns the mapping object of material name and corresponding material.
-		 *
-		 * @returns {Object} Map of {@link Material}
-		 */
+		
 		Builder.prototype.getMaterials = function () {
 			return this.materials;
 		};
@@ -12923,13 +12005,7 @@ var Three = (function (exports) {
 		return Builder;
 	})();
 
-	/**
-	 * Base class to be used by loaders.
-	 * @class
-	 *
-	 * @param {DefaultLoadingManager} [manager] The loadingManager for the loader to use. Default is {@link DefaultLoadingManager}
-	 * @param {LoaderSupport.ConsoleLogger} logger logger to be used
-	 */
+
 	LoaderSupport.LoaderBase = (function () {
 
 		var Validator = LoaderSupport.Validator;
@@ -12939,6 +12015,9 @@ var Three = (function (exports) {
 			this.manager = Validator.verifyInput( manager, DefaultLoadingManager );
 			this.logger = Validator.verifyInput( logger, new ConsoleLogger() );
 
+			this.fileLoader = new FileLoader( this.manager );
+			this.fileLoader.setResponseType( 'arraybuffer' );
+
 			this.modelName = '';
 			this.instanceNo = 0;
 			this.path = '';
@@ -12947,33 +12026,8 @@ var Three = (function (exports) {
 
 			this.loaderRootNode = new Group();
 			this.builder = new LoaderSupport.Builder( this.logger );
-			this._createDefaultMaterials();
 			this.callbacks = new LoaderSupport.Callbacks();
 		}
-
-		LoaderBase.prototype._createDefaultMaterials = function () {
-			var defaultMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
-			defaultMaterial.name = 'defaultMaterial';
-
-			var vertexColorMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
-			vertexColorMaterial.name = 'vertexColorMaterial';
-			vertexColorMaterial.vertexColors = VertexColors;
-
-			var runtimeMaterials = {};
-			runtimeMaterials[ defaultMaterial.name ] = defaultMaterial;
-			runtimeMaterials[ vertexColorMaterial.name ] = vertexColorMaterial;
-
-			this.builder.updateMaterials(
-				{
-					cmd: 'materialData',
-					materials: {
-						materialCloneInstructions: null,
-						serializedMaterials: null,
-						runtimeMaterials: runtimeMaterials
-					}
-				}
-			);
-		};
 
 		LoaderBase.prototype._applyPrepData = function ( prepData ) {
 			if ( Validator.isValid( prepData ) ) {
@@ -12997,84 +12051,42 @@ var Three = (function (exports) {
 			this.builder._setCallbacks( this.callbacks );
 		};
 
-		/**
-		 * Provides access to console logging wrapper.
-		 *
-		 * @returns {LoaderSupport.ConsoleLogger}
-		 */
+		
 		LoaderBase.prototype.getLogger = function () {
 			return this.logger;
 		};
 
-		/**
-		 * Set the name of the model.
-		 * @memberOf LoaderSupport.LoaderBase
-		 *
-		 * @param {string} modelName
-		 */
+		
 		LoaderBase.prototype.setModelName = function ( modelName ) {
 			this.modelName = Validator.verifyInput( modelName, this.modelName );
 		};
 
-		/**
-		 * The URL of the base path.
-		 * @memberOf LoaderSupport.LoaderBase
-		 *
-		 * @param {string} path URL
-		 */
+		
 		LoaderBase.prototype.setPath = function ( path ) {
 			this.path = Validator.verifyInput( path, this.path );
 		};
 
-		/**
-		 * Set the node where the loaded objects will be attached directly.
-		 * @memberOf LoaderSupport.LoaderBase
-		 *
-		 * @param {Object3D} streamMeshesTo Object already attached to scenegraph where new meshes will be attached to
-		 */
+		
 		LoaderBase.prototype.setStreamMeshesTo = function ( streamMeshesTo ) {
 			this.loaderRootNode = Validator.verifyInput( streamMeshesTo, this.loaderRootNode );
 		};
 
-		/**
-		 * Set materials loaded by MTLLoader or any other supplier of an Array of {@link Material}.
-		 * @memberOf LoaderSupport.LoaderBase
-		 *
-		 * @param {Material[]} materials Array of {@link Material}
-		 */
+		
 		LoaderBase.prototype.setMaterials = function ( materials ) {
 			this.builder.setMaterials( materials );
 		};
 
-		/**
-		 * Instructs loaders to create indexed {@link BufferGeometry}.
-		 * @memberOf LoaderSupport.LoaderBase
-		 *
-		 * @param {boolean} useIndices=false
-		 */
+		
 		LoaderBase.prototype.setUseIndices = function ( useIndices ) {
 			this.useIndices = useIndices === true;
 		};
 
-		/**
-		 * Tells whether normals should be completely disregarded and regenerated.
-		 * @memberOf LoaderSupport.LoaderBase
-		 *
-		 * @param {boolean} disregardNormals=false
-		 */
+		
 		LoaderBase.prototype.setDisregardNormals = function ( disregardNormals ) {
 			this.disregardNormals = disregardNormals === true;
 		};
 
-		/**
-		 * Announce feedback which is give to the registered callbacks.
-		 * @memberOf LoaderSupport.LoaderBase
-		 * @private
-		 *
-		 * @param {string} type The type of event
-		 * @param {string} text Textual description of the event
-		 * @param {number} numericalValue Numerical value describing the progress
-		 */
+		
 		LoaderBase.prototype.onProgress = function ( type, text, numericalValue ) {
 			var content = Validator.isValid( text ) ? text: '';
 			var event = {
@@ -13092,14 +12104,129 @@ var Three = (function (exports) {
 			this.logger.logDebug( content );
 		};
 
+		
+		LoaderBase.prototype.load = function ( url, onLoad, onProgress, onError, onMeshAlter, useAsync ) {
+			var scope = this;
+			if ( ! Validator.isValid( onProgress ) ) {
+				var numericalValueRef = 0;
+				var numericalValue = 0;
+				onProgress = function ( event ) {
+					if ( ! event.lengthComputable ) return;
+
+					numericalValue = event.loaded / event.total;
+					if ( numericalValue > numericalValueRef ) {
+
+						numericalValueRef = numericalValue;
+						var output = 'Download of "' + url + '": ' + ( numericalValue * 100 ).toFixed( 2 ) + '%';
+						scope.onProgress( 'progressLoad', output, numericalValue );
+
+					}
+				};
+			}
+
+			if ( ! Validator.isValid( onError ) ) {
+				onError = function ( event ) {
+					var output = 'Error occurred while downloading "' + url + '"';
+					scope.logger.logError( output + ': ' + event );
+					scope.onProgress( 'error', output, -1 );
+				};
+			}
+
+			this.fileLoader.setPath( this.path );
+			this.fileLoader.load( url, function ( content ) {
+				if ( useAsync ) {
+
+					scope.parseAsync( content, onLoad );
+
+				} else {
+
+					var callbacks = new LoaderSupport.Callbacks();
+					callbacks.setCallbackOnMeshAlter( onMeshAlter );
+					scope._setCallbacks( callbacks );
+					onLoad(
+						{
+							detail: {
+								loaderRootNode: scope.parse( content ),
+								modelName: scope.modelName,
+								instanceNo: scope.instanceNo
+							}
+						}
+					);
+
+				}
+
+			}, onProgress, onError );
+
+		};
+
+		
+		LoaderBase.prototype.checkResourceDescriptorFiles = function ( resources, fileDesc ) {
+			var resource, triple, i, found;
+			var result = {};
+
+			for ( var index in resources ) {
+
+				resource = resources[ index ];
+				found = false;
+				if ( ! Validator.isValid( resource.name ) ) continue;
+				if ( Validator.isValid( resource.content ) ) {
+
+					for ( i = 0; i < fileDesc.length && !found; i++ ) {
+
+						triple = fileDesc[ i ];
+						if ( resource.extension.toLowerCase() === triple.ext.toLowerCase() ) {
+
+							if ( triple.ignore ) {
+
+								found = true;
+
+							} else if ( triple.type === "Uint8Array" ) {
+
+								// fast-fail on bad type
+								if ( ! ( resource.content instanceof Uint8Array ) ) throw 'Provided content is not of type arraybuffer! Aborting...';
+								result[ triple.ext ] = resource;
+								found = true;
+
+							} else if ( triple.type === "String" ) {
+
+								if ( ! (typeof(resource.content) === 'string' || resource.content instanceof String) ) throw 'Provided  content is not of type String! Aborting...';
+								result[ triple.ext ] = resource;
+								found = true;
+
+							}
+
+						}
+
+					}
+					if ( !found ) throw 'Unidentified resource "' + resource.name + '": ' + resource.url;
+
+				} else {
+
+					// fast-fail on bad type
+					if ( ! ( typeof( resource.name ) === 'string' || resource.name instanceof String ) ) throw 'Provided file is not properly defined! Aborting...';
+					for ( i = 0; i < fileDesc.length && !found; i++ ) {
+
+						triple = fileDesc[ i ];
+						if ( resource.extension.toLowerCase() === triple.ext.toLowerCase() ) {
+
+							if ( ! triple.ignore ) result[ triple.ext ] = resource;
+							found = true;
+
+						}
+
+					}
+					if ( !found ) throw 'Unidentified resource "' + resource.name + '": ' + resource.url;
+
+				}
+			}
+
+			return result;
+		};
+
 		return LoaderBase;
 	})();
 
-	/**
-	 * Default implementation of the WorkerRunner responsible for creation and configuration of the parser within the worker.
-	 *
-	 * @class
-	 */
+
 	LoaderSupport.WorkerRunnerRefImpl = (function () {
 
 		function WorkerRunnerRefImpl() {
@@ -13110,13 +12237,7 @@ var Three = (function (exports) {
 			self.addEventListener( 'message', scopedRunner, false );
 		}
 
-		/**
-		 * Applies values from parameter object via set functions or via direct assignment.
-		 * @memberOf LoaderSupport.WorkerRunnerRefImpl
-		 *
-		 * @param {Object} parser The parser instance
-		 * @param {Object} params The parameter object
-		 */
+		
 		WorkerRunnerRefImpl.prototype.applyProperties = function ( parser, params ) {
 			var property, funcName, values;
 			for ( property in params ) {
@@ -13135,12 +12256,7 @@ var Three = (function (exports) {
 			}
 		};
 
-		/**
-		 * Configures the Parser implementation according the supplied configuration object.
-		 * @memberOf LoaderSupport.WorkerRunnerRefImpl
-		 *
-		 * @param {Object} payload Raw mesh description (buffers, params, materials) used to build one to many meshes.
-		 */
+		
 		WorkerRunnerRefImpl.prototype.processMessage = function ( payload ) {
 			var logEnabled = payload.logger.enabled;
 			var logDebug = payload.logger.enabled;
@@ -13181,16 +12297,10 @@ var Three = (function (exports) {
 		return WorkerRunnerRefImpl;
 	})();
 
-	/**
-	 * This class provides means to transform existing parser code into a web worker. It defines a simple communication protocol
-	 * which allows to configure the worker and receive raw mesh data during execution.
-	 * @class
-	 *
-	 * @param {LoaderSupport.ConsoleLogger} logger logger to be used
-	 */
+
 	LoaderSupport.WorkerSupport = (function () {
 
-		var WORKER_SUPPORT_VERSION = '2.0.1';
+		var WORKER_SUPPORT_VERSION = '2.1.2';
 
 		var Validator = LoaderSupport.Validator;
 
@@ -13226,9 +12336,7 @@ var Three = (function (exports) {
 				this._postMessage();
 			};
 
-			/**
-			 * Executed in worker scope
-	 		 */
+			
 			LoaderWorker.prototype._receiveWorkerMessage = function ( e ) {
 				var payload = e.data;
 				switch ( payload.cmd ) {
@@ -13355,16 +12463,8 @@ var Three = (function (exports) {
 			this.loaderWorker = new LoaderWorker( this.logger );
 		}
 
-		/**
-		 * Validate the status of worker code and the derived worker.
-		 * @memberOf LoaderSupport.WorkerSupport
-		 *
-		 * @param {Function} functionCodeBuilder Function that is invoked with funcBuildObject and funcBuildSingelton that allows stringification of objects and singletons.
-		 * @param {String[]} libLocations URL of libraries that shall be added to worker code relative to libPath
-		 * @param {String} libPath Base path used for loading libraries
-		 * @param {LoaderSupport.WorkerRunnerRefImpl} runnerImpl The default worker parser wrapper implementation (communication and execution). An extended class could be passed here.
-		 */
-		WorkerSupport.prototype.validate = function ( functionCodeBuilder, libLocations, libPath, runnerImpl ) {
+		
+		WorkerSupport.prototype.validate = function ( functionCodeBuilder, parserName, libLocations, libPath, runnerImpl ) {
 			if ( Validator.isValid( this.loaderWorker.worker ) ) return;
 
 			this.logger.logInfo( 'WorkerSupport: Building worker code...' );
@@ -13372,17 +12472,18 @@ var Three = (function (exports) {
 
 			if ( Validator.isValid( runnerImpl ) ) {
 
-				this.logger.logInfo( 'WorkerSupport: Using "' + runnerImpl.name + '" as Runncer class for worker.' );
+				this.logger.logInfo( 'WorkerSupport: Using "' + runnerImpl.name + '" as Runner class for worker.' );
 
 			} else {
 
 				runnerImpl = LoaderSupport.WorkerRunnerRefImpl;
-				this.logger.logInfo( 'WorkerSupport: Using DEFAULT "LoaderSupport.WorkerRunnerRefImpl" as Runncer class for worker.' );
+				this.logger.logInfo( 'WorkerSupport: Using DEFAULT "LoaderSupport.WorkerRunnerRefImpl" as Runner class for worker.' );
 
 			}
 
-			var userWorkerCode = functionCodeBuilder( buildObject, buildSingelton );
-			userWorkerCode += buildSingelton( runnerImpl.name, runnerImpl.name, runnerImpl );
+			var userWorkerCode = functionCodeBuilder( buildObject, buildSingleton );
+			userWorkerCode += 'var Parser = '+ parserName + ';\n\n';
+			userWorkerCode += buildSingleton( runnerImpl.name, runnerImpl );
 			userWorkerCode += 'new ' + runnerImpl.name + '();\n\n';
 
 			var scope = this;
@@ -13392,7 +12493,7 @@ var Three = (function (exports) {
 				var loadAllLibraries = function ( path, locations ) {
 					if ( locations.length === 0 ) {
 
-						scope.loaderWorker.initWorker( libsContent + userWorkerCode, scope.logger, runnerImpl.name );
+						scope.loaderWorker.initWorker( libsContent + userWorkerCode, runnerImpl.name );
 						scope.logger.logTimeEnd( 'buildWebWorkerCode' );
 
 					} else {
@@ -13414,39 +12515,23 @@ var Three = (function (exports) {
 
 			} else {
 
-				this.loaderWorker.initWorker( userWorkerCode, this.logger, runnerImpl.name );
+				this.loaderWorker.initWorker( userWorkerCode, runnerImpl.name );
 				this.logger.logTimeEnd( 'buildWebWorkerCode' );
 
 			}
 		};
 
-		/**
-		 * Specify functions that should be build when new raw mesh data becomes available and when the parser is finished.
-		 * @memberOf LoaderSupport.WorkerSupport
-		 *
-		 * @param {Function} builder The builder function. Default is {@link LoaderSupport.Builder}.
-		 * @param {Function} onLoad The function that is called when parsing is complete.
-		 */
+		
 		WorkerSupport.prototype.setCallbacks = function ( builder, onLoad ) {
 			this.loaderWorker.setCallbacks( builder, onLoad );
 		};
 
-		/**
-		 * Runs the parser with the provided configuration.
-		 * @memberOf LoaderSupport.WorkerSupport
-		 *
-		 * @param {Object} payload Raw mesh description (buffers, params, materials) used to build one to many meshes.
-		 */
+		
 		WorkerSupport.prototype.run = function ( payload ) {
 			this.loaderWorker.run( payload );
 		};
 
-		/**
-		 * Request termination of worker once parser is finished.
-		 * @memberOf LoaderSupport.WorkerSupport
-		 *
-		 * @param {boolean} terminateRequested True or false.
-		 */
+		
 		WorkerSupport.prototype.setTerminateRequested = function ( terminateRequested ) {
 			this.loaderWorker.setTerminateRequested( terminateRequested );
 		};
@@ -13483,27 +12568,41 @@ var Three = (function (exports) {
 			return objectString;
 		};
 
-		var buildSingelton = function ( fullName, internalName, object ) {
-			var objectString = fullName + ' = (function () {\n\n';
-			objectString += '\t' + object.prototype.constructor.toString() + '\n\n';
-			objectString = objectString.replace( object.name, internalName );
+		var buildSingleton = function ( fullName, object, internalName ) {
+			var objectString = '';
+			var objectName = ( Validator.isValid( internalName ) ) ? internalName : object.name;
 
-			var funcString;
-			var objectPart;
+			var funcString, objectPart, constructorString;
 			for ( var name in object.prototype ) {
 
 				objectPart = object.prototype[ name ];
-				if ( typeof objectPart === 'function' ) {
+				if ( name === 'constructor' ) {
 
 					funcString = objectPart.toString();
-					objectString += '\t' + internalName + '.prototype.' + name + ' = ' + funcString + ';\n\n';
+					funcString = funcString.replace( 'function', '' );
+					constructorString = '\tfunction ' + objectName + funcString + ';\n\n';
+
+				} else if ( typeof objectPart === 'function' ) {
+
+					funcString = objectPart.toString();
+					objectString += '\t' + objectName + '.prototype.' + name + ' = ' + funcString + ';\n\n';
 
 				}
 
 			}
-			objectString += '\treturn ' + internalName + ';\n';
+			objectString += '\treturn ' + objectName + ';\n';
 			objectString += '})();\n\n';
+			if ( ! Validator.isValid( constructorString ) ) {
 
+				constructorString = fullName + ' = (function () {\n\n';
+				constructorString += '\t' + object.prototype.constructor.toString() + '\n\n';
+				objectString = constructorString + objectString;
+
+			} else {
+
+				objectString = fullName + ' = (function () {\n\n' + constructorString + objectString;
+
+			}
 			return objectString;
 		};
 
@@ -13511,19 +12610,7 @@ var Three = (function (exports) {
 
 	})();
 
-	/**
-	 * Orchestrate loading of multiple OBJ files/data from an instruction queue with a configurable amount of workers (1-16).
-	 * Workflow:
-	 *   prepareWorkers
-	 *   enqueueForRun
-	 *   processQueue
-	 *   tearDown (to force stop)
-	 *
-	 * @class
-	 *
-	 * @param {string} classDef Class definition to be used for construction
-	 * @param {LoaderSupport.ConsoleLogger} logger logger to be used
-	 */
+
 	LoaderSupport.WorkerDirector = (function () {
 
 		var LOADER_WORKER_DIRECTOR_VERSION = '2.1.0';
@@ -13555,44 +12642,22 @@ var Three = (function (exports) {
 			this.callbackOnFinishedProcessing = null;
 		}
 
-		/**
-		 * Returns the maximum length of the instruction queue.
-		 * @memberOf LoaderSupport.WorkerDirector
-		 *
-		 * @returns {number}
-		 */
+		
 		WorkerDirector.prototype.getMaxQueueSize = function () {
 			return this.maxQueueSize;
 		};
 
-		/**
-		 * Returns the maximum number of workers.
-		 * @memberOf LoaderSupport.WorkerDirector
-		 *
-		 * @returns {number}
-		 */
+		
 		WorkerDirector.prototype.getMaxWebWorkers = function () {
 			return this.maxWebWorkers;
 		};
 
-		/**
-		 * Sets the CORS string to be used.
-		 * @memberOf LoaderSupport.WorkerDirector
-		 *
-		 * @param {string} crossOrigin CORS value
-		 */
+		
 		WorkerDirector.prototype.setCrossOrigin = function ( crossOrigin ) {
 			this.crossOrigin = crossOrigin;
 		};
 
-		/**
-		 * Create or destroy workers according limits. Set the name and register callbacks for dynamically created web workers.
-		 * @memberOf LoaderSupport.WorkerDirector
-		 *
-		 * @param {OBJLoader2.WWOBJLoader2.PrepDataCallbacks} globalCallbacks  Register global callbacks used by all web workers
-		 * @param {number} maxQueueSize Set the maximum size of the instruction queue (1-1024)
-		 * @param {number} maxWebWorkers Set the maximum amount of workers (1-16)
-		 */
+		
 		WorkerDirector.prototype.prepareWorkers = function ( globalCallbacks, maxQueueSize, maxWebWorkers ) {
 			if ( Validator.isValid( globalCallbacks ) ) this.workerDescription.globalCallbacks = globalCallbacks;
 			this.maxQueueSize = Math.min( maxQueueSize, MAX_QUEUE_SIZE );
@@ -13615,33 +12680,20 @@ var Three = (function (exports) {
 			}
 		};
 
-		/**
-		 * Store run instructions in internal instructionQueue.
-		 * @memberOf LoaderSupport.WorkerDirector
-		 *
-		 * @param {LoaderSupport.PrepData} prepData
-		 */
+		
 		WorkerDirector.prototype.enqueueForRun = function ( prepData ) {
 			if ( this.instructionQueue.length < this.maxQueueSize ) {
 				this.instructionQueue.push( prepData );
 			}
 		};
 
-		/**
-		 * Returns if any workers are running.
-		 *
-		 * @memberOf LoaderSupport.WorkerDirector
-		 * @returns {boolean}
-		 */
+		
 		WorkerDirector.prototype.isRunning = function () {
 			var wsKeys = Object.keys( this.workerDescription.workerSupports );
 			return ( ( this.instructionQueue.length > 0 && this.instructionQueuePointer < this.instructionQueue.length ) || wsKeys.length > 0 );
 		};
 
-		/**
-		 * Process the instructionQueue until it is depleted.
-		 * @memberOf LoaderSupport.WorkerDirector
-		 */
+		
 		WorkerDirector.prototype.processQueue = function () {
 			var prepData, supportDesc;
 			for ( var instanceNo in this.workerDescription.workerSupports ) {
@@ -13749,12 +12801,7 @@ var Three = (function (exports) {
 			}
 		};
 
-		/**
-		 * Terminate all workers.
-		 * @memberOf LoaderSupport.WorkerDirector
-		 *
-		 * @param {callback} callbackOnFinishedProcessing Function called once all workers finished processing.
-		 */
+		
 		WorkerDirector.prototype.tearDown = function ( callbackOnFinishedProcessing ) {
 			this.logger.logInfo( 'WorkerDirector received the deregister call. Terminating all workers!' );
 
@@ -13772,9 +12819,116 @@ var Three = (function (exports) {
 
 	})();
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
+	function MeshPhongMaterial( parameters ) {
+
+		Material.call( this );
+
+		this.type = 'MeshPhongMaterial';
+
+		this.color = new Color( 0xffffff ); // diffuse
+		this.specular = new Color( 0x111111 );
+		this.shininess = 30;
+
+		this.map = null;
+
+		this.lightMap = null;
+		this.lightMapIntensity = 1.0;
+
+		this.aoMap = null;
+		this.aoMapIntensity = 1.0;
+
+		this.emissive = new Color( 0x000000 );
+		this.emissiveIntensity = 1.0;
+		this.emissiveMap = null;
+
+		this.bumpMap = null;
+		this.bumpScale = 1;
+
+		this.normalMap = null;
+		this.normalScale = new Vector2( 1, 1 );
+
+		this.displacementMap = null;
+		this.displacementScale = 1;
+		this.displacementBias = 0;
+
+		this.specularMap = null;
+
+		this.alphaMap = null;
+
+		this.envMap = null;
+		this.combine = MultiplyOperation;
+		this.reflectivity = 1;
+		this.refractionRatio = 0.98;
+
+		this.wireframe = false;
+		this.wireframeLinewidth = 1;
+		this.wireframeLinecap = 'round';
+		this.wireframeLinejoin = 'round';
+
+		this.skinning = false;
+		this.morphTargets = false;
+		this.morphNormals = false;
+
+		this.setValues( parameters );
+
+	}
+
+	MeshPhongMaterial.prototype = Object.create( Material.prototype );
+	MeshPhongMaterial.prototype.constructor = MeshPhongMaterial;
+
+	MeshPhongMaterial.prototype.isMeshPhongMaterial = true;
+
+	MeshPhongMaterial.prototype.copy = function ( source ) {
+
+		Material.prototype.copy.call( this, source );
+
+		this.color.copy( source.color );
+		this.specular.copy( source.specular );
+		this.shininess = source.shininess;
+
+		this.map = source.map;
+
+		this.lightMap = source.lightMap;
+		this.lightMapIntensity = source.lightMapIntensity;
+
+		this.aoMap = source.aoMap;
+		this.aoMapIntensity = source.aoMapIntensity;
+
+		this.emissive.copy( source.emissive );
+		this.emissiveMap = source.emissiveMap;
+		this.emissiveIntensity = source.emissiveIntensity;
+
+		this.bumpMap = source.bumpMap;
+		this.bumpScale = source.bumpScale;
+
+		this.normalMap = source.normalMap;
+		this.normalScale.copy( source.normalScale );
+
+		this.displacementMap = source.displacementMap;
+		this.displacementScale = source.displacementScale;
+		this.displacementBias = source.displacementBias;
+
+		this.specularMap = source.specularMap;
+
+		this.alphaMap = source.alphaMap;
+
+		this.envMap = source.envMap;
+		this.combine = source.combine;
+		this.reflectivity = source.reflectivity;
+		this.refractionRatio = source.refractionRatio;
+
+		this.wireframe = source.wireframe;
+		this.wireframeLinewidth = source.wireframeLinewidth;
+		this.wireframeLinecap = source.wireframeLinecap;
+		this.wireframeLinejoin = source.wireframeLinejoin;
+
+		this.skinning = source.skinning;
+		this.morphTargets = source.morphTargets;
+		this.morphNormals = source.morphNormals;
+
+		return this;
+
+	};
 
 	function ImageLoader( manager ) {
 
@@ -13826,13 +12980,7 @@ var Three = (function (exports) {
 
 			}, false );
 
-			/*
-			image.addEventListener( 'progress', function ( event ) {
-
-				if ( onProgress ) onProgress( event );
-
-			}, false );
-			*/
+			
 
 			image.addEventListener( 'error', function ( event ) {
 
@@ -13873,12 +13021,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author szimek / https://github.com/szimek/
-	 */
-
 	var textureId = 0;
 
 	function Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
@@ -13918,7 +13060,7 @@ var Three = (function (exports) {
 		this.flipY = true;
 		this.unpackAlignment = 4;	// valid values: 1, 2, 4, 8 (see http://www.khronos.org/opengles/sdk/docs/man/xhtml/glPixelStorei.xml)
 
-		// Values of encoding !== THREE.LinearEncoding only supported on map, envMap and emissiveMap.
+		// Values of encoding !== LinearEncoding only supported on map, envMap and emissiveMap.
 		//
 		// Also changing the encoding after already used by a Material will not automatically make the Material
 		// update.  You need to explicitly call Material.needsUpdate to trigger it to recompile.
@@ -14060,7 +13202,7 @@ var Three = (function (exports) {
 
 			if ( this.image !== undefined ) {
 
-				// TODO: Move to THREE.Image
+				// TODO: Move to Image
 
 				var image = this.image;
 
@@ -14187,10 +13329,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function TextureLoader( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -14247,11 +13385,320 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * Loads a Wavefront .mtl file specifying materials
-	 *
-	 * @author angelxuanchang
-	 */
+	function Loader() {
+
+		this.onLoadStart = function () {};
+		this.onLoadProgress = function () {};
+		this.onLoadComplete = function () {};
+
+	}
+
+	Loader.Handlers = {
+
+		handlers: [],
+
+		add: function ( regex, loader ) {
+
+			this.handlers.push( regex, loader );
+
+		},
+
+		get: function ( file ) {
+
+			var handlers = this.handlers;
+
+			for ( var i = 0, l = handlers.length; i < l; i += 2 ) {
+
+				var regex = handlers[ i ];
+				var loader = handlers[ i + 1 ];
+
+				if ( regex.test( file ) ) {
+
+					return loader;
+
+				}
+
+			}
+
+			return null;
+
+		}
+
+	};
+
+	Object.assign( Loader.prototype, {
+
+		crossOrigin: undefined,
+
+		initMaterials: function ( materials, texturePath, crossOrigin ) {
+
+			var array = [];
+
+			for ( var i = 0; i < materials.length; ++ i ) {
+
+				array[ i ] = this.createMaterial( materials[ i ], texturePath, crossOrigin );
+
+			}
+
+			return array;
+
+		},
+
+		createMaterial: ( function () {
+
+			var BlendingMode = {
+				NoBlending: NoBlending,
+				NormalBlending: NormalBlending,
+				AdditiveBlending: AdditiveBlending,
+				SubtractiveBlending: SubtractiveBlending,
+				MultiplyBlending: MultiplyBlending,
+				CustomBlending: CustomBlending
+			};
+
+			var color = new Color();
+			var textureLoader = new TextureLoader();
+			var materialLoader = new MaterialLoader();
+
+			return function createMaterial( m, texturePath, crossOrigin ) {
+
+				// convert from old material format
+
+				var textures = {};
+
+				function loadTexture( path, repeat, offset, wrap, anisotropy ) {
+
+					var fullPath = texturePath + path;
+					var loader = Loader.Handlers.get( fullPath );
+
+					var texture;
+
+					if ( loader !== null ) {
+
+						texture = loader.load( fullPath );
+
+					} else {
+
+						textureLoader.setCrossOrigin( crossOrigin );
+						texture = textureLoader.load( fullPath );
+
+					}
+
+					if ( repeat !== undefined ) {
+
+						texture.repeat.fromArray( repeat );
+
+						if ( repeat[ 0 ] !== 1 ) texture.wrapS = RepeatWrapping;
+						if ( repeat[ 1 ] !== 1 ) texture.wrapT = RepeatWrapping;
+
+					}
+
+					if ( offset !== undefined ) {
+
+						texture.offset.fromArray( offset );
+
+					}
+
+					if ( wrap !== undefined ) {
+
+						if ( wrap[ 0 ] === 'repeat' ) texture.wrapS = RepeatWrapping;
+						if ( wrap[ 0 ] === 'mirror' ) texture.wrapS = MirroredRepeatWrapping;
+
+						if ( wrap[ 1 ] === 'repeat' ) texture.wrapT = RepeatWrapping;
+						if ( wrap[ 1 ] === 'mirror' ) texture.wrapT = MirroredRepeatWrapping;
+
+					}
+
+					if ( anisotropy !== undefined ) {
+
+						texture.anisotropy = anisotropy;
+
+					}
+
+					var uuid = _Math.generateUUID();
+
+					textures[ uuid ] = texture;
+
+					return uuid;
+
+				}
+
+				//
+
+				var json = {
+					uuid: _Math.generateUUID(),
+					type: 'MeshLambertMaterial'
+				};
+
+				for ( var name in m ) {
+
+					var value = m[ name ];
+
+					switch ( name ) {
+
+						case 'DbgColor':
+						case 'DbgIndex':
+						case 'opticalDensity':
+						case 'illumination':
+							break;
+						case 'DbgName':
+							json.name = value;
+							break;
+						case 'blending':
+							json.blending = BlendingMode[ value ];
+							break;
+						case 'colorAmbient':
+						case 'mapAmbient':
+							console.warn( 'Loader.createMaterial:', name, 'is no longer supported.' );
+							break;
+						case 'colorDiffuse':
+							json.color = color.fromArray( value ).getHex();
+							break;
+						case 'colorSpecular':
+							json.specular = color.fromArray( value ).getHex();
+							break;
+						case 'colorEmissive':
+							json.emissive = color.fromArray( value ).getHex();
+							break;
+						case 'specularCoef':
+							json.shininess = value;
+							break;
+						case 'shading':
+							if ( value.toLowerCase() === 'basic' ) json.type = 'MeshBasicMaterial';
+							if ( value.toLowerCase() === 'phong' ) json.type = 'MeshPhongMaterial';
+							if ( value.toLowerCase() === 'standard' ) json.type = 'MeshStandardMaterial';
+							break;
+						case 'mapDiffuse':
+							json.map = loadTexture( value, m.mapDiffuseRepeat, m.mapDiffuseOffset, m.mapDiffuseWrap, m.mapDiffuseAnisotropy );
+							break;
+						case 'mapDiffuseRepeat':
+						case 'mapDiffuseOffset':
+						case 'mapDiffuseWrap':
+						case 'mapDiffuseAnisotropy':
+							break;
+						case 'mapEmissive':
+							json.emissiveMap = loadTexture( value, m.mapEmissiveRepeat, m.mapEmissiveOffset, m.mapEmissiveWrap, m.mapEmissiveAnisotropy );
+							break;
+						case 'mapEmissiveRepeat':
+						case 'mapEmissiveOffset':
+						case 'mapEmissiveWrap':
+						case 'mapEmissiveAnisotropy':
+							break;
+						case 'mapLight':
+							json.lightMap = loadTexture( value, m.mapLightRepeat, m.mapLightOffset, m.mapLightWrap, m.mapLightAnisotropy );
+							break;
+						case 'mapLightRepeat':
+						case 'mapLightOffset':
+						case 'mapLightWrap':
+						case 'mapLightAnisotropy':
+							break;
+						case 'mapAO':
+							json.aoMap = loadTexture( value, m.mapAORepeat, m.mapAOOffset, m.mapAOWrap, m.mapAOAnisotropy );
+							break;
+						case 'mapAORepeat':
+						case 'mapAOOffset':
+						case 'mapAOWrap':
+						case 'mapAOAnisotropy':
+							break;
+						case 'mapBump':
+							json.bumpMap = loadTexture( value, m.mapBumpRepeat, m.mapBumpOffset, m.mapBumpWrap, m.mapBumpAnisotropy );
+							break;
+						case 'mapBumpScale':
+							json.bumpScale = value;
+							break;
+						case 'mapBumpRepeat':
+						case 'mapBumpOffset':
+						case 'mapBumpWrap':
+						case 'mapBumpAnisotropy':
+							break;
+						case 'mapNormal':
+							json.normalMap = loadTexture( value, m.mapNormalRepeat, m.mapNormalOffset, m.mapNormalWrap, m.mapNormalAnisotropy );
+							break;
+						case 'mapNormalFactor':
+							json.normalScale = [ value, value ];
+							break;
+						case 'mapNormalRepeat':
+						case 'mapNormalOffset':
+						case 'mapNormalWrap':
+						case 'mapNormalAnisotropy':
+							break;
+						case 'mapSpecular':
+							json.specularMap = loadTexture( value, m.mapSpecularRepeat, m.mapSpecularOffset, m.mapSpecularWrap, m.mapSpecularAnisotropy );
+							break;
+						case 'mapSpecularRepeat':
+						case 'mapSpecularOffset':
+						case 'mapSpecularWrap':
+						case 'mapSpecularAnisotropy':
+							break;
+						case 'mapMetalness':
+							json.metalnessMap = loadTexture( value, m.mapMetalnessRepeat, m.mapMetalnessOffset, m.mapMetalnessWrap, m.mapMetalnessAnisotropy );
+							break;
+						case 'mapMetalnessRepeat':
+						case 'mapMetalnessOffset':
+						case 'mapMetalnessWrap':
+						case 'mapMetalnessAnisotropy':
+							break;
+						case 'mapRoughness':
+							json.roughnessMap = loadTexture( value, m.mapRoughnessRepeat, m.mapRoughnessOffset, m.mapRoughnessWrap, m.mapRoughnessAnisotropy );
+							break;
+						case 'mapRoughnessRepeat':
+						case 'mapRoughnessOffset':
+						case 'mapRoughnessWrap':
+						case 'mapRoughnessAnisotropy':
+							break;
+						case 'mapAlpha':
+							json.alphaMap = loadTexture( value, m.mapAlphaRepeat, m.mapAlphaOffset, m.mapAlphaWrap, m.mapAlphaAnisotropy );
+							break;
+						case 'mapAlphaRepeat':
+						case 'mapAlphaOffset':
+						case 'mapAlphaWrap':
+						case 'mapAlphaAnisotropy':
+							break;
+						case 'flipSided':
+							json.side = BackSide;
+							break;
+						case 'doubleSided':
+							json.side = DoubleSide;
+							break;
+						case 'transparency':
+							console.warn( 'Loader.createMaterial: transparency has been renamed to opacity' );
+							json.opacity = value;
+							break;
+						case 'depthTest':
+						case 'depthWrite':
+						case 'colorWrite':
+						case 'opacity':
+						case 'reflectivity':
+						case 'transparent':
+						case 'visible':
+						case 'wireframe':
+							json[ name ] = value;
+							break;
+						case 'vertexColors':
+							if ( value === true ) json.vertexColors = VertexColors;
+							if ( value === 'face' ) json.vertexColors = FaceColors;
+							break;
+						default:
+							console.error( 'Loader.createMaterial: Unsupported', name, value );
+							break;
+
+					}
+
+				}
+
+				if ( json.type === 'MeshBasicMaterial' ) delete json.emissive;
+				if ( json.type !== 'MeshPhongMaterial' ) delete json.specular;
+
+				if ( json.opacity < 1 ) json.transparent = true;
+
+				materialLoader.setTextures( textures );
+
+				return materialLoader.parse( json );
+
+			};
+
+		} )()
+
+	} );
 
 	var MTLLoader = function ( manager ) {
 
@@ -14263,19 +13710,7 @@ var Three = (function (exports) {
 
 		constructor: MTLLoader,
 
-		/**
-		 * Loads and parses a MTL asset from a URL.
-		 *
-		 * @param {String} url - URL to the MTL file.
-		 * @param {Function} [onLoad] - Callback invoked with the loaded object.
-		 * @param {Function} [onProgress] - Callback for download progress.
-		 * @param {Function} [onError] - Callback for download errors.
-		 *
-		 * @see setPath setTexturePath
-		 *
-		 * @note In order for relative texture references to resolve correctly
-		 * you must call setPath and/or setTexturePath explicitly prior to load.
-		 */
+		
 		load: function ( url, onLoad, onProgress, onError ) {
 
 			var scope = this;
@@ -14290,36 +13725,14 @@ var Three = (function (exports) {
 
 		},
 
-		/**
-		 * Set base path for resolving references.
-		 * If set this path will be prepended to each loaded and found reference.
-		 *
-		 * @see setTexturePath
-		 * @param {String} path
-		 *
-		 * @example
-		 *     mtlLoader.setPath( 'assets/obj/' );
-		 *     mtlLoader.load( 'my.mtl', ... );
-		 */
+		
 		setPath: function ( path ) {
 
 			this.path = path;
 
 		},
 
-		/**
-		 * Set base path for resolving texture references.
-		 * If set this path will be prepended found texture reference.
-		 * If not set and setPath is, it will be used as texture base path.
-		 *
-		 * @see setPath
-		 * @param {String} path
-		 *
-		 * @example
-		 *     mtlLoader.setPath( 'assets/obj/' );
-		 *     mtlLoader.setTexturePath( 'assets/textures/' );
-		 *     mtlLoader.load( 'my.mtl', ... );
-		 */
+		
 		setTexturePath: function ( path ) {
 
 			this.texturePath = path;
@@ -14346,17 +13759,7 @@ var Three = (function (exports) {
 
 		},
 
-		/**
-		 * Parses a MTL file.
-		 *
-		 * @param {String} text - Content of MTL file
-		 * @return {MTLLoader.MaterialCreator}
-		 *
-		 * @see setPath setTexturePath
-		 *
-		 * @note In order for relative texture references to resolve correctly
-		 * you must call setPath and/or setTexturePath explicitly prior to parse.
-		 */
+		
 		parse: function ( text ) {
 
 			var lines = text.split( '\n' );
@@ -14418,20 +13821,7 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * Create a new THREE-MTLLoader.MaterialCreator
-	 * @param baseUrl - Url relative to which textures are loaded
-	 * @param options - Set of options on how to construct the materials
-	 *                  side: Which side to apply the material
-	 *                        FrontSide (default), BackSide, DoubleSide
-	 *                  wrap: What type of wrapping to apply for textures
-	 *                        RepeatWrapping (default), ClampToEdgeWrapping, MirroredRepeatWrapping
-	 *                  normalizeRGB: RGBs need to be normalized to 0-1 from 0-255
-	 *                                Default: false, assumed to be already normalized
-	 *                  ignoreZeroRGBs: Ignore values of RGBs (Ka,Kd,Ks) that are all 0's
-	 *                                  Default: false
-	 * @constructor
-	 */
+
 
 	MTLLoader.MaterialCreator = function ( baseUrl, options ) {
 
@@ -14711,9 +14101,11 @@ var Three = (function (exports) {
 					case 'tr':
 						n = parseFloat( value );
 
-						if ( n > 0 ) {
+						if ( this.options && this.options.invertTrProperty ) n = 1 - n;
 
-							params.opacity = 1 - n;
+						if ( n < 1 ) {
+
+							params.opacity = n;
 							params.transparent = true;
 
 						}
@@ -14801,19 +14193,11 @@ var Three = (function (exports) {
 
 	if ( LoaderSupport === undefined ) console.error( '"LoaderSupport" is not available. "OBJLoader2" requires it. Please include "LoaderSupport.js" in your HTML.' );
 
-	/**
-	 * Use this class to load OBJ data from files or to parse OBJ data from an arraybuffer
-	 * @class
-	 *
-	 * @param {DefaultLoadingManager} [manager] The loadingManager for the loader to use. Default is {@link DefaultLoadingManager}
-	 * @param {LoaderSupport.ConsoleLogger} logger logger to be used
-	 */
+
 	var OBJLoader2 = (function () {
 
-		var OBJLOADER2_VERSION = '2.2.1';
-		var LoaderBase = LoaderSupport.LoaderBase;
+		var OBJLOADER2_VERSION = '2.3.1';
 		var Validator = LoaderSupport.Validator;
-		var ConsoleLogger = LoaderSupport.ConsoleLogger;
 
 		OBJLoader2.prototype = Object.create( LoaderSupport.LoaderBase.prototype );
 		OBJLoader2.prototype.constructor = OBJLoader2;
@@ -14823,98 +14207,26 @@ var Three = (function (exports) {
 			this.logger.logInfo( 'Using OBJLoader2 version: ' + OBJLOADER2_VERSION );
 
 			this.materialPerSmoothingGroup = false;
-			this.fileLoader = Validator.verifyInput( this.fileLoader, new FileLoader( this.manager ) );
 
 			this.workerSupport = null;
 			this.terminateWorkerOnLoad = true;
 		}
 
-		/**
-		 * Tells whether a material shall be created per smoothing group.
-		 * @memberOf OBJLoader2
-		 *
-		 * @param {boolean} materialPerSmoothingGroup=false
-		 */
+		
 		OBJLoader2.prototype.setMaterialPerSmoothingGroup = function ( materialPerSmoothingGroup ) {
 			this.materialPerSmoothingGroup = materialPerSmoothingGroup === true;
 		};
 
-		/**
-		 * Use this convenient method to load an OBJ file at the given URL. By default the fileLoader uses an arraybuffer.
-		 * @memberOf OBJLoader2
-		 *
-		 * @param {string}  url A string containing the path/URL of the .obj file.
-		 * @param {callback} onLoad A function to be called after loading is successfully completed. The function receives loaded Object3D as an argument.
-		 * @param {callback} [onProgress] A function to be called while the loading is in progress. The argument will be the XMLHttpRequest instance, which contains total and Integer bytes.
-		 * @param {callback} [onError] A function to be called if an error occurs during loading. The function receives the error as an argument.
-		 * @param {callback} [onMeshAlter] A function to be called after a new mesh raw data becomes available for alteration.
-		 * @param {boolean} [useAsync] If true, uses async loading with worker, if false loads data synchronously.
-		 */
-		OBJLoader2.prototype.load = function ( url, onLoad, onProgress, onError, onMeshAlter, useAsync ) {
-			var scope = this;
-			if ( ! Validator.isValid( onProgress ) ) {
-				var numericalValueRef = 0;
-				var numericalValue = 0;
-				onProgress = function ( event ) {
-					if ( ! event.lengthComputable ) return;
-
-					numericalValue = event.loaded / event.total;
-					if ( numericalValue > numericalValueRef ) {
-
-						numericalValueRef = numericalValue;
-						var output = 'Download of "' + url + '": ' + ( numericalValue * 100 ).toFixed( 2 ) + '%';
-						scope.onProgress( 'progressLoad', output, numericalValue );
-
-					}
-				};
-			}
-
-			if ( ! Validator.isValid( onError ) ) {
-				onError = function ( event ) {
-					var output = 'Error occurred while downloading "' + url + '"';
-					scope.logger.logError( output + ': ' + event );
-					scope.onProgress( 'error', output, -1 );
-				};
-			}
-
-			this.fileLoader.setPath( this.path );
-			this.fileLoader.setResponseType( 'arraybuffer' );
-			this.fileLoader.load( url, function ( content ) {
-				if ( useAsync ) {
-
-					scope.parseAsync( content, onLoad );
-
-				} else {
-
-					var callbacks = new LoaderSupport.Callbacks();
-					callbacks.setCallbackOnMeshAlter( onMeshAlter );
-					scope._setCallbacks( callbacks );
-					onLoad(
-						{
-							detail: {
-								loaderRootNode: scope.parse( content ),
-								modelName: scope.modelName,
-								instanceNo: scope.instanceNo
-							}
-						}
-					);
-
-				}
-
-			}, onProgress, onError );
-
-		};
-
-		/**
-		 * Run the loader according the provided instructions.
-		 * @memberOf OBJLoader2
-		 *
-		 * @param {LoaderSupport.PrepData} prepData All parameters and resources required for execution
-		 * @param {LoaderSupport.WorkerSupport} [workerSupportExternal] Use pre-existing WorkerSupport
-		 */
+		
 		OBJLoader2.prototype.run = function ( prepData, workerSupportExternal ) {
 			this._applyPrepData( prepData );
-			var available = this._checkFiles( prepData.resources );
+			var available = this.checkResourceDescriptorFiles( prepData.resources,
+				[
+					{ ext: "obj", type: "Uint8Array", ignore: false },
+					{ ext: "mtl", type: "String", ignore: false },
+					{ ext: "zip", type: "String", ignore: true }
+				]
+			);
 			if ( Validator.isValid( workerSupportExternal ) ) {
 
 				this.terminateWorkerOnLoad = false;
@@ -14958,12 +14270,7 @@ var Three = (function (exports) {
 			}
 		};
 
-		/**
-		 * Parses OBJ data synchronously from arraybuffer or string.
-		 * @memberOf OBJLoader2
-		 *
-		 * @param {arraybuffer|string} content OBJ data as Uint8Array or String
-		 */
+		
 		OBJLoader2.prototype.parse = function ( content ) {
 			this.logger.logTimeStart( 'OBJLoader2 parse: ' + this.modelName );
 
@@ -15010,13 +14317,7 @@ var Three = (function (exports) {
 			return this.loaderRootNode;
 		};
 
-		/**
-		 * Parses OBJ content asynchronously from arraybuffer.
-		 * @memberOf OBJLoader2
-		 *
-		 * @param {arraybuffer} content OBJ data as Uint8Array
-		 * @param {callback} onLoad Called after worker successfully completed loading
-		 */
+		
 		OBJLoader2.prototype.parseAsync = function ( content, onLoad ) {
 			this.logger.logTimeStart( 'OBJLoader2 parseAsync: ' + this.modelName );
 
@@ -15043,22 +14344,18 @@ var Three = (function (exports) {
 			};
 
 			this.workerSupport = Validator.verifyInput( this.workerSupport, new LoaderSupport.WorkerSupport( this.logger ) );
-			var buildCode = function ( funcBuildObject, funcBuildSingelton ) {
+			var buildCode = function ( funcBuildObject, funcBuildSingleton ) {
 				var workerCode = '';
-				workerCode += '/**\n';
-				workerCode += '  * This code was constructed by OBJLoader2 buildCode.\n';
-				workerCode += '  */\n\n';
-				workerCode += funcBuildObject( 'Validator', Validator );
-				workerCode += funcBuildSingelton( 'ConsoleLogger', 'ConsoleLogger', ConsoleLogger );
-				workerCode += funcBuildSingelton( 'LoaderBase', 'LoaderBase', LoaderBase );
-				workerCode += funcBuildObject( 'Consts', Consts );
-				workerCode += funcBuildSingelton( 'Parser', 'Parser', Parser );
-				workerCode += funcBuildSingelton( 'RawMesh', 'RawMesh', RawMesh );
-				workerCode += funcBuildSingelton( 'RawMeshSubGroup', 'RawMeshSubGroup', RawMeshSubGroup );
+				workerCode += '\n\n';
+				workerCode += 'THREE = { LoaderSupport: {} };\n\n';
+				workerCode += funcBuildObject( 'LoaderSupport.Validator', Validator );
+				workerCode += funcBuildSingleton( 'LoaderSupport.ConsoleLogger', LoaderSupport.ConsoleLogger );
+				workerCode += funcBuildSingleton( 'LoaderSupport.LoaderBase', LoaderSupport.LoaderBase );
+				workerCode += funcBuildSingleton( 'Parser', Parser );
 
 				return workerCode;
 			};
-			this.workerSupport.validate( buildCode, false );
+			this.workerSupport.validate( buildCode, 'Parser' );
 			this.workerSupport.setCallbacks( scopedOnMeshLoaded, scopedOnLoad );
 			if ( scope.terminateWorkerOnLoad ) this.workerSupport.setTerminateRequested( true );
 
@@ -15093,59 +14390,75 @@ var Three = (function (exports) {
 			);
 		};
 
-		/**
-		 * Constants used by OBJLoader2
-		 */
-		var Consts = {
-			CODE_LF: 10,
-			CODE_CR: 13,
-			CODE_SPACE: 32,
-			CODE_SLASH: 47,
-			STRING_LF: '\n',
-			STRING_CR: '\r',
-			STRING_SPACE: ' ',
-			STRING_SLASH: '/',
-			LINE_F: 'f',
-			LINE_G: 'g',
-			LINE_L: 'l',
-			LINE_O: 'o',
-			LINE_S: 's',
-			LINE_V: 'v',
-			LINE_VT: 'vt',
-			LINE_VN: 'vn',
-			LINE_MTLLIB: 'mtllib',
-			LINE_USEMTL: 'usemtl'
-		};
 
-		/**
-		 * Parse OBJ data either from ArrayBuffer or string
-		 * @class
-		 */
+		
 		var Parser = (function () {
-
-			var ConsoleLogger = LoaderSupport.ConsoleLogger;
 
 			function Parser() {
 				this.callbackProgress = null;
 				this.callbackBuilder = null;
 
 				this.materials = {};
-				this.rawMesh = null;
 				this.useAsync = false;
 				this.materialPerSmoothingGroup = false;
 				this.useIndices = false;
 				this.disregardNormals = false;
 
+				this.vertices = [];
+				this.colors = [];
+				this.normals = [];
+				this.uvs = [];
+
+				this.rawMesh = {
+					objectName: '',
+					groupName: '',
+					activeMtlName: '',
+					mtllibName: '',
+
+					// reset with new mesh
+					faceType: -1,
+					subGroups: [],
+					subGroupInUse: null,
+					smoothingGroup: {
+						splitMaterials: false,
+						normalized: -1,
+						real: -1
+					},
+					counts: {
+						doubleIndicesCount: 0,
+						faceCount: 0,
+						mtlCount: 0,
+						smoothingGroupCount: 0
+					}
+				};
+
 				this.inputObjectCount = 1;
 				this.outputObjectCount = 1;
-				this.counts = {
+				this.globalCounts = {
 					vertices: 0,
 					faces: 0,
-					doubleIndicesCount: 0
+					doubleIndicesCount: 0,
+					currentByte: 0,
+					totalBytes: 0
 				};
-				this.logger = new ConsoleLogger();
-				this.totalBytes = 0;
+				this.logger = new LoaderSupport.ConsoleLogger();
 			}
+
+			Parser.prototype.resetRawMesh = function () {
+				// faces are stored according combined index of group, material and smoothingGroup (0 or not)
+				this.rawMesh.subGroups = [];
+				this.rawMesh.subGroupInUse = null;
+				this.rawMesh.smoothingGroup.normalized = -1;
+				this.rawMesh.smoothingGroup.real = -1;
+
+				// this default index is required as it is possible to define faces without 'g' or 'usemtl'
+				this.pushSmoothingGroup( 1 );
+
+				this.rawMesh.counts.doubleIndicesCount = 0;
+				this.rawMesh.counts.faceCount = 0;
+				this.rawMesh.counts.mtlCount = 0;
+				this.rawMesh.counts.smoothingGroupCount = 0;
+			};
 
 			Parser.prototype.setUseAsync = function ( useAsync ) {
 				this.useAsync = useAsync;
@@ -15164,13 +14477,13 @@ var Three = (function (exports) {
 			};
 
 			Parser.prototype.setMaterials = function ( materials ) {
-				this.materials = Validator.verifyInput( materials, this.materials );
-				this.materials = Validator.verifyInput( this.materials, {} );
+				this.materials = LoaderSupport.Validator.verifyInput( materials, this.materials );
+				this.materials = LoaderSupport.Validator.verifyInput( this.materials, {} );
 			};
 
 			Parser.prototype.setCallbackBuilder = function ( callbackBuilder ) {
+				if ( ! LoaderSupport.Validator.isValid( callbackBuilder ) ) throw 'Unable to run as no "builder" callback is set.';
 				this.callbackBuilder = callbackBuilder;
-				if ( ! Validator.isValid( this.callbackBuilder ) ) throw 'Unable to run as no "builder" callback is set.';
 			};
 
 			Parser.prototype.setCallbackProgress = function ( callbackProgress ) {
@@ -15183,37 +14496,32 @@ var Three = (function (exports) {
 			};
 
 			Parser.prototype.configure = function () {
-				this.rawMesh = new RawMesh( this.materialPerSmoothingGroup, this.useIndices, this.disregardNormals );
+				this.pushSmoothingGroup( 1 );
 
 				if ( this.logger.isEnabled() ) {
 
 					var matKeys = Object.keys( this.materials );
 					var matNames = ( matKeys.length > 0 ) ? '\n\tmaterialNames:\n\t\t- ' + matKeys.join( '\n\t\t- ' ) : '\n\tmaterialNames: None';
 					var printedConfig = 'OBJLoader2.Parser configuration:'
-							+ matNames
-							+ '\n\tuseAsync: ' + this.useAsync
-							+ '\n\tmaterialPerSmoothingGroup: ' + this.materialPerSmoothingGroup
-							+ '\n\tuseIndices: ' + this.useIndices
-							+ '\n\tdisregardNormals: ' + this.disregardNormals
-							+ '\n\tcallbackBuilderName: ' + this.callbackBuilder.name
-							+ '\n\tcallbackProgressName: ' + this.callbackProgress.name;
+						+ matNames
+						+ '\n\tuseAsync: ' + this.useAsync
+						+ '\n\tmaterialPerSmoothingGroup: ' + this.materialPerSmoothingGroup
+						+ '\n\tuseIndices: ' + this.useIndices
+						+ '\n\tdisregardNormals: ' + this.disregardNormals
+						+ '\n\tcallbackBuilderName: ' + this.callbackBuilder.name
+						+ '\n\tcallbackProgressName: ' + this.callbackProgress.name;
 					this.logger.logInfo( printedConfig );
 				}
 			};
 
-			/**
-			 * Parse the provided arraybuffer
-			 * @memberOf Parser
-			 *
-			 * @param {Uint8Array} arrayBuffer OBJ data as Uint8Array
-			 */
+			
 			Parser.prototype.parse = function ( arrayBuffer ) {
 				this.logger.logTimeStart( 'OBJLoader2.Parser.parse' );
 				this.configure();
 
 				var arrayBufferView = new Uint8Array( arrayBuffer );
 				var length = arrayBufferView.byteLength;
-				this.totalBytes = length;
+				this.globalCounts.totalBytes = length;
 				var buffer = new Array( 128 );
 				var bufferPointer = 0;
 				var slashSpacePattern = new Array( 16 );
@@ -15225,27 +14533,31 @@ var Three = (function (exports) {
 
 					code = arrayBufferView[ i ];
 					switch ( code ) {
-						case Consts.CODE_SPACE:
+						// space
+						case 32:
 							if ( word.length > 0 ) buffer[ bufferPointer++ ] = word;
 							slashSpacePattern[ slashSpacePatternPointer++ ] = 0;
 							word = '';
 							break;
-
-						case Consts.CODE_SLASH:
+						// slash
+						case 47:
 							if ( word.length > 0 ) buffer[ bufferPointer++ ] = word;
 							slashSpacePattern[ slashSpacePatternPointer++ ] = 1;
 							word = '';
 							break;
 
-						case Consts.CODE_LF:
+						// LF
+						case 10:
 							if ( word.length > 0 ) buffer[ bufferPointer++ ] = word;
 							word = '';
-							this.processLine( buffer, bufferPointer, slashSpacePattern, slashSpacePatternPointer, i );
+							this.globalCounts.currentByte = i;
+							this.processLine( buffer, bufferPointer, slashSpacePattern, slashSpacePatternPointer );
 							bufferPointer = 0;
 							slashSpacePatternPointer = 0;
 							break;
 
-						case Consts.CODE_CR:
+						// CR
+						case 13:
 							break;
 
 						default:
@@ -15253,22 +14565,17 @@ var Three = (function (exports) {
 							break;
 					}
 				}
-				this.finalize( i );
+				this.finalizeParsing();
 				this.logger.logTimeEnd( 'OBJLoader2.Parser.parse' );
 			};
 
-			/**
-			 * Parse the provided text
-			 * @memberOf Parser
-			 *
-			 * @param {string} text OBJ data as string
-			 */
+			
 			Parser.prototype.parseText = function ( text ) {
 				this.logger.logTimeStart( 'OBJLoader2.Parser.parseText' );
 				this.configure();
 
 				var length = text.length;
-				this.totalBytes = length;
+				this.globalCounts.totalBytes = length;
 				var buffer = new Array( 128 );
 				var bufferPointer = 0;
 				var slashSpacePattern = new Array( 16 );
@@ -15280,38 +14587,39 @@ var Three = (function (exports) {
 
 					char = text[ i ];
 					switch ( char ) {
-						case Consts.STRING_SPACE:
+						case ' ':
 							if ( word.length > 0 ) buffer[ bufferPointer++ ] = word;
 							slashSpacePattern[ slashSpacePatternPointer++ ] = 0;
 							word = '';
 							break;
 
-						case Consts.STRING_SLASH:
+						case '/':
 							if ( word.length > 0 ) buffer[ bufferPointer++ ] = word;
 							slashSpacePattern[ slashSpacePatternPointer++ ] = 1;
 							word = '';
 							break;
 
-						case Consts.STRING_LF:
+						case '\n':
 							if ( word.length > 0 ) buffer[ bufferPointer++ ] = word;
 							word = '';
-							this.processLine( buffer, bufferPointer, slashSpacePattern, slashSpacePatternPointer, i );
+							this.globalCounts.currentByte = i;
+							this.processLine( buffer, bufferPointer, slashSpacePattern, slashSpacePatternPointer );
 							bufferPointer = 0;
 							slashSpacePatternPointer = 0;
 							break;
 
-						case Consts.STRING_CR:
+						case '\r':
 							break;
 
 						default:
 							word += char;
 					}
 				}
-				this.finalize( i );
+				this.finalizeParsing();
 				this.logger.logTimeEnd( 'OBJLoader2.Parser.parseText' );
 			};
 
-			Parser.prototype.processLine = function ( buffer, bufferPointer, slashSpacePattern, slashSpacePatternPointer, currentByte ) {
+			Parser.prototype.processLine = function ( buffer, bufferPointer, slashSpacePattern, slashSpacePatternPointer ) {
 				if ( bufferPointer < 1 ) return;
 
 				var countSlashes = function ( slashSpacePattern, slashSpacePatternPointer ) {
@@ -15349,51 +14657,100 @@ var Three = (function (exports) {
 				};
 
 				switch ( buffer[ 0 ] ) {
-					case Consts.LINE_V:
-						this.rawMesh.pushVertex( buffer, bufferPointer > 4 );
+					case 'v':
+						this.vertices.push( parseFloat( buffer[ 1 ] ) );
+						this.vertices.push( parseFloat( buffer[ 2 ] ) );
+						this.vertices.push( parseFloat( buffer[ 3 ] ) );
+						if ( bufferPointer > 4 ) {
+
+							this.colors.push( parseFloat( buffer[ 4 ] ) );
+							this.colors.push( parseFloat( buffer[ 5 ] ) );
+							this.colors.push( parseFloat( buffer[ 6 ] ) );
+
+						}
 						break;
 
-					case Consts.LINE_VT:
-						this.rawMesh.pushUv( buffer );
+					case 'vt':
+						this.uvs.push( parseFloat( buffer[ 1 ] ) );
+						this.uvs.push( parseFloat( buffer[ 2 ] ) );
 						break;
 
-					case Consts.LINE_VN:
-						this.rawMesh.pushNormal( buffer );
+					case 'vn':
+						this.normals.push( parseFloat( buffer[ 1 ] ) );
+						this.normals.push( parseFloat( buffer[ 2 ] ) );
+						this.normals.push( parseFloat( buffer[ 3 ] ) );
 						break;
 
-					case Consts.LINE_F:
-						this.rawMesh.processFaces( buffer, bufferPointer, countSlashes( slashSpacePattern, slashSpacePatternPointer ) );
+					case 'f':
+						var slashesCount = countSlashes( slashSpacePattern, slashSpacePatternPointer );
+						var bufferLength = bufferPointer - 1;
+
+						// "f vertex ..."
+						if ( slashesCount === 0 ) {
+
+							this.checkFaceType( 0 );
+
+							// "f vertex/uv ..."
+						} else if  ( bufferLength === slashesCount * 2 ) {
+
+							this.checkFaceType( 1 );
+
+							// "f vertex/uv/normal ..."
+						} else if  ( bufferLength * 2 === slashesCount * 3 ) {
+
+							this.checkFaceType( 2 );
+
+							// "f vertex//normal ..."
+						} else {
+
+							this.checkFaceType( 3 );
+
+						}
+						this.processFaces( buffer, bufferLength );
 						break;
 
-					case Consts.LINE_L:
-						this.rawMesh.processLines( buffer, bufferPointer, countSlashes( slashSpacePattern, slashSpacePatternPointer ) );
+					case 'l':
+						this.checkFaceType( 4 );
+						this.processLinesOrPoints( buffer, bufferPointer, countSlashes( slashSpacePattern, slashSpacePatternPointer ) );
 						break;
 
-					case Consts.LINE_S:
-						this.rawMesh.pushSmoothingGroup( buffer[ 1 ] );
+					case 'p':
+						this.checkFaceType( 5 );
+						this.processLinesOrPoints( buffer, bufferPointer, 0 );
+						break;
+
+					case 's':
+						this.pushSmoothingGroup( buffer[ 1 ] );
 						flushStringBuffer( buffer, bufferPointer );
 						break;
 
-					case Consts.LINE_G:
+					case 'g':
 						// 'g' leads to creation of mesh if valid data (faces declaration was done before), otherwise only groupName gets set
-						this.processCompletedMesh( currentByte );
-						this.rawMesh.pushGroup( concatStringBuffer( buffer, bufferPointer, slashSpacePattern ) );
+						this.processCompletedMesh();
+						this.rawMesh.groupName = LoaderSupport.Validator.verifyInput( concatStringBuffer( buffer, bufferPointer, slashSpacePattern ), '' );
 						flushStringBuffer( buffer, bufferPointer );
 						break;
 
-					case Consts.LINE_O:
+					case 'o':
 						// 'o' is pure meta-information and does not result in creation of new meshes
-						this.rawMesh.pushObject( concatStringBuffer( buffer, bufferPointer, slashSpacePattern ) );
+						this.rawMesh.objectName = LoaderSupport.Validator.verifyInput( concatStringBuffer( buffer, bufferPointer, slashSpacePattern ), '' );
 						flushStringBuffer( buffer, bufferPointer );
 						break;
 
-					case Consts.LINE_MTLLIB:
-						this.rawMesh.pushMtllib( concatStringBuffer( buffer, bufferPointer, slashSpacePattern ) );
+					case 'mtllib':
+						this.rawMesh.mtllibName = LoaderSupport.Validator.verifyInput( concatStringBuffer( buffer, bufferPointer, slashSpacePattern ), '' );
 						flushStringBuffer( buffer, bufferPointer );
 						break;
 
-					case Consts.LINE_USEMTL:
-						this.rawMesh.pushUsemtl( concatStringBuffer( buffer, bufferPointer, slashSpacePattern ) );
+					case 'usemtl':
+						var mtlName = concatStringBuffer( buffer, bufferPointer, slashSpacePattern );
+						if ( this.rawMesh.activeMtlName !== mtlName && LoaderSupport.Validator.isValid( mtlName ) ) {
+
+							this.rawMesh.activeMtlName = mtlName;
+							this.rawMesh.counts.mtlCount++;
+							this.checkSubGroup();
+
+						}
 						flushStringBuffer( buffer, bufferPointer );
 						break;
 
@@ -15402,37 +14759,279 @@ var Three = (function (exports) {
 				}
 			};
 
-			Parser.prototype.createRawMeshReport = function ( rawMesh , inputObjectCount ) {
-				var report = rawMesh.createReport( inputObjectCount );
-				return 'Input Object number: ' + inputObjectCount +
-					'\n\tObject name: ' + report.objectName +
-					'\n\tGroup name: ' + report.groupName +
-					'\n\tMtllib name: ' + report.mtllibName +
-					'\n\tVertex count: ' + report.vertexCount +
-					'\n\tNormal count: ' + report.normalCount +
-					'\n\tUV count: ' + report.uvCount +
-					'\n\tSmoothingGroup count: ' + report.smoothingGroupCount +
-					'\n\tMaterial count: ' + report.mtlCount +
-					'\n\tReal RawMeshSubGroup count: ' + report.subGroups;
+			Parser.prototype.pushSmoothingGroup = function ( smoothingGroup ) {
+				var smoothingGroupInt = parseInt( smoothingGroup );
+				if ( isNaN( smoothingGroupInt ) ) {
+					smoothingGroupInt = smoothingGroup === "off" ? 0 : 1;
+				}
+
+				var smoothCheck = this.rawMesh.smoothingGroup.normalized;
+				this.rawMesh.smoothingGroup.normalized = this.rawMesh.smoothingGroup.splitMaterials ? smoothingGroupInt : ( smoothingGroupInt === 0 ) ? 0 : 1;
+				this.rawMesh.smoothingGroup.real = smoothingGroupInt;
+
+				if ( smoothCheck !== smoothingGroupInt ) {
+
+					this.rawMesh.counts.smoothingGroupCount++;
+					this.checkSubGroup();
+
+				}
 			};
 
-			Parser.prototype.processCompletedMesh = function ( currentByte ) {
-				var result = this.rawMesh.finalize();
-				if ( Validator.isValid( result ) ) {
+			
+			Parser.prototype.checkFaceType = function ( faceType ) {
+				if ( this.rawMesh.faceType !== faceType ) {
 
-					if ( this.rawMesh.colors.length > 0 && this.rawMesh.colors.length !== this.rawMesh.vertices.length ) {
+					this.processCompletedMesh();
+					this.rawMesh.faceType = faceType;
+					this.checkSubGroup();
+
+				}
+			};
+
+			Parser.prototype.checkSubGroup = function () {
+				var index = this.rawMesh.activeMtlName + '|' + this.rawMesh.smoothingGroup.normalized;
+				this.rawMesh.subGroupInUse = this.rawMesh.subGroups[ index ];
+
+				if ( ! LoaderSupport.Validator.isValid( this.rawMesh.subGroupInUse ) ) {
+
+					this.rawMesh.subGroupInUse = {
+						index: index,
+						objectName: this.rawMesh.objectName,
+						groupName: this.rawMesh.groupName,
+						materialName: this.rawMesh.activeMtlName,
+						smoothingGroup: this.rawMesh.smoothingGroup.normalized,
+						vertices: [],
+						indexMappingsCount: 0,
+						indexMappings: [],
+						indices: [],
+						colors: [],
+						uvs: [],
+						normals: []
+					};
+					this.rawMesh.subGroups[ index ] = this.rawMesh.subGroupInUse;
+
+				}
+			};
+
+			Parser.prototype.processFaces = function ( buffer, bufferLength ) {
+				var i, length;
+
+				// "f vertex ..."
+				if ( this.rawMesh.faceType === 0 ) {
+
+					for ( i = 2, length = bufferLength; i < length; i ++ ) {
+
+						this.buildFace( buffer[ 1 ] );
+						this.buildFace( buffer[ i ] );
+						this.buildFace( buffer[ i + 1 ] );
+
+					}
+
+					// "f vertex/uv ..."
+				} else if  ( this.rawMesh.faceType === 1 ) {
+
+					for ( i = 3, length = bufferLength - 2; i < length; i += 2 ) {
+
+						this.buildFace( buffer[ 1 ], buffer[ 2 ] );
+						this.buildFace( buffer[ i ], buffer[ i + 1 ] );
+						this.buildFace( buffer[ i + 2 ], buffer[ i + 3 ] );
+
+					}
+
+					// "f vertex/uv/normal ..."
+				} else if  ( this.rawMesh.faceType === 2 ) {
+
+					for ( i = 4, length = bufferLength - 3; i < length; i += 3 ) {
+
+						this.buildFace( buffer[ 1 ], buffer[ 2 ], buffer[ 3 ] );
+						this.buildFace( buffer[ i ], buffer[ i + 1 ], buffer[ i + 2 ] );
+						this.buildFace( buffer[ i + 3 ], buffer[ i + 4 ], buffer[ i + 5 ] );
+
+					}
+
+					// "f vertex//normal ..."
+				} else {
+
+					for ( i = 3, length = bufferLength - 2; i < length; i += 2 ) {
+
+						this.buildFace( buffer[ 1 ], undefined, buffer[ 2 ] );
+						this.buildFace( buffer[ i ], undefined, buffer[ i + 1 ] );
+						this.buildFace( buffer[ i + 2 ], undefined, buffer[ i + 3 ] );
+
+					}
+
+				}
+			};
+
+			Parser.prototype.buildFace = function ( faceIndexV, faceIndexU, faceIndexN ) {
+				if ( this.disregardNormals ) faceIndexN = undefined;
+				var scope = this;
+				var updateSubGroupInUse = function () {
+
+					var faceIndexVi = parseInt( faceIndexV );
+					var indexPointerV = 3 * ( faceIndexVi > 0 ? faceIndexVi - 1 : faceIndexVi + scope.vertices.length / 3 );
+
+					var vertices = scope.rawMesh.subGroupInUse.vertices;
+					vertices.push( scope.vertices[ indexPointerV++ ] );
+					vertices.push( scope.vertices[ indexPointerV++ ] );
+					vertices.push( scope.vertices[ indexPointerV ] );
+
+					var indexPointerC = scope.colors.length > 0 ? indexPointerV : null;
+					if ( indexPointerC !== null ) {
+
+						var colors = scope.rawMesh.subGroupInUse.colors;
+						colors.push( scope.colors[ indexPointerC++ ] );
+						colors.push( scope.colors[ indexPointerC++ ] );
+						colors.push( scope.colors[ indexPointerC ] );
+
+					}
+
+					if ( faceIndexU ) {
+
+						var faceIndexUi = parseInt( faceIndexU );
+						var indexPointerU = 2 * ( faceIndexUi > 0 ? faceIndexUi - 1 : faceIndexUi + scope.uvs.length / 2 );
+						var uvs = scope.rawMesh.subGroupInUse.uvs;
+						uvs.push( scope.uvs[ indexPointerU++ ] );
+						uvs.push( scope.uvs[ indexPointerU ] );
+
+					}
+					if ( faceIndexN ) {
+
+						var faceIndexNi = parseInt( faceIndexN );
+						var indexPointerN = 3 * ( faceIndexNi > 0 ? faceIndexNi - 1 : faceIndexNi + scope.normals.length / 3 );
+						var normals = scope.rawMesh.subGroupInUse.normals;
+						normals.push( scope.normals[ indexPointerN++ ] );
+						normals.push( scope.normals[ indexPointerN++ ] );
+						normals.push( scope.normals[ indexPointerN ] );
+
+					}
+				};
+
+				if ( this.useIndices ) {
+
+					var mappingName = faceIndexV + ( faceIndexU ? '_' + faceIndexU : '_n' ) + ( faceIndexN ? '_' + faceIndexN : '_n' );
+					var indicesPointer = this.rawMesh.subGroupInUse.indexMappings[ mappingName ];
+					if ( LoaderSupport.Validator.isValid( indicesPointer ) ) {
+
+						this.rawMesh.counts.doubleIndicesCount++;
+
+					} else {
+
+						indicesPointer = this.rawMesh.subGroupInUse.vertices.length / 3;
+						updateSubGroupInUse();
+						this.rawMesh.subGroupInUse.indexMappings[ mappingName ] = indicesPointer;
+						this.rawMesh.subGroupInUse.indexMappingsCount++;
+
+					}
+					this.rawMesh.subGroupInUse.indices.push( indicesPointer );
+
+				} else {
+
+					updateSubGroupInUse();
+
+				}
+				this.rawMesh.counts.faceCount++;
+			};
+
+			
+			Parser.prototype.processLinesOrPoints = function ( buffer, bufferPointer, slashCount ) {
+				var i = 1;
+				var length;
+				var bufferLength = bufferPointer - 1;
+
+				if ( bufferLength === slashCount * 2 ) {
+
+					for ( length = bufferPointer; i < length; i += 2 ) this.buildFace( buffer[ i ], buffer[ i + 1 ] );
+
+				} else {
+
+					for ( length = bufferPointer; i < length; i ++ ) this.buildFace( buffer[ i ] );
+
+				}
+			};
+
+			Parser.prototype.createRawMeshReport = function ( inputObjectCount ) {
+				return 'Input Object number: ' + inputObjectCount +
+					'\n\tObject name: ' + this.rawMesh.objectName +
+					'\n\tGroup name: ' + this.rawMesh.groupName +
+					'\n\tMtllib name: ' + this.rawMesh.mtllibName +
+					'\n\tVertex count: ' + this.vertices.length / 3 +
+					'\n\tNormal count: ' + this.normals.length / 3 +
+					'\n\tUV count: ' + this.uvs.length / 2 +
+					'\n\tSmoothingGroup count: ' + this.rawMesh.counts.smoothingGroupCount +
+					'\n\tMaterial count: ' + this.rawMesh.counts.mtlCount +
+					'\n\tReal MeshOutputGroup count: ' + this.rawMesh.subGroups.length;
+			};
+
+			
+			Parser.prototype.finalizeRawMesh = function () {
+				var meshOutputGroupTemp = [];
+				var meshOutputGroup;
+				var absoluteVertexCount = 0;
+				var absoluteIndexMappingsCount = 0;
+				var absoluteIndexCount = 0;
+				var absoluteColorCount = 0;
+				var absoluteNormalCount = 0;
+				var absoluteUvCount = 0;
+				var indices;
+				for ( var name in this.rawMesh.subGroups ) {
+
+					meshOutputGroup = this.rawMesh.subGroups[ name ];
+					if ( meshOutputGroup.vertices.length > 0 ) {
+
+						indices = meshOutputGroup.indices;
+						if ( indices.length > 0 && absoluteIndexMappingsCount > 0 ) {
+
+							for ( var i in indices ) indices[ i ] = indices[ i ] + absoluteIndexMappingsCount;
+
+						}
+						meshOutputGroupTemp.push( meshOutputGroup );
+						absoluteVertexCount += meshOutputGroup.vertices.length;
+						absoluteIndexMappingsCount += meshOutputGroup.indexMappingsCount;
+						absoluteIndexCount += meshOutputGroup.indices.length;
+						absoluteColorCount += meshOutputGroup.colors.length;
+						absoluteUvCount += meshOutputGroup.uvs.length;
+						absoluteNormalCount += meshOutputGroup.normals.length;
+
+					}
+				}
+
+				// do not continue if no result
+				var result = null;
+				if ( meshOutputGroupTemp.length > 0 ) {
+
+					result = {
+						name: this.rawMesh.groupName !== '' ? this.rawMesh.groupName : this.rawMesh.objectName,
+						subGroups: meshOutputGroupTemp,
+						absoluteVertexCount: absoluteVertexCount,
+						absoluteIndexCount: absoluteIndexCount,
+						absoluteColorCount: absoluteColorCount,
+						absoluteNormalCount: absoluteNormalCount,
+						absoluteUvCount: absoluteUvCount,
+						faceCount: this.rawMesh.counts.faceCount,
+						doubleIndicesCount: this.rawMesh.counts.doubleIndicesCount
+					};
+
+				}
+				return result;
+			};
+
+			Parser.prototype.processCompletedMesh = function () {
+				var result = this.finalizeRawMesh();
+				if ( LoaderSupport.Validator.isValid( result ) ) {
+
+					if ( this.colors.length > 0 && this.colors.length !== this.vertices.length ) {
 
 						throw 'Vertex Colors were detected, but vertex count and color count do not match!';
 
 					}
-					if ( this.logger.isDebug() ) this.logger.logDebug( this.createRawMeshReport( this.rawMesh, this.inputObjectCount ) );
+					if ( this.logger.isDebug() ) this.logger.logDebug( this.createRawMeshReport( this.inputObjectCount ) );
 					this.inputObjectCount++;
 
-					this.buildMesh( result, currentByte );
-					var progressBytesPercent = currentByte / this.totalBytes;
+					this.buildMesh( result );
+					var progressBytesPercent = this.globalCounts.currentByte / this.globalCounts.totalBytes;
 					this.callbackProgress( 'Completed [o: ' + this.rawMesh.objectName + ' g:' + this.rawMesh.groupName + '] Total progress: ' + ( progressBytesPercent * 100 ).toFixed( 2 ) + '%', progressBytesPercent );
-					this.rawMesh.reset( this.rawMesh.smoothingGroup.splitMaterials );
-
+					this.resetRawMesh();
 					return true;
 
 				} else {
@@ -15441,42 +15040,24 @@ var Three = (function (exports) {
 				}
 			};
 
-			Parser.prototype.finalize = function ( currentByte ) {
-				this.logger.logInfo( 'Global output object count: ' + this.outputObjectCount );
-				if ( this.processCompletedMesh( currentByte ) && this.logger.isEnabled() ) {
-
-					var parserFinalReport = 'Overall counts: ' +
-						'\n\tVertices: ' + this.counts.vertices +
-						'\n\tFaces: ' + this.counts.faces +
-						'\n\tMultiple definitions: ' + this.counts.doubleIndicesCount;
-					this.logger.logInfo( parserFinalReport );
-
-				}
-			};
-
-			/**
-			 * RawObjectDescriptions are transformed to too intermediate format that is forwarded to the Builder.
-			 * It is ensured that rawObjectDescriptions only contain objects with vertices (no need to check).
-			 *
-			 * @param result
-			 */
-			Parser.prototype.buildMesh = function ( result, currentByte ) {
-				var rawObjectDescriptions = result.subGroups;
+			
+			Parser.prototype.buildMesh = function ( result ) {
+				var meshOutputGroups = result.subGroups;
 
 				var vertexFA = new Float32Array( result.absoluteVertexCount );
-				this.counts.vertices += result.absoluteVertexCount / 3;
-				this.counts.faces += result.faceCount;
-				this.counts.doubleIndicesCount += result.doubleIndicesCount;
+				this.globalCounts.vertices += result.absoluteVertexCount / 3;
+				this.globalCounts.faces += result.faceCount;
+				this.globalCounts.doubleIndicesCount += result.doubleIndicesCount;
 				var indexUA = ( result.absoluteIndexCount > 0 ) ? new Uint32Array( result.absoluteIndexCount ) : null;
 				var colorFA = ( result.absoluteColorCount > 0 ) ? new Float32Array( result.absoluteColorCount ) : null;
 				var normalFA = ( result.absoluteNormalCount > 0 ) ? new Float32Array( result.absoluteNormalCount ) : null;
 				var uvFA = ( result.absoluteUvCount > 0 ) ? new Float32Array( result.absoluteUvCount ) : null;
-				var haveVertexColors = Validator.isValid( colorFA );
+				var haveVertexColors = LoaderSupport.Validator.isValid( colorFA );
 
-				var rawObjectDescription;
+				var meshOutputGroup;
 				var materialNames = [];
 
-				var createMultiMaterial = ( rawObjectDescriptions.length > 1 );
+				var createMultiMaterial = ( meshOutputGroups.length > 1 );
 				var materialIndex = 0;
 				var materialIndexMapping = [];
 				var selectedMaterialIndex;
@@ -15492,23 +15073,33 @@ var Three = (function (exports) {
 				var materialGroupLength = 0;
 
 				var materialOrg, material, materialName, materialNameOrg;
-				for ( var oodIndex in rawObjectDescriptions ) {
+				// only one specific face type
+				for ( var oodIndex in meshOutputGroups ) {
 
-					if ( ! rawObjectDescriptions.hasOwnProperty( oodIndex ) ) continue;
-					rawObjectDescription = rawObjectDescriptions[ oodIndex ];
+					if ( ! meshOutputGroups.hasOwnProperty( oodIndex ) ) continue;
+					meshOutputGroup = meshOutputGroups[ oodIndex ];
 
-					materialNameOrg = rawObjectDescription.materialName;
-					materialName = materialNameOrg + ( haveVertexColors ? '_vertexColor' : '' ) + ( rawObjectDescription.smoothingGroup === 0 ? '_flat' : '' );
+					materialNameOrg = meshOutputGroup.materialName;
+					if ( this.rawMesh.faceType < 4 ) {
+
+						materialName = materialNameOrg + ( haveVertexColors ? '_vertexColor' : '' ) + ( meshOutputGroup.smoothingGroup === 0 ? '_flat' : '' );
+
+
+					} else {
+
+						materialName = this.rawMesh.faceType === 4 ? 'defaultLineMaterial' : 'defaultPointMaterial';
+
+					}
 					materialOrg = this.materials[ materialNameOrg ];
 					material = this.materials[ materialName ];
 
 					// both original and derived names do not lead to an existing material => need to use a default material
-					if ( ! Validator.isValid( materialOrg ) && ! Validator.isValid( material ) ) {
+					if ( ! LoaderSupport.Validator.isValid( materialOrg ) && ! LoaderSupport.Validator.isValid( material ) ) {
 
-						var defaultMaterialName = haveVertexColors ? 'vertexColorMaterial' : 'defaultMaterial';
+						var defaultMaterialName = haveVertexColors ? 'defaultVertexColorMaterial' : 'defaultMaterial';
 						materialOrg = this.materials[ defaultMaterialName ];
-						this.logger.logWarn( 'object_group "' + rawObjectDescription.objectName + '_' +
-							rawObjectDescription.groupName + '" was defined with unresolvable material "' +
+						this.logger.logWarn( 'object_group "' + meshOutputGroup.objectName + '_' +
+							meshOutputGroup.groupName + '" was defined with unresolvable material "' +
 							materialNameOrg + '"! Assigning "' + defaultMaterialName + '".' );
 						materialNameOrg = defaultMaterialName;
 
@@ -15521,14 +15112,14 @@ var Three = (function (exports) {
 						}
 
 					}
-					if ( ! Validator.isValid( material ) ) {
+					if ( ! LoaderSupport.Validator.isValid( material ) ) {
 
 						var materialCloneInstructions = {
 							materialNameOrg: materialNameOrg,
 							materialName: materialName,
 							materialProperties: {
 								vertexColors: haveVertexColors ? 2 : 0,
-								flatShading: rawObjectDescription.smoothingGroup === 0
+								flatShading: meshOutputGroup.smoothingGroup === 0
 							}
 						};
 						var payload = {
@@ -15556,7 +15147,7 @@ var Three = (function (exports) {
 							materialIndex++;
 
 						}
-						materialGroupLength = this.useIndices ? rawObjectDescription.indices.length : rawObjectDescription.vertices.length / 3;
+						materialGroupLength = this.useIndices ? meshOutputGroup.indices.length : meshOutputGroup.vertices.length / 3;
 						materialGroup = {
 							start: materialGroupOffset,
 							count: materialGroupLength,
@@ -15571,49 +15162,51 @@ var Three = (function (exports) {
 
 					}
 
-					vertexFA.set( rawObjectDescription.vertices, vertexFAOffset );
-					vertexFAOffset += rawObjectDescription.vertices.length;
+					vertexFA.set( meshOutputGroup.vertices, vertexFAOffset );
+					vertexFAOffset += meshOutputGroup.vertices.length;
 
 					if ( indexUA ) {
 
-						indexUA.set( rawObjectDescription.indices, indexUAOffset );
-						indexUAOffset += rawObjectDescription.indices.length;
+						indexUA.set( meshOutputGroup.indices, indexUAOffset );
+						indexUAOffset += meshOutputGroup.indices.length;
 
 					}
 
 					if ( colorFA ) {
 
-						colorFA.set( rawObjectDescription.colors, colorFAOffset );
-						colorFAOffset += rawObjectDescription.colors.length;
+						colorFA.set( meshOutputGroup.colors, colorFAOffset );
+						colorFAOffset += meshOutputGroup.colors.length;
 
 					}
 
 					if ( normalFA ) {
 
-						normalFA.set( rawObjectDescription.normals, normalFAOffset );
-						normalFAOffset += rawObjectDescription.normals.length;
+						normalFA.set( meshOutputGroup.normals, normalFAOffset );
+						normalFAOffset += meshOutputGroup.normals.length;
 
 					}
 					if ( uvFA ) {
 
-						uvFA.set( rawObjectDescription.uvs, uvFAOffset );
-						uvFAOffset += rawObjectDescription.uvs.length;
+						uvFA.set( meshOutputGroup.uvs, uvFAOffset );
+						uvFAOffset += meshOutputGroup.uvs.length;
 
 					}
 
 					if ( this.logger.isDebug() ) {
-						var materialIndexLine = Validator.isValid( selectedMaterialIndex ) ? '\n\t\tmaterialIndex: ' + selectedMaterialIndex : '';
-						var createdReport = 'Output Object no.: ' + this.outputObjectCount +
-							'\n\t\tgroupName: ' + rawObjectDescription.groupName +
+						var materialIndexLine = LoaderSupport.Validator.isValid( selectedMaterialIndex ) ? '\n\t\tmaterialIndex: ' + selectedMaterialIndex : '';
+						var createdReport = '\tOutput Object no.: ' + this.outputObjectCount +
+							'\n\t\tgroupName: ' + meshOutputGroup.groupName +
+							'\n\t\tIndex: ' + meshOutputGroup.index +
+							'\n\t\tfaceType: ' + this.rawMesh.faceType +
+							'\n\t\tmaterialName: ' + meshOutputGroup.materialName +
+							'\n\t\tsmoothingGroup: ' + meshOutputGroup.smoothingGroup +
 							materialIndexLine +
-							'\n\t\tmaterialName: ' + rawObjectDescription.materialName +
-							'\n\t\tsmoothingGroup: ' + rawObjectDescription.smoothingGroup +
-							'\n\t\tobjectName: ' + rawObjectDescription.objectName +
-							'\n\t\t#vertices: ' + rawObjectDescription.vertices.length / 3 +
-							'\n\t\t#indices: ' + rawObjectDescription.indices.length +
-							'\n\t\t#colors: ' + rawObjectDescription.colors.length / 3 +
-							'\n\t\t#uvs: ' + rawObjectDescription.uvs.length / 2 +
-							'\n\t\t#normals: ' + rawObjectDescription.normals.length / 3;
+							'\n\t\tobjectName: ' + meshOutputGroup.objectName +
+							'\n\t\t#vertices: ' + meshOutputGroup.vertices.length / 3 +
+							'\n\t\t#indices: ' + meshOutputGroup.indices.length +
+							'\n\t\t#colors: ' + meshOutputGroup.colors.length / 3 +
+							'\n\t\t#uvs: ' + meshOutputGroup.uvs.length / 2 +
+							'\n\t\t#normals: ' + meshOutputGroup.normals.length / 3;
 						this.logger.logDebug( createdReport );
 					}
 
@@ -15624,7 +15217,7 @@ var Three = (function (exports) {
 					{
 						cmd: 'meshData',
 						progress: {
-							numericalValue: currentByte / this.totalBytes
+							numericalValue: this.globalCounts.currentByte / this.globalCounts.totalBytes
 						},
 						params: {
 							meshName: result.name
@@ -15640,474 +15233,43 @@ var Three = (function (exports) {
 							colors: colorFA,
 							normals: normalFA,
 							uvs: uvFA
-						}
+						},
+						// 0: mesh, 1: line, 2: point
+						geometryType: this.rawMesh.faceType < 4 ? 0 : ( this.rawMesh.faceType === 4 ) ? 1 : 2
 					},
 					[ vertexFA.buffer ],
-					Validator.isValid( indexUA ) ? [ indexUA.buffer ] : null,
-					Validator.isValid( colorFA ) ? [ colorFA.buffer ] : null,
-					Validator.isValid( normalFA ) ? [ normalFA.buffer ] : null,
-					Validator.isValid( uvFA ) ? [ uvFA.buffer ] : null
+					LoaderSupport.Validator.isValid( indexUA ) ? [ indexUA.buffer ] : null,
+					LoaderSupport.Validator.isValid( colorFA ) ? [ colorFA.buffer ] : null,
+					LoaderSupport.Validator.isValid( normalFA ) ? [ normalFA.buffer ] : null,
+					LoaderSupport.Validator.isValid( uvFA ) ? [ uvFA.buffer ] : null
 				);
+			};
+
+			Parser.prototype.finalizeParsing = function () {
+				this.logger.logInfo( 'Global output object count: ' + this.outputObjectCount );
+				if ( this.processCompletedMesh() && this.logger.isEnabled() ) {
+
+					var parserFinalReport = 'Overall counts: ' +
+						'\n\tVertices: ' + this.globalCounts.vertices +
+						'\n\tFaces: ' + this.globalCounts.faces +
+						'\n\tMultiple definitions: ' + this.globalCounts.doubleIndicesCount;
+					this.logger.logInfo( parserFinalReport );
+
+				}
 			};
 
 			return Parser;
 		})();
 
-		/**
-		 * {@link RawMesh} is only used by {@link Parser}.
-		 * The user of OBJLoader2 does not need to care about this class.
-		 * It is defined publicly for inclusion in web worker based OBJ loader ({@link OBJLoader2.WWOBJLoader2})
-		 */
-		var RawMesh = (function () {
-
-			function RawMesh( materialPerSmoothingGroup, useIndices, disregardNormals ) {
-				this.vertices = [];
-				this.colors = [];
-				this.normals = [];
-				this.uvs = [];
-
-				this.useIndices = useIndices === true;
-				this.disregardNormals = disregardNormals === true;
-
-				this.objectName = '';
-				this.groupName = '';
-				this.activeMtlName = '';
-				this.mtllibName = '';
-				this.reset( materialPerSmoothingGroup );
-			}
-
-			RawMesh.prototype.reset = function ( materialPerSmoothingGroup ) {
-				// faces are stored according combined index of group, material and smoothingGroup (0 or not)
-				this.subGroups = [];
-				this.subGroupInUse = null;
-				this.smoothingGroup = {
-					splitMaterials: materialPerSmoothingGroup === true,
-					normalized: -1,
-					real: -1
-				};
-				// this default index is required as it is possible to define faces without 'g' or 'usemtl'
-				this.pushSmoothingGroup( 1 );
-
-				this.doubleIndicesCount = 0;
-				this.faceCount = 0;
-				this.mtlCount = 0;
-				this.smoothingGroupCount = 0;
-			};
-
-			RawMesh.prototype.pushVertex = function ( buffer, haveVertexColors ) {
-				this.vertices.push( parseFloat( buffer[ 1 ] ) );
-				this.vertices.push( parseFloat( buffer[ 2 ] ) );
-				this.vertices.push( parseFloat( buffer[ 3 ] ) );
-				if ( haveVertexColors ) {
-
-					this.colors.push( parseFloat( buffer[ 4 ] ) );
-					this.colors.push( parseFloat( buffer[ 5 ] ) );
-					this.colors.push( parseFloat( buffer[ 6 ] ) );
-
-				}
-			};
-
-			RawMesh.prototype.pushUv = function ( buffer ) {
-				this.uvs.push( parseFloat( buffer[ 1 ] ) );
-				this.uvs.push( parseFloat( buffer[ 2 ] ) );
-			};
-
-			RawMesh.prototype.pushNormal = function ( buffer ) {
-				this.normals.push( parseFloat( buffer[ 1 ] ) );
-				this.normals.push( parseFloat( buffer[ 2 ] ) );
-				this.normals.push( parseFloat( buffer[ 3 ] ) );
-			};
-
-			RawMesh.prototype.pushGroup = function ( groupName ) {
-				this.groupName = Validator.verifyInput( groupName, '' );
-			};
-
-			RawMesh.prototype.pushObject = function ( objectName ) {
-				this.objectName = Validator.verifyInput( objectName, '' );
-			};
-
-			RawMesh.prototype.pushMtllib = function ( mtllibName ) {
-				this.mtllibName = Validator.verifyInput( mtllibName, '' );
-			};
-
-			RawMesh.prototype.pushUsemtl = function ( mtlName ) {
-				if ( this.activeMtlName === mtlName || ! Validator.isValid( mtlName ) ) return;
-				this.activeMtlName = mtlName;
-				this.mtlCount++;
-
-				this.verifyIndex();
-			};
-
-			RawMesh.prototype.pushSmoothingGroup = function ( smoothingGroup ) {
-				var smoothingGroupInt = parseInt( smoothingGroup );
-				if ( isNaN( smoothingGroupInt ) ) {
-					smoothingGroupInt = smoothingGroup === "off" ? 0 : 1;
-				}
-
-				var smoothCheck = this.smoothingGroup.normalized;
-				this.smoothingGroup.normalized = this.smoothingGroup.splitMaterials ? smoothingGroupInt : ( smoothingGroupInt === 0 ) ? 0 : 1;
-				this.smoothingGroup.real = smoothingGroupInt;
-
-				if ( smoothCheck !== smoothingGroupInt ) {
-
-					this.smoothingGroupCount++;
-					this.verifyIndex();
-
-				}
-			};
-
-			RawMesh.prototype.verifyIndex = function () {
-				var index = this.activeMtlName + '|' + this.smoothingGroup.normalized;
-				this.subGroupInUse = this.subGroups[ index ];
-				if ( ! Validator.isValid( this.subGroupInUse ) ) {
-
-					this.subGroupInUse = new RawMeshSubGroup( this.objectName, this.groupName, this.activeMtlName, this.smoothingGroup.normalized );
-					this.subGroups[ index ] = this.subGroupInUse;
-
-				}
-			};
-
-			RawMesh.prototype.processFaces = function ( buffer, bufferPointer, slashesCount ) {
-				var bufferLength = bufferPointer - 1;
-				var i, length;
-
-				// "f vertex ..."
-				if ( slashesCount === 0 ) {
-
-					for ( i = 2, length = bufferLength; i < length; i ++ ) {
-
-						this.buildFace( buffer[ 1 ] );
-						this.buildFace( buffer[ i ] );
-						this.buildFace( buffer[ i + 1 ] );
-
-					}
-
-					// "f vertex/uv ..."
-				} else if  ( bufferLength === slashesCount * 2 ) {
-
-					for ( i = 3, length = bufferLength - 2; i < length; i += 2 ) {
-
-						this.buildFace( buffer[ 1 ], buffer[ 2 ] );
-						this.buildFace( buffer[ i ], buffer[ i + 1 ] );
-						this.buildFace( buffer[ i + 2 ], buffer[ i + 3 ] );
-
-					}
-
-					// "f vertex/uv/normal ..."
-				} else if  ( bufferLength * 2 === slashesCount * 3 ) {
-
-					for ( i = 4, length = bufferLength - 3; i < length; i += 3 ) {
-
-						this.buildFace( buffer[ 1 ], buffer[ 2 ], buffer[ 3 ] );
-						this.buildFace( buffer[ i ], buffer[ i + 1 ], buffer[ i + 2 ] );
-						this.buildFace( buffer[ i + 3 ], buffer[ i + 4 ], buffer[ i + 5 ] );
-
-					}
-
-					// "f vertex//normal ..."
-				} else {
-
-					for ( i = 3, length = bufferLength - 2; i < length; i += 2 ) {
-
-						this.buildFace( buffer[ 1 ], undefined, buffer[ 2 ] );
-						this.buildFace( buffer[ i ], undefined, buffer[ i + 1 ] );
-						this.buildFace( buffer[ i + 2 ], undefined, buffer[ i + 3 ] );
-
-					}
-
-				}
-			};
-
-
-			RawMesh.prototype.buildFace = function ( faceIndexV, faceIndexU, faceIndexN ) {
-				var sgiu = this.subGroupInUse;
-				if ( this.disregardNormals ) faceIndexN = undefined;
-				var scope = this;
-				var updateRawObjectDescriptionInUse = function () {
-
-					var faceIndexVi = parseInt( faceIndexV );
-					var indexPointerV = 3 * ( faceIndexVi > 0 ? faceIndexVi - 1 : faceIndexVi + scope.vertices.length / 3 );
-
-					var vertices = sgiu.vertices;
-					vertices.push( scope.vertices[ indexPointerV++ ] );
-					vertices.push( scope.vertices[ indexPointerV++ ] );
-					vertices.push( scope.vertices[ indexPointerV ] );
-
-					var indexPointerC = scope.colors.length > 0 ? indexPointerV : null;
-					if ( indexPointerC !== null ) {
-
-						var colors = sgiu.colors;
-						colors.push( scope.colors[ indexPointerC++ ] );
-						colors.push( scope.colors[ indexPointerC++ ] );
-						colors.push( scope.colors[ indexPointerC ] );
-
-					}
-
-					if ( faceIndexU ) {
-
-						var faceIndexUi = parseInt( faceIndexU );
-						var indexPointerU = 2 * ( faceIndexUi > 0 ? faceIndexUi - 1 : faceIndexUi + scope.uvs.length / 2 );
-						var uvs = sgiu.uvs;
-						uvs.push( scope.uvs[ indexPointerU++ ] );
-						uvs.push( scope.uvs[ indexPointerU ] );
-
-					}
-					if ( faceIndexN ) {
-
-						var faceIndexNi = parseInt( faceIndexN );
-						var indexPointerN = 3 * ( faceIndexNi > 0 ? faceIndexNi - 1 : faceIndexNi + scope.normals.length / 3 );
-						var normals = sgiu.normals;
-						normals.push( scope.normals[ indexPointerN++ ] );
-						normals.push( scope.normals[ indexPointerN++ ] );
-						normals.push( scope.normals[ indexPointerN ] );
-
-					}
-				};
-
-				if ( this.useIndices ) {
-
-					var mappingName = faceIndexV + ( faceIndexU ? '_' + faceIndexU : '_n' ) + ( faceIndexN ? '_' + faceIndexN : '_n' );
-					var indicesPointer = sgiu.indexMappings[ mappingName ];
-					if ( Validator.isValid( indicesPointer ) ) {
-
-						this.doubleIndicesCount++;
-
-					} else {
-
-						indicesPointer = sgiu.vertices.length / 3;
-						updateRawObjectDescriptionInUse();
-						sgiu.indexMappings[ mappingName ] = indicesPointer;
-						sgiu.indexMappingsCount++;
-
-					}
-					sgiu.indices.push( indicesPointer );
-
-				} else {
-
-					updateRawObjectDescriptionInUse();
-
-				}
-				this.faceCount++;
-			};
-
-			/*
-			 * Support for lines with or without texture. First element in indexArray is the line identification
-			 * 0: "f vertex/uv		vertex/uv 		..."
-			 * 1: "f vertex			vertex 			..."
-			 */
-			RawMesh.prototype.processLines = function ( buffer, bufferPointer, slashCount ) {
-				var i = 1;
-				var length;
-				var bufferLength = bufferPointer - 1;
-
-				if ( bufferLength === slashCount * 2 ) {
-
-					for ( length = bufferLength - 2; i < length; i += 2 ) {
-
-						this.vertices.push( parseInt( buffer[ i ] ) );
-						this.uvs.push( parseInt( buffer[ i + 1 ] ) );
-
-					}
-
-				} else {
-
-					for ( length = bufferLength - 1; i < length; i ++ ) {
-
-						this.vertices.push( parseInt( buffer[ i ] ) );
-
-					}
-
-				}
-			};
-
-			/**
-			 * Clear any empty rawObjectDescription and calculate absolute vertex, normal and uv counts
-			 */
-			RawMesh.prototype.finalize = function () {
-				var rawObjectDescriptionsTemp = [];
-				var rawObjectDescription;
-				var absoluteVertexCount = 0;
-				var absoluteIndexMappingsCount = 0;
-				var absoluteIndexCount = 0;
-				var absoluteColorCount = 0;
-				var absoluteNormalCount = 0;
-				var absoluteUvCount = 0;
-				var indices;
-				for ( var name in this.subGroups ) {
-
-					rawObjectDescription = this.subGroups[ name ];
-					if ( rawObjectDescription.vertices.length > 0 ) {
-
-						indices = rawObjectDescription.indices;
-						if ( indices.length > 0 && absoluteIndexMappingsCount > 0 ) {
-
-							for ( var i in indices ) indices[ i ] = indices[ i ] + absoluteIndexMappingsCount;
-
-						}
-						rawObjectDescriptionsTemp.push( rawObjectDescription );
-						absoluteVertexCount += rawObjectDescription.vertices.length;
-						absoluteIndexMappingsCount += rawObjectDescription.indexMappingsCount;
-						absoluteIndexCount += rawObjectDescription.indices.length;
-						absoluteColorCount += rawObjectDescription.colors.length;
-						absoluteUvCount += rawObjectDescription.uvs.length;
-						absoluteNormalCount += rawObjectDescription.normals.length;
-
-					}
-				}
-
-				// do not continue if no result
-				var result = null;
-				if ( rawObjectDescriptionsTemp.length > 0 ) {
-
-					result = {
-						name: this.groupName !== '' ? this.groupName : this.objectName,
-						subGroups: rawObjectDescriptionsTemp,
-						absoluteVertexCount: absoluteVertexCount,
-						absoluteIndexCount: absoluteIndexCount,
-						absoluteColorCount: absoluteColorCount,
-						absoluteNormalCount: absoluteNormalCount,
-						absoluteUvCount: absoluteUvCount,
-						faceCount: this.faceCount,
-						doubleIndicesCount: this.doubleIndicesCount
-					};
-
-				}
-				return result;
-			};
-
-			RawMesh.prototype.createReport = function () {
-				var report = {
-					objectName: this.objectName,
-					groupName: this.groupName,
-					mtllibName: this.mtllibName,
-					vertexCount: this.vertices.length / 3,
-					normalCount: this.normals.length / 3,
-					uvCount: this.uvs.length / 2,
-					smoothingGroupCount: this.smoothingGroupCount,
-					mtlCount: this.mtlCount,
-					subGroups: this.subGroups.length
-				};
-
-				return report;
-			};
-
-			return RawMesh;
-		})();
-
-		/**
-		 * Descriptive information and data (vertices, normals, uvs) to passed on to mesh building function.
-		 * @class
-		 *
-		 * @param {string} objectName Name of the mesh
-		 * @param {string} groupName Name of the group
-		 * @param {string} materialName Name of the material
-		 * @param {number} smoothingGroup Normalized smoothingGroup (0: flat shading, 1: smooth shading)
-		 */
-		var RawMeshSubGroup = (function () {
-
-			function RawMeshSubGroup( objectName, groupName, materialName, smoothingGroup ) {
-				this.objectName = objectName;
-				this.groupName = groupName;
-				this.materialName = materialName;
-				this.smoothingGroup = smoothingGroup;
-				this._init();
-			}
-
-			RawMeshSubGroup.prototype._init = function () {
-				this.vertices = [];
-				this.indexMappingsCount = 0;
-				this.indexMappings = [];
-				this.indices = [];
-				this.colors = [];
-				this.uvs = [];
-				this.normals = [];
-			};
-
-			return RawMeshSubGroup;
-		})();
-
-		OBJLoader2.prototype._checkFiles = function ( resources ) {
-			var resource;
-			var result = {
-				mtl: null,
-				obj: null
-			};
-			for ( var index in resources ) {
-
-				resource = resources[ index ];
-				if ( ! Validator.isValid( resource.name ) ) continue;
-				if ( Validator.isValid( resource.content ) ) {
-
-					if ( resource.extension === 'OBJ' ) {
-
-						// fast-fail on bad type
-						if ( ! ( resource.content instanceof Uint8Array ) ) throw 'Provided content is not of type arraybuffer! Aborting...';
-						result.obj = resource;
-
-					} else if ( resource.extension === 'MTL' && Validator.isValid( resource.name ) ) {
-
-						if ( ! ( typeof( resource.content ) === 'string' || resource.content instanceof String ) ) throw 'Provided  content is not of type String! Aborting...';
-						result.mtl = resource;
-
-					} else if ( resource.extension === "ZIP" ) {
-						// ignore
-
-					} else {
-
-						throw 'Unidentified resource "' + resource.name + '": ' + resource.url;
-
-					}
-
-				} else {
-
-					// fast-fail on bad type
-					if ( ! ( typeof( resource.name ) === 'string' || resource.name instanceof String ) ) throw 'Provided file is not properly defined! Aborting...';
-					if ( resource.extension === 'OBJ' ) {
-
-						result.obj = resource;
-
-					} else if ( resource.extension === 'MTL' ) {
-
-						result.mtl = resource;
-
-					} else if ( resource.extension === "ZIP" ) {
-						// ignore
-
-					} else {
-
-						throw 'Unidentified resource "' + resource.name + '": ' + resource.url;
-
-					}
-				}
-			}
-
-			return result;
-		};
-
-		/**
-		 * Utility method for loading an mtl file according resource description.
-		 * @memberOf OBJLoader2
-		 *
-		 * @param {string} url URL to the file
-		 * @param {Object} content The file content as arraybuffer or text
-		 * @param {function} callbackOnLoad
-		 * @param {string} [crossOrigin] CORS value
-		 */
-		OBJLoader2.prototype.loadMtl = function ( url, content, callbackOnLoad, crossOrigin ) {
+		
+		OBJLoader2.prototype.loadMtl = function ( url, content, callbackOnLoad, crossOrigin, materialOptions ) {
 			var resource = new LoaderSupport.ResourceDescriptor( url, 'MTL' );
 			resource.setContent( content );
-			this._loadMtl( resource, callbackOnLoad, crossOrigin );
+			this._loadMtl( resource, callbackOnLoad, crossOrigin, materialOptions );
 		};
 
-		/**
-		 * Utility method for loading an mtl file according resource description.
-		 * @memberOf OBJLoader2
-		 *
-		 * @param {LoaderSupport.ResourceDescriptor} resource
-		 * @param {function} callbackOnLoad
-		 * @param {string} [crossOrigin] CORS value
-		 */
-		OBJLoader2.prototype._loadMtl = function ( resource, callbackOnLoad, crossOrigin ) {
+
+		OBJLoader2.prototype._loadMtl = function ( resource, callbackOnLoad, crossOrigin, materialOptions ) {
 			if ( MTLLoader === undefined ) console.error( '"MTLLoader" is not available. "OBJLoader2" requires it for loading MTL files.' );
 			if ( Validator.isValid( resource ) ) this.logger.logTimeStart( 'Loading MTL: ' + resource.name );
 
@@ -16130,12 +15292,13 @@ var Three = (function (exports) {
 				}
 
 				if ( Validator.isValid( resource ) ) scope.logger.logTimeEnd( 'Loading MTL: ' + resource.name );
-				callbackOnLoad( materials );
+				callbackOnLoad( materials, materialCreator );
 			};
 
-			var mtlLoader = new MTLLoader();
+			var mtlLoader = new MTLLoader( this.manager );
 			crossOrigin = Validator.verifyInput( crossOrigin, 'anonymous' );
 			mtlLoader.setCrossOrigin( crossOrigin );
+			if ( Validator.isValid( materialOptions ) ) mtlLoader.setMaterialOptions( materialOptions );
 
 			// fast-fail
 			if ( ! Validator.isValid( resource ) || ( ! Validator.isValid( resource.content ) && ! Validator.isValid( resource.url ) ) ) {
@@ -16153,7 +15316,7 @@ var Three = (function (exports) {
 
 					var onError = function ( event ) {
 						var output = 'Error occurred while downloading "' + resource.url + '"';
-						scope.logger.logError( output + ': ' + event );
+						scope.logger.logError( output, event instanceof ProgressEvent ? [ 'Status: ' + event.currentTarget.statusText ] : null );
 						throw output;
 					};
 

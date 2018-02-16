@@ -1,12 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * Based on Nvidia Cg tutorial
-	 */
-
 	var FresnelShader = {
 
 		uniforms: {

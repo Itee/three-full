@@ -1,13 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * Luminosity
-	 * http://en.wikipedia.org/wiki/Luminosity
-	 */
-
 	var LuminosityShader = {
 
 		uniforms: {

@@ -1,13 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author egraether / http://egraether.com/
-	 * @author zz85 / http://www.lab4games.net/zz85/blog
-	 */
-
 	function Vector2( x, y ) {
 
 		this.x = x || 0;
@@ -134,7 +127,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -177,7 +170,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -465,7 +458,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector2: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector2: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -491,15 +484,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author zz85 / https://github.com/zz85 | https://www.lab4games.net/zz85/blog
-	 *
-	 * Edge Detection Shader using Frei-Chen filter
-	 * Based on http://rastergrid.com/blog/2011/01/frei-chen-edge-detector
-	 *
-	 * aspect: vec2 of (1/width, 1/height)
-	 */
 
 	var FreiChenShader = {
 
@@ -563,7 +547,7 @@ var Three = (function (exports) {
 				"float cnv[9];",
 				"vec3 sample;",
 
-				/* fetch the 3x3 neighbourhood and use the RGB vector's length as intensity value */
+				
 				"for (float i=0.0; i<3.0; i++) {",
 					"for (float j=0.0; j<3.0; j++) {",
 						"sample = texture2D(tDiffuse, vUv + texel * vec2(i-1.0,j-1.0) ).rgb;",
@@ -571,7 +555,7 @@ var Three = (function (exports) {
 					"}",
 				"}",
 
-				/* calculate the convolution values for all the masks */
+				
 				"for (int i=0; i<9; i++) {",
 					"float dp3 = dot(G[i][0], I[0]) + dot(G[i][1], I[1]) + dot(G[i][2], I[2]);",
 					"cnv[i] = dp3 * dp3;",

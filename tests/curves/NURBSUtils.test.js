@@ -1,14 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Vector4( x, y, z, w ) {
 
 		this.x = x || 0;
@@ -127,7 +119,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -178,7 +170,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector4: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector4: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -613,7 +605,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector4: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector4: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -627,11 +619,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	var _Math = {
 
@@ -650,7 +637,7 @@ var Three = (function (exports) {
 
 			}
 
-			return function () {
+			return function generateUUID() {
 
 				var d0 = Math.random() * 0xffffffff | 0;
 				var d1 = Math.random() * 0xffffffff | 0;
@@ -776,19 +763,6 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author jordi_ros / http://plattsoft.com
-	 * @author D1plo1d / http://github.com/D1plo1d
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author timknip / http://www.floorplanner.com/
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Matrix4() {
 
 		this.elements = [
@@ -802,7 +776,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix4: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix4: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -930,7 +904,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				console.error( 'THREE.Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
+				console.error( 'Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -1150,7 +1124,7 @@ var Three = (function (exports) {
 
 			if ( n !== undefined ) {
 
-				console.warn( 'THREE.Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
+				console.warn( 'Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
 				return this.multiplyMatrices( m, n );
 
 			}
@@ -1341,7 +1315,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix4: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix4: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -1594,7 +1568,7 @@ var Three = (function (exports) {
 
 			if ( far === undefined ) {
 
-				console.warn( 'THREE.Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
+				console.warn( 'Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
 
 			}
 
@@ -1697,13 +1671,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Quaternion( x, y, z, w ) {
 
@@ -1896,7 +1863,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				throw new Error( 'THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+				throw new Error( 'Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -2093,7 +2060,9 @@ var Three = (function (exports) {
 
 		inverse: function () {
 
-			return this.conjugate().normalize();
+			// quaternion is assumed to have unit length
+
+			return this.conjugate();
 
 		},
 
@@ -2159,7 +2128,7 @@ var Three = (function (exports) {
 
 			if ( p !== undefined ) {
 
-				console.warn( 'THREE.Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
+				console.warn( 'Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
 				return this.multiplyQuaternions( q, p );
 
 			}
@@ -2304,15 +2273,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author kile / http://kile.stravaganza.org/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -2417,7 +2377,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -2464,7 +2424,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -2501,7 +2461,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
 				return this.multiplyVectors( v, w );
 
 			}
@@ -2542,7 +2502,7 @@ var Three = (function (exports) {
 
 				if ( ! ( euler && euler.isEuler ) ) {
 
-					console.error( 'THREE.Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+					console.error( 'Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 				}
 
@@ -2642,7 +2602,7 @@ var Three = (function (exports) {
 
 		transformDirection: function ( m ) {
 
-			// input: THREE.Matrix4 affine matrix
+			// input: Matrix4 affine matrix
 			// vector interpreted as a direction
 
 			var x = this.x, y = this.y, z = this.z;
@@ -2836,7 +2796,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
 				return this.crossVectors( v, w );
 
 			}
@@ -3014,7 +2974,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector3: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector3: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -3028,30 +2988,9 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author renej
-	 * NURBS utils
-	 *
-	 * See NURBSCurve and NURBSSurface.
-	 *
-	 **/
-
-
-	/**************************************************************
-	 *	NURBS Utils
-	 **************************************************************/
-
 	var NURBSUtils = {
 
-		/*
-		Finds knot vector span.
-
-		p : degree
-		u : parametric value
-		U : knot vector
 		
-		returns the span
-		*/
 		findSpan: function( p,  u,  U ) {
 
 			var n = U.length - p - 1;
@@ -3093,16 +3032,7 @@ var Three = (function (exports) {
 		},
 	    
 			
-		/*
-		Calculate basis functions. See The NURBS Book, page 70, algorithm A2.2
-	   
-		span : span in which u lies
-		u    : parametric point
-		p    : degree
-		U    : knot vector
 		
-		returns array[p+1] with basis functions values.
-		*/
 		calcBasisFunctions: function( span, u, p, U ) {
 
 			var N = [];
@@ -3136,16 +3066,7 @@ var Three = (function (exports) {
 		},
 
 
-		/*
-		Calculate B-Spline curve points. See The NURBS Book, page 82, algorithm A3.1.
-	 
-		p : degree of B-Spline
-		U : knot vector
-		P : control points (x, y, z, w)
-		u : parametric point
-
-		returns point for given u
-		*/
+		
 		calcBSplinePoint: function( p, U, P, u ) {
 
 			var span = this.findSpan( p, u, U );
@@ -3169,17 +3090,7 @@ var Three = (function (exports) {
 		},
 
 
-		/*
-		Calculate basis functions derivatives. See The NURBS Book, page 72, algorithm A2.3.
-
-		span : span in which u lies
-		u    : parametric point
-		p    : degree
-		n    : number of derivatives to calculate
-		U    : knot vector
-
-		returns array[n+1][p+1] with basis functions derivatives
-		*/
+		
 		calcBasisFunctionDerivatives: function( span,  u,  p,  n,  U ) {
 
 			var zeroArr = [];
@@ -3299,17 +3210,7 @@ var Three = (function (exports) {
 		},
 
 
-		/*
-			Calculate derivatives of a B-Spline. See The NURBS Book, page 93, algorithm A3.2.
-
-			p  : degree
-			U  : knot vector
-			P  : control points
-			u  : Parametric points
-			nd : number of derivatives
-
-			returns array[d+1] with derivatives
-			*/
+		
 		calcBSplineDerivatives: function( p,  U,  P,  u,  nd ) {
 
 			var du = nd < p ? nd : p;
@@ -3355,11 +3256,7 @@ var Three = (function (exports) {
 		},
 
 
-		/*
-		Calculate "K over I"
-
-		returns k!/(i!(k-i)!)
-		*/
+		
 		calcKoverI: function( k, i ) {
 
 			var nom = 1;
@@ -3389,13 +3286,7 @@ var Three = (function (exports) {
 		},
 
 
-		/*
-		Calculate derivatives (0-nd) of rational curve. See The NURBS Book, page 127, algorithm A4.2.
-
-		Pders : result of function calcBSplineDerivatives
-
-		returns array with derivatives for rational curve.
-		*/
+		
 		calcRationalCurveDerivatives: function ( Pders ) {
 
 			var nd = Pders.length;
@@ -3431,17 +3322,7 @@ var Three = (function (exports) {
 		},
 
 
-		/*
-		Calculate NURBS curve derivatives. See The NURBS Book, page 127, algorithm A4.2.
-
-		p  : degree
-		U  : knot vector
-		P  : control points in homogeneous space
-		u  : parametric points
-		nd : number of derivatives
-
-		returns array with derivatives.
-		*/
+		
 		calcNURBSDerivatives: function( p,  U,  P,  u,  nd ) {
 
 			var Pders = this.calcBSplineDerivatives( p, U, P, u, nd );
@@ -3450,16 +3331,7 @@ var Three = (function (exports) {
 		},
 
 
-		/*
-		Calculate rational B-Spline surface point. See The NURBS Book, page 134, algorithm A4.3.
-	 
-		p1, p2 : degrees of B-Spline surface
-		U1, U2 : knot vectors
-		P      : control points (x, y, z, w)
-		u, v   : parametric values
-
-		returns point for given (u, v)
-		*/
+		
 		calcSurfacePoint: function( p, q, U, V, P, u, v ) {
 
 			var uspan = this.findSpan( p, u, U );

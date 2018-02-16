@@ -1,13 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Ref: https://en.wikipedia.org/wiki/Cylindrical_coordinate_system
-	 *
-	 */
-
 	function Cylindrical( radius, theta, y ) {
 
 		this.radius = ( radius !== undefined ) ? radius : 1.0; // distance from the origin to a point in the x-z plane
