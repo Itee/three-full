@@ -321,7 +321,7 @@ module.exports = {
             exportsOverride: [ 'hilbert3D' ],
 		},
         ImmediateRenderObject: {
-            outputOverride: 'object/ImmediateRenderObject.js'
+            outputOverride: 'objects/ImmediateRenderObject.js'
         },
         ImprovedNoise: {
 			exportsOverride: [ 'ImprovedNoise' ],
