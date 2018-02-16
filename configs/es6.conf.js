@@ -293,6 +293,7 @@ module.exports = {
             exportsOverride: [ 'hilbert3D' ],
 		},
 		ImprovedNoise: {
+			exportsOverride: [ 'ImprovedNoise' ],
 			outputOverride: 'misc/ImprovedNoise.js'
 		},
 		KMZLoader: {
