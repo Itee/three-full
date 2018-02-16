@@ -696,12 +696,17 @@ module.exports = {
 				'_Math'
 			]
 		},
-		Water2: {
-			imports: [
-				'UniformsUtils',
-				'UniformsLib'
-			]
-		},
+        Water2: {
+            imports:         [
+                'UniformsUtils',
+                'UniformsLib'
+            ],
+            replacements:    [
+                [ /Water/g, 'Water2' ],
+                [ 'Water2 = function (', 'function Water2(' ],
+            ],
+            exportsOverride: [ 'Water2' ]
+        },
 		WebGLDeferredRenderer: {
 			imports: [
 				'CopyShader',
