@@ -1,7 +1,6 @@
-/**
- * @author [Tristan Valcke]{@link https://github.com/Itee}
- * @author sunag / http://www.sunag.com.br/
- */
+
+
+
 
 var NodeLib = {
 
@@ -65,5 +64,6 @@ var NodeLib = {
 	}
 
 };
+
 
 export { NodeLib }

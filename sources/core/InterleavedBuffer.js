@@ -1,8 +1,8 @@
-import { _Math } from '../math/Math.js';
+import { _Math } from '../math/Math.js'
 
-/**
- * @author benaadams / https://twitter.com/ben_a_adams
- */
+
+
+
 
 function InterleavedBuffer( array, stride ) {
 
@@ -39,7 +39,7 @@ Object.assign( InterleavedBuffer.prototype, {
 
 		if ( Array.isArray( array ) ) {
 
-			throw new TypeError( 'THREE.BufferAttribute: array should be a Typed Array.' );
+			throw new TypeError( 'BufferAttribute: array should be a Typed Array.' );
 
 		}
 
@@ -109,4 +109,6 @@ Object.assign( InterleavedBuffer.prototype, {
 } );
 
 
-export { InterleavedBuffer };
+;
+
+export { InterleavedBuffer }

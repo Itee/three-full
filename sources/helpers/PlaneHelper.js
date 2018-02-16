@@ -1,14 +1,20 @@
-/**
- * @author WestLangley / http://github.com/WestLangley
- */
+import { Line } from '../objects/Line.js'
+import { Mesh } from '../objects/Mesh.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Object3D } from '../core/Object3D.js'
 
-import { Line } from '../objects/Line.js';
-import { Mesh } from '../objects/Mesh.js';
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { Object3D } from '../core/Object3D.js';
+
+
+
+
+
+
+
+
+
 
 function PlaneHelper( plane, size, hex ) {
 
@@ -57,4 +63,6 @@ PlaneHelper.prototype.updateMatrixWorld = function ( force ) {
 
 };
 
-export { PlaneHelper };
+;
+
+export { PlaneHelper }

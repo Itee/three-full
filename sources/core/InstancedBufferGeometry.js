@@ -1,8 +1,8 @@
-import { BufferGeometry } from './BufferGeometry.js';
+import { BufferGeometry } from './BufferGeometry.js'
 
-/**
- * @author benaadams / https://twitter.com/ben_a_adams
- */
+
+
+
 
 function InstancedBufferGeometry() {
 
@@ -37,4 +37,6 @@ InstancedBufferGeometry.prototype = Object.assign( Object.create( BufferGeometry
 
 } );
 
-export { InstancedBufferGeometry };
+;
+
+export { InstancedBufferGeometry }

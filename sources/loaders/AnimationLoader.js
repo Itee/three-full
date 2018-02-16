@@ -1,10 +1,12 @@
-import { AnimationClip } from '../animation/AnimationClip.js';
-import { FileLoader } from './FileLoader.js';
-import { DefaultLoadingManager } from './LoadingManager.js';
+import { AnimationClip } from '../animation/AnimationClip.js'
+import { FileLoader } from './FileLoader.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author bhouston / http://clara.io/
- */
+
+
+
+
+
 
 function AnimationLoader( manager ) {
 
@@ -46,4 +48,6 @@ Object.assign( AnimationLoader.prototype, {
 } );
 
 
-export { AnimationLoader };
+;
+
+export { AnimationLoader }

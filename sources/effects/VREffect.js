@@ -3,15 +3,7 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { Quaternion } from '../math/Quaternion.js'
 
-/**
- * @author dmarcos / https://github.com/dmarcos
- * @author mrdoob / http://mrdoob.com
- *
- * WebVR Spec: http://mozvr.github.io/webvr-spec/webvr.html
- *
- * Firefox: http://mozvr.com/downloads/
- * Chromium: https://webvr.info/get-chrome
- */
+
 
 var VREffect = function ( renderer, onError ) {
 

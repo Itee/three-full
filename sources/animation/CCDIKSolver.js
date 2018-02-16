@@ -1,8 +1,8 @@
 import { Object3D } from '../core/Object3D.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Vector3 } from '../math/Vector3.js'
-import { SphereBufferGeometry } from '../geometries/Geometries.js'
-import { MeshBasicMaterial } from '../materials/Materials.js'
+import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { Color } from '../math/Color.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
@@ -11,29 +11,7 @@ import { Mesh } from '../objects/Mesh.js'
 import { Line } from '../objects/Line.js'
 import { Matrix4 } from '../math/Matrix4.js'
 
-/**
- * @author takahiro / https://github.com/takahirox
- *
- * CCD Algorithm
- *  https://sites.google.com/site/auraliusproject/ccd-algorithm
- *
- * mesh.geometry needs to have iks array.
- *
- * // ik parameter example
- * //
- * // target, effector, index in links are bone index in skeleton.
- * // the bones relation should be
- * // <-- parent                                  child -->
- * // links[ n ], links[ n - 1 ], ..., links[ 0 ], effector
- * ik = {
- *	target: 1,
- *	effector: 2,
- *	links: [ { index: 5, limitation: new Vector3( 1, 0, 0 ) }, { index: 4, enabled: false }, { index : 3 } ],
- *	iteration: 10,
- *	minAngle: 0.0,
- *	maxAngle: 1.0,
- * };
- */
+
 
 var CCDIKSolver = function ( mesh ) {
 
@@ -82,10 +60,7 @@ CCDIKSolver.prototype = {
 
 	},
 
-	/*
-	 * save the bone matrices before solving IK.
-	 * they're used for generating VMD and VPD.
-	 */
+	
 	_saveOriginalBonesInfo: function () {
 
 		var bones = this.mesh.skeleton.bones;

@@ -1,22 +1,23 @@
-/**
- * @author thespite / http://clicktorelease.com/
- */
+import { Cache } from './Cache.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-import { Cache } from './Cache.js';
-import { DefaultLoadingManager } from './LoadingManager.js';
+
+
+
+
 
 
 function ImageBitmapLoader( manager ) {
 
 	if ( typeof createImageBitmap === 'undefined' ) {
 
-		console.warn( 'THREE.ImageBitmapLoader: createImageBitmap() not supported.' );
+		console.warn( 'ImageBitmapLoader: createImageBitmap() not supported.' );
 
 	}
 
 	if ( typeof fetch === 'undefined' ) {
 
-		console.warn( 'THREE.ImageBitmapLoader: fetch() not supported.' );
+		console.warn( 'ImageBitmapLoader: fetch() not supported.' );
 
 	}
 
@@ -90,7 +91,7 @@ ImageBitmapLoader.prototype = {
 
 	},
 
-	setCrossOrigin: function ( /* value */ ) {
+	setCrossOrigin: function (  ) {
 
 		return this;
 
@@ -105,4 +106,6 @@ ImageBitmapLoader.prototype = {
 
 };
 
-export { ImageBitmapLoader };
+;
+
+export { ImageBitmapLoader }

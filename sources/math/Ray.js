@@ -1,8 +1,8 @@
-import { Vector3 } from './Vector3.js';
+import { Vector3 } from './Vector3.js'
 
-/**
- * @author bhouston / http://clara.io
- */
+
+
+
 
 function Ray( origin, direction ) {
 
@@ -531,4 +531,6 @@ Object.assign( Ray.prototype, {
 } );
 
 
-export { Ray };
+;
+
+export { Ray }

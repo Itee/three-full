@@ -1,10 +1,8 @@
-import { TempNode } from '../../nodes/TempNode.js'
+import { TempNode } from '../TempNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var ColorAdjustmentNode = function( rgb, adjustment, method ) {
+
+var ColorAdjustmentNode = function ( rgb, adjustment, method ) {
 
 	TempNode.call( this, 'v3' );
 
@@ -23,8 +21,9 @@ ColorAdjustmentNode.CONTRAST = 'contrast';
 
 ColorAdjustmentNode.prototype = Object.create( TempNode.prototype );
 ColorAdjustmentNode.prototype.constructor = ColorAdjustmentNode;
+ColorAdjustmentNode.prototype.nodeType = "ColorAdjustment";
 
-ColorAdjustmentNode.prototype.generate = function( builder, output ) {
+ColorAdjustmentNode.prototype.generate = function ( builder, output ) {
 
 	var rgb = this.rgb.build( builder, 'v3' );
 	var adjustment = this.adjustment.build( builder, 'fv1' );
@@ -68,6 +67,24 @@ ColorAdjustmentNode.prototype.generate = function( builder, output ) {
 	builder.include( name );
 
 	return builder.format( name + '(' + rgb + ',' + adjustment + ')', this.getType( builder ), output );
+
+};
+
+ColorAdjustmentNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.rgb = this.rgb.toJSON( meta ).uuid;
+		data.adjustment = this.adjustment.toJSON( meta ).uuid;
+		data.method = this.method;
+
+	}
+
+	return data;
 
 };
 

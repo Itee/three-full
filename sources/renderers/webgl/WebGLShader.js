@@ -1,6 +1,6 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 function addLineNumbers( string ) {
 
@@ -25,13 +25,13 @@ function WebGLShader( gl, type, string ) {
 
 	if ( gl.getShaderParameter( shader, gl.COMPILE_STATUS ) === false ) {
 
-		console.error( 'THREE.WebGLShader: Shader couldn\'t compile.' );
+		console.error( 'WebGLShader: Shader couldn\'t compile.' );
 
 	}
 
 	if ( gl.getShaderInfoLog( shader ) !== '' ) {
 
-		console.warn( 'THREE.WebGLShader: gl.getShaderInfoLog()', type === gl.VERTEX_SHADER ? 'vertex' : 'fragment', gl.getShaderInfoLog( shader ), addLineNumbers( string ) );
+		console.warn( 'WebGLShader: gl.getShaderInfoLog()', type === gl.VERTEX_SHADER ? 'vertex' : 'fragment', gl.getShaderInfoLog( shader ), addLineNumbers( string ) );
 
 	}
 
@@ -43,4 +43,6 @@ function WebGLShader( gl, type, string ) {
 }
 
 
-export { WebGLShader };
+;
+
+export { WebGLShader }

@@ -1,14 +1,8 @@
-import { _Math } from './Math.js';
+import { _Math } from './Math.js'
 
-/**
- * @author bhouston / http://clara.io
- * @author WestLangley / http://github.com/WestLangley
- *
- * Ref: https://en.wikipedia.org/wiki/Spherical_coordinate_system
- *
- * The poles (phi) are at the positive and negative y axis.
- * The equator starts at positive z.
- */
+
+
+
 
 function Spherical( radius, phi, theta ) {
 
@@ -81,4 +75,6 @@ Object.assign( Spherical.prototype, {
 } );
 
 
-export { Spherical };
+;
+
+export { Spherical }

@@ -5,24 +5,25 @@ import {
 	SubtractiveBlending,
 	MultiplyBlending,
 	CustomBlending,
-
 	FaceColors,
 	VertexColors,
-
 	DoubleSide,
 	BackSide,
-
 	MirroredRepeatWrapping,
 	RepeatWrapping
-} from '../constants.js';
-import { _Math } from '../math/Math.js';
-import { MaterialLoader } from './MaterialLoader.js';
-import { TextureLoader } from './TextureLoader.js';
-import { Color } from '../math/Color.js';
+} from '../constants.js'
+import { _Math } from '../math/Math.js'
+import { MaterialLoader } from './MaterialLoader.js'
+import { TextureLoader } from './TextureLoader.js'
+import { Color } from '../math/Color.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- */
+
+
+
+
+
+
+
 
 function Loader() {
 
@@ -187,7 +188,7 @@ Object.assign( Loader.prototype, {
 						break;
 					case 'colorAmbient':
 					case 'mapAmbient':
-						console.warn( 'THREE.Loader.createMaterial:', name, 'is no longer supported.' );
+						console.warn( 'Loader.createMaterial:', name, 'is no longer supported.' );
 						break;
 					case 'colorDiffuse':
 						json.color = color.fromArray( value ).getHex();
@@ -299,7 +300,7 @@ Object.assign( Loader.prototype, {
 						json.side = DoubleSide;
 						break;
 					case 'transparency':
-						console.warn( 'THREE.Loader.createMaterial: transparency has been renamed to opacity' );
+						console.warn( 'Loader.createMaterial: transparency has been renamed to opacity' );
 						json.opacity = value;
 						break;
 					case 'depthTest':
@@ -317,7 +318,7 @@ Object.assign( Loader.prototype, {
 						if ( value === 'face' ) json.vertexColors = FaceColors;
 						break;
 					default:
-						console.error( 'THREE.Loader.createMaterial: Unsupported', name, value );
+						console.error( 'Loader.createMaterial: Unsupported', name, value );
 						break;
 
 				}
@@ -339,4 +340,6 @@ Object.assign( Loader.prototype, {
 
 } );
 
-export { Loader };
+;
+
+export { Loader }

@@ -1,23 +1,26 @@
-import { TempNode } from '../../nodes/TempNode.js'
+import { TempNode } from '../TempNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var LightNode = function() {
+
+var LightNode = function ( scope ) {
 
 	TempNode.call( this, 'v3', { shared: false } );
 
+	this.scope = scope || LightNode.TOTAL;
+
 };
+
+LightNode.TOTAL = 'total';
 
 LightNode.prototype = Object.create( TempNode.prototype );
 LightNode.prototype.constructor = LightNode;
+LightNode.prototype.nodeType = "Light";
 
-LightNode.prototype.generate = function( builder, output ) {
+LightNode.prototype.generate = function ( builder, output ) {
 
 	if ( builder.isCache( 'light' ) ) {
 
-		return builder.format( 'reflectedLight.directDiffuse', this.getType( builder ), output )
+		return builder.format( 'reflectedLight.directDiffuse', this.getType( builder ), output );
 
 	} else {
 
@@ -26,6 +29,22 @@ LightNode.prototype.generate = function( builder, output ) {
 		return builder.format( 'vec3( 0.0 )', this.getType( builder ), output );
 
 	}
+
+};
+
+LightNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.scope = this.scope;
+
+	}
+
+	return data;
 
 };
 

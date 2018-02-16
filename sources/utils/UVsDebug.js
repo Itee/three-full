@@ -2,17 +2,7 @@ import { Vector2 } from '../math/Vector2.js'
 import { Geometry } from '../core/Geometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 
-/* 
- * @author zz85 / http://github.com/zz85
- * @author WestLangley / http://github.com/WestLangley
- *
- * tool for "unwrapping" and debugging three.js 
- * geometries UV mapping
- *
- * Sample usage:
- *	document.body.appendChild( UVsDebug( new SphereGeometry( 10, 10, 10, 10 ) );
- *
- */
+
  
 var UVsDebug = function( geometry, size ) {
 

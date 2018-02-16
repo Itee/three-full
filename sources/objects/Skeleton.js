@@ -1,11 +1,8 @@
-import { Matrix4 } from '../math/Matrix4.js';
+import { Matrix4 } from '../math/Matrix4.js'
 
-/**
- * @author mikael emtinger / http://gomo.se/
- * @author alteredq / http://alteredqualia.com/
- * @author michael guerrero / http://realitymeltdown.com
- * @author ikerr / http://verold.com
- */
+
+
+
 
 function Skeleton( bones, boneInverses ) {
 
@@ -30,7 +27,7 @@ function Skeleton( bones, boneInverses ) {
 
 		} else {
 
-			console.warn( 'THREE.Skeleton boneInverses is the wrong length.' );
+			console.warn( 'Skeleton boneInverses is the wrong length.' );
 
 			this.boneInverses = [];
 
@@ -152,9 +149,29 @@ Object.assign( Skeleton.prototype, {
 
 		return new Skeleton( this.bones, this.boneInverses );
 
+	},
+
+	getBoneByName: function ( name ) {
+
+		for ( var i = 0, il = this.bones.length; i < il; i ++ ) {
+
+			var bone = this.bones[ i ];
+
+			if ( bone.name === name ) {
+
+				return bone;
+
+			}
+
+		}
+
+		return undefined;
+
 	}
 
 } );
 
 
-export { Skeleton };
+;
+
+export { Skeleton }

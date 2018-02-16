@@ -1,8 +1,8 @@
-import { Object3D } from '../core/Object3D.js';
+import { Object3D } from '../core/Object3D.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 function Scene() {
 
@@ -52,4 +52,6 @@ Scene.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 
 
-export { Scene };
+;
+
+export { Scene }

@@ -1,20 +1,16 @@
-import { FileLoader } from '../../loaders/FileLoader.js'
+import { FileLoader } from '../FileLoader.js'
 import { Matrix4 } from '../../math/Matrix4.js'
 import { Color } from '../../math/Color.js'
 import { DirectionalLight } from '../../lights/DirectionalLight.js'
 import { PointLight } from '../../lights/PointLight.js'
 import { SpotLight } from '../../lights/SpotLight.js'
 import { AmbientLight } from '../../lights/AmbientLight.js'
-import {
-	MeshPhongMaterial,
-	RawShaderMaterial,
-	MeshBasicMaterial,
-	MeshLambertMaterial
-} from '../../materials/Materials.js'
+import { MeshPhongMaterial } from '../../materials/MeshPhongMaterial.js'
+import { RawShaderMaterial } from '../../materials/RawShaderMaterial.js'
 import { InterleavedBuffer } from '../../core/InterleavedBuffer.js'
 import { InterleavedBufferAttribute } from '../../core/InterleavedBufferAttribute.js'
 import { BufferAttribute } from '../../core/BufferAttribute.js'
-import { TextureLoader } from '../../loaders/TextureLoader.js'
+import { TextureLoader } from '../TextureLoader.js'
 import { Group } from '../../objects/Group.js'
 import { BufferGeometry } from '../../core/BufferGeometry.js'
 import { Mesh } from '../../objects/Mesh.js'
@@ -78,24 +74,22 @@ import {
 	InterpolateDiscrete,
 	InterpolateLinear
 } from '../../constants.js'
-import { DefaultLoadingManager } from '../../loaders/LoadingManager.js'
-import { Loader } from '../../loaders/Loader.js'
+import { DefaultLoadingManager } from '../LoadingManager.js'
+import { Loader } from '../Loader.js'
 import { Matrix3 } from '../../math/Matrix3.js'
 import { Vector2 } from '../../math/Vector2.js'
 import { Vector3 } from '../../math/Vector3.js'
 import { Vector4 } from '../../math/Vector4.js'
 import { UniformsUtils } from '../../renderers/shaders/UniformsUtils.js'
+import { MeshBasicMaterial } from '../../materials/MeshBasicMaterial.js'
+import { MeshLambertMaterial } from '../../materials/MeshLambertMaterial.js'
 import { QuaternionKeyframeTrack } from '../../animation/tracks/QuaternionKeyframeTrack.js'
 import { VectorKeyframeTrack } from '../../animation/tracks/VectorKeyframeTrack.js'
 import { AnimationUtils } from '../../animation/AnimationUtils.js'
-import { LoaderUtils } from '../../loaders/LoaderUtils.js'
+import { LoaderUtils } from '../LoaderUtils.js'
+import { _Math } from '../../math/Math.js'
 
-/**
- * @author Rich Tibbett / https://github.com/richtr
- * @author mrdoob / http://mrdoob.com/
- * @author Tony Parisi / http://www.tonyparisi.com/
- * @author Takahiro / https://github.com/takahirox
- */
+
 
 var LegacyGLTFLoader = ( function () {
 
@@ -195,7 +189,7 @@ var LegacyGLTFLoader = ( function () {
 
 	};
 
-	/* GLTFREGISTRY */
+	
 
 	function GLTFRegistry() {
 
@@ -247,7 +241,7 @@ var LegacyGLTFLoader = ( function () {
 
 	}
 
-	/* GLTFSHADERS */
+	
 
 	LegacyGLTFLoader.Shaders = {
 
@@ -259,7 +253,7 @@ var LegacyGLTFLoader = ( function () {
 
 	};
 
-	/* GLTFSHADER */
+	
 
 	function GLTFShader( targetNode, allNodes ) {
 
@@ -363,7 +357,7 @@ var LegacyGLTFLoader = ( function () {
 	};
 
 
-	/* ANIMATION */
+	
 
 	LegacyGLTFLoader.Animations = {
 
@@ -375,16 +369,16 @@ var LegacyGLTFLoader = ( function () {
 
 	};
 
-	/*********************************/
-	/********** EXTENSIONS ***********/
-	/*********************************/
+	
+	
+	
 
 	var EXTENSIONS = {
 		KHR_BINARY_GLTF: 'KHR_binary_glTF',
 		KHR_MATERIALS_COMMON: 'KHR_materials_common'
 	};
 
-	/* MATERIALS COMMON EXTENSION */
+	
 
 	function GLTFMaterialsCommonExtension( json ) {
 
@@ -435,7 +429,7 @@ var LegacyGLTFLoader = ( function () {
 
 	}
 
-	/* BINARY EXTENSION */
+	
 
 	var BINARY_EXTENSION_BUFFER_NAME = 'binary_glTF';
 
@@ -496,11 +490,11 @@ var LegacyGLTFLoader = ( function () {
 
 	};
 
-	/*********************************/
-	/********** INTERNALS ************/
-	/*********************************/
+	
+	
+	
 
-	/* CONSTANTS */
+	
 
 	var WEBGL_CONSTANTS = {
 		FLOAT: 5126,
@@ -644,7 +638,7 @@ var LegacyGLTFLoader = ( function () {
 		32926: 'SAMPLE_ALPHA_TO_COVERAGE'
 	};
 
-	/* UTILITY FUNCTIONS */
+	
 
 	function _each( object, callback, thisObj ) {
 
@@ -902,7 +896,7 @@ var LegacyGLTFLoader = ( function () {
 
 	};
 
-	/* GLTF PARSER */
+	
 
 	function GLTFParser( json, extensions, options ) {
 
@@ -1829,7 +1823,7 @@ var LegacyGLTFLoader = ( function () {
 				// aspectRatio = xfov / yfov
 				var xfov = yfov * aspectRatio;
 
-				var _camera = new PerspectiveCamera( Math.radToDeg( xfov ), aspectRatio, camera.perspective.znear || 1, camera.perspective.zfar || 2e6 );
+				var _camera = new PerspectiveCamera( _Math.radToDeg( xfov ), aspectRatio, camera.perspective.znear || 1, camera.perspective.zfar || 2e6 );
 				if ( camera.name !== undefined ) _camera.name = camera.name;
 
 				if ( camera.extras ) _camera.userData = camera.extras;

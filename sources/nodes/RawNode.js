@@ -1,10 +1,8 @@
-import { GLNode } from '../nodes/GLNode.js'
+import { GLNode } from './GLNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var RawNode = function( value ) {
+
+var RawNode = function ( value ) {
 
 	GLNode.call( this, 'v4' );
 
@@ -14,8 +12,9 @@ var RawNode = function( value ) {
 
 RawNode.prototype = Object.create( GLNode.prototype );
 RawNode.prototype.constructor = RawNode;
+RawNode.prototype.nodeType = "Raw";
 
-GLNode.prototype.generate = function( builder ) {
+RawNode.prototype.generate = function ( builder ) {
 
 	var material = builder.material;
 
@@ -34,6 +33,22 @@ GLNode.prototype.generate = function( builder ) {
 	}
 
 	return code;
+
+};
+
+RawNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.value = this.value.toJSON( meta ).uuid;
+
+	}
+
+	return data;
 
 };
 

@@ -1,17 +1,6 @@
 import { Vector2 } from '../math/Vector2.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- *
- * Screen-space ambient occlusion shader
- * - ported from
- *   SSAO GLSL shader v1.2
- *   assembled by Martins Upitis (martinsh) (http://devlog-martinsh.blogspot.com)
- *   original technique is made by ArKano22 (http://www.gamedev.net/topic/550699-ssao-no-halo-artifacts/)
- * - modifications
- * - modified to use RGBA packed depth texture (use clear color 1,1,1,1 for depth pass)
- * - refactoring and optimizations
- */
+
 
 var SSAOShader = {
 

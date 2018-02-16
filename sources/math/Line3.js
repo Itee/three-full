@@ -1,9 +1,10 @@
-import { Vector3 } from './Vector3.js';
-import { _Math } from './Math.js';
+import { Vector3 } from './Vector3.js'
+import { _Math } from './Math.js'
 
-/**
- * @author bhouston / http://clara.io
- */
+
+
+
+
 
 function Line3( start, end ) {
 
@@ -127,4 +128,6 @@ Object.assign( Line3.prototype, {
 } );
 
 
-export { Line3 };
+;
+
+export { Line3 }

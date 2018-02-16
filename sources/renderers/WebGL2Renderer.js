@@ -1,16 +1,20 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+import { REVISION } from '../constants.js'
+import { WebGLExtensions } from './webgl/WebGLExtensions.js'
+import { WebGLState } from './webgl/WebGLState.js'
+import { Color } from '../math/Color.js'
+import { Vector4 } from '../math/Vector4.js'
 
-import { REVISION } from '../constants.js';
-import { WebGLExtensions } from './webgl/WebGLExtensions.js';
-import { WebGLState } from './webgl/WebGLState.js';
-import { Color } from '../math/Color.js';
-import { Vector4 } from '../math/Vector4.js';
+
+
+
+
+
+
+
 
 function WebGL2Renderer( parameters ) {
 
-	console.log( 'THREE.WebGL2Renderer', REVISION );
+	console.log( 'WebGL2Renderer', REVISION );
 
 	parameters = parameters || {};
 
@@ -64,7 +68,7 @@ function WebGL2Renderer( parameters ) {
 
 	} catch ( error ) {
 
-		console.error( 'THREE.WebGL2Renderer: ' + error.message );
+		console.error( 'WebGL2Renderer: ' + error.message );
 
 	}
 
@@ -141,7 +145,7 @@ function WebGL2Renderer( parameters ) {
 
 		if ( camera !== undefined && camera.isCamera !== true ) {
 
-			console.error( 'THREE.WebGL2Renderer.render: camera is not an instance of THREE.Camera.' );
+			console.error( 'WebGL2Renderer.render: camera is not an instance of Camera.' );
 			return;
 
 		}
@@ -186,4 +190,6 @@ function WebGL2Renderer( parameters ) {
 }
 
 
-export { WebGL2Renderer };
+;
+
+export { WebGL2Renderer }

@@ -1,24 +1,14 @@
-import { FileLoader } from '../loaders/FileLoader.js'
-import { Box3 } from '../math/Box3.js'
+import { FileLoader } from './FileLoader.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { LineSegments } from '../objects/LineSegments.js'
 import { Group } from '../objects/Group.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
 'use strict';
 
-/**
- * GCodeLoader is used to load gcode files usually used for 3D printing or CNC applications.
- *
- * Gcode files are composed by commands used by machines to create objects.
- *
- * @class GCodeLoader
- * @param {Manager} manager Loading manager.
- * @author tentone
- * @author joewalnes
- */
+
 var GCodeLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -46,8 +36,6 @@ GCodeLoader.prototype.parse = function ( data ) {
 	var layers = [];
 
 	var currentLayer = undefined;
-
-	var box = new Box3();
 
 	var pathMaterial = new LineBasicMaterial( { color: 0xFF0000 } );
 	pathMaterial.name = 'path';
@@ -83,13 +71,6 @@ GCodeLoader.prototype.parse = function ( data ) {
 
 		}
 
-		if ( line.extruding ) {
-
-			box.min.set( Math.min( box.min.x, p2.x ), Math.min( box.min.y, p2.y ), Math.min( box.min.z, p2.z ) );
-			box.max.set( Math.max( box.max.x, p2.x ), Math.max( box.max.y, p2.y ), Math.max( box.max.z, p2.z ) );
-
-		}
-
 	}
 
 	function delta( v1, v2 ) {
@@ -98,13 +79,13 @@ GCodeLoader.prototype.parse = function ( data ) {
 
 	}
 
-	function absolute ( v1, v2 ) {
+	function absolute( v1, v2 ) {
 
 		return state.relative ? v1 + v2 : v2;
 
 	}
 
-	var lines = data.replace( /;.+/g,'' ).split( '\n' );
+	var lines = data.replace( /;.+/g, '' ).split( '\n' );
 
 	for ( var i = 0; i < lines.length; i ++ ) {
 

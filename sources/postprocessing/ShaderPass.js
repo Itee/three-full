@@ -1,14 +1,12 @@
-import { Pass } from '../postprocessing/Pass.js'
-import { ShaderMaterial } from '../materials/Materials.js'
+import { Pass } from './Pass.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/Geometries.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- */
+
 
 var ShaderPass = function ( shader, textureID ) {
 

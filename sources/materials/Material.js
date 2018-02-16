@@ -1,11 +1,23 @@
-import { EventDispatcher } from '../core/EventDispatcher.js';
-import { NoColors, FrontSide, FlatShading, NormalBlending, LessEqualDepth, AddEquation, OneMinusSrcAlphaFactor, SrcAlphaFactor } from '../constants.js';
-import { _Math } from '../math/Math.js';
+import { EventDispatcher } from '../core/EventDispatcher.js'
+import {
+	NoColors,
+	FrontSide,
+	FlatShading,
+	NormalBlending,
+	LessEqualDepth,
+	AddEquation,
+	OneMinusSrcAlphaFactor,
+	SrcAlphaFactor,
+	FaceColors,
+	VertexColors
+} from '../constants.js'
+import { _Math } from '../math/Math.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author alteredq / http://alteredqualia.com/
- */
+
+
+
+
+
 
 var materialId = 0;
 
@@ -24,7 +36,7 @@ function Material() {
 	this.blending = NormalBlending;
 	this.side = FrontSide;
 	this.flatShading = false;
-	this.vertexColors = NoColors; // THREE.NoColors, THREE.VertexColors, THREE.FaceColors
+	this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 	this.opacity = 1;
 	this.transparent = false;
@@ -43,6 +55,8 @@ function Material() {
 	this.clippingPlanes = null;
 	this.clipIntersection = false;
 	this.clipShadows = false;
+
+	this.shadowSide = null;
 
 	this.colorWrite = true;
 
@@ -85,7 +99,7 @@ Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 
 			if ( newValue === undefined ) {
 
-				console.warn( "THREE.Material: '" + key + "' parameter is undefined." );
+				console.warn( "Material: '" + key + "' parameter is undefined." );
 				continue;
 
 			}
@@ -93,7 +107,7 @@ Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 			// for backward compatability if shading is set in the constructor
 			if ( key === 'shading' ) {
 
-				console.warn( 'THREE.' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
+				console.warn( '' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
 				this.flatShading = ( newValue === FlatShading ) ? true : false;
 				continue;
 
@@ -103,7 +117,7 @@ Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 
 			if ( currentValue === undefined ) {
 
-				console.warn( "THREE." + this.type + ": '" + key + "' is not a property of this material." );
+				console.warn( "" + this.type + ": '" + key + "' is not a property of this material." );
 				continue;
 
 			}
@@ -351,6 +365,8 @@ Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 
 		this.clippingPlanes = dstPlanes;
 
+		this.shadowSide = source.shadowSide;
+
 		return this;
 
 	},
@@ -364,4 +380,6 @@ Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 } );
 
 
-export { Material };
+;
+
+export { Material }

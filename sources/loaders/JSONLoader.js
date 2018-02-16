@@ -1,25 +1,34 @@
-import { Loader } from './Loader.js';
-import { LoaderUtils } from './LoaderUtils.js';
-import { AnimationClip } from '../animation/AnimationClip.js';
-import { Vector3 } from '../math/Vector3.js';
-import { Vector4 } from '../math/Vector4.js';
-import { Color } from '../math/Color.js';
-import { Vector2 } from '../math/Vector2.js';
-import { Face3 } from '../core/Face3.js';
-import { Geometry } from '../core/Geometry.js';
-import { FileLoader } from './FileLoader.js';
-import { DefaultLoadingManager } from './LoadingManager.js';
+import { Loader } from './Loader.js'
+import { LoaderUtils } from './LoaderUtils.js'
+import { AnimationClip } from '../animation/AnimationClip.js'
+import { Vector3 } from '../math/Vector3.js'
+import { Vector4 } from '../math/Vector4.js'
+import { Color } from '../math/Color.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Face3 } from '../core/Face3.js'
+import { Geometry } from '../core/Geometry.js'
+import { FileLoader } from './FileLoader.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author alteredq / http://alteredqualia.com/
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function JSONLoader( manager ) {
 
 	if ( typeof manager === 'boolean' ) {
 
-		console.warn( 'THREE.JSONLoader: showStatus parameter has been removed from constructor.' );
+		console.warn( 'JSONLoader: showStatus parameter has been removed from constructor.' );
 		manager = undefined;
 
 	}
@@ -53,14 +62,14 @@ Object.assign( JSONLoader.prototype, {
 
 					if ( type.toLowerCase() === 'object' ) {
 
-						console.error( 'THREE.JSONLoader: ' + url + ' should be loaded with THREE.ObjectLoader instead.' );
+						console.error( 'JSONLoader: ' + url + ' should be loaded with ObjectLoader instead.' );
 						return;
 
 					}
 
 					if ( type.toLowerCase() === 'scene' ) {
 
-						console.error( 'THREE.JSONLoader: ' + url + ' should be loaded with THREE.SceneLoader instead.' );
+						console.error( 'JSONLoader: ' + url + ' should be loaded with SceneLoader instead.' );
 						return;
 
 					}
@@ -463,7 +472,7 @@ Object.assign( JSONLoader.prototype, {
 
 			if ( json.morphColors !== undefined && json.morphColors.length > 0 ) {
 
-				console.warn( 'THREE.JSONLoader: "morphColors" no longer supported. Using them as face colors.' );
+				console.warn( 'JSONLoader: "morphColors" no longer supported. Using them as face colors.' );
 
 				var faces = geometry.faces;
 				var morphColors = json.morphColors[ 0 ].colors;
@@ -525,7 +534,7 @@ Object.assign( JSONLoader.prototype, {
 
 		}
 
-		return function ( json, texturePath ) {
+		return function parse( json, texturePath ) {
 
 			if ( json.data !== undefined ) {
 
@@ -573,4 +582,6 @@ Object.assign( JSONLoader.prototype, {
 } );
 
 
-export { JSONLoader };
+;
+
+export { JSONLoader }

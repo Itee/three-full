@@ -1,15 +1,12 @@
-import { _Math } from './Math.js';
-import { Matrix4 } from './Matrix4.js';
-import { Quaternion } from './Quaternion.js';
+import { _Math } from './Math.js'
+import { Matrix4 } from './Matrix4.js'
+import { Quaternion } from './Quaternion.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author kile / http://kile.stravaganza.org/
- * @author philogb / http://blog.thejit.org/
- * @author mikael emtinger / http://gomo.se/
- * @author egraether / http://egraether.com/
- * @author WestLangley / http://github.com/WestLangley
- */
+
+
+
+
+
 
 function Vector3( x, y, z ) {
 
@@ -115,7 +112,7 @@ Object.assign( Vector3.prototype, {
 
 		if ( w !== undefined ) {
 
-			console.warn( 'THREE.Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+			console.warn( 'Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 			return this.addVectors( v, w );
 
 		}
@@ -162,7 +159,7 @@ Object.assign( Vector3.prototype, {
 
 		if ( w !== undefined ) {
 
-			console.warn( 'THREE.Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+			console.warn( 'Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 			return this.subVectors( v, w );
 
 		}
@@ -199,7 +196,7 @@ Object.assign( Vector3.prototype, {
 
 		if ( w !== undefined ) {
 
-			console.warn( 'THREE.Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
+			console.warn( 'Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
 			return this.multiplyVectors( v, w );
 
 		}
@@ -240,7 +237,7 @@ Object.assign( Vector3.prototype, {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				console.error( 'THREE.Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+				console.error( 'Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -340,7 +337,7 @@ Object.assign( Vector3.prototype, {
 
 	transformDirection: function ( m ) {
 
-		// input: THREE.Matrix4 affine matrix
+		// input: Matrix4 affine matrix
 		// vector interpreted as a direction
 
 		var x = this.x, y = this.y, z = this.z;
@@ -534,7 +531,7 @@ Object.assign( Vector3.prototype, {
 
 		if ( w !== undefined ) {
 
-			console.warn( 'THREE.Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
+			console.warn( 'Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
 			return this.crossVectors( v, w );
 
 		}
@@ -712,7 +709,7 @@ Object.assign( Vector3.prototype, {
 
 		if ( offset !== undefined ) {
 
-			console.warn( 'THREE.Vector3: offset has been removed from .fromBufferAttribute().' );
+			console.warn( 'Vector3: offset has been removed from .fromBufferAttribute().' );
 
 		}
 
@@ -727,4 +724,6 @@ Object.assign( Vector3.prototype, {
 } );
 
 
-export { Vector3 };
+;
+
+export { Vector3 }

@@ -1,13 +1,14 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author benaadams / https://twitter.com/ben_a_adams
- * @author Mugen87 / https://github.com/Mugen87
- */
+import { Geometry } from '../core/Geometry.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Vector3 } from '../math/Vector3.js'
 
-import { Geometry } from '../core/Geometry.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { Vector3 } from '../math/Vector3.js';
+
+
+
+
+
+
 
 // SphereGeometry
 
@@ -149,4 +150,9 @@ SphereBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 SphereBufferGeometry.prototype.constructor = SphereBufferGeometry;
 
 
-export { SphereGeometry, SphereBufferGeometry };
+;
+
+export {
+	SphereGeometry,
+	SphereBufferGeometry
+}

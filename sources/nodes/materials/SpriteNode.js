@@ -1,11 +1,9 @@
-import { GLNode } from '../../nodes/GLNode.js'
-import { ColorNode } from '../../nodes/inputs/ColorNode.js'
+import { GLNode } from '../GLNode.js'
+import { ColorNode } from '../inputs/ColorNode.js'
 import { UniformsUtils } from '../../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../../renderers/shaders/UniformsLib.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
+
 
 var SpriteNode = function () {
 
@@ -18,6 +16,7 @@ var SpriteNode = function () {
 
 SpriteNode.prototype = Object.create( GLNode.prototype );
 SpriteNode.prototype.constructor = SpriteNode;
+SpriteNode.prototype.nodeType = "Sprite";
 
 SpriteNode.prototype.build = function ( builder ) {
 
@@ -26,8 +25,8 @@ SpriteNode.prototype.build = function ( builder ) {
 
 	material.define( 'SPRITE' );
 
-	material.requestAttribs.light = false;
-	material.requestAttribs.transparent = this.alpha != undefined;
+	material.requires.lights = false;
+	material.requires.transparent = this.alpha != undefined;
 
 	if ( builder.isShader( 'vertex' ) ) {
 
@@ -140,6 +139,31 @@ SpriteNode.prototype.build = function ( builder ) {
 	}
 
 	return output.join( "\n" );
+
+};
+
+SpriteNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		// vertex
+
+		if ( this.transform ) data.transform = this.transform.toJSON( meta ).uuid;
+
+		// fragment
+
+		data.color = this.color.toJSON( meta ).uuid;
+		if ( this.spherical === false ) data.spherical = false;
+
+		if ( this.alpha ) data.alpha = this.alpha.toJSON( meta ).uuid;
+
+	}
+
+	return data;
 
 };
 

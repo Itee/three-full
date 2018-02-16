@@ -1,10 +1,12 @@
-import { Light } from './Light.js';
-import { Color } from '../math/Color.js';
-import { Object3D } from '../core/Object3D.js';
+import { Light } from './Light.js'
+import { Color } from '../math/Color.js'
+import { Object3D } from '../core/Object3D.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- */
+
+
+
+
+
 
 function HemisphereLight( skyColor, groundColor, intensity ) {
 
@@ -40,4 +42,6 @@ HemisphereLight.prototype = Object.assign( Object.create( Light.prototype ), {
 } );
 
 
-export { HemisphereLight };
+;
+
+export { HemisphereLight }

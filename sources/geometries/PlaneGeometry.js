@@ -1,11 +1,12 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author Mugen87 / https://github.com/Mugen87
- */
+import { Geometry } from '../core/Geometry.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
-import { Geometry } from '../core/Geometry.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
+
+
+
+
+
 
 // PlaneGeometry
 
@@ -123,4 +124,9 @@ PlaneBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 PlaneBufferGeometry.prototype.constructor = PlaneBufferGeometry;
 
 
-export { PlaneGeometry, PlaneBufferGeometry };
+;
+
+export {
+	PlaneGeometry,
+	PlaneBufferGeometry
+}

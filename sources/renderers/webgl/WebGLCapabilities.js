@@ -1,6 +1,6 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 function WebGLCapabilities( gl, extensions, parameters ) {
 
@@ -61,7 +61,7 @@ function WebGLCapabilities( gl, extensions, parameters ) {
 
 	if ( maxPrecision !== precision ) {
 
-		console.warn( 'THREE.WebGLRenderer:', precision, 'not supported, using', maxPrecision, 'instead.' );
+		console.warn( 'WebGLRenderer:', precision, 'not supported, using', maxPrecision, 'instead.' );
 		precision = maxPrecision;
 
 	}
@@ -109,4 +109,6 @@ function WebGLCapabilities( gl, extensions, parameters ) {
 }
 
 
-export { WebGLCapabilities };
+;
+
+export { WebGLCapabilities }

@@ -1,15 +1,13 @@
-import { Pass } from '../postprocessing/Pass.js'
+import { Pass } from './Pass.js'
 import { Mesh } from '../objects/Mesh.js'
 import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
-import { ShaderMaterial } from '../materials/Materials.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Scene } from '../scenes/Scene.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { BackSide } from '../constants.js'
 import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
 
-/**
- * @author bhouston / http://clara.io/
- */
+
 
 var CubeTexturePass = function ( camera, envMap, opacity ) {
 

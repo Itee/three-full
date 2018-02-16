@@ -1,19 +1,16 @@
 import { Object3D } from '../core/Object3D.js'
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { Mesh } from '../objects/Mesh.js'
-import { MeshPhongMaterial } from '../materials/Materials.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { Texture } from '../textures/Texture.js'
-import { ImageLoader } from '../loaders/ImageLoader.js'
+import { ImageLoader } from './ImageLoader.js'
 import { Bone } from '../objects/Bone.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * Author: Pierre Lepers
- * Date: 09/12/2013 17:21
- */
+
 
 
 
@@ -1191,11 +1188,7 @@ import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 		},
 
-		/**
-	 * Converts a UTF-8 byte array to JavaScript's 16-bit Unicode.
-	 * @param {Array.<number>} bytes UTF-8 byte array.
-	 * @return {string} 16-bit Unicode string.
-	 */
+		
 		readUTF: function () {
 
 			var len = this.readU16();
@@ -1203,11 +1196,7 @@ import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 		},
 
-		/**
-		 * Converts a UTF-8 byte array to JavaScript's 16-bit Unicode.
-		 * @param {Array.<number>} bytes UTF-8 byte array.
-		 * @return {string} 16-bit Unicode string.
-		 */
+		
 		readUTFBytes: function ( len ) {
 
 			// TODO(user): Use native implementations if/when available

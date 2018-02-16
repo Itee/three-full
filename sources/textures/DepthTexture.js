@@ -1,10 +1,16 @@
-/**
- * @author Matt DesLauriers / @mattdesl
- * @author atix / arthursilber.de
- */
+import { Texture } from './Texture.js'
+import {
+	NearestFilter,
+	UnsignedShortType,
+	UnsignedInt248Type,
+	DepthFormat,
+	DepthStencilFormat
+} from '../constants.js'
 
-import { Texture } from './Texture.js';
-import { NearestFilter, UnsignedShortType, UnsignedInt248Type, DepthFormat, DepthStencilFormat } from '../constants.js';
+
+
+
+
 
 function DepthTexture( width, height, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, format ) {
 
@@ -12,7 +18,7 @@ function DepthTexture( width, height, type, mapping, wrapS, wrapT, magFilter, mi
 
 	if ( format !== DepthFormat && format !== DepthStencilFormat ) {
 
-		throw new Error( 'DepthTexture format must be either THREE.DepthFormat or THREE.DepthStencilFormat' );
+		throw new Error( 'DepthTexture format must be either DepthFormat or DepthStencilFormat' );
 
 	}
 
@@ -35,4 +41,6 @@ DepthTexture.prototype = Object.create( Texture.prototype );
 DepthTexture.prototype.constructor = DepthTexture;
 DepthTexture.prototype.isDepthTexture = true;
 
-export { DepthTexture };
+;
+
+export { DepthTexture }

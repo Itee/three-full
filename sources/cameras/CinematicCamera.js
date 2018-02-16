@@ -1,13 +1,11 @@
-import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
-import {
-	MeshDepthMaterial,
-	ShaderMaterial
-} from '../materials/Materials.js'
+import { PerspectiveCamera } from './PerspectiveCamera.js'
+import { MeshDepthMaterial } from '../materials/MeshDepthMaterial.js'
 import { Scene } from '../scenes/Scene.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
+import { OrthographicCamera } from './OrthographicCamera.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/Geometries.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import {
 	LinearFilter,
 	RGBFormat
@@ -15,12 +13,7 @@ import {
 import { BokehShader } from '../shaders/BokehShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author greggman / http://games.greggman.com/
- * @author zz85 / http://www.lab4games.net/zz85/blog
- * @author kaypiKun
- */
+
 
 var CinematicCamera = function( fov, aspect, near, far ) {
 

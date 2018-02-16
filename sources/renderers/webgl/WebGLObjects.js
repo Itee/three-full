@@ -1,6 +1,6 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 function WebGLObjects( geometries, infoRender ) {
 
@@ -33,7 +33,7 @@ function WebGLObjects( geometries, infoRender ) {
 
 	}
 
-	function clear() {
+	function dispose() {
 
 		updateList = {};
 
@@ -42,11 +42,13 @@ function WebGLObjects( geometries, infoRender ) {
 	return {
 
 		update: update,
-		clear: clear
+		dispose: dispose
 
 	};
 
 }
 
 
-export { WebGLObjects };
+;
+
+export { WebGLObjects }

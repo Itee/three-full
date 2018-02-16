@@ -1,8 +1,8 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+import { PerspectiveCamera } from './PerspectiveCamera.js'
 
-import { PerspectiveCamera } from './PerspectiveCamera.js';
+
+
+
 
 function ArrayCamera( array ) {
 
@@ -21,4 +21,6 @@ ArrayCamera.prototype = Object.assign( Object.create( PerspectiveCamera.prototyp
 } );
 
 
-export { ArrayCamera };
+;
+
+export { ArrayCamera }

@@ -1,11 +1,12 @@
-/**
- * @author alteredq / http://alteredqualia.com/
- * @author mrdoob / http://mrdoob.com/
- */
+import { Mesh } from '../objects/Mesh.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
 
-import { Mesh } from '../objects/Mesh.js';
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js';
-import { SphereBufferGeometry } from '../geometries/SphereGeometry.js';
+
+
+
+
+
 
 function PointLightHelper( light, sphereSize, color ) {
 
@@ -25,27 +26,7 @@ function PointLightHelper( light, sphereSize, color ) {
 	this.update();
 
 
-	/*
-	var distanceGeometry = new THREE.IcosahedronGeometry( 1, 2 );
-	var distanceMaterial = new THREE.MeshBasicMaterial( { color: hexColor, fog: false, wireframe: true, opacity: 0.1, transparent: true } );
-
-	this.lightSphere = new THREE.Mesh( bulbGeometry, bulbMaterial );
-	this.lightDistance = new THREE.Mesh( distanceGeometry, distanceMaterial );
-
-	var d = light.distance;
-
-	if ( d === 0.0 ) {
-
-		this.lightDistance.visible = false;
-
-	} else {
-
-		this.lightDistance.scale.set( d, d, d );
-
-	}
-
-	this.add( this.lightDistance );
-	*/
+	
 
 }
 
@@ -71,22 +52,11 @@ PointLightHelper.prototype.update = function () {
 
 	}
 
-	/*
-	var d = this.light.distance;
-
-	if ( d === 0.0 ) {
-
-		this.lightDistance.visible = false;
-
-	} else {
-
-		this.lightDistance.visible = true;
-		this.lightDistance.scale.set( d, d, d );
-
-	}
-	*/
+	
 
 };
 
 
-export { PointLightHelper };
+;
+
+export { PointLightHelper }

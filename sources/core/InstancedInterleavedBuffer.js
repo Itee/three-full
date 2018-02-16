@@ -1,8 +1,8 @@
-import { InterleavedBuffer } from './InterleavedBuffer.js';
+import { InterleavedBuffer } from './InterleavedBuffer.js'
 
-/**
- * @author benaadams / https://twitter.com/ben_a_adams
- */
+
+
+
 
 function InstancedInterleavedBuffer( array, stride, meshPerAttribute ) {
 
@@ -30,4 +30,6 @@ InstancedInterleavedBuffer.prototype = Object.assign( Object.create( Interleaved
 
 } );
 
-export { InstancedInterleavedBuffer };
+;
+
+export { InstancedInterleavedBuffer }

@@ -1,12 +1,8 @@
-import { MeshStandardMaterial } from './MeshStandardMaterial.js';
+import { MeshStandardMaterial } from './MeshStandardMaterial.js'
 
-/**
- * @author WestLangley / http://github.com/WestLangley
- *
- * parameters = {
- *  reflectivity: <float>
- * }
- */
+
+
+
 
 function MeshPhysicalMaterial( parameters ) {
 
@@ -46,4 +42,6 @@ MeshPhysicalMaterial.prototype.copy = function ( source ) {
 };
 
 
-export { MeshPhysicalMaterial };
+;
+
+export { MeshPhysicalMaterial }

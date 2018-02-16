@@ -1,11 +1,12 @@
-import { Vector3 } from './Vector3.js';
-import { Line3 } from './Line3.js';
-import { Plane } from './Plane.js';
+import { Vector3 } from './Vector3.js'
+import { Line3 } from './Line3.js'
+import { Plane } from './Plane.js'
 
-/**
- * @author bhouston / http://clara.io
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
+
+
 
 function Triangle( a, b, c ) {
 
@@ -189,6 +190,12 @@ Object.assign( Triangle.prototype, {
 
 	},
 
+	intersectsBox: function ( box ) {
+
+		return box.intersectsTriangle( this );
+
+	},
+
 	closestPointToPoint: function () {
 
 		var plane = new Plane();
@@ -255,4 +262,6 @@ Object.assign( Triangle.prototype, {
 } );
 
 
-export { Triangle };
+;
+
+export { Triangle }

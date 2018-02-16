@@ -1,33 +1,29 @@
 import { Object3D } from '../core/Object3D.js'
-import { Projector } from '../Three.Legacy.js'
+import {
+	Projector,
+	RenderableSprite,
+	RenderableLine,
+	RenderableFace
+} from './Projector.js'
 import { Box2 } from '../math/Box2.js'
 import { Color } from '../math/Color.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix3 } from '../math/Matrix3.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Camera } from '../cameras/Camera.js'
-import {
-	RenderableSprite,
-	RenderableLine,
-	RenderableFace
-} from '../renderers/Projector.js'
 import { AmbientLight } from '../lights/AmbientLight.js'
 import { DirectionalLight } from '../lights/DirectionalLight.js'
 import { PointLight } from '../lights/PointLight.js'
-import {
-	MeshBasicMaterial,
-	MeshLambertMaterial,
-	MeshPhongMaterial,
-	MeshNormalMaterial
-} from '../materials/Materials.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
+import { MeshNormalMaterial } from '../materials/MeshNormalMaterial.js'
 import {
 	REVISION,
 	FaceColors
 } from '../constants.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
 
 var SVGObject = function ( node ) {
 

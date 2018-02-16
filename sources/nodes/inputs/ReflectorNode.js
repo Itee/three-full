@@ -1,12 +1,22 @@
-import { TempNode } from '../../nodes/TempNode.js'
-import { Matrix4Node } from '../../nodes/inputs/Matrix4Node.js'
-import { PositionNode } from '../../nodes/accessors/PositionNode.js'
-import { OperatorNode } from '../../nodes/math/OperatorNode.js'
-import { TextureNode } from '../../nodes/inputs/TextureNode.js'
+import { TempNode } from '../TempNode.js'
+import { Matrix4Node } from './Matrix4Node.js'
+import { PositionNode } from '../accessors/PositionNode.js'
+import { OperatorNode } from '../math/OperatorNode.js'
+import { TextureNode } from './TextureNode.js'
 
-var ReflectorNode = function( mirror, camera, options ) {
+var ReflectorNode = function ( mirror ) {
 
 	TempNode.call( this, 'v4' );
+
+	if ( mirror ) this.setMirror( mirror );
+
+};
+
+ReflectorNode.prototype = Object.create( TempNode.prototype );
+ReflectorNode.prototype.constructor = ReflectorNode;
+ReflectorNode.prototype.nodeType = "Reflector";
+
+ReflectorNode.prototype.setMirror = function ( mirror ) {
 
 	this.mirror = mirror;
 
@@ -21,10 +31,7 @@ var ReflectorNode = function( mirror, camera, options ) {
 
 };
 
-ReflectorNode.prototype = Object.create( TempNode.prototype );
-ReflectorNode.prototype.constructor = ReflectorNode;
-
-ReflectorNode.prototype.generate = function( builder, output ) {
+ReflectorNode.prototype.generate = function ( builder, output ) {
 
 	var material = builder.material;
 
@@ -48,6 +55,24 @@ ReflectorNode.prototype.generate = function( builder, output ) {
 		return builder.format( 'vec4(0.0)', this.type, output );
 
 	}
+
+};
+
+ReflectorNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.mirror = this.mirror.uuid;
+
+		if ( this.offset ) data.offset = this.offset.toJSON( meta ).uuid;
+
+	}
+
+	return data;
 
 };
 

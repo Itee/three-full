@@ -1,9 +1,10 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+import { Texture } from './Texture.js'
+import { CubeReflectionMapping } from '../constants.js'
 
-import { Texture } from './Texture.js';
-import { CubeReflectionMapping } from '../constants.js';
+
+
+
+
 
 function CubeTexture( images, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
 
@@ -38,4 +39,6 @@ Object.defineProperty( CubeTexture.prototype, 'images', {
 } );
 
 
-export { CubeTexture };
+;
+
+export { CubeTexture }

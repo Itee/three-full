@@ -1,10 +1,10 @@
-import { Box3 } from './Box3.js';
-import { Vector3 } from './Vector3.js';
+import { Box3 } from './Box3.js'
+import { Vector3 } from './Vector3.js'
 
-/**
- * @author bhouston / http://clara.io
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
+
 
 function Sphere( center, radius ) {
 
@@ -167,4 +167,6 @@ Object.assign( Sphere.prototype, {
 } );
 
 
-export { Sphere };
+;
+
+export { Sphere }

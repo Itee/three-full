@@ -1,6 +1,6 @@
-/**
- * @author Don McCurdy / https://www.donmccurdy.com
- */
+
+
+
 
 var LoaderUtils = {
 
@@ -24,7 +24,8 @@ var LoaderUtils = {
 
 		}
 
-		return s;
+		// Merges multi-byte utf-8 characters.
+		return decodeURIComponent( escape( s ) );
 
 	},
 
@@ -42,4 +43,6 @@ var LoaderUtils = {
 
 };
 
-export { LoaderUtils };
+;
+
+export { LoaderUtils }

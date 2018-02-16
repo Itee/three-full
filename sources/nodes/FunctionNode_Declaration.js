@@ -1,10 +1,8 @@
-/**
- * @author [Tristan Valcke]{@link https://github.com/Itee}
- * @author sunag / http://www.sunag.com.br/
- * @thanks bhouston / https://clara.io/
- */
-
 import { TempNode } from './TempNode.js'
+
+
+
+
 
 var FunctionNode = function( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ) {
 
@@ -91,5 +89,6 @@ FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
 	this.value = src;
 
 };
+
 
 export { FunctionNode }

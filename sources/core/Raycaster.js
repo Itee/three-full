@@ -1,10 +1,8 @@
-import { Ray } from '../math/Ray.js';
+import { Ray } from '../math/Ray.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author bhouston / http://clara.io/
- * @author stephomi / http://stephaneginier.com/
- */
+
+
+
 
 function Raycaster( origin, direction, near, far ) {
 
@@ -26,7 +24,7 @@ function Raycaster( origin, direction, near, far ) {
 		PointCloud: {
 			get: function () {
 
-				console.warn( 'THREE.Raycaster: params.PointCloud has been renamed to params.Points.' );
+				console.warn( 'Raycaster: params.PointCloud has been renamed to params.Points.' );
 				return this.Points;
 
 			}
@@ -87,7 +85,7 @@ Object.assign( Raycaster.prototype, {
 
 		} else {
 
-			console.error( 'THREE.Raycaster: Unsupported camera type.' );
+			console.error( 'Raycaster: Unsupported camera type.' );
 
 		}
 
@@ -111,7 +109,7 @@ Object.assign( Raycaster.prototype, {
 
 		if ( Array.isArray( objects ) === false ) {
 
-			console.warn( 'THREE.Raycaster.intersectObjects: objects is not an Array.' );
+			console.warn( 'Raycaster.intersectObjects: objects is not an Array.' );
 			return intersects;
 
 		}
@@ -131,4 +129,6 @@ Object.assign( Raycaster.prototype, {
 } );
 
 
-export { Raycaster };
+;
+
+export { Raycaster }

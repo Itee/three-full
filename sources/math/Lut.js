@@ -1,13 +1,11 @@
-import { Color } from '../math/Color.js'
+import { Color } from './Color.js'
 import { Texture } from '../textures/Texture.js'
-import { PlaneBufferGeometry } from '../geometries/Geometries.js'
-import {
-	MeshBasicMaterial,
-	SpriteMaterial
-} from '../materials/Materials.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
-import { Vector3 } from '../math/Vector3.js'
+import { Vector3 } from './Vector3.js'
 import { CanvasTexture } from '../textures/CanvasTexture.js'
+import { SpriteMaterial } from '../materials/SpriteMaterial.js'
 import { Sprite } from '../objects/Sprite.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Geometry } from '../core/Geometry.js'
@@ -17,9 +15,7 @@ import {
 	LinearFilter
 } from '../constants.js'
 
-/**
- * @author daron1337 / http://daron1337.github.io/
- */
+
 
 var Lut = function ( colormap, numberofcolors ) {
 

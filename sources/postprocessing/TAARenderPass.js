@@ -1,19 +1,7 @@
-import { SSAARenderPass } from '../postprocessing/SSAARenderPass.js'
+import { SSAARenderPass } from './SSAARenderPass.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 
-/**
- *
- * Temporal Anti-Aliasing Render Pass
- *
- * @author bhouston / http://clara.io/
- *
- * When there is no motion in the scene, the TAA render pass accumulates jittered camera samples across frames to create a high quality anti-aliased result.
- *
- * References:
- *
- * TODO: Add support for motion vector pas so that accumulation of samples across frames can occur on dynamics scenes.
- *
- */
+
 
 var TAARenderPass = function ( scene, camera, params ) {
 

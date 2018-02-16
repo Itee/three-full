@@ -1,4 +1,4 @@
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import {
 	Float32BufferAttribute,
 	Uint8BufferAttribute,
@@ -6,14 +6,11 @@ import {
 } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Group } from '../objects/Group.js'
-import { MeshPhongMaterial } from '../materials/Materials.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author Mugen87 / https://github.com/Mugen87
- */
+
 
 var PlayCanvasLoader = function ( manager ) {
 

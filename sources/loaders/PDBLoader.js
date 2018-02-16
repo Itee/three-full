@@ -1,12 +1,9 @@
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- * @author Mugen87 / https://github.com/Mugen87
- */
+
 
 var PDBLoader = function ( manager ) {
 

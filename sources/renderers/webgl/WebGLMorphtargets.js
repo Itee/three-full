@@ -1,6 +1,6 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 function absNumericalSort( a, b ) {
 
@@ -108,4 +108,6 @@ function WebGLMorphtargets( gl ) {
 }
 
 
-export { WebGLMorphtargets };
+;
+
+export { WebGLMorphtargets }

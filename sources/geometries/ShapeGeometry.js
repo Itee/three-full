@@ -1,12 +1,14 @@
-/**
- * @author jonobr1 / http://jonobr1.com
- * @author Mugen87 / https://github.com/Mugen87
- */
+import { Geometry } from '../core/Geometry.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { ShapeUtils } from '../utils/ShapeUtils.js'
 
-import { Geometry } from '../core/Geometry.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { ShapeUtils } from '../extras/ShapeUtils.js';
+
+
+
+
+
+
 
 // ShapeGeometry
 
@@ -18,7 +20,7 @@ function ShapeGeometry( shapes, curveSegments ) {
 
 	if ( typeof curveSegments === 'object' ) {
 
-		console.warn( 'THREE.ShapeGeometry: Options parameter has been removed.' );
+		console.warn( 'ShapeGeometry: Options parameter has been removed.' );
 
 		curveSegments = curveSegments.curveSegments;
 
@@ -219,4 +221,9 @@ function toJSON( shapes, data ) {
 }
 
 
-export { ShapeGeometry, ShapeBufferGeometry };
+;
+
+export {
+	ShapeGeometry,
+	ShapeBufferGeometry
+}

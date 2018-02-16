@@ -1,18 +1,10 @@
-import { Material } from './Material.js';
-import { Color } from '../math/Color.js';
+import { Material } from './Material.js'
+import { Color } from '../math/Color.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- *
- * parameters = {
- *  color: <hex>,
- *  opacity: <float>,
- *  map: new THREE.Texture( <Image> ),
- *
- *	uvOffset: new THREE.Vector2(),
- *	uvScale: new THREE.Vector2()
- * }
- */
+
+
+
+
 
 function SpriteMaterial( parameters ) {
 
@@ -50,4 +42,6 @@ SpriteMaterial.prototype.copy = function ( source ) {
 };
 
 
-export { SpriteMaterial };
+;
+
+export { SpriteMaterial }

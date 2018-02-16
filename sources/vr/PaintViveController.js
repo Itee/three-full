@@ -1,20 +1,16 @@
-import { ViveController } from '../vr/ViveController.js'
+import { ViveController } from './ViveController.js'
 import { Color } from '../math/Color.js'
 import { CanvasTexture } from '../textures/CanvasTexture.js'
 import { CircleGeometry } from '../geometries/CircleGeometry.js'
-import { MeshBasicMaterial } from '../materials/Materials.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
-import {
-	IcosahedronGeometry,
-	ShapeGeometry
-} from '../geometries/Geometries.js'
+import { IcosahedronGeometry } from '../geometries/IcosahedronGeometry.js'
 import { Group } from '../objects/Group.js'
-import { Shape } from '../extras/core/Shape.js'
+import { Shape } from '../core/Shape.js'
+import { ShapeGeometry } from '../geometries/ShapeGeometry.js'
 import { DoubleSide } from '../constants.js'
 
-/**
- * @author mrdoob / http://mrdoob.com
- */
+
 
 var PaintViveController = function ( id ) {
 

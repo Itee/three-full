@@ -1,18 +1,22 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author WestLangley / http://github.com/WestLangley
- */
+import { Matrix3 } from '../math/Matrix3.js'
+import { Vector3 } from '../math/Vector3.js'
+import { LineSegments } from '../objects/LineSegments.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
 
-import { Matrix3 } from '../math/Matrix3.js';
-import { Vector3 } from '../math/Vector3.js';
-import { LineSegments } from '../objects/LineSegments.js';
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
+
+
+
+
+
+
+
+
 
 function FaceNormalsHelper( object, size, hex, linewidth ) {
 
-	// FaceNormalsHelper only supports THREE.Geometry
+	// FaceNormalsHelper only supports Geometry
 
 	this.object = object;
 
@@ -34,7 +38,7 @@ function FaceNormalsHelper( object, size, hex, linewidth ) {
 
 	} else {
 
-		console.warn( 'THREE.FaceNormalsHelper: only THREE.Geometry is supported. Use THREE.VertexNormalsHelper, instead.' );
+		console.warn( 'FaceNormalsHelper: only Geometry is supported. Use VertexNormalsHelper, instead.' );
 
 	}
 
@@ -115,4 +119,6 @@ FaceNormalsHelper.prototype.update = ( function () {
 }() );
 
 
-export { FaceNormalsHelper };
+;
+
+export { FaceNormalsHelper }

@@ -1,8 +1,8 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+import { Vector2 } from '../math/Vector2.js'
 
-import { Vector2 } from '../math/Vector2.js';
+
+
+
 
 function DirectGeometry() {
 
@@ -185,7 +185,7 @@ Object.assign( DirectGeometry.prototype, {
 
 				} else {
 
-					console.warn( 'THREE.DirectGeometry.fromGeometry(): Undefined vertexUv ', i );
+					console.warn( 'DirectGeometry.fromGeometry(): Undefined vertexUv ', i );
 
 					this.uvs.push( new Vector2(), new Vector2(), new Vector2() );
 
@@ -203,7 +203,7 @@ Object.assign( DirectGeometry.prototype, {
 
 				} else {
 
-					console.warn( 'THREE.DirectGeometry.fromGeometry(): Undefined vertexUv2 ', i );
+					console.warn( 'DirectGeometry.fromGeometry(): Undefined vertexUv2 ', i );
 
 					this.uvs2.push( new Vector2(), new Vector2(), new Vector2() );
 
@@ -260,4 +260,6 @@ Object.assign( DirectGeometry.prototype, {
 } );
 
 
-export { DirectGeometry };
+;
+
+export { DirectGeometry }

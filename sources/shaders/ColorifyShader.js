@@ -1,10 +1,6 @@
 import { Color } from '../math/Color.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- *
- * Colorify shader
- */
+
 
 var ColorifyShader = {
 

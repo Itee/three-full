@@ -1,12 +1,8 @@
 import { Texture } from '../textures/Texture.js'
-import { FileLoader } from '../loaders/FileLoader.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { FileLoader } from './FileLoader.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/*
- * @author Daosheng Mu / https://github.com/DaoshengMu/
- * @author mrdoob / http://mrdoob.com/
- * @author takahirox / https://github.com/takahirox/
- */
+
 
 var TGALoader = function ( manager ) {
 

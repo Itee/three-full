@@ -1,18 +1,22 @@
-import { Vector4 } from '../math/Vector4.js';
-import { Vector3 } from '../math/Vector3.js';
-import { Vector2 } from '../math/Vector2.js';
-import { Color } from '../math/Color.js';
-import { _Math } from '../math/Math.js';
+import { Vector4 } from '../math/Vector4.js'
+import { Vector3 } from '../math/Vector3.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Color } from '../math/Color.js'
+import { _Math } from '../math/Math.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
+
+
+
+
 
 function BufferAttribute( array, itemSize, normalized ) {
 
 	if ( Array.isArray( array ) ) {
 
-		throw new TypeError( 'THREE.BufferAttribute: array should be a Typed Array.' );
+		throw new TypeError( 'BufferAttribute: array should be a Typed Array.' );
 
 	}
 
@@ -51,7 +55,7 @@ Object.assign( BufferAttribute.prototype, {
 
 		if ( Array.isArray( array ) ) {
 
-			throw new TypeError( 'THREE.BufferAttribute: array should be a Typed Array.' );
+			throw new TypeError( 'BufferAttribute: array should be a Typed Array.' );
 
 		}
 
@@ -114,7 +118,7 @@ Object.assign( BufferAttribute.prototype, {
 
 			if ( color === undefined ) {
 
-				console.warn( 'THREE.BufferAttribute.copyColorsArray(): color is undefined', i );
+				console.warn( 'BufferAttribute.copyColorsArray(): color is undefined', i );
 				color = new Color();
 
 			}
@@ -157,7 +161,7 @@ Object.assign( BufferAttribute.prototype, {
 
 			if ( vector === undefined ) {
 
-				console.warn( 'THREE.BufferAttribute.copyVector2sArray(): vector is undefined', i );
+				console.warn( 'BufferAttribute.copyVector2sArray(): vector is undefined', i );
 				vector = new Vector2();
 
 			}
@@ -181,7 +185,7 @@ Object.assign( BufferAttribute.prototype, {
 
 			if ( vector === undefined ) {
 
-				console.warn( 'THREE.BufferAttribute.copyVector3sArray(): vector is undefined', i );
+				console.warn( 'BufferAttribute.copyVector3sArray(): vector is undefined', i );
 				vector = new Vector3();
 
 			}
@@ -206,7 +210,7 @@ Object.assign( BufferAttribute.prototype, {
 
 			if ( vector === undefined ) {
 
-				console.warn( 'THREE.BufferAttribute.copyVector4sArray(): vector is undefined', i );
+				console.warn( 'BufferAttribute.copyVector4sArray(): vector is undefined', i );
 				vector = new Vector4();
 
 			}
@@ -433,6 +437,8 @@ Float64BufferAttribute.prototype.constructor = Float64BufferAttribute;
 
 //
 
+;
+
 export {
 	Float64BufferAttribute,
 	Float32BufferAttribute,
@@ -444,4 +450,4 @@ export {
 	Uint8BufferAttribute,
 	Int8BufferAttribute,
 	BufferAttribute
-};
+}

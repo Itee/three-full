@@ -1,20 +1,12 @@
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-import { PointsMaterial } from '../materials/Materials.js'
+import { PointsMaterial } from '../materials/PointsMaterial.js'
 import { Points } from '../objects/Points.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
-import { LoaderUtils } from '../loaders/LoaderUtils.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { LoaderUtils } from './LoaderUtils.js'
 
-/**
- * @author Filipe Caixeta / http://filipecaixeta.com.br
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Description: A THREE loader for PCD ascii and binary files.
- *
- * Limitations: Compressed binary files are not supported.
- *
- */
+
 
 var PCDLoader = function ( manager ) {
 

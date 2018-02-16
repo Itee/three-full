@@ -1,14 +1,16 @@
-/**
- * @author abelnation / http://github.com/abelnation
- * @author Mugen87 / http://github.com/Mugen87
- * @author WestLangley / http://github.com/WestLangley
- */
+import { Object3D } from '../core/Object3D.js'
+import { Line } from '../objects/Line.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { BufferAttribute } from '../core/BufferAttribute.js'
 
-import { Object3D } from '../core/Object3D.js';
-import { Line } from '../objects/Line.js';
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { BufferAttribute } from '../core/BufferAttribute.js';
+
+
+
+
+
+
+
 
 function RectAreaLightHelper( light, color ) {
 
@@ -78,4 +80,6 @@ RectAreaLightHelper.prototype.update = function () {
 
 };
 
-export { RectAreaLightHelper };
+;
+
+export { RectAreaLightHelper }

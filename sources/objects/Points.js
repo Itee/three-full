@@ -1,14 +1,20 @@
-import { Sphere } from '../math/Sphere.js';
-import { Ray } from '../math/Ray.js';
-import { Matrix4 } from '../math/Matrix4.js';
-import { Object3D } from '../core/Object3D.js';
-import { Vector3 } from '../math/Vector3.js';
-import { PointsMaterial } from '../materials/PointsMaterial.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
+import { Sphere } from '../math/Sphere.js'
+import { Ray } from '../math/Ray.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Object3D } from '../core/Object3D.js'
+import { Vector3 } from '../math/Vector3.js'
+import { PointsMaterial } from '../materials/PointsMaterial.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- */
+
+
+
+
+
+
+
+
+
 
 function Points( geometry, material ) {
 
@@ -144,4 +150,6 @@ Points.prototype = Object.assign( Object.create( Object3D.prototype ), {
 } );
 
 
-export { Points };
+;
+
+export { Points }

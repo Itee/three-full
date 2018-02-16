@@ -1,10 +1,12 @@
-import { AudioContext } from '../audio/AudioContext.js';
-import { FileLoader } from './FileLoader.js';
-import { DefaultLoadingManager } from './LoadingManager.js';
+import { AudioContext } from '../audio/AudioContext.js'
+import { FileLoader } from './FileLoader.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author Reece Aaron Lecrivain / http://reecenotes.com/
- */
+
+
+
+
+
 
 function AudioLoader( manager ) {
 
@@ -35,4 +37,6 @@ Object.assign( AudioLoader.prototype, {
 } );
 
 
-export { AudioLoader };
+;
+
+export { AudioLoader }

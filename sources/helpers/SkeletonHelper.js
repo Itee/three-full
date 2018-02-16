@@ -1,20 +1,24 @@
-/**
- * @author Sean Griffin / http://twitter.com/sgrif
- * @author Michael Guerrero / http://realitymeltdown.com
- * @author mrdoob / http://mrdoob.com/
- * @author ikerr / http://verold.com
- * @author Mugen87 / https://github.com/Mugen87
- */
+import { LineSegments } from '../objects/LineSegments.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { VertexColors } from '../constants.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { Color } from '../math/Color.js'
+import { Vector3 } from '../math/Vector3.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Object3D } from '../core/Object3D.js'
 
-import { LineSegments } from '../objects/LineSegments.js';
-import { Matrix4 } from '../math/Matrix4.js';
-import { VertexColors } from '../constants.js';
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
-import { Color } from '../math/Color.js';
-import { Vector3 } from '../math/Vector3.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { Object3D } from '../core/Object3D.js';
+
+
+
+
+
+
+
+
+
+
+
 
 function getBoneList( object ) {
 
@@ -125,4 +129,6 @@ SkeletonHelper.prototype.updateMatrixWorld = function () {
 
 }();
 
-export { SkeletonHelper };
+;
+
+export { SkeletonHelper }

@@ -1,10 +1,8 @@
-import { TempNode } from '../../nodes/TempNode.js'
+import { TempNode } from '../TempNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var Math1Node = function( a, method ) {
+
+var Math1Node = function ( a, method ) {
 
 	TempNode.call( this );
 
@@ -41,19 +39,22 @@ Math1Node.INVERT = 'invert';
 
 Math1Node.prototype = Object.create( TempNode.prototype );
 Math1Node.prototype.constructor = Math1Node;
+Math1Node.prototype.nodeType = "Math1";
 
-Math1Node.prototype.getType = function( builder ) {
+Math1Node.prototype.getType = function ( builder ) {
 
 	switch ( this.method ) {
+
 		case Math1Node.LENGTH:
 			return 'fv1';
+
 	}
 
 	return this.a.getType( builder );
 
 };
 
-Math1Node.prototype.generate = function( builder, output ) {
+Math1Node.prototype.generate = function ( builder, output ) {
 
 	var material = builder.material;
 
@@ -74,9 +75,27 @@ Math1Node.prototype.generate = function( builder, output ) {
 		default:
 			result = this.method + '(' + result + ')';
 			break;
+
 	}
 
 	return builder.format( result, type, output );
+
+};
+
+Math1Node.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.a = this.a.toJSON( meta ).uuid;
+		data.method = this.method;
+
+	}
+
+	return data;
 
 };
 

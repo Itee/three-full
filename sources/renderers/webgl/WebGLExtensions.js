@@ -1,6 +1,6 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 function WebGLExtensions( gl ) {
 
@@ -47,7 +47,7 @@ function WebGLExtensions( gl ) {
 
 			if ( extension === null ) {
 
-				console.warn( 'THREE.WebGLRenderer: ' + name + ' extension not supported.' );
+				console.warn( 'WebGLRenderer: ' + name + ' extension not supported.' );
 
 			}
 
@@ -62,4 +62,6 @@ function WebGLExtensions( gl ) {
 }
 
 
-export { WebGLExtensions };
+;
+
+export { WebGLExtensions }

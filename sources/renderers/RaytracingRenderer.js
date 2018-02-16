@@ -2,13 +2,7 @@ import { EventDispatcher } from '../core/EventDispatcher.js'
 import { Color } from '../math/Color.js'
 import { REVISION } from '../constants.js'
 
-/**
- * RaytracingRenderer renders by raytracing it's scene. However, it does not
- * compute the pixels itself but it hands off and coordinates the taks for workers.
- * The workers compute the pixel values and this renderer simply paints it to the Canvas.
- *
- * @author zz85 / http://github.com/zz85
- */
+
 
 var RaytracingRenderer = function ( parameters ) {
 
@@ -82,9 +76,9 @@ var RaytracingRenderer = function ( parameters ) {
 			worker.color = new Color().setHSL( Math.random() , 0.8, 0.8 ).getHexString();
 			pool.push( worker );
 
-			if ( renderering ) {
+			updateSettings( worker );
 
-				updateSettings( worker );
+			if ( renderering ) {
 
 				worker.postMessage( {
 					scene: sceneJSON,

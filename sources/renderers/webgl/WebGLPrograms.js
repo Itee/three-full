@@ -1,9 +1,17 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+import {
+	BackSide,
+	DoubleSide,
+	CubeUVRefractionMapping,
+	CubeUVReflectionMapping,
+	GammaEncoding,
+	LinearEncoding
+} from '../../constants.js'
+import { WebGLProgram } from './WebGLProgram.js'
 
-import { BackSide, DoubleSide, CubeUVRefractionMapping, CubeUVReflectionMapping, GammaEncoding, LinearEncoding } from '../../constants.js';
-import { WebGLProgram } from './WebGLProgram.js';
+
+
+
+
 
 function WebGLPrograms( renderer, extensions, capabilities ) {
 
@@ -64,7 +72,7 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 
 			if ( maxBones < bones.length ) {
 
-				console.warn( 'THREE.WebGLRenderer: Skeleton has ' + bones.length + ' bones. This GPU supports ' + maxBones + '.' );
+				console.warn( 'WebGLRenderer: Skeleton has ' + bones.length + ' bones. This GPU supports ' + maxBones + '.' );
 				return 0;
 
 			}
@@ -89,7 +97,7 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 
 		} else if ( map.isWebGLRenderTarget ) {
 
-			console.warn( "THREE.WebGLPrograms.getTextureEncodingFromMap: don't use render targets as textures. Use their .texture property instead." );
+			console.warn( "WebGLPrograms.getTextureEncodingFromMap: don't use render targets as textures. Use their .texture property instead." );
 			encoding = map.texture.encoding;
 
 		}
@@ -121,7 +129,7 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 
 			if ( precision !== material.precision ) {
 
-				console.warn( 'THREE.WebGLProgram.getParameters:', material.precision, 'not supported, using', precision, 'instead.' );
+				console.warn( 'WebGLProgram.getParameters:', material.precision, 'not supported, using', precision, 'instead.' );
 
 			}
 
@@ -302,4 +310,6 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 }
 
 
-export { WebGLPrograms };
+;
+
+export { WebGLPrograms }

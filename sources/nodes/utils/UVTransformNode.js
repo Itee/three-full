@@ -1,25 +1,21 @@
-import { FunctionNode } from '../../nodes/FunctionNode.js'
-import { UVNode } from '../../nodes/accessors/UVNode.js'
-import { Matrix4Node } from '../../nodes/inputs/Matrix4Node.js'
-import { Vector2 } from '../../math/Vector2.js'
-import { Vector3 } from '../../math/Vector3.js'
-import { Matrix4 } from '../../math/Matrix4.js'
+import { FunctionNode } from '../FunctionNode.js'
+import { UVNode } from '../accessors/UVNode.js'
+import { Matrix3Node } from '../inputs/Matrix3Node.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
+
 
 var UVTransformNode = function () {
 
-	FunctionNode.call( this, "( uvTransform * vec4( uvNode, 0, 1 ) ).xy", "vec2" );
+	FunctionNode.call( this, "( uvTransform * vec3( uvNode, 1 ) ).xy", "vec2" );
 
 	this.uv = new UVNode();
-	this.transform = new Matrix4Node();
+	this.transform = new Matrix3Node();
 
 };
 
 UVTransformNode.prototype = Object.create( FunctionNode.prototype );
 UVTransformNode.prototype.constructor = UVTransformNode;
+UVTransformNode.prototype.nodeType = "UVTransform";
 
 UVTransformNode.prototype.generate = function ( builder, output ) {
 
@@ -30,28 +26,30 @@ UVTransformNode.prototype.generate = function ( builder, output ) {
 
 };
 
-UVTransformNode.prototype.compose = function () {
+UVTransformNode.prototype.setUvTransform = function ( tx, ty, sx, sy, rotation, cx, cy ) {
 
-	var defaultPivot = new Vector2( .5, .5 ),
-		tempVector = new Vector3(),
-		tempMatrix = new Matrix4();
+	cx = cx !== undefined ? cx : .5;
+	cy = cy !== undefined ? cy : .5;
 
-	return function compose( translate, rotate, scale, optionalCenter ) {
+	this.transform.value.setUvTransform( tx, ty, sx, sy, rotation, cx, cy );
 
-		optionalCenter = optionalCenter !== undefined ? optionalCenter : defaultPivot;
+};
 
-		var matrix = this.transform.value;
+UVTransformNode.prototype.toJSON = function ( meta ) {
 
-		matrix.identity()
-			.setPosition( tempVector.set( - optionalCenter.x, - optionalCenter.y, 0 ) )
-			.premultiply( tempMatrix.makeRotationZ( rotate ) )
-			.multiply( tempMatrix.makeScale( scale.x, scale.y, 0 ) )
-			.multiply( tempMatrix.makeTranslation( translate.x, translate.y, 0 ) );
+	var data = this.getJSONNode( meta );
 
-		return this;
+	if ( ! data ) {
 
-	};
+		data = this.createJSONNode( meta );
 
-}();
+		data.uv = this.uv.toJSON( meta ).uuid;
+		data.transform = this.transform.toJSON( meta ).uuid;
+
+	}
+
+	return data;
+
+};
 
 export { UVTransformNode }

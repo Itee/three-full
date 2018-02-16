@@ -1,6 +1,6 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 function WebGLBufferRenderer( gl, extensions, infoRender ) {
 
@@ -30,7 +30,7 @@ function WebGLBufferRenderer( gl, extensions, infoRender ) {
 
 		if ( extension === null ) {
 
-			console.error( 'THREE.WebGLBufferRenderer: using THREE.InstancedBufferGeometry but hardware does not support extension ANGLE_instanced_arrays.' );
+			console.error( 'WebGLBufferRenderer: using InstancedBufferGeometry but hardware does not support extension ANGLE_instanced_arrays.' );
 			return;
 
 		}
@@ -66,4 +66,6 @@ function WebGLBufferRenderer( gl, extensions, infoRender ) {
 }
 
 
-export { WebGLBufferRenderer };
+;
+
+export { WebGLBufferRenderer }

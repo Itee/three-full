@@ -1,8 +1,8 @@
-import { Interpolant } from '../Interpolant.js';
+import { Interpolant } from '../Interpolant.js'
 
-/**
- * @author tschw
- */
+
+
+
 
 function LinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
@@ -41,4 +41,6 @@ LinearInterpolant.prototype = Object.assign( Object.create( Interpolant.prototyp
 } );
 
 
-export { LinearInterpolant };
+;
+
+export { LinearInterpolant }

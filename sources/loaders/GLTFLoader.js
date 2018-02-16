@@ -1,28 +1,26 @@
-import { FileLoader } from '../loaders/FileLoader.js'
+import { Interpolant } from '../math/Interpolant.js'
+import { FileLoader } from './FileLoader.js'
 import { Color } from '../math/Color.js'
 import { DirectionalLight } from '../lights/DirectionalLight.js'
 import { PointLight } from '../lights/PointLight.js'
 import { SpotLight } from '../lights/SpotLight.js'
 import { AmbientLight } from '../lights/AmbientLight.js'
-import {
-	ShaderMaterial,
-	MeshStandardMaterial,
-	MeshPhongMaterial,
-	MeshLambertMaterial,
-	MeshBasicMaterial
-} from '../materials/Materials.js'
-import { TextureLoader } from '../loaders/TextureLoader.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
+import { BufferAttribute } from '../core/BufferAttribute.js'
+import { TextureLoader } from './TextureLoader.js'
 import { InterleavedBuffer } from '../core/InterleavedBuffer.js'
 import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js'
-import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Vector2 } from '../math/Vector2.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Group } from '../objects/Group.js'
 import { SkinnedMesh } from '../objects/SkinnedMesh.js'
 import { Mesh } from '../objects/Mesh.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { LineSegments } from '../objects/LineSegments.js'
 import { Line } from '../objects/Line.js'
 import { LineLoop } from '../objects/LineLoop.js'
+import { PointsMaterial } from '../materials/PointsMaterial.js'
 import { Points } from '../objects/Points.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
@@ -83,19 +81,26 @@ import {
 	TriangleFanDrawMode,
 	sRGBEncoding
 } from '../constants.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
+import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
-import { LoaderUtils } from '../loaders/LoaderUtils.js'
+import { LoaderUtils } from './LoaderUtils.js'
 import { AnimationUtils } from '../animation/AnimationUtils.js'
+import { _Math } from '../math/Math.js'
+import { Matrix3 } from '../math/Matrix3.js'
+import { Vector3 } from '../math/Vector3.js'
+import { Vector4 } from '../math/Vector4.js'
+import { Texture } from '../textures/Texture.js'
+import { Material } from '../materials/Material.js'
+import { NumberKeyframeTrack } from '../animation/tracks/NumberKeyframeTrack.js'
+import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
+import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
+import { PropertyBinding } from '../animation/PropertyBinding.js'
 
-/**
- * @author Rich Tibbett / https://github.com/richtr
- * @author mrdoob / http://mrdoob.com/
- * @author Tony Parisi / http://www.tonyparisi.com/
- * @author Takahiro / https://github.com/takahirox
- * @author Don McCurdy / https://www.donmccurdy.com
- */
+
 
 var GLTFLoader = ( function () {
 
@@ -212,12 +217,6 @@ var GLTFLoader = ( function () {
 
 				}
 
-				if ( json.extensionsUsed.indexOf( EXTENSIONS.KHR_MATERIALS_COMMON ) >= 0 ) {
-
-					extensions[ EXTENSIONS.KHR_MATERIALS_COMMON ] = new GLTFMaterialsCommonExtension( json );
-
-				}
-
 				if ( json.extensionsUsed.indexOf( EXTENSIONS.KHR_MATERIALS_PBR_SPECULAR_GLOSSINESS ) >= 0 ) {
 
 					extensions[ EXTENSIONS.KHR_MATERIALS_PBR_SPECULAR_GLOSSINESS ] = new GLTFMaterialsPbrSpecularGlossinessExtension();
@@ -256,7 +255,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/* GLTFREGISTRY */
+	
 
 	function GLTFRegistry() {
 
@@ -292,22 +291,17 @@ var GLTFLoader = ( function () {
 
 	}
 
-	/*********************************/
-	/********** EXTENSIONS ***********/
-	/*********************************/
+	
+	
+	
 
 	var EXTENSIONS = {
 		KHR_BINARY_GLTF: 'KHR_binary_glTF',
 		KHR_LIGHTS: 'KHR_lights',
-		KHR_MATERIALS_COMMON: 'KHR_materials_common',
 		KHR_MATERIALS_PBR_SPECULAR_GLOSSINESS: 'KHR_materials_pbrSpecularGlossiness'
 	};
 
-	/**
-	 * Lights Extension
-	 *
-	 * Specification: PENDING
-	 */
+	
 	function GLTFLightsExtension( json ) {
 
 		this.name = EXTENSIONS.KHR_LIGHTS;
@@ -387,108 +381,7 @@ var GLTFLoader = ( function () {
 
 	}
 
-	/**
-	 * Common Materials Extension
-	 *
-	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/extensions/Khronos/KHR_materials_common
-	 */
-	function GLTFMaterialsCommonExtension( json ) {
-
-		this.name = EXTENSIONS.KHR_MATERIALS_COMMON;
-
-	}
-
-	GLTFMaterialsCommonExtension.prototype.getMaterialType = function ( material ) {
-
-		var khrMaterial = material.extensions[ this.name ];
-
-		switch ( khrMaterial.type ) {
-
-			case 'commonBlinn' :
-			case 'commonPhong' :
-				return MeshPhongMaterial;
-
-			case 'commonLambert' :
-				return MeshLambertMaterial;
-
-			case 'commonConstant' :
-			default :
-				return MeshBasicMaterial;
-
-		}
-
-	};
-
-	GLTFMaterialsCommonExtension.prototype.extendParams = function ( materialParams, material, parser ) {
-
-		var khrMaterial = material.extensions[ this.name ];
-
-		var pending = [];
-
-		var keys = [];
-
-		// TODO: Currently ignored: 'ambientFactor', 'ambientTexture'
-		switch ( khrMaterial.type ) {
-
-			case 'commonBlinn' :
-			case 'commonPhong' :
-				keys.push( 'diffuseFactor', 'diffuseTexture', 'specularFactor', 'specularTexture', 'shininessFactor' );
-				break;
-
-			case 'commonLambert' :
-				keys.push( 'diffuseFactor', 'diffuseTexture' );
-				break;
-
-			case 'commonConstant' :
-			default :
-				break;
-
-		}
-
-		var materialValues = {};
-
-		keys.forEach( function ( v ) {
-
-			if ( khrMaterial[ v ] !== undefined ) materialValues[ v ] = khrMaterial[ v ];
-
-		} );
-
-		if ( materialValues.diffuseFactor !== undefined ) {
-
-			materialParams.color = new Color().fromArray( materialValues.diffuseFactor );
-			materialParams.opacity = materialValues.diffuseFactor[ 3 ];
-
-		}
-
-		if ( materialValues.diffuseTexture !== undefined ) {
-
-			pending.push( parser.assignTexture( materialParams, 'map', materialValues.diffuseTexture.index ) );
-
-		}
-
-		if ( materialValues.specularFactor !== undefined ) {
-
-			materialParams.specular = new Color().fromArray( materialValues.specularFactor );
-
-		}
-
-		if ( materialValues.specularTexture !== undefined ) {
-
-			pending.push( parser.assignTexture( materialParams, 'specularMap', materialValues.specularTexture.index ) );
-
-		}
-
-		if ( materialValues.shininessFactor !== undefined ) {
-
-			materialParams.shininess = materialValues.shininessFactor;
-
-		}
-
-		return Promise.all( pending );
-
-	};
-
-	/* BINARY EXTENSION */
+	
 
 	var BINARY_EXTENSION_BUFFER_NAME = 'binary_glTF';
 	var BINARY_EXTENSION_HEADER_MAGIC = 'glTF';
@@ -556,11 +449,7 @@ var GLTFLoader = ( function () {
 
 	}
 
-	/**
-	 * Specular-Glossiness Extension
-	 *
-	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/extensions/Khronos/KHR_materials_pbrSpecularGlossiness
-	 */
+	
 	function GLTFMaterialsPbrSpecularGlossinessExtension() {
 
 		return {
@@ -772,18 +661,7 @@ var GLTFLoader = ( function () {
 
 			},
 
-			/**
-			 * Clones a GLTFSpecularGlossinessMaterial instance. The ShaderMaterial.copy() method can
-			 * copy only properties it knows about or inherits, and misses many properties that would
-			 * normally be defined by MeshStandardMaterial.
-			 *
-			 * This method allows GLTFSpecularGlossinessMaterials to be cloned in the process of
-			 * loading a glTF model, but cloning later (e.g. by the user) would require these changes
-			 * AND also updating `.onBeforeRender` on the parent mesh.
-			 *
-			 * @param  {ShaderMaterial} source
-			 * @return {ShaderMaterial}
-			 */
+			
 			cloneMaterial: function ( source ) {
 
 				var target = source.clone();
@@ -804,6 +682,12 @@ var GLTFLoader = ( function () {
 
 			// Here's based on refreshUniformsCommon() and refreshUniformsStandard() in WebGLRenderer.
 			refreshUniforms: function ( renderer, scene, camera, geometry, material, group ) {
+
+				if ( material.isGLTFSpecularGlossinessMaterial !== true ) {
+
+					return;
+
+				}
 
 				var uniforms = material.uniforms;
 				var defines = material.defines;
@@ -949,11 +833,66 @@ var GLTFLoader = ( function () {
 
 	}
 
-	/*********************************/
-	/********** INTERNALS ************/
-	/*********************************/
+	
+	
+	
 
-	/* CONSTANTS */
+	// Spline Interpolation
+	// Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#appendix-c-spline-interpolation
+	function GLTFCubicSplineInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
+
+		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
+
+	};
+
+	GLTFCubicSplineInterpolant.prototype = Object.create( Interpolant.prototype );
+	GLTFCubicSplineInterpolant.prototype.constructor = GLTFCubicSplineInterpolant;
+
+	GLTFCubicSplineInterpolant.prototype.interpolate_ = function ( i1, t0, t, t1 ) {
+
+		var result = this.resultBuffer;
+		var values = this.sampleValues;
+		var stride = this.valueSize;
+
+		var stride2 = stride * 2;
+		var stride3 = stride * 3;
+
+		var td = t1 - t0;
+
+		var p = ( t - t0 ) / td;
+		var pp = p * p;
+		var ppp = pp * p;
+
+		var offset1 = i1 * stride3;
+		var offset0 = offset1 - stride3;
+
+		var s0 = 2 * ppp - 3 * pp + 1;
+		var s1 = ppp - 2 * pp + p;
+		var s2 = - 2 * ppp + 3 * pp;
+		var s3 = ppp - pp;
+
+		// Layout of keyframe output values for CUBICSPLINE animations:
+		//   [ inTangent_1, splineVertex_1, outTangent_1, inTangent_2, splineVertex_2, ... ]
+		for ( var i = 0; i !== stride; i ++ ) {
+
+			var p0 = values[ offset0 + i + stride ];        // splineVertex_k
+			var m0 = values[ offset0 + i + stride2 ] * td;  // outTangent_k * (t_k+1 - t_k)
+			var p1 = values[ offset1 + i + stride ];        // splineVertex_k+1
+			var m1 = values[ offset1 + i ] * td;            // inTangent_k+1 * (t_k+1 - t_k)
+
+			result[ i ] = s0 * p0 + s1 * m0 + s2 * p1 + s3 * m1;
+
+		}
+
+		return result;
+
+	};
+
+	
+	
+	
+
+	
 
 	var WEBGL_CONSTANTS = {
 		FLOAT: 5126,
@@ -1087,7 +1026,10 @@ var GLTFLoader = ( function () {
 	};
 
 	var INTERPOLATION = {
-		CUBICSPLINE: InterpolateSmooth,
+		CUBICSPLINE: InterpolateSmooth, // We use custom interpolation GLTFCubicSplineInterpolation for CUBICSPLINE.
+		                                      // KeyframeTrack.optimize() can't handle glTF Cubic Spline output values layout,
+		                                      // using InterpolateSmooth for KeyframeTrack instantiation to prevent optimization.
+		                                      // See KeyframeTrack.optimize() for the detail.
 		LINEAR: InterpolateLinear,
 		STEP: InterpolateDiscrete
 	};
@@ -1107,7 +1049,7 @@ var GLTFLoader = ( function () {
 		BLEND: 'BLEND'
 	};
 
-	/* UTILITY FUNCTIONS */
+	
 
 	function resolveURL( url, path ) {
 
@@ -1128,9 +1070,7 @@ var GLTFLoader = ( function () {
 
 	}
 
-	/**
-	 * Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#default-material
-	 */
+	
 	function createDefaultMaterial() {
 
 		return new MeshStandardMaterial( {
@@ -1145,16 +1085,7 @@ var GLTFLoader = ( function () {
 
 	}
 
-	/**
-	 * Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#morph-targets
-	 *
-	 * TODO: Implement support for morph targets on TANGENT attribute.
-	 *
-	 * @param {Mesh} mesh
-	 * @param {GLTF.Mesh} meshDef
-	 * @param {GLTF.Primitive} primitiveDef
-	 * @param {Array<BufferAttribute>} accessors
-	 */
+	
 	function addMorphTargets( mesh, meshDef, primitiveDef, accessors ) {
 
 		var geometry = mesh.geometry;
@@ -1191,7 +1122,7 @@ var GLTFLoader = ( function () {
 				// So morphTarget value will depend on mesh's position, then cloning attribute
 				// for the case if attribute is shared among two or more meshes.
 
-				positionAttribute = accessors[ target.POSITION ].clone();
+				positionAttribute = cloneBufferAttribute( accessors[ target.POSITION ] );
 				var position = geometry.attributes.position;
 
 				for ( var j = 0, jl = positionAttribute.count; j < jl; j ++ ) {
@@ -1209,7 +1140,7 @@ var GLTFLoader = ( function () {
 
 				// Copying the original position not to affect the final position.
 				// See the formula above.
-				positionAttribute = geometry.attributes.position.clone();
+				positionAttribute = cloneBufferAttribute( geometry.attributes.position );
 
 			}
 
@@ -1226,7 +1157,7 @@ var GLTFLoader = ( function () {
 
 				// see target.POSITION's comment
 
-				normalAttribute = accessors[ target.NORMAL ].clone();
+				normalAttribute = cloneBufferAttribute( accessors[ target.NORMAL ] );
 				var normal = geometry.attributes.normal;
 
 				for ( var j = 0, jl = normalAttribute.count; j < jl; j ++ ) {
@@ -1242,7 +1173,7 @@ var GLTFLoader = ( function () {
 
 			} else if ( geometry.attributes.normal !== undefined ) {
 
-				normalAttribute = geometry.attributes.normal.clone();
+				normalAttribute = cloneBufferAttribute( geometry.attributes.normal );
 
 			}
 
@@ -1322,7 +1253,32 @@ var GLTFLoader = ( function () {
 
 	}
 
-	/* GLTF PARSER */
+	function cloneBufferAttribute( attribute ) {
+
+		if ( attribute.isInterleavedBufferAttribute ) {
+
+			var count = attribute.count;
+			var itemSize = attribute.itemSize;
+			var array = attribute.array.slice( 0, count * itemSize );
+
+			for ( var i = 0; i < count; ++ i ) {
+
+				array[ i ] = attribute.getX( i );
+				if ( itemSize >= 2 ) array[ i + 1 ] = attribute.getY( i );
+				if ( itemSize >= 3 ) array[ i + 2 ] = attribute.getZ( i );
+				if ( itemSize >= 4 ) array[ i + 3 ] = attribute.getW( i );
+
+			}
+
+			return new BufferAttribute( array, itemSize, attribute.normalized );
+
+		}
+
+		return attribute.clone();
+
+	}
+
+	
 
 	function GLTFParser( json, extensions, options ) {
 
@@ -1347,7 +1303,6 @@ var GLTFLoader = ( function () {
 	GLTFParser.prototype.parse = function ( onLoad, onError ) {
 
 		var json = this.json;
-		var parser = this;
 
 		// Clear the loader cache
 		this.cache.removeAll();
@@ -1376,9 +1331,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Marks the special nodes/meshes in json for efficient parse.
-	 */
+	
 	GLTFParser.prototype.markDefs = function () {
 
 		var nodeDefs = this.json.nodes || [];
@@ -1439,12 +1392,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Requests the specified dependency asynchronously, with caching.
-	 * @param {string} type
-	 * @param {number} index
-	 * @return {Promise<Object>}
-	 */
+	
 	GLTFParser.prototype.getDependency = function ( type, index ) {
 
 		var cacheKey = type + ':' + index;
@@ -1462,11 +1410,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Requests all dependencies of the specified type asynchronously, with caching.
-	 * @param {string} type
-	 * @return {Promise<Array<Object>>}
-	 */
+	
 	GLTFParser.prototype.getDependencies = function ( type ) {
 
 		var dependencies = this.cache.get( type );
@@ -1490,11 +1434,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Requests all multiple dependencies of the specified types asynchronously, with caching.
-	 * @param {Array<string>} types
-	 * @return {Promise<Object<Array<Object>>>}
-	 */
+	
 	GLTFParser.prototype.getMultiDependencies = function ( types ) {
 
 		var results = {};
@@ -1523,11 +1463,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#buffers-and-buffer-views
-	 * @param {number} bufferIndex
-	 * @return {Promise<ArrayBuffer>}
-	 */
+	
 	GLTFParser.prototype.loadBuffer = function ( bufferIndex ) {
 
 		var bufferDef = this.json.buffers[ bufferIndex ];
@@ -1560,11 +1496,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#buffers-and-buffer-views
-	 * @param {number} bufferViewIndex
-	 * @return {Promise<ArrayBuffer>}
-	 */
+	
 	GLTFParser.prototype.loadBufferView = function ( bufferViewIndex ) {
 
 		var bufferViewDef = this.json.bufferViews[ bufferViewIndex ];
@@ -1579,13 +1511,10 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#accessors
-	 * @param {number} accessorIndex
-	 * @return {Promise<BufferAttribute|InterleavedBufferAttribute>}
-	 */
+	
 	GLTFParser.prototype.loadAccessor = function ( accessorIndex ) {
 
+		var parser = this;
 		var json = this.json;
 
 		var accessorDef = this.json.accessors[ accessorIndex ];
@@ -1619,6 +1548,7 @@ var GLTFLoader = ( function () {
 			// For VEC3: itemSize is 3, elementBytes is 4, itemBytes is 12.
 			var elementBytes = TypedArray.BYTES_PER_ELEMENT;
 			var itemBytes = elementBytes * itemSize;
+			var byteOffset = accessorDef.byteOffset || 0;
 			var byteStride = json.bufferViews[ accessorDef.bufferView ].byteStride;
 			var normalized = accessorDef.normalized === true;
 			var array, bufferAttribute;
@@ -1626,13 +1556,22 @@ var GLTFLoader = ( function () {
 			// The buffer is not interleaved if the stride is the item size in bytes.
 			if ( byteStride && byteStride !== itemBytes ) {
 
-				// Use the full buffer if it's interleaved.
-				array = new TypedArray( bufferView );
+				var ibCacheKey = 'InterleavedBuffer:' + accessorDef.bufferView + ':' + accessorDef.componentType;
+				var ib = parser.cache.get( ibCacheKey );
 
-				// Integer parameters to IB/IBA are in array elements, not bytes.
-				var ib = new InterleavedBuffer( array, byteStride / elementBytes );
+				if ( ! ib ) {
 
-				bufferAttribute = new InterleavedBufferAttribute( ib, itemSize, accessorDef.byteOffset / elementBytes, normalized );
+					// Use the full buffer if it's interleaved.
+					array = new TypedArray( bufferView );
+
+					// Integer parameters to IB/IBA are in array elements, not bytes.
+					ib = new InterleavedBuffer( array, byteStride / elementBytes );
+
+					parser.cache.add( ibCacheKey, ib );
+
+				}
+
+				bufferAttribute = new InterleavedBufferAttribute( ib, itemSize, byteOffset / elementBytes, normalized );
 
 			} else {
 
@@ -1642,7 +1581,7 @@ var GLTFLoader = ( function () {
 
 				} else {
 
-					array = new TypedArray( bufferView, accessorDef.byteOffset, accessorDef.count * itemSize );
+					array = new TypedArray( bufferView, byteOffset, accessorDef.count * itemSize );
 
 				}
 
@@ -1689,11 +1628,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#textures
-	 * @param {number} textureIndex
-	 * @return {Promise<Texture>}
-	 */
+	
 	GLTFParser.prototype.loadTexture = function ( textureIndex ) {
 
 		var parser = this;
@@ -1774,13 +1709,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Asynchronously assigns a texture to the given material parameters.
-	 * @param {Object} materialParams
-	 * @param {string} textureName
-	 * @param {number} textureIndex
-	 * @return {Promise}
-	 */
+	
 	GLTFParser.prototype.assignTexture = function ( materialParams, textureName, textureIndex ) {
 
 		return this.getDependency( 'texture', textureIndex ).then( function ( texture ) {
@@ -1791,11 +1720,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#materials
-	 * @param {number} materialIndex
-	 * @return {Promise<Material>}
-	 */
+	
 	GLTFParser.prototype.loadMaterial = function ( materialIndex ) {
 
 		var parser = this;
@@ -1809,13 +1734,7 @@ var GLTFLoader = ( function () {
 
 		var pending = [];
 
-		if ( materialExtensions[ EXTENSIONS.KHR_MATERIALS_COMMON ] ) {
-
-			var khcExtension = extensions[ EXTENSIONS.KHR_MATERIALS_COMMON ];
-			materialType = khcExtension.getMaterialType( materialDef );
-			pending.push( khcExtension.extendParams( materialParams, materialDef, parser ) );
-
-		} else if ( materialExtensions[ EXTENSIONS.KHR_MATERIALS_PBR_SPECULAR_GLOSSINESS ] ) {
+		if ( materialExtensions[ EXTENSIONS.KHR_MATERIALS_PBR_SPECULAR_GLOSSINESS ] ) {
 
 			var sgExtension = extensions[ EXTENSIONS.KHR_MATERIALS_PBR_SPECULAR_GLOSSINESS ];
 			materialType = sgExtension.getMaterialType( materialDef );
@@ -1979,11 +1898,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#geometry
-	 * @param {Array<Object>} primitives
-	 * @return {Promise<Array<BufferGeometry>>}
-	 */
+	
 	GLTFParser.prototype.loadGeometries = function ( primitives ) {
 
 		var cache = this.primitiveCache;
@@ -2090,11 +2005,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#meshes
-	 * @param {number} meshIndex
-	 * @return {Promise<Group|Mesh|SkinnedMesh>}
-	 */
+	
 	GLTFParser.prototype.loadMesh = function ( meshIndex ) {
 
 		var scope = this;
@@ -2196,19 +2107,60 @@ var GLTFLoader = ( function () {
 
 						}
 
-					} else if ( primitive.mode === WEBGL_CONSTANTS.LINES ) {
+					} else if ( primitive.mode === WEBGL_CONSTANTS.LINES ||
+						primitive.mode === WEBGL_CONSTANTS.LINE_STRIP ||
+						primitive.mode === WEBGL_CONSTANTS.LINE_LOOP ) {
 
-						mesh = new LineSegments( geometry, material );
+						var cacheKey = 'LineBasicMaterial:' + material.uuid;
 
-					} else if ( primitive.mode === WEBGL_CONSTANTS.LINE_STRIP ) {
+						var lineMaterial = scope.cache.get( cacheKey );
 
-						mesh = new Line( geometry, material );
+						if ( ! lineMaterial ) {
 
-					} else if ( primitive.mode === WEBGL_CONSTANTS.LINE_LOOP ) {
+							lineMaterial = new LineBasicMaterial();
+							Material.prototype.copy.call( lineMaterial, material );
+							lineMaterial.color.copy( material.color );
+							lineMaterial.lights = false;  // LineBasicMaterial doesn't support lights yet
 
-						mesh = new LineLoop( geometry, material );
+							scope.cache.add( cacheKey, lineMaterial );
+
+						}
+
+						material = lineMaterial;
+
+						if ( primitive.mode === WEBGL_CONSTANTS.LINES ) {
+
+							mesh = new LineSegments( geometry, material );
+
+						} else if ( primitive.mode === WEBGL_CONSTANTS.LINE_STRIP ) {
+
+							mesh = new Line( geometry, material );
+
+						} else {
+
+							mesh = new LineLoop( geometry, material );
+
+						}
 
 					} else if ( primitive.mode === WEBGL_CONSTANTS.POINTS ) {
+
+						var cacheKey = 'PointsMaterial:' + material.uuid;
+
+						var pointsMaterial = scope.cache.get( cacheKey );
+
+						if ( ! pointsMaterial ) {
+
+							pointsMaterial = new PointsMaterial();
+							Material.prototype.copy.call( pointsMaterial, material );
+							pointsMaterial.color.copy( material.color );
+							pointsMaterial.map = material.map;
+							pointsMaterial.lights = false;  // PointsMaterial doesn't support lights yet
+
+							scope.cache.add( cacheKey, pointsMaterial );
+
+						}
+
+						material = pointsMaterial;
 
 						mesh = new Points( geometry, material );
 
@@ -2258,11 +2210,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#cameras
-	 * @param {number} cameraIndex
-	 * @return {Promise<Camera>}
-	 */
+	
 	GLTFParser.prototype.loadCamera = function ( cameraIndex ) {
 
 		var camera;
@@ -2281,7 +2229,7 @@ var GLTFLoader = ( function () {
 			var aspectRatio = params.aspectRatio || 1;
 			var xfov = params.yfov * aspectRatio;
 
-			camera = new PerspectiveCamera( Math.radToDeg( xfov ), aspectRatio, params.znear || 1, params.zfar || 2e6 );
+			camera = new PerspectiveCamera( _Math.radToDeg( xfov ), aspectRatio, params.znear || 1, params.zfar || 2e6 );
 
 		} else if ( cameraDef.type === 'orthographic' ) {
 
@@ -2296,11 +2244,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#skins
-	 * @param {number} skinIndex
-	 * @return {Promise<Object>}
-	 */
+	
 	GLTFParser.prototype.loadSkin = function ( skinIndex ) {
 
 		var skinDef = this.json.skins[ skinIndex ];
@@ -2323,11 +2267,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#animations
-	 * @param {number} animationIndex
-	 * @return {Promise<AnimationClip>}
-	 */
+	
 	GLTFParser.prototype.loadAnimation = function ( animationIndex ) {
 
 		var json = this.json;
@@ -2390,36 +2330,6 @@ var GLTFLoader = ( function () {
 
 						var targetName = node.name ? node.name : node.uuid;
 
-						if ( sampler.interpolation === 'CUBICSPLINE' ) {
-
-							var itemSize = outputAccessor.itemSize;
-							var TypedArray = outputAccessor.array.constructor;
-							var outputAccessorValues = new TypedArray( outputAccessor.count * itemSize / 3 );
-
-							// Layout of keyframe output values for CUBICSPLINE animations:
-							//
-							//   [ inTangent1, splineVertex1, outTangent1, inTangent2, splineVertex2, ... ]
-							//
-							// KeyframeTrack infers tangents from the spline vertices when interpolating:
-							// those values are extracted below. This still guarantees smooth curves, but does
-							// throw away more precise information in the tangents. In the future, consider
-							// re-sampling at a higher framerate using the tangents provided.
-							//
-							// See: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#appendix-c-spline-interpolation
-
-							for ( var j = 0, jl = outputAccessor.count; j < jl; j += 3 ) {
-
-								outputAccessorValues[ j * itemSize / 3 ] = outputAccessor.getX( j + 1 );
-								if ( itemSize > 1 ) outputAccessorValues[ j * itemSize / 3 + 1 ] = outputAccessor.getY( j + 1 );
-								if ( itemSize > 2 ) outputAccessorValues[ j * itemSize / 3 + 2 ] = outputAccessor.getZ( j + 1 );
-								if ( itemSize > 3 ) outputAccessorValues[ j * itemSize / 3 + 3 ] = outputAccessor.getW( j + 1 );
-
-							}
-
-							outputAccessor = new BufferAttribute( outputAccessorValues, itemSize / 3, outputAccessor.normalized );
-
-						}
-
 						var interpolation = sampler.interpolation !== undefined ? INTERPOLATION[ sampler.interpolation ] : InterpolateLinear;
 
 						var targetNames = [];
@@ -2452,12 +2362,30 @@ var GLTFLoader = ( function () {
 						// be reused by other tracks, make copies here.
 						for ( var j = 0, jl = targetNames.length; j < jl; j ++ ) {
 
-							tracks.push( new TypedKeyframeTrack(
+							var track = new TypedKeyframeTrack(
 								targetNames[ j ] + '.' + PATH_PROPERTIES[ target.path ],
 								AnimationUtils.arraySlice( inputAccessor.array, 0 ),
 								AnimationUtils.arraySlice( outputAccessor.array, 0 ),
 								interpolation
-							) );
+							);
+
+							// Here is the trick to enable custom interpolation.
+							// Overrides .createInterpolant in a factory method which creates custom interpolation.
+							if ( sampler.interpolation === 'CUBICSPLINE' ) {
+
+								track.createInterpolant = function ( result ) {
+
+									// A CUBICSPLINE keyframe in glTF has three output values for each input value,
+									// representing inTangent, splineVertex, and outTangent. As a result, track.getValueSize()
+									// must be divided by three to get the interpolant's sampleSize argument.
+
+									return new GLTFCubicSplineInterpolant( this.times, this.values, this.getValueSize() / 3, result );
+
+								};
+
+							}
+
+							tracks.push( track );
 
 						}
 
@@ -2475,11 +2403,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#nodes-and-hierarchy
-	 * @param {number} nodeIndex
-	 * @return {Promise<Object3D>}
-	 */
+	
 	GLTFParser.prototype.loadNode = function ( nodeIndex ) {
 
 		var json = this.json;
@@ -2600,11 +2524,7 @@ var GLTFLoader = ( function () {
 
 	};
 
-	/**
-	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#scenes
-	 * @param {number} sceneIndex
-	 * @return {Promise<Scene>}
-	 */
+	
 	GLTFParser.prototype.loadScene = function () {
 
 		// scene node hierachy builder

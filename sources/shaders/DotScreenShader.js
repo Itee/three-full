@@ -1,12 +1,6 @@
 import { Vector2 } from '../math/Vector2.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- *
- * Dot screen shader
- * based on glfx.js sepia shader
- * https://github.com/evanw/glfx.js
- */
+
 
 var DotScreenShader = {
 

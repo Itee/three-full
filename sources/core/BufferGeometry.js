@@ -1,19 +1,33 @@
-import { Vector3 } from '../math/Vector3.js';
-import { Box3 } from '../math/Box3.js';
-import { EventDispatcher } from './EventDispatcher.js';
-import { BufferAttribute, Float32BufferAttribute, Uint16BufferAttribute, Uint32BufferAttribute } from './BufferAttribute.js';
-import { Sphere } from '../math/Sphere.js';
-import { DirectGeometry } from './DirectGeometry.js';
-import { Object3D } from './Object3D.js';
-import { Matrix4 } from '../math/Matrix4.js';
-import { Matrix3 } from '../math/Matrix3.js';
-import { _Math } from '../math/Math.js';
-import { arrayMax } from '../utils.js';
+import { Vector3 } from '../math/Vector3.js'
+import { Box3 } from '../math/Box3.js'
+import { EventDispatcher } from './EventDispatcher.js'
+import {
+	BufferAttribute,
+	Float32BufferAttribute,
+	Uint16BufferAttribute,
+	Uint32BufferAttribute
+} from './BufferAttribute.js'
+import { Sphere } from '../math/Sphere.js'
+import { DirectGeometry } from './DirectGeometry.js'
+import { Object3D } from './Object3D.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Matrix3 } from '../math/Matrix3.js'
+import { _Math } from '../math/Math.js'
+import { arrayMax } from '../utils.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 var bufferGeometryId = 1; // BufferGeometry uses odd numbers as Id
 
@@ -70,7 +84,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 		if ( ! ( attribute && attribute.isBufferAttribute ) && ! ( attribute && attribute.isInterleavedBufferAttribute ) ) {
 
-			console.warn( 'THREE.BufferGeometry: .addAttribute() now expects ( name, attribute ).' );
+			console.warn( 'BufferGeometry: .addAttribute() now expects ( name, attribute ).' );
 
 			this.addAttribute( name, new BufferAttribute( arguments[ 1 ], arguments[ 2 ] ) );
 
@@ -80,7 +94,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 		if ( name === 'index' ) {
 
-			console.warn( 'THREE.BufferGeometry.addAttribute: Use .setIndex() for index attribute.' );
+			console.warn( 'BufferGeometry.addAttribute: Use .setIndex() for index attribute.' );
 			this.setIndex( attribute );
 
 			return;
@@ -290,7 +304,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 	setFromObject: function ( object ) {
 
-		// console.log( 'THREE.BufferGeometry.setFromObject(). Converting', object, this );
+		// console.log( 'BufferGeometry.setFromObject(). Converting', object, this );
 
 		var geometry = object.geometry;
 
@@ -610,7 +624,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 		if ( isNaN( this.boundingBox.min.x ) || isNaN( this.boundingBox.min.y ) || isNaN( this.boundingBox.min.z ) ) {
 
-			console.error( 'THREE.BufferGeometry.computeBoundingBox: Computed min/max have NaN values. The "position" attribute is likely to have NaN values.', this );
+			console.error( 'BufferGeometry.computeBoundingBox: Computed min/max have NaN values. The "position" attribute is likely to have NaN values.', this );
 
 		}
 
@@ -656,7 +670,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 				if ( isNaN( this.boundingSphere.radius ) ) {
 
-					console.error( 'THREE.BufferGeometry.computeBoundingSphere(): Computed radius is NaN. The "position" attribute is likely to have NaN values.', this );
+					console.error( 'BufferGeometry.computeBoundingSphere(): Computed radius is NaN. The "position" attribute is likely to have NaN values.', this );
 
 				}
 
@@ -797,7 +811,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 		if ( ! ( geometry && geometry.isBufferGeometry ) ) {
 
-			console.error( 'THREE.BufferGeometry.merge(): geometry not an instance of THREE.BufferGeometry.', geometry );
+			console.error( 'BufferGeometry.merge(): geometry not an instance of BufferGeometry.', geometry );
 			return;
 
 		}
@@ -858,7 +872,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 		if ( this.index === null ) {
 
-			console.warn( 'THREE.BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+			console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
 			return this;
 
 		}
@@ -986,29 +1000,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 	clone: function () {
 
-		/*
-		 // Handle primitives
-
-		 var parameters = this.parameters;
-
-		 if ( parameters !== undefined ) {
-
-		 var values = [];
-
-		 for ( var key in parameters ) {
-
-		 values.push( parameters[ key ] );
-
-		 }
-
-		 var geometry = Object.create( this.constructor.prototype );
-		 this.constructor.apply( geometry, values );
-		 return geometry;
-
-		 }
-
-		 return new this.constructor().copy( this );
-		 */
+		
 
 		return new BufferGeometry().copy( this );
 
@@ -1120,4 +1112,6 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 } );
 
 
-export { BufferGeometry };
+;
+
+export { BufferGeometry }

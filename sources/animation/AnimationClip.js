@@ -1,17 +1,18 @@
-import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js';
-import { QuaternionKeyframeTrack } from './tracks/QuaternionKeyframeTrack.js';
-import { NumberKeyframeTrack } from './tracks/NumberKeyframeTrack.js';
-import { AnimationUtils } from './AnimationUtils.js';
-import { KeyframeTrack } from './KeyframeTrack.js';
-import { _Math } from '../math/Math.js';
+import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js'
+import { QuaternionKeyframeTrack } from './tracks/QuaternionKeyframeTrack.js'
+import { NumberKeyframeTrack } from './tracks/NumberKeyframeTrack.js'
+import { AnimationUtils } from './AnimationUtils.js'
+import { KeyframeTrack } from './KeyframeTrack.js'
+import { _Math } from '../math/Math.js'
 
-/**
- *
- * Reusable set of Tracks that represent an animation.
- *
- * @author Ben Houston / http://clara.io/
- * @author David Sarno / http://lighthaus.us/
- */
+
+
+
+
+
+
+
+
 
 function AnimationClip( name, duration, tracks ) {
 
@@ -189,7 +190,7 @@ Object.assign( AnimationClip, {
 
 		if ( ! animation ) {
 
-			console.error( 'THREE.AnimationClip: No animation in JSONLoader data.' );
+			console.error( 'AnimationClip: No animation in JSONLoader data.' );
 			return null;
 
 		}
@@ -355,4 +356,6 @@ Object.assign( AnimationClip.prototype, {
 } );
 
 
-export { AnimationClip };
+;
+
+export { AnimationClip }

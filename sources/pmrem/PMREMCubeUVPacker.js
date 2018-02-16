@@ -3,8 +3,8 @@ import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneGeometry } from '../geometries/Geometries.js'
-import { ShaderMaterial } from '../materials/Materials.js'
+import { PlaneGeometry } from '../geometries/PlaneGeometry.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Vector3 } from '../math/Vector3.js'
 import {
 	DoubleSide,
@@ -19,20 +19,7 @@ import {
 	RGBM16Encoding
 } from '../constants.js'
 
-/**
- * @author Prashant Sharma / spidersharma03
- * @author Ben Houston / bhouston, https://clara.io
- *
- * This class takes the cube lods(corresponding to different roughness values), and creates a single cubeUV
- * Texture. The format for a given roughness set of faces is simply::
- * +X+Y+Z
- * -X-Y-Z
- * For every roughness a mip map chain is also saved, which is essential to remove the texture artifacts due to
- * minification.
- * Right now for every face a PlaneMesh is drawn, which leads to a lot of geometry draw calls, but can be replaced
- * later by drawing a single buffer and by sending the appropriate faceIndex via vertex attributes.
- * The arrangement of the faces is fixed, as assuming this arrangement, the sampling function has been written.
- */
+
 
 
 var PMREMCubeUVPacker = function( cubeTextureLods, numLods ) {
@@ -135,12 +122,15 @@ PMREMCubeUVPacker.prototype = {
 		var gammaOutput = renderer.gammaOutput;
 		var toneMapping = renderer.toneMapping;
 		var toneMappingExposure = renderer.toneMappingExposure;
+		var currentRenderTarget = renderer.getRenderTarget();
+		
 		renderer.gammaInput = false;
 		renderer.gammaOutput = false;
 		renderer.toneMapping = LinearToneMapping;
 		renderer.toneMappingExposure = 1.0;
 		renderer.render( this.scene, this.camera, this.CubeUVRenderTarget, false );
 
+		renderer.setRenderTarget( currentRenderTarget );
 		renderer.toneMapping = toneMapping;
 		renderer.toneMappingExposure = toneMappingExposure;
 		renderer.gammaInput = gammaInput;

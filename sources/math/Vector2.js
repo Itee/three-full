@@ -1,9 +1,6 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author philogb / http://blog.thejit.org/
- * @author egraether / http://egraether.com/
- * @author zz85 / http://www.lab4games.net/zz85/blog
- */
+
+
+
 
 function Vector2( x, y ) {
 
@@ -131,7 +128,7 @@ Object.assign( Vector2.prototype, {
 
 		if ( w !== undefined ) {
 
-			console.warn( 'THREE.Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+			console.warn( 'Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 			return this.addVectors( v, w );
 
 		}
@@ -174,7 +171,7 @@ Object.assign( Vector2.prototype, {
 
 		if ( w !== undefined ) {
 
-			console.warn( 'THREE.Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+			console.warn( 'Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 			return this.subVectors( v, w );
 
 		}
@@ -462,7 +459,7 @@ Object.assign( Vector2.prototype, {
 
 		if ( offset !== undefined ) {
 
-			console.warn( 'THREE.Vector2: offset has been removed from .fromBufferAttribute().' );
+			console.warn( 'Vector2: offset has been removed from .fromBufferAttribute().' );
 
 		}
 
@@ -490,4 +487,6 @@ Object.assign( Vector2.prototype, {
 } );
 
 
-export { Vector2 };
+;
+
+export { Vector2 }

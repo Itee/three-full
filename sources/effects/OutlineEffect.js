@@ -1,33 +1,9 @@
 import { Color } from '../math/Color.js'
-import { ShaderMaterial } from '../materials/Materials.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { BackSide } from '../constants.js'
 import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
 
-/**
- * @author takahirox / http://github.com/takahirox/
- *
- * Reference: https://en.wikipedia.org/wiki/Cel_shading
- *
- * // How to set default outline parameters
- * new OutlineEffect( renderer, {
- * 	defaultThickNess: 0.01,
- * 	defaultColor: new Color( 0x888888 ),
- * 	defaultAlpha: 0.8,
- * 	defaultKeepAlive: true // keeps outline material in cache even if material is removed from scene
- * } );
- *
- * // How to set outline parameters for each material
- * material.outlineParameters = {
- * 	thickNess: 0.01,
- * 	color: new Color( 0x888888 ),
- * 	alpha: 0.8,
- * 	visible: true,
- * 	keepAlive: true
- * };
- *
- * TODO
- *  - support shader material without objectNormal in its vertexShader
- */
+
 
 var OutlineEffect = function ( renderer, parameters ) {
 
@@ -447,20 +423,7 @@ var OutlineEffect = function ( renderer, parameters ) {
 
 	};
 
-	/*
-	 * See #9918
-	 *
-	 * The following property copies and wrapper methods enable
-	 * OutlineEffect to be called from other *Effect, like
-	 *
-	 * effect = new VREffect( new OutlineEffect( renderer ) );
-	 *
-	 * function render () {
-	 *
- 	 * 	effect.render( scene, camera );
-	 *
-	 * }
-	 */
+	
 	this.autoClear = renderer.autoClear;
 	this.domElement = renderer.domElement;
 	this.shadowMap = renderer.shadowMap;

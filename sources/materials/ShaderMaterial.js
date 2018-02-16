@@ -1,26 +1,10 @@
-import { Material } from './Material.js';
-import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js';
+import { Material } from './Material.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- *
- * parameters = {
- *  defines: { "label" : "value" },
- *  uniforms: { "parameter1": { value: 1.0 }, "parameter2": { value2: 2 } },
- *
- *  fragmentShader: <string>,
- *  vertexShader: <string>,
- *
- *  wireframe: <boolean>,
- *  wireframeLinewidth: <float>,
- *
- *  lights: <bool>,
- *
- *  skinning: <bool>,
- *  morphTargets: <bool>,
- *  morphNormals: <bool>
- * }
- */
+
+
+
+
 
 function ShaderMaterial( parameters ) {
 
@@ -63,12 +47,13 @@ function ShaderMaterial( parameters ) {
 	};
 
 	this.index0AttributeName = undefined;
+	this.uniformsNeedUpdate = false;
 
 	if ( parameters !== undefined ) {
 
 		if ( parameters.attributes !== undefined ) {
 
-			console.error( 'THREE.ShaderMaterial: attributes should now be defined in THREE.BufferGeometry instead.' );
+			console.error( 'ShaderMaterial: attributes should now be defined in BufferGeometry instead.' );
 
 		}
 
@@ -124,4 +109,6 @@ ShaderMaterial.prototype.toJSON = function ( meta ) {
 };
 
 
-export { ShaderMaterial };
+;
+
+export { ShaderMaterial }

@@ -1,19 +1,22 @@
-import { Quaternion } from '../math/Quaternion.js';
-import { Vector3 } from '../math/Vector3.js';
-import { Matrix4 } from '../math/Matrix4.js';
-import { EventDispatcher } from './EventDispatcher.js';
-import { Euler } from '../math/Euler.js';
-import { Layers } from './Layers.js';
-import { Matrix3 } from '../math/Matrix3.js';
-import { _Math } from '../math/Math.js';
+import { Quaternion } from '../math/Quaternion.js'
+import { Vector3 } from '../math/Vector3.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { EventDispatcher } from './EventDispatcher.js'
+import { Euler } from '../math/Euler.js'
+import { Layers } from './Layers.js'
+import { Matrix3 } from '../math/Matrix3.js'
+import { _Math } from '../math/Math.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author mikael emtinger / http://gomo.se/
- * @author alteredq / http://alteredqualia.com/
- * @author WestLangley / http://github.com/WestLangley
- * @author elephantatwork / www.elephantatwork.ch
- */
+
+
+
+
+
+
+
+
+
+
 
 var object3DId = 0;
 
@@ -352,7 +355,7 @@ Object3D.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 
 		if ( object === this ) {
 
-			console.error( "THREE.Object3D.add: object can't be added as a child of itself.", object );
+			console.error( "Object3D.add: object can't be added as a child of itself.", object );
 			return this;
 
 		}
@@ -372,7 +375,7 @@ Object3D.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 
 		} else {
 
-			console.error( "THREE.Object3D.add: object not an instance of THREE.Object3D.", object );
+			console.error( "Object3D.add: object not an instance of Object3D.", object );
 
 		}
 
@@ -827,4 +830,6 @@ Object3D.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 } );
 
 
-export { Object3D };
+;
+
+export { Object3D }

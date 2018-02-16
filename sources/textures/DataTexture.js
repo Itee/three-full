@@ -1,9 +1,10 @@
-/**
- * @author alteredq / http://alteredqualia.com/
- */
+import { Texture } from './Texture.js'
+import { NearestFilter } from '../constants.js'
 
-import { Texture } from './Texture.js';
-import { NearestFilter } from '../constants.js';
+
+
+
+
 
 function DataTexture( data, width, height, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, encoding ) {
 
@@ -26,4 +27,6 @@ DataTexture.prototype.constructor = DataTexture;
 DataTexture.prototype.isDataTexture = true;
 
 
-export { DataTexture };
+;
+
+export { DataTexture }

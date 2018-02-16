@@ -1,12 +1,8 @@
-import { MeshPhongMaterial } from './MeshPhongMaterial.js';
+import { MeshPhongMaterial } from './MeshPhongMaterial.js'
 
-/**
- * @author takahirox / http://github.com/takahirox
- *
- * parameters = {
- *  gradientMap: new THREE.Texture( <Image> )
- * }
- */
+
+
+
 
 function MeshToonMaterial( parameters ) {
 
@@ -38,4 +34,6 @@ MeshToonMaterial.prototype.copy = function ( source ) {
 };
 
 
-export { MeshToonMaterial };
+;
+
+export { MeshToonMaterial }

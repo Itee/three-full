@@ -1,14 +1,10 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- *
- * parameters = {
- *  color: <THREE.Color>,
- *  opacity: <float>
- * }
- */
+import { Material } from './Material.js'
+import { Color } from '../math/Color.js'
 
-import { Material } from './Material.js';
-import { Color } from '../math/Color.js';
+
+
+
+
 
 function ShadowMaterial( parameters ) {
 
@@ -32,4 +28,6 @@ ShadowMaterial.prototype.constructor = ShadowMaterial;
 ShadowMaterial.prototype.isShadowMaterial = true;
 
 
-export { ShadowMaterial };
+;
+
+export { ShadowMaterial }

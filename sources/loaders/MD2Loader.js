@@ -1,13 +1,11 @@
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { Geometry } from '../core/Geometry.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Face3 } from '../core/Face3.js'
 import { Vector3 } from '../math/Vector3.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
 
 var MD2Loader = function ( manager ) {
 

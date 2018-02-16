@@ -1,13 +1,11 @@
-import { TempNode } from '../../nodes/TempNode.js'
-import { FloatNode } from '../../nodes/inputs/FloatNode.js'
-import { NormalNode } from '../../nodes/accessors/NormalNode.js'
-import { PositionNode } from '../../nodes/accessors/PositionNode.js'
+import { TempNode } from '../TempNode.js'
+import { FloatNode } from '../inputs/FloatNode.js'
+import { NormalNode } from '../accessors/NormalNode.js'
+import { PositionNode } from '../accessors/PositionNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var NormalMapNode = function( value, uv, scale, normal, position ) {
+
+var NormalMapNode = function ( value, uv, scale, normal, position ) {
 
 	TempNode.call( this, 'v3' );
 
@@ -21,8 +19,9 @@ var NormalMapNode = function( value, uv, scale, normal, position ) {
 
 NormalMapNode.prototype = Object.create( TempNode.prototype );
 NormalMapNode.prototype.constructor = NormalMapNode;
+NormalMapNode.prototype.nodeType = "NormalMap";
 
-NormalMapNode.prototype.generate = function( builder, output ) {
+NormalMapNode.prototype.generate = function ( builder, output ) {
 
 	var material = builder.material;
 
@@ -43,6 +42,26 @@ NormalMapNode.prototype.generate = function( builder, output ) {
 		return builder.format( 'vec3( 0.0 )', this.getType( builder ), output );
 
 	}
+
+};
+
+NormalMapNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.value = this.value.uuid;
+		data.scale = this.scale.toJSON( meta ).uuid;
+
+		data.normal = this.normal.toJSON( meta ).uuid;
+		data.position = this.position.toJSON( meta ).uuid;
+
+	}
+
+	return data;
 
 };
 

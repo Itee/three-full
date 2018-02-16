@@ -1,12 +1,6 @@
 import { Vector2 } from '../math/Vector2.js'
 
-/**
- * @author mpk / http://polko.me/
- *
- * WebGL port of Subpixel Morphological Antialiasing (SMAA) v2.8
- * Preset: SMAA 1x Medium (with color edge detection)
- * https://github.com/iryoku/smaa/releases/tag/v2.8
- */
+
 
 var SMAAShader = [ {
 
@@ -194,13 +188,7 @@ var SMAAShader = [ {
 		"}",
 
 		"float SMAASearchXLeft( sampler2D edgesTex, sampler2D searchTex, vec2 texcoord, float end ) {",
-			/**
-			* @PSEUDO_GATHER4
-			* This texcoord has been offset by (-0.25, -0.125) in the vertex shader to
-			* sample between edge, thus fetching four edges in a row.
-			* Sampling with different offsets in each direction allows to disambiguate
-			* which edges are active from the four fetched ones.
-			*/
+			
 			"vec2 e = vec2( 0.0, 1.0 );",
 
 			"for ( int i = 0; i < SMAA_MAX_SEARCH_STEPS; i ++ ) {", // WebGL port note: Changed while to for

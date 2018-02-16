@@ -1,15 +1,27 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author alteredq / http://alteredqualia.com/
- * @author szimek / https://github.com/szimek/
- */
+import { EventDispatcher } from '../core/EventDispatcher.js'
+import {
+	UVMapping,
+	MirroredRepeatWrapping,
+	ClampToEdgeWrapping,
+	RepeatWrapping,
+	LinearEncoding,
+	UnsignedByteType,
+	RGBAFormat,
+	LinearMipMapLinearFilter,
+	LinearFilter
+} from '../constants.js'
+import { _Math } from '../math/Math.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Matrix3 } from '../math/Matrix3.js'
 
-import { EventDispatcher } from '../core/EventDispatcher.js';
-import { UVMapping } from '../constants.js';
-import { MirroredRepeatWrapping, ClampToEdgeWrapping, RepeatWrapping, LinearEncoding, UnsignedByteType, RGBAFormat, LinearMipMapLinearFilter, LinearFilter } from '../constants.js';
-import { _Math } from '../math/Math.js';
-import { Vector2 } from '../math/Vector2.js';
-import { Matrix3 } from '../math/Matrix3.js';
+
+
+
+
+
+
+
+
 
 var textureId = 0;
 
@@ -50,7 +62,7 @@ function Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, ty
 	this.flipY = true;
 	this.unpackAlignment = 4;	// valid values: 1, 2, 4, 8 (see http://www.khronos.org/opengles/sdk/docs/man/xhtml/glPixelStorei.xml)
 
-	// Values of encoding !== THREE.LinearEncoding only supported on map, envMap and emissiveMap.
+	// Values of encoding !== LinearEncoding only supported on map, envMap and emissiveMap.
 	//
 	// Also changing the encoding after already used by a Material will not automatically make the Material
 	// update.  You need to explicitly call Material.needsUpdate to trigger it to recompile.
@@ -192,7 +204,7 @@ Texture.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
 
 		if ( this.image !== undefined ) {
 
-			// TODO: Move to THREE.Image
+			// TODO: Move to Image
 
 			var image = this.image;
 
@@ -320,4 +332,6 @@ Object.defineProperty( Texture.prototype, "needsUpdate", {
 } );
 
 
-export { Texture };
+;
+
+export { Texture }

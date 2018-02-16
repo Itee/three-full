@@ -1,28 +1,10 @@
-import { Material } from './Material.js';
-import { Vector3 } from '../math/Vector3.js';
+import { Material } from './Material.js'
+import { Vector3 } from '../math/Vector3.js'
 
-/**
- * @author WestLangley / http://github.com/WestLangley
- *
- * parameters = {
- *
- *  referencePosition: <float>,
- *  nearDistance: <float>,
- *  farDistance: <float>,
- *
- *  skinning: <bool>,
- *  morphTargets: <bool>,
- *
- *  map: new THREE.Texture( <Image> ),
- *
- *  alphaMap: new THREE.Texture( <Image> ),
- *
- *  displacementMap: new THREE.Texture( <Image> ),
- *  displacementScale: <float>,
- *  displacementBias: <float>
- *
- * }
- */
+
+
+
+
 
 function MeshDistanceMaterial( parameters ) {
 
@@ -81,4 +63,6 @@ MeshDistanceMaterial.prototype.copy = function ( source ) {
 };
 
 
-export { MeshDistanceMaterial };
+;
+
+export { MeshDistanceMaterial }

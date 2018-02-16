@@ -1,21 +1,13 @@
-import { CompressedTextureLoader } from '../loaders/CompressedTextureLoader.js'
+import { CompressedTextureLoader } from './CompressedTextureLoader.js'
 import {
 	RGB_PVRTC_4BPPV1_Format,
 	RGB_PVRTC_2BPPV1_Format,
 	RGBA_PVRTC_4BPPV1_Format,
 	RGBA_PVRTC_2BPPV1_Format
 } from '../constants.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/*
- *	 PVRLoader
- *   Author: pierre lepers
- *   Date: 17/09/2014 11:09
- *
- *	 PVR v2 (legacy) parser
- *   TODO : Add Support for PVR v3 format
- *   TODO : implement loadMipmaps option
- */
+
 
 var PVRLoader = function ( manager ) {
 

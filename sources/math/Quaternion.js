@@ -1,11 +1,8 @@
-import { Vector3 } from './Vector3.js';
+import { Vector3 } from './Vector3.js'
 
-/**
- * @author mikael emtinger / http://gomo.se/
- * @author alteredq / http://alteredqualia.com/
- * @author WestLangley / http://github.com/WestLangley
- * @author bhouston / http://clara.io
- */
+
+
+
 
 function Quaternion( x, y, z, w ) {
 
@@ -198,7 +195,7 @@ Object.assign( Quaternion.prototype, {
 
 		if ( ! ( euler && euler.isEuler ) ) {
 
-			throw new Error( 'THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+			throw new Error( 'Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 		}
 
@@ -395,7 +392,9 @@ Object.assign( Quaternion.prototype, {
 
 	inverse: function () {
 
-		return this.conjugate().normalize();
+		// quaternion is assumed to have unit length
+
+		return this.conjugate();
 
 	},
 
@@ -461,7 +460,7 @@ Object.assign( Quaternion.prototype, {
 
 		if ( p !== undefined ) {
 
-			console.warn( 'THREE.Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
+			console.warn( 'Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
 			return this.multiplyQuaternions( q, p );
 
 		}
@@ -607,4 +606,6 @@ Object.assign( Quaternion.prototype, {
 } );
 
 
-export { Quaternion };
+;
+
+export { Quaternion }

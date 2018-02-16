@@ -1,19 +1,8 @@
-/**
- * @author alteredq / http://alteredqualia.com/
- *
- * parameters = {
- *  color: <hex>,
- *  opacity: <float>,
- *
- *  linewidth: <float>,
- *
- *  scale: <float>,
- *  dashSize: <float>,
- *  gapSize: <float>
- * }
- */
+import { LineBasicMaterial } from './LineBasicMaterial.js'
 
-import { LineBasicMaterial } from './LineBasicMaterial.js';
+
+
+
 
 function LineDashedMaterial( parameters ) {
 
@@ -47,4 +36,6 @@ LineDashedMaterial.prototype.copy = function ( source ) {
 };
 
 
-export { LineDashedMaterial };
+;
+
+export { LineDashedMaterial }

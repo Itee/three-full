@@ -1,57 +1,12 @@
-import { Material } from './Material.js';
-import { Vector2 } from '../math/Vector2.js';
-import { Color } from '../math/Color.js';
+import { Material } from './Material.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Color } from '../math/Color.js'
 
-/**
- * @author WestLangley / http://github.com/WestLangley
- *
- * parameters = {
- *  color: <hex>,
- *  roughness: <float>,
- *  metalness: <float>,
- *  opacity: <float>,
- *
- *  map: new THREE.Texture( <Image> ),
- *
- *  lightMap: new THREE.Texture( <Image> ),
- *  lightMapIntensity: <float>
- *
- *  aoMap: new THREE.Texture( <Image> ),
- *  aoMapIntensity: <float>
- *
- *  emissive: <hex>,
- *  emissiveIntensity: <float>
- *  emissiveMap: new THREE.Texture( <Image> ),
- *
- *  bumpMap: new THREE.Texture( <Image> ),
- *  bumpScale: <float>,
- *
- *  normalMap: new THREE.Texture( <Image> ),
- *  normalScale: <Vector2>,
- *
- *  displacementMap: new THREE.Texture( <Image> ),
- *  displacementScale: <float>,
- *  displacementBias: <float>,
- *
- *  roughnessMap: new THREE.Texture( <Image> ),
- *
- *  metalnessMap: new THREE.Texture( <Image> ),
- *
- *  alphaMap: new THREE.Texture( <Image> ),
- *
- *  envMap: new THREE.CubeTexture( [posx, negx, posy, negy, posz, negz] ),
- *  envMapIntensity: <float>
- *
- *  refractionRatio: <float>,
- *
- *  wireframe: <boolean>,
- *  wireframeLinewidth: <float>,
- *
- *  skinning: <bool>,
- *  morphTargets: <bool>,
- *  morphNormals: <bool>
- * }
- */
+
+
+
+
+
 
 function MeshStandardMaterial( parameters ) {
 
@@ -173,4 +128,6 @@ MeshStandardMaterial.prototype.copy = function ( source ) {
 };
 
 
-export { MeshStandardMaterial };
+;
+
+export { MeshStandardMaterial }

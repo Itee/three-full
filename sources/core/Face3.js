@@ -1,10 +1,10 @@
-import { Color } from '../math/Color.js';
-import { Vector3 } from '../math/Vector3.js';
+import { Color } from '../math/Color.js'
+import { Vector3 } from '../math/Vector3.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author alteredq / http://alteredqualia.com/
- */
+
+
+
+
 
 function Face3( a, b, c, normal, color, materialIndex ) {
 
@@ -60,4 +60,6 @@ Object.assign( Face3.prototype, {
 } );
 
 
-export { Face3 };
+;
+
+export { Face3 }

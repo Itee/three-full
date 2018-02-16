@@ -1,24 +1,10 @@
-/**
- * @author zz85 / http://www.lab4games.net/zz85/blog
- * @author alteredq / http://alteredqualia.com/
- *
- * Text = 3D Text
- *
- * parameters = {
- *  font: <THREE.Font>, // font
- *
- *  size: <float>, // size of the text
- *  height: <float>, // thickness to extrude text
- *  curveSegments: <int>, // number of points on the curves
- *
- *  bevelEnabled: <bool>, // turn on bevel
- *  bevelThickness: <float>, // how deep into text bevel goes
- *  bevelSize: <float> // how far from text outline is bevel
- * }
- */
+import { Geometry } from '../core/Geometry.js'
+import { ExtrudeBufferGeometry } from './ExtrudeGeometry.js'
 
-import { Geometry } from '../core/Geometry.js';
-import { ExtrudeBufferGeometry } from './ExtrudeGeometry.js';
+
+
+
+
 
 // TextGeometry
 
@@ -51,7 +37,7 @@ function TextBufferGeometry( text, parameters ) {
 
 	if ( ! ( font && font.isFont ) ) {
 
-		console.error( 'THREE.TextGeometry: font parameter is not an instance of THREE.Font.' );
+		console.error( 'TextGeometry: font parameter is not an instance of Font.' );
 		return new Geometry();
 
 	}
@@ -78,4 +64,9 @@ TextBufferGeometry.prototype = Object.create( ExtrudeBufferGeometry.prototype );
 TextBufferGeometry.prototype.constructor = TextBufferGeometry;
 
 
-export { TextGeometry, TextBufferGeometry };
+;
+
+export {
+	TextGeometry,
+	TextBufferGeometry
+}

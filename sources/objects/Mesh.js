@@ -1,21 +1,32 @@
-import { Vector3 } from '../math/Vector3.js';
-import { Vector2 } from '../math/Vector2.js';
-import { Sphere } from '../math/Sphere.js';
-import { Ray } from '../math/Ray.js';
-import { Matrix4 } from '../math/Matrix4.js';
-import { Object3D } from '../core/Object3D.js';
-import { Triangle } from '../math/Triangle.js';
-import { Face3 } from '../core/Face3.js';
-import { DoubleSide, BackSide, TrianglesDrawMode } from '../constants.js';
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
+import { Vector3 } from '../math/Vector3.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Sphere } from '../math/Sphere.js'
+import { Ray } from '../math/Ray.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Object3D } from '../core/Object3D.js'
+import { Triangle } from '../math/Triangle.js'
+import { Face3 } from '../core/Face3.js'
+import {
+	DoubleSide,
+	BackSide,
+	TrianglesDrawMode
+} from '../constants.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author alteredq / http://alteredqualia.com/
- * @author mikael emtinger / http://gomo.se/
- * @author jonobr1 / http://jonobr1.com/
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function Mesh( geometry, material ) {
 
@@ -397,4 +408,6 @@ Mesh.prototype = Object.assign( Object.create( Object3D.prototype ), {
 } );
 
 
-export { Mesh };
+;
+
+export { Mesh }

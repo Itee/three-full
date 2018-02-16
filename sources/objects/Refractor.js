@@ -1,10 +1,10 @@
-import { Mesh } from '../objects/Mesh.js'
+import { Mesh } from './Mesh.js'
 import { Color } from '../math/Color.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { Plane } from '../math/Plane.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/Materials.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Vector4 } from '../math/Vector4.js'
@@ -13,11 +13,9 @@ import {
 	RGBFormat
 } from '../constants.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { _Math } from '../math/Math.js'
 
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- */
+
 
 var Refractor = function ( geometry, options ) {
 
@@ -57,7 +55,7 @@ var Refractor = function ( geometry, options ) {
 
 	var renderTarget = new WebGLRenderTarget( textureWidth, textureHeight, parameters );
 
-	if ( ! Math.isPowerOfTwo( textureWidth ) || ! Math.isPowerOfTwo( textureHeight ) ) {
+	if ( ! _Math.isPowerOfTwo( textureWidth ) || ! _Math.isPowerOfTwo( textureHeight ) ) {
 
 		renderTarget.texture.generateMipmaps = false;
 

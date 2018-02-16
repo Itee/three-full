@@ -1,10 +1,8 @@
-import { TempNode } from '../../nodes/TempNode.js'
+import { TempNode } from '../TempNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var Math2Node = function( a, b, method ) {
+
+var Math2Node = function ( a, b, method ) {
 
 	TempNode.call( this );
 
@@ -27,8 +25,9 @@ Math2Node.POW = 'pow';
 
 Math2Node.prototype = Object.create( TempNode.prototype );
 Math2Node.prototype.constructor = Math2Node;
+Math2Node.prototype.nodeType = "Math2";
 
-Math2Node.prototype.getInputType = function( builder ) {
+Math2Node.prototype.getInputType = function ( builder ) {
 
 	// use the greater length vector
 	if ( builder.getFormatLength( this.b.getType( builder ) ) > builder.getFormatLength( this.a.getType( builder ) ) ) {
@@ -41,22 +40,24 @@ Math2Node.prototype.getInputType = function( builder ) {
 
 };
 
-Math2Node.prototype.getType = function( builder ) {
+Math2Node.prototype.getType = function ( builder ) {
 
 	switch ( this.method ) {
+
 		case Math2Node.DISTANCE:
 		case Math2Node.DOT:
 			return 'fv1';
 
 		case Math2Node.CROSS:
 			return 'v3';
+
 	}
 
 	return this.getInputType( builder );
 
 };
 
-Math2Node.prototype.generate = function( builder, output ) {
+Math2Node.prototype.generate = function ( builder, output ) {
 
 	var material = builder.material;
 
@@ -69,6 +70,7 @@ Math2Node.prototype.generate = function( builder, output ) {
 	// optimzer
 
 	switch ( this.method ) {
+
 		case Math2Node.CROSS:
 			a = this.a.build( builder, 'v3' );
 			b = this.b.build( builder, 'v3' );
@@ -94,6 +96,24 @@ Math2Node.prototype.generate = function( builder, output ) {
 	}
 
 	return builder.format( this.method + '(' + a + ',' + b + ')', this.getType( builder ), output );
+
+};
+
+Math2Node.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.a = this.a.toJSON( meta ).uuid;
+		data.b = this.b.toJSON( meta ).uuid;
+		data.method = this.method;
+
+	}
+
+	return data;
 
 };
 

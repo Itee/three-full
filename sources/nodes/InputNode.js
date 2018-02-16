@@ -1,49 +1,64 @@
-import { TempNode } from '../nodes/TempNode.js'
+import { TempNode } from './TempNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var InputNode = function( type, params ) {
+
+var InputNode = function ( type, params ) {
 
 	params = params || {};
 	params.shared = params.shared !== undefined ? params.shared : false;
 
 	TempNode.call( this, type, params );
 
+	this.readonly = false;
+
 };
 
 InputNode.prototype = Object.create( TempNode.prototype );
 InputNode.prototype.constructor = InputNode;
 
-InputNode.prototype.generate = function( builder, output, uuid, type, ns, needsUpdate ) {
+InputNode.prototype.isReadonly = function ( builder ) {
+
+	return this.readonly;
+
+};
+
+InputNode.prototype.generate = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
 	var material = builder.material;
 
 	uuid = builder.getUuid( uuid || this.getUuid() );
 	type = type || this.getType( builder );
 
-	var data = material.getDataNode( uuid );
+	var data = material.getDataNode( uuid ),
+		readonly = this.isReadonly( builder ) && this.generateReadonly !== undefined;
 
-	if ( builder.isShader( 'vertex' ) ) {
+	if ( readonly ) {
 
-		if ( ! data.vertex ) {
-
-			data.vertex = material.createVertexUniform( type, this.value, ns, needsUpdate );
-
-		}
-
-		return builder.format( data.vertex.name, type, output );
+		return this.generateReadonly( builder, output, uuid, type, ns, needsUpdate );
 
 	} else {
 
-		if ( ! data.fragment ) {
+		if ( builder.isShader( 'vertex' ) ) {
 
-			data.fragment = material.createFragmentUniform( type, this.value, ns, needsUpdate );
+			if ( ! data.vertex ) {
+
+				data.vertex = material.createVertexUniform( type, this.value, ns, needsUpdate );
+
+			}
+
+			return builder.format( data.vertex.name, type, output );
+
+		} else {
+
+			if ( ! data.fragment ) {
+
+				data.fragment = material.createFragmentUniform( type, this.value, ns, needsUpdate );
+
+			}
+
+			return builder.format( data.fragment.name, type, output );
 
 		}
-
-		return builder.format( data.fragment.name, type, output );
 
 	}
 

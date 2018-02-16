@@ -1,10 +1,8 @@
-import { TempNode } from '../nodes/TempNode.js'
+import { TempNode } from './TempNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var ConstNode = function( src, useDefine ) {
+
+var ConstNode = function ( src, useDefine ) {
 
 	TempNode.call( this );
 
@@ -21,18 +19,19 @@ ConstNode.EPSILON = 'EPSILON';
 
 ConstNode.prototype = Object.create( TempNode.prototype );
 ConstNode.prototype.constructor = ConstNode;
+ConstNode.prototype.nodeType = "Const";
 
-ConstNode.prototype.getType = function( builder ) {
+ConstNode.prototype.getType = function ( builder ) {
 
 	return builder.getTypeByFormat( this.type );
 
 };
 
-ConstNode.prototype.eval = function( src, useDefine ) {
+ConstNode.prototype.eval = function ( src, useDefine ) {
 
 	src = ( src || '' ).trim();
 
-	var name, type, value;
+	var name, type, value = "";
 
 	var rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\=?\s?(.*?)(\;|$)/i;
 	var match = src.match( rDeclaration );
@@ -58,7 +57,7 @@ ConstNode.prototype.eval = function( src, useDefine ) {
 
 };
 
-ConstNode.prototype.build = function( builder, output ) {
+ConstNode.prototype.build = function ( builder, output ) {
 
 	if ( output === 'source' ) {
 
@@ -84,9 +83,29 @@ ConstNode.prototype.build = function( builder, output ) {
 
 };
 
-ConstNode.prototype.generate = function( builder, output ) {
+ConstNode.prototype.generate = function ( builder, output ) {
 
 	return builder.format( this.name, this.getType( builder ), output );
+
+};
+
+ConstNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.name = this.name;
+		data.out = this.type;
+
+		if ( this.value ) data.value = this.value;
+		if ( data.useDefine === true ) data.useDefine = true;
+
+	}
+
+	return data;
 
 };
 

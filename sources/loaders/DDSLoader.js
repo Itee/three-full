@@ -1,4 +1,4 @@
-import { CompressedTextureLoader } from '../loaders/CompressedTextureLoader.js'
+import { CompressedTextureLoader } from './CompressedTextureLoader.js'
 import {
 	RGBAFormat,
 	RGB_S3TC_DXT1_Format,
@@ -7,9 +7,7 @@ import {
 	RGB_ETC1_Format
 } from '../constants.js'
 
-/*
- * @author mrdoob / http://mrdoob.com/
- */
+
 
 var DDSLoader = function () {
 

@@ -1,4 +1,4 @@
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Bone } from '../objects/Bone.js'
@@ -6,17 +6,9 @@ import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
 import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
 import { AnimationClip } from '../animation/AnimationClip.js'
 import { Skeleton } from '../objects/Skeleton.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author herzig / http://github.com/herzig
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Description: reads BVH files and outputs a single Skeleton and an AnimationClip
- *
- * Currently only supports bvh files containing a single root.
- *
- */
+
 
 var BVHLoader = function ( manager ) {
 
@@ -46,13 +38,7 @@ BVHLoader.prototype = {
 
 	parse: function ( text ) {
 
-		/*
-			reads a string array (lines) from a BVH file
-			and outputs a skeleton structure including motion data
-
-			returns thee root node:
-			{ name: '', channels: [], children: [] }
-		*/
+		
 		function readBvh( lines ) {
 
 			// read model structure
@@ -109,16 +95,7 @@ BVHLoader.prototype = {
 
 		}
 
-		/*
-			Recursively reads data from a single frame into the bone hierarchy.
-			The passed bone hierarchy has to be structured in the same order as the BVH file.
-			keyframe data is stored in bone.frames.
-
-			- data: splitted string array (frame values), values are shift()ed so
-			this should be empty after parsing the whole hierarchy.
-			- frameTime: playback time for this keyframe.
-			- bone: the bone to read frame data from.
-		*/
+		
 		function readFrameData( data, frameTime, bone ) {
 
 			// end sites have no motion data
@@ -185,15 +162,7 @@ BVHLoader.prototype = {
 
 		}
 
-		/*
-		 Recursively parses the HIERACHY section of the BVH file
-
-		 - lines: all lines of the file. lines are consumed as we go along.
-		 - firstline: line containing the node type and name e.g. 'JOINT hip'
-		 - list: collects a flat list of nodes
-
-		 returns: a BVH node including children
-		*/
+		
 		function readNode( lines, firstline, list ) {
 
 			var node = { name: '', type: '', frames: [] };
@@ -289,14 +258,7 @@ BVHLoader.prototype = {
 
 		}
 
-		/*
-			recursively converts the internal bvh node structure to a Bone hierarchy
-
-			source: the bvh root node
-			list: pass an empty array, collects a flat list of all converted Bones
-
-			returns the root Bone
-		*/
+		
 		function toTHREEBone( source, list ) {
 
 			var bone = new Bone();
@@ -319,13 +281,7 @@ BVHLoader.prototype = {
 
 		}
 
-		/*
-			builds a AnimationClip from the keyframe data saved in each bone.
-
-			bone: bvh root node
-
-			returns: a AnimationClip containing position and quaternion tracks
-		*/
+		
 		function toTHREEAnimation( bones ) {
 
 			var tracks = [];
@@ -383,9 +339,7 @@ BVHLoader.prototype = {
 
 		}
 
-		/*
-			returns the next non-empty line in lines
-		*/
+		
 		function nextLine( lines ) {
 
 			var line;

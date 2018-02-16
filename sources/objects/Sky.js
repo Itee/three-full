@@ -1,25 +1,11 @@
-import { Mesh } from '../objects/Mesh.js'
-import { ShaderMaterial } from '../materials/Materials.js'
-import { SphereBufferGeometry } from '../geometries/Geometries.js'
+import { Mesh } from './Mesh.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
 import { Vector3 } from '../math/Vector3.js'
 import { BackSide } from '../constants.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-/**
- * @author zz85 / https://github.com/zz85
- *
- * Based on "A Practical Analytic Model for Daylight"
- * aka The Preetham Model, the de facto standard analytic skydome model
- * http://www.cs.utah.edu/~shirley/papers/sunsky/sunsky.pdf
- *
- * First implemented by Simon Wallner
- * http://www.simonwallner.at/projects/atmospheric-scattering
- *
- * Improved by Martin Upitis
- * http://blenderartists.org/forum/showthread.php?245954-preethams-sky-impementation-HDR
- *
- * Three.js integration by zz85 http://twitter.com/blurspline
-*/
+
 
 var Sky = function () {
 

@@ -1,18 +1,16 @@
-/**
- * @author oosmoxiecode / https://github.com/oosmoxiecode
- * @author WestLangley / https://github.com/WestLangley
- * @author zz85 / https://github.com/zz85
- * @author miningold / https://github.com/miningold
- * @author jonobr1 / https://github.com/jonobr1
- * @author Mugen87 / https://github.com/Mugen87
- *
- */
+import { Geometry } from '../core/Geometry.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
 
-import { Geometry } from '../core/Geometry.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { Vector2 } from '../math/Vector2.js';
-import { Vector3 } from '../math/Vector3.js';
+
+
+
+
+
+
+
 
 // TubeGeometry
 
@@ -30,7 +28,7 @@ function TubeGeometry( path, tubularSegments, radius, radialSegments, closed, ta
 		closed: closed
 	};
 
-	if ( taper !== undefined ) console.warn( 'THREE.TubeGeometry: taper has been removed.' );
+	if ( taper !== undefined ) console.warn( 'TubeGeometry: taper has been removed.' );
 
 	var bufferGeometry = new TubeBufferGeometry( path, tubularSegments, radius, radialSegments, closed );
 
@@ -220,4 +218,9 @@ TubeBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 TubeBufferGeometry.prototype.constructor = TubeBufferGeometry;
 
 
-export { TubeGeometry, TubeBufferGeometry };
+;
+
+export {
+	TubeGeometry,
+	TubeBufferGeometry
+}

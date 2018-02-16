@@ -1,11 +1,39 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+import { WebGLUniforms } from './WebGLUniforms.js'
+import { WebGLShader } from './WebGLShader.js'
+import { ShaderChunk } from '../shaders/ShaderChunk.js'
+import {
+	NoToneMapping,
+	AddOperation,
+	MixOperation,
+	MultiplyOperation,
+	EquirectangularRefractionMapping,
+	CubeRefractionMapping,
+	SphericalReflectionMapping,
+	EquirectangularReflectionMapping,
+	CubeUVRefractionMapping,
+	CubeUVReflectionMapping,
+	CubeReflectionMapping,
+	PCFSoftShadowMap,
+	PCFShadowMap,
+	CineonToneMapping,
+	Uncharted2ToneMapping,
+	ReinhardToneMapping,
+	LinearToneMapping,
+	GammaEncoding,
+	RGBDEncoding,
+	RGBM16Encoding,
+	RGBM7Encoding,
+	RGBEEncoding,
+	sRGBEncoding,
+	LinearEncoding
+} from '../../constants.js'
 
-import { WebGLUniforms } from './WebGLUniforms.js';
-import { WebGLShader } from './WebGLShader.js';
-import { ShaderChunk } from '../shaders/ShaderChunk.js';
-import { NoToneMapping, AddOperation, MixOperation, MultiplyOperation, EquirectangularRefractionMapping, CubeRefractionMapping, SphericalReflectionMapping, EquirectangularReflectionMapping, CubeUVRefractionMapping, CubeUVReflectionMapping, CubeReflectionMapping, PCFSoftShadowMap, PCFShadowMap, CineonToneMapping, Uncharted2ToneMapping, ReinhardToneMapping, LinearToneMapping, GammaEncoding, RGBDEncoding, RGBM16Encoding, RGBM7Encoding, RGBEEncoding, sRGBEncoding, LinearEncoding } from '../../constants.js';
+
+
+
+
+
+
 
 var programIdCount = 0;
 
@@ -123,7 +151,7 @@ function fetchAttributeLocations( gl, program ) {
 		var info = gl.getActiveAttrib( program, i );
 		var name = info.name;
 
-		// console.log( 'THREE.WebGLProgram: ACTIVE VERTEX ATTRIBUTE:', name, i );
+		// console.log( 'WebGLProgram: ACTIVE VERTEX ATTRIBUTE:', name, i );
 
 		attributes[ name ] = gl.getAttribLocation( program, name );
 
@@ -147,6 +175,14 @@ function replaceLightNums( string, parameters ) {
 		.replace( /NUM_RECT_AREA_LIGHTS/g, parameters.numRectAreaLights )
 		.replace( /NUM_POINT_LIGHTS/g, parameters.numPointLights )
 		.replace( /NUM_HEMI_LIGHTS/g, parameters.numHemiLights );
+
+}
+
+function replaceClippingPlaneNums( string, parameters ) {
+
+	return string
+		.replace( /NUM_CLIPPING_PLANES/g, parameters.numClippingPlanes )
+		.replace( /UNION_CLIPPING_PLANES/g, ( parameters.numClippingPlanes - parameters.numClipIntersection ) );
 
 }
 
@@ -174,7 +210,7 @@ function parseIncludes( string ) {
 
 function unrollLoops( string ) {
 
-	var pattern = /for \( int i \= (\d+)\; i < (\d+)\; i \+\+ \) \{([\s\S]+?)(?=\})\}/g;
+	var pattern = /#pragma unroll_loop[\s]+?for \( int i \= (\d+)\; i < (\d+)\; i \+\+ \) \{([\s\S]+?)(?=\})\}/g;
 
 	function replace( match, start, end, snippet ) {
 
@@ -358,8 +394,6 @@ function WebGLProgram( renderer, extensions, code, material, shader, parameters 
 			parameters.doubleSided ? '#define DOUBLE_SIDED' : '',
 			parameters.flipSided ? '#define FLIP_SIDED' : '',
 
-			'#define NUM_CLIPPING_PLANES ' + parameters.numClippingPlanes,
-
 			parameters.shadowMapEnabled ? '#define USE_SHADOWMAP' : '',
 			parameters.shadowMapEnabled ? '#define ' + shadowMapTypeDefine : '',
 
@@ -462,9 +496,6 @@ function WebGLProgram( renderer, extensions, code, material, shader, parameters 
 			parameters.doubleSided ? '#define DOUBLE_SIDED' : '',
 			parameters.flipSided ? '#define FLIP_SIDED' : '',
 
-			'#define NUM_CLIPPING_PLANES ' + parameters.numClippingPlanes,
-			'#define UNION_CLIPPING_PLANES ' + ( parameters.numClippingPlanes - parameters.numClipIntersection ),
-
 			parameters.shadowMapEnabled ? '#define USE_SHADOWMAP' : '',
 			parameters.shadowMapEnabled ? '#define ' + shadowMapTypeDefine : '',
 
@@ -502,16 +533,14 @@ function WebGLProgram( renderer, extensions, code, material, shader, parameters 
 
 	vertexShader = parseIncludes( vertexShader );
 	vertexShader = replaceLightNums( vertexShader, parameters );
+	vertexShader = replaceClippingPlaneNums( vertexShader, parameters );
 
 	fragmentShader = parseIncludes( fragmentShader );
 	fragmentShader = replaceLightNums( fragmentShader, parameters );
+	fragmentShader = replaceClippingPlaneNums( fragmentShader, parameters );
 
-	if ( ! material.isShaderMaterial ) {
-
-		vertexShader = unrollLoops( vertexShader );
-		fragmentShader = unrollLoops( fragmentShader );
-
-	}
+	vertexShader = unrollLoops( vertexShader );
+	fragmentShader = unrollLoops( fragmentShader );
 
 	var vertexGlsl = prefixVertex + vertexShader;
 	var fragmentGlsl = prefixFragment + fragmentShader;
@@ -540,9 +569,9 @@ function WebGLProgram( renderer, extensions, code, material, shader, parameters 
 
 	gl.linkProgram( program );
 
-	var programLog = gl.getProgramInfoLog( program );
-	var vertexLog = gl.getShaderInfoLog( glVertexShader );
-	var fragmentLog = gl.getShaderInfoLog( glFragmentShader );
+	var programLog = gl.getProgramInfoLog( program ).trim();
+	var vertexLog = gl.getShaderInfoLog( glVertexShader ).trim();
+	var fragmentLog = gl.getShaderInfoLog( glFragmentShader ).trim();
 
 	var runnable = true;
 	var haveDiagnostics = true;
@@ -554,11 +583,11 @@ function WebGLProgram( renderer, extensions, code, material, shader, parameters 
 
 		runnable = false;
 
-		console.error( 'THREE.WebGLProgram: shader error: ', gl.getError(), 'gl.VALIDATE_STATUS', gl.getProgramParameter( program, gl.VALIDATE_STATUS ), 'gl.getProgramInfoLog', programLog, vertexLog, fragmentLog );
+		console.error( 'WebGLProgram: shader error: ', gl.getError(), 'gl.VALIDATE_STATUS', gl.getProgramParameter( program, gl.VALIDATE_STATUS ), 'gl.getProgramInfoLog', programLog, vertexLog, fragmentLog );
 
 	} else if ( programLog !== '' ) {
 
-		console.warn( 'THREE.WebGLProgram: gl.getProgramInfoLog()', programLog );
+		console.warn( 'WebGLProgram: gl.getProgramInfoLog()', programLog );
 
 	} else if ( vertexLog === '' || fragmentLog === '' ) {
 
@@ -646,7 +675,7 @@ function WebGLProgram( renderer, extensions, code, material, shader, parameters 
 		uniforms: {
 			get: function () {
 
-				console.warn( 'THREE.WebGLProgram: .uniforms is now .getUniforms().' );
+				console.warn( 'WebGLProgram: .uniforms is now .getUniforms().' );
 				return this.getUniforms();
 
 			}
@@ -655,7 +684,7 @@ function WebGLProgram( renderer, extensions, code, material, shader, parameters 
 		attributes: {
 			get: function () {
 
-				console.warn( 'THREE.WebGLProgram: .attributes is now .getAttributes().' );
+				console.warn( 'WebGLProgram: .attributes is now .getAttributes().' );
 				return this.getAttributes();
 
 			}
@@ -677,4 +706,6 @@ function WebGLProgram( renderer, extensions, code, material, shader, parameters 
 
 }
 
-export { WebGLProgram };
+;
+
+export { WebGLProgram }

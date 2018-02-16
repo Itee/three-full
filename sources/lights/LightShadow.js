@@ -1,9 +1,10 @@
-import { Matrix4 } from '../math/Matrix4.js';
-import { Vector2 } from '../math/Vector2.js';
+import { Matrix4 } from '../math/Matrix4.js'
+import { Vector2 } from '../math/Vector2.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
+
 
 function LightShadow( camera ) {
 
@@ -58,4 +59,6 @@ Object.assign( LightShadow.prototype, {
 } );
 
 
-export { LightShadow };
+;
+
+export { LightShadow }

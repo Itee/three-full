@@ -1,10 +1,12 @@
-import { Color } from '../../math/Color.js';
-import { Vector2 } from '../../math/Vector2.js';
-import { Matrix3 } from '../../math/Matrix3.js';
+import { Color } from '../../math/Color.js'
+import { Vector2 } from '../../math/Vector2.js'
+import { Matrix3 } from '../../math/Matrix3.js'
 
-/**
- * Uniforms library for shared webgl shaders
- */
+
+
+
+
+
 
 var UniformsLib = {
 
@@ -185,4 +187,6 @@ var UniformsLib = {
 
 };
 
-export { UniformsLib };
+;
+
+export { UniformsLib }

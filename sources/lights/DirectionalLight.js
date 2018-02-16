@@ -1,11 +1,12 @@
-import { Light } from './Light.js';
-import { DirectionalLightShadow } from './DirectionalLightShadow.js';
-import { Object3D } from '../core/Object3D.js';
+import { Light } from './Light.js'
+import { DirectionalLightShadow } from './DirectionalLightShadow.js'
+import { Object3D } from '../core/Object3D.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author alteredq / http://alteredqualia.com/
- */
+
+
+
+
+
 
 function DirectionalLight( color, intensity ) {
 
@@ -43,4 +44,6 @@ DirectionalLight.prototype = Object.assign( Object.create( Light.prototype ), {
 } );
 
 
-export { DirectionalLight };
+;
+
+export { DirectionalLight }

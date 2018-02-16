@@ -1,13 +1,11 @@
-import { Pass } from '../postprocessing/Pass.js'
-import {
-	ShaderMaterial,
-	MeshBasicMaterial
-} from '../materials/Materials.js'
+import { Pass } from './Pass.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/Geometries.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import {
 	NoBlending,
 	LinearFilter,
@@ -19,14 +17,7 @@ import { LuminosityShader } from '../shaders/LuminosityShader.js'
 import { ToneMapShader } from '../shaders/ToneMapShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-/**
- * @author miibond
- * Generate a texture that represents the luminosity of the current scene, adapted over time
- * to simulate the optic nerve responding to the amount of light it is receiving.
- * Based on a GDC2007 presentation by Wolfgang Engel titled "Post-Processing Pipeline"
- *
- * Full-screen tone-mapping shader based on http://www.graphics.cornell.edu/~jaf/publications/sig02_paper.pdf
- */
+
 
 var AdaptiveToneMappingPass = function ( adaptive, resolution ) {
 

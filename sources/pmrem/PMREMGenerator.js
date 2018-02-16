@@ -1,9 +1,9 @@
 import { WebGLRenderTargetCube } from '../renderers/WebGLRenderTargetCube.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneGeometry } from '../geometries/Geometries.js'
+import { PlaneGeometry } from '../geometries/PlaneGeometry.js'
 import { Scene } from '../scenes/Scene.js'
-import { ShaderMaterial } from '../materials/Materials.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Vector3 } from '../math/Vector3.js'
 import {
 	DoubleSide,
@@ -19,18 +19,7 @@ import {
 	GammaEncoding
 } from '../constants.js'
 
-/**
- * @author Prashant Sharma / spidersharma03
- * @author Ben Houston / bhouston, https://clara.io
- *
- * To avoid cube map seams, I create an extra pixel around each face. This way when the cube map is
- * sampled by an application later(with a little care by sampling the centre of the texel), the extra 1 border
- *	of pixels makes sure that there is no seams artifacts present. This works perfectly for cubeUV format as
- *	well where the 6 faces can be arranged in any manner whatsoever.
- * Code in the beginning of fragment shader's main function does this job for a given resolution.
- *	Run Scene_PMREM_Test.html in the examples directory to see the sampling from the cube lods generated
- *	by this class.
- */
+
 
 var PMREMGenerator = function( sourceTexture, samplesPerLevel, resolution ) {
 
@@ -89,19 +78,7 @@ PMREMGenerator.prototype = {
 
 	constructor : PMREMGenerator,
 
-	/*
-	 * Prashant Sharma / spidersharma03: More thought and work is needed here.
-	 * Right now it's a kind of a hack to use the previously convolved map to convolve the current one.
-	 * I tried to use the original map to convolve all the lods, but for many textures(specially the high frequency)
-	 * even a high number of samples(1024) dosen't lead to satisfactory results.
-	 * By using the previous convolved maps, a lower number of samples are generally sufficient(right now 32, which
-	 * gives okay results unless we see the reflection very carefully, or zoom in too much), however the math
-	 * goes wrong as the distribution function tries to sample a larger area than what it should be. So I simply scaled
-	 * the roughness by 0.9(totally empirical) to try to visually match the original result.
-	 * The condition "if(i <5)" is also an attemt to make the result match the original result.
-	 * This method requires the most amount of thinking I guess. Here is a paper which we could try to implement in future::
-	 * http://http.developer.nvidia.com/GPUGems3/gpugems3_ch20.html
-	 */
+	
 	update: function( renderer ) {
 
 		this.shader.uniforms[ 'envMap' ].value = this.sourceTexture;
@@ -111,6 +88,7 @@ PMREMGenerator.prototype = {
 		var gammaOutput = renderer.gammaOutput;
 		var toneMapping = renderer.toneMapping;
 		var toneMappingExposure = renderer.toneMappingExposure;
+		var currentRenderTarget = renderer.getRenderTarget();
 
 		renderer.toneMapping = LinearToneMapping;
 		renderer.toneMappingExposure = 1.0;
@@ -130,6 +108,7 @@ PMREMGenerator.prototype = {
 
 		}
 
+		renderer.setRenderTarget( currentRenderTarget );
 		renderer.toneMapping = toneMapping;
 		renderer.toneMappingExposure = toneMappingExposure;
 		renderer.gammaInput = gammaInput;

@@ -1,10 +1,7 @@
-import { FileLoader } from '../loaders/FileLoader.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { FileLoader } from './FileLoader.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author zz85 / http://joshuakoo.com/
- */
+
 
 var SVGLoader = function ( manager ) {
 

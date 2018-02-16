@@ -1,11 +1,14 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+import { Vector3 } from '../math/Vector3.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { Object3D } from '../core/Object3D.js'
+import { AudioContext } from './AudioContext.js'
 
-import { Vector3 } from '../math/Vector3.js';
-import { Quaternion } from '../math/Quaternion.js';
-import { Object3D } from '../core/Object3D.js';
-import { AudioContext } from './AudioContext.js';
+
+
+
+
+
+
 
 function AudioListener() {
 
@@ -126,4 +129,6 @@ AudioListener.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 } );
 
-export { AudioListener };
+;
+
+export { AudioListener }

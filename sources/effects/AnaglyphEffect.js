@@ -3,21 +3,16 @@ import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { StereoCamera } from '../cameras/StereoCamera.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/Materials.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/Geometries.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import {
 	NearestFilter,
 	LinearFilter,
 	RGBAFormat
 } from '../constants.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author marklundin / http://mark-lundin.com/
- * @author alteredq / http://alteredqualia.com/
- * @author tschw
- */
+
 
 var AnaglyphEffect = function ( renderer, width, height ) {
 

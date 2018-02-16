@@ -1,6 +1,6 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 function Layers() {
 
@@ -43,4 +43,6 @@ Object.assign( Layers.prototype, {
 } );
 
 
-export { Layers };
+;
+
+export { Layers }

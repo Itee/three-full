@@ -1,11 +1,14 @@
-import { Vector2 } from '../math/Vector2.js';
-import { FileLoader } from './FileLoader.js';
-import { DefaultLoadingManager } from './LoadingManager.js';
-import * as Materials from '../materials/Materials.js';
+import { Vector2 } from '../math/Vector2.js'
+import { FileLoader } from './FileLoader.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { FlatShading } from '../constants.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
+
+
+
 
 function MaterialLoader( manager ) {
 
@@ -43,7 +46,7 @@ Object.assign( MaterialLoader.prototype, {
 
 			if ( textures[ name ] === undefined ) {
 
-				console.warn( 'THREE.MaterialLoader: Undefined texture', name );
+				console.warn( 'MaterialLoader: Undefined texture', name );
 
 			}
 
@@ -98,7 +101,7 @@ Object.assign( MaterialLoader.prototype, {
 
 		// Deprecated
 
-		if ( json.shading !== undefined ) material.flatShading = json.shading === 1; // THREE.FlatShading
+		if ( json.shading !== undefined ) material.flatShading = json.shading === 1; // FlatShading
 
 		// for PointsMaterial
 
@@ -167,4 +170,6 @@ Object.assign( MaterialLoader.prototype, {
 } );
 
 
-export { MaterialLoader };
+;
+
+export { MaterialLoader }

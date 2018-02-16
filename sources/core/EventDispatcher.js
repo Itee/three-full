@@ -1,6 +1,6 @@
-/**
- * https://github.com/mrdoob/eventdispatcher.js/
- */
+
+
+
 
 function EventDispatcher() {}
 
@@ -83,4 +83,6 @@ Object.assign( EventDispatcher.prototype, {
 } );
 
 
-export { EventDispatcher };
+;
+
+export { EventDispatcher }

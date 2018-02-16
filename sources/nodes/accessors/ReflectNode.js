@@ -1,10 +1,8 @@
-import { TempNode } from '../../nodes/TempNode.js'
+import { TempNode } from '../TempNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var ReflectNode = function( scope ) {
+
+var ReflectNode = function ( scope ) {
 
 	TempNode.call( this, 'v3', { unique: true } );
 
@@ -18,19 +16,22 @@ ReflectNode.VECTOR = 'vector';
 
 ReflectNode.prototype = Object.create( TempNode.prototype );
 ReflectNode.prototype.constructor = ReflectNode;
+ReflectNode.prototype.nodeType = "Reflect";
 
-ReflectNode.prototype.getType = function( builder ) {
+ReflectNode.prototype.getType = function ( builder ) {
 
 	switch ( this.scope ) {
+
 		case ReflectNode.SPHERE:
 			return 'v2';
+
 	}
 
 	return this.type;
 
 };
 
-ReflectNode.prototype.generate = function( builder, output ) {
+ReflectNode.prototype.generate = function ( builder, output ) {
 
 	var result;
 
@@ -63,9 +64,26 @@ ReflectNode.prototype.generate = function( builder, output ) {
 			result = 'reflectSphereVec';
 
 			break;
+
 	}
 
 	return builder.format( result, this.getType( this.type ), output );
+
+};
+
+ReflectNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.scope = this.scope;
+
+	}
+
+	return data;
 
 };
 

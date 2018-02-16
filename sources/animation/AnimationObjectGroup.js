@@ -1,36 +1,10 @@
-import { PropertyBinding } from './PropertyBinding.js';
-import { _Math } from '../math/Math.js';
+import { PropertyBinding } from './PropertyBinding.js'
+import { _Math } from '../math/Math.js'
 
-/**
- *
- * A group of objects that receives a shared animation state.
- *
- * Usage:
- *
- * 	-	Add objects you would otherwise pass as 'root' to the
- * 		constructor or the .clipAction method of AnimationMixer.
- *
- * 	-	Instead pass this object as 'root'.
- *
- * 	-	You can also add and remove objects later when the mixer
- * 		is running.
- *
- * Note:
- *
- *  	Objects of this class appear as one object to the mixer,
- *  	so cache control of the individual objects must be done
- *  	on the group.
- *
- * Limitation:
- *
- * 	- 	The animated properties must be compatible among the
- * 		all objects in the group.
- *
- *  -	A single property can either be controlled through a
- *  	target group or directly, but not both.
- *
- * @author tschw
- */
+
+
+
+
 
 function AnimationObjectGroup() {
 
@@ -95,14 +69,14 @@ Object.assign( AnimationObjectGroup.prototype, {
 			paths = this._paths,
 			parsedPaths = this._parsedPaths,
 			bindings = this._bindings,
-			nBindings = bindings.length;
+			nBindings = bindings.length,
+			knownObject = undefined;
 
 		for ( var i = 0, n = arguments.length; i !== n; ++ i ) {
 
 			var object = arguments[ i ],
 				uuid = object.uuid,
-				index = indicesByUUID[ uuid ],
-				knownObject = undefined;
+				index = indicesByUUID[ uuid ];
 
 			if ( index === undefined ) {
 
@@ -161,7 +135,7 @@ Object.assign( AnimationObjectGroup.prototype, {
 
 			} else if ( objects[ index ] !== knownObject ) {
 
-				console.error( 'THREE.AnimationObjectGroup: Different objects with the same UUID ' +
+				console.error( 'AnimationObjectGroup: Different objects with the same UUID ' +
 						'detected. Clean the caches or recreate your infrastructure when reloading scenes.' );
 
 			} // else the object is already where we want it to be
@@ -378,4 +352,6 @@ Object.assign( AnimationObjectGroup.prototype, {
 } );
 
 
-export { AnimationObjectGroup };
+;
+
+export { AnimationObjectGroup }

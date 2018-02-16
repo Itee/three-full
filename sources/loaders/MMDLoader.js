@@ -1,22 +1,22 @@
-import { Loader } from '../loaders/Loader.js'
+import { Loader } from './Loader.js'
 import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
 import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
 import { NumberKeyframeTrack } from '../animation/tracks/NumberKeyframeTrack.js'
 import { LinearInterpolant } from '../math/interpolants/LinearInterpolant.js'
 import { AudioListener } from '../audio/AudioListener.js'
 import { Audio } from '../audio/Audio.js'
-import { AudioLoader } from '../loaders/AudioLoader.js'
+import { AudioLoader } from './AudioLoader.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Euler } from '../math/Euler.js'
 import { Vector3 } from '../math/Vector3.js'
 import { AnimationClip } from '../animation/AnimationClip.js'
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-import { TextureLoader } from '../loaders/TextureLoader.js'
-import { TGALoader } from '../loaders/TGALoader.js'
+import { TextureLoader } from './TextureLoader.js'
+import { TGALoader } from './TGALoader.js'
 import { Color } from '../math/Color.js'
-import { MeshToonMaterial } from '../materials/Materials.js'
+import { MeshToonMaterial } from '../materials/MeshToonMaterial.js'
 import { SkinnedMesh } from '../objects/SkinnedMesh.js'
 import { MMDPhysics } from '../animation/MMDPhysics.js'
 import { AnimationMixer } from '../animation/AnimationMixer.js'
@@ -33,47 +33,11 @@ import {
 	SphericalReflectionMapping,
 	RepeatWrapping
 } from '../constants.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
-import { LoaderUtils } from '../loaders/LoaderUtils.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { LoaderUtils } from './LoaderUtils.js'
+import { _Math } from '../math/Math.js'
 
-/**
- * @author takahiro / https://github.com/takahirox
- *
- * Dependencies
- *  - mmd-parser https://github.com/takahirox/mmd-parser
- *  - ammo.js https://github.com/kripken/ammo.js
- *  - TGALoader
- *  - MMDPhysics
- *  - CCDIKSolver
- *  - OutlineEffect
- *
- *
- * This loader loads and parses PMD/PMX and VMD binary files
- * then creates mesh for Three.js.
- *
- * PMD/PMX is a model data format and VMD is a motion data format
- * used in MMD(Miku Miku Dance).
- *
- * MMD is a 3D CG animation tool which is popular in Japan.
- *
- *
- * MMD official site
- *  http://www.geocities.jp/higuchuu4/index_e.htm
- *
- * PMD, VMD format
- *  http://blog.goo.ne.jp/torisu_tetosuki/e/209ad341d3ece2b1b4df24abf619d6e4
- *
- * PMX format
- *  http://gulshan-i-raz.geo.jp/labs/2012/10/17/pmx-format1/
- *
- *
- * TODO
- *  - light motion in vmd support.
- *  - SDEF support.
- *  - uv/material/bone morphing support.
- *  - more precise grant skinning support.
- *  - shadow support.
- */
+
 
 var MMDLoader = function ( manager ) {
 
@@ -87,12 +51,7 @@ var MMDLoader = function ( manager ) {
 MMDLoader.prototype = Object.create( Loader.prototype );
 MMDLoader.prototype.constructor = MMDLoader;
 
-/*
- * base64 encoded defalut toon textures toon00.bmp - toon10.bmp
- * Users don't need to prepare default texture files.
- *
- * This idea is from http://www20.atpages.jp/katwat/three.js_r58/examples/mytest37/mmd.three.js
- */
+
 MMDLoader.prototype.defaultToonTextures = [
 	'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAL0lEQVRYR+3QQREAAAzCsOFfNJPBJ1XQS9r2hsUAAQIECBAgQIAAAQIECBAgsBZ4MUx/ofm2I/kAAAAASUVORK5CYII=',
 	'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAN0lEQVRYR+3WQREAMBACsZ5/bWiiMvgEBTt5cW37hjsBBAgQIECAwFwgyfYPCCBAgAABAgTWAh8aBHZBl14e8wAAAABJRU5ErkJggg==',
@@ -107,11 +66,7 @@ MMDLoader.prototype.defaultToonTextures = [
 	'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAL0lEQVRYR+3QQREAAAzCsOFfNJPBJ1XQS9r2hsUAAQIECBAgQIAAAQIECBAgsBZ4MUx/ofm2I/kAAAAASUVORK5CYII='
 ];
 
-/*
- * Set 'anonymous' for the the texture image file in other domain
- * even if server responds with "Access-Control-Allow-Origin: *"
- * because some image operation fails in MMDLoader.
- */
+
 MMDLoader.prototype.setTextureCrossOrigin = function ( value ) {
 
 	this.textureCrossOrigin = value;
@@ -336,11 +291,7 @@ MMDLoader.prototype.pourVmdIntoCamera = function ( camera, vmd, name ) {
 
 		var createTrack = function ( node, type, times, values, interpolations ) {
 
-			/*
-			 * optimizes here not to let KeyframeTrackPrototype optimize
-			 * because KeyframeTrackPrototype optimizes times and values but
-			 * doesn't optimize interpolations.
-			 */
+			
 			if ( times.length > 2 ) {
 
 				times = times.slice();
@@ -416,10 +367,7 @@ MMDLoader.prototype.pourVmdIntoCamera = function ( camera, vmd, name ) {
 			position.add( center );
 			position.applyQuaternion( quaternion );
 
-			/*
-			 * Note: This is a workaround not to make Animation system calculate lerp
-			 *       if the diff from the last frame is 1 frame (in 30fps).
-			 */
+			
 			if ( times.length > 0 && time < times[ times.length - 1 ] + ( 1 / 30 ) * 1.5 ) {
 
 				times[ times.length - 1 ] = time - 1e-13;
@@ -462,7 +410,7 @@ MMDLoader.prototype.pourVmdIntoCamera = function ( camera, vmd, name ) {
 		tracks.push( createTrack( '.position', 'VectorKeyframeTrackEx', times, positions, pInterpolations ) );
 		tracks.push( createTrack( '.fov', 'NumberKeyframeTrackEx', times, fovs, fInterpolations ) );
 
-		var clip = new AnimationClip( name === undefined ? Math.generateUUID() : name, - 1, tracks );
+		var clip = new AnimationClip( name === undefined ? _Math.generateUUID() : name, - 1, tracks );
 
 		if ( camera.center === undefined ) camera.center = new Vector3( 0, 0, 0 );
 		if ( camera.animations === undefined ) camera.animations = [];
@@ -1028,18 +976,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 			params.name = m.name;
 
-			/*
-			 * Color
-			 *
-			 * MMD         MeshToonMaterial
-			 * diffuse  -  color
-			 * specular -  specular
-			 * ambient  -  emissive * a
-			 *               (a = 1.0 without map texture or 0.2 with map texture)
-			 *
-			 * MeshToonMaterial doesn't have ambient. Set it to emissive instead.
-			 * It'll be too bright if material has map texture so using coef 0.2.
-			 */
+			
 			params.color = new Color( m.diffuse[ 0 ], m.diffuse[ 1 ], m.diffuse[ 2 ] );
 			params.opacity = m.diffuse[ 3 ];
 			params.specular = new Color( m.specular[ 0 ], m.specular[ 1 ], m.specular[ 2 ] );
@@ -1236,13 +1173,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 						}
 
-						/*
-						 * This method expects
-						 *   t.flipY = false
-						 *   t.wrapS = RepeatWrapping
-						 *   t.wrapT = RepeatWrapping
-						 * TODO: more precise
-						 */
+						
 						function getAlphaByUv( image, uv ) {
 
 							var width = image.width;
@@ -1446,11 +1377,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 
 			}
 
-			/*
-			 * RigidBody position parameter in PMX seems global position
-			 * while the one in PMD seems offset from corresponding bone.
-			 * So unify being offset.
-			 */
+			
 			if ( model.metadata.format === 'pmx' ) {
 
 				if ( p.boneIndex !== - 1 ) {
@@ -1485,9 +1412,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 			var bodyA = rigidBodies[ p.rigidBodyIndex1 ];
 			var bodyB = rigidBodies[ p.rigidBodyIndex2 ];
 
-			/*
-			 * Refer to http://www20.atpages.jp/katwat/wp/?p=4135
-			 */
+			
 			if ( bodyA.type !== 0 && bodyB.type === 2 ) {
 
 				if ( bodyA.boneIndex !== - 1 && bodyB.boneIndex !== - 1 &&
@@ -1617,7 +1542,7 @@ MMDLoader.prototype.createAnimation = function ( mesh, vmd, name ) {
 
 		}
 
-		var clip = new AnimationClip( name === undefined ? Math.generateUUID() : name, - 1, tracks );
+		var clip = new AnimationClip( name === undefined ? _Math.generateUUID() : name, - 1, tracks );
 
 		if ( mesh.geometry.animations === undefined ) mesh.geometry.animations = [];
 		mesh.geometry.animations.push( clip );
@@ -1655,7 +1580,7 @@ MMDLoader.prototype.createAnimation = function ( mesh, vmd, name ) {
 
 		}
 
-		var clip = new AnimationClip( name === undefined ? Math.generateUUID() : name + 'Morph', - 1, tracks );
+		var clip = new AnimationClip( name === undefined ? _Math.generateUUID() : name + 'Morph', - 1, tracks );
 
 		if ( mesh.geometry.animations === undefined ) mesh.geometry.animations = [];
 		mesh.geometry.animations.push( clip );
@@ -1675,11 +1600,7 @@ MMDLoader.DataCreationHelper.prototype = {
 
 	constructor: MMDLoader.DataCreationHelper,
 
-	/*
-	 * Note: Sometimes to use Japanese Unicode characters runs into problems in Three.js.
-	 *       In such a case, use this method to convert it to Unicode hex charcode strings,
-	 *       like 'あいう' -> '0x30420x30440x3046'
-	 */
+	
 
 	toCharcodeStrings: function ( s ) {
 
@@ -1797,11 +1718,7 @@ MMDLoader.DataCreationHelper.prototype = {
 
 };
 
-/*
- * extends existing KeyframeTrack for bone and camera animation.
- *   - use Float64Array for times
- *   - use Cubic Bezier curves interpolation
- */
+
 MMDLoader.VectorKeyframeTrackEx = function ( name, times, values, interpolationParameterArray ) {
 
 	this.interpolationParameters = new Float32Array( interpolationParameterArray );
@@ -1941,42 +1858,7 @@ MMDLoader.CubicBezierInterpolation.prototype.interpolate_ = function ( i1, t0, t
 
 MMDLoader.CubicBezierInterpolation.prototype._calculate = function ( x1, x2, y1, y2, x ) {
 
-	/*
-	 * Cubic Bezier curves
-	 *   https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B.C3.A9zier_curves
-	 *
-	 * B(t) = ( 1 - t ) ^ 3 * P0
-	 *      + 3 * ( 1 - t ) ^ 2 * t * P1
-	 *      + 3 * ( 1 - t ) * t^2 * P2
-	 *      + t ^ 3 * P3
-	 *      ( 0 <= t <= 1 )
-	 *
-	 * MMD uses Cubic Bezier curves for bone and camera animation interpolation.
-	 *   http://d.hatena.ne.jp/edvakf/20111016/1318716097
-	 *
-	 *    x = ( 1 - t ) ^ 3 * x0
-	 *      + 3 * ( 1 - t ) ^ 2 * t * x1
-	 *      + 3 * ( 1 - t ) * t^2 * x2
-	 *      + t ^ 3 * x3
-	 *    y = ( 1 - t ) ^ 3 * y0
-	 *      + 3 * ( 1 - t ) ^ 2 * t * y1
-	 *      + 3 * ( 1 - t ) * t^2 * y2
-	 *      + t ^ 3 * y3
-	 *      ( x0 = 0, y0 = 0 )
-	 *      ( x3 = 1, y3 = 1 )
-	 *      ( 0 <= t, x1, x2, y1, y2 <= 1 )
-	 *
-	 * Here solves this equation with Bisection method,
-	 *   https://en.wikipedia.org/wiki/Bisection_method
-	 * gets t, and then calculate y.
-	 *
-	 * f(t) = 3 * ( 1 - t ) ^ 2 * t * x1
-	 *      + 3 * ( 1 - t ) * t^2 * x2
-	 *      + t ^ 3 - x = 0
-	 *
-	 * (Another option: Newton's method
-	 *    https://en.wikipedia.org/wiki/Newton%27s_method)
-	 */
+	
 
 	var c = 0.5;
 	var t = c;
@@ -2408,12 +2290,7 @@ MMDHelper.prototype = {
 
 	},
 
-	/*
-	 * detect the longest duration among model, camera, and audio animations and then
-	 * set it to them to sync.
-	 * TODO: touching private properties ( ._actions and ._clip ) so consider better way
-	 *       to access them for safe and modularity.
-	 */
+	
 	unifyAnimationDuration: function ( params ) {
 
 		params = params === undefined ? {} : params;
@@ -2704,16 +2581,7 @@ MMDHelper.prototype = {
 
 	},
 
-	/*
-	 * Note: These following three functions are workaround for r74dev.
-	 *       PropertyMixer.apply() seems to save values into buffer cache
-	 *       when mixer.update() is called.
-	 *       ikSolver.update() and physics.update() change bone position/quaternion
-	 *       without mixer.update() then buffer cache will be inconsistent.
-	 *       So trying to avoid buffer cache inconsistency by doing
-	 *       backup bones position/quaternion right after mixer.update() call
-	 *       and then restore them after rendering.
-	 */
+	
 	initBackupBones: function ( mesh ) {
 
 		mesh.skeleton.backupBones = [];

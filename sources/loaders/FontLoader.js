@@ -1,10 +1,12 @@
-import { Font } from '../extras/core/Font.js';
-import { FileLoader } from './FileLoader.js';
-import { DefaultLoadingManager } from './LoadingManager.js';
+import { Font } from '../core/Font.js'
+import { FileLoader } from './FileLoader.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
+
+
 
 function FontLoader( manager ) {
 
@@ -30,7 +32,7 @@ Object.assign( FontLoader.prototype, {
 
 			} catch ( e ) {
 
-				console.warn( 'THREE.FontLoader: typeface.js support is being deprecated. Use typeface.json instead.' );
+				console.warn( 'FontLoader: typeface.js support is being deprecated. Use typeface.json instead.' );
 				json = JSON.parse( text.substring( 65, text.length - 2 ) );
 
 			}
@@ -59,4 +61,6 @@ Object.assign( FontLoader.prototype, {
 } );
 
 
-export { FontLoader };
+;
+
+export { FontLoader }

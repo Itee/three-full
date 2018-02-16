@@ -1,8 +1,8 @@
-import { _Math } from '../math/Math.js';
+import { _Math } from '../math/Math.js'
 
-/**
- * @author benaadams / https://twitter.com/ben_a_adams
- */
+
+
+
 
 function InterleavedBufferAttribute( interleavedBuffer, itemSize, offset, normalized ) {
 
@@ -139,4 +139,6 @@ Object.assign( InterleavedBufferAttribute.prototype, {
 } );
 
 
-export { InterleavedBufferAttribute };
+;
+
+export { InterleavedBufferAttribute }

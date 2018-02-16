@@ -1,13 +1,9 @@
 import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Matrix4 } from '../math/Matrix4.js'
+import { _Math } from '../math/Math.js'
 
-/**
- * @author takahiro / http://github.com/takahirox
- *
- * Dependencies
- *  - mmd-parser https://github.com/takahirox/mmd-parser
- */
+
 
 var MMDExporter = function () {
 
@@ -75,24 +71,11 @@ var MMDExporter = function () {
 
 	}
 
-	/* TODO: implement
-	// mesh -> pmd
-	this.parsePmd = function ( object ) {
+	
 
-	};
-	*/
+	
 
-	/* TODO: implement
-	// mesh -> pmx
-	this.parsePmx = function ( object ) {
-
-	};
-	*/
-
-	/*
-	 * skeleton -> vpd
-	 * Returns Shift_JIS encoded Uint8Array. Otherwise return strings.
-	 */
+	
 	this.parseVpd = function ( skin, outputShiftJis, useOriginalBones ) {
 
 		if ( skin.isSkinnedMesh !== true ) {
@@ -161,10 +144,7 @@ var MMDExporter = function () {
 			var bone = bones[ i ];
 			var bone2 = bones2[ i ];
 
-			/*
-			 * use the bone matrix saved before solving IK.
-			 * see CCDIKSolver for the detail.
-			 */
+			
 			if ( useOriginalBones === true &&
 				bone.userData.ik !== undefined &&
 				bone.userData.ik.originalMatrix !== undefined ) {
@@ -204,12 +184,7 @@ var MMDExporter = function () {
 
 	};
 
-	/* TODO: implement
-	// animation + skeleton -> vmd
-	this.parseVmd = function ( object ) {
-
-	};
-	*/
+	
 
 };
 

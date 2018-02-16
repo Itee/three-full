@@ -1,14 +1,16 @@
-import { Mesh } from './Mesh.js';
-import { Vector4 } from '../math/Vector4.js';
-import { Skeleton } from './Skeleton.js';
-import { Bone } from './Bone.js';
-import { Matrix4 } from '../math/Matrix4.js';
+import { Mesh } from './Mesh.js'
+import { Vector4 } from '../math/Vector4.js'
+import { Skeleton } from './Skeleton.js'
+import { Bone } from './Bone.js'
+import { Matrix4 } from '../math/Matrix4.js'
 
-/**
- * @author mikael emtinger / http://gomo.se/
- * @author alteredq / http://alteredqualia.com/
- * @author ikerr / http://verold.com
- */
+
+
+
+
+
+
+
 
 function SkinnedMesh( geometry, material ) {
 
@@ -191,7 +193,7 @@ SkinnedMesh.prototype = Object.assign( Object.create( Mesh.prototype ), {
 
 		} else {
 
-			console.warn( 'THREE.SkinnedMesh: Unrecognized bindMode: ' + this.bindMode );
+			console.warn( 'SkinnedMesh: Unrecognized bindMode: ' + this.bindMode );
 
 		}
 
@@ -206,4 +208,6 @@ SkinnedMesh.prototype = Object.assign( Object.create( Mesh.prototype ), {
 } );
 
 
-export { SkinnedMesh };
+;
+
+export { SkinnedMesh }

@@ -1,5 +1,5 @@
-import { FileLoader } from '../loaders/FileLoader.js'
-import { TextureLoader } from '../loaders/TextureLoader.js'
+import { FileLoader } from './FileLoader.js'
+import { TextureLoader } from './TextureLoader.js'
 import {
 	BufferAttribute,
 	Float32BufferAttribute
@@ -11,26 +11,22 @@ import { PointLight } from '../lights/PointLight.js'
 import { SpotLight } from '../lights/SpotLight.js'
 import { Object3D } from '../core/Object3D.js'
 import { Mesh } from '../objects/Mesh.js'
-import { SphereBufferGeometry } from '../geometries/Geometries.js'
-import {
-	MeshBasicMaterial,
-	MeshPhongMaterial
-} from '../materials/Materials.js'
+import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
 import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Vector2 } from '../math/Vector2.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { Scene } from '../scenes/Scene.js'
 import {
 	BackSide,
 	DoubleSide,
 	VertexColors
 } from '../constants.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
 
 var VRMLLoader = function ( manager ) {
 
@@ -97,28 +93,7 @@ VRMLLoader.prototype = {
 			var float2_pattern = /([\d\.\+\-e]+)\s+([\d\.\+\-e]+)/g;
 			var float3_pattern = /([\d\.\+\-e]+)\s+([\d\.\+\-e]+)\s+([\d\.\+\-e]+)/g;
 
-			/**
-			 * Vertically paints the faces interpolating between the
-			 * specified colors at the specified angels. This is used for the Background
-			 * node, but could be applied to other nodes with multiple faces as well.
-			 *
-			 * When used with the Background node, default is directionIsDown is true if
-			 * interpolating the skyColor down from the Zenith. When interpolationg up from
-			 * the Nadir i.e. interpolating the groundColor, the directionIsDown is false.
-			 *
-			 * The first angle is never specified, it is the Zenith (0 rad). Angles are specified
-			 * in radians. The geometry is thought a sphere, but could be anything. The color interpolation
-			 * is linear along the Y axis in any case.
-			 *
-			 * You must specify one more color than you have angles at the beginning of the colors array.
-			 * This is the color of the Zenith (the top of the shape).
-			 *
-			 * @param geometry
-			 * @param radius
-			 * @param angles
-			 * @param colors
-			 * @param boolean topDown Whether to work top down or bottom up.
-			 */
+			
 			function paintFaces( geometry, radius, angles, colors, topDown ) {
 
 				var direction = ( topDown === true ) ? 1 : - 1;
@@ -217,10 +192,7 @@ VRMLLoader.prototype = {
 
 				var parts = [], part, property = {}, fieldName;
 
-				/**
-				 * Expression for matching relevant information, such as a name or value, but not the separators
-				 * @type {RegExp}
-				 */
+				
 				var regex = /[^\s,\[\]]+/g;
 
 				var point;

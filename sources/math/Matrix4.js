@@ -1,17 +1,8 @@
-import { Vector3 } from './Vector3.js';
+import { Vector3 } from './Vector3.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author supereggbert / http://www.paulbrunt.co.uk/
- * @author philogb / http://blog.thejit.org/
- * @author jordi_ros / http://plattsoft.com
- * @author D1plo1d / http://github.com/D1plo1d
- * @author alteredq / http://alteredqualia.com/
- * @author mikael emtinger / http://gomo.se/
- * @author timknip / http://www.floorplanner.com/
- * @author bhouston / http://clara.io
- * @author WestLangley / http://github.com/WestLangley
- */
+
+
+
 
 function Matrix4() {
 
@@ -26,7 +17,7 @@ function Matrix4() {
 
 	if ( arguments.length > 0 ) {
 
-		console.error( 'THREE.Matrix4: the constructor no longer reads arguments. use .set() instead.' );
+		console.error( 'Matrix4: the constructor no longer reads arguments. use .set() instead.' );
 
 	}
 
@@ -154,7 +145,7 @@ Object.assign( Matrix4.prototype, {
 
 		if ( ! ( euler && euler.isEuler ) ) {
 
-			console.error( 'THREE.Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
+			console.error( 'Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
 
 		}
 
@@ -374,7 +365,7 @@ Object.assign( Matrix4.prototype, {
 
 		if ( n !== undefined ) {
 
-			console.warn( 'THREE.Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
+			console.warn( 'Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
 			return this.multiplyMatrices( m, n );
 
 		}
@@ -565,7 +556,7 @@ Object.assign( Matrix4.prototype, {
 
 		if ( det === 0 ) {
 
-			var msg = "THREE.Matrix4: .getInverse() can't invert matrix, determinant is 0";
+			var msg = "Matrix4: .getInverse() can't invert matrix, determinant is 0";
 
 			if ( throwOnDegenerate === true ) {
 
@@ -818,7 +809,7 @@ Object.assign( Matrix4.prototype, {
 
 		if ( far === undefined ) {
 
-			console.warn( 'THREE.Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
+			console.warn( 'Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
 
 		}
 
@@ -923,4 +914,6 @@ Object.assign( Matrix4.prototype, {
 } );
 
 
-export { Matrix4 };
+;
+
+export { Matrix4 }

@@ -1,16 +1,15 @@
-import { ZeroCurvatureEnding } from '../../constants.js';
-import { Interpolant } from '../Interpolant.js';
-import { WrapAroundEnding, ZeroSlopeEnding } from '../../constants.js';
+import {
+	ZeroCurvatureEnding,
+	WrapAroundEnding,
+	ZeroSlopeEnding
+} from '../../constants.js'
+import { Interpolant } from '../Interpolant.js'
 
-/**
- * Fast and simple cubic spline interpolant.
- *
- * It was derived from a Hermitian construction setting the first derivative
- * at each sample position to the linear slope between neighboring positions
- * over their parameter interval.
- *
- * @author tschw
- */
+
+
+
+
+
 
 function CubicInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
@@ -153,4 +152,6 @@ CubicInterpolant.prototype = Object.assign( Object.create( Interpolant.prototype
 } );
 
 
-export { CubicInterpolant };
+;
+
+export { CubicInterpolant }

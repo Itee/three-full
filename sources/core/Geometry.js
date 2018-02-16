@@ -1,23 +1,28 @@
-import { EventDispatcher } from './EventDispatcher.js';
-import { Face3 } from './Face3.js';
-import { Matrix3 } from '../math/Matrix3.js';
-import { Sphere } from '../math/Sphere.js';
-import { Box3 } from '../math/Box3.js';
-import { Vector3 } from '../math/Vector3.js';
-import { Matrix4 } from '../math/Matrix4.js';
-import { Vector2 } from '../math/Vector2.js';
-import { Color } from '../math/Color.js';
-import { Object3D } from './Object3D.js';
-import { _Math } from '../math/Math.js';
+import { EventDispatcher } from './EventDispatcher.js'
+import { Face3 } from './Face3.js'
+import { Matrix3 } from '../math/Matrix3.js'
+import { Sphere } from '../math/Sphere.js'
+import { Box3 } from '../math/Box3.js'
+import { Vector3 } from '../math/Vector3.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Color } from '../math/Color.js'
+import { Object3D } from './Object3D.js'
+import { _Math } from '../math/Math.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author kile / http://kile.stravaganza.org/
- * @author alteredq / http://alteredqualia.com/
- * @author mikael emtinger / http://gomo.se/
- * @author zz85 / http://www.lab4games.net/zz85/blog
- * @author bhouston / http://clara.io
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 var geometryId = 0; // Geometry uses even numbers as Id
 
@@ -656,25 +661,6 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 
 	},
 
-	computeLineDistances: function () {
-
-		var d = 0;
-		var vertices = this.vertices;
-
-		for ( var i = 0, il = vertices.length; i < il; i ++ ) {
-
-			if ( i > 0 ) {
-
-				d += vertices[ i ].distanceTo( vertices[ i - 1 ] );
-
-			}
-
-			this.lineDistances[ i ] = d;
-
-		}
-
-	},
-
 	computeBoundingBox: function () {
 
 		if ( this.boundingBox === null ) {
@@ -703,7 +689,7 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 
 		if ( ! ( geometry && geometry.isGeometry ) ) {
 
-			console.error( 'THREE.Geometry.merge(): geometry not an instance of THREE.Geometry.', geometry );
+			console.error( 'Geometry.merge(): geometry not an instance of Geometry.', geometry );
 			return;
 
 		}
@@ -823,7 +809,7 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 
 		if ( ! ( mesh && mesh.isMesh ) ) {
 
-			console.error( 'THREE.Geometry.mergeMesh(): mesh not an instance of THREE.Mesh.', mesh );
+			console.error( 'Geometry.mergeMesh(): mesh not an instance of Mesh.', mesh );
 			return;
 
 		}
@@ -834,11 +820,7 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 
 	},
 
-	/*
-	 * Checks for duplicate vertices with hashmap.
-	 * Duplicated vertices are removed
-	 * and faces' vertices are updated.
-	 */
+	
 
 	mergeVertices: function () {
 
@@ -1180,29 +1162,7 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 
 	clone: function () {
 
-		/*
-		 // Handle primitives
-
-		 var parameters = this.parameters;
-
-		 if ( parameters !== undefined ) {
-
-		 var values = [];
-
-		 for ( var key in parameters ) {
-
-		 values.push( parameters[ key ] );
-
-		 }
-
-		 var geometry = Object.create( this.constructor.prototype );
-		 this.constructor.apply( geometry, values );
-		 return geometry;
-
-		 }
-
-		 return new this.constructor().copy( this );
-		 */
+		
 
 		return new Geometry().copy( this );
 
@@ -1451,4 +1411,6 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 } );
 
 
-export { Geometry };
+;
+
+export { Geometry }

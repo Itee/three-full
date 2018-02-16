@@ -1,9 +1,10 @@
-import { LightShadow } from './LightShadow.js';
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js';
+import { LightShadow } from './LightShadow.js'
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
+
 
 function DirectionalLightShadow( ) {
 
@@ -18,4 +19,6 @@ DirectionalLightShadow.prototype = Object.assign( Object.create( LightShadow.pro
 } );
 
 
-export { DirectionalLightShadow };
+;
+
+export { DirectionalLightShadow }

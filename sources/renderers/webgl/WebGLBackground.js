@@ -1,16 +1,24 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+import { BackSide } from '../../constants.js'
+import { OrthographicCamera } from '../../cameras/OrthographicCamera.js'
+import { BoxBufferGeometry } from '../../geometries/BoxGeometry.js'
+import { PlaneBufferGeometry } from '../../geometries/PlaneGeometry.js'
+import { MeshBasicMaterial } from '../../materials/MeshBasicMaterial.js'
+import { ShaderMaterial } from '../../materials/ShaderMaterial.js'
+import { Color } from '../../math/Color.js'
+import { Mesh } from '../../objects/Mesh.js'
+import { ShaderLib } from '../shaders/ShaderLib.js'
 
-import { BackSide } from '../../constants.js';
-import { OrthographicCamera } from '../../cameras/OrthographicCamera.js';
-import { BoxBufferGeometry } from '../../geometries/BoxGeometry.js';
-import { PlaneBufferGeometry } from '../../geometries/PlaneGeometry.js';
-import { MeshBasicMaterial } from '../../materials/MeshBasicMaterial.js';
-import { ShaderMaterial } from '../../materials/ShaderMaterial.js';
-import { Color } from '../../math/Color.js';
-import { Mesh } from '../../objects/Mesh.js';
-import { ShaderLib } from '../shaders/ShaderLib.js';
+
+
+
+
+
+
+
+
+
+
+
 
 function WebGLBackground( renderer, state, geometries, premultipliedAlpha ) {
 
@@ -138,4 +146,6 @@ function WebGLBackground( renderer, state, geometries, premultipliedAlpha ) {
 }
 
 
-export { WebGLBackground };
+;
+
+export { WebGLBackground }
