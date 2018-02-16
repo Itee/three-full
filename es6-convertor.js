@@ -372,7 +372,7 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
                 const exportPath = _exportMap[ exportedElement ]
 
                 const sourcePathTarget = 'sources\\'
-                const srcPathTarget = 'src\\'
+                const srcPathTarget    = 'src\\'
 
                 if ( exportPath.contains( sourcePathTarget ) ) {
 
