@@ -3226,16 +3226,6 @@ export default [
 
 	// objects
     {
-        input: 'sources/objects/Car.js',
-        plugins: [ glsl() ],
-        output: {
-            indent: '\t',
-            format: 'iife',
-            name: 'Three',
-            file: 'tests/objects/Car.test.js'
-        }
-    },
-    {
 		input: 'sources/objects/Bone.js',
 		plugins: [ glsl() ],
 		output: {
@@ -3245,6 +3235,16 @@ export default [
 			file: 'tests/objects/Bone.test.js'
 		}
 	},
+    {
+        input: 'sources/objects/Car.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/objects/Car.test.js'
+        }
+    },
     {
         input: 'sources/objects/GPUParticleSystem.js',
         plugins: [ glsl() ],
