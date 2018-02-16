@@ -198,7 +198,10 @@ module.exports = {
 			],
 			outputOverride: 'curves/CurveExtras.js'
 		},
-		Detector: {
+        CurvePath: {
+            outputOverride: 'core/CurvePath.js'
+        },
+        Detector: {
 			outputOverride: 'helpers/Detector.js'
 		},
         DeviceOrientationControls: {
