@@ -33,7 +33,6 @@ module.exports = {
 		'crossfade',                        // Scene has already been declared
 		'Cloth.js',							// Use global variable from example html ! Need to be refactored
 		'ParametricGeometries.js',          // Bug TorusKnotCurve from es6-exports
-		'RollerCoaster.js',                 // invalid default exports with file name from es6-exports
 		'OceanShaders.js',                  // Todo: check how to extends imported lib properly
 		'RectAreaLightUniformsLib.js',      //
 		'Volume.js',                        // damned eval
@@ -489,6 +488,15 @@ module.exports = {
 				[ /(return null;[\s\n\r]+};)/g, '$1\nvar HDRLoader = RGBELoader;\n\n' ],
 			]
 
+		},
+        RollerCoaster: {
+			exportsOverride: [
+				'RollerCoasterGeometry',
+				'RollerCoasterLiftersGeometry',
+				'RollerCoasterShadowGeometry',
+				'SkyGeometry',
+				'TreesGeometry'
+			]
 		},
 		SAOPass: {
 			imports: [
