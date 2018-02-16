@@ -739,20 +739,18 @@ gulp.task( 'convert-three', ( done ) => {
 
 	}
 
-	function updateThreeExports() {
+    function updateThreeExports () {
 
-		const mainImportFile = '.\\src\\Three.js'
-		const mainExportFile = './sources/Three.js'
+        const mainExporterFilePath = './sources/Three.js'
+        const exports              = es6.getAllExports( mainExporterFilePath )
 
-		let exports = es6.getAllExports( mainImportFile ).replace( /import/g, 'export' )
+        let data = '// Made by Itee (https://github.com/Itee) with ES6 Convertor script\n\n' +
+            'import \'./polyfills.js\';\n\n' +
+            exports
 
-		let data = '// Made by Itee (https://github.com/Itee) with ES6 Convertor script\n\n' +
-			'import \'./polyfills.js\';\n\n' +
-			exports
+        fs.writeFileSync( mainExporterFilePath, data )
 
-		fs.writeFileSync( mainExportFile, data )
-
-	}
+    }
 
 } )
 
