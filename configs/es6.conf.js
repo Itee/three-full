@@ -141,7 +141,10 @@ module.exports = {
             ],
 			outputOverride: 'objects/Car.js'
 		},
-		CinematicCamera: {
+        CatmullRomCurve3: {
+            outputOverride: 'curves/CatmullRomCurve3.js'
+        },
+        CinematicCamera: {
 			imports: [
 				'BokehShader',
 				'UniformsUtils'
