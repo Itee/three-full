@@ -412,7 +412,8 @@ module.exports = {
 			imports: [ 'NURBSUtils' ]
 		},
 		OBJLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [ 'DefaultLoadingManager' ],
+            exportsOverride: [ 'OBJLoader' ]
 		},
 		OBJLoader2: {
 			replacements: [
