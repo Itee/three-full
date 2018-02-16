@@ -576,7 +576,8 @@ module.exports = {
 			imports: [ 'UnpackDepthRGBAShader' ]
 		},
 		SimplexNoise: {
-			outputOverride: 'misc/SimplexNoise.js'
+			outputOverride: 'misc/SimplexNoise.js',
+            exportsOverride: [ 'SimplexNoise' ]
 		},
 		Sky: {
 			imports: [ 'UniformsUtils' ]
