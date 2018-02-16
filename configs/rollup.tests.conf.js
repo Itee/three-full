@@ -814,13 +814,13 @@ export default [
 
 	// extras
 	{
-		input: 'sources/extras/SceneUtils.js',
+		input: 'sources/extras/Earcut.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/extras/SceneUtils.test.js'
+			file: 'tests/extras/Earcut.test.js'
 		}
 	},
 	{
@@ -1100,16 +1100,6 @@ export default [
 			file: 'tests/geometries/ExtrudeGeometry.test.js'
 		}
 	},
-//	{
-//		input: 'sources/geometries/Geometries.js',
-//		plugins: [ glsl() ],
-//		output: {
-//			indent: '\t',
-//			format: 'iife',
-//			name: 'Three',
-//			file: 'tests/geometries/Geometries.test.js'
-//		}
-//	},
 	{
 		input: 'sources/geometries/hilbert2D.js',
 		plugins: [ glsl() ],
@@ -1737,15 +1727,25 @@ export default [
 		}
 	},
 	{
-		input: 'sources/loaders/FBXLoader.js',
+		input: 'sources/loaders/EXRLoader.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/loaders/FBXLoader.test.js'
+			file: 'tests/loaders/EXRLoader.test.js'
 		}
 	},
+    {
+        input: 'sources/loaders/FBXLoader.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/loaders/FBXLoader.test.js'
+        }
+    },
 	{
 		input: 'sources/loaders/FileLoader.js',
 		plugins: [ glsl() ],
@@ -1764,6 +1764,16 @@ export default [
 			format: 'iife',
 			name: 'Three',
 			file: 'tests/loaders/FontLoader.test.js'
+		}
+	},
+	{
+		input: 'sources/loaders/GCodeLoader.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/loaders/GCodeLoader.test.js'
 		}
 	},
 	{
@@ -1824,6 +1834,16 @@ export default [
 			format: 'iife',
 			name: 'Three',
 			file: 'tests/loaders/KMZLoader.test.js'
+		}
+	},
+	{
+		input: 'sources/loaders/KTXLoader.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/loaders/KTXLoader.test.js'
 		}
 	},
 	{
@@ -1894,6 +1914,16 @@ export default [
 			format: 'iife',
 			name: 'Three',
 			file: 'tests/loaders/MTLLoader.test.js'
+		}
+	},
+	{
+		input: 'sources/loaders/NodeMaterialLoader.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/loaders/NodeMaterialLoader.test.js'
 		}
 	},
 	{
@@ -2688,6 +2718,16 @@ export default [
 		}
 	},
 	{
+		input: 'sources/nodes/NodeFrame.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/nodes/NodeFrame.test.js'
+		}
+	},
+	{
 		input: 'sources/nodes/NodeLib.js',
 		plugins: [ glsl() ],
 		output: {
@@ -2857,6 +2897,16 @@ export default [
 			format: 'iife',
 			name: 'Three',
 			file: 'tests/nodes/inputs/IntNode.test.js'
+		}
+	},
+	{
+		input: 'sources/nodes/inputs/Matrix3Node.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/nodes/inputs/Matrix3Node.test.js'
 		}
 	},
 	{
@@ -3176,16 +3226,6 @@ export default [
 
 	// objects
     {
-        input: 'sources/objects/Car.js',
-        plugins: [ glsl() ],
-        output: {
-            indent: '\t',
-            format: 'iife',
-            name: 'Three',
-            file: 'tests/objects/Car.test.js'
-        }
-    },
-    {
 		input: 'sources/objects/Bone.js',
 		plugins: [ glsl() ],
 		output: {
@@ -3195,6 +3235,16 @@ export default [
 			file: 'tests/objects/Bone.test.js'
 		}
 	},
+    {
+        input: 'sources/objects/Car.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/objects/Car.test.js'
+        }
+    },
     {
         input: 'sources/objects/GPUParticleSystem.js',
         plugins: [ glsl() ],
@@ -3226,13 +3276,13 @@ export default [
         }
     },
 	{
-		input: 'sources/objects/LensFlare.js',
+		input: 'sources/objects/Lensflare.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/objects/LensFlare.test.js'
+			file: 'tests/objects/Lensflare.test.js'
 		}
 	},
 	{
@@ -3386,6 +3436,16 @@ export default [
 		}
 	},
 	{
+		input: 'sources/objects/RollerCoaster.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/objects/RollerCoaster.test.js'
+		}
+	},
+	{
 		input: 'sources/objects/ShadowMesh.js',
 		plugins: [ glsl() ],
 		output: {
@@ -3453,6 +3513,16 @@ export default [
 			format: 'iife',
 			name: 'Three',
 			file: 'tests/objects/Water.test.js'
+		}
+	},
+	{
+		input: 'sources/objects/Water2.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/objects/Water2.test.js'
 		}
 	},
 	{
@@ -3944,16 +4014,6 @@ export default [
 		}
 	},
 	{
-		input: 'sources/renderers/webgl/WebGLFlareRenderer.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/renderers/webgl/WebGLFlareRenderer.test.js'
-		}
-	},
-	{
 		input: 'sources/renderers/webgl/WebGLGeometries.js',
 		plugins: [ glsl() ],
 		output: {
@@ -4041,6 +4101,16 @@ export default [
 			format: 'iife',
 			name: 'Three',
 			file: 'tests/renderers/webgl/WebGLRenderLists.test.js'
+		}
+	},
+	{
+		input: 'sources/renderers/webgl/WebGLRenderStates.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/renderers/webgl/WebGLRenderStates.test.js'
 		}
 	},
 	{
@@ -4449,6 +4519,16 @@ export default [
 		}
 	},
 	{
+		input: 'sources/shaders/PixelShader.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/shaders/PixelShader.test.js'
+		}
+	},
+	{
 		input: 'sources/shaders/RGBShiftShader.js',
 		plugins: [ glsl() ],
 		output: {
@@ -4750,6 +4830,16 @@ export default [
             format: 'iife',
             name: 'Three',
             file: 'tests/utils/QuickHull.test.js'
+        }
+    },
+    {
+        input: 'sources/utils/SceneUtils.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/utils/SceneUtils.test.js'
         }
     },
     {

@@ -112,6 +112,13 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
+        BokehShader2: {
+            replacements:    [
+                [ 'BokehShader', 'BokehShader2' ],
+                [ 'BokehShader2 = {', 'var BokehShader2 = {' ]
+            ],
+            exportsOverride: [ 'BokehShader2' ]
+        },
 		BufferGeometryUtils: {
 			outputOverride: 'utils/BufferGeometryUtils.js'
 		},
@@ -265,16 +272,14 @@ module.exports = {
 				'VectorKeyframeTrack',
 				'PropertyBinding'
 			],
-			replacements: [
-				['GLTFLoader = (', 'var GLTFLoader = (']
-			],
             exportsOverride: [
             	'GLTFLoader'
 			]
 		},
-		GPUComputationRenderer: {
-			outputOverride: 'renderers/GPUComputationRenderer.js'
-		},
+        GPUComputationRenderer: {
+            exportsOverride: [ 'GPUComputationRenderer' ],
+            outputOverride:  'renderers/GPUComputationRenderer.js'
+        },
 		GPUParticleSystem: {
             imports: [ '_Math' ],
 			outputOverride: 'objects/GPUParticleSystem.js'
@@ -285,7 +290,14 @@ module.exports = {
 		HDRCubeTextureLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
+		hilbert2D: {
+            exportsOverride: [ 'hilbert2D' ],
+		},
+		hilbert3D: {
+            exportsOverride: [ 'hilbert3D' ],
+		},
 		ImprovedNoise: {
+			exportsOverride: [ 'ImprovedNoise' ],
 			outputOverride: 'misc/ImprovedNoise.js'
 		},
 		KMZLoader: {
@@ -307,7 +319,8 @@ module.exports = {
 				'AnimationUtils',
 				'LoaderUtils',
 				'_Math'
-			]
+			],
+            exportsOverride: [ 'LegacyGLTFLoader' ]
 		},
 		LoaderSupport: {
 			imports: [ 'DefaultLoadingManager' ],
@@ -403,7 +416,8 @@ module.exports = {
 			imports: [ 'NURBSUtils' ]
 		},
 		OBJLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [ 'DefaultLoadingManager' ],
+            exportsOverride: [ 'OBJLoader' ]
 		},
 		OBJLoader2: {
 			replacements: [
@@ -439,6 +453,9 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
+        Pass: {
+            exportsOverride: [ 'Pass' ]
+		},
 		PDBLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
@@ -446,7 +463,8 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		PRNG: {
-			outputOverride: 'utils/PRNG.js'
+			outputOverride: 'utils/PRNG.js',
+            exportsOverride: [ 'PRNG' ]
 		},
 		PRWMLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -476,6 +494,7 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		QuickHull: {
+            exportsOverride: [ 'QuickHull' ],
 			outputOverride: 'utils/QuickHull.js'
 		},
 		Refractor: {
@@ -561,7 +580,8 @@ module.exports = {
 			imports: [ 'UnpackDepthRGBAShader' ]
 		},
 		SimplexNoise: {
-			outputOverride: 'misc/SimplexNoise.js'
+			outputOverride: 'misc/SimplexNoise.js',
+            exportsOverride: [ 'SimplexNoise' ]
 		},
 		Sky: {
 			imports: [ 'UniformsUtils' ]
@@ -570,7 +590,11 @@ module.exports = {
 			imports: [
 				'SMAAShader',
 				'UniformsUtils'
-			]
+			],
+            exportsOverride: [ 'SMAAPass' ]
+		},
+        SMAAShader: {
+            exportsOverride: [ 'SMAAShader' ]
 		},
 		SpriteNode: {
 			imports: [
@@ -676,12 +700,17 @@ module.exports = {
 				'_Math'
 			]
 		},
-		Water2: {
-			imports: [
-				'UniformsUtils',
-				'UniformsLib'
-			]
-		},
+        Water2: {
+            imports:         [
+                'UniformsUtils',
+                'UniformsLib'
+            ],
+            replacements:    [
+                [ /Water/g, 'Water2' ],
+                [ 'Water2 = function (', 'function Water2(' ],
+            ],
+            exportsOverride: [ 'Water2' ]
+        },
 		WebGLDeferredRenderer: {
 			imports: [
 				'CopyShader',
@@ -696,7 +725,8 @@ module.exports = {
 		WebVR: {
 			replacements: [
 				[ 'var WEBVR', 'var WebVR' ]
-			]
+			],
+            exportsOverride: [ 'WebVR' ]
 		}
 	}
 }

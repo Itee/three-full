@@ -501,7 +501,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
             fileType   = _getFileType( file )
 
             // Processing exports
-            exports = _getExportsFor( file )
+            exports = _getExportsFor( file, edgeCase[ 'exportsOverride' ] )
             if ( !exports ) {
 
                 // Fallback with file name in last resore
