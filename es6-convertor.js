@@ -1390,7 +1390,9 @@ Object.assign( Es6.prototype, {
     getAllExports: function getAllExports ( path ) {
 
         // Todo: should be exports
-        return _formatImportStatements( path, Object.keys( _exportMap ) )
+        const formatedImportStatements = _formatImportStatements( path, Object.keys( _exportMap ) )
+        const formatedExportStatements = formatedImportStatements.replace( /import/g, 'export' )
+        return formatedExportStatements
 
     },
 
