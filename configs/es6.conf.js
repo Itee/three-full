@@ -215,6 +215,9 @@ module.exports = {
                 'UniformsUtils'
             ]
         },
+		Earcut: {
+            outputOverride: 'misc/Earcut.js'
+        },
 		EffectComposer: {
 			imports: [ 'CopyShader' ]
 		},
