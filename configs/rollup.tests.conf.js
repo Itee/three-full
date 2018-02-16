@@ -3436,6 +3436,16 @@ export default [
 		}
 	},
 	{
+		input: 'sources/objects/RollerCoaster.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/objects/RollerCoaster.test.js'
+		}
+	},
+	{
 		input: 'sources/objects/ShadowMesh.js',
 		plugins: [ glsl() ],
 		output: {
