@@ -586,7 +586,8 @@ module.exports = {
 			imports: [
 				'SMAAShader',
 				'UniformsUtils'
-			]
+			],
+            exportsOverride: [ 'SMAAPass' ]
 		},
 		SpriteNode: {
 			imports: [
