@@ -324,8 +324,6 @@ function _createDataMap ( filesPaths, edgeCases, outputBasePath ) {
 
     filesPaths.forEach( ( filePath ) => {
 
-
-
     } )
 
 }
@@ -335,9 +333,9 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
     let fileExtension = undefined
     let baseName      = undefined
     let edgeCase      = undefined
-    let file = undefined
+    let file          = undefined
 
-    let exports = undefined
+    let exports          = undefined
     let overrideFilePath = undefined
     let outputPath       = undefined
 
@@ -348,7 +346,7 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
         edgeCase      = edgeCases[ baseName ] || {}
         file          = _getUncommentedFileForPath( filePath )
 
-        if( baseName === 'constants' ) {
+        if ( baseName === 'constants' ) {
             var debug = 1
         }
 
@@ -361,7 +359,7 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
         }
 
-        outputPath       = _getOutputFor( filePath, outputBasePath, edgeCase[ 'outputOverride' ] )
+        outputPath = _getOutputFor( filePath, outputBasePath, edgeCase[ 'outputOverride' ] )
 
         exports.forEach( ( exportedElement ) => {
 
@@ -486,10 +484,10 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
 
             }
 
-            imports      = _getImportsFor( {
-                file:   file,
+            imports = _getImportsFor( {
+                file:    file,
                 exports: exports,
-                output: outputPath
+                output:  outputPath
             } )
 
             replacements = _getReplacementsFor( file, exports )
@@ -653,7 +651,7 @@ function _getAllNewStatementIn ( file, exports ) {
                                   .replace( /\s+/g, '' )
 
               // Check if the new statement is not about the exported object !
-              if( exports.includes(result) ) {
+              if ( exports.includes( result ) ) {
                   return
               }
 
@@ -677,7 +675,7 @@ function _getAllInstanceOfStatementIn ( file, exports ) {
                                   .replace( /\s+/g, '' )
 
               // Check if the new statement is not about the exported object !
-              if( exports.includes(result) ) {
+              if ( exports.includes( result ) ) {
                   return
               }
 
@@ -724,7 +722,7 @@ function _getAllConstantStatementIn ( file ) {
 function _getImportsFor ( fileDatas ) {
 
     const file       = fileDatas.file
-    const exports = fileDatas.exports
+    const exports    = fileDatas.exports
     const outputPath = fileDatas.output
 
     let statements = []
@@ -744,7 +742,6 @@ function _getImportsFor ( fileDatas ) {
 function _formatImportStatements ( importerFilePath, objectNames ) {
 
     let importStatements = []
-
 
     // Count number of sub folder to return to file path root
     let importerSpecificPath = importerFilePath.replace( _output, "" )
@@ -773,11 +770,11 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
 
             const specificSourcePath_old = getSpecificPath( sourcePath )
 
-//            compareAndRemoveCommonsPath()
+            //            compareAndRemoveCommonsPath()
             while ( importerSpecificPath.substring( 0, 1 ) === specificSourcePath.substring( 0, 1 ) ) {
 
                 importerSpecificPath = importerSpecificPath.substring( 1 )
-                specificSourcePath = specificSourcePath.substring( 1 )
+                specificSourcePath   = specificSourcePath.substring( 1 )
 
             }
 
@@ -790,12 +787,12 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
             }
             importsMap[ relativePath ].push( objectName )
 
-            function compareAndRemoveCommonsPath() {
+            function compareAndRemoveCommonsPath () {
 
                 while ( importerSpecificPath.substring( 0, 1 ) === specificSourcePath.substring( 0, 1 ) ) {
 
                     importerSpecificPath = importerSpecificPath.substring( 1 )
-                    specificSourcePath = specificSourcePath.substring( 1 )
+                    specificSourcePath   = specificSourcePath.substring( 1 )
 
                 }
 
@@ -936,7 +933,7 @@ function _getExportsReplacementsFor ( exports ) {
 function _getIifeReplacementsFor ( file ) {
 
     const unspacedFile = file.replace( /\s+/g, '' )
-    let replacements = []
+    let replacements   = []
 
     // Check if this iife is a main englobing function or inner function
     const matchIife = unspacedFile.match( /^\(\s*function\s*\(\s*(\w+)?\s*\)\s*\{/g ) || []
@@ -1279,8 +1276,7 @@ function _formatExportStatements ( filePath, exports ) {
 
 function _getOutputFor ( filePath, outputBasePath, outputOverride ) {
 
-    if( outputOverride )
-    {
+    if ( outputOverride ) {
         return path.join( outputBasePath, outputOverride )
     }
 
@@ -1451,9 +1447,9 @@ Object.assign( Es6.prototype, {
 
     convert: function convert ( callback ) {
 
-        const inputs    = this.inputs
-        const excludes  = this.excludes
-        const output    = _output = this.output
+        const inputs   = this.inputs
+        const excludes = this.excludes
+        const output   = _output = this.output
         const edgeCases = this.edgeCases
 
         const allFilesPaths       = _getFilesPathsUnder( inputs )
