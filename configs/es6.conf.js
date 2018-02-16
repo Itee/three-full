@@ -490,6 +490,7 @@ module.exports = {
 			imports: [ 'DefaultLoadingManager' ]
 		},
 		QuickHull: {
+            exportsOverride: [ 'QuickHull' ],
 			outputOverride: 'utils/QuickHull.js'
 		},
 		Refractor: {
