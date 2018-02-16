@@ -732,11 +732,17 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
         } else {
 
             // Compute relative path from importer to exporter
-            const relativePath = path.join( path.relative( path.dirname( importerFilePath ), path.dirname( exporterFilePath ) ), path.basename( exporterFilePath ) ).replace( /\\/g, '/' )
-            if ( !importsMap[ relativePath ] ) {
-                importsMap[ relativePath ] = []
+            const importerDirectoryName      = path.dirname( importerFilePath )
+            const exporterDirectoryName      = path.dirname( exporterFilePath )
+            const exporterBaseName           = path.basename( exporterFilePath )
+            const relativePath               = path.relative( importerDirectoryName, exporterDirectoryName )
+            const relativeFilePath           = path.join( relativePath, exporterBaseName )
+            const relativeFilePathNormalized = relativeFilePath.replace( /\\/g, '/' )
+
+            if ( !importsMap[ relativeFilePathNormalized ] ) {
+                importsMap[ relativeFilePathNormalized ] = []
             }
-            importsMap[ relativePath ].push( objectName )
+            importsMap[ relativeFilePathNormalized ].push( objectName )
 
         }
 
