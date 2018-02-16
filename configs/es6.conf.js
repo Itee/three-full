@@ -170,7 +170,13 @@ module.exports = {
 		CubeTexturePass: {
 			imports: [ 'ShaderLib' ]
 		},
-		Curve: {
+        CubicBezierCurve: {
+            outputOverride: 'curves/CubicBezierCurve.js'
+        },
+        CubicBezierCurve3: {
+            outputOverride: 'curves/CubicBezierCurve3.js'
+        },
+        Curve: {
 			outputOverride: 'curves/Curve.js'
 		},
 		CurveExtras: {
