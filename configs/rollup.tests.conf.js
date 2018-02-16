@@ -3276,13 +3276,13 @@ export default [
         }
     },
 	{
-		input: 'sources/objects/LensFlare.js',
+		input: 'sources/objects/Lensflare.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/objects/LensFlare.test.js'
+			file: 'tests/objects/Lensflare.test.js'
 		}
 	},
 	{
