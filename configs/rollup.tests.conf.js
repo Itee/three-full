@@ -1767,6 +1767,16 @@ export default [
 		}
 	},
 	{
+		input: 'sources/loaders/GCodeLoader.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/loaders/GCodeLoader.test.js'
+		}
+	},
+	{
 		input: 'sources/loaders/GLTFLoader.js',
 		plugins: [ glsl() ],
 		output: {
