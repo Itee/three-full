@@ -334,7 +334,13 @@ module.exports = {
 			],
             exportsOverride: [ 'LegacyGLTFLoader' ]
 		},
-		LoaderSupport: {
+        LineCurve: {
+            outputOverride: 'curves/LineCurve.js'
+        },
+        LineCurve3: {
+            outputOverride: 'curves/LineCurve3.js'
+        },
+        LoaderSupport: {
 			imports: [ 'DefaultLoadingManager' ],
 			replacements: [
 				[ 'if ( var LoaderSupport === undefined ) { var LoaderSupport = {} }', 'var LoaderSupport = {}' ]
