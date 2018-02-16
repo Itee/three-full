@@ -582,8 +582,7 @@ module.exports = {
 		},
 		TimelinerController: {
 			imports: [
-				'AnimationUtils',
-				'Timeliner'
+				'AnimationUtils'
 			],
 			outputOverride: 'animation/TimelinerController.js'
 		},
