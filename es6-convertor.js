@@ -346,10 +346,6 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
         edgeCase      = edgeCases[ baseName ] || {}
         file          = _getUncommentedFileForPath( filePath )
 
-        if ( baseName === 'constants' ) {
-            var debug = 1
-        }
-
         exports = _getExportsFor( file )
         if ( !exports ) {
 
@@ -1443,10 +1439,6 @@ Object.assign( Es6.prototype, {
         for ( let key in _fileMap ) {
 
             if ( !_fileMap.hasOwnProperty( key ) ) { continue }
-
-            if ( key === "FunctionNode_Implementation" ) {
-                var debug = 1
-            }
 
             fileDatas = _fileMap[ key ]
 
