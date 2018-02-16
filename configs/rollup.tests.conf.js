@@ -33,286 +33,6 @@ function glsl() {
 export default [
 
 	//root
-	{
-		input: 'sources/AnimationClipCreator.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/AnimationClipCreator.test.js'
-		}
-	},
-	{
-		input: 'sources/BufferGeometryUtils.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/BufferGeometryUtils.test.js'
-		}
-	},
-	{
-		input: 'sources/Car.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/Car.test.js'
-		}
-	},
-	{
-		input: 'sources/ConvexObjectBreaker.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/ConvexObjectBreaker.test.js'
-		}
-	},
-	{
-		input: 'sources/CurveExtras.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/CurveExtras.test.js'
-		}
-	},
-	{
-		input: 'sources/Detector.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/Detector.test.js'
-		}
-	},
-	{
-		input: 'sources/GPUComputationRenderer.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/GPUComputationRenderer.test.js'
-		}
-	},
-	{
-		input: 'sources/GPUParticleSystem.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/GPUParticleSystem.test.js'
-		}
-	},
-	{
-		input: 'sources/Gyroscope.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/Gyroscope.test.js'
-		}
-	},
-	{
-		input: 'sources/ImprovedNoise.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/ImprovedNoise.test.js'
-		}
-	},
-	{
-		input: 'sources/MarchingCubes.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/MarchingCubes.test.js'
-		}
-	},
-	{
-		input: 'sources/MD2Character.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/MD2Character.test.js'
-		}
-	},
-	{
-		input: 'sources/MD2CharacterComplex.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/MD2CharacterComplex.test.js'
-		}
-	},
-	{
-		input: 'sources/MorphAnimMesh.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/MorphAnimMesh.test.js'
-		}
-	},
-	{
-		input: 'sources/MorphBlendMesh.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/MorphBlendMesh.test.js'
-		}
-	},
-	{
-		input: 'sources/Ocean.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/Ocean.test.js'
-		}
-	},
-	{
-		input: 'sources/Octree.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/Octree.test.js'
-		}
-	},
-	{
-		input: 'sources/PRNG.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/PRNG.test.js'
-		}
-	},
-	{
-		input: 'sources/QuickHull.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/QuickHull.test.js'
-		}
-	},
-	{
-		input: 'sources/ShaderGodRays.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/ShaderGodRays.test.js'
-		}
-	},
-	{
-		input: 'sources/ShaderSkin.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/ShaderSkin.test.js'
-		}
-	},
-	{
-		input: 'sources/ShaderTerrain.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/ShaderTerrain.test.js'
-		}
-	},
-	{
-		input: 'sources/ShaderToon.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/ShaderToon.test.js'
-		}
-	},
-	{
-		input: 'sources/SimplexNoise.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/SimplexNoise.test.js'
-		}
-	},
-	{
-		input: 'sources/TimelinerController.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/TimelinerController.test.js'
-		}
-	},
-	{
-		input: 'sources/TypedArrayUtils.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/TypedArrayUtils.test.js'
-		}
-	},
-	{
-		input: 'sources/UCSCharacter.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/UCSCharacter.test.js'
-		}
-	},
-	{
-		input: 'sources/VolumeSlice.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/VolumeSlice.test.js'
-		}
-	},
 
 	// animation
 	{
@@ -335,6 +55,16 @@ export default [
 			file: 'tests/animation/AnimationClip.test.js'
 		}
 	},
+    {
+        input: 'sources/animation/AnimationClipCreator.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/animation/AnimationClipCreator.test.js'
+        }
+    },
 	{
 		input: 'sources/animation/AnimationMixer.js',
 		plugins: [ glsl() ],
@@ -415,6 +145,16 @@ export default [
 			file: 'tests/animation/PropertyMixer.test.js'
 		}
 	},
+    {
+        input: 'sources/animation/TimelinerController.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/animation/TimelinerController.test.js'
+        }
+    },
 	// animation/tracks
 
 	{
@@ -529,6 +269,16 @@ export default [
 			file: 'tests/audio/PositionalAudio.test.js'
 		}
 	},
+    {
+        input: 'sources/audio/VolumeSlice.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/audio/VolumeSlice.test.js'
+        }
+    },
 
 	// cameras
 	{
@@ -877,7 +627,27 @@ export default [
 	},
 
 	// curves
+    {
+        input: 'sources/curves/Curve.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/curves/Curve.test.js'
+        }
+    },
 	{
+        input: 'sources/curves/CurveExtras.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/curves/CurveExtras.test.js'
+        }
+    },
+    {
 		input: 'sources/curves/NURBSCurve.js',
 		plugins: [ glsl() ],
 		output: {
@@ -1060,20 +830,10 @@ export default [
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/ShapeUtils.test.js'
+			file: 'tests/extras/ShapeUtils.test.js'
 		}
 	},
 	// extras/core
-	{
-		input: 'sources/extras/core/Curve.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/extras/core/Curve.test.js'
-		}
-	},
 	{
 		input: 'sources/extras/core/CurvePath.js',
 		plugins: [ glsl() ],
@@ -1340,16 +1100,16 @@ export default [
 			file: 'tests/geometries/ExtrudeGeometry.test.js'
 		}
 	},
-	{
-		input: 'sources/geometries/Geometries.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/geometries/Geometries.test.js'
-		}
-	},
+//	{
+//		input: 'sources/geometries/Geometries.js',
+//		plugins: [ glsl() ],
+//		output: {
+//			indent: '\t',
+//			format: 'iife',
+//			name: 'Three',
+//			file: 'tests/geometries/Geometries.test.js'
+//		}
+//	},
 	{
 		input: 'sources/geometries/hilbert2D.js',
 		plugins: [ glsl() ],
@@ -1582,6 +1342,16 @@ export default [
 			file: 'tests/helpers/CameraHelper.test.js'
 		}
 	},
+    {
+        input: 'sources/helpers/Detector.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/helpers/Detector.test.js'
+        }
+    },
 	{
 		input: 'sources/helpers/DirectionalLightHelper.js',
 		plugins: [ glsl() ],
@@ -2762,7 +2532,29 @@ export default [
 		}
 	},
 
-	// modifiers
+	// misc
+    {
+        input: 'sources/misc/ImprovedNoise.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/misc/ImprovedNoise.test.js'
+        }
+    },
+    {
+        input: 'sources/misc/SimplexNoise.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/misc/SimplexNoise.test.js'
+        }
+    },
+
+    // modifiers
 	{
 		input: 'sources/modifiers/BufferSubdivisionModifier.js',
 		plugins: [ glsl() ],
@@ -2773,7 +2565,17 @@ export default [
 			file: 'tests/modifiers/BufferSubdivisionModifier.test.js'
 		}
 	},
-	{
+    {
+        input: 'sources/modifiers/ConvexObjectBreaker.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/modifiers/ConvexObjectBreaker.test.js'
+        }
+    },
+    {
 		input: 'sources/modifiers/ExplodeModifier.js',
 		plugins: [ glsl() ],
 		output: {
@@ -3373,7 +3175,17 @@ export default [
 	},
 
 	// objects
-	{
+    {
+        input: 'sources/objects/Car.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/objects/Car.test.js'
+        }
+    },
+    {
 		input: 'sources/objects/Bone.js',
 		plugins: [ glsl() ],
 		output: {
@@ -3383,7 +3195,17 @@ export default [
 			file: 'tests/objects/Bone.test.js'
 		}
 	},
-	{
+    {
+        input: 'sources/objects/GPUParticleSystem.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/objects/GPUParticleSystem.test.js'
+        }
+    },
+    {
 		input: 'sources/objects/Group.js',
 		plugins: [ glsl() ],
 		output: {
@@ -3393,6 +3215,16 @@ export default [
 			file: 'tests/objects/Group.test.js'
 		}
 	},
+    {
+        input: 'sources/objects/Gyroscope.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/objects/Gyroscope.test.js'
+        }
+    },
 	{
 		input: 'sources/objects/LensFlare.js',
 		plugins: [ glsl() ],
@@ -3443,7 +3275,37 @@ export default [
 			file: 'tests/objects/LOD.test.js'
 		}
 	},
-	{
+    {
+        input: 'sources/objects/MarchingCubes.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/objects/MarchingCubes.test.js'
+        }
+    },
+    {
+        input: 'sources/objects/MD2Character.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/objects/MD2Character.test.js'
+        }
+    },
+    {
+        input: 'sources/objects/MD2CharacterComplex.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/objects/MD2CharacterComplex.test.js'
+        }
+    },
+    {
 		input: 'sources/objects/Mesh.js',
 		plugins: [ glsl() ],
 		output: {
@@ -3453,7 +3315,37 @@ export default [
 			file: 'tests/objects/Mesh.test.js'
 		}
 	},
-	{
+    {
+        input: 'sources/objects/MorphAnimMesh.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/objects/MorphAnimMesh.test.js'
+        }
+    },
+    {
+        input: 'sources/objects/MorphBlendMesh.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/objects/MorphBlendMesh.test.js'
+        }
+    },
+    {
+        input: 'sources/objects/Ocean.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/objects/Ocean.test.js'
+        }
+    },
+    {
 		input: 'sources/objects/Points.js',
 		plugins: [ glsl() ],
 		output: {
@@ -3543,6 +3435,16 @@ export default [
 			file: 'tests/objects/Sprite.test.js'
 		}
 	},
+    {
+        input: 'sources/objects/UCSCharacter.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/objects/UCSCharacter.test.js'
+        }
+    },
 	{
 		input: 'sources/objects/Water.js',
 		plugins: [ glsl() ],
@@ -3564,7 +3466,7 @@ export default [
 		}
 	},
 
-	// pmrem
+    // pmrem
 	{
 		input: 'sources/pmrem/PMREMCubeUVPacker.js',
 		plugins: [ glsl() ],
@@ -3839,6 +3741,16 @@ export default [
 			file: 'tests/renderers/CSS3DRenderer.test.js'
 		}
 	},
+    {
+        input: 'sources/renderers/GPUComputationRenderer.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/renderers/GPUComputationRenderer.test.js'
+        }
+    },
 	{
 		input: 'sources/renderers/Projector.js',
 		plugins: [ glsl() ],
@@ -4566,6 +4478,46 @@ export default [
 			file: 'tests/shaders/SepiaShader.test.js'
 		}
 	},
+    {
+        input: 'sources/shaders/ShaderGodRays.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/shaders/ShaderGodRays.test.js'
+        }
+    },
+    {
+        input: 'sources/shaders/ShaderSkin.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/shaders/ShaderSkin.test.js'
+        }
+    },
+    {
+        input: 'sources/shaders/ShaderTerrain.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/shaders/ShaderTerrain.test.js'
+        }
+    },
+    {
+        input: 'sources/shaders/ShaderToon.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/shaders/ShaderToon.test.js'
+        }
+    },
 	{
 		input: 'sources/shaders/SMAAShader.js',
 		plugins: [ glsl() ],
@@ -4750,36 +4702,86 @@ export default [
 	},
 
 	// utils
-	{
-		input: 'sources/utils/GeometryUtils.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/utils/GeometryUtils.test.js'
-		}
-	},
-	{
-		input: 'sources/utils/ShadowMapViewer.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/utils/ShadowMapViewer.test.js'
-		}
-	},
-	{
-		input: 'sources/utils/UVsDebug.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/utils/UVsDebug.test.js'
-		}
-	},
+    {
+        input: 'sources/utils/BufferGeometryUtils.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/utils/BufferGeometryUtils.test.js'
+        }
+    },
+    {
+        input: 'sources/utils/GeometryUtils.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/utils/GeometryUtils.test.js'
+        }
+    },
+    {
+        input: 'sources/utils/Octree.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/utils/Octree.test.js'
+        }
+    },
+    {
+        input: 'sources/utils/PRNG.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/utils/PRNG.test.js'
+        }
+    },
+    {
+        input: 'sources/utils/QuickHull.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/utils/QuickHull.test.js'
+        }
+    },
+    {
+        input: 'sources/utils/ShadowMapViewer.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/utils/ShadowMapViewer.test.js'
+        }
+    },
+    {
+        input: 'sources/utils/TypedArrayUtils.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/utils/TypedArrayUtils.test.js'
+        }
+    },
+    {
+        input: 'sources/utils/UVsDebug.js',
+        plugins: [ glsl() ],
+        output: {
+            indent: '\t',
+            format: 'iife',
+            name: 'Three',
+            file: 'tests/utils/UVsDebug.test.js'
+        }
+    },
 
 	// vr
 	{
