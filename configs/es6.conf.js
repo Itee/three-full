@@ -272,9 +272,6 @@ module.exports = {
 				'VectorKeyframeTrack',
 				'PropertyBinding'
 			],
-			replacements: [
-				['GLTFLoader = (', 'var GLTFLoader = (']
-			],
             exportsOverride: [
             	'GLTFLoader'
 			]
