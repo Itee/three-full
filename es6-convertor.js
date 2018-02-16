@@ -714,9 +714,15 @@ function _getImportsFor ( fileDatas ) {
 function _formatImportStatements ( importerFilePath, objectNames ) {
 
     let importStatements = []
-    let importsMap = {}
+    let importsMap       = {}
 
     objectNames.forEach( ( objectName ) => {
+
+        const exporterFilePath = _exportMap[ objectName ]
+        if ( !exporterFilePath ) {
+            console.error( 'Missing export statement for: ' + objectName + ' in ' + importerFilePath + ' this is an edge case that will probably need to be managed manually !!!' )
+            return
+        }
 
         if ( Array.isArray( objectName ) ) {
 
@@ -725,46 +731,12 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
 
         } else {
 
-            const sourcePath = _exportMap[ objectName ]
-            if ( !sourcePath ) {
-                console.error( 'Missing export statement for: ' + objectName + ' in ' + importerSpecificPath + ' this is an edge case that will probably need to be managed manually !!!\n' )
-                return
-            }
-
-            // Count number of sub folder to return to file path root
-            let importerSpecificPath = importerFilePath.replace( _output, "" )
-                                                       .replace( /\\/g, '/' )
-
-            let specificSourcePath = sourcePath.replace( _output, "" )
-                                               .replace( /\\/g, '/' )
-
-            // Compare and remove commons parts of path s
-            while ( importerSpecificPath.substring( 0, 1 ) === specificSourcePath.substring( 0, 1 ) ) {
-
-                importerSpecificPath = importerSpecificPath.substring( 1 )
-                specificSourcePath   = specificSourcePath.substring( 1 )
-
-            }
-
-            const importerDeepLevel = importerSpecificPath.match( /\//g ) || []
-            const relativePart      = getRelativePartFor( importerDeepLevel.length )
-            const relativePath      = relativePart + specificSourcePath
-
+            // Compute relative path from importer to exporter
+            const relativePath = path.join( path.relative( path.dirname( importerFilePath ), path.dirname( exporterFilePath ) ), path.basename( exporterFilePath ) ).replace( /\\/g, '/' )
             if ( !importsMap[ relativePath ] ) {
                 importsMap[ relativePath ] = []
             }
             importsMap[ relativePath ].push( objectName )
-
-            function compareAndRemoveCommonsPath () {
-
-                while ( importerSpecificPath.substring( 0, 1 ) === specificSourcePath.substring( 0, 1 ) ) {
-
-                    importerSpecificPath = importerSpecificPath.substring( 1 )
-                    specificSourcePath   = specificSourcePath.substring( 1 )
-
-                }
-
-            }
 
         }
 
@@ -808,53 +780,6 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
     }
 
     return importStatements.join( '\n' ).concat( '\n\n' ) // don't forget last feed line
-
-    // Todo: duplicate
-    function getSpecificPath ( path ) {
-
-        const exampleTarget = 'src\\'
-        const sourceTarget  = 'sources\\'
-
-        let indexOfExampleTarget = path.indexOf( exampleTarget )
-        let indexOfSourceTarget  = path.indexOf( sourceTarget )
-        let specificPath         = undefined
-        if ( indexOfExampleTarget > -1 ) {
-
-            specificPath = path.slice( indexOfExampleTarget + exampleTarget.length )
-
-        } else if ( indexOfSourceTarget > -1 ) {
-
-            specificPath = path.slice( indexOfSourceTarget + sourceTarget.length )
-
-        } else {
-
-            throw new Error( "Unable to find specific path part for: " + path )
-
-        }
-
-        return specificPath.replace( /\\/g, '/' )
-
-    }
-
-    function getRelativePartFor ( deepLevel ) {
-
-        let relativePart = ''
-
-        if ( deepLevel === 0 ) {
-
-            relativePart = './'
-
-        } else {
-
-            for ( let i = 0 ; i < deepLevel ; i++ ) {
-                relativePart += '../'
-            }
-
-        }
-
-        return relativePart
-
-    }
 
 }
 
