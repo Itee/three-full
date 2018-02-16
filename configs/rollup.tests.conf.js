@@ -3525,6 +3525,16 @@ export default [
 			file: 'tests/objects/Water2.test.js'
 		}
 	},
+	{
+		input: 'sources/objects/Water2.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/objects/Water2.test.js'
+		}
+	},
 
     // pmrem
 	{
