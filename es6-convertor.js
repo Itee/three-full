@@ -370,14 +370,17 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
             if ( _exportMap[ exportedElement ] ) {
 
+                //Todo: Need to setup a precedence over file path to determine which export is the right
+
                 // Keep source path when possible
                 const exportPath = _exportMap[ exportedElement ]
 
                 const sourcePathTarget = 'sources\\'
+                const srcPathTarget = 'src\\'
 
                 if ( exportPath.contains( sourcePathTarget ) ) {
 
-                    if ( filePath.contains( sourcePathTarget ) ) {
+                    if ( filePath.contains( srcPathTarget ) ) {
 
                         console.error( 'WARNING: Element "' + exportedElement + '" in source ' + path.basename( filePath ) + ' is already exported by source ' + path.basename( exportPath ) + '! Unable to determine which source file is the right exporter !!!' )
 
@@ -390,7 +393,7 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
                 } else {
 
-                    if ( filePath.contains( sourcePathTarget ) ) {
+                    if ( filePath.contains( srcPathTarget ) ) {
 
                         _exportMap[ exportedElement ] = outputPath
                         console.warn( 'WARNING: Element "' + exportedElement + '" in source ' + path.basename( filePath ) + ' is already exported by example ' + path.basename( exportPath ) + ' replacing by the source file !' )
