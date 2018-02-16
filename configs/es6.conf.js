@@ -327,8 +327,8 @@ module.exports = {
 			exportsOverride: [ 'ImprovedNoise' ],
 			outputOverride: 'misc/ImprovedNoise.js'
 		},
-        Interpolation: {
-            outputOverride: 'core/Interpolation.js'
+        Interpolations: {
+            outputOverride: 'core/Interpolations.js'
         },
         KMZLoader: {
 			imports: [ 'DefaultLoadingManager' ]
