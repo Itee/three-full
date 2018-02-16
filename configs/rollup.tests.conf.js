@@ -1917,6 +1917,16 @@ export default [
 		}
 	},
 	{
+		input: 'sources/loaders/NodeMaterialLoader.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/loaders/NodeMaterialLoader.test.js'
+		}
+	},
+	{
 		input: 'sources/loaders/ObjectLoader.js',
 		plugins: [ glsl() ],
 		output: {
