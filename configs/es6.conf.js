@@ -88,7 +88,8 @@ module.exports = {
 		BinaryLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils'
+				'LoaderUtils',
+				'Loader'
 			]
 		},
 		BloomPass: {
