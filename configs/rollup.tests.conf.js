@@ -2718,6 +2718,16 @@ export default [
 		}
 	},
 	{
+		input: 'sources/nodes/NodeFrame.js',
+		plugins: [ glsl() ],
+		output: {
+			indent: '\t',
+			format: 'iife',
+			name: 'Three',
+			file: 'tests/nodes/NodeFrame.test.js'
+		}
+	},
+	{
 		input: 'sources/nodes/NodeLib.js',
 		plugins: [ glsl() ],
 		output: {
