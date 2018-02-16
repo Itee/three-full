@@ -272,9 +272,10 @@ module.exports = {
             	'GLTFLoader'
 			]
 		},
-		GPUComputationRenderer: {
-			outputOverride: 'renderers/GPUComputationRenderer.js'
-		},
+        GPUComputationRenderer: {
+            exportsOverride: [ 'GPUComputationRenderer' ],
+            outputOverride:  'renderers/GPUComputationRenderer.js'
+        },
 		GPUParticleSystem: {
             imports: [ '_Math' ],
 			outputOverride: 'objects/GPUParticleSystem.js'
