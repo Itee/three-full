@@ -9,7 +9,7 @@ Three.js r90 come with lot of examples files, which are curently not usable as E
 The purpose of this project is to convert all examples files and includes them as part 
 of the library.
 
-**The version 5.0.0 is now available !!!**
+**The version 5.0.1 is now available !!!**
 
 #### Setup ####
 
@@ -193,6 +193,10 @@ All others folders under example file tree will be mapped to their counter-part 
 
 
 #### Change log ####
+
+##### 5.0.1 :
+
+* Reintroduce LineSegment fix
 
 ##### 5.0.0 :
 
