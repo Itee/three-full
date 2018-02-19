@@ -9518,8 +9518,8 @@ var Three = (function (exports) {
 
 		if ( mode === 1 ) {
 
-			console.warn( 'Line: parameter LinePieces no longer supported. Created LineSegments instead.' );
-			return new LineSegments( geometry, material );
+			console.error( 'Line: parameter LinePieces no longer supported. Created LineSegments instead.' );
+			
 
 		}
 
@@ -9570,7 +9570,7 @@ var Three = (function (exports) {
 
 					} else {
 
-						console.warn( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+						console.error( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
 
 					}
 
