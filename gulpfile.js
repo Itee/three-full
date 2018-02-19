@@ -62,7 +62,8 @@ gulp.task( 'patch-three', ( done ) => {
             'create-function-node-declaration-file',
             'create-function-node-implementation-file',
             'fix-function-node-export',
-            'fix-camera-node'
+            'fix-camera-node',
+            'fix-line'
         ],
         done
     )
@@ -681,6 +682,20 @@ gulp.task( 'fix-effect-composer', () => {
                .pipe( gulp.dest( './node_modules/three/examples/js/postprocessing' ) )
 
 } )
+
+/**
+ * Fix circular dependency between Line and LineSegments
+ */
+gulp.task( 'fix-line', () => {
+
+    return gulp.src( './node_modules/three/src/objects/Line.js' )
+               .pipe( replace( [ [ 'import { LineSegments } from \'./LineSegments.js\';', '' ] ] ) )
+               .pipe( replace( [ [ 'console.warn', 'console.error' ] ] ) )
+               .pipe( replace( [ [ 'return new LineSegments( geometry, material );', '' ] ] ) )
+               .pipe( gulp.dest( './node_modules/three/src/objects' ) )
+
+} )
+
 
 /////////////////////
 ////// CLEAN ////////
