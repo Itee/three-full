@@ -5,7 +5,6 @@ import { Object3D } from '../core/Object3D.js'
 import { Vector3 } from '../math/Vector3.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
-import { LineSegments } from './LineSegments.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
 
@@ -23,8 +22,8 @@ function Line( geometry, material, mode ) {
 
 	if ( mode === 1 ) {
 
-		console.warn( 'Line: parameter LinePieces no longer supported. Created LineSegments instead.' );
-		return new LineSegments( geometry, material );
+		console.error( 'Line: parameter LinePieces no longer supported. Created LineSegments instead.' );
+		
 
 	}
 
@@ -75,7 +74,7 @@ Line.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 				} else {
 
-					console.warn( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+					console.error( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
 
 				}
 
