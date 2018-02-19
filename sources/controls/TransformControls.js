@@ -1,11 +1,7 @@
-import { MeshBasicMaterial } from '../materials/Materials.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Object3D } from '../core/Object3D.js'
-import {
-	PlaneBufferGeometry,
-	OctahedronGeometry,
-	TorusBufferGeometry
-} from '../geometries/Geometries.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix4 } from '../math/Matrix4.js'
@@ -17,6 +13,8 @@ import {
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Line } from '../objects/Line.js'
+import { OctahedronGeometry } from '../geometries/OctahedronGeometry.js'
+import { TorusBufferGeometry } from '../geometries/TorusGeometry.js'
 import { Euler } from '../math/Euler.js'
 import { Quaternion } from '../math/Quaternion.js'
 import {
@@ -32,9 +30,7 @@ import {
 	DoubleSide
 } from '../constants.js'
 
-/**
- * @author arodic / https://github.com/arodic
- */
+
 
 
 
@@ -890,9 +886,9 @@ import {
 					event.preventDefault();
 					event.stopPropagation();
 
-					scope.dispatchEvent( mouseDownEvent );
-
 					scope.axis = intersect.object.name;
+
+					scope.dispatchEvent( mouseDownEvent );
 
 					scope.update();
 

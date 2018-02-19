@@ -1,28 +1,17 @@
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-import { MeshPhongMaterial } from '../materials/Materials.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { Object3D } from '../core/Object3D.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Mesh } from '../objects/Mesh.js'
-import { TextureLoader } from '../loaders/TextureLoader.js'
+import { TextureLoader } from './TextureLoader.js'
 import { RepeatWrapping } from '../constants.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
-import { LoaderUtils } from '../loaders/LoaderUtils.js'
-import { Loader } from '../loaders/Loader.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { LoaderUtils } from './LoaderUtils.js'
+import { Loader } from './Loader.js'
 
-/**
- * @author Alexander Gessler / http://www.greentoken.de/
- * https://github.com/acgessler
- *
- * Loader for models imported with Open Asset Import Library (http://assimp.sf.net)
- * through assimp2json (https://github.com/acgessler/assimp2json).
- *
- * Supports any input format that assimp supports, including 3ds, obj, dae, blend,
- * fbx, x, ms3d, lwo (and many more).
- *
- * See webgl_loader_assimp2json example.
- */
+
 
 var AssimpJSONLoader = function ( manager ) {
 

@@ -1,11 +1,11 @@
-import { Pass } from '../postprocessing/Pass.js'
+import { Pass } from './Pass.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { Texture } from '../textures/Texture.js'
-import { ShaderMaterial } from '../materials/Materials.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/Geometries.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import {
 	NearestFilter,
 	LinearFilter,
@@ -15,9 +15,7 @@ import {
 import { SMAAShader } from '../shaders/SMAAShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-/**
- * @author mpk / http://polko.me/
- */
+
 
 var SMAAPass = function ( width, height ) {
 

@@ -1,4 +1,4 @@
-import { Mesh } from '../objects/Mesh.js'
+import { Mesh } from './Mesh.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Color } from '../math/Color.js'
 import { Plane } from '../math/Plane.js'
@@ -6,7 +6,7 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { Vector4 } from '../math/Vector4.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/Materials.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import {
 	FrontSide,
 	LinearFilter,
@@ -15,15 +15,9 @@ import {
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 import { ShaderChunk } from '../renderers/shaders/ShaderChunk.js'
+import { _Math } from '../math/Math.js'
 
-/**
- * @author jbouny / https://github.com/jbouny
- *
- * Work based on :
- * @author Slayvin / http://slayvin.net : Flat mirror for three.js
- * @author Stemkoski / http://www.adelphi.edu/~stemkoski : An implementation of water shader based on the flat mirror
- * @author Jonas Wagner / http://29a.ch/ && http://29a.ch/slides/2012/webglwater/ : Water shader explanations in WebGL
- */
+
 
 var Water = function ( geometry, options ) {
 
@@ -75,7 +69,7 @@ var Water = function ( geometry, options ) {
 
 	var renderTarget = new WebGLRenderTarget( textureWidth, textureHeight, parameters );
 
-	if ( ! Math.isPowerOfTwo( textureWidth ) || ! Math.isPowerOfTwo( textureHeight ) ) {
+	if ( ! _Math.isPowerOfTwo( textureWidth ) || ! _Math.isPowerOfTwo( textureHeight ) ) {
 
 		renderTarget.texture.generateMipmaps = false;
 

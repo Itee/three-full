@@ -1,15 +1,10 @@
-import { InterpolateDiscrete } from '../../constants.js';
-import { KeyframeTrack } from '../KeyframeTrack.js';
+import { InterpolateDiscrete } from '../../constants.js'
+import { KeyframeTrack } from '../KeyframeTrack.js'
 
-/**
- *
- * A Track that interpolates Strings
- *
- *
- * @author Ben Houston / http://clara.io/
- * @author David Sarno / http://lighthaus.us/
- * @author tschw
- */
+
+
+
+
 
 function StringKeyframeTrack( name, times, values, interpolation ) {
 
@@ -32,4 +27,6 @@ StringKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrack.prot
 
 } );
 
-export { StringKeyframeTrack };
+;
+
+export { StringKeyframeTrack }

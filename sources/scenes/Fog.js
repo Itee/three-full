@@ -1,9 +1,8 @@
-import { Color } from '../math/Color.js';
+import { Color } from '../math/Color.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author alteredq / http://alteredqualia.com/
- */
+
+
+
 
 function Fog( color, near, far ) {
 
@@ -24,7 +23,7 @@ Fog.prototype.clone = function () {
 
 };
 
-Fog.prototype.toJSON = function ( /* meta */ ) {
+Fog.prototype.toJSON = function (  ) {
 
 	return {
 		type: 'Fog',
@@ -35,4 +34,6 @@ Fog.prototype.toJSON = function ( /* meta */ ) {
 
 };
 
-export { Fog };
+;
+
+export { Fog }

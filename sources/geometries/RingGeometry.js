@@ -1,13 +1,16 @@
-/**
- * @author Kaleb Murphy
- * @author Mugen87 / https://github.com/Mugen87
- */
+import { Geometry } from '../core/Geometry.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
 
-import { Geometry } from '../core/Geometry.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { Vector2 } from '../math/Vector2.js';
-import { Vector3 } from '../math/Vector3.js';
+
+
+
+
+
+
+
 
 // RingGeometry
 
@@ -149,4 +152,9 @@ RingBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 RingBufferGeometry.prototype.constructor = RingBufferGeometry;
 
 
-export { RingGeometry, RingBufferGeometry };
+;
+
+export {
+	RingGeometry,
+	RingBufferGeometry
+}

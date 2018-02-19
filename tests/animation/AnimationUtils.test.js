@@ -1,12 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author tschw
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 */
-
 	var AnimationUtils = {
 
 		// same as Array.prototype.slice, but also works on typed arrays
@@ -123,7 +117,7 @@ var Three = (function (exports) {
 
 			} else if ( value.toArray !== undefined ) {
 
-				// ...assume THREE.Math-ish
+				// ...assume Math-ish
 
 				do {
 

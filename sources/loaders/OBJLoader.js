@@ -1,16 +1,20 @@
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { Group } from '../objects/Group.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
-import { MeshPhongMaterial } from '../materials/Materials.js'
-import { Mesh } from '../objects/Mesh.js'
+import { PointsMaterial } from '../materials/PointsMaterial.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { LineSegments } from '../objects/LineSegments.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { Points } from '../objects/Points.js'
+import { Mesh } from '../objects/Mesh.js'
+import {
+	NoColors,
+	VertexColors
+} from '../constants.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
 
 var OBJLoader = ( function () {
 
@@ -226,6 +230,15 @@ var OBJLoader = ( function () {
 
 			},
 
+			addVertexPoint: function ( a ) {
+
+				var src = this.vertices;
+				var dst = this.object.geometry.vertices;
+
+				dst.push( src[ a + 0 ], src[ a + 1 ], src[ a + 2 ] );
+
+			},
+
 			addVertexLine: function ( a ) {
 
 				var src = this.vertices;
@@ -315,6 +328,20 @@ var OBJLoader = ( function () {
 				if ( this.colors.length > 0 ) {
 
 					this.addColor( ia, ib, ic );
+
+				}
+
+			},
+
+			addPointGeometry: function ( vertices ) {
+
+				this.object.geometry.type = 'Points';
+
+				var vLen = this.vertices.length;
+
+				for ( var vi = 0, l = vertices.length; vi < l; vi ++ ) {
+
+					this.addVertexPoint( this.parseVertexIndex( vertices[ vi ], vLen ) );
 
 				}
 
@@ -534,6 +561,13 @@ var OBJLoader = ( function () {
 					}
 					state.addLineGeometry( lineVertices, lineUVs );
 
+				} else if ( lineFirstChar === 'p' ) {
+
+					var lineData = line.substr( 1 ).trim();
+					var pointData = lineData.split( " " );
+
+					state.addPointGeometry( pointData );
+
 				} else if ( ( result = object_pattern.exec( line ) ) !== null ) {
 
 					// o object_name
@@ -571,17 +605,7 @@ var OBJLoader = ( function () {
 					// where explicit usemtl defines geometry groups.
 					// Example asset: examples/models/obj/cerberus/Cerberus.obj
 
-					/*
-					 * http://paulbourke.net/dataformats/obj/
-					 * or
-					 * http://www.cs.utah.edu/~boulos/cs3505/obj_spec.pdf
-					 *
-					 * From chapter "Grouping" Syntax explanation "s group_number":
-					 * "group_number is the smoothing group number. To turn off smoothing groups, use a value of 0 or off.
-					 * Polygonal elements use group numbers to put elements in different smoothing groups. For free-form
-					 * surfaces, smoothing groups are either turned on or off; there is no difference between values greater
-					 * than 0."
-					 */
+					
 					if ( result.length > 1 ) {
 
 						var value = result[ 1 ].trim().toLowerCase();
@@ -618,6 +642,8 @@ var OBJLoader = ( function () {
 				var geometry = object.geometry;
 				var materials = object.materials;
 				var isLine = ( geometry.type === 'Line' );
+				var isPoints = ( geometry.type === 'Points' );
+				var hasVertexColors = false;
 
 				// Skip o/g line declarations that did not follow with any faces
 				if ( geometry.vertices.length === 0 ) continue;
@@ -638,6 +664,7 @@ var OBJLoader = ( function () {
 
 				if ( geometry.colors.length > 0 ) {
 
+					hasVertexColors = true;
 					buffergeometry.addAttribute( 'color', new Float32BufferAttribute( geometry.colors, 3 ) );
 
 				}
@@ -666,7 +693,14 @@ var OBJLoader = ( function () {
 
 							var materialLine = new LineBasicMaterial();
 							materialLine.copy( material );
+							materialLine.lights = false; // TOFIX
 							material = materialLine;
+
+						} else if ( isPoints && material && ! ( material instanceof PointsMaterial ) ) {
+
+							var materialPoints = new PointsMaterial( { size: 10, sizeAttenuation: false } );
+							materialLine.copy( material );
+							material = materialPoints;
 
 						}
 
@@ -674,12 +708,26 @@ var OBJLoader = ( function () {
 
 					if ( ! material ) {
 
-						material = ( ! isLine ? new MeshPhongMaterial() : new LineBasicMaterial() );
+						if ( isLine ) {
+
+							material = new LineBasicMaterial();
+
+						} else if ( isPoints ) {
+
+							material = new PointsMaterial( { size: 1, sizeAttenuation: false } );
+
+						} else {
+
+							material = new MeshPhongMaterial();
+
+						}
+
 						material.name = sourceMaterial.name;
 
 					}
 
 					material.flatShading = sourceMaterial.smooth ? false : true;
+					material.vertexColors = hasVertexColors ? VertexColors : NoColors;
 
 					createdMaterials.push( material );
 
@@ -698,11 +746,35 @@ var OBJLoader = ( function () {
 
 					}
 
-					mesh = ( ! isLine ? new Mesh( buffergeometry, createdMaterials ) : new LineSegments( buffergeometry, createdMaterials ) );
+					if ( isLine ) {
+
+						mesh = new LineSegments( buffergeometry, createdMaterials );
+
+					} else if ( isPoints ) {
+
+						mesh = new Points( buffergeometry, createdMaterials );
+
+					} else {
+
+						mesh = new Mesh( buffergeometry, createdMaterials );
+
+					}
 
 				} else {
 
-					mesh = ( ! isLine ? new Mesh( buffergeometry, createdMaterials[ 0 ] ) : new LineSegments( buffergeometry, createdMaterials[ 0 ] ) );
+					if ( isLine ) {
+
+						mesh = new LineSegments( buffergeometry, createdMaterials[ 0 ] );
+
+					} else if ( isPoints ) {
+
+						mesh = new Points( buffergeometry, createdMaterials[ 0 ] );
+
+					} else {
+
+						mesh = new Mesh( buffergeometry, createdMaterials[ 0 ] );
+
+					}
 
 				}
 

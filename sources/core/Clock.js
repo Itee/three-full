@@ -1,6 +1,6 @@
-/**
- * @author alteredq / http://alteredqualia.com/
- */
+
+
+
 
 function Clock( autoStart ) {
 
@@ -70,4 +70,6 @@ Object.assign( Clock.prototype, {
 } );
 
 
-export { Clock };
+;
+
+export { Clock }

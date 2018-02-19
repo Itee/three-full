@@ -1,10 +1,10 @@
-/**
- * @author Abe Pazos / https://hamoid.com
- * @author Mugen87 / https://github.com/Mugen87
- */
+import { Geometry } from '../core/Geometry.js'
+import { PolyhedronBufferGeometry } from './PolyhedronGeometry.js'
 
-import { Geometry } from '../core/Geometry.js';
-import { PolyhedronBufferGeometry } from './PolyhedronGeometry.js';
+
+
+
+
 
 // DodecahedronGeometry
 
@@ -85,4 +85,9 @@ DodecahedronBufferGeometry.prototype = Object.create( PolyhedronBufferGeometry.p
 DodecahedronBufferGeometry.prototype.constructor = DodecahedronBufferGeometry;
 
 
-export { DodecahedronGeometry, DodecahedronBufferGeometry };
+;
+
+export {
+	DodecahedronGeometry,
+	DodecahedronBufferGeometry
+}

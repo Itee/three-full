@@ -1,8 +1,8 @@
-import { BufferAttribute } from './BufferAttribute.js';
+import { BufferAttribute } from './BufferAttribute.js'
 
-/**
- * @author benaadams / https://twitter.com/ben_a_adams
- */
+
+
+
 
 function InstancedBufferAttribute( array, itemSize, meshPerAttribute ) {
 
@@ -32,4 +32,6 @@ InstancedBufferAttribute.prototype = Object.assign( Object.create( BufferAttribu
 
 
 
-export { InstancedBufferAttribute };
+;
+
+export { InstancedBufferAttribute }

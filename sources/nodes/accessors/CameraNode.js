@@ -1,13 +1,11 @@
-import { TempNode } from '../../nodes/TempNode.js'
-import { FunctionNode } from '../../nodes/FunctionNode.js'
-import { FloatNode } from '../../nodes/inputs/FloatNode.js'
-import { PositionNode } from '../../nodes/accessors/PositionNode.js'
+import { TempNode } from '../TempNode.js'
+import { FunctionNode } from '../FunctionNode.js'
+import { FloatNode } from '../inputs/FloatNode.js'
+import { PositionNode } from './PositionNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var CameraNode = function( scope, camera ) {
+
+var CameraNode = function ( scope, camera ) {
 
 	TempNode.call( this, 'v3' );
 
@@ -17,14 +15,14 @@ var CameraNode = function( scope, camera ) {
 };
 
 CameraNode.fDepthColor = new FunctionNode( [
-"float depthColor( float mNear, float mFar ) {",
-"	#ifdef USE_LOGDEPTHBUF_EXT",
-"		float depth = gl_FragDepthEXT / gl_FragCoord.w;",
-"	#else",
-"		float depth = gl_FragCoord.z / gl_FragCoord.w;",
-"	#endif",
-"	return 1.0 - smoothstep( mNear, mFar, depth );",
-"}"
+	"float depthColor( float mNear, float mFar ) {",
+	"	#ifdef USE_LOGDEPTHBUF_EXT",
+	"		float depth = gl_FragDepthEXT / gl_FragCoord.w;",
+	"	#else",
+	"		float depth = gl_FragCoord.z / gl_FragCoord.w;",
+	"	#endif",
+	"	return 1.0 - smoothstep( mNear, mFar, depth );",
+	"}"
 ].join( "\n" ) );
 
 CameraNode.POSITION = 'position';
@@ -33,15 +31,16 @@ CameraNode.TO_VERTEX = 'toVertex';
 
 CameraNode.prototype = Object.create( TempNode.prototype );
 CameraNode.prototype.constructor = CameraNode;
+CameraNode.prototype.nodeType = "Camera";
 
-CameraNode.prototype.setCamera = function( camera ) {
+CameraNode.prototype.setCamera = function ( camera ) {
 
 	this.camera = camera;
-	this.requestUpdate = camera !== undefined;
+	this.updateFrame = camera !== undefined ? this.onUpdateFrame : undefined;
 
 };
 
-CameraNode.prototype.setScope = function( scope ) {
+CameraNode.prototype.setScope = function ( scope ) {
 
 	switch ( this.scope ) {
 
@@ -60,6 +59,8 @@ CameraNode.prototype.setScope = function( scope ) {
 
 		case CameraNode.DEPTH:
 
+			var camera = this.camera;
+
 			this.near = new FloatNode( this.camera ? this.camera.near : 1 );
 			this.far = new FloatNode( this.camera ? this.camera.far : 1200 );
 
@@ -69,41 +70,47 @@ CameraNode.prototype.setScope = function( scope ) {
 
 };
 
-CameraNode.prototype.getType = function( builder ) {
+CameraNode.prototype.getType = function ( builder ) {
 
 	switch ( this.scope ) {
+
 		case CameraNode.DEPTH:
 			return 'fv1';
+
 	}
 
 	return this.type;
 
 };
 
-CameraNode.prototype.isUnique = function( builder ) {
+CameraNode.prototype.isUnique = function ( builder ) {
 
 	switch ( this.scope ) {
+
 		case CameraNode.DEPTH:
 		case CameraNode.TO_VERTEX:
 			return true;
+
 	}
 
 	return false;
 
 };
 
-CameraNode.prototype.isShared = function( builder ) {
+CameraNode.prototype.isShared = function ( builder ) {
 
 	switch ( this.scope ) {
+
 		case CameraNode.POSITION:
 			return false;
+
 	}
 
 	return true;
 
 };
 
-CameraNode.prototype.generate = function( builder, output ) {
+CameraNode.prototype.generate = function ( builder, output ) {
 
 	var material = builder.material;
 	var result;
@@ -138,11 +145,13 @@ CameraNode.prototype.generate = function( builder, output ) {
 
 };
 
-CameraNode.prototype.updateFrame = function( delta ) {
+CameraNode.prototype.onUpdateFrame = function ( frame ) {
 
 	switch ( this.scope ) {
 
 		case CameraNode.DEPTH:
+
+			var camera = this.camera;
 
 			this.near.number = this.camera.near;
 			this.far.number = this.camera.far;
@@ -150,6 +159,35 @@ CameraNode.prototype.updateFrame = function( delta ) {
 			break;
 
 	}
+
+};
+
+CameraNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.scope = this.scope;
+
+		if ( this.camera ) data.camera = this.camera.uuid;
+
+		switch ( this.scope ) {
+
+			case CameraNode.DEPTH:
+
+				data.near = this.near.number;
+				data.far = this.far.number;
+
+				break;
+
+		}
+
+	}
+
+	return data;
 
 };
 

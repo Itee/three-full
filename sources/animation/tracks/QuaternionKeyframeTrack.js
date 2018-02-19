@@ -1,15 +1,12 @@
-import { InterpolateLinear } from '../../constants.js';
-import { KeyframeTrack } from '../KeyframeTrack.js';
-import { QuaternionLinearInterpolant } from '../../math/interpolants/QuaternionLinearInterpolant.js';
+import { InterpolateLinear } from '../../constants.js'
+import { KeyframeTrack } from '../KeyframeTrack.js'
+import { QuaternionLinearInterpolant } from '../../math/interpolants/QuaternionLinearInterpolant.js'
 
-/**
- *
- * A Track of quaternion keyframe values.
- *
- * @author Ben Houston / http://clara.io/
- * @author David Sarno / http://lighthaus.us/
- * @author tschw
- */
+
+
+
+
+
 
 function QuaternionKeyframeTrack( name, times, values, interpolation ) {
 
@@ -37,4 +34,6 @@ QuaternionKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrack.
 
 } );
 
-export { QuaternionKeyframeTrack };
+;
+
+export { QuaternionKeyframeTrack }

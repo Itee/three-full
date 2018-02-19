@@ -1,10 +1,12 @@
-import { LightShadow } from './LightShadow.js';
-import { _Math } from '../math/Math.js';
-import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js';
+import { LightShadow } from './LightShadow.js'
+import { _Math } from '../math/Math.js'
+import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
+
+
 
 function SpotLightShadow() {
 
@@ -40,4 +42,6 @@ SpotLightShadow.prototype = Object.assign( Object.create( LightShadow.prototype 
 } );
 
 
-export { SpotLightShadow };
+;
+
+export { SpotLightShadow }

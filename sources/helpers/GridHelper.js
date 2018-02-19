@@ -1,13 +1,18 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+import { LineSegments } from '../objects/LineSegments.js'
+import { VertexColors } from '../constants.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Color } from '../math/Color.js'
 
-import { LineSegments } from '../objects/LineSegments.js';
-import { VertexColors } from '../constants.js';
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { Color } from '../math/Color.js';
+
+
+
+
+
+
+
+
 
 function GridHelper( size, divisions, color1, color2 ) {
 
@@ -49,4 +54,6 @@ function GridHelper( size, divisions, color1, color2 ) {
 GridHelper.prototype = Object.create( LineSegments.prototype );
 GridHelper.prototype.constructor = GridHelper;
 
-export { GridHelper };
+;
+
+export { GridHelper }

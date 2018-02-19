@@ -1,9 +1,7 @@
 import { Object3D } from '../core/Object3D.js'
 import { Vector3 } from '../math/Vector3.js'
 
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
+
 
 var DaydreamController = function () {
 

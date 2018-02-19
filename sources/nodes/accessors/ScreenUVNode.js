@@ -1,10 +1,8 @@
-import { TempNode } from '../../nodes/TempNode.js'
+import { TempNode } from '../TempNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var ScreenUVNode = function( resolution ) {
+
+var ScreenUVNode = function ( resolution ) {
 
 	TempNode.call( this, 'v2' );
 
@@ -14,8 +12,9 @@ var ScreenUVNode = function( resolution ) {
 
 ScreenUVNode.prototype = Object.create( TempNode.prototype );
 ScreenUVNode.prototype.constructor = ScreenUVNode;
+ScreenUVNode.prototype.nodeType = "ScreenUV";
 
-ScreenUVNode.prototype.generate = function( builder, output ) {
+ScreenUVNode.prototype.generate = function ( builder, output ) {
 
 	var material = builder.material;
 	var result;
@@ -33,6 +32,22 @@ ScreenUVNode.prototype.generate = function( builder, output ) {
 	}
 
 	return builder.format( result, this.getType( builder ), output );
+
+};
+
+ScreenUVNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.resolution = this.resolution.toJSON( meta ).uuid;
+
+	}
+
+	return data;
 
 };
 

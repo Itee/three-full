@@ -1,10 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function WebGLObjects( geometries, infoRender ) {
 
 		var updateList = {};
@@ -36,7 +32,7 @@ var Three = (function (exports) {
 
 		}
 
-		function clear() {
+		function dispose() {
 
 			updateList = {};
 
@@ -45,7 +41,7 @@ var Three = (function (exports) {
 		return {
 
 			update: update,
-			clear: clear
+			dispose: dispose
 
 		};
 

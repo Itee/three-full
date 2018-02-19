@@ -1,11 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -23,7 +18,7 @@ var Three = (function (exports) {
 
 			}
 
-			return function () {
+			return function generateUUID() {
 
 				var d0 = Math.random() * 0xffffffff | 0;
 				var d1 = Math.random() * 0xffffffff | 0;
@@ -149,22 +144,22 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var GLNode = function( type ) {
+	var GLNode = function ( type ) {
 
 		this.uuid = _Math.generateUUID();
 
+		this.name = "";
 		this.allows = {};
-		this.requestUpdate = false;
 
 		this.type = type;
 
+		this.userData = {};
+
 	};
 
-	GLNode.prototype.parse = function( builder, context ) {
+	GLNode.prototype.isNode = true;
+
+	GLNode.prototype.parse = function ( builder, context ) {
 
 		context = context || {};
 
@@ -183,7 +178,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.parseAndBuildCode = function( builder, output, context ) {
+	GLNode.prototype.parseAndBuildCode = function ( builder, output, context ) {
 
 		context = context || {};
 
@@ -193,13 +188,13 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.buildCode = function( builder, output, context ) {
+	GLNode.prototype.buildCode = function ( builder, output, context ) {
 
 		context = context || {};
 
 		var material = builder.material;
 
-		var data = { result : this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
+		var data = { result: this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
 
 		if ( builder.isShader( 'vertex' ) ) data.code = material.clearVertexNode();
 		else data.code = material.clearFragmentNode();
@@ -210,7 +205,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.build = function( builder, output, uuid ) {
+	GLNode.prototype.build = function ( builder, output, uuid ) {
 
 		output = output || this.getType( builder, output );
 
@@ -224,9 +219,15 @@ var Three = (function (exports) {
 
 		}
 
-		if ( this.requestUpdate && material.requestUpdate.indexOf( this ) === - 1 ) {
+		if ( material.nodes.indexOf( this ) === - 1 ) {
 
-			material.requestUpdate.push( this );
+			material.nodes.push( this );
+
+		}
+
+		if ( this.updateFrame !== undefined && material.updaters.indexOf( this ) === - 1 ) {
+
+			material.updaters.push( this );
 
 		}
 
@@ -234,7 +235,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.appendDepsNode = function( builder, data, output ) {
+	GLNode.prototype.appendDepsNode = function ( builder, data, output ) {
 
 		data.deps = ( data.deps || 0 ) + 1;
 
@@ -249,18 +250,56 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.getType = function( builder, output ) {
+	GLNode.prototype.getType = function ( builder, output ) {
 
 		return output === 'sampler2D' || output === 'samplerCube' ? output : this.type;
 
 	};
 
-	/**
-	 * Automatic node cache
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	GLNode.prototype.getJSONNode = function ( meta ) {
 
-	var TempNode = function( type, params ) {
+		var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+		if ( ! isRootObject && meta.nodes[ this.uuid ] !== undefined ) {
+
+			return meta.nodes[ this.uuid ];
+
+		}
+
+	};
+
+	GLNode.prototype.createJSONNode = function ( meta ) {
+
+		var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+		var data = {};
+
+		if ( typeof this.nodeType !== "string" ) throw new Error( "Node does not allow serialization." );
+
+		data.uuid = this.uuid;
+		data.type = this.nodeType + "Node";
+
+		if ( this.name !== "" ) data.name = this.name;
+
+		if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
+
+		if ( ! isRootObject ) {
+
+			meta.nodes[ this.uuid ] = data;
+
+		}
+
+		return data;
+
+	};
+
+	GLNode.prototype.toJSON = function ( meta ) {
+
+		return this.getJSONNode( meta ) || this.createJSONNode( meta );
+
+	};
+
+	var TempNode = function ( type, params ) {
 
 		GLNode.call( this, type );
 
@@ -274,7 +313,7 @@ var Three = (function (exports) {
 	TempNode.prototype = Object.create( GLNode.prototype );
 	TempNode.prototype.constructor = TempNode;
 
-	TempNode.prototype.build = function( builder, output, uuid, ns ) {
+	TempNode.prototype.build = function ( builder, output, uuid, ns ) {
 
 		output = output || this.getType( builder );
 
@@ -286,7 +325,7 @@ var Three = (function (exports) {
 
 			if ( isUnique && this.constructor.uuid === undefined ) {
 
-				this.constructor.uuid = Math.generateUUID();
+				this.constructor.uuid = _Math.generateUUID();
 
 			}
 
@@ -346,19 +385,19 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.isShared = function( builder, output ) {
+	TempNode.prototype.isShared = function ( builder, output ) {
 
 		return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
 
 	};
 
-	TempNode.prototype.isUnique = function( builder, output ) {
+	TempNode.prototype.isUnique = function ( builder, output ) {
 
 		return this.unique;
 
 	};
 
-	TempNode.prototype.getUuid = function( unique ) {
+	TempNode.prototype.getUuid = function ( unique ) {
 
 		var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
 
@@ -368,7 +407,7 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.getTemp = function( builder, uuid ) {
+	TempNode.prototype.getTemp = function ( builder, uuid ) {
 
 		uuid = uuid || this.uuid;
 
@@ -379,7 +418,7 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.generate = function( builder, output, uuid, type, ns ) {
+	TempNode.prototype.generate = function ( builder, output, uuid, type, ns ) {
 
 		if ( ! this.isShared( builder, output ) ) console.error( "TempNode is not shared!" );
 
@@ -390,67 +429,67 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var InputNode = function( type, params ) {
+	var InputNode = function ( type, params ) {
 
 		params = params || {};
 		params.shared = params.shared !== undefined ? params.shared : false;
 
 		TempNode.call( this, type, params );
 
+		this.readonly = false;
+
 	};
 
 	InputNode.prototype = Object.create( TempNode.prototype );
 	InputNode.prototype.constructor = InputNode;
 
-	InputNode.prototype.generate = function( builder, output, uuid, type, ns, needsUpdate ) {
+	InputNode.prototype.isReadonly = function ( builder ) {
+
+		return this.readonly;
+
+	};
+
+	InputNode.prototype.generate = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
 		var material = builder.material;
 
 		uuid = builder.getUuid( uuid || this.getUuid() );
 		type = type || this.getType( builder );
 
-		var data = material.getDataNode( uuid );
+		var data = material.getDataNode( uuid ),
+			readonly = this.isReadonly( builder ) && this.generateReadonly !== undefined;
 
-		if ( builder.isShader( 'vertex' ) ) {
+		if ( readonly ) {
 
-			if ( ! data.vertex ) {
-
-				data.vertex = material.createVertexUniform( type, this.value, ns, needsUpdate );
-
-			}
-
-			return builder.format( data.vertex.name, type, output );
+			return this.generateReadonly( builder, output, uuid, type, ns, needsUpdate );
 
 		} else {
 
-			if ( ! data.fragment ) {
+			if ( builder.isShader( 'vertex' ) ) {
 
-				data.fragment = material.createFragmentUniform( type, this.value, ns, needsUpdate );
+				if ( ! data.vertex ) {
+
+					data.vertex = material.createVertexUniform( type, this.value, ns, needsUpdate );
+
+				}
+
+				return builder.format( data.vertex.name, type, output );
+
+			} else {
+
+				if ( ! data.fragment ) {
+
+					data.fragment = material.createFragmentUniform( type, this.value, ns, needsUpdate );
+
+				}
+
+				return builder.format( data.fragment.name, type, output );
 
 			}
-
-			return builder.format( data.fragment.name, type, output );
 
 		}
 
 	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author jordi_ros / http://plattsoft.com
-	 * @author D1plo1d / http://github.com/D1plo1d
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author timknip / http://www.floorplanner.com/
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
 
 	function Matrix4() {
 
@@ -465,7 +504,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix4: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix4: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -593,7 +632,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				console.error( 'THREE.Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
+				console.error( 'Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -813,7 +852,7 @@ var Three = (function (exports) {
 
 			if ( n !== undefined ) {
 
-				console.warn( 'THREE.Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
+				console.warn( 'Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
 				return this.multiplyMatrices( m, n );
 
 			}
@@ -1004,7 +1043,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix4: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix4: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -1257,7 +1296,7 @@ var Three = (function (exports) {
 
 			if ( far === undefined ) {
 
-				console.warn( 'THREE.Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
+				console.warn( 'Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
 
 			}
 
@@ -1360,13 +1399,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Quaternion( x, y, z, w ) {
 
@@ -1559,7 +1591,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				throw new Error( 'THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+				throw new Error( 'Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -1756,7 +1788,9 @@ var Three = (function (exports) {
 
 		inverse: function () {
 
-			return this.conjugate().normalize();
+			// quaternion is assumed to have unit length
+
+			return this.conjugate();
 
 		},
 
@@ -1822,7 +1856,7 @@ var Three = (function (exports) {
 
 			if ( p !== undefined ) {
 
-				console.warn( 'THREE.Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
+				console.warn( 'Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
 				return this.multiplyQuaternions( q, p );
 
 			}
@@ -1967,15 +2001,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author kile / http://kile.stravaganza.org/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -2080,7 +2105,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -2127,7 +2152,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -2164,7 +2189,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
 				return this.multiplyVectors( v, w );
 
 			}
@@ -2205,7 +2230,7 @@ var Three = (function (exports) {
 
 				if ( ! ( euler && euler.isEuler ) ) {
 
-					console.error( 'THREE.Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+					console.error( 'Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 				}
 
@@ -2305,7 +2330,7 @@ var Three = (function (exports) {
 
 		transformDirection: function ( m ) {
 
-			// input: THREE.Matrix4 affine matrix
+			// input: Matrix4 affine matrix
 			// vector interpreted as a direction
 
 			var x = this.x, y = this.y, z = this.z;
@@ -2499,7 +2524,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
 				return this.crossVectors( v, w );
 
 			}
@@ -2677,7 +2702,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector3: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector3: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -2690,10 +2715,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * https://github.com/mrdoob/eventdispatcher.js/
-	 */
 
 	function EventDispatcher() {}
 
@@ -2776,123 +2797,23 @@ var Three = (function (exports) {
 	} );
 
 	var FrontSide = 0;
-
-
 	var FlatShading = 1;
-
 	var NoColors = 0;
-
-
-
 	var NormalBlending = 1;
-
-
-
-
 	var AddEquation = 100;
-
-
-
-
-
-
-
-
 	var SrcAlphaFactor = 204;
 	var OneMinusSrcAlphaFactor = 205;
-
-
-
-
-
-
-
-
 	var LessEqualDepth = 3;
-
-
-
-
-	var MultiplyOperation = 0;
-
-
-
-
-
-
-
 	var UVMapping = 300;
 	var CubeReflectionMapping = 301;
-
-
-
-
-
-
 	var RepeatWrapping = 1000;
 	var ClampToEdgeWrapping = 1001;
 	var MirroredRepeatWrapping = 1002;
-
-
-
 	var LinearFilter = 1006;
-
 	var LinearMipMapLinearFilter = 1008;
 	var UnsignedByteType = 1009;
-
-
-
-
-
-
-
-
-
-
-
-
-
 	var RGBAFormat = 1023;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	var LinearEncoding = 3000;
-
-
-
-
-
-
-
-	var BasicDepthPacking = 3200;
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 */
 
 	var materialId = 0;
 
@@ -2911,7 +2832,7 @@ var Three = (function (exports) {
 		this.blending = NormalBlending;
 		this.side = FrontSide;
 		this.flatShading = false;
-		this.vertexColors = NoColors; // THREE.NoColors, THREE.VertexColors, THREE.FaceColors
+		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 		this.opacity = 1;
 		this.transparent = false;
@@ -2930,6 +2851,8 @@ var Three = (function (exports) {
 		this.clippingPlanes = null;
 		this.clipIntersection = false;
 		this.clipShadows = false;
+
+		this.shadowSide = null;
 
 		this.colorWrite = true;
 
@@ -2972,7 +2895,7 @@ var Three = (function (exports) {
 
 				if ( newValue === undefined ) {
 
-					console.warn( "THREE.Material: '" + key + "' parameter is undefined." );
+					console.warn( "Material: '" + key + "' parameter is undefined." );
 					continue;
 
 				}
@@ -2980,7 +2903,7 @@ var Three = (function (exports) {
 				// for backward compatability if shading is set in the constructor
 				if ( key === 'shading' ) {
 
-					console.warn( 'THREE.' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
+					console.warn( '' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
 					this.flatShading = ( newValue === FlatShading ) ? true : false;
 					continue;
 
@@ -2990,7 +2913,7 @@ var Three = (function (exports) {
 
 				if ( currentValue === undefined ) {
 
-					console.warn( "THREE." + this.type + ": '" + key + "' is not a property of this material." );
+					console.warn( "" + this.type + ": '" + key + "' is not a property of this material." );
 					continue;
 
 				}
@@ -3238,6 +3161,8 @@ var Three = (function (exports) {
 
 			this.clippingPlanes = dstPlanes;
 
+			this.shadowSide = source.shadowSide;
+
 			return this;
 
 		},
@@ -3250,9 +3175,323 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
+	var UniformsUtils = {
+
+		merge: function ( uniforms ) {
+
+			var merged = {};
+
+			for ( var u = 0; u < uniforms.length; u ++ ) {
+
+				var tmp = this.clone( uniforms[ u ] );
+
+				for ( var p in tmp ) {
+
+					merged[ p ] = tmp[ p ];
+
+				}
+
+			}
+
+			return merged;
+
+		},
+
+		clone: function ( uniforms_src ) {
+
+			var uniforms_dst = {};
+
+			for ( var u in uniforms_src ) {
+
+				uniforms_dst[ u ] = {};
+
+				for ( var p in uniforms_src[ u ] ) {
+
+					var parameter_src = uniforms_src[ u ][ p ];
+
+					if ( parameter_src && ( parameter_src.isColor ||
+						parameter_src.isMatrix3 || parameter_src.isMatrix4 ||
+						parameter_src.isVector2 || parameter_src.isVector3 || parameter_src.isVector4 ||
+						parameter_src.isTexture ) ) {
+
+						uniforms_dst[ u ][ p ] = parameter_src.clone();
+
+					} else if ( Array.isArray( parameter_src ) ) {
+
+						uniforms_dst[ u ][ p ] = parameter_src.slice();
+
+					} else {
+
+						uniforms_dst[ u ][ p ] = parameter_src;
+
+					}
+
+				}
+
+			}
+
+			return uniforms_dst;
+
+		}
+
+	};
+
+	function ShaderMaterial( parameters ) {
+
+		Material.call( this );
+
+		this.type = 'ShaderMaterial';
+
+		this.defines = {};
+		this.uniforms = {};
+
+		this.vertexShader = 'void main() {\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}';
+		this.fragmentShader = 'void main() {\n\tgl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}';
+
+		this.linewidth = 1;
+
+		this.wireframe = false;
+		this.wireframeLinewidth = 1;
+
+		this.fog = false; // set to use scene fog
+		this.lights = false; // set to use scene lights
+		this.clipping = false; // set to use user-defined clipping planes
+
+		this.skinning = false; // set to use skinning attribute streams
+		this.morphTargets = false; // set to use morph targets
+		this.morphNormals = false; // set to use morph normals
+
+		this.extensions = {
+			derivatives: false, // set to use derivatives
+			fragDepth: false, // set to use fragment depth values
+			drawBuffers: false, // set to use draw buffers
+			shaderTextureLOD: false // set to use shader texture LOD
+		};
+
+		// When rendered geometry doesn't include these attributes but the material does,
+		// use these default values in WebGL. This avoids errors when buffer data is missing.
+		this.defaultAttributeValues = {
+			'color': [ 1, 1, 1 ],
+			'uv': [ 0, 0 ],
+			'uv2': [ 0, 0 ]
+		};
+
+		this.index0AttributeName = undefined;
+		this.uniformsNeedUpdate = false;
+
+		if ( parameters !== undefined ) {
+
+			if ( parameters.attributes !== undefined ) {
+
+				console.error( 'ShaderMaterial: attributes should now be defined in BufferGeometry instead.' );
+
+			}
+
+			this.setValues( parameters );
+
+		}
+
+	}
+
+	ShaderMaterial.prototype = Object.create( Material.prototype );
+	ShaderMaterial.prototype.constructor = ShaderMaterial;
+
+	ShaderMaterial.prototype.isShaderMaterial = true;
+
+	ShaderMaterial.prototype.copy = function ( source ) {
+
+		Material.prototype.copy.call( this, source );
+
+		this.fragmentShader = source.fragmentShader;
+		this.vertexShader = source.vertexShader;
+
+		this.uniforms = UniformsUtils.clone( source.uniforms );
+
+		this.defines = source.defines;
+
+		this.wireframe = source.wireframe;
+		this.wireframeLinewidth = source.wireframeLinewidth;
+
+		this.lights = source.lights;
+		this.clipping = source.clipping;
+
+		this.skinning = source.skinning;
+
+		this.morphTargets = source.morphTargets;
+		this.morphNormals = source.morphNormals;
+
+		this.extensions = source.extensions;
+
+		return this;
+
+	};
+
+	ShaderMaterial.prototype.toJSON = function ( meta ) {
+
+		var data = Material.prototype.toJSON.call( this, meta );
+
+		data.uniforms = this.uniforms;
+		data.vertexShader = this.vertexShader;
+		data.fragmentShader = this.fragmentShader;
+
+		return data;
+
+	};
+
+	var RawNode = function ( value ) {
+
+		GLNode.call( this, 'v4' );
+
+		this.value = value;
+
+	};
+
+	RawNode.prototype = Object.create( GLNode.prototype );
+	RawNode.prototype.constructor = RawNode;
+	RawNode.prototype.nodeType = "Raw";
+
+	RawNode.prototype.generate = function ( builder ) {
+
+		var material = builder.material;
+
+		var data = this.value.parseAndBuildCode( builder, this.type );
+
+		var code = data.code + '\n';
+
+		if ( builder.shader == 'vertex' ) {
+
+			code += 'gl_Position = ' + data.result + ';';
+
+		} else {
+
+			code += 'gl_FragColor = ' + data.result + ';';
+
+		}
+
+		return code;
+
+	};
+
+	RawNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.value = this.value.toJSON( meta ).uuid;
+
+		}
+
+		return data;
+
+	};
+
+	var PositionNode = function ( scope ) {
+
+		TempNode.call( this, 'v3' );
+
+		this.scope = scope || PositionNode.LOCAL;
+
+	};
+
+	PositionNode.LOCAL = 'local';
+	PositionNode.WORLD = 'world';
+	PositionNode.VIEW = 'view';
+	PositionNode.PROJECTION = 'projection';
+
+	PositionNode.prototype = Object.create( TempNode.prototype );
+	PositionNode.prototype.constructor = PositionNode;
+	PositionNode.prototype.nodeType = "Position";
+
+	PositionNode.prototype.getType = function ( builder ) {
+
+		switch ( this.scope ) {
+
+			case PositionNode.PROJECTION:
+				return 'v4';
+
+		}
+
+		return this.type;
+
+	};
+
+	PositionNode.prototype.isShared = function ( builder ) {
+
+		switch ( this.scope ) {
+
+			case PositionNode.LOCAL:
+			case PositionNode.WORLD:
+				return false;
+
+		}
+
+		return true;
+
+	};
+
+	PositionNode.prototype.generate = function ( builder, output ) {
+
+		var material = builder.material;
+		var result;
+
+		switch ( this.scope ) {
+
+			case PositionNode.LOCAL:
+
+				material.requires.position = true;
+
+				if ( builder.isShader( 'vertex' ) ) result = 'transformed';
+				else result = 'vPosition';
+
+				break;
+
+			case PositionNode.WORLD:
+
+				material.requires.worldPosition = true;
+
+				if ( builder.isShader( 'vertex' ) ) result = 'vWPosition';
+				else result = 'vWPosition';
+
+				break;
+
+			case PositionNode.VIEW:
+
+				if ( builder.isShader( 'vertex' ) ) result = '-mvPosition.xyz';
+				else result = 'vViewPosition';
+
+				break;
+
+			case PositionNode.PROJECTION:
+
+				if ( builder.isShader( 'vertex' ) ) result = '(projectionMatrix * modelViewMatrix * vec4( position, 1.0 ))';
+				else result = 'vec4( 0.0 )';
+
+				break;
+
+		}
+
+		return builder.format( result, this.getType( builder ), output );
+
+	};
+
+	PositionNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.scope = this.scope;
+
+		}
+
+		return data;
+
+	};
 
 	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
 		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
@@ -3283,7 +3522,7 @@ var Three = (function (exports) {
 
 		if ( g === undefined && b === undefined ) {
 
-			// r is THREE.Color, hex or string
+			// r is Color, hex or string
 			return this.set( r );
 
 		}
@@ -3399,7 +3638,7 @@ var Three = (function (exports) {
 
 				if ( parseFloat( string ) < 1 ) {
 
-					console.warn( 'THREE.Color: Alpha component of ' + style + ' will be ignored.' );
+					console.warn( 'Color: Alpha component of ' + style + ' will be ignored.' );
 
 				}
 
@@ -3511,7 +3750,7 @@ var Three = (function (exports) {
 				} else {
 
 					// unknown color
-					console.warn( 'THREE.Color: Unknown color ' + style );
+					console.warn( 'Color: Unknown color ' + style );
 
 				}
 
@@ -3769,347 +4008,300 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 *
-	 * parameters = {
-	 *  color: <THREE.Color>,
-	 *  opacity: <float>
-	 * }
-	 */
+	var ColorNode = function ( color ) {
 
-	function ShadowMaterial( parameters ) {
+		InputNode.call( this, 'c' );
 
-		Material.call( this );
-
-		this.type = 'ShadowMaterial';
-
-		this.color = new Color( 0x000000 );
-		this.opacity = 1.0;
-
-		this.lights = true;
-		this.transparent = true;
-
-		this.setValues( parameters );
-
-	}
-
-	ShadowMaterial.prototype = Object.create( Material.prototype );
-	ShadowMaterial.prototype.constructor = ShadowMaterial;
-
-	ShadowMaterial.prototype.isShadowMaterial = true;
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *	uvOffset: new THREE.Vector2(),
-	 *	uvScale: new THREE.Vector2()
-	 * }
-	 */
-
-	function SpriteMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'SpriteMaterial';
-
-		this.color = new Color( 0xffffff );
-		this.map = null;
-
-		this.rotation = 0;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	SpriteMaterial.prototype = Object.create( Material.prototype );
-	SpriteMaterial.prototype.constructor = SpriteMaterial;
-	SpriteMaterial.prototype.isSpriteMaterial = true;
-
-	SpriteMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-		this.map = source.map;
-
-		this.rotation = source.rotation;
-
-		return this;
+		this.value = new Color( color || 0 );
 
 	};
 
-	/**
-	 * Uniform Utilities
-	 */
+	ColorNode.prototype = Object.create( InputNode.prototype );
+	ColorNode.prototype.constructor = ColorNode;
+	ColorNode.prototype.nodeType = "Color";
 
-	var UniformsUtils = {
+	NodeMaterial.addShortcuts( ColorNode.prototype, 'value', [ 'r', 'g', 'b' ] );
 
-		merge: function ( uniforms ) {
+	ColorNode.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
-			var merged = {};
+		return builder.format( "vec3( " + this.r + ", " + this.g + ", " + this.b + " )", type, output );
 
-			for ( var u = 0; u < uniforms.length; u ++ ) {
+	};
 
-				var tmp = this.clone( uniforms[ u ] );
+	ColorNode.prototype.toJSON = function ( meta ) {
 
-				for ( var p in tmp ) {
+		var data = this.getJSONNode( meta );
 
-					merged[ p ] = tmp[ p ];
+		if ( ! data ) {
 
-				}
+			data = this.createJSONNode( meta );
 
-			}
+			data.r = this.r;
+			data.g = this.g;
+			data.b = this.b;
 
-			return merged;
-
-		},
-
-		clone: function ( uniforms_src ) {
-
-			var uniforms_dst = {};
-
-			for ( var u in uniforms_src ) {
-
-				uniforms_dst[ u ] = {};
-
-				for ( var p in uniforms_src[ u ] ) {
-
-					var parameter_src = uniforms_src[ u ][ p ];
-
-					if ( parameter_src && ( parameter_src.isColor ||
-						parameter_src.isMatrix3 || parameter_src.isMatrix4 ||
-						parameter_src.isVector2 || parameter_src.isVector3 || parameter_src.isVector4 ||
-						parameter_src.isTexture ) ) {
-
-						uniforms_dst[ u ][ p ] = parameter_src.clone();
-
-					} else if ( Array.isArray( parameter_src ) ) {
-
-						uniforms_dst[ u ][ p ] = parameter_src.slice();
-
-					} else {
-
-						uniforms_dst[ u ][ p ] = parameter_src;
-
-					}
-
-				}
-
-			}
-
-			return uniforms_dst;
+			if ( this.readonly === true ) data.readonly = true;
 
 		}
-
-	};
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  defines: { "label" : "value" },
-	 *  uniforms: { "parameter1": { value: 1.0 }, "parameter2": { value2: 2 } },
-	 *
-	 *  fragmentShader: <string>,
-	 *  vertexShader: <string>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  lights: <bool>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
-
-	function ShaderMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'ShaderMaterial';
-
-		this.defines = {};
-		this.uniforms = {};
-
-		this.vertexShader = 'void main() {\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}';
-		this.fragmentShader = 'void main() {\n\tgl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}';
-
-		this.linewidth = 1;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-
-		this.fog = false; // set to use scene fog
-		this.lights = false; // set to use scene lights
-		this.clipping = false; // set to use user-defined clipping planes
-
-		this.skinning = false; // set to use skinning attribute streams
-		this.morphTargets = false; // set to use morph targets
-		this.morphNormals = false; // set to use morph normals
-
-		this.extensions = {
-			derivatives: false, // set to use derivatives
-			fragDepth: false, // set to use fragment depth values
-			drawBuffers: false, // set to use draw buffers
-			shaderTextureLOD: false // set to use shader texture LOD
-		};
-
-		// When rendered geometry doesn't include these attributes but the material does,
-		// use these default values in WebGL. This avoids errors when buffer data is missing.
-		this.defaultAttributeValues = {
-			'color': [ 1, 1, 1 ],
-			'uv': [ 0, 0 ],
-			'uv2': [ 0, 0 ]
-		};
-
-		this.index0AttributeName = undefined;
-
-		if ( parameters !== undefined ) {
-
-			if ( parameters.attributes !== undefined ) {
-
-				console.error( 'THREE.ShaderMaterial: attributes should now be defined in THREE.BufferGeometry instead.' );
-
-			}
-
-			this.setValues( parameters );
-
-		}
-
-	}
-
-	ShaderMaterial.prototype = Object.create( Material.prototype );
-	ShaderMaterial.prototype.constructor = ShaderMaterial;
-
-	ShaderMaterial.prototype.isShaderMaterial = true;
-
-	ShaderMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.fragmentShader = source.fragmentShader;
-		this.vertexShader = source.vertexShader;
-
-		this.uniforms = UniformsUtils.clone( source.uniforms );
-
-		this.defines = source.defines;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		this.lights = source.lights;
-		this.clipping = source.clipping;
-
-		this.skinning = source.skinning;
-
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		this.extensions = source.extensions;
-
-		return this;
-
-	};
-
-	ShaderMaterial.prototype.toJSON = function ( meta ) {
-
-		var data = Material.prototype.toJSON.call( this, meta );
-
-		data.uniforms = this.uniforms;
-		data.vertexShader = this.vertexShader;
-		data.fragmentShader = this.fragmentShader;
 
 		return data;
 
 	};
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
+	var NodeBuilder = function ( material ) {
 
-	function RawShaderMaterial( parameters ) {
+		this.material = material;
 
-		ShaderMaterial.call( this, parameters );
+		this.caches = [];
+		this.slots = [];
 
-		this.type = 'RawShaderMaterial';
+		this.keywords = {};
 
-	}
+		this.parsing = false;
+		this.optimize = true;
 
-	RawShaderMaterial.prototype = Object.create( ShaderMaterial.prototype );
-	RawShaderMaterial.prototype.constructor = RawShaderMaterial;
-
-	RawShaderMaterial.prototype.isRawShaderMaterial = true;
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  size: <float>,
-	 *  sizeAttenuation: <bool>
-	 * }
-	 */
-
-	function PointsMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'PointsMaterial';
-
-		this.color = new Color( 0xffffff );
-
-		this.map = null;
-
-		this.size = 1;
-		this.sizeAttenuation = true;
-
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	PointsMaterial.prototype = Object.create( Material.prototype );
-	PointsMaterial.prototype.constructor = PointsMaterial;
-
-	PointsMaterial.prototype.isPointsMaterial = true;
-
-	PointsMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-
-		this.map = source.map;
-
-		this.size = source.size;
-		this.sizeAttenuation = source.sizeAttenuation;
-
-		return this;
+		this.update();
 
 	};
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author egraether / http://egraether.com/
-	 * @author zz85 / http://www.lab4games.net/zz85/blog
-	 */
+	NodeBuilder.type = {
+		float: 'fv1',
+		vec2: 'v2',
+		vec3: 'v3',
+		vec4: 'v4',
+		mat4: 'v4',
+		int: 'iv1'
+	};
+
+	NodeBuilder.constructors = [
+		'float',
+		'vec2',
+		'vec3',
+		'vec4'
+	];
+
+	NodeBuilder.elements = [
+		'x',
+		'y',
+		'z',
+		'w'
+	];
+
+	NodeBuilder.prototype = {
+
+		constructor: NodeBuilder,
+
+		addCache: function ( name, requires ) {
+
+			this.caches.push( {
+				name: name || '',
+				requires: requires || {}
+			} );
+
+			return this.update();
+
+		},
+
+		removeCache: function () {
+
+			this.caches.pop();
+
+			return this.update();
+
+		},
+
+		addSlot: function ( name ) {
+
+			this.slots.push( {
+				name: name || ''
+			} );
+
+			return this.update();
+
+		},
+
+		removeSlot: function () {
+
+			this.slots.pop();
+
+			return this.update();
+
+		},
+
+		isCache: function ( name ) {
+
+			var i = this.caches.length;
+
+			while ( i -- ) {
+
+				if ( this.caches[ i ].name == name ) return true;
+
+			}
+
+			return false;
+
+		},
+
+		isSlot: function ( name ) {
+
+			var i = this.slots.length;
+
+			while ( i -- ) {
+
+				if ( this.slots[ i ].name == name ) return true;
+
+			}
+
+			return false;
+
+		},
+
+		update: function () {
+
+			var cache = this.caches[ this.caches.length - 1 ];
+			var slot = this.slots[ this.slots.length - 1 ];
+
+			this.slot = slot ? slot.name : '';
+			this.cache = cache ? cache.name : '';
+			this.requires = cache ? cache.requires : {};
+
+			return this;
+
+		},
+
+		require: function ( name, node ) {
+
+			this.requires[ name ] = node;
+
+			return this;
+
+		},
+
+		include: function ( node, parent, source ) {
+
+			this.material.include( this, node, parent, source );
+
+			return this;
+
+		},
+
+		colorToVector: function ( color ) {
+
+			return color.replace( 'r', 'x' ).replace( 'g', 'y' ).replace( 'b', 'z' ).replace( 'a', 'w' );
+
+		},
+
+		getConstructorFromLength: function ( len ) {
+
+			return NodeBuilder.constructors[ len - 1 ];
+
+		},
+
+		getFormatName: function ( format ) {
+
+			return format.replace( /c/g, 'v3' ).replace( /fv1/g, 'v1' ).replace( /iv1/g, 'i' );
+
+		},
+
+		isFormatMatrix: function ( format ) {
+
+			return /^m/.test( format );
+
+		},
+
+		getFormatLength: function ( format ) {
+
+			return parseInt( this.getFormatName( format ).substr( 1 ) );
+
+		},
+
+		getFormatFromLength: function ( len ) {
+
+			if ( len == 1 ) return 'fv1';
+
+			return 'v' + len;
+
+		},
+
+		format: function ( code, from, to ) {
+
+			var format = this.getFormatName( to + '=' + from );
+
+			switch ( format ) {
+
+				case 'v1=v2': return code + '.x';
+				case 'v1=v3': return code + '.x';
+				case 'v1=v4': return code + '.x';
+				case 'v1=i': return 'float(' + code + ')';
+
+				case 'v2=v1': return 'vec2(' + code + ')';
+				case 'v2=v3': return code + '.xy';
+				case 'v2=v4': return code + '.xy';
+				case 'v2=i': return 'vec2(float(' + code + '))';
+
+				case 'v3=v1': return 'vec3(' + code + ')';
+				case 'v3=v2': return 'vec3(' + code + ',0.0)';
+				case 'v3=v4': return code + '.xyz';
+				case 'v3=i': return 'vec2(float(' + code + '))';
+
+				case 'v4=v1': return 'vec4(' + code + ')';
+				case 'v4=v2': return 'vec4(' + code + ',0.0,1.0)';
+				case 'v4=v3': return 'vec4(' + code + ',1.0)';
+				case 'v4=i': return 'vec4(float(' + code + '))';
+
+				case 'i=v1': return 'int(' + code + ')';
+				case 'i=v2': return 'int(' + code + '.x)';
+				case 'i=v3': return 'int(' + code + '.x)';
+				case 'i=v4': return 'int(' + code + '.x)';
+
+			}
+
+			return code;
+
+		},
+
+		getTypeByFormat: function ( format ) {
+
+			return NodeBuilder.type[ format ] || format;
+
+		},
+
+		getUuid: function ( uuid, useCache ) {
+
+			useCache = useCache !== undefined ? useCache : true;
+
+			if ( useCache && this.cache ) uuid = this.cache + '-' + uuid;
+
+			return uuid;
+
+		},
+
+		getElementByIndex: function ( index ) {
+
+			return NodeBuilder.elements[ index ];
+
+		},
+
+		getIndexByElement: function ( elm ) {
+
+			return NodeBuilder.elements.indexOf( elm );
+
+		},
+
+		isShader: function ( shader ) {
+
+			return this.shader == shader;
+
+		},
+
+		setShader: function ( shader ) {
+
+			this.shader = shader;
+
+			return this;
+
+		}
+	};
 
 	function Vector2( x, y ) {
 
@@ -4237,7 +4429,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -4280,7 +4472,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -4568,7 +4760,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector2: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector2: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -4595,1409 +4787,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  roughness: <float>,
-	 *  metalness: <float>,
-	 *  opacity: <float>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  lightMap: new THREE.Texture( <Image> ),
-	 *  lightMapIntensity: <float>
-	 *
-	 *  aoMap: new THREE.Texture( <Image> ),
-	 *  aoMapIntensity: <float>
-	 *
-	 *  emissive: <hex>,
-	 *  emissiveIntensity: <float>
-	 *  emissiveMap: new THREE.Texture( <Image> ),
-	 *
-	 *  bumpMap: new THREE.Texture( <Image> ),
-	 *  bumpScale: <float>,
-	 *
-	 *  normalMap: new THREE.Texture( <Image> ),
-	 *  normalScale: <Vector2>,
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>,
-	 *
-	 *  roughnessMap: new THREE.Texture( <Image> ),
-	 *
-	 *  metalnessMap: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  envMap: new THREE.CubeTexture( [posx, negx, posy, negy, posz, negz] ),
-	 *  envMapIntensity: <float>
-	 *
-	 *  refractionRatio: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
-
-	function MeshStandardMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.defines = { 'STANDARD': '' };
-
-		this.type = 'MeshStandardMaterial';
-
-		this.color = new Color( 0xffffff ); // diffuse
-		this.roughness = 0.5;
-		this.metalness = 0.5;
-
-		this.map = null;
-
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.emissive = new Color( 0x000000 );
-		this.emissiveIntensity = 1.0;
-		this.emissiveMap = null;
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.roughnessMap = null;
-
-		this.metalnessMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.envMapIntensity = 1.0;
-
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshStandardMaterial.prototype = Object.create( Material.prototype );
-	MeshStandardMaterial.prototype.constructor = MeshStandardMaterial;
-
-	MeshStandardMaterial.prototype.isMeshStandardMaterial = true;
-
-	MeshStandardMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.defines = { 'STANDARD': '' };
-
-		this.color.copy( source.color );
-		this.roughness = source.roughness;
-		this.metalness = source.metalness;
-
-		this.map = source.map;
-
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
-
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
-
-		this.emissive.copy( source.emissive );
-		this.emissiveMap = source.emissiveMap;
-		this.emissiveIntensity = source.emissiveIntensity;
-
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
-
-		this.normalMap = source.normalMap;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.roughnessMap = source.roughnessMap;
-
-		this.metalnessMap = source.metalnessMap;
-
-		this.alphaMap = source.alphaMap;
-
-		this.envMap = source.envMap;
-		this.envMapIntensity = source.envMapIntensity;
-
-		this.refractionRatio = source.refractionRatio;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
-	/**
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *  reflectivity: <float>
-	 * }
-	 */
-
-	function MeshPhysicalMaterial( parameters ) {
-
-		MeshStandardMaterial.call( this );
-
-		this.defines = { 'PHYSICAL': '' };
-
-		this.type = 'MeshPhysicalMaterial';
-
-		this.reflectivity = 0.5; // maps to F0 = 0.04
-
-		this.clearCoat = 0.0;
-		this.clearCoatRoughness = 0.0;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshPhysicalMaterial.prototype = Object.create( MeshStandardMaterial.prototype );
-	MeshPhysicalMaterial.prototype.constructor = MeshPhysicalMaterial;
-
-	MeshPhysicalMaterial.prototype.isMeshPhysicalMaterial = true;
-
-	MeshPhysicalMaterial.prototype.copy = function ( source ) {
-
-		MeshStandardMaterial.prototype.copy.call( this, source );
-
-		this.defines = { 'PHYSICAL': '' };
-
-		this.reflectivity = source.reflectivity;
-
-		this.clearCoat = source.clearCoat;
-		this.clearCoatRoughness = source.clearCoatRoughness;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  specular: <hex>,
-	 *  shininess: <float>,
-	 *  opacity: <float>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  lightMap: new THREE.Texture( <Image> ),
-	 *  lightMapIntensity: <float>
-	 *
-	 *  aoMap: new THREE.Texture( <Image> ),
-	 *  aoMapIntensity: <float>
-	 *
-	 *  emissive: <hex>,
-	 *  emissiveIntensity: <float>
-	 *  emissiveMap: new THREE.Texture( <Image> ),
-	 *
-	 *  bumpMap: new THREE.Texture( <Image> ),
-	 *  bumpScale: <float>,
-	 *
-	 *  normalMap: new THREE.Texture( <Image> ),
-	 *  normalScale: <Vector2>,
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>,
-	 *
-	 *  specularMap: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  envMap: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
-	 *  combine: THREE.Multiply,
-	 *  reflectivity: <float>,
-	 *  refractionRatio: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
-
-	function MeshPhongMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshPhongMaterial';
-
-		this.color = new Color( 0xffffff ); // diffuse
-		this.specular = new Color( 0x111111 );
-		this.shininess = 30;
-
-		this.map = null;
-
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.emissive = new Color( 0x000000 );
-		this.emissiveIntensity = 1.0;
-		this.emissiveMap = null;
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.specularMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.combine = MultiplyOperation;
-		this.reflectivity = 1;
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshPhongMaterial.prototype = Object.create( Material.prototype );
-	MeshPhongMaterial.prototype.constructor = MeshPhongMaterial;
-
-	MeshPhongMaterial.prototype.isMeshPhongMaterial = true;
-
-	MeshPhongMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-		this.specular.copy( source.specular );
-		this.shininess = source.shininess;
-
-		this.map = source.map;
-
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
-
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
-
-		this.emissive.copy( source.emissive );
-		this.emissiveMap = source.emissiveMap;
-		this.emissiveIntensity = source.emissiveIntensity;
-
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
-
-		this.normalMap = source.normalMap;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.specularMap = source.specularMap;
-
-		this.alphaMap = source.alphaMap;
-
-		this.envMap = source.envMap;
-		this.combine = source.combine;
-		this.reflectivity = source.reflectivity;
-		this.refractionRatio = source.refractionRatio;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
-	/**
-	 * @author takahirox / http://github.com/takahirox
-	 *
-	 * parameters = {
-	 *  gradientMap: new THREE.Texture( <Image> )
-	 * }
-	 */
-
-	function MeshToonMaterial( parameters ) {
-
-		MeshPhongMaterial.call( this );
-
-		this.defines = { 'TOON': '' };
-
-		this.type = 'MeshToonMaterial';
-
-		this.gradientMap = null;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshToonMaterial.prototype = Object.create( MeshPhongMaterial.prototype );
-	MeshToonMaterial.prototype.constructor = MeshToonMaterial;
-
-	MeshToonMaterial.prototype.isMeshToonMaterial = true;
-
-	MeshToonMaterial.prototype.copy = function ( source ) {
-
-		MeshPhongMaterial.prototype.copy.call( this, source );
-
-		this.gradientMap = source.gradientMap;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *  opacity: <float>,
-	 *
-	 *  bumpMap: new THREE.Texture( <Image> ),
-	 *  bumpScale: <float>,
-	 *
-	 *  normalMap: new THREE.Texture( <Image> ),
-	 *  normalScale: <Vector2>,
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
-
-	function MeshNormalMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshNormalMaterial';
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshNormalMaterial.prototype = Object.create( Material.prototype );
-	MeshNormalMaterial.prototype.constructor = MeshNormalMaterial;
-
-	MeshNormalMaterial.prototype.isMeshNormalMaterial = true;
-
-	MeshNormalMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
-
-		this.normalMap = source.normalMap;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  lightMap: new THREE.Texture( <Image> ),
-	 *  lightMapIntensity: <float>
-	 *
-	 *  aoMap: new THREE.Texture( <Image> ),
-	 *  aoMapIntensity: <float>
-	 *
-	 *  emissive: <hex>,
-	 *  emissiveIntensity: <float>
-	 *  emissiveMap: new THREE.Texture( <Image> ),
-	 *
-	 *  specularMap: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  envMap: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
-	 *  combine: THREE.Multiply,
-	 *  reflectivity: <float>,
-	 *  refractionRatio: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *  morphNormals: <bool>
-	 * }
-	 */
-
-	function MeshLambertMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshLambertMaterial';
-
-		this.color = new Color( 0xffffff ); // diffuse
-
-		this.map = null;
-
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.emissive = new Color( 0x000000 );
-		this.emissiveIntensity = 1.0;
-		this.emissiveMap = null;
-
-		this.specularMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.combine = MultiplyOperation;
-		this.reflectivity = 1;
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshLambertMaterial.prototype = Object.create( Material.prototype );
-	MeshLambertMaterial.prototype.constructor = MeshLambertMaterial;
-
-	MeshLambertMaterial.prototype.isMeshLambertMaterial = true;
-
-	MeshLambertMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-
-		this.map = source.map;
-
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
-
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
-
-		this.emissive.copy( source.emissive );
-		this.emissiveMap = source.emissiveMap;
-		this.emissiveIntensity = source.emissiveIntensity;
-
-		this.specularMap = source.specularMap;
-
-		this.alphaMap = source.alphaMap;
-
-		this.envMap = source.envMap;
-		this.combine = source.combine;
-		this.reflectivity = source.reflectivity;
-		this.refractionRatio = source.refractionRatio;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author bhouston / https://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *
-	 *  opacity: <float>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>
-	 * }
-	 */
-
-	function MeshDepthMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshDepthMaterial';
-
-		this.depthPacking = BasicDepthPacking;
-
-		this.skinning = false;
-		this.morphTargets = false;
-
-		this.map = null;
-
-		this.alphaMap = null;
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshDepthMaterial.prototype = Object.create( Material.prototype );
-	MeshDepthMaterial.prototype.constructor = MeshDepthMaterial;
-
-	MeshDepthMaterial.prototype.isMeshDepthMaterial = true;
-
-	MeshDepthMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.depthPacking = source.depthPacking;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-
-		this.map = source.map;
-
-		this.alphaMap = source.alphaMap;
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		return this;
-
-	};
-
-	/**
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * parameters = {
-	 *
-	 *  referencePosition: <float>,
-	 *  nearDistance: <float>,
-	 *  farDistance: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>,
-	 *
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  displacementMap: new THREE.Texture( <Image> ),
-	 *  displacementScale: <float>,
-	 *  displacementBias: <float>
-	 *
-	 * }
-	 */
-
-	function MeshDistanceMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshDistanceMaterial';
-
-		this.referencePosition = new Vector3();
-		this.nearDistance = 1;
-		this.farDistance = 1000;
-
-		this.skinning = false;
-		this.morphTargets = false;
-
-		this.map = null;
-
-		this.alphaMap = null;
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshDistanceMaterial.prototype = Object.create( Material.prototype );
-	MeshDistanceMaterial.prototype.constructor = MeshDistanceMaterial;
-
-	MeshDistanceMaterial.prototype.isMeshDistanceMaterial = true;
-
-	MeshDistanceMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.referencePosition.copy( source.referencePosition );
-		this.nearDistance = source.nearDistance;
-		this.farDistance = source.farDistance;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-
-		this.map = source.map;
-
-		this.alphaMap = source.alphaMap;
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *  lightMap: new THREE.Texture( <Image> ),
-	 *  lightMapIntensity: <float>
-	 *
-	 *  aoMap: new THREE.Texture( <Image> ),
-	 *  aoMapIntensity: <float>
-	 *
-	 *  specularMap: new THREE.Texture( <Image> ),
-	 *
-	 *  alphaMap: new THREE.Texture( <Image> ),
-	 *
-	 *  envMap: new THREE.TextureCube( [posx, negx, posy, negy, posz, negz] ),
-	 *  combine: THREE.Multiply,
-	 *  reflectivity: <float>,
-	 *  refractionRatio: <float>,
-	 *
-	 *  depthTest: <bool>,
-	 *  depthWrite: <bool>,
-	 *
-	 *  wireframe: <boolean>,
-	 *  wireframeLinewidth: <float>,
-	 *
-	 *  skinning: <bool>,
-	 *  morphTargets: <bool>
-	 * }
-	 */
-
-	function MeshBasicMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshBasicMaterial';
-
-		this.color = new Color( 0xffffff ); // emissive
-
-		this.map = null;
-
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.specularMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.combine = MultiplyOperation;
-		this.reflectivity = 1;
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
-
-		this.skinning = false;
-		this.morphTargets = false;
-
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshBasicMaterial.prototype = Object.create( Material.prototype );
-	MeshBasicMaterial.prototype.constructor = MeshBasicMaterial;
-
-	MeshBasicMaterial.prototype.isMeshBasicMaterial = true;
-
-	MeshBasicMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-
-		this.map = source.map;
-
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
-
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
-
-		this.specularMap = source.specularMap;
-
-		this.alphaMap = source.alphaMap;
-
-		this.envMap = source.envMap;
-		this.combine = source.combine;
-		this.reflectivity = source.reflectivity;
-		this.refractionRatio = source.refractionRatio;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-
-		return this;
-
-	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *
-	 *  linewidth: <float>,
-	 *  linecap: "round",
-	 *  linejoin: "round"
-	 * }
-	 */
-
-	function LineBasicMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'LineBasicMaterial';
-
-		this.color = new Color( 0xffffff );
-
-		this.linewidth = 1;
-		this.linecap = 'round';
-		this.linejoin = 'round';
-
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	LineBasicMaterial.prototype = Object.create( Material.prototype );
-	LineBasicMaterial.prototype.constructor = LineBasicMaterial;
-
-	LineBasicMaterial.prototype.isLineBasicMaterial = true;
-
-	LineBasicMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-
-		this.linewidth = source.linewidth;
-		this.linecap = source.linecap;
-		this.linejoin = source.linejoin;
-
-		return this;
-
-	};
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *
-	 *  linewidth: <float>,
-	 *
-	 *  scale: <float>,
-	 *  dashSize: <float>,
-	 *  gapSize: <float>
-	 * }
-	 */
-
-	function LineDashedMaterial( parameters ) {
-
-		LineBasicMaterial.call( this );
-
-		this.type = 'LineDashedMaterial';
-
-		this.scale = 1;
-		this.dashSize = 3;
-		this.gapSize = 1;
-
-		this.setValues( parameters );
-
-	}
-
-	LineDashedMaterial.prototype = Object.create( LineBasicMaterial.prototype );
-	LineDashedMaterial.prototype.constructor = LineDashedMaterial;
-
-	LineDashedMaterial.prototype.isLineDashedMaterial = true;
-
-	LineDashedMaterial.prototype.copy = function ( source ) {
-
-		LineBasicMaterial.prototype.copy.call( this, source );
-
-		this.scale = source.scale;
-		this.dashSize = source.dashSize;
-		this.gapSize = source.gapSize;
-
-		return this;
-
-	};
-
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var RawNode = function( value ) {
-
-		GLNode.call( this, 'v4' );
-
-		this.value = value;
-
-	};
-
-	RawNode.prototype = Object.create( GLNode.prototype );
-	RawNode.prototype.constructor = RawNode;
-
-	GLNode.prototype.generate = function( builder ) {
-
-		var material = builder.material;
-
-		var data = this.value.parseAndBuildCode( builder, this.type );
-
-		var code = data.code + '\n';
-
-		if ( builder.shader == 'vertex' ) {
-
-			code += 'gl_Position = ' + data.result + ';';
-
-		} else {
-
-			code += 'gl_FragColor = ' + data.result + ';';
-
-		}
-
-		return code;
-
-	};
-
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var PositionNode = function( scope ) {
-
-		TempNode.call( this, 'v3' );
-
-		this.scope = scope || PositionNode.LOCAL;
-
-	};
-
-	PositionNode.LOCAL = 'local';
-	PositionNode.WORLD = 'world';
-	PositionNode.VIEW = 'view';
-	PositionNode.PROJECTION = 'projection';
-
-	PositionNode.prototype = Object.create( TempNode.prototype );
-	PositionNode.prototype.constructor = PositionNode;
-
-	PositionNode.prototype.getType = function( builder ) {
-
-		switch ( this.scope ) {
-			case PositionNode.PROJECTION:
-				return 'v4';
-		}
-
-		return this.type;
-
-	};
-
-	PositionNode.prototype.isShared = function( builder ) {
-
-		switch ( this.scope ) {
-			case PositionNode.LOCAL:
-			case PositionNode.WORLD:
-				return false;
-		}
-
-		return true;
-
-	};
-
-	PositionNode.prototype.generate = function( builder, output ) {
-
-		var material = builder.material;
-		var result;
-
-		switch ( this.scope ) {
-
-			case PositionNode.LOCAL:
-
-				material.requestAttribs.position = true;
-
-				if ( builder.isShader( 'vertex' ) ) result = 'transformed';
-				else result = 'vPosition';
-
-				break;
-
-			case PositionNode.WORLD:
-
-				material.requestAttribs.worldPosition = true;
-
-				if ( builder.isShader( 'vertex' ) ) result = 'vWPosition';
-				else result = 'vWPosition';
-
-				break;
-
-			case PositionNode.VIEW:
-
-				if ( builder.isShader( 'vertex' ) ) result = '-mvPosition.xyz';
-				else result = 'vViewPosition';
-
-				break;
-
-			case PositionNode.PROJECTION:
-
-				if ( builder.isShader( 'vertex' ) ) result = '(projectionMatrix * modelViewMatrix * vec4( position, 1.0 ))';
-				else result = 'vec4( 0.0 )';
-
-				break;
-
-		}
-
-		return builder.format( result, this.getType( builder ), output );
-
-	};
-
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var ColorNode = function( color ) {
-
-		InputNode.call( this, 'c' );
-
-		this.value = new Color( color || 0 );
-
-	};
-
-	ColorNode.prototype = Object.create( InputNode.prototype );
-	ColorNode.prototype.constructor = ColorNode;
-
-	NodeMaterial.addShortcuts( ColorNode.prototype, 'value', [ 'r', 'g', 'b' ] );
-
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var NodeBuilder = function( material ) {
-
-		this.material = material;
-
-		this.caches = [];
-		this.slots = [];
-
-		this.keywords = {};
-
-		this.parsing = false;
-		this.optimize = true;
-
-		this.update();
-
-	};
-
-	NodeBuilder.type = {
-		float : 'fv1',
-		vec2 : 'v2',
-		vec3 : 'v3',
-		vec4 : 'v4',
-		mat4 : 'v4',
-		int : 'iv1'
-	};
-
-	NodeBuilder.constructors = [
-		'float',
-		'vec2',
-		'vec3',
-		'vec4'
-	];
-
-	NodeBuilder.elements = [
-		'x',
-		'y',
-		'z',
-		'w'
-	];
-
-	NodeBuilder.prototype = {
-
-		constructor: NodeBuilder,
-
-		addCache : function( name, requires ) {
-
-			this.caches.push( {
-				name : name || '',
-				requires : requires || {}
-			} );
-
-			return this.update();
-
-		},
-
-		removeCache : function() {
-
-			this.caches.pop();
-
-			return this.update();
-
-		},
-
-		addSlot : function( name ) {
-
-			this.slots.push( {
-				name : name || ''
-			} );
-
-			return this.update();
-
-		},
-
-		removeSlot : function() {
-
-			this.slots.pop();
-
-			return this.update();
-
-		},
-
-		isCache : function( name ) {
-
-			var i = this.caches.length;
-
-			while ( i -- ) {
-
-				if ( this.caches[ i ].name == name ) return true;
-
-			}
-
-			return false;
-
-		},
-
-		isSlot : function( name ) {
-
-			var i = this.slots.length;
-
-			while ( i -- ) {
-
-				if ( this.slots[ i ].name == name ) return true;
-
-			}
-
-			return false;
-
-		},
-
-		update : function() {
-
-			var cache = this.caches[ this.caches.length - 1 ];
-			var slot = this.slots[ this.slots.length - 1 ];
-
-			this.slot = slot ? slot.name : '';
-			this.cache = cache ? cache.name : '';
-			this.requires = cache ? cache.requires : {};
-
-			return this;
-
-		},
-
-		require : function( name, node ) {
-
-			this.requires[ name ] = node;
-
-			return this;
-
-		},
-
-		include : function( node, parent, source ) {
-
-			this.material.include( this, node, parent, source );
-
-			return this;
-
-		},
-
-		colorToVector : function( color ) {
-
-			return color.replace( 'r', 'x' ).replace( 'g', 'y' ).replace( 'b', 'z' ).replace( 'a', 'w' );
-
-		},
-
-		getConstructorFromLength : function( len ) {
-
-			return NodeBuilder.constructors[ len - 1 ];
-
-		},
-
-		getFormatName : function( format ) {
-
-			return format.replace( /c/g, 'v3' ).replace( /fv1/g, 'v1' ).replace( /iv1/g, 'i' );
-
-		},
-
-		isFormatMatrix : function( format ) {
-
-			return /^m/.test( format );
-
-		},
-
-		getFormatLength : function( format ) {
-
-			return parseInt( this.getFormatName( format ).substr( 1 ) );
-
-		},
-
-		getFormatFromLength : function( len ) {
-
-			if ( len == 1 ) return 'fv1';
-
-			return 'v' + len;
-
-		},
-
-		format : function( code, from, to ) {
-
-			var format = this.getFormatName( to + '=' + from );
-
-			switch ( format ) {
-
-				case 'v1=v2': return code + '.x';
-				case 'v1=v3': return code + '.x';
-				case 'v1=v4': return code + '.x';
-				case 'v1=i': return 'float(' + code + ')';
-
-				case 'v2=v1': return 'vec2(' + code + ')';
-				case 'v2=v3': return code + '.xy';
-				case 'v2=v4': return code + '.xy';
-				case 'v2=i': return 'vec2(float(' + code + '))';
-
-				case 'v3=v1': return 'vec3(' + code + ')';
-				case 'v3=v2': return 'vec3(' + code + ',0.0)';
-				case 'v3=v4': return code + '.xyz';
-				case 'v3=i': return 'vec2(float(' + code + '))';
-
-				case 'v4=v1': return 'vec4(' + code + ')';
-				case 'v4=v2': return 'vec4(' + code + ',0.0,1.0)';
-				case 'v4=v3': return 'vec4(' + code + ',1.0)';
-				case 'v4=i': return 'vec4(float(' + code + '))';
-
-				case 'i=v1': return 'int(' + code + ')';
-				case 'i=v2': return 'int(' + code + '.x)';
-				case 'i=v3': return 'int(' + code + '.x)';
-				case 'i=v4': return 'int(' + code + '.x)';
-
-			}
-
-			return code;
-
-		},
-
-		getTypeByFormat : function( format ) {
-
-			return NodeBuilder.type[ format ] || format;
-
-		},
-
-		getUuid : function( uuid, useCache ) {
-
-			useCache = useCache !== undefined ? useCache : true;
-
-			if ( useCache && this.cache ) uuid = this.cache + '-' + uuid;
-
-			return uuid;
-
-		},
-
-		getElementByIndex : function( index ) {
-
-			return NodeBuilder.elements[ index ];
-
-		},
-
-		getIndexByElement : function( elm ) {
-
-			return NodeBuilder.elements.indexOf( elm );
-
-		},
-
-		isShader : function( shader ) {
-
-			return this.shader == shader;
-
-		},
-
-		setShader : function( shader ) {
-
-			this.shader = shader;
-
-			return this;
-
-		}
-	};
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 * @author tschw
-	 */
-
 	function Matrix3() {
 
 		this.elements = [
@@ -6010,7 +4799,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix3: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix3: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -6175,7 +4964,7 @@ var Three = (function (exports) {
 
 			if ( matrix && matrix.isMatrix4 ) {
 
-				console.error( "THREE.Matrix3: .getInverse() no longer takes a Matrix4 argument." );
+				console.error( "Matrix3: .getInverse() no longer takes a Matrix4 argument." );
 
 			}
 
@@ -6194,7 +4983,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix3: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix3: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -6375,12 +5164,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author szimek / https://github.com/szimek/
-	 */
-
 	var textureId = 0;
 
 	function Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
@@ -6420,7 +5203,7 @@ var Three = (function (exports) {
 		this.flipY = true;
 		this.unpackAlignment = 4;	// valid values: 1, 2, 4, 8 (see http://www.khronos.org/opengles/sdk/docs/man/xhtml/glPixelStorei.xml)
 
-		// Values of encoding !== THREE.LinearEncoding only supported on map, envMap and emissiveMap.
+		// Values of encoding !== LinearEncoding only supported on map, envMap and emissiveMap.
 		//
 		// Also changing the encoding after already used by a Material will not automatically make the Material
 		// update.  You need to explicitly call Material.needsUpdate to trigger it to recompile.
@@ -6562,7 +5345,7 @@ var Three = (function (exports) {
 
 			if ( this.image !== undefined ) {
 
-				// TODO: Move to THREE.Image
+				// TODO: Move to Image
 
 				var image = this.image;
 
@@ -6689,10 +5472,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function CubeTexture( images, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
 
 		images = images !== undefined ? images : [];
@@ -6724,12 +5503,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 * @thanks bhouston / https://clara.io/
-	 */
 
 	var FunctionNode = function( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ) {
 
@@ -6817,11 +5590,6 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
 	var NodeLib = {
 
 		nodes: {},
@@ -6885,11 +5653,7 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var UVNode = function( index ) {
+	var UVNode = function ( index ) {
 
 		TempNode.call( this, 'v2', { shared: false } );
 
@@ -6902,13 +5666,14 @@ var Three = (function (exports) {
 
 	UVNode.prototype = Object.create( TempNode.prototype );
 	UVNode.prototype.constructor = UVNode;
+	UVNode.prototype.nodeType = "UV";
 
-	UVNode.prototype.generate = function( builder, output ) {
+	UVNode.prototype.generate = function ( builder, output ) {
 
 		var material = builder.material;
 		var result;
 
-		material.requestAttribs.uv[ this.index ] = true;
+		material.requires.uv[ this.index ] = true;
 
 		if ( builder.isShader( 'vertex' ) ) result = UVNode.vertexDict[ this.index ];
 		else result = UVNode.fragmentDict[ this.index ];
@@ -6917,11 +5682,23 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	UVNode.prototype.toJSON = function ( meta ) {
 
-	var NormalNode = function( scope ) {
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.index = this.index;
+
+		}
+
+		return data;
+
+	};
+
+	var NormalNode = function ( scope ) {
 
 		TempNode.call( this, 'v3' );
 
@@ -6935,19 +5712,22 @@ var Three = (function (exports) {
 
 	NormalNode.prototype = Object.create( TempNode.prototype );
 	NormalNode.prototype.constructor = NormalNode;
+	NormalNode.prototype.nodeType = "Normal";
 
-	NormalNode.prototype.isShared = function( builder ) {
+	NormalNode.prototype.isShared = function ( builder ) {
 
 		switch ( this.scope ) {
+
 			case NormalNode.WORLD:
 				return true;
+
 		}
 
 		return false;
 
 	};
 
-	NormalNode.prototype.generate = function( builder, output ) {
+	NormalNode.prototype.generate = function ( builder, output ) {
 
 		var material = builder.material;
 		var result;
@@ -6956,7 +5736,7 @@ var Three = (function (exports) {
 
 			case NormalNode.LOCAL:
 
-				material.requestAttribs.normal = true;
+				material.requires.normal = true;
 
 				if ( builder.isShader( 'vertex' ) ) result = 'normal';
 				else result = 'vObjectNormal';
@@ -6965,7 +5745,7 @@ var Three = (function (exports) {
 
 			case NormalNode.WORLD:
 
-				material.requestAttribs.worldNormal = true;
+				material.requires.worldNormal = true;
 
 				if ( builder.isShader( 'vertex' ) ) result = '( modelMatrix * vec4( objectNormal, 0.0 ) ).xyz';
 				else result = 'vWNormal';
@@ -6984,11 +5764,23 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	NormalNode.prototype.toJSON = function ( meta ) {
 
-	var FloatNode = function( value ) {
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.scope = this.scope;
+
+		}
+
+		return data;
+
+	};
+
+	var FloatNode = function ( value ) {
 
 		InputNode.call( this, 'fv1' );
 
@@ -6998,15 +5790,16 @@ var Three = (function (exports) {
 
 	FloatNode.prototype = Object.create( InputNode.prototype );
 	FloatNode.prototype.constructor = FloatNode;
+	FloatNode.prototype.nodeType = "Float";
 
 	Object.defineProperties( FloatNode.prototype, {
 		number: {
-			get: function() {
+			get: function () {
 
 				return this.value[ 0 ];
 
 			},
-			set: function( val ) {
+			set: function ( val ) {
 
 				this.value[ 0 ] = val;
 
@@ -7014,34 +5807,109 @@ var Three = (function (exports) {
 		}
 	} );
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	FloatNode.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
-	var TimerNode = function( value, scale ) {
+		var value = this.number;
 
-		FloatNode.call( this, value );
-
-		this.requestUpdate = true;
-
-		this.scale = scale !== undefined ? scale : 1;
+		return builder.format( Math.floor( value ) !== value ? value : value + ".0", type, output );
 
 	};
+
+	FloatNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.number = this.number;
+
+			if ( this.readonly === true ) data.readonly = true;
+
+		}
+
+		return data;
+
+	};
+
+	var TimerNode = function ( scale, scope ) {
+
+		FloatNode.call( this );
+
+		this.scale = scale !== undefined ? scale : 1;
+		this.scope = scope || TimerNode.GLOBAL;
+
+		this.timeScale = this.scale !== 1;
+
+	};
+
+	TimerNode.GLOBAL = 'global';
+	TimerNode.LOCAL = 'local';
+	TimerNode.DELTA = 'delta';
 
 	TimerNode.prototype = Object.create( FloatNode.prototype );
 	TimerNode.prototype.constructor = TimerNode;
+	TimerNode.prototype.nodeType = "Timer";
 
-	TimerNode.prototype.updateFrame = function( delta ) {
+	TimerNode.prototype.isReadonly = function ( builder ) {
 
-		this.number += delta * this.scale;
+		return false;
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	TimerNode.prototype.isUnique = function ( builder ) {
 
-	var ConstNode = function( src, useDefine ) {
+		// share TimerNode "uniform" input if is used on more time with others TimerNode
+		return this.timeScale && ( this.scope === TimerNode.GLOBAL || this.scope === TimerNode.DELTA );
+
+	};
+
+	TimerNode.prototype.updateFrame = function ( frame ) {
+
+		var scale = this.timeScale ? this.scale : 1;
+
+		switch( this.scope ) {
+
+			case TimerNode.LOCAL:
+
+				this.number += frame.delta * scale;
+
+				break;
+
+			case TimerNode.DELTA:
+
+				this.number = frame.delta * scale;
+
+				break;
+
+			default:
+
+				this.number = frame.time * scale;
+
+		}
+
+	};
+
+	TimerNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.scope = this.scope;
+			data.scale = this.scale;
+			data.timeScale = this.timeScale;
+
+		}
+
+		return data;
+
+	};
+
+	var ConstNode = function ( src, useDefine ) {
 
 		TempNode.call( this );
 
@@ -7058,18 +5926,19 @@ var Three = (function (exports) {
 
 	ConstNode.prototype = Object.create( TempNode.prototype );
 	ConstNode.prototype.constructor = ConstNode;
+	ConstNode.prototype.nodeType = "Const";
 
-	ConstNode.prototype.getType = function( builder ) {
+	ConstNode.prototype.getType = function ( builder ) {
 
 		return builder.getTypeByFormat( this.type );
 
 	};
 
-	ConstNode.prototype.eval = function( src, useDefine ) {
+	ConstNode.prototype.eval = function ( src, useDefine ) {
 
 		src = ( src || '' ).trim();
 
-		var name, type, value;
+		var name, type, value = "";
 
 		var rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\=?\s?(.*?)(\;|$)/i;
 		var match = src.match( rDeclaration );
@@ -7095,7 +5964,7 @@ var Three = (function (exports) {
 
 	};
 
-	ConstNode.prototype.build = function( builder, output ) {
+	ConstNode.prototype.build = function ( builder, output ) {
 
 		if ( output === 'source' ) {
 
@@ -7121,18 +5990,36 @@ var Three = (function (exports) {
 
 	};
 
-	ConstNode.prototype.generate = function( builder, output ) {
+	ConstNode.prototype.generate = function ( builder, output ) {
 
 		return builder.format( this.name, this.getType( builder ), output );
 
 	};
 
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	ConstNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.name = this.name;
+			data.out = this.type;
+
+			if ( this.value ) data.value = this.value;
+			if ( data.useDefine === true ) data.useDefine = true;
+
+		}
+
+		return data;
+
+	};
 
 	// Fix circular dependency, see #2
+
+
+
 	//
 	//	Keywords
 	//
@@ -7281,18 +6168,9 @@ var Three = (function (exports) {
 		"}"
 	].join( "\n" ) ) );
 
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 * @thanks bhouston / https://clara.io/
-	 */
-
 	// Fix circular dependency, see #2
+
+
 	FunctionNode.prototype.isShared = function( builder, output ) {
 
 		return ! this.isMethod;
@@ -7406,49 +6284,42 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 * @thanks bhouston / https://clara.io/
-	 */
-
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var NodeMaterial = function( vertex, fragment ) {
+	var NodeMaterial = function ( vertex, fragment ) {
 
 		ShaderMaterial.call( this );
 
 		this.vertex = vertex || new RawNode( new PositionNode( PositionNode.PROJECTION ) );
 		this.fragment = fragment || new RawNode( new ColorNode( 0xFF0000 ) );
 
+		this.updaters = [];
+
 	};
 
 	NodeMaterial.types = {
-		t : 'sampler2D',
-		tc : 'samplerCube',
-		bv1 : 'bool',
-		iv1 : 'int',
-		fv1 : 'float',
-		c : 'vec3',
-		v2 : 'vec2',
-		v3 : 'vec3',
-		v4 : 'vec4',
-		m4 : 'mat4'
+		t: 'sampler2D',
+		tc: 'samplerCube',
+		bv1: 'bool',
+		iv1: 'int',
+		fv1: 'float',
+		c: 'vec3',
+		v2: 'vec2',
+		v3: 'vec3',
+		v4: 'vec4',
+		m3: 'mat3',
+		m4: 'mat4'
 	};
 
-	NodeMaterial.addShortcuts = function( proto, prop, list ) {
+	NodeMaterial.addShortcuts = function ( proto, prop, list ) {
 
 		function applyShortcut( prop, name ) {
 
 			return {
-				get: function() {
+				get: function () {
 
 					return this[ prop ][ name ];
 
 				},
-				set: function( val ) {
+				set: function ( val ) {
 
 					this[ prop ][ name ] = val;
 
@@ -7457,7 +6328,7 @@ var Three = (function (exports) {
 
 		}
 
-		return ( function() {
+		return ( function () {
 
 			var shortcuts = {};
 
@@ -7477,20 +6348,23 @@ var Three = (function (exports) {
 
 	NodeMaterial.prototype = Object.create( ShaderMaterial.prototype );
 	NodeMaterial.prototype.constructor = NodeMaterial;
+	NodeMaterial.prototype.type = "NodeMaterial";
 
-	NodeMaterial.prototype.updateFrame = function( delta ) {
+	NodeMaterial.prototype.updateFrame = function ( frame ) {
 
-		for ( var i = 0; i < this.requestUpdate.length; ++ i ) {
+		for ( var i = 0; i < this.updaters.length; ++ i ) {
 
-			this.requestUpdate[ i ].updateFrame( delta );
+			frame.updateNode( this.updaters[ i ] );
 
 		}
 
 	};
 
-	NodeMaterial.prototype.build = function() {
+	NodeMaterial.prototype.build = function () {
 
 		var vertex, fragment;
+
+		this.nodes = [];
 
 		this.defines = {};
 		this.uniforms = {};
@@ -7498,7 +6372,7 @@ var Three = (function (exports) {
 
 		this.extensions = {};
 
-		this.nodeData = {};	
+		this.nodeData = {};
 
 		this.vertexUniform = [];
 		this.fragmentUniform = [];
@@ -7512,11 +6386,13 @@ var Three = (function (exports) {
 		this.consts = [];
 		this.functions = [];
 
-		this.requestUpdate = [];
+		this.updaters = [];
 
-		this.requestAttribs = {
+		this.requires = {
 			uv: [],
-			color: []
+			color: [],
+			lights: this.lights,
+			fog: this.fog
 		};
 
 		this.vertexPars = '';
@@ -7529,25 +6405,25 @@ var Three = (function (exports) {
 		this.fragmentNode = '';
 
 		this.prefixCode = [
-		"#ifdef GL_EXT_shader_texture_lod",
+			"#ifdef GL_EXT_shader_texture_lod",
 
-		"	#define texCube(a, b) textureCube(a, b)",
-		"	#define texCubeBias(a, b, c) textureCubeLodEXT(a, b, c)",
+			"	#define texCube(a, b) textureCube(a, b)",
+			"	#define texCubeBias(a, b, c) textureCubeLodEXT(a, b, c)",
 
-		"	#define tex2D(a, b) texture2D(a, b)",
-		"	#define tex2DBias(a, b, c) texture2DLodEXT(a, b, c)",
+			"	#define tex2D(a, b) texture2D(a, b)",
+			"	#define tex2DBias(a, b, c) texture2DLodEXT(a, b, c)",
 
-		"#else",
+			"#else",
 
-		"	#define texCube(a, b) textureCube(a, b)",
-		"	#define texCubeBias(a, b, c) textureCube(a, b, c)",
+			"	#define texCube(a, b) textureCube(a, b)",
+			"	#define texCubeBias(a, b, c) textureCube(a, b, c)",
 
-		"	#define tex2D(a, b) texture2D(a, b)",
-		"	#define tex2DBias(a, b, c) texture2D(a, b, c)",
+			"	#define tex2D(a, b) texture2D(a, b)",
+			"	#define tex2DBias(a, b, c) texture2D(a, b, c)",
 
-		"#endif",
+			"#endif",
 
-		"#include <packing>"
+			"#include <packing>"
 
 		].join( "\n" );
 
@@ -7556,7 +6432,7 @@ var Three = (function (exports) {
 		vertex = this.vertex.build( builder.setShader( 'vertex' ), 'v4' );
 		fragment = this.fragment.build( builder.setShader( 'fragment' ), 'v4' );
 
-		if ( this.requestAttribs.uv[ 0 ] ) {
+		if ( this.requires.uv[ 0 ] ) {
 
 			this.addVertexPars( 'varying vec2 vUv;' );
 			this.addFragmentPars( 'varying vec2 vUv;' );
@@ -7565,7 +6441,7 @@ var Three = (function (exports) {
 
 		}
 
-		if ( this.requestAttribs.uv[ 1 ] ) {
+		if ( this.requires.uv[ 1 ] ) {
 
 			this.addVertexPars( 'varying vec2 vUv2; attribute vec2 uv2;' );
 			this.addFragmentPars( 'varying vec2 vUv2;' );
@@ -7574,7 +6450,7 @@ var Three = (function (exports) {
 
 		}
 
-		if ( this.requestAttribs.color[ 0 ] ) {
+		if ( this.requires.color[ 0 ] ) {
 
 			this.addVertexPars( 'varying vec4 vColor; attribute vec4 color;' );
 			this.addFragmentPars( 'varying vec4 vColor;' );
@@ -7583,7 +6459,7 @@ var Three = (function (exports) {
 
 		}
 
-		if ( this.requestAttribs.color[ 1 ] ) {
+		if ( this.requires.color[ 1 ] ) {
 
 			this.addVertexPars( 'varying vec4 vColor2; attribute vec4 color2;' );
 			this.addFragmentPars( 'varying vec4 vColor2;' );
@@ -7592,7 +6468,7 @@ var Three = (function (exports) {
 
 		}
 
-		if ( this.requestAttribs.position ) {
+		if ( this.requires.position ) {
 
 			this.addVertexPars( 'varying vec3 vPosition;' );
 			this.addFragmentPars( 'varying vec3 vPosition;' );
@@ -7601,18 +6477,16 @@ var Three = (function (exports) {
 
 		}
 
-		if ( this.requestAttribs.worldPosition ) {
-
-			// for future update replace from the native "varying vec3 vWorldPosition" for optimization
+		if ( this.requires.worldPosition ) {
 
 			this.addVertexPars( 'varying vec3 vWPosition;' );
 			this.addFragmentPars( 'varying vec3 vWPosition;' );
 
-			this.addVertexCode( 'vWPosition = worldPosition.xyz;' );
+			this.addVertexCode( 'vWPosition = ( modelMatrix * vec4( transformed, 1.0 ) ).xyz;' );
 
 		}
 
-		if ( this.requestAttribs.normal ) {
+		if ( this.requires.normal ) {
 
 			this.addVertexPars( 'varying vec3 vObjectNormal;' );
 			this.addFragmentPars( 'varying vec3 vObjectNormal;' );
@@ -7621,7 +6495,7 @@ var Three = (function (exports) {
 
 		}
 
-		if ( this.requestAttribs.worldNormal ) {
+		if ( this.requires.worldNormal ) {
 
 			this.addVertexPars( 'varying vec3 vWNormal;' );
 			this.addFragmentPars( 'varying vec3 vWNormal;' );
@@ -7630,8 +6504,10 @@ var Three = (function (exports) {
 
 		}
 
-		this.lights = this.requestAttribs.light;
-		this.transparent = this.requestAttribs.transparent || this.blending > NormalBlending;
+		this.fog = this.requires.fog;
+		this.lights = this.requires.lights;
+
+		this.transparent = this.requires.transparent || this.blending > NormalBlending;
 
 		this.vertexShader = [
 			this.prefixCode,
@@ -7666,19 +6542,19 @@ var Three = (function (exports) {
 
 	};
 
-	NodeMaterial.prototype.define = function( name, value ) {
+	NodeMaterial.prototype.define = function ( name, value ) {
 
 		this.defines[ name ] = value == undefined ? 1 : value;
 
 	};
 
-	NodeMaterial.prototype.isDefined = function( name ) {
+	NodeMaterial.prototype.isDefined = function ( name ) {
 
 		return this.defines[ name ] != undefined;
 
 	};
 
-	NodeMaterial.prototype.mergeUniform = function( uniforms ) {
+	NodeMaterial.prototype.mergeUniform = function ( uniforms ) {
 
 		for ( var name in uniforms ) {
 
@@ -7688,15 +6564,15 @@ var Three = (function (exports) {
 
 	};
 
-	NodeMaterial.prototype.createUniform = function( type, value, ns, needsUpdate ) {
+	NodeMaterial.prototype.createUniform = function ( type, value, ns, needsUpdate ) {
 
 		var index = this.uniformList.length;
 
 		var uniform = {
-			type : type,
-			value : value,
-			name : ns ? ns : 'nVu' + index,
-			needsUpdate : needsUpdate
+			type: type,
+			value: value,
+			name: ns ? ns : 'nVu' + index,
+			needsUpdate: needsUpdate
 		};
 
 		this.uniformList.push( uniform );
@@ -7705,7 +6581,7 @@ var Three = (function (exports) {
 
 	};
 
-	NodeMaterial.prototype.getVertexTemp = function( uuid, type, ns ) {
+	NodeMaterial.prototype.getVertexTemp = function ( uuid, type, ns ) {
 
 		var data = this.vertexTemps[ uuid ];
 
@@ -7714,7 +6590,7 @@ var Three = (function (exports) {
 			var index = this.vertexTemps.length,
 				name = ns ? ns : 'nVt' + index;
 
-			data = { name : name, type : type };
+			data = { name: name, type: type };
 
 			this.vertexTemps.push( data );
 			this.vertexTemps[ uuid ] = data;
@@ -7725,7 +6601,7 @@ var Three = (function (exports) {
 
 	};
 
-	NodeMaterial.prototype.getFragmentTemp = function( uuid, type, ns ) {
+	NodeMaterial.prototype.getFragmentTemp = function ( uuid, type, ns ) {
 
 		var data = this.fragmentTemps[ uuid ];
 
@@ -7734,7 +6610,7 @@ var Three = (function (exports) {
 			var index = this.fragmentTemps.length,
 				name = ns ? ns : 'nVt' + index;
 
-			data = { name : name, type : type };
+			data = { name: name, type: type };
 
 			this.fragmentTemps.push( data );
 			this.fragmentTemps[ uuid ] = data;
@@ -7745,7 +6621,7 @@ var Three = (function (exports) {
 
 	};
 
-	NodeMaterial.prototype.getVar = function( uuid, type, ns ) {
+	NodeMaterial.prototype.getVar = function ( uuid, type, ns ) {
 
 		var data = this.vars[ uuid ];
 
@@ -7754,7 +6630,7 @@ var Three = (function (exports) {
 			var index = this.vars.length,
 				name = ns ? ns : 'nVv' + index;
 
-			data = { name : name, type : type };
+			data = { name: name, type: type };
 
 			this.vars.push( data );
 			this.vars[ uuid ] = data;
@@ -7768,7 +6644,7 @@ var Three = (function (exports) {
 
 	};
 
-	NodeMaterial.prototype.getAttribute = function( name, type ) {
+	NodeMaterial.prototype.getAttribute = function ( name, type ) {
 
 		if ( ! this.attributes[ name ] ) {
 
@@ -7777,7 +6653,7 @@ var Three = (function (exports) {
 			this.addVertexPars( 'attribute ' + type + ' ' + name + ';' );
 			this.addVertexCode( varying.name + ' = ' + name + ';' );
 
-			this.attributes[ name ] = { varying : varying, name : name, type : type };
+			this.attributes[ name ] = { varying: varying, name: name, type: type };
 
 		}
 
@@ -7785,7 +6661,7 @@ var Three = (function (exports) {
 
 	};
 
-	NodeMaterial.prototype.getIncludes = function() {
+	NodeMaterial.prototype.getIncludes = function () {
 
 		function sortByPosition( a, b ) {
 
@@ -7793,7 +6669,7 @@ var Three = (function (exports) {
 
 		}
 
-		return function( incs ) {
+		return function ( incs ) {
 
 			if ( ! incs ) return '';
 
@@ -7807,41 +6683,41 @@ var Three = (function (exports) {
 
 			return code;
 
-		}
+		};
 
 	}();
 
-	NodeMaterial.prototype.addVertexPars = function( code ) {
+	NodeMaterial.prototype.addVertexPars = function ( code ) {
 
 		this.vertexPars += code + '\n';
 
 	};
 
-	NodeMaterial.prototype.addFragmentPars = function( code ) {
+	NodeMaterial.prototype.addFragmentPars = function ( code ) {
 
 		this.fragmentPars += code + '\n';
 
 	};
 
-	NodeMaterial.prototype.addVertexCode = function( code ) {
+	NodeMaterial.prototype.addVertexCode = function ( code ) {
 
 		this.vertexCode += code + '\n';
 
 	};
 
-	NodeMaterial.prototype.addFragmentCode = function( code ) {
+	NodeMaterial.prototype.addFragmentCode = function ( code ) {
 
 		this.fragmentCode += code + '\n';
 
 	};
 
-	NodeMaterial.prototype.addVertexNode = function( code ) {
+	NodeMaterial.prototype.addVertexNode = function ( code ) {
 
 		this.vertexNode += code + '\n';
 
 	};
 
-	NodeMaterial.prototype.clearVertexNode = function() {
+	NodeMaterial.prototype.clearVertexNode = function () {
 
 		var code = this.vertexNode;
 
@@ -7851,13 +6727,13 @@ var Three = (function (exports) {
 
 	};
 
-	NodeMaterial.prototype.addFragmentNode = function( code ) {
+	NodeMaterial.prototype.addFragmentNode = function ( code ) {
 
 		this.fragmentNode += code + '\n';
 
 	};
 
-	NodeMaterial.prototype.clearFragmentNode = function() {
+	NodeMaterial.prototype.clearFragmentNode = function () {
 
 		var code = this.fragmentNode;
 
@@ -7867,7 +6743,7 @@ var Three = (function (exports) {
 
 	};
 
-	NodeMaterial.prototype.getCodePars = function( pars, prefix ) {
+	NodeMaterial.prototype.getCodePars = function ( pars, prefix ) {
 
 		prefix = prefix || '';
 
@@ -7893,7 +6769,7 @@ var Three = (function (exports) {
 
 	};
 
-	NodeMaterial.prototype.createVertexUniform = function( type, value, ns, needsUpdate ) {
+	NodeMaterial.prototype.createVertexUniform = function ( type, value, ns, needsUpdate ) {
 
 		var uniform = this.createUniform( type, value, ns, needsUpdate );
 
@@ -7906,7 +6782,7 @@ var Three = (function (exports) {
 
 	};
 
-	NodeMaterial.prototype.createFragmentUniform = function( type, value, ns, needsUpdate ) {
+	NodeMaterial.prototype.createFragmentUniform = function ( type, value, ns, needsUpdate ) {
 
 		var uniform = this.createUniform( type, value, ns, needsUpdate );
 
@@ -7919,13 +6795,13 @@ var Three = (function (exports) {
 
 	};
 
-	NodeMaterial.prototype.getDataNode = function( uuid ) {
+	NodeMaterial.prototype.getDataNode = function ( uuid ) {
 
 		return this.nodeData[ uuid ] = this.nodeData[ uuid ] || {};
 
 	};
 
-	NodeMaterial.prototype.include = function( builder, node, parent, source ) {
+	NodeMaterial.prototype.include = function ( builder, node, parent, source ) {
 
 		var includes;
 
@@ -7946,8 +6822,8 @@ var Three = (function (exports) {
 		if ( ! included ) {
 
 			included = includes[ node.name ] = {
-				node : node,
-				deps : []
+				node: node,
+				deps: []
 			};
 
 			includes.push( included );
@@ -7982,11 +6858,67 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	NodeMaterial.prototype.toJSON = function ( meta ) {
 
-	var Vector3Node = function( x, y, z ) {
+		var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+		if ( isRootObject ) {
+
+			meta = {
+				nodes: {}
+			};
+
+		}
+
+		if ( meta && ! meta.materials ) meta.materials = {};
+
+		if ( ! meta.materials[ this.uuid ] ) {
+
+			var data = {};
+
+			data.uuid = this.uuid;
+			data.type = this.type;
+
+			meta.materials[ data.uuid ] = data;
+
+			if ( this.name !== "" ) data.name = this.name;
+
+			if ( this.blending !== NormalBlending ) data.blending = this.blending;
+			if ( this.flatShading === true ) data.flatShading = this.flatShading;
+			if ( this.side !== FrontSide ) data.side = this.side;
+
+			if ( this.transparent === true ) data.transparent = this.transparent;
+
+			data.depthFunc = this.depthFunc;
+			data.depthTest = this.depthTest;
+			data.depthWrite = this.depthWrite;
+
+			if ( this.wireframe === true ) data.wireframe = this.wireframe;
+			if ( this.wireframeLinewidth > 1 ) data.wireframeLinewidth = this.wireframeLinewidth;
+			if ( this.wireframeLinecap !== 'round' ) data.wireframeLinecap = this.wireframeLinecap;
+			if ( this.wireframeLinejoin !== 'round' ) data.wireframeLinejoin = this.wireframeLinejoin;
+
+			if ( this.morphTargets === true ) data.morphTargets = true;
+			if ( this.skinning === true ) data.skinning = true;
+
+			data.fog = this.fog;
+			data.lights = this.lights;
+
+			if ( this.visible === false ) data.visible = false;
+			if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
+
+			data.vertex = this.vertex.toJSON( meta ).uuid;
+			data.fragment = this.fragment.toJSON( meta ).uuid;
+
+		}
+
+		meta.material = this.uuid;
+
+		return meta;
+
+	};
+
+	var Vector3Node = function ( x, y, z ) {
 
 		InputNode.call( this, 'v3' );
 
@@ -7997,24 +6929,77 @@ var Three = (function (exports) {
 
 	Vector3Node.prototype = Object.create( InputNode.prototype );
 	Vector3Node.prototype.constructor = Vector3Node;
+	Vector3Node.prototype.nodeType = "Vector3";
 
 	NodeMaterial.addShortcuts( Vector3Node.prototype, 'value', [ 'x', 'y', 'z' ] );
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	Vector3Node.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
+
+		return builder.format( "vec3( " + this.x + ", " + this.y + ", " + this.z + " )", type, output );
+
+	};
+
+	Vector3Node.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.x = this.x;
+			data.y = this.y;
+			data.z = this.z;
+
+			if ( this.readonly === true ) data.readonly = true;
+
+		}
+
+		return data;
+
+	};
 
 	var VelocityNode = function ( target, params ) {
 
 		Vector3Node.call( this );
 
-		this.requestUpdate = true;
+		this.params = {};
 
-		this.target = target;
-		this.params = params || {};
-
-		this.position = this.target.position.clone();
 		this.velocity = new Vector3();
+
+		this.setTarget( target );
+		this.setParams( params );
+
+	};
+
+	VelocityNode.prototype = Object.create( Vector3Node.prototype );
+	VelocityNode.prototype.constructor = VelocityNode;
+	VelocityNode.prototype.nodeType = "Velocity";
+
+	VelocityNode.prototype.isReadonly = function ( builder ) {
+
+		return false;
+
+	};
+
+	VelocityNode.prototype.setParams = function ( params ) {
+
+		switch ( this.params.type ) {
+
+			case "elastic":
+
+				delete this.moment;
+
+				delete this.speed;
+				delete this.springVelocity;
+
+				delete this.lastVelocity;
+
+				break;
+
+		}
+
+		this.params = params || {};
 
 		switch ( this.params.type ) {
 
@@ -8033,26 +7018,54 @@ var Three = (function (exports) {
 
 	};
 
-	VelocityNode.prototype = Object.create( Vector3Node.prototype );
-	VelocityNode.prototype.constructor = VelocityNode;
+	VelocityNode.prototype.setTarget = function ( target ) {
 
-	VelocityNode.prototype.updateFrame = function ( delta ) {
+		if ( this.target ) {
 
-		this.velocity.subVectors( this.target.position, this.position );
-		this.position.copy( this.target.position );
+			delete this.position;
+			delete this.oldPosition;
+
+		}
+
+		this.target = target;
+
+		if ( target ) {
+
+			this.position = target.getWorldPosition();
+			this.oldPosition = this.position.clone();
+
+		}
+
+	};
+
+	VelocityNode.prototype.updateFrameVelocity = function ( frame ) {
+
+		if ( this.target ) {
+
+			this.position = this.target.getWorldPosition();
+			this.velocity.subVectors( this.position, this.oldPosition );
+			this.oldPosition.copy( this.position );
+
+		}
+
+	};
+
+	VelocityNode.prototype.updateFrame = function ( frame ) {
+
+		this.updateFrameVelocity( frame );
 
 		switch ( this.params.type ) {
 
 			case "elastic":
 
 				// convert to real scale: 0 at 1 values
-				var deltaFps = delta * (this.params.fps || 60);
+				var deltaFps = frame.delta * ( this.params.fps || 60 );
 
 				var spring = Math.pow( this.params.spring, deltaFps ),
 					damping = Math.pow( this.params.damping, deltaFps );
 
 				// fix relative frame-rate
-				this.velocity.multiplyScalar( Math.exp( -this.params.damping * deltaFps ) );
+				this.velocity.multiplyScalar( Math.exp( - this.params.damping * deltaFps ) );
 
 				// elastic
 				this.velocity.add( this.springVelocity );
@@ -8081,6 +7094,25 @@ var Three = (function (exports) {
 				this.value.copy( this.velocity );
 
 		}
+
+	};
+
+	VelocityNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			if ( this.target ) data.target = this.target.uuid;
+
+			// clone params
+			data.params = JSON.parse( JSON.stringify( this.params ) );
+
+		}
+
+		return data;
 
 	};
 

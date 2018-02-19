@@ -1,10 +1,489 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
+	function Vector2( x, y ) {
+
+		this.x = x || 0;
+		this.y = y || 0;
+
+	}
+
+	Object.defineProperties( Vector2.prototype, {
+
+		"width": {
+
+			get: function () {
+
+				return this.x;
+
+			},
+
+			set: function ( value ) {
+
+				this.x = value;
+
+			}
+
+		},
+
+		"height": {
+
+			get: function () {
+
+				return this.y;
+
+			},
+
+			set: function ( value ) {
+
+				this.y = value;
+
+			}
+
+		}
+
+	} );
+
+	Object.assign( Vector2.prototype, {
+
+		isVector2: true,
+
+		set: function ( x, y ) {
+
+			this.x = x;
+			this.y = y;
+
+			return this;
+
+		},
+
+		setScalar: function ( scalar ) {
+
+			this.x = scalar;
+			this.y = scalar;
+
+			return this;
+
+		},
+
+		setX: function ( x ) {
+
+			this.x = x;
+
+			return this;
+
+		},
+
+		setY: function ( y ) {
+
+			this.y = y;
+
+			return this;
+
+		},
+
+		setComponent: function ( index, value ) {
+
+			switch ( index ) {
+
+				case 0: this.x = value; break;
+				case 1: this.y = value; break;
+				default: throw new Error( 'index is out of range: ' + index );
+
+			}
+
+			return this;
+
+		},
+
+		getComponent: function ( index ) {
+
+			switch ( index ) {
+
+				case 0: return this.x;
+				case 1: return this.y;
+				default: throw new Error( 'index is out of range: ' + index );
+
+			}
+
+		},
+
+		clone: function () {
+
+			return new this.constructor( this.x, this.y );
+
+		},
+
+		copy: function ( v ) {
+
+			this.x = v.x;
+			this.y = v.y;
+
+			return this;
+
+		},
+
+		add: function ( v, w ) {
+
+			if ( w !== undefined ) {
+
+				console.warn( 'Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				return this.addVectors( v, w );
+
+			}
+
+			this.x += v.x;
+			this.y += v.y;
+
+			return this;
+
+		},
+
+		addScalar: function ( s ) {
+
+			this.x += s;
+			this.y += s;
+
+			return this;
+
+		},
+
+		addVectors: function ( a, b ) {
+
+			this.x = a.x + b.x;
+			this.y = a.y + b.y;
+
+			return this;
+
+		},
+
+		addScaledVector: function ( v, s ) {
+
+			this.x += v.x * s;
+			this.y += v.y * s;
+
+			return this;
+
+		},
+
+		sub: function ( v, w ) {
+
+			if ( w !== undefined ) {
+
+				console.warn( 'Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				return this.subVectors( v, w );
+
+			}
+
+			this.x -= v.x;
+			this.y -= v.y;
+
+			return this;
+
+		},
+
+		subScalar: function ( s ) {
+
+			this.x -= s;
+			this.y -= s;
+
+			return this;
+
+		},
+
+		subVectors: function ( a, b ) {
+
+			this.x = a.x - b.x;
+			this.y = a.y - b.y;
+
+			return this;
+
+		},
+
+		multiply: function ( v ) {
+
+			this.x *= v.x;
+			this.y *= v.y;
+
+			return this;
+
+		},
+
+		multiplyScalar: function ( scalar ) {
+
+			this.x *= scalar;
+			this.y *= scalar;
+
+			return this;
+
+		},
+
+		divide: function ( v ) {
+
+			this.x /= v.x;
+			this.y /= v.y;
+
+			return this;
+
+		},
+
+		divideScalar: function ( scalar ) {
+
+			return this.multiplyScalar( 1 / scalar );
+
+		},
+
+		applyMatrix3: function ( m ) {
+
+			var x = this.x, y = this.y;
+			var e = m.elements;
+
+			this.x = e[ 0 ] * x + e[ 3 ] * y + e[ 6 ];
+			this.y = e[ 1 ] * x + e[ 4 ] * y + e[ 7 ];
+
+			return this;
+
+		},
+
+		min: function ( v ) {
+
+			this.x = Math.min( this.x, v.x );
+			this.y = Math.min( this.y, v.y );
+
+			return this;
+
+		},
+
+		max: function ( v ) {
+
+			this.x = Math.max( this.x, v.x );
+			this.y = Math.max( this.y, v.y );
+
+			return this;
+
+		},
+
+		clamp: function ( min, max ) {
+
+			// assumes min < max, componentwise
+
+			this.x = Math.max( min.x, Math.min( max.x, this.x ) );
+			this.y = Math.max( min.y, Math.min( max.y, this.y ) );
+
+			return this;
+
+		},
+
+		clampScalar: function () {
+
+			var min = new Vector2();
+			var max = new Vector2();
+
+			return function clampScalar( minVal, maxVal ) {
+
+				min.set( minVal, minVal );
+				max.set( maxVal, maxVal );
+
+				return this.clamp( min, max );
+
+			};
+
+		}(),
+
+		clampLength: function ( min, max ) {
+
+			var length = this.length();
+
+			return this.divideScalar( length || 1 ).multiplyScalar( Math.max( min, Math.min( max, length ) ) );
+
+		},
+
+		floor: function () {
+
+			this.x = Math.floor( this.x );
+			this.y = Math.floor( this.y );
+
+			return this;
+
+		},
+
+		ceil: function () {
+
+			this.x = Math.ceil( this.x );
+			this.y = Math.ceil( this.y );
+
+			return this;
+
+		},
+
+		round: function () {
+
+			this.x = Math.round( this.x );
+			this.y = Math.round( this.y );
+
+			return this;
+
+		},
+
+		roundToZero: function () {
+
+			this.x = ( this.x < 0 ) ? Math.ceil( this.x ) : Math.floor( this.x );
+			this.y = ( this.y < 0 ) ? Math.ceil( this.y ) : Math.floor( this.y );
+
+			return this;
+
+		},
+
+		negate: function () {
+
+			this.x = - this.x;
+			this.y = - this.y;
+
+			return this;
+
+		},
+
+		dot: function ( v ) {
+
+			return this.x * v.x + this.y * v.y;
+
+		},
+
+		lengthSq: function () {
+
+			return this.x * this.x + this.y * this.y;
+
+		},
+
+		length: function () {
+
+			return Math.sqrt( this.x * this.x + this.y * this.y );
+
+		},
+
+		manhattanLength: function () {
+
+			return Math.abs( this.x ) + Math.abs( this.y );
+
+		},
+
+		normalize: function () {
+
+			return this.divideScalar( this.length() || 1 );
+
+		},
+
+		angle: function () {
+
+			// computes the angle in radians with respect to the positive x-axis
+
+			var angle = Math.atan2( this.y, this.x );
+
+			if ( angle < 0 ) angle += 2 * Math.PI;
+
+			return angle;
+
+		},
+
+		distanceTo: function ( v ) {
+
+			return Math.sqrt( this.distanceToSquared( v ) );
+
+		},
+
+		distanceToSquared: function ( v ) {
+
+			var dx = this.x - v.x, dy = this.y - v.y;
+			return dx * dx + dy * dy;
+
+		},
+
+		manhattanDistanceTo: function ( v ) {
+
+			return Math.abs( this.x - v.x ) + Math.abs( this.y - v.y );
+
+		},
+
+		setLength: function ( length ) {
+
+			return this.normalize().multiplyScalar( length );
+
+		},
+
+		lerp: function ( v, alpha ) {
+
+			this.x += ( v.x - this.x ) * alpha;
+			this.y += ( v.y - this.y ) * alpha;
+
+			return this;
+
+		},
+
+		lerpVectors: function ( v1, v2, alpha ) {
+
+			return this.subVectors( v2, v1 ).multiplyScalar( alpha ).add( v1 );
+
+		},
+
+		equals: function ( v ) {
+
+			return ( ( v.x === this.x ) && ( v.y === this.y ) );
+
+		},
+
+		fromArray: function ( array, offset ) {
+
+			if ( offset === undefined ) offset = 0;
+
+			this.x = array[ offset ];
+			this.y = array[ offset + 1 ];
+
+			return this;
+
+		},
+
+		toArray: function ( array, offset ) {
+
+			if ( array === undefined ) array = [];
+			if ( offset === undefined ) offset = 0;
+
+			array[ offset ] = this.x;
+			array[ offset + 1 ] = this.y;
+
+			return array;
+
+		},
+
+		fromBufferAttribute: function ( attribute, index, offset ) {
+
+			if ( offset !== undefined ) {
+
+				console.warn( 'Vector2: offset has been removed from .fromBufferAttribute().' );
+
+			}
+
+			this.x = attribute.getX( index );
+			this.y = attribute.getY( index );
+
+			return this;
+
+		},
+
+		rotateAround: function ( center, angle ) {
+
+			var c = Math.cos( angle ), s = Math.sin( angle );
+
+			var x = this.x - center.x;
+			var y = this.y - center.y;
+
+			this.x = x * c - y * s + center.x;
+			this.y = x * s + y * c + center.y;
+
+			return this;
+
+		}
+
+	} );
 
 	var _Math = {
 
@@ -23,7 +502,7 @@ var Three = (function (exports) {
 
 			}
 
-			return function () {
+			return function generateUUID() {
 
 				var d0 = Math.random() * 0xffffffff | 0;
 				var d1 = Math.random() * 0xffffffff | 0;
@@ -149,19 +628,6 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author jordi_ros / http://plattsoft.com
-	 * @author D1plo1d / http://github.com/D1plo1d
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author timknip / http://www.floorplanner.com/
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Matrix4() {
 
 		this.elements = [
@@ -175,7 +641,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix4: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix4: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -303,7 +769,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				console.error( 'THREE.Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
+				console.error( 'Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -523,7 +989,7 @@ var Three = (function (exports) {
 
 			if ( n !== undefined ) {
 
-				console.warn( 'THREE.Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
+				console.warn( 'Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
 				return this.multiplyMatrices( m, n );
 
 			}
@@ -714,7 +1180,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix4: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix4: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -967,7 +1433,7 @@ var Three = (function (exports) {
 
 			if ( far === undefined ) {
 
-				console.warn( 'THREE.Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
+				console.warn( 'Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
 
 			}
 
@@ -1070,13 +1536,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Quaternion( x, y, z, w ) {
 
@@ -1269,7 +1728,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				throw new Error( 'THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+				throw new Error( 'Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -1466,7 +1925,9 @@ var Three = (function (exports) {
 
 		inverse: function () {
 
-			return this.conjugate().normalize();
+			// quaternion is assumed to have unit length
+
+			return this.conjugate();
 
 		},
 
@@ -1532,7 +1993,7 @@ var Three = (function (exports) {
 
 			if ( p !== undefined ) {
 
-				console.warn( 'THREE.Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
+				console.warn( 'Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
 				return this.multiplyQuaternions( q, p );
 
 			}
@@ -1677,15 +2138,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author kile / http://kile.stravaganza.org/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -1790,7 +2242,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -1837,7 +2289,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -1874,7 +2326,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
 				return this.multiplyVectors( v, w );
 
 			}
@@ -1915,7 +2367,7 @@ var Three = (function (exports) {
 
 				if ( ! ( euler && euler.isEuler ) ) {
 
-					console.error( 'THREE.Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+					console.error( 'Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 				}
 
@@ -2015,7 +2467,7 @@ var Three = (function (exports) {
 
 		transformDirection: function ( m ) {
 
-			// input: THREE.Matrix4 affine matrix
+			// input: Matrix4 affine matrix
 			// vector interpreted as a direction
 
 			var x = this.x, y = this.y, z = this.z;
@@ -2209,7 +2661,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
 				return this.crossVectors( v, w );
 
 			}
@@ -2387,7 +2839,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector3: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector3: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -2400,10 +2852,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * https://github.com/mrdoob/eventdispatcher.js/
-	 */
 
 	function EventDispatcher() {}
 
@@ -2484,12 +2932,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Euler( x, y, z, order ) {
 
@@ -2723,7 +3165,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.warn( 'THREE.Euler: .setFromRotationMatrix() given unsupported order: ' + order );
+				console.warn( 'Euler: .setFromRotationMatrix() given unsupported order: ' + order );
 
 			}
 
@@ -2830,10 +3272,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function Layers() {
 
 		this.mask = 1 | 0;
@@ -2874,13 +3312,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 * @author tschw
-	 */
-
 	function Matrix3() {
 
 		this.elements = [
@@ -2893,7 +3324,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix3: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix3: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -3058,7 +3489,7 @@ var Three = (function (exports) {
 
 			if ( matrix && matrix.isMatrix4 ) {
 
-				console.error( "THREE.Matrix3: .getInverse() no longer takes a Matrix4 argument." );
+				console.error( "Matrix3: .getInverse() no longer takes a Matrix4 argument." );
 
 			}
 
@@ -3077,7 +3508,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix3: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix3: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -3257,14 +3688,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author elephantatwork / www.elephantatwork.ch
-	 */
 
 	var object3DId = 0;
 
@@ -3603,7 +4026,7 @@ var Three = (function (exports) {
 
 			if ( object === this ) {
 
-				console.error( "THREE.Object3D.add: object can't be added as a child of itself.", object );
+				console.error( "Object3D.add: object can't be added as a child of itself.", object );
 				return this;
 
 			}
@@ -3623,7 +4046,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.error( "THREE.Object3D.add: object not an instance of THREE.Object3D.", object );
+				console.error( "Object3D.add: object not an instance of Object3D.", object );
 
 			}
 
@@ -4078,44 +4501,13 @@ var Three = (function (exports) {
 	} );
 
 	var FrontSide = 0;
-
-
 	var FlatShading = 1;
-
 	var NoColors = 0;
-
-
-
 	var NormalBlending = 1;
-
-
-
-
 	var AddEquation = 100;
-
-
-
-
-
-
-
-
 	var SrcAlphaFactor = 204;
 	var OneMinusSrcAlphaFactor = 205;
-
-
-
-
-
-
-
-
 	var LessEqualDepth = 3;
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 */
 
 	var materialId = 0;
 
@@ -4134,7 +4526,7 @@ var Three = (function (exports) {
 		this.blending = NormalBlending;
 		this.side = FrontSide;
 		this.flatShading = false;
-		this.vertexColors = NoColors; // THREE.NoColors, THREE.VertexColors, THREE.FaceColors
+		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 		this.opacity = 1;
 		this.transparent = false;
@@ -4153,6 +4545,8 @@ var Three = (function (exports) {
 		this.clippingPlanes = null;
 		this.clipIntersection = false;
 		this.clipShadows = false;
+
+		this.shadowSide = null;
 
 		this.colorWrite = true;
 
@@ -4195,7 +4589,7 @@ var Three = (function (exports) {
 
 				if ( newValue === undefined ) {
 
-					console.warn( "THREE.Material: '" + key + "' parameter is undefined." );
+					console.warn( "Material: '" + key + "' parameter is undefined." );
 					continue;
 
 				}
@@ -4203,7 +4597,7 @@ var Three = (function (exports) {
 				// for backward compatability if shading is set in the constructor
 				if ( key === 'shading' ) {
 
-					console.warn( 'THREE.' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
+					console.warn( '' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
 					this.flatShading = ( newValue === FlatShading ) ? true : false;
 					continue;
 
@@ -4213,7 +4607,7 @@ var Three = (function (exports) {
 
 				if ( currentValue === undefined ) {
 
-					console.warn( "THREE." + this.type + ": '" + key + "' is not a property of this material." );
+					console.warn( "" + this.type + ": '" + key + "' is not a property of this material." );
 					continue;
 
 				}
@@ -4461,6 +4855,8 @@ var Three = (function (exports) {
 
 			this.clippingPlanes = dstPlanes;
 
+			this.shadowSide = source.shadowSide;
+
 			return this;
 
 		},
@@ -4472,10 +4868,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
 		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
@@ -4506,7 +4898,7 @@ var Three = (function (exports) {
 
 		if ( g === undefined && b === undefined ) {
 
-			// r is THREE.Color, hex or string
+			// r is Color, hex or string
 			return this.set( r );
 
 		}
@@ -4622,7 +5014,7 @@ var Three = (function (exports) {
 
 				if ( parseFloat( string ) < 1 ) {
 
-					console.warn( 'THREE.Color: Alpha component of ' + style + ' will be ignored.' );
+					console.warn( 'Color: Alpha component of ' + style + ' will be ignored.' );
 
 				}
 
@@ -4734,7 +5126,7 @@ var Three = (function (exports) {
 				} else {
 
 					// unknown color
-					console.warn( 'THREE.Color: Unknown color ' + style );
+					console.warn( 'Color: Unknown color ' + style );
 
 				}
 
@@ -4992,19 +5384,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 *
-	 * parameters = {
-	 *  color: <hex>,
-	 *  opacity: <float>,
-	 *  map: new THREE.Texture( <Image> ),
-	 *
-	 *	uvOffset: new THREE.Vector2(),
-	 *	uvScale: new THREE.Vector2()
-	 * }
-	 */
-
 	function SpriteMaterial( parameters ) {
 
 		Material.call( this );
@@ -5040,11 +5419,6 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 */
-
 	function Sprite( material ) {
 
 		Object3D.call( this );
@@ -5052,6 +5426,8 @@ var Three = (function (exports) {
 		this.type = 'Sprite';
 
 		this.material = ( material !== undefined ) ? material : new SpriteMaterial();
+
+		this.center = new Vector2( 0.5, 0.5 );
 
 	}
 
@@ -5098,7 +5474,18 @@ var Three = (function (exports) {
 
 			return new this.constructor( this.material ).copy( this );
 
+		},
+
+		copy: function ( source ) {
+
+			Object3D.prototype.copy.call( this, source );
+
+			if ( source.center !== undefined ) this.center.copy( source.center );
+
+			return this;
+
 		}
+
 
 	} );
 

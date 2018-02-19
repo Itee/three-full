@@ -1,9 +1,12 @@
-/**
- * @author abelnation / http://github.com/abelnation
- */
+import {
+	CylinderGeometry,
+	CylinderBufferGeometry
+} from './CylinderGeometry.js'
 
-import { CylinderGeometry } from './CylinderGeometry.js';
-import { CylinderBufferGeometry } from './CylinderGeometry.js';
+
+
+
+
 
 // ConeGeometry
 
@@ -52,4 +55,9 @@ ConeBufferGeometry.prototype = Object.create( CylinderBufferGeometry.prototype )
 ConeBufferGeometry.prototype.constructor = ConeBufferGeometry;
 
 
-export { ConeGeometry, ConeBufferGeometry };
+;
+
+export {
+	ConeGeometry,
+	ConeBufferGeometry
+}

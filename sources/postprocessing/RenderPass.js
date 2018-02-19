@@ -1,8 +1,6 @@
-import { Pass } from '../postprocessing/Pass.js'
+import { Pass } from './Pass.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- */
+
 
 var RenderPass = function ( scene, camera, overrideMaterial, clearColor, clearAlpha ) {
 

@@ -1,11 +1,6 @@
 import { Vector2 } from '../math/Vector2.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- *
- * Normal map shader
- * - compute normals from heightmap
- */
+
 
 var NormalMapShader = {
 

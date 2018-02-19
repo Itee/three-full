@@ -1,10 +1,8 @@
-import { TempNode } from '../../nodes/TempNode.js'
+import { TempNode } from '../TempNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var Math3Node = function( a, b, c, method ) {
+
+var Math3Node = function ( a, b, c, method ) {
 
 	TempNode.call( this );
 
@@ -23,8 +21,9 @@ Math3Node.FACEFORWARD = 'faceforward';
 
 Math3Node.prototype = Object.create( TempNode.prototype );
 Math3Node.prototype.constructor = Math3Node;
+Math3Node.prototype.nodeType = "Math3";
 
-Math3Node.prototype.getType = function( builder ) {
+Math3Node.prototype.getType = function ( builder ) {
 
 	var a = builder.getFormatLength( this.a.getType( builder ) );
 	var b = builder.getFormatLength( this.b.getType( builder ) );
@@ -37,7 +36,7 @@ Math3Node.prototype.getType = function( builder ) {
 
 };
 
-Math3Node.prototype.generate = function( builder, output ) {
+Math3Node.prototype.generate = function ( builder, output ) {
 
 	var material = builder.material;
 
@@ -51,6 +50,7 @@ Math3Node.prototype.generate = function( builder, output ) {
 	// optimzer
 
 	switch ( this.method ) {
+
 		case Math3Node.REFRACT:
 			a = this.a.build( builder, type );
 			b = this.b.build( builder, type );
@@ -72,6 +72,25 @@ Math3Node.prototype.generate = function( builder, output ) {
 	}
 
 	return builder.format( this.method + '(' + a + ',' + b + ',' + c + ')', type, output );
+
+};
+
+Math3Node.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.a = this.a.toJSON( meta ).uuid;
+		data.b = this.b.toJSON( meta ).uuid;
+		data.c = this.c.toJSON( meta ).uuid;
+		data.method = this.method;
+
+	}
+
+	return data;
 
 };
 

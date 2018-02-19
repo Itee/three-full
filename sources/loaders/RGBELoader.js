@@ -1,13 +1,12 @@
-import { DataTextureLoader } from '../loaders/DataTextureLoader.js'
+import { DataTextureLoader } from './DataTextureLoader.js'
 import {
 	UnsignedByteType,
+	RGBAFormat,
 	RGBEFormat
 } from '../constants.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author Nikos M. / https://github.com/foo123/
- */
+
 
 // https://github.com/mrdoob/three.js/issues/5552
 // http://en.wikipedia.org/wiki/RGBE_image_format
@@ -25,11 +24,11 @@ RGBELoader.prototype = Object.create( DataTextureLoader.prototype );
 RGBELoader.prototype._parser = function ( buffer ) {
 
 	var
-		/* return codes for rgbe routines */
+		
 		RGBE_RETURN_SUCCESS = 0,
 		RGBE_RETURN_FAILURE = - 1,
 
-		/* default error routine.  change this to change error handling */
+		
 		rgbe_read_error = 1,
 		rgbe_write_error = 2,
 		rgbe_format_error = 3,
@@ -52,15 +51,15 @@ RGBELoader.prototype._parser = function ( buffer ) {
 
 		},
 
-		/* offsets to red, green, and blue components in a data (float) pixel */
+		
 		RGBE_DATA_RED = 0,
 		RGBE_DATA_GREEN = 1,
 		RGBE_DATA_BLUE = 2,
 
-		/* number of floats per pixel, use 4 since stored in rgba image format */
+		
 		RGBE_DATA_SIZE = 4,
 
-		/* flags indicating which fields in an rgbe_header_info are valid */
+		
 		RGBE_VALID_PROGRAMTYPE = 1,
 		RGBE_VALID_FORMAT = 2,
 		RGBE_VALID_DIMENSIONS = 4,
@@ -84,12 +83,7 @@ RGBELoader.prototype._parser = function ( buffer ) {
 
 			if ( - 1 < i ) {
 
-				/*for (i=l-1; i>=0; i--) {
-					byteCode = m.charCodeAt(i);
-					if (byteCode > 0x7f && byteCode <= 0x7ff) byteLen++;
-					else if (byteCode > 0x7ff && byteCode <= 0xffff) byteLen += 2;
-					if (byteCode >= 0xDC00 && byteCode <= 0xDFFF) i--; //trail surrogate
-				}*/
+				
 				if ( false !== consume ) buffer.pos += len + i + 1;
 				return s + chunk.slice( 0, i );
 
@@ -98,7 +92,7 @@ RGBELoader.prototype._parser = function ( buffer ) {
 
 		},
 
-		/* minimal header reading.  modify if you want to parse more information */
+		
 		RGBE_ReadHeader = function ( buffer ) {
 
 			var line, match,
@@ -113,21 +107,21 @@ RGBELoader.prototype._parser = function ( buffer ) {
 				// RGBE format header struct
 				header = {
 
-					valid: 0, /* indicate which fields are valid */
+					valid: 0, 
 
-					string: '', /* the actual header string */
+					string: '', 
 
-					comments: '', /* comments found in header */
+					comments: '', 
 
-					programtype: 'RGBE', /* listed at beginning of file to identify it after "#?". defaults to "RGBE" */
+					programtype: 'RGBE', 
 
-					format: '', /* RGBE format, default 32-bit_rle_rgbe */
+					format: '', 
 
-					gamma: 1.0, /* image has already been gamma corrected with given gamma. defaults to 1.0 (no correction) */
+					gamma: 1.0, 
 
-					exposure: 1.0, /* a value of 1.0 in an image corresponds to <exposure> watts/steradian/m^2. defaults to 1.0 */
+					exposure: 1.0, 
 
-					width: 0, height: 0 /* image dimensions, width/height */
+					width: 0, height: 0 
 
 				};
 
@@ -136,7 +130,7 @@ RGBELoader.prototype._parser = function ( buffer ) {
 				return rgbe_error( rgbe_read_error, "no header found" );
 
 			}
-			/* if you want to require the magic token then uncomment the next line */
+			
 			if ( ! ( match = line.match( magic_token_re ) ) ) {
 
 				return rgbe_error( rgbe_format_error, "bad initial token" );

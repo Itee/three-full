@@ -1,12 +1,8 @@
-import { Interpolant } from '../Interpolant.js';
+import { Interpolant } from '../Interpolant.js'
 
-/**
- *
- * Interpolant that evaluates to the sample value at the position preceeding
- * the parameter.
- *
- * @author tschw
- */
+
+
+
 
 function DiscreteInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
@@ -18,7 +14,7 @@ DiscreteInterpolant.prototype = Object.assign( Object.create( Interpolant.protot
 
 	constructor: DiscreteInterpolant,
 
-	interpolate_: function ( i1 /*, t0, t, t1 */ ) {
+	interpolate_: function ( i1  ) {
 
 		return this.copySampleValue_( i1 - 1 );
 
@@ -27,4 +23,6 @@ DiscreteInterpolant.prototype = Object.assign( Object.create( Interpolant.protot
 } );
 
 
-export { DiscreteInterpolant };
+;
+
+export { DiscreteInterpolant }

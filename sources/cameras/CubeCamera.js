@@ -1,15 +1,19 @@
-import { Object3D } from '../core/Object3D.js';
-import { WebGLRenderTargetCube } from '../renderers/WebGLRenderTargetCube.js';
-import { LinearFilter, RGBFormat } from '../constants.js';
-import { Vector3 } from '../math/Vector3.js';
-import { PerspectiveCamera } from './PerspectiveCamera.js';
+import { Object3D } from '../core/Object3D.js'
+import { WebGLRenderTargetCube } from '../renderers/WebGLRenderTargetCube.js'
+import {
+	LinearFilter,
+	RGBFormat
+} from '../constants.js'
+import { Vector3 } from '../math/Vector3.js'
+import { PerspectiveCamera } from './PerspectiveCamera.js'
 
-/**
- * Camera for rendering cube maps
- *	- renders scene into axis-aligned cube
- *
- * @author alteredq / http://alteredqualia.com/
- */
+
+
+
+
+
+
+
 
 function CubeCamera( near, far, cubeResolution ) {
 
@@ -110,4 +114,6 @@ CubeCamera.prototype = Object.create( Object3D.prototype );
 CubeCamera.prototype.constructor = CubeCamera;
 
 
-export { CubeCamera };
+;
+
+export { CubeCamera }

@@ -1,5 +1,5 @@
-import { ShaderPass } from '../postprocessing/ShaderPass.js'
-import { MeshDepthMaterial } from '../materials/Materials.js'
+import { ShaderPass } from './ShaderPass.js'
+import { MeshDepthMaterial } from '../materials/MeshDepthMaterial.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import {
 	NoBlending,
@@ -10,25 +10,7 @@ import { SSAOShader } from '../shaders/SSAOShader.js'
 
 'use strict';
 
-/**
- * Screen-space ambient occlusion pass.
- *
- * Has the following parameters
- *  - radius
- *  	- Ambient occlusion shadow radius (numeric value).
- *  - onlyAO
- *  	- Display only ambient occlusion result (boolean value).
- *  - aoClamp
- *  	- Ambient occlusion clamp (numeric value).
- *  - lumInfluence
- *  	- Pixel luminosity influence in AO calculation (numeric value).
- * 
- * To output to screen set renderToScreens true
- *
- * @author alteredq / http://alteredqualia.com/
- * @author tentone
- * @class SSAOPass
- */
+
 var SSAOPass = function ( scene, camera, width, height ) {
 
 	if ( SSAOShader === undefined) {
@@ -97,16 +79,7 @@ var SSAOPass = function ( scene, camera, width, height ) {
 
 SSAOPass.prototype = Object.create( ShaderPass.prototype );
 
-/**
- * Render using this pass.
- * 
- * @method render
- * @param {WebGLRenderer} renderer
- * @param {WebGLRenderTarget} writeBuffer Buffer to write output.
- * @param {WebGLRenderTarget} readBuffer Input buffer.
- * @param {Number} delta Delta time in milliseconds.
- * @param {Boolean} maskActive Not used in this pass.
- */
+
 SSAOPass.prototype.render = function( renderer, writeBuffer, readBuffer, delta, maskActive ) {
 
 	//Render depth into depthRenderTarget
@@ -122,24 +95,14 @@ SSAOPass.prototype.render = function( renderer, writeBuffer, readBuffer, delta, 
 
 };
 
-/**
- * Change scene to be renderer by this render pass.
- *
- * @method setScene
- * @param {Scene} scene
- */
+
 SSAOPass.prototype.setScene = function(scene) {
 	
 	this.scene2 = scene;
 
 };
 
-/**
- * Set camera used by this render pass.
- *
- * @method setCamera
- * @param {Camera} camera
- */
+
 SSAOPass.prototype.setCamera = function( camera ) {
 
 	this.camera2 = camera;
@@ -149,13 +112,7 @@ SSAOPass.prototype.setCamera = function( camera ) {
 
 };
 
-/**
- * Set resolution of this render pass.
- * 
- * @method setSize
- * @param {Number} width
- * @param {Number} height
- */
+
 SSAOPass.prototype.setSize = function( width, height ) {
 
 	this.width = width;

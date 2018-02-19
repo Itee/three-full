@@ -1,6 +1,6 @@
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { Group } from '../objects/Group.js'
-import { MeshPhongMaterial } from '../materials/Materials.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Geometry } from '../core/Geometry.js'
 import { Mesh } from '../objects/Mesh.js'
@@ -9,25 +9,16 @@ import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Face3 } from '../core/Face3.js'
-import { TextureLoader } from '../loaders/TextureLoader.js'
+import { TextureLoader } from './TextureLoader.js'
 import { Color } from '../math/Color.js'
 import {
 	DoubleSide,
 	AdditiveBlending
 } from '../constants.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
-import { LoaderUtils } from '../loaders/LoaderUtils.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { LoaderUtils } from './LoaderUtils.js'
 
-/*
- * Autodesk 3DS threee.js file loader, based on lib3ds.
- *
- * Loads geometry with uv and materials basic properties with texture support.
- *
- * @author @tentone
- * @author @timknip
- * @class TDSLoader
- * @constructor
- */
+
 
 'use strict';
 
@@ -48,15 +39,7 @@ TDSLoader.prototype = {
 
 	constructor: TDSLoader,
 
-	/**
-	 * Load 3ds file from url.
-	 *
-	 * @method load
-	 * @param {[type]} url URL for the file.
-	 * @param {Function} onLoad onLoad callback, receives group Object3D as argument.
-	 * @param {Function} onProgress onProgress callback.
-	 * @param {Function} onError onError callback.
-	 */
+	
 	load: function ( url, onLoad, onProgress, onError ) {
 
 		var scope = this;
@@ -75,14 +58,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Parse arraybuffer data and load 3ds file.
-	 *
-	 * @method parse
-	 * @param {ArrayBuffer} arraybuffer Arraybuffer data to be loaded.
-	 * @param {String} path Path for external resources.
-	 * @return {Object3D} Group loaded from 3ds file.
-	 */
+	
 	parse: function ( arraybuffer, path ) {
 
 		this.group = new Group();
@@ -102,12 +78,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Decode file content to read 3ds data.
-	 *
-	 * @method readFile
-	 * @param {ArrayBuffer} arraybuffer Arraybuffer data to be loaded.
-	 */
+	
 	readFile: function ( arraybuffer, path ) {
 
 		var data = new DataView( arraybuffer );
@@ -145,12 +116,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read mesh data chunk.
-	 *
-	 * @method readMeshData
-	 * @param {Dataview} data Dataview in use.
-	 */
+	
 	readMeshData: function ( data, path ) {
 
 		var chunk = this.readChunk( data );
@@ -193,12 +159,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read named object chunk.
-	 *
-	 * @method readNamedObject
-	 * @param {Dataview} data Dataview in use.
-	 */
+	
 	readNamedObject: function ( data ) {
 
 		var chunk = this.readChunk( data );
@@ -229,12 +190,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read material data chunk and add it to the material list.
-	 *
-	 * @method readMaterialEntry
-	 * @param {Dataview} data Dataview in use.
-	 */
+	
 	readMaterialEntry: function ( data, path ) {
 
 		var chunk = this.readChunk( data );
@@ -330,12 +286,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read mesh data chunk.
-	 *
-	 * @method readMesh
-	 * @param {Dataview} data Dataview in use.
-	 */
+	
 	readMesh: function ( data ) {
 
 		var chunk = this.readChunk( data );
@@ -510,13 +461,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read face array data chunk.
-	 *
-	 * @method readFaceArray
-	 * @param {Dataview} data Dataview in use.
-	 * @param {Mesh} mesh Mesh to be filled with the data read.
-	 */
+	
 	readFaceArray: function ( data, mesh ) {
 
 		var chunk = this.readChunk( data );
@@ -574,13 +519,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read texture map data chunk.
-	 *
-	 * @method readMap
-	 * @param {Dataview} data Dataview in use.
-	 * @return {Texture} Texture read from this data chunk.
-	 */
+	
 	readMap: function ( data, path ) {
 
 		var chunk = this.readChunk( data );
@@ -635,13 +574,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read material group data chunk.
-	 *
-	 * @method readMaterialGroup
-	 * @param {Dataview} data Dataview in use.
-	 * @return {Object} Object with name and index of the object.
-	 */
+	
 	readMaterialGroup: function ( data ) {
 
 		var chunk = this.readChunk( data );
@@ -662,13 +595,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read a color value.
-	 *
-	 * @method readColor
-	 * @param {DataView} data Dataview.
-	 * @return {Color} Color value read..
-	 */
+	
 	readColor: function ( data ) {
 
 		var chunk = this.readChunk( data );
@@ -705,13 +632,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read next chunk of data.
-	 *
-	 * @method readChunk
-	 * @param {DataView} data Dataview.
-	 * @return {Object} Chunk of data read.
-	 */
+	
 	readChunk: function ( data ) {
 
 		var chunk = {};
@@ -726,25 +647,14 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Set position to the end of the current chunk of data.
-	 *
-	 * @method endChunk
-	 * @param {Object} chunk Data chunk.
-	 */
+	
 	endChunk: function ( chunk ) {
 
 		this.position = chunk.end;
 
 	},
 
-	/**
-	 * Move to the next data chunk.
-	 *
-	 * @method nextChunk
-	 * @param {DataView} data Dataview.
-	 * @param {Object} chunk Data chunk.
-	 */
+	
 	nextChunk: function ( data, chunk ) {
 
 		if ( chunk.cur >= chunk.end ) {
@@ -770,25 +680,14 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Reset dataview position.
-	 *
-	 * @method resetPosition
-	 * @param {DataView} data Dataview.
-	 */
+	
 	resetPosition: function () {
 
 		this.position -= 6;
 
 	},
 
-	/**
-	 * Read byte value.
-	 *
-	 * @method readByte
-	 * @param {DataView} data Dataview to read data from.
-	 * @return {Number} Data read from the dataview.
-	 */
+	
 	readByte: function ( data ) {
 
 		var v = data.getUint8( this.position, true );
@@ -797,13 +696,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read 32 bit float value.
-	 *
-	 * @method readFloat
-	 * @param {DataView} data Dataview to read data from.
-	 * @return {Number} Data read from the dataview.
-	 */
+	
 	readFloat: function ( data ) {
 
 		try {
@@ -820,13 +713,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read 32 bit signed integer value.
-	 *
-	 * @method readInt
-	 * @param {DataView} data Dataview to read data from.
-	 * @return {Number} Data read from the dataview.
-	 */
+	
 	readInt: function ( data ) {
 
 		var v = data.getInt32( this.position, true );
@@ -835,13 +722,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read 16 bit signed integer value.
-	 *
-	 * @method readShort
-	 * @param {DataView} data Dataview to read data from.
-	 * @return {Number} Data read from the dataview.
-	 */
+	
 	readShort: function ( data ) {
 
 		var v = data.getInt16( this.position, true );
@@ -850,13 +731,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read 64 bit unsigned integer value.
-	 *
-	 * @method readDWord
-	 * @param {DataView} data Dataview to read data from.
-	 * @return {Number} Data read from the dataview.
-	 */
+	
 	readDWord: function ( data ) {
 
 		var v = data.getUint32( this.position, true );
@@ -865,13 +740,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read 32 bit unsigned integer value.
-	 *
-	 * @method readWord
-	 * @param {DataView} data Dataview to read data from.
-	 * @return {Number} Data read from the dataview.
-	 */
+	
 	readWord: function ( data ) {
 
 		var v = data.getUint16( this.position, true );
@@ -880,14 +749,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Read string value.
-	 *
-	 * @method readString
-	 * @param {DataView} data Dataview to read data from.
-	 * @param {Number} maxLength Max size of the string to be read.
-	 * @return {String} Data read from the dataview.
-	 */
+	
 	readString: function ( data, maxLength ) {
 
 		var s = '';
@@ -909,13 +771,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Set resource path used to determine the file path to attached resources.
-	 *
-	 * @method setPath
-	 * @param {String} path Path to resources.
-	 * @return Self for chaining.
-	 */
+	
 	setPath: function ( path ) {
 
 		this.path = path;
@@ -924,14 +780,7 @@ TDSLoader.prototype = {
 
 	},
 
-	/**
-	 * Print debug message to the console.
-	 *
-	 * Is controlled by a flag to show or hide debug messages.
-	 *
-	 * @method debugMessage
-	 * @param {Object} message Debug message to print to the console.
-	 */
+	
 	debugMessage: function ( message ) {
 
 		if ( this.debug ) {

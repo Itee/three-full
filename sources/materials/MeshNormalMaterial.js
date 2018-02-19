@@ -1,31 +1,10 @@
-import { Material } from './Material.js';
-import { Vector2 } from '../math/Vector2.js';
+import { Material } from './Material.js'
+import { Vector2 } from '../math/Vector2.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author WestLangley / http://github.com/WestLangley
- *
- * parameters = {
- *  opacity: <float>,
- *
- *  bumpMap: new THREE.Texture( <Image> ),
- *  bumpScale: <float>,
- *
- *  normalMap: new THREE.Texture( <Image> ),
- *  normalScale: <Vector2>,
- *
- *  displacementMap: new THREE.Texture( <Image> ),
- *  displacementScale: <float>,
- *  displacementBias: <float>,
- *
- *  wireframe: <boolean>,
- *  wireframeLinewidth: <float>
- *
- *  skinning: <bool>,
- *  morphTargets: <bool>,
- *  morphNormals: <bool>
- * }
- */
+
+
+
+
 
 function MeshNormalMaterial( parameters ) {
 
@@ -88,4 +67,6 @@ MeshNormalMaterial.prototype.copy = function ( source ) {
 };
 
 
-export { MeshNormalMaterial };
+;
+
+export { MeshNormalMaterial }

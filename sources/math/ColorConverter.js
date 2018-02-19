@@ -1,9 +1,6 @@
+import { _Math } from './Math.js'
 
 
-/**
- * @author bhouston / http://exocortex.com/
- * @author zz85 / http://github.com/zz85
- */
 
 var ColorConverter = {
 
@@ -11,9 +8,9 @@ var ColorConverter = {
 
 		// https://gist.github.com/xpansive/1337890#file-index-js
 
-		h = Math.euclideanModulo( h, 1 );
-		s = Math.clamp( s, 0, 1 );
-		v = Math.clamp( v, 0, 1 );
+		h = _Math.euclideanModulo( h, 1 );
+		s = _Math.clamp( s, 0, 1 );
+		v = _Math.clamp( v, 0, 1 );
 
 		return color.setHSL( h, ( s * v ) / ( ( h = ( 2 - s ) * v ) < 1 ? h : ( 2 - h ) ), h * 0.5 );
 

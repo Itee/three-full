@@ -1,17 +1,32 @@
-/**
- * @author alteredq / http://alteredqualia.com/
- * @author mrdoob / http://mrdoob.com/
- */
+import {
+	FrontSide,
+	BackSide,
+	DoubleSide,
+	RGBAFormat,
+	NearestFilter,
+	PCFShadowMap,
+	RGBADepthPacking
+} from '../../constants.js'
+import { WebGLRenderTarget } from '../WebGLRenderTarget.js'
+import { MeshDepthMaterial } from '../../materials/MeshDepthMaterial.js'
+import { MeshDistanceMaterial } from '../../materials/MeshDistanceMaterial.js'
+import { Vector4 } from '../../math/Vector4.js'
+import { Vector3 } from '../../math/Vector3.js'
+import { Vector2 } from '../../math/Vector2.js'
+import { Matrix4 } from '../../math/Matrix4.js'
+import { Frustum } from '../../math/Frustum.js'
 
-import { FrontSide, BackSide, DoubleSide, RGBAFormat, NearestFilter, PCFShadowMap, RGBADepthPacking } from '../../constants.js';
-import { WebGLRenderTarget } from '../WebGLRenderTarget.js';
-import { MeshDepthMaterial } from '../../materials/MeshDepthMaterial.js';
-import { MeshDistanceMaterial } from '../../materials/MeshDistanceMaterial.js';
-import { Vector4 } from '../../math/Vector4.js';
-import { Vector3 } from '../../math/Vector3.js';
-import { Vector2 } from '../../math/Vector2.js';
-import { Matrix4 } from '../../math/Matrix4.js';
-import { Frustum } from '../../math/Frustum.js';
+
+
+
+
+
+
+
+
+
+
+
 
 function WebGLShadowMap( _renderer, _objects, maxTextureSize ) {
 
@@ -33,6 +48,8 @@ function WebGLShadowMap( _renderer, _objects, maxTextureSize ) {
 		_distanceMaterials = new Array( _NumberOfMaterialVariants ),
 
 		_materialCache = {};
+
+	var shadowSide = { 0: BackSide, 1: FrontSide, 2: DoubleSide };
 
 	var cubeDirections = [
 		new Vector3( 1, 0, 0 ), new Vector3( - 1, 0, 0 ), new Vector3( 0, 0, 1 ),
@@ -91,9 +108,6 @@ function WebGLShadowMap( _renderer, _objects, maxTextureSize ) {
 
 	this.type = PCFShadowMap;
 
-	this.renderReverseSided = true;
-	this.renderSingleSided = true;
-
 	this.render = function ( lights, scene, camera ) {
 
 		if ( scope.enabled === false ) return;
@@ -123,7 +137,7 @@ function WebGLShadowMap( _renderer, _objects, maxTextureSize ) {
 
 			if ( shadow === undefined ) {
 
-				console.warn( 'THREE.WebGLShadowMap:', light, 'has no shadow.' );
+				console.warn( 'WebGLShadowMap:', light, 'has no shadow.' );
 				continue;
 
 			}
@@ -297,7 +311,7 @@ function WebGLShadowMap( _renderer, _objects, maxTextureSize ) {
 
 			if ( object.isSkinnedMesh && material.skinning === false ) {
 
-				console.warn( 'THREE.WebGLShadowMap: THREE.SkinnedMesh with material.skinning set to false:', object );
+				console.warn( 'WebGLShadowMap: SkinnedMesh with material.skinning set to false:', object );
 
 			}
 
@@ -350,22 +364,7 @@ function WebGLShadowMap( _renderer, _objects, maxTextureSize ) {
 		result.visible = material.visible;
 		result.wireframe = material.wireframe;
 
-		var side = material.side;
-
-		if ( scope.renderSingleSided && side == DoubleSide ) {
-
-			side = FrontSide;
-
-		}
-
-		if ( scope.renderReverseSided ) {
-
-			if ( side === FrontSide ) side = BackSide;
-			else if ( side === BackSide ) side = FrontSide;
-
-		}
-
-		result.side = side;
+		result.side = ( material.shadowSide != null ) ? material.shadowSide : shadowSide[ material.side ];
 
 		result.clipShadows = material.clipShadows;
 		result.clippingPlanes = material.clippingPlanes;
@@ -443,4 +442,6 @@ function WebGLShadowMap( _renderer, _objects, maxTextureSize ) {
 }
 
 
-export { WebGLShadowMap };
+;
+
+export { WebGLShadowMap }

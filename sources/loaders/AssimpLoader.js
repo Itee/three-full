@@ -1,15 +1,12 @@
-import { FileLoader } from '../loaders/FileLoader.js'
-import { TextureLoader } from '../loaders/TextureLoader.js'
+import { FileLoader } from './FileLoader.js'
+import { TextureLoader } from './TextureLoader.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Bone } from '../objects/Bone.js'
 import { Skeleton } from '../objects/Skeleton.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
-import {
-	MeshLambertMaterial,
-	MeshPhongMaterial
-} from '../materials/Materials.js'
+import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Mesh } from '../objects/Mesh.js'
 import { SkinnedMesh } from '../objects/SkinnedMesh.js'
@@ -17,13 +14,12 @@ import { Vector2 } from '../math/Vector2.js'
 import { Vector4 } from '../math/Vector4.js'
 import { Color } from '../math/Color.js'
 import { Object3D } from '../core/Object3D.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
-import { LoaderUtils } from '../loaders/LoaderUtils.js'
-import { Loader } from '../loaders/Loader.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { LoaderUtils } from './LoaderUtils.js'
+import { Loader } from './Loader.js'
 
-/**
- * @author Virtulous / https://virtulo.us/
- */
+
 
 var AssimpLoader = function ( manager ) {
 
@@ -386,117 +382,50 @@ AssimpLoader.prototype = {
 		//! This light type doesn't have a valid position, direction, or
 		//! other properties, just a color.
 		var aiLightSource_AMBIENT = 0x4;
-		/** Flat shading. Shading is done on per-face base,
-		 *  diffuse only. Also known as 'faceted shading'.
-		 */
+		
 		var aiShadingMode_Flat = 0x1;
-		/** Simple Gouraud shading.
-		 */
+		
 		var aiShadingMode_Gouraud = 0x2;
-		/** Phong-Shading -
-		 */
+		
 		var aiShadingMode_Phong = 0x3;
-		/** Phong-Blinn-Shading
-		 */
+		
 		var aiShadingMode_Blinn = 0x4;
-		/** Toon-Shading per pixel
-		 *
-		 *  Also known as 'comic' shader.
-		 */
+		
 		var aiShadingMode_Toon = 0x5;
-		/** OrenNayar-Shading per pixel
-		 *
-		 *  Extension to standard Lambertian shading, taking the
-		 *  roughness of the material into account
-		 */
+		
 		var aiShadingMode_OrenNayar = 0x6;
-		/** Minnaert-Shading per pixel
-		 *
-		 *  Extension to standard Lambertian shading, taking the
-		 *  "darkness" of the material into account
-		 */
+		
 		var aiShadingMode_Minnaert = 0x7;
-		/** CookTorrance-Shading per pixel
-		 *
-		 *  Special shader for metallic surfaces.
-		 */
+		
 		var aiShadingMode_CookTorrance = 0x8;
-		/** No shading at all. Constant light influence of 1.0.
-		 */
+		
 		var aiShadingMode_NoShading = 0x9;
-		/** Fresnel shading
-		 */
+		
 		var aiShadingMode_Fresnel = 0xa;
 		var aiTextureType_NONE = 0x0;
-		/** The texture is combined with the result of the diffuse
-		 *  lighting equation.
-		 */
+		
 		var aiTextureType_DIFFUSE = 0x1;
-		/** The texture is combined with the result of the specular
-		 *  lighting equation.
-		 */
+		
 		var aiTextureType_SPECULAR = 0x2;
-		/** The texture is combined with the result of the ambient
-		 *  lighting equation.
-		 */
+		
 		var aiTextureType_AMBIENT = 0x3;
-		/** The texture is added to the result of the lighting
-		 *  calculation. It isn't influenced by incoming light.
-		 */
+		
 		var aiTextureType_EMISSIVE = 0x4;
-		/** The texture is a height map.
-		 *
-		 *  By convention, higher gray-scale values stand for
-		 *  higher elevations from the base height.
-		 */
+		
 		var aiTextureType_HEIGHT = 0x5;
-		/** The texture is a (tangent space) normal-map.
-		 *
-		 *  Again, there are several conventions for tangent-space
-		 *  normal maps. Assimp does (intentionally) not
-		 *  distinguish here.
-		 */
+		
 		var aiTextureType_NORMALS = 0x6;
-		/** The texture defines the glossiness of the material.
-		 *
-		 *  The glossiness is in fact the exponent of the specular
-		 *  (phong) lighting equation. Usually there is a conversion
-		 *  function defined to map the linear color values in the
-		 *  texture to a suitable exponent. Have fun.
-		 */
+		
 		var aiTextureType_SHININESS = 0x7;
-		/** The texture defines per-pixel opacity.
-		 *
-		 *  Usually 'white' means opaque and 'black' means
-		 *  'transparency'. Or quite the opposite. Have fun.
-		 */
+		
 		var aiTextureType_OPACITY = 0x8;
-		/** Displacement texture
-		 *
-		 *  The exact purpose and format is application-dependent.
-		 *  Higher color values stand for higher vertex displacements.
-		 */
+		
 		var aiTextureType_DISPLACEMENT = 0x9;
-		/** Lightmap texture (aka Ambient Occlusion)
-		 *
-		 *  Both 'Lightmaps' and dedicated 'ambient occlusion maps' are
-		 *  covered by this material property. The texture contains a
-		 *  scaling value for the final color value of a pixel. Its
-		 *  intensity is not affected by incoming light.
-		 */
+		
 		var aiTextureType_LIGHTMAP = 0xA;
-		/** Reflection texture
-		 *
-		 * Contains the color of a perfect mirror reflection.
-		 * Rarely used, almost never for real-time applications.
-		 */
+		
 		var aiTextureType_REFLECTION = 0xB;
-		/** Unknown texture
-		 *
-		 *  A texture reference that does not match any of the definitions
-		 *  above is considered to be 'unknown'. It is still imported,
-		 *  but is excluded from any further postprocessing.
-		 */
+		
 		var aiTextureType_UNKNOWN = 0xC;
 		var BONESPERVERT = 4;
 
@@ -1151,9 +1080,11 @@ AssimpLoader.prototype = {
 
 			}
 
-			if ( ! key ) return null;
+			if ( ! key ) {
+				
+				return null;
 
-			if ( key && nextKey ) {
+			} else if ( nextKey ) {
 
 				var dT = nextKey.mTime - key.mTime;
 				var T = key.mTime - time;
@@ -1161,16 +1092,18 @@ AssimpLoader.prototype = {
 
 				return lerp( key.mValue.toTHREE(), nextKey.mValue.toTHREE(), l );
 
+			} else {
+
+				nextKey = keys[ 0 ].clone();
+				nextKey.mTime += lne;
+
+				var dT = nextKey.mTime - key.mTime;
+				var T = key.mTime - time;
+				var l = T / dT;
+
+				return lerp( key.mValue.toTHREE(), nextKey.mValue.toTHREE(), l );
+				
 			}
-
-			nextKey = keys[ 0 ].clone();
-			nextKey.mTime += lne;
-
-			var dT = nextKey.mTime - key.mTime;
-			var T = key.mTime - time;
-			var l = T / dT;
-
-			return lerp( key.mValue.toTHREE(), nextKey.mValue.toTHREE(), l );
 
 		}
 
@@ -1659,7 +1592,7 @@ AssimpLoader.prototype = {
 
 		}
 
-		function ReadBounds( stream, T /*p*/, n ) {
+		function ReadBounds( stream, T , n ) {
 
 			// not sure what to do here, the data isn't really useful.
 			return stream.Seek( sizeof( T ) * n, aiOrigin_CUR );
@@ -1677,7 +1610,7 @@ AssimpLoader.prototype = {
 
 			var chunkID = Read_uint32_t( stream );
 			ai_assert( chunkID == ASSBIN_CHUNK_AINODE );
-			/*uint32_t size =*/
+			
 			Read_uint32_t( stream );
 			var node = new aiNode();
 			node.mParent = parent;
@@ -1722,7 +1655,7 @@ AssimpLoader.prototype = {
 
 			var chunkID = Read_uint32_t( stream );
 			ai_assert( chunkID == ASSBIN_CHUNK_AIBONE );
-			/*uint32_t size =*/
+			
 			Read_uint32_t( stream );
 			b.mName = Read_aiString( stream );
 			b.mNumWeights = Read_unsigned_int( stream );
@@ -1750,7 +1683,7 @@ AssimpLoader.prototype = {
 
 			var chunkID = Read_uint32_t( stream );
 			ai_assert( chunkID == ASSBIN_CHUNK_AIMESH );
-			/*uint32_t size =*/
+			
 			Read_uint32_t( stream );
 			mesh.mPrimitiveTypes = Read_unsigned_int( stream );
 			mesh.mNumVertices = Read_unsigned_int( stream );
@@ -1958,7 +1891,7 @@ AssimpLoader.prototype = {
 
 			var chunkID = Read_uint32_t( stream );
 			ai_assert( chunkID == ASSBIN_CHUNK_AIMATERIALPROPERTY );
-			/*uint32_t size =*/
+			
 			Read_uint32_t( stream );
 			prop.mKey = Read_aiString( stream );
 			prop.mSemantic = Read_unsigned_int( stream );
@@ -1976,7 +1909,7 @@ AssimpLoader.prototype = {
 
 			var chunkID = Read_uint32_t( stream );
 			ai_assert( chunkID == ASSBIN_CHUNK_AIMATERIAL );
-			/*uint32_t size =*/
+			
 			Read_uint32_t( stream );
 			mat.mNumAllocated = mat.mNumProperties = Read_unsigned_int( stream );
 
@@ -2005,7 +1938,7 @@ AssimpLoader.prototype = {
 
 			var chunkID = Read_uint32_t( stream );
 			ai_assert( chunkID == ASSBIN_CHUNK_AINODEANIM );
-			/*uint32_t size =*/
+			
 			Read_uint32_t( stream );
 			nd.mNodeName = Read_aiString( stream );
 			nd.mNumPositionKeys = Read_unsigned_int( stream );
@@ -2071,7 +2004,7 @@ AssimpLoader.prototype = {
 
 			var chunkID = Read_uint32_t( stream );
 			ai_assert( chunkID == ASSBIN_CHUNK_AIANIMATION );
-			/*uint32_t size =*/
+			
 			Read_uint32_t( stream );
 			anim.mName = Read_aiString( stream );
 			anim.mDuration = Read_double( stream );
@@ -2097,7 +2030,7 @@ AssimpLoader.prototype = {
 
 			var chunkID = Read_uint32_t( stream );
 			ai_assert( chunkID == ASSBIN_CHUNK_AITEXTURE );
-			/*uint32_t size =*/
+			
 			Read_uint32_t( stream );
 			tex.mWidth = Read_unsigned_int( stream );
 			tex.mHeight = Read_unsigned_int( stream );
@@ -2125,7 +2058,7 @@ AssimpLoader.prototype = {
 
 			var chunkID = Read_uint32_t( stream );
 			ai_assert( chunkID == ASSBIN_CHUNK_AILIGHT );
-			/*uint32_t size =*/
+			
 			Read_uint32_t( stream );
 			l.mName = Read_aiString( stream );
 			l.mType = Read_unsigned_int( stream );
@@ -2155,7 +2088,7 @@ AssimpLoader.prototype = {
 
 			var chunkID = Read_uint32_t( stream );
 			ai_assert( chunkID == ASSBIN_CHUNK_AICAMERA );
-			/*uint32_t size =*/
+			
 			Read_uint32_t( stream );
 			cam.mName = Read_aiString( stream );
 			cam.mPosition = Read_aiVector3D( stream );
@@ -2172,7 +2105,7 @@ AssimpLoader.prototype = {
 
 			var chunkID = Read_uint32_t( stream );
 			ai_assert( chunkID == ASSBIN_CHUNK_AISCENE );
-			/*uint32_t size =*/
+			
 			Read_uint32_t( stream );
 			scene.mFlags = Read_unsigned_int( stream );
 			scene.mNumMeshes = Read_unsigned_int( stream );
@@ -2335,13 +2268,13 @@ AssimpLoader.prototype = {
 			var stream = new DataView( pFiledata );
 			extendStream( stream );
 			stream.Seek( 44, aiOrigin_CUR ); // signature
-			/*unsigned int versionMajor =*/
+			
 			var versionMajor = Read_unsigned_int( stream );
-			/*unsigned int versionMinor =*/
+			
 			var versionMinor = Read_unsigned_int( stream );
-			/*unsigned int versionRevision =*/
+			
 			var versionRevision = Read_unsigned_int( stream );
-			/*unsigned int compileFlags =*/
+			
 			var compileFlags = Read_unsigned_int( stream );
 			shortened = Read_uint16_t( stream ) > 0;
 			compressed = Read_uint16_t( stream ) > 0;

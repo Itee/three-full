@@ -1,36 +1,10 @@
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
-import { LoaderUtils } from '../loaders/LoaderUtils.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { LoaderUtils } from './LoaderUtils.js'
 
-/**
- * @author Wei Meng / http://about.me/menway
- *
- * Description: A THREE loader for PLY ASCII files (known as the Polygon
- * File Format or the Stanford Triangle Format).
- *
- * Limitations: ASCII decoding assumes file is UTF-8.
- *
- * Usage:
- *	var loader = new PLYLoader();
- *	loader.load('./models/ply/ascii/dolphins.ply', function (geometry) {
- *
- *		scene.add( new Mesh( geometry ) );
- *
- *	} );
- *
- * If the PLY file uses non standard property names, they can be mapped while
- * loading. For example, the following maps the properties
- * “diffuse_(red|green|blue)” in the file to standard color names.
- *
- * loader.setPropertyNameMapping( {
- *	diffuse_red: 'red',
- *	diffuse_green: 'green',
- *	diffuse_blue: 'blue'
- * } );
- *
- */
+
 
 
 var PLYLoader = function ( manager ) {

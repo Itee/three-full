@@ -1,6 +1,6 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 function arrayMin( array ) {
 
@@ -34,4 +34,9 @@ function arrayMax( array ) {
 
 }
 
-export { arrayMin, arrayMax };
+;
+
+export {
+	arrayMin,
+	arrayMax
+}

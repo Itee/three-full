@@ -1,10 +1,12 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+import { Vector3 } from '../math/Vector3.js'
+import { Audio } from './Audio.js'
+import { Object3D } from '../core/Object3D.js'
 
-import { Vector3 } from '../math/Vector3.js';
-import { Audio } from './Audio.js';
-import { Object3D } from '../core/Object3D.js';
+
+
+
+
+
 
 function PositionalAudio( listener ) {
 
@@ -92,4 +94,6 @@ PositionalAudio.prototype = Object.assign( Object.create( Audio.prototype ), {
 
 } );
 
-export { PositionalAudio };
+;
+
+export { PositionalAudio }

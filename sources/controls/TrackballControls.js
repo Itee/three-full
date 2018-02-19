@@ -3,12 +3,7 @@ import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Quaternion } from '../math/Quaternion.js'
 
-/**
- * @author Eberhard Graether / http://egraether.com/
- * @author Mark Lundin 	/ http://mark-lundin.com
- * @author Simone Manini / http://daron1337.github.io
- * @author Luca Antiga 	/ http://lantiga.github.io
- */
+
 
 var TrackballControls = function ( object, domElement ) {
 
@@ -38,7 +33,7 @@ var TrackballControls = function ( object, domElement ) {
 	this.minDistance = 0;
 	this.maxDistance = Infinity;
 
-	this.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
+	this.keys = [ 65 , 83 , 68  ];
 
 	// internals
 
@@ -474,6 +469,8 @@ var TrackballControls = function ( object, domElement ) {
 	function mousewheel( event ) {
 
 		if ( _this.enabled === false ) return;
+		
+		if ( _this.noZoom === true ) return;
 
 		event.preventDefault();
 		event.stopPropagation();

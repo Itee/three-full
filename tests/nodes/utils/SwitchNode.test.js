@@ -1,11 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -23,7 +18,7 @@ var Three = (function (exports) {
 
 			}
 
-			return function () {
+			return function generateUUID() {
 
 				var d0 = Math.random() * 0xffffffff | 0;
 				var d1 = Math.random() * 0xffffffff | 0;
@@ -149,22 +144,22 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var GLNode = function( type ) {
+	var GLNode = function ( type ) {
 
 		this.uuid = _Math.generateUUID();
 
+		this.name = "";
 		this.allows = {};
-		this.requestUpdate = false;
 
 		this.type = type;
 
+		this.userData = {};
+
 	};
 
-	GLNode.prototype.parse = function( builder, context ) {
+	GLNode.prototype.isNode = true;
+
+	GLNode.prototype.parse = function ( builder, context ) {
 
 		context = context || {};
 
@@ -183,7 +178,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.parseAndBuildCode = function( builder, output, context ) {
+	GLNode.prototype.parseAndBuildCode = function ( builder, output, context ) {
 
 		context = context || {};
 
@@ -193,13 +188,13 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.buildCode = function( builder, output, context ) {
+	GLNode.prototype.buildCode = function ( builder, output, context ) {
 
 		context = context || {};
 
 		var material = builder.material;
 
-		var data = { result : this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
+		var data = { result: this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
 
 		if ( builder.isShader( 'vertex' ) ) data.code = material.clearVertexNode();
 		else data.code = material.clearFragmentNode();
@@ -210,7 +205,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.build = function( builder, output, uuid ) {
+	GLNode.prototype.build = function ( builder, output, uuid ) {
 
 		output = output || this.getType( builder, output );
 
@@ -224,9 +219,15 @@ var Three = (function (exports) {
 
 		}
 
-		if ( this.requestUpdate && material.requestUpdate.indexOf( this ) === - 1 ) {
+		if ( material.nodes.indexOf( this ) === - 1 ) {
 
-			material.requestUpdate.push( this );
+			material.nodes.push( this );
+
+		}
+
+		if ( this.updateFrame !== undefined && material.updaters.indexOf( this ) === - 1 ) {
+
+			material.updaters.push( this );
 
 		}
 
@@ -234,7 +235,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.appendDepsNode = function( builder, data, output ) {
+	GLNode.prototype.appendDepsNode = function ( builder, data, output ) {
 
 		data.deps = ( data.deps || 0 ) + 1;
 
@@ -249,17 +250,56 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.getType = function( builder, output ) {
+	GLNode.prototype.getType = function ( builder, output ) {
 
 		return output === 'sampler2D' || output === 'samplerCube' ? output : this.type;
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	GLNode.prototype.getJSONNode = function ( meta ) {
 
-	var SwitchNode = function( node, components ) {
+		var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+		if ( ! isRootObject && meta.nodes[ this.uuid ] !== undefined ) {
+
+			return meta.nodes[ this.uuid ];
+
+		}
+
+	};
+
+	GLNode.prototype.createJSONNode = function ( meta ) {
+
+		var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+		var data = {};
+
+		if ( typeof this.nodeType !== "string" ) throw new Error( "Node does not allow serialization." );
+
+		data.uuid = this.uuid;
+		data.type = this.nodeType + "Node";
+
+		if ( this.name !== "" ) data.name = this.name;
+
+		if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
+
+		if ( ! isRootObject ) {
+
+			meta.nodes[ this.uuid ] = data;
+
+		}
+
+		return data;
+
+	};
+
+	GLNode.prototype.toJSON = function ( meta ) {
+
+		return this.getJSONNode( meta ) || this.createJSONNode( meta );
+
+	};
+
+	var SwitchNode = function ( node, components ) {
 
 		GLNode.call( this );
 
@@ -270,14 +310,15 @@ var Three = (function (exports) {
 
 	SwitchNode.prototype = Object.create( GLNode.prototype );
 	SwitchNode.prototype.constructor = SwitchNode;
+	SwitchNode.prototype.nodeType = "Switch";
 
-	SwitchNode.prototype.getType = function( builder ) {
+	SwitchNode.prototype.getType = function ( builder ) {
 
 		return builder.getFormatFromLength( this.components.length );
 
 	};
 
-	SwitchNode.prototype.generate = function( builder, output ) {
+	SwitchNode.prototype.generate = function ( builder, output ) {
 
 		var type = this.node.getType( builder );
 		var inputLength = builder.getFormatLength( type ) - 1;
@@ -322,9 +363,26 @@ var Three = (function (exports) {
 
 			// join
 
-			return builder.format( node, type, output )
+			return builder.format( node, type, output );
 
 		}
+
+	};
+
+	SwitchNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.node = this.node.toJSON( meta ).uuid;
+			data.components = this.components;
+
+		}
+
+		return data;
 
 	};
 

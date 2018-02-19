@@ -17,30 +17,6 @@ var Three = (function (exports) {
 	var DstColorFactor = 208;
 	var OneMinusDstColorFactor = 209;
 	var SrcAlphaSaturateFactor = 210;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	var RepeatWrapping = 1000;
 	var ClampToEdgeWrapping = 1001;
 	var MirroredRepeatWrapping = 1002;
@@ -67,22 +43,31 @@ var Three = (function (exports) {
 	var RGBAFormat = 1023;
 	var LuminanceFormat = 1024;
 	var LuminanceAlphaFormat = 1025;
-
 	var DepthFormat = 1026;
 	var DepthStencilFormat = 1027;
-	var RGB_S3TC_DXT1_Format = 2001;
-	var RGBA_S3TC_DXT1_Format = 2002;
-	var RGBA_S3TC_DXT3_Format = 2003;
-	var RGBA_S3TC_DXT5_Format = 2004;
-	var RGB_PVRTC_4BPPV1_Format = 2100;
-	var RGB_PVRTC_2BPPV1_Format = 2101;
-	var RGBA_PVRTC_4BPPV1_Format = 2102;
-	var RGBA_PVRTC_2BPPV1_Format = 2103;
-	var RGB_ETC1_Format = 2151;
-
-	/**
-	 * @author thespite / http://www.twitter.com/thespite
-	 */
+	var RGB_S3TC_DXT1_Format = 33776;
+	var RGBA_S3TC_DXT1_Format = 33777;
+	var RGBA_S3TC_DXT3_Format = 33778;
+	var RGBA_S3TC_DXT5_Format = 33779;
+	var RGB_PVRTC_4BPPV1_Format = 35840;
+	var RGB_PVRTC_2BPPV1_Format = 35841;
+	var RGBA_PVRTC_4BPPV1_Format = 35842;
+	var RGBA_PVRTC_2BPPV1_Format = 35843;
+	var RGB_ETC1_Format = 36196;
+	var RGBA_ASTC_4x4_Format = 37808;
+	var RGBA_ASTC_5x4_Format = 37809;
+	var RGBA_ASTC_5x5_Format = 37810;
+	var RGBA_ASTC_6x5_Format = 37811;
+	var RGBA_ASTC_6x6_Format = 37812;
+	var RGBA_ASTC_8x5_Format = 37813;
+	var RGBA_ASTC_8x6_Format = 37814;
+	var RGBA_ASTC_8x8_Format = 37815;
+	var RGBA_ASTC_10x5_Format = 37816;
+	var RGBA_ASTC_10x6_Format = 37817;
+	var RGBA_ASTC_10x8_Format = 37818;
+	var RGBA_ASTC_10x10_Format = 37819;
+	var RGBA_ASTC_12x10_Format = 37820;
+	var RGBA_ASTC_12x12_Format = 37821;
 
 	function WebGLUtils( gl, extensions ) {
 
@@ -184,6 +169,22 @@ var Three = (function (exports) {
 				extension = extensions.get( 'WEBGL_compressed_texture_etc1' );
 
 				if ( extension !== null ) return extension.COMPRESSED_RGB_ETC1_WEBGL;
+
+			}
+
+			if ( p === RGBA_ASTC_4x4_Format || p === RGBA_ASTC_5x4_Format || p === RGBA_ASTC_5x5_Format ||
+				p === RGBA_ASTC_6x5_Format || p === RGBA_ASTC_6x6_Format || p === RGBA_ASTC_8x5_Format ||
+				p === RGBA_ASTC_8x6_Format || p === RGBA_ASTC_8x8_Format || p === RGBA_ASTC_10x5_Format ||
+				p === RGBA_ASTC_10x6_Format || p === RGBA_ASTC_10x8_Format || p === RGBA_ASTC_10x10_Format ||
+				p === RGBA_ASTC_12x10_Format || p === RGBA_ASTC_12x12_Format ) {
+
+				extension = extensions.get( 'WEBGL_compressed_texture_astc' );
+
+				if ( extension !== null ) {
+
+					return p;
+
+				}
 
 			}
 

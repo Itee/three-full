@@ -1,13 +1,11 @@
-import { InputNode } from '../../nodes/InputNode.js'
-import { ReflectNode } from '../../nodes/accessors/ReflectNode.js'
+import { InputNode } from '../InputNode.js'
+import { ReflectNode } from '../accessors/ReflectNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var CubeTextureNode = function( value, coord, bias ) {
 
-	InputNode.call( this, 'v4', { shared : true } );
+var CubeTextureNode = function ( value, coord, bias ) {
+
+	InputNode.call( this, 'v4', { shared: true } );
 
 	this.value = value;
 	this.coord = coord || new ReflectNode();
@@ -17,14 +15,15 @@ var CubeTextureNode = function( value, coord, bias ) {
 
 CubeTextureNode.prototype = Object.create( InputNode.prototype );
 CubeTextureNode.prototype.constructor = CubeTextureNode;
+CubeTextureNode.prototype.nodeType = "CubeTexture";
 
-CubeTextureNode.prototype.getTexture = function( builder, output ) {
+CubeTextureNode.prototype.getTexture = function ( builder, output ) {
 
 	return InputNode.prototype.generate.call( this, builder, output, this.value.uuid, 't' );
 
 };
 
-CubeTextureNode.prototype.generate = function( builder, output ) {
+CubeTextureNode.prototype.generate = function ( builder, output ) {
 
 	if ( output === 'samplerCube' ) {
 
@@ -62,6 +61,25 @@ CubeTextureNode.prototype.generate = function( builder, output ) {
 	}
 
 	return builder.format( code, this.type, output );
+
+};
+
+CubeTextureNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.value = this.value.uuid;
+		data.coord = this.coord.toJSON( meta ).uuid;
+
+		if ( this.bias ) data.bias = this.bias.toJSON( meta ).uuid;
+
+	}
+
+	return data;
 
 };
 

@@ -1,54 +1,10 @@
-/**
- * @author tschw
- *
- * Uniforms of a program.
- * Those form a tree structure with a special top-level container for the root,
- * which you get by calling 'new WebGLUniforms( gl, program, renderer )'.
- *
- *
- * Properties of inner nodes including the top-level container:
- *
- * .seq - array of nested uniforms
- * .map - nested uniforms by name
- *
- *
- * Methods of all nodes except the top-level container:
- *
- * .setValue( gl, value, [renderer] )
- *
- * 		uploads a uniform value(s)
- *  	the 'renderer' parameter is needed for sampler uniforms
- *
- *
- * Static methods of the top-level container (renderer factorizations):
- *
- * .upload( gl, seq, values, renderer )
- *
- * 		sets uniforms in 'seq' to 'values[id].value'
- *
- * .seqWithValue( seq, values ) : filteredSeq
- *
- * 		filters 'seq' entries with corresponding entry in values
- *
- *
- * Methods of the top-level container (renderer factorizations):
- *
- * .setValue( gl, name, value )
- *
- * 		sets uniform with  name 'name' to 'value'
- *
- * .set( gl, obj, prop )
- *
- * 		sets uniform from object and property with same name than uniform
- *
- * .setOptional( gl, obj, prop )
- *
- * 		like .set for an optional property of the object
- *
- */
+import { CubeTexture } from '../../textures/CubeTexture.js'
+import { Texture } from '../../textures/Texture.js'
 
-import { CubeTexture } from '../../textures/CubeTexture.js';
-import { Texture } from '../../textures/Texture.js';
+
+
+
+
 
 var emptyTexture = new Texture();
 var emptyCubeTexture = new CubeTexture();
@@ -150,7 +106,7 @@ function setValue1i( gl, v ) {
 
 }
 
-// Single float vector (from flat array or THREE.VectorN)
+// Single float vector (from flat array or VectorN)
 
 function setValue2fv( gl, v ) {
 
@@ -606,4 +562,6 @@ WebGLUniforms.seqWithValue = function ( seq, values ) {
 
 };
 
-export { WebGLUniforms };
+;
+
+export { WebGLUniforms }

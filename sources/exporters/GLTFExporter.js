@@ -1,13 +1,11 @@
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Scene } from '../scenes/Scene.js'
-import {
-	ShaderMaterial,
-	MeshStandardMaterial,
-	MeshBasicMaterial,
-	PointsMaterial
-} from '../materials/Materials.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { PointsMaterial } from '../materials/PointsMaterial.js'
 import { LineSegments } from '../objects/LineSegments.js'
 import { LineLoop } from '../objects/LineLoop.js'
 import { Line } from '../objects/Line.js'
@@ -19,15 +17,15 @@ import { Camera } from '../cameras/Camera.js'
 import { SkinnedMesh } from '../objects/SkinnedMesh.js'
 import {
 	DoubleSide,
+	VertexColors,
 	RGBAFormat,
 	InterpolateDiscrete,
 	TriangleStripDrawMode,
 	TriangleFanDrawMode
 } from '../constants.js'
+import { _Math } from '../math/Math.js'
 
-/**
- * @author fernandojsg / http://fernandojsg.com
- */
+
 
 //------------------------------------------------------------------------------
 // Constants
@@ -82,12 +80,7 @@ GLTFExporter.prototype = {
 
 	constructor: GLTFExporter,
 
-	/**
-	 * Parse scenes and generate GLTF output
-	 * @param  {Scene or [Scenes]} input   Scene or Array of Scenes
-	 * @param  {Function} onDone  Callback on completed
-	 * @param  {Object} options options
-	 */
+	
 	parse: function ( input, onDone, options ) {
 
 		var DEFAULT_OPTIONS = {
@@ -131,15 +124,8 @@ GLTFExporter.prototype = {
 
 		var cachedCanvas;
 
-		/**
-		 * Compare two arrays
-		 */
-		/**
-		 * Compare two arrays
-		 * @param  {Array} array1 Array 1 to compare
-		 * @param  {Array} array2 Array 2 to compare
-		 * @return {Boolean}        Returns true if both arrays are equal
-		 */
+		
+		
 		function equalArray( array1, array2 ) {
 
 			return ( array1.length === array2.length ) && array1.every( function ( element, index ) {
@@ -150,11 +136,7 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Converts a string to an ArrayBuffer.
-		 * @param  {string} text
-		 * @return {ArrayBuffer}
-		 */
+		
 		function stringToArrayBuffer( text ) {
 
 			if ( window.TextEncoder !== undefined ) {
@@ -177,11 +159,7 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Get the min and max vectors from the given attribute
-		 * @param  {BufferAttribute} attribute Attribute to find the min/max
-		 * @return {Object} Object containing the `min` and `max` values (As an array of attribute.itemSize components)
-		 */
+		
 		function getMinMax( attribute ) {
 
 			var output = {
@@ -207,12 +185,14 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Process a buffer to append to the default one.
-		 * @param  {BufferAttribute} attribute     Attribute to store
-		 * @param  {Integer} componentType Component type (Unsigned short, unsigned int or float)
-		 * @return {Integer}               Index of the buffer created (Currently always 0)
-		 */
+		
+		function getPaddedBufferSize( bufferSize ) {
+
+			return Math.ceil( bufferSize / 4 ) * 4;
+
+		}
+		
+		
 		function processBuffer( attribute, componentType, start, count ) {
 
 			if ( ! outputJSON.buffers ) {
@@ -235,6 +215,10 @@ GLTFExporter.prototype = {
 
 			// Create a new dataview and dump the attribute's array into it
 			var byteLength = count * attribute.itemSize * componentSize;
+			
+			// adjust required size of array buffer with padding 
+			// to satisfy gltf requirement that the length is divisible by 4
+			byteLength = getPaddedBufferSize( byteLength );
 
 			var dataView = new DataView( new ArrayBuffer( byteLength ) );
 
@@ -250,7 +234,7 @@ GLTFExporter.prototype = {
 
 					} else if ( componentType === WEBGL_CONSTANTS.UNSIGNED_INT ) {
 
-						dataView.setUint8( offset, value, true );
+						dataView.setUint32( offset, value, true );
 
 					} else if ( componentType === WEBGL_CONSTANTS.UNSIGNED_SHORT ) {
 
@@ -272,15 +256,7 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Process and generate a BufferView
-		 * @param  {BufferAttribute} data
-		 * @param  {number} componentType
-		 * @param  {number} start
-		 * @param  {number} count
-		 * @param  {number} target (Optional) Target usage of the BufferView
-		 * @return {Object}
-		 */
+		
 		function processBufferView( data, componentType, start, count, target ) {
 
 			if ( ! outputJSON.bufferViews ) {
@@ -327,12 +303,7 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Process attribute to generate an accessor
-		 * @param  {BufferAttribute} attribute Attribute to process
-		 * @param  {BufferGeometry} geometry (Optional) Geometry used for truncated draw range
-		 * @return {Integer}           Index of the processed accessor on the "accessors" array
-		 */
+		
 		function processAccessor( attribute, geometry ) {
 
 			if ( ! outputJSON.accessors ) {
@@ -416,14 +387,10 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Process image
-		 * @param  {Texture} map Texture to process
-		 * @return {Integer}     Index of the processed texture in the "images" array
-		 */
+		
 		function processImage( map ) {
 
-			if ( cachedData.images[ map.uuid ] ) {
+			if ( cachedData.images[ map.uuid ] !== undefined ) {
 
 				return cachedData.images[ map.uuid ];
 
@@ -473,11 +440,7 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Process sampler
-		 * @param  {Texture} map Texture to process
-		 * @return {Integer}     Index of the processed texture in the "samplers" array
-		 */
+		
 		function processSampler( map ) {
 
 			if ( ! outputJSON.samplers ) {
@@ -501,11 +464,7 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Process texture
-		 * @param  {Texture} map Map to process
-		 * @return {Integer}     Index of the processed texture in the "textures" array
-		 */
+		
 		function processTexture( map ) {
 
 			if ( ! outputJSON.textures ) {
@@ -527,14 +486,10 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Process material
-		 * @param  {Material} material Material to process
-		 * @return {Integer}      Index of the processed material in the "materials" array
-		 */
+		
 		function processMaterial( material ) {
 
-			if ( cachedData.materials[ material.uuid ] ) {
+			if ( cachedData.materials[ material.uuid ] !== undefined ) {
 
 				return cachedData.materials[ material.uuid ];
 
@@ -703,11 +658,7 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Process mesh
-		 * @param  {Mesh} mesh Mesh to process
-		 * @return {Integer}      Index of the processed mesh in the "meshes" array
-		 */
+		
 		function processMesh( mesh ) {
 
 			if ( ! outputJSON.meshes ) {
@@ -819,6 +770,7 @@ GLTFExporter.prototype = {
 			// Morph targets
 			if ( mesh.morphTargetInfluences !== undefined && mesh.morphTargetInfluences.length > 0 ) {
 
+				var weights = [];
 				gltfMesh.primitives[ 0 ].targets = [];
 
 				for ( var i = 0; i < mesh.morphTargetInfluences.length; ++ i ) {
@@ -835,7 +787,11 @@ GLTFExporter.prototype = {
 
 					gltfMesh.primitives[ 0 ].targets.push( target );
 
+					weights.push( mesh.morphTargetInfluences[ i ] );
+
 				}
+
+				gltfMesh.weights = weights;
 
 			}
 
@@ -845,11 +801,7 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Process camera
-		 * @param  {Camera} camera Camera to process
-		 * @return {Integer}      Index of the processed mesh in the "camera" array
-		 */
+		
 		function processCamera( camera ) {
 
 			if ( ! outputJSON.cameras ) {
@@ -882,7 +834,7 @@ GLTFExporter.prototype = {
 				gltfCamera.perspective = {
 
 					aspectRatio: camera.aspect,
-					yfov: Math.degToRad( camera.fov ) / camera.aspect,
+					yfov: _Math.degToRad( camera.fov ) / camera.aspect,
 					zfar: camera.far,
 					znear: camera.near
 
@@ -902,17 +854,7 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Creates glTF animation entry from AnimationClip object.
-		 *
-		 * Status:
-		 * - Only properties listed in PATH_PROPERTIES may be animated.
-		 * - Only LINEAR and STEP interpolation currently supported.
-		 *
-		 * @param {AnimationClip} clip
-		 * @param {Object3D} root
-		 * @return {number}
-		 */
+		
 		function processAnimation ( clip, root ) {
 
 			if ( ! outputJSON.animations ) {
@@ -930,6 +872,20 @@ GLTFExporter.prototype = {
 				var trackBinding = PropertyBinding.parseTrackName( track.name );
 				var trackNode = PropertyBinding.findNode( root, trackBinding.nodeName );
 				var trackProperty = PATH_PROPERTIES[ trackBinding.propertyName ];
+
+				if ( trackBinding.objectName === 'bones' ) {
+
+					if ( trackNode.isSkinnedMesh === true ) {
+
+						trackNode = trackNode.skeleton.getBoneByName( trackBinding.objectIndex );
+
+					} else {
+
+						trackNode = undefined;
+
+					}
+
+				}
 
 				if ( ! trackNode || ! trackProperty ) {
 
@@ -951,7 +907,7 @@ GLTFExporter.prototype = {
 
 					input: processAccessor( new BufferAttribute( track.times, inputItemSize ) ),
 					output: processAccessor( new BufferAttribute( track.values, outputItemSize ) ),
-					interpolation: track.interpolation === InterpolateDiscrete ? 'STEP' : 'LINEAR'
+					interpolation: track.getInterpolation() === InterpolateDiscrete ? 'STEP' : 'LINEAR'
 
 				} );
 
@@ -1019,11 +975,7 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Process Object3D node
-		 * @param  {Object3D} node Object3D to processNode
-		 * @return {Integer}      Index of the node in the nodes list
-		 */
+		
 		function processNode( object ) {
 
 			if ( object instanceof Light ) {
@@ -1078,7 +1030,7 @@ GLTFExporter.prototype = {
 
 			if ( object.name ) {
 
-				gltfNode.name = object.name;
+				gltfNode.name = String( object.name );
 
 			}
 
@@ -1153,10 +1105,7 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Process Scene
-		 * @param  {Scene} node Scene to process
-		 */
+		
 		function processScene( scene ) {
 
 			if ( ! outputJSON.scenes ) {
@@ -1208,10 +1157,7 @@ GLTFExporter.prototype = {
 
 		}
 
-		/**
-		 * Creates a Scene to hold a list of objects and parse it
-		 * @param  {Array} objects List of objects to process
-		 */
+		
 		function processObjects( objects ) {
 
 			var scene = new Scene();

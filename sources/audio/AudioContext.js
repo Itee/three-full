@@ -1,6 +1,6 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 var context;
 
@@ -26,4 +26,6 @@ var AudioContext = {
 
 };
 
-export { AudioContext };
+;
+
+export { AudioContext }

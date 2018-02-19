@@ -1,15 +1,18 @@
-/**
- * @author alteredq / http://alteredqualia.com/
- * @author mrdoob / http://mrdoob.com/
- * @author WestLangley / http://github.com/WestLangley
- */
+import { Vector3 } from '../math/Vector3.js'
+import { Object3D } from '../core/Object3D.js'
+import { LineSegments } from '../objects/LineSegments.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
 
-import { Vector3 } from '../math/Vector3.js';
-import { Object3D } from '../core/Object3D.js';
-import { LineSegments } from '../objects/LineSegments.js';
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
+
+
+
+
+
+
+
+
 
 function SpotLightHelper( light, color ) {
 
@@ -100,4 +103,6 @@ SpotLightHelper.prototype.update = function () {
 }();
 
 
-export { SpotLightHelper };
+;
+
+export { SpotLightHelper }

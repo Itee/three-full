@@ -1,15 +1,14 @@
-/**
- * @author zz85 / https://github.com/zz85
- * @author Mugen87 / https://github.com/Mugen87
- *
- * Parametric Surfaces Geometry
- * based on the brilliant article by @prideout http://prideout.net/blog/?p=44
- */
+import { Geometry } from '../core/Geometry.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Vector3 } from '../math/Vector3.js'
 
-import { Geometry } from '../core/Geometry.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { Vector3 } from '../math/Vector3.js';
+
+
+
+
+
+
 
 // ParametricGeometry
 
@@ -154,4 +153,9 @@ ParametricBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 ParametricBufferGeometry.prototype.constructor = ParametricBufferGeometry;
 
 
-export { ParametricGeometry, ParametricBufferGeometry };
+;
+
+export {
+	ParametricGeometry,
+	ParametricBufferGeometry
+}

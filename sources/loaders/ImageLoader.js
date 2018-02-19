@@ -1,9 +1,10 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+import { Cache } from './Cache.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-import { Cache } from './Cache.js';
-import { DefaultLoadingManager } from './LoadingManager.js';
+
+
+
+
 
 
 function ImageLoader( manager ) {
@@ -56,13 +57,7 @@ Object.assign( ImageLoader.prototype, {
 
 		}, false );
 
-		/*
-		image.addEventListener( 'progress', function ( event ) {
-
-			if ( onProgress ) onProgress( event );
-
-		}, false );
-		*/
+		
 
 		image.addEventListener( 'error', function ( event ) {
 
@@ -104,4 +99,6 @@ Object.assign( ImageLoader.prototype, {
 } );
 
 
-export { ImageLoader };
+;
+
+export { ImageLoader }

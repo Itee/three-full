@@ -1,6 +1,6 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 function WebGLAttributes( gl ) {
 
@@ -26,7 +26,7 @@ function WebGLAttributes( gl ) {
 
 		} else if ( array instanceof Float64Array ) {
 
-			console.warn( 'THREE.WebGLAttributes: Unsupported data buffer format: Float64Array.' );
+			console.warn( 'WebGLAttributes: Unsupported data buffer format: Float64Array.' );
 
 		} else if ( array instanceof Uint16Array ) {
 
@@ -82,7 +82,7 @@ function WebGLAttributes( gl ) {
 
 		} else if ( updateRange.count === 0 ) {
 
-			console.error( 'THREE.WebGLObjects.updateBuffer: dynamic THREE.BufferAttribute marked as needsUpdate but updateRange.count is 0, ensure you are using set methods or updating manually.' );
+			console.error( 'WebGLObjects.updateBuffer: dynamic BufferAttribute marked as needsUpdate but updateRange.count is 0, ensure you are using set methods or updating manually.' );
 
 		} else {
 
@@ -152,4 +152,6 @@ function WebGLAttributes( gl ) {
 }
 
 
-export { WebGLAttributes };
+;
+
+export { WebGLAttributes }

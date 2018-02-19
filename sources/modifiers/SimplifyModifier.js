@@ -3,15 +3,7 @@ import { Geometry } from '../core/Geometry.js'
 import { Face3 } from '../core/Face3.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 
-/*
- *	@author zz85 / http://twitter.com/blurspline / http://www.lab4games.net/zz85/blog
- *
- *	Simplification Geometry Modifier
- *    - based on code and technique
- *	  - by Stan Melax in 1998
- *	  - Progressive Mesh type Polygon Reduction Algorithm
- *    - http://www.melax.com/polychop/
- */
+
 
 var SimplifyModifier = function() {
 

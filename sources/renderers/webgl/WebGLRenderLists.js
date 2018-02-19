@@ -1,6 +1,6 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 function painterSortStable( a, b ) {
 
@@ -131,7 +131,7 @@ function WebGLRenderLists() {
 
 		if ( list === undefined ) {
 
-			// console.log( 'THREE.WebGLRenderLists:', hash );
+			// console.log( 'WebGLRenderLists:', hash );
 
 			list = new WebGLRenderList();
 			lists[ hash ] = list;
@@ -156,4 +156,6 @@ function WebGLRenderLists() {
 }
 
 
-export { WebGLRenderLists };
+;
+
+export { WebGLRenderLists }

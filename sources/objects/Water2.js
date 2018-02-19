@@ -1,31 +1,24 @@
-import { Mesh } from '../objects/Mesh.js'
+import { Mesh } from './Mesh.js'
 import { Color } from '../math/Color.js'
 import { Vector2 } from '../math/Vector2.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Clock } from '../core/Clock.js'
-import { Reflector } from '../objects/Reflector.js'
-import { Refractor } from '../objects/Refractor.js'
-import { ShaderMaterial } from '../materials/Materials.js'
+import { Reflector } from './Reflector.js'
+import { Refractor } from './Refractor.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Vector4 } from '../math/Vector4.js'
 import { RepeatWrapping } from '../constants.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 
-/**
- * @author Mugen87 / https://github.com/Mugen87
- *
- * References:
- *	http://www.valvesoftware.com/publications/2010/siggraph2010_vlachos_waterflow.pdf
- * 	http://graphicsrunner.blogspot.de/2010/08/water-using-flow-maps.html
- *
- */
 
-var Water = function ( geometry, options ) {
+
+function Water2( geometry, options ) {
 
 	Mesh.call( this, geometry );
 
-	this.type = 'Water';
+	this.type = 'Water2';
 
 	var scope = this;
 
@@ -39,13 +32,13 @@ var Water = function ( geometry, options ) {
 	var flowSpeed = options.flowSpeed || 0.03;
 	var reflectivity = options.reflectivity || 0.02;
 	var scale = options.scale || 1;
-	var shader = options.shader || Water.WaterShader;
+	var shader = options.shader || Water2.Water2Shader;
 
 	var textureLoader = new TextureLoader();
 
 	var flowMap = options.flowMap || undefined;
-	var normalMap0 = options.normalMap0 || textureLoader.load( 'textures/water/Water_1_M_Normal.jpg' );
-	var normalMap1 = options.normalMap1 || textureLoader.load( 'textures/water/Water_2_M_Normal.jpg' );
+	var normalMap0 = options.normalMap0 || textureLoader.load( 'textures/water/Water2_1_M_Normal.jpg' );
+	var normalMap1 = options.normalMap1 || textureLoader.load( 'textures/water/Water2_2_M_Normal.jpg' );
 
 	var cycle = 0.15; // a cycle of a flow map phase
 	var halfCycle = cycle * 0.5;
@@ -56,14 +49,14 @@ var Water = function ( geometry, options ) {
 
 	if ( Reflector === undefined ) {
 
-		console.error( 'Water: Required component Reflector not found.' );
+		console.error( 'Water2: Required component Reflector not found.' );
 		return;
 
 	}
 
 	if ( Refractor === undefined ) {
 
-		console.error( 'Water: Required component Refractor not found.' );
+		console.error( 'Water2: Required component Refractor not found.' );
 		return;
 
 	}
@@ -199,10 +192,10 @@ var Water = function ( geometry, options ) {
 
 };
 
-Water.prototype = Object.create( Mesh.prototype );
-Water.prototype.constructor = Water;
+Water2.prototype = Object.create( Mesh.prototype );
+Water2.prototype.constructor = Water2;
 
-Water.WaterShader = {
+Water2.Water2Shader = {
 
 	uniforms: {
 
@@ -350,4 +343,4 @@ Water.WaterShader = {
 	].join( '\n' )
 };
 
-export { Water }
+export { Water2 }

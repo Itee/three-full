@@ -1,13 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author egraether / http://egraether.com/
-	 * @author zz85 / http://www.lab4games.net/zz85/blog
-	 */
-
 	function Vector2( x, y ) {
 
 		this.x = x || 0;
@@ -134,7 +127,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -177,7 +170,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -465,7 +458,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector2: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector2: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -491,14 +484,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mpk / http://polko.me/
-	 *
-	 * WebGL port of Subpixel Morphological Antialiasing (SMAA) v2.8
-	 * Preset: SMAA 1x Medium (with color edge detection)
-	 * https://github.com/iryoku/smaa/releases/tag/v2.8
-	 */
 
 	var SMAAShader = [ {
 
@@ -686,13 +671,7 @@ var Three = (function (exports) {
 			"}",
 
 			"float SMAASearchXLeft( sampler2D edgesTex, sampler2D searchTex, vec2 texcoord, float end ) {",
-				/**
-				* @PSEUDO_GATHER4
-				* This texcoord has been offset by (-0.25, -0.125) in the vertex shader to
-				* sample between edge, thus fetching four edges in a row.
-				* Sampling with different offsets in each direction allows to disambiguate
-				* which edges are active from the four fetched ones.
-				*/
+				
 				"vec2 e = vec2( 0.0, 1.0 );",
 
 				"for ( int i = 0; i < SMAA_MAX_SEARCH_STEPS; i ++ ) {", // WebGL port note: Changed while to for

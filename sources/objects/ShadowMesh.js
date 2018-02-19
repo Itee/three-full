@@ -1,12 +1,8 @@
-import { Mesh } from '../objects/Mesh.js'
-import { MeshBasicMaterial } from '../materials/Materials.js'
+import { Mesh } from './Mesh.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { Matrix4 } from '../math/Matrix4.js'
 
-/**
- * @author erichlof /  http://github.com/erichlof
- *
- * A shadow Mesh that follows a shadow-casting Mesh in the scene, but is confined to a single plane.
- */
+
 
 var ShadowMesh = function ( mesh ) {
 

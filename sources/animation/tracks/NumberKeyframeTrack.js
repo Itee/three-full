@@ -1,13 +1,8 @@
-import { KeyframeTrack } from '../KeyframeTrack.js';
+import { KeyframeTrack } from '../KeyframeTrack.js'
 
-/**
- *
- * A Track of numeric keyframe values.
- *
- * @author Ben Houston / http://clara.io/
- * @author David Sarno / http://lighthaus.us/
- * @author tschw
- */
+
+
+
 
 function NumberKeyframeTrack( name, times, values, interpolation ) {
 
@@ -27,4 +22,6 @@ NumberKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrack.prot
 
 } );
 
-export { NumberKeyframeTrack };
+;
+
+export { NumberKeyframeTrack }

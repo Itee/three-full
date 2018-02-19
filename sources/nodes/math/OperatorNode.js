@@ -1,10 +1,8 @@
-import { TempNode } from '../../nodes/TempNode.js'
+import { TempNode } from '../TempNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var OperatorNode = function( a, b, op ) {
+
+var OperatorNode = function ( a, b, op ) {
 
 	TempNode.call( this );
 
@@ -21,8 +19,9 @@ OperatorNode.DIV = '/';
 
 OperatorNode.prototype = Object.create( TempNode.prototype );
 OperatorNode.prototype.constructor = OperatorNode;
+OperatorNode.prototype.nodeType = "Operator";
 
-OperatorNode.prototype.getType = function( builder ) {
+OperatorNode.prototype.getType = function ( builder ) {
 
 	var a = this.a.getType( builder );
 	var b = this.b.getType( builder );
@@ -43,7 +42,7 @@ OperatorNode.prototype.getType = function( builder ) {
 
 };
 
-OperatorNode.prototype.generate = function( builder, output ) {
+OperatorNode.prototype.generate = function ( builder, output ) {
 
 	var material = builder.material,
 		data = material.getDataNode( this.uuid );
@@ -54,6 +53,24 @@ OperatorNode.prototype.generate = function( builder, output ) {
 	var b = this.b.build( builder, type );
 
 	return builder.format( '(' + a + this.op + b + ')', type, output );
+
+};
+
+OperatorNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.a = this.a.toJSON( meta ).uuid;
+		data.b = this.b.toJSON( meta ).uuid;
+		data.op = this.op;
+
+	}
+
+	return data;
 
 };
 

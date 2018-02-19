@@ -5,11 +5,11 @@ threejs-full-es6
 
 #### Extended Three JavaScript 3D library ####
 
-Three.js r89 come with lot of examples files, which are curently not usable as ES6 module. 
+Three.js r90 come with lot of examples files, which are curently not usable as ES6 module. 
 The purpose of this project is to convert all examples files and includes them as part 
 of the library.
 
-**The version 4.2.2 is now available !!!**
+**The version 5.0.0 is now available !!!**
 
 #### Setup ####
 
@@ -108,19 +108,85 @@ This command will build converted sources as UMD, AMD, ES ([*](#bug)), CJS and I
 
 #### <a id="miss"></a>Missings ####
 
-This is the list of unsupported part of example, which cannot be converted yet.
-* **ctm folder** //*Need to check worker import*
-* **draco folder** //*draco_decoder use Eval !*
-* **sea3d folder** //*Duplicate export 'SEA3D', namespace not managed yet*
-* **crossfade folder** //*Scene has already been declared*
-* **RaytracingWorker.js** //*Need to check worker import*
-* **ParametricGeometries.js** //*Bug TorusKnotCurve from es6-convertor*
-* **RollerCoaster.js** //*invalid default exports with file name from es6-convertor*
-* **OceanShaders.js** //*Need to check how to extends imported lib properly*
-* **RectAreaLightUniformsLib.js** //*...*
-* **NRRDLoader.js** //*Import Volume.js*
-* **Volume.js** //*Use Eval !*
-* **Cloth.js** //*Use global variable from html example file !*
+This is the list of unsupported part of example, which cannot/won't be converted.
+
+* **Intermediary exporter files** 
+    * **Curves.js**
+    * **Geometries.js**
+    * **Materials.js**
+    
+* **Workers** 
+    * **RaytracingWorker.js**
+    * **OffscreenCanvas.js**
+    * **ctm folder**
+    
+* **Folders**
+    * **draco** //*draco_decoder use Eval !*
+    * **sea3d** //*Duplicate export 'SEA3D', namespace not managed yet*
+    * **crossfade folder** //*Scene has already been declared*
+        
+* **Specific Files**   
+    * **Cloth.js** //*Use global variable from html example file !*
+    * **ParametricGeometries.js** //*Wrong export of TorusKnotCurve*
+    * **OceanShaders.js** //*Need to check how to extends imported lib properly*
+    * **RectAreaLightUniformsLib.js** //*Need to check how to extends imported lib properly*
+    * **Volume.js** //*Use Eval !*
+    * **NRRDLoader.js** //*Import Volume.js*
+    * **XLoader.js** //*Unprocessable AMD module style*
+
+#### <a id="redirectedFiles"></a>Redirected Files ####
+
+* AnimationClipCreator ---> 'animation/AnimationClipCreator.js'
+* ArcCurve ---> 'curves/ArcCurve.js'
+* BufferGeometryUtils ---> 'utils/BufferGeometryUtils.js'
+* Car ---> 'objects/Car.js'
+* CatmullRomCurve3 ---> 'curves/CatmullRomCurve3.js'
+* ConvexObjectBreaker ---> 'modifiers/ConvexObjectBreaker.js'
+* CubicBezierCurve ---> 'curves/CubicBezierCurve.js'
+* CubicBezierCurve3 ---> 'curves/CubicBezierCurve3.js'
+* Curve ---> 'curves/Curve.js'
+* CurveExtras ---> 'curves/CurveExtras.js'
+* CurvePath ---> 'core/CurvePath.js'
+* Detector ---> 'helpers/Detector.js'
+* Earcut ---> 'misc/Earcut.js'
+* EllipseCurve ---> 'curves/EllipseCurve.js'
+* Font ---> 'core/Font.js'
+* GPUComputationRenderer ---> 'renderers/GPUComputationRenderer.js'
+* GPUParticleSystem ---> 'objects/GPUParticleSystem.js'
+* Gyroscope ---> 'objects/Gyroscope.js'
+* ImmediateRenderObject ---> 'objects/ImmediateRenderObject.js'
+* ImprovedNoise ---> 'misc/ImprovedNoise.js'
+* Interpolation ---> 'core/Interpolation.js'
+* LineCurve ---> 'curves/LineCurve.js'
+* LineCurve3 ---> 'curves/LineCurve3.js'
+* MarchingCubes ---> 'objects/MarchingCubes.js'
+* MD2Character ---> 'objects/MD2Character.js'
+* MD2CharacterComplex ---> 'objects/MD2CharacterComplex.js'
+* MorphAnimMesh ---> 'objects/MorphAnimMesh.js'
+* MorphBlendMesh ---> 'objects/MorphBlendMesh.js'
+* Ocean ---> 'objects/Ocean.js'
+* Octree ---> 'utils/Octree.js'
+* Path ---> 'core/Path.js'
+* PRNG ---> 'utils/PRNG.js'
+* QuadraticBezierCurve ---> 'curves/QuadraticBezierCurve.js'
+* QuadraticBezierCurve3 ---> 'curves/QuadraticBezierCurve3.js'
+* QuickHull ---> 'utils/QuickHull.js'
+* RollerCoaster ---> 'objects/RollerCoaster.js'
+* ShaderGodRays ---> 'shaders/ShaderGodRays.js'
+* ShaderSkin ---> 'shaders/ShaderSkin.js'
+* ShaderTerrain ---> 'shaders/ShaderTerrain.js'
+* ShaderToon ---> 'shaders/ShaderToon.js'
+* Shape ---> 'core/Shape.js'
+* ShapePath ---> 'core/ShapePath.js'
+* ShapeUtils ---> 'utils/ShapeUtils.js'
+* SimplexNoise ---> 'misc/SimplexNoise.js'
+* SplineCurve ---> 'curves/SplineCurve.js'
+* TimelinerController ---> 'animation/TimelinerController.js'
+* TypedArrayUtils ---> 'utils/TypedArrayUtils.js'
+* UCSCharacter ---> 'objects/UCSCharacter.js'
+* VolumeSlice ---> 'audio/VolumeSlice.js'
+
+All others folders under example file tree will be mapped to their counter-part under sources folders
 
 #### <a id="bug"></a>Bugs ####
 - No known bug
@@ -128,6 +194,13 @@ This is the list of unsupported part of example, which cannot be converted yet.
 
 #### Change log ####
 
+##### 5.0.0 :
+
+* Support of Three r90
+* Move the example folder tree to source */!\ In case you're using direct source import, please check the '([Redirected Files](#redirectedFiles))' part*
+* Fix Math (instead of _Math) issue
+* Fix missings imports/exports
+* Reintroduce RollerCoaster stuff
 
 ##### 4.2.4 :
 

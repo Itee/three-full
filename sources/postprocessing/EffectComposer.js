@@ -1,18 +1,16 @@
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderPass } from '../postprocessing/ShaderPass.js'
+import { ShaderPass } from './ShaderPass.js'
 import {
 	MaskPass,
 	ClearMaskPass
-} from '../postprocessing/MaskPass.js'
+} from './MaskPass.js'
 import {
 	LinearFilter,
 	RGBAFormat
 } from '../constants.js'
 import { CopyShader } from '../shaders/CopyShader.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- */
+
 
 var EffectComposer = function ( renderer, renderTarget ) {
 
@@ -62,7 +60,7 @@ var EffectComposer = function ( renderer, renderTarget ) {
 
 Object.assign( EffectComposer.prototype, {
 
-	swapBuffers: function() {
+	swapBuffers: function () {
 
 		var tmp = this.readBuffer;
 		this.readBuffer = this.writeBuffer;
@@ -163,7 +161,7 @@ Object.assign( EffectComposer.prototype, {
 
 		for ( var i = 0; i < this.passes.length; i ++ ) {
 
-			this.passes[i].setSize( width, height );
+			this.passes[ i ].setSize( width, height );
 
 		}
 
@@ -172,29 +170,5 @@ Object.assign( EffectComposer.prototype, {
 } );
 
 
-/*
 
-
-	// if set to true, the pass is processed by the composer
-	this.enabled = true;
-
-	// if set to true, the pass indicates to swap read and write buffer after rendering
-	this.needsSwap = true;
-
-	// if set to true, the pass clears its buffer before rendering
-	this.clear = false;
-
-	// if set to true, the result of the pass is rendered to screen
-	this.renderToScreen = false;
-
-};
-
-Object.assign( Pass.prototype, {
-
-	setSize: function( width, height ) {},
-
-	render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
-
-		
-*/
 export { EffectComposer }

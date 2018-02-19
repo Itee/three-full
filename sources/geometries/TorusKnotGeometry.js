@@ -1,14 +1,14 @@
-/**
- * @author oosmoxiecode
- * @author Mugen87 / https://github.com/Mugen87
- *
- * based on http://www.blackpawn.com/texts/pqtorus/
- */
+import { Geometry } from '../core/Geometry.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Vector3 } from '../math/Vector3.js'
 
-import { Geometry } from '../core/Geometry.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { Vector3 } from '../math/Vector3.js';
+
+
+
+
+
+
 
 // TorusKnotGeometry
 
@@ -27,7 +27,7 @@ function TorusKnotGeometry( radius, tube, tubularSegments, radialSegments, p, q,
 		q: q
 	};
 
-	if ( heightScale !== undefined ) console.warn( 'THREE.TorusKnotGeometry: heightScale has been deprecated. Use .scale( x, y, z ) instead.' );
+	if ( heightScale !== undefined ) console.warn( 'TorusKnotGeometry: heightScale has been deprecated. Use .scale( x, y, z ) instead.' );
 
 	this.fromBufferGeometry( new TorusKnotBufferGeometry( radius, tube, tubularSegments, radialSegments, p, q ) );
 	this.mergeVertices();
@@ -191,4 +191,9 @@ TorusKnotBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 TorusKnotBufferGeometry.prototype.constructor = TorusKnotBufferGeometry;
 
 
-export { TorusKnotGeometry, TorusKnotBufferGeometry };
+;
+
+export {
+	TorusKnotGeometry,
+	TorusKnotBufferGeometry
+}

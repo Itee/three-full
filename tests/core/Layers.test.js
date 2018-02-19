@@ -1,10 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function Layers() {
 
 		this.mask = 1 | 0;

@@ -1,11 +1,6 @@
 import { Face3 } from '../core/Face3.js'
 
-/**
- * Break faces with edges longer than maxEdgeLength
- * - not recursive
- *
- * @author alteredq / http://alteredqualia.com/
- */
+
 
 var TessellateModifier = function ( maxEdgeLength ) {
 

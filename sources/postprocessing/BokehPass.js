@@ -1,13 +1,11 @@
-import { Pass } from '../postprocessing/Pass.js'
+import { Pass } from './Pass.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import {
-	MeshDepthMaterial,
-	ShaderMaterial
-} from '../materials/Materials.js'
+import { MeshDepthMaterial } from '../materials/MeshDepthMaterial.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/Geometries.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { Color } from '../math/Color.js'
 import {
 	NoBlending,
@@ -18,9 +16,7 @@ import {
 import { BokehShader } from '../shaders/BokehShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-/**
- * Depth-of-field post-process with bokeh shader
- */
+
 
 
 var BokehPass = function ( scene, camera, params ) {

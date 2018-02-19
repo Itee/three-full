@@ -1,11 +1,9 @@
-import { FileLoader } from '../loaders/FileLoader.js'
-import { ColladaLoader } from '../loaders/ColladaLoader.js'
+import { FileLoader } from './FileLoader.js'
+import { ColladaLoader } from './ColladaLoader.js'
 import { Group } from '../objects/Group.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
 
 var KMZLoader = function ( manager ) {
 

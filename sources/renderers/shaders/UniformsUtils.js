@@ -1,6 +1,6 @@
-/**
- * Uniform Utilities
- */
+
+
+
 
 var UniformsUtils = {
 
@@ -64,4 +64,6 @@ var UniformsUtils = {
 };
 
 
-export { UniformsUtils };
+;
+
+export { UniformsUtils }

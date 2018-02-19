@@ -1,32 +1,14 @@
-import { FileLoader } from '../loaders/FileLoader.js'
-import { MeshPhongMaterial } from '../materials/Materials.js'
+import { FileLoader } from './FileLoader.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { Color } from '../math/Color.js'
 import { Group } from '../objects/Group.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Mesh } from '../objects/Mesh.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
-import { LoaderUtils } from '../loaders/LoaderUtils.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { LoaderUtils } from './LoaderUtils.js'
 
-/*
- * @author tamarintech / https://tamarintech.com
- *
- * Description: Early release of an AMF Loader following the pattern of the
- * example loaders in the three.js project.
- *
- * More information about the AMF format: http://amf.wikispaces.com
- *
- * Usage:
- *	var loader = new AMFLoader();
- *	loader.load('/path/to/project.amf', function(objecttree) {
- *		scene.add(objecttree);
- *	});
- *
- * Materials now supported, material colors supported
- * Zip support, requires jszip
- * No constellation support (yet)!
- *
- */
+
 
 var AMFLoader = function ( manager ) {
 

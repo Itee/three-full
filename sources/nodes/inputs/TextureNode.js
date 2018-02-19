@@ -1,13 +1,11 @@
-import { InputNode } from '../../nodes/InputNode.js'
-import { UVNode } from '../../nodes/accessors/UVNode.js'
+import { InputNode } from '../InputNode.js'
+import { UVNode } from '../accessors/UVNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var TextureNode = function( value, coord, bias, project ) {
 
-	InputNode.call( this, 'v4', { shared : true } );
+var TextureNode = function ( value, coord, bias, project ) {
+
+	InputNode.call( this, 'v4', { shared: true } );
 
 	this.value = value;
 	this.coord = coord || new UVNode();
@@ -18,14 +16,15 @@ var TextureNode = function( value, coord, bias, project ) {
 
 TextureNode.prototype = Object.create( InputNode.prototype );
 TextureNode.prototype.constructor = TextureNode;
+TextureNode.prototype.nodeType = "Texture";
 
-TextureNode.prototype.getTexture = function( builder, output ) {
+TextureNode.prototype.getTexture = function ( builder, output ) {
 
 	return InputNode.prototype.generate.call( this, builder, output, this.value.uuid, 't' );
 
 };
 
-TextureNode.prototype.generate = function( builder, output ) {
+TextureNode.prototype.generate = function ( builder, output ) {
 
 	if ( output === 'sampler2D' ) {
 
@@ -66,6 +65,27 @@ TextureNode.prototype.generate = function( builder, output ) {
 	}
 
 	return builder.format( code, this.type, output );
+
+};
+
+TextureNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		if ( this.value ) data.value = this.value.uuid;
+
+		data.coord = this.coord.toJSON( meta ).uuid;
+		data.project = this.project;
+
+		if ( this.bias ) data.bias = this.bias.toJSON( meta ).uuid;
+
+	}
+
+	return data;
 
 };
 

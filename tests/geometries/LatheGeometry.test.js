@@ -1,10 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * https://github.com/mrdoob/eventdispatcher.js/
-	 */
-
 	function EventDispatcher() {}
 
 	Object.assign( EventDispatcher.prototype, {
@@ -85,11 +81,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -107,7 +98,7 @@ var Three = (function (exports) {
 
 			}
 
-			return function () {
+			return function generateUUID() {
 
 				var d0 = Math.random() * 0xffffffff | 0;
 				var d1 = Math.random() * 0xffffffff | 0;
@@ -233,10 +224,6 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
 		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
 		'brown': 0xA52A2A, 'burlywood': 0xDEB887, 'cadetblue': 0x5F9EA0, 'chartreuse': 0x7FFF00, 'chocolate': 0xD2691E, 'coral': 0xFF7F50,
@@ -266,7 +253,7 @@ var Three = (function (exports) {
 
 		if ( g === undefined && b === undefined ) {
 
-			// r is THREE.Color, hex or string
+			// r is Color, hex or string
 			return this.set( r );
 
 		}
@@ -382,7 +369,7 @@ var Three = (function (exports) {
 
 				if ( parseFloat( string ) < 1 ) {
 
-					console.warn( 'THREE.Color: Alpha component of ' + style + ' will be ignored.' );
+					console.warn( 'Color: Alpha component of ' + style + ' will be ignored.' );
 
 				}
 
@@ -494,7 +481,7 @@ var Three = (function (exports) {
 				} else {
 
 					// unknown color
-					console.warn( 'THREE.Color: Unknown color ' + style );
+					console.warn( 'Color: Unknown color ' + style );
 
 				}
 
@@ -752,19 +739,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author jordi_ros / http://plattsoft.com
-	 * @author D1plo1d / http://github.com/D1plo1d
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author timknip / http://www.floorplanner.com/
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Matrix4() {
 
 		this.elements = [
@@ -778,7 +752,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix4: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix4: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -906,7 +880,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				console.error( 'THREE.Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
+				console.error( 'Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -1126,7 +1100,7 @@ var Three = (function (exports) {
 
 			if ( n !== undefined ) {
 
-				console.warn( 'THREE.Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
+				console.warn( 'Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
 				return this.multiplyMatrices( m, n );
 
 			}
@@ -1317,7 +1291,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix4: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix4: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -1570,7 +1544,7 @@ var Three = (function (exports) {
 
 			if ( far === undefined ) {
 
-				console.warn( 'THREE.Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
+				console.warn( 'Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
 
 			}
 
@@ -1673,13 +1647,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Quaternion( x, y, z, w ) {
 
@@ -1872,7 +1839,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				throw new Error( 'THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+				throw new Error( 'Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -2069,7 +2036,9 @@ var Three = (function (exports) {
 
 		inverse: function () {
 
-			return this.conjugate().normalize();
+			// quaternion is assumed to have unit length
+
+			return this.conjugate();
 
 		},
 
@@ -2135,7 +2104,7 @@ var Three = (function (exports) {
 
 			if ( p !== undefined ) {
 
-				console.warn( 'THREE.Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
+				console.warn( 'Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
 				return this.multiplyQuaternions( q, p );
 
 			}
@@ -2280,15 +2249,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author kile / http://kile.stravaganza.org/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -2393,7 +2353,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -2440,7 +2400,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -2477,7 +2437,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
 				return this.multiplyVectors( v, w );
 
 			}
@@ -2518,7 +2478,7 @@ var Three = (function (exports) {
 
 				if ( ! ( euler && euler.isEuler ) ) {
 
-					console.error( 'THREE.Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+					console.error( 'Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 				}
 
@@ -2618,7 +2578,7 @@ var Three = (function (exports) {
 
 		transformDirection: function ( m ) {
 
-			// input: THREE.Matrix4 affine matrix
+			// input: Matrix4 affine matrix
 			// vector interpreted as a direction
 
 			var x = this.x, y = this.y, z = this.z;
@@ -2812,7 +2772,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
 				return this.crossVectors( v, w );
 
 			}
@@ -2990,7 +2950,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector3: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector3: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -3003,11 +2963,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 */
 
 	function Face3( a, b, c, normal, color, materialIndex ) {
 
@@ -3062,13 +3017,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 * @author tschw
-	 */
-
 	function Matrix3() {
 
 		this.elements = [
@@ -3081,7 +3029,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix3: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix3: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -3246,7 +3194,7 @@ var Three = (function (exports) {
 
 			if ( matrix && matrix.isMatrix4 ) {
 
-				console.error( "THREE.Matrix3: .getInverse() no longer takes a Matrix4 argument." );
+				console.error( "Matrix3: .getInverse() no longer takes a Matrix4 argument." );
 
 			}
 
@@ -3265,7 +3213,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix3: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix3: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -3445,11 +3393,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
 
 	function Box3( min, max ) {
 
@@ -3816,6 +3759,107 @@ var Three = (function (exports) {
 
 		},
 
+		intersectsTriangle: ( function () {
+
+			// triangle centered vertices
+			var v0 = new Vector3();
+			var v1 = new Vector3();
+			var v2 = new Vector3();
+
+			// triangle edge vectors
+			var f0 = new Vector3();
+			var f1 = new Vector3();
+			var f2 = new Vector3();
+
+			var testAxis = new Vector3();
+
+			var center = new Vector3();
+			var extents = new Vector3();
+
+			var triangleNormal = new Vector3();
+
+			function satForAxes( axes ) {
+
+				var i, j;
+
+				for ( i = 0, j = axes.length - 3; i <= j; i += 3 ) {
+
+					testAxis.fromArray( axes, i );
+					// project the aabb onto the seperating axis
+					var r = extents.x * Math.abs( testAxis.x ) + extents.y * Math.abs( testAxis.y ) + extents.z * Math.abs( testAxis.z );
+					// project all 3 vertices of the triangle onto the seperating axis
+					var p0 = v0.dot( testAxis );
+					var p1 = v1.dot( testAxis );
+					var p2 = v2.dot( testAxis );
+					// actual test, basically see if either of the most extreme of the triangle points intersects r
+					if ( Math.max( - Math.max( p0, p1, p2 ), Math.min( p0, p1, p2 ) ) > r ) {
+
+						// points of the projected triangle are outside the projected half-length of the aabb
+						// the axis is seperating and we can exit
+						return false;
+
+					}
+
+				}
+
+				return true;
+
+			}
+
+			return function intersectsTriangle( triangle ) {
+
+				if ( this.isEmpty() ) {
+
+					return false;
+
+				}
+
+				// compute box center and extents
+				this.getCenter( center );
+				extents.subVectors( this.max, center );
+
+				// translate triangle to aabb origin
+				v0.subVectors( triangle.a, center );
+				v1.subVectors( triangle.b, center );
+				v2.subVectors( triangle.c, center );
+
+				// compute edge vectors for triangle
+				f0.subVectors( v1, v0 );
+				f1.subVectors( v2, v1 );
+				f2.subVectors( v0, v2 );
+
+				// test against axes that are given by cross product combinations of the edges of the triangle and the edges of the aabb
+				// make an axis testing of each of the 3 sides of the aabb against each of the 3 sides of the triangle = 9 axis of separation
+				// axis_ij = u_i x f_j (u0, u1, u2 = face normals of aabb = x,y,z axes vectors since aabb is axis aligned)
+				var axes = [
+					0, - f0.z, f0.y, 0, - f1.z, f1.y, 0, - f2.z, f2.y,
+					f0.z, 0, - f0.x, f1.z, 0, - f1.x, f2.z, 0, - f2.x,
+					- f0.y, f0.x, 0, - f1.y, f1.x, 0, - f2.y, f2.x, 0
+				];
+				if ( ! satForAxes( axes ) ) {
+
+					return false;
+
+				}
+
+				// test 3 face normals from the aabb
+				axes = [ 1, 0, 0, 0, 1, 0, 0, 0, 1 ];
+				if ( ! satForAxes( axes ) ) {
+
+					return false;
+
+				}
+
+				// finally testing the face normal of the triangle
+				// use already existing triangle edge vectors here
+				triangleNormal.crossVectors( f0, f1 );
+				axes = [ triangleNormal.x, triangleNormal.y, triangleNormal.z ];
+				return satForAxes( axes );
+
+			};
+
+		} )(),
+
 		clampPoint: function ( point, optionalTarget ) {
 
 			var result = optionalTarget || new Vector3();
@@ -3927,11 +3971,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author bhouston / http://clara.io
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	function Sphere( center, radius ) {
 
@@ -4093,13 +4132,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author egraether / http://egraether.com/
-	 * @author zz85 / http://www.lab4games.net/zz85/blog
-	 */
-
 	function Vector2( x, y ) {
 
 		this.x = x || 0;
@@ -4226,7 +4258,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -4269,7 +4301,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -4557,7 +4589,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector2: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector2: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -4583,12 +4615,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Euler( x, y, z, order ) {
 
@@ -4822,7 +4848,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.warn( 'THREE.Euler: .setFromRotationMatrix() given unsupported order: ' + order );
+				console.warn( 'Euler: .setFromRotationMatrix() given unsupported order: ' + order );
 
 			}
 
@@ -4929,10 +4955,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function Layers() {
 
 		this.mask = 1 | 0;
@@ -4972,14 +4994,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author elephantatwork / www.elephantatwork.ch
-	 */
 
 	var object3DId = 0;
 
@@ -5318,7 +5332,7 @@ var Three = (function (exports) {
 
 			if ( object === this ) {
 
-				console.error( "THREE.Object3D.add: object can't be added as a child of itself.", object );
+				console.error( "Object3D.add: object can't be added as a child of itself.", object );
 				return this;
 
 			}
@@ -5338,7 +5352,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.error( "THREE.Object3D.add: object not an instance of THREE.Object3D.", object );
+				console.error( "Object3D.add: object not an instance of Object3D.", object );
 
 			}
 
@@ -5791,15 +5805,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author kile / http://kile.stravaganza.org/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author zz85 / http://www.lab4games.net/zz85/blog
-	 * @author bhouston / http://clara.io
-	 */
 
 	var geometryId = 0; // Geometry uses even numbers as Id
 
@@ -6438,25 +6443,6 @@ var Three = (function (exports) {
 
 		},
 
-		computeLineDistances: function () {
-
-			var d = 0;
-			var vertices = this.vertices;
-
-			for ( var i = 0, il = vertices.length; i < il; i ++ ) {
-
-				if ( i > 0 ) {
-
-					d += vertices[ i ].distanceTo( vertices[ i - 1 ] );
-
-				}
-
-				this.lineDistances[ i ] = d;
-
-			}
-
-		},
-
 		computeBoundingBox: function () {
 
 			if ( this.boundingBox === null ) {
@@ -6485,7 +6471,7 @@ var Three = (function (exports) {
 
 			if ( ! ( geometry && geometry.isGeometry ) ) {
 
-				console.error( 'THREE.Geometry.merge(): geometry not an instance of THREE.Geometry.', geometry );
+				console.error( 'Geometry.merge(): geometry not an instance of Geometry.', geometry );
 				return;
 
 			}
@@ -6605,7 +6591,7 @@ var Three = (function (exports) {
 
 			if ( ! ( mesh && mesh.isMesh ) ) {
 
-				console.error( 'THREE.Geometry.mergeMesh(): mesh not an instance of THREE.Mesh.', mesh );
+				console.error( 'Geometry.mergeMesh(): mesh not an instance of Mesh.', mesh );
 				return;
 
 			}
@@ -6616,11 +6602,7 @@ var Three = (function (exports) {
 
 		},
 
-		/*
-		 * Checks for duplicate vertices with hashmap.
-		 * Duplicated vertices are removed
-		 * and faces' vertices are updated.
-		 */
+		
 
 		mergeVertices: function () {
 
@@ -6962,29 +6944,7 @@ var Three = (function (exports) {
 
 		clone: function () {
 
-			/*
-			 // Handle primitives
-
-			 var parameters = this.parameters;
-
-			 if ( parameters !== undefined ) {
-
-			 var values = [];
-
-			 for ( var key in parameters ) {
-
-			 values.push( parameters[ key ] );
-
-			 }
-
-			 var geometry = Object.create( this.constructor.prototype );
-			 this.constructor.apply( geometry, values );
-			 return geometry;
-
-			 }
-
-			 return new this.constructor().copy( this );
-			 */
+			
 
 			return new Geometry().copy( this );
 
@@ -7232,14 +7192,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Vector4( x, y, z, w ) {
 
 		this.x = x || 0;
@@ -7358,7 +7310,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -7409,7 +7361,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector4: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector4: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -7844,7 +7796,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector4: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector4: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -7859,15 +7811,11 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function BufferAttribute( array, itemSize, normalized ) {
 
 		if ( Array.isArray( array ) ) {
 
-			throw new TypeError( 'THREE.BufferAttribute: array should be a Typed Array.' );
+			throw new TypeError( 'BufferAttribute: array should be a Typed Array.' );
 
 		}
 
@@ -7906,7 +7854,7 @@ var Three = (function (exports) {
 
 			if ( Array.isArray( array ) ) {
 
-				throw new TypeError( 'THREE.BufferAttribute: array should be a Typed Array.' );
+				throw new TypeError( 'BufferAttribute: array should be a Typed Array.' );
 
 			}
 
@@ -7969,7 +7917,7 @@ var Three = (function (exports) {
 
 				if ( color === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyColorsArray(): color is undefined', i );
+					console.warn( 'BufferAttribute.copyColorsArray(): color is undefined', i );
 					color = new Color();
 
 				}
@@ -8012,7 +7960,7 @@ var Three = (function (exports) {
 
 				if ( vector === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyVector2sArray(): vector is undefined', i );
+					console.warn( 'BufferAttribute.copyVector2sArray(): vector is undefined', i );
 					vector = new Vector2();
 
 				}
@@ -8036,7 +7984,7 @@ var Three = (function (exports) {
 
 				if ( vector === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyVector3sArray(): vector is undefined', i );
+					console.warn( 'BufferAttribute.copyVector3sArray(): vector is undefined', i );
 					vector = new Vector3();
 
 				}
@@ -8061,7 +8009,7 @@ var Three = (function (exports) {
 
 				if ( vector === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyVector4sArray(): vector is undefined', i );
+					console.warn( 'BufferAttribute.copyVector4sArray(): vector is undefined', i );
 					vector = new Vector4();
 
 				}
@@ -8286,9 +8234,7 @@ var Three = (function (exports) {
 	Float64BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float64BufferAttribute.prototype.constructor = Float64BufferAttribute;
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
+	//
 
 	function DirectGeometry() {
 
@@ -8471,7 +8417,7 @@ var Three = (function (exports) {
 
 					} else {
 
-						console.warn( 'THREE.DirectGeometry.fromGeometry(): Undefined vertexUv ', i );
+						console.warn( 'DirectGeometry.fromGeometry(): Undefined vertexUv ', i );
 
 						this.uvs.push( new Vector2(), new Vector2(), new Vector2() );
 
@@ -8489,7 +8435,7 @@ var Three = (function (exports) {
 
 					} else {
 
-						console.warn( 'THREE.DirectGeometry.fromGeometry(): Undefined vertexUv2 ', i );
+						console.warn( 'DirectGeometry.fromGeometry(): Undefined vertexUv2 ', i );
 
 						this.uvs2.push( new Vector2(), new Vector2(), new Vector2() );
 
@@ -8545,10 +8491,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function arrayMax( array ) {
 
 		if ( array.length === 0 ) return - Infinity;
@@ -8564,11 +8506,6 @@ var Three = (function (exports) {
 		return max;
 
 	}
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	var bufferGeometryId = 1; // BufferGeometry uses odd numbers as Id
 
@@ -8625,7 +8562,7 @@ var Three = (function (exports) {
 
 			if ( ! ( attribute && attribute.isBufferAttribute ) && ! ( attribute && attribute.isInterleavedBufferAttribute ) ) {
 
-				console.warn( 'THREE.BufferGeometry: .addAttribute() now expects ( name, attribute ).' );
+				console.warn( 'BufferGeometry: .addAttribute() now expects ( name, attribute ).' );
 
 				this.addAttribute( name, new BufferAttribute( arguments[ 1 ], arguments[ 2 ] ) );
 
@@ -8635,7 +8572,7 @@ var Three = (function (exports) {
 
 			if ( name === 'index' ) {
 
-				console.warn( 'THREE.BufferGeometry.addAttribute: Use .setIndex() for index attribute.' );
+				console.warn( 'BufferGeometry.addAttribute: Use .setIndex() for index attribute.' );
 				this.setIndex( attribute );
 
 				return;
@@ -8845,7 +8782,7 @@ var Three = (function (exports) {
 
 		setFromObject: function ( object ) {
 
-			// console.log( 'THREE.BufferGeometry.setFromObject(). Converting', object, this );
+			// console.log( 'BufferGeometry.setFromObject(). Converting', object, this );
 
 			var geometry = object.geometry;
 
@@ -9165,7 +9102,7 @@ var Three = (function (exports) {
 
 			if ( isNaN( this.boundingBox.min.x ) || isNaN( this.boundingBox.min.y ) || isNaN( this.boundingBox.min.z ) ) {
 
-				console.error( 'THREE.BufferGeometry.computeBoundingBox: Computed min/max have NaN values. The "position" attribute is likely to have NaN values.', this );
+				console.error( 'BufferGeometry.computeBoundingBox: Computed min/max have NaN values. The "position" attribute is likely to have NaN values.', this );
 
 			}
 
@@ -9211,7 +9148,7 @@ var Three = (function (exports) {
 
 					if ( isNaN( this.boundingSphere.radius ) ) {
 
-						console.error( 'THREE.BufferGeometry.computeBoundingSphere(): Computed radius is NaN. The "position" attribute is likely to have NaN values.', this );
+						console.error( 'BufferGeometry.computeBoundingSphere(): Computed radius is NaN. The "position" attribute is likely to have NaN values.', this );
 
 					}
 
@@ -9352,7 +9289,7 @@ var Three = (function (exports) {
 
 			if ( ! ( geometry && geometry.isBufferGeometry ) ) {
 
-				console.error( 'THREE.BufferGeometry.merge(): geometry not an instance of THREE.BufferGeometry.', geometry );
+				console.error( 'BufferGeometry.merge(): geometry not an instance of BufferGeometry.', geometry );
 				return;
 
 			}
@@ -9413,7 +9350,7 @@ var Three = (function (exports) {
 
 			if ( this.index === null ) {
 
-				console.warn( 'THREE.BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
 				return this;
 
 			}
@@ -9541,29 +9478,7 @@ var Three = (function (exports) {
 
 		clone: function () {
 
-			/*
-			 // Handle primitives
-
-			 var parameters = this.parameters;
-
-			 if ( parameters !== undefined ) {
-
-			 var values = [];
-
-			 for ( var key in parameters ) {
-
-			 values.push( parameters[ key ] );
-
-			 }
-
-			 var geometry = Object.create( this.constructor.prototype );
-			 this.constructor.apply( geometry, values );
-			 return geometry;
-
-			 }
-
-			 return new this.constructor().copy( this );
-			 */
+			
 
 			return new BufferGeometry().copy( this );
 
@@ -9673,13 +9588,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author astrodud / http://astrodud.isgreat.org/
-	 * @author zz85 / https://github.com/zz85
-	 * @author bhouston / http://clara.io
-	 * @author Mugen87 / https://github.com/Mugen87
-	 */
 
 	// LatheGeometry
 

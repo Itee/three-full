@@ -4,33 +4,14 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Euler } from '../math/Euler.js'
 import { Bone } from '../objects/Bone.js'
-import { MeshBasicMaterial } from '../materials/Materials.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { Color } from '../math/Color.js'
-import { SphereBufferGeometry } from '../geometries/Geometries.js'
+import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
 import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
 import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js'
 import { Mesh } from '../objects/Mesh.js'
 
-/**
- * @author takahiro / https://github.com/takahirox
- *
- * Dependencies
- *  - Ammo.js https://github.com/kripken/ammo.js
- *
- * MMD specific Physics class.
- *
- * See MMDLoader for the passed parameter list of RigidBody/Constraint.
- *
- * Requirement:
- *  - don't change object's scale from (1,1,1) after setting physics to object
- *
- * TODO
- *  - optimize for the performance
- *  - use Physijs http://chandlerprall.github.io/Physijs/
- *    and improve the performance by making use of Web worker.
- *  - if possible, make this class being non-MMD specific.
- *  - object scale change support
- */
+
 
 var MMDPhysics = function ( mesh, params ) {
 
@@ -39,12 +20,7 @@ var MMDPhysics = function ( mesh, params ) {
 	this.mesh = mesh;
 	this.helper = new MMDPhysics.ResourceHelper();
 
-	/*
-	 * I don't know why but 1/60 unitStep easily breaks models
-	 * so I set it 1/65 so far.
-	 * Don't set too small unitStep because
-	 * the smaller unitStep can make the performance worse.
-	 */
+	
 	this.unitStep = ( params.unitStep !== undefined ) ? params.unitStep : 1 / 65;
 	this.maxStepNum = ( params.maxStepNum !== undefined ) ? params.maxStepNum : 3;
 
@@ -224,15 +200,7 @@ MMDPhysics.prototype = {
 
 };
 
-/**
- * This helper class responsibilies are
- *
- * 1. manage Ammo.js and Three.js object resources and
- *    improve the performance and the memory consumption by
- *    reusing objects.
- *
- * 2. provide simple Ammo object operations.
- */
+
 MMDPhysics.ResourceHelper = function () {
 
 	// for Three.js
@@ -748,11 +716,7 @@ MMDPhysics.RigidBody.prototype = {
 
 			body.setCollisionFlags( body.getCollisionFlags() | 2 );
 
-			/*
-			 * It'd be better to comment out this line though in general I should call this method
-			 * because I'm not sure why but physics will be more like MMD's
-			 * if I comment out.
-			 */
+			
 			body.setActivationState( 4 );
 
 		}
@@ -1036,12 +1000,7 @@ MMDPhysics.Constraint.prototype = {
 
 		}
 
-		/*
-		 * Currently(10/31/2016) official ammo.js doesn't support
-		 * btGeneric6DofSpringConstraint.setParam method.
-		 * You need custom ammo.js (add the method into idl) if you wanna use.
-		 * By setting this parameter, physics will be more like MMD's
-		 */
+		
 		if ( constraint.setParam !== undefined ) {
 
 			for ( var i = 0; i < 6; i ++ ) {

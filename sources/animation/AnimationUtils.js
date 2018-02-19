@@ -1,8 +1,6 @@
-/**
- * @author tschw
- * @author Ben Houston / http://clara.io/
- * @author David Sarno / http://lighthaus.us/
- */
+
+
+
 
 var AnimationUtils = {
 
@@ -120,7 +118,7 @@ var AnimationUtils = {
 
 		} else if ( value.toArray !== undefined ) {
 
-			// ...assume THREE.Math-ish
+			// ...assume Math-ish
 
 			do {
 
@@ -163,4 +161,6 @@ var AnimationUtils = {
 };
 
 
-export { AnimationUtils };
+;
+
+export { AnimationUtils }

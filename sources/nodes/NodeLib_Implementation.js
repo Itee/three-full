@@ -1,17 +1,22 @@
-/**
- * @author [Tristan Valcke]{@link https://github.com/Itee}
- * @author sunag / http://www.sunag.com.br/
- */
-
 import { NodeLib } from './NodeLib_Declaration'
 import { UVNode } from './accessors/UVNode.js'
 import { PositionNode } from './accessors/PositionNode.js'
 import { NormalNode } from './accessors/NormalNode.js'
 import { TimerNode } from './utils/TimerNode.js'
 import { ConstNode } from './ConstNode.js'
+import { FunctionNode } from './FunctionNode.js'
+
+
+
+
+
+
+
+
+
 
 // Fix circular dependency, see #2
-import { FunctionNode } from './FunctionNode'
+
 
 
 //
@@ -161,5 +166,6 @@ NodeLib.add( new FunctionNode( [
 	"	return mix(rgb.rgb, vec3(mx), amt);",
 	"}"
 ].join( "\n" ) ) );
+
 
 export { NodeLib }

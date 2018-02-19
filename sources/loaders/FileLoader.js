@@ -1,9 +1,10 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+import { Cache } from './Cache.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-import { Cache } from './Cache.js';
-import { DefaultLoadingManager } from './LoadingManager.js';
+
+
+
+
 
 var loading = {};
 
@@ -192,7 +193,7 @@ Object.assign( FileLoader.prototype, {
 					// Some browsers return HTTP Status 0 when using non-http protocol
 					// e.g. 'file://' or 'data://'. Handle as success.
 
-					console.warn( 'THREE.FileLoader: HTTP Status 0 received.' );
+					console.warn( 'FileLoader: HTTP Status 0 received.' );
 
 					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
 
@@ -309,4 +310,6 @@ Object.assign( FileLoader.prototype, {
 } );
 
 
-export { FileLoader };
+;
+
+export { FileLoader }

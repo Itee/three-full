@@ -1,11 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -23,7 +18,7 @@ var Three = (function (exports) {
 
 			}
 
-			return function () {
+			return function generateUUID() {
 
 				var d0 = Math.random() * 0xffffffff | 0;
 				var d1 = Math.random() * 0xffffffff | 0;
@@ -149,22 +144,22 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var GLNode = function( type ) {
+	var GLNode = function ( type ) {
 
 		this.uuid = _Math.generateUUID();
 
+		this.name = "";
 		this.allows = {};
-		this.requestUpdate = false;
 
 		this.type = type;
 
+		this.userData = {};
+
 	};
 
-	GLNode.prototype.parse = function( builder, context ) {
+	GLNode.prototype.isNode = true;
+
+	GLNode.prototype.parse = function ( builder, context ) {
 
 		context = context || {};
 
@@ -183,7 +178,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.parseAndBuildCode = function( builder, output, context ) {
+	GLNode.prototype.parseAndBuildCode = function ( builder, output, context ) {
 
 		context = context || {};
 
@@ -193,13 +188,13 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.buildCode = function( builder, output, context ) {
+	GLNode.prototype.buildCode = function ( builder, output, context ) {
 
 		context = context || {};
 
 		var material = builder.material;
 
-		var data = { result : this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
+		var data = { result: this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
 
 		if ( builder.isShader( 'vertex' ) ) data.code = material.clearVertexNode();
 		else data.code = material.clearFragmentNode();
@@ -210,7 +205,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.build = function( builder, output, uuid ) {
+	GLNode.prototype.build = function ( builder, output, uuid ) {
 
 		output = output || this.getType( builder, output );
 
@@ -224,9 +219,15 @@ var Three = (function (exports) {
 
 		}
 
-		if ( this.requestUpdate && material.requestUpdate.indexOf( this ) === - 1 ) {
+		if ( material.nodes.indexOf( this ) === - 1 ) {
 
-			material.requestUpdate.push( this );
+			material.nodes.push( this );
+
+		}
+
+		if ( this.updateFrame !== undefined && material.updaters.indexOf( this ) === - 1 ) {
+
+			material.updaters.push( this );
 
 		}
 
@@ -234,7 +235,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.appendDepsNode = function( builder, data, output ) {
+	GLNode.prototype.appendDepsNode = function ( builder, data, output ) {
 
 		data.deps = ( data.deps || 0 ) + 1;
 
@@ -249,18 +250,56 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.getType = function( builder, output ) {
+	GLNode.prototype.getType = function ( builder, output ) {
 
 		return output === 'sampler2D' || output === 'samplerCube' ? output : this.type;
 
 	};
 
-	/**
-	 * Automatic node cache
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	GLNode.prototype.getJSONNode = function ( meta ) {
 
-	var TempNode = function( type, params ) {
+		var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+		if ( ! isRootObject && meta.nodes[ this.uuid ] !== undefined ) {
+
+			return meta.nodes[ this.uuid ];
+
+		}
+
+	};
+
+	GLNode.prototype.createJSONNode = function ( meta ) {
+
+		var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+		var data = {};
+
+		if ( typeof this.nodeType !== "string" ) throw new Error( "Node does not allow serialization." );
+
+		data.uuid = this.uuid;
+		data.type = this.nodeType + "Node";
+
+		if ( this.name !== "" ) data.name = this.name;
+
+		if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
+
+		if ( ! isRootObject ) {
+
+			meta.nodes[ this.uuid ] = data;
+
+		}
+
+		return data;
+
+	};
+
+	GLNode.prototype.toJSON = function ( meta ) {
+
+		return this.getJSONNode( meta ) || this.createJSONNode( meta );
+
+	};
+
+	var TempNode = function ( type, params ) {
 
 		GLNode.call( this, type );
 
@@ -274,7 +313,7 @@ var Three = (function (exports) {
 	TempNode.prototype = Object.create( GLNode.prototype );
 	TempNode.prototype.constructor = TempNode;
 
-	TempNode.prototype.build = function( builder, output, uuid, ns ) {
+	TempNode.prototype.build = function ( builder, output, uuid, ns ) {
 
 		output = output || this.getType( builder );
 
@@ -286,7 +325,7 @@ var Three = (function (exports) {
 
 			if ( isUnique && this.constructor.uuid === undefined ) {
 
-				this.constructor.uuid = Math.generateUUID();
+				this.constructor.uuid = _Math.generateUUID();
 
 			}
 
@@ -346,19 +385,19 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.isShared = function( builder, output ) {
+	TempNode.prototype.isShared = function ( builder, output ) {
 
 		return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
 
 	};
 
-	TempNode.prototype.isUnique = function( builder, output ) {
+	TempNode.prototype.isUnique = function ( builder, output ) {
 
 		return this.unique;
 
 	};
 
-	TempNode.prototype.getUuid = function( unique ) {
+	TempNode.prototype.getUuid = function ( unique ) {
 
 		var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
 
@@ -368,7 +407,7 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.getTemp = function( builder, uuid ) {
+	TempNode.prototype.getTemp = function ( builder, uuid ) {
 
 		uuid = uuid || this.uuid;
 
@@ -379,7 +418,7 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.generate = function( builder, output, uuid, type, ns ) {
+	TempNode.prototype.generate = function ( builder, output, uuid, type, ns ) {
 
 		if ( ! this.isShared( builder, output ) ) console.error( "TempNode is not shared!" );
 
@@ -389,12 +428,6 @@ var Three = (function (exports) {
 		else return builder.material.getFragmentTemp( uuid, type || this.getType( builder ), ns ).name;
 
 	};
-
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 * @thanks bhouston / https://clara.io/
-	 */
 
 	var FunctionNode = function( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ) {
 
@@ -482,11 +515,6 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
 	var NodeLib = {
 
 		nodes: {},
@@ -550,11 +578,7 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var UVNode = function( index ) {
+	var UVNode = function ( index ) {
 
 		TempNode.call( this, 'v2', { shared: false } );
 
@@ -567,13 +591,14 @@ var Three = (function (exports) {
 
 	UVNode.prototype = Object.create( TempNode.prototype );
 	UVNode.prototype.constructor = UVNode;
+	UVNode.prototype.nodeType = "UV";
 
-	UVNode.prototype.generate = function( builder, output ) {
+	UVNode.prototype.generate = function ( builder, output ) {
 
 		var material = builder.material;
 		var result;
 
-		material.requestAttribs.uv[ this.index ] = true;
+		material.requires.uv[ this.index ] = true;
 
 		if ( builder.isShader( 'vertex' ) ) result = UVNode.vertexDict[ this.index ];
 		else result = UVNode.fragmentDict[ this.index ];
@@ -582,11 +607,23 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	UVNode.prototype.toJSON = function ( meta ) {
 
-	var PositionNode = function( scope ) {
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.index = this.index;
+
+		}
+
+		return data;
+
+	};
+
+	var PositionNode = function ( scope ) {
 
 		TempNode.call( this, 'v3' );
 
@@ -601,31 +638,36 @@ var Three = (function (exports) {
 
 	PositionNode.prototype = Object.create( TempNode.prototype );
 	PositionNode.prototype.constructor = PositionNode;
+	PositionNode.prototype.nodeType = "Position";
 
-	PositionNode.prototype.getType = function( builder ) {
+	PositionNode.prototype.getType = function ( builder ) {
 
 		switch ( this.scope ) {
+
 			case PositionNode.PROJECTION:
 				return 'v4';
+
 		}
 
 		return this.type;
 
 	};
 
-	PositionNode.prototype.isShared = function( builder ) {
+	PositionNode.prototype.isShared = function ( builder ) {
 
 		switch ( this.scope ) {
+
 			case PositionNode.LOCAL:
 			case PositionNode.WORLD:
 				return false;
+
 		}
 
 		return true;
 
 	};
 
-	PositionNode.prototype.generate = function( builder, output ) {
+	PositionNode.prototype.generate = function ( builder, output ) {
 
 		var material = builder.material;
 		var result;
@@ -634,7 +676,7 @@ var Three = (function (exports) {
 
 			case PositionNode.LOCAL:
 
-				material.requestAttribs.position = true;
+				material.requires.position = true;
 
 				if ( builder.isShader( 'vertex' ) ) result = 'transformed';
 				else result = 'vPosition';
@@ -643,7 +685,7 @@ var Three = (function (exports) {
 
 			case PositionNode.WORLD:
 
-				material.requestAttribs.worldPosition = true;
+				material.requires.worldPosition = true;
 
 				if ( builder.isShader( 'vertex' ) ) result = 'vWPosition';
 				else result = 'vWPosition';
@@ -670,11 +712,23 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	PositionNode.prototype.toJSON = function ( meta ) {
 
-	var NormalNode = function( scope ) {
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.scope = this.scope;
+
+		}
+
+		return data;
+
+	};
+
+	var NormalNode = function ( scope ) {
 
 		TempNode.call( this, 'v3' );
 
@@ -688,19 +742,22 @@ var Three = (function (exports) {
 
 	NormalNode.prototype = Object.create( TempNode.prototype );
 	NormalNode.prototype.constructor = NormalNode;
+	NormalNode.prototype.nodeType = "Normal";
 
-	NormalNode.prototype.isShared = function( builder ) {
+	NormalNode.prototype.isShared = function ( builder ) {
 
 		switch ( this.scope ) {
+
 			case NormalNode.WORLD:
 				return true;
+
 		}
 
 		return false;
 
 	};
 
-	NormalNode.prototype.generate = function( builder, output ) {
+	NormalNode.prototype.generate = function ( builder, output ) {
 
 		var material = builder.material;
 		var result;
@@ -709,7 +766,7 @@ var Three = (function (exports) {
 
 			case NormalNode.LOCAL:
 
-				material.requestAttribs.normal = true;
+				material.requires.normal = true;
 
 				if ( builder.isShader( 'vertex' ) ) result = 'normal';
 				else result = 'vObjectNormal';
@@ -718,7 +775,7 @@ var Three = (function (exports) {
 
 			case NormalNode.WORLD:
 
-				material.requestAttribs.worldNormal = true;
+				material.requires.worldNormal = true;
 
 				if ( builder.isShader( 'vertex' ) ) result = '( modelMatrix * vec4( objectNormal, 0.0 ) ).xyz';
 				else result = 'vWNormal';
@@ -737,60 +794,85 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	NormalNode.prototype.toJSON = function ( meta ) {
 
-	var InputNode = function( type, params ) {
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.scope = this.scope;
+
+		}
+
+		return data;
+
+	};
+
+	var InputNode = function ( type, params ) {
 
 		params = params || {};
 		params.shared = params.shared !== undefined ? params.shared : false;
 
 		TempNode.call( this, type, params );
 
+		this.readonly = false;
+
 	};
 
 	InputNode.prototype = Object.create( TempNode.prototype );
 	InputNode.prototype.constructor = InputNode;
 
-	InputNode.prototype.generate = function( builder, output, uuid, type, ns, needsUpdate ) {
+	InputNode.prototype.isReadonly = function ( builder ) {
+
+		return this.readonly;
+
+	};
+
+	InputNode.prototype.generate = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
 		var material = builder.material;
 
 		uuid = builder.getUuid( uuid || this.getUuid() );
 		type = type || this.getType( builder );
 
-		var data = material.getDataNode( uuid );
+		var data = material.getDataNode( uuid ),
+			readonly = this.isReadonly( builder ) && this.generateReadonly !== undefined;
 
-		if ( builder.isShader( 'vertex' ) ) {
+		if ( readonly ) {
 
-			if ( ! data.vertex ) {
-
-				data.vertex = material.createVertexUniform( type, this.value, ns, needsUpdate );
-
-			}
-
-			return builder.format( data.vertex.name, type, output );
+			return this.generateReadonly( builder, output, uuid, type, ns, needsUpdate );
 
 		} else {
 
-			if ( ! data.fragment ) {
+			if ( builder.isShader( 'vertex' ) ) {
 
-				data.fragment = material.createFragmentUniform( type, this.value, ns, needsUpdate );
+				if ( ! data.vertex ) {
+
+					data.vertex = material.createVertexUniform( type, this.value, ns, needsUpdate );
+
+				}
+
+				return builder.format( data.vertex.name, type, output );
+
+			} else {
+
+				if ( ! data.fragment ) {
+
+					data.fragment = material.createFragmentUniform( type, this.value, ns, needsUpdate );
+
+				}
+
+				return builder.format( data.fragment.name, type, output );
 
 			}
-
-			return builder.format( data.fragment.name, type, output );
 
 		}
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var FloatNode = function( value ) {
+	var FloatNode = function ( value ) {
 
 		InputNode.call( this, 'fv1' );
 
@@ -800,15 +882,16 @@ var Three = (function (exports) {
 
 	FloatNode.prototype = Object.create( InputNode.prototype );
 	FloatNode.prototype.constructor = FloatNode;
+	FloatNode.prototype.nodeType = "Float";
 
 	Object.defineProperties( FloatNode.prototype, {
 		number: {
-			get: function() {
+			get: function () {
 
 				return this.value[ 0 ];
 
 			},
-			set: function( val ) {
+			set: function ( val ) {
 
 				this.value[ 0 ] = val;
 
@@ -816,34 +899,109 @@ var Three = (function (exports) {
 		}
 	} );
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	FloatNode.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
-	var TimerNode = function( value, scale ) {
+		var value = this.number;
 
-		FloatNode.call( this, value );
-
-		this.requestUpdate = true;
-
-		this.scale = scale !== undefined ? scale : 1;
+		return builder.format( Math.floor( value ) !== value ? value : value + ".0", type, output );
 
 	};
+
+	FloatNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.number = this.number;
+
+			if ( this.readonly === true ) data.readonly = true;
+
+		}
+
+		return data;
+
+	};
+
+	var TimerNode = function ( scale, scope ) {
+
+		FloatNode.call( this );
+
+		this.scale = scale !== undefined ? scale : 1;
+		this.scope = scope || TimerNode.GLOBAL;
+
+		this.timeScale = this.scale !== 1;
+
+	};
+
+	TimerNode.GLOBAL = 'global';
+	TimerNode.LOCAL = 'local';
+	TimerNode.DELTA = 'delta';
 
 	TimerNode.prototype = Object.create( FloatNode.prototype );
 	TimerNode.prototype.constructor = TimerNode;
+	TimerNode.prototype.nodeType = "Timer";
 
-	TimerNode.prototype.updateFrame = function( delta ) {
+	TimerNode.prototype.isReadonly = function ( builder ) {
 
-		this.number += delta * this.scale;
+		return false;
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	TimerNode.prototype.isUnique = function ( builder ) {
 
-	var ConstNode = function( src, useDefine ) {
+		// share TimerNode "uniform" input if is used on more time with others TimerNode
+		return this.timeScale && ( this.scope === TimerNode.GLOBAL || this.scope === TimerNode.DELTA );
+
+	};
+
+	TimerNode.prototype.updateFrame = function ( frame ) {
+
+		var scale = this.timeScale ? this.scale : 1;
+
+		switch( this.scope ) {
+
+			case TimerNode.LOCAL:
+
+				this.number += frame.delta * scale;
+
+				break;
+
+			case TimerNode.DELTA:
+
+				this.number = frame.delta * scale;
+
+				break;
+
+			default:
+
+				this.number = frame.time * scale;
+
+		}
+
+	};
+
+	TimerNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.scope = this.scope;
+			data.scale = this.scale;
+			data.timeScale = this.timeScale;
+
+		}
+
+		return data;
+
+	};
+
+	var ConstNode = function ( src, useDefine ) {
 
 		TempNode.call( this );
 
@@ -860,18 +1018,19 @@ var Three = (function (exports) {
 
 	ConstNode.prototype = Object.create( TempNode.prototype );
 	ConstNode.prototype.constructor = ConstNode;
+	ConstNode.prototype.nodeType = "Const";
 
-	ConstNode.prototype.getType = function( builder ) {
+	ConstNode.prototype.getType = function ( builder ) {
 
 		return builder.getTypeByFormat( this.type );
 
 	};
 
-	ConstNode.prototype.eval = function( src, useDefine ) {
+	ConstNode.prototype.eval = function ( src, useDefine ) {
 
 		src = ( src || '' ).trim();
 
-		var name, type, value;
+		var name, type, value = "";
 
 		var rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\=?\s?(.*?)(\;|$)/i;
 		var match = src.match( rDeclaration );
@@ -897,7 +1056,7 @@ var Three = (function (exports) {
 
 	};
 
-	ConstNode.prototype.build = function( builder, output ) {
+	ConstNode.prototype.build = function ( builder, output ) {
 
 		if ( output === 'source' ) {
 
@@ -923,18 +1082,36 @@ var Three = (function (exports) {
 
 	};
 
-	ConstNode.prototype.generate = function( builder, output ) {
+	ConstNode.prototype.generate = function ( builder, output ) {
 
 		return builder.format( this.name, this.getType( builder ), output );
 
 	};
 
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	ConstNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.name = this.name;
+			data.out = this.type;
+
+			if ( this.value ) data.value = this.value;
+			if ( data.useDefine === true ) data.useDefine = true;
+
+		}
+
+		return data;
+
+	};
 
 	// Fix circular dependency, see #2
+
+
+
 	//
 	//	Keywords
 	//
@@ -1083,18 +1260,9 @@ var Three = (function (exports) {
 		"}"
 	].join( "\n" ) ) );
 
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 * @thanks bhouston / https://clara.io/
-	 */
-
 	// Fix circular dependency, see #2
+
+
 	FunctionNode.prototype.isShared = function( builder, output ) {
 
 		return ! this.isMethod;
@@ -1208,1355 +1376,6 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 * @thanks bhouston / https://clara.io/
-	 */
-
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
-
-	function Quaternion( x, y, z, w ) {
-
-		this._x = x || 0;
-		this._y = y || 0;
-		this._z = z || 0;
-		this._w = ( w !== undefined ) ? w : 1;
-
-	}
-
-	Object.assign( Quaternion, {
-
-		slerp: function ( qa, qb, qm, t ) {
-
-			return qm.copy( qa ).slerp( qb, t );
-
-		},
-
-		slerpFlat: function ( dst, dstOffset, src0, srcOffset0, src1, srcOffset1, t ) {
-
-			// fuzz-free, array-based Quaternion SLERP operation
-
-			var x0 = src0[ srcOffset0 + 0 ],
-				y0 = src0[ srcOffset0 + 1 ],
-				z0 = src0[ srcOffset0 + 2 ],
-				w0 = src0[ srcOffset0 + 3 ],
-
-				x1 = src1[ srcOffset1 + 0 ],
-				y1 = src1[ srcOffset1 + 1 ],
-				z1 = src1[ srcOffset1 + 2 ],
-				w1 = src1[ srcOffset1 + 3 ];
-
-			if ( w0 !== w1 || x0 !== x1 || y0 !== y1 || z0 !== z1 ) {
-
-				var s = 1 - t,
-
-					cos = x0 * x1 + y0 * y1 + z0 * z1 + w0 * w1,
-
-					dir = ( cos >= 0 ? 1 : - 1 ),
-					sqrSin = 1 - cos * cos;
-
-				// Skip the Slerp for tiny steps to avoid numeric problems:
-				if ( sqrSin > Number.EPSILON ) {
-
-					var sin = Math.sqrt( sqrSin ),
-						len = Math.atan2( sin, cos * dir );
-
-					s = Math.sin( s * len ) / sin;
-					t = Math.sin( t * len ) / sin;
-
-				}
-
-				var tDir = t * dir;
-
-				x0 = x0 * s + x1 * tDir;
-				y0 = y0 * s + y1 * tDir;
-				z0 = z0 * s + z1 * tDir;
-				w0 = w0 * s + w1 * tDir;
-
-				// Normalize in case we just did a lerp:
-				if ( s === 1 - t ) {
-
-					var f = 1 / Math.sqrt( x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0 );
-
-					x0 *= f;
-					y0 *= f;
-					z0 *= f;
-					w0 *= f;
-
-				}
-
-			}
-
-			dst[ dstOffset ] = x0;
-			dst[ dstOffset + 1 ] = y0;
-			dst[ dstOffset + 2 ] = z0;
-			dst[ dstOffset + 3 ] = w0;
-
-		}
-
-	} );
-
-	Object.defineProperties( Quaternion.prototype, {
-
-		x: {
-
-			get: function () {
-
-				return this._x;
-
-			},
-
-			set: function ( value ) {
-
-				this._x = value;
-				this.onChangeCallback();
-
-			}
-
-		},
-
-		y: {
-
-			get: function () {
-
-				return this._y;
-
-			},
-
-			set: function ( value ) {
-
-				this._y = value;
-				this.onChangeCallback();
-
-			}
-
-		},
-
-		z: {
-
-			get: function () {
-
-				return this._z;
-
-			},
-
-			set: function ( value ) {
-
-				this._z = value;
-				this.onChangeCallback();
-
-			}
-
-		},
-
-		w: {
-
-			get: function () {
-
-				return this._w;
-
-			},
-
-			set: function ( value ) {
-
-				this._w = value;
-				this.onChangeCallback();
-
-			}
-
-		}
-
-	} );
-
-	Object.assign( Quaternion.prototype, {
-
-		set: function ( x, y, z, w ) {
-
-			this._x = x;
-			this._y = y;
-			this._z = z;
-			this._w = w;
-
-			this.onChangeCallback();
-
-			return this;
-
-		},
-
-		clone: function () {
-
-			return new this.constructor( this._x, this._y, this._z, this._w );
-
-		},
-
-		copy: function ( quaternion ) {
-
-			this._x = quaternion.x;
-			this._y = quaternion.y;
-			this._z = quaternion.z;
-			this._w = quaternion.w;
-
-			this.onChangeCallback();
-
-			return this;
-
-		},
-
-		setFromEuler: function ( euler, update ) {
-
-			if ( ! ( euler && euler.isEuler ) ) {
-
-				throw new Error( 'THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
-
-			}
-
-			var x = euler._x, y = euler._y, z = euler._z, order = euler.order;
-
-			// http://www.mathworks.com/matlabcentral/fileexchange/
-			// 	20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors/
-			//	content/SpinCalc.m
-
-			var cos = Math.cos;
-			var sin = Math.sin;
-
-			var c1 = cos( x / 2 );
-			var c2 = cos( y / 2 );
-			var c3 = cos( z / 2 );
-
-			var s1 = sin( x / 2 );
-			var s2 = sin( y / 2 );
-			var s3 = sin( z / 2 );
-
-			if ( order === 'XYZ' ) {
-
-				this._x = s1 * c2 * c3 + c1 * s2 * s3;
-				this._y = c1 * s2 * c3 - s1 * c2 * s3;
-				this._z = c1 * c2 * s3 + s1 * s2 * c3;
-				this._w = c1 * c2 * c3 - s1 * s2 * s3;
-
-			} else if ( order === 'YXZ' ) {
-
-				this._x = s1 * c2 * c3 + c1 * s2 * s3;
-				this._y = c1 * s2 * c3 - s1 * c2 * s3;
-				this._z = c1 * c2 * s3 - s1 * s2 * c3;
-				this._w = c1 * c2 * c3 + s1 * s2 * s3;
-
-			} else if ( order === 'ZXY' ) {
-
-				this._x = s1 * c2 * c3 - c1 * s2 * s3;
-				this._y = c1 * s2 * c3 + s1 * c2 * s3;
-				this._z = c1 * c2 * s3 + s1 * s2 * c3;
-				this._w = c1 * c2 * c3 - s1 * s2 * s3;
-
-			} else if ( order === 'ZYX' ) {
-
-				this._x = s1 * c2 * c3 - c1 * s2 * s3;
-				this._y = c1 * s2 * c3 + s1 * c2 * s3;
-				this._z = c1 * c2 * s3 - s1 * s2 * c3;
-				this._w = c1 * c2 * c3 + s1 * s2 * s3;
-
-			} else if ( order === 'YZX' ) {
-
-				this._x = s1 * c2 * c3 + c1 * s2 * s3;
-				this._y = c1 * s2 * c3 + s1 * c2 * s3;
-				this._z = c1 * c2 * s3 - s1 * s2 * c3;
-				this._w = c1 * c2 * c3 - s1 * s2 * s3;
-
-			} else if ( order === 'XZY' ) {
-
-				this._x = s1 * c2 * c3 - c1 * s2 * s3;
-				this._y = c1 * s2 * c3 - s1 * c2 * s3;
-				this._z = c1 * c2 * s3 + s1 * s2 * c3;
-				this._w = c1 * c2 * c3 + s1 * s2 * s3;
-
-			}
-
-			if ( update !== false ) this.onChangeCallback();
-
-			return this;
-
-		},
-
-		setFromAxisAngle: function ( axis, angle ) {
-
-			// http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
-
-			// assumes axis is normalized
-
-			var halfAngle = angle / 2, s = Math.sin( halfAngle );
-
-			this._x = axis.x * s;
-			this._y = axis.y * s;
-			this._z = axis.z * s;
-			this._w = Math.cos( halfAngle );
-
-			this.onChangeCallback();
-
-			return this;
-
-		},
-
-		setFromRotationMatrix: function ( m ) {
-
-			// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
-
-			// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
-
-			var te = m.elements,
-
-				m11 = te[ 0 ], m12 = te[ 4 ], m13 = te[ 8 ],
-				m21 = te[ 1 ], m22 = te[ 5 ], m23 = te[ 9 ],
-				m31 = te[ 2 ], m32 = te[ 6 ], m33 = te[ 10 ],
-
-				trace = m11 + m22 + m33,
-				s;
-
-			if ( trace > 0 ) {
-
-				s = 0.5 / Math.sqrt( trace + 1.0 );
-
-				this._w = 0.25 / s;
-				this._x = ( m32 - m23 ) * s;
-				this._y = ( m13 - m31 ) * s;
-				this._z = ( m21 - m12 ) * s;
-
-			} else if ( m11 > m22 && m11 > m33 ) {
-
-				s = 2.0 * Math.sqrt( 1.0 + m11 - m22 - m33 );
-
-				this._w = ( m32 - m23 ) / s;
-				this._x = 0.25 * s;
-				this._y = ( m12 + m21 ) / s;
-				this._z = ( m13 + m31 ) / s;
-
-			} else if ( m22 > m33 ) {
-
-				s = 2.0 * Math.sqrt( 1.0 + m22 - m11 - m33 );
-
-				this._w = ( m13 - m31 ) / s;
-				this._x = ( m12 + m21 ) / s;
-				this._y = 0.25 * s;
-				this._z = ( m23 + m32 ) / s;
-
-			} else {
-
-				s = 2.0 * Math.sqrt( 1.0 + m33 - m11 - m22 );
-
-				this._w = ( m21 - m12 ) / s;
-				this._x = ( m13 + m31 ) / s;
-				this._y = ( m23 + m32 ) / s;
-				this._z = 0.25 * s;
-
-			}
-
-			this.onChangeCallback();
-
-			return this;
-
-		},
-
-		setFromUnitVectors: function () {
-
-			// assumes direction vectors vFrom and vTo are normalized
-
-			var v1 = new Vector3();
-			var r;
-
-			var EPS = 0.000001;
-
-			return function setFromUnitVectors( vFrom, vTo ) {
-
-				if ( v1 === undefined ) v1 = new Vector3();
-
-				r = vFrom.dot( vTo ) + 1;
-
-				if ( r < EPS ) {
-
-					r = 0;
-
-					if ( Math.abs( vFrom.x ) > Math.abs( vFrom.z ) ) {
-
-						v1.set( - vFrom.y, vFrom.x, 0 );
-
-					} else {
-
-						v1.set( 0, - vFrom.z, vFrom.y );
-
-					}
-
-				} else {
-
-					v1.crossVectors( vFrom, vTo );
-
-				}
-
-				this._x = v1.x;
-				this._y = v1.y;
-				this._z = v1.z;
-				this._w = r;
-
-				return this.normalize();
-
-			};
-
-		}(),
-
-		inverse: function () {
-
-			return this.conjugate().normalize();
-
-		},
-
-		conjugate: function () {
-
-			this._x *= - 1;
-			this._y *= - 1;
-			this._z *= - 1;
-
-			this.onChangeCallback();
-
-			return this;
-
-		},
-
-		dot: function ( v ) {
-
-			return this._x * v._x + this._y * v._y + this._z * v._z + this._w * v._w;
-
-		},
-
-		lengthSq: function () {
-
-			return this._x * this._x + this._y * this._y + this._z * this._z + this._w * this._w;
-
-		},
-
-		length: function () {
-
-			return Math.sqrt( this._x * this._x + this._y * this._y + this._z * this._z + this._w * this._w );
-
-		},
-
-		normalize: function () {
-
-			var l = this.length();
-
-			if ( l === 0 ) {
-
-				this._x = 0;
-				this._y = 0;
-				this._z = 0;
-				this._w = 1;
-
-			} else {
-
-				l = 1 / l;
-
-				this._x = this._x * l;
-				this._y = this._y * l;
-				this._z = this._z * l;
-				this._w = this._w * l;
-
-			}
-
-			this.onChangeCallback();
-
-			return this;
-
-		},
-
-		multiply: function ( q, p ) {
-
-			if ( p !== undefined ) {
-
-				console.warn( 'THREE.Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
-				return this.multiplyQuaternions( q, p );
-
-			}
-
-			return this.multiplyQuaternions( this, q );
-
-		},
-
-		premultiply: function ( q ) {
-
-			return this.multiplyQuaternions( q, this );
-
-		},
-
-		multiplyQuaternions: function ( a, b ) {
-
-			// from http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/code/index.htm
-
-			var qax = a._x, qay = a._y, qaz = a._z, qaw = a._w;
-			var qbx = b._x, qby = b._y, qbz = b._z, qbw = b._w;
-
-			this._x = qax * qbw + qaw * qbx + qay * qbz - qaz * qby;
-			this._y = qay * qbw + qaw * qby + qaz * qbx - qax * qbz;
-			this._z = qaz * qbw + qaw * qbz + qax * qby - qay * qbx;
-			this._w = qaw * qbw - qax * qbx - qay * qby - qaz * qbz;
-
-			this.onChangeCallback();
-
-			return this;
-
-		},
-
-		slerp: function ( qb, t ) {
-
-			if ( t === 0 ) return this;
-			if ( t === 1 ) return this.copy( qb );
-
-			var x = this._x, y = this._y, z = this._z, w = this._w;
-
-			// http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/
-
-			var cosHalfTheta = w * qb._w + x * qb._x + y * qb._y + z * qb._z;
-
-			if ( cosHalfTheta < 0 ) {
-
-				this._w = - qb._w;
-				this._x = - qb._x;
-				this._y = - qb._y;
-				this._z = - qb._z;
-
-				cosHalfTheta = - cosHalfTheta;
-
-			} else {
-
-				this.copy( qb );
-
-			}
-
-			if ( cosHalfTheta >= 1.0 ) {
-
-				this._w = w;
-				this._x = x;
-				this._y = y;
-				this._z = z;
-
-				return this;
-
-			}
-
-			var sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
-
-			if ( Math.abs( sinHalfTheta ) < 0.001 ) {
-
-				this._w = 0.5 * ( w + this._w );
-				this._x = 0.5 * ( x + this._x );
-				this._y = 0.5 * ( y + this._y );
-				this._z = 0.5 * ( z + this._z );
-
-				return this;
-
-			}
-
-			var halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
-			var ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
-				ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
-
-			this._w = ( w * ratioA + this._w * ratioB );
-			this._x = ( x * ratioA + this._x * ratioB );
-			this._y = ( y * ratioA + this._y * ratioB );
-			this._z = ( z * ratioA + this._z * ratioB );
-
-			this.onChangeCallback();
-
-			return this;
-
-		},
-
-		equals: function ( quaternion ) {
-
-			return ( quaternion._x === this._x ) && ( quaternion._y === this._y ) && ( quaternion._z === this._z ) && ( quaternion._w === this._w );
-
-		},
-
-		fromArray: function ( array, offset ) {
-
-			if ( offset === undefined ) offset = 0;
-
-			this._x = array[ offset ];
-			this._y = array[ offset + 1 ];
-			this._z = array[ offset + 2 ];
-			this._w = array[ offset + 3 ];
-
-			this.onChangeCallback();
-
-			return this;
-
-		},
-
-		toArray: function ( array, offset ) {
-
-			if ( array === undefined ) array = [];
-			if ( offset === undefined ) offset = 0;
-
-			array[ offset ] = this._x;
-			array[ offset + 1 ] = this._y;
-			array[ offset + 2 ] = this._z;
-			array[ offset + 3 ] = this._w;
-
-			return array;
-
-		},
-
-		onChange: function ( callback ) {
-
-			this.onChangeCallback = callback;
-
-			return this;
-
-		},
-
-		onChangeCallback: function () {}
-
-	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author kile / http://kile.stravaganza.org/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
-	function Vector3( x, y, z ) {
-
-		this.x = x || 0;
-		this.y = y || 0;
-		this.z = z || 0;
-
-	}
-
-	Object.assign( Vector3.prototype, {
-
-		isVector3: true,
-
-		set: function ( x, y, z ) {
-
-			this.x = x;
-			this.y = y;
-			this.z = z;
-
-			return this;
-
-		},
-
-		setScalar: function ( scalar ) {
-
-			this.x = scalar;
-			this.y = scalar;
-			this.z = scalar;
-
-			return this;
-
-		},
-
-		setX: function ( x ) {
-
-			this.x = x;
-
-			return this;
-
-		},
-
-		setY: function ( y ) {
-
-			this.y = y;
-
-			return this;
-
-		},
-
-		setZ: function ( z ) {
-
-			this.z = z;
-
-			return this;
-
-		},
-
-		setComponent: function ( index, value ) {
-
-			switch ( index ) {
-
-				case 0: this.x = value; break;
-				case 1: this.y = value; break;
-				case 2: this.z = value; break;
-				default: throw new Error( 'index is out of range: ' + index );
-
-			}
-
-			return this;
-
-		},
-
-		getComponent: function ( index ) {
-
-			switch ( index ) {
-
-				case 0: return this.x;
-				case 1: return this.y;
-				case 2: return this.z;
-				default: throw new Error( 'index is out of range: ' + index );
-
-			}
-
-		},
-
-		clone: function () {
-
-			return new this.constructor( this.x, this.y, this.z );
-
-		},
-
-		copy: function ( v ) {
-
-			this.x = v.x;
-			this.y = v.y;
-			this.z = v.z;
-
-			return this;
-
-		},
-
-		add: function ( v, w ) {
-
-			if ( w !== undefined ) {
-
-				console.warn( 'THREE.Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
-				return this.addVectors( v, w );
-
-			}
-
-			this.x += v.x;
-			this.y += v.y;
-			this.z += v.z;
-
-			return this;
-
-		},
-
-		addScalar: function ( s ) {
-
-			this.x += s;
-			this.y += s;
-			this.z += s;
-
-			return this;
-
-		},
-
-		addVectors: function ( a, b ) {
-
-			this.x = a.x + b.x;
-			this.y = a.y + b.y;
-			this.z = a.z + b.z;
-
-			return this;
-
-		},
-
-		addScaledVector: function ( v, s ) {
-
-			this.x += v.x * s;
-			this.y += v.y * s;
-			this.z += v.z * s;
-
-			return this;
-
-		},
-
-		sub: function ( v, w ) {
-
-			if ( w !== undefined ) {
-
-				console.warn( 'THREE.Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
-				return this.subVectors( v, w );
-
-			}
-
-			this.x -= v.x;
-			this.y -= v.y;
-			this.z -= v.z;
-
-			return this;
-
-		},
-
-		subScalar: function ( s ) {
-
-			this.x -= s;
-			this.y -= s;
-			this.z -= s;
-
-			return this;
-
-		},
-
-		subVectors: function ( a, b ) {
-
-			this.x = a.x - b.x;
-			this.y = a.y - b.y;
-			this.z = a.z - b.z;
-
-			return this;
-
-		},
-
-		multiply: function ( v, w ) {
-
-			if ( w !== undefined ) {
-
-				console.warn( 'THREE.Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
-				return this.multiplyVectors( v, w );
-
-			}
-
-			this.x *= v.x;
-			this.y *= v.y;
-			this.z *= v.z;
-
-			return this;
-
-		},
-
-		multiplyScalar: function ( scalar ) {
-
-			this.x *= scalar;
-			this.y *= scalar;
-			this.z *= scalar;
-
-			return this;
-
-		},
-
-		multiplyVectors: function ( a, b ) {
-
-			this.x = a.x * b.x;
-			this.y = a.y * b.y;
-			this.z = a.z * b.z;
-
-			return this;
-
-		},
-
-		applyEuler: function () {
-
-			var quaternion = new Quaternion();
-
-			return function applyEuler( euler ) {
-
-				if ( ! ( euler && euler.isEuler ) ) {
-
-					console.error( 'THREE.Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
-
-				}
-
-				return this.applyQuaternion( quaternion.setFromEuler( euler ) );
-
-			};
-
-		}(),
-
-		applyAxisAngle: function () {
-
-			var quaternion = new Quaternion();
-
-			return function applyAxisAngle( axis, angle ) {
-
-				return this.applyQuaternion( quaternion.setFromAxisAngle( axis, angle ) );
-
-			};
-
-		}(),
-
-		applyMatrix3: function ( m ) {
-
-			var x = this.x, y = this.y, z = this.z;
-			var e = m.elements;
-
-			this.x = e[ 0 ] * x + e[ 3 ] * y + e[ 6 ] * z;
-			this.y = e[ 1 ] * x + e[ 4 ] * y + e[ 7 ] * z;
-			this.z = e[ 2 ] * x + e[ 5 ] * y + e[ 8 ] * z;
-
-			return this;
-
-		},
-
-		applyMatrix4: function ( m ) {
-
-			var x = this.x, y = this.y, z = this.z;
-			var e = m.elements;
-
-			var w = 1 / ( e[ 3 ] * x + e[ 7 ] * y + e[ 11 ] * z + e[ 15 ] );
-
-			this.x = ( e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * z + e[ 12 ] ) * w;
-			this.y = ( e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * z + e[ 13 ] ) * w;
-			this.z = ( e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z + e[ 14 ] ) * w;
-
-			return this;
-
-		},
-
-		applyQuaternion: function ( q ) {
-
-			var x = this.x, y = this.y, z = this.z;
-			var qx = q.x, qy = q.y, qz = q.z, qw = q.w;
-
-			// calculate quat * vector
-
-			var ix = qw * x + qy * z - qz * y;
-			var iy = qw * y + qz * x - qx * z;
-			var iz = qw * z + qx * y - qy * x;
-			var iw = - qx * x - qy * y - qz * z;
-
-			// calculate result * inverse quat
-
-			this.x = ix * qw + iw * - qx + iy * - qz - iz * - qy;
-			this.y = iy * qw + iw * - qy + iz * - qx - ix * - qz;
-			this.z = iz * qw + iw * - qz + ix * - qy - iy * - qx;
-
-			return this;
-
-		},
-
-		project: function () {
-
-			var matrix = new Matrix4();
-
-			return function project( camera ) {
-
-				matrix.multiplyMatrices( camera.projectionMatrix, matrix.getInverse( camera.matrixWorld ) );
-				return this.applyMatrix4( matrix );
-
-			};
-
-		}(),
-
-		unproject: function () {
-
-			var matrix = new Matrix4();
-
-			return function unproject( camera ) {
-
-				matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
-				return this.applyMatrix4( matrix );
-
-			};
-
-		}(),
-
-		transformDirection: function ( m ) {
-
-			// input: THREE.Matrix4 affine matrix
-			// vector interpreted as a direction
-
-			var x = this.x, y = this.y, z = this.z;
-			var e = m.elements;
-
-			this.x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * z;
-			this.y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * z;
-			this.z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z;
-
-			return this.normalize();
-
-		},
-
-		divide: function ( v ) {
-
-			this.x /= v.x;
-			this.y /= v.y;
-			this.z /= v.z;
-
-			return this;
-
-		},
-
-		divideScalar: function ( scalar ) {
-
-			return this.multiplyScalar( 1 / scalar );
-
-		},
-
-		min: function ( v ) {
-
-			this.x = Math.min( this.x, v.x );
-			this.y = Math.min( this.y, v.y );
-			this.z = Math.min( this.z, v.z );
-
-			return this;
-
-		},
-
-		max: function ( v ) {
-
-			this.x = Math.max( this.x, v.x );
-			this.y = Math.max( this.y, v.y );
-			this.z = Math.max( this.z, v.z );
-
-			return this;
-
-		},
-
-		clamp: function ( min, max ) {
-
-			// assumes min < max, componentwise
-
-			this.x = Math.max( min.x, Math.min( max.x, this.x ) );
-			this.y = Math.max( min.y, Math.min( max.y, this.y ) );
-			this.z = Math.max( min.z, Math.min( max.z, this.z ) );
-
-			return this;
-
-		},
-
-		clampScalar: function () {
-
-			var min = new Vector3();
-			var max = new Vector3();
-
-			return function clampScalar( minVal, maxVal ) {
-
-				min.set( minVal, minVal, minVal );
-				max.set( maxVal, maxVal, maxVal );
-
-				return this.clamp( min, max );
-
-			};
-
-		}(),
-
-		clampLength: function ( min, max ) {
-
-			var length = this.length();
-
-			return this.divideScalar( length || 1 ).multiplyScalar( Math.max( min, Math.min( max, length ) ) );
-
-		},
-
-		floor: function () {
-
-			this.x = Math.floor( this.x );
-			this.y = Math.floor( this.y );
-			this.z = Math.floor( this.z );
-
-			return this;
-
-		},
-
-		ceil: function () {
-
-			this.x = Math.ceil( this.x );
-			this.y = Math.ceil( this.y );
-			this.z = Math.ceil( this.z );
-
-			return this;
-
-		},
-
-		round: function () {
-
-			this.x = Math.round( this.x );
-			this.y = Math.round( this.y );
-			this.z = Math.round( this.z );
-
-			return this;
-
-		},
-
-		roundToZero: function () {
-
-			this.x = ( this.x < 0 ) ? Math.ceil( this.x ) : Math.floor( this.x );
-			this.y = ( this.y < 0 ) ? Math.ceil( this.y ) : Math.floor( this.y );
-			this.z = ( this.z < 0 ) ? Math.ceil( this.z ) : Math.floor( this.z );
-
-			return this;
-
-		},
-
-		negate: function () {
-
-			this.x = - this.x;
-			this.y = - this.y;
-			this.z = - this.z;
-
-			return this;
-
-		},
-
-		dot: function ( v ) {
-
-			return this.x * v.x + this.y * v.y + this.z * v.z;
-
-		},
-
-		// TODO lengthSquared?
-
-		lengthSq: function () {
-
-			return this.x * this.x + this.y * this.y + this.z * this.z;
-
-		},
-
-		length: function () {
-
-			return Math.sqrt( this.x * this.x + this.y * this.y + this.z * this.z );
-
-		},
-
-		manhattanLength: function () {
-
-			return Math.abs( this.x ) + Math.abs( this.y ) + Math.abs( this.z );
-
-		},
-
-		normalize: function () {
-
-			return this.divideScalar( this.length() || 1 );
-
-		},
-
-		setLength: function ( length ) {
-
-			return this.normalize().multiplyScalar( length );
-
-		},
-
-		lerp: function ( v, alpha ) {
-
-			this.x += ( v.x - this.x ) * alpha;
-			this.y += ( v.y - this.y ) * alpha;
-			this.z += ( v.z - this.z ) * alpha;
-
-			return this;
-
-		},
-
-		lerpVectors: function ( v1, v2, alpha ) {
-
-			return this.subVectors( v2, v1 ).multiplyScalar( alpha ).add( v1 );
-
-		},
-
-		cross: function ( v, w ) {
-
-			if ( w !== undefined ) {
-
-				console.warn( 'THREE.Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
-				return this.crossVectors( v, w );
-
-			}
-
-			return this.crossVectors( this, v );
-
-		},
-
-		crossVectors: function ( a, b ) {
-
-			var ax = a.x, ay = a.y, az = a.z;
-			var bx = b.x, by = b.y, bz = b.z;
-
-			this.x = ay * bz - az * by;
-			this.y = az * bx - ax * bz;
-			this.z = ax * by - ay * bx;
-
-			return this;
-
-		},
-
-		projectOnVector: function ( vector ) {
-
-			var scalar = vector.dot( this ) / vector.lengthSq();
-
-			return this.copy( vector ).multiplyScalar( scalar );
-
-		},
-
-		projectOnPlane: function () {
-
-			var v1 = new Vector3();
-
-			return function projectOnPlane( planeNormal ) {
-
-				v1.copy( this ).projectOnVector( planeNormal );
-
-				return this.sub( v1 );
-
-			};
-
-		}(),
-
-		reflect: function () {
-
-			// reflect incident vector off plane orthogonal to normal
-			// normal is assumed to have unit length
-
-			var v1 = new Vector3();
-
-			return function reflect( normal ) {
-
-				return this.sub( v1.copy( normal ).multiplyScalar( 2 * this.dot( normal ) ) );
-
-			};
-
-		}(),
-
-		angleTo: function ( v ) {
-
-			var theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
-
-			// clamp, to handle numerical problems
-
-			return Math.acos( _Math.clamp( theta, - 1, 1 ) );
-
-		},
-
-		distanceTo: function ( v ) {
-
-			return Math.sqrt( this.distanceToSquared( v ) );
-
-		},
-
-		distanceToSquared: function ( v ) {
-
-			var dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
-
-			return dx * dx + dy * dy + dz * dz;
-
-		},
-
-		manhattanDistanceTo: function ( v ) {
-
-			return Math.abs( this.x - v.x ) + Math.abs( this.y - v.y ) + Math.abs( this.z - v.z );
-
-		},
-
-		setFromSpherical: function ( s ) {
-
-			var sinPhiRadius = Math.sin( s.phi ) * s.radius;
-
-			this.x = sinPhiRadius * Math.sin( s.theta );
-			this.y = Math.cos( s.phi ) * s.radius;
-			this.z = sinPhiRadius * Math.cos( s.theta );
-
-			return this;
-
-		},
-
-		setFromCylindrical: function ( c ) {
-
-			this.x = c.radius * Math.sin( c.theta );
-			this.y = c.y;
-			this.z = c.radius * Math.cos( c.theta );
-
-			return this;
-
-		},
-
-		setFromMatrixPosition: function ( m ) {
-
-			var e = m.elements;
-
-			this.x = e[ 12 ];
-			this.y = e[ 13 ];
-			this.z = e[ 14 ];
-
-			return this;
-
-		},
-
-		setFromMatrixScale: function ( m ) {
-
-			var sx = this.setFromMatrixColumn( m, 0 ).length();
-			var sy = this.setFromMatrixColumn( m, 1 ).length();
-			var sz = this.setFromMatrixColumn( m, 2 ).length();
-
-			this.x = sx;
-			this.y = sy;
-			this.z = sz;
-
-			return this;
-
-		},
-
-		setFromMatrixColumn: function ( m, index ) {
-
-			return this.fromArray( m.elements, index * 4 );
-
-		},
-
-		equals: function ( v ) {
-
-			return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
-
-		},
-
-		fromArray: function ( array, offset ) {
-
-			if ( offset === undefined ) offset = 0;
-
-			this.x = array[ offset ];
-			this.y = array[ offset + 1 ];
-			this.z = array[ offset + 2 ];
-
-			return this;
-
-		},
-
-		toArray: function ( array, offset ) {
-
-			if ( array === undefined ) array = [];
-			if ( offset === undefined ) offset = 0;
-
-			array[ offset ] = this.x;
-			array[ offset + 1 ] = this.y;
-			array[ offset + 2 ] = this.z;
-
-			return array;
-
-		},
-
-		fromBufferAttribute: function ( attribute, index, offset ) {
-
-			if ( offset !== undefined ) {
-
-				console.warn( 'THREE.Vector3: offset has been removed from .fromBufferAttribute().' );
-
-			}
-
-			this.x = attribute.getX( index );
-			this.y = attribute.getY( index );
-			this.z = attribute.getZ( index );
-
-			return this;
-
-		}
-
-	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author jordi_ros / http://plattsoft.com
-	 * @author D1plo1d / http://github.com/D1plo1d
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author timknip / http://www.floorplanner.com/
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Matrix4() {
 
 		this.elements = [
@@ -2570,7 +1389,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix4: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix4: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -2698,7 +1517,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				console.error( 'THREE.Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
+				console.error( 'Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -2918,7 +1737,7 @@ var Three = (function (exports) {
 
 			if ( n !== undefined ) {
 
-				console.warn( 'THREE.Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
+				console.warn( 'Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
 				return this.multiplyMatrices( m, n );
 
 			}
@@ -3109,7 +1928,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix4: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix4: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -3362,7 +2181,7 @@ var Three = (function (exports) {
 
 			if ( far === undefined ) {
 
-				console.warn( 'THREE.Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
+				console.warn( 'Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
 
 			}
 
@@ -3466,64 +2285,152 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	function Quaternion( x, y, z, w ) {
 
-	var Matrix4Node = function( matrix ) {
-
-		InputNode.call( this, 'm4' );
-
-		this.value = matrix || new Matrix4();
-
-	};
-
-	Matrix4Node.prototype = Object.create( InputNode.prototype );
-	Matrix4Node.prototype.constructor = Matrix4Node;
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author egraether / http://egraether.com/
-	 * @author zz85 / http://www.lab4games.net/zz85/blog
-	 */
-
-	function Vector2( x, y ) {
-
-		this.x = x || 0;
-		this.y = y || 0;
+		this._x = x || 0;
+		this._y = y || 0;
+		this._z = z || 0;
+		this._w = ( w !== undefined ) ? w : 1;
 
 	}
 
-	Object.defineProperties( Vector2.prototype, {
+	Object.assign( Quaternion, {
 
-		"width": {
+		slerp: function ( qa, qb, qm, t ) {
+
+			return qm.copy( qa ).slerp( qb, t );
+
+		},
+
+		slerpFlat: function ( dst, dstOffset, src0, srcOffset0, src1, srcOffset1, t ) {
+
+			// fuzz-free, array-based Quaternion SLERP operation
+
+			var x0 = src0[ srcOffset0 + 0 ],
+				y0 = src0[ srcOffset0 + 1 ],
+				z0 = src0[ srcOffset0 + 2 ],
+				w0 = src0[ srcOffset0 + 3 ],
+
+				x1 = src1[ srcOffset1 + 0 ],
+				y1 = src1[ srcOffset1 + 1 ],
+				z1 = src1[ srcOffset1 + 2 ],
+				w1 = src1[ srcOffset1 + 3 ];
+
+			if ( w0 !== w1 || x0 !== x1 || y0 !== y1 || z0 !== z1 ) {
+
+				var s = 1 - t,
+
+					cos = x0 * x1 + y0 * y1 + z0 * z1 + w0 * w1,
+
+					dir = ( cos >= 0 ? 1 : - 1 ),
+					sqrSin = 1 - cos * cos;
+
+				// Skip the Slerp for tiny steps to avoid numeric problems:
+				if ( sqrSin > Number.EPSILON ) {
+
+					var sin = Math.sqrt( sqrSin ),
+						len = Math.atan2( sin, cos * dir );
+
+					s = Math.sin( s * len ) / sin;
+					t = Math.sin( t * len ) / sin;
+
+				}
+
+				var tDir = t * dir;
+
+				x0 = x0 * s + x1 * tDir;
+				y0 = y0 * s + y1 * tDir;
+				z0 = z0 * s + z1 * tDir;
+				w0 = w0 * s + w1 * tDir;
+
+				// Normalize in case we just did a lerp:
+				if ( s === 1 - t ) {
+
+					var f = 1 / Math.sqrt( x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0 );
+
+					x0 *= f;
+					y0 *= f;
+					z0 *= f;
+					w0 *= f;
+
+				}
+
+			}
+
+			dst[ dstOffset ] = x0;
+			dst[ dstOffset + 1 ] = y0;
+			dst[ dstOffset + 2 ] = z0;
+			dst[ dstOffset + 3 ] = w0;
+
+		}
+
+	} );
+
+	Object.defineProperties( Quaternion.prototype, {
+
+		x: {
 
 			get: function () {
 
-				return this.x;
+				return this._x;
 
 			},
 
 			set: function ( value ) {
 
-				this.x = value;
+				this._x = value;
+				this.onChangeCallback();
 
 			}
 
 		},
 
-		"height": {
+		y: {
 
 			get: function () {
 
-				return this.y;
+				return this._y;
 
 			},
 
 			set: function ( value ) {
 
-				this.y = value;
+				this._y = value;
+				this.onChangeCallback();
+
+			}
+
+		},
+
+		z: {
+
+			get: function () {
+
+				return this._z;
+
+			},
+
+			set: function ( value ) {
+
+				this._z = value;
+				this.onChangeCallback();
+
+			}
+
+		},
+
+		w: {
+
+			get: function () {
+
+				return this._w;
+
+			},
+
+			set: function ( value ) {
+
+				this._w = value;
+				this.onChangeCallback();
 
 			}
 
@@ -3531,14 +2438,471 @@ var Three = (function (exports) {
 
 	} );
 
-	Object.assign( Vector2.prototype, {
+	Object.assign( Quaternion.prototype, {
 
-		isVector2: true,
+		set: function ( x, y, z, w ) {
 
-		set: function ( x, y ) {
+			this._x = x;
+			this._y = y;
+			this._z = z;
+			this._w = w;
+
+			this.onChangeCallback();
+
+			return this;
+
+		},
+
+		clone: function () {
+
+			return new this.constructor( this._x, this._y, this._z, this._w );
+
+		},
+
+		copy: function ( quaternion ) {
+
+			this._x = quaternion.x;
+			this._y = quaternion.y;
+			this._z = quaternion.z;
+			this._w = quaternion.w;
+
+			this.onChangeCallback();
+
+			return this;
+
+		},
+
+		setFromEuler: function ( euler, update ) {
+
+			if ( ! ( euler && euler.isEuler ) ) {
+
+				throw new Error( 'Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+
+			}
+
+			var x = euler._x, y = euler._y, z = euler._z, order = euler.order;
+
+			// http://www.mathworks.com/matlabcentral/fileexchange/
+			// 	20696-function-to-convert-between-dcm-euler-angles-quaternions-and-euler-vectors/
+			//	content/SpinCalc.m
+
+			var cos = Math.cos;
+			var sin = Math.sin;
+
+			var c1 = cos( x / 2 );
+			var c2 = cos( y / 2 );
+			var c3 = cos( z / 2 );
+
+			var s1 = sin( x / 2 );
+			var s2 = sin( y / 2 );
+			var s3 = sin( z / 2 );
+
+			if ( order === 'XYZ' ) {
+
+				this._x = s1 * c2 * c3 + c1 * s2 * s3;
+				this._y = c1 * s2 * c3 - s1 * c2 * s3;
+				this._z = c1 * c2 * s3 + s1 * s2 * c3;
+				this._w = c1 * c2 * c3 - s1 * s2 * s3;
+
+			} else if ( order === 'YXZ' ) {
+
+				this._x = s1 * c2 * c3 + c1 * s2 * s3;
+				this._y = c1 * s2 * c3 - s1 * c2 * s3;
+				this._z = c1 * c2 * s3 - s1 * s2 * c3;
+				this._w = c1 * c2 * c3 + s1 * s2 * s3;
+
+			} else if ( order === 'ZXY' ) {
+
+				this._x = s1 * c2 * c3 - c1 * s2 * s3;
+				this._y = c1 * s2 * c3 + s1 * c2 * s3;
+				this._z = c1 * c2 * s3 + s1 * s2 * c3;
+				this._w = c1 * c2 * c3 - s1 * s2 * s3;
+
+			} else if ( order === 'ZYX' ) {
+
+				this._x = s1 * c2 * c3 - c1 * s2 * s3;
+				this._y = c1 * s2 * c3 + s1 * c2 * s3;
+				this._z = c1 * c2 * s3 - s1 * s2 * c3;
+				this._w = c1 * c2 * c3 + s1 * s2 * s3;
+
+			} else if ( order === 'YZX' ) {
+
+				this._x = s1 * c2 * c3 + c1 * s2 * s3;
+				this._y = c1 * s2 * c3 + s1 * c2 * s3;
+				this._z = c1 * c2 * s3 - s1 * s2 * c3;
+				this._w = c1 * c2 * c3 - s1 * s2 * s3;
+
+			} else if ( order === 'XZY' ) {
+
+				this._x = s1 * c2 * c3 - c1 * s2 * s3;
+				this._y = c1 * s2 * c3 - s1 * c2 * s3;
+				this._z = c1 * c2 * s3 + s1 * s2 * c3;
+				this._w = c1 * c2 * c3 + s1 * s2 * s3;
+
+			}
+
+			if ( update !== false ) this.onChangeCallback();
+
+			return this;
+
+		},
+
+		setFromAxisAngle: function ( axis, angle ) {
+
+			// http://www.euclideanspace.com/maths/geometry/rotations/conversions/angleToQuaternion/index.htm
+
+			// assumes axis is normalized
+
+			var halfAngle = angle / 2, s = Math.sin( halfAngle );
+
+			this._x = axis.x * s;
+			this._y = axis.y * s;
+			this._z = axis.z * s;
+			this._w = Math.cos( halfAngle );
+
+			this.onChangeCallback();
+
+			return this;
+
+		},
+
+		setFromRotationMatrix: function ( m ) {
+
+			// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
+
+			// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
+
+			var te = m.elements,
+
+				m11 = te[ 0 ], m12 = te[ 4 ], m13 = te[ 8 ],
+				m21 = te[ 1 ], m22 = te[ 5 ], m23 = te[ 9 ],
+				m31 = te[ 2 ], m32 = te[ 6 ], m33 = te[ 10 ],
+
+				trace = m11 + m22 + m33,
+				s;
+
+			if ( trace > 0 ) {
+
+				s = 0.5 / Math.sqrt( trace + 1.0 );
+
+				this._w = 0.25 / s;
+				this._x = ( m32 - m23 ) * s;
+				this._y = ( m13 - m31 ) * s;
+				this._z = ( m21 - m12 ) * s;
+
+			} else if ( m11 > m22 && m11 > m33 ) {
+
+				s = 2.0 * Math.sqrt( 1.0 + m11 - m22 - m33 );
+
+				this._w = ( m32 - m23 ) / s;
+				this._x = 0.25 * s;
+				this._y = ( m12 + m21 ) / s;
+				this._z = ( m13 + m31 ) / s;
+
+			} else if ( m22 > m33 ) {
+
+				s = 2.0 * Math.sqrt( 1.0 + m22 - m11 - m33 );
+
+				this._w = ( m13 - m31 ) / s;
+				this._x = ( m12 + m21 ) / s;
+				this._y = 0.25 * s;
+				this._z = ( m23 + m32 ) / s;
+
+			} else {
+
+				s = 2.0 * Math.sqrt( 1.0 + m33 - m11 - m22 );
+
+				this._w = ( m21 - m12 ) / s;
+				this._x = ( m13 + m31 ) / s;
+				this._y = ( m23 + m32 ) / s;
+				this._z = 0.25 * s;
+
+			}
+
+			this.onChangeCallback();
+
+			return this;
+
+		},
+
+		setFromUnitVectors: function () {
+
+			// assumes direction vectors vFrom and vTo are normalized
+
+			var v1 = new Vector3();
+			var r;
+
+			var EPS = 0.000001;
+
+			return function setFromUnitVectors( vFrom, vTo ) {
+
+				if ( v1 === undefined ) v1 = new Vector3();
+
+				r = vFrom.dot( vTo ) + 1;
+
+				if ( r < EPS ) {
+
+					r = 0;
+
+					if ( Math.abs( vFrom.x ) > Math.abs( vFrom.z ) ) {
+
+						v1.set( - vFrom.y, vFrom.x, 0 );
+
+					} else {
+
+						v1.set( 0, - vFrom.z, vFrom.y );
+
+					}
+
+				} else {
+
+					v1.crossVectors( vFrom, vTo );
+
+				}
+
+				this._x = v1.x;
+				this._y = v1.y;
+				this._z = v1.z;
+				this._w = r;
+
+				return this.normalize();
+
+			};
+
+		}(),
+
+		inverse: function () {
+
+			// quaternion is assumed to have unit length
+
+			return this.conjugate();
+
+		},
+
+		conjugate: function () {
+
+			this._x *= - 1;
+			this._y *= - 1;
+			this._z *= - 1;
+
+			this.onChangeCallback();
+
+			return this;
+
+		},
+
+		dot: function ( v ) {
+
+			return this._x * v._x + this._y * v._y + this._z * v._z + this._w * v._w;
+
+		},
+
+		lengthSq: function () {
+
+			return this._x * this._x + this._y * this._y + this._z * this._z + this._w * this._w;
+
+		},
+
+		length: function () {
+
+			return Math.sqrt( this._x * this._x + this._y * this._y + this._z * this._z + this._w * this._w );
+
+		},
+
+		normalize: function () {
+
+			var l = this.length();
+
+			if ( l === 0 ) {
+
+				this._x = 0;
+				this._y = 0;
+				this._z = 0;
+				this._w = 1;
+
+			} else {
+
+				l = 1 / l;
+
+				this._x = this._x * l;
+				this._y = this._y * l;
+				this._z = this._z * l;
+				this._w = this._w * l;
+
+			}
+
+			this.onChangeCallback();
+
+			return this;
+
+		},
+
+		multiply: function ( q, p ) {
+
+			if ( p !== undefined ) {
+
+				console.warn( 'Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
+				return this.multiplyQuaternions( q, p );
+
+			}
+
+			return this.multiplyQuaternions( this, q );
+
+		},
+
+		premultiply: function ( q ) {
+
+			return this.multiplyQuaternions( q, this );
+
+		},
+
+		multiplyQuaternions: function ( a, b ) {
+
+			// from http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/code/index.htm
+
+			var qax = a._x, qay = a._y, qaz = a._z, qaw = a._w;
+			var qbx = b._x, qby = b._y, qbz = b._z, qbw = b._w;
+
+			this._x = qax * qbw + qaw * qbx + qay * qbz - qaz * qby;
+			this._y = qay * qbw + qaw * qby + qaz * qbx - qax * qbz;
+			this._z = qaz * qbw + qaw * qbz + qax * qby - qay * qbx;
+			this._w = qaw * qbw - qax * qbx - qay * qby - qaz * qbz;
+
+			this.onChangeCallback();
+
+			return this;
+
+		},
+
+		slerp: function ( qb, t ) {
+
+			if ( t === 0 ) return this;
+			if ( t === 1 ) return this.copy( qb );
+
+			var x = this._x, y = this._y, z = this._z, w = this._w;
+
+			// http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/
+
+			var cosHalfTheta = w * qb._w + x * qb._x + y * qb._y + z * qb._z;
+
+			if ( cosHalfTheta < 0 ) {
+
+				this._w = - qb._w;
+				this._x = - qb._x;
+				this._y = - qb._y;
+				this._z = - qb._z;
+
+				cosHalfTheta = - cosHalfTheta;
+
+			} else {
+
+				this.copy( qb );
+
+			}
+
+			if ( cosHalfTheta >= 1.0 ) {
+
+				this._w = w;
+				this._x = x;
+				this._y = y;
+				this._z = z;
+
+				return this;
+
+			}
+
+			var sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
+
+			if ( Math.abs( sinHalfTheta ) < 0.001 ) {
+
+				this._w = 0.5 * ( w + this._w );
+				this._x = 0.5 * ( x + this._x );
+				this._y = 0.5 * ( y + this._y );
+				this._z = 0.5 * ( z + this._z );
+
+				return this;
+
+			}
+
+			var halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
+			var ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
+				ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
+
+			this._w = ( w * ratioA + this._w * ratioB );
+			this._x = ( x * ratioA + this._x * ratioB );
+			this._y = ( y * ratioA + this._y * ratioB );
+			this._z = ( z * ratioA + this._z * ratioB );
+
+			this.onChangeCallback();
+
+			return this;
+
+		},
+
+		equals: function ( quaternion ) {
+
+			return ( quaternion._x === this._x ) && ( quaternion._y === this._y ) && ( quaternion._z === this._z ) && ( quaternion._w === this._w );
+
+		},
+
+		fromArray: function ( array, offset ) {
+
+			if ( offset === undefined ) offset = 0;
+
+			this._x = array[ offset ];
+			this._y = array[ offset + 1 ];
+			this._z = array[ offset + 2 ];
+			this._w = array[ offset + 3 ];
+
+			this.onChangeCallback();
+
+			return this;
+
+		},
+
+		toArray: function ( array, offset ) {
+
+			if ( array === undefined ) array = [];
+			if ( offset === undefined ) offset = 0;
+
+			array[ offset ] = this._x;
+			array[ offset + 1 ] = this._y;
+			array[ offset + 2 ] = this._z;
+			array[ offset + 3 ] = this._w;
+
+			return array;
+
+		},
+
+		onChange: function ( callback ) {
+
+			this.onChangeCallback = callback;
+
+			return this;
+
+		},
+
+		onChangeCallback: function () {}
+
+	} );
+
+	function Vector3( x, y, z ) {
+
+		this.x = x || 0;
+		this.y = y || 0;
+		this.z = z || 0;
+
+	}
+
+	Object.assign( Vector3.prototype, {
+
+		isVector3: true,
+
+		set: function ( x, y, z ) {
 
 			this.x = x;
 			this.y = y;
+			this.z = z;
 
 			return this;
 
@@ -3548,6 +2912,7 @@ var Three = (function (exports) {
 
 			this.x = scalar;
 			this.y = scalar;
+			this.z = scalar;
 
 			return this;
 
@@ -3569,12 +2934,21 @@ var Three = (function (exports) {
 
 		},
 
+		setZ: function ( z ) {
+
+			this.z = z;
+
+			return this;
+
+		},
+
 		setComponent: function ( index, value ) {
 
 			switch ( index ) {
 
 				case 0: this.x = value; break;
 				case 1: this.y = value; break;
+				case 2: this.z = value; break;
 				default: throw new Error( 'index is out of range: ' + index );
 
 			}
@@ -3589,6 +2963,7 @@ var Three = (function (exports) {
 
 				case 0: return this.x;
 				case 1: return this.y;
+				case 2: return this.z;
 				default: throw new Error( 'index is out of range: ' + index );
 
 			}
@@ -3597,7 +2972,7 @@ var Three = (function (exports) {
 
 		clone: function () {
 
-			return new this.constructor( this.x, this.y );
+			return new this.constructor( this.x, this.y, this.z );
 
 		},
 
@@ -3605,6 +2980,7 @@ var Three = (function (exports) {
 
 			this.x = v.x;
 			this.y = v.y;
+			this.z = v.z;
 
 			return this;
 
@@ -3614,13 +2990,14 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
 
 			this.x += v.x;
 			this.y += v.y;
+			this.z += v.z;
 
 			return this;
 
@@ -3630,6 +3007,7 @@ var Three = (function (exports) {
 
 			this.x += s;
 			this.y += s;
+			this.z += s;
 
 			return this;
 
@@ -3639,6 +3017,7 @@ var Three = (function (exports) {
 
 			this.x = a.x + b.x;
 			this.y = a.y + b.y;
+			this.z = a.z + b.z;
 
 			return this;
 
@@ -3648,6 +3027,7 @@ var Three = (function (exports) {
 
 			this.x += v.x * s;
 			this.y += v.y * s;
+			this.z += v.z * s;
 
 			return this;
 
@@ -3657,13 +3037,14 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
 
 			this.x -= v.x;
 			this.y -= v.y;
+			this.z -= v.z;
 
 			return this;
 
@@ -3673,6 +3054,7 @@ var Three = (function (exports) {
 
 			this.x -= s;
 			this.y -= s;
+			this.z -= s;
 
 			return this;
 
@@ -3682,15 +3064,24 @@ var Three = (function (exports) {
 
 			this.x = a.x - b.x;
 			this.y = a.y - b.y;
+			this.z = a.z - b.z;
 
 			return this;
 
 		},
 
-		multiply: function ( v ) {
+		multiply: function ( v, w ) {
+
+			if ( w !== undefined ) {
+
+				console.warn( 'Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
+				return this.multiplyVectors( v, w );
+
+			}
 
 			this.x *= v.x;
 			this.y *= v.y;
+			this.z *= v.z;
 
 			return this;
 
@@ -3700,8 +3091,141 @@ var Three = (function (exports) {
 
 			this.x *= scalar;
 			this.y *= scalar;
+			this.z *= scalar;
 
 			return this;
+
+		},
+
+		multiplyVectors: function ( a, b ) {
+
+			this.x = a.x * b.x;
+			this.y = a.y * b.y;
+			this.z = a.z * b.z;
+
+			return this;
+
+		},
+
+		applyEuler: function () {
+
+			var quaternion = new Quaternion();
+
+			return function applyEuler( euler ) {
+
+				if ( ! ( euler && euler.isEuler ) ) {
+
+					console.error( 'Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+
+				}
+
+				return this.applyQuaternion( quaternion.setFromEuler( euler ) );
+
+			};
+
+		}(),
+
+		applyAxisAngle: function () {
+
+			var quaternion = new Quaternion();
+
+			return function applyAxisAngle( axis, angle ) {
+
+				return this.applyQuaternion( quaternion.setFromAxisAngle( axis, angle ) );
+
+			};
+
+		}(),
+
+		applyMatrix3: function ( m ) {
+
+			var x = this.x, y = this.y, z = this.z;
+			var e = m.elements;
+
+			this.x = e[ 0 ] * x + e[ 3 ] * y + e[ 6 ] * z;
+			this.y = e[ 1 ] * x + e[ 4 ] * y + e[ 7 ] * z;
+			this.z = e[ 2 ] * x + e[ 5 ] * y + e[ 8 ] * z;
+
+			return this;
+
+		},
+
+		applyMatrix4: function ( m ) {
+
+			var x = this.x, y = this.y, z = this.z;
+			var e = m.elements;
+
+			var w = 1 / ( e[ 3 ] * x + e[ 7 ] * y + e[ 11 ] * z + e[ 15 ] );
+
+			this.x = ( e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * z + e[ 12 ] ) * w;
+			this.y = ( e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * z + e[ 13 ] ) * w;
+			this.z = ( e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z + e[ 14 ] ) * w;
+
+			return this;
+
+		},
+
+		applyQuaternion: function ( q ) {
+
+			var x = this.x, y = this.y, z = this.z;
+			var qx = q.x, qy = q.y, qz = q.z, qw = q.w;
+
+			// calculate quat * vector
+
+			var ix = qw * x + qy * z - qz * y;
+			var iy = qw * y + qz * x - qx * z;
+			var iz = qw * z + qx * y - qy * x;
+			var iw = - qx * x - qy * y - qz * z;
+
+			// calculate result * inverse quat
+
+			this.x = ix * qw + iw * - qx + iy * - qz - iz * - qy;
+			this.y = iy * qw + iw * - qy + iz * - qx - ix * - qz;
+			this.z = iz * qw + iw * - qz + ix * - qy - iy * - qx;
+
+			return this;
+
+		},
+
+		project: function () {
+
+			var matrix = new Matrix4();
+
+			return function project( camera ) {
+
+				matrix.multiplyMatrices( camera.projectionMatrix, matrix.getInverse( camera.matrixWorld ) );
+				return this.applyMatrix4( matrix );
+
+			};
+
+		}(),
+
+		unproject: function () {
+
+			var matrix = new Matrix4();
+
+			return function unproject( camera ) {
+
+				matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
+				return this.applyMatrix4( matrix );
+
+			};
+
+		}(),
+
+		transformDirection: function ( m ) {
+
+			// input: Matrix4 affine matrix
+			// vector interpreted as a direction
+
+			var x = this.x, y = this.y, z = this.z;
+			var e = m.elements;
+
+			this.x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * z;
+			this.y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * z;
+			this.z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z;
+
+			return this.normalize();
 
 		},
 
@@ -3709,6 +3233,7 @@ var Three = (function (exports) {
 
 			this.x /= v.x;
 			this.y /= v.y;
+			this.z /= v.z;
 
 			return this;
 
@@ -3720,22 +3245,11 @@ var Three = (function (exports) {
 
 		},
 
-		applyMatrix3: function ( m ) {
-
-			var x = this.x, y = this.y;
-			var e = m.elements;
-
-			this.x = e[ 0 ] * x + e[ 3 ] * y + e[ 6 ];
-			this.y = e[ 1 ] * x + e[ 4 ] * y + e[ 7 ];
-
-			return this;
-
-		},
-
 		min: function ( v ) {
 
 			this.x = Math.min( this.x, v.x );
 			this.y = Math.min( this.y, v.y );
+			this.z = Math.min( this.z, v.z );
 
 			return this;
 
@@ -3745,6 +3259,7 @@ var Three = (function (exports) {
 
 			this.x = Math.max( this.x, v.x );
 			this.y = Math.max( this.y, v.y );
+			this.z = Math.max( this.z, v.z );
 
 			return this;
 
@@ -3756,6 +3271,7 @@ var Three = (function (exports) {
 
 			this.x = Math.max( min.x, Math.min( max.x, this.x ) );
 			this.y = Math.max( min.y, Math.min( max.y, this.y ) );
+			this.z = Math.max( min.z, Math.min( max.z, this.z ) );
 
 			return this;
 
@@ -3763,13 +3279,13 @@ var Three = (function (exports) {
 
 		clampScalar: function () {
 
-			var min = new Vector2();
-			var max = new Vector2();
+			var min = new Vector3();
+			var max = new Vector3();
 
 			return function clampScalar( minVal, maxVal ) {
 
-				min.set( minVal, minVal );
-				max.set( maxVal, maxVal );
+				min.set( minVal, minVal, minVal );
+				max.set( maxVal, maxVal, maxVal );
 
 				return this.clamp( min, max );
 
@@ -3789,6 +3305,7 @@ var Three = (function (exports) {
 
 			this.x = Math.floor( this.x );
 			this.y = Math.floor( this.y );
+			this.z = Math.floor( this.z );
 
 			return this;
 
@@ -3798,6 +3315,7 @@ var Three = (function (exports) {
 
 			this.x = Math.ceil( this.x );
 			this.y = Math.ceil( this.y );
+			this.z = Math.ceil( this.z );
 
 			return this;
 
@@ -3807,6 +3325,7 @@ var Three = (function (exports) {
 
 			this.x = Math.round( this.x );
 			this.y = Math.round( this.y );
+			this.z = Math.round( this.z );
 
 			return this;
 
@@ -3816,6 +3335,7 @@ var Three = (function (exports) {
 
 			this.x = ( this.x < 0 ) ? Math.ceil( this.x ) : Math.floor( this.x );
 			this.y = ( this.y < 0 ) ? Math.ceil( this.y ) : Math.floor( this.y );
+			this.z = ( this.z < 0 ) ? Math.ceil( this.z ) : Math.floor( this.z );
 
 			return this;
 
@@ -3825,6 +3345,7 @@ var Three = (function (exports) {
 
 			this.x = - this.x;
 			this.y = - this.y;
+			this.z = - this.z;
 
 			return this;
 
@@ -3832,62 +3353,33 @@ var Three = (function (exports) {
 
 		dot: function ( v ) {
 
-			return this.x * v.x + this.y * v.y;
+			return this.x * v.x + this.y * v.y + this.z * v.z;
 
 		},
 
+		// TODO lengthSquared?
+
 		lengthSq: function () {
 
-			return this.x * this.x + this.y * this.y;
+			return this.x * this.x + this.y * this.y + this.z * this.z;
 
 		},
 
 		length: function () {
 
-			return Math.sqrt( this.x * this.x + this.y * this.y );
+			return Math.sqrt( this.x * this.x + this.y * this.y + this.z * this.z );
 
 		},
 
 		manhattanLength: function () {
 
-			return Math.abs( this.x ) + Math.abs( this.y );
+			return Math.abs( this.x ) + Math.abs( this.y ) + Math.abs( this.z );
 
 		},
 
 		normalize: function () {
 
 			return this.divideScalar( this.length() || 1 );
-
-		},
-
-		angle: function () {
-
-			// computes the angle in radians with respect to the positive x-axis
-
-			var angle = Math.atan2( this.y, this.x );
-
-			if ( angle < 0 ) angle += 2 * Math.PI;
-
-			return angle;
-
-		},
-
-		distanceTo: function ( v ) {
-
-			return Math.sqrt( this.distanceToSquared( v ) );
-
-		},
-
-		distanceToSquared: function ( v ) {
-
-			var dx = this.x - v.x, dy = this.y - v.y;
-			return dx * dx + dy * dy;
-
-		},
-
-		manhattanDistanceTo: function ( v ) {
-
-			return Math.abs( this.x - v.x ) + Math.abs( this.y - v.y );
 
 		},
 
@@ -3901,6 +3393,7 @@ var Three = (function (exports) {
 
 			this.x += ( v.x - this.x ) * alpha;
 			this.y += ( v.y - this.y ) * alpha;
+			this.z += ( v.z - this.z ) * alpha;
 
 			return this;
 
@@ -3912,9 +3405,156 @@ var Three = (function (exports) {
 
 		},
 
+		cross: function ( v, w ) {
+
+			if ( w !== undefined ) {
+
+				console.warn( 'Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
+				return this.crossVectors( v, w );
+
+			}
+
+			return this.crossVectors( this, v );
+
+		},
+
+		crossVectors: function ( a, b ) {
+
+			var ax = a.x, ay = a.y, az = a.z;
+			var bx = b.x, by = b.y, bz = b.z;
+
+			this.x = ay * bz - az * by;
+			this.y = az * bx - ax * bz;
+			this.z = ax * by - ay * bx;
+
+			return this;
+
+		},
+
+		projectOnVector: function ( vector ) {
+
+			var scalar = vector.dot( this ) / vector.lengthSq();
+
+			return this.copy( vector ).multiplyScalar( scalar );
+
+		},
+
+		projectOnPlane: function () {
+
+			var v1 = new Vector3();
+
+			return function projectOnPlane( planeNormal ) {
+
+				v1.copy( this ).projectOnVector( planeNormal );
+
+				return this.sub( v1 );
+
+			};
+
+		}(),
+
+		reflect: function () {
+
+			// reflect incident vector off plane orthogonal to normal
+			// normal is assumed to have unit length
+
+			var v1 = new Vector3();
+
+			return function reflect( normal ) {
+
+				return this.sub( v1.copy( normal ).multiplyScalar( 2 * this.dot( normal ) ) );
+
+			};
+
+		}(),
+
+		angleTo: function ( v ) {
+
+			var theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
+
+			// clamp, to handle numerical problems
+
+			return Math.acos( _Math.clamp( theta, - 1, 1 ) );
+
+		},
+
+		distanceTo: function ( v ) {
+
+			return Math.sqrt( this.distanceToSquared( v ) );
+
+		},
+
+		distanceToSquared: function ( v ) {
+
+			var dx = this.x - v.x, dy = this.y - v.y, dz = this.z - v.z;
+
+			return dx * dx + dy * dy + dz * dz;
+
+		},
+
+		manhattanDistanceTo: function ( v ) {
+
+			return Math.abs( this.x - v.x ) + Math.abs( this.y - v.y ) + Math.abs( this.z - v.z );
+
+		},
+
+		setFromSpherical: function ( s ) {
+
+			var sinPhiRadius = Math.sin( s.phi ) * s.radius;
+
+			this.x = sinPhiRadius * Math.sin( s.theta );
+			this.y = Math.cos( s.phi ) * s.radius;
+			this.z = sinPhiRadius * Math.cos( s.theta );
+
+			return this;
+
+		},
+
+		setFromCylindrical: function ( c ) {
+
+			this.x = c.radius * Math.sin( c.theta );
+			this.y = c.y;
+			this.z = c.radius * Math.cos( c.theta );
+
+			return this;
+
+		},
+
+		setFromMatrixPosition: function ( m ) {
+
+			var e = m.elements;
+
+			this.x = e[ 12 ];
+			this.y = e[ 13 ];
+			this.z = e[ 14 ];
+
+			return this;
+
+		},
+
+		setFromMatrixScale: function ( m ) {
+
+			var sx = this.setFromMatrixColumn( m, 0 ).length();
+			var sy = this.setFromMatrixColumn( m, 1 ).length();
+			var sz = this.setFromMatrixColumn( m, 2 ).length();
+
+			this.x = sx;
+			this.y = sy;
+			this.z = sz;
+
+			return this;
+
+		},
+
+		setFromMatrixColumn: function ( m, index ) {
+
+			return this.fromArray( m.elements, index * 4 );
+
+		},
+
 		equals: function ( v ) {
 
-			return ( ( v.x === this.x ) && ( v.y === this.y ) );
+			return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) );
 
 		},
 
@@ -3924,6 +3564,7 @@ var Three = (function (exports) {
 
 			this.x = array[ offset ];
 			this.y = array[ offset + 1 ];
+			this.z = array[ offset + 2 ];
 
 			return this;
 
@@ -3936,6 +3577,7 @@ var Three = (function (exports) {
 
 			array[ offset ] = this.x;
 			array[ offset + 1 ] = this.y;
+			array[ offset + 2 ] = this.z;
 
 			return array;
 
@@ -3945,26 +3587,13 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector2: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector3: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
 			this.x = attribute.getX( index );
 			this.y = attribute.getY( index );
-
-			return this;
-
-		},
-
-		rotateAround: function ( center, angle ) {
-
-			var c = Math.cos( angle ), s = Math.sin( angle );
-
-			var x = this.x - center.x;
-			var y = this.y - center.y;
-
-			this.x = x * c - y * s + center.x;
-			this.y = x * s + y * c + center.y;
+			this.z = attribute.getZ( index );
 
 			return this;
 
@@ -3972,21 +3601,431 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	function Matrix3() {
+
+		this.elements = [
+
+			1, 0, 0,
+			0, 1, 0,
+			0, 0, 1
+
+		];
+
+		if ( arguments.length > 0 ) {
+
+			console.error( 'Matrix3: the constructor no longer reads arguments. use .set() instead.' );
+
+		}
+
+	}
+
+	Object.assign( Matrix3.prototype, {
+
+		isMatrix3: true,
+
+		set: function ( n11, n12, n13, n21, n22, n23, n31, n32, n33 ) {
+
+			var te = this.elements;
+
+			te[ 0 ] = n11; te[ 1 ] = n21; te[ 2 ] = n31;
+			te[ 3 ] = n12; te[ 4 ] = n22; te[ 5 ] = n32;
+			te[ 6 ] = n13; te[ 7 ] = n23; te[ 8 ] = n33;
+
+			return this;
+
+		},
+
+		identity: function () {
+
+			this.set(
+
+				1, 0, 0,
+				0, 1, 0,
+				0, 0, 1
+
+			);
+
+			return this;
+
+		},
+
+		clone: function () {
+
+			return new this.constructor().fromArray( this.elements );
+
+		},
+
+		copy: function ( m ) {
+
+			var te = this.elements;
+			var me = m.elements;
+
+			te[ 0 ] = me[ 0 ]; te[ 1 ] = me[ 1 ]; te[ 2 ] = me[ 2 ];
+			te[ 3 ] = me[ 3 ]; te[ 4 ] = me[ 4 ]; te[ 5 ] = me[ 5 ];
+			te[ 6 ] = me[ 6 ]; te[ 7 ] = me[ 7 ]; te[ 8 ] = me[ 8 ];
+
+			return this;
+
+		},
+
+		setFromMatrix4: function ( m ) {
+
+			var me = m.elements;
+
+			this.set(
+
+				me[ 0 ], me[ 4 ], me[ 8 ],
+				me[ 1 ], me[ 5 ], me[ 9 ],
+				me[ 2 ], me[ 6 ], me[ 10 ]
+
+			);
+
+			return this;
+
+		},
+
+		applyToBufferAttribute: function () {
+
+			var v1 = new Vector3();
+
+			return function applyToBufferAttribute( attribute ) {
+
+				for ( var i = 0, l = attribute.count; i < l; i ++ ) {
+
+					v1.x = attribute.getX( i );
+					v1.y = attribute.getY( i );
+					v1.z = attribute.getZ( i );
+
+					v1.applyMatrix3( this );
+
+					attribute.setXYZ( i, v1.x, v1.y, v1.z );
+
+				}
+
+				return attribute;
+
+			};
+
+		}(),
+
+		multiply: function ( m ) {
+
+			return this.multiplyMatrices( this, m );
+
+		},
+
+		premultiply: function ( m ) {
+
+			return this.multiplyMatrices( m, this );
+
+		},
+
+		multiplyMatrices: function ( a, b ) {
+
+			var ae = a.elements;
+			var be = b.elements;
+			var te = this.elements;
+
+			var a11 = ae[ 0 ], a12 = ae[ 3 ], a13 = ae[ 6 ];
+			var a21 = ae[ 1 ], a22 = ae[ 4 ], a23 = ae[ 7 ];
+			var a31 = ae[ 2 ], a32 = ae[ 5 ], a33 = ae[ 8 ];
+
+			var b11 = be[ 0 ], b12 = be[ 3 ], b13 = be[ 6 ];
+			var b21 = be[ 1 ], b22 = be[ 4 ], b23 = be[ 7 ];
+			var b31 = be[ 2 ], b32 = be[ 5 ], b33 = be[ 8 ];
+
+			te[ 0 ] = a11 * b11 + a12 * b21 + a13 * b31;
+			te[ 3 ] = a11 * b12 + a12 * b22 + a13 * b32;
+			te[ 6 ] = a11 * b13 + a12 * b23 + a13 * b33;
+
+			te[ 1 ] = a21 * b11 + a22 * b21 + a23 * b31;
+			te[ 4 ] = a21 * b12 + a22 * b22 + a23 * b32;
+			te[ 7 ] = a21 * b13 + a22 * b23 + a23 * b33;
+
+			te[ 2 ] = a31 * b11 + a32 * b21 + a33 * b31;
+			te[ 5 ] = a31 * b12 + a32 * b22 + a33 * b32;
+			te[ 8 ] = a31 * b13 + a32 * b23 + a33 * b33;
+
+			return this;
+
+		},
+
+		multiplyScalar: function ( s ) {
+
+			var te = this.elements;
+
+			te[ 0 ] *= s; te[ 3 ] *= s; te[ 6 ] *= s;
+			te[ 1 ] *= s; te[ 4 ] *= s; te[ 7 ] *= s;
+			te[ 2 ] *= s; te[ 5 ] *= s; te[ 8 ] *= s;
+
+			return this;
+
+		},
+
+		determinant: function () {
+
+			var te = this.elements;
+
+			var a = te[ 0 ], b = te[ 1 ], c = te[ 2 ],
+				d = te[ 3 ], e = te[ 4 ], f = te[ 5 ],
+				g = te[ 6 ], h = te[ 7 ], i = te[ 8 ];
+
+			return a * e * i - a * f * h - b * d * i + b * f * g + c * d * h - c * e * g;
+
+		},
+
+		getInverse: function ( matrix, throwOnDegenerate ) {
+
+			if ( matrix && matrix.isMatrix4 ) {
+
+				console.error( "Matrix3: .getInverse() no longer takes a Matrix4 argument." );
+
+			}
+
+			var me = matrix.elements,
+				te = this.elements,
+
+				n11 = me[ 0 ], n21 = me[ 1 ], n31 = me[ 2 ],
+				n12 = me[ 3 ], n22 = me[ 4 ], n32 = me[ 5 ],
+				n13 = me[ 6 ], n23 = me[ 7 ], n33 = me[ 8 ],
+
+				t11 = n33 * n22 - n32 * n23,
+				t12 = n32 * n13 - n33 * n12,
+				t13 = n23 * n12 - n22 * n13,
+
+				det = n11 * t11 + n21 * t12 + n31 * t13;
+
+			if ( det === 0 ) {
+
+				var msg = "Matrix3: .getInverse() can't invert matrix, determinant is 0";
+
+				if ( throwOnDegenerate === true ) {
+
+					throw new Error( msg );
+
+				} else {
+
+					console.warn( msg );
+
+				}
+
+				return this.identity();
+
+			}
+
+			var detInv = 1 / det;
+
+			te[ 0 ] = t11 * detInv;
+			te[ 1 ] = ( n31 * n23 - n33 * n21 ) * detInv;
+			te[ 2 ] = ( n32 * n21 - n31 * n22 ) * detInv;
+
+			te[ 3 ] = t12 * detInv;
+			te[ 4 ] = ( n33 * n11 - n31 * n13 ) * detInv;
+			te[ 5 ] = ( n31 * n12 - n32 * n11 ) * detInv;
+
+			te[ 6 ] = t13 * detInv;
+			te[ 7 ] = ( n21 * n13 - n23 * n11 ) * detInv;
+			te[ 8 ] = ( n22 * n11 - n21 * n12 ) * detInv;
+
+			return this;
+
+		},
+
+		transpose: function () {
+
+			var tmp, m = this.elements;
+
+			tmp = m[ 1 ]; m[ 1 ] = m[ 3 ]; m[ 3 ] = tmp;
+			tmp = m[ 2 ]; m[ 2 ] = m[ 6 ]; m[ 6 ] = tmp;
+			tmp = m[ 5 ]; m[ 5 ] = m[ 7 ]; m[ 7 ] = tmp;
+
+			return this;
+
+		},
+
+		getNormalMatrix: function ( matrix4 ) {
+
+			return this.setFromMatrix4( matrix4 ).getInverse( this ).transpose();
+
+		},
+
+		transposeIntoArray: function ( r ) {
+
+			var m = this.elements;
+
+			r[ 0 ] = m[ 0 ];
+			r[ 1 ] = m[ 3 ];
+			r[ 2 ] = m[ 6 ];
+			r[ 3 ] = m[ 1 ];
+			r[ 4 ] = m[ 4 ];
+			r[ 5 ] = m[ 7 ];
+			r[ 6 ] = m[ 2 ];
+			r[ 7 ] = m[ 5 ];
+			r[ 8 ] = m[ 8 ];
+
+			return this;
+
+		},
+
+		setUvTransform: function ( tx, ty, sx, sy, rotation, cx, cy ) {
+
+			var c = Math.cos( rotation );
+			var s = Math.sin( rotation );
+
+			this.set(
+				sx * c, sx * s, - sx * ( c * cx + s * cy ) + cx + tx,
+				- sy * s, sy * c, - sy * ( - s * cx + c * cy ) + cy + ty,
+				0, 0, 1
+			);
+
+		},
+
+		scale: function ( sx, sy ) {
+
+			var te = this.elements;
+
+			te[ 0 ] *= sx; te[ 3 ] *= sx; te[ 6 ] *= sx;
+			te[ 1 ] *= sy; te[ 4 ] *= sy; te[ 7 ] *= sy;
+
+			return this;
+
+		},
+
+		rotate: function ( theta ) {
+
+			var c = Math.cos( theta );
+			var s = Math.sin( theta );
+
+			var te = this.elements;
+
+			var a11 = te[ 0 ], a12 = te[ 3 ], a13 = te[ 6 ];
+			var a21 = te[ 1 ], a22 = te[ 4 ], a23 = te[ 7 ];
+
+			te[ 0 ] = c * a11 + s * a21;
+			te[ 3 ] = c * a12 + s * a22;
+			te[ 6 ] = c * a13 + s * a23;
+
+			te[ 1 ] = - s * a11 + c * a21;
+			te[ 4 ] = - s * a12 + c * a22;
+			te[ 7 ] = - s * a13 + c * a23;
+
+			return this;
+
+		},
+
+		translate: function ( tx, ty ) {
+
+			var te = this.elements;
+
+			te[ 0 ] += tx * te[ 2 ]; te[ 3 ] += tx * te[ 5 ]; te[ 6 ] += tx * te[ 8 ];
+			te[ 1 ] += ty * te[ 2 ]; te[ 4 ] += ty * te[ 5 ]; te[ 7 ] += ty * te[ 8 ];
+
+			return this;
+
+		},
+
+		equals: function ( matrix ) {
+
+			var te = this.elements;
+			var me = matrix.elements;
+
+			for ( var i = 0; i < 9; i ++ ) {
+
+				if ( te[ i ] !== me[ i ] ) return false;
+
+			}
+
+			return true;
+
+		},
+
+		fromArray: function ( array, offset ) {
+
+			if ( offset === undefined ) offset = 0;
+
+			for ( var i = 0; i < 9; i ++ ) {
+
+				this.elements[ i ] = array[ i + offset ];
+
+			}
+
+			return this;
+
+		},
+
+		toArray: function ( array, offset ) {
+
+			if ( array === undefined ) array = [];
+			if ( offset === undefined ) offset = 0;
+
+			var te = this.elements;
+
+			array[ offset ] = te[ 0 ];
+			array[ offset + 1 ] = te[ 1 ];
+			array[ offset + 2 ] = te[ 2 ];
+
+			array[ offset + 3 ] = te[ 3 ];
+			array[ offset + 4 ] = te[ 4 ];
+			array[ offset + 5 ] = te[ 5 ];
+
+			array[ offset + 6 ] = te[ 6 ];
+			array[ offset + 7 ] = te[ 7 ];
+			array[ offset + 8 ] = te[ 8 ];
+
+			return array;
+
+		}
+
+	} );
+
+	var Matrix3Node = function ( matrix ) {
+
+		InputNode.call( this, 'm3' );
+
+		this.value = matrix || new Matrix3();
+
+	};
+
+	Matrix3Node.prototype = Object.create( InputNode.prototype );
+	Matrix3Node.prototype.constructor = Matrix3Node;
+	Matrix3Node.prototype.nodeType = "Matrix3";
+
+	Matrix3Node.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
+
+		return builder.format( "mat3( " + this.value.elements.join( ", " ) + " )", type, output );
+
+	};
+
+	Matrix3Node.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.elements = this.value.elements.concat();
+
+			if ( this.readonly === true ) data.readonly = true;
+
+		}
+
+		return data;
+
+	};
 
 	var UVTransformNode = function () {
 
-		FunctionNode.call( this, "( uvTransform * vec4( uvNode, 0, 1 ) ).xy", "vec2" );
+		FunctionNode.call( this, "( uvTransform * vec3( uvNode, 1 ) ).xy", "vec2" );
 
 		this.uv = new UVNode();
-		this.transform = new Matrix4Node();
+		this.transform = new Matrix3Node();
 
 	};
 
 	UVTransformNode.prototype = Object.create( FunctionNode.prototype );
 	UVTransformNode.prototype.constructor = UVTransformNode;
+	UVTransformNode.prototype.nodeType = "UVTransform";
 
 	UVTransformNode.prototype.generate = function ( builder, output ) {
 
@@ -3997,29 +4036,31 @@ var Three = (function (exports) {
 
 	};
 
-	UVTransformNode.prototype.compose = function () {
+	UVTransformNode.prototype.setUvTransform = function ( tx, ty, sx, sy, rotation, cx, cy ) {
 
-		var defaultPivot = new Vector2( .5, .5 ),
-			tempVector = new Vector3(),
-			tempMatrix = new Matrix4();
+		cx = cx !== undefined ? cx : .5;
+		cy = cy !== undefined ? cy : .5;
 
-		return function compose( translate, rotate, scale, optionalCenter ) {
+		this.transform.value.setUvTransform( tx, ty, sx, sy, rotation, cx, cy );
 
-			optionalCenter = optionalCenter !== undefined ? optionalCenter : defaultPivot;
+	};
 
-			var matrix = this.transform.value;
+	UVTransformNode.prototype.toJSON = function ( meta ) {
 
-			matrix.identity()
-				.setPosition( tempVector.set( - optionalCenter.x, - optionalCenter.y, 0 ) )
-				.premultiply( tempMatrix.makeRotationZ( rotate ) )
-				.multiply( tempMatrix.makeScale( scale.x, scale.y, 0 ) )
-				.multiply( tempMatrix.makeTranslation( translate.x, translate.y, 0 ) );
+		var data = this.getJSONNode( meta );
 
-			return this;
+		if ( ! data ) {
 
-		};
+			data = this.createJSONNode( meta );
 
-	}();
+			data.uv = this.uv.toJSON( meta ).uuid;
+			data.transform = this.transform.toJSON( meta ).uuid;
+
+		}
+
+		return data;
+
+	};
 
 	exports.UVTransformNode = UVTransformNode;
 

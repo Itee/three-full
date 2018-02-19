@@ -1,28 +1,24 @@
-/**
- * @author WestLangley / http://github.com/WestLangley
- * @author zz85 / http://github.com/zz85
- * @author bhouston / http://clara.io
- *
- * Creates an arrow for visualizing directions
- *
- * Parameters:
- *  dir - Vector3
- *  origin - Vector3
- *  length - Number
- *  color - color in hex value
- *  headLength - Number
- *  headWidth - Number
- */
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Object3D } from '../core/Object3D.js'
+import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { Mesh } from '../objects/Mesh.js'
+import { Line } from '../objects/Line.js'
+import { Vector3 } from '../math/Vector3.js'
 
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { Object3D } from '../core/Object3D.js';
-import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js';
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js';
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
-import { Mesh } from '../objects/Mesh.js';
-import { Line } from '../objects/Line.js';
-import { Vector3 } from '../math/Vector3.js';
+
+
+
+
+
+
+
+
+
+
+
 
 var lineGeometry, coneGeometry;
 
@@ -118,4 +114,6 @@ ArrowHelper.prototype.setColor = function ( color ) {
 };
 
 
-export { ArrowHelper };
+;
+
+export { ArrowHelper }

@@ -1,7 +1,6 @@
-/**
- * @author alteredq / http://alteredqualia.com/
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 var _Math = {
 
@@ -20,7 +19,7 @@ var _Math = {
 
 		}
 
-		return function () {
+		return function generateUUID() {
 
 			var d0 = Math.random() * 0xffffffff | 0;
 			var d1 = Math.random() * 0xffffffff | 0;
@@ -147,4 +146,6 @@ var _Math = {
 };
 
 
-export { _Math };
+;
+
+export { _Math }

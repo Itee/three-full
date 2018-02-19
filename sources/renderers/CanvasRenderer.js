@@ -1,14 +1,14 @@
 import { Material } from '../materials/Material.js'
 import { Color } from '../math/Color.js'
-import { Projector } from '../Three.Legacy.js'
-import { Box2 } from '../math/Box2.js'
-import { Vector3 } from '../math/Vector3.js'
-import { Matrix3 } from '../math/Matrix3.js'
 import {
+	Projector,
 	RenderableSprite,
 	RenderableLine,
 	RenderableFace
-} from '../renderers/Projector.js'
+} from './Projector.js'
+import { Box2 } from '../math/Box2.js'
+import { Vector3 } from '../math/Vector3.js'
+import { Matrix3 } from '../math/Matrix3.js'
 import { CompressedTexture } from '../textures/CompressedTexture.js'
 import { DataTexture } from '../textures/DataTexture.js'
 import {
@@ -25,9 +25,7 @@ import {
 	MirroredRepeatWrapping
 } from '../constants.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
 
 var SpriteCanvasMaterial = function ( parameters ) {
 
@@ -131,12 +129,7 @@ var CanvasRenderer = function ( parameters ) {
 		_normal = new Vector3(),
 		_normalViewMatrix = new Matrix3();
 
-	/* TODO
-	_canvas.mozImageSmoothingEnabled = false;
-	_canvas.webkitImageSmoothingEnabled = false;
-	_canvas.msImageSmoothingEnabled = false;
-	_canvas.imageSmoothingEnabled = false;
-	*/
+	
 
 	// dash+gap fallbacks for Firefox and everything else
 
@@ -366,10 +359,7 @@ var CanvasRenderer = function ( parameters ) {
 
 		_normalViewMatrix.getNormalMatrix( camera.matrixWorldInverse );
 
-		/* DEBUG
-		setFillStyle( 'rgba( 0, 255, 255, 0.5 )' );
-		_context.fillRect( _clipBox.min.x, _clipBox.min.y, _clipBox.max.x - _clipBox.min.x, _clipBox.max.y - _clipBox.min.y );
-		*/
+		
 
 		calculateLights();
 
@@ -442,21 +432,13 @@ var CanvasRenderer = function ( parameters ) {
 
 			}
 
-			/* DEBUG
-			setLineWidth( 1 );
-			setStrokeStyle( 'rgba( 0, 255, 0, 0.5 )' );
-			_context.strokeRect( _elemBox.min.x, _elemBox.min.y, _elemBox.max.x - _elemBox.min.x, _elemBox.max.y - _elemBox.min.y );
-			*/
+			
 
 			_clearBox.union( _elemBox );
 
 		}
 
-		/* DEBUG
-		setLineWidth( 1 );
-		setStrokeStyle( 'rgba( 255, 0, 0, 0.5 )' );
-		_context.strokeRect( _clearBox.min.x, _clearBox.min.y, _clearBox.max.x - _clearBox.min.x, _clearBox.max.y - _clearBox.min.y );
-		*/
+		
 
 		_context.setTransform( 1, 0, 0, 1, 0, 0 );
 
@@ -634,15 +616,7 @@ var CanvasRenderer = function ( parameters ) {
 
 		}
 
-		/* DEBUG
-		setStrokeStyle( 'rgb(255,255,0)' );
-		_context.beginPath();
-		_context.moveTo( v1.x - 10, v1.y );
-		_context.lineTo( v1.x + 10, v1.y );
-		_context.moveTo( v1.x, v1.y - 10 );
-		_context.lineTo( v1.x, v1.y + 10 );
-		_context.stroke();
-		*/
+		
 
 	}
 
@@ -1013,45 +987,7 @@ var CanvasRenderer = function ( parameters ) {
 
 	}
 
-	/*
-	function clipImage( x0, y0, x1, y1, x2, y2, u0, v0, u1, v1, u2, v2, image ) {
-
-		// http://extremelysatisfactorytotalitarianism.com/blog/?p=2120
-
-		var a, b, c, d, e, f, det, idet,
-		width = image.width - 1,
-		height = image.height - 1;
-
-		u0 *= width; v0 *= height;
-		u1 *= width; v1 *= height;
-		u2 *= width; v2 *= height;
-
-		x1 -= x0; y1 -= y0;
-		x2 -= x0; y2 -= y0;
-
-		u1 -= u0; v1 -= v0;
-		u2 -= u0; v2 -= v0;
-
-		det = u1 * v2 - u2 * v1;
-
-		idet = 1 / det;
-
-		a = ( v2 * x1 - v1 * x2 ) * idet;
-		b = ( v2 * y1 - v1 * y2 ) * idet;
-		c = ( u1 * x2 - u2 * x1 ) * idet;
-		d = ( u1 * y2 - u2 * y1 ) * idet;
-
-		e = x0 - a * u0 - c * v0;
-		f = y0 - b * u0 - d * v0;
-
-		_context.save();
-		_context.transform( a, b, c, d, e, f );
-		_context.clip();
-		_context.drawImage( image, 0, 0 );
-		_context.restore();
-
-	}
-	*/
+	
 
 	// Hide anti-alias gaps
 

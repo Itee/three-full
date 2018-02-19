@@ -1,15 +1,13 @@
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
 import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
 import { AnimationClip } from '../animation/AnimationClip.js'
 import { Matrix4 } from '../math/Matrix4.js'
-import {
-	MeshPhongMaterial,
-	MeshLambertMaterial,
-	MeshBasicMaterial
-} from '../materials/Materials.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
+import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Color } from '../math/Color.js'
@@ -28,19 +26,18 @@ import { Line } from '../objects/Line.js'
 import { SkinnedMesh } from '../objects/SkinnedMesh.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Scene } from '../scenes/Scene.js'
-import { TextureLoader } from '../loaders/TextureLoader.js'
+import { TextureLoader } from './TextureLoader.js'
 import {
+	DoubleSide,
 	RepeatWrapping,
 	ClampToEdgeWrapping
 } from '../constants.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
-import { LoaderUtils } from '../loaders/LoaderUtils.js'
-import { Loader } from '../loaders/Loader.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { LoaderUtils } from './LoaderUtils.js'
+import { Loader } from './Loader.js'
+import { _Math } from '../math/Math.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author Mugen87 / https://github.com/Mugen87
- */
+
 
 var ColladaLoader = function ( manager ) {
 
@@ -1102,6 +1099,10 @@ ColladaLoader.prototype = {
 						data.technique = parseEffectTechnique( child );
 						break;
 
+					case 'extra':
+						data.extra = parseEffectExtra( child );
+						break;
+
 				}
 
 			}
@@ -1228,9 +1229,14 @@ ColladaLoader.prototype = {
 					case 'diffuse':
 					case 'specular':
 					case 'shininess':
-					case 'transparent':
 					case 'transparency':
 						data[ child.nodeName ] = parseEffectParameter( child );
+						break;
+					case 'transparent':
+						data[ child.nodeName ] = {
+							opaque: child.getAttribute( 'opaque' ),
+							data: parseEffectParameter( child )
+						};
 						break;
 
 				}
@@ -1363,6 +1369,54 @@ ColladaLoader.prototype = {
 
 		}
 
+		function parseEffectExtra( xml ) {
+
+			var data = {};
+
+			for ( var i = 0, l = xml.childNodes.length; i < l; i ++ ) {
+
+				var child = xml.childNodes[ i ];
+
+				if ( child.nodeType !== 1 ) continue;
+
+				switch ( child.nodeName ) {
+
+					case 'technique':
+						data.technique = parseEffectExtraTechnique( child );
+						break;
+
+				}
+
+			}
+
+			return data;
+
+		}
+
+		function parseEffectExtraTechnique( xml ) {
+
+			var data = {};
+
+			for ( var i = 0, l = xml.childNodes.length; i < l; i ++ ) {
+
+				var child = xml.childNodes[ i ];
+
+				if ( child.nodeType !== 1 ) continue;
+
+				switch ( child.nodeName ) {
+
+					case 'double_sided':
+						data[ child.nodeName ] = parseInt( child.textContent );
+						break;
+
+				}
+
+			}
+
+			return data;
+
+		}
+
 		function buildEffect( data ) {
 
 			return data;
@@ -1407,6 +1461,7 @@ ColladaLoader.prototype = {
 
 			var effect = getEffect( data.url );
 			var technique = effect.profile.technique;
+			var extra = effect.profile.extra;
 
 			var material;
 
@@ -1432,12 +1487,27 @@ ColladaLoader.prototype = {
 			function getTexture( textureObject ) {
 
 				var sampler = effect.profile.samplers[ textureObject.id ];
+				var image;
+
+				// get image
 
 				if ( sampler !== undefined ) {
 
 					var surface = effect.profile.surfaces[ sampler.source ];
+					image = getImage( surface.init_from );
 
-					var texture = textureLoader.load( getImage( surface.init_from ) );
+				} else {
+
+					console.warn( 'ColladaLoader: Undefined sampler. Access image directly (see #12530).' );
+					image = getImage( textureObject.id );
+
+				}
+
+				// create texture if image is avaiable
+
+				if ( image !== undefined ) {
+
+					var texture = textureLoader.load( image );
 
 					var extra = textureObject.extra;
 
@@ -1460,11 +1530,13 @@ ColladaLoader.prototype = {
 
 					return texture;
 
+				} else {
+
+					console.error( 'ColladaLoader: Unable to load texture with ID:', textureObject.id );
+
+					return null;
+
 				}
-
-				console.error( 'ColladaLoader: Undefined sampler', textureObject.id );
-
-				return null;
 
 			}
 
@@ -1492,16 +1564,81 @@ ColladaLoader.prototype = {
 						if ( parameter.color && material.emissive )
 							material.emissive.fromArray( parameter.color );
 						break;
-					case 'transparent':
-						// if ( parameter.texture ) material.alphaMap = getTexture( parameter.texture );
-						material.transparent = true;
-						break;
-					case 'transparency':
-						if ( parameter.float !== undefined ) material.opacity = parameter.float;
-						material.transparent = true;
-						break;
 
 				}
+
+			}
+
+			//
+
+			var transparent = parameters[ 'transparent' ];
+			var transparency = parameters[ 'transparency' ];
+
+			// <transparency> does not exist but <transparent>
+
+			if ( transparency === undefined && transparent ) {
+
+				transparency = {
+					float: 1
+				};
+
+			}
+
+			// <transparent> does not exist but <transparency>
+
+			if ( transparent === undefined && transparency ) {
+
+				transparent = {
+					opaque: 'A_ONE',
+					data: {
+						color: [ 1, 1, 1, 1 ]
+					} };
+
+			}
+
+			if ( transparent && transparency ) {
+
+				// handle case if a texture exists but no color
+
+				if ( transparent.data.texture ) {
+
+					material.alphaMap = getTexture( transparent.data.texture );
+					material.transparent = true;
+
+				} else {
+
+					var color = transparent.data.color;
+
+					switch ( transparent.opaque ) {
+
+						case 'A_ONE':
+							material.opacity = color[ 3 ] * transparency.float;
+							break;
+						case 'RGB_ZERO':
+							material.opacity = 1 - ( color[ 0 ] * transparency.float );
+							break;
+						case 'A_ZERO':
+							material.opacity = 1 - ( color[ 3 ] * transparency.float );
+							break;
+						case 'RGB_ONE':
+							material.opacity = color[ 0 ] * transparency.float;
+							break;
+						default:
+							console.warn( 'ColladaLoader: Invalid opaque type "%s" of transparent tag.', transparent.opaque );
+
+					}
+
+					if ( material.opacity < 1 ) material.transparent = true;
+
+				}
+
+			}
+
+			//
+
+			if ( extra !== undefined && extra.technique !== undefined && extra.technique.double_sided === 1 ) {
+
+				material.side = DoubleSide;
 
 			}
 
@@ -2482,7 +2619,7 @@ ColladaLoader.prototype = {
 				case 'rotate':
 					data.obj = new Vector3();
 					data.obj.fromArray( array );
-					data.angle = Math.degToRad( array[ 3 ] );
+					data.angle = _Math.degToRad( array[ 3 ] );
 					break;
 
 			}
@@ -2678,7 +2815,7 @@ ColladaLoader.prototype = {
 									switch ( joint.type ) {
 
 										case 'revolute':
-											matrix.multiply( m0.makeRotationAxis( axis, Math.degToRad( value ) ) );
+											matrix.multiply( m0.makeRotationAxis( axis, _Math.degToRad( value ) ) );
 											break;
 
 										case 'prismatic':
@@ -2774,7 +2911,7 @@ ColladaLoader.prototype = {
 					case 'rotate':
 						var array = parseFloats( child.textContent );
 						var vector = new Vector3().fromArray( array );
-						var angle = Math.degToRad( array[ 3 ] );
+						var angle = _Math.degToRad( array[ 3 ] );
 						transforms.push( {
 							sid: child.getAttribute( 'sid' ),
 							type: child.nodeName,
@@ -2881,7 +3018,7 @@ ColladaLoader.prototype = {
 
 					case 'rotate':
 						var array = parseFloats( child.textContent );
-						var angle = Math.degToRad( array[ 3 ] );
+						var angle = _Math.degToRad( array[ 3 ] );
 						data.matrix.multiply( matrix.makeRotationAxis( vector.fromArray( array ), angle ) );
 						data.transforms[ child.getAttribute( 'sid' ) ] = child.nodeName;
 						break;

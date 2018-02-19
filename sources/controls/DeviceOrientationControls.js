@@ -1,13 +1,9 @@
 import { Vector3 } from '../math/Vector3.js'
 import { Euler } from '../math/Euler.js'
 import { Quaternion } from '../math/Quaternion.js'
+import { _Math } from '../math/Math.js'
 
-/**
- * @author richt / http://richt.me
- * @author WestLangley / http://github.com/WestLangley
- *
- * W3C Device Orientation control (http://w3c.github.io/deviceorientation/spec-source-orientation.html)
- */
+
 
 var DeviceOrientationControls = function( object ) {
 
@@ -85,18 +81,28 @@ var DeviceOrientationControls = function( object ) {
 
 		if ( scope.enabled === false ) return;
 
-		var alpha = scope.deviceOrientation.alpha ? Math.degToRad( scope.deviceOrientation.alpha ) + this.alphaOffset : 0; // Z
-		var beta = scope.deviceOrientation.beta ? Math.degToRad( scope.deviceOrientation.beta ) : 0; // X'
-		var gamma = scope.deviceOrientation.gamma ? Math.degToRad( scope.deviceOrientation.gamma ) : 0; // Y''
-		var orient = scope.screenOrientation ? Math.degToRad( scope.screenOrientation ) : 0; // O
+		var device = scope.deviceOrientation;
 
-		setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
+		if ( device ) {
+
+			var alpha = device.alpha ? _Math.degToRad( device.alpha ) + scope.alphaOffset : 0; // Z
+
+			var beta = device.beta ? _Math.degToRad( device.beta ) : 0; // X'
+
+			var gamma = device.gamma ? _Math.degToRad( device.gamma ) : 0; // Y''
+
+			var orient = scope.screenOrientation ? _Math.degToRad( scope.screenOrientation ) : 0; // O
+
+			setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
+
+		}
+
 
 	};
 
 	this.dispose = function() {
 
-		this.disconnect();
+		scope.disconnect();
 
 	};
 

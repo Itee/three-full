@@ -1,33 +1,37 @@
-import { StringKeyframeTrack } from './tracks/StringKeyframeTrack.js';
-import { BooleanKeyframeTrack } from './tracks/BooleanKeyframeTrack.js';
-import { QuaternionKeyframeTrack } from './tracks/QuaternionKeyframeTrack.js';
-import { ColorKeyframeTrack } from './tracks/ColorKeyframeTrack.js';
-import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js';
-import { NumberKeyframeTrack } from './tracks/NumberKeyframeTrack.js';
+import { StringKeyframeTrack } from './tracks/StringKeyframeTrack.js'
+import { BooleanKeyframeTrack } from './tracks/BooleanKeyframeTrack.js'
+import { QuaternionKeyframeTrack } from './tracks/QuaternionKeyframeTrack.js'
+import { ColorKeyframeTrack } from './tracks/ColorKeyframeTrack.js'
+import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js'
+import { NumberKeyframeTrack } from './tracks/NumberKeyframeTrack.js'
 import {
 	InterpolateLinear,
 	InterpolateSmooth,
 	InterpolateDiscrete
-} from '../constants.js';
-import { CubicInterpolant } from '../math/interpolants/CubicInterpolant.js';
-import { LinearInterpolant } from '../math/interpolants/LinearInterpolant.js';
-import { DiscreteInterpolant } from '../math/interpolants/DiscreteInterpolant.js';
-import { AnimationUtils } from './AnimationUtils.js';
+} from '../constants.js'
+import { CubicInterpolant } from '../math/interpolants/CubicInterpolant.js'
+import { LinearInterpolant } from '../math/interpolants/LinearInterpolant.js'
+import { DiscreteInterpolant } from '../math/interpolants/DiscreteInterpolant.js'
+import { AnimationUtils } from './AnimationUtils.js'
 
-/**
- *
- * A timed sequence of keyframes for a specific property.
- *
- *
- * @author Ben Houston / http://clara.io/
- * @author David Sarno / http://lighthaus.us/
- * @author tschw
- */
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function KeyframeTrack( name, times, values, interpolation ) {
 
-	if ( name === undefined ) throw new Error( 'THREE.KeyframeTrack: track name is undefined' );
-	if ( times === undefined || times.length === 0 ) throw new Error( 'THREE.KeyframeTrack: no keyframes in track named ' + name );
+	if ( name === undefined ) throw new Error( 'KeyframeTrack: track name is undefined' );
+	if ( times === undefined || times.length === 0 ) throw new Error( 'KeyframeTrack: no keyframes in track named ' + name );
 
 	this.name = name;
 
@@ -52,7 +56,7 @@ Object.assign( KeyframeTrack, {
 
 		if ( json.type === undefined ) {
 
-			throw new Error( 'THREE.KeyframeTrack: track type undefined, can not parse' );
+			throw new Error( 'KeyframeTrack: track type undefined, can not parse' );
 
 		}
 
@@ -159,7 +163,7 @@ Object.assign( KeyframeTrack, {
 
 		}
 
-		throw new Error( 'THREE.KeyframeTrack: Unsupported typeName: ' + typeName );
+		throw new Error( 'KeyframeTrack: Unsupported typeName: ' + typeName );
 
 	}
 
@@ -239,7 +243,7 @@ Object.assign( KeyframeTrack.prototype, {
 
 			}
 
-			console.warn( 'THREE.KeyframeTrack:', message );
+			console.warn( 'KeyframeTrack:', message );
 			return;
 
 		}
@@ -358,7 +362,7 @@ Object.assign( KeyframeTrack.prototype, {
 		var valueSize = this.getValueSize();
 		if ( valueSize - Math.floor( valueSize ) !== 0 ) {
 
-			console.error( 'THREE.KeyframeTrack: Invalid value size in track.', this );
+			console.error( 'KeyframeTrack: Invalid value size in track.', this );
 			valid = false;
 
 		}
@@ -370,7 +374,7 @@ Object.assign( KeyframeTrack.prototype, {
 
 		if ( nKeys === 0 ) {
 
-			console.error( 'THREE.KeyframeTrack: Track is empty.', this );
+			console.error( 'KeyframeTrack: Track is empty.', this );
 			valid = false;
 
 		}
@@ -383,7 +387,7 @@ Object.assign( KeyframeTrack.prototype, {
 
 			if ( typeof currTime === 'number' && isNaN( currTime ) ) {
 
-				console.error( 'THREE.KeyframeTrack: Time is not a valid number.', this, i, currTime );
+				console.error( 'KeyframeTrack: Time is not a valid number.', this, i, currTime );
 				valid = false;
 				break;
 
@@ -391,7 +395,7 @@ Object.assign( KeyframeTrack.prototype, {
 
 			if ( prevTime !== null && prevTime > currTime ) {
 
-				console.error( 'THREE.KeyframeTrack: Out of order keys.', this, i, currTime, prevTime );
+				console.error( 'KeyframeTrack: Out of order keys.', this, i, currTime, prevTime );
 				valid = false;
 				break;
 
@@ -411,7 +415,7 @@ Object.assign( KeyframeTrack.prototype, {
 
 					if ( isNaN( value ) ) {
 
-						console.error( 'THREE.KeyframeTrack: Value is not a valid number.', this, i, value );
+						console.error( 'KeyframeTrack: Value is not a valid number.', this, i, value );
 						valid = false;
 						break;
 
@@ -535,4 +539,6 @@ Object.assign( KeyframeTrack.prototype, {
 
 } );
 
-export { KeyframeTrack };
+;
+
+export { KeyframeTrack }

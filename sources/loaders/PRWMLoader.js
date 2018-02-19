@@ -1,12 +1,9 @@
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author Kevin Chapelier / https://github.com/kchapelier
- * See https://github.com/kchapelier/PRWM for more informations about this file format
- */
+
 
 
 
@@ -14,10 +11,7 @@ import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 	var bigEndianPlatform = null;
 
-	/**
-	 * Check if the endianness of the platform is big-endian (most significant bit first)
-	 * @returns {boolean} True if big-endian, false if little-endian
-	 */
+	
 	function isBigEndianPlatform() {
 
 		if ( bigEndianPlatform === null ) {
@@ -117,7 +111,7 @@ import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 		}
 
-		/** PRELIMINARY CHECKS **/
+		
 
 		if ( version === 0 ) {
 
@@ -143,7 +137,7 @@ import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
 
 		}
 
-		/** PARSING **/
+		
 
 		var pos = 8;
 

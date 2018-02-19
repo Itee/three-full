@@ -1,13 +1,12 @@
-/**
- * @author [Tristan Valcke]{@link https://github.com/Itee}
- * @author sunag / http://www.sunag.com.br/
- * @thanks bhouston / https://clara.io/
- */
+import { FunctionNode } from './FunctionNode_Declaration'
+import { NodeLib } from './NodeLib.js'
 
-import { FunctionNode } from './FunctionNode_Declaration.js'
+
+
+
 
 // Fix circular dependency, see #2
-import { NodeLib } from '../nodes/NodeLib.js'
+
 
 FunctionNode.prototype.isShared = function( builder, output ) {
 
@@ -121,5 +120,6 @@ FunctionNode.prototype.generate = function( builder, output ) {
 	}
 
 };
+
 
 export { FunctionNode }

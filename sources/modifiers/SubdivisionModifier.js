@@ -2,21 +2,7 @@ import { Face3 } from '../core/Face3.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 
-/*
- *	@author zz85 / http://twitter.com/blurspline / http://www.lab4games.net/zz85/blog
- *	@author centerionware / http://www.centerionware.com
- *
- *	Subdivision Geometry Modifier
- *		using Loop Subdivision Scheme
- *
- *	References:
- *		http://graphics.stanford.edu/~mdfisher/subdivision.html
- *		http://www.holmes3d.net/graphics/subdivision/
- *		http://www.cs.rutgers.edu/~decarlo/readings/subdiv-sg00c.pdf
- *
- *	Known Issues:
- *		- currently doesn't handle "Sharp Edges"
- */
+
 
 var SubdivisionModifier = function ( subdivisions ) {
 
@@ -162,11 +148,7 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 
 		var hasUvs = oldUvs !== undefined && oldUvs.length > 0;
 
-		/******************************************************
-		 *
-		 * Step 0: Preprocess Geometry to Generate edges Lookup
-		 *
-		 *******************************************************/
+		
 
 		metaVertices = new Array( oldVertices.length );
 		sourceEdges = {}; // Edge => { oldVertex1, oldVertex2, faces[]  }
@@ -174,13 +156,7 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 		generateLookups( oldVertices, oldFaces, metaVertices, sourceEdges );
 
 
-		/******************************************************
-		 *
-		 *	Step 1.
-		 *	For each edge, create a new Edge Vertex,
-		 *	then position it.
-		 *
-		 *******************************************************/
+		
 
 		newEdgeVertices = [];
 		var other, currentEdge, newEdge, face;
@@ -240,12 +216,7 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 
 		}
 
-		/******************************************************
-		 *
-		 *	Step 2.
-		 *	Reposition each source vertices.
-		 *
-		 *******************************************************/
+		
 
 		var beta, sourceVertexWeight, connectingVertexWeight;
 		var connectingEdge, connectingEdges, oldVertex, newSourceVertex;
@@ -321,13 +292,7 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 		}
 
 
-		/******************************************************
-		 *
-		 *	Step 3.
-		 *	Generate Faces between source vertices
-		 *	and edge vertices.
-		 *
-		 *******************************************************/
+		
 
 		newVertices = newSourceVertices.concat( newEdgeVertices );
 		var sl = newSourceVertices.length, edge1, edge2, edge3;

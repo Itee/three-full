@@ -61,7 +61,7 @@ var DepthLimitedBlurShader = {
 		"	#if PERSPECTIVE_CAMERA == 1",
 		"	return perspectiveDepthToViewZ( depth, cameraNear, cameraFar );",
 		"	#else",
-		"	return orthoDepthToViewZ( depth, cameraNear, cameraFar );",
+		"	return orthographicDepthToViewZ( depth, cameraNear, cameraFar );",
 		"	#endif",
 		"}",
 

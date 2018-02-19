@@ -1,13 +1,16 @@
-/**
- * @author sroucheray / http://sroucheray.org/
- * @author mrdoob / http://mrdoob.com/
- */
+import { LineSegments } from '../objects/LineSegments.js'
+import { VertexColors } from '../constants.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
 
-import { LineSegments } from '../objects/LineSegments.js';
-import { VertexColors } from '../constants.js';
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
+
+
+
+
+
+
+
 
 function AxesHelper( size ) {
 
@@ -39,4 +42,6 @@ AxesHelper.prototype = Object.create( LineSegments.prototype );
 AxesHelper.prototype.constructor = AxesHelper;
 
 
-export { AxesHelper };
+;
+
+export { AxesHelper }

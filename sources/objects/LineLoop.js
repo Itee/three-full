@@ -1,8 +1,8 @@
-import { Line } from './Line.js';
+import { Line } from './Line.js'
 
-/**
- * @author mgreter / http://github.com/mgreter
- */
+
+
+
 
 function LineLoop( geometry, material ) {
 
@@ -21,4 +21,6 @@ LineLoop.prototype = Object.assign( Object.create( Line.prototype ), {
 } );
 
 
-export { LineLoop };
+;
+
+export { LineLoop }

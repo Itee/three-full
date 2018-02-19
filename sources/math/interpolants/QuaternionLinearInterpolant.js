@@ -1,11 +1,10 @@
-import { Interpolant } from '../Interpolant.js';
-import { Quaternion } from '../Quaternion.js';
+import { Interpolant } from '../Interpolant.js'
+import { Quaternion } from '../Quaternion.js'
 
-/**
- * Spherical linear unit quaternion interpolant.
- *
- * @author tschw
- */
+
+
+
+
 
 function QuaternionLinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
@@ -40,4 +39,6 @@ QuaternionLinearInterpolant.prototype = Object.assign( Object.create( Interpolan
 } );
 
 
-export { QuaternionLinearInterpolant };
+;
+
+export { QuaternionLinearInterpolant }

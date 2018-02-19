@@ -1,15 +1,18 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author Mugen87 / http://github.com/Mugen87
- * @author Hectate / http://www.github.com/Hectate
- */
+import { LineSegments } from '../objects/LineSegments.js'
+import { VertexColors } from '../constants.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Color } from '../math/Color.js'
 
-import { LineSegments } from '../objects/LineSegments.js';
-import { VertexColors } from '../constants.js';
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { Color } from '../math/Color.js';
+
+
+
+
+
+
+
+
 
 function PolarGridHelper( radius, radials, circles, divisions, color1, color2 ) {
 
@@ -92,4 +95,6 @@ function PolarGridHelper( radius, radials, circles, divisions, color1, color2 ) 
 PolarGridHelper.prototype = Object.create( LineSegments.prototype );
 PolarGridHelper.prototype.constructor = PolarGridHelper;
 
-export { PolarGridHelper };
+;
+
+export { PolarGridHelper }

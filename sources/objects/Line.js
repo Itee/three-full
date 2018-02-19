@@ -1,22 +1,30 @@
-import { Sphere } from '../math/Sphere.js';
-import { Ray } from '../math/Ray.js';
-import { Matrix4 } from '../math/Matrix4.js';
-import { Object3D } from '../core/Object3D.js';
-import { Vector3 } from '../math/Vector3.js';
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
+import { Sphere } from '../math/Sphere.js'
+import { Ray } from '../math/Ray.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Object3D } from '../core/Object3D.js'
+import { Vector3 } from '../math/Vector3.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { LineSegments } from './LineSegments.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
+
+
+
+
+
+
 
 function Line( geometry, material, mode ) {
 
 	if ( mode === 1 ) {
 
-		console.error( 'THREE.Line: parameter THREE.LinePieces no longer supported. Created THREE.LineSegments instead.' );
-		
+		console.warn( 'Line: parameter LinePieces no longer supported. Created LineSegments instead.' );
+		return new LineSegments( geometry, material );
 
 	}
 
@@ -34,6 +42,64 @@ Line.prototype = Object.assign( Object.create( Object3D.prototype ), {
 	constructor: Line,
 
 	isLine: true,
+
+	computeLineDistances: ( function () {
+
+		var start = new Vector3();
+		var end = new Vector3();
+
+		return function computeLineDistances() {
+
+			var geometry = this.geometry;
+
+			if ( geometry.isBufferGeometry ) {
+
+				// we assume non-indexed geometry
+
+				if ( geometry.index === null ) {
+
+					var positionAttribute = geometry.attributes.position;
+					var lineDistances = [ 0 ];
+
+					for ( var i = 1, l = positionAttribute.count; i < l; i ++ ) {
+
+						start.fromBufferAttribute( positionAttribute, i - 1 );
+						end.fromBufferAttribute( positionAttribute, i );
+
+						lineDistances[ i ] = lineDistances[ i - 1 ];
+						lineDistances[ i ] += start.distanceTo( end );
+
+					}
+
+					geometry.addAttribute( 'lineDistance', new Float32BufferAttribute( lineDistances, 1 ) );
+
+				} else {
+
+					console.warn( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+
+				}
+
+			} else if ( geometry.isGeometry ) {
+
+				var vertices = geometry.vertices;
+				var lineDistances = geometry.lineDistances;
+
+				lineDistances[ 0 ] = 0;
+
+				for ( var i = 1, l = vertices.length; i < l; i ++ ) {
+
+					lineDistances[ i ] = lineDistances[ i - 1 ];
+					lineDistances[ i ] += vertices[ i - 1 ].distanceTo( vertices[ i ] );
+
+				}
+
+			}
+
+			return this;
+
+		};
+
+	}() ),
 
 	raycast: ( function () {
 
@@ -193,4 +259,6 @@ Line.prototype = Object.assign( Object.create( Object3D.prototype ), {
 } );
 
 
-export { Line };
+;
+
+export { Line }

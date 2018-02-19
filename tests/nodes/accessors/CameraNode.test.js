@@ -1,11 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -23,7 +18,7 @@ var Three = (function (exports) {
 
 			}
 
-			return function () {
+			return function generateUUID() {
 
 				var d0 = Math.random() * 0xffffffff | 0;
 				var d1 = Math.random() * 0xffffffff | 0;
@@ -149,22 +144,22 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var GLNode = function( type ) {
+	var GLNode = function ( type ) {
 
 		this.uuid = _Math.generateUUID();
 
+		this.name = "";
 		this.allows = {};
-		this.requestUpdate = false;
 
 		this.type = type;
 
+		this.userData = {};
+
 	};
 
-	GLNode.prototype.parse = function( builder, context ) {
+	GLNode.prototype.isNode = true;
+
+	GLNode.prototype.parse = function ( builder, context ) {
 
 		context = context || {};
 
@@ -183,7 +178,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.parseAndBuildCode = function( builder, output, context ) {
+	GLNode.prototype.parseAndBuildCode = function ( builder, output, context ) {
 
 		context = context || {};
 
@@ -193,13 +188,13 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.buildCode = function( builder, output, context ) {
+	GLNode.prototype.buildCode = function ( builder, output, context ) {
 
 		context = context || {};
 
 		var material = builder.material;
 
-		var data = { result : this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
+		var data = { result: this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
 
 		if ( builder.isShader( 'vertex' ) ) data.code = material.clearVertexNode();
 		else data.code = material.clearFragmentNode();
@@ -210,7 +205,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.build = function( builder, output, uuid ) {
+	GLNode.prototype.build = function ( builder, output, uuid ) {
 
 		output = output || this.getType( builder, output );
 
@@ -224,9 +219,15 @@ var Three = (function (exports) {
 
 		}
 
-		if ( this.requestUpdate && material.requestUpdate.indexOf( this ) === - 1 ) {
+		if ( material.nodes.indexOf( this ) === - 1 ) {
 
-			material.requestUpdate.push( this );
+			material.nodes.push( this );
+
+		}
+
+		if ( this.updateFrame !== undefined && material.updaters.indexOf( this ) === - 1 ) {
+
+			material.updaters.push( this );
 
 		}
 
@@ -234,7 +235,7 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.appendDepsNode = function( builder, data, output ) {
+	GLNode.prototype.appendDepsNode = function ( builder, data, output ) {
 
 		data.deps = ( data.deps || 0 ) + 1;
 
@@ -249,18 +250,56 @@ var Three = (function (exports) {
 
 	};
 
-	GLNode.prototype.getType = function( builder, output ) {
+	GLNode.prototype.getType = function ( builder, output ) {
 
 		return output === 'sampler2D' || output === 'samplerCube' ? output : this.type;
 
 	};
 
-	/**
-	 * Automatic node cache
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	GLNode.prototype.getJSONNode = function ( meta ) {
 
-	var TempNode = function( type, params ) {
+		var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+		if ( ! isRootObject && meta.nodes[ this.uuid ] !== undefined ) {
+
+			return meta.nodes[ this.uuid ];
+
+		}
+
+	};
+
+	GLNode.prototype.createJSONNode = function ( meta ) {
+
+		var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+		var data = {};
+
+		if ( typeof this.nodeType !== "string" ) throw new Error( "Node does not allow serialization." );
+
+		data.uuid = this.uuid;
+		data.type = this.nodeType + "Node";
+
+		if ( this.name !== "" ) data.name = this.name;
+
+		if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
+
+		if ( ! isRootObject ) {
+
+			meta.nodes[ this.uuid ] = data;
+
+		}
+
+		return data;
+
+	};
+
+	GLNode.prototype.toJSON = function ( meta ) {
+
+		return this.getJSONNode( meta ) || this.createJSONNode( meta );
+
+	};
+
+	var TempNode = function ( type, params ) {
 
 		GLNode.call( this, type );
 
@@ -274,7 +313,7 @@ var Three = (function (exports) {
 	TempNode.prototype = Object.create( GLNode.prototype );
 	TempNode.prototype.constructor = TempNode;
 
-	TempNode.prototype.build = function( builder, output, uuid, ns ) {
+	TempNode.prototype.build = function ( builder, output, uuid, ns ) {
 
 		output = output || this.getType( builder );
 
@@ -286,7 +325,7 @@ var Three = (function (exports) {
 
 			if ( isUnique && this.constructor.uuid === undefined ) {
 
-				this.constructor.uuid = Math.generateUUID();
+				this.constructor.uuid = _Math.generateUUID();
 
 			}
 
@@ -346,19 +385,19 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.isShared = function( builder, output ) {
+	TempNode.prototype.isShared = function ( builder, output ) {
 
 		return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
 
 	};
 
-	TempNode.prototype.isUnique = function( builder, output ) {
+	TempNode.prototype.isUnique = function ( builder, output ) {
 
 		return this.unique;
 
 	};
 
-	TempNode.prototype.getUuid = function( unique ) {
+	TempNode.prototype.getUuid = function ( unique ) {
 
 		var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
 
@@ -368,7 +407,7 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.getTemp = function( builder, uuid ) {
+	TempNode.prototype.getTemp = function ( builder, uuid ) {
 
 		uuid = uuid || this.uuid;
 
@@ -379,7 +418,7 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.generate = function( builder, output, uuid, type, ns ) {
+	TempNode.prototype.generate = function ( builder, output, uuid, type, ns ) {
 
 		if ( ! this.isShared( builder, output ) ) console.error( "TempNode is not shared!" );
 
@@ -389,12 +428,6 @@ var Three = (function (exports) {
 		else return builder.material.getFragmentTemp( uuid, type || this.getType( builder ), ns ).name;
 
 	};
-
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 * @thanks bhouston / https://clara.io/
-	 */
 
 	var FunctionNode = function( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ) {
 
@@ -482,11 +515,6 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
 	var NodeLib = {
 
 		nodes: {},
@@ -550,11 +578,7 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var UVNode = function( index ) {
+	var UVNode = function ( index ) {
 
 		TempNode.call( this, 'v2', { shared: false } );
 
@@ -567,13 +591,14 @@ var Three = (function (exports) {
 
 	UVNode.prototype = Object.create( TempNode.prototype );
 	UVNode.prototype.constructor = UVNode;
+	UVNode.prototype.nodeType = "UV";
 
-	UVNode.prototype.generate = function( builder, output ) {
+	UVNode.prototype.generate = function ( builder, output ) {
 
 		var material = builder.material;
 		var result;
 
-		material.requestAttribs.uv[ this.index ] = true;
+		material.requires.uv[ this.index ] = true;
 
 		if ( builder.isShader( 'vertex' ) ) result = UVNode.vertexDict[ this.index ];
 		else result = UVNode.fragmentDict[ this.index ];
@@ -582,11 +607,23 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	UVNode.prototype.toJSON = function ( meta ) {
 
-	var PositionNode = function( scope ) {
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.index = this.index;
+
+		}
+
+		return data;
+
+	};
+
+	var PositionNode = function ( scope ) {
 
 		TempNode.call( this, 'v3' );
 
@@ -601,31 +638,36 @@ var Three = (function (exports) {
 
 	PositionNode.prototype = Object.create( TempNode.prototype );
 	PositionNode.prototype.constructor = PositionNode;
+	PositionNode.prototype.nodeType = "Position";
 
-	PositionNode.prototype.getType = function( builder ) {
+	PositionNode.prototype.getType = function ( builder ) {
 
 		switch ( this.scope ) {
+
 			case PositionNode.PROJECTION:
 				return 'v4';
+
 		}
 
 		return this.type;
 
 	};
 
-	PositionNode.prototype.isShared = function( builder ) {
+	PositionNode.prototype.isShared = function ( builder ) {
 
 		switch ( this.scope ) {
+
 			case PositionNode.LOCAL:
 			case PositionNode.WORLD:
 				return false;
+
 		}
 
 		return true;
 
 	};
 
-	PositionNode.prototype.generate = function( builder, output ) {
+	PositionNode.prototype.generate = function ( builder, output ) {
 
 		var material = builder.material;
 		var result;
@@ -634,7 +676,7 @@ var Three = (function (exports) {
 
 			case PositionNode.LOCAL:
 
-				material.requestAttribs.position = true;
+				material.requires.position = true;
 
 				if ( builder.isShader( 'vertex' ) ) result = 'transformed';
 				else result = 'vPosition';
@@ -643,7 +685,7 @@ var Three = (function (exports) {
 
 			case PositionNode.WORLD:
 
-				material.requestAttribs.worldPosition = true;
+				material.requires.worldPosition = true;
 
 				if ( builder.isShader( 'vertex' ) ) result = 'vWPosition';
 				else result = 'vWPosition';
@@ -670,11 +712,23 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	PositionNode.prototype.toJSON = function ( meta ) {
 
-	var NormalNode = function( scope ) {
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.scope = this.scope;
+
+		}
+
+		return data;
+
+	};
+
+	var NormalNode = function ( scope ) {
 
 		TempNode.call( this, 'v3' );
 
@@ -688,19 +742,22 @@ var Three = (function (exports) {
 
 	NormalNode.prototype = Object.create( TempNode.prototype );
 	NormalNode.prototype.constructor = NormalNode;
+	NormalNode.prototype.nodeType = "Normal";
 
-	NormalNode.prototype.isShared = function( builder ) {
+	NormalNode.prototype.isShared = function ( builder ) {
 
 		switch ( this.scope ) {
+
 			case NormalNode.WORLD:
 				return true;
+
 		}
 
 		return false;
 
 	};
 
-	NormalNode.prototype.generate = function( builder, output ) {
+	NormalNode.prototype.generate = function ( builder, output ) {
 
 		var material = builder.material;
 		var result;
@@ -709,7 +766,7 @@ var Three = (function (exports) {
 
 			case NormalNode.LOCAL:
 
-				material.requestAttribs.normal = true;
+				material.requires.normal = true;
 
 				if ( builder.isShader( 'vertex' ) ) result = 'normal';
 				else result = 'vObjectNormal';
@@ -718,7 +775,7 @@ var Three = (function (exports) {
 
 			case NormalNode.WORLD:
 
-				material.requestAttribs.worldNormal = true;
+				material.requires.worldNormal = true;
 
 				if ( builder.isShader( 'vertex' ) ) result = '( modelMatrix * vec4( objectNormal, 0.0 ) ).xyz';
 				else result = 'vWNormal';
@@ -737,60 +794,85 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	NormalNode.prototype.toJSON = function ( meta ) {
 
-	var InputNode = function( type, params ) {
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.scope = this.scope;
+
+		}
+
+		return data;
+
+	};
+
+	var InputNode = function ( type, params ) {
 
 		params = params || {};
 		params.shared = params.shared !== undefined ? params.shared : false;
 
 		TempNode.call( this, type, params );
 
+		this.readonly = false;
+
 	};
 
 	InputNode.prototype = Object.create( TempNode.prototype );
 	InputNode.prototype.constructor = InputNode;
 
-	InputNode.prototype.generate = function( builder, output, uuid, type, ns, needsUpdate ) {
+	InputNode.prototype.isReadonly = function ( builder ) {
+
+		return this.readonly;
+
+	};
+
+	InputNode.prototype.generate = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
 		var material = builder.material;
 
 		uuid = builder.getUuid( uuid || this.getUuid() );
 		type = type || this.getType( builder );
 
-		var data = material.getDataNode( uuid );
+		var data = material.getDataNode( uuid ),
+			readonly = this.isReadonly( builder ) && this.generateReadonly !== undefined;
 
-		if ( builder.isShader( 'vertex' ) ) {
+		if ( readonly ) {
 
-			if ( ! data.vertex ) {
-
-				data.vertex = material.createVertexUniform( type, this.value, ns, needsUpdate );
-
-			}
-
-			return builder.format( data.vertex.name, type, output );
+			return this.generateReadonly( builder, output, uuid, type, ns, needsUpdate );
 
 		} else {
 
-			if ( ! data.fragment ) {
+			if ( builder.isShader( 'vertex' ) ) {
 
-				data.fragment = material.createFragmentUniform( type, this.value, ns, needsUpdate );
+				if ( ! data.vertex ) {
+
+					data.vertex = material.createVertexUniform( type, this.value, ns, needsUpdate );
+
+				}
+
+				return builder.format( data.vertex.name, type, output );
+
+			} else {
+
+				if ( ! data.fragment ) {
+
+					data.fragment = material.createFragmentUniform( type, this.value, ns, needsUpdate );
+
+				}
+
+				return builder.format( data.fragment.name, type, output );
 
 			}
-
-			return builder.format( data.fragment.name, type, output );
 
 		}
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var FloatNode = function( value ) {
+	var FloatNode = function ( value ) {
 
 		InputNode.call( this, 'fv1' );
 
@@ -800,15 +882,16 @@ var Three = (function (exports) {
 
 	FloatNode.prototype = Object.create( InputNode.prototype );
 	FloatNode.prototype.constructor = FloatNode;
+	FloatNode.prototype.nodeType = "Float";
 
 	Object.defineProperties( FloatNode.prototype, {
 		number: {
-			get: function() {
+			get: function () {
 
 				return this.value[ 0 ];
 
 			},
-			set: function( val ) {
+			set: function ( val ) {
 
 				this.value[ 0 ] = val;
 
@@ -816,34 +899,109 @@ var Three = (function (exports) {
 		}
 	} );
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	FloatNode.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
-	var TimerNode = function( value, scale ) {
+		var value = this.number;
 
-		FloatNode.call( this, value );
-
-		this.requestUpdate = true;
-
-		this.scale = scale !== undefined ? scale : 1;
+		return builder.format( Math.floor( value ) !== value ? value : value + ".0", type, output );
 
 	};
+
+	FloatNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.number = this.number;
+
+			if ( this.readonly === true ) data.readonly = true;
+
+		}
+
+		return data;
+
+	};
+
+	var TimerNode = function ( scale, scope ) {
+
+		FloatNode.call( this );
+
+		this.scale = scale !== undefined ? scale : 1;
+		this.scope = scope || TimerNode.GLOBAL;
+
+		this.timeScale = this.scale !== 1;
+
+	};
+
+	TimerNode.GLOBAL = 'global';
+	TimerNode.LOCAL = 'local';
+	TimerNode.DELTA = 'delta';
 
 	TimerNode.prototype = Object.create( FloatNode.prototype );
 	TimerNode.prototype.constructor = TimerNode;
+	TimerNode.prototype.nodeType = "Timer";
 
-	TimerNode.prototype.updateFrame = function( delta ) {
+	TimerNode.prototype.isReadonly = function ( builder ) {
 
-		this.number += delta * this.scale;
+		return false;
 
 	};
 
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	TimerNode.prototype.isUnique = function ( builder ) {
 
-	var ConstNode = function( src, useDefine ) {
+		// share TimerNode "uniform" input if is used on more time with others TimerNode
+		return this.timeScale && ( this.scope === TimerNode.GLOBAL || this.scope === TimerNode.DELTA );
+
+	};
+
+	TimerNode.prototype.updateFrame = function ( frame ) {
+
+		var scale = this.timeScale ? this.scale : 1;
+
+		switch( this.scope ) {
+
+			case TimerNode.LOCAL:
+
+				this.number += frame.delta * scale;
+
+				break;
+
+			case TimerNode.DELTA:
+
+				this.number = frame.delta * scale;
+
+				break;
+
+			default:
+
+				this.number = frame.time * scale;
+
+		}
+
+	};
+
+	TimerNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.scope = this.scope;
+			data.scale = this.scale;
+			data.timeScale = this.timeScale;
+
+		}
+
+		return data;
+
+	};
+
+	var ConstNode = function ( src, useDefine ) {
 
 		TempNode.call( this );
 
@@ -860,18 +1018,19 @@ var Three = (function (exports) {
 
 	ConstNode.prototype = Object.create( TempNode.prototype );
 	ConstNode.prototype.constructor = ConstNode;
+	ConstNode.prototype.nodeType = "Const";
 
-	ConstNode.prototype.getType = function( builder ) {
+	ConstNode.prototype.getType = function ( builder ) {
 
 		return builder.getTypeByFormat( this.type );
 
 	};
 
-	ConstNode.prototype.eval = function( src, useDefine ) {
+	ConstNode.prototype.eval = function ( src, useDefine ) {
 
 		src = ( src || '' ).trim();
 
-		var name, type, value;
+		var name, type, value = "";
 
 		var rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\=?\s?(.*?)(\;|$)/i;
 		var match = src.match( rDeclaration );
@@ -897,7 +1056,7 @@ var Three = (function (exports) {
 
 	};
 
-	ConstNode.prototype.build = function( builder, output ) {
+	ConstNode.prototype.build = function ( builder, output ) {
 
 		if ( output === 'source' ) {
 
@@ -923,18 +1082,36 @@ var Three = (function (exports) {
 
 	};
 
-	ConstNode.prototype.generate = function( builder, output ) {
+	ConstNode.prototype.generate = function ( builder, output ) {
 
 		return builder.format( this.name, this.getType( builder ), output );
 
 	};
 
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 */
+	ConstNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.name = this.name;
+			data.out = this.type;
+
+			if ( this.value ) data.value = this.value;
+			if ( data.useDefine === true ) data.useDefine = true;
+
+		}
+
+		return data;
+
+	};
 
 	// Fix circular dependency, see #2
+
+
+
 	//
 	//	Keywords
 	//
@@ -1083,18 +1260,9 @@ var Three = (function (exports) {
 		"}"
 	].join( "\n" ) ) );
 
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 * @thanks bhouston / https://clara.io/
-	 */
-
 	// Fix circular dependency, see #2
+
+
 	FunctionNode.prototype.isShared = function( builder, output ) {
 
 		return ! this.isMethod;
@@ -1208,17 +1376,7 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author [Tristan Valcke]{@link https://github.com/Itee}
-	 * @author sunag / http://www.sunag.com.br/
-	 * @thanks bhouston / https://clara.io/
-	 */
-
-	/**
-	 * @author sunag / http://www.sunag.com.br/
-	 */
-
-	var CameraNode = function( scope, camera ) {
+	var CameraNode = function ( scope, camera ) {
 
 		TempNode.call( this, 'v3' );
 
@@ -1228,14 +1386,14 @@ var Three = (function (exports) {
 	};
 
 	CameraNode.fDepthColor = new FunctionNode( [
-	"float depthColor( float mNear, float mFar ) {",
-	"	#ifdef USE_LOGDEPTHBUF_EXT",
-	"		float depth = gl_FragDepthEXT / gl_FragCoord.w;",
-	"	#else",
-	"		float depth = gl_FragCoord.z / gl_FragCoord.w;",
-	"	#endif",
-	"	return 1.0 - smoothstep( mNear, mFar, depth );",
-	"}"
+		"float depthColor( float mNear, float mFar ) {",
+		"	#ifdef USE_LOGDEPTHBUF_EXT",
+		"		float depth = gl_FragDepthEXT / gl_FragCoord.w;",
+		"	#else",
+		"		float depth = gl_FragCoord.z / gl_FragCoord.w;",
+		"	#endif",
+		"	return 1.0 - smoothstep( mNear, mFar, depth );",
+		"}"
 	].join( "\n" ) );
 
 	CameraNode.POSITION = 'position';
@@ -1244,15 +1402,16 @@ var Three = (function (exports) {
 
 	CameraNode.prototype = Object.create( TempNode.prototype );
 	CameraNode.prototype.constructor = CameraNode;
+	CameraNode.prototype.nodeType = "Camera";
 
-	CameraNode.prototype.setCamera = function( camera ) {
+	CameraNode.prototype.setCamera = function ( camera ) {
 
 		this.camera = camera;
-		this.requestUpdate = camera !== undefined;
+		this.updateFrame = camera !== undefined ? this.onUpdateFrame : undefined;
 
 	};
 
-	CameraNode.prototype.setScope = function( scope ) {
+	CameraNode.prototype.setScope = function ( scope ) {
 
 		switch ( this.scope ) {
 
@@ -1271,6 +1430,8 @@ var Three = (function (exports) {
 
 			case CameraNode.DEPTH:
 
+				var camera = this.camera;
+
 				this.near = new FloatNode( this.camera ? this.camera.near : 1 );
 				this.far = new FloatNode( this.camera ? this.camera.far : 1200 );
 
@@ -1280,41 +1441,47 @@ var Three = (function (exports) {
 
 	};
 
-	CameraNode.prototype.getType = function( builder ) {
+	CameraNode.prototype.getType = function ( builder ) {
 
 		switch ( this.scope ) {
+
 			case CameraNode.DEPTH:
 				return 'fv1';
+
 		}
 
 		return this.type;
 
 	};
 
-	CameraNode.prototype.isUnique = function( builder ) {
+	CameraNode.prototype.isUnique = function ( builder ) {
 
 		switch ( this.scope ) {
+
 			case CameraNode.DEPTH:
 			case CameraNode.TO_VERTEX:
 				return true;
+
 		}
 
 		return false;
 
 	};
 
-	CameraNode.prototype.isShared = function( builder ) {
+	CameraNode.prototype.isShared = function ( builder ) {
 
 		switch ( this.scope ) {
+
 			case CameraNode.POSITION:
 				return false;
+
 		}
 
 		return true;
 
 	};
 
-	CameraNode.prototype.generate = function( builder, output ) {
+	CameraNode.prototype.generate = function ( builder, output ) {
 
 		var material = builder.material;
 		var result;
@@ -1349,11 +1516,13 @@ var Three = (function (exports) {
 
 	};
 
-	CameraNode.prototype.updateFrame = function( delta ) {
+	CameraNode.prototype.onUpdateFrame = function ( frame ) {
 
 		switch ( this.scope ) {
 
 			case CameraNode.DEPTH:
+
+				var camera = this.camera;
 
 				this.near.number = this.camera.near;
 				this.far.number = this.camera.far;
@@ -1361,6 +1530,35 @@ var Three = (function (exports) {
 				break;
 
 		}
+
+	};
+
+	CameraNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.scope = this.scope;
+
+			if ( this.camera ) data.camera = this.camera.uuid;
+
+			switch ( this.scope ) {
+
+				case CameraNode.DEPTH:
+
+					data.near = this.near.number;
+					data.far = this.far.number;
+
+					break;
+
+			}
+
+		}
+
+		return data;
 
 	};
 

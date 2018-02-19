@@ -1,11 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -23,7 +18,7 @@ var Three = (function (exports) {
 
 			}
 
-			return function () {
+			return function generateUUID() {
 
 				var d0 = Math.random() * 0xffffffff | 0;
 				var d1 = Math.random() * 0xffffffff | 0;
@@ -148,16 +143,6 @@ var Three = (function (exports) {
 		}
 
 	};
-
-	/**
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 *
-	 * Ref: https://en.wikipedia.org/wiki/Spherical_coordinate_system
-	 *
-	 * The poles (phi) are at the positive and negative y axis.
-	 * The equator starts at positive z.
-	 */
 
 	function Spherical( radius, phi, theta ) {
 

@@ -1,9 +1,7 @@
-import { NodeMaterial } from '../../nodes/NodeMaterial.js'
-import { SpriteNode } from '../../nodes/materials/SpriteNode.js'
+import { NodeMaterial } from '../NodeMaterial.js'
+import { SpriteNode } from './SpriteNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
+
 
 var SpriteNodeMaterial = function () {
 
@@ -11,12 +9,14 @@ var SpriteNodeMaterial = function () {
 
 	NodeMaterial.call( this, this.node, this.node );
 
+	this.type = "SpriteNodeMaterial";
+
 };
 
 SpriteNodeMaterial.prototype = Object.create( NodeMaterial.prototype );
 SpriteNodeMaterial.prototype.constructor = SpriteNodeMaterial;
 
 NodeMaterial.addShortcuts( SpriteNodeMaterial.prototype, 'node',
-[ 'color', 'alpha', 'transform', 'spherical' ] );
+	[ 'color', 'alpha', 'transform', 'spherical' ] );
 
 export { SpriteNodeMaterial }

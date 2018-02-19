@@ -1,8 +1,8 @@
-import { Light } from './Light.js';
+import { Light } from './Light.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 function AmbientLight( color, intensity ) {
 
@@ -23,4 +23,6 @@ AmbientLight.prototype = Object.assign( Object.create( Light.prototype ), {
 } );
 
 
-export { AmbientLight };
+;
+
+export { AmbientLight }

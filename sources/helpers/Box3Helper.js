@@ -1,13 +1,20 @@
-/**
- * @author WestLangley / http://github.com/WestLangley
- */
+import { LineSegments } from '../objects/LineSegments.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import {
+	BufferAttribute,
+	Float32BufferAttribute
+} from '../core/BufferAttribute.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Object3D } from '../core/Object3D.js'
 
-import { LineSegments } from '../objects/LineSegments.js';
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js';
-import { BufferAttribute } from '../core/BufferAttribute.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { Object3D } from '../core/Object3D.js';
+
+
+
+
+
+
+
+
 
 function Box3Helper( box, hex ) {
 
@@ -52,4 +59,6 @@ Box3Helper.prototype.updateMatrixWorld = function ( force ) {
 
 };
 
-export { Box3Helper };
+;
+
+export { Box3Helper }

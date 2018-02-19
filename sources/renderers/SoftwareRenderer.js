@@ -1,31 +1,24 @@
 import { Color } from '../math/Color.js'
 import { Vector3 } from '../math/Vector3.js'
-import { Projector } from '../Three.Legacy.js'
-import { Vector4 } from '../math/Vector4.js'
-import { Vector2 } from '../math/Vector2.js'
 import {
+	Projector,
 	RenderableFace,
 	RenderableSprite,
 	RenderableLine
-} from '../renderers/Projector.js'
-import {
-	MeshBasicMaterial,
-	MeshLambertMaterial,
-	MeshPhongMaterial,
-	SpriteMaterial
-} from '../materials/Materials.js'
+} from './Projector.js'
+import { Vector4 } from '../math/Vector4.js'
+import { Vector2 } from '../math/Vector2.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
+import { SpriteMaterial } from '../materials/SpriteMaterial.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import {
 	REVISION,
 	FaceColors
 } from '../constants.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author ryg / http://farbrausch.de/~fg
- * @author mraleph / http://mrale.ph/
- * @author daoshengmu / http://dsmu.me/
- */
+
 
 var SoftwareRenderer = function ( parameters ) {
 
@@ -324,19 +317,7 @@ var SoftwareRenderer = function ( parameters ) {
 		var width = Math.max( rectx2, prevrectx2 ) - x;
 		var height = Math.max( recty2, prevrecty2 ) - y;
 
-		/*
-		// debug; draw zbuffer
-
-		for ( var i = 0, l = zbuffer.length; i < l; i++ ) {
-
-			var o = i * 4;
-			var v = (65535 - zbuffer[ i ]) >> 3;
-			data[ o + 0 ] = v;
-			data[ o + 1 ] = v;
-			data[ o + 2 ] = v;
-			data[ o + 3 ] = 255;
-		}
-		*/
+		
 
 		if ( x !== Infinity ) {
 
@@ -676,31 +657,7 @@ var SoftwareRenderer = function ( parameters ) {
 
 	}
 
-	/*
-	function clearRectangle( x1, y1, x2, y2 ) {
-
-		var xmin = Math.max( Math.min( x1, x2 ), 0 );
-		var xmax = Math.min( Math.max( x1, x2 ), canvasWidth );
-		var ymin = Math.max( Math.min( y1, y2 ), 0 );
-		var ymax = Math.min( Math.max( y1, y2 ), canvasHeight );
-
-		var offset = ( xmin + ymin * canvasWidth ) * 4 + 3;
-		var linestep = ( canvasWidth - ( xmax - xmin ) ) * 4;
-
-		for ( var y = ymin; y < ymax; y ++ ) {
-
-			for ( var x = xmin; x < xmax; x ++ ) {
-
-				data[ offset += 4 ] = 0;
-
-			}
-
-			offset += linestep;
-
-		}
-
-	}
-	*/
+	
 
 	function drawTriangle( v1, v2, v3, uv1, uv2, uv3, shader, face, material ) {
 
@@ -1601,7 +1558,7 @@ SoftwareRenderer.Texture = function () {
 		}
 
 		var size = image.width > image.height ? image.width : image.height;
-		size = Math.nextPowerOfTwo( size );
+		size = _Math.nextPowerOfTwo( size );
 
 		if ( canvas.width != size || canvas.height != size ) {
 

@@ -1,10 +1,8 @@
-import { GLNode } from '../../nodes/GLNode.js'
+import { GLNode } from '../GLNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var SwitchNode = function( node, components ) {
+
+var SwitchNode = function ( node, components ) {
 
 	GLNode.call( this );
 
@@ -15,14 +13,15 @@ var SwitchNode = function( node, components ) {
 
 SwitchNode.prototype = Object.create( GLNode.prototype );
 SwitchNode.prototype.constructor = SwitchNode;
+SwitchNode.prototype.nodeType = "Switch";
 
-SwitchNode.prototype.getType = function( builder ) {
+SwitchNode.prototype.getType = function ( builder ) {
 
 	return builder.getFormatFromLength( this.components.length );
 
 };
 
-SwitchNode.prototype.generate = function( builder, output ) {
+SwitchNode.prototype.generate = function ( builder, output ) {
 
 	var type = this.node.getType( builder );
 	var inputLength = builder.getFormatLength( type ) - 1;
@@ -67,9 +66,26 @@ SwitchNode.prototype.generate = function( builder, output ) {
 
 		// join
 
-		return builder.format( node, type, output )
+		return builder.format( node, type, output );
 
 	}
+
+};
+
+SwitchNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.node = this.node.toJSON( meta ).uuid;
+		data.components = this.components;
+
+	}
+
+	return data;
 
 };
 

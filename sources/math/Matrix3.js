@@ -1,11 +1,8 @@
-import { Vector3 } from './Vector3.js';
+import { Vector3 } from './Vector3.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- * @author WestLangley / http://github.com/WestLangley
- * @author bhouston / http://clara.io
- * @author tschw
- */
+
+
+
 
 function Matrix3() {
 
@@ -19,7 +16,7 @@ function Matrix3() {
 
 	if ( arguments.length > 0 ) {
 
-		console.error( 'THREE.Matrix3: the constructor no longer reads arguments. use .set() instead.' );
+		console.error( 'Matrix3: the constructor no longer reads arguments. use .set() instead.' );
 
 	}
 
@@ -184,7 +181,7 @@ Object.assign( Matrix3.prototype, {
 
 		if ( matrix && matrix.isMatrix4 ) {
 
-			console.error( "THREE.Matrix3: .getInverse() no longer takes a Matrix4 argument." );
+			console.error( "Matrix3: .getInverse() no longer takes a Matrix4 argument." );
 
 		}
 
@@ -203,7 +200,7 @@ Object.assign( Matrix3.prototype, {
 
 		if ( det === 0 ) {
 
-			var msg = "THREE.Matrix3: .getInverse() can't invert matrix, determinant is 0";
+			var msg = "Matrix3: .getInverse() can't invert matrix, determinant is 0";
 
 			if ( throwOnDegenerate === true ) {
 
@@ -385,4 +382,6 @@ Object.assign( Matrix3.prototype, {
 } );
 
 
-export { Matrix3 };
+;
+
+export { Matrix3 }

@@ -1,13 +1,11 @@
-import { DataTextureLoader } from '../loaders/DataTextureLoader.js'
+import { DataTextureLoader } from './DataTextureLoader.js'
 import {
 	FloatType,
 	RGBAFormat
 } from '../constants.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
- * @author Richard M. / https://github.com/richardmonette
- */
+
 
 // https://github.com/mrdoob/three.js/issues/10652
 // https://en.wikipedia.org/wiki/OpenEXR

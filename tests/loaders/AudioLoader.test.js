@@ -1,10 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var context;
 
 	var AudioContext = {
@@ -29,10 +25,6 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var Cache = {
 
 		enabled: false,
@@ -43,7 +35,7 @@ var Three = (function (exports) {
 
 			if ( this.enabled === false ) return;
 
-			// console.log( 'THREE.Cache', 'Adding key:', key );
+			// console.log( 'Cache', 'Adding key:', key );
 
 			this.files[ key ] = file;
 
@@ -53,7 +45,7 @@ var Three = (function (exports) {
 
 			if ( this.enabled === false ) return;
 
-			// console.log( 'THREE.Cache', 'Checking key:', key );
+			// console.log( 'Cache', 'Checking key:', key );
 
 			return this.files[ key ];
 
@@ -72,10 +64,6 @@ var Three = (function (exports) {
 		}
 
 	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	function LoadingManager( onLoad, onProgress, onError ) {
 
@@ -165,10 +153,6 @@ var Three = (function (exports) {
 	}
 
 	var DefaultLoadingManager = new LoadingManager();
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	var loading = {};
 
@@ -357,7 +341,7 @@ var Three = (function (exports) {
 						// Some browsers return HTTP Status 0 when using non-http protocol
 						// e.g. 'file://' or 'data://'. Handle as success.
 
-						console.warn( 'THREE.FileLoader: HTTP Status 0 received.' );
+						console.warn( 'FileLoader: HTTP Status 0 received.' );
 
 						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
 
@@ -472,10 +456,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author Reece Aaron Lecrivain / http://reecenotes.com/
-	 */
 
 	function AudioLoader( manager ) {
 

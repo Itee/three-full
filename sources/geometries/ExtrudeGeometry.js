@@ -1,33 +1,18 @@
-/**
- * @author zz85 / http://www.lab4games.net/zz85/blog
- *
- * Creates extruded geometry from a path shape.
- *
- * parameters = {
- *
- *  curveSegments: <int>, // number of points on the curves
- *  steps: <int>, // number of points for z-side extrusions / used for subdividing segments of extrude spline too
- *  amount: <int>, // Depth to extrude the shape
- *
- *  bevelEnabled: <bool>, // turn on bevel
- *  bevelThickness: <float>, // how deep into the original shape bevel goes
- *  bevelSize: <float>, // how far from shape outline is bevel
- *  bevelSegments: <int>, // number of bevel layers
- *
- *  extrudePath: <THREE.Curve> // curve to extrude shape along
- *  frames: <Object> // containing arrays of tangents, normals, binormals
- *
- *  UVGenerator: <Object> // object that provides UV generator functions
- *
- * }
- */
+import { Geometry } from '../core/Geometry.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
+import { ShapeUtils } from '../utils/ShapeUtils.js'
 
-import { Geometry } from '../core/Geometry.js';
-import { BufferGeometry } from '../core/BufferGeometry.js';
-import { Float32BufferAttribute } from '../core/BufferAttribute.js';
-import { Vector2 } from '../math/Vector2.js';
-import { Vector3 } from '../math/Vector3.js';
-import { ShapeUtils } from '../extras/ShapeUtils.js';
+
+
+
+
+
+
+
+
 
 // ExtrudeGeometry
 
@@ -215,7 +200,7 @@ ExtrudeBufferGeometry.prototype.addShape = function ( shape, options ) {
 
 	var faces = ShapeUtils.triangulateShape( vertices, holes );
 
-	/* Vertices */
+	
 
 	var contour = vertices; // vertices has all points but contour has only points of circumference
 
@@ -230,7 +215,7 @@ ExtrudeBufferGeometry.prototype.addShape = function ( shape, options ) {
 
 	function scalePt2( pt, vec, size ) {
 
-		if ( ! vec ) console.error( "THREE.ExtrudeGeometry: vec does not exist" );
+		if ( ! vec ) console.error( "ExtrudeGeometry: vec does not exist" );
 
 		return vec.clone().multiplyScalar( size ).add( pt );
 
@@ -550,7 +535,7 @@ ExtrudeBufferGeometry.prototype.addShape = function ( shape, options ) {
 
 	}
 
-	/* Faces */
+	
 
 	// Top and bottom faces
 
@@ -811,4 +796,9 @@ ExtrudeGeometry.WorldUVGenerator = {
 };
 
 
-export { ExtrudeGeometry, ExtrudeBufferGeometry };
+;
+
+export {
+	ExtrudeGeometry,
+	ExtrudeBufferGeometry
+}

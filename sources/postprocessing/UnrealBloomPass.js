@@ -1,16 +1,14 @@
-import { Pass } from '../postprocessing/Pass.js'
+import { Pass } from './Pass.js'
 import { Vector2 } from '../math/Vector2.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import {
-	ShaderMaterial,
-	MeshBasicMaterial
-} from '../materials/Materials.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Color } from '../math/Color.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/Geometries.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import {
 	AdditiveBlending,
 	LinearFilter,
@@ -20,12 +18,7 @@ import { LuminosityHighPassShader } from '../shaders/LuminosityHighPassShader.js
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { CopyShader } from '../shaders/CopyShader.js'
 
-/**
- * @author spidersharma / http://eduperiment.com/
- * 
- * Inspired from Unreal Engine
- * https://docs.unrealengine.com/latest/INT/Engine/Rendering/PostProcessEffects/Bloom/
- */
+
 var UnrealBloomPass = function ( resolution, strength, radius, threshold ) {
 
 	Pass.call( this );

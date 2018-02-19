@@ -1,11 +1,17 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+import {
+	RGBAFormat,
+	RGBFormat
+} from '../constants.js'
+import { ImageLoader } from './ImageLoader.js'
+import { Texture } from '../textures/Texture.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-import { RGBAFormat, RGBFormat } from '../constants.js';
-import { ImageLoader } from './ImageLoader.js';
-import { Texture } from '../textures/Texture.js';
-import { DefaultLoadingManager } from './LoadingManager.js';
+
+
+
+
+
+
 
 
 function TextureLoader( manager ) {
@@ -65,4 +71,6 @@ Object.assign( TextureLoader.prototype, {
 } );
 
 
-export { TextureLoader };
+;
+
+export { TextureLoader }

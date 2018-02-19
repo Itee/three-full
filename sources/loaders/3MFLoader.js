@@ -1,17 +1,15 @@
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
-import { MeshPhongMaterial } from '../materials/Materials.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Group } from '../objects/Group.js'
 import { VertexColors } from '../constants.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
-import { LoaderUtils } from '../loaders/LoaderUtils.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { LoaderUtils } from './LoaderUtils.js'
 
-/**
- * @author technohippy / https://github.com/technohippy
- */
+
 
 var ThreeMFLoader = function ( manager ) {
 

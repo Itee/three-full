@@ -1,6 +1,6 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 function LoadingManager( onLoad, onProgress, onError ) {
 
@@ -92,4 +92,9 @@ function LoadingManager( onLoad, onProgress, onError ) {
 var DefaultLoadingManager = new LoadingManager();
 
 
-export { DefaultLoadingManager, LoadingManager };
+;
+
+export {
+	DefaultLoadingManager,
+	LoadingManager
+}

@@ -1,13 +1,14 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author mikael emtinger / http://gomo.se/
- * @author WestLangley / http://github.com/WestLangley
-*/
+import { Matrix4 } from '../math/Matrix4.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { Object3D } from '../core/Object3D.js'
+import { Vector3 } from '../math/Vector3.js'
 
-import { Matrix4 } from '../math/Matrix4.js';
-import { Quaternion } from '../math/Quaternion.js';
-import { Object3D } from '../core/Object3D.js';
-import { Vector3 } from '../math/Vector3.js';
+
+
+
+
+
+
 
 function Camera() {
 
@@ -69,4 +70,6 @@ Camera.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 } );
 
-export { Camera };
+;
+
+export { Camera }

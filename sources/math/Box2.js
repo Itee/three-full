@@ -1,8 +1,8 @@
-import { Vector2 } from './Vector2.js';
+import { Vector2 } from './Vector2.js'
 
-/**
- * @author bhouston / http://clara.io
- */
+
+
+
 
 function Box2( min, max ) {
 
@@ -218,4 +218,6 @@ Object.assign( Box2.prototype, {
 } );
 
 
-export { Box2 };
+;
+
+export { Box2 }

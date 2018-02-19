@@ -1,10 +1,10 @@
-import { Camera } from './Camera.js';
-import { Object3D } from '../core/Object3D.js';
+import { Camera } from './Camera.js'
+import { Object3D } from '../core/Object3D.js'
 
-/**
- * @author alteredq / http://alteredqualia.com/
- * @author arose / http://github.com/arose
- */
+
+
+
+
 
 function OrthographicCamera( left, right, top, bottom, near, far ) {
 
@@ -142,4 +142,6 @@ OrthographicCamera.prototype = Object.assign( Object.create( Camera.prototype ),
 } );
 
 
-export { OrthographicCamera };
+;
+
+export { OrthographicCamera }

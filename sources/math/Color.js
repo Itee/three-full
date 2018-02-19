@@ -1,8 +1,8 @@
-import { _Math } from './Math.js';
+import { _Math } from './Math.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
 	'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
@@ -33,7 +33,7 @@ function Color( r, g, b ) {
 
 	if ( g === undefined && b === undefined ) {
 
-		// r is THREE.Color, hex or string
+		// r is Color, hex or string
 		return this.set( r );
 
 	}
@@ -149,7 +149,7 @@ Object.assign( Color.prototype, {
 
 			if ( parseFloat( string ) < 1 ) {
 
-				console.warn( 'THREE.Color: Alpha component of ' + style + ' will be ignored.' );
+				console.warn( 'Color: Alpha component of ' + style + ' will be ignored.' );
 
 			}
 
@@ -261,7 +261,7 @@ Object.assign( Color.prototype, {
 			} else {
 
 				// unknown color
-				console.warn( 'THREE.Color: Unknown color ' + style );
+				console.warn( 'Color: Unknown color ' + style );
 
 			}
 
@@ -520,4 +520,6 @@ Object.assign( Color.prototype, {
 } );
 
 
-export { Color };
+;
+
+export { Color }

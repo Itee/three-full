@@ -1,6 +1,6 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
+
+
 
 function AudioAnalyser( audio, fftSize ) {
 
@@ -39,4 +39,6 @@ Object.assign( AudioAnalyser.prototype, {
 
 } );
 
-export { AudioAnalyser };
+;
+
+export { AudioAnalyser }

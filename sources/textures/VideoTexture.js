@@ -1,27 +1,14 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+import { Texture } from './Texture.js'
 
-import { Texture } from './Texture.js';
+
+
+
 
 function VideoTexture( video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy ) {
 
 	Texture.call( this, video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy );
 
 	this.generateMipmaps = false;
-
-	// Set needsUpdate when first frame is ready
-
-	var scope = this;
-
-	function onLoaded() {
-
-		video.removeEventListener( 'loadeddata', onLoaded, false );
-		scope.needsUpdate = true;
-
-	}
-
-	video.addEventListener( 'loadeddata', onLoaded, false );
 
 }
 
@@ -46,4 +33,6 @@ VideoTexture.prototype = Object.assign( Object.create( Texture.prototype ), {
 } );
 
 
-export { VideoTexture };
+;
+
+export { VideoTexture }

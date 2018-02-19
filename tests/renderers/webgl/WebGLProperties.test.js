@@ -1,10 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author fordacious / fordacious.github.io
-	 */
-
 	function WebGLProperties() {
 
 		var properties = {};
@@ -31,7 +27,16 @@ var Three = (function (exports) {
 
 		}
 
-		function clear() {
+		function update( object, key, value ) {
+
+			var uuid = object.uuid;
+			var map = properties[ uuid ];
+
+			map[ key ] = value;
+
+		}
+
+		function dispose() {
 
 			properties = {};
 
@@ -40,7 +45,8 @@ var Three = (function (exports) {
 		return {
 			get: get,
 			remove: remove,
-			clear: clear
+			update: update,
+			dispose: dispose
 		};
 
 	}

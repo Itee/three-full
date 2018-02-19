@@ -1,11 +1,9 @@
-import { GLNode } from '../nodes/GLNode.js'
+import { GLNode } from './GLNode.js'
+import { _Math } from '../math/Math.js'
 
-/**
- * Automatic node cache
- * @author sunag / http://www.sunag.com.br/
- */
 
-var TempNode = function( type, params ) {
+
+var TempNode = function ( type, params ) {
 
 	GLNode.call( this, type );
 
@@ -19,7 +17,7 @@ var TempNode = function( type, params ) {
 TempNode.prototype = Object.create( GLNode.prototype );
 TempNode.prototype.constructor = TempNode;
 
-TempNode.prototype.build = function( builder, output, uuid, ns ) {
+TempNode.prototype.build = function ( builder, output, uuid, ns ) {
 
 	output = output || this.getType( builder );
 
@@ -31,7 +29,7 @@ TempNode.prototype.build = function( builder, output, uuid, ns ) {
 
 		if ( isUnique && this.constructor.uuid === undefined ) {
 
-			this.constructor.uuid = Math.generateUUID();
+			this.constructor.uuid = _Math.generateUUID();
 
 		}
 
@@ -91,19 +89,19 @@ TempNode.prototype.build = function( builder, output, uuid, ns ) {
 
 };
 
-TempNode.prototype.isShared = function( builder, output ) {
+TempNode.prototype.isShared = function ( builder, output ) {
 
 	return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
 
 };
 
-TempNode.prototype.isUnique = function( builder, output ) {
+TempNode.prototype.isUnique = function ( builder, output ) {
 
 	return this.unique;
 
 };
 
-TempNode.prototype.getUuid = function( unique ) {
+TempNode.prototype.getUuid = function ( unique ) {
 
 	var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
 
@@ -113,7 +111,7 @@ TempNode.prototype.getUuid = function( unique ) {
 
 };
 
-TempNode.prototype.getTemp = function( builder, uuid ) {
+TempNode.prototype.getTemp = function ( builder, uuid ) {
 
 	uuid = uuid || this.uuid;
 
@@ -124,7 +122,7 @@ TempNode.prototype.getTemp = function( builder, uuid ) {
 
 };
 
-TempNode.prototype.generate = function( builder, output, uuid, type, ns ) {
+TempNode.prototype.generate = function ( builder, output, uuid, type, ns ) {
 
 	if ( ! this.isShared( builder, output ) ) console.error( "TempNode is not shared!" );
 

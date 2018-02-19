@@ -1,10 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var Cache = {
 
 		enabled: false,
@@ -15,7 +11,7 @@ var Three = (function (exports) {
 
 			if ( this.enabled === false ) return;
 
-			// console.log( 'THREE.Cache', 'Adding key:', key );
+			// console.log( 'Cache', 'Adding key:', key );
 
 			this.files[ key ] = file;
 
@@ -25,7 +21,7 @@ var Three = (function (exports) {
 
 			if ( this.enabled === false ) return;
 
-			// console.log( 'THREE.Cache', 'Checking key:', key );
+			// console.log( 'Cache', 'Checking key:', key );
 
 			return this.files[ key ];
 
@@ -44,10 +40,6 @@ var Three = (function (exports) {
 		}
 
 	};
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	function LoadingManager( onLoad, onProgress, onError ) {
 
@@ -137,10 +129,6 @@ var Three = (function (exports) {
 	}
 
 	var DefaultLoadingManager = new LoadingManager();
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	var loading = {};
 
@@ -329,7 +317,7 @@ var Three = (function (exports) {
 						// Some browsers return HTTP Status 0 when using non-http protocol
 						// e.g. 'file://' or 'data://'. Handle as success.
 
-						console.warn( 'THREE.FileLoader: HTTP Status 0 received.' );
+						console.warn( 'FileLoader: HTTP Status 0 received.' );
 
 						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
 
@@ -445,11 +433,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -467,7 +450,7 @@ var Three = (function (exports) {
 
 			}
 
-			return function () {
+			return function generateUUID() {
 
 				var d0 = Math.random() * 0xffffffff | 0;
 				var d1 = Math.random() * 0xffffffff | 0;
@@ -593,19 +576,6 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author jordi_ros / http://plattsoft.com
-	 * @author D1plo1d / http://github.com/D1plo1d
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author timknip / http://www.floorplanner.com/
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Matrix4() {
 
 		this.elements = [
@@ -619,7 +589,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix4: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix4: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -747,7 +717,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				console.error( 'THREE.Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
+				console.error( 'Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -967,7 +937,7 @@ var Three = (function (exports) {
 
 			if ( n !== undefined ) {
 
-				console.warn( 'THREE.Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
+				console.warn( 'Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
 				return this.multiplyMatrices( m, n );
 
 			}
@@ -1158,7 +1128,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix4: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix4: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -1411,7 +1381,7 @@ var Three = (function (exports) {
 
 			if ( far === undefined ) {
 
-				console.warn( 'THREE.Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
+				console.warn( 'Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
 
 			}
 
@@ -1514,13 +1484,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Quaternion( x, y, z, w ) {
 
@@ -1713,7 +1676,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				throw new Error( 'THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+				throw new Error( 'Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -1910,7 +1873,9 @@ var Three = (function (exports) {
 
 		inverse: function () {
 
-			return this.conjugate().normalize();
+			// quaternion is assumed to have unit length
+
+			return this.conjugate();
 
 		},
 
@@ -1976,7 +1941,7 @@ var Three = (function (exports) {
 
 			if ( p !== undefined ) {
 
-				console.warn( 'THREE.Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
+				console.warn( 'Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
 				return this.multiplyQuaternions( q, p );
 
 			}
@@ -2121,15 +2086,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author kile / http://kile.stravaganza.org/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -2234,7 +2190,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -2281,7 +2237,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -2318,7 +2274,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
 				return this.multiplyVectors( v, w );
 
 			}
@@ -2359,7 +2315,7 @@ var Three = (function (exports) {
 
 				if ( ! ( euler && euler.isEuler ) ) {
 
-					console.error( 'THREE.Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+					console.error( 'Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 				}
 
@@ -2459,7 +2415,7 @@ var Three = (function (exports) {
 
 		transformDirection: function ( m ) {
 
-			// input: THREE.Matrix4 affine matrix
+			// input: Matrix4 affine matrix
 			// vector interpreted as a direction
 
 			var x = this.x, y = this.y, z = this.z;
@@ -2653,7 +2609,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
 				return this.crossVectors( v, w );
 
 			}
@@ -2831,7 +2787,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector3: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector3: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -2844,10 +2800,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * https://github.com/mrdoob/eventdispatcher.js/
-	 */
 
 	function EventDispatcher() {}
 
@@ -2928,12 +2880,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Euler( x, y, z, order ) {
 
@@ -3167,7 +3113,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.warn( 'THREE.Euler: .setFromRotationMatrix() given unsupported order: ' + order );
+				console.warn( 'Euler: .setFromRotationMatrix() given unsupported order: ' + order );
 
 			}
 
@@ -3274,10 +3220,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function Layers() {
 
 		this.mask = 1 | 0;
@@ -3318,13 +3260,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 * @author tschw
-	 */
-
 	function Matrix3() {
 
 		this.elements = [
@@ -3337,7 +3272,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix3: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix3: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -3502,7 +3437,7 @@ var Three = (function (exports) {
 
 			if ( matrix && matrix.isMatrix4 ) {
 
-				console.error( "THREE.Matrix3: .getInverse() no longer takes a Matrix4 argument." );
+				console.error( "Matrix3: .getInverse() no longer takes a Matrix4 argument." );
 
 			}
 
@@ -3521,7 +3456,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix3: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix3: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -3701,14 +3636,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author elephantatwork / www.elephantatwork.ch
-	 */
 
 	var object3DId = 0;
 
@@ -4047,7 +3974,7 @@ var Three = (function (exports) {
 
 			if ( object === this ) {
 
-				console.error( "THREE.Object3D.add: object can't be added as a child of itself.", object );
+				console.error( "Object3D.add: object can't be added as a child of itself.", object );
 				return this;
 
 			}
@@ -4067,7 +3994,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.error( "THREE.Object3D.add: object not an instance of THREE.Object3D.", object );
+				console.error( "Object3D.add: object not an instance of Object3D.", object );
 
 			}
 
@@ -4521,12 +4448,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author ikerr / http://verold.com
-	 */
-
 	function Bone() {
 
 		Object3D.call( this );
@@ -4550,16 +4471,6 @@ var Three = (function (exports) {
 	var ZeroSlopeEnding = 2401;
 	var WrapAroundEnding = 2402;
 
-	/**
-	 *
-	 * A Track that interpolates Strings
-	 *
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
-
 	function StringKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -4580,16 +4491,6 @@ var Three = (function (exports) {
 		InterpolantFactoryMethodSmooth: undefined
 
 	} );
-
-	/**
-	 *
-	 * A Track of Boolean keyframe values.
-	 *
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
 
 	function BooleanKeyframeTrack( name, times, values ) {
 
@@ -4614,28 +4515,6 @@ var Three = (function (exports) {
 		// computes "firstValue ^ isOdd( index )".
 
 	} );
-
-	/**
-	 * Abstract base class of interpolants over parametric samples.
-	 *
-	 * The parameter domain is one dimensional, typically the time or a path
-	 * along a curve defined by the data.
-	 *
-	 * The sample values can have any dimensionality and derived classes may
-	 * apply special interpretations to the data.
-	 *
-	 * This class provides the interval seek in a Template Method, deferring
-	 * the actual interpolation to derived classes.
-	 *
-	 * Time complexity is O(1) for linear access crossing at most two points
-	 * and O(log N) for random access, where N is the number of positions.
-	 *
-	 * References:
-	 *
-	 * 		http://www.oodesign.com/template-method-pattern.html
-	 *
-	 * @author tschw
-	 */
 
 	function Interpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
@@ -4846,14 +4725,14 @@ var Three = (function (exports) {
 
 		// Template methods for derived classes:
 
-		interpolate_: function ( /* i1, t0, t, t1 */ ) {
+		interpolate_: function (  ) {
 
 			throw new Error( 'call to abstract method' );
 			// implementations shall return this.resultBuffer
 
 		},
 
-		intervalChanged_: function ( /* i1, t0, t1 */ ) {
+		intervalChanged_: function (  ) {
 
 			// empty
 
@@ -4871,12 +4750,6 @@ var Three = (function (exports) {
 		afterEnd_: Interpolant.prototype.copySampleValue_,
 
 	} );
-
-	/**
-	 * Spherical linear unit quaternion interpolant.
-	 *
-	 * @author tschw
-	 */
 
 	function QuaternionLinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
@@ -4910,15 +4783,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 *
-	 * A Track of quaternion keyframe values.
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
-
 	function QuaternionKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -4945,16 +4809,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 *
-	 * A Track of keyframe values that represent color.
-	 *
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
-
 	function ColorKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -4976,15 +4830,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 *
-	 * A Track of numeric keyframe values.
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
-
 	function NumberKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -5002,16 +4847,6 @@ var Three = (function (exports) {
 		// DefaultInterpolation is inherited
 
 	} );
-
-	/**
-	 * Fast and simple cubic spline interpolant.
-	 *
-	 * It was derived from a Hermitian construction setting the first derivative
-	 * at each sample position to the linear slope between neighboring positions
-	 * over their parameter interval.
-	 *
-	 * @author tschw
-	 */
 
 	function CubicInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
@@ -5153,10 +4988,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author tschw
-	 */
-
 	function LinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -5193,14 +5024,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 *
-	 * Interpolant that evaluates to the sample value at the position preceeding
-	 * the parameter.
-	 *
-	 * @author tschw
-	 */
-
 	function DiscreteInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -5211,19 +5034,13 @@ var Three = (function (exports) {
 
 		constructor: DiscreteInterpolant,
 
-		interpolate_: function ( i1 /*, t0, t, t1 */ ) {
+		interpolate_: function ( i1  ) {
 
 			return this.copySampleValue_( i1 - 1 );
 
 		}
 
 	} );
-
-	/**
-	 * @author tschw
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 */
 
 	var AnimationUtils = {
 
@@ -5341,7 +5158,7 @@ var Three = (function (exports) {
 
 			} else if ( value.toArray !== undefined ) {
 
-				// ...assume THREE.Math-ish
+				// ...assume Math-ish
 
 				do {
 
@@ -5383,20 +5200,10 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 *
-	 * A timed sequence of keyframes for a specific property.
-	 *
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
-
 	function KeyframeTrack( name, times, values, interpolation ) {
 
-		if ( name === undefined ) throw new Error( 'THREE.KeyframeTrack: track name is undefined' );
-		if ( times === undefined || times.length === 0 ) throw new Error( 'THREE.KeyframeTrack: no keyframes in track named ' + name );
+		if ( name === undefined ) throw new Error( 'KeyframeTrack: track name is undefined' );
+		if ( times === undefined || times.length === 0 ) throw new Error( 'KeyframeTrack: no keyframes in track named ' + name );
 
 		this.name = name;
 
@@ -5421,7 +5228,7 @@ var Three = (function (exports) {
 
 			if ( json.type === undefined ) {
 
-				throw new Error( 'THREE.KeyframeTrack: track type undefined, can not parse' );
+				throw new Error( 'KeyframeTrack: track type undefined, can not parse' );
 
 			}
 
@@ -5528,7 +5335,7 @@ var Three = (function (exports) {
 
 			}
 
-			throw new Error( 'THREE.KeyframeTrack: Unsupported typeName: ' + typeName );
+			throw new Error( 'KeyframeTrack: Unsupported typeName: ' + typeName );
 
 		}
 
@@ -5608,7 +5415,7 @@ var Three = (function (exports) {
 
 				}
 
-				console.warn( 'THREE.KeyframeTrack:', message );
+				console.warn( 'KeyframeTrack:', message );
 				return;
 
 			}
@@ -5727,7 +5534,7 @@ var Three = (function (exports) {
 			var valueSize = this.getValueSize();
 			if ( valueSize - Math.floor( valueSize ) !== 0 ) {
 
-				console.error( 'THREE.KeyframeTrack: Invalid value size in track.', this );
+				console.error( 'KeyframeTrack: Invalid value size in track.', this );
 				valid = false;
 
 			}
@@ -5739,7 +5546,7 @@ var Three = (function (exports) {
 
 			if ( nKeys === 0 ) {
 
-				console.error( 'THREE.KeyframeTrack: Track is empty.', this );
+				console.error( 'KeyframeTrack: Track is empty.', this );
 				valid = false;
 
 			}
@@ -5752,7 +5559,7 @@ var Three = (function (exports) {
 
 				if ( typeof currTime === 'number' && isNaN( currTime ) ) {
 
-					console.error( 'THREE.KeyframeTrack: Time is not a valid number.', this, i, currTime );
+					console.error( 'KeyframeTrack: Time is not a valid number.', this, i, currTime );
 					valid = false;
 					break;
 
@@ -5760,7 +5567,7 @@ var Three = (function (exports) {
 
 				if ( prevTime !== null && prevTime > currTime ) {
 
-					console.error( 'THREE.KeyframeTrack: Out of order keys.', this, i, currTime, prevTime );
+					console.error( 'KeyframeTrack: Out of order keys.', this, i, currTime, prevTime );
 					valid = false;
 					break;
 
@@ -5780,7 +5587,7 @@ var Three = (function (exports) {
 
 						if ( isNaN( value ) ) {
 
-							console.error( 'THREE.KeyframeTrack: Value is not a valid number.', this, i, value );
+							console.error( 'KeyframeTrack: Value is not a valid number.', this, i, value );
 							valid = false;
 							break;
 
@@ -5904,16 +5711,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 *
-	 * A Track of vectored keyframe values.
-	 *
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 * @author tschw
-	 */
-
 	function VectorKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -5931,14 +5728,6 @@ var Three = (function (exports) {
 		// DefaultInterpolation is inherited
 
 	} );
-
-	/**
-	 *
-	 * Reusable set of Tracks that represent an animation.
-	 *
-	 * @author Ben Houston / http://clara.io/
-	 * @author David Sarno / http://lighthaus.us/
-	 */
 
 	function AnimationClip( name, duration, tracks ) {
 
@@ -6116,7 +5905,7 @@ var Three = (function (exports) {
 
 			if ( ! animation ) {
 
-				console.error( 'THREE.AnimationClip: No animation in JSONLoader data.' );
+				console.error( 'AnimationClip: No animation in JSONLoader data.' );
 				return null;
 
 			}
@@ -6281,13 +6070,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author michael guerrero / http://realitymeltdown.com
-	 * @author ikerr / http://verold.com
-	 */
-
 	function Skeleton( bones, boneInverses ) {
 
 		// copy the bone array
@@ -6311,7 +6093,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.warn( 'THREE.Skeleton boneInverses is the wrong length.' );
+				console.warn( 'Skeleton boneInverses is the wrong length.' );
 
 				this.boneInverses = [];
 
@@ -6433,19 +6215,27 @@ var Three = (function (exports) {
 
 			return new Skeleton( this.bones, this.boneInverses );
 
+		},
+
+		getBoneByName: function ( name ) {
+
+			for ( var i = 0, il = this.bones.length; i < il; i ++ ) {
+
+				var bone = this.bones[ i ];
+
+				if ( bone.name === name ) {
+
+					return bone;
+
+				}
+
+			}
+
+			return undefined;
+
 		}
 
 	} );
-
-	/**
-	 * @author herzig / http://github.com/herzig
-	 * @author Mugen87 / https://github.com/Mugen87
-	 *
-	 * Description: reads BVH files and outputs a single Skeleton and an AnimationClip
-	 *
-	 * Currently only supports bvh files containing a single root.
-	 *
-	 */
 
 	var BVHLoader = function ( manager ) {
 
@@ -6475,13 +6265,7 @@ var Three = (function (exports) {
 
 		parse: function ( text ) {
 
-			/*
-				reads a string array (lines) from a BVH file
-				and outputs a skeleton structure including motion data
-
-				returns thee root node:
-				{ name: '', channels: [], children: [] }
-			*/
+			
 			function readBvh( lines ) {
 
 				// read model structure
@@ -6538,16 +6322,7 @@ var Three = (function (exports) {
 
 			}
 
-			/*
-				Recursively reads data from a single frame into the bone hierarchy.
-				The passed bone hierarchy has to be structured in the same order as the BVH file.
-				keyframe data is stored in bone.frames.
-
-				- data: splitted string array (frame values), values are shift()ed so
-				this should be empty after parsing the whole hierarchy.
-				- frameTime: playback time for this keyframe.
-				- bone: the bone to read frame data from.
-			*/
+			
 			function readFrameData( data, frameTime, bone ) {
 
 				// end sites have no motion data
@@ -6614,15 +6389,7 @@ var Three = (function (exports) {
 
 			}
 
-			/*
-			 Recursively parses the HIERACHY section of the BVH file
-
-			 - lines: all lines of the file. lines are consumed as we go along.
-			 - firstline: line containing the node type and name e.g. 'JOINT hip'
-			 - list: collects a flat list of nodes
-
-			 returns: a BVH node including children
-			*/
+			
 			function readNode( lines, firstline, list ) {
 
 				var node = { name: '', type: '', frames: [] };
@@ -6718,14 +6485,7 @@ var Three = (function (exports) {
 
 			}
 
-			/*
-				recursively converts the internal bvh node structure to a Bone hierarchy
-
-				source: the bvh root node
-				list: pass an empty array, collects a flat list of all converted Bones
-
-				returns the root Bone
-			*/
+			
 			function toTHREEBone( source, list ) {
 
 				var bone = new Bone();
@@ -6748,13 +6508,7 @@ var Three = (function (exports) {
 
 			}
 
-			/*
-				builds a AnimationClip from the keyframe data saved in each bone.
-
-				bone: bvh root node
-
-				returns: a AnimationClip containing position and quaternion tracks
-			*/
+			
 			function toTHREEAnimation( bones ) {
 
 				var tracks = [];
@@ -6812,9 +6566,7 @@ var Three = (function (exports) {
 
 			}
 
-			/*
-				returns the next non-empty line in lines
-			*/
+			
 			function nextLine( lines ) {
 
 				var line;

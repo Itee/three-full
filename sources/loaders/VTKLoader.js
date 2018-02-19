@@ -1,24 +1,16 @@
 import { EventDispatcher } from '../core/EventDispatcher.js'
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Geometry } from '../core/Geometry.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Face3 } from '../core/Face3.js'
 import { Color } from '../math/Color.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
-import { LoaderUtils } from '../loaders/LoaderUtils.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { LoaderUtils } from './LoaderUtils.js'
+import { _Math } from '../math/Math.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author Alex Pletzer
- *
- * Updated on 22.03.2017
- * VTK header is now parsed and used to extract all the compressed data
- * @author Andrii Iudin https://github.com/andreyyudin
- * @author Paul Kibet Korir https://github.com/polarise
- * @author Sriram Somasundharam https://github.com/raamssundar
- */
+
 
 var VTKLoader = function ( manager ) {
 
@@ -932,7 +924,7 @@ Object.assign( VTKLoader.prototype, EventDispatcher.prototype, {
 					dom = new ActiveXObject( 'Microsoft.XMLDOM' ); // eslint-disable-line no-undef
 					dom.async = false;
 
-					if ( ! dom.loadXML( /* xml */ ) ) {
+					if ( ! dom.loadXML(  ) ) {
 
 						throw new Error( dom.parseError.reason + dom.parseError.srcText );
 

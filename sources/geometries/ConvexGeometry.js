@@ -1,11 +1,9 @@
 import { Geometry } from '../core/Geometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
-import { QuickHull } from '../QuickHull.js'
+import { QuickHull } from '../utils/QuickHull.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
-/**
- * @author Mugen87 / https://github.com/Mugen87
- */
+
 
 
 
@@ -14,8 +12,6 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 	function ConvexGeometry( points ) {
 
 		Geometry.call( this );
-
-		this.type = 'ConvexGeometry';
 
 		this.fromBufferGeometry( new ConvexBufferGeometry( points ) );
 		this.mergeVertices();
@@ -29,16 +25,14 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
 	function ConvexBufferGeometry( points ) {
 
-	  BufferGeometry.call( this );
+		BufferGeometry.call( this );
 
-		this.type = 'ConvexBufferGeometry';
+		// buffers
 
-	  // buffers
+		var vertices = [];
+		var normals = [];
 
-	  var vertices = [];
-	  var normals = [];
-
-	  // execute QuickHull
+		// execute QuickHull
 
 		if ( QuickHull === undefined ) {
 
@@ -46,36 +40,36 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
 		}
 
-	  var quickHull = new QuickHull().setFromPoints( points );
+		var quickHull = new QuickHull().setFromPoints( points );
 
-	  // generate vertices and normals
+		// generate vertices and normals
 
-	  var faces = quickHull.faces;
+		var faces = quickHull.faces;
 
-	  for ( var i = 0; i < faces.length; i ++ ) {
+		for ( var i = 0; i < faces.length; i ++ ) {
 
-	    var face = faces[ i ];
-	    var edge = face.edge;
+			var face = faces[ i ];
+			var edge = face.edge;
 
-	    // we move along a doubly-connected edge list to access all face points (see HalfEdge docs)
+			// we move along a doubly-connected edge list to access all face points (see HalfEdge docs)
 
-	    do {
+			do {
 
-	      var point = edge.head().point;
+				var point = edge.head().point;
 
-	      vertices.push( point.x, point.y, point.z );
-	      normals.push( face.normal.x, face.normal.y, face.normal.z );
+				vertices.push( point.x, point.y, point.z );
+				normals.push( face.normal.x, face.normal.y, face.normal.z );
 
-	      edge = edge.next;
+				edge = edge.next;
 
-	    } while ( edge !== face.edge );
+			} while ( edge !== face.edge );
 
-	  }
+		}
 
-	  // build geometry
+		// build geometry
 
-	  this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-	  this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
+		this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+		this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
 
 	}
 

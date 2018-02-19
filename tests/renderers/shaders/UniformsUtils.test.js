@@ -1,10 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * Uniform Utilities
-	 */
-
 	var UniformsUtils = {
 
 		merge: function ( uniforms ) {

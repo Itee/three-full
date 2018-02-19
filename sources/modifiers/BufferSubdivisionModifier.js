@@ -2,37 +2,10 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Geometry } from '../core/Geometry.js'
 import { Face3 } from '../core/Face3.js'
+import { Vector3 } from '../math/Vector3.js'
+import { Vector2 } from '../math/Vector2.js'
 
-/*
- * @author zz85 / http://twitter.com/blurspline / http://www.lab4games.net/zz85/blog
- * @author Matthew Adams / http://www.centerionware.com - added UV support and rewrote to use buffergeometry.
- *
- * Subdivision Geometry Modifier using Loop Subdivision Scheme for Geometry / BufferGeometry
- *
- * References:
- *	http://graphics.stanford.edu/~mdfisher/subdivision.html
- *	http://www.holmes3d.net/graphics/subdivision/
- *	http://www.cs.rutgers.edu/~decarlo/readings/subdiv-sg00c.pdf
- *
- * Known Issues:
- *	- currently doesn't handle "Sharp Edges"
- *	- no checks to prevent breaking when uv's don't exist.
- *	- vertex colors are unsupported.
- *	**DDS Images when using corrected uv's passed to subdivision modifier will have their uv's flipy'd within the correct uv set
- *	**Either flipy the DDS image, or use shaders. Don't try correcting the uv's before passing into subdiv (eg: v=1-v).
- *
- * @input Geometry, or index'd BufferGeometry with faceUV's (Not vertex uv's)
- * @output non-indexed vertex points, uv's, normals.
- *
- * The TypedArrayHelper class is designed to assist managing typed arrays, and to allow the removal of all 'new Vector3, new Face3, new Vector2'.
- *
- * It will automatically resize them if trying to push a new element to an array that isn't long enough
- * It provides 'registers' that the units can be mapped to. This allows a small set of objects
- * (ex: vector3's, face3's, vector2's) to be allocated then used, to eliminate any need to rewrite all
- * the features those classes offer while not requiring some_huge_number to be allocated.
- * It should be moved into it's own file honestly, then included before the BufferSubdivisionModifier - maybe in three's core?
- *
- */
+
 
 Face3.prototype.set = function( a, b, c ) {
 
@@ -525,11 +498,7 @@ var edge_type = function ( a, b ) {
 			doUvs = true;
 
 		}
-		/******************************************************
-		*
-		* Step 0: Preprocess Geometry to Generate edges Lookup
-		*
-		*******************************************************/
+		
 
 		metaVertices = new Array( oldVertices.length );
 		sourceEdges = {}; // Edge => { oldVertex1, oldVertex2, faces[]  }
@@ -537,13 +506,7 @@ var edge_type = function ( a, b ) {
 		generateLookups( oldVertices, oldFaces, metaVertices, sourceEdges );
 
 
-		/******************************************************
-		*
-		*	Step 1.
-		*	For each edge, create a new Edge Vertex,
-		*	then position it.
-		*
-		*******************************************************/
+		
 
 		newVertices = new TypedArrayHelper( ( geometry.getAttribute( 'position' ).array.length * 2 ) / 3, 2, Vector3, Float32Array, 3, XYZ );
 		var other, currentEdge, newEdge, face;
@@ -606,12 +569,7 @@ var edge_type = function ( a, b ) {
 		}
 
 		var edgeLength = newVertices.length;
-		/******************************************************
-		*
-		*	Step 2.
-		*	Reposition each source vertices.
-		*
-		*******************************************************/
+		
 
 		var beta, sourceVertexWeight, connectingVertexWeight;
 		var connectingEdge, connectingEdges, oldVertex, newSourceVertex;
@@ -675,12 +633,7 @@ var edge_type = function ( a, b ) {
 		}
 
 
-		/******************************************************
-		*
-		*	Step 3.
-		*	Generate faces between source vertices and edge vertices.
-		*
-		*******************************************************/
+		
 
 
 		var edge1, edge2, edge3;
@@ -714,31 +667,7 @@ var edge_type = function ( a, b ) {
 			newFace( newFaces, tFace );
 
 
-			/*
-				0________C_______2
-				 \      /\      /
-				  \ F2 /  \ F4 /
-				   \  / F1 \  /
-				    \/______\/
-				   A \      / B
-				      \ F3 /
-				       \  /
-				        \/
-				         1
-
-				Draw orders:
-				F1: ABC x3,x4,x5
-				F2: 0AC x0,x3,x5
-				F3: 1BA x1,x4,x3
-				F4: 2CB x2,x5,x4
-
-				0: x0
-				1: x1
-				2: x2
-				A: x3
-				B: x4
-				C: x5
-			*/
+			
 
 			if ( doUvs === true ) {
 

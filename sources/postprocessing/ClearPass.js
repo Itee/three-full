@@ -1,8 +1,6 @@
-import { Pass } from '../postprocessing/Pass.js'
+import { Pass } from './Pass.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
+
 
 var ClearPass = function ( clearColor, clearAlpha ) {
 

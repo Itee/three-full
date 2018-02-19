@@ -1,10 +1,6 @@
-/**
- * @author supereggbert / http://www.paulbrunt.co.uk/
- * @author philogb / http://blog.thejit.org/
- * @author mikael emtinger / http://gomo.se/
- * @author egraether / http://egraether.com/
- * @author WestLangley / http://github.com/WestLangley
- */
+
+
+
 
 function Vector4( x, y, z, w ) {
 
@@ -124,7 +120,7 @@ Object.assign( Vector4.prototype, {
 
 		if ( w !== undefined ) {
 
-			console.warn( 'THREE.Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+			console.warn( 'Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 			return this.addVectors( v, w );
 
 		}
@@ -175,7 +171,7 @@ Object.assign( Vector4.prototype, {
 
 		if ( w !== undefined ) {
 
-			console.warn( 'THREE.Vector4: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+			console.warn( 'Vector4: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 			return this.subVectors( v, w );
 
 		}
@@ -610,7 +606,7 @@ Object.assign( Vector4.prototype, {
 
 		if ( offset !== undefined ) {
 
-			console.warn( 'THREE.Vector4: offset has been removed from .fromBufferAttribute().' );
+			console.warn( 'Vector4: offset has been removed from .fromBufferAttribute().' );
 
 		}
 
@@ -626,4 +622,6 @@ Object.assign( Vector4.prototype, {
 } );
 
 
-export { Vector4 };
+;
+
+export { Vector4 }

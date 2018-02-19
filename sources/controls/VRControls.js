@@ -1,9 +1,6 @@
 import { Matrix4 } from '../math/Matrix4.js'
 
-/**
- * @author dmarcos / https://github.com/dmarcos
- * @author mrdoob / http://mrdoob.com
- */
+
 
 var VRControls = function ( object, onError ) {
 

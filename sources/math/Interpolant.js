@@ -1,24 +1,6 @@
-/**
- * Abstract base class of interpolants over parametric samples.
- *
- * The parameter domain is one dimensional, typically the time or a path
- * along a curve defined by the data.
- *
- * The sample values can have any dimensionality and derived classes may
- * apply special interpretations to the data.
- *
- * This class provides the interval seek in a Template Method, deferring
- * the actual interpolation to derived classes.
- *
- * Time complexity is O(1) for linear access crossing at most two points
- * and O(log N) for random access, where N is the number of positions.
- *
- * References:
- *
- * 		http://www.oodesign.com/template-method-pattern.html
- *
- * @author tschw
- */
+
+
+
 
 function Interpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
@@ -229,14 +211,14 @@ Object.assign( Interpolant.prototype, {
 
 	// Template methods for derived classes:
 
-	interpolate_: function ( /* i1, t0, t, t1 */ ) {
+	interpolate_: function (  ) {
 
 		throw new Error( 'call to abstract method' );
 		// implementations shall return this.resultBuffer
 
 	},
 
-	intervalChanged_: function ( /* i1, t0, t1 */ ) {
+	intervalChanged_: function (  ) {
 
 		// empty
 
@@ -256,4 +238,6 @@ Object.assign( Interpolant.prototype, {
 } );
 
 
-export { Interpolant };
+;
+
+export { Interpolant }

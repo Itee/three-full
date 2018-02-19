@@ -1,56 +1,37 @@
+import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { PointsMaterial } from '../materials/PointsMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Mesh } from '../objects/Mesh.js'
-import { MaterialLoader } from '../loaders/MaterialLoader.js'
+import { LineSegments } from '../objects/LineSegments.js'
+import { Points } from '../objects/Points.js'
+import { MaterialLoader } from './MaterialLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { Group } from '../objects/Group.js'
-import { MeshStandardMaterial } from '../materials/Materials.js'
-import { FileLoader } from '../loaders/FileLoader.js'
 import { VertexColors } from '../constants.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
-/**
-  * @author Kai Salmen / https://kaisalmen.de
-  * Development repository: https://github.com/kaisalmen/WWOBJLoader
-  */
+
 
 'use strict';
 
 var LoaderSupport = {}
 
-/**
- * Validation functions.
- * @class
- */
+
 LoaderSupport.Validator = {
-	/**
-	 * If given input is null or undefined, false is returned otherwise true.
-	 *
-	 * @param input Can be anything
-	 * @returns {boolean}
-	 */
+	
 	isValid: function( input ) {
 		return ( input !== null && input !== undefined );
 	},
-	/**
-	 * If given input is null or undefined, the defaultValue is returned otherwise the given input.
-	 *
-	 * @param input Can be anything
-	 * @param defaultValue Can be anything
-	 * @returns {*}
-	 */
+	
 	verifyInput: function( input, defaultValue ) {
 		return ( input === null || input === undefined ) ? defaultValue : input;
 	}
 };
 
 
-/**
- * Logging wrapper for console.
- * @class
- *
- * @param {boolean} enabled=true Tell if logger is enabled.
- * @param {boolean} debug=false Toggle debug logging.
- */
+
 LoaderSupport.ConsoleLogger = (function () {
 
 	function ConsoleLogger( enabled, debug ) {
@@ -58,113 +39,78 @@ LoaderSupport.ConsoleLogger = (function () {
 		this.debug = debug === true;
 	}
 
-	/**
-	 * Enable or disable debug logging.
-	 * @memberOf LoaderSupport.ConsoleLogger
-	 *
-	 * @param {boolean} debug True or False
-	 */
+	
 	ConsoleLogger.prototype.setDebug = function ( debug ) {
 		this.debug = debug === true;
 	};
 
-	/**
-	 * Returns if is enabled and debug.
-	 * @memberOf LoaderSupport.ConsoleLogger
-	 *
-	 * @returns {boolean}
-	 */
+	
 	ConsoleLogger.prototype.isDebug = function () {
 		return this.isEnabled() && this.debug;
 	};
 
-	/**
-	 * Enable or disable info, debug and time logging.
-	 * @memberOf LoaderSupport.ConsoleLogger
-	 *
-	 * @param {boolean} enabled True or False
-	 */
+	
 	ConsoleLogger.prototype.setEnabled = function ( enabled ) {
 		this.enabled = enabled === true;
 	};
 
-	/**
-	 * Returns if is enabled.
-	 * @memberOf LoaderSupport.ConsoleLogger
-	 *
-	 * @returns {boolean}
-	 */
+	
 	ConsoleLogger.prototype.isEnabled = function () {
 		return this.enabled;
 	};
 
-	/**
-	 * Log a debug message if enabled and debug is set.
-	 * @memberOf LoaderSupport.ConsoleLogger
-	 *
-	 * @param {string} message Message to log
-	 */
-	ConsoleLogger.prototype.logDebug = function ( message ) {
-		if ( this.enabled && this.debug ) console.info( message );
+	
+	ConsoleLogger.prototype.logDebug = function ( message, additional ) {
+		if ( this.enabled && this.debug ) {
+
+			this._createStatement( message, 'Additional content:', additional, function ( output ) { console.debug( output ) } );
+
+		}
 	};
 
-	/**
-	 * Log an info message if enabled.
-	 * @memberOf LoaderSupport.ConsoleLogger
-	 *
-	 * @param {string} message Message to log
-	 */
-	ConsoleLogger.prototype.logInfo = function ( message ) {
-		if ( this.enabled ) console.info( message );
+	
+	ConsoleLogger.prototype.logInfo = function ( message, additional ) {
+		if ( this.enabled ) {
+
+			this._createStatement( message, 'Additional content:', additional, function ( output ) { console.info( output ) } );
+
+		}
 	};
 
-	/**
-	 * Log a warn message (always).
-	 * @memberOf LoaderSupport.ConsoleLogger
-	 *
-	 * @param {string} message Message to log
-	 */
-	ConsoleLogger.prototype.logWarn = function ( message ) {
-		console.warn( message );
+	
+	ConsoleLogger.prototype.logWarn = function ( message, additional ) {
+		this._createStatement( message, 'Additional content:', additional, function ( output ) { console.warn( output ) } );
 	};
 
-	/**
-	 * Log an error message (always).
-	 * @memberOf LoaderSupport.ConsoleLogger
-	 *
-	 * @param {string} message Message to log
-	 */
-	ConsoleLogger.prototype.logError = function ( message ) {
-		console.error( message );
+	
+	ConsoleLogger.prototype.logError = function ( message, additional ) {
+		this._createStatement( message, 'Additional content:', additional, function ( output ) { console.error( output ) } );
 	};
 
-	/**
-	 * Start time measurement with provided id.
-	 * @memberOf LoaderSupport.ConsoleLogger
-	 *
-	 * @param {string} id Time identification
-	 */
+	
 	ConsoleLogger.prototype.logTimeStart = function ( id ) {
 		if ( this.enabled ) console.time( id );
 	};
 
-	/**
-	 * Stop time measurement started with provided id.
-	 * @memberOf LoaderSupport.ConsoleLogger
-	 *
-	 * @param {string} id Time identification
-	 */
+	
 	ConsoleLogger.prototype.logTimeEnd = function ( id ) {
 		if ( this.enabled ) console.timeEnd( id );
+	};
+
+	ConsoleLogger.prototype._createStatement = function ( message, addHeader, additional, logFunction ) {
+		var output = message;
+		if ( Array.isArray( additional ) ) {
+
+			output += '\n' + addHeader + '\n' + additional.join( '\n' );
+
+		}
+		logFunction( output );
 	};
 
 	return ConsoleLogger;
 })();
 
-/**
- * Callbacks utilized by loaders and builder.
- * @class
- */
+
 LoaderSupport.Callbacks = (function () {
 
 	var Validator = LoaderSupport.Validator;
@@ -176,43 +122,22 @@ LoaderSupport.Callbacks = (function () {
 		this.onLoadMaterials = null;
 	}
 
-	/**
-	 * Register callback function that is invoked by internal function "announceProgress" to print feedback.
-	 * @memberOf LoaderSupport.Callbacks
-	 *
-	 * @param {callback} callbackOnProgress Callback function for described functionality
-	 */
+	
 	Callbacks.prototype.setCallbackOnProgress = function ( callbackOnProgress ) {
 		this.onProgress = Validator.verifyInput( callbackOnProgress, this.onProgress );
 	};
 
-	/**
-	 * Register callback function that is called every time a mesh was loaded.
-	 * Use {@link LoaderSupport.LoadedMeshUserOverride} for alteration instructions (geometry, material or disregard mesh).
-	 * @memberOf LoaderSupport.Callbacks
-	 *
-	 * @param {callback} callbackOnMeshAlter Callback function for described functionality
-	 */
+	
 	Callbacks.prototype.setCallbackOnMeshAlter = function ( callbackOnMeshAlter ) {
 		this.onMeshAlter = Validator.verifyInput( callbackOnMeshAlter, this.onMeshAlter );
 	};
 
-	/**
-	 * Register callback function that is called once loading of the complete OBJ file is completed.
-	 * @memberOf LoaderSupport.Callbacks
-	 *
-	 * @param {callback} callbackOnLoad Callback function for described functionality
-	 */
+	
 	Callbacks.prototype.setCallbackOnLoad = function ( callbackOnLoad ) {
 		this.onLoad = Validator.verifyInput( callbackOnLoad, this.onLoad );
 	};
 
-	/**
-	 * Register callback function that is called when materials have been loaded.
-	 * @memberOf LoaderSupport.Callbacks
-	 *
-	 * @param {callback} callbackOnLoadMaterials Callback function for described functionality
-	 */
+	
 	Callbacks.prototype.setCallbackOnLoadMaterials = function ( callbackOnLoadMaterials ) {
 		this.onLoadMaterials = Validator.verifyInput( callbackOnLoadMaterials, this.onLoadMaterials );
 	};
@@ -221,13 +146,7 @@ LoaderSupport.Callbacks = (function () {
 })();
 
 
-/**
- * Object to return by callback onMeshAlter. Used to disregard a certain mesh or to return one to many meshes.
- * @class
- *
- * @param {boolean} disregardMesh=false Tell implementation to completely disregard this mesh
- * @param {boolean} disregardMesh=false Tell implementation that mesh(es) have been altered or added
- */
+
 LoaderSupport.LoadedMeshUserOverride = (function () {
 
 	function LoadedMeshUserOverride( disregardMesh, alteredMesh ) {
@@ -236,32 +155,18 @@ LoaderSupport.LoadedMeshUserOverride = (function () {
 		this.meshes = [];
 	}
 
-	/**
-	 * Add a mesh created within callback.
-	 *
-	 * @memberOf OBJLoader2.LoadedMeshUserOverride
-	 *
-	 * @param {Mesh} mesh
-	 */
+	
 	LoadedMeshUserOverride.prototype.addMesh = function ( mesh ) {
 		this.meshes.push( mesh );
 		this.alteredMesh = true;
 	};
 
-	/**
-	 * Answers if mesh shall be disregarded completely.
-	 *
-	 * @returns {boolean}
-	 */
+	
 	LoadedMeshUserOverride.prototype.isDisregardMesh = function () {
 		return this.disregardMesh;
 	};
 
-	/**
-	 * Answers if new mesh(es) were created.
-	 *
-	 * @returns {boolean}
-	 */
+	
 	LoadedMeshUserOverride.prototype.providesAlteredMeshes = function () {
 		return this.alteredMesh;
 	};
@@ -270,13 +175,7 @@ LoaderSupport.LoadedMeshUserOverride = (function () {
 })();
 
 
-/**
- * A resource description used by {@link LoaderSupport.PrepData} and others.
- * @class
- *
- * @param {string} url URL to the file
- * @param {string} extension The file extension (type)
- */
+
 LoaderSupport.ResourceDescriptor = (function () {
 
 	var Validator = LoaderSupport.Validator;
@@ -302,12 +201,7 @@ LoaderSupport.ResourceDescriptor = (function () {
 		this.content = null;
 	}
 
-	/**
-	 * Set the content of this resource (String)
-	 * @memberOf LoaderSupport.ResourceDescriptor
-	 *
-	 * @param {Object} content The file content as arraybuffer or text
-	 */
+	
 	ResourceDescriptor.prototype.setContent = function ( content ) {
 		this.content = Validator.verifyInput( content, null );
 	};
@@ -316,10 +210,7 @@ LoaderSupport.ResourceDescriptor = (function () {
 })();
 
 
-/**
- * Configuration instructions to be used by run method.
- * @class
- */
+
 LoaderSupport.PrepData = (function () {
 
 	var Validator = LoaderSupport.Validator;
@@ -336,92 +227,47 @@ LoaderSupport.PrepData = (function () {
 		this.useAsync = false;
 	}
 
-	/**
-	 * Set the node where the loaded objects will be attached directly.
-	 * @memberOf LoaderSupport.PrepData
-	 *
-	 * @param {Object3D} streamMeshesTo Object already attached to scenegraph where new meshes will be attached to
-	 */
+	
 	PrepData.prototype.setStreamMeshesTo = function ( streamMeshesTo ) {
 		this.streamMeshesTo = Validator.verifyInput( streamMeshesTo, null );
 	};
 
-	/**
-	 * Tells whether a material shall be created per smoothing group.
-	 * @memberOf LoaderSupport.PrepData
-	 *
-	 * @param {boolean} materialPerSmoothingGroup=false
-	 */
+	
 	PrepData.prototype.setMaterialPerSmoothingGroup = function ( materialPerSmoothingGroup ) {
 		this.materialPerSmoothingGroup = materialPerSmoothingGroup === true;
 	};
 
-	/**
-	 * Tells whether indices should be used
-	 * @memberOf LoaderSupport.PrepData
-	 *
-	 * @param {boolean} useIndices=false
-	 */
+	
 	PrepData.prototype.setUseIndices = function ( useIndices ) {
 		this.useIndices = useIndices === true;
 	};
 
-	/**
-	 * Tells whether normals should be completely disregarded and regenerated.
-	 * @memberOf LoaderSupport.PrepData
-	 *
-	 * @param {boolean} disregardNormals=false
-	 */
+	
 	PrepData.prototype.setDisregardNormals = function ( disregardNormals ) {
 		this.disregardNormals = disregardNormals === true;
 	};
 
-	/**
-	 * Returns all callbacks as {@link LoaderSupport.Callbacks}
-	 * @memberOf LoaderSupport.PrepData
-	 *
-	 * @returns {LoaderSupport.Callbacks}
-	 */
+	
 	PrepData.prototype.getCallbacks = function () {
 		return this.callbacks;
 	};
 
-	/**
-	 * Sets the CORS string to be used.
-	 * @memberOf LoaderSupport.PrepData
-	 *
-	 * @param {string} crossOrigin CORS value
-	 */
+	
 	PrepData.prototype.setCrossOrigin = function ( crossOrigin ) {
 		this.crossOrigin = crossOrigin;
 	};
 
-	/**
-	 * Add a resource description.
-	 * @memberOf LoaderSupport.PrepData
-	 *
-	 * @param {LoaderSupport.ResourceDescriptor}
-	 */
+	
 	PrepData.prototype.addResource = function ( resource ) {
 		this.resources.push( resource );
 	};
 
-	/**
-	 * If true uses async loading with worker, if false loads data synchronously.
-	 * @memberOf LoaderSupport.PrepData
-	 *
-	 * @param {boolean} useAsync
-	 */
+	
 	PrepData.prototype.setUseAsync = function ( useAsync ) {
 		this.useAsync = useAsync === true;
 	};
 
-	/**
-	 * Clones this object and returns it afterwards.
-	 * @memberOf LoaderSupport.PrepData
-	 *
-	 * @returns {@link LoaderSupport.PrepData}
-	 */
+	
 	PrepData.prototype.clone = function () {
 		var clone = new LoaderSupport.PrepData( this.modelName );
 		clone.resources = this.resources;
@@ -438,11 +284,7 @@ LoaderSupport.PrepData = (function () {
 	return PrepData;
 })();
 
-/**
- * Builds one or many Mesh from one raw set of Arraybuffers, materialGroup descriptions and further parameters.
- * Supports vertex, vertexColor, normal, uv and index buffers.
- * @class
- */
+
 LoaderSupport.Builder = (function () {
 
 	var LOADER_BUILDER_VERSION = '1.1.1';
@@ -455,14 +297,42 @@ LoaderSupport.Builder = (function () {
 		this.logger.logInfo( 'Using LoaderSupport.Builder version: ' + LOADER_BUILDER_VERSION );
 		this.callbacks = new LoaderSupport.Callbacks();
 		this.materials = [];
+		this._createDefaultMaterials();
 	}
 
-	/**
-	 * Set materials loaded by any supplier of an Array of {@link Material}.
-	 * @memberOf LoaderSupport.Builder
-	 *
-	 * @param {Material[]} materials Array of {@link Material}
-	 */
+	Builder.prototype._createDefaultMaterials = function () {
+		var defaultMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
+		defaultMaterial.name = 'defaultMaterial';
+
+		var defaultVertexColorMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
+		defaultVertexColorMaterial.name = 'defaultVertexColorMaterial';
+		defaultVertexColorMaterial.vertexColors = VertexColors;
+
+		var defaultLineMaterial = new LineBasicMaterial();
+		defaultLineMaterial.name = 'defaultLineMaterial';
+
+		var defaultPointMaterial = new PointsMaterial( { size: 1, sizeAttenuation: false } );
+		defaultPointMaterial.name = 'defaultPointMaterial';
+
+		var runtimeMaterials = {};
+		runtimeMaterials[ defaultMaterial.name ] = defaultMaterial;
+		runtimeMaterials[ defaultVertexColorMaterial.name ] = defaultVertexColorMaterial;
+		runtimeMaterials[ defaultLineMaterial.name ] = defaultLineMaterial;
+		runtimeMaterials[ defaultPointMaterial.name ] = defaultPointMaterial;
+
+		this.updateMaterials(
+			{
+				cmd: 'materialData',
+				materials: {
+					materialCloneInstructions: null,
+					serializedMaterials: null,
+					runtimeMaterials: runtimeMaterials
+				}
+			}
+		);
+	};
+
+	
 	Builder.prototype.setMaterials = function ( materials ) {
 		var payload = {
 			cmd: 'materialData',
@@ -482,13 +352,7 @@ LoaderSupport.Builder = (function () {
 		if ( Validator.isValid( callbacks.onLoadMaterials ) ) this.callbacks.setCallbackOnLoadMaterials( callbacks.onLoadMaterials );
 	};
 
-	/**
-	 * Delegates processing of the payload (mesh building or material update) to the corresponding functions (BW-compatibility).
-	 * @memberOf LoaderSupport.Builder
-	 *
-	 * @param {Object} payload Raw Mesh or Material descriptions.
-	 * @returns {Mesh[]} mesh Array of {@link Mesh} or null in case of material update
-	 */
+	
 	Builder.prototype.processPayload = function ( payload ) {
 		if ( payload.cmd === 'meshData' ) {
 
@@ -502,13 +366,7 @@ LoaderSupport.Builder = (function () {
 		}
 	};
 
-	/**
-	 * Builds one or multiple meshes from the data described in the payload (buffers, params, material info).
-	 * @memberOf LoaderSupport.Builder
-	 *
-	 * @param {Object} meshPayload Raw mesh description (buffers, params, materials) used to build one to many meshes.
-	 * @returns {Mesh[]} mesh Array of {@link Mesh}
-	 */
+	
 	Builder.prototype.buildMeshes = function ( meshPayload ) {
 		var meshName = meshPayload.params.meshName;
 
@@ -570,6 +428,7 @@ LoaderSupport.Builder = (function () {
 		var callbackOnMeshAlter = this.callbacks.onMeshAlter;
 		var callbackOnMeshAlterResult;
 		var useOrgMesh = true;
+		var geometryType = Validator.verifyInput( meshPayload.geometryType, 0 );
 		if ( Validator.isValid( callbackOnMeshAlter ) ) {
 
 			callbackOnMeshAlterResult = callbackOnMeshAlter(
@@ -577,7 +436,8 @@ LoaderSupport.Builder = (function () {
 					detail: {
 						meshName: meshName,
 						bufferGeometry: bufferGeometry,
-						material: material
+						material: material,
+						geometryType: geometryType
 					}
 				}
 			);
@@ -599,7 +459,20 @@ LoaderSupport.Builder = (function () {
 		}
 		if ( useOrgMesh ) {
 
-			mesh = new Mesh( bufferGeometry, material );
+			if ( meshPayload.computeBoundingSphere ) bufferGeometry.computeBoundingSphere();
+			if ( geometryType === 0 ) {
+
+				mesh = new Mesh( bufferGeometry, material );
+
+			} else if ( geometryType === 1) {
+
+				mesh = new LineSegments( bufferGeometry, material );
+
+			} else {
+
+				mesh = new Points( bufferGeometry, material );
+
+			}
 			mesh.name = meshName;
 			meshes.push( mesh );
 
@@ -642,12 +515,7 @@ LoaderSupport.Builder = (function () {
 		return meshes;
 	};
 
-	/**
-	 * Updates the materials with contained material objects (sync) or from alteration instructions (async).
-	 * @memberOf LoaderSupport.Builder
-	 *
-	 * @param {Object} materialPayload Material update instructions
-	 */
+	
 	Builder.prototype.updateMaterials = function ( materialPayload ) {
 		var material, materialName;
 		var materialCloneInstructions = materialPayload.materials.materialCloneInstructions;
@@ -655,19 +523,27 @@ LoaderSupport.Builder = (function () {
 
 			var materialNameOrg = materialCloneInstructions.materialNameOrg;
 			var materialOrg = this.materials[ materialNameOrg ];
-			material = materialOrg.clone();
 
-			materialName = materialCloneInstructions.materialName;
-			material.name = materialName;
+			if ( Validator.isValid( materialNameOrg ) ) {
 
-			var materialProperties = materialCloneInstructions.materialProperties;
-			for ( var key in materialProperties ) {
+				material = materialOrg.clone();
 
-				if ( material.hasOwnProperty( key ) && materialProperties.hasOwnProperty( key ) ) material[ key ] = materialProperties[ key ];
+				materialName = materialCloneInstructions.materialName;
+				material.name = materialName;
+
+				var materialProperties = materialCloneInstructions.materialProperties;
+				for ( var key in materialProperties ) {
+
+					if ( material.hasOwnProperty( key ) && materialProperties.hasOwnProperty( key ) ) material[ key ] = materialProperties[ key ];
+
+				}
+				this.materials[ materialName ] = material;
+
+			} else {
+
+				this.logger.logWarn( 'Requested material "' + materialNameOrg + '" is not available!' );
 
 			}
-			this.materials[ materialName ] = material;
-
 		}
 
 		var materials = materialPayload.materials.serializedMaterials;
@@ -703,11 +579,7 @@ LoaderSupport.Builder = (function () {
 		}
 	};
 
-	/**
-	 * Returns the mapping object of material name and corresponding jsonified material.
-	 *
-	 * @returns {Object} Map of Materials in JSON representation
-	 */
+	
 	Builder.prototype.getMaterialsJSON = function () {
 		var materialsJSON = {};
 		var material;
@@ -720,11 +592,7 @@ LoaderSupport.Builder = (function () {
 		return materialsJSON;
 	};
 
-	/**
-	 * Returns the mapping object of material name and corresponding material.
-	 *
-	 * @returns {Object} Map of {@link Material}
-	 */
+	
 	Builder.prototype.getMaterials = function () {
 		return this.materials;
 	};
@@ -732,13 +600,7 @@ LoaderSupport.Builder = (function () {
 	return Builder;
 })();
 
-/**
- * Base class to be used by loaders.
- * @class
- *
- * @param {DefaultLoadingManager} [manager] The loadingManager for the loader to use. Default is {@link DefaultLoadingManager}
- * @param {LoaderSupport.ConsoleLogger} logger logger to be used
- */
+
 LoaderSupport.LoaderBase = (function () {
 
 	var Validator = LoaderSupport.Validator;
@@ -748,6 +610,9 @@ LoaderSupport.LoaderBase = (function () {
 		this.manager = Validator.verifyInput( manager, DefaultLoadingManager );
 		this.logger = Validator.verifyInput( logger, new ConsoleLogger() );
 
+		this.fileLoader = new FileLoader( this.manager );
+		this.fileLoader.setResponseType( 'arraybuffer' );
+
 		this.modelName = '';
 		this.instanceNo = 0;
 		this.path = '';
@@ -756,33 +621,8 @@ LoaderSupport.LoaderBase = (function () {
 
 		this.loaderRootNode = new Group();
 		this.builder = new LoaderSupport.Builder( this.logger );
-		this._createDefaultMaterials();
 		this.callbacks = new LoaderSupport.Callbacks();
-	};
-
-	LoaderBase.prototype._createDefaultMaterials = function () {
-		var defaultMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
-		defaultMaterial.name = 'defaultMaterial';
-
-		var vertexColorMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
-		vertexColorMaterial.name = 'vertexColorMaterial';
-		vertexColorMaterial.vertexColors = VertexColors;
-
-		var runtimeMaterials = {};
-		runtimeMaterials[ defaultMaterial.name ] = defaultMaterial;
-		runtimeMaterials[ vertexColorMaterial.name ] = vertexColorMaterial;
-
-		this.builder.updateMaterials(
-			{
-				cmd: 'materialData',
-				materials: {
-					materialCloneInstructions: null,
-					serializedMaterials: null,
-					runtimeMaterials: runtimeMaterials
-				}
-			}
-		);
-	};
+	}
 
 	LoaderBase.prototype._applyPrepData = function ( prepData ) {
 		if ( Validator.isValid( prepData ) ) {
@@ -806,84 +646,42 @@ LoaderSupport.LoaderBase = (function () {
 		this.builder._setCallbacks( this.callbacks );
 	};
 
-	/**
-	 * Provides access to console logging wrapper.
-	 *
-	 * @returns {LoaderSupport.ConsoleLogger}
-	 */
+	
 	LoaderBase.prototype.getLogger = function () {
 		return this.logger;
 	};
 
-	/**
-	 * Set the name of the model.
-	 * @memberOf LoaderSupport.LoaderBase
-	 *
-	 * @param {string} modelName
-	 */
+	
 	LoaderBase.prototype.setModelName = function ( modelName ) {
 		this.modelName = Validator.verifyInput( modelName, this.modelName );
 	};
 
-	/**
-	 * The URL of the base path.
-	 * @memberOf LoaderSupport.LoaderBase
-	 *
-	 * @param {string} path URL
-	 */
+	
 	LoaderBase.prototype.setPath = function ( path ) {
 		this.path = Validator.verifyInput( path, this.path );
 	};
 
-	/**
-	 * Set the node where the loaded objects will be attached directly.
-	 * @memberOf LoaderSupport.LoaderBase
-	 *
-	 * @param {Object3D} streamMeshesTo Object already attached to scenegraph where new meshes will be attached to
-	 */
+	
 	LoaderBase.prototype.setStreamMeshesTo = function ( streamMeshesTo ) {
 		this.loaderRootNode = Validator.verifyInput( streamMeshesTo, this.loaderRootNode );
 	};
 
-	/**
-	 * Set materials loaded by MTLLoader or any other supplier of an Array of {@link Material}.
-	 * @memberOf LoaderSupport.LoaderBase
-	 *
-	 * @param {Material[]} materials Array of {@link Material}
-	 */
+	
 	LoaderBase.prototype.setMaterials = function ( materials ) {
 		this.builder.setMaterials( materials );
 	};
 
-	/**
-	 * Instructs loaders to create indexed {@link BufferGeometry}.
-	 * @memberOf LoaderSupport.LoaderBase
-	 *
-	 * @param {boolean} useIndices=false
-	 */
+	
 	LoaderBase.prototype.setUseIndices = function ( useIndices ) {
 		this.useIndices = useIndices === true;
 	};
 
-	/**
-	 * Tells whether normals should be completely disregarded and regenerated.
-	 * @memberOf LoaderSupport.LoaderBase
-	 *
-	 * @param {boolean} disregardNormals=false
-	 */
+	
 	LoaderBase.prototype.setDisregardNormals = function ( disregardNormals ) {
 		this.disregardNormals = disregardNormals === true;
 	};
 
-	/**
-	 * Announce feedback which is give to the registered callbacks.
-	 * @memberOf LoaderSupport.LoaderBase
-	 * @private
-	 *
-	 * @param {string} type The type of event
-	 * @param {string} text Textual description of the event
-	 * @param {number} numericalValue Numerical value describing the progress
-	 */
+	
 	LoaderBase.prototype.onProgress = function ( type, text, numericalValue ) {
 		var content = Validator.isValid( text ) ? text: '';
 		var event = {
@@ -901,14 +699,129 @@ LoaderSupport.LoaderBase = (function () {
 		this.logger.logDebug( content );
 	};
 
+	
+	LoaderBase.prototype.load = function ( url, onLoad, onProgress, onError, onMeshAlter, useAsync ) {
+		var scope = this;
+		if ( ! Validator.isValid( onProgress ) ) {
+			var numericalValueRef = 0;
+			var numericalValue = 0;
+			onProgress = function ( event ) {
+				if ( ! event.lengthComputable ) return;
+
+				numericalValue = event.loaded / event.total;
+				if ( numericalValue > numericalValueRef ) {
+
+					numericalValueRef = numericalValue;
+					var output = 'Download of "' + url + '": ' + ( numericalValue * 100 ).toFixed( 2 ) + '%';
+					scope.onProgress( 'progressLoad', output, numericalValue );
+
+				}
+			};
+		}
+
+		if ( ! Validator.isValid( onError ) ) {
+			onError = function ( event ) {
+				var output = 'Error occurred while downloading "' + url + '"';
+				scope.logger.logError( output + ': ' + event );
+				scope.onProgress( 'error', output, -1 );
+			};
+		}
+
+		this.fileLoader.setPath( this.path );
+		this.fileLoader.load( url, function ( content ) {
+			if ( useAsync ) {
+
+				scope.parseAsync( content, onLoad );
+
+			} else {
+
+				var callbacks = new LoaderSupport.Callbacks();
+				callbacks.setCallbackOnMeshAlter( onMeshAlter );
+				scope._setCallbacks( callbacks );
+				onLoad(
+					{
+						detail: {
+							loaderRootNode: scope.parse( content ),
+							modelName: scope.modelName,
+							instanceNo: scope.instanceNo
+						}
+					}
+				);
+
+			}
+
+		}, onProgress, onError );
+
+	};
+
+	
+	LoaderBase.prototype.checkResourceDescriptorFiles = function ( resources, fileDesc ) {
+		var resource, triple, i, found;
+		var result = {};
+
+		for ( var index in resources ) {
+
+			resource = resources[ index ];
+			found = false;
+			if ( ! Validator.isValid( resource.name ) ) continue;
+			if ( Validator.isValid( resource.content ) ) {
+
+				for ( i = 0; i < fileDesc.length && !found; i++ ) {
+
+					triple = fileDesc[ i ];
+					if ( resource.extension.toLowerCase() === triple.ext.toLowerCase() ) {
+
+						if ( triple.ignore ) {
+
+							found = true;
+
+						} else if ( triple.type === "Uint8Array" ) {
+
+							// fast-fail on bad type
+							if ( ! ( resource.content instanceof Uint8Array ) ) throw 'Provided content is not of type arraybuffer! Aborting...';
+							result[ triple.ext ] = resource;
+							found = true;
+
+						} else if ( triple.type === "String" ) {
+
+							if ( ! (typeof(resource.content) === 'string' || resource.content instanceof String) ) throw 'Provided  content is not of type String! Aborting...';
+							result[ triple.ext ] = resource;
+							found = true;
+
+						}
+
+					}
+
+				}
+				if ( !found ) throw 'Unidentified resource "' + resource.name + '": ' + resource.url;
+
+			} else {
+
+				// fast-fail on bad type
+				if ( ! ( typeof( resource.name ) === 'string' || resource.name instanceof String ) ) throw 'Provided file is not properly defined! Aborting...';
+				for ( i = 0; i < fileDesc.length && !found; i++ ) {
+
+					triple = fileDesc[ i ];
+					if ( resource.extension.toLowerCase() === triple.ext.toLowerCase() ) {
+
+						if ( ! triple.ignore ) result[ triple.ext ] = resource;
+						found = true;
+
+					}
+
+				}
+				if ( !found ) throw 'Unidentified resource "' + resource.name + '": ' + resource.url;
+
+			}
+		}
+
+		return result;
+	};
+
 	return LoaderBase;
 })();
 
-/**
- * Default implementation of the WorkerRunner responsible for creation and configuration of the parser within the worker.
- *
- * @class
- */
+
 LoaderSupport.WorkerRunnerRefImpl = (function () {
 
 	function WorkerRunnerRefImpl() {
@@ -919,13 +832,7 @@ LoaderSupport.WorkerRunnerRefImpl = (function () {
 		self.addEventListener( 'message', scopedRunner, false );
 	}
 
-	/**
-	 * Applies values from parameter object via set functions or via direct assignment.
-	 * @memberOf LoaderSupport.WorkerRunnerRefImpl
-	 *
-	 * @param {Object} parser The parser instance
-	 * @param {Object} params The parameter object
-	 */
+	
 	WorkerRunnerRefImpl.prototype.applyProperties = function ( parser, params ) {
 		var property, funcName, values;
 		for ( property in params ) {
@@ -944,12 +851,7 @@ LoaderSupport.WorkerRunnerRefImpl = (function () {
 		}
 	};
 
-	/**
-	 * Configures the Parser implementation according the supplied configuration object.
-	 * @memberOf LoaderSupport.WorkerRunnerRefImpl
-	 *
-	 * @param {Object} payload Raw mesh description (buffers, params, materials) used to build one to many meshes.
-	 */
+	
 	WorkerRunnerRefImpl.prototype.processMessage = function ( payload ) {
 		var logEnabled = payload.logger.enabled;
 		var logDebug = payload.logger.enabled;
@@ -990,16 +892,10 @@ LoaderSupport.WorkerRunnerRefImpl = (function () {
 	return WorkerRunnerRefImpl;
 })();
 
-/**
- * This class provides means to transform existing parser code into a web worker. It defines a simple communication protocol
- * which allows to configure the worker and receive raw mesh data during execution.
- * @class
- *
- * @param {LoaderSupport.ConsoleLogger} logger logger to be used
- */
+
 LoaderSupport.WorkerSupport = (function () {
 
-	var WORKER_SUPPORT_VERSION = '2.0.1';
+	var WORKER_SUPPORT_VERSION = '2.1.2';
 
 	var Validator = LoaderSupport.Validator;
 
@@ -1035,9 +931,7 @@ LoaderSupport.WorkerSupport = (function () {
 			this._postMessage();
 		};
 
-		/**
-		 * Executed in worker scope
- 		 */
+		
 		LoaderWorker.prototype._receiveWorkerMessage = function ( e ) {
 			var payload = e.data;
 			switch ( payload.cmd ) {
@@ -1164,16 +1058,8 @@ LoaderSupport.WorkerSupport = (function () {
 		this.loaderWorker = new LoaderWorker( this.logger );
 	}
 
-	/**
-	 * Validate the status of worker code and the derived worker.
-	 * @memberOf LoaderSupport.WorkerSupport
-	 *
-	 * @param {Function} functionCodeBuilder Function that is invoked with funcBuildObject and funcBuildSingelton that allows stringification of objects and singletons.
-	 * @param {String[]} libLocations URL of libraries that shall be added to worker code relative to libPath
-	 * @param {String} libPath Base path used for loading libraries
-	 * @param {LoaderSupport.WorkerRunnerRefImpl} runnerImpl The default worker parser wrapper implementation (communication and execution). An extended class could be passed here.
-	 */
-	WorkerSupport.prototype.validate = function ( functionCodeBuilder, libLocations, libPath, runnerImpl ) {
+	
+	WorkerSupport.prototype.validate = function ( functionCodeBuilder, parserName, libLocations, libPath, runnerImpl ) {
 		if ( Validator.isValid( this.loaderWorker.worker ) ) return;
 
 		this.logger.logInfo( 'WorkerSupport: Building worker code...' );
@@ -1181,17 +1067,18 @@ LoaderSupport.WorkerSupport = (function () {
 
 		if ( Validator.isValid( runnerImpl ) ) {
 
-			this.logger.logInfo( 'WorkerSupport: Using "' + runnerImpl.name + '" as Runncer class for worker.' );
+			this.logger.logInfo( 'WorkerSupport: Using "' + runnerImpl.name + '" as Runner class for worker.' );
 
 		} else {
 
 			runnerImpl = LoaderSupport.WorkerRunnerRefImpl;
-			this.logger.logInfo( 'WorkerSupport: Using DEFAULT "LoaderSupport.WorkerRunnerRefImpl" as Runncer class for worker.' );
+			this.logger.logInfo( 'WorkerSupport: Using DEFAULT "LoaderSupport.WorkerRunnerRefImpl" as Runner class for worker.' );
 
 		}
 
-		var userWorkerCode = functionCodeBuilder( buildObject, buildSingelton );
-		userWorkerCode += buildSingelton( runnerImpl.name, runnerImpl.name, runnerImpl );
+		var userWorkerCode = functionCodeBuilder( buildObject, buildSingleton );
+		userWorkerCode += 'var Parser = '+ parserName + ';\n\n';
+		userWorkerCode += buildSingleton( runnerImpl.name, runnerImpl );
 		userWorkerCode += 'new ' + runnerImpl.name + '();\n\n';
 
 		var scope = this;
@@ -1201,7 +1088,7 @@ LoaderSupport.WorkerSupport = (function () {
 			var loadAllLibraries = function ( path, locations ) {
 				if ( locations.length === 0 ) {
 
-					scope.loaderWorker.initWorker( libsContent + userWorkerCode, scope.logger, runnerImpl.name );
+					scope.loaderWorker.initWorker( libsContent + userWorkerCode, runnerImpl.name );
 					scope.logger.logTimeEnd( 'buildWebWorkerCode' );
 
 				} else {
@@ -1223,39 +1110,23 @@ LoaderSupport.WorkerSupport = (function () {
 
 		} else {
 
-			this.loaderWorker.initWorker( userWorkerCode, this.logger, runnerImpl.name );
+			this.loaderWorker.initWorker( userWorkerCode, runnerImpl.name );
 			this.logger.logTimeEnd( 'buildWebWorkerCode' );
 
 		}
 	};
 
-	/**
-	 * Specify functions that should be build when new raw mesh data becomes available and when the parser is finished.
-	 * @memberOf LoaderSupport.WorkerSupport
-	 *
-	 * @param {Function} builder The builder function. Default is {@link LoaderSupport.Builder}.
-	 * @param {Function} onLoad The function that is called when parsing is complete.
-	 */
+	
 	WorkerSupport.prototype.setCallbacks = function ( builder, onLoad ) {
 		this.loaderWorker.setCallbacks( builder, onLoad );
 	};
 
-	/**
-	 * Runs the parser with the provided configuration.
-	 * @memberOf LoaderSupport.WorkerSupport
-	 *
-	 * @param {Object} payload Raw mesh description (buffers, params, materials) used to build one to many meshes.
-	 */
+	
 	WorkerSupport.prototype.run = function ( payload ) {
 		this.loaderWorker.run( payload );
 	};
 
-	/**
-	 * Request termination of worker once parser is finished.
-	 * @memberOf LoaderSupport.WorkerSupport
-	 *
-	 * @param {boolean} terminateRequested True or false.
-	 */
+	
 	WorkerSupport.prototype.setTerminateRequested = function ( terminateRequested ) {
 		this.loaderWorker.setTerminateRequested( terminateRequested );
 	};
@@ -1292,27 +1163,41 @@ LoaderSupport.WorkerSupport = (function () {
 		return objectString;
 	};
 
-	var buildSingelton = function ( fullName, internalName, object ) {
-		var objectString = fullName + ' = (function () {\n\n';
-		objectString += '\t' + object.prototype.constructor.toString() + '\n\n';
-		objectString = objectString.replace( object.name, internalName );
+	var buildSingleton = function ( fullName, object, internalName ) {
+		var objectString = '';
+		var objectName = ( Validator.isValid( internalName ) ) ? internalName : object.name;
 
-		var funcString;
-		var objectPart;
+		var funcString, objectPart, constructorString;
 		for ( var name in object.prototype ) {
 
 			objectPart = object.prototype[ name ];
-			if ( typeof objectPart === 'function' ) {
+			if ( name === 'constructor' ) {
 
 				funcString = objectPart.toString();
-				objectString += '\t' + internalName + '.prototype.' + name + ' = ' + funcString + ';\n\n';
+				funcString = funcString.replace( 'function', '' );
+				constructorString = '\tfunction ' + objectName + funcString + ';\n\n';
+
+			} else if ( typeof objectPart === 'function' ) {
+
+				funcString = objectPart.toString();
+				objectString += '\t' + objectName + '.prototype.' + name + ' = ' + funcString + ';\n\n';
 
 			}
 
 		}
-		objectString += '\treturn ' + internalName + ';\n';
+		objectString += '\treturn ' + objectName + ';\n';
 		objectString += '})();\n\n';
+		if ( ! Validator.isValid( constructorString ) ) {
 
+			constructorString = fullName + ' = (function () {\n\n';
+			constructorString += '\t' + object.prototype.constructor.toString() + '\n\n';
+			objectString = constructorString + objectString;
+
+		} else {
+
+			objectString = fullName + ' = (function () {\n\n' + constructorString + objectString;
+
+		}
 		return objectString;
 	};
 
@@ -1320,19 +1205,7 @@ LoaderSupport.WorkerSupport = (function () {
 
 })();
 
-/**
- * Orchestrate loading of multiple OBJ files/data from an instruction queue with a configurable amount of workers (1-16).
- * Workflow:
- *   prepareWorkers
- *   enqueueForRun
- *   processQueue
- *   tearDown (to force stop)
- *
- * @class
- *
- * @param {string} classDef Class definition to be used for construction
- * @param {LoaderSupport.ConsoleLogger} logger logger to be used
- */
+
 LoaderSupport.WorkerDirector = (function () {
 
 	var LOADER_WORKER_DIRECTOR_VERSION = '2.1.0';
@@ -1364,44 +1237,22 @@ LoaderSupport.WorkerDirector = (function () {
 		this.callbackOnFinishedProcessing = null;
 	}
 
-	/**
-	 * Returns the maximum length of the instruction queue.
-	 * @memberOf LoaderSupport.WorkerDirector
-	 *
-	 * @returns {number}
-	 */
+	
 	WorkerDirector.prototype.getMaxQueueSize = function () {
 		return this.maxQueueSize;
 	};
 
-	/**
-	 * Returns the maximum number of workers.
-	 * @memberOf LoaderSupport.WorkerDirector
-	 *
-	 * @returns {number}
-	 */
+	
 	WorkerDirector.prototype.getMaxWebWorkers = function () {
 		return this.maxWebWorkers;
 	};
 
-	/**
-	 * Sets the CORS string to be used.
-	 * @memberOf LoaderSupport.WorkerDirector
-	 *
-	 * @param {string} crossOrigin CORS value
-	 */
+	
 	WorkerDirector.prototype.setCrossOrigin = function ( crossOrigin ) {
 		this.crossOrigin = crossOrigin;
 	};
 
-	/**
-	 * Create or destroy workers according limits. Set the name and register callbacks for dynamically created web workers.
-	 * @memberOf LoaderSupport.WorkerDirector
-	 *
-	 * @param {OBJLoader2.WWOBJLoader2.PrepDataCallbacks} globalCallbacks  Register global callbacks used by all web workers
-	 * @param {number} maxQueueSize Set the maximum size of the instruction queue (1-1024)
-	 * @param {number} maxWebWorkers Set the maximum amount of workers (1-16)
-	 */
+	
 	WorkerDirector.prototype.prepareWorkers = function ( globalCallbacks, maxQueueSize, maxWebWorkers ) {
 		if ( Validator.isValid( globalCallbacks ) ) this.workerDescription.globalCallbacks = globalCallbacks;
 		this.maxQueueSize = Math.min( maxQueueSize, MAX_QUEUE_SIZE );
@@ -1424,33 +1275,20 @@ LoaderSupport.WorkerDirector = (function () {
 		}
 	};
 
-	/**
-	 * Store run instructions in internal instructionQueue.
-	 * @memberOf LoaderSupport.WorkerDirector
-	 *
-	 * @param {LoaderSupport.PrepData} prepData
-	 */
+	
 	WorkerDirector.prototype.enqueueForRun = function ( prepData ) {
 		if ( this.instructionQueue.length < this.maxQueueSize ) {
 			this.instructionQueue.push( prepData );
 		}
 	};
 
-	/**
-	 * Returns if any workers are running.
-	 *
-	 * @memberOf LoaderSupport.WorkerDirector
-	 * @returns {boolean}
-	 */
+	
 	WorkerDirector.prototype.isRunning = function () {
 		var wsKeys = Object.keys( this.workerDescription.workerSupports );
 		return ( ( this.instructionQueue.length > 0 && this.instructionQueuePointer < this.instructionQueue.length ) || wsKeys.length > 0 );
 	};
 
-	/**
-	 * Process the instructionQueue until it is depleted.
-	 * @memberOf LoaderSupport.WorkerDirector
-	 */
+	
 	WorkerDirector.prototype.processQueue = function () {
 		var prepData, supportDesc;
 		for ( var instanceNo in this.workerDescription.workerSupports ) {
@@ -1558,12 +1396,7 @@ LoaderSupport.WorkerDirector = (function () {
 		}
 	};
 
-	/**
-	 * Terminate all workers.
-	 * @memberOf LoaderSupport.WorkerDirector
-	 *
-	 * @param {callback} callbackOnFinishedProcessing Function called once all workers finished processing.
-	 */
+	
 	WorkerDirector.prototype.tearDown = function ( callbackOnFinishedProcessing ) {
 		this.logger.logInfo( 'WorkerDirector received the deregister call. Terminating all workers!' );
 

@@ -1,11 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -23,7 +18,7 @@ var Three = (function (exports) {
 
 			}
 
-			return function () {
+			return function generateUUID() {
 
 				var d0 = Math.random() * 0xffffffff | 0;
 				var d1 = Math.random() * 0xffffffff | 0;
@@ -149,19 +144,6 @@ var Three = (function (exports) {
 
 	};
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author jordi_ros / http://plattsoft.com
-	 * @author D1plo1d / http://github.com/D1plo1d
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author timknip / http://www.floorplanner.com/
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Matrix4() {
 
 		this.elements = [
@@ -175,7 +157,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix4: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix4: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -270,7 +252,7 @@ var Three = (function (exports) {
 
 		extractRotation: function () {
 
-			var v1 = new Vector3$1();
+			var v1 = new Vector3();
 
 			return function extractRotation( m ) {
 
@@ -303,7 +285,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				console.error( 'THREE.Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
+				console.error( 'Matrix4: .makeRotationFromEuler() now expects a Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -466,9 +448,9 @@ var Three = (function (exports) {
 
 		lookAt: function () {
 
-			var x = new Vector3$1();
-			var y = new Vector3$1();
-			var z = new Vector3$1();
+			var x = new Vector3();
+			var y = new Vector3();
+			var z = new Vector3();
 
 			return function lookAt( eye, target, up ) {
 
@@ -523,7 +505,7 @@ var Three = (function (exports) {
 
 			if ( n !== undefined ) {
 
-				console.warn( 'THREE.Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
+				console.warn( 'Matrix4: .multiply() now only accepts one argument. Use .multiplyMatrices( a, b ) instead.' );
 				return this.multiplyMatrices( m, n );
 
 			}
@@ -593,7 +575,7 @@ var Three = (function (exports) {
 
 		applyToBufferAttribute: function () {
 
-			var v1 = new Vector3$1();
+			var v1 = new Vector3();
 
 			return function applyToBufferAttribute( attribute ) {
 
@@ -714,7 +696,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix4: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix4: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -913,7 +895,7 @@ var Three = (function (exports) {
 
 		decompose: function () {
 
-			var vector = new Vector3$1();
+			var vector = new Vector3();
 			var matrix = new Matrix4();
 
 			return function decompose( position, quaternion, scale ) {
@@ -967,7 +949,7 @@ var Three = (function (exports) {
 
 			if ( far === undefined ) {
 
-				console.warn( 'THREE.Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
+				console.warn( 'Matrix4: .makePerspective() has been redefined and has a new signature. Please check the docs.' );
 
 			}
 
@@ -1070,13 +1052,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Quaternion( x, y, z, w ) {
 
@@ -1269,7 +1244,7 @@ var Three = (function (exports) {
 
 			if ( ! ( euler && euler.isEuler ) ) {
 
-				throw new Error( 'THREE.Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+				throw new Error( 'Quaternion: .setFromEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 			}
 
@@ -1422,14 +1397,14 @@ var Three = (function (exports) {
 
 			// assumes direction vectors vFrom and vTo are normalized
 
-			var v1 = new Vector3$1();
+			var v1 = new Vector3();
 			var r;
 
 			var EPS = 0.000001;
 
 			return function setFromUnitVectors( vFrom, vTo ) {
 
-				if ( v1 === undefined ) v1 = new Vector3$1();
+				if ( v1 === undefined ) v1 = new Vector3();
 
 				r = vFrom.dot( vTo ) + 1;
 
@@ -1466,7 +1441,9 @@ var Three = (function (exports) {
 
 		inverse: function () {
 
-			return this.conjugate().normalize();
+			// quaternion is assumed to have unit length
+
+			return this.conjugate();
 
 		},
 
@@ -1532,7 +1509,7 @@ var Three = (function (exports) {
 
 			if ( p !== undefined ) {
 
-				console.warn( 'THREE.Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
+				console.warn( 'Quaternion: .multiply() now only accepts one argument. Use .multiplyQuaternions( a, b ) instead.' );
 				return this.multiplyQuaternions( q, p );
 
 			}
@@ -1677,16 +1654,7 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author kile / http://kile.stravaganza.org/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
-	function Vector3$1( x, y, z ) {
+	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
 		this.y = y || 0;
@@ -1694,7 +1662,7 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( Vector3$1.prototype, {
+	Object.assign( Vector3.prototype, {
 
 		isVector3: true,
 
@@ -1790,7 +1758,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -1837,7 +1805,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -1874,7 +1842,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .multiply() now only accepts one argument. Use .multiplyVectors( a, b ) instead.' );
 				return this.multiplyVectors( v, w );
 
 			}
@@ -1915,7 +1883,7 @@ var Three = (function (exports) {
 
 				if ( ! ( euler && euler.isEuler ) ) {
 
-					console.error( 'THREE.Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
+					console.error( 'Vector3: .applyEuler() now expects an Euler rotation rather than a Vector3 and order.' );
 
 				}
 
@@ -2015,7 +1983,7 @@ var Three = (function (exports) {
 
 		transformDirection: function ( m ) {
 
-			// input: THREE.Matrix4 affine matrix
+			// input: Matrix4 affine matrix
 			// vector interpreted as a direction
 
 			var x = this.x, y = this.y, z = this.z;
@@ -2079,8 +2047,8 @@ var Three = (function (exports) {
 
 		clampScalar: function () {
 
-			var min = new Vector3$1();
-			var max = new Vector3$1();
+			var min = new Vector3();
+			var max = new Vector3();
 
 			return function clampScalar( minVal, maxVal ) {
 
@@ -2209,7 +2177,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
+				console.warn( 'Vector3: .cross() now only accepts one argument. Use .crossVectors( a, b ) instead.' );
 				return this.crossVectors( v, w );
 
 			}
@@ -2241,7 +2209,7 @@ var Three = (function (exports) {
 
 		projectOnPlane: function () {
 
-			var v1 = new Vector3$1();
+			var v1 = new Vector3();
 
 			return function projectOnPlane( planeNormal ) {
 
@@ -2258,7 +2226,7 @@ var Three = (function (exports) {
 			// reflect incident vector off plane orthogonal to normal
 			// normal is assumed to have unit length
 
-			var v1 = new Vector3$1();
+			var v1 = new Vector3();
 
 			return function reflect( normal ) {
 
@@ -2387,7 +2355,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector3: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector3: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -2401,14 +2369,9 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author bhouston / http://clara.io
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function Sphere( center, radius ) {
 
-		this.center = ( center !== undefined ) ? center : new Vector3$1();
+		this.center = ( center !== undefined ) ? center : new Vector3();
 		this.radius = ( radius !== undefined ) ? radius : 0;
 
 	}
@@ -2515,7 +2478,7 @@ var Three = (function (exports) {
 
 			var deltaLengthSq = this.center.distanceToSquared( point );
 
-			var result = optionalTarget || new Vector3$1();
+			var result = optionalTarget || new Vector3();
 
 			result.copy( point );
 
@@ -2566,15 +2529,10 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author bhouston / http://clara.io
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
-
 	function Box3( min, max ) {
 
-		this.min = ( min !== undefined ) ? min : new Vector3$1( + Infinity, + Infinity, + Infinity );
-		this.max = ( max !== undefined ) ? max : new Vector3$1( - Infinity, - Infinity, - Infinity );
+		this.min = ( min !== undefined ) ? min : new Vector3( + Infinity, + Infinity, + Infinity );
+		this.max = ( max !== undefined ) ? max : new Vector3( - Infinity, - Infinity, - Infinity );
 
 	}
 
@@ -2673,7 +2631,7 @@ var Three = (function (exports) {
 
 		setFromCenterAndSize: function () {
 
-			var v1 = new Vector3$1();
+			var v1 = new Vector3();
 
 			return function setFromCenterAndSize( center, size ) {
 
@@ -2730,14 +2688,14 @@ var Three = (function (exports) {
 
 		getCenter: function ( optionalTarget ) {
 
-			var result = optionalTarget || new Vector3$1();
+			var result = optionalTarget || new Vector3();
 			return this.isEmpty() ? result.set( 0, 0, 0 ) : result.addVectors( this.min, this.max ).multiplyScalar( 0.5 );
 
 		},
 
 		getSize: function ( optionalTarget ) {
 
-			var result = optionalTarget || new Vector3$1();
+			var result = optionalTarget || new Vector3();
 			return this.isEmpty() ? result.set( 0, 0, 0 ) : result.subVectors( this.max, this.min );
 
 		},
@@ -2776,7 +2734,7 @@ var Three = (function (exports) {
 
 			var scope, i, l;
 
-			var v1 = new Vector3$1();
+			var v1 = new Vector3();
 
 			function traverse( node ) {
 
@@ -2854,7 +2812,7 @@ var Three = (function (exports) {
 			// This can potentially have a divide by zero if the box
 			// has a size dimension of 0.
 
-			var result = optionalTarget || new Vector3$1();
+			var result = optionalTarget || new Vector3();
 
 			return result.set(
 				( point.x - this.min.x ) / ( this.max.x - this.min.x ),
@@ -2875,7 +2833,7 @@ var Three = (function (exports) {
 
 		intersectsSphere: ( function () {
 
-			var closestPoint = new Vector3$1();
+			var closestPoint = new Vector3();
 
 			return function intersectsSphere( sphere ) {
 
@@ -2936,16 +2894,117 @@ var Three = (function (exports) {
 
 		},
 
+		intersectsTriangle: ( function () {
+
+			// triangle centered vertices
+			var v0 = new Vector3();
+			var v1 = new Vector3();
+			var v2 = new Vector3();
+
+			// triangle edge vectors
+			var f0 = new Vector3();
+			var f1 = new Vector3();
+			var f2 = new Vector3();
+
+			var testAxis = new Vector3();
+
+			var center = new Vector3();
+			var extents = new Vector3();
+
+			var triangleNormal = new Vector3();
+
+			function satForAxes( axes ) {
+
+				var i, j;
+
+				for ( i = 0, j = axes.length - 3; i <= j; i += 3 ) {
+
+					testAxis.fromArray( axes, i );
+					// project the aabb onto the seperating axis
+					var r = extents.x * Math.abs( testAxis.x ) + extents.y * Math.abs( testAxis.y ) + extents.z * Math.abs( testAxis.z );
+					// project all 3 vertices of the triangle onto the seperating axis
+					var p0 = v0.dot( testAxis );
+					var p1 = v1.dot( testAxis );
+					var p2 = v2.dot( testAxis );
+					// actual test, basically see if either of the most extreme of the triangle points intersects r
+					if ( Math.max( - Math.max( p0, p1, p2 ), Math.min( p0, p1, p2 ) ) > r ) {
+
+						// points of the projected triangle are outside the projected half-length of the aabb
+						// the axis is seperating and we can exit
+						return false;
+
+					}
+
+				}
+
+				return true;
+
+			}
+
+			return function intersectsTriangle( triangle ) {
+
+				if ( this.isEmpty() ) {
+
+					return false;
+
+				}
+
+				// compute box center and extents
+				this.getCenter( center );
+				extents.subVectors( this.max, center );
+
+				// translate triangle to aabb origin
+				v0.subVectors( triangle.a, center );
+				v1.subVectors( triangle.b, center );
+				v2.subVectors( triangle.c, center );
+
+				// compute edge vectors for triangle
+				f0.subVectors( v1, v0 );
+				f1.subVectors( v2, v1 );
+				f2.subVectors( v0, v2 );
+
+				// test against axes that are given by cross product combinations of the edges of the triangle and the edges of the aabb
+				// make an axis testing of each of the 3 sides of the aabb against each of the 3 sides of the triangle = 9 axis of separation
+				// axis_ij = u_i x f_j (u0, u1, u2 = face normals of aabb = x,y,z axes vectors since aabb is axis aligned)
+				var axes = [
+					0, - f0.z, f0.y, 0, - f1.z, f1.y, 0, - f2.z, f2.y,
+					f0.z, 0, - f0.x, f1.z, 0, - f1.x, f2.z, 0, - f2.x,
+					- f0.y, f0.x, 0, - f1.y, f1.x, 0, - f2.y, f2.x, 0
+				];
+				if ( ! satForAxes( axes ) ) {
+
+					return false;
+
+				}
+
+				// test 3 face normals from the aabb
+				axes = [ 1, 0, 0, 0, 1, 0, 0, 0, 1 ];
+				if ( ! satForAxes( axes ) ) {
+
+					return false;
+
+				}
+
+				// finally testing the face normal of the triangle
+				// use already existing triangle edge vectors here
+				triangleNormal.crossVectors( f0, f1 );
+				axes = [ triangleNormal.x, triangleNormal.y, triangleNormal.z ];
+				return satForAxes( axes );
+
+			};
+
+		} )(),
+
 		clampPoint: function ( point, optionalTarget ) {
 
-			var result = optionalTarget || new Vector3$1();
+			var result = optionalTarget || new Vector3();
 			return result.copy( point ).clamp( this.min, this.max );
 
 		},
 
 		distanceToPoint: function () {
 
-			var v1 = new Vector3$1();
+			var v1 = new Vector3();
 
 			return function distanceToPoint( point ) {
 
@@ -2958,7 +3017,7 @@ var Three = (function (exports) {
 
 		getBoundingSphere: function () {
 
-			var v1 = new Vector3$1();
+			var v1 = new Vector3();
 
 			return function getBoundingSphere( optionalTarget ) {
 
@@ -2998,14 +3057,14 @@ var Three = (function (exports) {
 		applyMatrix4: function () {
 
 			var points = [
-				new Vector3$1(),
-				new Vector3$1(),
-				new Vector3$1(),
-				new Vector3$1(),
-				new Vector3$1(),
-				new Vector3$1(),
-				new Vector3$1(),
-				new Vector3$1()
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3()
 			];
 
 			return function applyMatrix4( matrix ) {
@@ -3047,10 +3106,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * https://github.com/mrdoob/eventdispatcher.js/
-	 */
 
 	function EventDispatcher() {}
 
@@ -3131,14 +3186,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author supereggbert / http://www.paulbrunt.co.uk/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author egraether / http://egraether.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 */
 
 	function Vector4( x, y, z, w ) {
 
@@ -3258,7 +3305,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -3309,7 +3356,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector4: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector4: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -3744,7 +3791,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector4: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector4: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -3759,21 +3806,14 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author philogb / http://blog.thejit.org/
-	 * @author egraether / http://egraether.com/
-	 * @author zz85 / http://www.lab4games.net/zz85/blog
-	 */
-
-	function Vector2$1( x, y ) {
+	function Vector2( x, y ) {
 
 		this.x = x || 0;
 		this.y = y || 0;
 
 	}
 
-	Object.defineProperties( Vector2$1.prototype, {
+	Object.defineProperties( Vector2.prototype, {
 
 		"width": {
 
@@ -3809,7 +3849,7 @@ var Three = (function (exports) {
 
 	} );
 
-	Object.assign( Vector2$1.prototype, {
+	Object.assign( Vector2.prototype, {
 
 		isVector2: true,
 
@@ -3892,7 +3932,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
@@ -3935,7 +3975,7 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'THREE.Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
@@ -4041,8 +4081,8 @@ var Three = (function (exports) {
 
 		clampScalar: function () {
 
-			var min = new Vector2$1();
-			var max = new Vector2$1();
+			var min = new Vector2();
+			var max = new Vector2();
 
 			return function clampScalar( minVal, maxVal ) {
 
@@ -4223,7 +4263,7 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'THREE.Vector2: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector2: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
@@ -4249,10 +4289,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
 		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
@@ -4283,7 +4319,7 @@ var Three = (function (exports) {
 
 		if ( g === undefined && b === undefined ) {
 
-			// r is THREE.Color, hex or string
+			// r is Color, hex or string
 			return this.set( r );
 
 		}
@@ -4399,7 +4435,7 @@ var Three = (function (exports) {
 
 				if ( parseFloat( string ) < 1 ) {
 
-					console.warn( 'THREE.Color: Alpha component of ' + style + ' will be ignored.' );
+					console.warn( 'Color: Alpha component of ' + style + ' will be ignored.' );
 
 				}
 
@@ -4511,7 +4547,7 @@ var Three = (function (exports) {
 				} else {
 
 					// unknown color
-					console.warn( 'THREE.Color: Unknown color ' + style );
+					console.warn( 'Color: Unknown color ' + style );
 
 				}
 
@@ -4769,15 +4805,11 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function BufferAttribute( array, itemSize, normalized ) {
 
 		if ( Array.isArray( array ) ) {
 
-			throw new TypeError( 'THREE.BufferAttribute: array should be a Typed Array.' );
+			throw new TypeError( 'BufferAttribute: array should be a Typed Array.' );
 
 		}
 
@@ -4816,7 +4848,7 @@ var Three = (function (exports) {
 
 			if ( Array.isArray( array ) ) {
 
-				throw new TypeError( 'THREE.BufferAttribute: array should be a Typed Array.' );
+				throw new TypeError( 'BufferAttribute: array should be a Typed Array.' );
 
 			}
 
@@ -4879,7 +4911,7 @@ var Three = (function (exports) {
 
 				if ( color === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyColorsArray(): color is undefined', i );
+					console.warn( 'BufferAttribute.copyColorsArray(): color is undefined', i );
 					color = new Color();
 
 				}
@@ -4922,8 +4954,8 @@ var Three = (function (exports) {
 
 				if ( vector === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyVector2sArray(): vector is undefined', i );
-					vector = new Vector2$1();
+					console.warn( 'BufferAttribute.copyVector2sArray(): vector is undefined', i );
+					vector = new Vector2();
 
 				}
 
@@ -4946,8 +4978,8 @@ var Three = (function (exports) {
 
 				if ( vector === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyVector3sArray(): vector is undefined', i );
-					vector = new Vector3$1();
+					console.warn( 'BufferAttribute.copyVector3sArray(): vector is undefined', i );
+					vector = new Vector3();
 
 				}
 
@@ -4971,7 +5003,7 @@ var Three = (function (exports) {
 
 				if ( vector === undefined ) {
 
-					console.warn( 'THREE.BufferAttribute.copyVector4sArray(): vector is undefined', i );
+					console.warn( 'BufferAttribute.copyVector4sArray(): vector is undefined', i );
 					vector = new Vector4();
 
 				}
@@ -5196,9 +5228,7 @@ var Three = (function (exports) {
 	Float64BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float64BufferAttribute.prototype.constructor = Float64BufferAttribute;
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
+	//
 
 	function DirectGeometry() {
 
@@ -5381,9 +5411,9 @@ var Three = (function (exports) {
 
 					} else {
 
-						console.warn( 'THREE.DirectGeometry.fromGeometry(): Undefined vertexUv ', i );
+						console.warn( 'DirectGeometry.fromGeometry(): Undefined vertexUv ', i );
 
-						this.uvs.push( new Vector2$1(), new Vector2$1(), new Vector2$1() );
+						this.uvs.push( new Vector2(), new Vector2(), new Vector2() );
 
 					}
 
@@ -5399,9 +5429,9 @@ var Three = (function (exports) {
 
 					} else {
 
-						console.warn( 'THREE.DirectGeometry.fromGeometry(): Undefined vertexUv2 ', i );
+						console.warn( 'DirectGeometry.fromGeometry(): Undefined vertexUv2 ', i );
 
-						this.uvs2.push( new Vector2$1(), new Vector2$1(), new Vector2$1() );
+						this.uvs2.push( new Vector2(), new Vector2(), new Vector2() );
 
 					}
 
@@ -5454,12 +5484,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 */
 
 	function Euler( x, y, z, order ) {
 
@@ -5693,7 +5717,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.warn( 'THREE.Euler: .setFromRotationMatrix() given unsupported order: ' + order );
+				console.warn( 'Euler: .setFromRotationMatrix() given unsupported order: ' + order );
 
 			}
 
@@ -5782,7 +5806,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				return new Vector3$1( this._x, this._y, this._z );
+				return new Vector3( this._x, this._y, this._z );
 
 			}
 
@@ -5799,10 +5823,6 @@ var Three = (function (exports) {
 		onChangeCallback: function () {}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	function Layers() {
 
@@ -5844,13 +5864,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author bhouston / http://clara.io
-	 * @author tschw
-	 */
-
 	function Matrix3() {
 
 		this.elements = [
@@ -5863,7 +5876,7 @@ var Three = (function (exports) {
 
 		if ( arguments.length > 0 ) {
 
-			console.error( 'THREE.Matrix3: the constructor no longer reads arguments. use .set() instead.' );
+			console.error( 'Matrix3: the constructor no longer reads arguments. use .set() instead.' );
 
 		}
 
@@ -5936,7 +5949,7 @@ var Three = (function (exports) {
 
 		applyToBufferAttribute: function () {
 
-			var v1 = new Vector3$1();
+			var v1 = new Vector3();
 
 			return function applyToBufferAttribute( attribute ) {
 
@@ -6028,7 +6041,7 @@ var Three = (function (exports) {
 
 			if ( matrix && matrix.isMatrix4 ) {
 
-				console.error( "THREE.Matrix3: .getInverse() no longer takes a Matrix4 argument." );
+				console.error( "Matrix3: .getInverse() no longer takes a Matrix4 argument." );
 
 			}
 
@@ -6047,7 +6060,7 @@ var Three = (function (exports) {
 
 			if ( det === 0 ) {
 
-				var msg = "THREE.Matrix3: .getInverse() can't invert matrix, determinant is 0";
+				var msg = "Matrix3: .getInverse() can't invert matrix, determinant is 0";
 
 				if ( throwOnDegenerate === true ) {
 
@@ -6228,14 +6241,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author WestLangley / http://github.com/WestLangley
-	 * @author elephantatwork / www.elephantatwork.ch
-	 */
-
 	var object3DId = 0;
 
 	function Object3D() {
@@ -6252,10 +6257,10 @@ var Three = (function (exports) {
 
 		this.up = Object3D.DefaultUp.clone();
 
-		var position = new Vector3$1();
+		var position = new Vector3();
 		var rotation = new Euler();
 		var quaternion = new Quaternion();
-		var scale = new Vector3$1( 1, 1, 1 );
+		var scale = new Vector3( 1, 1, 1 );
 
 		function onRotationChange() {
 
@@ -6316,7 +6321,7 @@ var Three = (function (exports) {
 
 	}
 
-	Object3D.DefaultUp = new Vector3$1( 0, 1, 0 );
+	Object3D.DefaultUp = new Vector3( 0, 1, 0 );
 	Object3D.DefaultMatrixAutoUpdate = true;
 
 	Object3D.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
@@ -6415,7 +6420,7 @@ var Three = (function (exports) {
 
 		rotateX: function () {
 
-			var v1 = new Vector3$1( 1, 0, 0 );
+			var v1 = new Vector3( 1, 0, 0 );
 
 			return function rotateX( angle ) {
 
@@ -6427,7 +6432,7 @@ var Three = (function (exports) {
 
 		rotateY: function () {
 
-			var v1 = new Vector3$1( 0, 1, 0 );
+			var v1 = new Vector3( 0, 1, 0 );
 
 			return function rotateY( angle ) {
 
@@ -6439,7 +6444,7 @@ var Three = (function (exports) {
 
 		rotateZ: function () {
 
-			var v1 = new Vector3$1( 0, 0, 1 );
+			var v1 = new Vector3( 0, 0, 1 );
 
 			return function rotateZ( angle ) {
 
@@ -6454,7 +6459,7 @@ var Three = (function (exports) {
 			// translate object by distance along axis in object space
 			// axis is assumed to be normalized
 
-			var v1 = new Vector3$1();
+			var v1 = new Vector3();
 
 			return function translateOnAxis( axis, distance ) {
 
@@ -6470,7 +6475,7 @@ var Three = (function (exports) {
 
 		translateX: function () {
 
-			var v1 = new Vector3$1( 1, 0, 0 );
+			var v1 = new Vector3( 1, 0, 0 );
 
 			return function translateX( distance ) {
 
@@ -6482,7 +6487,7 @@ var Three = (function (exports) {
 
 		translateY: function () {
 
-			var v1 = new Vector3$1( 0, 1, 0 );
+			var v1 = new Vector3( 0, 1, 0 );
 
 			return function translateY( distance ) {
 
@@ -6494,7 +6499,7 @@ var Three = (function (exports) {
 
 		translateZ: function () {
 
-			var v1 = new Vector3$1( 0, 0, 1 );
+			var v1 = new Vector3( 0, 0, 1 );
 
 			return function translateZ( distance ) {
 
@@ -6527,7 +6532,7 @@ var Three = (function (exports) {
 			// This method does not support objects with rotated and/or translated parent(s)
 
 			var m1 = new Matrix4();
-			var vector = new Vector3$1();
+			var vector = new Vector3();
 
 			return function lookAt( x, y, z ) {
 
@@ -6573,7 +6578,7 @@ var Three = (function (exports) {
 
 			if ( object === this ) {
 
-				console.error( "THREE.Object3D.add: object can't be added as a child of itself.", object );
+				console.error( "Object3D.add: object can't be added as a child of itself.", object );
 				return this;
 
 			}
@@ -6593,7 +6598,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				console.error( "THREE.Object3D.add: object not an instance of THREE.Object3D.", object );
+				console.error( "Object3D.add: object not an instance of Object3D.", object );
 
 			}
 
@@ -6666,7 +6671,7 @@ var Three = (function (exports) {
 
 		getWorldPosition: function ( optionalTarget ) {
 
-			var result = optionalTarget || new Vector3$1();
+			var result = optionalTarget || new Vector3();
 
 			this.updateMatrixWorld( true );
 
@@ -6676,8 +6681,8 @@ var Three = (function (exports) {
 
 		getWorldQuaternion: function () {
 
-			var position = new Vector3$1();
-			var scale = new Vector3$1();
+			var position = new Vector3();
+			var scale = new Vector3();
 
 			return function getWorldQuaternion( optionalTarget ) {
 
@@ -6711,12 +6716,12 @@ var Three = (function (exports) {
 
 		getWorldScale: function () {
 
-			var position = new Vector3$1();
+			var position = new Vector3();
 			var quaternion = new Quaternion();
 
 			return function getWorldScale( optionalTarget ) {
 
-				var result = optionalTarget || new Vector3$1();
+				var result = optionalTarget || new Vector3();
 
 				this.updateMatrixWorld( true );
 
@@ -6734,7 +6739,7 @@ var Three = (function (exports) {
 
 			return function getWorldDirection( optionalTarget ) {
 
-				var result = optionalTarget || new Vector3$1();
+				var result = optionalTarget || new Vector3();
 
 				this.getWorldQuaternion( quaternion );
 
@@ -7047,10 +7052,6 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function arrayMax( array ) {
 
 		if ( array.length === 0 ) return - Infinity;
@@ -7066,11 +7067,6 @@ var Three = (function (exports) {
 		return max;
 
 	}
-
-	/**
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mrdoob / http://mrdoob.com/
-	 */
 
 	var bufferGeometryId = 1; // BufferGeometry uses odd numbers as Id
 
@@ -7127,7 +7123,7 @@ var Three = (function (exports) {
 
 			if ( ! ( attribute && attribute.isBufferAttribute ) && ! ( attribute && attribute.isInterleavedBufferAttribute ) ) {
 
-				console.warn( 'THREE.BufferGeometry: .addAttribute() now expects ( name, attribute ).' );
+				console.warn( 'BufferGeometry: .addAttribute() now expects ( name, attribute ).' );
 
 				this.addAttribute( name, new BufferAttribute( arguments[ 1 ], arguments[ 2 ] ) );
 
@@ -7137,7 +7133,7 @@ var Three = (function (exports) {
 
 			if ( name === 'index' ) {
 
-				console.warn( 'THREE.BufferGeometry.addAttribute: Use .setIndex() for index attribute.' );
+				console.warn( 'BufferGeometry.addAttribute: Use .setIndex() for index attribute.' );
 				this.setIndex( attribute );
 
 				return;
@@ -7347,7 +7343,7 @@ var Three = (function (exports) {
 
 		setFromObject: function ( object ) {
 
-			// console.log( 'THREE.BufferGeometry.setFromObject(). Converting', object, this );
+			// console.log( 'BufferGeometry.setFromObject(). Converting', object, this );
 
 			var geometry = object.geometry;
 
@@ -7667,7 +7663,7 @@ var Three = (function (exports) {
 
 			if ( isNaN( this.boundingBox.min.x ) || isNaN( this.boundingBox.min.y ) || isNaN( this.boundingBox.min.z ) ) {
 
-				console.error( 'THREE.BufferGeometry.computeBoundingBox: Computed min/max have NaN values. The "position" attribute is likely to have NaN values.', this );
+				console.error( 'BufferGeometry.computeBoundingBox: Computed min/max have NaN values. The "position" attribute is likely to have NaN values.', this );
 
 			}
 
@@ -7676,7 +7672,7 @@ var Three = (function (exports) {
 		computeBoundingSphere: function () {
 
 			var box = new Box3();
-			var vector = new Vector3$1();
+			var vector = new Vector3();
 
 			return function computeBoundingSphere() {
 
@@ -7713,7 +7709,7 @@ var Three = (function (exports) {
 
 					if ( isNaN( this.boundingSphere.radius ) ) {
 
-						console.error( 'THREE.BufferGeometry.computeBoundingSphere(): Computed radius is NaN. The "position" attribute is likely to have NaN values.', this );
+						console.error( 'BufferGeometry.computeBoundingSphere(): Computed radius is NaN. The "position" attribute is likely to have NaN values.', this );
 
 					}
 
@@ -7760,8 +7756,8 @@ var Three = (function (exports) {
 				var normals = attributes.normal.array;
 
 				var vA, vB, vC;
-				var pA = new Vector3$1(), pB = new Vector3$1(), pC = new Vector3$1();
-				var cb = new Vector3$1(), ab = new Vector3$1();
+				var pA = new Vector3(), pB = new Vector3(), pC = new Vector3();
+				var cb = new Vector3(), ab = new Vector3();
 
 				// indexed elements
 
@@ -7854,7 +7850,7 @@ var Three = (function (exports) {
 
 			if ( ! ( geometry && geometry.isBufferGeometry ) ) {
 
-				console.error( 'THREE.BufferGeometry.merge(): geometry not an instance of THREE.BufferGeometry.', geometry );
+				console.error( 'BufferGeometry.merge(): geometry not an instance of BufferGeometry.', geometry );
 				return;
 
 			}
@@ -7889,7 +7885,7 @@ var Three = (function (exports) {
 
 		normalizeNormals: function () {
 
-			var vector = new Vector3$1();
+			var vector = new Vector3();
 
 			return function normalizeNormals() {
 
@@ -7915,7 +7911,7 @@ var Three = (function (exports) {
 
 			if ( this.index === null ) {
 
-				console.warn( 'THREE.BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
 				return this;
 
 			}
@@ -8043,29 +8039,7 @@ var Three = (function (exports) {
 
 		clone: function () {
 
-			/*
-			 // Handle primitives
-
-			 var parameters = this.parameters;
-
-			 if ( parameters !== undefined ) {
-
-			 var values = [];
-
-			 for ( var key in parameters ) {
-
-			 values.push( parameters[ key ] );
-
-			 }
-
-			 var geometry = Object.create( this.constructor.prototype );
-			 this.constructor.apply( geometry, values );
-			 return geometry;
-
-			 }
-
-			 return new this.constructor().copy( this );
-			 */
+			
 
 			return new BufferGeometry().copy( this );
 
@@ -8176,18 +8150,13 @@ var Three = (function (exports) {
 
 	} );
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author alteredq / http://alteredqualia.com/
-	 */
-
 	function Face3( a, b, c, normal, color, materialIndex ) {
 
 		this.a = a;
 		this.b = b;
 		this.c = c;
 
-		this.normal = ( normal && normal.isVector3 ) ? normal : new Vector3$1();
+		this.normal = ( normal && normal.isVector3 ) ? normal : new Vector3();
 		this.vertexNormals = Array.isArray( normal ) ? normal : [];
 
 		this.color = ( color && color.isColor ) ? color : new Color();
@@ -8233,15 +8202,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 * @author kile / http://kile.stravaganza.org/
-	 * @author alteredq / http://alteredqualia.com/
-	 * @author mikael emtinger / http://gomo.se/
-	 * @author zz85 / http://www.lab4games.net/zz85/blog
-	 * @author bhouston / http://clara.io
-	 */
 
 	var geometryId = 0; // Geometry uses even numbers as Id
 
@@ -8458,11 +8418,11 @@ var Three = (function (exports) {
 
 			for ( var i = 0, j = 0; i < positions.length; i += 3, j += 2 ) {
 
-				scope.vertices.push( new Vector3$1( positions[ i ], positions[ i + 1 ], positions[ i + 2 ] ) );
+				scope.vertices.push( new Vector3( positions[ i ], positions[ i + 1 ], positions[ i + 2 ] ) );
 
 				if ( normals !== undefined ) {
 
-					tempNormals.push( new Vector3$1( normals[ i ], normals[ i + 1 ], normals[ i + 2 ] ) );
+					tempNormals.push( new Vector3( normals[ i ], normals[ i + 1 ], normals[ i + 2 ] ) );
 
 				}
 
@@ -8474,13 +8434,13 @@ var Three = (function (exports) {
 
 				if ( uvs !== undefined ) {
 
-					tempUVs.push( new Vector2$1( uvs[ j ], uvs[ j + 1 ] ) );
+					tempUVs.push( new Vector2( uvs[ j ], uvs[ j + 1 ] ) );
 
 				}
 
 				if ( uvs2 !== undefined ) {
 
-					tempUVs2.push( new Vector2$1( uvs2[ j ], uvs2[ j + 1 ] ) );
+					tempUVs2.push( new Vector2( uvs2[ j ], uvs2[ j + 1 ] ) );
 
 				}
 
@@ -8613,7 +8573,7 @@ var Three = (function (exports) {
 
 		computeFaceNormals: function () {
 
-			var cb = new Vector3$1(), ab = new Vector3$1();
+			var cb = new Vector3(), ab = new Vector3();
 
 			for ( var f = 0, fl = this.faces.length; f < fl; f ++ ) {
 
@@ -8645,7 +8605,7 @@ var Three = (function (exports) {
 
 			for ( v = 0, vl = this.vertices.length; v < vl; v ++ ) {
 
-				vertices[ v ] = new Vector3$1();
+				vertices[ v ] = new Vector3();
 
 			}
 
@@ -8655,7 +8615,7 @@ var Three = (function (exports) {
 				// http://www.iquilezles.org/www/articles/normals/normals.htm
 
 				var vA, vB, vC;
-				var cb = new Vector3$1(), ab = new Vector3$1();
+				var cb = new Vector3(), ab = new Vector3();
 
 				for ( f = 0, fl = this.faces.length; f < fl; f ++ ) {
 
@@ -8825,8 +8785,8 @@ var Three = (function (exports) {
 
 					for ( f = 0, fl = this.faces.length; f < fl; f ++ ) {
 
-						faceNormal = new Vector3$1();
-						vertexNormals = { a: new Vector3$1(), b: new Vector3$1(), c: new Vector3$1() };
+						faceNormal = new Vector3();
+						vertexNormals = { a: new Vector3(), b: new Vector3(), c: new Vector3() };
 
 						dstNormalsFace.push( faceNormal );
 						dstNormalsVertex.push( vertexNormals );
@@ -8880,25 +8840,6 @@ var Three = (function (exports) {
 
 		},
 
-		computeLineDistances: function () {
-
-			var d = 0;
-			var vertices = this.vertices;
-
-			for ( var i = 0, il = vertices.length; i < il; i ++ ) {
-
-				if ( i > 0 ) {
-
-					d += vertices[ i ].distanceTo( vertices[ i - 1 ] );
-
-				}
-
-				this.lineDistances[ i ] = d;
-
-			}
-
-		},
-
 		computeBoundingBox: function () {
 
 			if ( this.boundingBox === null ) {
@@ -8927,7 +8868,7 @@ var Three = (function (exports) {
 
 			if ( ! ( geometry && geometry.isGeometry ) ) {
 
-				console.error( 'THREE.Geometry.merge(): geometry not an instance of THREE.Geometry.', geometry );
+				console.error( 'Geometry.merge(): geometry not an instance of Geometry.', geometry );
 				return;
 
 			}
@@ -9047,7 +8988,7 @@ var Three = (function (exports) {
 
 			if ( ! ( mesh && mesh.isMesh ) ) {
 
-				console.error( 'THREE.Geometry.mergeMesh(): mesh not an instance of THREE.Mesh.', mesh );
+				console.error( 'Geometry.mergeMesh(): mesh not an instance of Mesh.', mesh );
 				return;
 
 			}
@@ -9058,11 +8999,7 @@ var Three = (function (exports) {
 
 		},
 
-		/*
-		 * Checks for duplicate vertices with hashmap.
-		 * Duplicated vertices are removed
-		 * and faces' vertices are updated.
-		 */
+		
 
 		mergeVertices: function () {
 
@@ -9154,7 +9091,7 @@ var Three = (function (exports) {
 			for ( var i = 0, l = points.length; i < l; i ++ ) {
 
 				var point = points[ i ];
-				this.vertices.push( new Vector3$1( point.x, point.y, point.z || 0 ) );
+				this.vertices.push( new Vector3( point.x, point.y, point.z || 0 ) );
 
 			}
 
@@ -9404,29 +9341,7 @@ var Three = (function (exports) {
 
 		clone: function () {
 
-			/*
-			 // Handle primitives
-
-			 var parameters = this.parameters;
-
-			 if ( parameters !== undefined ) {
-
-			 var values = [];
-
-			 for ( var key in parameters ) {
-
-			 values.push( parameters[ key ] );
-
-			 }
-
-			 var geometry = Object.create( this.constructor.prototype );
-			 this.constructor.apply( geometry, values );
-			 return geometry;
-
-			 }
-
-			 return new this.constructor().copy( this );
-			 */
+			
 
 			return new Geometry().copy( this );
 
@@ -9673,37 +9588,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	/*
-	 * @author zz85 / http://twitter.com/blurspline / http://www.lab4games.net/zz85/blog
-	 * @author Matthew Adams / http://www.centerionware.com - added UV support and rewrote to use buffergeometry.
-	 *
-	 * Subdivision Geometry Modifier using Loop Subdivision Scheme for Geometry / BufferGeometry
-	 *
-	 * References:
-	 *	http://graphics.stanford.edu/~mdfisher/subdivision.html
-	 *	http://www.holmes3d.net/graphics/subdivision/
-	 *	http://www.cs.rutgers.edu/~decarlo/readings/subdiv-sg00c.pdf
-	 *
-	 * Known Issues:
-	 *	- currently doesn't handle "Sharp Edges"
-	 *	- no checks to prevent breaking when uv's don't exist.
-	 *	- vertex colors are unsupported.
-	 *	**DDS Images when using corrected uv's passed to subdivision modifier will have their uv's flipy'd within the correct uv set
-	 *	**Either flipy the DDS image, or use shaders. Don't try correcting the uv's before passing into subdiv (eg: v=1-v).
-	 *
-	 * @input Geometry, or index'd BufferGeometry with faceUV's (Not vertex uv's)
-	 * @output non-indexed vertex points, uv's, normals.
-	 *
-	 * The TypedArrayHelper class is designed to assist managing typed arrays, and to allow the removal of all 'new Vector3, new Face3, new Vector2'.
-	 *
-	 * It will automatically resize them if trying to push a new element to an array that isn't long enough
-	 * It provides 'registers' that the units can be mapped to. This allows a small set of objects
-	 * (ex: vector3's, face3's, vector2's) to be allocated then used, to eliminate any need to rewrite all
-	 * the features those classes offer while not requiring some_huge_number to be allocated.
-	 * It should be moved into it's own file honestly, then included before the BufferSubdivisionModifier - maybe in three's core?
-	 *
-	 */
 
 	Face3.prototype.set = function( a, b, c ) {
 
@@ -10189,11 +10073,7 @@ var Three = (function (exports) {
 				doUvs = true;
 
 			}
-			/******************************************************
-			*
-			* Step 0: Preprocess Geometry to Generate edges Lookup
-			*
-			*******************************************************/
+			
 
 			metaVertices = new Array( oldVertices.length );
 			sourceEdges = {}; // Edge => { oldVertex1, oldVertex2, faces[]  }
@@ -10201,13 +10081,7 @@ var Three = (function (exports) {
 			generateLookups( oldVertices, oldFaces, metaVertices, sourceEdges );
 
 
-			/******************************************************
-			*
-			*	Step 1.
-			*	For each edge, create a new Edge Vertex,
-			*	then position it.
-			*
-			*******************************************************/
+			
 
 			newVertices = new TypedArrayHelper( ( geometry.getAttribute( 'position' ).array.length * 2 ) / 3, 2, Vector3, Float32Array, 3, XYZ );
 			var other, currentEdge, newEdge, face;
@@ -10270,12 +10144,7 @@ var Three = (function (exports) {
 			}
 
 			var edgeLength = newVertices.length;
-			/******************************************************
-			*
-			*	Step 2.
-			*	Reposition each source vertices.
-			*
-			*******************************************************/
+			
 
 			var beta, sourceVertexWeight, connectingVertexWeight;
 			var connectingEdge, connectingEdges, oldVertex, newSourceVertex;
@@ -10339,12 +10208,7 @@ var Three = (function (exports) {
 			}
 
 
-			/******************************************************
-			*
-			*	Step 3.
-			*	Generate faces between source vertices and edge vertices.
-			*
-			*******************************************************/
+			
 
 
 			var edge1, edge2, edge3;
@@ -10378,31 +10242,7 @@ var Three = (function (exports) {
 				newFace( newFaces, tFace );
 
 
-				/*
-					0________C_______2
-					 \      /\      /
-					  \ F2 /  \ F4 /
-					   \  / F1 \  /
-					    \/______\/
-					   A \      / B
-					      \ F3 /
-					       \  /
-					        \/
-					         1
-
-					Draw orders:
-					F1: ABC x3,x4,x5
-					F2: 0AC x0,x3,x5
-					F3: 1BA x1,x4,x3
-					F4: 2CB x2,x5,x4
-
-					0: x0
-					1: x1
-					2: x2
-					A: x3
-					B: x4
-					C: x5
-				*/
+				
 
 				if ( doUvs === true ) {
 

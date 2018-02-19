@@ -1,13 +1,11 @@
-import { TempNode } from '../../nodes/TempNode.js'
-import { UVNode } from '../../nodes/accessors/UVNode.js'
-import { Vector2Node } from '../../nodes/inputs/Vector2Node.js'
-import { FunctionNode } from '../../nodes/FunctionNode.js'
+import { TempNode } from '../TempNode.js'
+import { UVNode } from '../accessors/UVNode.js'
+import { Vector2Node } from '../inputs/Vector2Node.js'
+import { FunctionNode } from '../FunctionNode.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
 
-var BumpNode = function( value, coord, scale ) {
+
+var BumpNode = function ( value, coord, scale ) {
 
 	TempNode.call( this, 'v3' );
 
@@ -18,20 +16,21 @@ var BumpNode = function( value, coord, scale ) {
 };
 
 BumpNode.fBumpToNormal = new FunctionNode( [
-"vec3 bumpToNormal( sampler2D bumpMap, vec2 uv, vec2 scale ) {",
-"	vec2 dSTdx = dFdx( uv );",
-"	vec2 dSTdy = dFdy( uv );",
-"	float Hll = texture2D( bumpMap, uv ).x;",
-"	float dBx = texture2D( bumpMap, uv + dSTdx ).x - Hll;",
-"	float dBy = texture2D( bumpMap, uv + dSTdy ).x - Hll;",
-"	return vec3( .5 + ( dBx * scale.x ), .5 + ( dBy * scale.y ), 1.0 );",
-"}"
+	"vec3 bumpToNormal( sampler2D bumpMap, vec2 uv, vec2 scale ) {",
+	"	vec2 dSTdx = dFdx( uv );",
+	"	vec2 dSTdy = dFdy( uv );",
+	"	float Hll = texture2D( bumpMap, uv ).x;",
+	"	float dBx = texture2D( bumpMap, uv + dSTdx ).x - Hll;",
+	"	float dBy = texture2D( bumpMap, uv + dSTdy ).x - Hll;",
+	"	return vec3( .5 + ( dBx * scale.x ), .5 + ( dBy * scale.y ), 1.0 );",
+	"}"
 ].join( "\n" ), null, { derivatives: true } );
 
 BumpNode.prototype = Object.create( TempNode.prototype );
 BumpNode.prototype.constructor = BumpNode;
+BumpNode.prototype.nodeType = "Bump";
 
-BumpNode.prototype.generate = function( builder, output ) {
+BumpNode.prototype.generate = function ( builder, output ) {
 
 	var material = builder.material, func = BumpNode.fBumpToNormal;
 
@@ -50,6 +49,24 @@ BumpNode.prototype.generate = function( builder, output ) {
 		return builder.format( 'vec3( 0.0 )', this.getType( builder ), output );
 
 	}
+
+};
+
+BumpNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		data.value = this.value.toJSON( meta ).uuid;
+		data.coord = this.coord.toJSON( meta ).uuid;
+		data.scale = this.scale.toJSON( meta ).uuid;
+
+	}
+
+	return data;
 
 };
 

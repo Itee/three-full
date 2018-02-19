@@ -1,19 +1,16 @@
-import { FileLoader } from '../loaders/FileLoader.js'
+import { FileLoader } from './FileLoader.js'
 import { Color } from '../math/Color.js'
-import { MeshPhongMaterial } from '../materials/Materials.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { Vector2 } from '../math/Vector2.js'
-import { TextureLoader } from '../loaders/TextureLoader.js'
+import { TextureLoader } from './TextureLoader.js'
 import {
 	FrontSide,
 	RepeatWrapping
 } from '../constants.js'
-import { DefaultLoadingManager } from '../loaders/LoadingManager.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { Loader } from './Loader.js'
 
-/**
- * Loads a Wavefront .mtl file specifying materials
- *
- * @author angelxuanchang
- */
+
 
 var MTLLoader = function ( manager ) {
 
@@ -25,19 +22,7 @@ MTLLoader.prototype = {
 
 	constructor: MTLLoader,
 
-	/**
-	 * Loads and parses a MTL asset from a URL.
-	 *
-	 * @param {String} url - URL to the MTL file.
-	 * @param {Function} [onLoad] - Callback invoked with the loaded object.
-	 * @param {Function} [onProgress] - Callback for download progress.
-	 * @param {Function} [onError] - Callback for download errors.
-	 *
-	 * @see setPath setTexturePath
-	 *
-	 * @note In order for relative texture references to resolve correctly
-	 * you must call setPath and/or setTexturePath explicitly prior to load.
-	 */
+	
 	load: function ( url, onLoad, onProgress, onError ) {
 
 		var scope = this;
@@ -52,36 +37,14 @@ MTLLoader.prototype = {
 
 	},
 
-	/**
-	 * Set base path for resolving references.
-	 * If set this path will be prepended to each loaded and found reference.
-	 *
-	 * @see setTexturePath
-	 * @param {String} path
-	 *
-	 * @example
-	 *     mtlLoader.setPath( 'assets/obj/' );
-	 *     mtlLoader.load( 'my.mtl', ... );
-	 */
+	
 	setPath: function ( path ) {
 
 		this.path = path;
 
 	},
 
-	/**
-	 * Set base path for resolving texture references.
-	 * If set this path will be prepended found texture reference.
-	 * If not set and setPath is, it will be used as texture base path.
-	 *
-	 * @see setPath
-	 * @param {String} path
-	 *
-	 * @example
-	 *     mtlLoader.setPath( 'assets/obj/' );
-	 *     mtlLoader.setTexturePath( 'assets/textures/' );
-	 *     mtlLoader.load( 'my.mtl', ... );
-	 */
+	
 	setTexturePath: function ( path ) {
 
 		this.texturePath = path;
@@ -108,17 +71,7 @@ MTLLoader.prototype = {
 
 	},
 
-	/**
-	 * Parses a MTL file.
-	 *
-	 * @param {String} text - Content of MTL file
-	 * @return {MTLLoader.MaterialCreator}
-	 *
-	 * @see setPath setTexturePath
-	 *
-	 * @note In order for relative texture references to resolve correctly
-	 * you must call setPath and/or setTexturePath explicitly prior to parse.
-	 */
+	
 	parse: function ( text ) {
 
 		var lines = text.split( '\n' );
@@ -180,20 +133,7 @@ MTLLoader.prototype = {
 
 };
 
-/**
- * Create a new THREE-MTLLoader.MaterialCreator
- * @param baseUrl - Url relative to which textures are loaded
- * @param options - Set of options on how to construct the materials
- *                  side: Which side to apply the material
- *                        FrontSide (default), BackSide, DoubleSide
- *                  wrap: What type of wrapping to apply for textures
- *                        RepeatWrapping (default), ClampToEdgeWrapping, MirroredRepeatWrapping
- *                  normalizeRGB: RGBs need to be normalized to 0-1 from 0-255
- *                                Default: false, assumed to be already normalized
- *                  ignoreZeroRGBs: Ignore values of RGBs (Ka,Kd,Ks) that are all 0's
- *                                  Default: false
- * @constructor
- */
+
 
 MTLLoader.MaterialCreator = function ( baseUrl, options ) {
 
@@ -473,9 +413,11 @@ MTLLoader.MaterialCreator.prototype = {
 				case 'tr':
 					n = parseFloat( value );
 
-					if ( n > 0 ) {
+					if ( this.options && this.options.invertTrProperty ) n = 1 - n;
 
-						params.opacity = 1 - n;
+					if ( n < 1 ) {
+
+						params.opacity = n;
 						params.transparent = true;
 
 					}

@@ -1,15 +1,11 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	function Uniform( value ) {
 
 		if ( typeof value === 'string' ) {
 
-			console.warn( 'THREE.Uniform: Type parameter is no longer needed.' );
+			console.warn( 'Uniform: Type parameter is no longer needed.' );
 			value = arguments[ 1 ];
 
 		}

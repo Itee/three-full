@@ -1,9 +1,8 @@
-import { Color } from '../math/Color.js';
+import { Color } from '../math/Color.js'
 
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author alteredq / http://alteredqualia.com/
- */
+
+
+
 
 function FogExp2( color, density ) {
 
@@ -22,7 +21,7 @@ FogExp2.prototype.clone = function () {
 
 };
 
-FogExp2.prototype.toJSON = function ( /* meta */ ) {
+FogExp2.prototype.toJSON = function (  ) {
 
 	return {
 		type: 'FogExp2',
@@ -32,4 +31,6 @@ FogExp2.prototype.toJSON = function ( /* meta */ ) {
 
 };
 
-export { FogExp2 };
+;
+
+export { FogExp2 }

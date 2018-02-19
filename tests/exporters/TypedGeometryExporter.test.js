@@ -1,10 +1,6 @@
 var Three = (function (exports) {
 	'use strict';
 
-	/**
-	 * @author mrdoob / http://mrdoob.com/
-	 */
-
 	var TypedGeometryExporter = function () {};
 
 	TypedGeometryExporter.prototype = {

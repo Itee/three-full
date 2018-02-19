@@ -1,13 +1,11 @@
-import { GLNode } from '../../nodes/GLNode.js'
-import { ColorNode } from '../../nodes/inputs/ColorNode.js'
-import { FloatNode } from '../../nodes/inputs/FloatNode.js'
-import { UVNode } from '../../nodes/accessors/UVNode.js'
+import { GLNode } from '../GLNode.js'
+import { ColorNode } from '../inputs/ColorNode.js'
+import { FloatNode } from '../inputs/FloatNode.js'
+import { UVNode } from '../accessors/UVNode.js'
 import { UniformsUtils } from '../../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../../renderers/shaders/UniformsLib.js'
 
-/**
- * @author sunag / http://www.sunag.com.br/
- */
+
 
 var PhongNode = function () {
 
@@ -21,6 +19,7 @@ var PhongNode = function () {
 
 PhongNode.prototype = Object.create( GLNode.prototype );
 PhongNode.prototype.constructor = PhongNode;
+PhongNode.prototype.nodeType = "Phong";
 
 PhongNode.prototype.build = function ( builder ) {
 
@@ -30,7 +29,7 @@ PhongNode.prototype.build = function ( builder ) {
 	material.define( 'PHONG' );
 	material.define( 'ALPHATEST', '0.0' );
 
-	material.requestAttribs.light = true;
+	material.requires.lights = true;
 
 	if ( builder.isShader( 'vertex' ) ) {
 
@@ -144,7 +143,7 @@ PhongNode.prototype.build = function ( builder ) {
 		var environment = this.environment ? this.environment.buildCode( builder, 'c', { slot: 'environment' } ) : undefined;
 		var environmentAlpha = this.environmentAlpha && this.environment ? this.environmentAlpha.buildCode( builder, 'fv1' ) : undefined;
 
-		material.requestAttribs.transparent = alpha != undefined;
+		material.requires.transparent = alpha != undefined;
 
 		material.addFragmentPars( [
 			"#include <common>",
@@ -313,6 +312,46 @@ PhongNode.prototype.build = function ( builder ) {
 	}
 
 	return code;
+
+};
+
+
+PhongNode.prototype.toJSON = function ( meta ) {
+
+	var data = this.getJSONNode( meta );
+
+	if ( ! data ) {
+
+		data = this.createJSONNode( meta );
+
+		// vertex
+
+		if ( this.transform ) data.transform = this.transform.toJSON( meta ).uuid;
+
+		// fragment
+
+		data.color = this.color.toJSON( meta ).uuid;
+		data.specular = this.specular.toJSON( meta ).uuid;
+		data.shininess = this.shininess.toJSON( meta ).uuid;
+
+		if ( this.alpha ) data.alpha = this.alpha.toJSON( meta ).uuid;
+
+		if ( this.normal ) data.normal = this.normal.toJSON( meta ).uuid;
+		if ( this.normalScale ) data.normalScale = this.normalScale.toJSON( meta ).uuid;
+
+		if ( this.light ) data.light = this.light.toJSON( meta ).uuid;
+
+		if ( this.ao ) data.ao = this.ao.toJSON( meta ).uuid;
+		if ( this.ambient ) data.ambient = this.ambient.toJSON( meta ).uuid;
+		if ( this.shadow ) data.shadow = this.shadow.toJSON( meta ).uuid;
+		if ( this.emissive ) data.emissive = this.emissive.toJSON( meta ).uuid;
+
+		if ( this.environment ) data.environment = this.environment.toJSON( meta ).uuid;
+		if ( this.environmentAlpha ) data.environmentAlpha = this.environmentAlpha.toJSON( meta ).uuid;
+
+	}
+
+	return data;
 
 };
 

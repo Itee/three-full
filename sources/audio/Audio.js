@@ -1,9 +1,8 @@
-/**
- * @author mrdoob / http://mrdoob.com/
- * @author Reece Aaron Lecrivain / http://reecenotes.com/
- */
+import { Object3D } from '../core/Object3D.js'
 
-import { Object3D } from '../core/Object3D.js';
+
+
+
 
 function Audio( listener ) {
 
@@ -67,14 +66,14 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		if ( this.isPlaying === true ) {
 
-			console.warn( 'THREE.Audio: Audio is already playing.' );
+			console.warn( 'Audio: Audio is already playing.' );
 			return;
 
 		}
 
 		if ( this.hasPlaybackControl === false ) {
 
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
+			console.warn( 'Audio: this Audio has no playback control.' );
 			return;
 
 		}
@@ -100,7 +99,7 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		if ( this.hasPlaybackControl === false ) {
 
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
+			console.warn( 'Audio: this Audio has no playback control.' );
 			return;
 
 		}
@@ -121,7 +120,7 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		if ( this.hasPlaybackControl === false ) {
 
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
+			console.warn( 'Audio: this Audio has no playback control.' );
 			return;
 
 		}
@@ -224,7 +223,7 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		if ( this.hasPlaybackControl === false ) {
 
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
+			console.warn( 'Audio: this Audio has no playback control.' );
 			return;
 
 		}
@@ -257,7 +256,7 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		if ( this.hasPlaybackControl === false ) {
 
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
+			console.warn( 'Audio: this Audio has no playback control.' );
 			return false;
 
 		}
@@ -270,7 +269,7 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		if ( this.hasPlaybackControl === false ) {
 
-			console.warn( 'THREE.Audio: this Audio has no playback control.' );
+			console.warn( 'Audio: this Audio has no playback control.' );
 			return;
 
 		}
@@ -303,4 +302,6 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 } );
 
-export { Audio };
+;
+
+export { Audio }
