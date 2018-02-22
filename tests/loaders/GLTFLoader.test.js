@@ -6384,8 +6384,14 @@ var Three = (function (exports) {
 	var DoubleSide = 2;
 	var FlatShading = 1;
 	var NoColors = 0;
+	var FaceColors = 1;
 	var VertexColors = 2;
+	var NoBlending = 0;
 	var NormalBlending = 1;
+	var AdditiveBlending = 2;
+	var SubtractiveBlending = 3;
+	var MultiplyBlending = 4;
+	var CustomBlending = 5;
 	var AddEquation = 100;
 	var SrcAlphaFactor = 204;
 	var OneMinusSrcAlphaFactor = 205;
@@ -15802,6 +15808,480 @@ var Three = (function (exports) {
 		fragmentShader: ShaderChunk.meshphysical_frag
 
 	};
+
+	function MaterialLoader( manager ) {
+
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+		this.textures = {};
+
+	}
+
+	Object.assign( MaterialLoader.prototype, {
+
+		load: function ( url, onLoad, onProgress, onError ) {
+
+			var scope = this;
+
+			var loader = new FileLoader( scope.manager );
+			loader.load( url, function ( text ) {
+
+				onLoad( scope.parse( JSON.parse( text ) ) );
+
+			}, onProgress, onError );
+
+		},
+
+		setTextures: function ( value ) {
+
+			this.textures = value;
+
+		},
+
+		parse: function ( json ) {
+
+			var textures = this.textures;
+
+			function getTexture( name ) {
+
+				if ( textures[ name ] === undefined ) {
+
+					console.warn( 'MaterialLoader: Undefined texture', name );
+
+				}
+
+				return textures[ name ];
+
+			}
+
+			var material = new Materials[ json.type ]();
+
+			if ( json.uuid !== undefined ) material.uuid = json.uuid;
+			if ( json.name !== undefined ) material.name = json.name;
+			if ( json.color !== undefined ) material.color.setHex( json.color );
+			if ( json.roughness !== undefined ) material.roughness = json.roughness;
+			if ( json.metalness !== undefined ) material.metalness = json.metalness;
+			if ( json.emissive !== undefined ) material.emissive.setHex( json.emissive );
+			if ( json.specular !== undefined ) material.specular.setHex( json.specular );
+			if ( json.shininess !== undefined ) material.shininess = json.shininess;
+			if ( json.clearCoat !== undefined ) material.clearCoat = json.clearCoat;
+			if ( json.clearCoatRoughness !== undefined ) material.clearCoatRoughness = json.clearCoatRoughness;
+			if ( json.uniforms !== undefined ) material.uniforms = json.uniforms;
+			if ( json.vertexShader !== undefined ) material.vertexShader = json.vertexShader;
+			if ( json.fragmentShader !== undefined ) material.fragmentShader = json.fragmentShader;
+			if ( json.vertexColors !== undefined ) material.vertexColors = json.vertexColors;
+			if ( json.fog !== undefined ) material.fog = json.fog;
+			if ( json.flatShading !== undefined ) material.flatShading = json.flatShading;
+			if ( json.blending !== undefined ) material.blending = json.blending;
+			if ( json.side !== undefined ) material.side = json.side;
+			if ( json.opacity !== undefined ) material.opacity = json.opacity;
+			if ( json.transparent !== undefined ) material.transparent = json.transparent;
+			if ( json.alphaTest !== undefined ) material.alphaTest = json.alphaTest;
+			if ( json.depthTest !== undefined ) material.depthTest = json.depthTest;
+			if ( json.depthWrite !== undefined ) material.depthWrite = json.depthWrite;
+			if ( json.colorWrite !== undefined ) material.colorWrite = json.colorWrite;
+			if ( json.wireframe !== undefined ) material.wireframe = json.wireframe;
+			if ( json.wireframeLinewidth !== undefined ) material.wireframeLinewidth = json.wireframeLinewidth;
+			if ( json.wireframeLinecap !== undefined ) material.wireframeLinecap = json.wireframeLinecap;
+			if ( json.wireframeLinejoin !== undefined ) material.wireframeLinejoin = json.wireframeLinejoin;
+
+			if ( json.rotation !== undefined ) material.rotation = json.rotation;
+
+			if ( json.linewidth !== 1 ) material.linewidth = json.linewidth;
+			if ( json.dashSize !== undefined ) material.dashSize = json.dashSize;
+			if ( json.gapSize !== undefined ) material.gapSize = json.gapSize;
+			if ( json.scale !== undefined ) material.scale = json.scale;
+
+			if ( json.skinning !== undefined ) material.skinning = json.skinning;
+			if ( json.morphTargets !== undefined ) material.morphTargets = json.morphTargets;
+			if ( json.dithering !== undefined ) material.dithering = json.dithering;
+
+			if ( json.visible !== undefined ) material.visible = json.visible;
+			if ( json.userData !== undefined ) material.userData = json.userData;
+
+			// Deprecated
+
+			if ( json.shading !== undefined ) material.flatShading = json.shading === 1; // FlatShading
+
+			// for PointsMaterial
+
+			if ( json.size !== undefined ) material.size = json.size;
+			if ( json.sizeAttenuation !== undefined ) material.sizeAttenuation = json.sizeAttenuation;
+
+			// maps
+
+			if ( json.map !== undefined ) material.map = getTexture( json.map );
+
+			if ( json.alphaMap !== undefined ) {
+
+				material.alphaMap = getTexture( json.alphaMap );
+				material.transparent = true;
+
+			}
+
+			if ( json.bumpMap !== undefined ) material.bumpMap = getTexture( json.bumpMap );
+			if ( json.bumpScale !== undefined ) material.bumpScale = json.bumpScale;
+
+			if ( json.normalMap !== undefined ) material.normalMap = getTexture( json.normalMap );
+			if ( json.normalScale !== undefined ) {
+
+				var normalScale = json.normalScale;
+
+				if ( Array.isArray( normalScale ) === false ) {
+
+					// Blender exporter used to export a scalar. See #7459
+
+					normalScale = [ normalScale, normalScale ];
+
+				}
+
+				material.normalScale = new Vector2().fromArray( normalScale );
+
+			}
+
+			if ( json.displacementMap !== undefined ) material.displacementMap = getTexture( json.displacementMap );
+			if ( json.displacementScale !== undefined ) material.displacementScale = json.displacementScale;
+			if ( json.displacementBias !== undefined ) material.displacementBias = json.displacementBias;
+
+			if ( json.roughnessMap !== undefined ) material.roughnessMap = getTexture( json.roughnessMap );
+			if ( json.metalnessMap !== undefined ) material.metalnessMap = getTexture( json.metalnessMap );
+
+			if ( json.emissiveMap !== undefined ) material.emissiveMap = getTexture( json.emissiveMap );
+			if ( json.emissiveIntensity !== undefined ) material.emissiveIntensity = json.emissiveIntensity;
+
+			if ( json.specularMap !== undefined ) material.specularMap = getTexture( json.specularMap );
+
+			if ( json.envMap !== undefined ) material.envMap = getTexture( json.envMap );
+
+			if ( json.reflectivity !== undefined ) material.reflectivity = json.reflectivity;
+
+			if ( json.lightMap !== undefined ) material.lightMap = getTexture( json.lightMap );
+			if ( json.lightMapIntensity !== undefined ) material.lightMapIntensity = json.lightMapIntensity;
+
+			if ( json.aoMap !== undefined ) material.aoMap = getTexture( json.aoMap );
+			if ( json.aoMapIntensity !== undefined ) material.aoMapIntensity = json.aoMapIntensity;
+
+			if ( json.gradientMap !== undefined ) material.gradientMap = getTexture( json.gradientMap );
+
+			return material;
+
+		}
+
+	} );
+
+	function Loader() {
+
+		this.onLoadStart = function () {};
+		this.onLoadProgress = function () {};
+		this.onLoadComplete = function () {};
+
+	}
+
+	Loader.Handlers = {
+
+		handlers: [],
+
+		add: function ( regex, loader ) {
+
+			this.handlers.push( regex, loader );
+
+		},
+
+		get: function ( file ) {
+
+			var handlers = this.handlers;
+
+			for ( var i = 0, l = handlers.length; i < l; i += 2 ) {
+
+				var regex = handlers[ i ];
+				var loader = handlers[ i + 1 ];
+
+				if ( regex.test( file ) ) {
+
+					return loader;
+
+				}
+
+			}
+
+			return null;
+
+		}
+
+	};
+
+	Object.assign( Loader.prototype, {
+
+		crossOrigin: undefined,
+
+		initMaterials: function ( materials, texturePath, crossOrigin ) {
+
+			var array = [];
+
+			for ( var i = 0; i < materials.length; ++ i ) {
+
+				array[ i ] = this.createMaterial( materials[ i ], texturePath, crossOrigin );
+
+			}
+
+			return array;
+
+		},
+
+		createMaterial: ( function () {
+
+			var BlendingMode = {
+				NoBlending: NoBlending,
+				NormalBlending: NormalBlending,
+				AdditiveBlending: AdditiveBlending,
+				SubtractiveBlending: SubtractiveBlending,
+				MultiplyBlending: MultiplyBlending,
+				CustomBlending: CustomBlending
+			};
+
+			var color = new Color();
+			var textureLoader = new TextureLoader();
+			var materialLoader = new MaterialLoader();
+
+			return function createMaterial( m, texturePath, crossOrigin ) {
+
+				// convert from old material format
+
+				var textures = {};
+
+				function loadTexture( path, repeat, offset, wrap, anisotropy ) {
+
+					var fullPath = texturePath + path;
+					var loader = Loader.Handlers.get( fullPath );
+
+					var texture;
+
+					if ( loader !== null ) {
+
+						texture = loader.load( fullPath );
+
+					} else {
+
+						textureLoader.setCrossOrigin( crossOrigin );
+						texture = textureLoader.load( fullPath );
+
+					}
+
+					if ( repeat !== undefined ) {
+
+						texture.repeat.fromArray( repeat );
+
+						if ( repeat[ 0 ] !== 1 ) texture.wrapS = RepeatWrapping;
+						if ( repeat[ 1 ] !== 1 ) texture.wrapT = RepeatWrapping;
+
+					}
+
+					if ( offset !== undefined ) {
+
+						texture.offset.fromArray( offset );
+
+					}
+
+					if ( wrap !== undefined ) {
+
+						if ( wrap[ 0 ] === 'repeat' ) texture.wrapS = RepeatWrapping;
+						if ( wrap[ 0 ] === 'mirror' ) texture.wrapS = MirroredRepeatWrapping;
+
+						if ( wrap[ 1 ] === 'repeat' ) texture.wrapT = RepeatWrapping;
+						if ( wrap[ 1 ] === 'mirror' ) texture.wrapT = MirroredRepeatWrapping;
+
+					}
+
+					if ( anisotropy !== undefined ) {
+
+						texture.anisotropy = anisotropy;
+
+					}
+
+					var uuid = _Math.generateUUID();
+
+					textures[ uuid ] = texture;
+
+					return uuid;
+
+				}
+
+				//
+
+				var json = {
+					uuid: _Math.generateUUID(),
+					type: 'MeshLambertMaterial'
+				};
+
+				for ( var name in m ) {
+
+					var value = m[ name ];
+
+					switch ( name ) {
+
+						case 'DbgColor':
+						case 'DbgIndex':
+						case 'opticalDensity':
+						case 'illumination':
+							break;
+						case 'DbgName':
+							json.name = value;
+							break;
+						case 'blending':
+							json.blending = BlendingMode[ value ];
+							break;
+						case 'colorAmbient':
+						case 'mapAmbient':
+							console.warn( 'Loader.createMaterial:', name, 'is no longer supported.' );
+							break;
+						case 'colorDiffuse':
+							json.color = color.fromArray( value ).getHex();
+							break;
+						case 'colorSpecular':
+							json.specular = color.fromArray( value ).getHex();
+							break;
+						case 'colorEmissive':
+							json.emissive = color.fromArray( value ).getHex();
+							break;
+						case 'specularCoef':
+							json.shininess = value;
+							break;
+						case 'shading':
+							if ( value.toLowerCase() === 'basic' ) json.type = 'MeshBasicMaterial';
+							if ( value.toLowerCase() === 'phong' ) json.type = 'MeshPhongMaterial';
+							if ( value.toLowerCase() === 'standard' ) json.type = 'MeshStandardMaterial';
+							break;
+						case 'mapDiffuse':
+							json.map = loadTexture( value, m.mapDiffuseRepeat, m.mapDiffuseOffset, m.mapDiffuseWrap, m.mapDiffuseAnisotropy );
+							break;
+						case 'mapDiffuseRepeat':
+						case 'mapDiffuseOffset':
+						case 'mapDiffuseWrap':
+						case 'mapDiffuseAnisotropy':
+							break;
+						case 'mapEmissive':
+							json.emissiveMap = loadTexture( value, m.mapEmissiveRepeat, m.mapEmissiveOffset, m.mapEmissiveWrap, m.mapEmissiveAnisotropy );
+							break;
+						case 'mapEmissiveRepeat':
+						case 'mapEmissiveOffset':
+						case 'mapEmissiveWrap':
+						case 'mapEmissiveAnisotropy':
+							break;
+						case 'mapLight':
+							json.lightMap = loadTexture( value, m.mapLightRepeat, m.mapLightOffset, m.mapLightWrap, m.mapLightAnisotropy );
+							break;
+						case 'mapLightRepeat':
+						case 'mapLightOffset':
+						case 'mapLightWrap':
+						case 'mapLightAnisotropy':
+							break;
+						case 'mapAO':
+							json.aoMap = loadTexture( value, m.mapAORepeat, m.mapAOOffset, m.mapAOWrap, m.mapAOAnisotropy );
+							break;
+						case 'mapAORepeat':
+						case 'mapAOOffset':
+						case 'mapAOWrap':
+						case 'mapAOAnisotropy':
+							break;
+						case 'mapBump':
+							json.bumpMap = loadTexture( value, m.mapBumpRepeat, m.mapBumpOffset, m.mapBumpWrap, m.mapBumpAnisotropy );
+							break;
+						case 'mapBumpScale':
+							json.bumpScale = value;
+							break;
+						case 'mapBumpRepeat':
+						case 'mapBumpOffset':
+						case 'mapBumpWrap':
+						case 'mapBumpAnisotropy':
+							break;
+						case 'mapNormal':
+							json.normalMap = loadTexture( value, m.mapNormalRepeat, m.mapNormalOffset, m.mapNormalWrap, m.mapNormalAnisotropy );
+							break;
+						case 'mapNormalFactor':
+							json.normalScale = [ value, value ];
+							break;
+						case 'mapNormalRepeat':
+						case 'mapNormalOffset':
+						case 'mapNormalWrap':
+						case 'mapNormalAnisotropy':
+							break;
+						case 'mapSpecular':
+							json.specularMap = loadTexture( value, m.mapSpecularRepeat, m.mapSpecularOffset, m.mapSpecularWrap, m.mapSpecularAnisotropy );
+							break;
+						case 'mapSpecularRepeat':
+						case 'mapSpecularOffset':
+						case 'mapSpecularWrap':
+						case 'mapSpecularAnisotropy':
+							break;
+						case 'mapMetalness':
+							json.metalnessMap = loadTexture( value, m.mapMetalnessRepeat, m.mapMetalnessOffset, m.mapMetalnessWrap, m.mapMetalnessAnisotropy );
+							break;
+						case 'mapMetalnessRepeat':
+						case 'mapMetalnessOffset':
+						case 'mapMetalnessWrap':
+						case 'mapMetalnessAnisotropy':
+							break;
+						case 'mapRoughness':
+							json.roughnessMap = loadTexture( value, m.mapRoughnessRepeat, m.mapRoughnessOffset, m.mapRoughnessWrap, m.mapRoughnessAnisotropy );
+							break;
+						case 'mapRoughnessRepeat':
+						case 'mapRoughnessOffset':
+						case 'mapRoughnessWrap':
+						case 'mapRoughnessAnisotropy':
+							break;
+						case 'mapAlpha':
+							json.alphaMap = loadTexture( value, m.mapAlphaRepeat, m.mapAlphaOffset, m.mapAlphaWrap, m.mapAlphaAnisotropy );
+							break;
+						case 'mapAlphaRepeat':
+						case 'mapAlphaOffset':
+						case 'mapAlphaWrap':
+						case 'mapAlphaAnisotropy':
+							break;
+						case 'flipSided':
+							json.side = BackSide;
+							break;
+						case 'doubleSided':
+							json.side = DoubleSide;
+							break;
+						case 'transparency':
+							console.warn( 'Loader.createMaterial: transparency has been renamed to opacity' );
+							json.opacity = value;
+							break;
+						case 'depthTest':
+						case 'depthWrite':
+						case 'colorWrite':
+						case 'opacity':
+						case 'reflectivity':
+						case 'transparent':
+						case 'visible':
+						case 'wireframe':
+							json[ name ] = value;
+							break;
+						case 'vertexColors':
+							if ( value === true ) json.vertexColors = VertexColors;
+							if ( value === 'face' ) json.vertexColors = FaceColors;
+							break;
+						default:
+							console.error( 'Loader.createMaterial: Unsupported', name, value );
+							break;
+
+					}
+
+				}
+
+				if ( json.type === 'MeshBasicMaterial' ) delete json.emissive;
+				if ( json.type !== 'MeshPhongMaterial' ) delete json.specular;
+
+				if ( json.opacity < 1 ) json.transparent = true;
+
+				materialLoader.setTextures( textures );
+
+				return materialLoader.parse( json );
+
+			};
+
+		} )()
+
+	} );
 
 	var LoaderUtils = {
 

@@ -18470,7 +18470,7 @@
 
   } );
 
-  function Loader$1() {
+  function Loader() {
 
   	this.onLoadStart = function () {};
   	this.onLoadProgress = function () {};
@@ -18478,7 +18478,7 @@
 
   }
 
-  Loader$1.Handlers = {
+  Loader.Handlers = {
 
   	handlers: [],
 
@@ -18511,7 +18511,7 @@
 
   };
 
-  Object.assign( Loader$1.prototype, {
+  Object.assign( Loader.prototype, {
 
   	crossOrigin: undefined,
 
@@ -18555,7 +18555,7 @@
   			function loadTexture( path, repeat, offset, wrap, anisotropy ) {
 
   				var fullPath = texturePath + path;
-  				var loader = Loader$1.Handlers.get( fullPath );
+  				var loader = Loader.Handlers.get( fullPath );
 
   				var texture;
 
@@ -19373,7 +19373,7 @@
 
   			} else {
 
-  				var materials = Loader$1.prototype.initMaterials( json.materials, texturePath, this.crossOrigin );
+  				var materials = Loader.prototype.initMaterials( json.materials, texturePath, this.crossOrigin );
 
   				return { geometry: geometry, materials: materials };
 
@@ -20018,7 +20018,7 @@
   		Model.prototype.constructor = Model;
 
   		var geometry = new Model();
-  		var materials = Loader$1.prototype.initMaterials( jsonMaterials, texturePath, this.crossOrigin );
+  		var materials = Loader.prototype.initMaterials( jsonMaterials, texturePath, this.crossOrigin );
 
   		callback( geometry, materials );
 
@@ -29070,13 +29070,6 @@
   	}
 
   };
-
-  // browserify support
-  if ( typeof module === 'object' ) {
-
-  	module.exports = Detector;
-
-  }
 
   function StereoCamera() {
 
@@ -47567,7 +47560,7 @@
 
   						}
 
-  						var textureLoader = Loader$1.Handlers.get( sourceUri );
+  						var textureLoader = Loader.Handlers.get( sourceUri );
 
   						if ( textureLoader === null ) {
 
@@ -61178,14 +61171,14 @@
 
   var MMDLoader = function ( manager ) {
 
-  	Loader$1.call( this );
+  	Loader.call( this );
   	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
   	this.parser = new MMDParser.Parser();
   	this.textureCrossOrigin = null;
 
   };
 
-  MMDLoader.prototype = Object.create( Loader$1.prototype );
+  MMDLoader.prototype = Object.create( Loader.prototype );
   MMDLoader.prototype.constructor = MMDLoader;
 
 
@@ -62029,7 +62022,7 @@
 
   			if ( textures[ fullPath ] !== undefined ) { return fullPath; }
 
-  			var loader = Loader$1.Handlers.get( fullPath );
+  			var loader = Loader.Handlers.get( fullPath );
 
   			if ( loader === null ) {
 
@@ -64270,7 +64263,7 @@
   	loadTexture: function ( url, mapping, onLoad, onProgress, onError ) {
 
   		var texture;
-  		var loader = Loader$1.Handlers.get( url );
+  		var loader = Loader.Handlers.get( url );
   		var manager = ( this.manager !== undefined ) ? this.manager : DefaultLoadingManager;
 
   		if ( loader === null ) {
@@ -127111,7 +127104,7 @@
   exports.ImageBitmapLoader = ImageBitmapLoader;
   exports.ImageLoader = ImageLoader;
   exports.JSONLoader = JSONLoader;
-  exports.Loader = Loader$1;
+  exports.Loader = Loader;
   exports.LoaderUtils = LoaderUtils;
   exports.DefaultLoadingManager = DefaultLoadingManager;
   exports.LoadingManager = LoadingManager;

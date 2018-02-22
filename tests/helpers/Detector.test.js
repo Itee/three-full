@@ -68,13 +68,6 @@ var Three = (function (exports) {
 
 	};
 
-	// browserify support
-	if ( typeof module === 'object' ) {
-
-		module.exports = Detector;
-
-	}
-
 	exports.Detector = Detector;
 
 	return exports;

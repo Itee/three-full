@@ -202,7 +202,11 @@ module.exports = {
             outputOverride: 'core/CurvePath.js'
         },
         Detector: {
-			outputOverride: 'helpers/Detector.js'
+			outputOverride: 'helpers/Detector.js',
+			replacements: [
+				[/if \( typeof module === 'object' \) {/g, ''],
+				[ /module\.exports\s*=\s*\{?[^}]*}?/g, '']
+			]
 		},
         DeviceOrientationControls: {
             imports: [
@@ -283,6 +287,7 @@ module.exports = {
 				'MeshBasicMaterial',
 				'ShaderLib',
 				'UniformsUtils',
+				'Loader',
 				'LoaderUtils',
 				'AnimationUtils',
 				'_Math',
