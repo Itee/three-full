@@ -9,7 +9,7 @@ Three.js r90 come with lot of examples files, which are curently not usable as E
 The purpose of this project is to convert all examples files and includes them as part 
 of the library.
 
-**The version 5.0.2 is now available !!!**
+**The version 5.0.3 is now available !!!**
 
 #### Setup ####
 
@@ -193,6 +193,12 @@ All others folders under example file tree will be mapped to their counter-part 
 
 
 #### Change log ####
+
+##### 5.0.3:
+
+* Fix missings Geometries imports in ObjectLoader
+* Fix missings Materials imports in LoaderMaterial
+* Fix missings Curves imports in CurvePath
 
 ##### 5.0.2 (Thanks to Marc Bartels):
 
