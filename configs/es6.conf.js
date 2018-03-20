@@ -199,6 +199,37 @@ module.exports = {
 			outputOverride: 'curves/CurveExtras.js'
 		},
         CurvePath: {
+            // Equivalent to ( import * as Curves from 'intermediary exporter file Curves' )
+            imports: [
+                'ArcCurve',
+                'CatmullRomCurve3',
+                'CubicBezierCurve',
+                'CubicBezierCurve3',
+                'EllipseCurve',
+                'LineCurve',
+                'LineCurve3',
+                'QuadraticBezierCurve',
+                'QuadraticBezierCurve3',
+                'SplineCurve'
+            ],
+            replacements: [
+                [
+                	'function CurvePath() {',
+					'var Curves = {\n' +
+                    '    ArcCurve: ArcCurve,\n' +
+                    '    CatmullRomCurve3: CatmullRomCurve3,\n' +
+                    '    CubicBezierCurve: CubicBezierCurve,\n' +
+                    '    CubicBezierCurve3: CubicBezierCurve3,\n' +
+                    '    EllipseCurve: EllipseCurve,\n' +
+                    '    LineCurve: LineCurve,\n' +
+                    '    LineCurve3: LineCurve3,\n' +
+                    '    QuadraticBezierCurve: QuadraticBezierCurve,\n' +
+                    '    QuadraticBezierCurve3: QuadraticBezierCurve3,\n' +
+                    '    SplineCurve: SplineCurve\n' +
+                    '}\n' +
+                    'function CurvePath() {'
+				]
+            ],
             outputOverride: 'core/CurvePath.js'
         },
         Detector: {
@@ -500,6 +531,99 @@ module.exports = {
 		},
 		NURBSSurface: {
 			imports: [ 'NURBSUtils' ]
+		},
+        ObjectLoader: {
+            // Equivalent to ( import * as Geometries from 'intermediary exporter file Geometries' )
+            imports: [
+                'WireframeGeometry',
+                //'ParametricGeometry', 		Invalid due to TorusKnotCurve bug
+                //'ParametricBufferGeometry',	Invalid due to TorusKnotCurve bug
+                'TetrahedronGeometry',
+                'TetrahedronBufferGeometry',
+                'OctahedronGeometry',
+                'OctahedronBufferGeometry',
+                'IcosahedronGeometry',
+                'IcosahedronBufferGeometry',
+                'DodecahedronGeometry',
+                'DodecahedronBufferGeometry',
+                'PolyhedronGeometry',
+                'PolyhedronBufferGeometry',
+                'TubeGeometry',
+                'TubeBufferGeometry',
+                'TorusKnotGeometry',
+                'TorusGeometry',
+                'TorusBufferGeometry',
+                'TextGeometry',
+                'TextBufferGeometry',
+                'SphereGeometry',
+                'SphereBufferGeometry',
+                'RingGeometry',
+                'RingBufferGeometry',
+                'PlaneGeometry',
+                'PlaneBufferGeometry',
+                'LatheGeometry',
+                'LatheBufferGeometry',
+                'ShapeGeometry',
+                'ShapeBufferGeometry',
+                'ExtrudeGeometry',
+                'ExtrudeBufferGeometry',
+                'EdgesGeometry',
+                'ConeGeometry',
+                'ConeBufferGeometry',
+                'CylinderGeometry',
+                'CylinderBufferGeometry',
+                'CircleGeometry',
+                'CircleBufferGeometry',
+                'BoxGeometry',
+                'BoxBufferGeometry'
+            ],
+            replacements: [
+                [
+                    'function ObjectLoader( manager ) {',
+                    'var Geometries = {\n' +
+                    '    WireframeGeometry: WireframeGeometry,\n' +
+                    '    TetrahedronGeometry: TetrahedronGeometry,\n' +
+                    '    TetrahedronBufferGeometry: TetrahedronBufferGeometry,\n' +
+                    '    OctahedronGeometry: OctahedronGeometry,\n' +
+                    '    OctahedronBufferGeometry: OctahedronBufferGeometry,\n' +
+                    '    IcosahedronGeometry: IcosahedronGeometry,\n' +
+                    '    IcosahedronBufferGeometry: IcosahedronBufferGeometry,\n' +
+                    '    DodecahedronGeometry: DodecahedronGeometry,\n' +
+                    '    DodecahedronBufferGeometry: DodecahedronBufferGeometry,\n' +
+                    '    PolyhedronGeometry: PolyhedronGeometry,\n' +
+                    '    PolyhedronBufferGeometry: PolyhedronBufferGeometry,\n' +
+                    '    TubeGeometry: TubeGeometry,\n' +
+                    '    TubeBufferGeometry: TubeBufferGeometry,\n' +
+                    '    TorusKnotGeometry: TorusKnotGeometry,\n' +
+                    '    TorusGeometry: TorusGeometry,\n' +
+                    '    TorusBufferGeometry: TorusBufferGeometry,\n' +
+                    '    TextGeometry: TextGeometry,\n' +
+                    '    TextBufferGeometry: TextBufferGeometry,\n' +
+                    '    SphereGeometry: SphereGeometry,\n' +
+                    '    SphereBufferGeometry: SphereBufferGeometry,\n' +
+                    '    RingGeometry: RingGeometry,\n' +
+                    '    RingBufferGeometry: RingBufferGeometry,\n' +
+                    '    PlaneGeometry: PlaneGeometry,\n' +
+                    '    PlaneBufferGeometry: PlaneBufferGeometry,\n' +
+                    '    LatheGeometry: LatheGeometry,\n' +
+                    '    LatheBufferGeometry: LatheBufferGeometry,\n' +
+                    '    ShapeGeometry: ShapeGeometry,\n' +
+                    '    ShapeBufferGeometry: ShapeBufferGeometry,\n' +
+                    '    ExtrudeGeometry: ExtrudeGeometry,\n' +
+                    '    ExtrudeBufferGeometry: ExtrudeBufferGeometry,\n' +
+                    '    EdgesGeometry: EdgesGeometry,\n' +
+                    '    ConeGeometry: ConeGeometry,\n' +
+                    '    ConeBufferGeometry: ConeBufferGeometry,\n' +
+                    '    CylinderGeometry: CylinderGeometry,\n' +
+                    '    CylinderBufferGeometry: CylinderBufferGeometry,\n' +
+                    '    CircleGeometry: CircleGeometry,\n' +
+                    '    CircleBufferGeometry: CircleBufferGeometry,\n' +
+                    '    BoxGeometry: BoxGeometry,\n' +
+                    '    BoxBufferGeometry: BoxBufferGeometry\n' +
+                    '}\n' +
+                    'function ObjectLoader( manager ) {'
+                ]
+            ]
 		},
 		OBJLoader: {
 			imports: [ 'DefaultLoadingManager' ],
