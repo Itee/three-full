@@ -381,6 +381,27 @@ module.exports = {
 			],
 			outputOverride: 'objects/MarchingCubes.js'
 		},
+		MaterialLoader: {
+            // Equivalent to ( import * as Materials from 'intermediary exporter file Materials' )
+            imports: [
+            	'LineBasicMaterial',
+            	'LineDashedMaterial',
+            	'MeshBasicMaterial',
+            	'MeshDepthMaterial',
+            	'MeshDistanceMaterial',
+            	'MeshLambertMaterial',
+            	'MeshNormalMaterial',
+            	'MeshPhongMaterial',
+            	'MeshPhysicalMaterial',
+            	'MeshStandardMaterial',
+            	'MeshToonMaterial',
+            	'PointsMaterial',
+            	'RawShaderMaterial',
+            	'ShaderMaterial',
+            	'ShadowMaterial',
+            	'SpriteMaterial'
+			]
+		},
 		MD2Loader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
