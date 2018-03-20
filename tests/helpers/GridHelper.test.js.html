@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Three Full ES6 Tests</title>
+	</head>
+	<body>
+		<script src="../../builds/Three.iife.js"></script>
+		<!--<script src="GridHelper.test.js"></script>-->
+		<script>
+            try {
+
+                var grid = new Three.GridHelper(100, 100)
+                var grid2 = new Three.GridHelper(100, 100)
+                grid2.add( grid )
+
+                alert( 'GridHelper: Ok' )
+
+            } catch ( err ) {
+                alert( err )
+            }
+		</script>
+	</body>
+</html>
