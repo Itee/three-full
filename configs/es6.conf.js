@@ -199,6 +199,36 @@ module.exports = {
 			outputOverride: 'curves/CurveExtras.js'
 		},
         CurvePath: {
+            imports: [
+                'ArcCurve',
+                'CatmullRomCurve3',
+                'CubicBezierCurve',
+                'CubicBezierCurve3',
+                'EllipseCurve',
+                'LineCurve',
+                'LineCurve3',
+                'QuadraticBezierCurve',
+                'QuadraticBezierCurve3',
+                'SplineCurve'
+            ],
+            replacements: [
+                [
+                	'function CurvePath() {',
+					'var Curves = {\n' +
+                    '    ArcCurve: ArcCurve,\n' +
+                    '    CatmullRomCurve3: CatmullRomCurve3,\n' +
+                    '    CubicBezierCurve: CubicBezierCurve,\n' +
+                    '    CubicBezierCurve3: CubicBezierCurve3,\n' +
+                    '    EllipseCurve: EllipseCurve,\n' +
+                    '    LineCurve: LineCurve,\n' +
+                    '    LineCurve3: LineCurve3,\n' +
+                    '    QuadraticBezierCurve: QuadraticBezierCurve,\n' +
+                    '    QuadraticBezierCurve3: QuadraticBezierCurve3,\n' +
+                    '    SplineCurve: SplineCurve\n' +
+                    '}\n' +
+                    'function CurvePath() {'
+				]
+            ],
             outputOverride: 'core/CurvePath.js'
         },
         Detector: {
