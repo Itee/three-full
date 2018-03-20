@@ -1,4 +1,14 @@
 import { Curve } from '../curves/Curve.js'
+import { ArcCurve } from '../curves/ArcCurve.js'
+import { CatmullRomCurve3 } from '../curves/CatmullRomCurve3.js'
+import { CubicBezierCurve } from '../curves/CubicBezierCurve.js'
+import { CubicBezierCurve3 } from '../curves/CubicBezierCurve3.js'
+import { EllipseCurve } from '../curves/EllipseCurve.js'
+import { LineCurve } from '../curves/LineCurve.js'
+import { LineCurve3 } from '../curves/LineCurve3.js'
+import { QuadraticBezierCurve } from '../curves/QuadraticBezierCurve.js'
+import { QuadraticBezierCurve3 } from '../curves/QuadraticBezierCurve3.js'
+import { SplineCurve } from '../curves/SplineCurve.js'
 
 
 
@@ -7,6 +17,18 @@ import { Curve } from '../curves/Curve.js'
 
 
 
+var Curves = {
+    ArcCurve: ArcCurve,
+    CatmullRomCurve3: CatmullRomCurve3,
+    CubicBezierCurve: CubicBezierCurve,
+    CubicBezierCurve3: CubicBezierCurve3,
+    EllipseCurve: EllipseCurve,
+    LineCurve: LineCurve,
+    LineCurve3: LineCurve3,
+    QuadraticBezierCurve: QuadraticBezierCurve,
+    QuadraticBezierCurve3: QuadraticBezierCurve3,
+    SplineCurve: SplineCurve
+}
 function CurvePath() {
 
 	Curve.call( this );

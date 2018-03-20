@@ -2,6 +2,22 @@ import { Vector2 } from '../math/Vector2.js'
 import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { FlatShading } from '../constants.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { LineDashedMaterial } from '../materials/LineDashedMaterial.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { MeshDepthMaterial } from '../materials/MeshDepthMaterial.js'
+import { MeshDistanceMaterial } from '../materials/MeshDistanceMaterial.js'
+import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
+import { MeshNormalMaterial } from '../materials/MeshNormalMaterial.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
+import { MeshPhysicalMaterial } from '../materials/MeshPhysicalMaterial.js'
+import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
+import { MeshToonMaterial } from '../materials/MeshToonMaterial.js'
+import { PointsMaterial } from '../materials/PointsMaterial.js'
+import { RawShaderMaterial } from '../materials/RawShaderMaterial.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { ShadowMaterial } from '../materials/ShadowMaterial.js'
+import { SpriteMaterial } from '../materials/SpriteMaterial.js'
 
 
 
@@ -54,6 +70,24 @@ Object.assign( MaterialLoader.prototype, {
 
 		}
 
+		var Materials = {
+            LineBasicMaterial: LineBasicMaterial,
+            LineDashedMaterial: LineDashedMaterial,
+            MeshBasicMaterial: MeshBasicMaterial,
+            MeshDepthMaterial: MeshDepthMaterial,
+            MeshDistanceMaterial: MeshDistanceMaterial,
+            MeshLambertMaterial: MeshLambertMaterial,
+            MeshNormalMaterial: MeshNormalMaterial,
+            MeshPhongMaterial: MeshPhongMaterial,
+            MeshPhysicalMaterial: MeshPhysicalMaterial,
+            MeshStandardMaterial: MeshStandardMaterial,
+            MeshToonMaterial: MeshToonMaterial,
+            PointsMaterial: PointsMaterial,
+            RawShaderMaterial: RawShaderMaterial,
+            ShaderMaterial: ShaderMaterial,
+            ShadowMaterial: ShadowMaterial,
+            SpriteMaterial: SpriteMaterial
+		}
 		var material = new Materials[ json.type ]();
 
 		if ( json.uuid !== undefined ) material.uuid = json.uuid;

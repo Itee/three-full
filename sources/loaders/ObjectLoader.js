@@ -51,6 +51,81 @@ import { MaterialLoader } from './MaterialLoader.js'
 import { BufferGeometryLoader } from './BufferGeometryLoader.js'
 import { JSONLoader } from './JSONLoader.js'
 import { FileLoader } from './FileLoader.js'
+import { WireframeGeometry } from '../geometries/WireframeGeometry.js'
+import {
+	TetrahedronGeometry,
+	TetrahedronBufferGeometry
+} from '../geometries/TetrahedronGeometry.js'
+import {
+	OctahedronGeometry,
+	OctahedronBufferGeometry
+} from '../geometries/OctahedronGeometry.js'
+import {
+	IcosahedronGeometry,
+	IcosahedronBufferGeometry
+} from '../geometries/IcosahedronGeometry.js'
+import {
+	DodecahedronGeometry,
+	DodecahedronBufferGeometry
+} from '../geometries/DodecahedronGeometry.js'
+import {
+	PolyhedronGeometry,
+	PolyhedronBufferGeometry
+} from '../geometries/PolyhedronGeometry.js'
+import {
+	TubeGeometry,
+	TubeBufferGeometry
+} from '../geometries/TubeGeometry.js'
+import { TorusKnotGeometry } from '../geometries/TorusKnotGeometry.js'
+import {
+	TorusGeometry,
+	TorusBufferGeometry
+} from '../geometries/TorusGeometry.js'
+import {
+	TextGeometry,
+	TextBufferGeometry
+} from '../geometries/TextGeometry.js'
+import {
+	SphereGeometry,
+	SphereBufferGeometry
+} from '../geometries/SphereGeometry.js'
+import {
+	RingGeometry,
+	RingBufferGeometry
+} from '../geometries/RingGeometry.js'
+import {
+	PlaneGeometry,
+	PlaneBufferGeometry
+} from '../geometries/PlaneGeometry.js'
+import {
+	LatheGeometry,
+	LatheBufferGeometry
+} from '../geometries/LatheGeometry.js'
+import {
+	ShapeGeometry,
+	ShapeBufferGeometry
+} from '../geometries/ShapeGeometry.js'
+import {
+	ExtrudeGeometry,
+	ExtrudeBufferGeometry
+} from '../geometries/ExtrudeGeometry.js'
+import { EdgesGeometry } from '../geometries/EdgesGeometry.js'
+import {
+	ConeGeometry,
+	ConeBufferGeometry
+} from '../geometries/ConeGeometry.js'
+import {
+	CylinderGeometry,
+	CylinderBufferGeometry
+} from '../geometries/CylinderGeometry.js'
+import {
+	CircleGeometry,
+	CircleBufferGeometry
+} from '../geometries/CircleGeometry.js'
+import {
+	BoxGeometry,
+	BoxBufferGeometry
+} from '../geometries/BoxGeometry.js'
 
 
 
@@ -88,6 +163,47 @@ import { FileLoader } from './FileLoader.js'
 
 
 
+var Geometries = {
+    WireframeGeometry: WireframeGeometry,
+    TetrahedronGeometry: TetrahedronGeometry,
+    TetrahedronBufferGeometry: TetrahedronBufferGeometry,
+    OctahedronGeometry: OctahedronGeometry,
+    OctahedronBufferGeometry: OctahedronBufferGeometry,
+    IcosahedronGeometry: IcosahedronGeometry,
+    IcosahedronBufferGeometry: IcosahedronBufferGeometry,
+    DodecahedronGeometry: DodecahedronGeometry,
+    DodecahedronBufferGeometry: DodecahedronBufferGeometry,
+    PolyhedronGeometry: PolyhedronGeometry,
+    PolyhedronBufferGeometry: PolyhedronBufferGeometry,
+    TubeGeometry: TubeGeometry,
+    TubeBufferGeometry: TubeBufferGeometry,
+    TorusKnotGeometry: TorusKnotGeometry,
+    TorusGeometry: TorusGeometry,
+    TorusBufferGeometry: TorusBufferGeometry,
+    TextGeometry: TextGeometry,
+    TextBufferGeometry: TextBufferGeometry,
+    SphereGeometry: SphereGeometry,
+    SphereBufferGeometry: SphereBufferGeometry,
+    RingGeometry: RingGeometry,
+    RingBufferGeometry: RingBufferGeometry,
+    PlaneGeometry: PlaneGeometry,
+    PlaneBufferGeometry: PlaneBufferGeometry,
+    LatheGeometry: LatheGeometry,
+    LatheBufferGeometry: LatheBufferGeometry,
+    ShapeGeometry: ShapeGeometry,
+    ShapeBufferGeometry: ShapeBufferGeometry,
+    ExtrudeGeometry: ExtrudeGeometry,
+    ExtrudeBufferGeometry: ExtrudeBufferGeometry,
+    EdgesGeometry: EdgesGeometry,
+    ConeGeometry: ConeGeometry,
+    ConeBufferGeometry: ConeBufferGeometry,
+    CylinderGeometry: CylinderGeometry,
+    CylinderBufferGeometry: CylinderBufferGeometry,
+    CircleGeometry: CircleGeometry,
+    CircleBufferGeometry: CircleBufferGeometry,
+    BoxGeometry: BoxGeometry,
+    BoxBufferGeometry: BoxBufferGeometry
+}
 function ObjectLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
