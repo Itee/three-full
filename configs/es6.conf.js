@@ -199,6 +199,7 @@ module.exports = {
 			outputOverride: 'curves/CurveExtras.js'
 		},
         CurvePath: {
+            // Equivalent to ( import * as Curves from 'intermediary exporter file Curves' )
             imports: [
                 'ArcCurve',
                 'CatmullRomCurve3',
