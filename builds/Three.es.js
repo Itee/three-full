@@ -18158,6 +18158,644 @@ Object.assign( FileLoader.prototype, {
 
 } );
 
+function LineDashedMaterial( parameters ) {
+
+	LineBasicMaterial.call( this );
+
+	this.type = 'LineDashedMaterial';
+
+	this.scale = 1;
+	this.dashSize = 3;
+	this.gapSize = 1;
+
+	this.setValues( parameters );
+
+}
+
+LineDashedMaterial.prototype = Object.create( LineBasicMaterial.prototype );
+LineDashedMaterial.prototype.constructor = LineDashedMaterial;
+
+LineDashedMaterial.prototype.isLineDashedMaterial = true;
+
+LineDashedMaterial.prototype.copy = function ( source ) {
+
+	LineBasicMaterial.prototype.copy.call( this, source );
+
+	this.scale = source.scale;
+	this.dashSize = source.dashSize;
+	this.gapSize = source.gapSize;
+
+	return this;
+
+};
+
+function MeshDistanceMaterial( parameters ) {
+
+	Material.call( this );
+
+	this.type = 'MeshDistanceMaterial';
+
+	this.referencePosition = new Vector3();
+	this.nearDistance = 1;
+	this.farDistance = 1000;
+
+	this.skinning = false;
+	this.morphTargets = false;
+
+	this.map = null;
+
+	this.alphaMap = null;
+
+	this.displacementMap = null;
+	this.displacementScale = 1;
+	this.displacementBias = 0;
+
+	this.fog = false;
+	this.lights = false;
+
+	this.setValues( parameters );
+
+}
+
+MeshDistanceMaterial.prototype = Object.create( Material.prototype );
+MeshDistanceMaterial.prototype.constructor = MeshDistanceMaterial;
+
+MeshDistanceMaterial.prototype.isMeshDistanceMaterial = true;
+
+MeshDistanceMaterial.prototype.copy = function ( source ) {
+
+	Material.prototype.copy.call( this, source );
+
+	this.referencePosition.copy( source.referencePosition );
+	this.nearDistance = source.nearDistance;
+	this.farDistance = source.farDistance;
+
+	this.skinning = source.skinning;
+	this.morphTargets = source.morphTargets;
+
+	this.map = source.map;
+
+	this.alphaMap = source.alphaMap;
+
+	this.displacementMap = source.displacementMap;
+	this.displacementScale = source.displacementScale;
+	this.displacementBias = source.displacementBias;
+
+	return this;
+
+};
+
+function MeshLambertMaterial( parameters ) {
+
+	Material.call( this );
+
+	this.type = 'MeshLambertMaterial';
+
+	this.color = new Color( 0xffffff ); // diffuse
+
+	this.map = null;
+
+	this.lightMap = null;
+	this.lightMapIntensity = 1.0;
+
+	this.aoMap = null;
+	this.aoMapIntensity = 1.0;
+
+	this.emissive = new Color( 0x000000 );
+	this.emissiveIntensity = 1.0;
+	this.emissiveMap = null;
+
+	this.specularMap = null;
+
+	this.alphaMap = null;
+
+	this.envMap = null;
+	this.combine = MultiplyOperation;
+	this.reflectivity = 1;
+	this.refractionRatio = 0.98;
+
+	this.wireframe = false;
+	this.wireframeLinewidth = 1;
+	this.wireframeLinecap = 'round';
+	this.wireframeLinejoin = 'round';
+
+	this.skinning = false;
+	this.morphTargets = false;
+	this.morphNormals = false;
+
+	this.setValues( parameters );
+
+}
+
+MeshLambertMaterial.prototype = Object.create( Material.prototype );
+MeshLambertMaterial.prototype.constructor = MeshLambertMaterial;
+
+MeshLambertMaterial.prototype.isMeshLambertMaterial = true;
+
+MeshLambertMaterial.prototype.copy = function ( source ) {
+
+	Material.prototype.copy.call( this, source );
+
+	this.color.copy( source.color );
+
+	this.map = source.map;
+
+	this.lightMap = source.lightMap;
+	this.lightMapIntensity = source.lightMapIntensity;
+
+	this.aoMap = source.aoMap;
+	this.aoMapIntensity = source.aoMapIntensity;
+
+	this.emissive.copy( source.emissive );
+	this.emissiveMap = source.emissiveMap;
+	this.emissiveIntensity = source.emissiveIntensity;
+
+	this.specularMap = source.specularMap;
+
+	this.alphaMap = source.alphaMap;
+
+	this.envMap = source.envMap;
+	this.combine = source.combine;
+	this.reflectivity = source.reflectivity;
+	this.refractionRatio = source.refractionRatio;
+
+	this.wireframe = source.wireframe;
+	this.wireframeLinewidth = source.wireframeLinewidth;
+	this.wireframeLinecap = source.wireframeLinecap;
+	this.wireframeLinejoin = source.wireframeLinejoin;
+
+	this.skinning = source.skinning;
+	this.morphTargets = source.morphTargets;
+	this.morphNormals = source.morphNormals;
+
+	return this;
+
+};
+
+function MeshNormalMaterial( parameters ) {
+
+	Material.call( this );
+
+	this.type = 'MeshNormalMaterial';
+
+	this.bumpMap = null;
+	this.bumpScale = 1;
+
+	this.normalMap = null;
+	this.normalScale = new Vector2( 1, 1 );
+
+	this.displacementMap = null;
+	this.displacementScale = 1;
+	this.displacementBias = 0;
+
+	this.wireframe = false;
+	this.wireframeLinewidth = 1;
+
+	this.fog = false;
+	this.lights = false;
+
+	this.skinning = false;
+	this.morphTargets = false;
+	this.morphNormals = false;
+
+	this.setValues( parameters );
+
+}
+
+MeshNormalMaterial.prototype = Object.create( Material.prototype );
+MeshNormalMaterial.prototype.constructor = MeshNormalMaterial;
+
+MeshNormalMaterial.prototype.isMeshNormalMaterial = true;
+
+MeshNormalMaterial.prototype.copy = function ( source ) {
+
+	Material.prototype.copy.call( this, source );
+
+	this.bumpMap = source.bumpMap;
+	this.bumpScale = source.bumpScale;
+
+	this.normalMap = source.normalMap;
+	this.normalScale.copy( source.normalScale );
+
+	this.displacementMap = source.displacementMap;
+	this.displacementScale = source.displacementScale;
+	this.displacementBias = source.displacementBias;
+
+	this.wireframe = source.wireframe;
+	this.wireframeLinewidth = source.wireframeLinewidth;
+
+	this.skinning = source.skinning;
+	this.morphTargets = source.morphTargets;
+	this.morphNormals = source.morphNormals;
+
+	return this;
+
+};
+
+function MeshPhongMaterial( parameters ) {
+
+	Material.call( this );
+
+	this.type = 'MeshPhongMaterial';
+
+	this.color = new Color( 0xffffff ); // diffuse
+	this.specular = new Color( 0x111111 );
+	this.shininess = 30;
+
+	this.map = null;
+
+	this.lightMap = null;
+	this.lightMapIntensity = 1.0;
+
+	this.aoMap = null;
+	this.aoMapIntensity = 1.0;
+
+	this.emissive = new Color( 0x000000 );
+	this.emissiveIntensity = 1.0;
+	this.emissiveMap = null;
+
+	this.bumpMap = null;
+	this.bumpScale = 1;
+
+	this.normalMap = null;
+	this.normalScale = new Vector2( 1, 1 );
+
+	this.displacementMap = null;
+	this.displacementScale = 1;
+	this.displacementBias = 0;
+
+	this.specularMap = null;
+
+	this.alphaMap = null;
+
+	this.envMap = null;
+	this.combine = MultiplyOperation;
+	this.reflectivity = 1;
+	this.refractionRatio = 0.98;
+
+	this.wireframe = false;
+	this.wireframeLinewidth = 1;
+	this.wireframeLinecap = 'round';
+	this.wireframeLinejoin = 'round';
+
+	this.skinning = false;
+	this.morphTargets = false;
+	this.morphNormals = false;
+
+	this.setValues( parameters );
+
+}
+
+MeshPhongMaterial.prototype = Object.create( Material.prototype );
+MeshPhongMaterial.prototype.constructor = MeshPhongMaterial;
+
+MeshPhongMaterial.prototype.isMeshPhongMaterial = true;
+
+MeshPhongMaterial.prototype.copy = function ( source ) {
+
+	Material.prototype.copy.call( this, source );
+
+	this.color.copy( source.color );
+	this.specular.copy( source.specular );
+	this.shininess = source.shininess;
+
+	this.map = source.map;
+
+	this.lightMap = source.lightMap;
+	this.lightMapIntensity = source.lightMapIntensity;
+
+	this.aoMap = source.aoMap;
+	this.aoMapIntensity = source.aoMapIntensity;
+
+	this.emissive.copy( source.emissive );
+	this.emissiveMap = source.emissiveMap;
+	this.emissiveIntensity = source.emissiveIntensity;
+
+	this.bumpMap = source.bumpMap;
+	this.bumpScale = source.bumpScale;
+
+	this.normalMap = source.normalMap;
+	this.normalScale.copy( source.normalScale );
+
+	this.displacementMap = source.displacementMap;
+	this.displacementScale = source.displacementScale;
+	this.displacementBias = source.displacementBias;
+
+	this.specularMap = source.specularMap;
+
+	this.alphaMap = source.alphaMap;
+
+	this.envMap = source.envMap;
+	this.combine = source.combine;
+	this.reflectivity = source.reflectivity;
+	this.refractionRatio = source.refractionRatio;
+
+	this.wireframe = source.wireframe;
+	this.wireframeLinewidth = source.wireframeLinewidth;
+	this.wireframeLinecap = source.wireframeLinecap;
+	this.wireframeLinejoin = source.wireframeLinejoin;
+
+	this.skinning = source.skinning;
+	this.morphTargets = source.morphTargets;
+	this.morphNormals = source.morphNormals;
+
+	return this;
+
+};
+
+function MeshStandardMaterial( parameters ) {
+
+	Material.call( this );
+
+	this.defines = { 'STANDARD': '' };
+
+	this.type = 'MeshStandardMaterial';
+
+	this.color = new Color( 0xffffff ); // diffuse
+	this.roughness = 0.5;
+	this.metalness = 0.5;
+
+	this.map = null;
+
+	this.lightMap = null;
+	this.lightMapIntensity = 1.0;
+
+	this.aoMap = null;
+	this.aoMapIntensity = 1.0;
+
+	this.emissive = new Color( 0x000000 );
+	this.emissiveIntensity = 1.0;
+	this.emissiveMap = null;
+
+	this.bumpMap = null;
+	this.bumpScale = 1;
+
+	this.normalMap = null;
+	this.normalScale = new Vector2( 1, 1 );
+
+	this.displacementMap = null;
+	this.displacementScale = 1;
+	this.displacementBias = 0;
+
+	this.roughnessMap = null;
+
+	this.metalnessMap = null;
+
+	this.alphaMap = null;
+
+	this.envMap = null;
+	this.envMapIntensity = 1.0;
+
+	this.refractionRatio = 0.98;
+
+	this.wireframe = false;
+	this.wireframeLinewidth = 1;
+	this.wireframeLinecap = 'round';
+	this.wireframeLinejoin = 'round';
+
+	this.skinning = false;
+	this.morphTargets = false;
+	this.morphNormals = false;
+
+	this.setValues( parameters );
+
+}
+
+MeshStandardMaterial.prototype = Object.create( Material.prototype );
+MeshStandardMaterial.prototype.constructor = MeshStandardMaterial;
+
+MeshStandardMaterial.prototype.isMeshStandardMaterial = true;
+
+MeshStandardMaterial.prototype.copy = function ( source ) {
+
+	Material.prototype.copy.call( this, source );
+
+	this.defines = { 'STANDARD': '' };
+
+	this.color.copy( source.color );
+	this.roughness = source.roughness;
+	this.metalness = source.metalness;
+
+	this.map = source.map;
+
+	this.lightMap = source.lightMap;
+	this.lightMapIntensity = source.lightMapIntensity;
+
+	this.aoMap = source.aoMap;
+	this.aoMapIntensity = source.aoMapIntensity;
+
+	this.emissive.copy( source.emissive );
+	this.emissiveMap = source.emissiveMap;
+	this.emissiveIntensity = source.emissiveIntensity;
+
+	this.bumpMap = source.bumpMap;
+	this.bumpScale = source.bumpScale;
+
+	this.normalMap = source.normalMap;
+	this.normalScale.copy( source.normalScale );
+
+	this.displacementMap = source.displacementMap;
+	this.displacementScale = source.displacementScale;
+	this.displacementBias = source.displacementBias;
+
+	this.roughnessMap = source.roughnessMap;
+
+	this.metalnessMap = source.metalnessMap;
+
+	this.alphaMap = source.alphaMap;
+
+	this.envMap = source.envMap;
+	this.envMapIntensity = source.envMapIntensity;
+
+	this.refractionRatio = source.refractionRatio;
+
+	this.wireframe = source.wireframe;
+	this.wireframeLinewidth = source.wireframeLinewidth;
+	this.wireframeLinecap = source.wireframeLinecap;
+	this.wireframeLinejoin = source.wireframeLinejoin;
+
+	this.skinning = source.skinning;
+	this.morphTargets = source.morphTargets;
+	this.morphNormals = source.morphNormals;
+
+	return this;
+
+};
+
+function MeshPhysicalMaterial( parameters ) {
+
+	MeshStandardMaterial.call( this );
+
+	this.defines = { 'PHYSICAL': '' };
+
+	this.type = 'MeshPhysicalMaterial';
+
+	this.reflectivity = 0.5; // maps to F0 = 0.04
+
+	this.clearCoat = 0.0;
+	this.clearCoatRoughness = 0.0;
+
+	this.setValues( parameters );
+
+}
+
+MeshPhysicalMaterial.prototype = Object.create( MeshStandardMaterial.prototype );
+MeshPhysicalMaterial.prototype.constructor = MeshPhysicalMaterial;
+
+MeshPhysicalMaterial.prototype.isMeshPhysicalMaterial = true;
+
+MeshPhysicalMaterial.prototype.copy = function ( source ) {
+
+	MeshStandardMaterial.prototype.copy.call( this, source );
+
+	this.defines = { 'PHYSICAL': '' };
+
+	this.reflectivity = source.reflectivity;
+
+	this.clearCoat = source.clearCoat;
+	this.clearCoatRoughness = source.clearCoatRoughness;
+
+	return this;
+
+};
+
+function MeshToonMaterial( parameters ) {
+
+	MeshPhongMaterial.call( this );
+
+	this.defines = { 'TOON': '' };
+
+	this.type = 'MeshToonMaterial';
+
+	this.gradientMap = null;
+
+	this.setValues( parameters );
+
+}
+
+MeshToonMaterial.prototype = Object.create( MeshPhongMaterial.prototype );
+MeshToonMaterial.prototype.constructor = MeshToonMaterial;
+
+MeshToonMaterial.prototype.isMeshToonMaterial = true;
+
+MeshToonMaterial.prototype.copy = function ( source ) {
+
+	MeshPhongMaterial.prototype.copy.call( this, source );
+
+	this.gradientMap = source.gradientMap;
+
+	return this;
+
+};
+
+function PointsMaterial( parameters ) {
+
+	Material.call( this );
+
+	this.type = 'PointsMaterial';
+
+	this.color = new Color( 0xffffff );
+
+	this.map = null;
+
+	this.size = 1;
+	this.sizeAttenuation = true;
+
+	this.lights = false;
+
+	this.setValues( parameters );
+
+}
+
+PointsMaterial.prototype = Object.create( Material.prototype );
+PointsMaterial.prototype.constructor = PointsMaterial;
+
+PointsMaterial.prototype.isPointsMaterial = true;
+
+PointsMaterial.prototype.copy = function ( source ) {
+
+	Material.prototype.copy.call( this, source );
+
+	this.color.copy( source.color );
+
+	this.map = source.map;
+
+	this.size = source.size;
+	this.sizeAttenuation = source.sizeAttenuation;
+
+	return this;
+
+};
+
+function RawShaderMaterial( parameters ) {
+
+	ShaderMaterial.call( this, parameters );
+
+	this.type = 'RawShaderMaterial';
+
+}
+
+RawShaderMaterial.prototype = Object.create( ShaderMaterial.prototype );
+RawShaderMaterial.prototype.constructor = RawShaderMaterial;
+
+RawShaderMaterial.prototype.isRawShaderMaterial = true;
+
+function ShadowMaterial( parameters ) {
+
+	Material.call( this );
+
+	this.type = 'ShadowMaterial';
+
+	this.color = new Color( 0x000000 );
+	this.opacity = 1.0;
+
+	this.lights = true;
+	this.transparent = true;
+
+	this.setValues( parameters );
+
+}
+
+ShadowMaterial.prototype = Object.create( Material.prototype );
+ShadowMaterial.prototype.constructor = ShadowMaterial;
+
+ShadowMaterial.prototype.isShadowMaterial = true;
+
+function SpriteMaterial( parameters ) {
+
+	Material.call( this );
+
+	this.type = 'SpriteMaterial';
+
+	this.color = new Color( 0xffffff );
+	this.map = null;
+
+	this.rotation = 0;
+
+	this.fog = false;
+	this.lights = false;
+
+	this.setValues( parameters );
+
+}
+
+SpriteMaterial.prototype = Object.create( Material.prototype );
+SpriteMaterial.prototype.constructor = SpriteMaterial;
+SpriteMaterial.prototype.isSpriteMaterial = true;
+
+SpriteMaterial.prototype.copy = function ( source ) {
+
+	Material.prototype.copy.call( this, source );
+
+	this.color.copy( source.color );
+	this.map = source.map;
+
+	this.rotation = source.rotation;
+
+	return this;
+
+};
+
 function MaterialLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -18202,6 +18840,24 @@ Object.assign( MaterialLoader.prototype, {
 
 		}
 
+		var Materials = {
+            LineBasicMaterial: LineBasicMaterial,
+            LineDashedMaterial: LineDashedMaterial,
+            MeshBasicMaterial: MeshBasicMaterial,
+            MeshDepthMaterial: MeshDepthMaterial,
+            MeshDistanceMaterial: MeshDistanceMaterial,
+            MeshLambertMaterial: MeshLambertMaterial,
+            MeshNormalMaterial: MeshNormalMaterial,
+            MeshPhongMaterial: MeshPhongMaterial,
+            MeshPhysicalMaterial: MeshPhysicalMaterial,
+            MeshStandardMaterial: MeshStandardMaterial,
+            MeshToonMaterial: MeshToonMaterial,
+            PointsMaterial: PointsMaterial,
+            RawShaderMaterial: RawShaderMaterial,
+            ShaderMaterial: ShaderMaterial,
+            ShadowMaterial: ShadowMaterial,
+            SpriteMaterial: SpriteMaterial
+		};
 		var material = new Materials[ json.type ]();
 
 		if ( json.uuid !== undefined ) { material.uuid = json.uuid; }
@@ -31583,164 +32239,6 @@ var VREffect = function ( renderer, onError ) {
 
 };
 
-function MeshStandardMaterial( parameters ) {
-
-	Material.call( this );
-
-	this.defines = { 'STANDARD': '' };
-
-	this.type = 'MeshStandardMaterial';
-
-	this.color = new Color( 0xffffff ); // diffuse
-	this.roughness = 0.5;
-	this.metalness = 0.5;
-
-	this.map = null;
-
-	this.lightMap = null;
-	this.lightMapIntensity = 1.0;
-
-	this.aoMap = null;
-	this.aoMapIntensity = 1.0;
-
-	this.emissive = new Color( 0x000000 );
-	this.emissiveIntensity = 1.0;
-	this.emissiveMap = null;
-
-	this.bumpMap = null;
-	this.bumpScale = 1;
-
-	this.normalMap = null;
-	this.normalScale = new Vector2( 1, 1 );
-
-	this.displacementMap = null;
-	this.displacementScale = 1;
-	this.displacementBias = 0;
-
-	this.roughnessMap = null;
-
-	this.metalnessMap = null;
-
-	this.alphaMap = null;
-
-	this.envMap = null;
-	this.envMapIntensity = 1.0;
-
-	this.refractionRatio = 0.98;
-
-	this.wireframe = false;
-	this.wireframeLinewidth = 1;
-	this.wireframeLinecap = 'round';
-	this.wireframeLinejoin = 'round';
-
-	this.skinning = false;
-	this.morphTargets = false;
-	this.morphNormals = false;
-
-	this.setValues( parameters );
-
-}
-
-MeshStandardMaterial.prototype = Object.create( Material.prototype );
-MeshStandardMaterial.prototype.constructor = MeshStandardMaterial;
-
-MeshStandardMaterial.prototype.isMeshStandardMaterial = true;
-
-MeshStandardMaterial.prototype.copy = function ( source ) {
-
-	Material.prototype.copy.call( this, source );
-
-	this.defines = { 'STANDARD': '' };
-
-	this.color.copy( source.color );
-	this.roughness = source.roughness;
-	this.metalness = source.metalness;
-
-	this.map = source.map;
-
-	this.lightMap = source.lightMap;
-	this.lightMapIntensity = source.lightMapIntensity;
-
-	this.aoMap = source.aoMap;
-	this.aoMapIntensity = source.aoMapIntensity;
-
-	this.emissive.copy( source.emissive );
-	this.emissiveMap = source.emissiveMap;
-	this.emissiveIntensity = source.emissiveIntensity;
-
-	this.bumpMap = source.bumpMap;
-	this.bumpScale = source.bumpScale;
-
-	this.normalMap = source.normalMap;
-	this.normalScale.copy( source.normalScale );
-
-	this.displacementMap = source.displacementMap;
-	this.displacementScale = source.displacementScale;
-	this.displacementBias = source.displacementBias;
-
-	this.roughnessMap = source.roughnessMap;
-
-	this.metalnessMap = source.metalnessMap;
-
-	this.alphaMap = source.alphaMap;
-
-	this.envMap = source.envMap;
-	this.envMapIntensity = source.envMapIntensity;
-
-	this.refractionRatio = source.refractionRatio;
-
-	this.wireframe = source.wireframe;
-	this.wireframeLinewidth = source.wireframeLinewidth;
-	this.wireframeLinecap = source.wireframeLinecap;
-	this.wireframeLinejoin = source.wireframeLinejoin;
-
-	this.skinning = source.skinning;
-	this.morphTargets = source.morphTargets;
-	this.morphNormals = source.morphNormals;
-
-	return this;
-
-};
-
-function PointsMaterial( parameters ) {
-
-	Material.call( this );
-
-	this.type = 'PointsMaterial';
-
-	this.color = new Color( 0xffffff );
-
-	this.map = null;
-
-	this.size = 1;
-	this.sizeAttenuation = true;
-
-	this.lights = false;
-
-	this.setValues( parameters );
-
-}
-
-PointsMaterial.prototype = Object.create( Material.prototype );
-PointsMaterial.prototype.constructor = PointsMaterial;
-
-PointsMaterial.prototype.isPointsMaterial = true;
-
-PointsMaterial.prototype.copy = function ( source ) {
-
-	Material.prototype.copy.call( this, source );
-
-	this.color.copy( source.color );
-
-	this.map = source.map;
-
-	this.size = source.size;
-	this.sizeAttenuation = source.sizeAttenuation;
-
-	return this;
-
-};
-
 function LineSegments( geometry, material ) {
 
 	Line.call( this, geometry, material );
@@ -36361,117 +36859,6 @@ var ImprovedNoise = function () {
 	}
 };
 
-function MeshPhongMaterial( parameters ) {
-
-	Material.call( this );
-
-	this.type = 'MeshPhongMaterial';
-
-	this.color = new Color( 0xffffff ); // diffuse
-	this.specular = new Color( 0x111111 );
-	this.shininess = 30;
-
-	this.map = null;
-
-	this.lightMap = null;
-	this.lightMapIntensity = 1.0;
-
-	this.aoMap = null;
-	this.aoMapIntensity = 1.0;
-
-	this.emissive = new Color( 0x000000 );
-	this.emissiveIntensity = 1.0;
-	this.emissiveMap = null;
-
-	this.bumpMap = null;
-	this.bumpScale = 1;
-
-	this.normalMap = null;
-	this.normalScale = new Vector2( 1, 1 );
-
-	this.displacementMap = null;
-	this.displacementScale = 1;
-	this.displacementBias = 0;
-
-	this.specularMap = null;
-
-	this.alphaMap = null;
-
-	this.envMap = null;
-	this.combine = MultiplyOperation;
-	this.reflectivity = 1;
-	this.refractionRatio = 0.98;
-
-	this.wireframe = false;
-	this.wireframeLinewidth = 1;
-	this.wireframeLinecap = 'round';
-	this.wireframeLinejoin = 'round';
-
-	this.skinning = false;
-	this.morphTargets = false;
-	this.morphNormals = false;
-
-	this.setValues( parameters );
-
-}
-
-MeshPhongMaterial.prototype = Object.create( Material.prototype );
-MeshPhongMaterial.prototype.constructor = MeshPhongMaterial;
-
-MeshPhongMaterial.prototype.isMeshPhongMaterial = true;
-
-MeshPhongMaterial.prototype.copy = function ( source ) {
-
-	Material.prototype.copy.call( this, source );
-
-	this.color.copy( source.color );
-	this.specular.copy( source.specular );
-	this.shininess = source.shininess;
-
-	this.map = source.map;
-
-	this.lightMap = source.lightMap;
-	this.lightMapIntensity = source.lightMapIntensity;
-
-	this.aoMap = source.aoMap;
-	this.aoMapIntensity = source.aoMapIntensity;
-
-	this.emissive.copy( source.emissive );
-	this.emissiveMap = source.emissiveMap;
-	this.emissiveIntensity = source.emissiveIntensity;
-
-	this.bumpMap = source.bumpMap;
-	this.bumpScale = source.bumpScale;
-
-	this.normalMap = source.normalMap;
-	this.normalScale.copy( source.normalScale );
-
-	this.displacementMap = source.displacementMap;
-	this.displacementScale = source.displacementScale;
-	this.displacementBias = source.displacementBias;
-
-	this.specularMap = source.specularMap;
-
-	this.alphaMap = source.alphaMap;
-
-	this.envMap = source.envMap;
-	this.combine = source.combine;
-	this.reflectivity = source.reflectivity;
-	this.refractionRatio = source.refractionRatio;
-
-	this.wireframe = source.wireframe;
-	this.wireframeLinewidth = source.wireframeLinewidth;
-	this.wireframeLinecap = source.wireframeLinecap;
-	this.wireframeLinejoin = source.wireframeLinejoin;
-
-	this.skinning = source.skinning;
-	this.morphTargets = source.morphTargets;
-	this.morphNormals = source.morphNormals;
-
-	return this;
-
-};
-
 function Group() {
 
 	Object3D.call( this );
@@ -37817,93 +38204,6 @@ AssimpJSONLoader.prototype = {
 		return parseObject( json, json.rootnode, meshes, materials );
 
 	}
-
-};
-
-function MeshLambertMaterial( parameters ) {
-
-	Material.call( this );
-
-	this.type = 'MeshLambertMaterial';
-
-	this.color = new Color( 0xffffff ); // diffuse
-
-	this.map = null;
-
-	this.lightMap = null;
-	this.lightMapIntensity = 1.0;
-
-	this.aoMap = null;
-	this.aoMapIntensity = 1.0;
-
-	this.emissive = new Color( 0x000000 );
-	this.emissiveIntensity = 1.0;
-	this.emissiveMap = null;
-
-	this.specularMap = null;
-
-	this.alphaMap = null;
-
-	this.envMap = null;
-	this.combine = MultiplyOperation;
-	this.reflectivity = 1;
-	this.refractionRatio = 0.98;
-
-	this.wireframe = false;
-	this.wireframeLinewidth = 1;
-	this.wireframeLinecap = 'round';
-	this.wireframeLinejoin = 'round';
-
-	this.skinning = false;
-	this.morphTargets = false;
-	this.morphNormals = false;
-
-	this.setValues( parameters );
-
-}
-
-MeshLambertMaterial.prototype = Object.create( Material.prototype );
-MeshLambertMaterial.prototype.constructor = MeshLambertMaterial;
-
-MeshLambertMaterial.prototype.isMeshLambertMaterial = true;
-
-MeshLambertMaterial.prototype.copy = function ( source ) {
-
-	Material.prototype.copy.call( this, source );
-
-	this.color.copy( source.color );
-
-	this.map = source.map;
-
-	this.lightMap = source.lightMap;
-	this.lightMapIntensity = source.lightMapIntensity;
-
-	this.aoMap = source.aoMap;
-	this.aoMapIntensity = source.aoMapIntensity;
-
-	this.emissive.copy( source.emissive );
-	this.emissiveMap = source.emissiveMap;
-	this.emissiveIntensity = source.emissiveIntensity;
-
-	this.specularMap = source.specularMap;
-
-	this.alphaMap = source.alphaMap;
-
-	this.envMap = source.envMap;
-	this.combine = source.combine;
-	this.reflectivity = source.reflectivity;
-	this.refractionRatio = source.refractionRatio;
-
-	this.wireframe = source.wireframe;
-	this.wireframeLinewidth = source.wireframeLinewidth;
-	this.wireframeLinecap = source.wireframeLinecap;
-	this.wireframeLinejoin = source.wireframeLinejoin;
-
-	this.skinning = source.skinning;
-	this.morphTargets = source.morphTargets;
-	this.morphNormals = source.morphNormals;
-
-	return this;
 
 };
 
@@ -46217,19 +46517,6 @@ DDSLoader.parse = function ( buffer, loadMipmaps ) {
 	return dds;
 
 };
-
-function RawShaderMaterial( parameters ) {
-
-	ShaderMaterial.call( this, parameters );
-
-	this.type = 'RawShaderMaterial';
-
-}
-
-RawShaderMaterial.prototype = Object.create( ShaderMaterial.prototype );
-RawShaderMaterial.prototype.constructor = RawShaderMaterial;
-
-RawShaderMaterial.prototype.isRawShaderMaterial = true;
 
 function InterleavedBuffer( array, stride ) {
 
@@ -59529,35 +59816,6 @@ TGALoader.prototype = {
 		return canvas;
 
 	}
-
-};
-
-function MeshToonMaterial( parameters ) {
-
-	MeshPhongMaterial.call( this );
-
-	this.defines = { 'TOON': '' };
-
-	this.type = 'MeshToonMaterial';
-
-	this.gradientMap = null;
-
-	this.setValues( parameters );
-
-}
-
-MeshToonMaterial.prototype = Object.create( MeshPhongMaterial.prototype );
-MeshToonMaterial.prototype.constructor = MeshToonMaterial;
-
-MeshToonMaterial.prototype.isMeshToonMaterial = true;
-
-MeshToonMaterial.prototype.copy = function ( source ) {
-
-	MeshPhongMaterial.prototype.copy.call( this, source );
-
-	this.gradientMap = source.gradientMap;
-
-	return this;
 
 };
 
@@ -73860,41 +74118,6 @@ function CanvasTexture( canvas, mapping, wrapS, wrapT, magFilter, minFilter, for
 
 CanvasTexture.prototype = Object.create( Texture.prototype );
 CanvasTexture.prototype.constructor = CanvasTexture;
-
-function SpriteMaterial( parameters ) {
-
-	Material.call( this );
-
-	this.type = 'SpriteMaterial';
-
-	this.color = new Color( 0xffffff );
-	this.map = null;
-
-	this.rotation = 0;
-
-	this.fog = false;
-	this.lights = false;
-
-	this.setValues( parameters );
-
-}
-
-SpriteMaterial.prototype = Object.create( Material.prototype );
-SpriteMaterial.prototype.constructor = SpriteMaterial;
-SpriteMaterial.prototype.isSpriteMaterial = true;
-
-SpriteMaterial.prototype.copy = function ( source ) {
-
-	Material.prototype.copy.call( this, source );
-
-	this.color.copy( source.color );
-	this.map = source.map;
-
-	this.rotation = source.rotation;
-
-	return this;
-
-};
 
 function Sprite( material ) {
 
@@ -90691,66 +90914,6 @@ DepthTexture.prototype = Object.create( Texture.prototype );
 DepthTexture.prototype.constructor = DepthTexture;
 DepthTexture.prototype.isDepthTexture = true;
 
-function MeshNormalMaterial( parameters ) {
-
-	Material.call( this );
-
-	this.type = 'MeshNormalMaterial';
-
-	this.bumpMap = null;
-	this.bumpScale = 1;
-
-	this.normalMap = null;
-	this.normalScale = new Vector2( 1, 1 );
-
-	this.displacementMap = null;
-	this.displacementScale = 1;
-	this.displacementBias = 0;
-
-	this.wireframe = false;
-	this.wireframeLinewidth = 1;
-
-	this.fog = false;
-	this.lights = false;
-
-	this.skinning = false;
-	this.morphTargets = false;
-	this.morphNormals = false;
-
-	this.setValues( parameters );
-
-}
-
-MeshNormalMaterial.prototype = Object.create( Material.prototype );
-MeshNormalMaterial.prototype.constructor = MeshNormalMaterial;
-
-MeshNormalMaterial.prototype.isMeshNormalMaterial = true;
-
-MeshNormalMaterial.prototype.copy = function ( source ) {
-
-	Material.prototype.copy.call( this, source );
-
-	this.bumpMap = source.bumpMap;
-	this.bumpScale = source.bumpScale;
-
-	this.normalMap = source.normalMap;
-	this.normalScale.copy( source.normalScale );
-
-	this.displacementMap = source.displacementMap;
-	this.displacementScale = source.displacementScale;
-	this.displacementBias = source.displacementBias;
-
-	this.wireframe = source.wireframe;
-	this.wireframeLinewidth = source.wireframeLinewidth;
-
-	this.skinning = source.skinning;
-	this.morphTargets = source.morphTargets;
-	this.morphNormals = source.morphNormals;
-
-	return this;
-
-};
-
 var SAOShader = {
 	defines: {
 		'NUM_SAMPLES': 7,
@@ -99318,62 +99481,6 @@ function WebGLSpriteRenderer( renderer, gl, state, textures, capabilities ) {
 	}
 
 }
-
-function MeshDistanceMaterial( parameters ) {
-
-	Material.call( this );
-
-	this.type = 'MeshDistanceMaterial';
-
-	this.referencePosition = new Vector3();
-	this.nearDistance = 1;
-	this.farDistance = 1000;
-
-	this.skinning = false;
-	this.morphTargets = false;
-
-	this.map = null;
-
-	this.alphaMap = null;
-
-	this.displacementMap = null;
-	this.displacementScale = 1;
-	this.displacementBias = 0;
-
-	this.fog = false;
-	this.lights = false;
-
-	this.setValues( parameters );
-
-}
-
-MeshDistanceMaterial.prototype = Object.create( Material.prototype );
-MeshDistanceMaterial.prototype.constructor = MeshDistanceMaterial;
-
-MeshDistanceMaterial.prototype.isMeshDistanceMaterial = true;
-
-MeshDistanceMaterial.prototype.copy = function ( source ) {
-
-	Material.prototype.copy.call( this, source );
-
-	this.referencePosition.copy( source.referencePosition );
-	this.nearDistance = source.nearDistance;
-	this.farDistance = source.farDistance;
-
-	this.skinning = source.skinning;
-	this.morphTargets = source.morphTargets;
-
-	this.map = source.map;
-
-	this.alphaMap = source.alphaMap;
-
-	this.displacementMap = source.displacementMap;
-	this.displacementScale = source.displacementScale;
-	this.displacementBias = source.displacementBias;
-
-	return this;
-
-};
 
 function WebGLShadowMap( _renderer, _objects, maxTextureSize ) {
 
@@ -117315,6 +117422,1024 @@ function IcosahedronBufferGeometry( radius, detail ) {
 IcosahedronBufferGeometry.prototype = Object.create( PolyhedronBufferGeometry.prototype );
 IcosahedronBufferGeometry.prototype.constructor = IcosahedronBufferGeometry;
 
+function EllipseCurve( aX, aY, xRadius, yRadius, aStartAngle, aEndAngle, aClockwise, aRotation ) {
+
+	Curve.call( this );
+
+	this.type = 'EllipseCurve';
+
+	this.aX = aX || 0;
+	this.aY = aY || 0;
+
+	this.xRadius = xRadius || 1;
+	this.yRadius = yRadius || 1;
+
+	this.aStartAngle = aStartAngle || 0;
+	this.aEndAngle = aEndAngle || 2 * Math.PI;
+
+	this.aClockwise = aClockwise || false;
+
+	this.aRotation = aRotation || 0;
+
+}
+
+EllipseCurve.prototype = Object.create( Curve.prototype );
+EllipseCurve.prototype.constructor = EllipseCurve;
+
+EllipseCurve.prototype.isEllipseCurve = true;
+
+EllipseCurve.prototype.getPoint = function ( t, optionalTarget ) {
+
+	var point = optionalTarget || new Vector2();
+
+	var twoPi = Math.PI * 2;
+	var deltaAngle = this.aEndAngle - this.aStartAngle;
+	var samePoints = Math.abs( deltaAngle ) < Number.EPSILON;
+
+	// ensures that deltaAngle is 0 .. 2 PI
+	while ( deltaAngle < 0 ) { deltaAngle += twoPi; }
+	while ( deltaAngle > twoPi ) { deltaAngle -= twoPi; }
+
+	if ( deltaAngle < Number.EPSILON ) {
+
+		if ( samePoints ) {
+
+			deltaAngle = 0;
+
+		} else {
+
+			deltaAngle = twoPi;
+
+		}
+
+	}
+
+	if ( this.aClockwise === true && ! samePoints ) {
+
+		if ( deltaAngle === twoPi ) {
+
+			deltaAngle = - twoPi;
+
+		} else {
+
+			deltaAngle = deltaAngle - twoPi;
+
+		}
+
+	}
+
+	var angle = this.aStartAngle + t * deltaAngle;
+	var x = this.aX + this.xRadius * Math.cos( angle );
+	var y = this.aY + this.yRadius * Math.sin( angle );
+
+	if ( this.aRotation !== 0 ) {
+
+		var cos = Math.cos( this.aRotation );
+		var sin = Math.sin( this.aRotation );
+
+		var tx = x - this.aX;
+		var ty = y - this.aY;
+
+		// Rotate the point about the center of the ellipse.
+		x = tx * cos - ty * sin + this.aX;
+		y = tx * sin + ty * cos + this.aY;
+
+	}
+
+	return point.set( x, y );
+
+};
+
+EllipseCurve.prototype.copy = function ( source ) {
+
+	Curve.prototype.copy.call( this, source );
+
+	this.aX = source.aX;
+	this.aY = source.aY;
+
+	this.xRadius = source.xRadius;
+	this.yRadius = source.yRadius;
+
+	this.aStartAngle = source.aStartAngle;
+	this.aEndAngle = source.aEndAngle;
+
+	this.aClockwise = source.aClockwise;
+
+	this.aRotation = source.aRotation;
+
+	return this;
+
+};
+
+
+EllipseCurve.prototype.toJSON = function () {
+
+	var data = Curve.prototype.toJSON.call( this );
+
+	data.aX = this.aX;
+	data.aY = this.aY;
+
+	data.xRadius = this.xRadius;
+	data.yRadius = this.yRadius;
+
+	data.aStartAngle = this.aStartAngle;
+	data.aEndAngle = this.aEndAngle;
+
+	data.aClockwise = this.aClockwise;
+
+	data.aRotation = this.aRotation;
+
+	return data;
+
+};
+
+EllipseCurve.prototype.fromJSON = function ( json ) {
+
+	Curve.prototype.fromJSON.call( this, json );
+
+	this.aX = json.aX;
+	this.aY = json.aY;
+
+	this.xRadius = json.xRadius;
+	this.yRadius = json.yRadius;
+
+	this.aStartAngle = json.aStartAngle;
+	this.aEndAngle = json.aEndAngle;
+
+	this.aClockwise = json.aClockwise;
+
+	this.aRotation = json.aRotation;
+
+	return this;
+
+};
+
+function ArcCurve( aX, aY, aRadius, aStartAngle, aEndAngle, aClockwise ) {
+
+	EllipseCurve.call( this, aX, aY, aRadius, aRadius, aStartAngle, aEndAngle, aClockwise );
+
+	this.type = 'ArcCurve';
+
+}
+
+ArcCurve.prototype = Object.create( EllipseCurve.prototype );
+ArcCurve.prototype.constructor = ArcCurve;
+
+ArcCurve.prototype.isArcCurve = true;
+
+function CubicPoly() {
+
+	var c0 = 0, c1 = 0, c2 = 0, c3 = 0;
+
+	
+	function init( x0, x1, t0, t1 ) {
+
+		c0 = x0;
+		c1 = t0;
+		c2 = - 3 * x0 + 3 * x1 - 2 * t0 - t1;
+		c3 = 2 * x0 - 2 * x1 + t0 + t1;
+
+	}
+
+	return {
+
+		initCatmullRom: function ( x0, x1, x2, x3, tension ) {
+
+			init( x1, x2, tension * ( x2 - x0 ), tension * ( x3 - x1 ) );
+
+		},
+
+		initNonuniformCatmullRom: function ( x0, x1, x2, x3, dt0, dt1, dt2 ) {
+
+			// compute tangents when parameterized in [t1,t2]
+			var t1 = ( x1 - x0 ) / dt0 - ( x2 - x0 ) / ( dt0 + dt1 ) + ( x2 - x1 ) / dt1;
+			var t2 = ( x2 - x1 ) / dt1 - ( x3 - x1 ) / ( dt1 + dt2 ) + ( x3 - x2 ) / dt2;
+
+			// rescale tangents for parametrization in [0,1]
+			t1 *= dt1;
+			t2 *= dt1;
+
+			init( x1, x2, t1, t2 );
+
+		},
+
+		calc: function ( t ) {
+
+			var t2 = t * t;
+			var t3 = t2 * t;
+			return c0 + c1 * t + c2 * t2 + c3 * t3;
+
+		}
+
+	};
+
+}
+
+//
+
+var tmp = new Vector3();
+var px = new CubicPoly();
+var py = new CubicPoly();
+var pz = new CubicPoly();
+
+function CatmullRomCurve3( points, closed, curveType, tension ) {
+
+	Curve.call( this );
+
+	this.type = 'CatmullRomCurve3';
+
+	this.points = points || [];
+	this.closed = closed || false;
+	this.curveType = curveType || 'centripetal';
+	this.tension = tension || 0.5;
+
+}
+
+CatmullRomCurve3.prototype = Object.create( Curve.prototype );
+CatmullRomCurve3.prototype.constructor = CatmullRomCurve3;
+
+CatmullRomCurve3.prototype.isCatmullRomCurve3 = true;
+
+CatmullRomCurve3.prototype.getPoint = function ( t, optionalTarget ) {
+
+	var point = optionalTarget || new Vector3();
+
+	var points = this.points;
+	var l = points.length;
+
+	var p = ( l - ( this.closed ? 0 : 1 ) ) * t;
+	var intPoint = Math.floor( p );
+	var weight = p - intPoint;
+
+	if ( this.closed ) {
+
+		intPoint += intPoint > 0 ? 0 : ( Math.floor( Math.abs( intPoint ) / points.length ) + 1 ) * points.length;
+
+	} else if ( weight === 0 && intPoint === l - 1 ) {
+
+		intPoint = l - 2;
+		weight = 1;
+
+	}
+
+	var p0, p1, p2, p3; // 4 points
+
+	if ( this.closed || intPoint > 0 ) {
+
+		p0 = points[ ( intPoint - 1 ) % l ];
+
+	} else {
+
+		// extrapolate first point
+		tmp.subVectors( points[ 0 ], points[ 1 ] ).add( points[ 0 ] );
+		p0 = tmp;
+
+	}
+
+	p1 = points[ intPoint % l ];
+	p2 = points[ ( intPoint + 1 ) % l ];
+
+	if ( this.closed || intPoint + 2 < l ) {
+
+		p3 = points[ ( intPoint + 2 ) % l ];
+
+	} else {
+
+		// extrapolate last point
+		tmp.subVectors( points[ l - 1 ], points[ l - 2 ] ).add( points[ l - 1 ] );
+		p3 = tmp;
+
+	}
+
+	if ( this.curveType === 'centripetal' || this.curveType === 'chordal' ) {
+
+		// init Centripetal / Chordal Catmull-Rom
+		var pow = this.curveType === 'chordal' ? 0.5 : 0.25;
+		var dt0 = Math.pow( p0.distanceToSquared( p1 ), pow );
+		var dt1 = Math.pow( p1.distanceToSquared( p2 ), pow );
+		var dt2 = Math.pow( p2.distanceToSquared( p3 ), pow );
+
+		// safety check for repeated points
+		if ( dt1 < 1e-4 ) { dt1 = 1.0; }
+		if ( dt0 < 1e-4 ) { dt0 = dt1; }
+		if ( dt2 < 1e-4 ) { dt2 = dt1; }
+
+		px.initNonuniformCatmullRom( p0.x, p1.x, p2.x, p3.x, dt0, dt1, dt2 );
+		py.initNonuniformCatmullRom( p0.y, p1.y, p2.y, p3.y, dt0, dt1, dt2 );
+		pz.initNonuniformCatmullRom( p0.z, p1.z, p2.z, p3.z, dt0, dt1, dt2 );
+
+	} else if ( this.curveType === 'catmullrom' ) {
+
+		px.initCatmullRom( p0.x, p1.x, p2.x, p3.x, this.tension );
+		py.initCatmullRom( p0.y, p1.y, p2.y, p3.y, this.tension );
+		pz.initCatmullRom( p0.z, p1.z, p2.z, p3.z, this.tension );
+
+	}
+
+	point.set(
+		px.calc( weight ),
+		py.calc( weight ),
+		pz.calc( weight )
+	);
+
+	return point;
+
+};
+
+CatmullRomCurve3.prototype.copy = function ( source ) {
+	var this$1 = this;
+
+
+	Curve.prototype.copy.call( this, source );
+
+	this.points = [];
+
+	for ( var i = 0, l = source.points.length; i < l; i ++ ) {
+
+		var point = source.points[ i ];
+
+		this$1.points.push( point.clone() );
+
+	}
+
+	this.closed = source.closed;
+	this.curveType = source.curveType;
+	this.tension = source.tension;
+
+	return this;
+
+};
+
+CatmullRomCurve3.prototype.toJSON = function () {
+	var this$1 = this;
+
+
+	var data = Curve.prototype.toJSON.call( this );
+
+	data.points = [];
+
+	for ( var i = 0, l = this.points.length; i < l; i ++ ) {
+
+		var point = this$1.points[ i ];
+		data.points.push( point.toArray() );
+
+	}
+
+	data.closed = this.closed;
+	data.curveType = this.curveType;
+	data.tension = this.tension;
+
+	return data;
+
+};
+
+CatmullRomCurve3.prototype.fromJSON = function ( json ) {
+	var this$1 = this;
+
+
+	Curve.prototype.fromJSON.call( this, json );
+
+	this.points = [];
+
+	for ( var i = 0, l = json.points.length; i < l; i ++ ) {
+
+		var point = json.points[ i ];
+		this$1.points.push( new Vector3().fromArray( point ) );
+
+	}
+
+	this.closed = json.closed;
+	this.curveType = json.curveType;
+	this.tension = json.tension;
+
+	return this;
+
+};
+
+function CatmullRom( t, p0, p1, p2, p3 ) {
+
+	var v0 = ( p2 - p0 ) * 0.5;
+	var v1 = ( p3 - p1 ) * 0.5;
+	var t2 = t * t;
+	var t3 = t * t2;
+	return ( 2 * p1 - 2 * p2 + v0 + v1 ) * t3 + ( - 3 * p1 + 3 * p2 - 2 * v0 - v1 ) * t2 + v0 * t + p1;
+
+}
+
+//
+
+function QuadraticBezierP0( t, p ) {
+
+	var k = 1 - t;
+	return k * k * p;
+
+}
+
+function QuadraticBezierP1( t, p ) {
+
+	return 2 * ( 1 - t ) * t * p;
+
+}
+
+function QuadraticBezierP2( t, p ) {
+
+	return t * t * p;
+
+}
+
+function QuadraticBezier( t, p0, p1, p2 ) {
+
+	return QuadraticBezierP0( t, p0 ) + QuadraticBezierP1( t, p1 ) +
+		QuadraticBezierP2( t, p2 );
+
+}
+
+//
+
+function CubicBezierP0( t, p ) {
+
+	var k = 1 - t;
+	return k * k * k * p;
+
+}
+
+function CubicBezierP1( t, p ) {
+
+	var k = 1 - t;
+	return 3 * k * k * t * p;
+
+}
+
+function CubicBezierP2( t, p ) {
+
+	return 3 * ( 1 - t ) * t * t * p;
+
+}
+
+function CubicBezierP3( t, p ) {
+
+	return t * t * t * p;
+
+}
+
+function CubicBezier( t, p0, p1, p2, p3 ) {
+
+	return CubicBezierP0( t, p0 ) + CubicBezierP1( t, p1 ) + CubicBezierP2( t, p2 ) +
+		CubicBezierP3( t, p3 );
+
+}
+
+function CubicBezierCurve( v0, v1, v2, v3 ) {
+
+	Curve.call( this );
+
+	this.type = 'CubicBezierCurve';
+
+	this.v0 = v0 || new Vector2();
+	this.v1 = v1 || new Vector2();
+	this.v2 = v2 || new Vector2();
+	this.v3 = v3 || new Vector2();
+
+}
+
+CubicBezierCurve.prototype = Object.create( Curve.prototype );
+CubicBezierCurve.prototype.constructor = CubicBezierCurve;
+
+CubicBezierCurve.prototype.isCubicBezierCurve = true;
+
+CubicBezierCurve.prototype.getPoint = function ( t, optionalTarget ) {
+
+	var point = optionalTarget || new Vector2();
+
+	var v0 = this.v0, v1 = this.v1, v2 = this.v2, v3 = this.v3;
+
+	point.set(
+		CubicBezier( t, v0.x, v1.x, v2.x, v3.x ),
+		CubicBezier( t, v0.y, v1.y, v2.y, v3.y )
+	);
+
+	return point;
+
+};
+
+CubicBezierCurve.prototype.copy = function ( source ) {
+
+	Curve.prototype.copy.call( this, source );
+
+	this.v0.copy( source.v0 );
+	this.v1.copy( source.v1 );
+	this.v2.copy( source.v2 );
+	this.v3.copy( source.v3 );
+
+	return this;
+
+};
+
+CubicBezierCurve.prototype.toJSON = function () {
+
+	var data = Curve.prototype.toJSON.call( this );
+
+	data.v0 = this.v0.toArray();
+	data.v1 = this.v1.toArray();
+	data.v2 = this.v2.toArray();
+	data.v3 = this.v3.toArray();
+
+	return data;
+
+};
+
+CubicBezierCurve.prototype.fromJSON = function ( json ) {
+
+	Curve.prototype.fromJSON.call( this, json );
+
+	this.v0.fromArray( json.v0 );
+	this.v1.fromArray( json.v1 );
+	this.v2.fromArray( json.v2 );
+	this.v3.fromArray( json.v3 );
+
+	return this;
+
+};
+
+function CubicBezierCurve3( v0, v1, v2, v3 ) {
+
+	Curve.call( this );
+
+	this.type = 'CubicBezierCurve3';
+
+	this.v0 = v0 || new Vector3();
+	this.v1 = v1 || new Vector3();
+	this.v2 = v2 || new Vector3();
+	this.v3 = v3 || new Vector3();
+
+}
+
+CubicBezierCurve3.prototype = Object.create( Curve.prototype );
+CubicBezierCurve3.prototype.constructor = CubicBezierCurve3;
+
+CubicBezierCurve3.prototype.isCubicBezierCurve3 = true;
+
+CubicBezierCurve3.prototype.getPoint = function ( t, optionalTarget ) {
+
+	var point = optionalTarget || new Vector3();
+
+	var v0 = this.v0, v1 = this.v1, v2 = this.v2, v3 = this.v3;
+
+	point.set(
+		CubicBezier( t, v0.x, v1.x, v2.x, v3.x ),
+		CubicBezier( t, v0.y, v1.y, v2.y, v3.y ),
+		CubicBezier( t, v0.z, v1.z, v2.z, v3.z )
+	);
+
+	return point;
+
+};
+
+CubicBezierCurve3.prototype.copy = function ( source ) {
+
+	Curve.prototype.copy.call( this, source );
+
+	this.v0.copy( source.v0 );
+	this.v1.copy( source.v1 );
+	this.v2.copy( source.v2 );
+	this.v3.copy( source.v3 );
+
+	return this;
+
+};
+
+CubicBezierCurve3.prototype.toJSON = function () {
+
+	var data = Curve.prototype.toJSON.call( this );
+
+	data.v0 = this.v0.toArray();
+	data.v1 = this.v1.toArray();
+	data.v2 = this.v2.toArray();
+	data.v3 = this.v3.toArray();
+
+	return data;
+
+};
+
+CubicBezierCurve3.prototype.fromJSON = function ( json ) {
+
+	Curve.prototype.fromJSON.call( this, json );
+
+	this.v0.fromArray( json.v0 );
+	this.v1.fromArray( json.v1 );
+	this.v2.fromArray( json.v2 );
+	this.v3.fromArray( json.v3 );
+
+	return this;
+
+};
+
+function LineCurve( v1, v2 ) {
+
+	Curve.call( this );
+
+	this.type = 'LineCurve';
+
+	this.v1 = v1 || new Vector2();
+	this.v2 = v2 || new Vector2();
+
+}
+
+LineCurve.prototype = Object.create( Curve.prototype );
+LineCurve.prototype.constructor = LineCurve;
+
+LineCurve.prototype.isLineCurve = true;
+
+LineCurve.prototype.getPoint = function ( t, optionalTarget ) {
+
+	var point = optionalTarget || new Vector2();
+
+	if ( t === 1 ) {
+
+		point.copy( this.v2 );
+
+	} else {
+
+		point.copy( this.v2 ).sub( this.v1 );
+		point.multiplyScalar( t ).add( this.v1 );
+
+	}
+
+	return point;
+
+};
+
+// Line curve is linear, so we can overwrite default getPointAt
+
+LineCurve.prototype.getPointAt = function ( u, optionalTarget ) {
+
+	return this.getPoint( u, optionalTarget );
+
+};
+
+LineCurve.prototype.getTangent = function (  ) {
+
+	var tangent = this.v2.clone().sub( this.v1 );
+
+	return tangent.normalize();
+
+};
+
+LineCurve.prototype.copy = function ( source ) {
+
+	Curve.prototype.copy.call( this, source );
+
+	this.v1.copy( source.v1 );
+	this.v2.copy( source.v2 );
+
+	return this;
+
+};
+
+LineCurve.prototype.toJSON = function () {
+
+	var data = Curve.prototype.toJSON.call( this );
+
+	data.v1 = this.v1.toArray();
+	data.v2 = this.v2.toArray();
+
+	return data;
+
+};
+
+LineCurve.prototype.fromJSON = function ( json ) {
+
+	Curve.prototype.fromJSON.call( this, json );
+
+	this.v1.fromArray( json.v1 );
+	this.v2.fromArray( json.v2 );
+
+	return this;
+
+};
+
+function LineCurve3( v1, v2 ) {
+
+	Curve.call( this );
+
+	this.type = 'LineCurve3';
+
+	this.v1 = v1 || new Vector3();
+	this.v2 = v2 || new Vector3();
+
+}
+
+LineCurve3.prototype = Object.create( Curve.prototype );
+LineCurve3.prototype.constructor = LineCurve3;
+
+LineCurve3.prototype.isLineCurve3 = true;
+
+LineCurve3.prototype.getPoint = function ( t, optionalTarget ) {
+
+	var point = optionalTarget || new Vector3();
+
+	if ( t === 1 ) {
+
+		point.copy( this.v2 );
+
+	} else {
+
+		point.copy( this.v2 ).sub( this.v1 );
+		point.multiplyScalar( t ).add( this.v1 );
+
+	}
+
+	return point;
+
+};
+
+// Line curve is linear, so we can overwrite default getPointAt
+
+LineCurve3.prototype.getPointAt = function ( u, optionalTarget ) {
+
+	return this.getPoint( u, optionalTarget );
+
+};
+
+LineCurve3.prototype.copy = function ( source ) {
+
+	Curve.prototype.copy.call( this, source );
+
+	this.v1.copy( source.v1 );
+	this.v2.copy( source.v2 );
+
+	return this;
+
+};
+
+LineCurve3.prototype.toJSON = function () {
+
+	var data = Curve.prototype.toJSON.call( this );
+
+	data.v1 = this.v1.toArray();
+	data.v2 = this.v2.toArray();
+
+	return data;
+
+};
+
+LineCurve3.prototype.fromJSON = function ( json ) {
+
+	Curve.prototype.fromJSON.call( this, json );
+
+	this.v1.fromArray( json.v1 );
+	this.v2.fromArray( json.v2 );
+
+	return this;
+
+};
+
+function QuadraticBezierCurve( v0, v1, v2 ) {
+
+	Curve.call( this );
+
+	this.type = 'QuadraticBezierCurve';
+
+	this.v0 = v0 || new Vector2();
+	this.v1 = v1 || new Vector2();
+	this.v2 = v2 || new Vector2();
+
+}
+
+QuadraticBezierCurve.prototype = Object.create( Curve.prototype );
+QuadraticBezierCurve.prototype.constructor = QuadraticBezierCurve;
+
+QuadraticBezierCurve.prototype.isQuadraticBezierCurve = true;
+
+QuadraticBezierCurve.prototype.getPoint = function ( t, optionalTarget ) {
+
+	var point = optionalTarget || new Vector2();
+
+	var v0 = this.v0, v1 = this.v1, v2 = this.v2;
+
+	point.set(
+		QuadraticBezier( t, v0.x, v1.x, v2.x ),
+		QuadraticBezier( t, v0.y, v1.y, v2.y )
+	);
+
+	return point;
+
+};
+
+QuadraticBezierCurve.prototype.copy = function ( source ) {
+
+	Curve.prototype.copy.call( this, source );
+
+	this.v0.copy( source.v0 );
+	this.v1.copy( source.v1 );
+	this.v2.copy( source.v2 );
+
+	return this;
+
+};
+
+QuadraticBezierCurve.prototype.toJSON = function () {
+
+	var data = Curve.prototype.toJSON.call( this );
+
+	data.v0 = this.v0.toArray();
+	data.v1 = this.v1.toArray();
+	data.v2 = this.v2.toArray();
+
+	return data;
+
+};
+
+QuadraticBezierCurve.prototype.fromJSON = function ( json ) {
+
+	Curve.prototype.fromJSON.call( this, json );
+
+	this.v0.fromArray( json.v0 );
+	this.v1.fromArray( json.v1 );
+	this.v2.fromArray( json.v2 );
+
+	return this;
+
+};
+
+function QuadraticBezierCurve3( v0, v1, v2 ) {
+
+	Curve.call( this );
+
+	this.type = 'QuadraticBezierCurve3';
+
+	this.v0 = v0 || new Vector3();
+	this.v1 = v1 || new Vector3();
+	this.v2 = v2 || new Vector3();
+
+}
+
+QuadraticBezierCurve3.prototype = Object.create( Curve.prototype );
+QuadraticBezierCurve3.prototype.constructor = QuadraticBezierCurve3;
+
+QuadraticBezierCurve3.prototype.isQuadraticBezierCurve3 = true;
+
+QuadraticBezierCurve3.prototype.getPoint = function ( t, optionalTarget ) {
+
+	var point = optionalTarget || new Vector3();
+
+	var v0 = this.v0, v1 = this.v1, v2 = this.v2;
+
+	point.set(
+		QuadraticBezier( t, v0.x, v1.x, v2.x ),
+		QuadraticBezier( t, v0.y, v1.y, v2.y ),
+		QuadraticBezier( t, v0.z, v1.z, v2.z )
+	);
+
+	return point;
+
+};
+
+QuadraticBezierCurve3.prototype.copy = function ( source ) {
+
+	Curve.prototype.copy.call( this, source );
+
+	this.v0.copy( source.v0 );
+	this.v1.copy( source.v1 );
+	this.v2.copy( source.v2 );
+
+	return this;
+
+};
+
+QuadraticBezierCurve3.prototype.toJSON = function () {
+
+	var data = Curve.prototype.toJSON.call( this );
+
+	data.v0 = this.v0.toArray();
+	data.v1 = this.v1.toArray();
+	data.v2 = this.v2.toArray();
+
+	return data;
+
+};
+
+QuadraticBezierCurve3.prototype.fromJSON = function ( json ) {
+
+	Curve.prototype.fromJSON.call( this, json );
+
+	this.v0.fromArray( json.v0 );
+	this.v1.fromArray( json.v1 );
+	this.v2.fromArray( json.v2 );
+
+	return this;
+
+};
+
+function SplineCurve( points  ) {
+
+	Curve.call( this );
+
+	this.type = 'SplineCurve';
+
+	this.points = points || [];
+
+}
+
+SplineCurve.prototype = Object.create( Curve.prototype );
+SplineCurve.prototype.constructor = SplineCurve;
+
+SplineCurve.prototype.isSplineCurve = true;
+
+SplineCurve.prototype.getPoint = function ( t, optionalTarget ) {
+
+	var point = optionalTarget || new Vector2();
+
+	var points = this.points;
+	var p = ( points.length - 1 ) * t;
+
+	var intPoint = Math.floor( p );
+	var weight = p - intPoint;
+
+	var p0 = points[ intPoint === 0 ? intPoint : intPoint - 1 ];
+	var p1 = points[ intPoint ];
+	var p2 = points[ intPoint > points.length - 2 ? points.length - 1 : intPoint + 1 ];
+	var p3 = points[ intPoint > points.length - 3 ? points.length - 1 : intPoint + 2 ];
+
+	point.set(
+		CatmullRom( weight, p0.x, p1.x, p2.x, p3.x ),
+		CatmullRom( weight, p0.y, p1.y, p2.y, p3.y )
+	);
+
+	return point;
+
+};
+
+SplineCurve.prototype.copy = function ( source ) {
+	var this$1 = this;
+
+
+	Curve.prototype.copy.call( this, source );
+
+	this.points = [];
+
+	for ( var i = 0, l = source.points.length; i < l; i ++ ) {
+
+		var point = source.points[ i ];
+
+		this$1.points.push( point.clone() );
+
+	}
+
+	return this;
+
+};
+
+SplineCurve.prototype.toJSON = function () {
+	var this$1 = this;
+
+
+	var data = Curve.prototype.toJSON.call( this );
+
+	data.points = [];
+
+	for ( var i = 0, l = this.points.length; i < l; i ++ ) {
+
+		var point = this$1.points[ i ];
+		data.points.push( point.toArray() );
+
+	}
+
+	return data;
+
+};
+
+SplineCurve.prototype.fromJSON = function ( json ) {
+	var this$1 = this;
+
+
+	Curve.prototype.fromJSON.call( this, json );
+
+	this.points = [];
+
+	for ( var i = 0, l = json.points.length; i < l; i ++ ) {
+
+		var point = json.points[ i ];
+		this$1.points.push( new Vector2().fromArray( point ) );
+
+	}
+
+	return this;
+
+};
+
+var Curves = {
+    ArcCurve: ArcCurve,
+    CatmullRomCurve3: CatmullRomCurve3,
+    CubicBezierCurve: CubicBezierCurve,
+    CubicBezierCurve3: CubicBezierCurve3,
+    EllipseCurve: EllipseCurve,
+    LineCurve: LineCurve,
+    LineCurve3: LineCurve3,
+    QuadraticBezierCurve: QuadraticBezierCurve,
+    QuadraticBezierCurve3: QuadraticBezierCurve3,
+    SplineCurve: SplineCurve
+};
 function CurvePath() {
 
 	Curve.call( this );
@@ -117572,552 +118697,6 @@ CurvePath.prototype = Object.assign( Object.create( Curve.prototype ), {
 	}
 
 } );
-
-function EllipseCurve( aX, aY, xRadius, yRadius, aStartAngle, aEndAngle, aClockwise, aRotation ) {
-
-	Curve.call( this );
-
-	this.type = 'EllipseCurve';
-
-	this.aX = aX || 0;
-	this.aY = aY || 0;
-
-	this.xRadius = xRadius || 1;
-	this.yRadius = yRadius || 1;
-
-	this.aStartAngle = aStartAngle || 0;
-	this.aEndAngle = aEndAngle || 2 * Math.PI;
-
-	this.aClockwise = aClockwise || false;
-
-	this.aRotation = aRotation || 0;
-
-}
-
-EllipseCurve.prototype = Object.create( Curve.prototype );
-EllipseCurve.prototype.constructor = EllipseCurve;
-
-EllipseCurve.prototype.isEllipseCurve = true;
-
-EllipseCurve.prototype.getPoint = function ( t, optionalTarget ) {
-
-	var point = optionalTarget || new Vector2();
-
-	var twoPi = Math.PI * 2;
-	var deltaAngle = this.aEndAngle - this.aStartAngle;
-	var samePoints = Math.abs( deltaAngle ) < Number.EPSILON;
-
-	// ensures that deltaAngle is 0 .. 2 PI
-	while ( deltaAngle < 0 ) { deltaAngle += twoPi; }
-	while ( deltaAngle > twoPi ) { deltaAngle -= twoPi; }
-
-	if ( deltaAngle < Number.EPSILON ) {
-
-		if ( samePoints ) {
-
-			deltaAngle = 0;
-
-		} else {
-
-			deltaAngle = twoPi;
-
-		}
-
-	}
-
-	if ( this.aClockwise === true && ! samePoints ) {
-
-		if ( deltaAngle === twoPi ) {
-
-			deltaAngle = - twoPi;
-
-		} else {
-
-			deltaAngle = deltaAngle - twoPi;
-
-		}
-
-	}
-
-	var angle = this.aStartAngle + t * deltaAngle;
-	var x = this.aX + this.xRadius * Math.cos( angle );
-	var y = this.aY + this.yRadius * Math.sin( angle );
-
-	if ( this.aRotation !== 0 ) {
-
-		var cos = Math.cos( this.aRotation );
-		var sin = Math.sin( this.aRotation );
-
-		var tx = x - this.aX;
-		var ty = y - this.aY;
-
-		// Rotate the point about the center of the ellipse.
-		x = tx * cos - ty * sin + this.aX;
-		y = tx * sin + ty * cos + this.aY;
-
-	}
-
-	return point.set( x, y );
-
-};
-
-EllipseCurve.prototype.copy = function ( source ) {
-
-	Curve.prototype.copy.call( this, source );
-
-	this.aX = source.aX;
-	this.aY = source.aY;
-
-	this.xRadius = source.xRadius;
-	this.yRadius = source.yRadius;
-
-	this.aStartAngle = source.aStartAngle;
-	this.aEndAngle = source.aEndAngle;
-
-	this.aClockwise = source.aClockwise;
-
-	this.aRotation = source.aRotation;
-
-	return this;
-
-};
-
-
-EllipseCurve.prototype.toJSON = function () {
-
-	var data = Curve.prototype.toJSON.call( this );
-
-	data.aX = this.aX;
-	data.aY = this.aY;
-
-	data.xRadius = this.xRadius;
-	data.yRadius = this.yRadius;
-
-	data.aStartAngle = this.aStartAngle;
-	data.aEndAngle = this.aEndAngle;
-
-	data.aClockwise = this.aClockwise;
-
-	data.aRotation = this.aRotation;
-
-	return data;
-
-};
-
-EllipseCurve.prototype.fromJSON = function ( json ) {
-
-	Curve.prototype.fromJSON.call( this, json );
-
-	this.aX = json.aX;
-	this.aY = json.aY;
-
-	this.xRadius = json.xRadius;
-	this.yRadius = json.yRadius;
-
-	this.aStartAngle = json.aStartAngle;
-	this.aEndAngle = json.aEndAngle;
-
-	this.aClockwise = json.aClockwise;
-
-	this.aRotation = json.aRotation;
-
-	return this;
-
-};
-
-function CatmullRom( t, p0, p1, p2, p3 ) {
-
-	var v0 = ( p2 - p0 ) * 0.5;
-	var v1 = ( p3 - p1 ) * 0.5;
-	var t2 = t * t;
-	var t3 = t * t2;
-	return ( 2 * p1 - 2 * p2 + v0 + v1 ) * t3 + ( - 3 * p1 + 3 * p2 - 2 * v0 - v1 ) * t2 + v0 * t + p1;
-
-}
-
-//
-
-function QuadraticBezierP0( t, p ) {
-
-	var k = 1 - t;
-	return k * k * p;
-
-}
-
-function QuadraticBezierP1( t, p ) {
-
-	return 2 * ( 1 - t ) * t * p;
-
-}
-
-function QuadraticBezierP2( t, p ) {
-
-	return t * t * p;
-
-}
-
-function QuadraticBezier( t, p0, p1, p2 ) {
-
-	return QuadraticBezierP0( t, p0 ) + QuadraticBezierP1( t, p1 ) +
-		QuadraticBezierP2( t, p2 );
-
-}
-
-//
-
-function CubicBezierP0( t, p ) {
-
-	var k = 1 - t;
-	return k * k * k * p;
-
-}
-
-function CubicBezierP1( t, p ) {
-
-	var k = 1 - t;
-	return 3 * k * k * t * p;
-
-}
-
-function CubicBezierP2( t, p ) {
-
-	return 3 * ( 1 - t ) * t * t * p;
-
-}
-
-function CubicBezierP3( t, p ) {
-
-	return t * t * t * p;
-
-}
-
-function CubicBezier( t, p0, p1, p2, p3 ) {
-
-	return CubicBezierP0( t, p0 ) + CubicBezierP1( t, p1 ) + CubicBezierP2( t, p2 ) +
-		CubicBezierP3( t, p3 );
-
-}
-
-function SplineCurve( points  ) {
-
-	Curve.call( this );
-
-	this.type = 'SplineCurve';
-
-	this.points = points || [];
-
-}
-
-SplineCurve.prototype = Object.create( Curve.prototype );
-SplineCurve.prototype.constructor = SplineCurve;
-
-SplineCurve.prototype.isSplineCurve = true;
-
-SplineCurve.prototype.getPoint = function ( t, optionalTarget ) {
-
-	var point = optionalTarget || new Vector2();
-
-	var points = this.points;
-	var p = ( points.length - 1 ) * t;
-
-	var intPoint = Math.floor( p );
-	var weight = p - intPoint;
-
-	var p0 = points[ intPoint === 0 ? intPoint : intPoint - 1 ];
-	var p1 = points[ intPoint ];
-	var p2 = points[ intPoint > points.length - 2 ? points.length - 1 : intPoint + 1 ];
-	var p3 = points[ intPoint > points.length - 3 ? points.length - 1 : intPoint + 2 ];
-
-	point.set(
-		CatmullRom( weight, p0.x, p1.x, p2.x, p3.x ),
-		CatmullRom( weight, p0.y, p1.y, p2.y, p3.y )
-	);
-
-	return point;
-
-};
-
-SplineCurve.prototype.copy = function ( source ) {
-	var this$1 = this;
-
-
-	Curve.prototype.copy.call( this, source );
-
-	this.points = [];
-
-	for ( var i = 0, l = source.points.length; i < l; i ++ ) {
-
-		var point = source.points[ i ];
-
-		this$1.points.push( point.clone() );
-
-	}
-
-	return this;
-
-};
-
-SplineCurve.prototype.toJSON = function () {
-	var this$1 = this;
-
-
-	var data = Curve.prototype.toJSON.call( this );
-
-	data.points = [];
-
-	for ( var i = 0, l = this.points.length; i < l; i ++ ) {
-
-		var point = this$1.points[ i ];
-		data.points.push( point.toArray() );
-
-	}
-
-	return data;
-
-};
-
-SplineCurve.prototype.fromJSON = function ( json ) {
-	var this$1 = this;
-
-
-	Curve.prototype.fromJSON.call( this, json );
-
-	this.points = [];
-
-	for ( var i = 0, l = json.points.length; i < l; i ++ ) {
-
-		var point = json.points[ i ];
-		this$1.points.push( new Vector2().fromArray( point ) );
-
-	}
-
-	return this;
-
-};
-
-function CubicBezierCurve( v0, v1, v2, v3 ) {
-
-	Curve.call( this );
-
-	this.type = 'CubicBezierCurve';
-
-	this.v0 = v0 || new Vector2();
-	this.v1 = v1 || new Vector2();
-	this.v2 = v2 || new Vector2();
-	this.v3 = v3 || new Vector2();
-
-}
-
-CubicBezierCurve.prototype = Object.create( Curve.prototype );
-CubicBezierCurve.prototype.constructor = CubicBezierCurve;
-
-CubicBezierCurve.prototype.isCubicBezierCurve = true;
-
-CubicBezierCurve.prototype.getPoint = function ( t, optionalTarget ) {
-
-	var point = optionalTarget || new Vector2();
-
-	var v0 = this.v0, v1 = this.v1, v2 = this.v2, v3 = this.v3;
-
-	point.set(
-		CubicBezier( t, v0.x, v1.x, v2.x, v3.x ),
-		CubicBezier( t, v0.y, v1.y, v2.y, v3.y )
-	);
-
-	return point;
-
-};
-
-CubicBezierCurve.prototype.copy = function ( source ) {
-
-	Curve.prototype.copy.call( this, source );
-
-	this.v0.copy( source.v0 );
-	this.v1.copy( source.v1 );
-	this.v2.copy( source.v2 );
-	this.v3.copy( source.v3 );
-
-	return this;
-
-};
-
-CubicBezierCurve.prototype.toJSON = function () {
-
-	var data = Curve.prototype.toJSON.call( this );
-
-	data.v0 = this.v0.toArray();
-	data.v1 = this.v1.toArray();
-	data.v2 = this.v2.toArray();
-	data.v3 = this.v3.toArray();
-
-	return data;
-
-};
-
-CubicBezierCurve.prototype.fromJSON = function ( json ) {
-
-	Curve.prototype.fromJSON.call( this, json );
-
-	this.v0.fromArray( json.v0 );
-	this.v1.fromArray( json.v1 );
-	this.v2.fromArray( json.v2 );
-	this.v3.fromArray( json.v3 );
-
-	return this;
-
-};
-
-function QuadraticBezierCurve( v0, v1, v2 ) {
-
-	Curve.call( this );
-
-	this.type = 'QuadraticBezierCurve';
-
-	this.v0 = v0 || new Vector2();
-	this.v1 = v1 || new Vector2();
-	this.v2 = v2 || new Vector2();
-
-}
-
-QuadraticBezierCurve.prototype = Object.create( Curve.prototype );
-QuadraticBezierCurve.prototype.constructor = QuadraticBezierCurve;
-
-QuadraticBezierCurve.prototype.isQuadraticBezierCurve = true;
-
-QuadraticBezierCurve.prototype.getPoint = function ( t, optionalTarget ) {
-
-	var point = optionalTarget || new Vector2();
-
-	var v0 = this.v0, v1 = this.v1, v2 = this.v2;
-
-	point.set(
-		QuadraticBezier( t, v0.x, v1.x, v2.x ),
-		QuadraticBezier( t, v0.y, v1.y, v2.y )
-	);
-
-	return point;
-
-};
-
-QuadraticBezierCurve.prototype.copy = function ( source ) {
-
-	Curve.prototype.copy.call( this, source );
-
-	this.v0.copy( source.v0 );
-	this.v1.copy( source.v1 );
-	this.v2.copy( source.v2 );
-
-	return this;
-
-};
-
-QuadraticBezierCurve.prototype.toJSON = function () {
-
-	var data = Curve.prototype.toJSON.call( this );
-
-	data.v0 = this.v0.toArray();
-	data.v1 = this.v1.toArray();
-	data.v2 = this.v2.toArray();
-
-	return data;
-
-};
-
-QuadraticBezierCurve.prototype.fromJSON = function ( json ) {
-
-	Curve.prototype.fromJSON.call( this, json );
-
-	this.v0.fromArray( json.v0 );
-	this.v1.fromArray( json.v1 );
-	this.v2.fromArray( json.v2 );
-
-	return this;
-
-};
-
-function LineCurve( v1, v2 ) {
-
-	Curve.call( this );
-
-	this.type = 'LineCurve';
-
-	this.v1 = v1 || new Vector2();
-	this.v2 = v2 || new Vector2();
-
-}
-
-LineCurve.prototype = Object.create( Curve.prototype );
-LineCurve.prototype.constructor = LineCurve;
-
-LineCurve.prototype.isLineCurve = true;
-
-LineCurve.prototype.getPoint = function ( t, optionalTarget ) {
-
-	var point = optionalTarget || new Vector2();
-
-	if ( t === 1 ) {
-
-		point.copy( this.v2 );
-
-	} else {
-
-		point.copy( this.v2 ).sub( this.v1 );
-		point.multiplyScalar( t ).add( this.v1 );
-
-	}
-
-	return point;
-
-};
-
-// Line curve is linear, so we can overwrite default getPointAt
-
-LineCurve.prototype.getPointAt = function ( u, optionalTarget ) {
-
-	return this.getPoint( u, optionalTarget );
-
-};
-
-LineCurve.prototype.getTangent = function (  ) {
-
-	var tangent = this.v2.clone().sub( this.v1 );
-
-	return tangent.normalize();
-
-};
-
-LineCurve.prototype.copy = function ( source ) {
-
-	Curve.prototype.copy.call( this, source );
-
-	this.v1.copy( source.v1 );
-	this.v2.copy( source.v2 );
-
-	return this;
-
-};
-
-LineCurve.prototype.toJSON = function () {
-
-	var data = Curve.prototype.toJSON.call( this );
-
-	data.v1 = this.v1.toArray();
-	data.v2 = this.v2.toArray();
-
-	return data;
-
-};
-
-LineCurve.prototype.fromJSON = function ( json ) {
-
-	Curve.prototype.fromJSON.call( this, json );
-
-	this.v1.fromArray( json.v1 );
-	this.v2.fromArray( json.v2 );
-
-	return this;
-
-};
 
 function Path( points ) {
 
@@ -120888,466 +121467,6 @@ function createPath( char, divisions, scale, offsetX, offsetY, data ) {
 	return { offsetX: glyph.ha * scale, path: path };
 
 }
-
-function ArcCurve( aX, aY, aRadius, aStartAngle, aEndAngle, aClockwise ) {
-
-	EllipseCurve.call( this, aX, aY, aRadius, aRadius, aStartAngle, aEndAngle, aClockwise );
-
-	this.type = 'ArcCurve';
-
-}
-
-ArcCurve.prototype = Object.create( EllipseCurve.prototype );
-ArcCurve.prototype.constructor = ArcCurve;
-
-ArcCurve.prototype.isArcCurve = true;
-
-function CubicPoly() {
-
-	var c0 = 0, c1 = 0, c2 = 0, c3 = 0;
-
-	
-	function init( x0, x1, t0, t1 ) {
-
-		c0 = x0;
-		c1 = t0;
-		c2 = - 3 * x0 + 3 * x1 - 2 * t0 - t1;
-		c3 = 2 * x0 - 2 * x1 + t0 + t1;
-
-	}
-
-	return {
-
-		initCatmullRom: function ( x0, x1, x2, x3, tension ) {
-
-			init( x1, x2, tension * ( x2 - x0 ), tension * ( x3 - x1 ) );
-
-		},
-
-		initNonuniformCatmullRom: function ( x0, x1, x2, x3, dt0, dt1, dt2 ) {
-
-			// compute tangents when parameterized in [t1,t2]
-			var t1 = ( x1 - x0 ) / dt0 - ( x2 - x0 ) / ( dt0 + dt1 ) + ( x2 - x1 ) / dt1;
-			var t2 = ( x2 - x1 ) / dt1 - ( x3 - x1 ) / ( dt1 + dt2 ) + ( x3 - x2 ) / dt2;
-
-			// rescale tangents for parametrization in [0,1]
-			t1 *= dt1;
-			t2 *= dt1;
-
-			init( x1, x2, t1, t2 );
-
-		},
-
-		calc: function ( t ) {
-
-			var t2 = t * t;
-			var t3 = t2 * t;
-			return c0 + c1 * t + c2 * t2 + c3 * t3;
-
-		}
-
-	};
-
-}
-
-//
-
-var tmp = new Vector3();
-var px = new CubicPoly();
-var py = new CubicPoly();
-var pz = new CubicPoly();
-
-function CatmullRomCurve3( points, closed, curveType, tension ) {
-
-	Curve.call( this );
-
-	this.type = 'CatmullRomCurve3';
-
-	this.points = points || [];
-	this.closed = closed || false;
-	this.curveType = curveType || 'centripetal';
-	this.tension = tension || 0.5;
-
-}
-
-CatmullRomCurve3.prototype = Object.create( Curve.prototype );
-CatmullRomCurve3.prototype.constructor = CatmullRomCurve3;
-
-CatmullRomCurve3.prototype.isCatmullRomCurve3 = true;
-
-CatmullRomCurve3.prototype.getPoint = function ( t, optionalTarget ) {
-
-	var point = optionalTarget || new Vector3();
-
-	var points = this.points;
-	var l = points.length;
-
-	var p = ( l - ( this.closed ? 0 : 1 ) ) * t;
-	var intPoint = Math.floor( p );
-	var weight = p - intPoint;
-
-	if ( this.closed ) {
-
-		intPoint += intPoint > 0 ? 0 : ( Math.floor( Math.abs( intPoint ) / points.length ) + 1 ) * points.length;
-
-	} else if ( weight === 0 && intPoint === l - 1 ) {
-
-		intPoint = l - 2;
-		weight = 1;
-
-	}
-
-	var p0, p1, p2, p3; // 4 points
-
-	if ( this.closed || intPoint > 0 ) {
-
-		p0 = points[ ( intPoint - 1 ) % l ];
-
-	} else {
-
-		// extrapolate first point
-		tmp.subVectors( points[ 0 ], points[ 1 ] ).add( points[ 0 ] );
-		p0 = tmp;
-
-	}
-
-	p1 = points[ intPoint % l ];
-	p2 = points[ ( intPoint + 1 ) % l ];
-
-	if ( this.closed || intPoint + 2 < l ) {
-
-		p3 = points[ ( intPoint + 2 ) % l ];
-
-	} else {
-
-		// extrapolate last point
-		tmp.subVectors( points[ l - 1 ], points[ l - 2 ] ).add( points[ l - 1 ] );
-		p3 = tmp;
-
-	}
-
-	if ( this.curveType === 'centripetal' || this.curveType === 'chordal' ) {
-
-		// init Centripetal / Chordal Catmull-Rom
-		var pow = this.curveType === 'chordal' ? 0.5 : 0.25;
-		var dt0 = Math.pow( p0.distanceToSquared( p1 ), pow );
-		var dt1 = Math.pow( p1.distanceToSquared( p2 ), pow );
-		var dt2 = Math.pow( p2.distanceToSquared( p3 ), pow );
-
-		// safety check for repeated points
-		if ( dt1 < 1e-4 ) { dt1 = 1.0; }
-		if ( dt0 < 1e-4 ) { dt0 = dt1; }
-		if ( dt2 < 1e-4 ) { dt2 = dt1; }
-
-		px.initNonuniformCatmullRom( p0.x, p1.x, p2.x, p3.x, dt0, dt1, dt2 );
-		py.initNonuniformCatmullRom( p0.y, p1.y, p2.y, p3.y, dt0, dt1, dt2 );
-		pz.initNonuniformCatmullRom( p0.z, p1.z, p2.z, p3.z, dt0, dt1, dt2 );
-
-	} else if ( this.curveType === 'catmullrom' ) {
-
-		px.initCatmullRom( p0.x, p1.x, p2.x, p3.x, this.tension );
-		py.initCatmullRom( p0.y, p1.y, p2.y, p3.y, this.tension );
-		pz.initCatmullRom( p0.z, p1.z, p2.z, p3.z, this.tension );
-
-	}
-
-	point.set(
-		px.calc( weight ),
-		py.calc( weight ),
-		pz.calc( weight )
-	);
-
-	return point;
-
-};
-
-CatmullRomCurve3.prototype.copy = function ( source ) {
-	var this$1 = this;
-
-
-	Curve.prototype.copy.call( this, source );
-
-	this.points = [];
-
-	for ( var i = 0, l = source.points.length; i < l; i ++ ) {
-
-		var point = source.points[ i ];
-
-		this$1.points.push( point.clone() );
-
-	}
-
-	this.closed = source.closed;
-	this.curveType = source.curveType;
-	this.tension = source.tension;
-
-	return this;
-
-};
-
-CatmullRomCurve3.prototype.toJSON = function () {
-	var this$1 = this;
-
-
-	var data = Curve.prototype.toJSON.call( this );
-
-	data.points = [];
-
-	for ( var i = 0, l = this.points.length; i < l; i ++ ) {
-
-		var point = this$1.points[ i ];
-		data.points.push( point.toArray() );
-
-	}
-
-	data.closed = this.closed;
-	data.curveType = this.curveType;
-	data.tension = this.tension;
-
-	return data;
-
-};
-
-CatmullRomCurve3.prototype.fromJSON = function ( json ) {
-	var this$1 = this;
-
-
-	Curve.prototype.fromJSON.call( this, json );
-
-	this.points = [];
-
-	for ( var i = 0, l = json.points.length; i < l; i ++ ) {
-
-		var point = json.points[ i ];
-		this$1.points.push( new Vector3().fromArray( point ) );
-
-	}
-
-	this.closed = json.closed;
-	this.curveType = json.curveType;
-	this.tension = json.tension;
-
-	return this;
-
-};
-
-function CubicBezierCurve3( v0, v1, v2, v3 ) {
-
-	Curve.call( this );
-
-	this.type = 'CubicBezierCurve3';
-
-	this.v0 = v0 || new Vector3();
-	this.v1 = v1 || new Vector3();
-	this.v2 = v2 || new Vector3();
-	this.v3 = v3 || new Vector3();
-
-}
-
-CubicBezierCurve3.prototype = Object.create( Curve.prototype );
-CubicBezierCurve3.prototype.constructor = CubicBezierCurve3;
-
-CubicBezierCurve3.prototype.isCubicBezierCurve3 = true;
-
-CubicBezierCurve3.prototype.getPoint = function ( t, optionalTarget ) {
-
-	var point = optionalTarget || new Vector3();
-
-	var v0 = this.v0, v1 = this.v1, v2 = this.v2, v3 = this.v3;
-
-	point.set(
-		CubicBezier( t, v0.x, v1.x, v2.x, v3.x ),
-		CubicBezier( t, v0.y, v1.y, v2.y, v3.y ),
-		CubicBezier( t, v0.z, v1.z, v2.z, v3.z )
-	);
-
-	return point;
-
-};
-
-CubicBezierCurve3.prototype.copy = function ( source ) {
-
-	Curve.prototype.copy.call( this, source );
-
-	this.v0.copy( source.v0 );
-	this.v1.copy( source.v1 );
-	this.v2.copy( source.v2 );
-	this.v3.copy( source.v3 );
-
-	return this;
-
-};
-
-CubicBezierCurve3.prototype.toJSON = function () {
-
-	var data = Curve.prototype.toJSON.call( this );
-
-	data.v0 = this.v0.toArray();
-	data.v1 = this.v1.toArray();
-	data.v2 = this.v2.toArray();
-	data.v3 = this.v3.toArray();
-
-	return data;
-
-};
-
-CubicBezierCurve3.prototype.fromJSON = function ( json ) {
-
-	Curve.prototype.fromJSON.call( this, json );
-
-	this.v0.fromArray( json.v0 );
-	this.v1.fromArray( json.v1 );
-	this.v2.fromArray( json.v2 );
-	this.v3.fromArray( json.v3 );
-
-	return this;
-
-};
-
-function LineCurve3( v1, v2 ) {
-
-	Curve.call( this );
-
-	this.type = 'LineCurve3';
-
-	this.v1 = v1 || new Vector3();
-	this.v2 = v2 || new Vector3();
-
-}
-
-LineCurve3.prototype = Object.create( Curve.prototype );
-LineCurve3.prototype.constructor = LineCurve3;
-
-LineCurve3.prototype.isLineCurve3 = true;
-
-LineCurve3.prototype.getPoint = function ( t, optionalTarget ) {
-
-	var point = optionalTarget || new Vector3();
-
-	if ( t === 1 ) {
-
-		point.copy( this.v2 );
-
-	} else {
-
-		point.copy( this.v2 ).sub( this.v1 );
-		point.multiplyScalar( t ).add( this.v1 );
-
-	}
-
-	return point;
-
-};
-
-// Line curve is linear, so we can overwrite default getPointAt
-
-LineCurve3.prototype.getPointAt = function ( u, optionalTarget ) {
-
-	return this.getPoint( u, optionalTarget );
-
-};
-
-LineCurve3.prototype.copy = function ( source ) {
-
-	Curve.prototype.copy.call( this, source );
-
-	this.v1.copy( source.v1 );
-	this.v2.copy( source.v2 );
-
-	return this;
-
-};
-
-LineCurve3.prototype.toJSON = function () {
-
-	var data = Curve.prototype.toJSON.call( this );
-
-	data.v1 = this.v1.toArray();
-	data.v2 = this.v2.toArray();
-
-	return data;
-
-};
-
-LineCurve3.prototype.fromJSON = function ( json ) {
-
-	Curve.prototype.fromJSON.call( this, json );
-
-	this.v1.fromArray( json.v1 );
-	this.v2.fromArray( json.v2 );
-
-	return this;
-
-};
-
-function QuadraticBezierCurve3( v0, v1, v2 ) {
-
-	Curve.call( this );
-
-	this.type = 'QuadraticBezierCurve3';
-
-	this.v0 = v0 || new Vector3();
-	this.v1 = v1 || new Vector3();
-	this.v2 = v2 || new Vector3();
-
-}
-
-QuadraticBezierCurve3.prototype = Object.create( Curve.prototype );
-QuadraticBezierCurve3.prototype.constructor = QuadraticBezierCurve3;
-
-QuadraticBezierCurve3.prototype.isQuadraticBezierCurve3 = true;
-
-QuadraticBezierCurve3.prototype.getPoint = function ( t, optionalTarget ) {
-
-	var point = optionalTarget || new Vector3();
-
-	var v0 = this.v0, v1 = this.v1, v2 = this.v2;
-
-	point.set(
-		QuadraticBezier( t, v0.x, v1.x, v2.x ),
-		QuadraticBezier( t, v0.y, v1.y, v2.y ),
-		QuadraticBezier( t, v0.z, v1.z, v2.z )
-	);
-
-	return point;
-
-};
-
-QuadraticBezierCurve3.prototype.copy = function ( source ) {
-
-	Curve.prototype.copy.call( this, source );
-
-	this.v0.copy( source.v0 );
-	this.v1.copy( source.v1 );
-	this.v2.copy( source.v2 );
-
-	return this;
-
-};
-
-QuadraticBezierCurve3.prototype.toJSON = function () {
-
-	var data = Curve.prototype.toJSON.call( this );
-
-	data.v0 = this.v0.toArray();
-	data.v1 = this.v1.toArray();
-	data.v2 = this.v2.toArray();
-
-	return data;
-
-};
-
-QuadraticBezierCurve3.prototype.fromJSON = function ( json ) {
-
-	Curve.prototype.fromJSON.call( this, json );
-
-	this.v0.fromArray( json.v0 );
-	this.v1.fromArray( json.v1 );
-	this.v2.fromArray( json.v2 );
-
-	return this;
-
-};
 
 // ConeGeometry
 
@@ -125326,6 +125445,47 @@ FogExp2.prototype.toJSON = function (  ) {
 
 };
 
+var Geometries = {
+    WireframeGeometry: WireframeGeometry,
+    TetrahedronGeometry: TetrahedronGeometry,
+    TetrahedronBufferGeometry: TetrahedronBufferGeometry,
+    OctahedronGeometry: OctahedronGeometry,
+    OctahedronBufferGeometry: OctahedronBufferGeometry,
+    IcosahedronGeometry: IcosahedronGeometry,
+    IcosahedronBufferGeometry: IcosahedronBufferGeometry,
+    DodecahedronGeometry: DodecahedronGeometry,
+    DodecahedronBufferGeometry: DodecahedronBufferGeometry,
+    PolyhedronGeometry: PolyhedronGeometry,
+    PolyhedronBufferGeometry: PolyhedronBufferGeometry,
+    TubeGeometry: TubeGeometry,
+    TubeBufferGeometry: TubeBufferGeometry,
+    TorusKnotGeometry: TorusKnotGeometry,
+    TorusGeometry: TorusGeometry,
+    TorusBufferGeometry: TorusBufferGeometry,
+    TextGeometry: TextGeometry,
+    TextBufferGeometry: TextBufferGeometry,
+    SphereGeometry: SphereGeometry,
+    SphereBufferGeometry: SphereBufferGeometry,
+    RingGeometry: RingGeometry,
+    RingBufferGeometry: RingBufferGeometry,
+    PlaneGeometry: PlaneGeometry,
+    PlaneBufferGeometry: PlaneBufferGeometry,
+    LatheGeometry: LatheGeometry,
+    LatheBufferGeometry: LatheBufferGeometry,
+    ShapeGeometry: ShapeGeometry,
+    ShapeBufferGeometry: ShapeBufferGeometry,
+    ExtrudeGeometry: ExtrudeGeometry,
+    ExtrudeBufferGeometry: ExtrudeBufferGeometry,
+    EdgesGeometry: EdgesGeometry,
+    ConeGeometry: ConeGeometry,
+    ConeBufferGeometry: ConeBufferGeometry,
+    CylinderGeometry: CylinderGeometry,
+    CylinderBufferGeometry: CylinderBufferGeometry,
+    CircleGeometry: CircleGeometry,
+    CircleBufferGeometry: CircleBufferGeometry,
+    BoxGeometry: BoxGeometry,
+    BoxBufferGeometry: BoxBufferGeometry
+};
 function ObjectLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -126155,95 +126315,6 @@ var TEXTURE_FILTER = {
 	LinearMipMapNearestFilter: LinearMipMapNearestFilter,
 	LinearMipMapLinearFilter: LinearMipMapLinearFilter
 };
-
-function LineDashedMaterial( parameters ) {
-
-	LineBasicMaterial.call( this );
-
-	this.type = 'LineDashedMaterial';
-
-	this.scale = 1;
-	this.dashSize = 3;
-	this.gapSize = 1;
-
-	this.setValues( parameters );
-
-}
-
-LineDashedMaterial.prototype = Object.create( LineBasicMaterial.prototype );
-LineDashedMaterial.prototype.constructor = LineDashedMaterial;
-
-LineDashedMaterial.prototype.isLineDashedMaterial = true;
-
-LineDashedMaterial.prototype.copy = function ( source ) {
-
-	LineBasicMaterial.prototype.copy.call( this, source );
-
-	this.scale = source.scale;
-	this.dashSize = source.dashSize;
-	this.gapSize = source.gapSize;
-
-	return this;
-
-};
-
-function MeshPhysicalMaterial( parameters ) {
-
-	MeshStandardMaterial.call( this );
-
-	this.defines = { 'PHYSICAL': '' };
-
-	this.type = 'MeshPhysicalMaterial';
-
-	this.reflectivity = 0.5; // maps to F0 = 0.04
-
-	this.clearCoat = 0.0;
-	this.clearCoatRoughness = 0.0;
-
-	this.setValues( parameters );
-
-}
-
-MeshPhysicalMaterial.prototype = Object.create( MeshStandardMaterial.prototype );
-MeshPhysicalMaterial.prototype.constructor = MeshPhysicalMaterial;
-
-MeshPhysicalMaterial.prototype.isMeshPhysicalMaterial = true;
-
-MeshPhysicalMaterial.prototype.copy = function ( source ) {
-
-	MeshStandardMaterial.prototype.copy.call( this, source );
-
-	this.defines = { 'PHYSICAL': '' };
-
-	this.reflectivity = source.reflectivity;
-
-	this.clearCoat = source.clearCoat;
-	this.clearCoatRoughness = source.clearCoatRoughness;
-
-	return this;
-
-};
-
-function ShadowMaterial( parameters ) {
-
-	Material.call( this );
-
-	this.type = 'ShadowMaterial';
-
-	this.color = new Color( 0x000000 );
-	this.opacity = 1.0;
-
-	this.lights = true;
-	this.transparent = true;
-
-	this.setValues( parameters );
-
-}
-
-ShadowMaterial.prototype = Object.create( Material.prototype );
-ShadowMaterial.prototype.constructor = ShadowMaterial;
-
-ShadowMaterial.prototype.isShadowMaterial = true;
 
 function Cylindrical( radius, theta, y ) {
 
