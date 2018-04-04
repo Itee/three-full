@@ -81,7 +81,7 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
 
             // advanced options
             paths:     {},
-            banner:    '',
+            banner:    '// Made by Itee (https://github.com/Itee) with ES6 Convertor script\n\n' + 'var window = window || (function(){ console.warn("It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly."); return {} })()\n\n',
             footer:    '',
             intro:     '',
             outro:     '',
