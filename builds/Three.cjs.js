@@ -1,3 +1,8 @@
+// Made by Itee (https://github.com/Itee) with ES6 Convertor script
+
+var window = window || (function(){ console.warn("It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly."); return {} })()
+
+
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
@@ -126574,8 +126579,6 @@ VideoTexture.prototype = Object.assign( Object.create( Texture.prototype ), {
 	}
 
 } );
-
-// Made by Itee (https://github.com/Itee) with ES6 Convertor script
 
 exports.CCDIKSolver = CCDIKSolver;
 exports.CCDIKHelper = CCDIKHelper;
