@@ -1,5 +1,3 @@
-// Made by Itee (https://github.com/Itee) with ES6 Convertor script
-
 import './polyfills.js';
 
 export {

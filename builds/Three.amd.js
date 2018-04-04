@@ -1,3 +1,8 @@
+// Made by Itee (https://github.com/Itee) with ES6 Convertor script
+
+var window = window || (function(){ console.warn("It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly."); return {} })()
+
+
 define(['exports'], function (exports) { 'use strict';
 
   // Polyfills
@@ -126572,8 +126577,6 @@ define(['exports'], function (exports) { 'use strict';
   	}
 
   } );
-
-  // Made by Itee (https://github.com/Itee) with ES6 Convertor script
 
   exports.CCDIKSolver = CCDIKSolver;
   exports.CCDIKHelper = CCDIKHelper;
