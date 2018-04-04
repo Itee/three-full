@@ -631,7 +631,8 @@ module.exports = {
 		},
 		OBJLoader2: {
 			replacements: [
-				[ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ]
+				[ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ],
+				[ 'THREE = { LoaderSupport: {} };', 'var LoaderSupport = {};' ]
 			]
 		},
 		Ocean: {
