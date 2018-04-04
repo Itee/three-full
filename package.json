@@ -2,7 +2,8 @@
   "name": "threejs-full-es6",
   "version": "5.0.4",
   "description": "The famouse ThreeJs library with full examples as es6 module",
-  "main": "builds/Three.es.js",
+  "main": "builds/Three.cjs.js",
+  "module": "builds/Three.es.js",
   "scripts": {
     "help": "gulp help",
     "patch": "gulp patch-three",
