@@ -66019,7 +66019,7 @@ define(['exports'], function (exports) { 'use strict';
   		var buildCode = function ( funcBuildObject, funcBuildSingleton ) {
   			var workerCode = '';
   			workerCode += '\n\n';
-  			workerCode += 'THREE = { LoaderSupport: {} };\n\n';
+  			workerCode += 'var LoaderSupport = {};\n\n';
   			workerCode += funcBuildObject( 'LoaderSupport.Validator', Validator );
   			workerCode += funcBuildSingleton( 'LoaderSupport.ConsoleLogger', LoaderSupport.ConsoleLogger );
   			workerCode += funcBuildSingleton( 'LoaderSupport.LoaderBase', LoaderSupport.LoaderBase );
