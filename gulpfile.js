@@ -696,7 +696,6 @@ gulp.task( 'fix-line', () => {
 
 } )
 
-
 /////////////////////
 ////// CLEAN ////////
 /////////////////////
@@ -758,10 +757,10 @@ gulp.task( 'convert-three', ( done ) => {
 
         const mainExporterFilePath = './sources/Three.js'
         const exports              = es6.getAllExports( mainExporterFilePath )
-
-        let data = '// Made by Itee (https://github.com/Itee) with ES6 Convertor script\n\n' +
-            'import \'./polyfills.js\';\n\n' +
-            exports
+        const signature            = '// Made by Itee (https://github.com/Itee) with ES6 Convertor script\n\n'
+        const browserHack          = 'var window = window || (function(){ console.warn("It seems you are using this package in a non-browser environment. Some dependencies that depending on global window browser variable could not work properly."); return {} })()\n\n'
+        const globalImport         = 'import \'./polyfills.js\';\n\n'
+        const data                 = signature + browserHack + globalImport + exports
 
         fs.writeFileSync( mainExporterFilePath, data )
 
