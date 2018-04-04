@@ -194,6 +194,18 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+##### 5.0.6:
+
+* Add a window global variable check to avoid crach under nodejs
+
+##### 5.0.5:
+
+* Change default entry for main and module in package
+
+##### 5.0.4:
+
+* Fix #18, OBJLoader2 worker code
+
 ##### 5.0.3:
 
 * Fix missings Geometries imports in ObjectLoader
