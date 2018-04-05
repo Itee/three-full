@@ -459,7 +459,10 @@ module.exports = {
             ]
 		},
 		MD2Loader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'AnimationClip'
+			]
 		},
 		MD2Character: {
 			outputOverride: 'objects/MD2Character.js'
