@@ -56,16 +56,12 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
 
             // advanced options
             onwarn: function onWarn ( { loc, frame, message } ) {
-                // print location if applicable
                 if ( loc ) {
-                    console.log("YES WE HAVE A LOC !!!");
                     console.warn( `${loc.file} (${loc.line}:${loc.column}) ${message}` )
                     if ( frame ) {
                         console.warn( frame )
                     }
                 } else {
-                    console.log("DAMNED NO LOC PROVIDE !!!");
-
                     console.warn( message )
                 }
             },
