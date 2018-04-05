@@ -482,6 +482,7 @@ module.exports = {
 			imports: [
 				'DefaultLoadingManager',
 				'LoaderUtils',
+				'Interpolant',
 				'_Math'
 			]
 		},
