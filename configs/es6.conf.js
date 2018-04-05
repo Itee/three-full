@@ -660,6 +660,12 @@ module.exports = {
 			],
 			outputOverride: 'utils/Octree.js'
 		},
+		OrbitControls: {
+            replacements: [
+                ['ScreenSpacePanning = 0;', 'var ScreenSpacePanning = 0;'],
+                ['HorizontalPanning = 1;', 'var HorizontalPanning = 1;']
+            ]
+		},
 		OutlineEffect: {
 			imports: [ 'ShaderLib' ]
 		},
