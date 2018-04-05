@@ -266,6 +266,7 @@ module.exports = {
 			imports: [
 				'DefaultLoadingManager',
 				'LoaderUtils',
+				'PropertyBinding',
 				'_Math'
 			]
 		},
@@ -307,7 +308,8 @@ module.exports = {
 		},
 		GLTFExporter: {
             imports: [
-                '_Math'
+                '_Math',
+                'PropertyBinding'
             ]
 		},
 		GLTFLoader: {
@@ -458,7 +460,10 @@ module.exports = {
             ]
 		},
 		MD2Loader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'AnimationClip'
+			]
 		},
 		MD2Character: {
 			outputOverride: 'objects/MD2Character.js'
@@ -469,19 +474,18 @@ module.exports = {
             ],
 			outputOverride: 'objects/MD2CharacterComplex.js'
 		},
-		MMDExporter: {
-            imports: [
-                '_Math'
-            ]
-		},
 		MMDLoader: {
 			imports: [
 				'DefaultLoadingManager',
 				'LoaderUtils',
+				'Interpolant',
 				'_Math'
 			]
 		},
 		MorphAnimMesh: {
+            imports: [
+                'AnimationClip'
+            ],
 			outputOverride: 'objects/MorphAnimMesh.js'
 		},
 		MorphBlendMesh: {
@@ -513,6 +517,7 @@ module.exports = {
         NodeMaterialLoader: {
 			imports: [
 				'DefaultLoadingManager',
+				'CameraNode'
 			],
 			replacements: [
 				['NodeMaterialLoaderUtils = {', 'var NodeMaterialLoaderUtils = {']
@@ -825,6 +830,9 @@ module.exports = {
         SMAAShader: {
             exportsOverride: [ 'SMAAShader' ]
 		},
+        SoftwareRenderer: {
+            imports: [ '_Math' ]
+        },
         SplineCurve: {
             outputOverride: 'curves/SplineCurve.js'
         },
@@ -881,8 +889,7 @@ module.exports = {
 		},
 		TTFLoader: {
 			imports: [
-				'DefaultLoadingManager',
-				'_Math'
+				'DefaultLoadingManager'
 			]
 		},
 		TypedArrayUtils: {
@@ -920,8 +927,7 @@ module.exports = {
 		VTKLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils',
-				'_Math'
+				'LoaderUtils'
 			]
 		},
 		Water: {
