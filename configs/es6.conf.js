@@ -250,6 +250,13 @@ module.exports = {
                 'UniformsUtils'
             ]
         },
+        DRACOLoader: {
+            imports: [
+                'DefaultLoadingManager',
+                'Uint16BufferAttribute',
+                'Uint32BufferAttribute'
+            ]
+        },
 		Earcut: {
             outputOverride: 'misc/Earcut.js'
         },
@@ -395,6 +402,13 @@ module.exports = {
         },
         LineCurve3: {
             outputOverride: 'curves/LineCurve3.js'
+        },
+        LineMaterial: {
+            imports: [
+                'UniformsLib',
+                'UniformsUtils',
+                'ShaderLib'
+            ]
         },
         LoaderSupport: {
 			imports: [ 'DefaultLoadingManager' ],
@@ -635,7 +649,8 @@ module.exports = {
             exportsOverride: [ 'OBJLoader' ]
 		},
 		OBJLoader2: {
-			replacements: [
+            imports: [ 'DefaultLoadingManager' ],
+            replacements: [
 				[ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ],
 				[ 'THREE = { LoaderSupport: {} };', 'var LoaderSupport = {};' ]
 			]
@@ -659,6 +674,12 @@ module.exports = {
 				[ 'instanceof var OctreeNode', 'instanceof OctreeNode' ]
 			],
 			outputOverride: 'utils/Octree.js'
+		},
+		OrbitControls: {
+            replacements: [
+                ['ScreenSpacePanning = 0;', 'var ScreenSpacePanning = 0;'],
+                ['HorizontalPanning = 1;', 'var HorizontalPanning = 1;']
+            ]
 		},
 		OutlineEffect: {
 			imports: [ 'ShaderLib' ]

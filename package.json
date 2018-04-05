@@ -37,10 +37,10 @@
     "gulp": "^3.9.1",
     "gulp-batch-replace": "^0.0.0",
     "gulp-util": "^3.0.8",
-    "rollup": "^0.53.0",
-    "rollup-plugin-buble": "^0.18.0",
+    "rollup": "^0.57.1",
+    "rollup-plugin-buble": "^0.19.2",
     "rollup-plugin-uglify-es": "0.0.1",
     "run-sequence": "^2.2.0",
-    "three": "^0.90.0"
+    "three": "^0.91.0"
   }
 }
