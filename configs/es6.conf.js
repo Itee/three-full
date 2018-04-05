@@ -266,6 +266,7 @@ module.exports = {
 			imports: [
 				'DefaultLoadingManager',
 				'LoaderUtils',
+				'PropertyBinding',
 				'_Math'
 			]
 		},
