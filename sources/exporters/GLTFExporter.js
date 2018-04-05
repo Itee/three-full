@@ -24,6 +24,7 @@ import {
 	TriangleFanDrawMode
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
+import { PropertyBinding } from '../animation/PropertyBinding.js'
 
 
 

@@ -4,6 +4,7 @@ import { Vector2 } from '../math/Vector2.js'
 import { Face3 } from '../core/Face3.js'
 import { Vector3 } from '../math/Vector3.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+import { AnimationClip } from '../animation/AnimationClip.js'
 
 
 

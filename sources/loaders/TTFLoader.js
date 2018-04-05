@@ -1,6 +1,5 @@
 import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-import { _Math } from '../math/Math.js'
 
 
 

@@ -8,7 +8,6 @@ import { Face3 } from '../core/Face3.js'
 import { Color } from '../math/Color.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { _Math } from '../math/Math.js'
 
 
 
