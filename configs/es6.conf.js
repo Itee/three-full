@@ -396,6 +396,11 @@ module.exports = {
         LineCurve3: {
             outputOverride: 'curves/LineCurve3.js'
         },
+        LineMaterial: {
+            imports: [
+                'UniformsLib'
+            ]
+        },
         LoaderSupport: {
 			imports: [ 'DefaultLoadingManager' ],
 			replacements: [
