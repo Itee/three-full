@@ -250,6 +250,13 @@ module.exports = {
                 'UniformsUtils'
             ]
         },
+        DRACOLoader: {
+            imports: [
+                'DefaultLoadingManager',
+                'Uint16BufferAttribute',
+                'Uint32BufferAttribute'
+            ]
+        },
 		Earcut: {
             outputOverride: 'misc/Earcut.js'
         },
