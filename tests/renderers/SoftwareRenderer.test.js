@@ -1,7 +1,7 @@
 var Three = (function (exports) {
 	'use strict';
 
-	var _Math$1 = {
+	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
 		RAD2DEG: 180 / Math.PI,
@@ -114,13 +114,13 @@ var Three = (function (exports) {
 
 		degToRad: function ( degrees ) {
 
-			return degrees * _Math$1.DEG2RAD;
+			return degrees * _Math.DEG2RAD;
 
 		},
 
 		radToDeg: function ( radians ) {
 
-			return radians * _Math$1.RAD2DEG;
+			return radians * _Math.RAD2DEG;
 
 		},
 
@@ -256,9 +256,9 @@ var Three = (function (exports) {
 			return function setHSL( h, s, l ) {
 
 				// h,s,l ranges are in 0.0 - 1.0
-				h = _Math$1.euclideanModulo( h, 1 );
-				s = _Math$1.clamp( s, 0, 1 );
-				l = _Math$1.clamp( l, 0, 1 );
+				h = _Math.euclideanModulo( h, 1 );
+				s = _Math.clamp( s, 0, 1 );
+				l = _Math.clamp( l, 0, 1 );
 
 				if ( s === 0 ) {
 
@@ -2757,7 +2757,7 @@ var Three = (function (exports) {
 
 			// clamp, to handle numerical problems
 
-			return Math.acos( _Math$1.clamp( theta, - 1, 1 ) );
+			return Math.acos( _Math.clamp( theta, - 1, 1 ) );
 
 		},
 
@@ -5715,7 +5715,7 @@ var Three = (function (exports) {
 
 		setFromRotationMatrix: function ( m, order, update ) {
 
-			var clamp = _Math$1.clamp;
+			var clamp = _Math.clamp;
 
 			// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
 
@@ -5977,7 +5977,7 @@ var Three = (function (exports) {
 
 		Object.defineProperty( this, 'id', { value: object3DId ++ } );
 
-		this.uuid = _Math$1.generateUUID();
+		this.uuid = _Math.generateUUID();
 
 		this.name = '';
 		this.type = 'Object3D';
@@ -7444,7 +7444,7 @@ var Three = (function (exports) {
 
 				if ( clampToLine ) {
 
-					t = _Math$1.clamp( t, 0, 1 );
+					t = _Math.clamp( t, 0, 1 );
 
 				}
 
@@ -7809,7 +7809,7 @@ var Three = (function (exports) {
 
 		Object.defineProperty( this, 'id', { value: materialId ++ } );
 
-		this.uuid = _Math$1.generateUUID();
+		this.uuid = _Math.generateUUID();
 
 		this.name = '';
 		this.type = 'Material';
@@ -8250,7 +8250,7 @@ var Three = (function (exports) {
 
 		}
 
-		this.uuid = _Math$1.generateUUID();
+		this.uuid = _Math.generateUUID();
 		this.name = '';
 
 		this.array = array;
@@ -8944,7 +8944,7 @@ var Three = (function (exports) {
 
 		Object.defineProperty( this, 'id', { value: bufferGeometryId += 2 } );
 
-		this.uuid = _Math$1.generateUUID();
+		this.uuid = _Math.generateUUID();
 
 		this.name = '';
 		this.type = 'BufferGeometry';
@@ -10958,7 +10958,7 @@ var Three = (function (exports) {
 
 		Object.defineProperty( this, 'id', { value: geometryId += 2 } );
 
-		this.uuid = _Math$1.generateUUID();
+		this.uuid = _Math.generateUUID();
 
 		this.name = '';
 		this.type = 'Geometry';
