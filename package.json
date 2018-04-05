@@ -1,7 +1,7 @@
 {
   "name": "threejs-full-es6",
   "version": "5.0.7",
-  "description": "The famouse ThreeJs library with full examples as es6 module",
+  "description": "The famous ThreeJs library with integrated examples as es6 modules",
   "main": "builds/Three.cjs.js",
   "module": "builds/Three.es.js",
   "scripts": {
