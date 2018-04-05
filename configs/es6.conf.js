@@ -307,7 +307,8 @@ module.exports = {
 		},
 		GLTFExporter: {
             imports: [
-                '_Math'
+                '_Math',
+                'PropertyBinding'
             ]
 		},
 		GLTFLoader: {
