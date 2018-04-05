@@ -474,11 +474,6 @@ module.exports = {
             ],
 			outputOverride: 'objects/MD2CharacterComplex.js'
 		},
-		MMDExporter: {
-            imports: [
-                '_Math'
-            ]
-		},
 		MMDLoader: {
 			imports: [
 				'DefaultLoadingManager',
@@ -894,8 +889,7 @@ module.exports = {
 		},
 		TTFLoader: {
 			imports: [
-				'DefaultLoadingManager',
-				'_Math'
+				'DefaultLoadingManager'
 			]
 		},
 		TypedArrayUtils: {
@@ -933,8 +927,7 @@ module.exports = {
 		VTKLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils',
-				'_Math'
+				'LoaderUtils'
 			]
 		},
 		Water: {
