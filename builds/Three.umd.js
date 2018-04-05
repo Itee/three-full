@@ -1,7 +1,5 @@
 // Made by Itee (https://github.com/Itee) with ES6 Convertor script
 
-var window = window || (function(){ console.warn("It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly."); return {} })()
-
 
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -109,7 +107,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   }
 
-  var _Math$1 = {
+  var _Math = {
 
   	DEG2RAD: Math.PI / 180,
   	RAD2DEG: 180 / Math.PI,
@@ -222,13 +220,13 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	degToRad: function ( degrees ) {
 
-  		return degrees * _Math$1.DEG2RAD;
+  		return degrees * _Math.DEG2RAD;
 
   	},
 
   	radToDeg: function ( radians ) {
 
-  		return radians * _Math$1.RAD2DEG;
+  		return radians * _Math.RAD2DEG;
 
   	},
 
@@ -1753,7 +1751,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		// clamp, to handle numerical problems
 
-  		return Math.acos( _Math$1.clamp( theta, - 1, 1 ) );
+  		return Math.acos( _Math.clamp( theta, - 1, 1 ) );
 
   	},
 
@@ -2686,7 +2684,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	setFromRotationMatrix: function ( m, order, update ) {
 
-  		var clamp = _Math$1.clamp;
+  		var clamp = _Math.clamp;
 
   		// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
 
@@ -3329,7 +3327,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	Object.defineProperty( this, 'id', { value: object3DId ++ } );
 
-  	this.uuid = _Math$1.generateUUID();
+  	this.uuid = _Math.generateUUID();
 
   	this.name = '';
   	this.type = 'Object3D';
@@ -4258,9 +4256,9 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   		return function setHSL( h, s, l ) {
 
   			// h,s,l ranges are in 0.0 - 1.0
-  			h = _Math$1.euclideanModulo( h, 1 );
-  			s = _Math$1.clamp( s, 0, 1 );
-  			l = _Math$1.clamp( l, 0, 1 );
+  			h = _Math.euclideanModulo( h, 1 );
+  			s = _Math.clamp( s, 0, 1 );
+  			l = _Math.clamp( l, 0, 1 );
 
   			if ( s === 0 ) {
 
@@ -5946,7 +5944,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	Object.defineProperty( this, 'id', { value: geometryId += 2 } );
 
-  	this.uuid = _Math$1.generateUUID();
+  	this.uuid = _Math.generateUUID();
 
   	this.name = '';
   	this.type = 'Geometry';
@@ -7971,7 +7969,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	}
 
-  	this.uuid = _Math$1.generateUUID();
+  	this.uuid = _Math.generateUUID();
   	this.name = '';
 
   	this.array = array;
@@ -8685,7 +8683,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	Object.defineProperty( this, 'id', { value: bufferGeometryId += 2 } );
 
-  	this.uuid = _Math$1.generateUUID();
+  	this.uuid = _Math.generateUUID();
 
   	this.name = '';
   	this.type = 'BufferGeometry';
@@ -10050,7 +10048,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	Object.defineProperty( this, 'id', { value: materialId ++ } );
 
-  	this.uuid = _Math$1.generateUUID();
+  	this.uuid = _Math.generateUUID();
 
   	this.name = '';
   	this.type = 'Material';
@@ -11132,7 +11130,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   			if ( clampToLine ) {
 
-  				t = _Math$1.clamp( t, 0, 1 );
+  				t = _Math.clamp( t, 0, 1 );
 
   			}
 
@@ -14408,7 +14406,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   } );
 
-  function Interpolant$1( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
+  function Interpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
   	this.parameterPositions = parameterPositions;
   	this._cachedIndex = 0;
@@ -14420,7 +14418,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   }
 
-  Object.assign( Interpolant$1.prototype, {
+  Object.assign( Interpolant.prototype, {
 
   	evaluate: function ( t ) {
   		var this$1 = this;
@@ -14635,23 +14633,23 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   } );
 
   //!\ DECLARE ALIAS AFTER assign prototype !
-  Object.assign( Interpolant$1.prototype, {
+  Object.assign( Interpolant.prototype, {
 
   	//( 0, t, t0 ), returns this.resultBuffer
-  	beforeStart_: Interpolant$1.prototype.copySampleValue_,
+  	beforeStart_: Interpolant.prototype.copySampleValue_,
 
   	//( N-1, tN-1, t ), returns this.resultBuffer
-  	afterEnd_: Interpolant$1.prototype.copySampleValue_,
+  	afterEnd_: Interpolant.prototype.copySampleValue_,
 
   } );
 
   function QuaternionLinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
-  	Interpolant$1.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
+  	Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
 
   }
 
-  QuaternionLinearInterpolant.prototype = Object.assign( Object.create( Interpolant$1.prototype ), {
+  QuaternionLinearInterpolant.prototype = Object.assign( Object.create( Interpolant.prototype ), {
 
   	constructor: QuaternionLinearInterpolant,
 
@@ -14744,7 +14742,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   function CubicInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
-  	Interpolant$1.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
+  	Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
 
   	this._weightPrev = - 0;
   	this._offsetPrev = - 0;
@@ -14753,7 +14751,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   }
 
-  CubicInterpolant.prototype = Object.assign( Object.create( Interpolant$1.prototype ), {
+  CubicInterpolant.prototype = Object.assign( Object.create( Interpolant.prototype ), {
 
   	constructor: CubicInterpolant,
 
@@ -14884,11 +14882,11 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   function LinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
-  	Interpolant$1.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
+  	Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
 
   }
 
-  LinearInterpolant.prototype = Object.assign( Object.create( Interpolant$1.prototype ), {
+  LinearInterpolant.prototype = Object.assign( Object.create( Interpolant.prototype ), {
 
   	constructor: LinearInterpolant,
 
@@ -14920,11 +14918,11 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   function DiscreteInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
-  	Interpolant$1.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
+  	Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
 
   }
 
-  DiscreteInterpolant.prototype = Object.assign( Object.create( Interpolant$1.prototype ), {
+  DiscreteInterpolant.prototype = Object.assign( Object.create( Interpolant.prototype ), {
 
   	constructor: DiscreteInterpolant,
 
@@ -15625,13 +15623,13 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   } );
 
-  function AnimationClip$1( name, duration, tracks ) {
+  function AnimationClip( name, duration, tracks ) {
 
   	this.name = name;
   	this.tracks = tracks;
   	this.duration = ( duration !== undefined ) ? duration : - 1;
 
-  	this.uuid = _Math$1.generateUUID();
+  	this.uuid = _Math.generateUUID();
 
   	// this means it should figure out its duration by scanning the tracks
   	if ( this.duration < 0 ) {
@@ -15644,7 +15642,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   }
 
-  Object.assign( AnimationClip$1, {
+  Object.assign( AnimationClip, {
 
   	parse: function ( json ) {
 
@@ -15658,7 +15656,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		}
 
-  		return new AnimationClip$1( json.name, json.duration, tracks );
+  		return new AnimationClip( json.name, json.duration, tracks );
 
   	},
 
@@ -15723,7 +15721,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		}
 
-  		return new AnimationClip$1( name, - 1, tracks );
+  		return new AnimationClip( name, - 1, tracks );
 
   	},
 
@@ -15788,7 +15786,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		for ( var name in animationToMorphTargets ) {
 
-  			clips.push( AnimationClip$1.CreateFromMorphTargetSequence( name, animationToMorphTargets[ name ], fps, noLoop ) );
+  			clips.push( AnimationClip.CreateFromMorphTargetSequence( name, animationToMorphTargets[ name ], fps, noLoop ) );
 
   		}
 
@@ -15914,7 +15912,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		}
 
-  		var clip = new AnimationClip$1( clipName, duration, tracks );
+  		var clip = new AnimationClip( clipName, duration, tracks );
 
   		return clip;
 
@@ -15922,7 +15920,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   } );
 
-  Object.assign( AnimationClip$1.prototype, {
+  Object.assign( AnimationClip.prototype, {
 
   	resetDuration: function () {
   		var this$1 = this;
@@ -15983,7 +15981,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	var track = new NumberKeyframeTrack( trackName, times, values );
 
-  	return new AnimationClip$1( null, period, [ track ] );
+  	return new AnimationClip( null, period, [ track ] );
 
   };
 
@@ -15996,7 +15994,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	var track = new NumberKeyframeTrack( trackName, times, values );
 
-  	return new AnimationClip$1( null, period, [ track ] );
+  	return new AnimationClip( null, period, [ track ] );
 
   };
 
@@ -16018,7 +16016,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	var track = new VectorKeyframeTrack( trackName, times, values );
 
-  	return new AnimationClip$1( null, duration, [ track ] );
+  	return new AnimationClip( null, duration, [ track ] );
 
   };
 
@@ -16041,7 +16039,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	var track = new VectorKeyframeTrack( trackName, times, values );
 
-  	return new AnimationClip$1( null, duration, [ track ] );
+  	return new AnimationClip( null, duration, [ track ] );
 
   };
 
@@ -16054,7 +16052,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	var track = new BooleanKeyframeTrack( trackName, times, values );
 
-  	return new AnimationClip$1( null, duration, [ track ] );
+  	return new AnimationClip( null, duration, [ track ] );
 
   };
 
@@ -16075,7 +16073,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	var track = new ColorKeyframeTrack( trackName, times, values );
 
-  	return new AnimationClip$1( null, duration, [ track ] );
+  	return new AnimationClip( null, duration, [ track ] );
 
   };
 
@@ -16379,7 +16377,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   		// see http://www.bobatkins.com/photography/technical/field_of_view.html
   		var vExtentSlope = 0.5 * this.getFilmHeight() / focalLength;
 
-  		this.fov = _Math$1.RAD2DEG * 2 * Math.atan( vExtentSlope );
+  		this.fov = _Math.RAD2DEG * 2 * Math.atan( vExtentSlope );
   		this.updateProjectionMatrix();
 
   	},
@@ -16387,7 +16385,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   	
   	getFocalLength: function () {
 
-  		var vExtentSlope = Math.tan( _Math$1.DEG2RAD * 0.5 * this.fov );
+  		var vExtentSlope = Math.tan( _Math.DEG2RAD * 0.5 * this.fov );
 
   		return 0.5 * this.getFilmHeight() / vExtentSlope;
 
@@ -16395,8 +16393,8 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	getEffectiveFOV: function () {
 
-  		return _Math$1.RAD2DEG * 2 * Math.atan(
-  			Math.tan( _Math$1.DEG2RAD * 0.5 * this.fov ) / this.zoom );
+  		return _Math.RAD2DEG * 2 * Math.atan(
+  			Math.tan( _Math.DEG2RAD * 0.5 * this.fov ) / this.zoom );
 
   	},
 
@@ -16461,7 +16459,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		var near = this.near,
   			top = near * Math.tan(
-  				_Math$1.DEG2RAD * 0.5 * this.fov ) / this.zoom,
+  				_Math.DEG2RAD * 0.5 * this.fov ) / this.zoom,
   			height = 2 * top,
   			width = this.aspect * height,
   			left = - 0.5 * width,
@@ -16755,7 +16753,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	Object.defineProperty( this, 'id', { value: textureId ++ } );
 
-  	this.uuid = _Math$1.generateUUID();
+  	this.uuid = _Math.generateUUID();
 
   	this.name = '';
 
@@ -16936,7 +16934,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   			if ( image.uuid === undefined ) {
 
-  				image.uuid = _Math$1.generateUUID(); // UGH
+  				image.uuid = _Math.generateUUID(); // UGH
 
   			}
 
@@ -17059,7 +17057,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   function WebGLRenderTarget( width, height, options ) {
 
-  	this.uuid = _Math$1.generateUUID();
+  	this.uuid = _Math.generateUUID();
 
   	this.width = width;
   	this.height = height;
@@ -19262,7 +19260,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   				}
 
-  				var uuid = _Math$1.generateUUID();
+  				var uuid = _Math.generateUUID();
 
   				textures[ uuid ] = texture;
 
@@ -19273,7 +19271,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   			//
 
   			var json = {
-  				uuid: _Math$1.generateUUID(),
+  				uuid: _Math.generateUUID(),
   				type: 'MeshLambertMaterial'
   			};
 
@@ -19981,7 +19979,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   			for ( var i = 0; i < animations.length; i ++ ) {
 
-  				var clip = AnimationClip$1.parseAnimation( animations[ i ], geometry.bones );
+  				var clip = AnimationClip.parseAnimation( animations[ i ], geometry.bones );
   				if ( clip ) { outputAnimations.push( clip ); }
 
   			}
@@ -19990,7 +19988,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   			if ( geometry.morphTargets ) {
 
   				// TODO: Figure out what an appropraite FPS is for morph target animations -- defaulting to 10, but really it is completely arbitrary.
-  				var morphAnimationClips = AnimationClip$1.CreateClipsFromMorphTargetSequences( geometry.morphTargets, 10 );
+  				var morphAnimationClips = AnimationClip.CreateClipsFromMorphTargetSequences( geometry.morphTargets, 10 );
   				outputAnimations = outputAnimations.concat( morphAnimationClips );
 
   			}
@@ -20832,28 +20830,28 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		if ( controls.moveForward ) {
 
-  			this.speed = _Math$1.clamp( this.speed + delta * this.FRONT_ACCELERATION, this.MAX_REVERSE_SPEED, this.MAX_SPEED );
-  			this.acceleration = _Math$1.clamp( this.acceleration + delta, - 1, 1 );
+  			this.speed = _Math.clamp( this.speed + delta * this.FRONT_ACCELERATION, this.MAX_REVERSE_SPEED, this.MAX_SPEED );
+  			this.acceleration = _Math.clamp( this.acceleration + delta, - 1, 1 );
 
   		}
 
   		if ( controls.moveBackward ) {
 
 
-  			this.speed = _Math$1.clamp( this.speed - delta * this.BACK_ACCELERATION, this.MAX_REVERSE_SPEED, this.MAX_SPEED );
-  			this.acceleration = _Math$1.clamp( this.acceleration - delta, - 1, 1 );
+  			this.speed = _Math.clamp( this.speed - delta * this.BACK_ACCELERATION, this.MAX_REVERSE_SPEED, this.MAX_SPEED );
+  			this.acceleration = _Math.clamp( this.acceleration - delta, - 1, 1 );
 
   		}
 
   		if ( controls.moveLeft ) {
 
-  			this.wheelOrientation = _Math$1.clamp( this.wheelOrientation + delta * this.WHEEL_ANGULAR_ACCELERATION, - this.MAX_WHEEL_ROTATION, this.MAX_WHEEL_ROTATION );
+  			this.wheelOrientation = _Math.clamp( this.wheelOrientation + delta * this.WHEEL_ANGULAR_ACCELERATION, - this.MAX_WHEEL_ROTATION, this.MAX_WHEEL_ROTATION );
 
   		}
 
   		if ( controls.moveRight ) {
 
-  			this.wheelOrientation = _Math$1.clamp( this.wheelOrientation - delta * this.WHEEL_ANGULAR_ACCELERATION, - this.MAX_WHEEL_ROTATION, this.MAX_WHEEL_ROTATION );
+  			this.wheelOrientation = _Math.clamp( this.wheelOrientation - delta * this.WHEEL_ANGULAR_ACCELERATION, - this.MAX_WHEEL_ROTATION, this.MAX_WHEEL_ROTATION );
 
   		}
 
@@ -20865,15 +20863,15 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   				var k = exponentialEaseOut( this.speed / this.MAX_SPEED );
 
-  				this.speed = _Math$1.clamp( this.speed - k * delta * this.FRONT_DECCELERATION, 0, this.MAX_SPEED );
-  				this.acceleration = _Math$1.clamp( this.acceleration - k * delta, 0, 1 );
+  				this.speed = _Math.clamp( this.speed - k * delta * this.FRONT_DECCELERATION, 0, this.MAX_SPEED );
+  				this.acceleration = _Math.clamp( this.acceleration - k * delta, 0, 1 );
 
   			} else {
 
   				var k = exponentialEaseOut( this.speed / this.MAX_REVERSE_SPEED );
 
-  				this.speed = _Math$1.clamp( this.speed + k * delta * this.BACK_ACCELERATION, this.MAX_REVERSE_SPEED, 0 );
-  				this.acceleration = _Math$1.clamp( this.acceleration + k * delta, - 1, 0 );
+  				this.speed = _Math.clamp( this.speed + k * delta * this.BACK_ACCELERATION, this.MAX_REVERSE_SPEED, 0 );
+  				this.acceleration = _Math.clamp( this.acceleration + k * delta, - 1, 0 );
 
   			}
 
@@ -20886,11 +20884,11 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   			if ( this.wheelOrientation > 0 ) {
 
-  				this.wheelOrientation = _Math$1.clamp( this.wheelOrientation - delta * this.WHEEL_ANGULAR_DECCELERATION, 0, this.MAX_WHEEL_ROTATION );
+  				this.wheelOrientation = _Math.clamp( this.wheelOrientation - delta * this.WHEEL_ANGULAR_DECCELERATION, 0, this.MAX_WHEEL_ROTATION );
 
   			} else {
 
-  				this.wheelOrientation = _Math$1.clamp( this.wheelOrientation + delta * this.WHEEL_ANGULAR_DECCELERATION, - this.MAX_WHEEL_ROTATION, 0 );
+  				this.wheelOrientation = _Math.clamp( this.wheelOrientation + delta * this.WHEEL_ANGULAR_DECCELERATION, - this.MAX_WHEEL_ROTATION, 0 );
 
   			}
 
@@ -21155,13 +21153,13 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		if ( device ) {
 
-  			var alpha = device.alpha ? _Math$1.degToRad( device.alpha ) + scope.alphaOffset : 0; // Z
+  			var alpha = device.alpha ? _Math.degToRad( device.alpha ) + scope.alphaOffset : 0; // Z
 
-  			var beta = device.beta ? _Math$1.degToRad( device.beta ) : 0; // X'
+  			var beta = device.beta ? _Math.degToRad( device.beta ) : 0; // X'
 
-  			var gamma = device.gamma ? _Math$1.degToRad( device.gamma ) : 0; // Y''
+  			var gamma = device.gamma ? _Math.degToRad( device.gamma ) : 0; // Y''
 
-  			var orient = scope.screenOrientation ? _Math$1.degToRad( scope.screenOrientation ) : 0; // O
+  			var orient = scope.screenOrientation ? _Math.degToRad( scope.screenOrientation ) : 0; // O
 
   			setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
 
@@ -21643,7 +21641,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   		} else {
 
   			this.theta = Math.atan2( vec3.x, vec3.z ); // equator angle around y-up axis
-  			this.phi = Math.acos( _Math$1.clamp( vec3.y / this.radius, - 1, 1 ) ); // polar angle
+  			this.phi = Math.acos( _Math.clamp( vec3.y / this.radius, - 1, 1 ) ); // polar angle
 
   		}
 
@@ -22124,7 +22122,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		if ( this.heightSpeed ) {
 
-  			var y = _Math$1.clamp( this.object.position.y, this.heightMin, this.heightMax );
+  			var y = _Math.clamp( this.object.position.y, this.heightMin, this.heightMax );
   			var heightDelta = y - this.heightMin;
 
   			this.autoSpeedFactor = delta * ( heightDelta * this.heightCoef );
@@ -22166,13 +22164,13 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   		if ( this.lookVertical ) { this.lat -= this.mouseY * actualLookSpeed * verticalLookRatio; }
 
   		this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
-  		this.phi = _Math$1.degToRad( 90 - this.lat );
+  		this.phi = _Math.degToRad( 90 - this.lat );
 
-  		this.theta = _Math$1.degToRad( this.lon );
+  		this.theta = _Math.degToRad( this.lon );
 
   		if ( this.constrainVertical ) {
 
-  			this.phi = _Math$1.mapLinear( this.phi, 0, Math.PI, this.verticalMin, this.verticalMax );
+  			this.phi = _Math.mapLinear( this.phi, 0, Math.PI, this.verticalMin, this.verticalMax );
 
   		}
 
@@ -28707,7 +28705,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   				vec.normalize();
 
-  				theta = Math.acos( _Math$1.clamp( tangents[ i - 1 ].dot( tangents[ i ] ), - 1, 1 ) ); // clamp for floating pt errors
+  				theta = Math.acos( _Math.clamp( tangents[ i - 1 ].dot( tangents[ i ] ), - 1, 1 ) ); // clamp for floating pt errors
 
   				normals[ i ].applyMatrix4( mat.makeRotationAxis( vec, theta ) );
 
@@ -28721,7 +28719,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		if ( closed === true ) {
 
-  			theta = Math.acos( _Math$1.clamp( normals[ 0 ].dot( normals[ segments ] ), - 1, 1 ) );
+  			theta = Math.acos( _Math.clamp( normals[ 0 ].dot( normals[ segments ] ), - 1, 1 ) );
   			theta /= segments;
 
   			if ( tangents[ 0 ].dot( vec.crossVectors( normals[ 0 ], normals[ segments ] ) ) > 0 ) {
@@ -29781,7 +29779,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   				var projectionMatrix = camera.projectionMatrix.clone();
   				eyeSep = this.eyeSep / 2;
   				var eyeSepOnProjection = eyeSep * near / focus;
-  				var ymax = ( near * Math.tan( _Math$1.DEG2RAD * fov * 0.5 ) ) / zoom;
+  				var ymax = ( near * Math.tan( _Math.DEG2RAD * fov * 0.5 ) ) / zoom;
   				var xmin, xmax;
 
   				// translate xOffset
@@ -32900,6 +32898,715 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   } );
 
+  // Characters [].:/ are reserved for track binding syntax.
+  var RESERVED_CHARS_RE = '\\[\\]\\.:\\/';
+
+  function Composite( targetGroup, path, optionalParsedPath ) {
+
+  	var parsedPath = optionalParsedPath || PropertyBinding.parseTrackName( path );
+
+  	this._targetGroup = targetGroup;
+  	this._bindings = targetGroup.subscribe_( path, parsedPath );
+
+  }
+
+  Object.assign( Composite.prototype, {
+
+  	getValue: function ( array, offset ) {
+
+  		this.bind(); // bind all binding
+
+  		var firstValidIndex = this._targetGroup.nCachedObjects_,
+  			binding = this._bindings[ firstValidIndex ];
+
+  		// and only call .getValue on the first
+  		if ( binding !== undefined ) { binding.getValue( array, offset ); }
+
+  	},
+
+  	setValue: function ( array, offset ) {
+
+  		var bindings = this._bindings;
+
+  		for ( var i = this._targetGroup.nCachedObjects_,
+  				  n = bindings.length; i !== n; ++ i ) {
+
+  			bindings[ i ].setValue( array, offset );
+
+  		}
+
+  	},
+
+  	bind: function () {
+
+  		var bindings = this._bindings;
+
+  		for ( var i = this._targetGroup.nCachedObjects_,
+  				  n = bindings.length; i !== n; ++ i ) {
+
+  			bindings[ i ].bind();
+
+  		}
+
+  	},
+
+  	unbind: function () {
+
+  		var bindings = this._bindings;
+
+  		for ( var i = this._targetGroup.nCachedObjects_,
+  				  n = bindings.length; i !== n; ++ i ) {
+
+  			bindings[ i ].unbind();
+
+  		}
+
+  	}
+
+  } );
+
+
+  function PropertyBinding( rootNode, path, parsedPath ) {
+
+  	this.path = path;
+  	this.parsedPath = parsedPath || PropertyBinding.parseTrackName( path );
+
+  	this.node = PropertyBinding.findNode( rootNode, this.parsedPath.nodeName ) || rootNode;
+
+  	this.rootNode = rootNode;
+
+  }
+
+  Object.assign( PropertyBinding, {
+
+  	Composite: Composite,
+
+  	create: function ( root, path, parsedPath ) {
+
+  		if ( ! ( root && root.isAnimationObjectGroup ) ) {
+
+  			return new PropertyBinding( root, path, parsedPath );
+
+  		} else {
+
+  			return new PropertyBinding.Composite( root, path, parsedPath );
+
+  		}
+
+  	},
+
+  	
+  	sanitizeNodeName: ( function () {
+
+  		var reservedRe = new RegExp( '[' + RESERVED_CHARS_RE + ']', 'g' );
+
+  		return function sanitizeNodeName( name ) {
+
+  			return name.replace( /\s/g, '_' ).replace( reservedRe, '' );
+
+  		};
+
+  	}() ),
+
+  	parseTrackName: function () {
+
+  		// Attempts to allow node names from any language. ES5's `\w` regexp matches
+  		// only latin characters, and the unicode \p{L} is not yet supported. So
+  		// instead, we exclude reserved characters and match everything else.
+  		var wordChar = '[^' + RESERVED_CHARS_RE + ']';
+  		var wordCharOrDot = '[^' + RESERVED_CHARS_RE.replace( '\\.', '' ) + ']';
+
+  		// Parent directories, delimited by '/' or ':'. Currently unused, but must
+  		// be matched to parse the rest of the track name.
+  		var directoryRe = /((?:WC+[\/:])*)/.source.replace( 'WC', wordChar );
+
+  		// Target node. May contain word characters (a-zA-Z0-9_) and '.' or '-'.
+  		var nodeRe = /(WCOD+)?/.source.replace( 'WCOD', wordCharOrDot );
+
+  		// Object on target node, and accessor. May not contain reserved
+  		// characters. Accessor may contain any character except closing bracket.
+  		var objectRe = /(?:\.(WC+)(?:\[(.+)\])?)?/.source.replace( 'WC', wordChar );
+
+  		// Property and accessor. May not contain reserved characters. Accessor may
+  		// contain any non-bracket characters.
+  		var propertyRe = /\.(WC+)(?:\[(.+)\])?/.source.replace( 'WC', wordChar );
+
+  		var trackRe = new RegExp( ''
+  			+ '^'
+  			+ directoryRe
+  			+ nodeRe
+  			+ objectRe
+  			+ propertyRe
+  			+ '$'
+  		);
+
+  		var supportedObjectNames = [ 'material', 'materials', 'bones' ];
+
+  		return function parseTrackName( trackName ) {
+
+  			var matches = trackRe.exec( trackName );
+
+  			if ( ! matches ) {
+
+  				throw new Error( 'PropertyBinding: Cannot parse trackName: ' + trackName );
+
+  			}
+
+  			var results = {
+  				// directoryName: matches[ 1 ], // (tschw) currently unused
+  				nodeName: matches[ 2 ],
+  				objectName: matches[ 3 ],
+  				objectIndex: matches[ 4 ],
+  				propertyName: matches[ 5 ], // required
+  				propertyIndex: matches[ 6 ]
+  			};
+
+  			var lastDot = results.nodeName && results.nodeName.lastIndexOf( '.' );
+
+  			if ( lastDot !== undefined && lastDot !== - 1 ) {
+
+  				var objectName = results.nodeName.substring( lastDot + 1 );
+
+  				// Object names must be checked against a whitelist. Otherwise, there
+  				// is no way to parse 'foo.bar.baz': 'baz' must be a property, but
+  				// 'bar' could be the objectName, or part of a nodeName (which can
+  				// include '.' characters).
+  				if ( supportedObjectNames.indexOf( objectName ) !== - 1 ) {
+
+  					results.nodeName = results.nodeName.substring( 0, lastDot );
+  					results.objectName = objectName;
+
+  				}
+
+  			}
+
+  			if ( results.propertyName === null || results.propertyName.length === 0 ) {
+
+  				throw new Error( 'PropertyBinding: can not parse propertyName from trackName: ' + trackName );
+
+  			}
+
+  			return results;
+
+  		};
+
+  	}(),
+
+  	findNode: function ( root, nodeName ) {
+
+  		if ( ! nodeName || nodeName === "" || nodeName === "root" || nodeName === "." || nodeName === - 1 || nodeName === root.name || nodeName === root.uuid ) {
+
+  			return root;
+
+  		}
+
+  		// search into skeleton bones.
+  		if ( root.skeleton ) {
+
+  			var bone = root.skeleton.getBoneByName( nodeName );
+
+  			if ( bone !== undefined ) {
+
+  				return bone;
+
+  			}
+
+  		}
+
+  		// search into node subtree.
+  		if ( root.children ) {
+
+  			var searchNodeSubtree = function ( children ) {
+
+  				for ( var i = 0; i < children.length; i ++ ) {
+
+  					var childNode = children[ i ];
+
+  					if ( childNode.name === nodeName || childNode.uuid === nodeName ) {
+
+  						return childNode;
+
+  					}
+
+  					var result = searchNodeSubtree( childNode.children );
+
+  					if ( result ) { return result; }
+
+  				}
+
+  				return null;
+
+  			};
+
+  			var subTreeNode = searchNodeSubtree( root.children );
+
+  			if ( subTreeNode ) {
+
+  				return subTreeNode;
+
+  			}
+
+  		}
+
+  		return null;
+
+  	}
+
+  } );
+
+  Object.assign( PropertyBinding.prototype, { // prototype, continued
+
+  	// these are used to "bind" a nonexistent property
+  	_getValue_unavailable: function () {},
+  	_setValue_unavailable: function () {},
+
+  	BindingType: {
+  		Direct: 0,
+  		EntireArray: 1,
+  		ArrayElement: 2,
+  		HasFromToArray: 3
+  	},
+
+  	Versioning: {
+  		None: 0,
+  		NeedsUpdate: 1,
+  		MatrixWorldNeedsUpdate: 2
+  	},
+
+  	GetterByBindingType: [
+
+  		function getValue_direct( buffer, offset ) {
+
+  			buffer[ offset ] = this.node[ this.propertyName ];
+
+  		},
+
+  		function getValue_array( buffer, offset ) {
+
+  			var source = this.resolvedProperty;
+
+  			for ( var i = 0, n = source.length; i !== n; ++ i ) {
+
+  				buffer[ offset ++ ] = source[ i ];
+
+  			}
+
+  		},
+
+  		function getValue_arrayElement( buffer, offset ) {
+
+  			buffer[ offset ] = this.resolvedProperty[ this.propertyIndex ];
+
+  		},
+
+  		function getValue_toArray( buffer, offset ) {
+
+  			this.resolvedProperty.toArray( buffer, offset );
+
+  		}
+
+  	],
+
+  	SetterByBindingTypeAndVersioning: [
+
+  		[
+  			// Direct
+
+  			function setValue_direct( buffer, offset ) {
+
+  				this.targetObject[ this.propertyName ] = buffer[ offset ];
+
+  			},
+
+  			function setValue_direct_setNeedsUpdate( buffer, offset ) {
+
+  				this.targetObject[ this.propertyName ] = buffer[ offset ];
+  				this.targetObject.needsUpdate = true;
+
+  			},
+
+  			function setValue_direct_setMatrixWorldNeedsUpdate( buffer, offset ) {
+
+  				this.targetObject[ this.propertyName ] = buffer[ offset ];
+  				this.targetObject.matrixWorldNeedsUpdate = true;
+
+  			}
+
+  		], [
+
+  			// EntireArray
+
+  			function setValue_array( buffer, offset ) {
+
+  				var dest = this.resolvedProperty;
+
+  				for ( var i = 0, n = dest.length; i !== n; ++ i ) {
+
+  					dest[ i ] = buffer[ offset ++ ];
+
+  				}
+
+  			},
+
+  			function setValue_array_setNeedsUpdate( buffer, offset ) {
+
+  				var dest = this.resolvedProperty;
+
+  				for ( var i = 0, n = dest.length; i !== n; ++ i ) {
+
+  					dest[ i ] = buffer[ offset ++ ];
+
+  				}
+
+  				this.targetObject.needsUpdate = true;
+
+  			},
+
+  			function setValue_array_setMatrixWorldNeedsUpdate( buffer, offset ) {
+
+  				var dest = this.resolvedProperty;
+
+  				for ( var i = 0, n = dest.length; i !== n; ++ i ) {
+
+  					dest[ i ] = buffer[ offset ++ ];
+
+  				}
+
+  				this.targetObject.matrixWorldNeedsUpdate = true;
+
+  			}
+
+  		], [
+
+  			// ArrayElement
+
+  			function setValue_arrayElement( buffer, offset ) {
+
+  				this.resolvedProperty[ this.propertyIndex ] = buffer[ offset ];
+
+  			},
+
+  			function setValue_arrayElement_setNeedsUpdate( buffer, offset ) {
+
+  				this.resolvedProperty[ this.propertyIndex ] = buffer[ offset ];
+  				this.targetObject.needsUpdate = true;
+
+  			},
+
+  			function setValue_arrayElement_setMatrixWorldNeedsUpdate( buffer, offset ) {
+
+  				this.resolvedProperty[ this.propertyIndex ] = buffer[ offset ];
+  				this.targetObject.matrixWorldNeedsUpdate = true;
+
+  			}
+
+  		], [
+
+  			// HasToFromArray
+
+  			function setValue_fromArray( buffer, offset ) {
+
+  				this.resolvedProperty.fromArray( buffer, offset );
+
+  			},
+
+  			function setValue_fromArray_setNeedsUpdate( buffer, offset ) {
+
+  				this.resolvedProperty.fromArray( buffer, offset );
+  				this.targetObject.needsUpdate = true;
+
+  			},
+
+  			function setValue_fromArray_setMatrixWorldNeedsUpdate( buffer, offset ) {
+
+  				this.resolvedProperty.fromArray( buffer, offset );
+  				this.targetObject.matrixWorldNeedsUpdate = true;
+
+  			}
+
+  		]
+
+  	],
+
+  	getValue: function getValue_unbound( targetArray, offset ) {
+
+  		this.bind();
+  		this.getValue( targetArray, offset );
+
+  		// Note: This class uses a State pattern on a per-method basis:
+  		// 'bind' sets 'this.getValue' / 'setValue' and shadows the
+  		// prototype version of these methods with one that represents
+  		// the bound state. When the property is not found, the methods
+  		// become no-ops.
+
+  	},
+
+  	setValue: function getValue_unbound( sourceArray, offset ) {
+
+  		this.bind();
+  		this.setValue( sourceArray, offset );
+
+  	},
+
+  	// create getter / setter pair for a property in the scene graph
+  	bind: function () {
+
+  		var targetObject = this.node,
+  			parsedPath = this.parsedPath,
+
+  			objectName = parsedPath.objectName,
+  			propertyName = parsedPath.propertyName,
+  			propertyIndex = parsedPath.propertyIndex;
+
+  		if ( ! targetObject ) {
+
+  			targetObject = PropertyBinding.findNode( this.rootNode, parsedPath.nodeName ) || this.rootNode;
+
+  			this.node = targetObject;
+
+  		}
+
+  		// set fail state so we can just 'return' on error
+  		this.getValue = this._getValue_unavailable;
+  		this.setValue = this._setValue_unavailable;
+
+  		// ensure there is a value node
+  		if ( ! targetObject ) {
+
+  			console.error( 'PropertyBinding: Trying to update node for track: ' + this.path + ' but it wasn\'t found.' );
+  			return;
+
+  		}
+
+  		if ( objectName ) {
+
+  			var objectIndex = parsedPath.objectIndex;
+
+  			// special cases were we need to reach deeper into the hierarchy to get the face materials....
+  			switch ( objectName ) {
+
+  				case 'materials':
+
+  					if ( ! targetObject.material ) {
+
+  						console.error( 'PropertyBinding: Can not bind to material as node does not have a material.', this );
+  						return;
+
+  					}
+
+  					if ( ! targetObject.material.materials ) {
+
+  						console.error( 'PropertyBinding: Can not bind to material.materials as node.material does not have a materials array.', this );
+  						return;
+
+  					}
+
+  					targetObject = targetObject.material.materials;
+
+  					break;
+
+  				case 'bones':
+
+  					if ( ! targetObject.skeleton ) {
+
+  						console.error( 'PropertyBinding: Can not bind to bones as node does not have a skeleton.', this );
+  						return;
+
+  					}
+
+  					// potential future optimization: skip this if propertyIndex is already an integer
+  					// and convert the integer string to a true integer.
+
+  					targetObject = targetObject.skeleton.bones;
+
+  					// support resolving morphTarget names into indices.
+  					for ( var i = 0; i < targetObject.length; i ++ ) {
+
+  						if ( targetObject[ i ].name === objectIndex ) {
+
+  							objectIndex = i;
+  							break;
+
+  						}
+
+  					}
+
+  					break;
+
+  				default:
+
+  					if ( targetObject[ objectName ] === undefined ) {
+
+  						console.error( 'PropertyBinding: Can not bind to objectName of node undefined.', this );
+  						return;
+
+  					}
+
+  					targetObject = targetObject[ objectName ];
+
+  			}
+
+
+  			if ( objectIndex !== undefined ) {
+
+  				if ( targetObject[ objectIndex ] === undefined ) {
+
+  					console.error( 'PropertyBinding: Trying to bind to objectIndex of objectName, but is undefined.', this, targetObject );
+  					return;
+
+  				}
+
+  				targetObject = targetObject[ objectIndex ];
+
+  			}
+
+  		}
+
+  		// resolve property
+  		var nodeProperty = targetObject[ propertyName ];
+
+  		if ( nodeProperty === undefined ) {
+
+  			var nodeName = parsedPath.nodeName;
+
+  			console.error( 'PropertyBinding: Trying to update property for track: ' + nodeName +
+  				'.' + propertyName + ' but it wasn\'t found.', targetObject );
+  			return;
+
+  		}
+
+  		// determine versioning scheme
+  		var versioning = this.Versioning.None;
+
+  		if ( targetObject.needsUpdate !== undefined ) { // material
+
+  			versioning = this.Versioning.NeedsUpdate;
+  			this.targetObject = targetObject;
+
+  		} else if ( targetObject.matrixWorldNeedsUpdate !== undefined ) { // node transform
+
+  			versioning = this.Versioning.MatrixWorldNeedsUpdate;
+  			this.targetObject = targetObject;
+
+  		}
+
+  		// determine how the property gets bound
+  		var bindingType = this.BindingType.Direct;
+
+  		if ( propertyIndex !== undefined ) {
+
+  			// access a sub element of the property array (only primitives are supported right now)
+
+  			if ( propertyName === "morphTargetInfluences" ) {
+
+  				// potential optimization, skip this if propertyIndex is already an integer, and convert the integer string to a true integer.
+
+  				// support resolving morphTarget names into indices.
+  				if ( ! targetObject.geometry ) {
+
+  					console.error( 'PropertyBinding: Can not bind to morphTargetInfluences because node does not have a geometry.', this );
+  					return;
+
+  				}
+
+  				if ( targetObject.geometry.isBufferGeometry ) {
+
+  					if ( ! targetObject.geometry.morphAttributes ) {
+
+  						console.error( 'PropertyBinding: Can not bind to morphTargetInfluences because node does not have a geometry.morphAttributes.', this );
+  						return;
+
+  					}
+
+  					for ( var i = 0; i < this.node.geometry.morphAttributes.position.length; i ++ ) {
+
+  						if ( targetObject.geometry.morphAttributes.position[ i ].name === propertyIndex ) {
+
+  							propertyIndex = i;
+  							break;
+
+  						}
+
+  					}
+
+
+  				} else {
+
+  					if ( ! targetObject.geometry.morphTargets ) {
+
+  						console.error( 'PropertyBinding: Can not bind to morphTargetInfluences because node does not have a geometry.morphTargets.', this );
+  						return;
+
+  					}
+
+  					for ( var i = 0; i < this.node.geometry.morphTargets.length; i ++ ) {
+
+  						if ( targetObject.geometry.morphTargets[ i ].name === propertyIndex ) {
+
+  							propertyIndex = i;
+  							break;
+
+  						}
+
+  					}
+
+  				}
+
+  			}
+
+  			bindingType = this.BindingType.ArrayElement;
+
+  			this.resolvedProperty = nodeProperty;
+  			this.propertyIndex = propertyIndex;
+
+  		} else if ( nodeProperty.fromArray !== undefined && nodeProperty.toArray !== undefined ) {
+
+  			// must use copy for Object3D.Euler/Quaternion
+
+  			bindingType = this.BindingType.HasFromToArray;
+
+  			this.resolvedProperty = nodeProperty;
+
+  		} else if ( Array.isArray( nodeProperty ) ) {
+
+  			bindingType = this.BindingType.EntireArray;
+
+  			this.resolvedProperty = nodeProperty;
+
+  		} else {
+
+  			this.propertyName = propertyName;
+
+  		}
+
+  		// select getter / setter
+  		this.getValue = this.GetterByBindingType[ bindingType ];
+  		this.setValue = this.SetterByBindingTypeAndVersioning[ bindingType ][ versioning ];
+
+  	},
+
+  	unbind: function () {
+
+  		this.node = null;
+
+  		// back to the prototype version of getValue / setValue
+  		// note: avoiding to mutate the shape of 'this' via 'delete'
+  		this.getValue = this._getValue_unbound;
+  		this.setValue = this._setValue_unbound;
+
+  	}
+
+  } );
+
+  //!\ DECLARE ALIAS AFTER assign prototype !
+  Object.assign( PropertyBinding.prototype, {
+
+  	// initial state of these methods that calls 'bind'
+  	_getValue_unbound: PropertyBinding.prototype.getValue,
+  	_setValue_unbound: PropertyBinding.prototype.setValue,
+
+  } );
+
   //------------------------------------------------------------------------------
   // Constants
   //------------------------------------------------------------------------------
@@ -33707,7 +34414,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   				gltfCamera.perspective = {
 
   					aspectRatio: camera.aspect,
-  					yfov: _Math$1.degToRad( camera.fov ) / camera.aspect,
+  					yfov: _Math.degToRad( camera.fov ) / camera.aspect,
   					zfar: camera.far,
   					znear: camera.near
 
@@ -36588,9 +37295,9 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   		var velY = velocity.y + particleSystem.random() * velocityRandomness;
   		var velZ = velocity.z + particleSystem.random() * velocityRandomness;
 
-  		velX = _Math$1.clamp( ( velX - ( - maxVel ) ) / ( maxVel - ( - maxVel ) ), 0, 1 );
-  		velY = _Math$1.clamp( ( velY - ( - maxVel ) ) / ( maxVel - ( - maxVel ) ), 0, 1 );
-  		velZ = _Math$1.clamp( ( velZ - ( - maxVel ) ) / ( maxVel - ( - maxVel ) ), 0, 1 );
+  		velX = _Math.clamp( ( velX - ( - maxVel ) ) / ( maxVel - ( - maxVel ) ), 0, 1 );
+  		velY = _Math.clamp( ( velY - ( - maxVel ) ) / ( maxVel - ( - maxVel ) ), 0, 1 );
+  		velZ = _Math.clamp( ( velZ - ( - maxVel ) ) / ( maxVel - ( - maxVel ) ), 0, 1 );
 
   		velocityAttribute.array[ i * 3 + 0 ] = velX;
   		velocityAttribute.array[ i * 3 + 1 ] = velY;
@@ -36598,9 +37305,9 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		// color
 
-  		color.r = _Math$1.clamp( color.r + particleSystem.random() * colorRandomness, 0, 1 );
-  		color.g = _Math$1.clamp( color.g + particleSystem.random() * colorRandomness, 0, 1 );
-  		color.b = _Math$1.clamp( color.b + particleSystem.random() * colorRandomness, 0, 1 );
+  		color.r = _Math.clamp( color.r + particleSystem.random() * colorRandomness, 0, 1 );
+  		color.g = _Math.clamp( color.g + particleSystem.random() * colorRandomness, 0, 1 );
+  		color.b = _Math.clamp( color.b + particleSystem.random() * colorRandomness, 0, 1 );
 
   		colorAttribute.array[ i * 3 + 0 ] = color.r;
   		colorAttribute.array[ i * 3 + 1 ] = color.g;
@@ -41774,7 +42481,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		var camera = this.camera;
 
-  		var fov = _Math$1.RAD2DEG * 2 * light.angle;
+  		var fov = _Math.RAD2DEG * 2 * light.angle;
   		var aspect = this.mapSize.width / this.mapSize.height;
   		var far = light.distance || camera.far;
 
@@ -42454,7 +43161,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   			}
 
-  			return new AnimationClip$1( 'animation', - 1, tracks );
+  			return new AnimationClip( 'animation', - 1, tracks );
 
   		}
 
@@ -43209,7 +43916,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   			}
 
-  			return new AnimationClip$1( name, duration, tracks );
+  			return new AnimationClip( name, duration, tracks );
 
   		}
 
@@ -45086,7 +45793,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   				case 'rotate':
   					data.obj = new Vector3();
   					data.obj.fromArray( array );
-  					data.angle = _Math$1.degToRad( array[ 3 ] );
+  					data.angle = _Math.degToRad( array[ 3 ] );
   					break;
 
   			}
@@ -45282,7 +45989,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   									switch ( joint.type ) {
 
   										case 'revolute':
-  											matrix.multiply( m0.makeRotationAxis( axis, _Math$1.degToRad( value ) ) );
+  											matrix.multiply( m0.makeRotationAxis( axis, _Math.degToRad( value ) ) );
   											break;
 
   										case 'prismatic':
@@ -45378,7 +46085,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   					case 'rotate':
   						var array = parseFloats( child.textContent );
   						var vector = new Vector3().fromArray( array );
-  						var angle = _Math$1.degToRad( array[ 3 ] );
+  						var angle = _Math.degToRad( array[ 3 ] );
   						transforms.push( {
   							sid: child.getAttribute( 'sid' ),
   							type: child.nodeName,
@@ -45485,7 +46192,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   					case 'rotate':
   						var array = parseFloats( child.textContent );
-  						var angle = _Math$1.degToRad( array[ 3 ] );
+  						var angle = _Math.degToRad( array[ 3 ] );
   						data.matrix.multiply( matrix.makeRotationAxis( vector.fromArray( array ), angle ) );
   						data.transforms[ child.getAttribute( 'sid' ) ] = child.nodeName;
   						break;
@@ -46002,7 +46709,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   					}
 
-  					animations.push( new AnimationClip$1( 'default', - 1, tracks ) );
+  					animations.push( new AnimationClip( 'default', - 1, tracks ) );
 
   				}
 
@@ -46531,7 +47238,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   function InterleavedBuffer( array, stride ) {
 
-  	this.uuid = _Math$1.generateUUID();
+  	this.uuid = _Math.generateUUID();
 
   	this.array = array;
   	this.stride = stride;
@@ -46637,7 +47344,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   function InterleavedBufferAttribute( interleavedBuffer, itemSize, offset, normalized ) {
 
-  	this.uuid = _Math$1.generateUUID();
+  	this.uuid = _Math.generateUUID();
 
   	this.data = interleavedBuffer;
   	this.itemSize = itemSize;
@@ -48511,7 +49218,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   				// aspectRatio = xfov / yfov
   				var xfov = yfov * aspectRatio;
 
-  				var _camera = new PerspectiveCamera( _Math$1.radToDeg( xfov ), aspectRatio, camera.perspective.znear || 1, camera.perspective.zfar || 2e6 );
+  				var _camera = new PerspectiveCamera( _Math.radToDeg( xfov ), aspectRatio, camera.perspective.znear || 1, camera.perspective.zfar || 2e6 );
   				if ( camera.name !== undefined ) { _camera.name = camera.name; }
 
   				if ( camera.extras ) { _camera.userData = camera.extras; }
@@ -48625,7 +49332,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   				var name = animation.name !== undefined ? animation.name : "animation_" + animationId;
 
-  				return new AnimationClip$1( name, undefined, tracks );
+  				return new AnimationClip( name, undefined, tracks );
 
   			} );
 
@@ -50067,7 +50774,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		if ( 'GeometricRotation' in modelNode ) {
 
-  			var array = modelNode.GeometricRotation.value.map( _Math$1.degToRad );
+  			var array = modelNode.GeometricRotation.value.map( _Math.degToRad );
   			array[ 3 ] = 'ZYX';
 
   			preTransform.makeRotationFromEuler( new Euler().fromArray( array ) );
@@ -51127,7 +51834,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   					if ( lightAttribute.InnerAngle !== undefined ) {
 
-  						angle = _Math$1.degToRad( lightAttribute.InnerAngle.value );
+  						angle = _Math.degToRad( lightAttribute.InnerAngle.value );
 
   					}
 
@@ -51137,7 +51844,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   						// TODO: this is not correct - FBX calculates outer and inner angle in degrees
   						// with OuterAngle > InnerAngle && OuterAngle <= Math.PI
   						// while three.js uses a penumbra between (0, 1) to attenuate the inner angle
-  						penumbra = _Math$1.degToRad( lightAttribute.OuterAngle.value );
+  						penumbra = _Math.degToRad( lightAttribute.OuterAngle.value );
   						penumbra = Math.max( penumbra, 1 );
 
   					}
@@ -51348,7 +52055,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		if ( 'Lcl_Rotation' in modelNode ) {
 
-  			var rotation = modelNode.Lcl_Rotation.value.map( _Math$1.degToRad );
+  			var rotation = modelNode.Lcl_Rotation.value.map( _Math.degToRad );
   			rotation.push( 'ZYX' );
   			model.rotation.fromArray( rotation );
 
@@ -51362,7 +52069,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		if ( 'PreRotation' in modelNode ) {
 
-  			var array = modelNode.PreRotation.value.map( _Math$1.degToRad );
+  			var array = modelNode.PreRotation.value.map( _Math.degToRad );
   			array[ 3 ] = 'ZYX';
 
   			var preRotations = new Euler().fromArray( array );
@@ -51704,7 +52411,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		} );
 
-  		return new AnimationClip$1( rawClip.name, - 1, tracks );
+  		return new AnimationClip( rawClip.name, - 1, tracks );
 
   	}
 
@@ -51748,16 +52455,16 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	function generateRotationTrack( modelName, curves, initialValue, preRotations ) {
 
-  		if ( curves.x !== undefined ) { curves.x.values = curves.x.values.map( _Math$1.degToRad ); }
-  		if ( curves.y !== undefined ) { curves.y.values = curves.y.values.map( _Math$1.degToRad ); }
-  		if ( curves.z !== undefined ) { curves.z.values = curves.z.values.map( _Math$1.degToRad ); }
+  		if ( curves.x !== undefined ) { curves.x.values = curves.x.values.map( _Math.degToRad ); }
+  		if ( curves.y !== undefined ) { curves.y.values = curves.y.values.map( _Math.degToRad ); }
+  		if ( curves.z !== undefined ) { curves.z.values = curves.z.values.map( _Math.degToRad ); }
 
   		var times = getTimesForAllAxes( curves );
   		var values = getKeyframeTrackValues( times, curves, initialValue );
 
   		if ( preRotations !== undefined ) {
 
-  			preRotations = preRotations.map( _Math$1.degToRad );
+  			preRotations = preRotations.map( _Math.degToRad );
   			preRotations.push( 'ZYX' );
 
   			preRotations = new Euler().fromArray( preRotations );
@@ -53118,715 +53825,6 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   };
 
-  // Characters [].:/ are reserved for track binding syntax.
-  var RESERVED_CHARS_RE = '\\[\\]\\.:\\/';
-
-  function Composite( targetGroup, path, optionalParsedPath ) {
-
-  	var parsedPath = optionalParsedPath || PropertyBinding$1.parseTrackName( path );
-
-  	this._targetGroup = targetGroup;
-  	this._bindings = targetGroup.subscribe_( path, parsedPath );
-
-  }
-
-  Object.assign( Composite.prototype, {
-
-  	getValue: function ( array, offset ) {
-
-  		this.bind(); // bind all binding
-
-  		var firstValidIndex = this._targetGroup.nCachedObjects_,
-  			binding = this._bindings[ firstValidIndex ];
-
-  		// and only call .getValue on the first
-  		if ( binding !== undefined ) { binding.getValue( array, offset ); }
-
-  	},
-
-  	setValue: function ( array, offset ) {
-
-  		var bindings = this._bindings;
-
-  		for ( var i = this._targetGroup.nCachedObjects_,
-  				  n = bindings.length; i !== n; ++ i ) {
-
-  			bindings[ i ].setValue( array, offset );
-
-  		}
-
-  	},
-
-  	bind: function () {
-
-  		var bindings = this._bindings;
-
-  		for ( var i = this._targetGroup.nCachedObjects_,
-  				  n = bindings.length; i !== n; ++ i ) {
-
-  			bindings[ i ].bind();
-
-  		}
-
-  	},
-
-  	unbind: function () {
-
-  		var bindings = this._bindings;
-
-  		for ( var i = this._targetGroup.nCachedObjects_,
-  				  n = bindings.length; i !== n; ++ i ) {
-
-  			bindings[ i ].unbind();
-
-  		}
-
-  	}
-
-  } );
-
-
-  function PropertyBinding$1( rootNode, path, parsedPath ) {
-
-  	this.path = path;
-  	this.parsedPath = parsedPath || PropertyBinding$1.parseTrackName( path );
-
-  	this.node = PropertyBinding$1.findNode( rootNode, this.parsedPath.nodeName ) || rootNode;
-
-  	this.rootNode = rootNode;
-
-  }
-
-  Object.assign( PropertyBinding$1, {
-
-  	Composite: Composite,
-
-  	create: function ( root, path, parsedPath ) {
-
-  		if ( ! ( root && root.isAnimationObjectGroup ) ) {
-
-  			return new PropertyBinding$1( root, path, parsedPath );
-
-  		} else {
-
-  			return new PropertyBinding$1.Composite( root, path, parsedPath );
-
-  		}
-
-  	},
-
-  	
-  	sanitizeNodeName: ( function () {
-
-  		var reservedRe = new RegExp( '[' + RESERVED_CHARS_RE + ']', 'g' );
-
-  		return function sanitizeNodeName( name ) {
-
-  			return name.replace( /\s/g, '_' ).replace( reservedRe, '' );
-
-  		};
-
-  	}() ),
-
-  	parseTrackName: function () {
-
-  		// Attempts to allow node names from any language. ES5's `\w` regexp matches
-  		// only latin characters, and the unicode \p{L} is not yet supported. So
-  		// instead, we exclude reserved characters and match everything else.
-  		var wordChar = '[^' + RESERVED_CHARS_RE + ']';
-  		var wordCharOrDot = '[^' + RESERVED_CHARS_RE.replace( '\\.', '' ) + ']';
-
-  		// Parent directories, delimited by '/' or ':'. Currently unused, but must
-  		// be matched to parse the rest of the track name.
-  		var directoryRe = /((?:WC+[\/:])*)/.source.replace( 'WC', wordChar );
-
-  		// Target node. May contain word characters (a-zA-Z0-9_) and '.' or '-'.
-  		var nodeRe = /(WCOD+)?/.source.replace( 'WCOD', wordCharOrDot );
-
-  		// Object on target node, and accessor. May not contain reserved
-  		// characters. Accessor may contain any character except closing bracket.
-  		var objectRe = /(?:\.(WC+)(?:\[(.+)\])?)?/.source.replace( 'WC', wordChar );
-
-  		// Property and accessor. May not contain reserved characters. Accessor may
-  		// contain any non-bracket characters.
-  		var propertyRe = /\.(WC+)(?:\[(.+)\])?/.source.replace( 'WC', wordChar );
-
-  		var trackRe = new RegExp( ''
-  			+ '^'
-  			+ directoryRe
-  			+ nodeRe
-  			+ objectRe
-  			+ propertyRe
-  			+ '$'
-  		);
-
-  		var supportedObjectNames = [ 'material', 'materials', 'bones' ];
-
-  		return function parseTrackName( trackName ) {
-
-  			var matches = trackRe.exec( trackName );
-
-  			if ( ! matches ) {
-
-  				throw new Error( 'PropertyBinding: Cannot parse trackName: ' + trackName );
-
-  			}
-
-  			var results = {
-  				// directoryName: matches[ 1 ], // (tschw) currently unused
-  				nodeName: matches[ 2 ],
-  				objectName: matches[ 3 ],
-  				objectIndex: matches[ 4 ],
-  				propertyName: matches[ 5 ], // required
-  				propertyIndex: matches[ 6 ]
-  			};
-
-  			var lastDot = results.nodeName && results.nodeName.lastIndexOf( '.' );
-
-  			if ( lastDot !== undefined && lastDot !== - 1 ) {
-
-  				var objectName = results.nodeName.substring( lastDot + 1 );
-
-  				// Object names must be checked against a whitelist. Otherwise, there
-  				// is no way to parse 'foo.bar.baz': 'baz' must be a property, but
-  				// 'bar' could be the objectName, or part of a nodeName (which can
-  				// include '.' characters).
-  				if ( supportedObjectNames.indexOf( objectName ) !== - 1 ) {
-
-  					results.nodeName = results.nodeName.substring( 0, lastDot );
-  					results.objectName = objectName;
-
-  				}
-
-  			}
-
-  			if ( results.propertyName === null || results.propertyName.length === 0 ) {
-
-  				throw new Error( 'PropertyBinding: can not parse propertyName from trackName: ' + trackName );
-
-  			}
-
-  			return results;
-
-  		};
-
-  	}(),
-
-  	findNode: function ( root, nodeName ) {
-
-  		if ( ! nodeName || nodeName === "" || nodeName === "root" || nodeName === "." || nodeName === - 1 || nodeName === root.name || nodeName === root.uuid ) {
-
-  			return root;
-
-  		}
-
-  		// search into skeleton bones.
-  		if ( root.skeleton ) {
-
-  			var bone = root.skeleton.getBoneByName( nodeName );
-
-  			if ( bone !== undefined ) {
-
-  				return bone;
-
-  			}
-
-  		}
-
-  		// search into node subtree.
-  		if ( root.children ) {
-
-  			var searchNodeSubtree = function ( children ) {
-
-  				for ( var i = 0; i < children.length; i ++ ) {
-
-  					var childNode = children[ i ];
-
-  					if ( childNode.name === nodeName || childNode.uuid === nodeName ) {
-
-  						return childNode;
-
-  					}
-
-  					var result = searchNodeSubtree( childNode.children );
-
-  					if ( result ) { return result; }
-
-  				}
-
-  				return null;
-
-  			};
-
-  			var subTreeNode = searchNodeSubtree( root.children );
-
-  			if ( subTreeNode ) {
-
-  				return subTreeNode;
-
-  			}
-
-  		}
-
-  		return null;
-
-  	}
-
-  } );
-
-  Object.assign( PropertyBinding$1.prototype, { // prototype, continued
-
-  	// these are used to "bind" a nonexistent property
-  	_getValue_unavailable: function () {},
-  	_setValue_unavailable: function () {},
-
-  	BindingType: {
-  		Direct: 0,
-  		EntireArray: 1,
-  		ArrayElement: 2,
-  		HasFromToArray: 3
-  	},
-
-  	Versioning: {
-  		None: 0,
-  		NeedsUpdate: 1,
-  		MatrixWorldNeedsUpdate: 2
-  	},
-
-  	GetterByBindingType: [
-
-  		function getValue_direct( buffer, offset ) {
-
-  			buffer[ offset ] = this.node[ this.propertyName ];
-
-  		},
-
-  		function getValue_array( buffer, offset ) {
-
-  			var source = this.resolvedProperty;
-
-  			for ( var i = 0, n = source.length; i !== n; ++ i ) {
-
-  				buffer[ offset ++ ] = source[ i ];
-
-  			}
-
-  		},
-
-  		function getValue_arrayElement( buffer, offset ) {
-
-  			buffer[ offset ] = this.resolvedProperty[ this.propertyIndex ];
-
-  		},
-
-  		function getValue_toArray( buffer, offset ) {
-
-  			this.resolvedProperty.toArray( buffer, offset );
-
-  		}
-
-  	],
-
-  	SetterByBindingTypeAndVersioning: [
-
-  		[
-  			// Direct
-
-  			function setValue_direct( buffer, offset ) {
-
-  				this.targetObject[ this.propertyName ] = buffer[ offset ];
-
-  			},
-
-  			function setValue_direct_setNeedsUpdate( buffer, offset ) {
-
-  				this.targetObject[ this.propertyName ] = buffer[ offset ];
-  				this.targetObject.needsUpdate = true;
-
-  			},
-
-  			function setValue_direct_setMatrixWorldNeedsUpdate( buffer, offset ) {
-
-  				this.targetObject[ this.propertyName ] = buffer[ offset ];
-  				this.targetObject.matrixWorldNeedsUpdate = true;
-
-  			}
-
-  		], [
-
-  			// EntireArray
-
-  			function setValue_array( buffer, offset ) {
-
-  				var dest = this.resolvedProperty;
-
-  				for ( var i = 0, n = dest.length; i !== n; ++ i ) {
-
-  					dest[ i ] = buffer[ offset ++ ];
-
-  				}
-
-  			},
-
-  			function setValue_array_setNeedsUpdate( buffer, offset ) {
-
-  				var dest = this.resolvedProperty;
-
-  				for ( var i = 0, n = dest.length; i !== n; ++ i ) {
-
-  					dest[ i ] = buffer[ offset ++ ];
-
-  				}
-
-  				this.targetObject.needsUpdate = true;
-
-  			},
-
-  			function setValue_array_setMatrixWorldNeedsUpdate( buffer, offset ) {
-
-  				var dest = this.resolvedProperty;
-
-  				for ( var i = 0, n = dest.length; i !== n; ++ i ) {
-
-  					dest[ i ] = buffer[ offset ++ ];
-
-  				}
-
-  				this.targetObject.matrixWorldNeedsUpdate = true;
-
-  			}
-
-  		], [
-
-  			// ArrayElement
-
-  			function setValue_arrayElement( buffer, offset ) {
-
-  				this.resolvedProperty[ this.propertyIndex ] = buffer[ offset ];
-
-  			},
-
-  			function setValue_arrayElement_setNeedsUpdate( buffer, offset ) {
-
-  				this.resolvedProperty[ this.propertyIndex ] = buffer[ offset ];
-  				this.targetObject.needsUpdate = true;
-
-  			},
-
-  			function setValue_arrayElement_setMatrixWorldNeedsUpdate( buffer, offset ) {
-
-  				this.resolvedProperty[ this.propertyIndex ] = buffer[ offset ];
-  				this.targetObject.matrixWorldNeedsUpdate = true;
-
-  			}
-
-  		], [
-
-  			// HasToFromArray
-
-  			function setValue_fromArray( buffer, offset ) {
-
-  				this.resolvedProperty.fromArray( buffer, offset );
-
-  			},
-
-  			function setValue_fromArray_setNeedsUpdate( buffer, offset ) {
-
-  				this.resolvedProperty.fromArray( buffer, offset );
-  				this.targetObject.needsUpdate = true;
-
-  			},
-
-  			function setValue_fromArray_setMatrixWorldNeedsUpdate( buffer, offset ) {
-
-  				this.resolvedProperty.fromArray( buffer, offset );
-  				this.targetObject.matrixWorldNeedsUpdate = true;
-
-  			}
-
-  		]
-
-  	],
-
-  	getValue: function getValue_unbound( targetArray, offset ) {
-
-  		this.bind();
-  		this.getValue( targetArray, offset );
-
-  		// Note: This class uses a State pattern on a per-method basis:
-  		// 'bind' sets 'this.getValue' / 'setValue' and shadows the
-  		// prototype version of these methods with one that represents
-  		// the bound state. When the property is not found, the methods
-  		// become no-ops.
-
-  	},
-
-  	setValue: function getValue_unbound( sourceArray, offset ) {
-
-  		this.bind();
-  		this.setValue( sourceArray, offset );
-
-  	},
-
-  	// create getter / setter pair for a property in the scene graph
-  	bind: function () {
-
-  		var targetObject = this.node,
-  			parsedPath = this.parsedPath,
-
-  			objectName = parsedPath.objectName,
-  			propertyName = parsedPath.propertyName,
-  			propertyIndex = parsedPath.propertyIndex;
-
-  		if ( ! targetObject ) {
-
-  			targetObject = PropertyBinding$1.findNode( this.rootNode, parsedPath.nodeName ) || this.rootNode;
-
-  			this.node = targetObject;
-
-  		}
-
-  		// set fail state so we can just 'return' on error
-  		this.getValue = this._getValue_unavailable;
-  		this.setValue = this._setValue_unavailable;
-
-  		// ensure there is a value node
-  		if ( ! targetObject ) {
-
-  			console.error( 'PropertyBinding: Trying to update node for track: ' + this.path + ' but it wasn\'t found.' );
-  			return;
-
-  		}
-
-  		if ( objectName ) {
-
-  			var objectIndex = parsedPath.objectIndex;
-
-  			// special cases were we need to reach deeper into the hierarchy to get the face materials....
-  			switch ( objectName ) {
-
-  				case 'materials':
-
-  					if ( ! targetObject.material ) {
-
-  						console.error( 'PropertyBinding: Can not bind to material as node does not have a material.', this );
-  						return;
-
-  					}
-
-  					if ( ! targetObject.material.materials ) {
-
-  						console.error( 'PropertyBinding: Can not bind to material.materials as node.material does not have a materials array.', this );
-  						return;
-
-  					}
-
-  					targetObject = targetObject.material.materials;
-
-  					break;
-
-  				case 'bones':
-
-  					if ( ! targetObject.skeleton ) {
-
-  						console.error( 'PropertyBinding: Can not bind to bones as node does not have a skeleton.', this );
-  						return;
-
-  					}
-
-  					// potential future optimization: skip this if propertyIndex is already an integer
-  					// and convert the integer string to a true integer.
-
-  					targetObject = targetObject.skeleton.bones;
-
-  					// support resolving morphTarget names into indices.
-  					for ( var i = 0; i < targetObject.length; i ++ ) {
-
-  						if ( targetObject[ i ].name === objectIndex ) {
-
-  							objectIndex = i;
-  							break;
-
-  						}
-
-  					}
-
-  					break;
-
-  				default:
-
-  					if ( targetObject[ objectName ] === undefined ) {
-
-  						console.error( 'PropertyBinding: Can not bind to objectName of node undefined.', this );
-  						return;
-
-  					}
-
-  					targetObject = targetObject[ objectName ];
-
-  			}
-
-
-  			if ( objectIndex !== undefined ) {
-
-  				if ( targetObject[ objectIndex ] === undefined ) {
-
-  					console.error( 'PropertyBinding: Trying to bind to objectIndex of objectName, but is undefined.', this, targetObject );
-  					return;
-
-  				}
-
-  				targetObject = targetObject[ objectIndex ];
-
-  			}
-
-  		}
-
-  		// resolve property
-  		var nodeProperty = targetObject[ propertyName ];
-
-  		if ( nodeProperty === undefined ) {
-
-  			var nodeName = parsedPath.nodeName;
-
-  			console.error( 'PropertyBinding: Trying to update property for track: ' + nodeName +
-  				'.' + propertyName + ' but it wasn\'t found.', targetObject );
-  			return;
-
-  		}
-
-  		// determine versioning scheme
-  		var versioning = this.Versioning.None;
-
-  		if ( targetObject.needsUpdate !== undefined ) { // material
-
-  			versioning = this.Versioning.NeedsUpdate;
-  			this.targetObject = targetObject;
-
-  		} else if ( targetObject.matrixWorldNeedsUpdate !== undefined ) { // node transform
-
-  			versioning = this.Versioning.MatrixWorldNeedsUpdate;
-  			this.targetObject = targetObject;
-
-  		}
-
-  		// determine how the property gets bound
-  		var bindingType = this.BindingType.Direct;
-
-  		if ( propertyIndex !== undefined ) {
-
-  			// access a sub element of the property array (only primitives are supported right now)
-
-  			if ( propertyName === "morphTargetInfluences" ) {
-
-  				// potential optimization, skip this if propertyIndex is already an integer, and convert the integer string to a true integer.
-
-  				// support resolving morphTarget names into indices.
-  				if ( ! targetObject.geometry ) {
-
-  					console.error( 'PropertyBinding: Can not bind to morphTargetInfluences because node does not have a geometry.', this );
-  					return;
-
-  				}
-
-  				if ( targetObject.geometry.isBufferGeometry ) {
-
-  					if ( ! targetObject.geometry.morphAttributes ) {
-
-  						console.error( 'PropertyBinding: Can not bind to morphTargetInfluences because node does not have a geometry.morphAttributes.', this );
-  						return;
-
-  					}
-
-  					for ( var i = 0; i < this.node.geometry.morphAttributes.position.length; i ++ ) {
-
-  						if ( targetObject.geometry.morphAttributes.position[ i ].name === propertyIndex ) {
-
-  							propertyIndex = i;
-  							break;
-
-  						}
-
-  					}
-
-
-  				} else {
-
-  					if ( ! targetObject.geometry.morphTargets ) {
-
-  						console.error( 'PropertyBinding: Can not bind to morphTargetInfluences because node does not have a geometry.morphTargets.', this );
-  						return;
-
-  					}
-
-  					for ( var i = 0; i < this.node.geometry.morphTargets.length; i ++ ) {
-
-  						if ( targetObject.geometry.morphTargets[ i ].name === propertyIndex ) {
-
-  							propertyIndex = i;
-  							break;
-
-  						}
-
-  					}
-
-  				}
-
-  			}
-
-  			bindingType = this.BindingType.ArrayElement;
-
-  			this.resolvedProperty = nodeProperty;
-  			this.propertyIndex = propertyIndex;
-
-  		} else if ( nodeProperty.fromArray !== undefined && nodeProperty.toArray !== undefined ) {
-
-  			// must use copy for Object3D.Euler/Quaternion
-
-  			bindingType = this.BindingType.HasFromToArray;
-
-  			this.resolvedProperty = nodeProperty;
-
-  		} else if ( Array.isArray( nodeProperty ) ) {
-
-  			bindingType = this.BindingType.EntireArray;
-
-  			this.resolvedProperty = nodeProperty;
-
-  		} else {
-
-  			this.propertyName = propertyName;
-
-  		}
-
-  		// select getter / setter
-  		this.getValue = this.GetterByBindingType[ bindingType ];
-  		this.setValue = this.SetterByBindingTypeAndVersioning[ bindingType ][ versioning ];
-
-  	},
-
-  	unbind: function () {
-
-  		this.node = null;
-
-  		// back to the prototype version of getValue / setValue
-  		// note: avoiding to mutate the shape of 'this' via 'delete'
-  		this.getValue = this._getValue_unbound;
-  		this.setValue = this._setValue_unbound;
-
-  	}
-
-  } );
-
-  //!\ DECLARE ALIAS AFTER assign prototype !
-  Object.assign( PropertyBinding$1.prototype, {
-
-  	// initial state of these methods that calls 'bind'
-  	_getValue_unbound: PropertyBinding$1.prototype.getValue,
-  	_setValue_unbound: PropertyBinding$1.prototype.setValue,
-
-  } );
-
   var GLTFLoader = ( function () {
 
   	function GLTFLoader( manager ) {
@@ -54567,11 +54565,11 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   	// Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#appendix-c-spline-interpolation
   	function GLTFCubicSplineInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
-  		Interpolant$1.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
+  		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
 
   	}
 
-  	GLTFCubicSplineInterpolant.prototype = Object.create( Interpolant$1.prototype );
+  	GLTFCubicSplineInterpolant.prototype = Object.create( Interpolant.prototype );
   	GLTFCubicSplineInterpolant.prototype.constructor = GLTFCubicSplineInterpolant;
 
   	GLTFCubicSplineInterpolant.prototype.interpolate_ = function ( i1, t0, t, t1 ) {
@@ -55895,7 +55893,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   			var aspectRatio = params.aspectRatio || 1;
   			var xfov = params.yfov * aspectRatio;
 
-  			camera = new PerspectiveCamera( _Math$1.radToDeg( xfov ), aspectRatio, params.znear || 1, params.zfar || 2e6 );
+  			camera = new PerspectiveCamera( _Math.radToDeg( xfov ), aspectRatio, params.znear || 1, params.zfar || 2e6 );
 
   		} else if ( cameraDef.type === 'orthographic' ) {
 
@@ -56063,7 +56061,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   			var name = animationDef.name !== undefined ? animationDef.name : 'animation_' + animationIndex;
 
-  			return new AnimationClip$1( name, undefined, tracks );
+  			return new AnimationClip( name, undefined, tracks );
 
   		} );
 
@@ -56150,7 +56148,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   			if ( nodeDef.name !== undefined ) {
 
-  				node.name = PropertyBinding$1.sanitizeNodeName( nodeDef.name );
+  				node.name = PropertyBinding.sanitizeNodeName( nodeDef.name );
 
   			}
 
@@ -60747,7 +60745,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   					_propertyBindings[ i ].binding.parsedPath;
 
   				binding = new PropertyMixer(
-  					PropertyBinding$1.create( root, trackName, path ),
+  					PropertyBinding.create( root, trackName, path ),
   					track.ValueTypeName, track.getValueSize() );
 
   				++ binding.referenceCount;
@@ -61195,7 +61193,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   			rootUuid = root.uuid,
 
   			clipObject = typeof clip === 'string' ?
-  				AnimationClip$1.findByName( root, clip ) : clip,
+  				AnimationClip.findByName( root, clip ) : clip,
 
   			clipUuid = clipObject !== null ? clipObject.uuid : clip,
 
@@ -61245,7 +61243,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   			rootUuid = root.uuid,
 
   			clipObject = typeof clip === 'string' ?
-  				AnimationClip$1.findByName( root, clip ) : clip,
+  				AnimationClip.findByName( root, clip ) : clip,
 
   			clipUuid = clipObject ? clipObject.uuid : clip,
 
@@ -61803,7 +61801,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   		tracks.push( createTrack( '.position', 'VectorKeyframeTrackEx', times, positions, pInterpolations ) );
   		tracks.push( createTrack( '.fov', 'NumberKeyframeTrackEx', times, fovs, fInterpolations ) );
 
-  		var clip = new AnimationClip$1( name === undefined ? _Math$1.generateUUID() : name, - 1, tracks );
+  		var clip = new AnimationClip( name === undefined ? _Math.generateUUID() : name, - 1, tracks );
 
   		if ( camera.center === undefined ) { camera.center = new Vector3( 0, 0, 0 ); }
   		if ( camera.animations === undefined ) { camera.animations = []; }
@@ -62935,7 +62933,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		}
 
-  		var clip = new AnimationClip$1( name === undefined ? _Math$1.generateUUID() : name, - 1, tracks );
+  		var clip = new AnimationClip( name === undefined ? _Math.generateUUID() : name, - 1, tracks );
 
   		if ( mesh.geometry.animations === undefined ) { mesh.geometry.animations = []; }
   		mesh.geometry.animations.push( clip );
@@ -62973,7 +62971,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		}
 
-  		var clip = new AnimationClip$1( name === undefined ? _Math$1.generateUUID() : name + 'Morph', - 1, tracks );
+  		var clip = new AnimationClip( name === undefined ? _Math.generateUUID() : name + 'Morph', - 1, tracks );
 
   		if ( mesh.geometry.animations === undefined ) { mesh.geometry.animations = []; }
   		mesh.geometry.animations.push( clip );
@@ -64543,6 +64541,1432 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   		return texture;
 
   	}
+
+  };
+
+  var GLNode = function ( type ) {
+
+  	this.uuid = _Math.generateUUID();
+
+  	this.name = "";
+  	this.allows = {};
+
+  	this.type = type;
+
+  	this.userData = {};
+
+  };
+
+  GLNode.prototype.isNode = true;
+
+  GLNode.prototype.parse = function ( builder, context ) {
+
+  	context = context || {};
+
+  	builder.parsing = true;
+
+  	var material = builder.material;
+
+  	this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), 'v4' );
+
+  	material.clearVertexNode();
+  	material.clearFragmentNode();
+
+  	builder.removeCache().removeSlot();
+
+  	builder.parsing = false;
+
+  };
+
+  GLNode.prototype.parseAndBuildCode = function ( builder, output, context ) {
+
+  	context = context || {};
+
+  	this.parse( builder, context );
+
+  	return this.buildCode( builder, output, context );
+
+  };
+
+  GLNode.prototype.buildCode = function ( builder, output, context ) {
+
+  	context = context || {};
+
+  	var material = builder.material;
+
+  	var data = { result: this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
+
+  	if ( builder.isShader( 'vertex' ) ) { data.code = material.clearVertexNode(); }
+  	else { data.code = material.clearFragmentNode(); }
+
+  	builder.removeCache().removeSlot();
+
+  	return data;
+
+  };
+
+  GLNode.prototype.build = function ( builder, output, uuid ) {
+
+  	output = output || this.getType( builder, output );
+
+  	var material = builder.material, data = material.getDataNode( uuid || this.uuid );
+
+  	if ( builder.parsing ) { this.appendDepsNode( builder, data, output ); }
+
+  	if ( this.allows[ builder.shader ] === false ) {
+
+  		throw new Error( 'Shader ' + shader + ' is not compatible with this node.' );
+
+  	}
+
+  	if ( material.nodes.indexOf( this ) === - 1 ) {
+
+  		material.nodes.push( this );
+
+  	}
+
+  	if ( this.updateFrame !== undefined && material.updaters.indexOf( this ) === - 1 ) {
+
+  		material.updaters.push( this );
+
+  	}
+
+  	return this.generate( builder, output, uuid );
+
+  };
+
+  GLNode.prototype.appendDepsNode = function ( builder, data, output ) {
+
+  	data.deps = ( data.deps || 0 ) + 1;
+
+  	var outputLen = builder.getFormatLength( output );
+
+  	if ( outputLen > ( data.outputMax || 0 ) || this.getType( builder, output ) ) {
+
+  		data.outputMax = outputLen;
+  		data.output = output;
+
+  	}
+
+  };
+
+  GLNode.prototype.getType = function ( builder, output ) {
+
+  	return output === 'sampler2D' || output === 'samplerCube' ? output : this.type;
+
+  };
+
+  GLNode.prototype.getJSONNode = function ( meta ) {
+
+  	var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+  	if ( ! isRootObject && meta.nodes[ this.uuid ] !== undefined ) {
+
+  		return meta.nodes[ this.uuid ];
+
+  	}
+
+  };
+
+  GLNode.prototype.createJSONNode = function ( meta ) {
+
+  	var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+  	var data = {};
+
+  	if ( typeof this.nodeType !== "string" ) { throw new Error( "Node does not allow serialization." ); }
+
+  	data.uuid = this.uuid;
+  	data.type = this.nodeType + "Node";
+
+  	if ( this.name !== "" ) { data.name = this.name; }
+
+  	if ( JSON.stringify( this.userData ) !== '{}' ) { data.userData = this.userData; }
+
+  	if ( ! isRootObject ) {
+
+  		meta.nodes[ this.uuid ] = data;
+
+  	}
+
+  	return data;
+
+  };
+
+  GLNode.prototype.toJSON = function ( meta ) {
+
+  	return this.getJSONNode( meta ) || this.createJSONNode( meta );
+
+  };
+
+  var TempNode = function ( type, params ) {
+
+  	GLNode.call( this, type );
+
+  	params = params || {};
+
+  	this.shared = params.shared !== undefined ? params.shared : true;
+  	this.unique = params.unique !== undefined ? params.unique : false;
+
+  };
+
+  TempNode.prototype = Object.create( GLNode.prototype );
+  TempNode.prototype.constructor = TempNode;
+
+  TempNode.prototype.build = function ( builder, output, uuid, ns ) {
+
+  	output = output || this.getType( builder );
+
+  	var material = builder.material;
+
+  	if ( this.isShared( builder, output ) ) {
+
+  		var isUnique = this.isUnique( builder, output );
+
+  		if ( isUnique && this.constructor.uuid === undefined ) {
+
+  			this.constructor.uuid = _Math.generateUUID();
+
+  		}
+
+  		uuid = builder.getUuid( uuid || this.getUuid(), ! isUnique );
+
+  		var data = material.getDataNode( uuid );
+
+  		if ( builder.parsing ) {
+
+  			if ( data.deps || 0 > 0 ) {
+
+  				this.appendDepsNode( builder, data, output );
+
+  				return this.generate( builder, type, uuid );
+
+  			}
+
+  			return GLNode.prototype.build.call( this, builder, output, uuid );
+
+  		} else if ( isUnique ) {
+
+  			data.name = data.name || GLNode.prototype.build.call( this, builder, output, uuid );
+
+  			return data.name;
+
+  		} else if ( ! builder.optimize || data.deps == 1 ) {
+
+  			return GLNode.prototype.build.call( this, builder, output, uuid );
+
+  		}
+
+  		uuid = this.getUuid( false );
+
+  		var name = this.getTemp( builder, uuid );
+  		var type = data.output || this.getType( builder );
+
+  		if ( name ) {
+
+  			return builder.format( name, type, output );
+
+  		} else {
+
+  			name = TempNode.prototype.generate.call( this, builder, output, uuid, data.output, ns );
+
+  			var code = this.generate( builder, type, uuid );
+
+  			if ( builder.isShader( 'vertex' ) ) { material.addVertexNode( name + '=' + code + ';' ); }
+  			else { material.addFragmentNode( name + '=' + code + ';' ); }
+
+  			return builder.format( name, type, output );
+
+  		}
+
+  	}
+
+  	return GLNode.prototype.build.call( this, builder, output, uuid );
+
+  };
+
+  TempNode.prototype.isShared = function ( builder, output ) {
+
+  	return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
+
+  };
+
+  TempNode.prototype.isUnique = function ( builder, output ) {
+
+  	return this.unique;
+
+  };
+
+  TempNode.prototype.getUuid = function ( unique ) {
+
+  	var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
+
+  	if ( typeof this.scope == "string" ) { uuid = this.scope + '-' + uuid; }
+
+  	return uuid;
+
+  };
+
+  TempNode.prototype.getTemp = function ( builder, uuid ) {
+
+  	uuid = uuid || this.uuid;
+
+  	var material = builder.material;
+
+  	if ( builder.isShader( 'vertex' ) && material.vertexTemps[ uuid ] ) { return material.vertexTemps[ uuid ].name; }
+  	else if ( material.fragmentTemps[ uuid ] ) { return material.fragmentTemps[ uuid ].name; }
+
+  };
+
+  TempNode.prototype.generate = function ( builder, output, uuid, type, ns ) {
+
+  	if ( ! this.isShared( builder, output ) ) { console.error( "TempNode is not shared!" ); }
+
+  	uuid = uuid || this.uuid;
+
+  	if ( builder.isShader( 'vertex' ) ) { return builder.material.getVertexTemp( uuid, type || this.getType( builder ), ns ).name; }
+  	else { return builder.material.getFragmentTemp( uuid, type || this.getType( builder ), ns ).name; }
+
+  };
+
+  var FunctionNode = function( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ) {
+
+  	src = src || '';
+
+  	this.isMethod = typeof includesOrType !== "string";
+  	this.useKeywords = true;
+
+  	TempNode.call( this, this.isMethod ? null : includesOrType );
+
+  	if ( this.isMethod ) { this.eval( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ); }
+  	else { this.eval( src, extensionsOrIncludes, keywordsOrExtensions ); }
+
+  };
+
+  FunctionNode.rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\((.*?)\)/i;
+  FunctionNode.rProperties = /[a-z_0-9]+/ig;
+
+  FunctionNode.prototype = Object.create( TempNode.prototype );
+  FunctionNode.prototype.constructor = FunctionNode;
+
+  FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
+  	var this$1 = this;
+
+
+  	src = ( src || '' ).trim();
+
+  	this.includes = includes || [];
+  	this.extensions = extensions || {};
+  	this.keywords = keywords || {};
+
+  	if ( this.isMethod ) {
+
+  		var match = src.match( FunctionNode.rDeclaration );
+
+  		this.inputs = [];
+
+  		if ( match && match.length == 4 ) {
+
+  			this.type = match[ 1 ];
+  			this.name = match[ 2 ];
+
+  			var inputs = match[ 3 ].match( FunctionNode.rProperties );
+
+  			if ( inputs ) {
+
+  				var i = 0;
+
+  				while ( i < inputs.length ) {
+
+  					var qualifier = inputs[ i ++ ];
+  					var type, name;
+
+  					if ( qualifier == 'in' || qualifier == 'out' || qualifier == 'inout' ) {
+
+  						type = inputs[ i ++ ];
+
+  					} else {
+
+  						type = qualifier;
+  						qualifier = '';
+
+  					}
+
+  					name = inputs[ i ++ ];
+
+  					this$1.inputs.push( {
+  						name : name,
+  						type : type,
+  						qualifier : qualifier
+  					} );
+
+  				}
+
+  			}
+
+  		} else {
+
+  			this.type = '';
+  			this.name = '';
+
+  		}
+
+  	}
+
+  	this.value = src;
+
+  };
+
+  var NodeLib = {
+
+  	nodes: {},
+  	keywords: {},
+
+  	add: function( node ) {
+
+  		this.nodes[ node.name ] = node;
+
+  	},
+
+  	addKeyword: function( name, callback, cache ) {
+
+  		cache = cache !== undefined ? cache : true;
+
+  		this.keywords[ name ] = { callback : callback, cache : cache };
+
+  	},
+
+  	remove: function( node ) {
+
+  		delete this.nodes[ node.name ];
+
+  	},
+
+  	removeKeyword: function( name ) {
+
+  		delete this.keywords[ name ];
+
+  	},
+
+  	get: function( name ) {
+
+  		return this.nodes[ name ];
+
+  	},
+
+  	getKeyword: function( name, material ) {
+
+  		return this.keywords[ name ].callback.call( this, material );
+
+  	},
+
+  	getKeywordData: function( name ) {
+
+  		return this.keywords[ name ];
+
+  	},
+
+  	contains: function( name ) {
+
+  		return this.nodes[ name ] != undefined;
+
+  	},
+
+  	containsKeyword: function( name ) {
+
+  		return this.keywords[ name ] != undefined;
+
+  	}
+
+  };
+
+  var UVNode = function ( index ) {
+
+  	TempNode.call( this, 'v2', { shared: false } );
+
+  	this.index = index || 0;
+
+  };
+
+  UVNode.vertexDict = [ 'uv', 'uv2' ];
+  UVNode.fragmentDict = [ 'vUv', 'vUv2' ];
+
+  UVNode.prototype = Object.create( TempNode.prototype );
+  UVNode.prototype.constructor = UVNode;
+  UVNode.prototype.nodeType = "UV";
+
+  UVNode.prototype.generate = function ( builder, output ) {
+
+  	var material = builder.material;
+  	var result;
+
+  	material.requires.uv[ this.index ] = true;
+
+  	if ( builder.isShader( 'vertex' ) ) { result = UVNode.vertexDict[ this.index ]; }
+  	else { result = UVNode.fragmentDict[ this.index ]; }
+
+  	return builder.format( result, this.getType( builder ), output );
+
+  };
+
+  UVNode.prototype.toJSON = function ( meta ) {
+
+  	var data = this.getJSONNode( meta );
+
+  	if ( ! data ) {
+
+  		data = this.createJSONNode( meta );
+
+  		data.index = this.index;
+
+  	}
+
+  	return data;
+
+  };
+
+  var PositionNode = function ( scope ) {
+
+  	TempNode.call( this, 'v3' );
+
+  	this.scope = scope || PositionNode.LOCAL;
+
+  };
+
+  PositionNode.LOCAL = 'local';
+  PositionNode.WORLD = 'world';
+  PositionNode.VIEW = 'view';
+  PositionNode.PROJECTION = 'projection';
+
+  PositionNode.prototype = Object.create( TempNode.prototype );
+  PositionNode.prototype.constructor = PositionNode;
+  PositionNode.prototype.nodeType = "Position";
+
+  PositionNode.prototype.getType = function ( builder ) {
+
+  	switch ( this.scope ) {
+
+  		case PositionNode.PROJECTION:
+  			return 'v4';
+
+  	}
+
+  	return this.type;
+
+  };
+
+  PositionNode.prototype.isShared = function ( builder ) {
+
+  	switch ( this.scope ) {
+
+  		case PositionNode.LOCAL:
+  		case PositionNode.WORLD:
+  			return false;
+
+  	}
+
+  	return true;
+
+  };
+
+  PositionNode.prototype.generate = function ( builder, output ) {
+
+  	var material = builder.material;
+  	var result;
+
+  	switch ( this.scope ) {
+
+  		case PositionNode.LOCAL:
+
+  			material.requires.position = true;
+
+  			if ( builder.isShader( 'vertex' ) ) { result = 'transformed'; }
+  			else { result = 'vPosition'; }
+
+  			break;
+
+  		case PositionNode.WORLD:
+
+  			material.requires.worldPosition = true;
+
+  			if ( builder.isShader( 'vertex' ) ) { result = 'vWPosition'; }
+  			else { result = 'vWPosition'; }
+
+  			break;
+
+  		case PositionNode.VIEW:
+
+  			if ( builder.isShader( 'vertex' ) ) { result = '-mvPosition.xyz'; }
+  			else { result = 'vViewPosition'; }
+
+  			break;
+
+  		case PositionNode.PROJECTION:
+
+  			if ( builder.isShader( 'vertex' ) ) { result = '(projectionMatrix * modelViewMatrix * vec4( position, 1.0 ))'; }
+  			else { result = 'vec4( 0.0 )'; }
+
+  			break;
+
+  	}
+
+  	return builder.format( result, this.getType( builder ), output );
+
+  };
+
+  PositionNode.prototype.toJSON = function ( meta ) {
+
+  	var data = this.getJSONNode( meta );
+
+  	if ( ! data ) {
+
+  		data = this.createJSONNode( meta );
+
+  		data.scope = this.scope;
+
+  	}
+
+  	return data;
+
+  };
+
+  var NormalNode = function ( scope ) {
+
+  	TempNode.call( this, 'v3' );
+
+  	this.scope = scope || NormalNode.LOCAL;
+
+  };
+
+  NormalNode.LOCAL = 'local';
+  NormalNode.WORLD = 'world';
+  NormalNode.VIEW = 'view';
+
+  NormalNode.prototype = Object.create( TempNode.prototype );
+  NormalNode.prototype.constructor = NormalNode;
+  NormalNode.prototype.nodeType = "Normal";
+
+  NormalNode.prototype.isShared = function ( builder ) {
+
+  	switch ( this.scope ) {
+
+  		case NormalNode.WORLD:
+  			return true;
+
+  	}
+
+  	return false;
+
+  };
+
+  NormalNode.prototype.generate = function ( builder, output ) {
+
+  	var material = builder.material;
+  	var result;
+
+  	switch ( this.scope ) {
+
+  		case NormalNode.LOCAL:
+
+  			material.requires.normal = true;
+
+  			if ( builder.isShader( 'vertex' ) ) { result = 'normal'; }
+  			else { result = 'vObjectNormal'; }
+
+  			break;
+
+  		case NormalNode.WORLD:
+
+  			material.requires.worldNormal = true;
+
+  			if ( builder.isShader( 'vertex' ) ) { result = '( modelMatrix * vec4( objectNormal, 0.0 ) ).xyz'; }
+  			else { result = 'vWNormal'; }
+
+  			break;
+
+  		case NormalNode.VIEW:
+
+  			result = 'vNormal';
+
+  			break;
+
+  	}
+
+  	return builder.format( result, this.getType( builder ), output );
+
+  };
+
+  NormalNode.prototype.toJSON = function ( meta ) {
+
+  	var data = this.getJSONNode( meta );
+
+  	if ( ! data ) {
+
+  		data = this.createJSONNode( meta );
+
+  		data.scope = this.scope;
+
+  	}
+
+  	return data;
+
+  };
+
+  var InputNode = function ( type, params ) {
+
+  	params = params || {};
+  	params.shared = params.shared !== undefined ? params.shared : false;
+
+  	TempNode.call( this, type, params );
+
+  	this.readonly = false;
+
+  };
+
+  InputNode.prototype = Object.create( TempNode.prototype );
+  InputNode.prototype.constructor = InputNode;
+
+  InputNode.prototype.isReadonly = function ( builder ) {
+
+  	return this.readonly;
+
+  };
+
+  InputNode.prototype.generate = function ( builder, output, uuid, type, ns, needsUpdate ) {
+
+  	var material = builder.material;
+
+  	uuid = builder.getUuid( uuid || this.getUuid() );
+  	type = type || this.getType( builder );
+
+  	var data = material.getDataNode( uuid ),
+  		readonly = this.isReadonly( builder ) && this.generateReadonly !== undefined;
+
+  	if ( readonly ) {
+
+  		return this.generateReadonly( builder, output, uuid, type, ns, needsUpdate );
+
+  	} else {
+
+  		if ( builder.isShader( 'vertex' ) ) {
+
+  			if ( ! data.vertex ) {
+
+  				data.vertex = material.createVertexUniform( type, this.value, ns, needsUpdate );
+
+  			}
+
+  			return builder.format( data.vertex.name, type, output );
+
+  		} else {
+
+  			if ( ! data.fragment ) {
+
+  				data.fragment = material.createFragmentUniform( type, this.value, ns, needsUpdate );
+
+  			}
+
+  			return builder.format( data.fragment.name, type, output );
+
+  		}
+
+  	}
+
+  };
+
+  var FloatNode = function ( value ) {
+
+  	InputNode.call( this, 'fv1' );
+
+  	this.value = [ value || 0 ];
+
+  };
+
+  FloatNode.prototype = Object.create( InputNode.prototype );
+  FloatNode.prototype.constructor = FloatNode;
+  FloatNode.prototype.nodeType = "Float";
+
+  Object.defineProperties( FloatNode.prototype, {
+  	number: {
+  		get: function () {
+
+  			return this.value[ 0 ];
+
+  		},
+  		set: function ( val ) {
+
+  			this.value[ 0 ] = val;
+
+  		}
+  	}
+  } );
+
+  FloatNode.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
+
+  	var value = this.number;
+
+  	return builder.format( Math.floor( value ) !== value ? value : value + ".0", type, output );
+
+  };
+
+  FloatNode.prototype.toJSON = function ( meta ) {
+
+  	var data = this.getJSONNode( meta );
+
+  	if ( ! data ) {
+
+  		data = this.createJSONNode( meta );
+
+  		data.number = this.number;
+
+  		if ( this.readonly === true ) { data.readonly = true; }
+
+  	}
+
+  	return data;
+
+  };
+
+  var TimerNode = function ( scale, scope ) {
+
+  	FloatNode.call( this );
+
+  	this.scale = scale !== undefined ? scale : 1;
+  	this.scope = scope || TimerNode.GLOBAL;
+
+  	this.timeScale = this.scale !== 1;
+
+  };
+
+  TimerNode.GLOBAL = 'global';
+  TimerNode.LOCAL = 'local';
+  TimerNode.DELTA = 'delta';
+
+  TimerNode.prototype = Object.create( FloatNode.prototype );
+  TimerNode.prototype.constructor = TimerNode;
+  TimerNode.prototype.nodeType = "Timer";
+
+  TimerNode.prototype.isReadonly = function ( builder ) {
+
+  	return false;
+
+  };
+
+  TimerNode.prototype.isUnique = function ( builder ) {
+
+  	// share TimerNode "uniform" input if is used on more time with others TimerNode
+  	return this.timeScale && ( this.scope === TimerNode.GLOBAL || this.scope === TimerNode.DELTA );
+
+  };
+
+  TimerNode.prototype.updateFrame = function ( frame ) {
+
+  	var scale = this.timeScale ? this.scale : 1;
+
+  	switch( this.scope ) {
+
+  		case TimerNode.LOCAL:
+
+  			this.number += frame.delta * scale;
+
+  			break;
+
+  		case TimerNode.DELTA:
+
+  			this.number = frame.delta * scale;
+
+  			break;
+
+  		default:
+
+  			this.number = frame.time * scale;
+
+  	}
+
+  };
+
+  TimerNode.prototype.toJSON = function ( meta ) {
+
+  	var data = this.getJSONNode( meta );
+
+  	if ( ! data ) {
+
+  		data = this.createJSONNode( meta );
+
+  		data.scope = this.scope;
+  		data.scale = this.scale;
+  		data.timeScale = this.timeScale;
+
+  	}
+
+  	return data;
+
+  };
+
+  var ConstNode = function ( src, useDefine ) {
+
+  	TempNode.call( this );
+
+  	this.eval( src || ConstNode.PI, useDefine );
+
+  };
+
+  ConstNode.PI = 'PI';
+  ConstNode.PI2 = 'PI2';
+  ConstNode.RECIPROCAL_PI = 'RECIPROCAL_PI';
+  ConstNode.RECIPROCAL_PI2 = 'RECIPROCAL_PI2';
+  ConstNode.LOG2 = 'LOG2';
+  ConstNode.EPSILON = 'EPSILON';
+
+  ConstNode.prototype = Object.create( TempNode.prototype );
+  ConstNode.prototype.constructor = ConstNode;
+  ConstNode.prototype.nodeType = "Const";
+
+  ConstNode.prototype.getType = function ( builder ) {
+
+  	return builder.getTypeByFormat( this.type );
+
+  };
+
+  ConstNode.prototype.eval = function ( src, useDefine ) {
+
+  	src = ( src || '' ).trim();
+
+  	var name, type, value = "";
+
+  	var rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\=?\s?(.*?)(\;|$)/i;
+  	var match = src.match( rDeclaration );
+
+  	this.useDefine = useDefine;
+
+  	if ( match && match.length > 1 ) {
+
+  		type = match[ 1 ];
+  		name = match[ 2 ];
+  		value = match[ 3 ];
+
+  	} else {
+
+  		name = src;
+  		type = 'fv1';
+
+  	}
+
+  	this.name = name;
+  	this.type = type;
+  	this.value = value;
+
+  };
+
+  ConstNode.prototype.build = function ( builder, output ) {
+
+  	if ( output === 'source' ) {
+
+  		if ( this.value ) {
+
+  			if ( this.useDefine ) {
+
+  				return '#define ' + this.name + ' ' + this.value;
+
+  			}
+
+  			return 'const ' + this.type + ' ' + this.name + ' = ' + this.value + ';';
+
+  		}
+
+  	} else {
+
+  		builder.include( this );
+
+  		return builder.format( this.name, this.getType( builder ), output );
+
+  	}
+
+  };
+
+  ConstNode.prototype.generate = function ( builder, output ) {
+
+  	return builder.format( this.name, this.getType( builder ), output );
+
+  };
+
+  ConstNode.prototype.toJSON = function ( meta ) {
+
+  	var data = this.getJSONNode( meta );
+
+  	if ( ! data ) {
+
+  		data = this.createJSONNode( meta );
+
+  		data.name = this.name;
+  		data.out = this.type;
+
+  		if ( this.value ) { data.value = this.value; }
+  		if ( data.useDefine === true ) { data.useDefine = true; }
+
+  	}
+
+  	return data;
+
+  };
+
+  // Fix circular dependency, see #2
+
+
+
+  //
+  //	Keywords
+  //
+
+  NodeLib.addKeyword( 'uv', function() {
+
+  	return new UVNode();
+
+  } );
+
+  NodeLib.addKeyword( 'uv2', function() {
+
+  	return new UVNode( 1 );
+
+  } );
+
+  NodeLib.addKeyword( 'position', function() {
+
+  	return new PositionNode();
+
+  } );
+
+  NodeLib.addKeyword( 'worldPosition', function() {
+
+  	return new PositionNode( PositionNode.WORLD );
+
+  } );
+
+  NodeLib.addKeyword( 'normal', function() {
+
+  	return new NormalNode();
+
+  } );
+
+  NodeLib.addKeyword( 'worldNormal', function() {
+
+  	return new NormalNode( NormalNode.WORLD );
+
+  } );
+
+  NodeLib.addKeyword( 'viewPosition', function() {
+
+  	return new PositionNode( NormalNode.VIEW );
+
+  } );
+
+  NodeLib.addKeyword( 'viewNormal', function() {
+
+  	return new NormalNode( NormalNode.VIEW );
+
+  } );
+
+  NodeLib.addKeyword( 'time', function() {
+
+  	return new TimerNode();
+
+  } );
+
+  //
+  //	Luma
+  //
+
+  NodeLib.add( new ConstNode( "vec3 LUMA vec3(0.2125, 0.7154, 0.0721)" ) );
+
+  //
+  //	NormalMap
+  //
+
+  NodeLib.add( new FunctionNode( [
+  	// Per-Pixel Tangent Space Normal Mapping
+  	// http://hacksoflife.blogspot.ch/2009/11/per-pixel-tangent-space-normal-mapping.html
+  	"vec3 perturbNormal2Arb( vec3 eye_pos, vec3 surf_norm, vec3 map, vec2 mUv, vec2 scale ) {",
+  	"	vec3 q0 = dFdx( eye_pos );",
+  	"	vec3 q1 = dFdy( eye_pos );",
+  	"	vec2 st0 = dFdx( mUv.st );",
+  	"	vec2 st1 = dFdy( mUv.st );",
+  	"	vec3 S = normalize( q0 * st1.t - q1 * st0.t );",
+  	"	vec3 T = normalize( -q0 * st1.s + q1 * st0.s );",
+  	"	vec3 N = normalize( surf_norm );",
+  	"	vec3 mapN = map * 2.0 - 1.0;",
+  	"	mapN.xy = scale * mapN.xy;",
+  	"	mat3 tsn = mat3( S, T, N );",
+  	"	return normalize( tsn * mapN );",
+  	"}"
+  ].join( "\n" ), null, { derivatives: true } ) );
+
+  //
+  //	Noise
+  //
+
+  NodeLib.add( new FunctionNode( [
+  	"float snoise(vec2 co) {",
+  	"	return fract( sin( dot(co.xy, vec2(12.9898,78.233) ) ) * 43758.5453 );",
+  	"}"
+  ].join( "\n" ) ) );
+
+  //
+  //	Hue
+  //
+
+  NodeLib.add( new FunctionNode( [
+  	"vec3 hue_rgb(vec3 rgb, float adjustment) {",
+  	"	const mat3 RGBtoYIQ = mat3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263, 0.211456, -0.522591, 0.311135);",
+  	"	const mat3 YIQtoRGB = mat3(1.0, 0.9563, 0.6210, 1.0, -0.2721, -0.6474, 1.0, -1.107, 1.7046);",
+  	"	vec3 yiq = RGBtoYIQ * rgb;",
+  	"	float hue = atan(yiq.z, yiq.y) + adjustment;",
+  	"	float chroma = sqrt(yiq.z * yiq.z + yiq.y * yiq.y);",
+  	"	return YIQtoRGB * vec3(yiq.x, chroma * cos(hue), chroma * sin(hue));",
+  	"}"
+  ].join( "\n" ) ) );
+
+  //
+  //	Saturation
+  //
+
+  NodeLib.add( new FunctionNode( [
+  	// Algorithm from Chapter 16 of OpenGL Shading Language
+  	"vec3 saturation_rgb(vec3 rgb, float adjustment) {",
+  	"	vec3 intensity = vec3(dot(rgb, LUMA));",
+  	"	return mix(intensity, rgb, adjustment);",
+  	"}"
+  ].join( "\n" ) ) );
+
+  //
+  //	Luminance
+  //
+
+  NodeLib.add( new FunctionNode( [
+  	// Algorithm from Chapter 10 of Graphics Shaders
+  	"float luminance_rgb(vec3 rgb) {",
+  	"	return dot(rgb, LUMA);",
+  	"}"
+  ].join( "\n" ) ) );
+
+  //
+  //	Vibrance
+  //
+
+  NodeLib.add( new FunctionNode( [
+  	// Shader by Evan Wallace adapted by @lo-th
+  	"vec3 vibrance_rgb(vec3 rgb, float adjustment) {",
+  	"	float average = (rgb.r + rgb.g + rgb.b) / 3.0;",
+  	"	float mx = max(rgb.r, max(rgb.g, rgb.b));",
+  	"	float amt = (mx - average) * (-3.0 * adjustment);",
+  	"	return mix(rgb.rgb, vec3(mx), amt);",
+  	"}"
+  ].join( "\n" ) ) );
+
+  // Fix circular dependency, see #2
+
+
+  FunctionNode.prototype.isShared = function( builder, output ) {
+
+  	return ! this.isMethod;
+
+  };
+
+  FunctionNode.prototype.getType = function( builder ) {
+
+  	return builder.getTypeByFormat( this.type );
+
+  };
+
+  FunctionNode.prototype.getInputByName = function( name ) {
+  	var this$1 = this;
+
+
+  	var i = this.inputs.length;
+
+  	while ( i -- ) {
+
+  		if ( this$1.inputs[ i ].name === name )
+  			{ return this$1.inputs[ i ]; }
+
+  	}
+
+  };
+
+  FunctionNode.prototype.getIncludeByName = function( name ) {
+  	var this$1 = this;
+
+
+  	var i = this.includes.length;
+
+  	while ( i -- ) {
+
+  		if ( this$1.includes[ i ].name === name )
+  			{ return this$1.includes[ i ]; }
+
+  	}
+
+  };
+
+  FunctionNode.prototype.generate = function( builder, output ) {
+  	var this$1 = this;
+
+
+  	var match, offset = 0, src = this.value;
+
+  	for ( var i = 0; i < this.includes.length; i ++ ) {
+
+  		builder.include( this$1.includes[ i ], this$1 );
+
+  	}
+
+  	for ( var ext in this$1.extensions ) {
+
+  		builder.material.extensions[ ext ] = true;
+
+  	}
+
+  	while ( match = FunctionNode.rProperties.exec( this.value ) ) {
+
+  		var prop = match[ 0 ], isGlobal = this$1.isMethod ? ! this$1.getInputByName( prop ) : true;
+  		var reference = prop;
+
+  		if ( this$1.keywords[ prop ] || ( this$1.useKeywords && isGlobal && NodeLib.containsKeyword( prop ) ) ) {
+
+  			var node = this$1.keywords[ prop ];
+
+  			if ( ! node ) {
+
+  				var keyword = NodeLib.getKeywordData( prop );
+
+  				if ( keyword.cache ) { node = builder.keywords[ prop ]; }
+
+  				node = node || NodeLib.getKeyword( prop, builder );
+
+  				if ( keyword.cache ) { builder.keywords[ prop ] = node; }
+
+  			}
+
+  			reference = node.build( builder );
+
+  		}
+
+  		if ( prop != reference ) {
+
+  			src = src.substring( 0, match.index + offset ) + reference + src.substring( match.index + prop.length + offset );
+
+  			offset += reference.length - prop.length;
+
+  		}
+
+  		if ( this$1.getIncludeByName( reference ) === undefined && NodeLib.contains( reference ) ) {
+
+  			builder.include( NodeLib.get( reference ) );
+
+  		}
+
+  	}
+
+  	if ( output === 'source' ) {
+
+  		return src;
+
+  	} else if ( this.isMethod ) {
+
+  		builder.include( this, false, src );
+
+  		return this.name;
+
+  	} else {
+
+  		return builder.format( "(" + src + ")", this.getType( builder ), output );
+
+  	}
+
+  };
+
+  var CameraNode = function ( scope, camera ) {
+
+  	TempNode.call( this, 'v3' );
+
+  	this.setScope( scope || CameraNode.POSITION );
+  	this.setCamera( camera );
+
+  };
+
+  CameraNode.fDepthColor = new FunctionNode( [
+  	"float depthColor( float mNear, float mFar ) {",
+  	"	#ifdef USE_LOGDEPTHBUF_EXT",
+  	"		float depth = gl_FragDepthEXT / gl_FragCoord.w;",
+  	"	#else",
+  	"		float depth = gl_FragCoord.z / gl_FragCoord.w;",
+  	"	#endif",
+  	"	return 1.0 - smoothstep( mNear, mFar, depth );",
+  	"}"
+  ].join( "\n" ) );
+
+  CameraNode.POSITION = 'position';
+  CameraNode.DEPTH = 'depth';
+  CameraNode.TO_VERTEX = 'toVertex';
+
+  CameraNode.prototype = Object.create( TempNode.prototype );
+  CameraNode.prototype.constructor = CameraNode;
+  CameraNode.prototype.nodeType = "Camera";
+
+  CameraNode.prototype.setCamera = function ( camera ) {
+
+  	this.camera = camera;
+  	this.updateFrame = camera !== undefined ? this.onUpdateFrame : undefined;
+
+  };
+
+  CameraNode.prototype.setScope = function ( scope ) {
+
+  	switch ( this.scope ) {
+
+  		case CameraNode.DEPTH:
+
+  			delete this.near;
+  			delete this.far;
+
+  			break;
+
+  	}
+
+  	this.scope = scope;
+
+  	switch ( scope ) {
+
+  		case CameraNode.DEPTH:
+
+  			var camera = this.camera;
+
+  			this.near = new FloatNode( this.camera ? this.camera.near : 1 );
+  			this.far = new FloatNode( this.camera ? this.camera.far : 1200 );
+
+  			break;
+
+  	}
+
+  };
+
+  CameraNode.prototype.getType = function ( builder ) {
+
+  	switch ( this.scope ) {
+
+  		case CameraNode.DEPTH:
+  			return 'fv1';
+
+  	}
+
+  	return this.type;
+
+  };
+
+  CameraNode.prototype.isUnique = function ( builder ) {
+
+  	switch ( this.scope ) {
+
+  		case CameraNode.DEPTH:
+  		case CameraNode.TO_VERTEX:
+  			return true;
+
+  	}
+
+  	return false;
+
+  };
+
+  CameraNode.prototype.isShared = function ( builder ) {
+
+  	switch ( this.scope ) {
+
+  		case CameraNode.POSITION:
+  			return false;
+
+  	}
+
+  	return true;
+
+  };
+
+  CameraNode.prototype.generate = function ( builder, output ) {
+
+  	var material = builder.material;
+  	var result;
+
+  	switch ( this.scope ) {
+
+  		case CameraNode.POSITION:
+
+  			result = 'cameraPosition';
+
+  			break;
+
+  		case CameraNode.DEPTH:
+
+  			var func = CameraNode.fDepthColor;
+
+  			builder.include( func );
+
+  			result = func.name + '(' + this.near.build( builder, 'fv1' ) + ',' + this.far.build( builder, 'fv1' ) + ')';
+
+  			break;
+
+  		case CameraNode.TO_VERTEX:
+
+  			result = 'normalize( ' + new PositionNode( PositionNode.WORLD ).build( builder, 'v3' ) + ' - cameraPosition )';
+
+  			break;
+
+  	}
+
+  	return builder.format( result, this.getType( builder ), output );
+
+  };
+
+  CameraNode.prototype.onUpdateFrame = function ( frame ) {
+
+  	switch ( this.scope ) {
+
+  		case CameraNode.DEPTH:
+
+  			var camera = this.camera;
+
+  			this.near.number = this.camera.near;
+  			this.far.number = this.camera.far;
+
+  			break;
+
+  	}
+
+  };
+
+  CameraNode.prototype.toJSON = function ( meta ) {
+
+  	var data = this.getJSONNode( meta );
+
+  	if ( ! data ) {
+
+  		data = this.createJSONNode( meta );
+
+  		data.scope = this.scope;
+
+  		if ( this.camera ) { data.camera = this.camera.uuid; }
+
+  		switch ( this.scope ) {
+
+  			case CameraNode.DEPTH:
+
+  				data.near = this.near.number;
+  				data.far = this.far.number;
+
+  				break;
+
+  		}
+
+  	}
+
+  	return data;
 
   };
 
@@ -74065,9 +75489,9 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		// https://gist.github.com/xpansive/1337890#file-index-js
 
-  		h = _Math$1.euclideanModulo( h, 1 );
-  		s = _Math$1.clamp( s, 0, 1 );
-  		v = _Math$1.clamp( v, 0, 1 );
+  		h = _Math.euclideanModulo( h, 1 );
+  		s = _Math.clamp( s, 0, 1 );
+  		v = _Math.clamp( v, 0, 1 );
 
   		return color.setHSL( h, ( s * v ) / ( ( h = ( 2 - s ) * v ) < 1 ? h : ( 2 - h ) ), h * 0.5 );
 
@@ -75239,7 +76663,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   			}
 
-  			var keyframe = animation.start + _Math$1.clamp( Math.floor( animation.time / frameTime ), 0, animation.length - 1 );
+  			var keyframe = animation.start + _Math.clamp( Math.floor( animation.time / frameTime ), 0, animation.length - 1 );
   			var weight = animation.weight;
 
   			if ( keyframe !== animation.currentFrame ) {
@@ -75730,8 +77154,8 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		this.maxReverseSpeed = - this.maxSpeed;
 
-  		if ( controls.moveForward )  { this.speed = _Math$1.clamp( this.speed + delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed ); }
-  		if ( controls.moveBackward ) { this.speed = _Math$1.clamp( this.speed - delta * this.backAcceleration, this.maxReverseSpeed, this.maxSpeed ); }
+  		if ( controls.moveForward )  { this.speed = _Math.clamp( this.speed + delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed ); }
+  		if ( controls.moveBackward ) { this.speed = _Math.clamp( this.speed - delta * this.backAcceleration, this.maxReverseSpeed, this.maxSpeed ); }
 
   		// orientation based on controls
   		// (don't just stand while turning)
@@ -75741,14 +77165,14 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   		if ( controls.moveLeft ) {
 
   			this.bodyOrientation += delta * this.angularSpeed;
-  			this.speed = _Math$1.clamp( this.speed + dir * delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
+  			this.speed = _Math.clamp( this.speed + dir * delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
 
   		}
 
   		if ( controls.moveRight ) {
 
   			this.bodyOrientation -= delta * this.angularSpeed;
-  			this.speed = _Math$1.clamp( this.speed + dir * delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
+  			this.speed = _Math.clamp( this.speed + dir * delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
 
   		}
 
@@ -75759,12 +77183,12 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   			if ( this.speed > 0 ) {
 
   				var k = exponentialEaseOut( this.speed / this.maxSpeed );
-  				this.speed = _Math$1.clamp( this.speed - k * delta * this.frontDecceleration, 0, this.maxSpeed );
+  				this.speed = _Math.clamp( this.speed - k * delta * this.frontDecceleration, 0, this.maxSpeed );
 
   			} else {
 
   				var k = exponentialEaseOut( this.speed / this.maxReverseSpeed );
-  				this.speed = _Math$1.clamp( this.speed + k * delta * this.backAcceleration, this.maxReverseSpeed, 0 );
+  				this.speed = _Math.clamp( this.speed + k * delta * this.backAcceleration, this.maxReverseSpeed, 0 );
 
   			}
 
@@ -77672,1432 +79096,6 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   	this.mixer = new AnimationMixer( this );
 
   	return this;
-
-  };
-
-  var GLNode = function ( type ) {
-
-  	this.uuid = _Math$1.generateUUID();
-
-  	this.name = "";
-  	this.allows = {};
-
-  	this.type = type;
-
-  	this.userData = {};
-
-  };
-
-  GLNode.prototype.isNode = true;
-
-  GLNode.prototype.parse = function ( builder, context ) {
-
-  	context = context || {};
-
-  	builder.parsing = true;
-
-  	var material = builder.material;
-
-  	this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), 'v4' );
-
-  	material.clearVertexNode();
-  	material.clearFragmentNode();
-
-  	builder.removeCache().removeSlot();
-
-  	builder.parsing = false;
-
-  };
-
-  GLNode.prototype.parseAndBuildCode = function ( builder, output, context ) {
-
-  	context = context || {};
-
-  	this.parse( builder, context );
-
-  	return this.buildCode( builder, output, context );
-
-  };
-
-  GLNode.prototype.buildCode = function ( builder, output, context ) {
-
-  	context = context || {};
-
-  	var material = builder.material;
-
-  	var data = { result: this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
-
-  	if ( builder.isShader( 'vertex' ) ) { data.code = material.clearVertexNode(); }
-  	else { data.code = material.clearFragmentNode(); }
-
-  	builder.removeCache().removeSlot();
-
-  	return data;
-
-  };
-
-  GLNode.prototype.build = function ( builder, output, uuid ) {
-
-  	output = output || this.getType( builder, output );
-
-  	var material = builder.material, data = material.getDataNode( uuid || this.uuid );
-
-  	if ( builder.parsing ) { this.appendDepsNode( builder, data, output ); }
-
-  	if ( this.allows[ builder.shader ] === false ) {
-
-  		throw new Error( 'Shader ' + shader + ' is not compatible with this node.' );
-
-  	}
-
-  	if ( material.nodes.indexOf( this ) === - 1 ) {
-
-  		material.nodes.push( this );
-
-  	}
-
-  	if ( this.updateFrame !== undefined && material.updaters.indexOf( this ) === - 1 ) {
-
-  		material.updaters.push( this );
-
-  	}
-
-  	return this.generate( builder, output, uuid );
-
-  };
-
-  GLNode.prototype.appendDepsNode = function ( builder, data, output ) {
-
-  	data.deps = ( data.deps || 0 ) + 1;
-
-  	var outputLen = builder.getFormatLength( output );
-
-  	if ( outputLen > ( data.outputMax || 0 ) || this.getType( builder, output ) ) {
-
-  		data.outputMax = outputLen;
-  		data.output = output;
-
-  	}
-
-  };
-
-  GLNode.prototype.getType = function ( builder, output ) {
-
-  	return output === 'sampler2D' || output === 'samplerCube' ? output : this.type;
-
-  };
-
-  GLNode.prototype.getJSONNode = function ( meta ) {
-
-  	var isRootObject = ( meta === undefined || typeof meta === 'string' );
-
-  	if ( ! isRootObject && meta.nodes[ this.uuid ] !== undefined ) {
-
-  		return meta.nodes[ this.uuid ];
-
-  	}
-
-  };
-
-  GLNode.prototype.createJSONNode = function ( meta ) {
-
-  	var isRootObject = ( meta === undefined || typeof meta === 'string' );
-
-  	var data = {};
-
-  	if ( typeof this.nodeType !== "string" ) { throw new Error( "Node does not allow serialization." ); }
-
-  	data.uuid = this.uuid;
-  	data.type = this.nodeType + "Node";
-
-  	if ( this.name !== "" ) { data.name = this.name; }
-
-  	if ( JSON.stringify( this.userData ) !== '{}' ) { data.userData = this.userData; }
-
-  	if ( ! isRootObject ) {
-
-  		meta.nodes[ this.uuid ] = data;
-
-  	}
-
-  	return data;
-
-  };
-
-  GLNode.prototype.toJSON = function ( meta ) {
-
-  	return this.getJSONNode( meta ) || this.createJSONNode( meta );
-
-  };
-
-  var TempNode = function ( type, params ) {
-
-  	GLNode.call( this, type );
-
-  	params = params || {};
-
-  	this.shared = params.shared !== undefined ? params.shared : true;
-  	this.unique = params.unique !== undefined ? params.unique : false;
-
-  };
-
-  TempNode.prototype = Object.create( GLNode.prototype );
-  TempNode.prototype.constructor = TempNode;
-
-  TempNode.prototype.build = function ( builder, output, uuid, ns ) {
-
-  	output = output || this.getType( builder );
-
-  	var material = builder.material;
-
-  	if ( this.isShared( builder, output ) ) {
-
-  		var isUnique = this.isUnique( builder, output );
-
-  		if ( isUnique && this.constructor.uuid === undefined ) {
-
-  			this.constructor.uuid = _Math$1.generateUUID();
-
-  		}
-
-  		uuid = builder.getUuid( uuid || this.getUuid(), ! isUnique );
-
-  		var data = material.getDataNode( uuid );
-
-  		if ( builder.parsing ) {
-
-  			if ( data.deps || 0 > 0 ) {
-
-  				this.appendDepsNode( builder, data, output );
-
-  				return this.generate( builder, type, uuid );
-
-  			}
-
-  			return GLNode.prototype.build.call( this, builder, output, uuid );
-
-  		} else if ( isUnique ) {
-
-  			data.name = data.name || GLNode.prototype.build.call( this, builder, output, uuid );
-
-  			return data.name;
-
-  		} else if ( ! builder.optimize || data.deps == 1 ) {
-
-  			return GLNode.prototype.build.call( this, builder, output, uuid );
-
-  		}
-
-  		uuid = this.getUuid( false );
-
-  		var name = this.getTemp( builder, uuid );
-  		var type = data.output || this.getType( builder );
-
-  		if ( name ) {
-
-  			return builder.format( name, type, output );
-
-  		} else {
-
-  			name = TempNode.prototype.generate.call( this, builder, output, uuid, data.output, ns );
-
-  			var code = this.generate( builder, type, uuid );
-
-  			if ( builder.isShader( 'vertex' ) ) { material.addVertexNode( name + '=' + code + ';' ); }
-  			else { material.addFragmentNode( name + '=' + code + ';' ); }
-
-  			return builder.format( name, type, output );
-
-  		}
-
-  	}
-
-  	return GLNode.prototype.build.call( this, builder, output, uuid );
-
-  };
-
-  TempNode.prototype.isShared = function ( builder, output ) {
-
-  	return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
-
-  };
-
-  TempNode.prototype.isUnique = function ( builder, output ) {
-
-  	return this.unique;
-
-  };
-
-  TempNode.prototype.getUuid = function ( unique ) {
-
-  	var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
-
-  	if ( typeof this.scope == "string" ) { uuid = this.scope + '-' + uuid; }
-
-  	return uuid;
-
-  };
-
-  TempNode.prototype.getTemp = function ( builder, uuid ) {
-
-  	uuid = uuid || this.uuid;
-
-  	var material = builder.material;
-
-  	if ( builder.isShader( 'vertex' ) && material.vertexTemps[ uuid ] ) { return material.vertexTemps[ uuid ].name; }
-  	else if ( material.fragmentTemps[ uuid ] ) { return material.fragmentTemps[ uuid ].name; }
-
-  };
-
-  TempNode.prototype.generate = function ( builder, output, uuid, type, ns ) {
-
-  	if ( ! this.isShared( builder, output ) ) { console.error( "TempNode is not shared!" ); }
-
-  	uuid = uuid || this.uuid;
-
-  	if ( builder.isShader( 'vertex' ) ) { return builder.material.getVertexTemp( uuid, type || this.getType( builder ), ns ).name; }
-  	else { return builder.material.getFragmentTemp( uuid, type || this.getType( builder ), ns ).name; }
-
-  };
-
-  var FunctionNode = function( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ) {
-
-  	src = src || '';
-
-  	this.isMethod = typeof includesOrType !== "string";
-  	this.useKeywords = true;
-
-  	TempNode.call( this, this.isMethod ? null : includesOrType );
-
-  	if ( this.isMethod ) { this.eval( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ); }
-  	else { this.eval( src, extensionsOrIncludes, keywordsOrExtensions ); }
-
-  };
-
-  FunctionNode.rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\((.*?)\)/i;
-  FunctionNode.rProperties = /[a-z_0-9]+/ig;
-
-  FunctionNode.prototype = Object.create( TempNode.prototype );
-  FunctionNode.prototype.constructor = FunctionNode;
-
-  FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
-  	var this$1 = this;
-
-
-  	src = ( src || '' ).trim();
-
-  	this.includes = includes || [];
-  	this.extensions = extensions || {};
-  	this.keywords = keywords || {};
-
-  	if ( this.isMethod ) {
-
-  		var match = src.match( FunctionNode.rDeclaration );
-
-  		this.inputs = [];
-
-  		if ( match && match.length == 4 ) {
-
-  			this.type = match[ 1 ];
-  			this.name = match[ 2 ];
-
-  			var inputs = match[ 3 ].match( FunctionNode.rProperties );
-
-  			if ( inputs ) {
-
-  				var i = 0;
-
-  				while ( i < inputs.length ) {
-
-  					var qualifier = inputs[ i ++ ];
-  					var type, name;
-
-  					if ( qualifier == 'in' || qualifier == 'out' || qualifier == 'inout' ) {
-
-  						type = inputs[ i ++ ];
-
-  					} else {
-
-  						type = qualifier;
-  						qualifier = '';
-
-  					}
-
-  					name = inputs[ i ++ ];
-
-  					this$1.inputs.push( {
-  						name : name,
-  						type : type,
-  						qualifier : qualifier
-  					} );
-
-  				}
-
-  			}
-
-  		} else {
-
-  			this.type = '';
-  			this.name = '';
-
-  		}
-
-  	}
-
-  	this.value = src;
-
-  };
-
-  var NodeLib = {
-
-  	nodes: {},
-  	keywords: {},
-
-  	add: function( node ) {
-
-  		this.nodes[ node.name ] = node;
-
-  	},
-
-  	addKeyword: function( name, callback, cache ) {
-
-  		cache = cache !== undefined ? cache : true;
-
-  		this.keywords[ name ] = { callback : callback, cache : cache };
-
-  	},
-
-  	remove: function( node ) {
-
-  		delete this.nodes[ node.name ];
-
-  	},
-
-  	removeKeyword: function( name ) {
-
-  		delete this.keywords[ name ];
-
-  	},
-
-  	get: function( name ) {
-
-  		return this.nodes[ name ];
-
-  	},
-
-  	getKeyword: function( name, material ) {
-
-  		return this.keywords[ name ].callback.call( this, material );
-
-  	},
-
-  	getKeywordData: function( name ) {
-
-  		return this.keywords[ name ];
-
-  	},
-
-  	contains: function( name ) {
-
-  		return this.nodes[ name ] != undefined;
-
-  	},
-
-  	containsKeyword: function( name ) {
-
-  		return this.keywords[ name ] != undefined;
-
-  	}
-
-  };
-
-  var UVNode = function ( index ) {
-
-  	TempNode.call( this, 'v2', { shared: false } );
-
-  	this.index = index || 0;
-
-  };
-
-  UVNode.vertexDict = [ 'uv', 'uv2' ];
-  UVNode.fragmentDict = [ 'vUv', 'vUv2' ];
-
-  UVNode.prototype = Object.create( TempNode.prototype );
-  UVNode.prototype.constructor = UVNode;
-  UVNode.prototype.nodeType = "UV";
-
-  UVNode.prototype.generate = function ( builder, output ) {
-
-  	var material = builder.material;
-  	var result;
-
-  	material.requires.uv[ this.index ] = true;
-
-  	if ( builder.isShader( 'vertex' ) ) { result = UVNode.vertexDict[ this.index ]; }
-  	else { result = UVNode.fragmentDict[ this.index ]; }
-
-  	return builder.format( result, this.getType( builder ), output );
-
-  };
-
-  UVNode.prototype.toJSON = function ( meta ) {
-
-  	var data = this.getJSONNode( meta );
-
-  	if ( ! data ) {
-
-  		data = this.createJSONNode( meta );
-
-  		data.index = this.index;
-
-  	}
-
-  	return data;
-
-  };
-
-  var PositionNode = function ( scope ) {
-
-  	TempNode.call( this, 'v3' );
-
-  	this.scope = scope || PositionNode.LOCAL;
-
-  };
-
-  PositionNode.LOCAL = 'local';
-  PositionNode.WORLD = 'world';
-  PositionNode.VIEW = 'view';
-  PositionNode.PROJECTION = 'projection';
-
-  PositionNode.prototype = Object.create( TempNode.prototype );
-  PositionNode.prototype.constructor = PositionNode;
-  PositionNode.prototype.nodeType = "Position";
-
-  PositionNode.prototype.getType = function ( builder ) {
-
-  	switch ( this.scope ) {
-
-  		case PositionNode.PROJECTION:
-  			return 'v4';
-
-  	}
-
-  	return this.type;
-
-  };
-
-  PositionNode.prototype.isShared = function ( builder ) {
-
-  	switch ( this.scope ) {
-
-  		case PositionNode.LOCAL:
-  		case PositionNode.WORLD:
-  			return false;
-
-  	}
-
-  	return true;
-
-  };
-
-  PositionNode.prototype.generate = function ( builder, output ) {
-
-  	var material = builder.material;
-  	var result;
-
-  	switch ( this.scope ) {
-
-  		case PositionNode.LOCAL:
-
-  			material.requires.position = true;
-
-  			if ( builder.isShader( 'vertex' ) ) { result = 'transformed'; }
-  			else { result = 'vPosition'; }
-
-  			break;
-
-  		case PositionNode.WORLD:
-
-  			material.requires.worldPosition = true;
-
-  			if ( builder.isShader( 'vertex' ) ) { result = 'vWPosition'; }
-  			else { result = 'vWPosition'; }
-
-  			break;
-
-  		case PositionNode.VIEW:
-
-  			if ( builder.isShader( 'vertex' ) ) { result = '-mvPosition.xyz'; }
-  			else { result = 'vViewPosition'; }
-
-  			break;
-
-  		case PositionNode.PROJECTION:
-
-  			if ( builder.isShader( 'vertex' ) ) { result = '(projectionMatrix * modelViewMatrix * vec4( position, 1.0 ))'; }
-  			else { result = 'vec4( 0.0 )'; }
-
-  			break;
-
-  	}
-
-  	return builder.format( result, this.getType( builder ), output );
-
-  };
-
-  PositionNode.prototype.toJSON = function ( meta ) {
-
-  	var data = this.getJSONNode( meta );
-
-  	if ( ! data ) {
-
-  		data = this.createJSONNode( meta );
-
-  		data.scope = this.scope;
-
-  	}
-
-  	return data;
-
-  };
-
-  var NormalNode = function ( scope ) {
-
-  	TempNode.call( this, 'v3' );
-
-  	this.scope = scope || NormalNode.LOCAL;
-
-  };
-
-  NormalNode.LOCAL = 'local';
-  NormalNode.WORLD = 'world';
-  NormalNode.VIEW = 'view';
-
-  NormalNode.prototype = Object.create( TempNode.prototype );
-  NormalNode.prototype.constructor = NormalNode;
-  NormalNode.prototype.nodeType = "Normal";
-
-  NormalNode.prototype.isShared = function ( builder ) {
-
-  	switch ( this.scope ) {
-
-  		case NormalNode.WORLD:
-  			return true;
-
-  	}
-
-  	return false;
-
-  };
-
-  NormalNode.prototype.generate = function ( builder, output ) {
-
-  	var material = builder.material;
-  	var result;
-
-  	switch ( this.scope ) {
-
-  		case NormalNode.LOCAL:
-
-  			material.requires.normal = true;
-
-  			if ( builder.isShader( 'vertex' ) ) { result = 'normal'; }
-  			else { result = 'vObjectNormal'; }
-
-  			break;
-
-  		case NormalNode.WORLD:
-
-  			material.requires.worldNormal = true;
-
-  			if ( builder.isShader( 'vertex' ) ) { result = '( modelMatrix * vec4( objectNormal, 0.0 ) ).xyz'; }
-  			else { result = 'vWNormal'; }
-
-  			break;
-
-  		case NormalNode.VIEW:
-
-  			result = 'vNormal';
-
-  			break;
-
-  	}
-
-  	return builder.format( result, this.getType( builder ), output );
-
-  };
-
-  NormalNode.prototype.toJSON = function ( meta ) {
-
-  	var data = this.getJSONNode( meta );
-
-  	if ( ! data ) {
-
-  		data = this.createJSONNode( meta );
-
-  		data.scope = this.scope;
-
-  	}
-
-  	return data;
-
-  };
-
-  var InputNode = function ( type, params ) {
-
-  	params = params || {};
-  	params.shared = params.shared !== undefined ? params.shared : false;
-
-  	TempNode.call( this, type, params );
-
-  	this.readonly = false;
-
-  };
-
-  InputNode.prototype = Object.create( TempNode.prototype );
-  InputNode.prototype.constructor = InputNode;
-
-  InputNode.prototype.isReadonly = function ( builder ) {
-
-  	return this.readonly;
-
-  };
-
-  InputNode.prototype.generate = function ( builder, output, uuid, type, ns, needsUpdate ) {
-
-  	var material = builder.material;
-
-  	uuid = builder.getUuid( uuid || this.getUuid() );
-  	type = type || this.getType( builder );
-
-  	var data = material.getDataNode( uuid ),
-  		readonly = this.isReadonly( builder ) && this.generateReadonly !== undefined;
-
-  	if ( readonly ) {
-
-  		return this.generateReadonly( builder, output, uuid, type, ns, needsUpdate );
-
-  	} else {
-
-  		if ( builder.isShader( 'vertex' ) ) {
-
-  			if ( ! data.vertex ) {
-
-  				data.vertex = material.createVertexUniform( type, this.value, ns, needsUpdate );
-
-  			}
-
-  			return builder.format( data.vertex.name, type, output );
-
-  		} else {
-
-  			if ( ! data.fragment ) {
-
-  				data.fragment = material.createFragmentUniform( type, this.value, ns, needsUpdate );
-
-  			}
-
-  			return builder.format( data.fragment.name, type, output );
-
-  		}
-
-  	}
-
-  };
-
-  var FloatNode = function ( value ) {
-
-  	InputNode.call( this, 'fv1' );
-
-  	this.value = [ value || 0 ];
-
-  };
-
-  FloatNode.prototype = Object.create( InputNode.prototype );
-  FloatNode.prototype.constructor = FloatNode;
-  FloatNode.prototype.nodeType = "Float";
-
-  Object.defineProperties( FloatNode.prototype, {
-  	number: {
-  		get: function () {
-
-  			return this.value[ 0 ];
-
-  		},
-  		set: function ( val ) {
-
-  			this.value[ 0 ] = val;
-
-  		}
-  	}
-  } );
-
-  FloatNode.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
-
-  	var value = this.number;
-
-  	return builder.format( Math.floor( value ) !== value ? value : value + ".0", type, output );
-
-  };
-
-  FloatNode.prototype.toJSON = function ( meta ) {
-
-  	var data = this.getJSONNode( meta );
-
-  	if ( ! data ) {
-
-  		data = this.createJSONNode( meta );
-
-  		data.number = this.number;
-
-  		if ( this.readonly === true ) { data.readonly = true; }
-
-  	}
-
-  	return data;
-
-  };
-
-  var TimerNode = function ( scale, scope ) {
-
-  	FloatNode.call( this );
-
-  	this.scale = scale !== undefined ? scale : 1;
-  	this.scope = scope || TimerNode.GLOBAL;
-
-  	this.timeScale = this.scale !== 1;
-
-  };
-
-  TimerNode.GLOBAL = 'global';
-  TimerNode.LOCAL = 'local';
-  TimerNode.DELTA = 'delta';
-
-  TimerNode.prototype = Object.create( FloatNode.prototype );
-  TimerNode.prototype.constructor = TimerNode;
-  TimerNode.prototype.nodeType = "Timer";
-
-  TimerNode.prototype.isReadonly = function ( builder ) {
-
-  	return false;
-
-  };
-
-  TimerNode.prototype.isUnique = function ( builder ) {
-
-  	// share TimerNode "uniform" input if is used on more time with others TimerNode
-  	return this.timeScale && ( this.scope === TimerNode.GLOBAL || this.scope === TimerNode.DELTA );
-
-  };
-
-  TimerNode.prototype.updateFrame = function ( frame ) {
-
-  	var scale = this.timeScale ? this.scale : 1;
-
-  	switch( this.scope ) {
-
-  		case TimerNode.LOCAL:
-
-  			this.number += frame.delta * scale;
-
-  			break;
-
-  		case TimerNode.DELTA:
-
-  			this.number = frame.delta * scale;
-
-  			break;
-
-  		default:
-
-  			this.number = frame.time * scale;
-
-  	}
-
-  };
-
-  TimerNode.prototype.toJSON = function ( meta ) {
-
-  	var data = this.getJSONNode( meta );
-
-  	if ( ! data ) {
-
-  		data = this.createJSONNode( meta );
-
-  		data.scope = this.scope;
-  		data.scale = this.scale;
-  		data.timeScale = this.timeScale;
-
-  	}
-
-  	return data;
-
-  };
-
-  var ConstNode = function ( src, useDefine ) {
-
-  	TempNode.call( this );
-
-  	this.eval( src || ConstNode.PI, useDefine );
-
-  };
-
-  ConstNode.PI = 'PI';
-  ConstNode.PI2 = 'PI2';
-  ConstNode.RECIPROCAL_PI = 'RECIPROCAL_PI';
-  ConstNode.RECIPROCAL_PI2 = 'RECIPROCAL_PI2';
-  ConstNode.LOG2 = 'LOG2';
-  ConstNode.EPSILON = 'EPSILON';
-
-  ConstNode.prototype = Object.create( TempNode.prototype );
-  ConstNode.prototype.constructor = ConstNode;
-  ConstNode.prototype.nodeType = "Const";
-
-  ConstNode.prototype.getType = function ( builder ) {
-
-  	return builder.getTypeByFormat( this.type );
-
-  };
-
-  ConstNode.prototype.eval = function ( src, useDefine ) {
-
-  	src = ( src || '' ).trim();
-
-  	var name, type, value = "";
-
-  	var rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\=?\s?(.*?)(\;|$)/i;
-  	var match = src.match( rDeclaration );
-
-  	this.useDefine = useDefine;
-
-  	if ( match && match.length > 1 ) {
-
-  		type = match[ 1 ];
-  		name = match[ 2 ];
-  		value = match[ 3 ];
-
-  	} else {
-
-  		name = src;
-  		type = 'fv1';
-
-  	}
-
-  	this.name = name;
-  	this.type = type;
-  	this.value = value;
-
-  };
-
-  ConstNode.prototype.build = function ( builder, output ) {
-
-  	if ( output === 'source' ) {
-
-  		if ( this.value ) {
-
-  			if ( this.useDefine ) {
-
-  				return '#define ' + this.name + ' ' + this.value;
-
-  			}
-
-  			return 'const ' + this.type + ' ' + this.name + ' = ' + this.value + ';';
-
-  		}
-
-  	} else {
-
-  		builder.include( this );
-
-  		return builder.format( this.name, this.getType( builder ), output );
-
-  	}
-
-  };
-
-  ConstNode.prototype.generate = function ( builder, output ) {
-
-  	return builder.format( this.name, this.getType( builder ), output );
-
-  };
-
-  ConstNode.prototype.toJSON = function ( meta ) {
-
-  	var data = this.getJSONNode( meta );
-
-  	if ( ! data ) {
-
-  		data = this.createJSONNode( meta );
-
-  		data.name = this.name;
-  		data.out = this.type;
-
-  		if ( this.value ) { data.value = this.value; }
-  		if ( data.useDefine === true ) { data.useDefine = true; }
-
-  	}
-
-  	return data;
-
-  };
-
-  // Fix circular dependency, see #2
-
-
-
-  //
-  //	Keywords
-  //
-
-  NodeLib.addKeyword( 'uv', function() {
-
-  	return new UVNode();
-
-  } );
-
-  NodeLib.addKeyword( 'uv2', function() {
-
-  	return new UVNode( 1 );
-
-  } );
-
-  NodeLib.addKeyword( 'position', function() {
-
-  	return new PositionNode();
-
-  } );
-
-  NodeLib.addKeyword( 'worldPosition', function() {
-
-  	return new PositionNode( PositionNode.WORLD );
-
-  } );
-
-  NodeLib.addKeyword( 'normal', function() {
-
-  	return new NormalNode();
-
-  } );
-
-  NodeLib.addKeyword( 'worldNormal', function() {
-
-  	return new NormalNode( NormalNode.WORLD );
-
-  } );
-
-  NodeLib.addKeyword( 'viewPosition', function() {
-
-  	return new PositionNode( NormalNode.VIEW );
-
-  } );
-
-  NodeLib.addKeyword( 'viewNormal', function() {
-
-  	return new NormalNode( NormalNode.VIEW );
-
-  } );
-
-  NodeLib.addKeyword( 'time', function() {
-
-  	return new TimerNode();
-
-  } );
-
-  //
-  //	Luma
-  //
-
-  NodeLib.add( new ConstNode( "vec3 LUMA vec3(0.2125, 0.7154, 0.0721)" ) );
-
-  //
-  //	NormalMap
-  //
-
-  NodeLib.add( new FunctionNode( [
-  	// Per-Pixel Tangent Space Normal Mapping
-  	// http://hacksoflife.blogspot.ch/2009/11/per-pixel-tangent-space-normal-mapping.html
-  	"vec3 perturbNormal2Arb( vec3 eye_pos, vec3 surf_norm, vec3 map, vec2 mUv, vec2 scale ) {",
-  	"	vec3 q0 = dFdx( eye_pos );",
-  	"	vec3 q1 = dFdy( eye_pos );",
-  	"	vec2 st0 = dFdx( mUv.st );",
-  	"	vec2 st1 = dFdy( mUv.st );",
-  	"	vec3 S = normalize( q0 * st1.t - q1 * st0.t );",
-  	"	vec3 T = normalize( -q0 * st1.s + q1 * st0.s );",
-  	"	vec3 N = normalize( surf_norm );",
-  	"	vec3 mapN = map * 2.0 - 1.0;",
-  	"	mapN.xy = scale * mapN.xy;",
-  	"	mat3 tsn = mat3( S, T, N );",
-  	"	return normalize( tsn * mapN );",
-  	"}"
-  ].join( "\n" ), null, { derivatives: true } ) );
-
-  //
-  //	Noise
-  //
-
-  NodeLib.add( new FunctionNode( [
-  	"float snoise(vec2 co) {",
-  	"	return fract( sin( dot(co.xy, vec2(12.9898,78.233) ) ) * 43758.5453 );",
-  	"}"
-  ].join( "\n" ) ) );
-
-  //
-  //	Hue
-  //
-
-  NodeLib.add( new FunctionNode( [
-  	"vec3 hue_rgb(vec3 rgb, float adjustment) {",
-  	"	const mat3 RGBtoYIQ = mat3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263, 0.211456, -0.522591, 0.311135);",
-  	"	const mat3 YIQtoRGB = mat3(1.0, 0.9563, 0.6210, 1.0, -0.2721, -0.6474, 1.0, -1.107, 1.7046);",
-  	"	vec3 yiq = RGBtoYIQ * rgb;",
-  	"	float hue = atan(yiq.z, yiq.y) + adjustment;",
-  	"	float chroma = sqrt(yiq.z * yiq.z + yiq.y * yiq.y);",
-  	"	return YIQtoRGB * vec3(yiq.x, chroma * cos(hue), chroma * sin(hue));",
-  	"}"
-  ].join( "\n" ) ) );
-
-  //
-  //	Saturation
-  //
-
-  NodeLib.add( new FunctionNode( [
-  	// Algorithm from Chapter 16 of OpenGL Shading Language
-  	"vec3 saturation_rgb(vec3 rgb, float adjustment) {",
-  	"	vec3 intensity = vec3(dot(rgb, LUMA));",
-  	"	return mix(intensity, rgb, adjustment);",
-  	"}"
-  ].join( "\n" ) ) );
-
-  //
-  //	Luminance
-  //
-
-  NodeLib.add( new FunctionNode( [
-  	// Algorithm from Chapter 10 of Graphics Shaders
-  	"float luminance_rgb(vec3 rgb) {",
-  	"	return dot(rgb, LUMA);",
-  	"}"
-  ].join( "\n" ) ) );
-
-  //
-  //	Vibrance
-  //
-
-  NodeLib.add( new FunctionNode( [
-  	// Shader by Evan Wallace adapted by @lo-th
-  	"vec3 vibrance_rgb(vec3 rgb, float adjustment) {",
-  	"	float average = (rgb.r + rgb.g + rgb.b) / 3.0;",
-  	"	float mx = max(rgb.r, max(rgb.g, rgb.b));",
-  	"	float amt = (mx - average) * (-3.0 * adjustment);",
-  	"	return mix(rgb.rgb, vec3(mx), amt);",
-  	"}"
-  ].join( "\n" ) ) );
-
-  // Fix circular dependency, see #2
-
-
-  FunctionNode.prototype.isShared = function( builder, output ) {
-
-  	return ! this.isMethod;
-
-  };
-
-  FunctionNode.prototype.getType = function( builder ) {
-
-  	return builder.getTypeByFormat( this.type );
-
-  };
-
-  FunctionNode.prototype.getInputByName = function( name ) {
-  	var this$1 = this;
-
-
-  	var i = this.inputs.length;
-
-  	while ( i -- ) {
-
-  		if ( this$1.inputs[ i ].name === name )
-  			{ return this$1.inputs[ i ]; }
-
-  	}
-
-  };
-
-  FunctionNode.prototype.getIncludeByName = function( name ) {
-  	var this$1 = this;
-
-
-  	var i = this.includes.length;
-
-  	while ( i -- ) {
-
-  		if ( this$1.includes[ i ].name === name )
-  			{ return this$1.includes[ i ]; }
-
-  	}
-
-  };
-
-  FunctionNode.prototype.generate = function( builder, output ) {
-  	var this$1 = this;
-
-
-  	var match, offset = 0, src = this.value;
-
-  	for ( var i = 0; i < this.includes.length; i ++ ) {
-
-  		builder.include( this$1.includes[ i ], this$1 );
-
-  	}
-
-  	for ( var ext in this$1.extensions ) {
-
-  		builder.material.extensions[ ext ] = true;
-
-  	}
-
-  	while ( match = FunctionNode.rProperties.exec( this.value ) ) {
-
-  		var prop = match[ 0 ], isGlobal = this$1.isMethod ? ! this$1.getInputByName( prop ) : true;
-  		var reference = prop;
-
-  		if ( this$1.keywords[ prop ] || ( this$1.useKeywords && isGlobal && NodeLib.containsKeyword( prop ) ) ) {
-
-  			var node = this$1.keywords[ prop ];
-
-  			if ( ! node ) {
-
-  				var keyword = NodeLib.getKeywordData( prop );
-
-  				if ( keyword.cache ) { node = builder.keywords[ prop ]; }
-
-  				node = node || NodeLib.getKeyword( prop, builder );
-
-  				if ( keyword.cache ) { builder.keywords[ prop ] = node; }
-
-  			}
-
-  			reference = node.build( builder );
-
-  		}
-
-  		if ( prop != reference ) {
-
-  			src = src.substring( 0, match.index + offset ) + reference + src.substring( match.index + prop.length + offset );
-
-  			offset += reference.length - prop.length;
-
-  		}
-
-  		if ( this$1.getIncludeByName( reference ) === undefined && NodeLib.contains( reference ) ) {
-
-  			builder.include( NodeLib.get( reference ) );
-
-  		}
-
-  	}
-
-  	if ( output === 'source' ) {
-
-  		return src;
-
-  	} else if ( this.isMethod ) {
-
-  		builder.include( this, false, src );
-
-  		return this.name;
-
-  	} else {
-
-  		return builder.format( "(" + src + ")", this.getType( builder ), output );
-
-  	}
-
-  };
-
-  var CameraNode$1 = function ( scope, camera ) {
-
-  	TempNode.call( this, 'v3' );
-
-  	this.setScope( scope || CameraNode$1.POSITION );
-  	this.setCamera( camera );
-
-  };
-
-  CameraNode$1.fDepthColor = new FunctionNode( [
-  	"float depthColor( float mNear, float mFar ) {",
-  	"	#ifdef USE_LOGDEPTHBUF_EXT",
-  	"		float depth = gl_FragDepthEXT / gl_FragCoord.w;",
-  	"	#else",
-  	"		float depth = gl_FragCoord.z / gl_FragCoord.w;",
-  	"	#endif",
-  	"	return 1.0 - smoothstep( mNear, mFar, depth );",
-  	"}"
-  ].join( "\n" ) );
-
-  CameraNode$1.POSITION = 'position';
-  CameraNode$1.DEPTH = 'depth';
-  CameraNode$1.TO_VERTEX = 'toVertex';
-
-  CameraNode$1.prototype = Object.create( TempNode.prototype );
-  CameraNode$1.prototype.constructor = CameraNode$1;
-  CameraNode$1.prototype.nodeType = "Camera";
-
-  CameraNode$1.prototype.setCamera = function ( camera ) {
-
-  	this.camera = camera;
-  	this.updateFrame = camera !== undefined ? this.onUpdateFrame : undefined;
-
-  };
-
-  CameraNode$1.prototype.setScope = function ( scope ) {
-
-  	switch ( this.scope ) {
-
-  		case CameraNode$1.DEPTH:
-
-  			delete this.near;
-  			delete this.far;
-
-  			break;
-
-  	}
-
-  	this.scope = scope;
-
-  	switch ( scope ) {
-
-  		case CameraNode$1.DEPTH:
-
-  			var camera = this.camera;
-
-  			this.near = new FloatNode( this.camera ? this.camera.near : 1 );
-  			this.far = new FloatNode( this.camera ? this.camera.far : 1200 );
-
-  			break;
-
-  	}
-
-  };
-
-  CameraNode$1.prototype.getType = function ( builder ) {
-
-  	switch ( this.scope ) {
-
-  		case CameraNode$1.DEPTH:
-  			return 'fv1';
-
-  	}
-
-  	return this.type;
-
-  };
-
-  CameraNode$1.prototype.isUnique = function ( builder ) {
-
-  	switch ( this.scope ) {
-
-  		case CameraNode$1.DEPTH:
-  		case CameraNode$1.TO_VERTEX:
-  			return true;
-
-  	}
-
-  	return false;
-
-  };
-
-  CameraNode$1.prototype.isShared = function ( builder ) {
-
-  	switch ( this.scope ) {
-
-  		case CameraNode$1.POSITION:
-  			return false;
-
-  	}
-
-  	return true;
-
-  };
-
-  CameraNode$1.prototype.generate = function ( builder, output ) {
-
-  	var material = builder.material;
-  	var result;
-
-  	switch ( this.scope ) {
-
-  		case CameraNode$1.POSITION:
-
-  			result = 'cameraPosition';
-
-  			break;
-
-  		case CameraNode$1.DEPTH:
-
-  			var func = CameraNode$1.fDepthColor;
-
-  			builder.include( func );
-
-  			result = func.name + '(' + this.near.build( builder, 'fv1' ) + ',' + this.far.build( builder, 'fv1' ) + ')';
-
-  			break;
-
-  		case CameraNode$1.TO_VERTEX:
-
-  			result = 'normalize( ' + new PositionNode( PositionNode.WORLD ).build( builder, 'v3' ) + ' - cameraPosition )';
-
-  			break;
-
-  	}
-
-  	return builder.format( result, this.getType( builder ), output );
-
-  };
-
-  CameraNode$1.prototype.onUpdateFrame = function ( frame ) {
-
-  	switch ( this.scope ) {
-
-  		case CameraNode$1.DEPTH:
-
-  			var camera = this.camera;
-
-  			this.near.number = this.camera.near;
-  			this.far.number = this.camera.far;
-
-  			break;
-
-  	}
-
-  };
-
-  CameraNode$1.prototype.toJSON = function ( meta ) {
-
-  	var data = this.getJSONNode( meta );
-
-  	if ( ! data ) {
-
-  		data = this.createJSONNode( meta );
-
-  		data.scope = this.scope;
-
-  		if ( this.camera ) { data.camera = this.camera.uuid; }
-
-  		switch ( this.scope ) {
-
-  			case CameraNode$1.DEPTH:
-
-  				data.near = this.near.number;
-  				data.far = this.far.number;
-
-  				break;
-
-  		}
-
-  	}
-
-  	return data;
 
   };
 
@@ -82508,7 +82506,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   	ShaderPass.call( this );
 
   	this.name = "";
-  	this.uuid = _Math$1.generateUUID();
+  	this.uuid = _Math.generateUUID();
 
   	this.userData = {};
 
@@ -84092,7 +84090,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	var renderTarget = new WebGLRenderTarget( textureWidth, textureHeight, parameters );
 
-  	if ( ! _Math$1.isPowerOfTwo( textureWidth ) || ! _Math$1.isPowerOfTwo( textureHeight ) ) {
+  	if ( ! _Math.isPowerOfTwo( textureWidth ) || ! _Math.isPowerOfTwo( textureHeight ) ) {
 
   		renderTarget.texture.generateMipmaps = false;
 
@@ -84357,7 +84355,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	var renderTarget = new WebGLRenderTarget( textureWidth, textureHeight, parameters );
 
-  	if ( ! _Math$1.isPowerOfTwo( textureWidth ) || ! _Math$1.isPowerOfTwo( textureHeight ) ) {
+  	if ( ! _Math.isPowerOfTwo( textureWidth ) || ! _Math.isPowerOfTwo( textureHeight ) ) {
 
   		renderTarget.texture.generateMipmaps = false;
 
@@ -84967,7 +84965,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	var renderTarget = new WebGLRenderTarget( textureWidth, textureHeight, parameters );
 
-  	if ( ! _Math$1.isPowerOfTwo( textureWidth ) || ! _Math$1.isPowerOfTwo( textureHeight ) ) {
+  	if ( ! _Math.isPowerOfTwo( textureWidth ) || ! _Math.isPowerOfTwo( textureHeight ) ) {
 
   		renderTarget.texture.generateMipmaps = false;
 
@@ -86242,7 +86240,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   			
   			if ( ! object.uuid ) {
   				
-  				object.uuid = _Math$1.generateUUID();
+  				object.uuid = _Math.generateUUID();
   				
   			}
   			
@@ -90222,22 +90220,22 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   		if ( this.curF % this.randX == 0 || this.goWild == true ) {
 
   			this.uniforms[ 'amount' ].value = Math.random() / 30;
-  			this.uniforms[ 'angle' ].value = _Math$1.randFloat( - Math.PI, Math.PI );
-  			this.uniforms[ 'seed_x' ].value = _Math$1.randFloat( - 1, 1 );
-  			this.uniforms[ 'seed_y' ].value = _Math$1.randFloat( - 1, 1 );
-  			this.uniforms[ 'distortion_x' ].value = _Math$1.randFloat( 0, 1 );
-  			this.uniforms[ 'distortion_y' ].value = _Math$1.randFloat( 0, 1 );
+  			this.uniforms[ 'angle' ].value = _Math.randFloat( - Math.PI, Math.PI );
+  			this.uniforms[ 'seed_x' ].value = _Math.randFloat( - 1, 1 );
+  			this.uniforms[ 'seed_y' ].value = _Math.randFloat( - 1, 1 );
+  			this.uniforms[ 'distortion_x' ].value = _Math.randFloat( 0, 1 );
+  			this.uniforms[ 'distortion_y' ].value = _Math.randFloat( 0, 1 );
   			this.curF = 0;
   			this.generateTrigger();
 
   		} else if ( this.curF % this.randX < this.randX / 5 ) {
 
   			this.uniforms[ 'amount' ].value = Math.random() / 90;
-  			this.uniforms[ 'angle' ].value = _Math$1.randFloat( - Math.PI, Math.PI );
-  			this.uniforms[ 'distortion_x' ].value = _Math$1.randFloat( 0, 1 );
-  			this.uniforms[ 'distortion_y' ].value = _Math$1.randFloat( 0, 1 );
-  			this.uniforms[ 'seed_x' ].value = _Math$1.randFloat( - 0.3, 0.3 );
-  			this.uniforms[ 'seed_y' ].value = _Math$1.randFloat( - 0.3, 0.3 );
+  			this.uniforms[ 'angle' ].value = _Math.randFloat( - Math.PI, Math.PI );
+  			this.uniforms[ 'distortion_x' ].value = _Math.randFloat( 0, 1 );
+  			this.uniforms[ 'distortion_y' ].value = _Math.randFloat( 0, 1 );
+  			this.uniforms[ 'seed_x' ].value = _Math.randFloat( - 0.3, 0.3 );
+  			this.uniforms[ 'seed_y' ].value = _Math.randFloat( - 0.3, 0.3 );
 
   		} else if ( this.goWild == false ) {
 
@@ -90262,7 +90260,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	generateTrigger: function() {
 
-  		this.randX = _Math$1.randInt( 120, 240 );
+  		this.randX = _Math.randInt( 120, 240 );
 
   	},
 
@@ -90273,7 +90271,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		for ( var i = 0; i < length; i ++ ) {
 
-  			var val = _Math$1.randFloat( 0, 1 );
+  			var val = _Math.randFloat( 0, 1 );
   			data_arr[ i * 3 + 0 ] = val;
   			data_arr[ i * 3 + 1 ] = val;
   			data_arr[ i * 3 + 2 ] = val;
@@ -101836,7 +101834,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	function isPowerOfTwo( image ) {
 
-  		return _Math$1.isPowerOfTwo( image.width ) && _Math$1.isPowerOfTwo( image.height );
+  		return _Math.isPowerOfTwo( image.width ) && _Math.isPowerOfTwo( image.height );
 
   	}
 
@@ -101846,8 +101844,8 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   			if ( _canvas === undefined ) { _canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' ); }
 
-  			_canvas.width = _Math$1.floorPowerOfTwo( image.width );
-  			_canvas.height = _Math$1.floorPowerOfTwo( image.height );
+  			_canvas.width = _Math.floorPowerOfTwo( image.width );
+  			_canvas.height = _Math.floorPowerOfTwo( image.height );
 
   			var context = _canvas.getContext( '2d' );
   			context.drawImage( image, 0, 0, _canvas.width, _canvas.height );
@@ -106450,7 +106448,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
 
   						var size = Math.sqrt( bones.length * 4 ); // 4 pixels needed for 1 matrix
-  						size = _Math$1.ceilPowerOfTwo( size );
+  						size = _Math.ceilPowerOfTwo( size );
   						size = Math.max( size, 4 );
 
   						var boneMatrices = new Float32Array( size * size * 4 ); // 4 floats per RGBA pixel
@@ -115212,7 +115210,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   					spec.initialValue, spec.interpolation ) );
   		}
 
-  		this._clip = new AnimationClip$1( 'editclip', 0, tracks );
+  		this._clip = new AnimationClip( 'editclip', 0, tracks );
   		this._action = this._mixer.clipAction( this._clip ).play();
 
   	},
@@ -115436,7 +115434,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		// for recording the state:
   		this._propRefs[ prop ] =
-  				new PropertyBinding$1( this._scene, prop );
+  				new PropertyBinding( this._scene, prop );
 
   		return track;
 
@@ -118889,7 +118887,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	Path.call( this, points );
 
-  	this.uuid = _Math$1.generateUUID();
+  	this.uuid = _Math.generateUUID();
 
   	this.type = 'Shape';
 
@@ -120415,7 +120413,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   	var arguments$1 = arguments;
 
 
-  	this.uuid = _Math$1.generateUUID();
+  	this.uuid = _Math.generateUUID();
 
   	// cached objects followed by the active ones
   	this._objects = Array.prototype.slice.call( arguments );
@@ -120499,7 +120497,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   				for ( var j = 0, m = nBindings; j !== m; ++ j ) {
 
-  					bindings[ j ].push( new PropertyBinding$1( object, paths[ j ], parsedPaths[ j ] ) );
+  					bindings[ j ].push( new PropertyBinding( object, paths[ j ], parsedPaths[ j ] ) );
 
   				}
 
@@ -120534,7 +120532,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   						// for objects that are cached, the binding may
   						// or may not exist
 
-  						binding = new PropertyBinding$1( object, paths[ j ], parsedPaths[ j ] );
+  						binding = new PropertyBinding( object, paths[ j ], parsedPaths[ j ] );
 
   					}
 
@@ -120722,7 +120720,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   		for ( var i = nCachedObjects, n = objects.length; i !== n; ++ i ) {
 
   			var object = objects[ i ];
-  			bindingsForPath[ i ] = new PropertyBinding$1( object, path, parsedPath );
+  			bindingsForPath[ i ] = new PropertyBinding( object, path, parsedPath );
 
   		}
 
@@ -121621,7 +121619,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	// helper variables
 
-  	var thresholdDot = Math.cos( _Math$1.DEG2RAD * thresholdAngle );
+  	var thresholdDot = Math.cos( _Math.DEG2RAD * thresholdAngle );
   	var edge = [ 0, 0 ], edges = {}, edge1, edge2;
   	var key, keys = [ 'a', 'b', 'c' ];
 
@@ -122531,7 +122529,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   	// clamp phiLength so it's in range of [ 0, 2PI ]
 
-  	phiLength = _Math$1.clamp( phiLength, 0, Math.PI * 2 );
+  	phiLength = _Math.clamp( phiLength, 0, Math.PI * 2 );
 
 
   	// buffers
@@ -124909,7 +124907,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		for ( var i = 0; i < json.length; i ++ ) {
 
-  			var clip = AnimationClip$1.parse( json[ i ] );
+  			var clip = AnimationClip.parse( json[ i ] );
 
   			animations.push( clip );
 
@@ -125899,7 +125897,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
 
   		for ( var i = 0; i < json.length; i ++ ) {
 
-  			var clip = AnimationClip$1.parse( json[ i ] );
+  			var clip = AnimationClip.parse( json[ i ] );
 
   			animations.push( clip );
 
@@ -126704,7 +126702,7 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   exports.TessellateModifier = TessellateModifier;
   exports.MorphAnimMesh = MorphAnimMesh;
   exports.MorphBlendMesh = MorphBlendMesh;
-  exports.CameraNode = CameraNode$1;
+  exports.CameraNode = CameraNode;
   exports.ColorsNode = ColorsNode;
   exports.LightNode = LightNode;
   exports.NormalNode = NormalNode;
@@ -126888,12 +126886,12 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   exports.ViveController = ViveController;
   exports.WebVR = WebVR;
   exports.AnimationAction = AnimationAction;
-  exports.AnimationClip = AnimationClip$1;
+  exports.AnimationClip = AnimationClip;
   exports.AnimationMixer = AnimationMixer;
   exports.AnimationObjectGroup = AnimationObjectGroup;
   exports.AnimationUtils = AnimationUtils;
   exports.KeyframeTrack = KeyframeTrack;
-  exports.PropertyBinding = PropertyBinding$1;
+  exports.PropertyBinding = PropertyBinding;
   exports.PropertyMixer = PropertyMixer;
   exports.BooleanKeyframeTrack = BooleanKeyframeTrack;
   exports.ColorKeyframeTrack = ColorKeyframeTrack;
@@ -127208,13 +127206,13 @@ var window = window || (function(){ console.warn("It seems you are using this pa
   exports.Cylindrical = Cylindrical;
   exports.Euler = Euler;
   exports.Frustum = Frustum;
-  exports.Interpolant = Interpolant$1;
+  exports.Interpolant = Interpolant;
   exports.CubicInterpolant = CubicInterpolant;
   exports.DiscreteInterpolant = DiscreteInterpolant;
   exports.LinearInterpolant = LinearInterpolant;
   exports.QuaternionLinearInterpolant = QuaternionLinearInterpolant;
   exports.Line3 = Line3;
-  exports._Math = _Math$1;
+  exports._Math = _Math;
   exports.Matrix3 = Matrix3;
   exports.Matrix4 = Matrix4;
   exports.Plane = Plane;
