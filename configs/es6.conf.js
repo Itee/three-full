@@ -398,7 +398,8 @@ module.exports = {
         },
         LineMaterial: {
             imports: [
-                'UniformsLib'
+                'UniformsLib',
+                'ShaderLib'
             ]
         },
         LoaderSupport: {
