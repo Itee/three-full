@@ -40,7 +40,29 @@ var EditorControls = function ( object, domElement ) {
 	this.focus = function ( target ) {
 
 		var box = new Box3().setFromObject( target );
-		object.lookAt( center.copy( box.getCenter() ) );
+
+		var distance;
+
+		if ( box.isEmpty() === false ) {
+
+			center.copy( box.getCenter() );
+			distance = box.getBoundingSphere().radius;
+
+		} else {
+
+			// Focusing on an Group, AmbientLight, etc
+
+			center.setFromMatrixPosition( target.matrixWorld );
+			distance = 0.1;
+
+		}
+
+		var delta = new Vector3( 0, 0, 1 );
+		delta.applyQuaternion( object.quaternion );
+		delta.multiplyScalar( distance * 4 );
+
+		object.position.copy( center ).add( delta );
+
 		scope.dispatchEvent( changeEvent );
 
 	};

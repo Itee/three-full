@@ -1,6 +1,6 @@
 import { Mesh } from './Mesh.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
+import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
 import { Vector3 } from '../math/Vector3.js'
 import { BackSide } from '../constants.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
@@ -18,7 +18,7 @@ var Sky = function () {
 		side: BackSide
 	} );
 
-	Mesh.call( this, new SphereBufferGeometry( 1, 32, 15 ), material );
+	Mesh.call( this, new BoxBufferGeometry( 1, 1, 1 ), material );
 
 };
 
@@ -89,6 +89,7 @@ Sky.SkyShader = {
 		'	vWorldPosition = worldPosition.xyz;',
 
 		'	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+		'	gl_Position.z = gl_Position.w;', // set z to camera.far
 
 		'	vSunDirection = normalize( sunPosition );',
 

@@ -452,6 +452,11 @@ import { _Math } from '../math/Math.js'
 
 			parameters.color = new Color().fromArray( properties.Diffuse.value );
 
+		} else if ( properties.DiffuseColor && properties.DiffuseColor.type === 'Color' ) {
+
+			// The blender exporter exports diffuse here instead of in properties.Diffuse
+			parameters.color = new Color().fromArray( properties.DiffuseColor.value );
+
 		}
 		if ( properties.DisplacementFactor ) {
 
@@ -467,6 +472,11 @@ import { _Math } from '../math/Math.js'
 
 			parameters.specular = new Color().fromArray( properties.Specular.value );
 
+		} else if ( properties.SpecularColor && properties.SpecularColor.type === 'Color' ) {
+
+			// The blender exporter exports specular color here instead of in properties.Specular
+			parameters.emissive = new Color().fromArray( properties.SpecularColor.value );
+
 		}
 		if ( properties.Shininess ) {
 
@@ -476,6 +486,11 @@ import { _Math } from '../math/Math.js'
 		if ( properties.Emissive ) {
 
 			parameters.emissive = new Color().fromArray( properties.Emissive.value );
+
+		} else if ( properties.EmissiveColor && properties.EmissiveColor.type === 'Color' ) {
+
+			// The blender exporter exports emissive color here instead of in properties.Emissive
+			parameters.emissive = new Color().fromArray( properties.EmissiveColor.value );
 
 		}
 		if ( properties.EmissiveFactor ) {
@@ -720,6 +735,7 @@ import { _Math } from '../math/Math.js'
 		// For now just assume one model and get the preRotations from that
 		var modelNode = modelNodes[ 0 ];
 
+
 		if ( 'GeometricRotation' in modelNode ) {
 
 			var array = modelNode.GeometricRotation.value.map( _Math.degToRad );
@@ -732,6 +748,12 @@ import { _Math } from '../math/Math.js'
 		if ( 'GeometricTranslation' in modelNode ) {
 
 			preTransform.setPosition( new Vector3().fromArray( modelNode.GeometricTranslation.value ) );
+
+		}
+
+		if ( 'GeometricScaling' in modelNode ) {
+
+			preTransform.scale( new Vector3().fromArray( modelNode.GeometricScaling.value ) );
 
 		}
 
@@ -1758,7 +1780,7 @@ import { _Math } from '../math/Math.js'
 
 				} else {
 
-					distance = lightAttribute.FarAttenuationEnd.value / 1000;
+					distance = lightAttribute.FarAttenuationEnd.value;
 
 				}
 
@@ -2006,7 +2028,7 @@ import { _Math } from '../math/Math.js'
 
 			var rotation = modelNode.Lcl_Rotation.value.map( _Math.degToRad );
 			rotation.push( 'ZYX' );
-			model.rotation.fromArray( rotation );
+			model.quaternion.setFromEuler( new Euler().fromArray( rotation ) );
 
 		}
 
@@ -2024,9 +2046,7 @@ import { _Math } from '../math/Math.js'
 			var preRotations = new Euler().fromArray( array );
 
 			preRotations = new Quaternion().setFromEuler( preRotations );
-			var currentRotation = new Quaternion().setFromEuler( model.rotation );
-			preRotations.multiply( currentRotation );
-			model.rotation.setFromQuaternion( preRotations, 'ZYX' );
+			model.quaternion.premultiply( preRotations );
 
 		}
 

@@ -1,12 +1,9 @@
-import { _Math } from '../math/Math.js'
 
 
 
 
 
 function InterleavedBufferAttribute( interleavedBuffer, itemSize, offset, normalized ) {
-
-	this.uuid = _Math.generateUUID();
 
 	this.data = interleavedBuffer;
 	this.itemSize = itemSize;

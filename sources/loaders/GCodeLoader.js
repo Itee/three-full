@@ -4,6 +4,7 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { LineSegments } from '../objects/LineSegments.js'
 import { Group } from '../objects/Group.js'
+import { Euler } from '../math/Euler.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
 'use strict';
@@ -209,7 +210,7 @@ GCodeLoader.prototype.parse = function ( data ) {
 
 	}
 
-	object.rotation.set( - Math.PI / 2, 0, 0 );
+	object.quaternion.setFromEuler( new Euler( - Math.PI / 2, 0, 0 ) );
 
 	return object;
 

@@ -156,11 +156,6 @@ var CanvasRenderer = function ( parameters ) {
 
 	};
 
-	// WebGLRenderer compatibility
-
-	this.supportsVertexTextures = function () {};
-	this.setFaceCulling = function () {};
-
 	// API
 
 	this.getContext = function () {

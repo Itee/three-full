@@ -78,7 +78,7 @@ var SMAAPass = function ( width, height ) {
 	this.uniformsEdges[ "resolution" ].value.set( 1 / width, 1 / height );
 
 	this.materialEdges = new ShaderMaterial( {
-		defines: SMAAShader[0].defines,
+		defines: Object.assign( {}, SMAAShader[ 0 ].defines ),
 		uniforms: this.uniformsEdges,
 		vertexShader: SMAAShader[0].vertexShader,
 		fragmentShader: SMAAShader[0].fragmentShader
@@ -94,7 +94,7 @@ var SMAAPass = function ( width, height ) {
 	this.uniformsWeights[ "tSearch" ].value = this.searchTexture;
 
 	this.materialWeights = new ShaderMaterial( {
-		defines: SMAAShader[1].defines,
+		defines: Object.assign( {}, SMAAShader[ 1 ].defines ),
 		uniforms: this.uniformsWeights,
 		vertexShader: SMAAShader[1].vertexShader,
 		fragmentShader: SMAAShader[1].fragmentShader

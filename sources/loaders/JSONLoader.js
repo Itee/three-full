@@ -67,13 +67,6 @@ Object.assign( JSONLoader.prototype, {
 
 					}
 
-					if ( type.toLowerCase() === 'scene' ) {
-
-						console.error( 'JSONLoader: ' + url + ' should be loaded with SceneLoader instead.' );
-						return;
-
-					}
-
 				}
 
 			}

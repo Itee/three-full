@@ -51,8 +51,6 @@ var Lensflare = function () {
 
 	var geometry = Lensflare.Geometry;
 
-	var shader = Lensflare.Shader;
-
 	var material1a = new RawShaderMaterial( {
 		uniforms: {
 			'scale': { value: null },
@@ -270,6 +268,12 @@ var Lensflare = function () {
 
 		tempMap.dispose();
 		occlusionMap.dispose();
+
+		for ( var i = 0, l = elements.length; i < l; i ++ ) {
+
+			elements[ i ].texture.dispose();
+
+		}
 
 	};
 

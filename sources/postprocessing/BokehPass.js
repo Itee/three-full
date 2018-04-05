@@ -73,7 +73,7 @@ var BokehPass = function ( scene, camera, params ) {
 	bokehUniforms[ "farClip" ].value = camera.far;
 
 	this.materialBokeh = new ShaderMaterial( {
-		defines: bokehShader.defines,
+		defines: Object.assign( {}, bokehShader.defines ),
 		uniforms: bokehUniforms,
 		vertexShader: bokehShader.vertexShader,
 		fragmentShader: bokehShader.fragmentShader

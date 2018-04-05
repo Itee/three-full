@@ -1,5 +1,8 @@
+import { Group } from '../objects/Group.js'
 import { LoaderSupport } from './LoaderSupport.js'
+import { FileLoader } from './FileLoader.js'
 import { MTLLoader } from './MTLLoader.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
 
 
@@ -12,33 +15,190 @@ if ( LoaderSupport === undefined ) console.error( '"LoaderSupport" is not availa
 
 var OBJLoader2 = (function () {
 
-	var OBJLOADER2_VERSION = '2.3.1';
+	var OBJLOADER2_VERSION = '2.4.0';
 	var Validator = LoaderSupport.Validator;
 
-	OBJLoader2.prototype = Object.create( LoaderSupport.LoaderBase.prototype );
-	OBJLoader2.prototype.constructor = OBJLoader2;
+	function OBJLoader2( manager ) {
+		console.info( 'Using OBJLoader2 version: ' + OBJLOADER2_VERSION );
 
-	function OBJLoader2( manager, logger ) {
-		LoaderSupport.LoaderBase.call( this, manager, logger );
-		this.logger.logInfo( 'Using OBJLoader2 version: ' + OBJLOADER2_VERSION );
+		this.manager = Validator.verifyInput( manager, DefaultLoadingManager );
+		this.logging = {
+			enabled: true,
+			debug: false
+		};
 
+		this.modelName = '';
+		this.instanceNo = 0;
+		this.path = '';
+		this.useIndices = false;
+		this.disregardNormals = false;
 		this.materialPerSmoothingGroup = false;
+		this.loaderRootNode = new Group();
 
-		this.workerSupport = null;
+		this.meshBuilder = new LoaderSupport.MeshBuilder();
+		this.callbacks = new LoaderSupport.Callbacks();
+		this.workerSupport = new LoaderSupport.WorkerSupport();
 		this.terminateWorkerOnLoad = true;
 	}
+
+	
+	OBJLoader2.prototype.setLogging = function ( enabled, debug ) {
+		this.logging.enabled = enabled === true;
+		this.logging.debug = debug === true;
+		this.meshBuilder.setLogging( this.logging.enabled, this.logging.debug );
+	};
+
+	
+	OBJLoader2.prototype.setModelName = function ( modelName ) {
+		this.modelName = Validator.verifyInput( modelName, this.modelName );
+	};
+
+	
+	OBJLoader2.prototype.setPath = function ( path ) {
+		this.path = Validator.verifyInput( path, this.path );
+	};
+
+	
+	OBJLoader2.prototype.setStreamMeshesTo = function ( streamMeshesTo ) {
+		this.loaderRootNode = Validator.verifyInput( streamMeshesTo, this.loaderRootNode );
+	};
+
+	
+	OBJLoader2.prototype.setMaterials = function ( materials ) {
+		this.meshBuilder.setMaterials( materials );
+	};
+
+	
+	OBJLoader2.prototype.setUseIndices = function ( useIndices ) {
+		this.useIndices = useIndices === true;
+	};
+
+	
+	OBJLoader2.prototype.setDisregardNormals = function ( disregardNormals ) {
+		this.disregardNormals = disregardNormals === true;
+	};
 
 	
 	OBJLoader2.prototype.setMaterialPerSmoothingGroup = function ( materialPerSmoothingGroup ) {
 		this.materialPerSmoothingGroup = materialPerSmoothingGroup === true;
 	};
 
+	OBJLoader2.prototype._setCallbacks = function ( callbacks ) {
+		if ( Validator.isValid( callbacks.onProgress ) ) this.callbacks.setCallbackOnProgress( callbacks.onProgress );
+		if ( Validator.isValid( callbacks.onMeshAlter ) ) this.callbacks.setCallbackOnMeshAlter( callbacks.onMeshAlter );
+		if ( Validator.isValid( callbacks.onLoad ) ) this.callbacks.setCallbackOnLoad( callbacks.onLoad );
+		if ( Validator.isValid( callbacks.onLoadMaterials ) ) this.callbacks.setCallbackOnLoadMaterials( callbacks.onLoadMaterials );
+
+		this.meshBuilder._setCallbacks( this.callbacks );
+	};
+
+	
+	OBJLoader2.prototype.onProgress = function ( type, text, numericalValue ) {
+		var content = Validator.isValid( text ) ? text: '';
+		var event = {
+			detail: {
+				type: type,
+				modelName: this.modelName,
+				instanceNo: this.instanceNo,
+				text: content,
+				numericalValue: numericalValue
+			}
+		};
+
+		if ( Validator.isValid( this.callbacks.onProgress ) ) this.callbacks.onProgress( event );
+
+		if ( this.logging.enabled && this.logging.debug ) console.debug( content );
+	};
+
+	OBJLoader2.prototype._onError = function ( event ) {
+		var output = 'Error occurred while downloading!';
+
+		if ( event.currentTarget && event.currentTarget.statusText !== null ) {
+
+			output += '\nurl: ' + event.currentTarget.responseURL + '\nstatus: ' + event.currentTarget.statusText;
+
+		}
+		this.onProgress( 'error', output, -1 );
+		throw output;
+	};
+
+	
+	OBJLoader2.prototype.load = function ( url, onLoad, onProgress, onError, onMeshAlter, useAsync ) {
+		var resource = new LoaderSupport.ResourceDescriptor( url, 'OBJ' );
+		this._loadObj( resource, onLoad, onProgress, onError, onMeshAlter, useAsync );
+	};
+
+	OBJLoader2.prototype._loadObj = function ( resource, onLoad, onProgress, onError, onMeshAlter, useAsync ) {
+		if ( ! Validator.isValid( onError ) ) onError = this._onError;
+
+		// fast-fail
+		if ( ! Validator.isValid( resource ) ) onError( 'An invalid ResourceDescriptor was provided. Unable to continue!' );
+		var scope = this;
+		var fileLoaderOnLoad = function ( content ) {
+
+			resource.content = content;
+			if ( useAsync ) {
+
+				scope.parseAsync( content, onLoad );
+
+			} else {
+
+				var callbacks = new LoaderSupport.Callbacks();
+				callbacks.setCallbackOnMeshAlter( onMeshAlter );
+				scope._setCallbacks( callbacks );
+				onLoad(
+					{
+						detail: {
+							loaderRootNode: scope.parse( content ),
+							modelName: scope.modelName,
+							instanceNo: scope.instanceNo
+						}
+					}
+				);
+
+			}
+		};
+
+		// fast-fail
+		if ( ! Validator.isValid( resource.url ) || Validator.isValid( resource.content ) ) {
+
+			fileLoaderOnLoad( Validator.isValid( resource.content ) ? resource.content : null );
+
+		} else {
+
+			if ( ! Validator.isValid( onProgress ) ) {
+				var numericalValueRef = 0;
+				var numericalValue = 0;
+				onProgress = function ( event ) {
+					if ( ! event.lengthComputable ) return;
+
+					numericalValue = event.loaded / event.total;
+					if ( numericalValue > numericalValueRef ) {
+
+						numericalValueRef = numericalValue;
+						var output = 'Download of "' + resource.url + '": ' + ( numericalValue * 100 ).toFixed( 2 ) + '%';
+						scope.onProgress( 'progressLoad', output, numericalValue );
+
+					}
+				};
+			}
+
+
+			var fileLoader = new FileLoader( this.manager );
+			fileLoader.setPath( this.path );
+			fileLoader.setResponseType( 'arraybuffer' );
+			fileLoader.load( resource.url, fileLoaderOnLoad, onProgress, onError );
+
+		}
+	};
+
+
 	
 	OBJLoader2.prototype.run = function ( prepData, workerSupportExternal ) {
 		this._applyPrepData( prepData );
-		var available = this.checkResourceDescriptorFiles( prepData.resources,
+		var available = prepData.checkResourceDescriptorFiles( prepData.resources,
 			[
-				{ ext: "obj", type: "Uint8Array", ignore: false },
+				{ ext: "obj", type: "ArrayBuffer", ignore: false },
 				{ ext: "mtl", type: "String", ignore: false },
 				{ ext: "zip", type: "String", ignore: true }
 			]
@@ -47,67 +207,65 @@ var OBJLoader2 = (function () {
 
 			this.terminateWorkerOnLoad = false;
 			this.workerSupport = workerSupportExternal;
-			this.logger = workerSupportExternal.logger;
+			this.logging.enabled = this.workerSupport.logging.enabled;
+			this.logging.debug = this.workerSupport.logging.debug;
 
 		}
 		var scope = this;
 		var onMaterialsLoaded = function ( materials ) {
-			scope.builder.setMaterials( materials );
+			if ( materials !== null ) scope.meshBuilder.setMaterials( materials );
+			scope._loadObj( available.obj, scope.callbacks.onLoad, null, null, scope.callbacks.onMeshAlter, prepData.useAsync );
 
-			if ( Validator.isValid( available.obj.content ) ) {
-
-				if ( prepData.useAsync ) {
-
-					scope.parseAsync( available.obj.content, scope.callbacks.onLoad );
-
-				} else {
-
-					scope.parse( available.obj.content );
-
-				}
-			} else {
-
-				scope.setPath( available.obj.path );
-				scope.load( available.obj.name, scope.callbacks.onLoad, null, null, scope.callbacks.onMeshAlter, prepData.useAsync );
-
-			}
 		};
-
-		this._loadMtl( available.mtl, onMaterialsLoaded, prepData.crossOrigin );
+		this._loadMtl( available.mtl, onMaterialsLoaded, prepData.crossOrigin, prepData.materialOptions );
 	};
 
 	OBJLoader2.prototype._applyPrepData = function ( prepData ) {
-		LoaderSupport.LoaderBase.prototype._applyPrepData.call( this, prepData );
-
 		if ( Validator.isValid( prepData ) ) {
 
+			this.setLogging( prepData.logging.enabled, prepData.logging.debug );
+			this.setModelName( prepData.modelName );
+			this.setStreamMeshesTo( prepData.streamMeshesTo );
+			this.meshBuilder.setMaterials( prepData.materials );
+			this.setUseIndices( prepData.useIndices );
+			this.setDisregardNormals( prepData.disregardNormals );
 			this.setMaterialPerSmoothingGroup( prepData.materialPerSmoothingGroup );
+
+			this._setCallbacks( prepData.getCallbacks() );
 
 		}
 	};
 
 	
 	OBJLoader2.prototype.parse = function ( content ) {
-		this.logger.logTimeStart( 'OBJLoader2 parse: ' + this.modelName );
+		// fast-fail in case of illegal data
+		if ( ! Validator.isValid( content ) ) {
+
+			console.warn( 'Provided content is not a valid ArrayBuffer or String.' );
+			return this.loaderRootNode;
+
+		}
+		if ( this.logging.enabled ) console.time( 'OBJLoader2 parse: ' + this.modelName );
+		this.meshBuilder.init();
 
 		var parser = new Parser();
-		parser.setLogConfig( this.logger.enabled, this.logger.debug );
+		parser.setLogging( this.logging.enabled, this.logging.debug );
 		parser.setMaterialPerSmoothingGroup( this.materialPerSmoothingGroup );
 		parser.setUseIndices( this.useIndices );
 		parser.setDisregardNormals( this.disregardNormals );
 		// sync code works directly on the material references
-		parser.setMaterials( this.builder.getMaterials() );
+		parser.setMaterials( this.meshBuilder.getMaterials() );
 
 		var scope = this;
 		var onMeshLoaded = function ( payload ) {
-			var meshes = scope.builder.processPayload( payload );
+			var meshes = scope.meshBuilder.processPayload( payload );
 			var mesh;
 			for ( var i in meshes ) {
 				mesh = meshes[ i ];
 				scope.loaderRootNode.add( mesh );
 			}
 		};
-		parser.setCallbackBuilder( onMeshLoaded );
+		parser.setCallbackMeshBuilder( onMeshLoaded );
 		var onProgressScoped = function ( text, numericalValue ) {
 			scope.onProgress( 'progressParse', text, numericalValue );
 		};
@@ -115,12 +273,12 @@ var OBJLoader2 = (function () {
 
 		if ( content instanceof ArrayBuffer || content instanceof Uint8Array ) {
 
-			this.logger.logInfo( 'Parsing arrayBuffer...' );
+			if ( this.logging.enabled ) console.info( 'Parsing arrayBuffer...' );
 			parser.parse( content );
 
 		} else if ( typeof( content ) === 'string' || content instanceof String ) {
 
-			this.logger.logInfo( 'Parsing text...' );
+			if ( this.logging.enabled ) console.info( 'Parsing text...' );
 			parser.parseText( content );
 
 		} else {
@@ -128,16 +286,15 @@ var OBJLoader2 = (function () {
 			throw 'Provided content was neither of type String nor Uint8Array! Aborting...';
 
 		}
-		this.logger.logTimeEnd( 'OBJLoader2 parse: ' + this.modelName );
+		if ( this.logging.enabled ) console.timeEnd( 'OBJLoader2 parse: ' + this.modelName );
 
 		return this.loaderRootNode;
 	};
 
 	
 	OBJLoader2.prototype.parseAsync = function ( content, onLoad ) {
-		this.logger.logTimeStart( 'OBJLoader2 parseAsync: ' + this.modelName );
-
 		var scope = this;
+		var measureTime = false;
 		var scopedOnLoad = function () {
 			onLoad(
 				{
@@ -148,25 +305,35 @@ var OBJLoader2 = (function () {
 					}
 				}
 			);
-			scope.logger.logTimeEnd( 'OBJLoader2 parseAsync: ' + scope.modelName );
+			if ( measureTime && scope.logging.enabled ) console.timeEnd( 'OBJLoader2 parseAsync: ' + scope.modelName );
 		};
+		// fast-fail in case of illegal data
+		if ( ! Validator.isValid( content ) ) {
+
+			console.warn( 'Provided content is not a valid ArrayBuffer.' );
+			scopedOnLoad()
+
+		} else {
+
+			measureTime = true;
+
+		}
+		if ( measureTime && this.logging.enabled ) console.time( 'OBJLoader2 parseAsync: ' + this.modelName );
+		this.meshBuilder.init();
+
 		var scopedOnMeshLoaded = function ( payload ) {
-			var meshes = scope.builder.processPayload( payload );
+			var meshes = scope.meshBuilder.processPayload( payload );
 			var mesh;
 			for ( var i in meshes ) {
 				mesh = meshes[ i ];
 				scope.loaderRootNode.add( mesh );
 			}
 		};
-
-		this.workerSupport = Validator.verifyInput( this.workerSupport, new LoaderSupport.WorkerSupport( this.logger ) );
 		var buildCode = function ( funcBuildObject, funcBuildSingleton ) {
 			var workerCode = '';
 			workerCode += '\n\n';
 			workerCode += 'var LoaderSupport = {};\n\n';
 			workerCode += funcBuildObject( 'LoaderSupport.Validator', Validator );
-			workerCode += funcBuildSingleton( 'LoaderSupport.ConsoleLogger', LoaderSupport.ConsoleLogger );
-			workerCode += funcBuildSingleton( 'LoaderSupport.LoaderBase', LoaderSupport.LoaderBase );
 			workerCode += funcBuildSingleton( 'Parser', Parser );
 
 			return workerCode;
@@ -176,7 +343,7 @@ var OBJLoader2 = (function () {
 		if ( scope.terminateWorkerOnLoad ) this.workerSupport.setTerminateRequested( true );
 
 		var materialNames = {};
-		var materials = this.builder.getMaterials();
+		var materials = this.meshBuilder.getMaterials();
 		for ( var materialName in materials ) {
 
 			materialNames[ materialName ] = materialName;
@@ -190,9 +357,9 @@ var OBJLoader2 = (function () {
 					useIndices: this.useIndices,
 					disregardNormals: this.disregardNormals
 				},
-				logger: {
-					debug: this.logger.debug,
-					enabled: this.logger.enabled
+				logging: {
+					enabled: this.logging.enabled,
+					debug: this.logging.debug
 				},
 				materials: {
 					// in async case only material names are supplied to parser
@@ -212,7 +379,9 @@ var OBJLoader2 = (function () {
 
 		function Parser() {
 			this.callbackProgress = null;
-			this.callbackBuilder = null;
+			this.callbackMeshBuilder = null;
+			this.contentRef = null;
+			this.legacyMode = false;
 
 			this.materials = {};
 			this.useAsync = false;
@@ -254,10 +423,15 @@ var OBJLoader2 = (function () {
 				vertices: 0,
 				faces: 0,
 				doubleIndicesCount: 0,
+				lineByte: 0,
 				currentByte: 0,
 				totalBytes: 0
 			};
-			this.logger = new LoaderSupport.ConsoleLogger();
+
+			this.logging = {
+				enabled: true,
+				debug: false
+			};
 		}
 
 		Parser.prototype.resetRawMesh = function () {
@@ -297,24 +471,24 @@ var OBJLoader2 = (function () {
 			this.materials = LoaderSupport.Validator.verifyInput( this.materials, {} );
 		};
 
-		Parser.prototype.setCallbackBuilder = function ( callbackBuilder ) {
-			if ( ! LoaderSupport.Validator.isValid( callbackBuilder ) ) throw 'Unable to run as no "builder" callback is set.';
-			this.callbackBuilder = callbackBuilder;
+		Parser.prototype.setCallbackMeshBuilder = function ( callbackMeshBuilder ) {
+			if ( ! LoaderSupport.Validator.isValid( callbackMeshBuilder ) ) throw 'Unable to run as no "MeshBuilder" callback is set.';
+			this.callbackMeshBuilder = callbackMeshBuilder;
 		};
 
 		Parser.prototype.setCallbackProgress = function ( callbackProgress ) {
 			this.callbackProgress = callbackProgress;
 		};
 
-		Parser.prototype.setLogConfig = function ( enabled, debug ) {
-			this.logger.setEnabled( enabled );
-			this.logger.setDebug( debug );
+		Parser.prototype.setLogging = function ( enabled, debug ) {
+			this.logging.enabled = enabled === true;
+			this.logging.debug = debug === true;
 		};
 
 		Parser.prototype.configure = function () {
 			this.pushSmoothingGroup( 1 );
 
-			if ( this.logger.isEnabled() ) {
+			if ( this.logging.enabled ) {
 
 				var matKeys = Object.keys( this.materials );
 				var matNames = ( matKeys.length > 0 ) ? '\n\tmaterialNames:\n\t\t- ' + matKeys.join( '\n\t\t- ' ) : '\n\tmaterialNames: None';
@@ -324,41 +498,36 @@ var OBJLoader2 = (function () {
 					+ '\n\tmaterialPerSmoothingGroup: ' + this.materialPerSmoothingGroup
 					+ '\n\tuseIndices: ' + this.useIndices
 					+ '\n\tdisregardNormals: ' + this.disregardNormals
-					+ '\n\tcallbackBuilderName: ' + this.callbackBuilder.name
+					+ '\n\tcallbackMeshBuilderName: ' + this.callbackMeshBuilder.name
 					+ '\n\tcallbackProgressName: ' + this.callbackProgress.name;
-				this.logger.logInfo( printedConfig );
+				console.info( printedConfig );
 			}
 		};
 
 		
 		Parser.prototype.parse = function ( arrayBuffer ) {
-			this.logger.logTimeStart( 'OBJLoader2.Parser.parse' );
+			if ( this.logging.enabled ) console.time( 'OBJLoader2.Parser.parse' );
 			this.configure();
 
 			var arrayBufferView = new Uint8Array( arrayBuffer );
+			this.contentRef = arrayBufferView;
 			var length = arrayBufferView.byteLength;
 			this.globalCounts.totalBytes = length;
 			var buffer = new Array( 128 );
-			var bufferPointer = 0;
-			var slashSpacePattern = new Array( 16 );
-			var slashSpacePatternPointer = 0;
-			var code;
-			var word = '';
-			var i = 0;
-			for ( ; i < length; i++ ) {
+
+			for ( var code, word = '', bufferPointer = 0, slashesCount = 0, i = 0; i < length; i++ ) {
 
 				code = arrayBufferView[ i ];
 				switch ( code ) {
 					// space
 					case 32:
 						if ( word.length > 0 ) buffer[ bufferPointer++ ] = word;
-						slashSpacePattern[ slashSpacePatternPointer++ ] = 0;
 						word = '';
 						break;
 					// slash
 					case 47:
 						if ( word.length > 0 ) buffer[ bufferPointer++ ] = word;
-						slashSpacePattern[ slashSpacePatternPointer++ ] = 1;
+						slashesCount++;
 						word = '';
 						break;
 
@@ -366,10 +535,11 @@ var OBJLoader2 = (function () {
 					case 10:
 						if ( word.length > 0 ) buffer[ bufferPointer++ ] = word;
 						word = '';
+						this.globalCounts.lineByte = this.globalCounts.currentByte;
 						this.globalCounts.currentByte = i;
-						this.processLine( buffer, bufferPointer, slashSpacePattern, slashSpacePatternPointer );
+						this.processLine( buffer, bufferPointer, slashesCount );
 						bufferPointer = 0;
-						slashSpacePatternPointer = 0;
+						slashesCount = 0;
 						break;
 
 					// CR
@@ -382,46 +552,42 @@ var OBJLoader2 = (function () {
 				}
 			}
 			this.finalizeParsing();
-			this.logger.logTimeEnd( 'OBJLoader2.Parser.parse' );
+			if ( this.logging.enabled ) console.timeEnd(  'OBJLoader2.Parser.parse' );
 		};
 
 		
 		Parser.prototype.parseText = function ( text ) {
-			this.logger.logTimeStart( 'OBJLoader2.Parser.parseText' );
+			if ( this.logging.enabled ) console.time(  'OBJLoader2.Parser.parseText' );
 			this.configure();
-
+			this.legacyMode = true;
+			this.contentRef = text;
 			var length = text.length;
 			this.globalCounts.totalBytes = length;
 			var buffer = new Array( 128 );
-			var bufferPointer = 0;
-			var slashSpacePattern = new Array( 16 );
-			var slashSpacePatternPointer = 0;
-			var char;
-			var word = '';
-			var i = 0;
-			for ( ; i < length; i++ ) {
+
+			for ( var char, word = '', bufferPointer = 0, slashesCount = 0, i = 0; i < length; i++ ) {
 
 				char = text[ i ];
 				switch ( char ) {
 					case ' ':
 						if ( word.length > 0 ) buffer[ bufferPointer++ ] = word;
-						slashSpacePattern[ slashSpacePatternPointer++ ] = 0;
 						word = '';
 						break;
 
 					case '/':
 						if ( word.length > 0 ) buffer[ bufferPointer++ ] = word;
-						slashSpacePattern[ slashSpacePatternPointer++ ] = 1;
+						slashesCount++;
 						word = '';
 						break;
 
 					case '\n':
 						if ( word.length > 0 ) buffer[ bufferPointer++ ] = word;
 						word = '';
+						this.globalCounts.lineByte = this.globalCounts.currentByte;
 						this.globalCounts.currentByte = i;
-						this.processLine( buffer, bufferPointer, slashSpacePattern, slashSpacePatternPointer );
+						this.processLine( buffer, bufferPointer, slashesCount );
 						bufferPointer = 0;
-						slashSpacePatternPointer = 0;
+						slashesCount = 0;
 						break;
 
 					case '\r':
@@ -432,47 +598,36 @@ var OBJLoader2 = (function () {
 				}
 			}
 			this.finalizeParsing();
-			this.logger.logTimeEnd( 'OBJLoader2.Parser.parseText' );
+			if ( this.logging.enabled ) console.timeEnd( 'OBJLoader2.Parser.parseText' );
 		};
 
-		Parser.prototype.processLine = function ( buffer, bufferPointer, slashSpacePattern, slashSpacePatternPointer ) {
+		Parser.prototype.processLine = function ( buffer, bufferPointer, slashesCount ) {
 			if ( bufferPointer < 1 ) return;
 
-			var countSlashes = function ( slashSpacePattern, slashSpacePatternPointer ) {
-				var slashesCount = 0;
-				for ( var i = 0; i < slashSpacePatternPointer; i++ ) {
-					slashesCount += slashSpacePattern[ i ];
-				}
-				return slashesCount;
-			};
+			var reconstructString = function ( content, legacyMode, start, stop ) {
+				var line = '';
+				if ( stop > start ) {
 
-			var concatStringBuffer = function ( buffer, bufferPointer, slashSpacePattern ) {
-				var concatBuffer = '';
-				if ( bufferPointer === 2 ) {
+					var i;
+					if ( legacyMode ) {
 
-					concatBuffer = buffer[ 1 ];
+						for ( i = start; i < stop; i++ ) line += content[ i ];
 
-				} else {
+					} else {
 
-					var bufferLength = bufferPointer - 1;
-					for ( var i = 1; i < bufferLength; i++ ) {
 
-						concatBuffer += buffer[ i ] + ( slashSpacePattern[ i ] === 0 ? ' ' : '/' );
+						for ( i = start; i < stop; i++ ) line += String.fromCharCode( content[ i ] );
 
 					}
-					concatBuffer += buffer[ bufferLength ];
+					line = line.trim();
 
 				}
-				return concatBuffer;
+				return line;
 			};
 
-			var flushStringBuffer = function ( buffer, bufferPointer ) {
-				for ( var i = 0; i < bufferPointer; i++ ) {
-					buffer[ i ] = '';
-				}
-			};
-
-			switch ( buffer[ 0 ] ) {
+			var bufferLength, length, i, lineDesignation;
+			lineDesignation = buffer [ 0 ];
+			switch ( lineDesignation ) {
 				case 'v':
 					this.vertices.push( parseFloat( buffer[ 1 ] ) );
 					this.vertices.push( parseFloat( buffer[ 2 ] ) );
@@ -498,76 +653,103 @@ var OBJLoader2 = (function () {
 					break;
 
 				case 'f':
-					var slashesCount = countSlashes( slashSpacePattern, slashSpacePatternPointer );
-					var bufferLength = bufferPointer - 1;
+					bufferLength = bufferPointer - 1;
 
 					// "f vertex ..."
 					if ( slashesCount === 0 ) {
 
 						this.checkFaceType( 0 );
+						for ( i = 2, length = bufferLength; i < length; i ++ ) {
 
-						// "f vertex/uv ..."
+							this.buildFace( buffer[ 1 ] );
+							this.buildFace( buffer[ i ] );
+							this.buildFace( buffer[ i + 1 ] );
+
+						}
+
+					// "f vertex/uv ..."
 					} else if  ( bufferLength === slashesCount * 2 ) {
 
 						this.checkFaceType( 1 );
+						for ( i = 3, length = bufferLength - 2; i < length; i += 2 ) {
 
-						// "f vertex/uv/normal ..."
+							this.buildFace( buffer[ 1 ], buffer[ 2 ] );
+							this.buildFace( buffer[ i ], buffer[ i + 1 ] );
+							this.buildFace( buffer[ i + 2 ], buffer[ i + 3 ] );
+
+						}
+
+					// "f vertex/uv/normal ..."
 					} else if  ( bufferLength * 2 === slashesCount * 3 ) {
 
 						this.checkFaceType( 2 );
+						for ( i = 4, length = bufferLength - 3; i < length; i += 3 ) {
 
-						// "f vertex//normal ..."
+							this.buildFace( buffer[ 1 ], buffer[ 2 ], buffer[ 3 ] );
+							this.buildFace( buffer[ i ], buffer[ i + 1 ], buffer[ i + 2 ] );
+							this.buildFace( buffer[ i + 3 ], buffer[ i + 4 ], buffer[ i + 5 ] );
+
+						}
+
+					// "f vertex//normal ..."
 					} else {
 
 						this.checkFaceType( 3 );
+						for ( i = 3, length = bufferLength - 2; i < length; i += 2 ) {
+
+							this.buildFace( buffer[ 1 ], undefined, buffer[ 2 ] );
+							this.buildFace( buffer[ i ], undefined, buffer[ i + 1 ] );
+							this.buildFace( buffer[ i + 2 ], undefined, buffer[ i + 3 ] );
+
+						}
 
 					}
-					this.processFaces( buffer, bufferLength );
 					break;
 
 				case 'l':
-					this.checkFaceType( 4 );
-					this.processLinesOrPoints( buffer, bufferPointer, countSlashes( slashSpacePattern, slashSpacePatternPointer ) );
-					break;
-
 				case 'p':
-					this.checkFaceType( 5 );
-					this.processLinesOrPoints( buffer, bufferPointer, 0 );
+					bufferLength = bufferPointer - 1;
+					if ( bufferLength === slashesCount * 2 )  {
+
+						this.checkFaceType( 4 );
+						for ( i = 1, length = bufferLength + 1; i < length; i += 2 ) this.buildFace( buffer[ i ], buffer[ i + 1 ] );
+
+					} else {
+
+						this.checkFaceType( ( lineDesignation === 'l' ) ? 5 : 6  );
+						for ( i = 1, length = bufferLength + 1; i < length; i ++ ) this.buildFace( buffer[ i ] );
+
+					}
 					break;
 
 				case 's':
 					this.pushSmoothingGroup( buffer[ 1 ] );
-					flushStringBuffer( buffer, bufferPointer );
 					break;
 
 				case 'g':
 					// 'g' leads to creation of mesh if valid data (faces declaration was done before), otherwise only groupName gets set
 					this.processCompletedMesh();
-					this.rawMesh.groupName = LoaderSupport.Validator.verifyInput( concatStringBuffer( buffer, bufferPointer, slashSpacePattern ), '' );
-					flushStringBuffer( buffer, bufferPointer );
+					this.rawMesh.groupName = reconstructString( this.contentRef, this.legacyMode, this.globalCounts.lineByte + 2, this.globalCounts.currentByte );
 					break;
 
 				case 'o':
 					// 'o' is pure meta-information and does not result in creation of new meshes
-					this.rawMesh.objectName = LoaderSupport.Validator.verifyInput( concatStringBuffer( buffer, bufferPointer, slashSpacePattern ), '' );
-					flushStringBuffer( buffer, bufferPointer );
+					this.rawMesh.objectName = reconstructString( this.contentRef, this.legacyMode, this.globalCounts.lineByte + 2, this.globalCounts.currentByte );
 					break;
 
 				case 'mtllib':
-					this.rawMesh.mtllibName = LoaderSupport.Validator.verifyInput( concatStringBuffer( buffer, bufferPointer, slashSpacePattern ), '' );
-					flushStringBuffer( buffer, bufferPointer );
+					this.rawMesh.mtllibName = reconstructString( this.contentRef, this.legacyMode, this.globalCounts.lineByte + 7, this.globalCounts.currentByte );
 					break;
 
 				case 'usemtl':
-					var mtlName = concatStringBuffer( buffer, bufferPointer, slashSpacePattern );
-					if ( this.rawMesh.activeMtlName !== mtlName && LoaderSupport.Validator.isValid( mtlName ) ) {
+					var mtlName = reconstructString( this.contentRef, this.legacyMode, this.globalCounts.lineByte + 7, this.globalCounts.currentByte );
+					if ( mtlName !== '' && this.rawMesh.activeMtlName !== mtlName ) {
 
 						this.rawMesh.activeMtlName = mtlName;
 						this.rawMesh.counts.mtlCount++;
 						this.checkSubGroup();
 
 					}
-					flushStringBuffer( buffer, bufferPointer );
 					break;
 
 				default:
@@ -629,56 +811,6 @@ var OBJLoader2 = (function () {
 			}
 		};
 
-		Parser.prototype.processFaces = function ( buffer, bufferLength ) {
-			var i, length;
-
-			// "f vertex ..."
-			if ( this.rawMesh.faceType === 0 ) {
-
-				for ( i = 2, length = bufferLength; i < length; i ++ ) {
-
-					this.buildFace( buffer[ 1 ] );
-					this.buildFace( buffer[ i ] );
-					this.buildFace( buffer[ i + 1 ] );
-
-				}
-
-				// "f vertex/uv ..."
-			} else if  ( this.rawMesh.faceType === 1 ) {
-
-				for ( i = 3, length = bufferLength - 2; i < length; i += 2 ) {
-
-					this.buildFace( buffer[ 1 ], buffer[ 2 ] );
-					this.buildFace( buffer[ i ], buffer[ i + 1 ] );
-					this.buildFace( buffer[ i + 2 ], buffer[ i + 3 ] );
-
-				}
-
-				// "f vertex/uv/normal ..."
-			} else if  ( this.rawMesh.faceType === 2 ) {
-
-				for ( i = 4, length = bufferLength - 3; i < length; i += 3 ) {
-
-					this.buildFace( buffer[ 1 ], buffer[ 2 ], buffer[ 3 ] );
-					this.buildFace( buffer[ i ], buffer[ i + 1 ], buffer[ i + 2 ] );
-					this.buildFace( buffer[ i + 3 ], buffer[ i + 4 ], buffer[ i + 5 ] );
-
-				}
-
-				// "f vertex//normal ..."
-			} else {
-
-				for ( i = 3, length = bufferLength - 2; i < length; i += 2 ) {
-
-					this.buildFace( buffer[ 1 ], undefined, buffer[ 2 ] );
-					this.buildFace( buffer[ i ], undefined, buffer[ i + 1 ] );
-					this.buildFace( buffer[ i + 2 ], undefined, buffer[ i + 3 ] );
-
-				}
-
-			}
-		};
-
 		Parser.prototype.buildFace = function ( faceIndexV, faceIndexU, faceIndexN ) {
 			if ( this.disregardNormals ) faceIndexN = undefined;
 			var scope = this;
@@ -701,7 +833,6 @@ var OBJLoader2 = (function () {
 					colors.push( scope.colors[ indexPointerC ] );
 
 				}
-
 				if ( faceIndexU ) {
 
 					var faceIndexUi = parseInt( faceIndexU );
@@ -747,23 +878,6 @@ var OBJLoader2 = (function () {
 
 			}
 			this.rawMesh.counts.faceCount++;
-		};
-
-		
-		Parser.prototype.processLinesOrPoints = function ( buffer, bufferPointer, slashCount ) {
-			var i = 1;
-			var length;
-			var bufferLength = bufferPointer - 1;
-
-			if ( bufferLength === slashCount * 2 ) {
-
-				for ( length = bufferPointer; i < length; i += 2 ) this.buildFace( buffer[ i ], buffer[ i + 1 ] );
-
-			} else {
-
-				for ( length = bufferPointer; i < length; i ++ ) this.buildFace( buffer[ i ] );
-
-			}
 		};
 
 		Parser.prototype.createRawMeshReport = function ( inputObjectCount ) {
@@ -841,7 +955,7 @@ var OBJLoader2 = (function () {
 					throw 'Vertex Colors were detected, but vertex count and color count do not match!';
 
 				}
-				if ( this.logger.isDebug() ) this.logger.logDebug( this.createRawMeshReport( this.inputObjectCount ) );
+				if ( this.logging.enabled && this.logging.debug ) console.debug( this.createRawMeshReport( this.inputObjectCount ) );
 				this.inputObjectCount++;
 
 				this.buildMesh( result );
@@ -903,7 +1017,7 @@ var OBJLoader2 = (function () {
 
 				} else {
 
-					materialName = this.rawMesh.faceType === 4 ? 'defaultLineMaterial' : 'defaultPointMaterial';
+					materialName = this.rawMesh.faceType === 6 ? 'defaultPointMaterial' : 'defaultLineMaterial';
 
 				}
 				materialOrg = this.materials[ materialNameOrg ];
@@ -914,7 +1028,7 @@ var OBJLoader2 = (function () {
 
 					var defaultMaterialName = haveVertexColors ? 'defaultVertexColorMaterial' : 'defaultMaterial';
 					materialOrg = this.materials[ defaultMaterialName ];
-					this.logger.logWarn( 'object_group "' + meshOutputGroup.objectName + '_' +
+					if ( this.logging.enabled ) console.warn( 'object_group "' + meshOutputGroup.objectName + '_' +
 						meshOutputGroup.groupName + '" was defined with unresolvable material "' +
 						materialNameOrg + '"! Assigning "' + defaultMaterialName + '".' );
 					materialNameOrg = defaultMaterialName;
@@ -944,7 +1058,7 @@ var OBJLoader2 = (function () {
 							materialCloneInstructions: materialCloneInstructions
 						}
 					};
-					this.callbackBuilder( payload );
+					this.callbackMeshBuilder( payload );
 
 					// fake entry for async; sync Parser always works on material references (Builder update directly visible here)
 					if ( this.useAsync ) this.materials[ materialName ] = materialCloneInstructions;
@@ -1008,7 +1122,7 @@ var OBJLoader2 = (function () {
 
 				}
 
-				if ( this.logger.isDebug() ) {
+				if ( this.logging.enabled && this.logging.debug ) {
 					var materialIndexLine = LoaderSupport.Validator.isValid( selectedMaterialIndex ) ? '\n\t\tmaterialIndex: ' + selectedMaterialIndex : '';
 					var createdReport = '\tOutput Object no.: ' + this.outputObjectCount +
 						'\n\t\tgroupName: ' + meshOutputGroup.groupName +
@@ -1023,13 +1137,13 @@ var OBJLoader2 = (function () {
 						'\n\t\t#colors: ' + meshOutputGroup.colors.length / 3 +
 						'\n\t\t#uvs: ' + meshOutputGroup.uvs.length / 2 +
 						'\n\t\t#normals: ' + meshOutputGroup.normals.length / 3;
-					this.logger.logDebug( createdReport );
+					console.debug( createdReport );
 				}
 
 			}
 
 			this.outputObjectCount++;
-			this.callbackBuilder(
+			this.callbackMeshBuilder(
 				{
 					cmd: 'meshData',
 					progress: {
@@ -1051,7 +1165,7 @@ var OBJLoader2 = (function () {
 						uvs: uvFA
 					},
 					// 0: mesh, 1: line, 2: point
-					geometryType: this.rawMesh.faceType < 4 ? 0 : ( this.rawMesh.faceType === 4 ) ? 1 : 2
+					geometryType: this.rawMesh.faceType < 4 ? 0 : ( this.rawMesh.faceType === 6 ) ? 2 : 1
 				},
 				[ vertexFA.buffer ],
 				LoaderSupport.Validator.isValid( indexUA ) ? [ indexUA.buffer ] : null,
@@ -1062,14 +1176,14 @@ var OBJLoader2 = (function () {
 		};
 
 		Parser.prototype.finalizeParsing = function () {
-			this.logger.logInfo( 'Global output object count: ' + this.outputObjectCount );
-			if ( this.processCompletedMesh() && this.logger.isEnabled() ) {
+			if ( this.logging.enabled ) console.info( 'Global output object count: ' + this.outputObjectCount );
+			if ( this.processCompletedMesh() && this.logging.enabled ) {
 
 				var parserFinalReport = 'Overall counts: ' +
 					'\n\tVertices: ' + this.globalCounts.vertices +
 					'\n\tFaces: ' + this.globalCounts.faces +
 					'\n\tMultiple definitions: ' + this.globalCounts.doubleIndicesCount;
-				this.logger.logInfo( parserFinalReport );
+				console.info( parserFinalReport );
 
 			}
 		};
@@ -1087,7 +1201,7 @@ var OBJLoader2 = (function () {
 
 	OBJLoader2.prototype._loadMtl = function ( resource, callbackOnLoad, crossOrigin, materialOptions ) {
 		if ( MTLLoader === undefined ) console.error( '"MTLLoader" is not available. "OBJLoader2" requires it for loading MTL files.' );
-		if ( Validator.isValid( resource ) ) this.logger.logTimeStart( 'Loading MTL: ' + resource.name );
+		if ( Validator.isValid( resource ) && this.logging.enabled ) console.time( 'Loading MTL: ' + resource.name );
 
 		var materials = [];
 		var scope = this;
@@ -1107,14 +1221,9 @@ var OBJLoader2 = (function () {
 				}
 			}
 
-			if ( Validator.isValid( resource ) ) scope.logger.logTimeEnd( 'Loading MTL: ' + resource.name );
+			if ( Validator.isValid( resource ) && scope.logging.enabled ) console.timeEnd( 'Loading MTL: ' + resource.name );
 			callbackOnLoad( materials, materialCreator );
 		};
-
-		var mtlLoader = new MTLLoader( this.manager );
-		crossOrigin = Validator.verifyInput( crossOrigin, 'anonymous' );
-		mtlLoader.setCrossOrigin( crossOrigin );
-		if ( Validator.isValid( materialOptions ) ) mtlLoader.setMaterialOptions( materialOptions );
 
 		// fast-fail
 		if ( ! Validator.isValid( resource ) || ( ! Validator.isValid( resource.content ) && ! Validator.isValid( resource.url ) ) ) {
@@ -1123,20 +1232,25 @@ var OBJLoader2 = (function () {
 
 		} else {
 
+			var mtlLoader = new MTLLoader( this.manager );
+			crossOrigin = Validator.verifyInput( crossOrigin, 'anonymous' );
+			mtlLoader.setCrossOrigin( crossOrigin );
 			mtlLoader.setPath( resource.path );
+			if ( Validator.isValid( materialOptions ) ) mtlLoader.setMaterialOptions( materialOptions );
+
 			if ( Validator.isValid( resource.content ) ) {
 
 				processMaterials( Validator.isValid( resource.content ) ? mtlLoader.parse( resource.content ) : null );
 
 			} else if ( Validator.isValid( resource.url ) ) {
 
-				var onError = function ( event ) {
-					var output = 'Error occurred while downloading "' + resource.url + '"';
-					scope.logger.logError( output, event instanceof ProgressEvent ? [ 'Status: ' + event.currentTarget.statusText ] : null );
-					throw output;
-				};
+				var fileLoader = new FileLoader( this.manager );
+				fileLoader.load( resource.url, function ( text ) {
 
-				mtlLoader.load( resource.name, processMaterials, undefined, onError );
+					resource.content = text;
+					processMaterials( mtlLoader.parse( text ) );
+
+				}, this._onProgress, this._onError );
 
 			}
 		}
