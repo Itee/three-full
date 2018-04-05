@@ -406,6 +406,7 @@ module.exports = {
         LineMaterial: {
             imports: [
                 'UniformsLib',
+                'UniformsUtils',
                 'ShaderLib'
             ]
         },
