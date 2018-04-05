@@ -2383,7 +2383,8 @@ var Three = (function (exports) {
 			v4 = undefined !== v4 ? v4 : 4,
 			v5 = undefined !== v5 ? v5 : 5,
 			v6 = undefined !== v6 ? v6 : 6,
-			v7 = undefined !== v7 ? v7 : 7;
+			v7 = undefined !== v7 ? v7 : 7
+		;
 
 		var vec_s = [
 			new Vector3( center.x - half, center.y + half, center.z - half ),

@@ -1611,11 +1611,16 @@ var Three = (function (exports) {
 
 		},
 
-		getHSL: function ( optionalTarget ) {
+		getHSL: function ( target ) {
 
 			// h,s,l ranges are in 0.0 - 1.0
 
-			var hsl = optionalTarget || { h: 0, s: 0, l: 0 };
+			if ( target === undefined ) {
+
+				console.warn( 'Color: .getHSL() target is now required' );
+				target = { h: 0, s: 0, l: 0 };
+
+			}
 
 			var r = this.r, g = this.g, b = this.b;
 
@@ -1648,11 +1653,11 @@ var Three = (function (exports) {
 
 			}
 
-			hsl.h = hue;
-			hsl.s = saturation;
-			hsl.l = lightness;
+			target.h = hue;
+			target.s = saturation;
+			target.l = lightness;
 
-			return hsl;
+			return target;
 
 		},
 
@@ -1662,17 +1667,23 @@ var Three = (function (exports) {
 
 		},
 
-		offsetHSL: function ( h, s, l ) {
+		offsetHSL: function () {
 
-			var hsl = this.getHSL();
+			var hsl = {};
 
-			hsl.h += h; hsl.s += s; hsl.l += l;
+			return function ( h, s, l ) {
 
-			this.setHSL( hsl.h, hsl.s, hsl.l );
+				this.getHSL( hsl );
 
-			return this;
+				hsl.h += h; hsl.s += s; hsl.l += l;
 
-		},
+				this.setHSL( hsl.h, hsl.s, hsl.l );
+
+				return this;
+
+			};
+
+		}(),
 
 		add: function ( color ) {
 
@@ -5318,6 +5329,7 @@ var Three = (function (exports) {
 			}
 
 			var output = {
+
 				metadata: {
 					version: 4.5,
 					type: 'Texture',
@@ -5336,11 +5348,13 @@ var Three = (function (exports) {
 
 				wrap: [ this.wrapS, this.wrapT ],
 
+				format: this.format,
 				minFilter: this.minFilter,
 				magFilter: this.magFilter,
 				anisotropy: this.anisotropy,
 
 				flipY: this.flipY
+
 			};
 
 			if ( this.image !== undefined ) {
@@ -7005,7 +7019,8 @@ var Three = (function (exports) {
 			envMap: { value: null },
 			flipEnvMap: { value: - 1 },
 			reflectivity: { value: 1.0 },
-			refractionRatio: { value: 0.98 }
+			refractionRatio: { value: 0.98 },
+			maxMipLevel: { value: 0 }
 
 		},
 
@@ -7339,7 +7354,7 @@ var Three = (function (exports) {
 				"#include <common>",
 				"#include <fog_pars_fragment>",
 				"#include <bsdfs>",
-				"#include <lights_pars>",
+				"#include <lights_pars_begin>",
 				"#include <lights_physical_pars_fragment>",
 				"#include <shadowmap_pars_fragment>",
 				"#include <logdepthbuf_pars_fragment>",
@@ -7348,7 +7363,7 @@ var Three = (function (exports) {
 
 			var output = [
 				// prevent undeclared normal
-				"	#include <normal_fragment>",
+				"	#include <normal_fragment_begin>",
 
 				// prevent undeclared material
 				"	PhysicalMaterial material;",
@@ -7444,7 +7459,8 @@ var Three = (function (exports) {
 			}
 
 			output.push(
-				"#include <lights_template>"
+				"#include <lights_fragment_begin>",
+				"#include <lights_fragment_end>"
 			);
 
 			if ( light ) {
@@ -7512,12 +7528,8 @@ var Three = (function (exports) {
 
 					output.push(
 						clearCoatEnv.code,
-						"vec3 clearCoatRadiance = " + clearCoatEnv.result + ";"
+						"clearCoatRadiance += " + clearCoatEnv.result + ";"
 					);
-
-				} else {
-
-					output.push( "vec3 clearCoatRadiance = vec3( 0.0 );" );
 
 				}
 

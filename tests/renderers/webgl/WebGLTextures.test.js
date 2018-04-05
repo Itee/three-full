@@ -159,9 +159,9 @@ var Three = (function (exports) {
 
 	};
 
-	function WebGLTextures( _gl, extensions, state, properties, capabilities, utils, infoMemory, infoRender ) {
+	function WebGLTextures( _gl, extensions, state, properties, capabilities, utils, info ) {
 
-		var _isWebGL2 = ( typeof WebGL2RenderingContext !== 'undefined' && _gl instanceof WebGL2RenderingContext );
+		var _isWebGL2 = ( typeof WebGL2RenderingContext !== 'undefined' && _gl instanceof WebGL2RenderingContext ); 
 		var _videoTextures = {};
 		var _canvas;
 
@@ -170,6 +170,13 @@ var Three = (function (exports) {
 		function clampToMaxSize( image, maxSize ) {
 
 			if ( image.width > maxSize || image.height > maxSize ) {
+
+				if ( 'data' in image ) {
+
+					console.warn( 'WebGLRenderer: image in DataTexture is too big (' + image.width + 'x' + image.height + ').' );
+					return;
+
+				}
 
 				// Warning: Scaling through the canvas will only work with images that use
 				// premultiplied alpha.
@@ -235,6 +242,15 @@ var Three = (function (exports) {
 
 		}
 
+		function generateMipmap( target, texture, width, height ) {
+
+			_gl.generateMipmap( target );
+
+			var textureProperties = properties.get( texture );
+			textureProperties.__maxMipLevel = Math.log2( Math.max( width, height ) );
+
+		}
+
 		// Fallback filters for non-power-of-2 textures
 
 		function filterFallback( f ) {
@@ -265,7 +281,7 @@ var Three = (function (exports) {
 
 			}
 
-			infoMemory.textures --;
+			info.memory.textures --;
 
 		}
 
@@ -277,7 +293,7 @@ var Three = (function (exports) {
 
 			deallocateRenderTarget( renderTarget );
 
-			infoMemory.textures --;
+			info.memory.textures --;
 
 		}
 
@@ -398,7 +414,7 @@ var Three = (function (exports) {
 
 						textureProperties.__image__webglTextureCube = _gl.createTexture();
 
-						infoMemory.textures ++;
+						info.memory.textures ++;
 
 					}
 
@@ -479,9 +495,20 @@ var Three = (function (exports) {
 
 					}
 
+					if ( ! isCompressed ) {
+
+						textureProperties.__maxMipLevel = 0;
+
+					} else {
+
+						textureProperties.__maxMipLevel = mipmaps.length - 1;
+
+					}
+
 					if ( textureNeedsGenerateMipmaps( texture, isPowerOfTwoImage ) ) {
 
-						_gl.generateMipmap( _gl.TEXTURE_CUBE_MAP );
+						// We assume images for cube map have the same size.
+						generateMipmap( _gl.TEXTURE_CUBE_MAP, texture, image.width, image.height );
 
 					}
 
@@ -569,7 +596,7 @@ var Three = (function (exports) {
 
 				textureProperties.__webglTexture = _gl.createTexture();
 
-				infoMemory.textures ++;
+				info.memory.textures ++;
 
 			}
 
@@ -668,10 +695,12 @@ var Three = (function (exports) {
 					}
 
 					texture.generateMipmaps = false;
+					textureProperties.__maxMipLevel = mipmaps.length - 1;
 
 				} else {
 
 					state.texImage2D( _gl.TEXTURE_2D, 0, glFormat, image.width, image.height, 0, glFormat, glType, image.data );
+					textureProperties.__maxMipLevel = 0;
 
 				}
 
@@ -701,6 +730,8 @@ var Three = (function (exports) {
 
 				}
 
+				textureProperties.__maxMipLevel = mipmaps.length - 1;
+
 			} else {
 
 				// regular Texture (image, video, canvas)
@@ -719,16 +750,22 @@ var Three = (function (exports) {
 					}
 
 					texture.generateMipmaps = false;
+					textureProperties.__maxMipLevel = mipmaps.length - 1;
 
 				} else {
 
 					state.texImage2D( _gl.TEXTURE_2D, 0, glFormat, glFormat, glType, image );
+					textureProperties.__maxMipLevel = 0;
 
 				}
 
 			}
 
-			if ( textureNeedsGenerateMipmaps( texture, isPowerOfTwoImage ) ) _gl.generateMipmap( _gl.TEXTURE_2D );
+			if ( textureNeedsGenerateMipmaps( texture, isPowerOfTwoImage ) ) {
+
+				generateMipmap( _gl.TEXTURE_2D, texture, image.width, image.height );
+
+			}
 
 			textureProperties.__version = texture.version;
 
@@ -872,7 +909,7 @@ var Three = (function (exports) {
 
 			textureProperties.__webglTexture = _gl.createTexture();
 
-			infoMemory.textures ++;
+			info.memory.textures ++;
 
 			var isCube = ( renderTarget.isWebGLRenderTargetCube === true );
 			var isTargetPowerOfTwo = isPowerOfTwo( renderTarget );
@@ -908,7 +945,12 @@ var Three = (function (exports) {
 
 				}
 
-				if ( textureNeedsGenerateMipmaps( renderTarget.texture, isTargetPowerOfTwo ) ) _gl.generateMipmap( _gl.TEXTURE_CUBE_MAP );
+				if ( textureNeedsGenerateMipmaps( renderTarget.texture, isTargetPowerOfTwo ) ) {
+
+					generateMipmap( _gl.TEXTURE_CUBE_MAP, renderTarget.texture, renderTarget.width, renderTarget.height );
+
+				}
+
 				state.bindTexture( _gl.TEXTURE_CUBE_MAP, null );
 
 			} else {
@@ -917,7 +959,12 @@ var Three = (function (exports) {
 				setTextureParameters( _gl.TEXTURE_2D, renderTarget.texture, isTargetPowerOfTwo );
 				setupFrameBufferTexture( renderTargetProperties.__webglFramebuffer, renderTarget, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D );
 
-				if ( textureNeedsGenerateMipmaps( renderTarget.texture, isTargetPowerOfTwo ) ) _gl.generateMipmap( _gl.TEXTURE_2D );
+				if ( textureNeedsGenerateMipmaps( renderTarget.texture, isTargetPowerOfTwo ) ) {
+
+					generateMipmap( _gl.TEXTURE_2D, renderTarget.texture, renderTarget.width, renderTarget.height );
+
+				}
+
 				state.bindTexture( _gl.TEXTURE_2D, null );
 
 			}
@@ -943,7 +990,7 @@ var Three = (function (exports) {
 				var webglTexture = properties.get( texture ).__webglTexture;
 
 				state.bindTexture( target, webglTexture );
-				_gl.generateMipmap( target );
+				generateMipmap( target, texture, renderTarget.width, renderTarget.height );
 				state.bindTexture( target, null );
 
 			}
@@ -953,7 +1000,7 @@ var Three = (function (exports) {
 		function updateVideoTexture( texture ) {
 
 			var id = texture.id;
-			var frame = infoRender.frame;
+			var frame = info.render.frame;
 
 			// Check the last frame we updated the VideoTexture
 

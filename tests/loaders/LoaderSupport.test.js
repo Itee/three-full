@@ -1426,11 +1426,16 @@ var Three = (function (exports) {
 
 		},
 
-		getHSL: function ( optionalTarget ) {
+		getHSL: function ( target ) {
 
 			// h,s,l ranges are in 0.0 - 1.0
 
-			var hsl = optionalTarget || { h: 0, s: 0, l: 0 };
+			if ( target === undefined ) {
+
+				console.warn( 'Color: .getHSL() target is now required' );
+				target = { h: 0, s: 0, l: 0 };
+
+			}
 
 			var r = this.r, g = this.g, b = this.b;
 
@@ -1463,11 +1468,11 @@ var Three = (function (exports) {
 
 			}
 
-			hsl.h = hue;
-			hsl.s = saturation;
-			hsl.l = lightness;
+			target.h = hue;
+			target.s = saturation;
+			target.l = lightness;
 
-			return hsl;
+			return target;
 
 		},
 
@@ -1477,17 +1482,23 @@ var Three = (function (exports) {
 
 		},
 
-		offsetHSL: function ( h, s, l ) {
+		offsetHSL: function () {
 
-			var hsl = this.getHSL();
+			var hsl = {};
 
-			hsl.h += h; hsl.s += s; hsl.l += l;
+			return function ( h, s, l ) {
 
-			this.setHSL( hsl.h, hsl.s, hsl.l );
+				this.getHSL( hsl );
 
-			return this;
+				hsl.h += h; hsl.s += s; hsl.l += l;
 
-		},
+				this.setHSL( hsl.h, hsl.s, hsl.l );
+
+				return this;
+
+			};
+
+		}(),
 
 		add: function ( color ) {
 
@@ -4123,33 +4134,43 @@ var Three = (function (exports) {
 
 		},
 
-		clampPoint: function ( point, optionalTarget ) {
+		clampPoint: function ( point, target ) {
 
 			var deltaLengthSq = this.center.distanceToSquared( point );
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			result.copy( point );
-
-			if ( deltaLengthSq > ( this.radius * this.radius ) ) {
-
-				result.sub( this.center ).normalize();
-				result.multiplyScalar( this.radius ).add( this.center );
+				console.warn( 'Sphere: .clampPoint() target is now required' );
+				target = new Vector3();
 
 			}
 
-			return result;
+			target.copy( point );
+
+			if ( deltaLengthSq > ( this.radius * this.radius ) ) {
+
+				target.sub( this.center ).normalize();
+				target.multiplyScalar( this.radius ).add( this.center );
+
+			}
+
+			return target;
 
 		},
 
-		getBoundingBox: function ( optionalTarget ) {
+		getBoundingBox: function ( target ) {
 
-			var box = optionalTarget || new Box3();
+			if ( target === undefined ) {
 
-			box.set( this.center, this.center );
-			box.expandByScalar( this.radius );
+				console.warn( 'Sphere: .getBoundingBox() target is now required' );
+				target = new Box3();
 
-			return box;
+			}
+
+			target.set( this.center, this.center );
+			target.expandByScalar( this.radius );
+
+			return target;
 
 		},
 
@@ -4335,17 +4356,29 @@ var Three = (function (exports) {
 
 		},
 
-		getCenter: function ( optionalTarget ) {
+		getCenter: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return this.isEmpty() ? result.set( 0, 0, 0 ) : result.addVectors( this.min, this.max ).multiplyScalar( 0.5 );
+			if ( target === undefined ) {
+
+				console.warn( 'Box3: .getCenter() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return this.isEmpty() ? target.set( 0, 0, 0 ) : target.addVectors( this.min, this.max ).multiplyScalar( 0.5 );
 
 		},
 
-		getSize: function ( optionalTarget ) {
+		getSize: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return this.isEmpty() ? result.set( 0, 0, 0 ) : result.subVectors( this.max, this.min );
+			if ( target === undefined ) {
+
+				console.warn( 'Box3: .getSize() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return this.isEmpty() ? target.set( 0, 0, 0 ) : target.subVectors( this.max, this.min );
 
 		},
 
@@ -4456,14 +4489,19 @@ var Three = (function (exports) {
 
 		},
 
-		getParameter: function ( point, optionalTarget ) {
+		getParameter: function ( point, target ) {
 
 			// This can potentially have a divide by zero if the box
 			// has a size dimension of 0.
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return result.set(
+				console.warn( 'Box3: .getParameter() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.set(
 				( point.x - this.min.x ) / ( this.max.x - this.min.x ),
 				( point.y - this.min.y ) / ( this.max.y - this.min.y ),
 				( point.z - this.min.z ) / ( this.max.z - this.min.z )
@@ -4644,10 +4682,16 @@ var Three = (function (exports) {
 
 		} )(),
 
-		clampPoint: function ( point, optionalTarget ) {
+		clampPoint: function ( point, target ) {
 
-			var result = optionalTarget || new Vector3();
-			return result.copy( point ).clamp( this.min, this.max );
+			if ( target === undefined ) {
+
+				console.warn( 'Box3: .clampPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.copy( point ).clamp( this.min, this.max );
 
 		},
 
@@ -4668,15 +4712,20 @@ var Three = (function (exports) {
 
 			var v1 = new Vector3();
 
-			return function getBoundingSphere( optionalTarget ) {
+			return function getBoundingSphere( target ) {
 
-				var result = optionalTarget || new Sphere();
+				if ( target === undefined ) {
 
-				this.getCenter( result.center );
+					console.warn( 'Box3: .getBoundingSphere() target is now required' );
+					target = new Sphere();
 
-				result.radius = this.getSize( v1 ).length() * 0.5;
+				}
 
-				return result;
+				this.getCenter( target.center );
+
+				target.radius = this.getSize( v1 ).length() * 0.5;
+
+				return target;
 
 			};
 
@@ -5383,7 +5432,6 @@ var Three = (function (exports) {
 
 		}
 
-		this.uuid = _Math.generateUUID();
 		this.name = '';
 
 		this.array = array;
@@ -5393,8 +5441,6 @@ var Three = (function (exports) {
 
 		this.dynamic = false;
 		this.updateRange = { offset: 0, count: - 1 };
-
-		this.onUploadCallback = function () {};
 
 		this.version = 0;
 
@@ -5413,6 +5459,8 @@ var Three = (function (exports) {
 	Object.assign( BufferAttribute.prototype, {
 
 		isBufferAttribute: true,
+
+		onUploadCallback: function () {},
 
 		setArray: function ( array ) {
 
@@ -5489,24 +5537,6 @@ var Three = (function (exports) {
 				array[ offset ++ ] = color.r;
 				array[ offset ++ ] = color.g;
 				array[ offset ++ ] = color.b;
-
-			}
-
-			return this;
-
-		},
-
-		copyIndicesArray: function ( indices ) {
-
-			var array = this.array, offset = 0;
-
-			for ( var i = 0, l = indices.length; i < l; i ++ ) {
-
-				var index = indices[ i ];
-
-				array[ offset ++ ] = index.a;
-				array[ offset ++ ] = index.b;
-				array[ offset ++ ] = index.c;
 
 			}
 
@@ -5798,11 +5828,8 @@ var Three = (function (exports) {
 	Float64BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float64BufferAttribute.prototype.constructor = Float64BufferAttribute;
 
-	//
-
 	function DirectGeometry() {
 
-		this.indices = [];
 		this.vertices = [];
 		this.normals = [];
 		this.colors = [];
@@ -7239,13 +7266,18 @@ var Three = (function (exports) {
 
 		},
 
-		getWorldPosition: function ( optionalTarget ) {
+		getWorldPosition: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
+
+				console.warn( 'Object3D: .getWorldPosition() target is now required' );
+				target = new Vector3();
+
+			}
 
 			this.updateMatrixWorld( true );
 
-			return result.setFromMatrixPosition( this.matrixWorld );
+			return target.setFromMatrixPosition( this.matrixWorld );
 
 		},
 
@@ -7254,31 +7286,20 @@ var Three = (function (exports) {
 			var position = new Vector3();
 			var scale = new Vector3();
 
-			return function getWorldQuaternion( optionalTarget ) {
+			return function getWorldQuaternion( target ) {
 
-				var result = optionalTarget || new Quaternion();
+				if ( target === undefined ) {
+
+					console.warn( 'Object3D: .getWorldQuaternion() target is now required' );
+					target = new Quaternion();
+
+				}
 
 				this.updateMatrixWorld( true );
 
-				this.matrixWorld.decompose( position, result, scale );
+				this.matrixWorld.decompose( position, target, scale );
 
-				return result;
-
-			};
-
-		}(),
-
-		getWorldRotation: function () {
-
-			var quaternion = new Quaternion();
-
-			return function getWorldRotation( optionalTarget ) {
-
-				var result = optionalTarget || new Euler();
-
-				this.getWorldQuaternion( quaternion );
-
-				return result.setFromQuaternion( quaternion, this.rotation.order, false );
+				return target;
 
 			};
 
@@ -7289,15 +7310,20 @@ var Three = (function (exports) {
 			var position = new Vector3();
 			var quaternion = new Quaternion();
 
-			return function getWorldScale( optionalTarget ) {
+			return function getWorldScale( target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Object3D: .getWorldScale() target is now required' );
+					target = new Vector3();
+
+				}
 
 				this.updateMatrixWorld( true );
 
-				this.matrixWorld.decompose( position, quaternion, result );
+				this.matrixWorld.decompose( position, quaternion, target );
 
-				return result;
+				return target;
 
 			};
 
@@ -7307,13 +7333,18 @@ var Three = (function (exports) {
 
 			var quaternion = new Quaternion();
 
-			return function getWorldDirection( optionalTarget ) {
+			return function getWorldDirection( target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Object3D: .getWorldDirection() target is now required' );
+					target = new Vector3();
+
+				}
 
 				this.getWorldQuaternion( quaternion );
 
-				return result.set( 0, 0, 1 ).applyQuaternion( quaternion );
+				return target.set( 0, 0, 1 ).applyQuaternion( quaternion );
 
 			};
 
@@ -7447,6 +7478,8 @@ var Three = (function (exports) {
 			if ( this.castShadow === true ) object.castShadow = true;
 			if ( this.receiveShadow === true ) object.receiveShadow = true;
 			if ( this.visible === false ) object.visible = false;
+			if ( this.frustumCulled === false ) object.frustumCulled = false;
+			if ( this.renderOrder !== 0 ) object.renderOrder = this.renderOrder;
 			if ( JSON.stringify( this.userData ) !== '{}' ) object.userData = this.userData;
 
 			object.matrix = this.matrix.toArray();
@@ -7901,15 +7934,21 @@ var Three = (function (exports) {
 
 		center: function () {
 
-			this.computeBoundingBox();
+			var offset = new Vector3();
 
-			var offset = this.boundingBox.getCenter().negate();
+			return function center() {
 
-			this.translate( offset.x, offset.y, offset.z );
+				this.computeBoundingBox();
 
-			return offset;
+				this.boundingBox.getCenter( offset ).negate();
 
-		},
+				this.translate( offset.x, offset.y, offset.z );
+
+				return this;
+
+			};
+
+		}(),
 
 		setFromObject: function ( object ) {
 
@@ -8141,14 +8180,6 @@ var Three = (function (exports) {
 
 				var uvs2 = new Float32Array( geometry.uvs2.length * 2 );
 				this.addAttribute( 'uv2', new BufferAttribute( uvs2, 2 ).copyVector2sArray( geometry.uvs2 ) );
-
-			}
-
-			if ( geometry.indices.length > 0 ) {
-
-				var TypeArray = arrayMax( geometry.indices ) > 65535 ? Uint32Array : Uint16Array;
-				var indices = new TypeArray( geometry.indices.length * 3 );
-				this.setIndex( new BufferAttribute( indices, 1 ).copyIndicesArray( geometry.indices ) );
 
 			}
 
@@ -8425,7 +8456,16 @@ var Three = (function (exports) {
 
 			}
 
-			if ( offset === undefined ) offset = 0;
+			if ( offset === undefined ) {
+
+				offset = 0;
+
+				console.warn(
+					'BufferGeometry.merge(): Overwriting original geometry, starting at offset=0. '
+					+ 'Use BufferGeometryUtils.mergeBufferGeometries() for lossless merge.'
+				);
+
+			}
 
 			var attributes = this.attributes;
 
@@ -8515,6 +8555,15 @@ var Three = (function (exports) {
 				}
 
 				geometry2.addAttribute( name, new BufferAttribute( array2, itemSize ) );
+
+			}
+
+			var groups = this.groups;
+
+			for ( var i = 0, l = groups.length; i < l; i ++ ) {
+
+				var group = groups[ i ];
+				geometry2.addGroup( group.start, group.count, group.materialIndex );
 
 			}
 
@@ -8753,11 +8802,16 @@ var Three = (function (exports) {
 
 		},
 
-		at: function ( t, optionalTarget ) {
+		at: function ( t, target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
+				console.warn( 'Ray: .at() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.copy( this.direction ).multiplyScalar( t ).add( this.origin );
 
 		},
 
@@ -8783,19 +8837,26 @@ var Three = (function (exports) {
 
 		}(),
 
-		closestPointToPoint: function ( point, optionalTarget ) {
+		closestPointToPoint: function ( point, target ) {
 
-			var result = optionalTarget || new Vector3();
-			result.subVectors( point, this.origin );
-			var directionDistance = result.dot( this.direction );
+			if ( target === undefined ) {
 
-			if ( directionDistance < 0 ) {
-
-				return result.copy( this.origin );
+				console.warn( 'Ray: .closestPointToPoint() target is now required' );
+				target = new Vector3();
 
 			}
 
-			return result.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
+			target.subVectors( point, this.origin );
+
+			var directionDistance = target.dot( this.direction );
+
+			if ( directionDistance < 0 ) {
+
+				return target.copy( this.origin );
+
+			}
+
+			return target.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
 
 		},
 
@@ -8960,7 +9021,7 @@ var Three = (function (exports) {
 
 			var v1 = new Vector3();
 
-			return function intersectSphere( sphere, optionalTarget ) {
+			return function intersectSphere( sphere, target ) {
 
 				v1.subVectors( sphere.center, this.origin );
 				var tca = v1.dot( this.direction );
@@ -8983,10 +9044,10 @@ var Three = (function (exports) {
 				// test to see if t0 is behind the ray:
 				// if it is, the ray is inside the sphere, so return the second exit point scaled by t1,
 				// in order to always return an intersect point that is in front of the ray.
-				if ( t0 < 0 ) return this.at( t1, optionalTarget );
+				if ( t0 < 0 ) return this.at( t1, target );
 
 				// else t0 is in front of the ray, so return the first collision point scaled by t0
-				return this.at( t0, optionalTarget );
+				return this.at( t0, target );
 
 			};
 
@@ -9025,7 +9086,7 @@ var Three = (function (exports) {
 
 		},
 
-		intersectPlane: function ( plane, optionalTarget ) {
+		intersectPlane: function ( plane, target ) {
 
 			var t = this.distanceToPlane( plane );
 
@@ -9035,7 +9096,7 @@ var Three = (function (exports) {
 
 			}
 
-			return this.at( t, optionalTarget );
+			return this.at( t, target );
 
 		},
 
@@ -9065,7 +9126,7 @@ var Three = (function (exports) {
 
 		},
 
-		intersectBox: function ( box, optionalTarget ) {
+		intersectBox: function ( box, target ) {
 
 			var tmin, tmax, tymin, tymax, tzmin, tzmax;
 
@@ -9130,7 +9191,7 @@ var Three = (function (exports) {
 
 			if ( tmax < 0 ) return null;
 
-			return this.at( tmin >= 0 ? tmin : tmax, optionalTarget );
+			return this.at( tmin >= 0 ? tmin : tmax, target );
 
 		},
 
@@ -9154,7 +9215,7 @@ var Three = (function (exports) {
 			var edge2 = new Vector3();
 			var normal = new Vector3();
 
-			return function intersectTriangle( a, b, c, backfaceCulling, optionalTarget ) {
+			return function intersectTriangle( a, b, c, backfaceCulling, target ) {
 
 				// from http://www.geometrictools.com/GTEngine/Include/Mathematics/GteIntrRay3Triangle3.h
 
@@ -9223,7 +9284,7 @@ var Three = (function (exports) {
 				}
 
 				// Ray intersects triangle.
-				return this.at( QdN / DdN, optionalTarget );
+				return this.at( QdN / DdN, target );
 
 			};
 
@@ -9279,17 +9340,29 @@ var Three = (function (exports) {
 
 		},
 
-		getCenter: function ( optionalTarget ) {
+		getCenter: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return result.addVectors( this.start, this.end ).multiplyScalar( 0.5 );
+			if ( target === undefined ) {
+
+				console.warn( 'Line3: .getCenter() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.addVectors( this.start, this.end ).multiplyScalar( 0.5 );
 
 		},
 
-		delta: function ( optionalTarget ) {
+		delta: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return result.subVectors( this.end, this.start );
+			if ( target === undefined ) {
+
+				console.warn( 'Line3: .delta() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.subVectors( this.end, this.start );
 
 		},
 
@@ -9305,11 +9378,16 @@ var Three = (function (exports) {
 
 		},
 
-		at: function ( t, optionalTarget ) {
+		at: function ( t, target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return this.delta( result ).multiplyScalar( t ).add( this.start );
+				console.warn( 'Line3: .at() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return this.delta( target ).multiplyScalar( t ).add( this.start );
 
 		},
 
@@ -9340,13 +9418,18 @@ var Three = (function (exports) {
 
 		}(),
 
-		closestPointToPoint: function ( point, clampToLine, optionalTarget ) {
+		closestPointToPoint: function ( point, clampToLine, target ) {
 
 			var t = this.closestPointToPointParameter( point, clampToLine );
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return this.delta( result ).multiplyScalar( t ).add( this.start );
+				console.warn( 'Line3: .closestPointToPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return this.delta( target ).multiplyScalar( t ).add( this.start );
 
 		},
 
@@ -9472,11 +9555,16 @@ var Three = (function (exports) {
 
 		},
 
-		projectPoint: function ( point, optionalTarget ) {
+		projectPoint: function ( point, target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return result.copy( this.normal ).multiplyScalar( - this.distanceToPoint( point ) ).add( point );
+				console.warn( 'Plane: .projectPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.copy( this.normal ).multiplyScalar( - this.distanceToPoint( point ) ).add( point );
 
 		},
 
@@ -9484,9 +9572,14 @@ var Three = (function (exports) {
 
 			var v1 = new Vector3();
 
-			return function intersectLine( line, optionalTarget ) {
+			return function intersectLine( line, target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Plane: .intersectLine() target is now required' );
+					target = new Vector3();
+
+				}
 
 				var direction = line.delta( v1 );
 
@@ -9497,7 +9590,7 @@ var Three = (function (exports) {
 					// line is coplanar, return origin
 					if ( this.distanceToPoint( line.start ) === 0 ) {
 
-						return result.copy( line.start );
+						return target.copy( line.start );
 
 					}
 
@@ -9514,7 +9607,7 @@ var Three = (function (exports) {
 
 				}
 
-				return result.copy( direction ).multiplyScalar( t ).add( line.start );
+				return target.copy( direction ).multiplyScalar( t ).add( line.start );
 
 			};
 
@@ -9543,11 +9636,16 @@ var Three = (function (exports) {
 
 		},
 
-		coplanarPoint: function ( optionalTarget ) {
+		coplanarPoint: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return result.copy( this.normal ).multiplyScalar( - this.constant );
+				console.warn( 'Plane: .coplanarPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.copy( this.normal ).multiplyScalar( - this.constant );
 
 		},
 
@@ -9598,26 +9696,31 @@ var Three = (function (exports) {
 
 	Object.assign( Triangle, {
 
-		normal: function () {
+		getNormal: function () {
 
 			var v0 = new Vector3();
 
-			return function normal( a, b, c, optionalTarget ) {
+			return function getNormal( a, b, c, target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
 
-				result.subVectors( c, b );
-				v0.subVectors( a, b );
-				result.cross( v0 );
-
-				var resultLengthSq = result.lengthSq();
-				if ( resultLengthSq > 0 ) {
-
-					return result.multiplyScalar( 1 / Math.sqrt( resultLengthSq ) );
+					console.warn( 'Triangle: .getNormal() target is now required' );
+					target = new Vector3();
 
 				}
 
-				return result.set( 0, 0, 0 );
+				target.subVectors( c, b );
+				v0.subVectors( a, b );
+				target.cross( v0 );
+
+				var targetLengthSq = target.lengthSq();
+				if ( targetLengthSq > 0 ) {
+
+					return target.multiplyScalar( 1 / Math.sqrt( targetLengthSq ) );
+
+				}
+
+				return target.set( 0, 0, 0 );
 
 			};
 
@@ -9625,13 +9728,13 @@ var Three = (function (exports) {
 
 		// static/instance method to calculate barycentric coordinates
 		// based on: http://www.blackpawn.com/texts/pointinpoly/default.html
-		barycoordFromPoint: function () {
+		getBarycoord: function () {
 
 			var v0 = new Vector3();
 			var v1 = new Vector3();
 			var v2 = new Vector3();
 
-			return function barycoordFromPoint( point, a, b, c, optionalTarget ) {
+			return function getBarycoord( point, a, b, c, target ) {
 
 				v0.subVectors( c, a );
 				v1.subVectors( b, a );
@@ -9645,14 +9748,19 @@ var Three = (function (exports) {
 
 				var denom = ( dot00 * dot11 - dot01 * dot01 );
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Triangle: .getBarycoord() target is now required' );
+					target = new Vector3();
+
+				}
 
 				// collinear or singular triangle
 				if ( denom === 0 ) {
 
 					// arbitrary location outside of triangle?
 					// not sure if this is the best idea, maybe should be returning undefined
-					return result.set( - 2, - 1, - 1 );
+					return target.set( - 2, - 1, - 1 );
 
 				}
 
@@ -9661,7 +9769,7 @@ var Three = (function (exports) {
 				var v = ( dot00 * dot12 - dot01 * dot02 ) * invDenom;
 
 				// barycentric coordinates must always sum to 1
-				return result.set( 1 - u - v, v, u );
+				return target.set( 1 - u - v, v, u );
 
 			};
 
@@ -9673,9 +9781,9 @@ var Three = (function (exports) {
 
 			return function containsPoint( point, a, b, c ) {
 
-				var result = Triangle.barycoordFromPoint( point, a, b, c, v1 );
+				Triangle.getBarycoord( point, a, b, c, v1 );
 
-				return ( result.x >= 0 ) && ( result.y >= 0 ) && ( ( result.x + result.y ) <= 1 );
+				return ( v1.x >= 0 ) && ( v1.y >= 0 ) && ( ( v1.x + v1.y ) <= 1 );
 
 			};
 
@@ -9721,12 +9829,12 @@ var Three = (function (exports) {
 
 		},
 
-		area: function () {
+		getArea: function () {
 
 			var v0 = new Vector3();
 			var v1 = new Vector3();
 
-			return function area() {
+			return function getArea() {
 
 				v0.subVectors( this.c, this.b );
 				v1.subVectors( this.a, this.b );
@@ -9737,30 +9845,41 @@ var Three = (function (exports) {
 
 		}(),
 
-		midpoint: function ( optionalTarget ) {
+		getMidpoint: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return result.addVectors( this.a, this.b ).add( this.c ).multiplyScalar( 1 / 3 );
+			if ( target === undefined ) {
 
-		},
+				console.warn( 'Triangle: .getMidpoint() target is now required' );
+				target = new Vector3();
 
-		normal: function ( optionalTarget ) {
+			}
 
-			return Triangle.normal( this.a, this.b, this.c, optionalTarget );
-
-		},
-
-		plane: function ( optionalTarget ) {
-
-			var result = optionalTarget || new Plane();
-
-			return result.setFromCoplanarPoints( this.a, this.b, this.c );
+			return target.addVectors( this.a, this.b ).add( this.c ).multiplyScalar( 1 / 3 );
 
 		},
 
-		barycoordFromPoint: function ( point, optionalTarget ) {
+		getNormal: function ( target ) {
 
-			return Triangle.barycoordFromPoint( point, this.a, this.b, this.c, optionalTarget );
+			return Triangle.getNormal( this.a, this.b, this.c, target );
+
+		},
+
+		getPlane: function ( target ) {
+
+			if ( target === undefined ) {
+
+				console.warn( 'Triangle: .getPlane() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.setFromCoplanarPoints( this.a, this.b, this.c );
+
+		},
+
+		getBarycoord: function ( point, target ) {
+
+			return Triangle.getBarycoord( point, this.a, this.b, this.c, target );
 
 		},
 
@@ -9783,9 +9902,15 @@ var Three = (function (exports) {
 			var projectedPoint = new Vector3();
 			var closestPoint = new Vector3();
 
-			return function closestPointToPoint( point, optionalTarget ) {
+			return function closestPointToPoint( point, target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Triangle: .closestPointToPoint() target is now required' );
+					target = new Vector3();
+
+				}
+
 				var minDistance = Infinity;
 
 				// project the point onto the plane of the triangle
@@ -9799,11 +9924,11 @@ var Three = (function (exports) {
 
 					// if so, this is the closest point
 
-					result.copy( projectedPoint );
+					target.copy( projectedPoint );
 
 				} else {
 
-					// if not, the point falls outside the triangle. the result is the closest point to the triangle's edges or vertices
+					// if not, the point falls outside the triangle. the target is the closest point to the triangle's edges or vertices
 
 					edgeList[ 0 ].set( this.a, this.b );
 					edgeList[ 1 ].set( this.b, this.c );
@@ -9819,7 +9944,7 @@ var Three = (function (exports) {
 
 							minDistance = distance;
 
-							result.copy( closestPoint );
+							target.copy( closestPoint );
 
 						}
 
@@ -9827,7 +9952,7 @@ var Three = (function (exports) {
 
 				}
 
-				return result;
+				return target;
 
 			};
 
@@ -10103,7 +10228,7 @@ var Three = (function (exports) {
 
 			function uvIntersection( point, p1, p2, p3, uv1, uv2, uv3 ) {
 
-				Triangle.barycoordFromPoint( point, p1, p2, p3, barycoord );
+				Triangle.getBarycoord( point, p1, p2, p3, barycoord );
 
 				uv1.multiplyScalar( barycoord.x );
 				uv2.multiplyScalar( barycoord.y );
@@ -10166,7 +10291,10 @@ var Three = (function (exports) {
 
 					}
 
-					intersection.face = new Face3( a, b, c, Triangle.normal( vA, vB, vC ) );
+					var face = new Face3( a, b, c );
+					Triangle.getNormal( vA, vB, vC, face.normal );
+
+					intersection.face = face;
 					intersection.faceIndex = a;
 
 				}
@@ -10714,6 +10842,7 @@ var Three = (function (exports) {
 				var localThreshold = threshold / ( ( this.scale.x + this.scale.y + this.scale.z ) / 3 );
 				var localThresholdSq = localThreshold * localThreshold;
 				var position = new Vector3();
+				var intersectPoint = new Vector3();
 
 				function testPoint( point, index ) {
 
@@ -10721,7 +10850,7 @@ var Three = (function (exports) {
 
 					if ( rayPointDistanceSq < localThresholdSq ) {
 
-						var intersectPoint = ray.closestPointToPoint( point );
+						ray.closestPointToPoint( point, intersectPoint );
 						intersectPoint.applyMatrix4( matrixWorld );
 
 						var distance = raycaster.ray.origin.distanceTo( intersectPoint );
@@ -11883,9 +12012,6 @@ var Three = (function (exports) {
 		this.type = 'ShadowMaterial';
 
 		this.color = new Color( 0x000000 );
-		this.opacity = 1.0;
-
-		this.lights = true;
 		this.transparent = true;
 
 		this.setValues( parameters );
@@ -11896,6 +12022,16 @@ var Three = (function (exports) {
 	ShadowMaterial.prototype.constructor = ShadowMaterial;
 
 	ShadowMaterial.prototype.isShadowMaterial = true;
+
+	ShadowMaterial.prototype.copy = function ( source ) {
+
+		Material.prototype.copy.call( this, source );
+
+		this.color.copy( source.color );
+
+		return this;
+
+	};
 
 	function SpriteMaterial( parameters ) {
 
@@ -12032,6 +12168,10 @@ var Three = (function (exports) {
 			if ( json.gapSize !== undefined ) material.gapSize = json.gapSize;
 			if ( json.scale !== undefined ) material.scale = json.scale;
 
+			if ( json.polygonOffset !== undefined ) material.polygonOffset = json.polygonOffset;
+			if ( json.polygonOffsetFactor !== undefined ) material.polygonOffsetFactor = json.polygonOffsetFactor;
+			if ( json.polygonOffsetUnits !== undefined ) material.polygonOffsetUnits = json.polygonOffsetUnits;
+
 			if ( json.skinning !== undefined ) material.skinning = json.skinning;
 			if ( json.morphTargets !== undefined ) material.morphTargets = json.morphTargets;
 			if ( json.dithering !== undefined ) material.dithering = json.dithering;
@@ -12109,22 +12249,6 @@ var Three = (function (exports) {
 
 	} );
 
-	function Group() {
-
-		Object3D.call( this );
-
-		this.type = 'Group';
-
-	}
-
-	Group.prototype = Object.assign( Object.create( Object3D.prototype ), {
-
-		constructor: Group,
-
-		isGroup: true
-
-	} );
-
 	var LoaderSupport = {};
 
 
@@ -12139,85 +12263,6 @@ var Three = (function (exports) {
 		}
 	};
 
-
-
-	LoaderSupport.ConsoleLogger = (function () {
-
-		function ConsoleLogger( enabled, debug ) {
-			this.enabled = enabled !== false;
-			this.debug = debug === true;
-		}
-
-		
-		ConsoleLogger.prototype.setDebug = function ( debug ) {
-			this.debug = debug === true;
-		};
-
-		
-		ConsoleLogger.prototype.isDebug = function () {
-			return this.isEnabled() && this.debug;
-		};
-
-		
-		ConsoleLogger.prototype.setEnabled = function ( enabled ) {
-			this.enabled = enabled === true;
-		};
-
-		
-		ConsoleLogger.prototype.isEnabled = function () {
-			return this.enabled;
-		};
-
-		
-		ConsoleLogger.prototype.logDebug = function ( message, additional ) {
-			if ( this.enabled && this.debug ) {
-
-				this._createStatement( message, 'Additional content:', additional, function ( output ) { console.debug( output ); } );
-
-			}
-		};
-
-		
-		ConsoleLogger.prototype.logInfo = function ( message, additional ) {
-			if ( this.enabled ) {
-
-				this._createStatement( message, 'Additional content:', additional, function ( output ) { console.info( output ); } );
-
-			}
-		};
-
-		
-		ConsoleLogger.prototype.logWarn = function ( message, additional ) {
-			this._createStatement( message, 'Additional content:', additional, function ( output ) { console.warn( output ); } );
-		};
-
-		
-		ConsoleLogger.prototype.logError = function ( message, additional ) {
-			this._createStatement( message, 'Additional content:', additional, function ( output ) { console.error( output ); } );
-		};
-
-		
-		ConsoleLogger.prototype.logTimeStart = function ( id ) {
-			if ( this.enabled ) console.time( id );
-		};
-
-		
-		ConsoleLogger.prototype.logTimeEnd = function ( id ) {
-			if ( this.enabled ) console.timeEnd( id );
-		};
-
-		ConsoleLogger.prototype._createStatement = function ( message, addHeader, additional, logFunction ) {
-			var output = message;
-			if ( Array.isArray( additional ) ) {
-
-				output += '\n' + addHeader + '\n' + additional.join( '\n' );
-
-			}
-			logFunction( output );
-		};
-
-		return ConsoleLogger;
-	})();
 
 
 	LoaderSupport.Callbacks = (function () {
@@ -12325,35 +12370,19 @@ var Three = (function (exports) {
 		var Validator = LoaderSupport.Validator;
 
 		function PrepData( modelName ) {
+			this.logging = {
+				enabled: true,
+				debug: false
+			};
 			this.modelName = Validator.verifyInput( modelName, '' );
 			this.resources = [];
-			this.streamMeshesTo = null;
-			this.materialPerSmoothingGroup = false;
-			this.useIndices = false;
-			this.disregardNormals = false;
 			this.callbacks = new LoaderSupport.Callbacks();
-			this.crossOrigin;
-			this.useAsync = false;
 		}
 
 		
-		PrepData.prototype.setStreamMeshesTo = function ( streamMeshesTo ) {
-			this.streamMeshesTo = Validator.verifyInput( streamMeshesTo, null );
-		};
-
-		
-		PrepData.prototype.setMaterialPerSmoothingGroup = function ( materialPerSmoothingGroup ) {
-			this.materialPerSmoothingGroup = materialPerSmoothingGroup === true;
-		};
-
-		
-		PrepData.prototype.setUseIndices = function ( useIndices ) {
-			this.useIndices = useIndices === true;
-		};
-
-		
-		PrepData.prototype.setDisregardNormals = function ( disregardNormals ) {
-			this.disregardNormals = disregardNormals === true;
+		PrepData.prototype.setLogging = function ( enabled, debug ) {
+			this.logging.enabled = enabled === true;
+			this.logging.debug = debug === true;
 		};
 
 		
@@ -12362,54 +12391,126 @@ var Three = (function (exports) {
 		};
 
 		
-		PrepData.prototype.setCrossOrigin = function ( crossOrigin ) {
-			this.crossOrigin = crossOrigin;
-		};
-
-		
 		PrepData.prototype.addResource = function ( resource ) {
 			this.resources.push( resource );
 		};
 
 		
-		PrepData.prototype.setUseAsync = function ( useAsync ) {
-			this.useAsync = useAsync === true;
-		};
-
-		
 		PrepData.prototype.clone = function () {
 			var clone = new LoaderSupport.PrepData( this.modelName );
+			clone.logging.enabled = this.logging.enabled;
+			clone.logging.debug = this.logging.debug;
 			clone.resources = this.resources;
-			clone.streamMeshesTo = this.streamMeshesTo;
-			clone.materialPerSmoothingGroup = this.materialPerSmoothingGroup;
-			clone.useIndices = this.useIndices;
-			clone.disregardNormals = this.disregardNormals;
 			clone.callbacks = this.callbacks;
-			clone.crossOrigin = this.crossOrigin;
-			clone.useAsync = this.useAsync;
+
+			var property, value;
+			for ( property in this ) {
+
+				value = this[ property ];
+				if ( ! clone.hasOwnProperty( property ) && typeof this[ property ] !== 'function' ) {
+
+					clone[ property ] = value;
+
+				}
+			}
+
 			return clone;
+		};
+
+
+		
+		PrepData.prototype.checkResourceDescriptorFiles = function ( resources, fileDesc ) {
+			var resource, triple, i, found;
+			var result = {};
+
+			for ( var index in resources ) {
+
+				resource = resources[ index ];
+				found = false;
+				if ( ! Validator.isValid( resource.name ) ) continue;
+				if ( Validator.isValid( resource.content ) ) {
+
+					for ( i = 0; i < fileDesc.length && !found; i++ ) {
+
+						triple = fileDesc[ i ];
+						if ( resource.extension.toLowerCase() === triple.ext.toLowerCase() ) {
+
+							if ( triple.ignore ) {
+
+								found = true;
+
+							} else if ( triple.type === "ArrayBuffer" ) {
+
+								// fast-fail on bad type
+								if ( ! ( resource.content instanceof ArrayBuffer || resource.content instanceof Uint8Array ) ) throw 'Provided content is not of type ArrayBuffer! Aborting...';
+								result[ triple.ext ] = resource;
+								found = true;
+
+							} else if ( triple.type === "String" ) {
+
+								if ( ! ( typeof( resource.content ) === 'string' || resource.content instanceof String) ) throw 'Provided  content is not of type String! Aborting...';
+								result[ triple.ext ] = resource;
+								found = true;
+
+							}
+
+						}
+
+					}
+					if ( !found ) throw 'Unidentified resource "' + resource.name + '": ' + resource.url;
+
+				} else {
+
+					// fast-fail on bad type
+					if ( ! ( typeof( resource.name ) === 'string' || resource.name instanceof String ) ) throw 'Provided file is not properly defined! Aborting...';
+					for ( i = 0; i < fileDesc.length && !found; i++ ) {
+
+						triple = fileDesc[ i ];
+						if ( resource.extension.toLowerCase() === triple.ext.toLowerCase() ) {
+
+							if ( ! triple.ignore ) result[ triple.ext ] = resource;
+							found = true;
+
+						}
+
+					}
+					if ( !found ) throw 'Unidentified resource "' + resource.name + '": ' + resource.url;
+
+				}
+			}
+
+			return result;
 		};
 
 		return PrepData;
 	})();
 
 
-	LoaderSupport.Builder = (function () {
+	LoaderSupport.MeshBuilder = (function () {
 
-		var LOADER_BUILDER_VERSION = '1.1.1';
+		var LOADER_MESH_BUILDER_VERSION = '1.2.0';
 
 		var Validator = LoaderSupport.Validator;
-		var ConsoleLogger = LoaderSupport.ConsoleLogger;
 
-		function Builder( logger ) {
-			this.logger = Validator.verifyInput( logger, new ConsoleLogger() );
-			this.logger.logInfo( 'Using LoaderSupport.Builder version: ' + LOADER_BUILDER_VERSION );
+		function MeshBuilder() {
+			console.info( 'Using LoaderSupport.MeshBuilder version: ' + LOADER_MESH_BUILDER_VERSION );
+			this.logging = {
+				enabled: true,
+				debug: false
+			};
+
 			this.callbacks = new LoaderSupport.Callbacks();
 			this.materials = [];
-			this._createDefaultMaterials();
 		}
 
-		Builder.prototype._createDefaultMaterials = function () {
+		
+		MeshBuilder.prototype.setLogging = function ( enabled, debug ) {
+			this.logging.enabled = enabled === true;
+			this.logging.debug = debug === true;
+		};
+
+		
+		MeshBuilder.prototype.init = function () {
 			var defaultMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
 			defaultMaterial.name = 'defaultMaterial';
 
@@ -12420,7 +12521,7 @@ var Three = (function (exports) {
 			var defaultLineMaterial = new LineBasicMaterial();
 			defaultLineMaterial.name = 'defaultLineMaterial';
 
-			var defaultPointMaterial = new PointsMaterial( { size: 1, sizeAttenuation: false } );
+			var defaultPointMaterial = new PointsMaterial( { size: 1 } );
 			defaultPointMaterial.name = 'defaultPointMaterial';
 
 			var runtimeMaterials = {};
@@ -12442,7 +12543,7 @@ var Three = (function (exports) {
 		};
 
 		
-		Builder.prototype.setMaterials = function ( materials ) {
+		MeshBuilder.prototype.setMaterials = function ( materials ) {
 			var payload = {
 				cmd: 'materialData',
 				materials: {
@@ -12454,7 +12555,7 @@ var Three = (function (exports) {
 			this.updateMaterials( payload );
 		};
 
-		Builder.prototype._setCallbacks = function ( callbacks ) {
+		MeshBuilder.prototype._setCallbacks = function ( callbacks ) {
 			if ( Validator.isValid( callbacks.onProgress ) ) this.callbacks.setCallbackOnProgress( callbacks.onProgress );
 			if ( Validator.isValid( callbacks.onMeshAlter ) ) this.callbacks.setCallbackOnMeshAlter( callbacks.onMeshAlter );
 			if ( Validator.isValid( callbacks.onLoad ) ) this.callbacks.setCallbackOnLoad( callbacks.onLoad );
@@ -12462,7 +12563,7 @@ var Three = (function (exports) {
 		};
 
 		
-		Builder.prototype.processPayload = function ( payload ) {
+		MeshBuilder.prototype.processPayload = function ( payload ) {
 			if ( payload.cmd === 'meshData' ) {
 
 				return this.buildMeshes( payload );
@@ -12476,7 +12577,7 @@ var Three = (function (exports) {
 		};
 
 		
-		Builder.prototype.buildMeshes = function ( meshPayload ) {
+		MeshBuilder.prototype.buildMeshes = function ( meshPayload ) {
 			var meshName = meshPayload.params.meshName;
 
 			var bufferGeometry = new BufferGeometry();
@@ -12609,7 +12710,7 @@ var Three = (function (exports) {
 			var callbackOnProgress = this.callbacks.onProgress;
 			if ( Validator.isValid( callbackOnProgress ) ) {
 
-				var event = new CustomEvent( 'BuilderEvent', {
+				var event = new CustomEvent( 'MeshBuilderEvent', {
 					detail: {
 						type: 'progress',
 						modelName: meshPayload.params.meshName,
@@ -12625,7 +12726,7 @@ var Three = (function (exports) {
 		};
 
 		
-		Builder.prototype.updateMaterials = function ( materialPayload ) {
+		MeshBuilder.prototype.updateMaterials = function ( materialPayload ) {
 			var material, materialName;
 			var materialCloneInstructions = materialPayload.materials.materialCloneInstructions;
 			if ( Validator.isValid( materialCloneInstructions ) ) {
@@ -12650,7 +12751,7 @@ var Three = (function (exports) {
 
 				} else {
 
-					this.logger.logWarn( 'Requested material "' + materialNameOrg + '" is not available!' );
+					console.warn( 'Requested material "' + materialNameOrg + '" is not available!' );
 
 				}
 			}
@@ -12666,7 +12767,7 @@ var Three = (function (exports) {
 					if ( Validator.isValid( materialJson ) ) {
 
 						material = loader.parse( materialJson );
-						this.logger.logInfo( 'De-serialized material with name "' + materialName + '" will be added.' );
+						if ( this.logging.enabled ) console.info( 'De-serialized material with name "' + materialName + '" will be added.' );
 						this.materials[ materialName ] = material;
 					}
 
@@ -12680,7 +12781,7 @@ var Three = (function (exports) {
 				for ( materialName in materials ) {
 
 					material = materials[ materialName ];
-					this.logger.logInfo( 'Material with name "' + materialName + '" will be added.' );
+					if ( this.logging.enabled ) console.info( 'Material with name "' + materialName + '" will be added.' );
 					this.materials[ materialName ] = material;
 
 				}
@@ -12689,7 +12790,7 @@ var Three = (function (exports) {
 		};
 
 		
-		Builder.prototype.getMaterialsJSON = function () {
+		MeshBuilder.prototype.getMaterialsJSON = function () {
 			var materialsJSON = {};
 			var material;
 			for ( var materialName in this.materials ) {
@@ -12702,232 +12803,11 @@ var Three = (function (exports) {
 		};
 
 		
-		Builder.prototype.getMaterials = function () {
+		MeshBuilder.prototype.getMaterials = function () {
 			return this.materials;
 		};
 
-		return Builder;
-	})();
-
-
-	LoaderSupport.LoaderBase = (function () {
-
-		var Validator = LoaderSupport.Validator;
-		var ConsoleLogger = LoaderSupport.ConsoleLogger;
-
-		function LoaderBase( manager, logger ) {
-			this.manager = Validator.verifyInput( manager, DefaultLoadingManager );
-			this.logger = Validator.verifyInput( logger, new ConsoleLogger() );
-
-			this.fileLoader = new FileLoader( this.manager );
-			this.fileLoader.setResponseType( 'arraybuffer' );
-
-			this.modelName = '';
-			this.instanceNo = 0;
-			this.path = '';
-			this.useIndices = false;
-			this.disregardNormals = false;
-
-			this.loaderRootNode = new Group();
-			this.builder = new LoaderSupport.Builder( this.logger );
-			this.callbacks = new LoaderSupport.Callbacks();
-		}
-
-		LoaderBase.prototype._applyPrepData = function ( prepData ) {
-			if ( Validator.isValid( prepData ) ) {
-
-				this.setModelName( prepData.modelName );
-				this.setStreamMeshesTo( prepData.streamMeshesTo );
-				this.builder.setMaterials( prepData.materials );
-				this.setUseIndices( prepData.useIndices );
-				this.setDisregardNormals( prepData.disregardNormals );
-
-				this._setCallbacks( prepData.getCallbacks() );
-			}
-		};
-
-		LoaderBase.prototype._setCallbacks = function ( callbacks ) {
-			if ( Validator.isValid( callbacks.onProgress ) ) this.callbacks.setCallbackOnProgress( callbacks.onProgress );
-			if ( Validator.isValid( callbacks.onMeshAlter ) ) this.callbacks.setCallbackOnMeshAlter( callbacks.onMeshAlter );
-			if ( Validator.isValid( callbacks.onLoad ) ) this.callbacks.setCallbackOnLoad( callbacks.onLoad );
-			if ( Validator.isValid( callbacks.onLoadMaterials ) ) this.callbacks.setCallbackOnLoadMaterials( callbacks.onLoadMaterials );
-
-			this.builder._setCallbacks( this.callbacks );
-		};
-
-		
-		LoaderBase.prototype.getLogger = function () {
-			return this.logger;
-		};
-
-		
-		LoaderBase.prototype.setModelName = function ( modelName ) {
-			this.modelName = Validator.verifyInput( modelName, this.modelName );
-		};
-
-		
-		LoaderBase.prototype.setPath = function ( path ) {
-			this.path = Validator.verifyInput( path, this.path );
-		};
-
-		
-		LoaderBase.prototype.setStreamMeshesTo = function ( streamMeshesTo ) {
-			this.loaderRootNode = Validator.verifyInput( streamMeshesTo, this.loaderRootNode );
-		};
-
-		
-		LoaderBase.prototype.setMaterials = function ( materials ) {
-			this.builder.setMaterials( materials );
-		};
-
-		
-		LoaderBase.prototype.setUseIndices = function ( useIndices ) {
-			this.useIndices = useIndices === true;
-		};
-
-		
-		LoaderBase.prototype.setDisregardNormals = function ( disregardNormals ) {
-			this.disregardNormals = disregardNormals === true;
-		};
-
-		
-		LoaderBase.prototype.onProgress = function ( type, text, numericalValue ) {
-			var content = Validator.isValid( text ) ? text: '';
-			var event = {
-				detail: {
-					type: type,
-					modelName: this.modelName,
-					instanceNo: this.instanceNo,
-					text: content,
-					numericalValue: numericalValue
-				}
-			};
-
-			if ( Validator.isValid( this.callbacks.onProgress ) ) this.callbacks.onProgress( event );
-
-			this.logger.logDebug( content );
-		};
-
-		
-		LoaderBase.prototype.load = function ( url, onLoad, onProgress, onError, onMeshAlter, useAsync ) {
-			var scope = this;
-			if ( ! Validator.isValid( onProgress ) ) {
-				var numericalValueRef = 0;
-				var numericalValue = 0;
-				onProgress = function ( event ) {
-					if ( ! event.lengthComputable ) return;
-
-					numericalValue = event.loaded / event.total;
-					if ( numericalValue > numericalValueRef ) {
-
-						numericalValueRef = numericalValue;
-						var output = 'Download of "' + url + '": ' + ( numericalValue * 100 ).toFixed( 2 ) + '%';
-						scope.onProgress( 'progressLoad', output, numericalValue );
-
-					}
-				};
-			}
-
-			if ( ! Validator.isValid( onError ) ) {
-				onError = function ( event ) {
-					var output = 'Error occurred while downloading "' + url + '"';
-					scope.logger.logError( output + ': ' + event );
-					scope.onProgress( 'error', output, -1 );
-				};
-			}
-
-			this.fileLoader.setPath( this.path );
-			this.fileLoader.load( url, function ( content ) {
-				if ( useAsync ) {
-
-					scope.parseAsync( content, onLoad );
-
-				} else {
-
-					var callbacks = new LoaderSupport.Callbacks();
-					callbacks.setCallbackOnMeshAlter( onMeshAlter );
-					scope._setCallbacks( callbacks );
-					onLoad(
-						{
-							detail: {
-								loaderRootNode: scope.parse( content ),
-								modelName: scope.modelName,
-								instanceNo: scope.instanceNo
-							}
-						}
-					);
-
-				}
-
-			}, onProgress, onError );
-
-		};
-
-		
-		LoaderBase.prototype.checkResourceDescriptorFiles = function ( resources, fileDesc ) {
-			var resource, triple, i, found;
-			var result = {};
-
-			for ( var index in resources ) {
-
-				resource = resources[ index ];
-				found = false;
-				if ( ! Validator.isValid( resource.name ) ) continue;
-				if ( Validator.isValid( resource.content ) ) {
-
-					for ( i = 0; i < fileDesc.length && !found; i++ ) {
-
-						triple = fileDesc[ i ];
-						if ( resource.extension.toLowerCase() === triple.ext.toLowerCase() ) {
-
-							if ( triple.ignore ) {
-
-								found = true;
-
-							} else if ( triple.type === "Uint8Array" ) {
-
-								// fast-fail on bad type
-								if ( ! ( resource.content instanceof Uint8Array ) ) throw 'Provided content is not of type arraybuffer! Aborting...';
-								result[ triple.ext ] = resource;
-								found = true;
-
-							} else if ( triple.type === "String" ) {
-
-								if ( ! (typeof(resource.content) === 'string' || resource.content instanceof String) ) throw 'Provided  content is not of type String! Aborting...';
-								result[ triple.ext ] = resource;
-								found = true;
-
-							}
-
-						}
-
-					}
-					if ( !found ) throw 'Unidentified resource "' + resource.name + '": ' + resource.url;
-
-				} else {
-
-					// fast-fail on bad type
-					if ( ! ( typeof( resource.name ) === 'string' || resource.name instanceof String ) ) throw 'Provided file is not properly defined! Aborting...';
-					for ( i = 0; i < fileDesc.length && !found; i++ ) {
-
-						triple = fileDesc[ i ];
-						if ( resource.extension.toLowerCase() === triple.ext.toLowerCase() ) {
-
-							if ( ! triple.ignore ) result[ triple.ext ] = resource;
-							found = true;
-
-						}
-
-					}
-					if ( !found ) throw 'Unidentified resource "' + resource.name + '": ' + resource.url;
-
-				}
-			}
-
-			return result;
-		};
-
-		return LoaderBase;
+		return MeshBuilder;
 	})();
 
 
@@ -12962,31 +12842,29 @@ var Three = (function (exports) {
 
 		
 		WorkerRunnerRefImpl.prototype.processMessage = function ( payload ) {
-			var logEnabled = payload.logger.enabled;
-			var logDebug = payload.logger.enabled;
 			if ( payload.cmd === 'run' ) {
 
 				var callbacks = {
-					callbackBuilder: function ( payload ) {
+					callbackMeshBuilder: function ( payload ) {
 						self.postMessage( payload );
 					},
 					callbackProgress: function ( text ) {
-						if ( logEnabled && logDebug ) console.debug( 'WorkerRunner: progress: ' + text );
+						if ( payload.logging.enabled && payload.logging.debug ) console.debug( 'WorkerRunner: progress: ' + text );
 					}
 				};
 
 				// Parser is expected to be named as such
 				var parser = new Parser();
-				if ( typeof parser[ 'setLogConfig' ] === 'function' ) parser.setLogConfig( logEnabled, logDebug );
+				if ( typeof parser[ 'setLogging' ] === 'function' ) parser.setLogging( payload.logging.enabled, payload.logging.debug );
 				this.applyProperties( parser, payload.params );
 				this.applyProperties( parser, payload.materials );
 				this.applyProperties( parser, callbacks );
 				parser.workerScope = self;
 				parser.parse( payload.data.input, payload.data.options );
 
-				if ( logEnabled ) console.log( 'WorkerRunner: Run complete!' );
+				if ( payload.logging.enabled ) console.log( 'WorkerRunner: Run complete!' );
 
-				callbacks.callbackBuilder( {
+				callbacks.callbackMeshBuilder( {
 					cmd: 'complete',
 					msg: 'WorkerRunner completed run.'
 				} );
@@ -13004,27 +12882,40 @@ var Three = (function (exports) {
 
 	LoaderSupport.WorkerSupport = (function () {
 
-		var WORKER_SUPPORT_VERSION = '2.1.2';
+		var WORKER_SUPPORT_VERSION = '2.2.0';
 
 		var Validator = LoaderSupport.Validator;
 
 		var LoaderWorker = (function () {
 
-			function LoaderWorker( logger ) {
-				this.logger = Validator.verifyInput( logger, new LoaderSupport.ConsoleLogger() );
+			function LoaderWorker() {
 				this._reset();
 			}
 
 			LoaderWorker.prototype._reset = function () {
+				this.logging = {
+					enabled: true,
+					debug: false
+				};
 				this.worker = null;
 				this.runnerImplName = null;
 				this.callbacks = {
-					builder: null,
+					meshBuilder: null,
 					onLoad: null
 				};
 				this.terminateRequested = false;
 				this.queuedMessage = null;
 				this.started = false;
+				this.forceCopy = false;
+			};
+
+			LoaderWorker.prototype.setLogging = function ( enabled, debug ) {
+				this.logging.enabled = enabled === true;
+				this.logging.debug = debug === true;
+			};
+
+			LoaderWorker.prototype.setForceCopy = function ( forceCopy ) {
+				this.forceCopy = forceCopy === true;
 			};
 
 			LoaderWorker.prototype.initWorker = function ( code, runnerImplName ) {
@@ -13047,7 +12938,7 @@ var Three = (function (exports) {
 					case 'meshData':
 					case 'materialData':
 					case 'imageData':
-						this.runtimeRef.callbacks.builder( payload );
+						this.runtimeRef.callbacks.meshBuilder( payload );
 						break;
 
 					case 'complete':
@@ -13057,35 +12948,35 @@ var Three = (function (exports) {
 
 						if ( this.runtimeRef.terminateRequested ) {
 
-							this.runtimeRef.logger.logInfo( 'WorkerSupport [' + this.runtimeRef.runnerImplName + ']: Run is complete. Terminating application on request!' );
+							if ( this.runtimeRef.logging.enabled ) console.info( 'WorkerSupport [' + this.runtimeRef.runnerImplName + ']: Run is complete. Terminating application on request!' );
 							this.runtimeRef._terminate();
 
 						}
 						break;
 
 					case 'error':
-						this.runtimeRef.logger.logError( 'WorkerSupport [' + this.runtimeRef.runnerImplName + ']: Reported error: ' + payload.msg );
+						console.error( 'WorkerSupport [' + this.runtimeRef.runnerImplName + ']: Reported error: ' + payload.msg );
 						this.runtimeRef.queuedMessage = null;
 						this.started = false;
 						this.runtimeRef.callbacks.onLoad( payload.msg );
 
 						if ( this.runtimeRef.terminateRequested ) {
 
-							this.runtimeRef.logger.logInfo( 'WorkerSupport [' + this.runtimeRef.runnerImplName + ']: Run reported error. Terminating application on request!' );
+							if ( this.runtimeRef.logging.enabled ) console.info( 'WorkerSupport [' + this.runtimeRef.runnerImplName + ']: Run reported error. Terminating application on request!' );
 							this.runtimeRef._terminate();
 
 						}
 						break;
 
 					default:
-						this.runtimeRef.logger.logError( 'WorkerSupport [' + this.runtimeRef.runnerImplName + ']: Received unknown command: ' + payload.cmd );
+						console.error( 'WorkerSupport [' + this.runtimeRef.runnerImplName + ']: Received unknown command: ' + payload.cmd );
 						break;
 
 				}
 			};
 
-			LoaderWorker.prototype.setCallbacks = function ( builder, onLoad ) {
-				this.callbacks.builder = Validator.verifyInput( builder, this.callbacks.builder );
+			LoaderWorker.prototype.setCallbacks = function ( meshBuilder, onLoad ) {
+				this.callbacks.meshBuilder = Validator.verifyInput( meshBuilder, this.callbacks.meshBuilder );
 				this.callbacks.onLoad = Validator.verifyInput( onLoad, this.callbacks.onLoad );
 			};
 
@@ -13101,17 +12992,17 @@ var Three = (function (exports) {
 					this.started = true;
 
 				}
-				if ( ! Validator.isValid( this.callbacks.builder ) ) throw 'Unable to run as no "builder" callback is set.';
+				if ( ! Validator.isValid( this.callbacks.meshBuilder ) ) throw 'Unable to run as no "MeshBuilder" callback is set.';
 				if ( ! Validator.isValid( this.callbacks.onLoad ) ) throw 'Unable to run as no "onLoad" callback is set.';
 				if ( payload.cmd !== 'run' ) payload.cmd = 'run';
-				if ( Validator.isValid( payload.logger ) ) {
+				if ( Validator.isValid( payload.logging ) ) {
 
-					payload.logger.enabled = Validator.verifyInput( payload.logger.enabled, true );
-					payload.logger.debug = Validator.verifyInput( payload.logger.debug, false );
+					payload.logging.enabled = payload.logging.enabled === true;
+					payload.logging.debug = payload.logging.debug === true;
 
 				} else {
 
-					payload.logger = {
+					payload.logging = {
 						enabled: true,
 						debug: false
 					};
@@ -13125,7 +13016,17 @@ var Three = (function (exports) {
 
 					if ( this.queuedMessage.data.input instanceof ArrayBuffer ) {
 
-						this.worker.postMessage( this.queuedMessage, [ this.queuedMessage.data.input ] );
+						var content;
+						if ( this.forceCopy ) {
+
+							content = this.queuedMessage.data.input.slice( 0 );
+
+						} else {
+
+							content = this.queuedMessage.data.input;
+
+						}
+						this.worker.postMessage( this.queuedMessage, [ content ] );
 
 					} else {
 
@@ -13140,7 +13041,7 @@ var Three = (function (exports) {
 				this.terminateRequested = terminateRequested === true;
 				if ( this.terminateRequested && Validator.isValid( this.worker ) && ! Validator.isValid( this.queuedMessage ) && this.started ) {
 
-					this.logger.logInfo( 'Worker is terminated immediately as it is not running!' );
+					if ( this.logging.enabled ) console.info( 'Worker is terminated immediately as it is not running!' );
 					this._terminate();
 
 				}
@@ -13155,38 +13056,56 @@ var Three = (function (exports) {
 
 		})();
 
-		function WorkerSupport( logger ) {
-			this.logger = Validator.verifyInput( logger, new LoaderSupport.ConsoleLogger() );
-			this.logger.logInfo( 'Using LoaderSupport.WorkerSupport version: ' + WORKER_SUPPORT_VERSION );
+		function WorkerSupport() {
+			console.info( 'Using LoaderSupport.WorkerSupport version: ' + WORKER_SUPPORT_VERSION );
+			this.logging = {
+				enabled: true,
+				debug: false
+			};
 
 			// check worker support first
 			if ( window.Worker === undefined ) throw "This browser does not support web workers!";
 			if ( window.Blob === undefined  ) throw "This browser does not support Blob!";
 			if ( typeof window.URL.createObjectURL !== 'function'  ) throw "This browser does not support Object creation from URL!";
 
-			this.loaderWorker = new LoaderWorker( this.logger );
+			this.loaderWorker = new LoaderWorker();
 		}
+
+		
+		WorkerSupport.prototype.setLogging = function ( enabled, debug ) {
+			this.logging.enabled = enabled === true;
+			this.logging.debug = debug === true;
+			this.loaderWorker.setLogging( this.logging.enabled, this.logging.debug );
+		};
+
+		
+		WorkerSupport.prototype.setForceWorkerDataCopy = function ( forceWorkerDataCopy ) {
+			this.loaderWorker.setForceCopy( forceWorkerDataCopy );
+		};
 
 		
 		WorkerSupport.prototype.validate = function ( functionCodeBuilder, parserName, libLocations, libPath, runnerImpl ) {
 			if ( Validator.isValid( this.loaderWorker.worker ) ) return;
 
-			this.logger.logInfo( 'WorkerSupport: Building worker code...' );
-			this.logger.logTimeStart( 'buildWebWorkerCode' );
+			if ( this.logging.enabled ) {
 
+				console.info( 'WorkerSupport: Building worker code...' );
+				console.time( 'buildWebWorkerCode' );
+
+			}
 			if ( Validator.isValid( runnerImpl ) ) {
 
-				this.logger.logInfo( 'WorkerSupport: Using "' + runnerImpl.name + '" as Runner class for worker.' );
+				if ( this.logging.enabled ) console.info( 'WorkerSupport: Using "' + runnerImpl.name + '" as Runner class for worker.' );
 
 			} else {
 
 				runnerImpl = LoaderSupport.WorkerRunnerRefImpl;
-				this.logger.logInfo( 'WorkerSupport: Using DEFAULT "LoaderSupport.WorkerRunnerRefImpl" as Runner class for worker.' );
+				if ( this.logging.enabled ) console.info( 'WorkerSupport: Using DEFAULT "LoaderSupport.WorkerRunnerRefImpl" as Runner class for worker.' );
 
 			}
 
 			var userWorkerCode = functionCodeBuilder( buildObject, buildSingleton );
-			userWorkerCode += 'var Parser = '+ parserName + ';\n\n';
+			userWorkerCode += 'var Parser = '+ parserName +  ';\n\n';
 			userWorkerCode += buildSingleton( runnerImpl.name, runnerImpl );
 			userWorkerCode += 'new ' + runnerImpl.name + '();\n\n';
 
@@ -13198,7 +13117,7 @@ var Three = (function (exports) {
 					if ( locations.length === 0 ) {
 
 						scope.loaderWorker.initWorker( libsContent + userWorkerCode, runnerImpl.name );
-						scope.logger.logTimeEnd( 'buildWebWorkerCode' );
+						if ( scope.logging.enabled ) console.timeEnd( 'buildWebWorkerCode' );
 
 					} else {
 
@@ -13220,14 +13139,14 @@ var Three = (function (exports) {
 			} else {
 
 				this.loaderWorker.initWorker( userWorkerCode, runnerImpl.name );
-				this.logger.logTimeEnd( 'buildWebWorkerCode' );
+				if ( this.logging.enabled ) console.timeEnd( 'buildWebWorkerCode' );
 
 			}
 		};
 
 		
-		WorkerSupport.prototype.setCallbacks = function ( builder, onLoad ) {
-			this.loaderWorker.setCallbacks( builder, onLoad );
+		WorkerSupport.prototype.setCallbacks = function ( meshBuilder, onLoad ) {
+			this.loaderWorker.setCallbacks( meshBuilder, onLoad );
 		};
 
 		
@@ -13272,11 +13191,12 @@ var Three = (function (exports) {
 			return objectString;
 		};
 
-		var buildSingleton = function ( fullName, object, internalName ) {
+		var buildSingleton = function ( fullName, object, internalName, basePrototypeName, ignoreFunctions ) {
 			var objectString = '';
 			var objectName = ( Validator.isValid( internalName ) ) ? internalName : object.name;
 
 			var funcString, objectPart, constructorString;
+			ignoreFunctions = Validator.verifyInput( ignoreFunctions, [] );
 			for ( var name in object.prototype ) {
 
 				objectPart = object.prototype[ name ];
@@ -13288,25 +13208,39 @@ var Three = (function (exports) {
 
 				} else if ( typeof objectPart === 'function' ) {
 
-					funcString = objectPart.toString();
-					objectString += '\t' + objectName + '.prototype.' + name + ' = ' + funcString + ';\n\n';
+					if ( ignoreFunctions.indexOf( name ) < 0 ) {
+
+						funcString = objectPart.toString();
+						objectString += '\t' + objectName + '.prototype.' + name + ' = ' + funcString + ';\n\n';
+
+					}
 
 				}
 
 			}
 			objectString += '\treturn ' + objectName + ';\n';
 			objectString += '})();\n\n';
+
+			var inheritanceBlock = '';
+			if ( Validator.isValid( basePrototypeName ) ) {
+
+				inheritanceBlock += '\n';
+				inheritanceBlock += objectName + '.prototype = Object.create( ' + basePrototypeName + '.prototype );\n';
+				inheritanceBlock += objectName + '.constructor = ' + objectName + ';\n';
+				inheritanceBlock += '\n';
+			}
 			if ( ! Validator.isValid( constructorString ) ) {
 
 				constructorString = fullName + ' = (function () {\n\n';
-				constructorString += '\t' + object.prototype.constructor.toString() + '\n\n';
+				constructorString += inheritanceBlock + '\t' + object.prototype.constructor.toString() + '\n\n';
 				objectString = constructorString + objectString;
 
 			} else {
 
-				objectString = fullName + ' = (function () {\n\n' + constructorString + objectString;
+				objectString = fullName + ' = (function () {\n\n' + inheritanceBlock + constructorString + objectString;
 
 			}
+
 			return objectString;
 		};
 
@@ -13317,16 +13251,19 @@ var Three = (function (exports) {
 
 	LoaderSupport.WorkerDirector = (function () {
 
-		var LOADER_WORKER_DIRECTOR_VERSION = '2.1.0';
+		var LOADER_WORKER_DIRECTOR_VERSION = '2.2.0';
 
 		var Validator = LoaderSupport.Validator;
 
 		var MAX_WEB_WORKER = 16;
 		var MAX_QUEUE_SIZE = 8192;
 
-		function WorkerDirector( classDef, logger ) {
-			this.logger = Validator.verifyInput( logger, new LoaderSupport.ConsoleLogger() );
-			this.logger.logInfo( 'Using LoaderSupport.WorkerDirector version: ' + LOADER_WORKER_DIRECTOR_VERSION );
+		function WorkerDirector( classDef ) {
+			console.info( 'Using LoaderSupport.WorkerDirector version: ' + LOADER_WORKER_DIRECTOR_VERSION );
+			this.logging = {
+				enabled: true,
+				debug: false
+			};
 
 			this.maxQueueSize = MAX_QUEUE_SIZE ;
 			this.maxWebWorkers = MAX_WEB_WORKER;
@@ -13337,7 +13274,8 @@ var Three = (function (exports) {
 			this.workerDescription = {
 				classDef: classDef,
 				globalCallbacks: {},
-				workerSupports: {}
+				workerSupports: {},
+				forceWorkerDataCopy: true
 			};
 			this.objectsCompleted = 0;
 			this.instructionQueue = [];
@@ -13345,6 +13283,12 @@ var Three = (function (exports) {
 
 			this.callbackOnFinishedProcessing = null;
 		}
+
+		
+		WorkerDirector.prototype.setLogging = function ( enabled, debug ) {
+			this.logging.enabled = enabled === true;
+			this.logging.debug = debug === true;
+		};
 
 		
 		WorkerDirector.prototype.getMaxQueueSize = function () {
@@ -13362,6 +13306,11 @@ var Three = (function (exports) {
 		};
 
 		
+		WorkerDirector.prototype.setForceWorkerDataCopy = function ( forceWorkerDataCopy ) {
+			this.workerDescription.forceWorkerDataCopy = forceWorkerDataCopy === true;
+		};
+
+		
 		WorkerDirector.prototype.prepareWorkers = function ( globalCallbacks, maxQueueSize, maxWebWorkers ) {
 			if ( Validator.isValid( globalCallbacks ) ) this.workerDescription.globalCallbacks = globalCallbacks;
 			this.maxQueueSize = Math.min( maxQueueSize, MAX_QUEUE_SIZE );
@@ -13373,11 +13322,14 @@ var Three = (function (exports) {
 
 			for ( var instanceNo = 0; instanceNo < this.maxWebWorkers; instanceNo++ ) {
 
+				var workerSupport = new LoaderSupport.WorkerSupport();
+				workerSupport.setLogging( this.logging.enabled, this.logging.debug );
+				workerSupport.setForceWorkerDataCopy( this.workerDescription.forceWorkerDataCopy );
 				this.workerDescription.workerSupports[ instanceNo ] = {
 					instanceNo: instanceNo,
 					inUse: false,
 					terminateRequested: false,
-					workerSupport: new LoaderSupport.WorkerSupport( this.logger ),
+					workerSupport: workerSupport,
 					loader: null
 				};
 
@@ -13433,7 +13385,7 @@ var Three = (function (exports) {
 			supportDesc.inUse = true;
 			supportDesc.workerSupport.setTerminateRequested( supportDesc.terminateRequested );
 
-			this.logger.logInfo( '\nAssigning next item from queue to worker (queue length: ' + this.instructionQueue.length + ')\n\n' );
+			if ( this.logging.enabled ) console.info( '\nAssigning next item from queue to worker (queue length: ' + this.instructionQueue.length + ')\n\n' );
 
 			var scope = this;
 			var prepDataCallbacks = prepData.getCallbacks();
@@ -13471,7 +13423,7 @@ var Three = (function (exports) {
 		WorkerDirector.prototype._buildLoader = function ( instanceNo ) {
 			var classDef = this.workerDescription.classDef;
 			var loader = Object.create( classDef.prototype );
-			this.workerDescription.classDef.call( loader, DefaultLoadingManager, this.logger );
+			classDef.call( loader, DefaultLoadingManager );
 
 			// verify that all required functions are implemented
 			if ( ! loader.hasOwnProperty( 'instanceNo' ) ) throw classDef.name + ' has no property "instanceNo".';
@@ -13485,10 +13437,11 @@ var Three = (function (exports) {
 			if ( typeof loader.run !== 'function'  ) throw classDef.name + ' has no function "run".';
 			if ( ! loader.hasOwnProperty( 'callbacks' ) || ! Validator.isValid( loader.callbacks ) ) {
 
-				this.logger.logWarn( classDef.name + ' has an invalid property "callbacks". Will change to "LoaderSupport.Callbacks"' );
+				console.warn( classDef.name + ' has an invalid property "callbacks". Will change to "LoaderSupport.Callbacks"' );
 				loader.callbacks = new LoaderSupport.Callbacks();
 
 			}
+
 			return loader;
 		};
 
@@ -13496,7 +13449,7 @@ var Three = (function (exports) {
 			if ( Validator.isValid( supportDesc ) ) {
 
 				supportDesc.workerSupport.setTerminateRequested( true );
-				this.logger.logInfo( 'Requested termination of worker #' + supportDesc.instanceNo + '.' );
+				if ( this.logging.enabled ) console.info( 'Requested termination of worker #' + supportDesc.instanceNo + '.' );
 
 				var loaderCallbacks = supportDesc.loader.callbacks;
 				if ( Validator.isValid( loaderCallbacks.onProgress ) ) loaderCallbacks.onProgress( { detail: { text: '' } } );
@@ -13507,7 +13460,7 @@ var Three = (function (exports) {
 
 		
 		WorkerDirector.prototype.tearDown = function ( callbackOnFinishedProcessing ) {
-			this.logger.logInfo( 'WorkerDirector received the deregister call. Terminating all workers!' );
+			if ( this.logging.enabled ) console.info( 'WorkerDirector received the deregister call. Terminating all workers!' );
 
 			this.instructionQueuePointer = this.instructionQueue.length;
 			this.callbackOnFinishedProcessing = Validator.verifyInput( callbackOnFinishedProcessing, null );
