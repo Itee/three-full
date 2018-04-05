@@ -711,6 +711,8 @@ Object.assign( ObjectLoader.prototype, {
 
 				}
 
+				if ( data.format !== undefined ) texture.format = data.format;
+
 				if ( data.minFilter !== undefined ) texture.minFilter = parseConstant( data.minFilter, TEXTURE_FILTER );
 				if ( data.magFilter !== undefined ) texture.magFilter = parseConstant( data.magFilter, TEXTURE_FILTER );
 				if ( data.anisotropy !== undefined ) texture.anisotropy = data.anisotropy;
@@ -826,6 +828,9 @@ Object.assign( ObjectLoader.prototype, {
 			case 'OrthographicCamera':
 
 				object = new OrthographicCamera( data.left, data.right, data.top, data.bottom, data.near, data.far );
+
+				if ( data.zoom !== undefined ) object.zoom = data.zoom;
+				if ( data.view !== undefined ) object.view = Object.assign( {}, data.view );
 
 				break;
 
@@ -965,6 +970,8 @@ Object.assign( ObjectLoader.prototype, {
 		}
 
 		if ( data.visible !== undefined ) object.visible = data.visible;
+		if ( data.frustumCulled !== undefined ) object.frustumCulled = data.frustumCulled;
+		if ( data.renderOrder !== undefined ) object.renderOrder = data.renderOrder;
 		if ( data.userData !== undefined ) object.userData = data.userData;
 
 		if ( data.children !== undefined ) {

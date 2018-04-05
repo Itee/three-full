@@ -105,9 +105,13 @@ var SAOPass = function ( scene, camera, depthTexture, useNormals, resolution ) {
 
 	}
 
-	this.saoMaterial = new ShaderMaterial( SAOShader );
+	this.saoMaterial = new ShaderMaterial( {
+		defines: Object.assign( {}, SAOShader.defines ),
+		fragmentShader: SAOShader.fragmentShader,
+		vertexShader: SAOShader.vertexShader,
+		uniforms: UniformsUtils.clone( SAOShader.uniforms )
+	} );
 	this.saoMaterial.extensions.derivatives = true;
-	this.saoMaterial.extensions.drawBuffers = true;
 	this.saoMaterial.defines[ 'DEPTH_PACKING' ] = this.supportsDepthTextureExtension ? 0 : 1;
 	this.saoMaterial.defines[ 'NORMAL_TEXTURE' ] = this.supportsNormalTexture ? 1 : 0;
 	this.saoMaterial.defines[ 'PERSPECTIVE_CAMERA' ] = this.camera.isPerspectiveCamera ? 1 : 0;
@@ -126,7 +130,7 @@ var SAOPass = function ( scene, camera, depthTexture, useNormals, resolution ) {
 
 	this.vBlurMaterial = new ShaderMaterial( {
 		uniforms: UniformsUtils.clone( DepthLimitedBlurShader.uniforms ),
-		defines: DepthLimitedBlurShader.defines,
+		defines: Object.assign( {}, DepthLimitedBlurShader.defines ),
 		vertexShader: DepthLimitedBlurShader.vertexShader,
 		fragmentShader: DepthLimitedBlurShader.fragmentShader
 	} );
@@ -139,7 +143,7 @@ var SAOPass = function ( scene, camera, depthTexture, useNormals, resolution ) {
 
 	this.hBlurMaterial = new ShaderMaterial( {
 		uniforms: UniformsUtils.clone( DepthLimitedBlurShader.uniforms ),
-		defines: DepthLimitedBlurShader.defines,
+		defines: Object.assign( {}, DepthLimitedBlurShader.defines ),
 		vertexShader: DepthLimitedBlurShader.vertexShader,
 		fragmentShader: DepthLimitedBlurShader.fragmentShader
 	} );
@@ -265,7 +269,7 @@ SAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		if ( ! this.supportsDepthTextureExtension ) {
 
 			// Clear rule : far clipping plane in both RGBA and Basic encoding
-			this.renderOverride( renderer, this.depthMaterial, this.depthRenderTarget, 0xffffff, 1.0 );
+			this.renderOverride( renderer, this.depthMaterial, this.depthRenderTarget, 0x000000, 1.0 );
 
 		}
 

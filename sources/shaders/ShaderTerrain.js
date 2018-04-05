@@ -84,7 +84,7 @@ var ShaderTerrain = {
 
 			ShaderChunk[ "common" ],
 			ShaderChunk[ "bsdfs" ],
-			ShaderChunk[ "lights_pars" ],
+			ShaderChunk[ "lights_pars_begin" ],
 			ShaderChunk[ "shadowmap_pars_fragment" ],
 			ShaderChunk[ "fog_pars_fragment" ],
 

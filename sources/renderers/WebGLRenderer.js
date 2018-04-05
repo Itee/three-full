@@ -11,35 +11,37 @@ import {
 	LinearToneMapping
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
-import { Matrix4 } from '../math/Matrix4.js'
 import { DataTexture } from '../textures/DataTexture.js'
-import { WebGLUniforms } from './webgl/WebGLUniforms.js'
+import { Frustum } from '../math/Frustum.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { ShaderLib } from './shaders/ShaderLib.js'
 import { UniformsLib } from './shaders/UniformsLib.js'
 import { UniformsUtils } from './shaders/UniformsUtils.js'
-import { ShaderLib } from './shaders/ShaderLib.js'
-import { WebGLSpriteRenderer } from './webgl/WebGLSpriteRenderer.js'
-import { WebGLShadowMap } from './webgl/WebGLShadowMap.js'
+import { Vector3 } from '../math/Vector3.js'
+import { Vector4 } from '../math/Vector4.js'
 import { WebGLAttributes } from './webgl/WebGLAttributes.js'
 import { WebGLBackground } from './webgl/WebGLBackground.js'
-import { WebGLRenderLists } from './webgl/WebGLRenderLists.js'
-import { WebGLMorphtargets } from './webgl/WebGLMorphtargets.js'
-import { WebGLIndexedBufferRenderer } from './webgl/WebGLIndexedBufferRenderer.js'
 import { WebGLBufferRenderer } from './webgl/WebGLBufferRenderer.js'
+import { WebGLCapabilities } from './webgl/WebGLCapabilities.js'
+import { WebGLClipping } from './webgl/WebGLClipping.js'
+import { WebGLExtensions } from './webgl/WebGLExtensions.js'
 import { WebGLGeometries } from './webgl/WebGLGeometries.js'
+import { WebGLIndexedBufferRenderer } from './webgl/WebGLIndexedBufferRenderer.js'
+import { WebGLInfo } from './webgl/WebGLInfo.js'
+import { WebGLMorphtargets } from './webgl/WebGLMorphtargets.js'
 import { WebGLObjects } from './webgl/WebGLObjects.js'
 import { WebGLPrograms } from './webgl/WebGLPrograms.js'
-import { WebGLTextures } from './webgl/WebGLTextures.js'
 import { WebGLProperties } from './webgl/WebGLProperties.js'
-import { WebGLState } from './webgl/WebGLState.js'
-import { WebGLCapabilities } from './webgl/WebGLCapabilities.js'
-import { WebVRManager } from './webvr/WebVRManager.js'
-import { WebGLExtensions } from './webgl/WebGLExtensions.js'
-import { Vector3 } from '../math/Vector3.js'
-import { WebGLClipping } from './webgl/WebGLClipping.js'
-import { Frustum } from '../math/Frustum.js'
-import { Vector4 } from '../math/Vector4.js'
-import { WebGLUtils } from './webgl/WebGLUtils.js'
+import { WebGLRenderLists } from './webgl/WebGLRenderLists.js'
 import { WebGLRenderStates } from './webgl/WebGLRenderStates.js'
+import { WebGLShadowMap } from './webgl/WebGLShadowMap.js'
+import { WebGLSpriteRenderer } from './webgl/WebGLSpriteRenderer.js'
+import { WebGLState } from './webgl/WebGLState.js'
+import { WebGLTextures } from './webgl/WebGLTextures.js'
+import { WebGLUniforms } from './webgl/WebGLUniforms.js'
+import { WebGLUtils } from './webgl/WebGLUtils.js'
+import { WebVRManager } from './webvr/WebVRManager.js'
+
 
 
 
@@ -186,44 +188,7 @@ function WebGLRenderer( parameters ) {
 
 		_projScreenMatrix = new Matrix4(),
 
-		_vector3 = new Vector3(),
-
-		// info
-
-		_infoMemory = {
-			geometries: 0,
-			textures: 0
-		},
-
-		_infoRender = {
-
-			frame: 0,
-			calls: 0,
-			vertices: 0,
-			faces: 0,
-			points: 0
-
-		};
-
-	this.info = {
-
-		render: _infoRender,
-		memory: _infoMemory,
-		programs: null,
-		autoReset: true,
-		reset: resetInfo
-
-	};
-
-	function resetInfo() {
-
-		_infoRender.frame ++;
-		_infoRender.calls = 0;
-		_infoRender.vertices = 0;
-		_infoRender.faces = 0;
-		_infoRender.points = 0;
-
-	}
+		_vector3 = new Vector3();
 
 	function getTargetPixelRatio() {
 
@@ -286,7 +251,7 @@ function WebGLRenderer( parameters ) {
 
 	}
 
-	var extensions, capabilities, state;
+	var extensions, capabilities, state, info;
 	var properties, textures, attributes, geometries, objects;
 	var programCache, renderLists, renderStates;
 
@@ -315,11 +280,12 @@ function WebGLRenderer( parameters ) {
 		state.scissor( _currentScissor.copy( _scissor ).multiplyScalar( _pixelRatio ) );
 		state.viewport( _currentViewport.copy( _viewport ).multiplyScalar( _pixelRatio ) );
 
+		info = new WebGLInfo( _gl );
 		properties = new WebGLProperties();
-		textures = new WebGLTextures( _gl, extensions, state, properties, capabilities, utils, _infoMemory, _infoRender );
+		textures = new WebGLTextures( _gl, extensions, state, properties, capabilities, utils, info );
 		attributes = new WebGLAttributes( _gl );
-		geometries = new WebGLGeometries( _gl, attributes, _infoMemory );
-		objects = new WebGLObjects( geometries, _infoRender );
+		geometries = new WebGLGeometries( _gl, attributes, info );
+		objects = new WebGLObjects( geometries, info );
 		morphtargets = new WebGLMorphtargets( _gl );
 		programCache = new WebGLPrograms( _this, extensions, capabilities );
 		renderLists = new WebGLRenderLists();
@@ -327,12 +293,12 @@ function WebGLRenderer( parameters ) {
 
 		background = new WebGLBackground( _this, state, geometries, _premultipliedAlpha );
 
-		bufferRenderer = new WebGLBufferRenderer( _gl, extensions, _infoRender );
-		indexedBufferRenderer = new WebGLIndexedBufferRenderer( _gl, extensions, _infoRender );
+		bufferRenderer = new WebGLBufferRenderer( _gl, extensions, info );
+		indexedBufferRenderer = new WebGLIndexedBufferRenderer( _gl, extensions, info );
 
 		spriteRenderer = new WebGLSpriteRenderer( _this, _gl, state, textures, capabilities );
 
-		_this.info.programs = programCache.programs;
+		info.programs = programCache.programs;
 
 		_this.context = _gl;
 		_this.capabilities = capabilities;
@@ -340,6 +306,7 @@ function WebGLRenderer( parameters ) {
 		_this.properties = properties;
 		_this.renderLists = renderLists;
 		_this.state = state;
+		_this.info = info;
 
 	}
 
@@ -1520,7 +1487,7 @@ function WebGLRenderer( parameters ) {
 
 			}
 
-			material.onBeforeCompile( materialProperties.shader );
+			material.onBeforeCompile( materialProperties.shader, _this );
 
 			program = programCache.acquireProgram( material, materialProperties.shader, parameters, code );
 
@@ -1981,6 +1948,8 @@ function WebGLRenderer( parameters ) {
 
 			uniforms.reflectivity.value = material.reflectivity;
 			uniforms.refractionRatio.value = material.refractionRatio;
+
+			uniforms.maxMipLevel.value = properties.get( material.envMap ).__maxMipLevel;
 
 		}
 
@@ -2573,11 +2542,25 @@ function WebGLRenderer( parameters ) {
 
 		var width = texture.image.width;
 		var height = texture.image.height;
-		var internalFormat = utils.convert( texture.format );
+		var glFormat = utils.convert( texture.format );
 
 		this.setTexture2D( texture, 0 );
 
-		_gl.copyTexImage2D( _gl.TEXTURE_2D, level || 0, internalFormat, position.x, position.y, width, height, 0 );
+		_gl.copyTexImage2D( _gl.TEXTURE_2D, level || 0, glFormat, position.x, position.y, width, height, 0 );
+
+	};
+
+	this.copyTextureToTexture = function ( position, srcTexture, dstTexture, level ) {
+
+		var width = srcTexture.image.width;
+		var height = srcTexture.image.height;
+		var glFormat = utils.convert( dstTexture.format );
+		var glType = utils.convert( dstTexture.type );
+		var pixels = srcTexture.isDataTexture ? srcTexture.image.data : srcTexture.image;
+
+		this.setTexture2D( dstTexture, 0 );
+
+		_gl.texSubImage2D( _gl.TEXTURE_2D, level || 0, position.x, position.y, width, height, glFormat, glType, pixels );
 
 	};
 

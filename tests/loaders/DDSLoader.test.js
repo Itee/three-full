@@ -3910,6 +3910,7 @@ var Three = (function (exports) {
 			}
 
 			var output = {
+
 				metadata: {
 					version: 4.5,
 					type: 'Texture',
@@ -3928,11 +3929,13 @@ var Three = (function (exports) {
 
 				wrap: [ this.wrapS, this.wrapT ],
 
+				format: this.format,
 				minFilter: this.minFilter,
 				magFilter: this.magFilter,
 				anisotropy: this.anisotropy,
 
 				flipY: this.flipY
+
 			};
 
 			if ( this.image !== undefined ) {
@@ -4237,12 +4240,7 @@ var Three = (function (exports) {
 
 		var DDS_MAGIC = 0x20534444;
 
-		var DDSD_CAPS = 0x1,
-			DDSD_HEIGHT = 0x2,
-			DDSD_WIDTH = 0x4,
-			DDSD_PITCH = 0x8,
-			DDSD_PIXELFORMAT = 0x1000,
-			DDSD_MIPMAPCOUNT = 0x20000;
+		var DDSD_MIPMAPCOUNT = 0x20000;
 
 		var DDSCAPS2_CUBEMAP = 0x200,
 			DDSCAPS2_CUBEMAP_POSITIVEX = 0x400,
@@ -4252,9 +4250,7 @@ var Three = (function (exports) {
 			DDSCAPS2_CUBEMAP_POSITIVEZ = 0x4000,
 			DDSCAPS2_CUBEMAP_NEGATIVEZ = 0x8000;
 
-		var DDPF_ALPHAPIXELS = 0x1,
-			DDPF_ALPHA = 0x2,
-			DDPF_FOURCC = 0x4;
+		var DDPF_FOURCC = 0x4;
 
 		function fourCCToInt32( value ) {
 
@@ -4328,8 +4324,10 @@ var Three = (function (exports) {
 		var off_GBitMask = 24;
 		var off_BBitMask = 25;
 		var off_ABitMask = 26;
-
 		var off_caps2 = 28;
+
+		// Parse header
+
 		var header = new Int32Array( buffer, 0, headerLengthInt );
 
 		if ( header[ off_magic ] !== DDS_MAGIC ) {

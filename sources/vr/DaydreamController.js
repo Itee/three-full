@@ -43,7 +43,7 @@ var DaydreamController = function () {
 
 	};
 
-	this.getTouchPadState = function () {
+	this.getTouchpadState = function () {
 
 		return touchpadIsPressed;
 
@@ -101,6 +101,15 @@ var DaydreamController = function () {
 			scope.visible = false;
 
 		}
+
+	};
+
+	// DEPRECATED
+
+	this.getTouchPadState = function () {
+
+		console.warn( 'DaydreamController: getTouchPadState() is now getTouchpadState()' );
+		return touchpadIsPressed;
 
 	};
 

@@ -12,7 +12,10 @@ import { Vector3 } from '../math/Vector3.js'
 import { AnimationClip } from '../animation/AnimationClip.js'
 import { FileLoader } from './FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
-import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import {
+	Float32BufferAttribute,
+	Uint16BufferAttribute
+} from '../core/BufferAttribute.js'
 import { TextureLoader } from './TextureLoader.js'
 import { TGALoader } from './TGALoader.js'
 import { Color } from '../math/Color.js'
@@ -1440,7 +1443,7 @@ MMDLoader.prototype.createMesh = function ( model, texturePath, onProgress, onEr
 		geometry.addAttribute( 'position', new Float32BufferAttribute( buffer.vertices, 3 ) );
 		geometry.addAttribute( 'normal', new Float32BufferAttribute( buffer.normals, 3 ) );
 		geometry.addAttribute( 'uv', new Float32BufferAttribute( buffer.uvs, 2 ) );
-		geometry.addAttribute( 'skinIndex', new Float32BufferAttribute( buffer.skinIndices, 4 ) );
+		geometry.addAttribute( 'skinIndex', new Uint16BufferAttribute( buffer.skinIndices, 4 ) );
 		geometry.addAttribute( 'skinWeight', new Float32BufferAttribute( buffer.skinWeights, 4 ) );
 
 		geometry.computeBoundingSphere();

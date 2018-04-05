@@ -3913,6 +3913,7 @@ var Three = (function (exports) {
 			}
 
 			var output = {
+
 				metadata: {
 					version: 4.5,
 					type: 'Texture',
@@ -3931,11 +3932,13 @@ var Three = (function (exports) {
 
 				wrap: [ this.wrapS, this.wrapT ],
 
+				format: this.format,
 				minFilter: this.minFilter,
 				magFilter: this.magFilter,
 				anisotropy: this.anisotropy,
 
 				flipY: this.flipY
+
 			};
 
 			if ( this.image !== undefined ) {
@@ -4184,9 +4187,8 @@ var Three = (function (exports) {
 	// adapted from http://www.graphics.cornell.edu/~bjw/rgbe.html
 	RGBELoader.prototype._parser = function ( buffer ) {
 
-		var
+		var 
 			
-			RGBE_RETURN_SUCCESS = 0,
 			RGBE_RETURN_FAILURE = - 1,
 
 			
@@ -4213,14 +4215,6 @@ var Three = (function (exports) {
 			},
 
 			
-			RGBE_DATA_RED = 0,
-			RGBE_DATA_GREEN = 1,
-			RGBE_DATA_BLUE = 2,
-
-			
-			RGBE_DATA_SIZE = 4,
-
-			
 			RGBE_VALID_PROGRAMTYPE = 1,
 			RGBE_VALID_FORMAT = 2,
 			RGBE_VALID_DIMENSIONS = 4,
@@ -4232,7 +4226,8 @@ var Three = (function (exports) {
 				lineLimit = ! lineLimit ? 1024 : lineLimit;
 				var p = buffer.pos,
 					i = - 1, len = 0, s = '', chunkSize = 128,
-					chunk = String.fromCharCode.apply( null, new Uint16Array( buffer.subarray( p, p + chunkSize ) ) );
+					chunk = String.fromCharCode.apply( null, new Uint16Array( buffer.subarray( p, p + chunkSize ) ) )
+				;
 				while ( ( 0 > ( i = chunk.indexOf( NEWLINE ) ) ) && ( len < lineLimit ) && ( p < buffer.byteLength ) ) {
 
 					s += chunk; len += chunk.length;
@@ -4360,7 +4355,8 @@ var Three = (function (exports) {
 
 				var data_rgba, offset, pos, count, byteValue,
 					scanline_buffer, ptr, ptr_end, i, l, off, isEncodedRun,
-					scanline_width = w, num_scanlines = h, rgbeStart;
+					scanline_width = w, num_scanlines = h, rgbeStart
+				;
 
 				if (
 					// run length encoding is not allowed so read flat
@@ -4472,7 +4468,8 @@ var Three = (function (exports) {
 
 				return data_rgba;
 
-			};
+			}
+		;
 
 		var byteArray = new Uint8Array( buffer );
 		byteArray.pos = 0;
@@ -4482,7 +4479,8 @@ var Three = (function (exports) {
 
 			var w = rgbe_header_info.width,
 				h = rgbe_header_info.height,
-				image_rgba_data = RGBE_ReadPixels_RLE( byteArray.subarray( byteArray.pos ), w, h );
+				image_rgba_data = RGBE_ReadPixels_RLE( byteArray.subarray( byteArray.pos ), w, h )
+			;
 			if ( RGBE_RETURN_FAILURE !== image_rgba_data ) {
 
 				return {

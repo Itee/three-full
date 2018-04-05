@@ -487,7 +487,6 @@ var Three = (function (exports) {
 
 	function DirectGeometry() {
 
-		this.indices = [];
 		this.vertices = [];
 		this.normals = [];
 		this.colors = [];

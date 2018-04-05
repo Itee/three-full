@@ -45,6 +45,15 @@ var CSS2DRenderer = function () {
 
 	this.domElement = domElement;
 
+	this.getSize = function () {
+
+		return {
+			width: _width,
+			height: _height
+		};
+
+	};
+
 	this.setSize = function ( width, height ) {
 
 		_width = width;

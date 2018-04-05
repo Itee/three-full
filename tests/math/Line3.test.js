@@ -2402,17 +2402,29 @@ var Three = (function (exports) {
 
 		},
 
-		getCenter: function ( optionalTarget ) {
+		getCenter: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return result.addVectors( this.start, this.end ).multiplyScalar( 0.5 );
+			if ( target === undefined ) {
+
+				console.warn( 'Line3: .getCenter() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.addVectors( this.start, this.end ).multiplyScalar( 0.5 );
 
 		},
 
-		delta: function ( optionalTarget ) {
+		delta: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return result.subVectors( this.end, this.start );
+			if ( target === undefined ) {
+
+				console.warn( 'Line3: .delta() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.subVectors( this.end, this.start );
 
 		},
 
@@ -2428,11 +2440,16 @@ var Three = (function (exports) {
 
 		},
 
-		at: function ( t, optionalTarget ) {
+		at: function ( t, target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return this.delta( result ).multiplyScalar( t ).add( this.start );
+				console.warn( 'Line3: .at() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return this.delta( target ).multiplyScalar( t ).add( this.start );
 
 		},
 
@@ -2463,13 +2480,18 @@ var Three = (function (exports) {
 
 		}(),
 
-		closestPointToPoint: function ( point, clampToLine, optionalTarget ) {
+		closestPointToPoint: function ( point, clampToLine, target ) {
 
 			var t = this.closestPointToPointParameter( point, clampToLine );
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return this.delta( result ).multiplyScalar( t ).add( this.start );
+				console.warn( 'Line3: .closestPointToPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return this.delta( target ).multiplyScalar( t ).add( this.start );
 
 		},
 

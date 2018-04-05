@@ -2402,17 +2402,29 @@ var Three = (function (exports) {
 
 		},
 
-		getCenter: function ( optionalTarget ) {
+		getCenter: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return result.addVectors( this.start, this.end ).multiplyScalar( 0.5 );
+			if ( target === undefined ) {
+
+				console.warn( 'Line3: .getCenter() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.addVectors( this.start, this.end ).multiplyScalar( 0.5 );
 
 		},
 
-		delta: function ( optionalTarget ) {
+		delta: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return result.subVectors( this.end, this.start );
+			if ( target === undefined ) {
+
+				console.warn( 'Line3: .delta() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.subVectors( this.end, this.start );
 
 		},
 
@@ -2428,11 +2440,16 @@ var Three = (function (exports) {
 
 		},
 
-		at: function ( t, optionalTarget ) {
+		at: function ( t, target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return this.delta( result ).multiplyScalar( t ).add( this.start );
+				console.warn( 'Line3: .at() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return this.delta( target ).multiplyScalar( t ).add( this.start );
 
 		},
 
@@ -2463,13 +2480,18 @@ var Three = (function (exports) {
 
 		}(),
 
-		closestPointToPoint: function ( point, clampToLine, optionalTarget ) {
+		closestPointToPoint: function ( point, clampToLine, target ) {
 
 			var t = this.closestPointToPointParameter( point, clampToLine );
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return this.delta( result ).multiplyScalar( t ).add( this.start );
+				console.warn( 'Line3: .closestPointToPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return this.delta( target ).multiplyScalar( t ).add( this.start );
 
 		},
 
@@ -2972,11 +2994,16 @@ var Three = (function (exports) {
 
 		},
 
-		projectPoint: function ( point, optionalTarget ) {
+		projectPoint: function ( point, target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return result.copy( this.normal ).multiplyScalar( - this.distanceToPoint( point ) ).add( point );
+				console.warn( 'Plane: .projectPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.copy( this.normal ).multiplyScalar( - this.distanceToPoint( point ) ).add( point );
 
 		},
 
@@ -2984,9 +3011,14 @@ var Three = (function (exports) {
 
 			var v1 = new Vector3();
 
-			return function intersectLine( line, optionalTarget ) {
+			return function intersectLine( line, target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Plane: .intersectLine() target is now required' );
+					target = new Vector3();
+
+				}
 
 				var direction = line.delta( v1 );
 
@@ -2997,7 +3029,7 @@ var Three = (function (exports) {
 					// line is coplanar, return origin
 					if ( this.distanceToPoint( line.start ) === 0 ) {
 
-						return result.copy( line.start );
+						return target.copy( line.start );
 
 					}
 
@@ -3014,7 +3046,7 @@ var Three = (function (exports) {
 
 				}
 
-				return result.copy( direction ).multiplyScalar( t ).add( line.start );
+				return target.copy( direction ).multiplyScalar( t ).add( line.start );
 
 			};
 
@@ -3043,11 +3075,16 @@ var Three = (function (exports) {
 
 		},
 
-		coplanarPoint: function ( optionalTarget ) {
+		coplanarPoint: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return result.copy( this.normal ).multiplyScalar( - this.constant );
+				console.warn( 'Plane: .coplanarPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.copy( this.normal ).multiplyScalar( - this.constant );
 
 		},
 
@@ -3098,26 +3135,31 @@ var Three = (function (exports) {
 
 	Object.assign( Triangle, {
 
-		normal: function () {
+		getNormal: function () {
 
 			var v0 = new Vector3();
 
-			return function normal( a, b, c, optionalTarget ) {
+			return function getNormal( a, b, c, target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
 
-				result.subVectors( c, b );
-				v0.subVectors( a, b );
-				result.cross( v0 );
-
-				var resultLengthSq = result.lengthSq();
-				if ( resultLengthSq > 0 ) {
-
-					return result.multiplyScalar( 1 / Math.sqrt( resultLengthSq ) );
+					console.warn( 'Triangle: .getNormal() target is now required' );
+					target = new Vector3();
 
 				}
 
-				return result.set( 0, 0, 0 );
+				target.subVectors( c, b );
+				v0.subVectors( a, b );
+				target.cross( v0 );
+
+				var targetLengthSq = target.lengthSq();
+				if ( targetLengthSq > 0 ) {
+
+					return target.multiplyScalar( 1 / Math.sqrt( targetLengthSq ) );
+
+				}
+
+				return target.set( 0, 0, 0 );
 
 			};
 
@@ -3125,13 +3167,13 @@ var Three = (function (exports) {
 
 		// static/instance method to calculate barycentric coordinates
 		// based on: http://www.blackpawn.com/texts/pointinpoly/default.html
-		barycoordFromPoint: function () {
+		getBarycoord: function () {
 
 			var v0 = new Vector3();
 			var v1 = new Vector3();
 			var v2 = new Vector3();
 
-			return function barycoordFromPoint( point, a, b, c, optionalTarget ) {
+			return function getBarycoord( point, a, b, c, target ) {
 
 				v0.subVectors( c, a );
 				v1.subVectors( b, a );
@@ -3145,14 +3187,19 @@ var Three = (function (exports) {
 
 				var denom = ( dot00 * dot11 - dot01 * dot01 );
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Triangle: .getBarycoord() target is now required' );
+					target = new Vector3();
+
+				}
 
 				// collinear or singular triangle
 				if ( denom === 0 ) {
 
 					// arbitrary location outside of triangle?
 					// not sure if this is the best idea, maybe should be returning undefined
-					return result.set( - 2, - 1, - 1 );
+					return target.set( - 2, - 1, - 1 );
 
 				}
 
@@ -3161,7 +3208,7 @@ var Three = (function (exports) {
 				var v = ( dot00 * dot12 - dot01 * dot02 ) * invDenom;
 
 				// barycentric coordinates must always sum to 1
-				return result.set( 1 - u - v, v, u );
+				return target.set( 1 - u - v, v, u );
 
 			};
 
@@ -3173,9 +3220,9 @@ var Three = (function (exports) {
 
 			return function containsPoint( point, a, b, c ) {
 
-				var result = Triangle.barycoordFromPoint( point, a, b, c, v1 );
+				Triangle.getBarycoord( point, a, b, c, v1 );
 
-				return ( result.x >= 0 ) && ( result.y >= 0 ) && ( ( result.x + result.y ) <= 1 );
+				return ( v1.x >= 0 ) && ( v1.y >= 0 ) && ( ( v1.x + v1.y ) <= 1 );
 
 			};
 
@@ -3221,12 +3268,12 @@ var Three = (function (exports) {
 
 		},
 
-		area: function () {
+		getArea: function () {
 
 			var v0 = new Vector3();
 			var v1 = new Vector3();
 
-			return function area() {
+			return function getArea() {
 
 				v0.subVectors( this.c, this.b );
 				v1.subVectors( this.a, this.b );
@@ -3237,30 +3284,41 @@ var Three = (function (exports) {
 
 		}(),
 
-		midpoint: function ( optionalTarget ) {
+		getMidpoint: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return result.addVectors( this.a, this.b ).add( this.c ).multiplyScalar( 1 / 3 );
+			if ( target === undefined ) {
 
-		},
+				console.warn( 'Triangle: .getMidpoint() target is now required' );
+				target = new Vector3();
 
-		normal: function ( optionalTarget ) {
+			}
 
-			return Triangle.normal( this.a, this.b, this.c, optionalTarget );
-
-		},
-
-		plane: function ( optionalTarget ) {
-
-			var result = optionalTarget || new Plane();
-
-			return result.setFromCoplanarPoints( this.a, this.b, this.c );
+			return target.addVectors( this.a, this.b ).add( this.c ).multiplyScalar( 1 / 3 );
 
 		},
 
-		barycoordFromPoint: function ( point, optionalTarget ) {
+		getNormal: function ( target ) {
 
-			return Triangle.barycoordFromPoint( point, this.a, this.b, this.c, optionalTarget );
+			return Triangle.getNormal( this.a, this.b, this.c, target );
+
+		},
+
+		getPlane: function ( target ) {
+
+			if ( target === undefined ) {
+
+				console.warn( 'Triangle: .getPlane() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.setFromCoplanarPoints( this.a, this.b, this.c );
+
+		},
+
+		getBarycoord: function ( point, target ) {
+
+			return Triangle.getBarycoord( point, this.a, this.b, this.c, target );
 
 		},
 
@@ -3283,9 +3341,15 @@ var Three = (function (exports) {
 			var projectedPoint = new Vector3();
 			var closestPoint = new Vector3();
 
-			return function closestPointToPoint( point, optionalTarget ) {
+			return function closestPointToPoint( point, target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Triangle: .closestPointToPoint() target is now required' );
+					target = new Vector3();
+
+				}
+
 				var minDistance = Infinity;
 
 				// project the point onto the plane of the triangle
@@ -3299,11 +3363,11 @@ var Three = (function (exports) {
 
 					// if so, this is the closest point
 
-					result.copy( projectedPoint );
+					target.copy( projectedPoint );
 
 				} else {
 
-					// if not, the point falls outside the triangle. the result is the closest point to the triangle's edges or vertices
+					// if not, the point falls outside the triangle. the target is the closest point to the triangle's edges or vertices
 
 					edgeList[ 0 ].set( this.a, this.b );
 					edgeList[ 1 ].set( this.b, this.c );
@@ -3319,7 +3383,7 @@ var Three = (function (exports) {
 
 							minDistance = distance;
 
-							result.copy( closestPoint );
+							target.copy( closestPoint );
 
 						}
 
@@ -3327,7 +3391,7 @@ var Three = (function (exports) {
 
 				}
 
-				return result;
+				return target;
 
 			};
 
@@ -4251,9 +4315,9 @@ var Three = (function (exports) {
 
 					triangle.set( a.point, b.point, c.point );
 
-					triangle.normal( this.normal );
-					triangle.midpoint( this.midpoint );
-					this.area = triangle.area();
+					triangle.getNormal( this.normal );
+					triangle.getMidpoint( this.midpoint );
+					this.area = triangle.getArea();
 
 					this.constant = this.normal.dot( this.midpoint );
 

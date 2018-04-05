@@ -999,11 +999,16 @@ var Three = (function (exports) {
 
 		},
 
-		getHSL: function ( optionalTarget ) {
+		getHSL: function ( target ) {
 
 			// h,s,l ranges are in 0.0 - 1.0
 
-			var hsl = optionalTarget || { h: 0, s: 0, l: 0 };
+			if ( target === undefined ) {
+
+				console.warn( 'Color: .getHSL() target is now required' );
+				target = { h: 0, s: 0, l: 0 };
+
+			}
 
 			var r = this.r, g = this.g, b = this.b;
 
@@ -1036,11 +1041,11 @@ var Three = (function (exports) {
 
 			}
 
-			hsl.h = hue;
-			hsl.s = saturation;
-			hsl.l = lightness;
+			target.h = hue;
+			target.s = saturation;
+			target.l = lightness;
 
-			return hsl;
+			return target;
 
 		},
 
@@ -1050,17 +1055,23 @@ var Three = (function (exports) {
 
 		},
 
-		offsetHSL: function ( h, s, l ) {
+		offsetHSL: function () {
 
-			var hsl = this.getHSL();
+			var hsl = {};
 
-			hsl.h += h; hsl.s += s; hsl.l += l;
+			return function ( h, s, l ) {
 
-			this.setHSL( hsl.h, hsl.s, hsl.l );
+				this.getHSL( hsl );
 
-			return this;
+				hsl.h += h; hsl.s += s; hsl.l += l;
 
-		},
+				this.setHSL( hsl.h, hsl.s, hsl.l );
+
+				return this;
+
+			};
+
+		}(),
 
 		add: function ( color ) {
 
@@ -3983,17 +3994,29 @@ var Three = (function (exports) {
 
 		},
 
-		getCenter: function ( optionalTarget ) {
+		getCenter: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return this.isEmpty() ? result.set( 0, 0, 0 ) : result.addVectors( this.min, this.max ).multiplyScalar( 0.5 );
+			if ( target === undefined ) {
+
+				console.warn( 'Box3: .getCenter() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return this.isEmpty() ? target.set( 0, 0, 0 ) : target.addVectors( this.min, this.max ).multiplyScalar( 0.5 );
 
 		},
 
-		getSize: function ( optionalTarget ) {
+		getSize: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return this.isEmpty() ? result.set( 0, 0, 0 ) : result.subVectors( this.max, this.min );
+			if ( target === undefined ) {
+
+				console.warn( 'Box3: .getSize() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return this.isEmpty() ? target.set( 0, 0, 0 ) : target.subVectors( this.max, this.min );
 
 		},
 
@@ -4104,14 +4127,19 @@ var Three = (function (exports) {
 
 		},
 
-		getParameter: function ( point, optionalTarget ) {
+		getParameter: function ( point, target ) {
 
 			// This can potentially have a divide by zero if the box
 			// has a size dimension of 0.
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return result.set(
+				console.warn( 'Box3: .getParameter() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.set(
 				( point.x - this.min.x ) / ( this.max.x - this.min.x ),
 				( point.y - this.min.y ) / ( this.max.y - this.min.y ),
 				( point.z - this.min.z ) / ( this.max.z - this.min.z )
@@ -4292,10 +4320,16 @@ var Three = (function (exports) {
 
 		} )(),
 
-		clampPoint: function ( point, optionalTarget ) {
+		clampPoint: function ( point, target ) {
 
-			var result = optionalTarget || new Vector3();
-			return result.copy( point ).clamp( this.min, this.max );
+			if ( target === undefined ) {
+
+				console.warn( 'Box3: .clampPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.copy( point ).clamp( this.min, this.max );
 
 		},
 
@@ -4316,15 +4350,20 @@ var Three = (function (exports) {
 
 			var v1 = new Vector3();
 
-			return function getBoundingSphere( optionalTarget ) {
+			return function getBoundingSphere( target ) {
 
-				var result = optionalTarget || new Sphere();
+				if ( target === undefined ) {
 
-				this.getCenter( result.center );
+					console.warn( 'Box3: .getBoundingSphere() target is now required' );
+					target = new Sphere();
 
-				result.radius = this.getSize( v1 ).length() * 0.5;
+				}
 
-				return result;
+				this.getCenter( target.center );
+
+				target.radius = this.getSize( v1 ).length() * 0.5;
+
+				return target;
 
 			};
 
@@ -4509,33 +4548,43 @@ var Three = (function (exports) {
 
 		},
 
-		clampPoint: function ( point, optionalTarget ) {
+		clampPoint: function ( point, target ) {
 
 			var deltaLengthSq = this.center.distanceToSquared( point );
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			result.copy( point );
-
-			if ( deltaLengthSq > ( this.radius * this.radius ) ) {
-
-				result.sub( this.center ).normalize();
-				result.multiplyScalar( this.radius ).add( this.center );
+				console.warn( 'Sphere: .clampPoint() target is now required' );
+				target = new Vector3();
 
 			}
 
-			return result;
+			target.copy( point );
+
+			if ( deltaLengthSq > ( this.radius * this.radius ) ) {
+
+				target.sub( this.center ).normalize();
+				target.multiplyScalar( this.radius ).add( this.center );
+
+			}
+
+			return target;
 
 		},
 
-		getBoundingBox: function ( optionalTarget ) {
+		getBoundingBox: function ( target ) {
 
-			var box = optionalTarget || new Box3();
+			if ( target === undefined ) {
 
-			box.set( this.center, this.center );
-			box.expandByScalar( this.radius );
+				console.warn( 'Sphere: .getBoundingBox() target is now required' );
+				target = new Box3();
 
-			return box;
+			}
+
+			target.set( this.center, this.center );
+			target.expandByScalar( this.radius );
+
+			return target;
 
 		},
 
@@ -5855,13 +5904,18 @@ var Three = (function (exports) {
 
 		},
 
-		getWorldPosition: function ( optionalTarget ) {
+		getWorldPosition: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
+
+				console.warn( 'Object3D: .getWorldPosition() target is now required' );
+				target = new Vector3();
+
+			}
 
 			this.updateMatrixWorld( true );
 
-			return result.setFromMatrixPosition( this.matrixWorld );
+			return target.setFromMatrixPosition( this.matrixWorld );
 
 		},
 
@@ -5870,31 +5924,20 @@ var Three = (function (exports) {
 			var position = new Vector3();
 			var scale = new Vector3();
 
-			return function getWorldQuaternion( optionalTarget ) {
+			return function getWorldQuaternion( target ) {
 
-				var result = optionalTarget || new Quaternion();
+				if ( target === undefined ) {
+
+					console.warn( 'Object3D: .getWorldQuaternion() target is now required' );
+					target = new Quaternion();
+
+				}
 
 				this.updateMatrixWorld( true );
 
-				this.matrixWorld.decompose( position, result, scale );
+				this.matrixWorld.decompose( position, target, scale );
 
-				return result;
-
-			};
-
-		}(),
-
-		getWorldRotation: function () {
-
-			var quaternion = new Quaternion();
-
-			return function getWorldRotation( optionalTarget ) {
-
-				var result = optionalTarget || new Euler();
-
-				this.getWorldQuaternion( quaternion );
-
-				return result.setFromQuaternion( quaternion, this.rotation.order, false );
+				return target;
 
 			};
 
@@ -5905,15 +5948,20 @@ var Three = (function (exports) {
 			var position = new Vector3();
 			var quaternion = new Quaternion();
 
-			return function getWorldScale( optionalTarget ) {
+			return function getWorldScale( target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Object3D: .getWorldScale() target is now required' );
+					target = new Vector3();
+
+				}
 
 				this.updateMatrixWorld( true );
 
-				this.matrixWorld.decompose( position, quaternion, result );
+				this.matrixWorld.decompose( position, quaternion, target );
 
-				return result;
+				return target;
 
 			};
 
@@ -5923,13 +5971,18 @@ var Three = (function (exports) {
 
 			var quaternion = new Quaternion();
 
-			return function getWorldDirection( optionalTarget ) {
+			return function getWorldDirection( target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Object3D: .getWorldDirection() target is now required' );
+					target = new Vector3();
+
+				}
 
 				this.getWorldQuaternion( quaternion );
 
-				return result.set( 0, 0, 1 ).applyQuaternion( quaternion );
+				return target.set( 0, 0, 1 ).applyQuaternion( quaternion );
 
 			};
 
@@ -6063,6 +6116,8 @@ var Three = (function (exports) {
 			if ( this.castShadow === true ) object.castShadow = true;
 			if ( this.receiveShadow === true ) object.receiveShadow = true;
 			if ( this.visible === false ) object.visible = false;
+			if ( this.frustumCulled === false ) object.frustumCulled = false;
+			if ( this.renderOrder !== 0 ) object.renderOrder = this.renderOrder;
 			if ( JSON.stringify( this.userData ) !== '{}' ) object.userData = this.userData;
 
 			object.matrix = this.matrix.toArray();
@@ -6573,15 +6628,21 @@ var Three = (function (exports) {
 
 		center: function () {
 
-			this.computeBoundingBox();
+			var offset = new Vector3();
 
-			var offset = this.boundingBox.getCenter().negate();
+			return function center() {
 
-			this.translate( offset.x, offset.y, offset.z );
+				this.computeBoundingBox();
 
-			return offset;
+				this.boundingBox.getCenter( offset ).negate();
 
-		},
+				this.translate( offset.x, offset.y, offset.z );
+
+				return this;
+
+			};
+
+		}(),
 
 		normalize: function () {
 
@@ -7028,7 +7089,7 @@ var Three = (function (exports) {
 
 			}
 
-			mesh.matrixAutoUpdate && mesh.updateMatrix();
+			if ( mesh.matrixAutoUpdate ) mesh.updateMatrix();
 
 			this.merge( mesh.geometry, mesh.matrix );
 

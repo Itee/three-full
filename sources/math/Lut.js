@@ -8,7 +8,7 @@ import { CanvasTexture } from '../textures/CanvasTexture.js'
 import { SpriteMaterial } from '../materials/SpriteMaterial.js'
 import { Sprite } from '../objects/Sprite.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
-import { Geometry } from '../core/Geometry.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Line } from '../objects/Line.js'
 import {
 	DoubleSide,
@@ -466,16 +466,16 @@ Lut.prototype = {
 
 				var material = new LineBasicMaterial( { color: 0x000000, linewidth: 2 } );
 
-				var geometry = new Geometry();
+				var points = [];
 
 
 				if ( this.legend.layout == 'vertical' ) {
 
 					var linePosition = ( this.legend.position.y - ( this.legend.dimensions.height * 0.5 ) + 0.01 ) + ( this.legend.dimensions.height ) * ( ( value - this.minV ) / ( this.maxV - this.minV ) * 0.99 );
 
-					geometry.vertices.push( new Vector3( this.legend.position.x + this.legend.dimensions.width * 0.55, linePosition, this.legend.position.z  ) );
+					points.push( new Vector3( this.legend.position.x + this.legend.dimensions.width * 0.55, linePosition, this.legend.position.z  ) );
 
-					geometry.vertices.push( new Vector3( this.legend.position.x + this.legend.dimensions.width * 0.7, linePosition, this.legend.position.z  ) );
+					points.push( new Vector3( this.legend.position.x + this.legend.dimensions.width * 0.7, linePosition, this.legend.position.z  ) );
 
 				}
 
@@ -483,11 +483,13 @@ Lut.prototype = {
 
 					var linePosition = ( this.legend.position.x - ( this.legend.dimensions.height * 0.5 ) + 0.01 ) + ( this.legend.dimensions.height ) * ( ( value - this.minV ) / ( this.maxV - this.minV ) * 0.99 );
 
-					geometry.vertices.push( new Vector3( linePosition, this.legend.position.y - this.legend.dimensions.width * 0.55, this.legend.position.z  ) );
+					points.push( new Vector3( linePosition, this.legend.position.y - this.legend.dimensions.width * 0.55, this.legend.position.z  ) );
 
-					geometry.vertices.push( new Vector3( linePosition, this.legend.position.y - this.legend.dimensions.width * 0.7, this.legend.position.z  ) );
+					points.push( new Vector3( linePosition, this.legend.position.y - this.legend.dimensions.width * 0.7, this.legend.position.z  ) );
 
 				}
+
+				var geometry = new BufferGeometry().setFromPoints( points );
 
 				var line = new Line( geometry, material );
 

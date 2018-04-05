@@ -2348,8 +2348,8 @@ var Three = (function (exports) {
 
 				var camera = this.camera;
 
-				this.near = new FloatNode( this.camera ? this.camera.near : 1 );
-				this.far = new FloatNode( this.camera ? this.camera.far : 1200 );
+				this.near = new FloatNode( camera ? camera.near : 1 );
+				this.far = new FloatNode( camera ? camera.far : 1200 );
 
 				break;
 
@@ -2440,8 +2440,8 @@ var Three = (function (exports) {
 
 				var camera = this.camera;
 
-				this.near.number = this.camera.near;
-				this.far.number = this.camera.far;
+				this.near.number = camera.near;
+				this.far.number = camera.far;
 
 				break;
 

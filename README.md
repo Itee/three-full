@@ -3,13 +3,13 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
+**The version 6.0.0 is now available under Three r0.91.0 !!!**
+
 #### Extended Three JavaScript 3D library ####
 
-Three.js r90 come with lot of examples files, which are curently not usable as ES6 module. 
+Three.js come with lot of examples files, which are curently not usable as ES6 module. 
 The purpose of this project is to convert all examples files and includes them as part 
 of the library.
-
-**The version 5.0.7 is now available !!!**
 
 #### Setup ####
 
@@ -194,6 +194,13 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+##### 6.0.0:
+
+* Support of Three r91
+* Fix DefaultLoadingManager import in OBJLoader2
+* Fix ShaderLib, UniformsLib, and UniformsUtils imports in LineMaterial
+* Fix DefaultLoadingManager, Uint16BufferAttribute and Uint32BufferAttribute imports in DRACOLoader
+* Remove fix-camera-node task due to threejs fix
 
 ##### 5.0.7:
 

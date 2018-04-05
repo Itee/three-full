@@ -158,7 +158,7 @@ Mesh.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		function uvIntersection( point, p1, p2, p3, uv1, uv2, uv3 ) {
 
-			Triangle.barycoordFromPoint( point, p1, p2, p3, barycoord );
+			Triangle.getBarycoord( point, p1, p2, p3, barycoord );
 
 			uv1.multiplyScalar( barycoord.x );
 			uv2.multiplyScalar( barycoord.y );
@@ -221,7 +221,10 @@ Mesh.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 				}
 
-				intersection.face = new Face3( a, b, c, Triangle.normal( vA, vB, vC ) );
+				var face = new Face3( a, b, c );
+				Triangle.getNormal( vA, vB, vC, face.normal );
+
+				intersection.face = face;
 				intersection.faceIndex = a;
 
 			}

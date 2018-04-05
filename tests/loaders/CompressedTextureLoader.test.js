@@ -3906,6 +3906,7 @@ var Three = (function (exports) {
 			}
 
 			var output = {
+
 				metadata: {
 					version: 4.5,
 					type: 'Texture',
@@ -3924,11 +3925,13 @@ var Three = (function (exports) {
 
 				wrap: [ this.wrapS, this.wrapT ],
 
+				format: this.format,
 				minFilter: this.minFilter,
 				magFilter: this.magFilter,
 				anisotropy: this.anisotropy,
 
 				flipY: this.flipY
+
 			};
 
 			if ( this.image !== undefined ) {

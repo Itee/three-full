@@ -76,7 +76,7 @@ var ShaderSkin = {
 			ShaderChunk[ "common" ],
 			ShaderChunk[ "bsdfs" ],
 			ShaderChunk[ "packing" ],
-			ShaderChunk[ "lights_pars" ],
+			ShaderChunk[ "lights_pars_begin" ],
 			ShaderChunk[ "shadowmap_pars_fragment" ],
 			ShaderChunk[ "fog_pars_fragment" ],
 			ShaderChunk[ "bumpmap_pars_fragment" ],
@@ -256,7 +256,7 @@ var ShaderSkin = {
 			"varying vec3 vViewPosition;",
 
 			ShaderChunk[ "common" ],
-			ShaderChunk[ "lights_pars" ],
+			ShaderChunk[ "lights_pars_begin" ],
 			ShaderChunk[ "shadowmap_pars_vertex" ],
 			ShaderChunk[ "fog_pars_vertex" ],
 
@@ -347,7 +347,7 @@ var ShaderSkin = {
 			"varying vec3 vViewPosition;",
 
 			ShaderChunk[ "common" ],
-			ShaderChunk[ "lights_pars" ],
+			ShaderChunk[ "lights_pars_begin" ],
 			ShaderChunk[ "fog_pars_fragment" ],
 
 			"float fresnelReflectance( vec3 H, vec3 V, float F0 ) {",

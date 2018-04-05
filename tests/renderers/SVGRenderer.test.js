@@ -3633,13 +3633,18 @@ var Three = (function (exports) {
 
 		},
 
-		getWorldPosition: function ( optionalTarget ) {
+		getWorldPosition: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
+
+				console.warn( 'Object3D: .getWorldPosition() target is now required' );
+				target = new Vector3();
+
+			}
 
 			this.updateMatrixWorld( true );
 
-			return result.setFromMatrixPosition( this.matrixWorld );
+			return target.setFromMatrixPosition( this.matrixWorld );
 
 		},
 
@@ -3648,31 +3653,20 @@ var Three = (function (exports) {
 			var position = new Vector3();
 			var scale = new Vector3();
 
-			return function getWorldQuaternion( optionalTarget ) {
+			return function getWorldQuaternion( target ) {
 
-				var result = optionalTarget || new Quaternion();
+				if ( target === undefined ) {
+
+					console.warn( 'Object3D: .getWorldQuaternion() target is now required' );
+					target = new Quaternion();
+
+				}
 
 				this.updateMatrixWorld( true );
 
-				this.matrixWorld.decompose( position, result, scale );
+				this.matrixWorld.decompose( position, target, scale );
 
-				return result;
-
-			};
-
-		}(),
-
-		getWorldRotation: function () {
-
-			var quaternion = new Quaternion();
-
-			return function getWorldRotation( optionalTarget ) {
-
-				var result = optionalTarget || new Euler();
-
-				this.getWorldQuaternion( quaternion );
-
-				return result.setFromQuaternion( quaternion, this.rotation.order, false );
+				return target;
 
 			};
 
@@ -3683,15 +3677,20 @@ var Three = (function (exports) {
 			var position = new Vector3();
 			var quaternion = new Quaternion();
 
-			return function getWorldScale( optionalTarget ) {
+			return function getWorldScale( target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Object3D: .getWorldScale() target is now required' );
+					target = new Vector3();
+
+				}
 
 				this.updateMatrixWorld( true );
 
-				this.matrixWorld.decompose( position, quaternion, result );
+				this.matrixWorld.decompose( position, quaternion, target );
 
-				return result;
+				return target;
 
 			};
 
@@ -3701,13 +3700,18 @@ var Three = (function (exports) {
 
 			var quaternion = new Quaternion();
 
-			return function getWorldDirection( optionalTarget ) {
+			return function getWorldDirection( target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Object3D: .getWorldDirection() target is now required' );
+					target = new Vector3();
+
+				}
 
 				this.getWorldQuaternion( quaternion );
 
-				return result.set( 0, 0, 1 ).applyQuaternion( quaternion );
+				return target.set( 0, 0, 1 ).applyQuaternion( quaternion );
 
 			};
 
@@ -3841,6 +3845,8 @@ var Three = (function (exports) {
 			if ( this.castShadow === true ) object.castShadow = true;
 			if ( this.receiveShadow === true ) object.receiveShadow = true;
 			if ( this.visible === false ) object.visible = false;
+			if ( this.frustumCulled === false ) object.frustumCulled = false;
+			if ( this.renderOrder !== 0 ) object.renderOrder = this.renderOrder;
 			if ( JSON.stringify( this.userData ) !== '{}' ) object.userData = this.userData;
 
 			object.matrix = this.matrix.toArray();
@@ -4359,11 +4365,16 @@ var Three = (function (exports) {
 
 		},
 
-		getHSL: function ( optionalTarget ) {
+		getHSL: function ( target ) {
 
 			// h,s,l ranges are in 0.0 - 1.0
 
-			var hsl = optionalTarget || { h: 0, s: 0, l: 0 };
+			if ( target === undefined ) {
+
+				console.warn( 'Color: .getHSL() target is now required' );
+				target = { h: 0, s: 0, l: 0 };
+
+			}
 
 			var r = this.r, g = this.g, b = this.b;
 
@@ -4396,11 +4407,11 @@ var Three = (function (exports) {
 
 			}
 
-			hsl.h = hue;
-			hsl.s = saturation;
-			hsl.l = lightness;
+			target.h = hue;
+			target.s = saturation;
+			target.l = lightness;
 
-			return hsl;
+			return target;
 
 		},
 
@@ -4410,17 +4421,23 @@ var Three = (function (exports) {
 
 		},
 
-		offsetHSL: function ( h, s, l ) {
+		offsetHSL: function () {
 
-			var hsl = this.getHSL();
+			var hsl = {};
 
-			hsl.h += h; hsl.s += s; hsl.l += l;
+			return function ( h, s, l ) {
 
-			this.setHSL( hsl.h, hsl.s, hsl.l );
+				this.getHSL( hsl );
 
-			return this;
+				hsl.h += h; hsl.s += s; hsl.l += l;
 
-		},
+				this.setHSL( hsl.h, hsl.s, hsl.l );
+
+				return this;
+
+			};
+
+		}(),
 
 		add: function ( color ) {
 
@@ -5739,33 +5756,43 @@ var Three = (function (exports) {
 
 		},
 
-		clampPoint: function ( point, optionalTarget ) {
+		clampPoint: function ( point, target ) {
 
 			var deltaLengthSq = this.center.distanceToSquared( point );
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			result.copy( point );
-
-			if ( deltaLengthSq > ( this.radius * this.radius ) ) {
-
-				result.sub( this.center ).normalize();
-				result.multiplyScalar( this.radius ).add( this.center );
+				console.warn( 'Sphere: .clampPoint() target is now required' );
+				target = new Vector3();
 
 			}
 
-			return result;
+			target.copy( point );
+
+			if ( deltaLengthSq > ( this.radius * this.radius ) ) {
+
+				target.sub( this.center ).normalize();
+				target.multiplyScalar( this.radius ).add( this.center );
+
+			}
+
+			return target;
 
 		},
 
-		getBoundingBox: function ( optionalTarget ) {
+		getBoundingBox: function ( target ) {
 
-			var box = optionalTarget || new Box3();
+			if ( target === undefined ) {
 
-			box.set( this.center, this.center );
-			box.expandByScalar( this.radius );
+				console.warn( 'Sphere: .getBoundingBox() target is now required' );
+				target = new Box3();
 
-			return box;
+			}
+
+			target.set( this.center, this.center );
+			target.expandByScalar( this.radius );
+
+			return target;
 
 		},
 
@@ -5951,17 +5978,29 @@ var Three = (function (exports) {
 
 		},
 
-		getCenter: function ( optionalTarget ) {
+		getCenter: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return this.isEmpty() ? result.set( 0, 0, 0 ) : result.addVectors( this.min, this.max ).multiplyScalar( 0.5 );
+			if ( target === undefined ) {
+
+				console.warn( 'Box3: .getCenter() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return this.isEmpty() ? target.set( 0, 0, 0 ) : target.addVectors( this.min, this.max ).multiplyScalar( 0.5 );
 
 		},
 
-		getSize: function ( optionalTarget ) {
+		getSize: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return this.isEmpty() ? result.set( 0, 0, 0 ) : result.subVectors( this.max, this.min );
+			if ( target === undefined ) {
+
+				console.warn( 'Box3: .getSize() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return this.isEmpty() ? target.set( 0, 0, 0 ) : target.subVectors( this.max, this.min );
 
 		},
 
@@ -6072,14 +6111,19 @@ var Three = (function (exports) {
 
 		},
 
-		getParameter: function ( point, optionalTarget ) {
+		getParameter: function ( point, target ) {
 
 			// This can potentially have a divide by zero if the box
 			// has a size dimension of 0.
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return result.set(
+				console.warn( 'Box3: .getParameter() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.set(
 				( point.x - this.min.x ) / ( this.max.x - this.min.x ),
 				( point.y - this.min.y ) / ( this.max.y - this.min.y ),
 				( point.z - this.min.z ) / ( this.max.z - this.min.z )
@@ -6260,10 +6304,16 @@ var Three = (function (exports) {
 
 		} )(),
 
-		clampPoint: function ( point, optionalTarget ) {
+		clampPoint: function ( point, target ) {
 
-			var result = optionalTarget || new Vector3();
-			return result.copy( point ).clamp( this.min, this.max );
+			if ( target === undefined ) {
+
+				console.warn( 'Box3: .clampPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.copy( point ).clamp( this.min, this.max );
 
 		},
 
@@ -6284,15 +6334,20 @@ var Three = (function (exports) {
 
 			var v1 = new Vector3();
 
-			return function getBoundingSphere( optionalTarget ) {
+			return function getBoundingSphere( target ) {
 
-				var result = optionalTarget || new Sphere();
+				if ( target === undefined ) {
 
-				this.getCenter( result.center );
+					console.warn( 'Box3: .getBoundingSphere() target is now required' );
+					target = new Sphere();
 
-				result.radius = this.getSize( v1 ).length() * 0.5;
+				}
 
-				return result;
+				this.getCenter( target.center );
+
+				target.radius = this.getSize( v1 ).length() * 0.5;
+
+				return target;
 
 			};
 
@@ -6477,11 +6532,16 @@ var Three = (function (exports) {
 
 		},
 
-		projectPoint: function ( point, optionalTarget ) {
+		projectPoint: function ( point, target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return result.copy( this.normal ).multiplyScalar( - this.distanceToPoint( point ) ).add( point );
+				console.warn( 'Plane: .projectPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.copy( this.normal ).multiplyScalar( - this.distanceToPoint( point ) ).add( point );
 
 		},
 
@@ -6489,9 +6549,14 @@ var Three = (function (exports) {
 
 			var v1 = new Vector3();
 
-			return function intersectLine( line, optionalTarget ) {
+			return function intersectLine( line, target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Plane: .intersectLine() target is now required' );
+					target = new Vector3();
+
+				}
 
 				var direction = line.delta( v1 );
 
@@ -6502,7 +6567,7 @@ var Three = (function (exports) {
 					// line is coplanar, return origin
 					if ( this.distanceToPoint( line.start ) === 0 ) {
 
-						return result.copy( line.start );
+						return target.copy( line.start );
 
 					}
 
@@ -6519,7 +6584,7 @@ var Three = (function (exports) {
 
 				}
 
-				return result.copy( direction ).multiplyScalar( t ).add( line.start );
+				return target.copy( direction ).multiplyScalar( t ).add( line.start );
 
 			};
 
@@ -6548,11 +6613,16 @@ var Three = (function (exports) {
 
 		},
 
-		coplanarPoint: function ( optionalTarget ) {
+		coplanarPoint: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return result.copy( this.normal ).multiplyScalar( - this.constant );
+				console.warn( 'Plane: .coplanarPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.copy( this.normal ).multiplyScalar( - this.constant );
 
 		},
 
@@ -6867,11 +6937,16 @@ var Three = (function (exports) {
 
 		},
 
-		at: function ( t, optionalTarget ) {
+		at: function ( t, target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return result.copy( this.direction ).multiplyScalar( t ).add( this.origin );
+				console.warn( 'Ray: .at() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.copy( this.direction ).multiplyScalar( t ).add( this.origin );
 
 		},
 
@@ -6897,19 +6972,26 @@ var Three = (function (exports) {
 
 		}(),
 
-		closestPointToPoint: function ( point, optionalTarget ) {
+		closestPointToPoint: function ( point, target ) {
 
-			var result = optionalTarget || new Vector3();
-			result.subVectors( point, this.origin );
-			var directionDistance = result.dot( this.direction );
+			if ( target === undefined ) {
 
-			if ( directionDistance < 0 ) {
-
-				return result.copy( this.origin );
+				console.warn( 'Ray: .closestPointToPoint() target is now required' );
+				target = new Vector3();
 
 			}
 
-			return result.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
+			target.subVectors( point, this.origin );
+
+			var directionDistance = target.dot( this.direction );
+
+			if ( directionDistance < 0 ) {
+
+				return target.copy( this.origin );
+
+			}
+
+			return target.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
 
 		},
 
@@ -7074,7 +7156,7 @@ var Three = (function (exports) {
 
 			var v1 = new Vector3();
 
-			return function intersectSphere( sphere, optionalTarget ) {
+			return function intersectSphere( sphere, target ) {
 
 				v1.subVectors( sphere.center, this.origin );
 				var tca = v1.dot( this.direction );
@@ -7097,10 +7179,10 @@ var Three = (function (exports) {
 				// test to see if t0 is behind the ray:
 				// if it is, the ray is inside the sphere, so return the second exit point scaled by t1,
 				// in order to always return an intersect point that is in front of the ray.
-				if ( t0 < 0 ) return this.at( t1, optionalTarget );
+				if ( t0 < 0 ) return this.at( t1, target );
 
 				// else t0 is in front of the ray, so return the first collision point scaled by t0
-				return this.at( t0, optionalTarget );
+				return this.at( t0, target );
 
 			};
 
@@ -7139,7 +7221,7 @@ var Three = (function (exports) {
 
 		},
 
-		intersectPlane: function ( plane, optionalTarget ) {
+		intersectPlane: function ( plane, target ) {
 
 			var t = this.distanceToPlane( plane );
 
@@ -7149,7 +7231,7 @@ var Three = (function (exports) {
 
 			}
 
-			return this.at( t, optionalTarget );
+			return this.at( t, target );
 
 		},
 
@@ -7179,7 +7261,7 @@ var Three = (function (exports) {
 
 		},
 
-		intersectBox: function ( box, optionalTarget ) {
+		intersectBox: function ( box, target ) {
 
 			var tmin, tmax, tymin, tymax, tzmin, tzmax;
 
@@ -7244,7 +7326,7 @@ var Three = (function (exports) {
 
 			if ( tmax < 0 ) return null;
 
-			return this.at( tmin >= 0 ? tmin : tmax, optionalTarget );
+			return this.at( tmin >= 0 ? tmin : tmax, target );
 
 		},
 
@@ -7268,7 +7350,7 @@ var Three = (function (exports) {
 			var edge2 = new Vector3();
 			var normal = new Vector3();
 
-			return function intersectTriangle( a, b, c, backfaceCulling, optionalTarget ) {
+			return function intersectTriangle( a, b, c, backfaceCulling, target ) {
 
 				// from http://www.geometrictools.com/GTEngine/Include/Mathematics/GteIntrRay3Triangle3.h
 
@@ -7337,7 +7419,7 @@ var Three = (function (exports) {
 				}
 
 				// Ray intersects triangle.
-				return this.at( QdN / DdN, optionalTarget );
+				return this.at( QdN / DdN, target );
 
 			};
 
@@ -7393,17 +7475,29 @@ var Three = (function (exports) {
 
 		},
 
-		getCenter: function ( optionalTarget ) {
+		getCenter: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return result.addVectors( this.start, this.end ).multiplyScalar( 0.5 );
+			if ( target === undefined ) {
+
+				console.warn( 'Line3: .getCenter() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.addVectors( this.start, this.end ).multiplyScalar( 0.5 );
 
 		},
 
-		delta: function ( optionalTarget ) {
+		delta: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return result.subVectors( this.end, this.start );
+			if ( target === undefined ) {
+
+				console.warn( 'Line3: .delta() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.subVectors( this.end, this.start );
 
 		},
 
@@ -7419,11 +7513,16 @@ var Three = (function (exports) {
 
 		},
 
-		at: function ( t, optionalTarget ) {
+		at: function ( t, target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return this.delta( result ).multiplyScalar( t ).add( this.start );
+				console.warn( 'Line3: .at() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return this.delta( target ).multiplyScalar( t ).add( this.start );
 
 		},
 
@@ -7454,13 +7553,18 @@ var Three = (function (exports) {
 
 		}(),
 
-		closestPointToPoint: function ( point, clampToLine, optionalTarget ) {
+		closestPointToPoint: function ( point, clampToLine, target ) {
 
 			var t = this.closestPointToPointParameter( point, clampToLine );
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return this.delta( result ).multiplyScalar( t ).add( this.start );
+				console.warn( 'Line3: .closestPointToPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return this.delta( target ).multiplyScalar( t ).add( this.start );
 
 		},
 
@@ -7491,26 +7595,31 @@ var Three = (function (exports) {
 
 	Object.assign( Triangle, {
 
-		normal: function () {
+		getNormal: function () {
 
 			var v0 = new Vector3();
 
-			return function normal( a, b, c, optionalTarget ) {
+			return function getNormal( a, b, c, target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
 
-				result.subVectors( c, b );
-				v0.subVectors( a, b );
-				result.cross( v0 );
-
-				var resultLengthSq = result.lengthSq();
-				if ( resultLengthSq > 0 ) {
-
-					return result.multiplyScalar( 1 / Math.sqrt( resultLengthSq ) );
+					console.warn( 'Triangle: .getNormal() target is now required' );
+					target = new Vector3();
 
 				}
 
-				return result.set( 0, 0, 0 );
+				target.subVectors( c, b );
+				v0.subVectors( a, b );
+				target.cross( v0 );
+
+				var targetLengthSq = target.lengthSq();
+				if ( targetLengthSq > 0 ) {
+
+					return target.multiplyScalar( 1 / Math.sqrt( targetLengthSq ) );
+
+				}
+
+				return target.set( 0, 0, 0 );
 
 			};
 
@@ -7518,13 +7627,13 @@ var Three = (function (exports) {
 
 		// static/instance method to calculate barycentric coordinates
 		// based on: http://www.blackpawn.com/texts/pointinpoly/default.html
-		barycoordFromPoint: function () {
+		getBarycoord: function () {
 
 			var v0 = new Vector3();
 			var v1 = new Vector3();
 			var v2 = new Vector3();
 
-			return function barycoordFromPoint( point, a, b, c, optionalTarget ) {
+			return function getBarycoord( point, a, b, c, target ) {
 
 				v0.subVectors( c, a );
 				v1.subVectors( b, a );
@@ -7538,14 +7647,19 @@ var Three = (function (exports) {
 
 				var denom = ( dot00 * dot11 - dot01 * dot01 );
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Triangle: .getBarycoord() target is now required' );
+					target = new Vector3();
+
+				}
 
 				// collinear or singular triangle
 				if ( denom === 0 ) {
 
 					// arbitrary location outside of triangle?
 					// not sure if this is the best idea, maybe should be returning undefined
-					return result.set( - 2, - 1, - 1 );
+					return target.set( - 2, - 1, - 1 );
 
 				}
 
@@ -7554,7 +7668,7 @@ var Three = (function (exports) {
 				var v = ( dot00 * dot12 - dot01 * dot02 ) * invDenom;
 
 				// barycentric coordinates must always sum to 1
-				return result.set( 1 - u - v, v, u );
+				return target.set( 1 - u - v, v, u );
 
 			};
 
@@ -7566,9 +7680,9 @@ var Three = (function (exports) {
 
 			return function containsPoint( point, a, b, c ) {
 
-				var result = Triangle.barycoordFromPoint( point, a, b, c, v1 );
+				Triangle.getBarycoord( point, a, b, c, v1 );
 
-				return ( result.x >= 0 ) && ( result.y >= 0 ) && ( ( result.x + result.y ) <= 1 );
+				return ( v1.x >= 0 ) && ( v1.y >= 0 ) && ( ( v1.x + v1.y ) <= 1 );
 
 			};
 
@@ -7614,12 +7728,12 @@ var Three = (function (exports) {
 
 		},
 
-		area: function () {
+		getArea: function () {
 
 			var v0 = new Vector3();
 			var v1 = new Vector3();
 
-			return function area() {
+			return function getArea() {
 
 				v0.subVectors( this.c, this.b );
 				v1.subVectors( this.a, this.b );
@@ -7630,30 +7744,41 @@ var Three = (function (exports) {
 
 		}(),
 
-		midpoint: function ( optionalTarget ) {
+		getMidpoint: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
-			return result.addVectors( this.a, this.b ).add( this.c ).multiplyScalar( 1 / 3 );
+			if ( target === undefined ) {
 
-		},
+				console.warn( 'Triangle: .getMidpoint() target is now required' );
+				target = new Vector3();
 
-		normal: function ( optionalTarget ) {
+			}
 
-			return Triangle.normal( this.a, this.b, this.c, optionalTarget );
-
-		},
-
-		plane: function ( optionalTarget ) {
-
-			var result = optionalTarget || new Plane();
-
-			return result.setFromCoplanarPoints( this.a, this.b, this.c );
+			return target.addVectors( this.a, this.b ).add( this.c ).multiplyScalar( 1 / 3 );
 
 		},
 
-		barycoordFromPoint: function ( point, optionalTarget ) {
+		getNormal: function ( target ) {
 
-			return Triangle.barycoordFromPoint( point, this.a, this.b, this.c, optionalTarget );
+			return Triangle.getNormal( this.a, this.b, this.c, target );
+
+		},
+
+		getPlane: function ( target ) {
+
+			if ( target === undefined ) {
+
+				console.warn( 'Triangle: .getPlane() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.setFromCoplanarPoints( this.a, this.b, this.c );
+
+		},
+
+		getBarycoord: function ( point, target ) {
+
+			return Triangle.getBarycoord( point, this.a, this.b, this.c, target );
 
 		},
 
@@ -7676,9 +7801,15 @@ var Three = (function (exports) {
 			var projectedPoint = new Vector3();
 			var closestPoint = new Vector3();
 
-			return function closestPointToPoint( point, optionalTarget ) {
+			return function closestPointToPoint( point, target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Triangle: .closestPointToPoint() target is now required' );
+					target = new Vector3();
+
+				}
+
 				var minDistance = Infinity;
 
 				// project the point onto the plane of the triangle
@@ -7692,11 +7823,11 @@ var Three = (function (exports) {
 
 					// if so, this is the closest point
 
-					result.copy( projectedPoint );
+					target.copy( projectedPoint );
 
 				} else {
 
-					// if not, the point falls outside the triangle. the result is the closest point to the triangle's edges or vertices
+					// if not, the point falls outside the triangle. the target is the closest point to the triangle's edges or vertices
 
 					edgeList[ 0 ].set( this.a, this.b );
 					edgeList[ 1 ].set( this.b, this.c );
@@ -7712,7 +7843,7 @@ var Three = (function (exports) {
 
 							minDistance = distance;
 
-							result.copy( closestPoint );
+							target.copy( closestPoint );
 
 						}
 
@@ -7720,7 +7851,7 @@ var Three = (function (exports) {
 
 				}
 
-				return result;
+				return target;
 
 			};
 
@@ -7787,7 +7918,7 @@ var Three = (function (exports) {
 
 	} );
 
-	var REVISION = '90';
+	var REVISION = '91';
 	var FrontSide = 0;
 	var BackSide = 1;
 	var DoubleSide = 2;
@@ -8250,7 +8381,6 @@ var Three = (function (exports) {
 
 		}
 
-		this.uuid = _Math.generateUUID();
 		this.name = '';
 
 		this.array = array;
@@ -8260,8 +8390,6 @@ var Three = (function (exports) {
 
 		this.dynamic = false;
 		this.updateRange = { offset: 0, count: - 1 };
-
-		this.onUploadCallback = function () {};
 
 		this.version = 0;
 
@@ -8280,6 +8408,8 @@ var Three = (function (exports) {
 	Object.assign( BufferAttribute.prototype, {
 
 		isBufferAttribute: true,
+
+		onUploadCallback: function () {},
 
 		setArray: function ( array ) {
 
@@ -8356,24 +8486,6 @@ var Three = (function (exports) {
 				array[ offset ++ ] = color.r;
 				array[ offset ++ ] = color.g;
 				array[ offset ++ ] = color.b;
-
-			}
-
-			return this;
-
-		},
-
-		copyIndicesArray: function ( indices ) {
-
-			var array = this.array, offset = 0;
-
-			for ( var i = 0, l = indices.length; i < l; i ++ ) {
-
-				var index = indices[ i ];
-
-				array[ offset ++ ] = index.a;
-				array[ offset ++ ] = index.b;
-				array[ offset ++ ] = index.c;
 
 			}
 
@@ -8665,11 +8777,8 @@ var Three = (function (exports) {
 	Float64BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float64BufferAttribute.prototype.constructor = Float64BufferAttribute;
 
-	//
-
 	function DirectGeometry() {
 
-		this.indices = [];
 		this.vertices = [];
 		this.normals = [];
 		this.colors = [];
@@ -9201,15 +9310,21 @@ var Three = (function (exports) {
 
 		center: function () {
 
-			this.computeBoundingBox();
+			var offset = new Vector3();
 
-			var offset = this.boundingBox.getCenter().negate();
+			return function center() {
 
-			this.translate( offset.x, offset.y, offset.z );
+				this.computeBoundingBox();
 
-			return offset;
+				this.boundingBox.getCenter( offset ).negate();
 
-		},
+				this.translate( offset.x, offset.y, offset.z );
+
+				return this;
+
+			};
+
+		}(),
 
 		setFromObject: function ( object ) {
 
@@ -9441,14 +9556,6 @@ var Three = (function (exports) {
 
 				var uvs2 = new Float32Array( geometry.uvs2.length * 2 );
 				this.addAttribute( 'uv2', new BufferAttribute( uvs2, 2 ).copyVector2sArray( geometry.uvs2 ) );
-
-			}
-
-			if ( geometry.indices.length > 0 ) {
-
-				var TypeArray = arrayMax( geometry.indices ) > 65535 ? Uint32Array : Uint16Array;
-				var indices = new TypeArray( geometry.indices.length * 3 );
-				this.setIndex( new BufferAttribute( indices, 1 ).copyIndicesArray( geometry.indices ) );
 
 			}
 
@@ -9725,7 +9832,16 @@ var Three = (function (exports) {
 
 			}
 
-			if ( offset === undefined ) offset = 0;
+			if ( offset === undefined ) {
+
+				offset = 0;
+
+				console.warn(
+					'BufferGeometry.merge(): Overwriting original geometry, starting at offset=0. '
+					+ 'Use BufferGeometryUtils.mergeBufferGeometries() for lossless merge.'
+				);
+
+			}
 
 			var attributes = this.attributes;
 
@@ -9815,6 +9931,15 @@ var Three = (function (exports) {
 				}
 
 				geometry2.addAttribute( name, new BufferAttribute( array2, itemSize ) );
+
+			}
+
+			var groups = this.groups;
+
+			for ( var i = 0, l = groups.length; i < l; i ++ ) {
+
+				var group = groups[ i ];
+				geometry2.addGroup( group.start, group.count, group.materialIndex );
 
 			}
 
@@ -10150,7 +10275,7 @@ var Three = (function (exports) {
 
 			function uvIntersection( point, p1, p2, p3, uv1, uv2, uv3 ) {
 
-				Triangle.barycoordFromPoint( point, p1, p2, p3, barycoord );
+				Triangle.getBarycoord( point, p1, p2, p3, barycoord );
 
 				uv1.multiplyScalar( barycoord.x );
 				uv2.multiplyScalar( barycoord.y );
@@ -10213,7 +10338,10 @@ var Three = (function (exports) {
 
 					}
 
-					intersection.face = new Face3( a, b, c, Triangle.normal( vA, vB, vC ) );
+					var face = new Face3( a, b, c );
+					Triangle.getNormal( vA, vB, vC, face.normal );
+
+					intersection.face = face;
 					intersection.faceIndex = a;
 
 				}
@@ -10762,6 +10890,7 @@ var Three = (function (exports) {
 				var localThreshold = threshold / ( ( this.scale.x + this.scale.y + this.scale.z ) / 3 );
 				var localThresholdSq = localThreshold * localThreshold;
 				var position = new Vector3();
+				var intersectPoint = new Vector3();
 
 				function testPoint( point, index ) {
 
@@ -10769,7 +10898,7 @@ var Three = (function (exports) {
 
 					if ( rayPointDistanceSq < localThresholdSq ) {
 
-						var intersectPoint = ray.closestPointToPoint( point );
+						ray.closestPointToPoint( point, intersectPoint );
 						intersectPoint.applyMatrix4( matrixWorld );
 
 						var distance = raycaster.ray.origin.distanceTo( intersectPoint );
@@ -11287,15 +11416,21 @@ var Three = (function (exports) {
 
 		center: function () {
 
-			this.computeBoundingBox();
+			var offset = new Vector3();
 
-			var offset = this.boundingBox.getCenter().negate();
+			return function center() {
 
-			this.translate( offset.x, offset.y, offset.z );
+				this.computeBoundingBox();
 
-			return offset;
+				this.boundingBox.getCenter( offset ).negate();
 
-		},
+				this.translate( offset.x, offset.y, offset.z );
+
+				return this;
+
+			};
+
+		}(),
 
 		normalize: function () {
 
@@ -11742,7 +11877,7 @@ var Three = (function (exports) {
 
 			}
 
-			mesh.matrixAutoUpdate && mesh.updateMatrix();
+			if ( mesh.matrixAutoUpdate ) mesh.updateMatrix();
 
 			this.merge( mesh.geometry, mesh.matrix );
 
@@ -13516,17 +13651,29 @@ var Three = (function (exports) {
 
 		},
 
-		getCenter: function ( optionalTarget ) {
+		getCenter: function ( target ) {
 
-			var result = optionalTarget || new Vector2();
-			return this.isEmpty() ? result.set( 0, 0 ) : result.addVectors( this.min, this.max ).multiplyScalar( 0.5 );
+			if ( target === undefined ) {
+
+				console.warn( 'Box2: .getCenter() target is now required' );
+				target = new Vector2();
+
+			}
+
+			return this.isEmpty() ? target.set( 0, 0 ) : target.addVectors( this.min, this.max ).multiplyScalar( 0.5 );
 
 		},
 
-		getSize: function ( optionalTarget ) {
+		getSize: function ( target ) {
 
-			var result = optionalTarget || new Vector2();
-			return this.isEmpty() ? result.set( 0, 0 ) : result.subVectors( this.max, this.min );
+			if ( target === undefined ) {
+
+				console.warn( 'Box2: .getSize() target is now required' );
+				target = new Vector2();
+
+			}
+
+			return this.isEmpty() ? target.set( 0, 0 ) : target.subVectors( this.max, this.min );
 
 		},
 
@@ -13571,14 +13718,19 @@ var Three = (function (exports) {
 
 		},
 
-		getParameter: function ( point, optionalTarget ) {
+		getParameter: function ( point, target ) {
 
 			// This can potentially have a divide by zero if the box
 			// has a size dimension of 0.
 
-			var result = optionalTarget || new Vector2();
+			if ( target === undefined ) {
 
-			return result.set(
+				console.warn( 'Box2: .getParameter() target is now required' );
+				target = new Vector2();
+
+			}
+
+			return target.set(
 				( point.x - this.min.x ) / ( this.max.x - this.min.x ),
 				( point.y - this.min.y ) / ( this.max.y - this.min.y )
 			);
@@ -13594,10 +13746,16 @@ var Three = (function (exports) {
 
 		},
 
-		clampPoint: function ( point, optionalTarget ) {
+		clampPoint: function ( point, target ) {
 
-			var result = optionalTarget || new Vector2();
-			return result.copy( point ).clamp( this.min, this.max );
+			if ( target === undefined ) {
+
+				console.warn( 'Box2: .clampPoint() target is now required' );
+				target = new Vector2();
+
+			}
+
+			return target.copy( point ).clamp( this.min, this.max );
 
 		},
 
@@ -13681,13 +13839,18 @@ var Three = (function (exports) {
 
 			var quaternion = new Quaternion();
 
-			return function getWorldDirection( optionalTarget ) {
+			return function getWorldDirection( target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Camera: .getWorldDirection() target is now required' );
+					target = new Vector3();
+
+				}
 
 				this.getWorldQuaternion( quaternion );
 
-				return result.set( 0, 0, - 1 ).applyQuaternion( quaternion );
+				return target.set( 0, 0, - 1 ).applyQuaternion( quaternion );
 
 			};
 
@@ -14478,9 +14641,7 @@ var Three = (function (exports) {
 		_svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' ),
 		_svgWidth, _svgHeight, _svgWidthHalf, _svgHeightHalf,
 
-		_v1, _v2, _v3, _v4,
-
-		_clipBox = new Box2(),
+		_v1, _v2, _v3, _clipBox = new Box2(),
 		_elemBox = new Box2(),
 
 		_color = new Color(),
@@ -14533,11 +14694,6 @@ var Three = (function (exports) {
 			}
 
 		};
-
-		// WebGLRenderer compatibility
-
-		this.supportsVertexTextures = function () {};
-		this.setFaceCulling = function () {};
 
 		this.setClearColor = function ( color, alpha ) {
 

@@ -2851,11 +2851,16 @@ var Three = (function (exports) {
 
 		},
 
-		projectPoint: function ( point, optionalTarget ) {
+		projectPoint: function ( point, target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return result.copy( this.normal ).multiplyScalar( - this.distanceToPoint( point ) ).add( point );
+				console.warn( 'Plane: .projectPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.copy( this.normal ).multiplyScalar( - this.distanceToPoint( point ) ).add( point );
 
 		},
 
@@ -2863,9 +2868,14 @@ var Three = (function (exports) {
 
 			var v1 = new Vector3();
 
-			return function intersectLine( line, optionalTarget ) {
+			return function intersectLine( line, target ) {
 
-				var result = optionalTarget || new Vector3();
+				if ( target === undefined ) {
+
+					console.warn( 'Plane: .intersectLine() target is now required' );
+					target = new Vector3();
+
+				}
 
 				var direction = line.delta( v1 );
 
@@ -2876,7 +2886,7 @@ var Three = (function (exports) {
 					// line is coplanar, return origin
 					if ( this.distanceToPoint( line.start ) === 0 ) {
 
-						return result.copy( line.start );
+						return target.copy( line.start );
 
 					}
 
@@ -2893,7 +2903,7 @@ var Three = (function (exports) {
 
 				}
 
-				return result.copy( direction ).multiplyScalar( t ).add( line.start );
+				return target.copy( direction ).multiplyScalar( t ).add( line.start );
 
 			};
 
@@ -2922,11 +2932,16 @@ var Three = (function (exports) {
 
 		},
 
-		coplanarPoint: function ( optionalTarget ) {
+		coplanarPoint: function ( target ) {
 
-			var result = optionalTarget || new Vector3();
+			if ( target === undefined ) {
 
-			return result.copy( this.normal ).multiplyScalar( - this.constant );
+				console.warn( 'Plane: .coplanarPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.copy( this.normal ).multiplyScalar( - this.constant );
 
 		},
 

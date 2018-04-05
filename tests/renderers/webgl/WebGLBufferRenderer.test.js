@@ -1,7 +1,7 @@
 var Three = (function (exports) {
 	'use strict';
 
-	function WebGLBufferRenderer( gl, extensions, infoRender ) {
+	function WebGLBufferRenderer( gl, extensions, info ) {
 
 		var mode;
 
@@ -15,11 +15,7 @@ var Three = (function (exports) {
 
 			gl.drawArrays( mode, start, count );
 
-			infoRender.calls ++;
-			infoRender.vertices += count;
-
-			if ( mode === gl.TRIANGLES ) infoRender.faces += count / 3;
-			else if ( mode === gl.POINTS ) infoRender.points += count;
+			info.update( count, mode );
 
 		}
 
@@ -48,11 +44,7 @@ var Three = (function (exports) {
 
 			}
 
-			infoRender.calls ++;
-			infoRender.vertices += count * geometry.maxInstancedCount;
-
-			if ( mode === gl.TRIANGLES ) infoRender.faces += geometry.maxInstancedCount * count / 3;
-			else if ( mode === gl.POINTS ) infoRender.points += geometry.maxInstancedCount * count;
+			info.update( count, mode, geometry.maxInstancedCount );
 
 		}
 

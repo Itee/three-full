@@ -8,6 +8,7 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Group } from '../objects/Group.js'
 import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
+import { Euler } from '../math/Euler.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
 
@@ -149,7 +150,7 @@ PlayCanvasLoader.prototype = {
 			object.name = data.name;
 
 			object.position.fromArray( data.position );
-			object.rotation.fromArray( data.rotation );
+			object.quaternion.setFromEuler( new Euler().fromArray( data.rotation ) );
 			object.scale.fromArray( data.scale );
 
 			data._object = object;
