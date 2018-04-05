@@ -487,6 +487,9 @@ module.exports = {
 			]
 		},
 		MorphAnimMesh: {
+            imports: [
+                'AnimationClip'
+            ],
 			outputOverride: 'objects/MorphAnimMesh.js'
 		},
 		MorphBlendMesh: {
