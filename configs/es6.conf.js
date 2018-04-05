@@ -641,7 +641,8 @@ module.exports = {
             exportsOverride: [ 'OBJLoader' ]
 		},
 		OBJLoader2: {
-			replacements: [
+            imports: [ 'DefaultLoadingManager' ],
+            replacements: [
 				[ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ],
 				[ 'THREE = { LoaderSupport: {} };', 'var LoaderSupport = {};' ]
 			]
