@@ -834,6 +834,9 @@ module.exports = {
         SMAAShader: {
             exportsOverride: [ 'SMAAShader' ]
 		},
+        SoftwareRenderer: {
+            imports: [ '_Math' ]
+        },
         SplineCurve: {
             outputOverride: 'curves/SplineCurve.js'
         },
