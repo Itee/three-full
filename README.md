@@ -1,4 +1,4 @@
-threejs-full-es6
+three-full
 ================
 
 [![License][license-badge]][license-badge-url]
@@ -17,7 +17,7 @@ Assuming that npm and node are already installed.
 
 Install:
 ````
-npm install --save threejs-full-es6
+npm install --save three-full
 ````
 
 #### Usage ####
@@ -27,30 +27,30 @@ Like Three.js but with more, more and more available stuff.
 ###### Using ES6: ######
 
 ````javascript
-import { WhatIWant } from 'node_modules/threejs-full-es6/builds/Three.es.js'
+import { WhatIWant } from 'node_modules/three-full/builds/Three.es.js'
 // equivalent to
-import { WhatIWant } from 'threejs-full-es6'
+import { WhatIWant } from 'three-full'
  
 // or directly from sources folder
  
-import { Ocean } from 'node_modules/threejs-full-es6/sources/Ocean'
+import { Ocean } from 'node_modules/three-full/sources/Ocean'
 ````
 
 ###### Using Node/CommonJS: ######
 ````javascript
-const Three = require('node_modules/threejs-full-es6/builds/Three.cjs.js')
+const Three = require('node_modules/three-full/builds/Three.cjs.js')
 ````
 
 ###### Using UMD: ######
 
 ````javascript
-const Three = require('node_modules/threejs-full-es6/builds/Three.umd.js')
+const Three = require('node_modules/three-full/builds/Three.umd.js')
 ````
 
 ###### Using AMD: ######
 
 ````javascript
-require(['node_modules/threejs-full-es6/builds/Three.amd.js'], 
+require(['node_modules/three-full/builds/Three.amd.js'], 
     function( Three ){
     
         //...
@@ -68,7 +68,7 @@ require(['node_modules/threejs-full-es6/builds/Three.amd.js'],
         <title>Three Full Es6</title>
     </head>
     <body>
-        <script src="node_modules/threejs-full-es6/builds/Three.iife.js"></script>
+        <script src="node_modules/three-full/builds/Three.iife.js"></script>
         <script>
             alert('Three.REVISION: ' + Three.REVISION)
         </script>
@@ -86,7 +86,7 @@ Help:
 ````
 npm run help
 ````
-Will display all you need to known about available commands in threejs-full-es6 package
+Will display all you need to known about available commands in three-full package
 
 Patch:
 ````
