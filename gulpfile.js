@@ -56,13 +56,12 @@ gulp.task( 'patch-three', ( done ) => {
         [
             'fix-effect-composer',
             'create-pass-file',
+            'fix-node-lib-export',
             'create-node-lib-declaration-file',
             'create-node-lib-implementation-file',
-            'fix-node-lib-export',
+            'fix-function-node-export',
             'create-function-node-declaration-file',
             'create-function-node-implementation-file',
-            'fix-function-node-export',
-            'fix-camera-node',
             'fix-line'
         ],
         done
@@ -70,6 +69,22 @@ gulp.task( 'patch-three', ( done ) => {
 
 } )
 
+/**
+ * Remove the Pass object from Effect composer and create a new file for Pass class in
+ * create-pass-file task
+ */
+gulp.task( 'fix-effect-composer', () => {
+
+    return gulp.src( './node_modules/three/examples/js/postprocessing/EffectComposer.js' )
+               .pipe( replace( [ [ 'THREE.Pass = function () {', '/*\n' ] ] ) )
+               .pipe( replace( [ [ /console\.error\(\s?\'THREE.Pass:[\w\s'.:();}]+/g, '\n*/' ] ] ) )
+               .pipe( gulp.dest( './node_modules/three/examples/js/postprocessing' ) )
+
+} )
+
+/**
+ * See above
+ */
 gulp.task( 'create-pass-file', ( done ) => {
 
     const stringFile = '' +
@@ -100,10 +115,33 @@ gulp.task( 'create-pass-file', ( done ) => {
 
 } )
 
-gulp.task( 'create-node-lib-declaration-file', ( done ) => {
+
+gulp.task( 'fix-node-lib-export', ( done ) => {
 
     const stringFile = '/**\n' +
         ' * @author [Tristan Valcke]{@link https://github.com/Itee}\n' +
+        ' * @author sunag / http://www.sunag.com.br/\n' +
+        ' */\n' +
+        '\n' +
+        'export { NodeLib } from \'./NodeLib_Implementation\'\n'
+
+    fs.writeFile( "./node_modules/three/examples/js/nodes/NodeLib.js", stringFile, ( error ) => {
+
+        if ( error ) {
+            return console.error( error )
+        }
+
+        console.log( "NodeLib.js was overrided !" )
+        done()
+
+    } );
+
+} )
+
+gulp.task( 'create-node-lib-declaration-file', ( done ) => {
+
+    const stringFile = '/**\n' +
+        ' * @author [Itee]{@link https://github.com/Itee}\n' +
         ' * @author sunag / http://www.sunag.com.br/\n' +
         ' */\n' +
         '\n' +
@@ -366,22 +404,24 @@ gulp.task( 'create-node-lib-implementation-file', ( done ) => {
 
 } )
 
-gulp.task( 'fix-node-lib-export', ( done ) => {
+
+gulp.task( 'fix-function-node-export', ( done ) => {
 
     const stringFile = '/**\n' +
         ' * @author [Tristan Valcke]{@link https://github.com/Itee}\n' +
         ' * @author sunag / http://www.sunag.com.br/\n' +
+        ' * @thanks bhouston / https://clara.io/\n' +
         ' */\n' +
         '\n' +
-        'export { NodeLib } from \'./NodeLib_Implementation\'\n'
+        'export { FunctionNode } from \'./FunctionNode_Implementation\'\n'
 
-    fs.writeFile( "./node_modules/three/examples/js/nodes/NodeLib.js", stringFile, ( error ) => {
+    fs.writeFile( "./node_modules/three/examples/js/nodes/FunctionNode.js", stringFile, ( error ) => {
 
         if ( error ) {
             return console.error( error )
         }
 
-        console.log( "NodeLib.js was overrided !" )
+        console.log( "FunctionNode.js was overrided !" )
         done()
 
     } );
@@ -640,28 +680,6 @@ gulp.task( 'create-function-node-implementation-file', ( done ) => {
 
 } )
 
-gulp.task( 'fix-function-node-export', ( done ) => {
-
-    const stringFile = '/**\n' +
-        ' * @author [Tristan Valcke]{@link https://github.com/Itee}\n' +
-        ' * @author sunag / http://www.sunag.com.br/\n' +
-        ' * @thanks bhouston / https://clara.io/\n' +
-        ' */\n' +
-        '\n' +
-        'export { FunctionNode } from \'./FunctionNode_Implementation\'\n'
-
-    fs.writeFile( "./node_modules/three/examples/js/nodes/FunctionNode.js", stringFile, ( error ) => {
-
-        if ( error ) {
-            return console.error( error )
-        }
-
-        console.log( "FunctionNode.js was overrided !" )
-        done()
-
-    } );
-
-} )
 
 gulp.task( 'fix-camera-node', () => {
 
@@ -671,15 +689,6 @@ gulp.task( 'fix-camera-node', () => {
                .pipe( replace( [ [ 'this.near.number = camera.near;', 'this.near.number = this.camera.near;' ] ] ) )
                .pipe( replace( [ [ 'this.far.number = camera.far;', 'this.far.number = this.camera.far;' ] ] ) )
                .pipe( gulp.dest( './node_modules/three/examples/js/nodes/accessors' ) )
-
-} )
-
-gulp.task( 'fix-effect-composer', () => {
-
-    return gulp.src( './node_modules/three/examples/js/postprocessing/EffectComposer.js' )
-               .pipe( replace( [ [ 'THREE.Pass = function () {', '/*\n' ] ] ) )
-               .pipe( replace( [ [ /console\.error\(\s?\'THREE.Pass:[\w\s'.:();}]+/g, '\n*/' ] ] ) )
-               .pipe( gulp.dest( './node_modules/three/examples/js/postprocessing' ) )
 
 } )
 
