@@ -1,5 +1,5 @@
 {
-  "name": "threejs-full-es6",
+  "name": "three-full",
   "version": "5.0.7",
   "description": "The famous ThreeJs library with integrated examples as es6 modules",
   "main": "builds/Three.cjs.js",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Itee/threejs-full-es6.git"
+    "url": "git+https://github.com/Itee/three-full.git"
   },
   "keywords": [
     "threejs",
@@ -27,9 +27,9 @@
   "author": "Itee",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Itee/threejs-full-es6/issues"
+    "url": "https://github.com/Itee/three-full/issues"
   },
-  "homepage": "https://github.com/Itee/threejs-full-es6#readme",
+  "homepage": "https://github.com/Itee/three-full#readme",
   "dependencies": {},
   "devDependencies": {
     "del": "^3.0.0",
