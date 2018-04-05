@@ -521,6 +521,7 @@ module.exports = {
         NodeMaterialLoader: {
 			imports: [
 				'DefaultLoadingManager',
+				'CameraNode'
 			],
 			replacements: [
 				['NodeMaterialLoaderUtils = {', 'var NodeMaterialLoaderUtils = {']
