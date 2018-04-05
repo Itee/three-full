@@ -6627,7 +6627,7 @@ var Three = (function (exports) {
 
 	} );
 
-	function Interpolant$1( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
+	function Interpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		this.parameterPositions = parameterPositions;
 		this._cachedIndex = 0;
@@ -6639,7 +6639,7 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( Interpolant$1.prototype, {
+	Object.assign( Interpolant.prototype, {
 
 		evaluate: function ( t ) {
 
@@ -6852,23 +6852,23 @@ var Three = (function (exports) {
 	} );
 
 	//!\ DECLARE ALIAS AFTER assign prototype !
-	Object.assign( Interpolant$1.prototype, {
+	Object.assign( Interpolant.prototype, {
 
 		//( 0, t, t0 ), returns this.resultBuffer
-		beforeStart_: Interpolant$1.prototype.copySampleValue_,
+		beforeStart_: Interpolant.prototype.copySampleValue_,
 
 		//( N-1, tN-1, t ), returns this.resultBuffer
-		afterEnd_: Interpolant$1.prototype.copySampleValue_,
+		afterEnd_: Interpolant.prototype.copySampleValue_,
 
 	} );
 
 	function QuaternionLinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
-		Interpolant$1.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
+		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
 
 	}
 
-	QuaternionLinearInterpolant.prototype = Object.assign( Object.create( Interpolant$1.prototype ), {
+	QuaternionLinearInterpolant.prototype = Object.assign( Object.create( Interpolant.prototype ), {
 
 		constructor: QuaternionLinearInterpolant,
 
@@ -6961,7 +6961,7 @@ var Three = (function (exports) {
 
 	function CubicInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
-		Interpolant$1.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
+		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
 
 		this._weightPrev = - 0;
 		this._offsetPrev = - 0;
@@ -6970,7 +6970,7 @@ var Three = (function (exports) {
 
 	}
 
-	CubicInterpolant.prototype = Object.assign( Object.create( Interpolant$1.prototype ), {
+	CubicInterpolant.prototype = Object.assign( Object.create( Interpolant.prototype ), {
 
 		constructor: CubicInterpolant,
 
@@ -7101,11 +7101,11 @@ var Three = (function (exports) {
 
 	function LinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
-		Interpolant$1.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
+		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
 
 	}
 
-	LinearInterpolant.prototype = Object.assign( Object.create( Interpolant$1.prototype ), {
+	LinearInterpolant.prototype = Object.assign( Object.create( Interpolant.prototype ), {
 
 		constructor: LinearInterpolant,
 
@@ -7137,11 +7137,11 @@ var Three = (function (exports) {
 
 	function DiscreteInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
-		Interpolant$1.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
+		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
 
 	}
 
-	DiscreteInterpolant.prototype = Object.assign( Object.create( Interpolant$1.prototype ), {
+	DiscreteInterpolant.prototype = Object.assign( Object.create( Interpolant.prototype ), {
 
 		constructor: DiscreteInterpolant,
 

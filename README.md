@@ -9,7 +9,7 @@ Three.js r90 come with lot of examples files, which are curently not usable as E
 The purpose of this project is to convert all examples files and includes them as part 
 of the library.
 
-**The version 5.0.3 is now available !!!**
+**The version 5.0.7 is now available !!!**
 
 #### Setup ####
 
@@ -193,6 +193,18 @@ All others folders under example file tree will be mapped to their counter-part 
 
 
 #### Change log ####
+
+
+##### 5.0.7:
+
+* Fix missings PropertyBinding imports in FBXLoader
+* Fix missings PropertyBinding imports in GLTFExporter
+* Fix missings AnimationClip imports in MorphAnimMesh
+* Fix missings AnimationClip imports in MD2Loader
+* Fix missings _Math imports in SoftwareRenderer
+* Fix missings CameraNode imports in NodeMaterialLoader
+* Fix missings Interpolant imports in MMDLoader
+* Remove unnecessary _Math imports
 
 ##### 5.0.6:
 

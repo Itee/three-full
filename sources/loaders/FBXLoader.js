@@ -40,6 +40,7 @@ import {
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
+import { PropertyBinding } from '../animation/PropertyBinding.js'
 import { _Math } from '../math/Math.js'
 
 

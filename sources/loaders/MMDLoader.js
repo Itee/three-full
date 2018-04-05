@@ -35,6 +35,7 @@ import {
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
+import { Interpolant } from '../math/Interpolant.js'
 import { _Math } from '../math/Math.js'
 
 

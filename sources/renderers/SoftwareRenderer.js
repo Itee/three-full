@@ -17,6 +17,7 @@ import {
 	REVISION,
 	FaceColors
 } from '../constants.js'
+import { _Math } from '../math/Math.js'
 
 
 

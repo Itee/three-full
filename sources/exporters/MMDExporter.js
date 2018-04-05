@@ -1,7 +1,6 @@
 import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Matrix4 } from '../math/Matrix4.js'
-import { _Math } from '../math/Math.js'
 
 
 

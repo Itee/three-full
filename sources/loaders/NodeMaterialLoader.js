@@ -1,6 +1,7 @@
 import { FileLoader } from './FileLoader.js'
 import { Vector2 } from '../math/Vector2.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+import { CameraNode } from '../nodes/accessors/CameraNode.js'
 
 
 

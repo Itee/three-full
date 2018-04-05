@@ -12979,7 +12979,7 @@ var Three = (function (exports) {
 
 	} );
 
-	function AnimationClip$1( name, duration, tracks ) {
+	function AnimationClip( name, duration, tracks ) {
 
 		this.name = name;
 		this.tracks = tracks;
@@ -12998,7 +12998,7 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( AnimationClip$1, {
+	Object.assign( AnimationClip, {
 
 		parse: function ( json ) {
 
@@ -13012,7 +13012,7 @@ var Three = (function (exports) {
 
 			}
 
-			return new AnimationClip$1( json.name, json.duration, tracks );
+			return new AnimationClip( json.name, json.duration, tracks );
 
 		},
 
@@ -13077,7 +13077,7 @@ var Three = (function (exports) {
 
 			}
 
-			return new AnimationClip$1( name, - 1, tracks );
+			return new AnimationClip( name, - 1, tracks );
 
 		},
 
@@ -13142,7 +13142,7 @@ var Three = (function (exports) {
 
 			for ( var name in animationToMorphTargets ) {
 
-				clips.push( AnimationClip$1.CreateFromMorphTargetSequence( name, animationToMorphTargets[ name ], fps, noLoop ) );
+				clips.push( AnimationClip.CreateFromMorphTargetSequence( name, animationToMorphTargets[ name ], fps, noLoop ) );
 
 			}
 
@@ -13268,7 +13268,7 @@ var Three = (function (exports) {
 
 			}
 
-			var clip = new AnimationClip$1( clipName, duration, tracks );
+			var clip = new AnimationClip( clipName, duration, tracks );
 
 			return clip;
 
@@ -13276,7 +13276,7 @@ var Three = (function (exports) {
 
 	} );
 
-	Object.assign( AnimationClip$1.prototype, {
+	Object.assign( AnimationClip.prototype, {
 
 		resetDuration: function () {
 
@@ -13829,7 +13829,7 @@ var Three = (function (exports) {
 				rootUuid = root.uuid,
 
 				clipObject = typeof clip === 'string' ?
-					AnimationClip$1.findByName( root, clip ) : clip,
+					AnimationClip.findByName( root, clip ) : clip,
 
 				clipUuid = clipObject !== null ? clipObject.uuid : clip,
 
@@ -13879,7 +13879,7 @@ var Three = (function (exports) {
 				rootUuid = root.uuid,
 
 				clipObject = typeof clip === 'string' ?
-					AnimationClip$1.findByName( root, clip ) : clip,
+					AnimationClip.findByName( root, clip ) : clip,
 
 				clipUuid = clipObject ? clipObject.uuid : clip,
 
