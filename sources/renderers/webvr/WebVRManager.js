@@ -29,6 +29,7 @@ function WebVRManager( renderer ) {
 	if ( typeof window !== 'undefined' && 'VRFrameData' in window ) {
 
 		frameData = new window.VRFrameData();
+		window.addEventListener( 'vrdisplaypresentchange', onVRDisplayPresentChange, false );
 
 	}
 
@@ -50,11 +51,17 @@ function WebVRManager( renderer ) {
 
 	//
 
+	function isPresenting() {
+
+		return device !== null && device.isPresenting === true;
+
+	}
+
 	var currentSize, currentPixelRatio;
 
 	function onVRDisplayPresentChange() {
 
-		if ( device !== null && device.isPresenting ) {
+		if ( isPresenting() ) {
 
 			var eyeParameters = device.getEyeParameters( 'left' );
 			var renderWidth = eyeParameters.renderWidth;
@@ -70,12 +77,6 @@ function WebVRManager( renderer ) {
 			renderer.setDrawingBufferSize( currentSize.width, currentSize.height, currentPixelRatio );
 
 		}
-
-	}
-
-	if ( typeof window !== 'undefined' ) {
-
-		window.addEventListener( 'vrdisplaypresentchange', onVRDisplayPresentChange, false );
 
 	}
 
@@ -232,7 +233,7 @@ function WebVRManager( renderer ) {
 
 	this.submitFrame = function () {
 
-		if ( device && device.isPresenting ) device.submitFrame();
+		if ( isPresenting() ) device.submitFrame();
 
 	};
 

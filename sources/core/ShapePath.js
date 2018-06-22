@@ -1,3 +1,4 @@
+import { Color } from '../math/Color.js'
 import { Path } from './Path.js'
 import { Shape } from './Shape.js'
 import { ShapeUtils } from '../utils/ShapeUtils.js'
@@ -8,9 +9,12 @@ import { ShapeUtils } from '../utils/ShapeUtils.js'
 
 
 
+
 function ShapePath() {
 
 	this.type = 'ShapePath';
+
+	this.color = new Color();
 
 	this.subPaths = [];
 	this.currentPath = null;

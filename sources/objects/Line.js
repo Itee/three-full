@@ -18,6 +18,7 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
 
 
+
 function Line( geometry, material, mode ) {
 
 	if ( mode === 1 ) {

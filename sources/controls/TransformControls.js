@@ -51,7 +51,7 @@ import {
 		this.oldColor = this.color.clone();
 		this.oldOpacity = this.opacity;
 
-		this.highlight = function( highlighted ) {
+		this.highlight = function ( highlighted ) {
 
 			if ( highlighted ) {
 
@@ -88,7 +88,7 @@ import {
 		this.oldColor = this.color.clone();
 		this.oldOpacity = this.opacity;
 
-		this.highlight = function( highlighted ) {
+		this.highlight = function ( highlighted ) {
 
 			if ( highlighted ) {
 
@@ -133,9 +133,9 @@ import {
 			var planeMaterial = new MeshBasicMaterial( { visible: false, side: DoubleSide } );
 
 			var planes = {
-				"XY":   new Mesh( planeGeometry, planeMaterial ),
-				"YZ":   new Mesh( planeGeometry, planeMaterial ),
-				"XZ":   new Mesh( planeGeometry, planeMaterial ),
+				"XY": new Mesh( planeGeometry, planeMaterial ),
+				"YZ": new Mesh( planeGeometry, planeMaterial ),
+				"XZ": new Mesh( planeGeometry, planeMaterial ),
 				"XYZE": new Mesh( planeGeometry, planeMaterial )
 			};
 
@@ -154,7 +154,7 @@ import {
 
 			//// HANDLES AND PICKERS
 
-			var setupGizmos = function( gizmoMap, parent ) {
+			var setupGizmos = function ( gizmoMap, parent ) {
 
 				for ( var name in gizmoMap ) {
 
@@ -206,7 +206,7 @@ import {
 
 		this.highlight = function ( axis ) {
 
-			this.traverse( function( child ) {
+			this.traverse( function ( child ) {
 
 				if ( child.material && child.material.highlight ) {
 
@@ -237,7 +237,7 @@ import {
 		var vec2 = new Vector3( 0, 1, 0 );
 		var lookAtMatrix = new Matrix4();
 
-		this.traverse( function( child ) {
+		this.traverse( function ( child ) {
 
 			if ( child.name.search( "E" ) !== - 1 ) {
 
@@ -265,13 +265,13 @@ import {
 		arrowGeometry.merge( mesh.geometry, mesh.matrix );
 
 		var lineXGeometry = new BufferGeometry();
-		lineXGeometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0,  1, 0, 0 ], 3 ) );
+		lineXGeometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0, 1, 0, 0 ], 3 ) );
 
 		var lineYGeometry = new BufferGeometry();
-		lineYGeometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0,  0, 1, 0 ], 3 ) );
+		lineYGeometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0, 0, 1, 0 ], 3 ) );
 
 		var lineZGeometry = new BufferGeometry();
-		lineZGeometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0,  0, 0, 1 ], 3 ) );
+		lineZGeometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0, 0, 0, 1 ], 3 ) );
 
 		this.handleGizmos = {
 
@@ -452,10 +452,12 @@ import {
 			],
 
 			XYZE: [
-				[ new Mesh() ]// TODO
+				[ new Mesh( new TorusBufferGeometry( 1, 0.12, 2, 24 ), pickerMaterial ) ]
 			]
 
 		};
+
+		this.pickerGizmos.XYZE[ 0 ][ 0 ].visible = false; // disable XYZE picker gizmo
 
 		this.setActivePlane = function ( axis ) {
 
@@ -701,12 +703,12 @@ import {
 		var oldScale = new Vector3();
 		var oldRotationMatrix = new Matrix4();
 
-		var parentRotationMatrix  = new Matrix4();
+		var parentRotationMatrix = new Matrix4();
 		var parentScale = new Vector3();
 
 		var worldPosition = new Vector3();
 		var worldRotation = new Euler();
-		var worldRotationMatrix  = new Matrix4();
+		var worldRotationMatrix = new Matrix4();
 		var camPosition = new Vector3();
 		var camRotation = new Euler();
 

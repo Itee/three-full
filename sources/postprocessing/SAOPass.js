@@ -9,7 +9,7 @@ import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneGeometry } from '../geometries/PlaneGeometry.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import {
 	NoBlending,
 	CustomBlending,
@@ -192,7 +192,7 @@ var SAOPass = function ( scene, camera, depthTexture, useNormals, resolution ) {
 
 	this.quadCamera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
 	this.quadScene = new Scene();
-	this.quad = new Mesh( new PlaneGeometry( 2, 2 ), null );
+	this.quad = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
 	this.quadScene.add( this.quad );
 
 };

@@ -862,7 +862,7 @@ function WebGLRenderer( parameters ) {
 
 	};
 
-	function setupVertexAttributes( material, program, geometry, startIndex ) {
+	function setupVertexAttributes( material, program, geometry ) {
 
 		if ( geometry && geometry.isInstancedBufferGeometry ) {
 
@@ -874,8 +874,6 @@ function WebGLRenderer( parameters ) {
 			}
 
 		}
-
-		if ( startIndex === undefined ) startIndex = 0;
 
 		state.initAttributes();
 
@@ -931,7 +929,7 @@ function WebGLRenderer( parameters ) {
 						}
 
 						_gl.bindBuffer( _gl.ARRAY_BUFFER, buffer );
-						_gl.vertexAttribPointer( programAttribute, size, type, normalized, stride * bytesPerElement, ( startIndex * stride + offset ) * bytesPerElement );
+						_gl.vertexAttribPointer( programAttribute, size, type, normalized, stride * bytesPerElement, offset * bytesPerElement );
 
 					} else {
 
@@ -952,7 +950,7 @@ function WebGLRenderer( parameters ) {
 						}
 
 						_gl.bindBuffer( _gl.ARRAY_BUFFER, buffer );
-						_gl.vertexAttribPointer( programAttribute, size, type, normalized, 0, startIndex * size * bytesPerElement );
+						_gl.vertexAttribPointer( programAttribute, size, type, normalized, 0, 0 );
 
 					}
 
@@ -2026,12 +2024,7 @@ function WebGLRenderer( parameters ) {
 
 			if ( uvScaleMap.matrixAutoUpdate === true ) {
 
-				var offset = uvScaleMap.offset;
-				var repeat = uvScaleMap.repeat;
-				var rotation = uvScaleMap.rotation;
-				var center = uvScaleMap.center;
-
-				uvScaleMap.matrix.setUvTransform( offset.x, offset.y, repeat.x, repeat.y, rotation, center.x, center.y );
+				uvScaleMap.updateMatrix();
 
 			}
 
@@ -2069,12 +2062,7 @@ function WebGLRenderer( parameters ) {
 
 			if ( material.map.matrixAutoUpdate === true ) {
 
-				var offset = material.map.offset;
-				var repeat = material.map.repeat;
-				var rotation = material.map.rotation;
-				var center = material.map.center;
-
-				material.map.matrix.setUvTransform( offset.x, offset.y, repeat.x, repeat.y, rotation, center.x, center.y );
+				material.map.updateMatrix();
 
 			}
 

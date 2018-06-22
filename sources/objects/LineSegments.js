@@ -7,6 +7,7 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
 
 
+
 function LineSegments( geometry, material ) {
 
 	Line.call( this, geometry, material );

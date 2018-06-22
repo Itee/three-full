@@ -1,7 +1,7 @@
 var Three = (function (exports) {
 	'use strict';
 
-	var REVISION = '91';
+	var REVISION = '92';
 	var CullFaceNone = 0;
 	var CullFaceBack = 1;
 	var CullFaceFront = 2;
@@ -54,10 +54,6 @@ var Three = (function (exports) {
 
 					case 'WEBGL_compressed_texture_pvrtc':
 						extension = gl.getExtension( 'WEBGL_compressed_texture_pvrtc' ) || gl.getExtension( 'WEBKIT_WEBGL_compressed_texture_pvrtc' );
-						break;
-
-					case 'WEBGL_compressed_texture_etc1':
-						extension = gl.getExtension( 'WEBGL_compressed_texture_etc1' );
 						break;
 
 					default:
@@ -1043,13 +1039,13 @@ var Three = (function (exports) {
 
 		if ( glVersion.indexOf( 'WebGL' ) !== - 1 ) {
 
-		   version = parseFloat( /^WebGL\ ([0-9])/.exec( glVersion )[ 1 ] );
-		   lineWidthAvailable = ( version >= 1.0 );
+			version = parseFloat( /^WebGL\ ([0-9])/.exec( glVersion )[ 1 ] );
+			lineWidthAvailable = ( version >= 1.0 );
 
 		} else if ( glVersion.indexOf( 'OpenGL ES' ) !== - 1 ) {
 
-		   version = parseFloat( /^OpenGL\ ES\ ([0-9])/.exec( glVersion )[ 1 ] );
-		   lineWidthAvailable = ( version >= 2.0 );
+			version = parseFloat( /^OpenGL\ ES\ ([0-9])/.exec( glVersion )[ 1 ] );
+			lineWidthAvailable = ( version >= 2.0 );
 
 		}
 
@@ -1670,7 +1666,7 @@ var Three = (function (exports) {
 
 			for ( var i = 0; i < 256; i ++ ) {
 
-				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
 
 			}
 
@@ -1680,10 +1676,13 @@ var Three = (function (exports) {
 				var d1 = Math.random() * 0xffffffff | 0;
 				var d2 = Math.random() * 0xffffffff | 0;
 				var d3 = Math.random() * 0xffffffff | 0;
-				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+				var uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
 					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
 					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
 					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+
+				// .toUpperCase() here flattens concatenated strings to save heap memory space.
+				return uuid.toUpperCase();
 
 			};
 
@@ -2388,8 +2387,7 @@ var Three = (function (exports) {
 
 		//
 
-		var _autoClear = true,
-			_autoClearColor = true,
+		var _autoClearColor = true,
 			_autoClearDepth = true,
 			_autoClearStencil = true,
 
@@ -2465,7 +2463,6 @@ var Three = (function (exports) {
 			}
 
 			var background = scene.background;
-			var forceClear = false;
 
 			if ( background === null ) {
 
@@ -2474,11 +2471,10 @@ var Three = (function (exports) {
 			} else if ( background && background.isColor ) {
 
 				state.buffers.color.setClear( background.r, background.g, background.b, 1, _premultipliedAlpha );
-				forceClear = true;
 
 			}
 
-			if ( _autoClear || forceClear ) {
+			{
 
 				this.clear( _autoClearColor, _autoClearDepth, _autoClearStencil );
 

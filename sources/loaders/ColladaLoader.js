@@ -1055,7 +1055,17 @@ ColladaLoader.prototype = {
 
 		function getImage( id ) {
 
-			return getBuild( library.images[ id ], buildImage );
+			var data = library.images[ id ];
+
+			if ( data !== undefined ) {
+
+				return getBuild( data, buildImage );
+
+			}
+
+			console.warn( 'ColladaLoader: Couldn\'t find image with ID:', id );
+
+			return null;
 
 		}
 
@@ -1496,7 +1506,7 @@ ColladaLoader.prototype = {
 			function getTexture( textureObject ) {
 
 				var sampler = effect.profile.samplers[ textureObject.id ];
-				var image;
+				var image = null;
 
 				// get image
 
@@ -1514,7 +1524,7 @@ ColladaLoader.prototype = {
 
 				// create texture if image is avaiable
 
-				if ( image !== undefined ) {
+				if ( image !== null ) {
 
 					var texture = textureLoader.load( image );
 
@@ -1541,7 +1551,7 @@ ColladaLoader.prototype = {
 
 				} else {
 
-					console.error( 'ColladaLoader: Unable to load texture with ID:', textureObject.id );
+					console.warn( 'ColladaLoader: Couldn\'t create texture with ID:', textureObject.id );
 
 					return null;
 
@@ -1566,12 +1576,11 @@ ColladaLoader.prototype = {
 						if ( parameter.texture ) material.specularMap = getTexture( parameter.texture );
 						break;
 					case 'shininess':
-						if ( parameter.float && material.shininess )
-							material.shininess = parameter.float;
+						if ( parameter.float && material.shininess ) material.shininess = parameter.float;
 						break;
 					case 'emission':
-						if ( parameter.color && material.emissive )
-							material.emissive.fromArray( parameter.color );
+						if ( parameter.color && material.emissive ) material.emissive.fromArray( parameter.color );
+						if ( parameter.texture ) material.emissiveMap = getTexture( parameter.texture );
 						break;
 
 				}
@@ -1611,7 +1620,8 @@ ColladaLoader.prototype = {
 
 				if ( transparent.data.texture ) {
 
-					material.alphaMap = getTexture( transparent.data.texture );
+					// we do not set an alpha map (see #13792)
+
 					material.transparent = true;
 
 				} else {
@@ -2209,29 +2219,56 @@ ColladaLoader.prototype = {
 
 			var materialKeys = [];
 
-			var start = 0, count = 0;
+			var start = 0;
 
 			for ( var p = 0; p < primitives.length; p ++ ) {
 
 				var primitive = primitives[ p ];
 				var inputs = primitive.inputs;
-				var triangleCount = 1;
-
-				if ( primitive.vcount && primitive.vcount[ 0 ] === 4 ) {
-
-					triangleCount = 2; // one quad -> two triangles
-
-				}
 
 				// groups
 
-				if ( primitive.type === 'lines' || primitive.type === 'linestrips' ) {
+				var count = 0;
 
-					count = primitive.count * 2;
+				switch ( primitive.type ) {
 
-				} else {
+					case 'lines':
+					case 'linestrips':
+						count = primitive.count * 2;
+						break;
 
-					count = primitive.count * 3 * triangleCount;
+					case 'triangles':
+						count = primitive.count * 3;
+						break;
+
+					case 'polylist':
+
+						for ( var g = 0; g < primitive.count; g ++ ) {
+
+							var vc = primitive.vcount[ g ];
+
+							switch ( vc ) {
+
+								case 3:
+									count += 3; // single triangle
+									break;
+
+								case 4:
+									count += 6; // quad, subdivided into two triangles
+									break;
+
+								default:
+									count += ( vc - 2 ) * 3; // polylist with more than four vertices
+									break;
+
+							}
+
+						}
+
+						break;
+
+					default:
+						console.warn( 'ColladaLoader: Unknow primitive type:', primitive.type );
 
 				}
 
@@ -2371,8 +2408,6 @@ ColladaLoader.prototype = {
 
 			}
 
-			var maxcount = 0;
-
 			var sourceArray = source.array;
 			var sourceStride = source.stride;
 
@@ -2402,19 +2437,21 @@ ColladaLoader.prototype = {
 
 						pushVector( a ); pushVector( b ); pushVector( c );
 
-					} else {
+					} else if ( count > 4 ) {
 
-						maxcount = Math.max( maxcount, count );
+						for ( var k = 1, kl = ( count - 2 ); k <= kl; k ++ ) {
+
+							var a = index + stride * 0;
+							var b = index + stride * k;
+							var c = index + stride * ( k + 1 );
+
+							pushVector( a ); pushVector( b ); pushVector( c );
+
+						}
 
 					}
 
 					index += stride * count;
-
-				}
-
-				if ( maxcount > 0 ) {
-
-					console.log( 'ColladaLoader: Geometry has faces with more than 4 vertices.' );
 
 				}
 
@@ -3644,19 +3681,13 @@ ColladaLoader.prototype = {
 
 		}
 
-		console.time( 'ColladaLoader' );
-
 		if ( text.length === 0 ) {
 
 			return { scene: new Scene() };
 
 		}
 
-		console.time( 'ColladaLoader: DOMParser' );
-
 		var xml = new DOMParser().parseFromString( text, 'application/xml' );
-
-		console.timeEnd( 'ColladaLoader: DOMParser' );
 
 		var collada = getElementsByTagName( xml, 'COLLADA' )[ 0 ];
 
@@ -3693,8 +3724,6 @@ ColladaLoader.prototype = {
 			kinematicsScenes: {}
 		};
 
-		console.time( 'ColladaLoader: Parse' );
-
 		parseLibrary( collada, 'library_animations', 'animation', parseAnimation );
 		parseLibrary( collada, 'library_animation_clips', 'animation_clip', parseAnimationClip );
 		parseLibrary( collada, 'library_controllers', 'controller', parseController );
@@ -3709,10 +3738,6 @@ ColladaLoader.prototype = {
 		parseLibrary( collada, 'library_kinematics_models', 'kinematics_model', parseKinematicsModel );
 		parseLibrary( collada, 'scene', 'instance_kinematics_scene', parseKinematicsScene );
 
-		console.timeEnd( 'ColladaLoader: Parse' );
-
-		console.time( 'ColladaLoader: Build' );
-
 		buildLibrary( library.animations, buildAnimation );
 		buildLibrary( library.clips, buildAnimationClip );
 		buildLibrary( library.controllers, buildController );
@@ -3723,8 +3748,6 @@ ColladaLoader.prototype = {
 		buildLibrary( library.lights, buildLight );
 		buildLibrary( library.geometries, buildGeometry );
 		buildLibrary( library.visualScenes, buildVisualScene );
-
-		console.timeEnd( 'ColladaLoader: Build' );
 
 		setupAnimations();
 		setupKinematics();
@@ -3738,8 +3761,6 @@ ColladaLoader.prototype = {
 		}
 
 		scene.scale.multiplyScalar( asset.unit );
-
-		console.timeEnd( 'ColladaLoader' );
 
 		return {
 			animations: animations,

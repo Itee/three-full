@@ -161,8 +161,6 @@ var LegacyGLTFLoader = ( function () {
 
 			}
 
-			console.time( 'LegacyGLTFLoader' );
-
 			var parser = new GLTFParser( json, extensions, {
 
 				path: path || this.path,
@@ -171,8 +169,6 @@ var LegacyGLTFLoader = ( function () {
 			} );
 
 			parser.parse( function ( scene, scenes, cameras, animations ) {
-
-				console.timeEnd( 'LegacyGLTFLoader' );
 
 				var glTF = {
 					"scene": scene,
@@ -730,6 +726,13 @@ var LegacyGLTFLoader = ( function () {
 
 		// Data URI
 		if ( /^data:.*,.*$/i.test( url ) ) {
+
+			return url;
+
+		}
+
+		// Blob URL
+		if ( /^blob:.*$/i.test( url ) ) {
 
 			return url;
 

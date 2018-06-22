@@ -146,7 +146,7 @@ var Three = (function (exports) {
 
 		var fLetterSpacing = 0;
 
-		if ( strResolution == "low" ) {
+		{
 
 			switch ( iScale ) {
 				case 1 : fLetterSpacing = - 1; break;
@@ -154,30 +154,6 @@ var Three = (function (exports) {
 				case 3 : fLetterSpacing = - 2.1; break;
 				case 4 : fLetterSpacing = - 3.1; break;
 				case 5 : fLetterSpacing = - 4.15; break;
-			}
-
-		}
-
-		if ( strResolution == "medium" ) {
-
-			switch ( iScale ) {
-				case 1 : fLetterSpacing = 0; break;
-				case 2 : fLetterSpacing = - 1; break;
-				case 3 : fLetterSpacing = - 1.04; break;
-				case 4 :
-				case 5 : fLetterSpacing = - 2.1; break;
-			}
-
-		}
-
-		if ( strResolution == "high" ) {
-
-			switch ( iScale ) {
-				case 1 :
-				case 2 : fLetterSpacing = 0; break;
-				case 3 :
-				case 4 :
-				case 5 : fLetterSpacing = - 1; break;
 			}
 
 		}

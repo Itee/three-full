@@ -508,9 +508,9 @@ Object.assign( ObjectLoader.prototype, {
 
 						var geometryShapes = [];
 
-						for ( var i = 0, l = data.shapes.length; i < l; i ++ ) {
+						for ( var j = 0, jl = data.shapes.length; j < jl; j ++ ) {
 
-							var shape = shapes[ data.shapes[ i ] ];
+							var shape = shapes[ data.shapes[ j ] ];
 
 							geometryShapes.push( shape );
 
@@ -943,10 +943,13 @@ Object.assign( ObjectLoader.prototype, {
 		object.uuid = data.uuid;
 
 		if ( data.name !== undefined ) object.name = data.name;
+
 		if ( data.matrix !== undefined ) {
 
 			object.matrix.fromArray( data.matrix );
-			object.matrix.decompose( object.position, object.quaternion, object.scale );
+
+			if ( data.matrixAutoUpdate !== undefined ) object.matrixAutoUpdate = data.matrixAutoUpdate;
+			if ( object.matrixAutoUpdate ) object.matrix.decompose( object.position, object.quaternion, object.scale );
 
 		} else {
 

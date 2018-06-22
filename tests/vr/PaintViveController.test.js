@@ -14,7 +14,7 @@ var Three = (function (exports) {
 
 			for ( var i = 0; i < 256; i ++ ) {
 
-				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
 
 			}
 
@@ -24,10 +24,13 @@ var Three = (function (exports) {
 				var d1 = Math.random() * 0xffffffff | 0;
 				var d2 = Math.random() * 0xffffffff | 0;
 				var d3 = Math.random() * 0xffffffff | 0;
-				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+				var uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
 					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
 					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
 					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+
+				// .toUpperCase() here flattens concatenated strings to save heap memory space.
+				return uuid.toUpperCase();
 
 			};
 
@@ -3851,6 +3854,8 @@ var Three = (function (exports) {
 
 			object.matrix = this.matrix.toArray();
 
+			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
+
 			//
 
 			function serialize( library, element ) {
@@ -5236,6 +5241,12 @@ var Three = (function (exports) {
 		constructor: Texture,
 
 		isTexture: true,
+
+		updateMatrix: function () {
+
+			this.matrix.setUvTransform( this.offset.x, this.offset.y, this.repeat.x, this.repeat.y, this.rotation, this.center.x, this.center.y );
+
+		},
 
 		clone: function () {
 
@@ -8389,6 +8400,8 @@ var Three = (function (exports) {
 			this.count = array !== undefined ? array.length / this.itemSize : 0;
 			this.array = array;
 
+			return this;
+
 		},
 
 		setDynamic: function ( value ) {
@@ -8401,6 +8414,7 @@ var Three = (function (exports) {
 
 		copy: function ( source ) {
 
+			this.name = source.name;
 			this.array = new source.array.constructor( source.array );
 			this.itemSize = source.itemSize;
 			this.count = source.count;
@@ -12133,12 +12147,7 @@ var Three = (function (exports) {
 
 							intersection = checkBufferGeometryIntersection( this, raycaster, ray, position, uv, a, b, c );
 
-							if ( intersection ) {
-
-								intersection.index = a; // triangle number in positions buffer semantics
-								intersects.push( intersection );
-
-							}
+							if ( intersection ) intersects.push( intersection );
 
 						}
 
@@ -13266,7 +13275,7 @@ var Three = (function (exports) {
 
 		if ( this.closed ) {
 
-			intPoint += intPoint > 0 ? 0 : ( Math.floor( Math.abs( intPoint ) / points.length ) + 1 ) * points.length;
+			intPoint += intPoint > 0 ? 0 : ( Math.floor( Math.abs( intPoint ) / l ) + 1 ) * l;
 
 		} else if ( weight === 0 && intPoint === l - 1 ) {
 

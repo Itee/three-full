@@ -14,7 +14,7 @@ var Three = (function (exports) {
 
 			for ( var i = 0; i < 256; i ++ ) {
 
-				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
 
 			}
 
@@ -24,10 +24,13 @@ var Three = (function (exports) {
 				var d1 = Math.random() * 0xffffffff | 0;
 				var d2 = Math.random() * 0xffffffff | 0;
 				var d3 = Math.random() * 0xffffffff | 0;
-				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+				var uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
 					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
 					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
 					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+
+				// .toUpperCase() here flattens concatenated strings to save heap memory space.
+				return uuid.toUpperCase();
 
 			};
 
@@ -3850,6 +3853,8 @@ var Three = (function (exports) {
 			if ( JSON.stringify( this.userData ) !== '{}' ) object.userData = this.userData;
 
 			object.matrix = this.matrix.toArray();
+
+			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
 
 			//
 
@@ -7918,7 +7923,7 @@ var Three = (function (exports) {
 
 	} );
 
-	var REVISION = '91';
+	var REVISION = '92';
 	var FrontSide = 0;
 	var BackSide = 1;
 	var DoubleSide = 2;
@@ -8422,6 +8427,8 @@ var Three = (function (exports) {
 			this.count = array !== undefined ? array.length / this.itemSize : 0;
 			this.array = array;
 
+			return this;
+
 		},
 
 		setDynamic: function ( value ) {
@@ -8434,6 +8441,7 @@ var Three = (function (exports) {
 
 		copy: function ( source ) {
 
+			this.name = source.name;
 			this.array = new source.array.constructor( source.array );
 			this.itemSize = source.itemSize;
 			this.count = source.count;
@@ -10423,12 +10431,7 @@ var Three = (function (exports) {
 
 							intersection = checkBufferGeometryIntersection( this, raycaster, ray, position, uv, a, b, c );
 
-							if ( intersection ) {
-
-								intersection.index = a; // triangle number in positions buffer semantics
-								intersects.push( intersection );
-
-							}
+							if ( intersection ) intersects.push( intersection );
 
 						}
 
@@ -13872,754 +13875,6 @@ var Three = (function (exports) {
 
 	} );
 
-	function AmbientLight( color, intensity ) {
-
-		Light.call( this, color, intensity );
-
-		this.type = 'AmbientLight';
-
-		this.castShadow = undefined;
-
-	}
-
-	AmbientLight.prototype = Object.assign( Object.create( Light.prototype ), {
-
-		constructor: AmbientLight,
-
-		isAmbientLight: true
-
-	} );
-
-	function LightShadow( camera ) {
-
-		this.camera = camera;
-
-		this.bias = 0;
-		this.radius = 1;
-
-		this.mapSize = new Vector2( 512, 512 );
-
-		this.map = null;
-		this.matrix = new Matrix4();
-
-	}
-
-	Object.assign( LightShadow.prototype, {
-
-		copy: function ( source ) {
-
-			this.camera = source.camera.clone();
-
-			this.bias = source.bias;
-			this.radius = source.radius;
-
-			this.mapSize.copy( source.mapSize );
-
-			return this;
-
-		},
-
-		clone: function () {
-
-			return new this.constructor().copy( this );
-
-		},
-
-		toJSON: function () {
-
-			var object = {};
-
-			if ( this.bias !== 0 ) object.bias = this.bias;
-			if ( this.radius !== 1 ) object.radius = this.radius;
-			if ( this.mapSize.x !== 512 || this.mapSize.y !== 512 ) object.mapSize = this.mapSize.toArray();
-
-			object.camera = this.camera.toJSON( false ).object;
-			delete object.camera.matrix;
-
-			return object;
-
-		}
-
-	} );
-
-	function OrthographicCamera( left, right, top, bottom, near, far ) {
-
-		Camera.call( this );
-
-		this.type = 'OrthographicCamera';
-
-		this.zoom = 1;
-		this.view = null;
-
-		this.left = left;
-		this.right = right;
-		this.top = top;
-		this.bottom = bottom;
-
-		this.near = ( near !== undefined ) ? near : 0.1;
-		this.far = ( far !== undefined ) ? far : 2000;
-
-		this.updateProjectionMatrix();
-
-	}
-
-	OrthographicCamera.prototype = Object.assign( Object.create( Camera.prototype ), {
-
-		constructor: OrthographicCamera,
-
-		isOrthographicCamera: true,
-
-		copy: function ( source, recursive ) {
-
-			Camera.prototype.copy.call( this, source, recursive );
-
-			this.left = source.left;
-			this.right = source.right;
-			this.top = source.top;
-			this.bottom = source.bottom;
-			this.near = source.near;
-			this.far = source.far;
-
-			this.zoom = source.zoom;
-			this.view = source.view === null ? null : Object.assign( {}, source.view );
-
-			return this;
-
-		},
-
-		setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
-
-			if ( this.view === null ) {
-
-				this.view = {
-					enabled: true,
-					fullWidth: 1,
-					fullHeight: 1,
-					offsetX: 0,
-					offsetY: 0,
-					width: 1,
-					height: 1
-				};
-
-			}
-
-			this.view.enabled = true;
-			this.view.fullWidth = fullWidth;
-			this.view.fullHeight = fullHeight;
-			this.view.offsetX = x;
-			this.view.offsetY = y;
-			this.view.width = width;
-			this.view.height = height;
-
-			this.updateProjectionMatrix();
-
-		},
-
-		clearViewOffset: function () {
-
-			if ( this.view !== null ) {
-
-				this.view.enabled = false;
-
-			}
-
-			this.updateProjectionMatrix();
-
-		},
-
-		updateProjectionMatrix: function () {
-
-			var dx = ( this.right - this.left ) / ( 2 * this.zoom );
-			var dy = ( this.top - this.bottom ) / ( 2 * this.zoom );
-			var cx = ( this.right + this.left ) / 2;
-			var cy = ( this.top + this.bottom ) / 2;
-
-			var left = cx - dx;
-			var right = cx + dx;
-			var top = cy + dy;
-			var bottom = cy - dy;
-
-			if ( this.view !== null && this.view.enabled ) {
-
-				var zoomW = this.zoom / ( this.view.width / this.view.fullWidth );
-				var zoomH = this.zoom / ( this.view.height / this.view.fullHeight );
-				var scaleW = ( this.right - this.left ) / this.view.width;
-				var scaleH = ( this.top - this.bottom ) / this.view.height;
-
-				left += scaleW * ( this.view.offsetX / zoomW );
-				right = left + scaleW * ( this.view.width / zoomW );
-				top -= scaleH * ( this.view.offsetY / zoomH );
-				bottom = top - scaleH * ( this.view.height / zoomH );
-
-			}
-
-			this.projectionMatrix.makeOrthographic( left, right, top, bottom, this.near, this.far );
-
-		},
-
-		toJSON: function ( meta ) {
-
-			var data = Object3D.prototype.toJSON.call( this, meta );
-
-			data.object.zoom = this.zoom;
-			data.object.left = this.left;
-			data.object.right = this.right;
-			data.object.top = this.top;
-			data.object.bottom = this.bottom;
-			data.object.near = this.near;
-			data.object.far = this.far;
-
-			if ( this.view !== null ) data.object.view = Object.assign( {}, this.view );
-
-			return data;
-
-		}
-
-	} );
-
-	function DirectionalLightShadow( ) {
-
-		LightShadow.call( this, new OrthographicCamera( - 5, 5, 5, - 5, 0.5, 500 ) );
-
-	}
-
-	DirectionalLightShadow.prototype = Object.assign( Object.create( LightShadow.prototype ), {
-
-		constructor: DirectionalLightShadow
-
-	} );
-
-	function DirectionalLight( color, intensity ) {
-
-		Light.call( this, color, intensity );
-
-		this.type = 'DirectionalLight';
-
-		this.position.copy( Object3D.DefaultUp );
-		this.updateMatrix();
-
-		this.target = new Object3D();
-
-		this.shadow = new DirectionalLightShadow();
-
-	}
-
-	DirectionalLight.prototype = Object.assign( Object.create( Light.prototype ), {
-
-		constructor: DirectionalLight,
-
-		isDirectionalLight: true,
-
-		copy: function ( source ) {
-
-			Light.prototype.copy.call( this, source );
-
-			this.target = source.target.clone();
-
-			this.shadow = source.shadow.clone();
-
-			return this;
-
-		}
-
-	} );
-
-	function PerspectiveCamera( fov, aspect, near, far ) {
-
-		Camera.call( this );
-
-		this.type = 'PerspectiveCamera';
-
-		this.fov = fov !== undefined ? fov : 50;
-		this.zoom = 1;
-
-		this.near = near !== undefined ? near : 0.1;
-		this.far = far !== undefined ? far : 2000;
-		this.focus = 10;
-
-		this.aspect = aspect !== undefined ? aspect : 1;
-		this.view = null;
-
-		this.filmGauge = 35;	// width of the film (default in millimeters)
-		this.filmOffset = 0;	// horizontal film offset (same unit as gauge)
-
-		this.updateProjectionMatrix();
-
-	}
-
-	PerspectiveCamera.prototype = Object.assign( Object.create( Camera.prototype ), {
-
-		constructor: PerspectiveCamera,
-
-		isPerspectiveCamera: true,
-
-		copy: function ( source, recursive ) {
-
-			Camera.prototype.copy.call( this, source, recursive );
-
-			this.fov = source.fov;
-			this.zoom = source.zoom;
-
-			this.near = source.near;
-			this.far = source.far;
-			this.focus = source.focus;
-
-			this.aspect = source.aspect;
-			this.view = source.view === null ? null : Object.assign( {}, source.view );
-
-			this.filmGauge = source.filmGauge;
-			this.filmOffset = source.filmOffset;
-
-			return this;
-
-		},
-
-		
-		setFocalLength: function ( focalLength ) {
-
-			// see http://www.bobatkins.com/photography/technical/field_of_view.html
-			var vExtentSlope = 0.5 * this.getFilmHeight() / focalLength;
-
-			this.fov = _Math.RAD2DEG * 2 * Math.atan( vExtentSlope );
-			this.updateProjectionMatrix();
-
-		},
-
-		
-		getFocalLength: function () {
-
-			var vExtentSlope = Math.tan( _Math.DEG2RAD * 0.5 * this.fov );
-
-			return 0.5 * this.getFilmHeight() / vExtentSlope;
-
-		},
-
-		getEffectiveFOV: function () {
-
-			return _Math.RAD2DEG * 2 * Math.atan(
-				Math.tan( _Math.DEG2RAD * 0.5 * this.fov ) / this.zoom );
-
-		},
-
-		getFilmWidth: function () {
-
-			// film not completely covered in portrait format (aspect < 1)
-			return this.filmGauge * Math.min( this.aspect, 1 );
-
-		},
-
-		getFilmHeight: function () {
-
-			// film not completely covered in landscape format (aspect > 1)
-			return this.filmGauge / Math.max( this.aspect, 1 );
-
-		},
-
-		
-		setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
-
-			this.aspect = fullWidth / fullHeight;
-
-			if ( this.view === null ) {
-
-				this.view = {
-					enabled: true,
-					fullWidth: 1,
-					fullHeight: 1,
-					offsetX: 0,
-					offsetY: 0,
-					width: 1,
-					height: 1
-				};
-
-			}
-
-			this.view.enabled = true;
-			this.view.fullWidth = fullWidth;
-			this.view.fullHeight = fullHeight;
-			this.view.offsetX = x;
-			this.view.offsetY = y;
-			this.view.width = width;
-			this.view.height = height;
-
-			this.updateProjectionMatrix();
-
-		},
-
-		clearViewOffset: function () {
-
-			if ( this.view !== null ) {
-
-				this.view.enabled = false;
-
-			}
-
-			this.updateProjectionMatrix();
-
-		},
-
-		updateProjectionMatrix: function () {
-
-			var near = this.near,
-				top = near * Math.tan(
-					_Math.DEG2RAD * 0.5 * this.fov ) / this.zoom,
-				height = 2 * top,
-				width = this.aspect * height,
-				left = - 0.5 * width,
-				view = this.view;
-
-			if ( this.view !== null && this.view.enabled ) {
-
-				var fullWidth = view.fullWidth,
-					fullHeight = view.fullHeight;
-
-				left += view.offsetX * width / fullWidth;
-				top -= view.offsetY * height / fullHeight;
-				width *= view.width / fullWidth;
-				height *= view.height / fullHeight;
-
-			}
-
-			var skew = this.filmOffset;
-			if ( skew !== 0 ) left += near * skew / this.getFilmWidth();
-
-			this.projectionMatrix.makePerspective( left, left + width, top, top - height, near, this.far );
-
-		},
-
-		toJSON: function ( meta ) {
-
-			var data = Object3D.prototype.toJSON.call( this, meta );
-
-			data.object.fov = this.fov;
-			data.object.zoom = this.zoom;
-
-			data.object.near = this.near;
-			data.object.far = this.far;
-			data.object.focus = this.focus;
-
-			data.object.aspect = this.aspect;
-
-			if ( this.view !== null ) data.object.view = Object.assign( {}, this.view );
-
-			data.object.filmGauge = this.filmGauge;
-			data.object.filmOffset = this.filmOffset;
-
-			return data;
-
-		}
-
-	} );
-
-	function PointLight( color, intensity, distance, decay ) {
-
-		Light.call( this, color, intensity );
-
-		this.type = 'PointLight';
-
-		Object.defineProperty( this, 'power', {
-			get: function () {
-
-				// intensity = power per solid angle.
-				// ref: equation (15) from https://seblagarde.files.wordpress.com/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf
-				return this.intensity * 4 * Math.PI;
-
-			},
-			set: function ( power ) {
-
-				// intensity = power per solid angle.
-				// ref: equation (15) from https://seblagarde.files.wordpress.com/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf
-				this.intensity = power / ( 4 * Math.PI );
-
-			}
-		} );
-
-		this.distance = ( distance !== undefined ) ? distance : 0;
-		this.decay = ( decay !== undefined ) ? decay : 1;	// for physically correct lights, should be 2.
-
-		this.shadow = new LightShadow( new PerspectiveCamera( 90, 1, 0.5, 500 ) );
-
-	}
-
-	PointLight.prototype = Object.assign( Object.create( Light.prototype ), {
-
-		constructor: PointLight,
-
-		isPointLight: true,
-
-		copy: function ( source ) {
-
-			Light.prototype.copy.call( this, source );
-
-			this.distance = source.distance;
-			this.decay = source.decay;
-
-			this.shadow = source.shadow.clone();
-
-			return this;
-
-		}
-
-	} );
-
-	function MeshLambertMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshLambertMaterial';
-
-		this.color = new Color( 0xffffff ); // diffuse
-
-		this.map = null;
-
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.emissive = new Color( 0x000000 );
-		this.emissiveIntensity = 1.0;
-		this.emissiveMap = null;
-
-		this.specularMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.combine = MultiplyOperation;
-		this.reflectivity = 1;
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshLambertMaterial.prototype = Object.create( Material.prototype );
-	MeshLambertMaterial.prototype.constructor = MeshLambertMaterial;
-
-	MeshLambertMaterial.prototype.isMeshLambertMaterial = true;
-
-	MeshLambertMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-
-		this.map = source.map;
-
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
-
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
-
-		this.emissive.copy( source.emissive );
-		this.emissiveMap = source.emissiveMap;
-		this.emissiveIntensity = source.emissiveIntensity;
-
-		this.specularMap = source.specularMap;
-
-		this.alphaMap = source.alphaMap;
-
-		this.envMap = source.envMap;
-		this.combine = source.combine;
-		this.reflectivity = source.reflectivity;
-		this.refractionRatio = source.refractionRatio;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
-	function MeshPhongMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshPhongMaterial';
-
-		this.color = new Color( 0xffffff ); // diffuse
-		this.specular = new Color( 0x111111 );
-		this.shininess = 30;
-
-		this.map = null;
-
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.emissive = new Color( 0x000000 );
-		this.emissiveIntensity = 1.0;
-		this.emissiveMap = null;
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.specularMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.combine = MultiplyOperation;
-		this.reflectivity = 1;
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshPhongMaterial.prototype = Object.create( Material.prototype );
-	MeshPhongMaterial.prototype.constructor = MeshPhongMaterial;
-
-	MeshPhongMaterial.prototype.isMeshPhongMaterial = true;
-
-	MeshPhongMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-		this.specular.copy( source.specular );
-		this.shininess = source.shininess;
-
-		this.map = source.map;
-
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
-
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
-
-		this.emissive.copy( source.emissive );
-		this.emissiveMap = source.emissiveMap;
-		this.emissiveIntensity = source.emissiveIntensity;
-
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
-
-		this.normalMap = source.normalMap;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.specularMap = source.specularMap;
-
-		this.alphaMap = source.alphaMap;
-
-		this.envMap = source.envMap;
-		this.combine = source.combine;
-		this.reflectivity = source.reflectivity;
-		this.refractionRatio = source.refractionRatio;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
-	function MeshNormalMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshNormalMaterial';
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshNormalMaterial.prototype = Object.create( Material.prototype );
-	MeshNormalMaterial.prototype.constructor = MeshNormalMaterial;
-
-	MeshNormalMaterial.prototype.isMeshNormalMaterial = true;
-
-	MeshNormalMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
-
-		this.normalMap = source.normalMap;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
 	var SVGObject = function ( node ) {
 
 		Object3D.call( this );
@@ -14636,36 +13891,38 @@ var Three = (function (exports) {
 		console.log( 'SVGRenderer', REVISION );
 
 		var _this = this,
-		_renderData, _elements, _lights,
-		_projector = new Projector(),
-		_svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' ),
-		_svgWidth, _svgHeight, _svgWidthHalf, _svgHeightHalf,
+			_renderData, _elements, _lights,
+			_projector = new Projector(),
+			_svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' ),
+			_svgWidth, _svgHeight, _svgWidthHalf, _svgHeightHalf,
 
-		_v1, _v2, _v3, _clipBox = new Box2(),
-		_elemBox = new Box2(),
+			_v1, _v2, _v3,
 
-		_color = new Color(),
-		_diffuseColor = new Color(),
-		_ambientLight = new Color(),
-		_directionalLights = new Color(),
-		_pointLights = new Color(),
-		_clearColor = new Color(),
-		_clearAlpha = 1,
+			_clipBox = new Box2(),
+			_elemBox = new Box2(),
 
-		_vector3 = new Vector3(), // Needed for PointLight
-		_centroid = new Vector3(),
-		_normal = new Vector3(),
-		_normalViewMatrix = new Matrix3(),
+			_color = new Color(),
+			_diffuseColor = new Color(),
+			_ambientLight = new Color(),
+			_directionalLights = new Color(),
+			_pointLights = new Color(),
+			_clearColor = new Color(),
+			_clearAlpha = 1,
 
-		_viewMatrix = new Matrix4(),
-		_viewProjectionMatrix = new Matrix4(),
+			_vector3 = new Vector3(), // Needed for PointLight
+			_centroid = new Vector3(),
+			_normal = new Vector3(),
+			_normalViewMatrix = new Matrix3(),
 
-		_svgPathPool = [],
-		_svgNode, _pathCount = 0,
+			_viewMatrix = new Matrix4(),
+			_viewProjectionMatrix = new Matrix4(),
 
-		_currentPath, _currentStyle,
+			_svgPathPool = [],
+			_svgNode, _pathCount = 0,
 
-		_quality = 1, _precision = null;
+			_currentPath, _currentStyle,
+
+			_quality = 1, _precision = null;
 
 		this.domElement = _svg;
 
@@ -14684,7 +13941,7 @@ var Three = (function (exports) {
 
 		};
 
-		this.setQuality = function( quality ) {
+		this.setQuality = function ( quality ) {
 
 			switch ( quality ) {
 
@@ -14704,7 +13961,7 @@ var Three = (function (exports) {
 
 		this.setPixelRatio = function () {};
 
-		this.setSize = function( width, height ) {
+		this.setSize = function ( width, height ) {
 
 			_svgWidth = width; _svgHeight = height;
 			_svgWidthHalf = _svgWidth / 2; _svgHeightHalf = _svgHeight / 2;
@@ -14736,7 +13993,7 @@ var Three = (function (exports) {
 
 		}
 
-		function getSvgColor ( color, opacity ) {
+		function getSvgColor( color, opacity ) {
 
 			var arg = Math.floor( color.r * 255 ) + ',' + Math.floor( color.g * 255 ) + ',' + Math.floor( color.b * 255 );
 
@@ -14746,9 +14003,9 @@ var Three = (function (exports) {
 
 		}
 
-		function convert ( c ) {
+		function convert( c ) {
 
-			return _precision !== null ? c.toFixed(_precision) : c;
+			return _precision !== null ? c.toFixed( _precision ) : c;
 
 		}
 
@@ -14868,7 +14125,7 @@ var Three = (function (exports) {
 					_vector3.setFromMatrixPosition( object.matrixWorld );
 					_vector3.applyMatrix4( _viewProjectionMatrix );
 
-					var x =   _vector3.x * _svgWidthHalf;
+					var x = _vector3.x * _svgWidthHalf;
 					var y = - _vector3.y * _svgHeightHalf;
 
 					var node = object.node;
@@ -14893,19 +14150,19 @@ var Three = (function (exports) {
 				var light = lights[ l ];
 				var lightColor = light.color;
 
-				if ( light instanceof AmbientLight ) {
+				if ( light.isAmbientLight ) {
 
 					_ambientLight.r += lightColor.r;
 					_ambientLight.g += lightColor.g;
 					_ambientLight.b += lightColor.b;
 
-				} else if ( light instanceof DirectionalLight ) {
+				} else if ( light.isDirectionalLight ) {
 
 					_directionalLights.r += lightColor.r;
 					_directionalLights.g += lightColor.g;
 					_directionalLights.b += lightColor.b;
 
-				} else if ( light instanceof PointLight ) {
+				} else if ( light.isPointLight ) {
 
 					_pointLights.r += lightColor.r;
 					_pointLights.g += lightColor.g;
@@ -14924,7 +14181,7 @@ var Three = (function (exports) {
 				var light = lights[ l ];
 				var lightColor = light.color;
 
-				if ( light instanceof DirectionalLight ) {
+				if ( light.isDirectionalLight ) {
 
 					var lightPosition = _vector3.setFromMatrixPosition( light.matrixWorld ).normalize();
 
@@ -14938,7 +14195,7 @@ var Three = (function (exports) {
 					color.g += lightColor.g * amount;
 					color.b += lightColor.b * amount;
 
-				} else if ( light instanceof PointLight ) {
+				} else if ( light.isPointLight ) {
 
 					var lightPosition = _vector3.setFromMatrixPosition( light.matrixWorld );
 
@@ -14968,11 +14225,13 @@ var Three = (function (exports) {
 			var scaleY = element.scale.y * _svgHeightHalf;
 
 			if ( material.isPointsMaterial ) {
+
 				scaleX *= material.size;
 				scaleY *= material.size;
+
 			}
 
-			var path = 'M' + convert( v1.x - scaleX * 0.5 ) + ',' + convert( v1.y - scaleY * 0.5 ) + 'h' + convert( scaleX ) + 'v' + convert( scaleY ) + 'h' + convert(-scaleX) + 'z';
+			var path = 'M' + convert( v1.x - scaleX * 0.5 ) + ',' + convert( v1.y - scaleY * 0.5 ) + 'h' + convert( scaleX ) + 'v' + convert( scaleY ) + 'h' + convert( - scaleX ) + 'z';
 			var style = "";
 
 			if ( material.isSpriteMaterial || material.isPointsMaterial ) {
@@ -15013,7 +14272,7 @@ var Three = (function (exports) {
 			var path = 'M' + convert( v1.positionScreen.x ) + ',' + convert( v1.positionScreen.y ) + 'L' + convert( v2.positionScreen.x ) + ',' + convert( v2.positionScreen.y ) + 'L' + convert( v3.positionScreen.x ) + ',' + convert( v3.positionScreen.y ) + 'z';
 			var style = '';
 
-			if ( material instanceof MeshBasicMaterial ) {
+			if ( material.isMeshBasicMaterial ) {
 
 				_color.copy( material.color );
 
@@ -15023,7 +14282,7 @@ var Three = (function (exports) {
 
 				}
 
-			} else if ( material instanceof MeshLambertMaterial || material instanceof MeshPhongMaterial ) {
+			} else if ( material.isMeshLambertMaterial || material.isMeshPhongMaterial || material.isMeshStandardMaterial ) {
 
 				_diffuseColor.copy( material.color );
 
@@ -15041,7 +14300,7 @@ var Three = (function (exports) {
 
 				_color.multiply( _diffuseColor ).add( material.emissive );
 
-			} else if ( material instanceof MeshNormalMaterial ) {
+			} else if ( material.isMeshNormalMaterial ) {
 
 				_normal.copy( element.normalModel ).applyMatrix3( _normalViewMatrix );
 
@@ -15063,7 +14322,7 @@ var Three = (function (exports) {
 
 		}
 
-		function addPath ( style, path ) {
+		function addPath( style, path ) {
 
 			if ( _currentStyle === style ) {
 

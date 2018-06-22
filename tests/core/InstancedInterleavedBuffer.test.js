@@ -41,6 +41,8 @@ var Three = (function (exports) {
 			this.count = array !== undefined ? array.length / this.stride : 0;
 			this.array = array;
 
+			return this;
+
 		},
 
 		setDynamic: function ( value ) {

@@ -123,7 +123,7 @@ var Three = (function (exports) {
 
 			for ( var i = 0; i < 256; i ++ ) {
 
-				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
 
 			}
 
@@ -133,10 +133,13 @@ var Three = (function (exports) {
 				var d1 = Math.random() * 0xffffffff | 0;
 				var d2 = Math.random() * 0xffffffff | 0;
 				var d3 = Math.random() * 0xffffffff | 0;
-				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+				var uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
 					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
 					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
 					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+
+				// .toUpperCase() here flattens concatenated strings to save heap memory space.
+				return uuid.toUpperCase();
 
 			};
 
@@ -3398,6 +3401,12 @@ var Three = (function (exports) {
 
 		isTexture: true,
 
+		updateMatrix: function () {
+
+			this.matrix.setUvTransform( this.offset.x, this.offset.y, this.repeat.x, this.repeat.y, this.rotation, this.center.x, this.center.y );
+
+		},
+
 		clone: function () {
 
 			return new this.constructor().copy( this );
@@ -5382,6 +5391,8 @@ var Three = (function (exports) {
 			if ( JSON.stringify( this.userData ) !== '{}' ) object.userData = this.userData;
 
 			object.matrix = this.matrix.toArray();
+
+			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
 
 			//
 
@@ -8794,6 +8805,8 @@ var Three = (function (exports) {
 			this.count = array !== undefined ? array.length / this.itemSize : 0;
 			this.array = array;
 
+			return this;
+
 		},
 
 		setDynamic: function ( value ) {
@@ -8806,6 +8819,7 @@ var Three = (function (exports) {
 
 		copy: function ( source ) {
 
+			this.name = source.name;
 			this.array = new source.array.constructor( source.array );
 			this.itemSize = source.itemSize;
 			this.count = source.count;
@@ -10795,12 +10809,7 @@ var Three = (function (exports) {
 
 							intersection = checkBufferGeometryIntersection( this, raycaster, ray, position, uv, a, b, c );
 
-							if ( intersection ) {
-
-								intersection.index = a; // triangle number in positions buffer semantics
-								intersects.push( intersection );
-
-							}
+							if ( intersection ) intersects.push( intersection );
 
 						}
 
@@ -12584,7 +12593,7 @@ var Three = (function (exports) {
 
 		this.uniforms = UniformsUtils.clone( source.uniforms );
 
-		this.defines = source.defines;
+		this.defines = Object.assign( {}, source.defines );
 
 		this.wireframe = source.wireframe;
 		this.wireframeLinewidth = source.wireframeLinewidth;
@@ -12615,7 +12624,7 @@ var Three = (function (exports) {
 
 	};
 
-	var PMREMGenerator = function( sourceTexture, samplesPerLevel, resolution ) {
+	var PMREMGenerator = function ( sourceTexture, samplesPerLevel, resolution ) {
 
 		this.sourceTexture = sourceTexture;
 		this.resolution = ( resolution !== undefined ) ? resolution : 256; // NODE: 256 is currently hard coded in the glsl code for performance reasons
@@ -12642,7 +12651,7 @@ var Three = (function (exports) {
 		 };
 
 		// how many LODs fit in the given CubeUV Texture.
-		this.numLods = Math.log( size ) / Math.log( 2 ) - 2;  // IE11 doesn't support Math.log2
+		this.numLods = Math.log( size ) / Math.log( 2 ) - 2; // IE11 doesn't support Math.log2
 
 		for ( var i = 0; i < this.numLods; i ++ ) {
 
@@ -12656,7 +12665,7 @@ var Three = (function (exports) {
 		this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0.0, 1000 );
 
 		this.shader = this.getShader();
-		this.shader.defines['SAMPLES_PER_LEVEL'] = this.samplesPerLevel;
+		this.shader.defines[ 'SAMPLES_PER_LEVEL' ] = this.samplesPerLevel;
 		this.planeMesh = new Mesh( new PlaneGeometry( 2, 2, 0 ), this.shader );
 		this.planeMesh.material.side = DoubleSide;
 		this.scene = new Scene();
@@ -12670,10 +12679,10 @@ var Three = (function (exports) {
 
 	PMREMGenerator.prototype = {
 
-		constructor : PMREMGenerator,
+		constructor: PMREMGenerator,
 
 		
-		update: function( renderer ) {
+		update: function ( renderer ) {
 
 			this.shader.uniforms[ 'envMap' ].value = this.sourceTexture;
 			this.shader.envMap = this.sourceTexture;
@@ -12693,7 +12702,7 @@ var Three = (function (exports) {
 
 				var r = i / ( this.numLods - 1 );
 				this.shader.uniforms[ 'roughness' ].value = r * 0.9; // see comment above, pragmatic choice
-				this.shader.uniforms[ 'queryScale' ].value.x = ( i == 0 ) ? -1 : 1;
+				this.shader.uniforms[ 'queryScale' ].value.x = ( i == 0 ) ? - 1 : 1;
 				var size = this.cubeLods[ i ].width;
 				this.shader.uniforms[ 'mapSize' ].value = size;
 				this.renderToCubeMapTarget( renderer, this.cubeLods[ i ] );
@@ -12710,7 +12719,7 @@ var Three = (function (exports) {
 
 		},
 
-		renderToCubeMapTarget: function( renderer, renderTarget ) {
+		renderToCubeMapTarget: function ( renderer, renderTarget ) {
 
 			for ( var i = 0; i < 6; i ++ ) {
 
@@ -12720,7 +12729,7 @@ var Three = (function (exports) {
 
 		},
 
-		renderToCubeMapTargetFace: function( renderer, renderTarget, faceIndex ) {
+		renderToCubeMapTargetFace: function ( renderer, renderTarget, faceIndex ) {
 
 			renderTarget.activeCubeFace = faceIndex;
 			this.shader.uniforms[ 'faceIndex' ].value = faceIndex;
@@ -12728,9 +12737,9 @@ var Three = (function (exports) {
 
 		},
 
-		getShader: function() {
+		getShader: function () {
 
-			return new ShaderMaterial( {
+			var shaderMaterial = new ShaderMaterial( {
 
 				defines: {
 					"SAMPLES_PER_LEVEL": 20,
@@ -12850,13 +12859,33 @@ var Three = (function (exports) {
 					//rgbColor = testColorMap( roughness ).rgb;\n\
 					gl_FragColor = linearToOutputTexel( vec4( rgbColor, 1.0 ) );\n\
 				}",
+
 				blending: CustomBlending,
+				premultipliedAlpha: false,
 				blendSrc: OneFactor,
 				blendDst: ZeroFactor,
 				blendSrcAlpha: OneFactor,
 				blendDstAlpha: ZeroFactor,
 				blendEquation: AddEquation
+
 			} );
+
+			shaderMaterial.type = 'PMREMGenerator';
+
+			return shaderMaterial;
+
+		},
+
+		dispose: function () {
+
+			for ( var i = 0, l = this.cubeLods.length; i < l; i ++ ) {
+
+				this.cubeLods[ i ].dispose();
+
+			}
+
+			this.planeMesh.geometry.dispose();
+			this.planeMesh.material.dispose();
 
 		}
 
