@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 6.0.0 is now available under Three r0.91.0 !!!**
+**The version 7.0.0 is now available under Three r0.92.0 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -193,6 +193,10 @@ All others folders under example file tree will be mapped to their counter-part 
 
 
 #### Change log ####
+
+##### 7.0.0:
+
+* Support of Three r92
 
 ##### 6.0.0:
 
