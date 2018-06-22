@@ -611,14 +611,6 @@ var Three = (function (exports) {
 
 			"//------------------------------------------",
 
-			"float getDepth( const in vec2 screenPosition ) {",
-			"	#if DEPTH_PACKING == 1",
-			"	return unpackRGBAToDepth( texture2D( tDepth, screenPosition ) );",
-			"	#else",
-			"	return texture2D( tDepth, screenPosition ).x;",
-			"	#endif",
-			"}",
-
 			"float penta(vec2 coords) {",
 				"//pentagonal shape",
 				"float scale = float(rings) - 1.3;",
@@ -680,7 +672,7 @@ var Three = (function (exports) {
 
 
 				"for( int i=0; i<9; i++ ) {",
-					"float tmp = getDepth( coords + offset[ i ] );",
+					"float tmp = texture2D(tDepth, coords + offset[i]).r;",
 					"d += tmp * kernel[i];",
 				"}",
 
@@ -742,10 +734,10 @@ var Three = (function (exports) {
 			"void main() {",
 				"//scene depth calculation",
 
-				"float depth = linearize( getDepth( vUv.xy ) );",
+				"float depth = linearize(texture2D(tDepth,vUv.xy).x);",
 
 				"// Blur depth?",
-				"if (depthblur) {",
+				"if ( depthblur ) {",
 					"depth = linearize(bdepth(vUv.xy));",
 				"}",
 
@@ -755,7 +747,7 @@ var Three = (function (exports) {
 
 				"if (shaderFocus) {",
 
-					"fDepth = linearize( getDepth( focusCoords ) );",
+					"fDepth = linearize(texture2D(tDepth,focusCoords).x);",
 
 				"}",
 
@@ -833,7 +825,50 @@ var Three = (function (exports) {
 
 	};
 
+	var BokehDepthShader = {
+
+		uniforms: {
+
+			"mNear": { value: 1.0 },
+			"mFar": { value: 1000.0 },
+
+		},
+
+		vertexShader: [
+
+			"varying float vViewZDepth;",
+
+			"void main() {",
+
+			"	#include <begin_vertex>",
+			"	#include <project_vertex>",
+
+			"	vViewZDepth = - mvPosition.z;",
+
+			"}"
+
+		].join( "\n" ),
+
+		fragmentShader: [
+
+			"uniform float mNear;",
+			"uniform float mFar;",
+
+			"varying float vViewZDepth;",
+
+			"void main() {",
+
+			"	float color = 1.0 - smoothstep( mNear, mFar, vViewZDepth );",
+			"	gl_FragColor = vec4( vec3( color ), 1.0 );",
+
+			"} "
+
+		].join( "\n" )
+
+	};
+
 	exports.BokehShader2 = BokehShader2;
+	exports.BokehDepthShader = BokehDepthShader;
 
 	return exports;
 

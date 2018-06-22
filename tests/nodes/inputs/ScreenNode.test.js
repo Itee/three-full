@@ -472,7 +472,7 @@ var Three = (function (exports) {
 
 				if ( ! data.vertex ) {
 
-					data.vertex = material.createVertexUniform( type, this.value, ns, needsUpdate );
+					data.vertex = material.createVertexUniform( type, this, ns, needsUpdate );
 
 				}
 
@@ -482,7 +482,7 @@ var Three = (function (exports) {
 
 				if ( ! data.fragment ) {
 
-					data.fragment = material.createFragmentUniform( type, this.value, ns, needsUpdate );
+					data.fragment = material.createFragmentUniform( type, this, ns, needsUpdate );
 
 				}
 

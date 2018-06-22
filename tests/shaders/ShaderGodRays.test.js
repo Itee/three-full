@@ -940,23 +940,17 @@ var Three = (function (exports) {
 
 		},
 
-		convertGammaToLinear: function () {
+		convertGammaToLinear: function ( gammaFactor ) {
 
-			var r = this.r, g = this.g, b = this.b;
-
-			this.r = r * r;
-			this.g = g * g;
-			this.b = b * b;
+			this.copyGammaToLinear( this, gammaFactor );
 
 			return this;
 
 		},
 
-		convertLinearToGamma: function () {
+		convertLinearToGamma: function ( gammaFactor ) {
 
-			this.r = Math.sqrt( this.r );
-			this.g = Math.sqrt( this.g );
-			this.b = Math.sqrt( this.b );
+			this.copyLinearToGamma( this, gammaFactor );
 
 			return this;
 
@@ -1158,6 +1152,47 @@ var Three = (function (exports) {
 	} );
 
 	var ShaderGodRays = {
+
+		'godrays_depthMask': {
+
+			uniforms: {
+
+				tInput: {
+					value: null
+				}
+
+			},
+
+			vertexShader: [
+
+				"varying vec2 vUv;",
+
+				"void main() {",
+
+				" vUv = uv;",
+				" gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+
+				"}"
+
+			].join( "\n" ),
+
+			fragmentShader: [
+
+				"varying vec2 vUv;",
+
+				"uniform sampler2D tInput;",
+
+				"void main() {",
+
+				"	gl_FragColor = vec4( 1.0 ) - texture2D( tInput, vUv );",
+
+
+				"}"
+
+			].join( "\n" )
+
+		},
+
 
 		
 

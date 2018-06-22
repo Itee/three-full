@@ -259,6 +259,8 @@ var Three = (function (exports) {
 
 			return function extractRotation( m ) {
 
+				// this method does not support reflection matrices
+
 				var te = this.elements;
 				var me = m.elements;
 
@@ -269,14 +271,22 @@ var Three = (function (exports) {
 				te[ 0 ] = me[ 0 ] * scaleX;
 				te[ 1 ] = me[ 1 ] * scaleX;
 				te[ 2 ] = me[ 2 ] * scaleX;
+				te[ 3 ] = 0;
 
 				te[ 4 ] = me[ 4 ] * scaleY;
 				te[ 5 ] = me[ 5 ] * scaleY;
 				te[ 6 ] = me[ 6 ] * scaleY;
+				te[ 7 ] = 0;
 
 				te[ 8 ] = me[ 8 ] * scaleZ;
 				te[ 9 ] = me[ 9 ] * scaleZ;
 				te[ 10 ] = me[ 10 ] * scaleZ;
+				te[ 11 ] = 0;
+
+				te[ 12 ] = 0;
+				te[ 13 ] = 0;
+				te[ 14 ] = 0;
+				te[ 15 ] = 1;
 
 				return this;
 
@@ -397,12 +407,12 @@ var Three = (function (exports) {
 
 			}
 
-			// last column
+			// bottom row
 			te[ 3 ] = 0;
 			te[ 7 ] = 0;
 			te[ 11 ] = 0;
 
-			// bottom row
+			// last column
 			te[ 12 ] = 0;
 			te[ 13 ] = 0;
 			te[ 14 ] = 0;
@@ -412,42 +422,18 @@ var Three = (function (exports) {
 
 		},
 
-		makeRotationFromQuaternion: function ( q ) {
+		makeRotationFromQuaternion: function () {
 
-			var te = this.elements;
+			var zero = new Vector3( 0, 0, 0 );
+			var one = new Vector3( 1, 1, 1 );
 
-			var x = q._x, y = q._y, z = q._z, w = q._w;
-			var x2 = x + x, y2 = y + y, z2 = z + z;
-			var xx = x * x2, xy = x * y2, xz = x * z2;
-			var yy = y * y2, yz = y * z2, zz = z * z2;
-			var wx = w * x2, wy = w * y2, wz = w * z2;
+			return function makeRotationFromQuaternion( q ) {
 
-			te[ 0 ] = 1 - ( yy + zz );
-			te[ 4 ] = xy - wz;
-			te[ 8 ] = xz + wy;
+				return this.compose( zero, q, one );
 
-			te[ 1 ] = xy + wz;
-			te[ 5 ] = 1 - ( xx + zz );
-			te[ 9 ] = yz - wx;
+			};
 
-			te[ 2 ] = xz - wy;
-			te[ 6 ] = yz + wx;
-			te[ 10 ] = 1 - ( xx + yy );
-
-			// last column
-			te[ 3 ] = 0;
-			te[ 7 ] = 0;
-			te[ 11 ] = 0;
-
-			// bottom row
-			te[ 12 ] = 0;
-			te[ 13 ] = 0;
-			te[ 14 ] = 0;
-			te[ 15 ] = 1;
-
-			return this;
-
-		},
+		}(),
 
 		lookAt: function () {
 
@@ -888,11 +874,37 @@ var Three = (function (exports) {
 
 		compose: function ( position, quaternion, scale ) {
 
-			this.makeRotationFromQuaternion( quaternion );
-			this.scale( scale );
-			this.setPosition( position );
+			var te = this.elements;
 
-			return this;
+			var x = quaternion._x, y = quaternion._y, z = quaternion._z, w = quaternion._w;
+			var x2 = x + x,	y2 = y + y, z2 = z + z;
+			var xx = x * x2, xy = x * y2, xz = x * z2;
+			var yy = y * y2, yz = y * z2, zz = z * z2;
+			var wx = w * x2, wy = w * y2, wz = w * z2;
+
+			var sx = scale.x, sy = scale.y, sz = scale.z;
+
+		        te[ 0 ] = ( 1 - ( yy + zz ) ) * sx;
+		        te[ 1 ] = ( xy + wz ) * sx;
+		        te[ 2 ] = ( xz - wy ) * sx;
+		        te[ 3 ] = 0;
+
+		        te[ 4 ] = ( xy - wz ) * sy;
+		        te[ 5 ] = ( 1 - ( xx + zz ) ) * sy;
+		        te[ 6 ] = ( yz + wx ) * sy;
+		        te[ 7 ] = 0;
+
+		        te[ 8 ] = ( xz + wy ) * sz;
+		        te[ 9 ] = ( yz - wx ) * sz;
+		        te[ 10 ] = ( 1 - ( xx + yy ) ) * sz;
+		        te[ 11 ] = 0;
+
+		        te[ 12 ] = position.x;
+		        te[ 13 ] = position.y;
+		        te[ 14 ] = position.z;
+		        te[ 15 ] = 1;
+
+		        return this;
 
 		},
 
@@ -4165,41 +4177,30 @@ var Three = (function (exports) {
 
 		},
 
-		applyMatrix4: function () {
+		applyMatrix4: function ( matrix ) {
 
-			var points = [
-				new Vector3(),
-				new Vector3(),
-				new Vector3(),
-				new Vector3(),
-				new Vector3(),
-				new Vector3(),
-				new Vector3(),
-				new Vector3()
-			];
+			// transform of empty box is an empty box.
+			if ( this.isEmpty( ) ) return this;
 
-			return function applyMatrix4( matrix ) {
+			var m = matrix.elements;
 
-				// transform of empty box is an empty box.
-				if ( this.isEmpty() ) return this;
+			var xax = m[ 0 ] * this.min.x, xay = m[ 1 ] * this.min.x, xaz = m[ 2 ] * this.min.x;
+			var xbx = m[ 0 ] * this.max.x, xby = m[ 1 ] * this.max.x, xbz = m[ 2 ] * this.max.x;
+			var yax = m[ 4 ] * this.min.y, yay = m[ 5 ] * this.min.y, yaz = m[ 6 ] * this.min.y;
+			var ybx = m[ 4 ] * this.max.y, yby = m[ 5 ] * this.max.y, ybz = m[ 6 ] * this.max.y;
+			var zax = m[ 8 ] * this.min.z, zay = m[ 9 ] * this.min.z, zaz = m[ 10 ] * this.min.z;
+			var zbx = m[ 8 ] * this.max.z, zby = m[ 9 ] * this.max.z, zbz = m[ 10 ] * this.max.z;
 
-				// NOTE: I am using a binary pattern to specify all 2^3 combinations below
-				points[ 0 ].set( this.min.x, this.min.y, this.min.z ).applyMatrix4( matrix ); // 000
-				points[ 1 ].set( this.min.x, this.min.y, this.max.z ).applyMatrix4( matrix ); // 001
-				points[ 2 ].set( this.min.x, this.max.y, this.min.z ).applyMatrix4( matrix ); // 010
-				points[ 3 ].set( this.min.x, this.max.y, this.max.z ).applyMatrix4( matrix ); // 011
-				points[ 4 ].set( this.max.x, this.min.y, this.min.z ).applyMatrix4( matrix ); // 100
-				points[ 5 ].set( this.max.x, this.min.y, this.max.z ).applyMatrix4( matrix ); // 101
-				points[ 6 ].set( this.max.x, this.max.y, this.min.z ).applyMatrix4( matrix ); // 110
-				points[ 7 ].set( this.max.x, this.max.y, this.max.z ).applyMatrix4( matrix );	// 111
+			this.min.x = Math.min( xax, xbx ) + Math.min( yax, ybx ) + Math.min( zax, zbx ) + m[ 12 ];
+			this.min.y = Math.min( xay, xby ) + Math.min( yay, yby ) + Math.min( zay, zby ) + m[ 13 ];
+			this.min.z = Math.min( xaz, xbz ) + Math.min( yaz, ybz ) + Math.min( zaz, zbz ) + m[ 14 ];
+			this.max.x = Math.max( xax, xbx ) + Math.max( yax, ybx ) + Math.max( zax, zbx ) + m[ 12 ];
+			this.max.y = Math.max( xay, xby ) + Math.max( yay, yby ) + Math.max( zay, zby ) + m[ 13 ];
+			this.max.z = Math.max( xaz, xbz ) + Math.max( yaz, ybz ) + Math.max( zaz, zbz ) + m[ 14 ];
 
-				this.setFromPoints( points );
+			return this;
 
-				return this;
-
-			};
-
-		}(),
+		},
 
 		translate: function ( offset ) {
 
@@ -6793,23 +6794,17 @@ var Three = (function (exports) {
 
 		},
 
-		convertGammaToLinear: function () {
+		convertGammaToLinear: function ( gammaFactor ) {
 
-			var r = this.r, g = this.g, b = this.b;
-
-			this.r = r * r;
-			this.g = g * g;
-			this.b = b * b;
+			this.copyGammaToLinear( this, gammaFactor );
 
 			return this;
 
 		},
 
-		convertLinearToGamma: function () {
+		convertLinearToGamma: function ( gammaFactor ) {
 
-			this.r = Math.sqrt( this.r );
-			this.g = Math.sqrt( this.g );
-			this.b = Math.sqrt( this.b );
+			this.copyLinearToGamma( this, gammaFactor );
 
 			return this;
 
@@ -7245,18 +7240,28 @@ var Three = (function (exports) {
 			if ( this.map && this.map.isTexture ) data.map = this.map.toJSON( meta ).uuid;
 			if ( this.alphaMap && this.alphaMap.isTexture ) data.alphaMap = this.alphaMap.toJSON( meta ).uuid;
 			if ( this.lightMap && this.lightMap.isTexture ) data.lightMap = this.lightMap.toJSON( meta ).uuid;
+
+			if ( this.aoMap && this.aoMap.isTexture ) {
+
+				data.aoMap = this.aoMap.toJSON( meta ).uuid;
+				data.aoMapIntensity = this.aoMapIntensity;
+
+			}
+
 			if ( this.bumpMap && this.bumpMap.isTexture ) {
 
 				data.bumpMap = this.bumpMap.toJSON( meta ).uuid;
 				data.bumpScale = this.bumpScale;
 
 			}
+
 			if ( this.normalMap && this.normalMap.isTexture ) {
 
 				data.normalMap = this.normalMap.toJSON( meta ).uuid;
 				data.normalScale = this.normalScale.toArray();
 
 			}
+
 			if ( this.displacementMap && this.displacementMap.isTexture ) {
 
 				data.displacementMap = this.displacementMap.toJSON( meta ).uuid;
@@ -7264,6 +7269,7 @@ var Three = (function (exports) {
 				data.displacementBias = this.displacementBias;
 
 			}
+
 			if ( this.roughnessMap && this.roughnessMap.isTexture ) data.roughnessMap = this.roughnessMap.toJSON( meta ).uuid;
 			if ( this.metalnessMap && this.metalnessMap.isTexture ) data.metalnessMap = this.metalnessMap.toJSON( meta ).uuid;
 
@@ -8677,6 +8683,12 @@ var Three = (function (exports) {
 
 			//
 
+			if ( faces.length === 0 ) {
+
+				console.error( 'DirectGeometry: Faceless geometries are not supported.' );
+
+			}
+
 			for ( var i = 0; i < faces.length; i ++ ) {
 
 				var face = faces[ i ];
@@ -8834,6 +8846,8 @@ var Three = (function (exports) {
 
 		this.drawRange = { start: 0, count: Infinity };
 
+		this.userData = {};
+
 	}
 
 	BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
@@ -8868,9 +8882,7 @@ var Three = (function (exports) {
 
 				console.warn( 'BufferGeometry: .addAttribute() now expects ( name, attribute ).' );
 
-				this.addAttribute( name, new BufferAttribute( arguments[ 1 ], arguments[ 2 ] ) );
-
-				return;
+				return this.addAttribute( name, new BufferAttribute( arguments[ 1 ], arguments[ 2 ] ) );
 
 			}
 
@@ -8879,7 +8891,7 @@ var Three = (function (exports) {
 				console.warn( 'BufferGeometry.addAttribute: Use .setIndex() for index attribute.' );
 				this.setIndex( attribute );
 
-				return;
+				return this;
 
 			}
 
@@ -9726,6 +9738,7 @@ var Three = (function (exports) {
 			data.uuid = this.uuid;
 			data.type = this.type;
 			if ( this.name !== '' ) data.name = this.name;
+			if ( Object.keys( this.userData ).length > 0 ) data.userData = this.userData;
 
 			if ( this.parameters !== undefined ) {
 
@@ -9896,6 +9909,10 @@ var Three = (function (exports) {
 
 			this.drawRange.start = source.drawRange.start;
 			this.drawRange.count = source.drawRange.count;
+
+			// user data
+
+			this.userData = source.userData;
 
 			return this;
 
@@ -10106,7 +10123,6 @@ var Three = (function (exports) {
 					Triangle.getNormal( vA, vB, vC, face.normal );
 
 					intersection.face = face;
-					intersection.faceIndex = a;
 
 				}
 
@@ -10168,7 +10184,7 @@ var Three = (function (exports) {
 
 							if ( intersection ) {
 
-								intersection.faceIndex = Math.floor( i / 3 ); // triangle number in indices buffer semantics
+								intersection.faceIndex = Math.floor( i / 3 ); // triangle number in indexed buffer semantics
 								intersects.push( intersection );
 
 							}
@@ -10187,7 +10203,12 @@ var Three = (function (exports) {
 
 							intersection = checkBufferGeometryIntersection( this, raycaster, ray, position, uv, a, b, c );
 
-							if ( intersection ) intersects.push( intersection );
+							if ( intersection ) {
+
+								intersection.faceIndex = Math.floor( i / 3 ); // triangle number in non-indexed buffer semantics
+								intersects.push( intersection );
+
+							}
 
 						}
 
@@ -12949,7 +12970,7 @@ var Three = (function (exports) {
 		ConvexBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 		ConvexBufferGeometry.prototype.constructor = ConvexBufferGeometry;
 
-	var ConvexObjectBreaker = function( minSizeForBreak, smallDelta ) {
+	var ConvexObjectBreaker = function ( minSizeForBreak, smallDelta ) {
 
 		this.minSizeForBreak = minSizeForBreak || 1.4;
 		this.smallDelta = smallDelta || 0.0001;
@@ -12966,9 +12987,7 @@ var Three = (function (exports) {
 
 		this.segments = [];
 		var n = 30 * 30;
-		for ( var i = 0; i < n; i++ ) {
-			this.segments[ i ] = false;
-		}
+		for ( var i = 0; i < n; i ++ ) this.segments[ i ] = false;
 
 	};
 
@@ -12976,7 +12995,7 @@ var Three = (function (exports) {
 
 		constructor: ConvexObjectBreaker,
 
-		prepareBreakableObject: function( object, mass, velocity, angularVelocity, breakable ) {
+		prepareBreakableObject: function ( object, mass, velocity, angularVelocity, breakable ) {
 
 			// object is a Object3d (normally a Mesh), must have a Geometry, and it must be convex.
 			// Its material property is propagated to its children (sub-pieces)
@@ -12984,9 +13003,7 @@ var Three = (function (exports) {
 
 			// Create vertices mark
 			var vertices = object.geometry.vertices;
-			for ( var i = 0, il = vertices.length; i < il; i++ ) {
-				vertices[ i ].mark = 0;
-			}
+			for ( var i = 0, il = vertices.length; i < il; i ++ ) vertices[ i ].mark = 0;
 
 			var userData = object.userData;
 			userData.mass = mass;
@@ -12997,7 +13014,7 @@ var Three = (function (exports) {
 		},
 
 		
-		subdivideByImpact: function( object, pointOfImpact, normal, maxRadialIterations, maxRandomIterations, minSizeForRadialSubdivision ) {
+		subdivideByImpact: function ( object, pointOfImpact, normal, maxRadialIterations, maxRandomIterations ) {
 
 			var debris = [];
 
@@ -13018,9 +13035,9 @@ var Three = (function (exports) {
 					debris.push( subObject );
 
 					return;
-					
+
 				}
-				
+
 				var angle = Math.PI;
 
 				if ( numIterations === 0 ) {
@@ -13028,19 +13045,17 @@ var Three = (function (exports) {
 					tempPlane2.normal.copy( tempPlane1.normal );
 					tempPlane2.constant = tempPlane1.constant;
 
-				}
-				else {
+				} else {
 
 					if ( numIterations <= maxRadialIterations ) {
-						
+
 						angle = ( endAngle - startAngle ) * ( 0.2 + 0.6 * Math.random() ) + startAngle;
 
 						// Rotate tempPlane2 at impact point around normal axis and the angle
 						scope.tempVector3_2.copy( object.position ).sub( pointOfImpact ).applyAxisAngle( normal, angle ).add( pointOfImpact );
 						tempPlane2.setFromCoplanarPoints( pointOfImpact, scope.tempVector3, scope.tempVector3_2 );
 
-					}
-					else {
+					} else {
 
 						angle = ( ( 0.5 * ( numIterations & 1 ) ) + 0.2 * ( 2 - Math.random() ) ) * Math.PI;
 
@@ -13079,7 +13094,7 @@ var Three = (function (exports) {
 
 		},
 
-		cutByPlane: function( object, plane, output ) {
+		cutByPlane: function ( object, plane, output ) {
 
 			// Returns breakable objects in output.object1 and output.object2 members, the resulting 2 pieces of the cut.
 			// object2 can be null if the plane doesn't cut the object.
@@ -13098,22 +13113,18 @@ var Three = (function (exports) {
 			var delta = this.smallDelta;
 
 			// Reset vertices mark
-			for ( var i = 0; i < numPoints; i++ ) {
-				points[ i ].mark = 0;
-			}
+			for ( var i = 0; i < numPoints; i ++ ) points[ i ].mark = 0;
 
 			// Reset segments mark
 			var numPointPairs = numPoints * numPoints;
-			for ( var i = 0; i < numPointPairs; i++ ) {
-				this.segments[ i ] = false;
-			}
+			for ( var i = 0; i < numPointPairs; i ++ ) this.segments[ i ] = false;
 
 			// Iterate through the faces to mark edges shared by coplanar faces
-			for ( var i = 0, il = faces.length - 1; i < il; i++ ) {
+			for ( var i = 0, il = faces.length - 1; i < il; i ++ ) {
 
 				var face1 = faces[ i ];
 
-				for ( var j = i + 1, jl = faces.length; j < jl; j++ ) {
+				for ( var j = i + 1, jl = faces.length; j < jl; j ++ ) {
 
 					var face2 = faces[ j ];
 
@@ -13130,18 +13141,24 @@ var Three = (function (exports) {
 
 
 						if ( a1 === a2 || a1 === b2 || a1 === c2 ) {
+
 							if ( b1 === a2 || b1 === b2 || b1 === c2 ) {
+
 								this.segments[ a1 * numPoints + b1 ] = true;
 								this.segments[ b1 * numPoints + a1 ] = true;
-							}
-							else {
+
+							}	else {
+
 								this.segments[ c1 * numPoints + a1 ] = true;
 								this.segments[ a1 * numPoints + c1 ] = true;
+
 							}
-						}
-						else if ( b1 === a2 || b1 === b2 || b1 === c2 ) {
+
+						}	else if ( b1 === a2 || b1 === b2 || b1 === c2 ) {
+
 							this.segments[ c1 * numPoints + b1 ] = true;
 							this.segments[ b1 * numPoints + c1 ] = true;
+
 						}
 
 					}
@@ -13160,17 +13177,14 @@ var Three = (function (exports) {
 
 				var face = faces[ i ];
 
-				for ( var segment = 0; segment < 3; segment++ ) {
+				for ( var segment = 0; segment < 3; segment ++ ) {
 
 					var i0 = segment === 0 ? face.a : ( segment === 1 ? face.b : face.c );
 					var i1 = segment === 0 ? face.b : ( segment === 1 ? face.c : face.a );
 
 					var segmentState = this.segments[ i0 * numPoints + i1 ];
 
-					if ( segmentState ) {
-						// The segment already has been processed in another face
-						continue;
-					}
+					if ( segmentState ) continue; // The segment already has been processed in another face
 
 					// Mark segment as processed (also inverted segment)
 					this.segments[ i0 * numPoints + i1 ] = true;
@@ -13185,19 +13199,23 @@ var Three = (function (exports) {
 
 						// mark: 1 for negative side, 2 for positive side, 3 for coplanar point
 						if ( d > delta ) {
+
 							p0.mark = 2;
 							points2.push( p0 );
-						}
-						else if ( d < - delta ) {
+
+						} else if ( d < - delta ) {
+
 							p0.mark = 1;
 							points1.push( p0 );
-						}
-						else {
+
+						} else {
+
 							p0.mark = 3;
 							points1.push( p0 );
 							var p0_2 = p0.clone();
 							p0_2.mark = 3;
 							points2.push( p0_2 );
+
 						}
 
 					}
@@ -13208,19 +13226,23 @@ var Three = (function (exports) {
 
 						// mark: 1 for negative side, 2 for positive side, 3 for coplanar point
 						if ( d > delta ) {
+
 							p1.mark = 2;
 							points2.push( p1 );
-						}
-						else if ( d < - delta ) {
+
+						} else if ( d < - delta ) {
+
 							p1.mark = 1;
 							points1.push( p1 );
-						}
-						else {
+
+						}	else {
+
 							p1.mark = 3;
 							points1.push( p1 );
 							var p1_2 = p1.clone();
 							p1_2.mark = 3;
 							points2.push( p1_2 );
+
 						}
 
 					}
@@ -13234,13 +13256,18 @@ var Three = (function (exports) {
 
 						this.tempLine1.start.copy( p0 );
 						this.tempLine1.end.copy( p1 );
-						var intersection = localPlane.intersectLine( this.tempLine1 );
+
+						var intersection = new Vector3();
+						intersection = localPlane.intersectLine( this.tempLine1, intersection );
+
 						if ( intersection === undefined ) {
+
 							// Shouldn't happen
 							console.error( "Internal error: segment does not intersect plane." );
 							output.segmentedObject1 = null;
 							output.segmentedObject2 = null;
 							return 0;
+
 						}
 
 						intersection.mark = 1;
@@ -13262,33 +13289,40 @@ var Three = (function (exports) {
 			this.tempCM1.set( 0, 0, 0 );
 			var radius1 = 0;
 			var numPoints1 = points1.length;
+
 			if ( numPoints1 > 0 ) {
-				for ( var i = 0; i < numPoints1; i++ ) {
-					this.tempCM1.add( points1[ i ] );
-				}
+
+				for ( var i = 0; i < numPoints1; i ++ ) this.tempCM1.add( points1[ i ] );
+
 				this.tempCM1.divideScalar( numPoints1 );
-				for ( var i = 0; i < numPoints1; i++ ) {
+				for ( var i = 0; i < numPoints1; i ++ ) {
+
 					var p = points1[ i ];
 					p.sub( this.tempCM1 );
 					radius1 = Math.max( radius1, p.x, p.y, p.z );
+
 				}
 				this.tempCM1.add( object.position );
+
 			}
 
 			this.tempCM2.set( 0, 0, 0 );
 			var radius2 = 0;
 			var numPoints2 = points2.length;
 			if ( numPoints2 > 0 ) {
-				for ( var i = 0; i < numPoints2; i++ ) {
-					this.tempCM2.add( points2[ i ] );
-				}
+
+				for ( var i = 0; i < numPoints2; i ++ ) this.tempCM2.add( points2[ i ] );
+
 				this.tempCM2.divideScalar( numPoints2 );
-				for ( var i = 0; i < numPoints2; i++ ) {
+				for ( var i = 0; i < numPoints2; i ++ ) {
+
 					var p = points2[ i ];
 					p.sub( this.tempCM2 );
 					radius2 = Math.max( radius2, p.x, p.y, p.z );
+
 				}
 				this.tempCM2.add( object.position );
+
 			}
 
 			var object1 = null;
@@ -13304,7 +13338,7 @@ var Three = (function (exports) {
 
 				this.prepareBreakableObject( object1, newMass, object.userData.velocity, object.userData.angularVelocity, 2 * radius1 > this.minSizeForBreak );
 
-				numObjects++;
+				numObjects ++;
 
 			}
 
@@ -13316,10 +13350,9 @@ var Three = (function (exports) {
 
 				this.prepareBreakableObject( object2, newMass, object.userData.velocity, object.userData.angularVelocity, 2 * radius2 > this.minSizeForBreak );
 
-				numObjects++;
+				numObjects ++;
 
 			}
-
 
 			output.object1 = object1;
 			output.object2 = object2;
@@ -13330,7 +13363,7 @@ var Three = (function (exports) {
 
 	};
 
-	ConvexObjectBreaker.transformFreeVector = function( v, m ) {
+	ConvexObjectBreaker.transformFreeVector = function ( v, m ) {
 
 		// input:
 		// vector interpreted as a free vector
@@ -13339,15 +13372,15 @@ var Three = (function (exports) {
 		var x = v.x, y = v.y, z = v.z;
 		var e = m.elements;
 
-		v.x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ]  * z;
-		v.y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ]  * z;
+		v.x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * z;
+		v.y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * z;
 		v.z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z;
 
 		return v;
 
 	};
 
-	ConvexObjectBreaker.transformFreeVectorInverse = function( v, m ) {
+	ConvexObjectBreaker.transformFreeVectorInverse = function ( v, m ) {
 
 		// input:
 		// vector interpreted as a free vector
@@ -13356,15 +13389,15 @@ var Three = (function (exports) {
 		var x = v.x, y = v.y, z = v.z;
 		var e = m.elements;
 
-		v.x = e[ 0 ] * x + e[ 1 ] * y + e[ 2 ]  * z;
-		v.y = e[ 4 ] * x + e[ 5 ] * y + e[ 6 ]  * z;
+		v.x = e[ 0 ] * x + e[ 1 ] * y + e[ 2 ] * z;
+		v.y = e[ 4 ] * x + e[ 5 ] * y + e[ 6 ] * z;
 		v.z = e[ 8 ] * x + e[ 9 ] * y + e[ 10 ] * z;
 
 		return v;
 
 	};
 
-	ConvexObjectBreaker.transformTiedVectorInverse = function( v, m ) {
+	ConvexObjectBreaker.transformTiedVectorInverse = function ( v, m ) {
 
 		// input:
 		// vector interpreted as a tied (ordinary) vector
@@ -13373,18 +13406,17 @@ var Three = (function (exports) {
 		var x = v.x, y = v.y, z = v.z;
 		var e = m.elements;
 
-		v.x = e[ 0 ] * x + e[ 1 ] * y + e[ 2 ]  * z - e[ 12 ];
-		v.y = e[ 4 ] * x + e[ 5 ] * y + e[ 6 ]  * z - e[ 13 ];
+		v.x = e[ 0 ] * x + e[ 1 ] * y + e[ 2 ] * z - e[ 12 ];
+		v.y = e[ 4 ] * x + e[ 5 ] * y + e[ 6 ] * z - e[ 13 ];
 		v.z = e[ 8 ] * x + e[ 9 ] * y + e[ 10 ] * z - e[ 14 ];
 
 		return v;
 
 	};
 
-	ConvexObjectBreaker.transformPlaneToLocalSpace = function() {
+	ConvexObjectBreaker.transformPlaneToLocalSpace = function () {
 
 		var v1 = new Vector3();
-		var m1 = new Matrix3();
 
 		return function transformPlaneToLocalSpace( plane, m, resultPlane ) {
 
