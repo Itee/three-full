@@ -1,16 +1,13 @@
 import { WebGLRenderTargetCube } from '../renderers/WebGLRenderTargetCube.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneGeometry } from '../geometries/PlaneGeometry.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { Scene } from '../scenes/Scene.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Vector3 } from '../math/Vector3.js'
 import {
 	DoubleSide,
-	CustomBlending,
-	AddEquation,
-	ZeroFactor,
-	OneFactor,
+	NoBlending,
 	LinearToneMapping,
 	NearestFilter,
 	LinearFilter,
@@ -63,7 +60,7 @@ var PMREMGenerator = function ( sourceTexture, samplesPerLevel, resolution ) {
 
 	this.shader = this.getShader();
 	this.shader.defines[ 'SAMPLES_PER_LEVEL' ] = this.samplesPerLevel;
-	this.planeMesh = new Mesh( new PlaneGeometry( 2, 2, 0 ), this.shader );
+	this.planeMesh = new Mesh( new PlaneBufferGeometry( 2, 2, 0 ), this.shader );
 	this.planeMesh.material.side = DoubleSide;
 	this.scene = new Scene();
 	this.scene.add( this.planeMesh );
@@ -257,13 +254,7 @@ PMREMGenerator.prototype = {
 					gl_FragColor = linearToOutputTexel( vec4( rgbColor, 1.0 ) );\n\
 				}",
 
-			blending: CustomBlending,
-			premultipliedAlpha: false,
-			blendSrc: OneFactor,
-			blendDst: ZeroFactor,
-			blendSrcAlpha: OneFactor,
-			blendDstAlpha: ZeroFactor,
-			blendEquation: AddEquation
+			blending: NoBlending
 
 		} );
 

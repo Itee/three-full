@@ -1,9 +1,11 @@
 import { Matrix4 } from '../../math/Matrix4.js'
-import { Vector4 } from '../../math/Vector4.js'
 import { Vector3 } from '../../math/Vector3.js'
+import { Vector4 } from '../../math/Vector4.js'
 import { Quaternion } from '../../math/Quaternion.js'
 import { ArrayCamera } from '../../cameras/ArrayCamera.js'
 import { PerspectiveCamera } from '../../cameras/PerspectiveCamera.js'
+import { WebGLAnimation } from '../webgl/WebGLAnimation.js'
+
 
 
 
@@ -72,9 +74,13 @@ function WebVRManager( renderer ) {
 
 			renderer.setDrawingBufferSize( renderWidth * 2, renderHeight, 1 );
 
+			animation.start();
+
 		} else if ( scope.enabled ) {
 
 			renderer.setDrawingBufferSize( currentSize.width, currentSize.height, currentPixelRatio );
+
+			animation.stop();
 
 		}
 
@@ -94,6 +100,8 @@ function WebVRManager( renderer ) {
 	this.setDevice = function ( value ) {
 
 		if ( value !== undefined ) device = value;
+
+		animation.setContext( value );
 
 	};
 
@@ -228,6 +236,18 @@ function WebVRManager( renderer ) {
 	this.getStandingMatrix = function () {
 
 		return standingMatrix;
+
+	};
+
+	this.isPresenting = isPresenting;
+
+	// Animation Loop
+
+	var animation = new WebGLAnimation();
+
+	this.setAnimationLoop = function ( callback ) {
+
+		animation.setAnimationLoop( callback );
 
 	};
 

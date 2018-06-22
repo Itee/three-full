@@ -1,35 +1,41 @@
 import { PerspectiveCamera } from './PerspectiveCamera.js'
-import { MeshDepthMaterial } from '../materials/MeshDepthMaterial.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Scene } from '../scenes/Scene.js'
 import { OrthographicCamera } from './OrthographicCamera.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import {
 	LinearFilter,
-	RGBFormat,
-	RGBADepthPacking
+	RGBFormat
 } from '../constants.js'
 import { BokehShader } from '../shaders/BokehShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
 
 
-var CinematicCamera = function( fov, aspect, near, far ) {
+var CinematicCamera = function ( fov, aspect, near, far ) {
 
 	PerspectiveCamera.call( this, fov, aspect, near, far );
 
-	this.type = "CinematicCamera";
+	this.type = 'CinematicCamera';
 
-	this.postprocessing = { enabled	: true };
+	this.postprocessing = { enabled: true };
 	this.shaderSettings = {
 		rings: 3,
 		samples: 4
 	};
 
-	this.material_depth = new MeshDepthMaterial();
-	this.material_depth.depthPacking = RGBADepthPacking;
+	var depthShader = BokehDepthShader;
+
+	this.materialDepth = new ShaderMaterial( {
+		uniforms: depthShader.uniforms,
+		vertexShader: depthShader.vertexShader,
+		fragmentShader: depthShader.fragmentShader
+	} );
+
+	this.materialDepth.uniforms[ 'mNear' ].value = near;
+	this.materialDepth.uniforms[ 'mFar' ].value = far;
 
 	// In case of cinematicCamera, having a default lens set is important
 	this.setLens();
@@ -189,7 +195,7 @@ CinematicCamera.prototype.renderCinematic = function ( scene, renderer ) {
 
 		// Render depth into texture
 
-		scene.overrideMaterial = this.material_depth;
+		scene.overrideMaterial = this.materialDepth;
 		renderer.render( scene, camera, this.postprocessing.rtTextureDepth, true );
 
 		// Render bokeh composite

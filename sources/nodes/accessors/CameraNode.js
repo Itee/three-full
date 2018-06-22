@@ -153,8 +153,8 @@ CameraNode.prototype.onUpdateFrame = function ( frame ) {
 
 			var camera = this.camera;
 
-			this.near.number = camera.near;
-			this.far.number = camera.far;
+			this.near.value = camera.near;
+			this.far.value = camera.far;
 
 			break;
 
@@ -178,8 +178,8 @@ CameraNode.prototype.toJSON = function ( meta ) {
 
 			case CameraNode.DEPTH:
 
-				data.near = this.near.number;
-				data.far = this.far.number;
+				data.near = this.near.value;
+				data.far = this.far.value;
 
 				break;
 

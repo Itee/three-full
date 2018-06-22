@@ -30,7 +30,7 @@ var NURBSUtils = {
 		var mid = Math.floor( ( low + high ) / 2 );
 
 		while ( u < U[ mid ] || u >= U[ mid + 1 ] ) {
-		  
+
 			if ( u < U[ mid ] ) {
 
 				high = mid;
@@ -48,8 +48,8 @@ var NURBSUtils = {
 		return mid;
 
 	},
-    
-		
+
+
 	
 	calcBasisFunctions: function( span, u, p, U ) {
 
@@ -59,7 +59,7 @@ var NURBSUtils = {
 		N[ 0 ] = 1.0;
 
 		for ( var j = 1; j <= p; ++ j ) {
-	   
+
 			left[ j ] = u - U[ span + 1 - j ];
 			right[ j ] = U[ span + j ] - u;
 
@@ -350,7 +350,7 @@ var NURBSUtils = {
 
 
 	
-	calcSurfacePoint: function( p, q, U, V, P, u, v ) {
+	calcSurfacePoint: function ( p, q, U, V, P, u, v, target ) {
 
 		var uspan = this.findSpan( p, u, U );
 		var vspan = this.findSpan( q, v, V );
@@ -382,13 +382,10 @@ var NURBSUtils = {
 		}
 
 		Sw.divideScalar( Sw.w );
-		return new Vector3( Sw.x, Sw.y, Sw.z );
+		target.set( Sw.x, Sw.y, Sw.z );
 
 	}
 
 };
-
-
-
 
 export { NURBSUtils }

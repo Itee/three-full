@@ -3,6 +3,7 @@ import { RawNode } from './RawNode.js'
 import { PositionNode } from './accessors/PositionNode.js'
 import { ColorNode } from './inputs/ColorNode.js'
 import { NodeBuilder } from './NodeBuilder.js'
+import { NodeUniform } from './NodeUniform.js'
 import { CubeTexture } from '../textures/CubeTexture.js'
 import { FunctionNode } from './FunctionNode.js'
 import { ConstNode } from './ConstNode.js'
@@ -294,16 +295,16 @@ NodeMaterial.prototype.mergeUniform = function ( uniforms ) {
 
 };
 
-NodeMaterial.prototype.createUniform = function ( type, value, ns, needsUpdate ) {
+NodeMaterial.prototype.createUniform = function ( type, node, ns, needsUpdate ) {
 
 	var index = this.uniformList.length;
 
-	var uniform = {
+	var uniform = new NodeUniform( {
 		type: type,
-		value: value,
 		name: ns ? ns : 'nVu' + index,
+		node: node,
 		needsUpdate: needsUpdate
-	};
+	} );
 
 	this.uniformList.push( uniform );
 
@@ -499,9 +500,9 @@ NodeMaterial.prototype.getCodePars = function ( pars, prefix ) {
 
 };
 
-NodeMaterial.prototype.createVertexUniform = function ( type, value, ns, needsUpdate ) {
+NodeMaterial.prototype.createVertexUniform = function ( type, node, ns, needsUpdate ) {
 
-	var uniform = this.createUniform( type, value, ns, needsUpdate );
+	var uniform = this.createUniform( type, node, ns, needsUpdate );
 
 	this.vertexUniform.push( uniform );
 	this.vertexUniform[ uniform.name ] = uniform;
@@ -512,9 +513,9 @@ NodeMaterial.prototype.createVertexUniform = function ( type, value, ns, needsUp
 
 };
 
-NodeMaterial.prototype.createFragmentUniform = function ( type, value, ns, needsUpdate ) {
+NodeMaterial.prototype.createFragmentUniform = function ( type, node, ns, needsUpdate ) {
 
-	var uniform = this.createUniform( type, value, ns, needsUpdate );
+	var uniform = this.createUniform( type, node, ns, needsUpdate );
 
 	this.fragmentUniform.push( uniform );
 	this.fragmentUniform[ uniform.name ] = uniform;

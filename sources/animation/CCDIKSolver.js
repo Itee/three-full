@@ -5,406 +5,429 @@ import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { Color } from '../math/Color.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { Matrix4 } from '../math/Matrix4.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Line } from '../objects/Line.js'
-import { Matrix4 } from '../math/Matrix4.js'
 
 
 
-var CCDIKSolver = function ( mesh ) {
-
-	this.mesh = mesh;
-
-	this._valid();
-
-};
-
-CCDIKSolver.prototype = {
-
-	constructor: CCDIKSolver,
-
-	_valid: function () {
-
-		var iks = this.mesh.geometry.iks;
-		var bones = this.mesh.skeleton.bones;
-
-		for ( var i = 0, il = iks.length; i < il; i ++ ) {
-
-			var ik = iks[ i ];
-
-			var effector = bones[ ik.effector ];
-
-			var links = ik.links;
-
-			var link0, link1;
-
-			link0 = effector;
-
-			for ( var j = 0, jl = links.length; j < jl; j ++ ) {
-
-				link1 = bones[ links[ j ].index ];
-
-				if ( link0.parent !== link1 ) {
-
-					console.warn( 'CCDIKSolver: bone ' + link0.name + ' is not the child of bone ' + link1.name );
-
-				}
-
-				link0 = link1;
-
-			}
-
-		}
-
-	},
+var CCDIKSolver = ( function () {
 
 	
-	_saveOriginalBonesInfo: function () {
+	function CCDIKSolver( mesh, iks ) {
 
-		var bones = this.mesh.skeleton.bones;
+		this.mesh = mesh;
+		this.iks = iks || [];
 
-		for ( var i = 0, il = bones.length; i < il; i ++ ) {
+		this._valid();
 
-			var bone = bones[ i ];
+	}
 
-			if ( bone.userData.ik === undefined ) bone.userData.ik = {};
+	CCDIKSolver.prototype = {
 
-			bone.userData.ik.originalMatrix = bone.matrix.toArray();
+		constructor: CCDIKSolver,
 
-		}
+		
+		update: function () {
 
-	},
+			var q = new Quaternion();
+			var targetPos = new Vector3();
+			var targetVec = new Vector3();
+			var effectorPos = new Vector3();
+			var effectorVec = new Vector3();
+			var linkPos = new Vector3();
+			var invLinkQ = new Quaternion();
+			var linkScale = new Vector3();
+			var axis = new Vector3();
+			var vector = new Vector3();
 
-	update: function ( saveOriginalBones ) {
+			return function update() {
 
-		var q = new Quaternion();
+				var bones = this.mesh.skeleton.bones;
+				var iks = this.iks;
 
-		var targetPos = new Vector3();
-		var targetVec = new Vector3();
-		var effectorPos = new Vector3();
-		var effectorVec = new Vector3();
-		var linkPos = new Vector3();
-		var invLinkQ = new Quaternion();
-		var linkScale = new Vector3();
-		var axis = new Vector3();
+				// for reference overhead reduction in loop
+				var math = Math;
 
-		var bones = this.mesh.skeleton.bones;
-		var iks = this.mesh.geometry.iks;
+				for ( var i = 0, il = iks.length; i < il; i++ ) {
 
-		var boneParams = this.mesh.geometry.bones;
+					var ik = iks[ i ];
+					var effector = bones[ ik.effector ];
+					var target = bones[ ik.target ];
 
-		// for reference overhead reduction in loop
-		var math = Math;
+					// don't use getWorldPosition() here for the performance
+					// because it calls updateMatrixWorld( true ) inside.
+					targetPos.setFromMatrixPosition( target.matrixWorld );
 
-		this.mesh.updateMatrixWorld( true );
+					var links = ik.links;
+					var iteration = ik.iteration !== undefined ? ik.iteration : 1;
 
-		if ( saveOriginalBones === true ) this._saveOriginalBonesInfo();
+					for ( var j = 0; j < iteration; j++ ) {
 
-		for ( var i = 0, il = iks.length; i < il; i++ ) {
+						var rotated = false;
 
-			var ik = iks[ i ];
-			var effector = bones[ ik.effector ];
-			var target = bones[ ik.target ];
+						for ( var k = 0, kl = links.length; k < kl; k++ ) {
 
-			// don't use getWorldPosition() here for the performance
-			// because it calls updateMatrixWorld( true ) inside.
-			targetPos.setFromMatrixPosition( target.matrixWorld );
+							var link = bones[ links[ k ].index ];
 
-			var links = ik.links;
-			var iteration = ik.iteration !== undefined ? ik.iteration : 1;
+							// skip this link and following links.
+							// this skip is used for MMD performance optimization.
+							if ( links[ k ].enabled === false ) break;
 
-			for ( var j = 0; j < iteration; j++ ) {
+							var limitation = links[ k ].limitation;
+							var rotationMin = links[ k ].rotationMin;
+							var rotationMax = links[ k ].rotationMax;
 
-				var rotated = false;
+							// don't use getWorldPosition/Quaternion() here for the performance
+							// because they call updateMatrixWorld( true ) inside.
+							link.matrixWorld.decompose( linkPos, invLinkQ, linkScale );
+							invLinkQ.inverse();
+							effectorPos.setFromMatrixPosition( effector.matrixWorld );
 
-				for ( var k = 0, kl = links.length; k < kl; k++ ) {
+							// work in link world
+							effectorVec.subVectors( effectorPos, linkPos );
+							effectorVec.applyQuaternion( invLinkQ );
+							effectorVec.normalize();
 
-					var link = bones[ links[ k ].index ];
+							targetVec.subVectors( targetPos, linkPos );
+							targetVec.applyQuaternion( invLinkQ );
+							targetVec.normalize();
 
-					// skip this link and following links.
-					// this skip is used for MMD performance optimization.
-					if ( links[ k ].enabled === false ) break;
+							var angle = targetVec.dot( effectorVec );
 
-					var limitation = links[ k ].limitation;
+							if ( angle > 1.0 ) {
 
-					// don't use getWorldPosition/Quaternion() here for the performance
-					// because they call updateMatrixWorld( true ) inside.
-					link.matrixWorld.decompose( linkPos, invLinkQ, linkScale );
-					invLinkQ.inverse();
-					effectorPos.setFromMatrixPosition( effector.matrixWorld );
+								angle = 1.0;
 
-					// work in link world
-					effectorVec.subVectors( effectorPos, linkPos );
-					effectorVec.applyQuaternion( invLinkQ );
-					effectorVec.normalize();
+							} else if ( angle < -1.0 ) {
 
-					targetVec.subVectors( targetPos, linkPos );
-					targetVec.applyQuaternion( invLinkQ );
-					targetVec.normalize();
+								angle = -1.0;
 
-					var angle = targetVec.dot( effectorVec );
+							}
 
-					if ( angle > 1.0 ) {
+							angle = math.acos( angle );
 
-						angle = 1.0;
+							// skip if changing angle is too small to prevent vibration of bone
+							// Refer to http://www20.atpages.jp/katwat/three.js_r58/examples/mytest37/mmd.three.js
+							if ( angle < 1e-5 ) continue;
 
-					} else if ( angle < -1.0 ) {
+							if ( ik.minAngle !== undefined && angle < ik.minAngle ) {
 
-						angle = -1.0;
+								angle = ik.minAngle;
 
-					}
+							}
 
-					angle = math.acos( angle );
+							if ( ik.maxAngle !== undefined && angle > ik.maxAngle ) {
 
-					// skip if changing angle is too small to prevent vibration of bone
-					// Refer to http://www20.atpages.jp/katwat/three.js_r58/examples/mytest37/mmd.three.js
-					if ( angle < 1e-5 ) continue;
+								angle = ik.maxAngle;
 
-					if ( ik.minAngle !== undefined && angle < ik.minAngle ) {
+							}
 
-						angle = ik.minAngle;
+							axis.crossVectors( effectorVec, targetVec );
+							axis.normalize();
 
-					}
+							q.setFromAxisAngle( axis, angle );
+							link.quaternion.multiply( q );
 
-					if ( ik.maxAngle !== undefined && angle > ik.maxAngle ) {
+							// TODO: re-consider the limitation specification
+							if ( limitation !== undefined ) {
 
-						angle = ik.maxAngle;
+								var c = link.quaternion.w;
 
-					}
+								if ( c > 1.0 ) c = 1.0;
 
-					axis.crossVectors( effectorVec, targetVec );
-					axis.normalize();
+								var c2 = math.sqrt( 1 - c * c );
+								link.quaternion.set( limitation.x * c2,
+								                     limitation.y * c2,
+								                     limitation.z * c2,
+								                     c );
 
-					q.setFromAxisAngle( axis, angle );
-					link.quaternion.multiply( q );
+							}
 
-					// TODO: re-consider the limitation specification
-					if ( limitation !== undefined ) {
+							if ( rotationMin !== undefined ) {
 
-						var c = link.quaternion.w;
+								link.rotation.setFromVector3(
+									link.rotation
+										.toVector3( vector )
+										.max( rotationMin ) );
 
-						if ( c > 1.0 ) {
+							}
 
-							c = 1.0;
+							if ( rotationMax !== undefined ) {
+
+								link.rotation.setFromVector3(
+									link.rotation
+										.toVector3( vector )
+										.min( rotationMax ) );
+
+							}
+
+							link.updateMatrixWorld( true );
+
+							rotated = true;
 
 						}
 
-						var c2 = math.sqrt( 1 - c * c );
-						link.quaternion.set( limitation.x * c2,
-						                     limitation.y * c2,
-						                     limitation.z * c2,
-						                     c );
+						if ( ! rotated ) break;
 
 					}
 
-					link.updateMatrixWorld( true );
-					rotated = true;
-
 				}
 
-				if ( ! rotated ) break;
+				return this;
+
+			};
+
+		}(),
+
+		
+		createHelper: function () {
+
+			return new CCDIKHelper( this.mesh, this.mesh.geometry.userData.MMD.iks );
+
+		},
+
+		// private methods
+
+		_valid: function () {
+
+			var iks = this.iks;
+			var bones = this.mesh.skeleton.bones;
+
+			for ( var i = 0, il = iks.length; i < il; i ++ ) {
+
+				var ik = iks[ i ];
+				var effector = bones[ ik.effector ];
+				var links = ik.links;
+				var link0, link1;
+
+				link0 = effector;
+
+				for ( var j = 0, jl = links.length; j < jl; j ++ ) {
+
+					link1 = bones[ links[ j ].index ];
+
+					if ( link0.parent !== link1 ) {
+
+						console.warn( 'CCDIKSolver: bone ' + link0.name + ' is not the child of bone ' + link1.name );
+
+					}
+
+					link0 = link1;
+
+				}
 
 			}
 
 		}
 
-		// just in case
-		this.mesh.updateMatrixWorld( true );
+	};
+
+	
+	function CCDIKHelper( mesh, iks ) {
+
+		Object3D.call( this );
+
+		this.root = mesh;
+		this.iks = iks || [];
+
+		this.matrix.copy( mesh.matrixWorld );
+		this.matrixAutoUpdate = false;
+
+		this.sphereGeometry = new SphereBufferGeometry( 0.25, 16, 8 );
+
+		this.targetSphereMaterial = new MeshBasicMaterial( {
+			color: new Color( 0xff8888 ),
+			depthTest: false,
+			depthWrite: false,
+			transparent: true
+		} );
+
+		this.effectorSphereMaterial = new MeshBasicMaterial( {
+			color: new Color( 0x88ff88 ),
+			depthTest: false,
+			depthWrite: false,
+			transparent: true
+		} );
+
+		this.linkSphereMaterial = new MeshBasicMaterial( {
+			color: new Color( 0x8888ff ),
+			depthTest: false,
+			depthWrite: false,
+			transparent: true
+		} );
+
+		this.lineMaterial = new LineBasicMaterial( {
+			color: new Color( 0xff0000 ),
+			depthTest: false,
+			depthWrite: false,
+			transparent: true
+		} );
+
+		this._init();
 
 	}
 
-};
+	CCDIKHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
+		constructor: CCDIKHelper,
 
-var CCDIKHelper = function ( mesh ) {
+		
+		updateMatrixWorld: function () {
 
-	if ( mesh.geometry.iks === undefined || mesh.skeleton === undefined ) {
+			var matrix = new Matrix4();
+			var vector = new Vector3();
 
-		throw 'CCDIKHelper requires iks in mesh.geometry and skeleton in mesh.';
+			function getPosition( bone, matrixWorldInv ) {
 
-	}
+				return vector
+					.setFromMatrixPosition( bone.matrixWorld )
+					.applyMatrix4( matrixWorldInv );
 
-	Object3D.call( this );
+			}
 
-	this.root = mesh;
+			function setPositionOfBoneToAttributeArray( array, index, bone, matrixWorldInv ) {
 
-	this.matrix = mesh.matrixWorld;
-	this.matrixAutoUpdate = false;
+				var v = getPosition( bone, matrixWorldInv );
 
-	this.sphereGeometry = new SphereBufferGeometry( 0.25, 16, 8 );
+				array[ index * 3 + 0 ] = v.x;
+				array[ index * 3 + 1 ] = v.y;
+				array[ index * 3 + 2 ] = v.z;
 
-	this.targetSphereMaterial = new MeshBasicMaterial( {
-		color: new Color( 0xff8888 ),
-		depthTest: false,
-		depthWrite: false,
-		transparent: true
-	} );
+			}
 
-	this.effectorSphereMaterial = new MeshBasicMaterial( {
-		color: new Color( 0x88ff88 ),
-		depthTest: false,
-		depthWrite: false,
-		transparent: true
-	} );
+			return function updateMatrixWorld( force ) {
 
-	this.linkSphereMaterial = new MeshBasicMaterial( {
-		color: new Color( 0x8888ff ),
-		depthTest: false,
-		depthWrite: false,
-		transparent: true
-	} );
+				var mesh = this.root;
 
-	this.lineMaterial = new LineBasicMaterial( {
-		color: new Color( 0xff0000 ),
-		depthTest: false,
-		depthWrite: false,
-		transparent: true
-	} );
+				if ( this.visible ) {
 
-	this._init();
-	this.update();
+					var offset = 0;
 
-};
+					var iks = this.iks;
+					var bones = mesh.skeleton.bones;
 
-CCDIKHelper.prototype = Object.create( Object3D.prototype );
-CCDIKHelper.prototype.constructor = CCDIKHelper;
+					matrix.getInverse( mesh.matrixWorld );
 
-CCDIKHelper.prototype._init = function () {
+					for ( var i = 0, il = iks.length; i < il; i ++ ) {
 
-	var self = this;
-	var mesh = this.root;
-	var iks = mesh.geometry.iks;
+						var ik = iks[ i ];
 
-	function createLineGeometry( ik ) {
+						var targetBone = bones[ ik.target ];
+						var effectorBone = bones[ ik.effector ];
 
-		var geometry = new BufferGeometry();
-		var vertices = new Float32Array( ( 2 + ik.links.length ) * 3 );
-		geometry.addAttribute( 'position', new BufferAttribute( vertices, 3 ) );
+						var targetMesh = this.children[ offset ++ ];
+						var effectorMesh = this.children[ offset ++ ];
 
-		return geometry;
+						targetMesh.position.copy( getPosition( targetBone, matrix ) );
+						effectorMesh.position.copy( getPosition( effectorBone, matrix ) );
 
-	}
+						for ( var j = 0, jl = ik.links.length; j < jl; j ++ ) {
 
-	function createTargetMesh() {
+							var link = ik.links[ j ];
+							var linkBone = bones[ link.index ];
 
-		return new Mesh( self.sphereGeometry, self.targetSphereMaterial );
+							var linkMesh = this.children[ offset ++ ];
 
-	}
+							linkMesh.position.copy( getPosition( linkBone, matrix ) );
 
-	function createEffectorMesh() {
+						}
 
-		return new Mesh( self.sphereGeometry, self.effectorSphereMaterial );
+						var line = this.children[ offset ++ ];
+						var array = line.geometry.attributes.position.array;
 
-	}
+						setPositionOfBoneToAttributeArray( array, 0, targetBone, matrix );
+						setPositionOfBoneToAttributeArray( array, 1, effectorBone, matrix );
 
-	function createLinkMesh() {
+						for ( var j = 0, jl = ik.links.length; j < jl; j ++ ) {
 
-		return new Mesh( self.sphereGeometry, self.linkSphereMaterial );
+							var link = ik.links[ j ];
+							var linkBone = bones[ link.index ];
+							setPositionOfBoneToAttributeArray( array, j + 2, linkBone, matrix );
 
-	}
+						}
 
-	function createLine( ik ) {
+						line.geometry.attributes.position.needsUpdate = true;
 
-		return new Line( createLineGeometry( ik ), self.lineMaterial );
+					}
 
-	}
+				}
 
-	for ( var i = 0, il = iks.length; i < il; i ++ ) {
+				this.matrix.copy( mesh.matrixWorld );
 
-		var ik = iks[ i ];
+				Object3D.prototype.updateMatrixWorld.call( this, force );
 
-		this.add( createTargetMesh() );
-		this.add( createEffectorMesh() );
+			};
 
-		for ( var j = 0, jl = ik.links.length; j < jl; j ++ ) {
+		}(),
 
-			this.add( createLinkMesh() );
+		// private method
+
+		_init: function () {
+
+			var self = this;
+			var mesh = this.root;
+			var iks = this.iks;
+
+			function createLineGeometry( ik ) {
+
+				var geometry = new BufferGeometry();
+				var vertices = new Float32Array( ( 2 + ik.links.length ) * 3 );
+				geometry.addAttribute( 'position', new BufferAttribute( vertices, 3 ) );
+
+				return geometry;
+
+			}
+
+			function createTargetMesh() {
+
+				return new Mesh( self.sphereGeometry, self.targetSphereMaterial );
+
+			}
+
+			function createEffectorMesh() {
+
+				return new Mesh( self.sphereGeometry, self.effectorSphereMaterial );
+
+			}
+
+			function createLinkMesh() {
+
+				return new Mesh( self.sphereGeometry, self.linkSphereMaterial );
+
+			}
+
+			function createLine( ik ) {
+
+				return new Line( createLineGeometry( ik ), self.lineMaterial );
+
+			}
+
+			for ( var i = 0, il = iks.length; i < il; i ++ ) {
+
+				var ik = iks[ i ];
+
+				this.add( createTargetMesh() );
+				this.add( createEffectorMesh() );
+
+				for ( var j = 0, jl = ik.links.length; j < jl; j ++ ) {
+
+					this.add( createLinkMesh() );
+
+				}
+
+				this.add( createLine( ik ) );
+
+			}
 
 		}
 
-		this.add( createLine( ik ) );
+	} );
 
-	}
+	return CCDIKSolver;
 
-};
+} )();
 
-CCDIKHelper.prototype.update = function () {
-
-	var offset = 0;
-
-	var mesh = this.root;
-	var iks = mesh.geometry.iks;
-	var bones = mesh.skeleton.bones;
-
-	var matrixWorldInv = new Matrix4().getInverse( mesh.matrixWorld );
-	var vector = new Vector3();
-
-	function getPosition( bone ) {
-
-		vector.setFromMatrixPosition( bone.matrixWorld );
-		vector.applyMatrix4( matrixWorldInv );
-
-		return vector;
-
-	}
-
-	function setPositionOfBoneToAttributeArray( array, index, bone ) {
-
-		var v = getPosition( bone );
-
-		array[ index * 3 + 0 ] = v.x;
-		array[ index * 3 + 1 ] = v.y;
-		array[ index * 3 + 2 ] = v.z;
-
-	}
-
-	for ( var i = 0, il = iks.length; i < il; i ++ ) {
-
-		var ik = iks[ i ];
-
-		var targetBone = bones[ ik.target ];
-		var effectorBone = bones[ ik.effector ];
-
-		var targetMesh = this.children[ offset ++ ];
-		var effectorMesh = this.children[ offset ++ ];
-
-		targetMesh.position.copy( getPosition( targetBone ) );
-		effectorMesh.position.copy( getPosition( effectorBone ) );
-
-		for ( var j = 0, jl = ik.links.length; j < jl; j ++ ) {
-
-			var link = ik.links[ j ];
-			var linkBone = bones[ link.index ];
-
-			var linkMesh = this.children[ offset ++ ];
-
-			linkMesh.position.copy( getPosition( linkBone ) );
-
-		}
-
-		var line = this.children[ offset ++ ];
-		var array = line.geometry.attributes.position.array;
-
-		setPositionOfBoneToAttributeArray( array, 0, targetBone );
-		setPositionOfBoneToAttributeArray( array, 1, effectorBone );
-
-		for ( var j = 0, jl = ik.links.length; j < jl; j ++ ) {
-
-			var link = ik.links[ j ];
-			var linkBone = bones[ link.index ];
-			setPositionOfBoneToAttributeArray( array, j + 2, linkBone );
-
-		}
-
-		line.geometry.attributes.position.needsUpdate = true;
-
-	}
-
-};
-
-export {
-	CCDIKSolver,
-	CCDIKHelper
-}
+export { CCDIKSolver }

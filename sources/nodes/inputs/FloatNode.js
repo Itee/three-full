@@ -6,7 +6,7 @@ var FloatNode = function ( value ) {
 
 	InputNode.call( this, 'fv1' );
 
-	this.value = [ value || 0 ];
+	this.value = value || 0;
 
 };
 
@@ -14,26 +14,11 @@ FloatNode.prototype = Object.create( InputNode.prototype );
 FloatNode.prototype.constructor = FloatNode;
 FloatNode.prototype.nodeType = "Float";
 
-Object.defineProperties( FloatNode.prototype, {
-	number: {
-		get: function () {
-
-			return this.value[ 0 ];
-
-		},
-		set: function ( val ) {
-
-			this.value[ 0 ] = val;
-
-		}
-	}
-} );
-
 FloatNode.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
-	var value = this.number;
+	var val = this.value;
 
-	return builder.format( Math.floor( value ) !== value ? value : value + ".0", type, output );
+	return builder.format( Math.floor( val ) !== val ? val : val + ".0", type, output );
 
 };
 
@@ -45,7 +30,7 @@ FloatNode.prototype.toJSON = function ( meta ) {
 
 		data = this.createJSONNode( meta );
 
-		data.number = this.number;
+		data.value = this.value;
 
 		if ( this.readonly === true ) data.readonly = true;
 
