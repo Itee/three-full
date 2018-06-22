@@ -120,7 +120,7 @@ module.exports = {
                 [ 'BokehShader', 'BokehShader2' ],
                 [ 'BokehShader2 = {', 'var BokehShader2 = {' ]
             ],
-            exportsOverride: [ 'BokehShader2' ]
+            exportsOverride: [ 'BokehShader2', 'BokehDepthShader' ]
         },
 		BufferGeometryUtils: {
 			outputOverride: 'utils/BufferGeometryUtils.js'
@@ -492,7 +492,6 @@ module.exports = {
 			imports: [
 				'DefaultLoadingManager',
 				'LoaderUtils',
-				'Interpolant',
 				'_Math'
 			]
 		},
