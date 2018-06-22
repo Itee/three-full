@@ -44,24 +44,24 @@ var TrackballControls = function ( object, domElement ) {
 	var lastPosition = new Vector3();
 
 	var _state = STATE.NONE,
-	_prevState = STATE.NONE,
+		_prevState = STATE.NONE,
 
-	_eye = new Vector3(),
+		_eye = new Vector3(),
 
-	_movePrev = new Vector2(),
-	_moveCurr = new Vector2(),
+		_movePrev = new Vector2(),
+		_moveCurr = new Vector2(),
 
-	_lastAxis = new Vector3(),
-	_lastAngle = 0,
+		_lastAxis = new Vector3(),
+		_lastAngle = 0,
 
-	_zoomStart = new Vector2(),
-	_zoomEnd = new Vector2(),
+		_zoomStart = new Vector2(),
+		_zoomEnd = new Vector2(),
 
-	_touchZoomDistanceStart = 0,
-	_touchZoomDistanceEnd = 0,
+		_touchZoomDistanceStart = 0,
+		_touchZoomDistanceEnd = 0,
 
-	_panStart = new Vector2(),
-	_panEnd = new Vector2();
+		_panStart = new Vector2(),
+		_panEnd = new Vector2();
 
 	// for reset
 
@@ -145,7 +145,7 @@ var TrackballControls = function ( object, domElement ) {
 
 	}() );
 
-	this.rotateCamera = ( function() {
+	this.rotateCamera = ( function () {
 
 		var axis = new Vector3(),
 			quaternion = new Quaternion(),
@@ -235,7 +235,7 @@ var TrackballControls = function ( object, domElement ) {
 
 	};
 
-	this.panCamera = ( function() {
+	this.panCamera = ( function () {
 
 		var mouseChange = new Vector2(),
 			objectUp = new Vector3(),
@@ -469,7 +469,7 @@ var TrackballControls = function ( object, domElement ) {
 	function mousewheel( event ) {
 
 		if ( _this.enabled === false ) return;
-		
+
 		if ( _this.noZoom === true ) return;
 
 		event.preventDefault();
@@ -587,7 +587,7 @@ var TrackballControls = function ( object, domElement ) {
 
 	}
 
-	this.dispose = function() {
+	this.dispose = function () {
 
 		this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
 		this.domElement.removeEventListener( 'mousedown', mousedown, false );

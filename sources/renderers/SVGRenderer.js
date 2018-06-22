@@ -11,13 +11,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { Matrix3 } from '../math/Matrix3.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Camera } from '../cameras/Camera.js'
-import { AmbientLight } from '../lights/AmbientLight.js'
-import { DirectionalLight } from '../lights/DirectionalLight.js'
-import { PointLight } from '../lights/PointLight.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
-import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
-import { MeshNormalMaterial } from '../materials/MeshNormalMaterial.js'
 import {
 	REVISION,
 	FaceColors
@@ -41,38 +34,38 @@ var SVGRenderer = function () {
 	console.log( 'SVGRenderer', REVISION );
 
 	var _this = this,
-	_renderData, _elements, _lights,
-	_projector = new Projector(),
-	_svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' ),
-	_svgWidth, _svgHeight, _svgWidthHalf, _svgHeightHalf,
+		_renderData, _elements, _lights,
+		_projector = new Projector(),
+		_svg = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' ),
+		_svgWidth, _svgHeight, _svgWidthHalf, _svgHeightHalf,
 
-	_v1, _v2, _v3, _v4,
+		_v1, _v2, _v3,
 
-	_clipBox = new Box2(),
-	_elemBox = new Box2(),
+		_clipBox = new Box2(),
+		_elemBox = new Box2(),
 
-	_color = new Color(),
-	_diffuseColor = new Color(),
-	_ambientLight = new Color(),
-	_directionalLights = new Color(),
-	_pointLights = new Color(),
-	_clearColor = new Color(),
-	_clearAlpha = 1,
+		_color = new Color(),
+		_diffuseColor = new Color(),
+		_ambientLight = new Color(),
+		_directionalLights = new Color(),
+		_pointLights = new Color(),
+		_clearColor = new Color(),
+		_clearAlpha = 1,
 
-	_vector3 = new Vector3(), // Needed for PointLight
-	_centroid = new Vector3(),
-	_normal = new Vector3(),
-	_normalViewMatrix = new Matrix3(),
+		_vector3 = new Vector3(), // Needed for PointLight
+		_centroid = new Vector3(),
+		_normal = new Vector3(),
+		_normalViewMatrix = new Matrix3(),
 
-	_viewMatrix = new Matrix4(),
-	_viewProjectionMatrix = new Matrix4(),
+		_viewMatrix = new Matrix4(),
+		_viewProjectionMatrix = new Matrix4(),
 
-	_svgPathPool = [],
-	_svgNode, _pathCount = 0,
+		_svgPathPool = [],
+		_svgNode, _pathCount = 0,
 
-	_currentPath, _currentStyle,
+		_currentPath, _currentStyle,
 
-	_quality = 1, _precision = null;
+		_quality = 1, _precision = null;
 
 	this.domElement = _svg;
 
@@ -91,7 +84,7 @@ var SVGRenderer = function () {
 
 	};
 
-	this.setQuality = function( quality ) {
+	this.setQuality = function ( quality ) {
 
 		switch ( quality ) {
 
@@ -111,7 +104,7 @@ var SVGRenderer = function () {
 
 	this.setPixelRatio = function () {};
 
-	this.setSize = function( width, height ) {
+	this.setSize = function ( width, height ) {
 
 		_svgWidth = width; _svgHeight = height;
 		_svgWidthHalf = _svgWidth / 2; _svgHeightHalf = _svgHeight / 2;
@@ -143,7 +136,7 @@ var SVGRenderer = function () {
 
 	}
 
-	function getSvgColor ( color, opacity ) {
+	function getSvgColor( color, opacity ) {
 
 		var arg = Math.floor( color.r * 255 ) + ',' + Math.floor( color.g * 255 ) + ',' + Math.floor( color.b * 255 );
 
@@ -153,9 +146,9 @@ var SVGRenderer = function () {
 
 	}
 
-	function convert ( c ) {
+	function convert( c ) {
 
-		return _precision !== null ? c.toFixed(_precision) : c;
+		return _precision !== null ? c.toFixed( _precision ) : c;
 
 	}
 
@@ -275,7 +268,7 @@ var SVGRenderer = function () {
 				_vector3.setFromMatrixPosition( object.matrixWorld );
 				_vector3.applyMatrix4( _viewProjectionMatrix );
 
-				var x =   _vector3.x * _svgWidthHalf;
+				var x = _vector3.x * _svgWidthHalf;
 				var y = - _vector3.y * _svgHeightHalf;
 
 				var node = object.node;
@@ -300,19 +293,19 @@ var SVGRenderer = function () {
 			var light = lights[ l ];
 			var lightColor = light.color;
 
-			if ( light instanceof AmbientLight ) {
+			if ( light.isAmbientLight ) {
 
 				_ambientLight.r += lightColor.r;
 				_ambientLight.g += lightColor.g;
 				_ambientLight.b += lightColor.b;
 
-			} else if ( light instanceof DirectionalLight ) {
+			} else if ( light.isDirectionalLight ) {
 
 				_directionalLights.r += lightColor.r;
 				_directionalLights.g += lightColor.g;
 				_directionalLights.b += lightColor.b;
 
-			} else if ( light instanceof PointLight ) {
+			} else if ( light.isPointLight ) {
 
 				_pointLights.r += lightColor.r;
 				_pointLights.g += lightColor.g;
@@ -331,7 +324,7 @@ var SVGRenderer = function () {
 			var light = lights[ l ];
 			var lightColor = light.color;
 
-			if ( light instanceof DirectionalLight ) {
+			if ( light.isDirectionalLight ) {
 
 				var lightPosition = _vector3.setFromMatrixPosition( light.matrixWorld ).normalize();
 
@@ -345,7 +338,7 @@ var SVGRenderer = function () {
 				color.g += lightColor.g * amount;
 				color.b += lightColor.b * amount;
 
-			} else if ( light instanceof PointLight ) {
+			} else if ( light.isPointLight ) {
 
 				var lightPosition = _vector3.setFromMatrixPosition( light.matrixWorld );
 
@@ -375,11 +368,13 @@ var SVGRenderer = function () {
 		var scaleY = element.scale.y * _svgHeightHalf;
 
 		if ( material.isPointsMaterial ) {
+
 			scaleX *= material.size;
 			scaleY *= material.size;
+
 		}
 
-		var path = 'M' + convert( v1.x - scaleX * 0.5 ) + ',' + convert( v1.y - scaleY * 0.5 ) + 'h' + convert( scaleX ) + 'v' + convert( scaleY ) + 'h' + convert(-scaleX) + 'z';
+		var path = 'M' + convert( v1.x - scaleX * 0.5 ) + ',' + convert( v1.y - scaleY * 0.5 ) + 'h' + convert( scaleX ) + 'v' + convert( scaleY ) + 'h' + convert( - scaleX ) + 'z';
 		var style = "";
 
 		if ( material.isSpriteMaterial || material.isPointsMaterial ) {
@@ -420,7 +415,7 @@ var SVGRenderer = function () {
 		var path = 'M' + convert( v1.positionScreen.x ) + ',' + convert( v1.positionScreen.y ) + 'L' + convert( v2.positionScreen.x ) + ',' + convert( v2.positionScreen.y ) + 'L' + convert( v3.positionScreen.x ) + ',' + convert( v3.positionScreen.y ) + 'z';
 		var style = '';
 
-		if ( material instanceof MeshBasicMaterial ) {
+		if ( material.isMeshBasicMaterial ) {
 
 			_color.copy( material.color );
 
@@ -430,7 +425,7 @@ var SVGRenderer = function () {
 
 			}
 
-		} else if ( material instanceof MeshLambertMaterial || material instanceof MeshPhongMaterial ) {
+		} else if ( material.isMeshLambertMaterial || material.isMeshPhongMaterial || material.isMeshStandardMaterial ) {
 
 			_diffuseColor.copy( material.color );
 
@@ -448,7 +443,7 @@ var SVGRenderer = function () {
 
 			_color.multiply( _diffuseColor ).add( material.emissive );
 
-		} else if ( material instanceof MeshNormalMaterial ) {
+		} else if ( material.isMeshNormalMaterial ) {
 
 			_normal.copy( element.normalModel ).applyMatrix3( _normalViewMatrix );
 
@@ -470,11 +465,11 @@ var SVGRenderer = function () {
 
 	}
 
-	function addPath ( style, path ) {
+	function addPath( style, path ) {
 
 		if ( _currentStyle === style ) {
 
-			_currentPath += path
+			_currentPath += path;
 
 		} else {
 

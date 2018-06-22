@@ -21,7 +21,7 @@ import {
 
 
 
-var PMREMGenerator = function( sourceTexture, samplesPerLevel, resolution ) {
+var PMREMGenerator = function ( sourceTexture, samplesPerLevel, resolution ) {
 
 	this.sourceTexture = sourceTexture;
 	this.resolution = ( resolution !== undefined ) ? resolution : 256; // NODE: 256 is currently hard coded in the glsl code for performance reasons
@@ -48,7 +48,7 @@ var PMREMGenerator = function( sourceTexture, samplesPerLevel, resolution ) {
 	 };
 
 	// how many LODs fit in the given CubeUV Texture.
-	this.numLods = Math.log( size ) / Math.log( 2 ) - 2;  // IE11 doesn't support Math.log2
+	this.numLods = Math.log( size ) / Math.log( 2 ) - 2; // IE11 doesn't support Math.log2
 
 	for ( var i = 0; i < this.numLods; i ++ ) {
 
@@ -62,7 +62,7 @@ var PMREMGenerator = function( sourceTexture, samplesPerLevel, resolution ) {
 	this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0.0, 1000 );
 
 	this.shader = this.getShader();
-	this.shader.defines['SAMPLES_PER_LEVEL'] = this.samplesPerLevel;
+	this.shader.defines[ 'SAMPLES_PER_LEVEL' ] = this.samplesPerLevel;
 	this.planeMesh = new Mesh( new PlaneGeometry( 2, 2, 0 ), this.shader );
 	this.planeMesh.material.side = DoubleSide;
 	this.scene = new Scene();
@@ -76,10 +76,10 @@ var PMREMGenerator = function( sourceTexture, samplesPerLevel, resolution ) {
 
 PMREMGenerator.prototype = {
 
-	constructor : PMREMGenerator,
+	constructor: PMREMGenerator,
 
 	
-	update: function( renderer ) {
+	update: function ( renderer ) {
 
 		this.shader.uniforms[ 'envMap' ].value = this.sourceTexture;
 		this.shader.envMap = this.sourceTexture;
@@ -99,7 +99,7 @@ PMREMGenerator.prototype = {
 
 			var r = i / ( this.numLods - 1 );
 			this.shader.uniforms[ 'roughness' ].value = r * 0.9; // see comment above, pragmatic choice
-			this.shader.uniforms[ 'queryScale' ].value.x = ( i == 0 ) ? -1 : 1;
+			this.shader.uniforms[ 'queryScale' ].value.x = ( i == 0 ) ? - 1 : 1;
 			var size = this.cubeLods[ i ].width;
 			this.shader.uniforms[ 'mapSize' ].value = size;
 			this.renderToCubeMapTarget( renderer, this.cubeLods[ i ] );
@@ -116,17 +116,17 @@ PMREMGenerator.prototype = {
 
 	},
 
-	renderToCubeMapTarget: function( renderer, renderTarget ) {
+	renderToCubeMapTarget: function ( renderer, renderTarget ) {
 
 		for ( var i = 0; i < 6; i ++ ) {
 
-			this.renderToCubeMapTargetFace( renderer, renderTarget, i )
+			this.renderToCubeMapTargetFace( renderer, renderTarget, i );
 
 		}
 
 	},
 
-	renderToCubeMapTargetFace: function( renderer, renderTarget, faceIndex ) {
+	renderToCubeMapTargetFace: function ( renderer, renderTarget, faceIndex ) {
 
 		renderTarget.activeCubeFace = faceIndex;
 		this.shader.uniforms[ 'faceIndex' ].value = faceIndex;
@@ -134,9 +134,9 @@ PMREMGenerator.prototype = {
 
 	},
 
-	getShader: function() {
+	getShader: function () {
 
-		return new ShaderMaterial( {
+		var shaderMaterial = new ShaderMaterial( {
 
 			defines: {
 				"SAMPLES_PER_LEVEL": 20,
@@ -256,13 +256,33 @@ PMREMGenerator.prototype = {
 					//rgbColor = testColorMap( roughness ).rgb;\n\
 					gl_FragColor = linearToOutputTexel( vec4( rgbColor, 1.0 ) );\n\
 				}",
+
 			blending: CustomBlending,
+			premultipliedAlpha: false,
 			blendSrc: OneFactor,
 			blendDst: ZeroFactor,
 			blendSrcAlpha: OneFactor,
 			blendDstAlpha: ZeroFactor,
 			blendEquation: AddEquation
+
 		} );
+
+		shaderMaterial.type = 'PMREMGenerator';
+
+		return shaderMaterial;
+
+	},
+
+	dispose: function () {
+
+		for ( var i = 0, l = this.cubeLods.length; i < l; i ++ ) {
+
+			this.cubeLods[ i ].dispose();
+
+		}
+
+		this.planeMesh.geometry.dispose();
+		this.planeMesh.material.dispose();
 
 	}
 

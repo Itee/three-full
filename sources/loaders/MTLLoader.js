@@ -41,6 +41,7 @@ MTLLoader.prototype = {
 	setPath: function ( path ) {
 
 		this.path = path;
+		return this;
 
 	},
 
@@ -48,6 +49,7 @@ MTLLoader.prototype = {
 	setTexturePath: function ( path ) {
 
 		this.texturePath = path;
+		return this;
 
 	},
 
@@ -55,19 +57,21 @@ MTLLoader.prototype = {
 
 		console.warn( 'MTLLoader: .setBaseUrl() is deprecated. Use .setTexturePath( path ) for texture path or .setPath( path ) for general base path instead.' );
 
-		this.setTexturePath( path );
+		return this.setTexturePath( path );
 
 	},
 
 	setCrossOrigin: function ( value ) {
 
 		this.crossOrigin = value;
+		return this;
 
 	},
 
 	setMaterialOptions: function ( value ) {
 
 		this.materialOptions = value;
+		return this;
 
 	},
 
@@ -415,9 +419,9 @@ MTLLoader.MaterialCreator.prototype = {
 
 					if ( this.options && this.options.invertTrProperty ) n = 1 - n;
 
-					if ( n < 1 ) {
+					if ( n > 0 ) {
 
-						params.opacity = n;
+						params.opacity = 1 - n;
 						params.transparent = true;
 
 					}

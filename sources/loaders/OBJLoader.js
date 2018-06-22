@@ -406,6 +406,8 @@ var OBJLoader = ( function () {
 
 			this.path = value;
 
+			return this;
+
 		},
 
 		setMaterials: function ( materials ) {

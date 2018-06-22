@@ -1,13 +1,13 @@
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Mesh } from '../objects/Mesh.js'
-import { PlaneGeometry } from '../geometries/PlaneGeometry.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Vector3 } from '../math/Vector3.js'
 import {
-	DoubleSide,
+	BackSide,
 	CustomBlending,
 	AddEquation,
 	ZeroFactor,
@@ -21,11 +21,9 @@ import {
 
 
 
-
-var PMREMCubeUVPacker = function( cubeTextureLods, numLods ) {
+var PMREMCubeUVPacker = function ( cubeTextureLods ) {
 
 	this.cubeLods = cubeTextureLods;
-	this.numLods = numLods;
 	var size = cubeTextureLods[ 0 ].width * 4;
 
 	var sourceTexture = cubeTextureLods[ 0 ].texture;
@@ -49,12 +47,13 @@ var PMREMCubeUVPacker = function( cubeTextureLods, numLods ) {
 	this.CubeUVRenderTarget = new WebGLRenderTarget( size, size, params );
 	this.CubeUVRenderTarget.texture.name = "PMREMCubeUVPacker.cubeUv";
 	this.CubeUVRenderTarget.texture.mapping = CubeUVReflectionMapping;
-	this.camera = new OrthographicCamera( - size * 0.5, size * 0.5, - size * 0.5, size * 0.5, 0.0, 1000 );
+	this.camera = new OrthographicCamera( - size * 0.5, size * 0.5, - size * 0.5, size * 0.5, 0, 1 ); // top and bottom are swapped for some reason?
 
 	this.scene = new Scene();
-	this.scene.add( this.camera );
 
 	this.objects = [];
+
+	var geometry = new PlaneBufferGeometry( 1, 1 );
 
 	var faceOffsets = [];
 	faceOffsets.push( new Vector2( 0, 0 ) );
@@ -90,12 +89,12 @@ var PMREMCubeUVPacker = function( cubeTextureLods, numLods ) {
 				material.envMap = this.cubeLods[ i ].texture;
 				material.uniforms[ 'faceIndex' ].value = k;
 				material.uniforms[ 'mapSize' ].value = mipSize;
-				var planeMesh = new Mesh(
-				new PlaneGeometry( mipSize, mipSize, 0 ),
-				material );
+
+				var planeMesh = new Mesh( geometry, material );
 				planeMesh.position.x = faceOffsets[ k ].x * mipSize - offset1 + mipOffsetX;
 				planeMesh.position.y = faceOffsets[ k ].y * mipSize - offset1 + offset2 + mipOffsetY;
-				planeMesh.material.side = DoubleSide;
+				planeMesh.material.side = BackSide;
+				planeMesh.scale.setScalar( mipSize );
 				this.scene.add( planeMesh );
 				this.objects.push( planeMesh );
 
@@ -123,7 +122,7 @@ PMREMCubeUVPacker.prototype = {
 		var toneMapping = renderer.toneMapping;
 		var toneMappingExposure = renderer.toneMappingExposure;
 		var currentRenderTarget = renderer.getRenderTarget();
-		
+
 		renderer.gammaInput = false;
 		renderer.gammaOutput = false;
 		renderer.toneMapping = LinearToneMapping;
@@ -197,7 +196,21 @@ PMREMCubeUVPacker.prototype = {
 
 		} );
 
+		shaderMaterial.type = 'PMREMCubeUVPacker';
+
 		return shaderMaterial;
+
+	},
+
+	dispose: function () {
+
+		for ( var i = 0, l = this.objects.length; i < l; i ++ ) {
+
+			this.objects[ i ].material.dispose();
+
+		}
+
+		this.objects[ 0 ].geometry.dispose();
 
 	}
 

@@ -1,5 +1,6 @@
 import { FileLoader } from './FileLoader.js'
 import { TextureLoader } from './TextureLoader.js'
+import { TGALoader } from './TGALoader.js'
 import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
 import { Color } from '../math/Color.js'
@@ -9,6 +10,7 @@ import { Vector3 } from '../math/Vector3.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import {
 	Float32BufferAttribute,
+	Uint16BufferAttribute,
 	BufferAttribute
 } from '../core/BufferAttribute.js'
 import { Matrix3 } from '../math/Matrix3.js'
@@ -42,6 +44,7 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
 import { PropertyBinding } from '../animation/PropertyBinding.js'
 import { _Math } from '../math/Math.js'
+
 
 
 
@@ -120,9 +123,9 @@ import { _Math } from '../math/Math.js'
 			var images = parseImages( FBXTree );
 			var textures = parseTextures( FBXTree, new TextureLoader( this.manager ).setPath( resourceDirectory ), images, connections );
 			var materials = parseMaterials( FBXTree, textures, connections );
-			var skeletons = parseDeformers( FBXTree, connections );
-			var geometryMap = parseGeometries( FBXTree, connections, skeletons );
-			var sceneGraph = parseScene( FBXTree, connections, skeletons, geometryMap, materials );
+			var deformers = parseDeformers( FBXTree, connections );
+			var geometryMap = parseGeometries( FBXTree, connections, deformers );
+			var sceneGraph = parseScene( FBXTree, connections, deformers.skeletons, geometryMap, materials );
 
 			return sceneGraph;
 
@@ -196,7 +199,7 @@ import { _Math } from '../math/Math.js'
 
 				var id = parseInt( nodeID );
 
-				images[ id ] = videoNode.Filename;
+				images[ id ] = videoNode.RelativeFilename || videoNode.Filename;
 
 				// raw image data is in videoNode.Content
 				if ( 'Content' in videoNode ) {
@@ -208,7 +211,7 @@ import { _Math } from '../math/Math.js'
 
 						var image = parseImage( videoNodes[ nodeID ] );
 
-						blobs[ videoNode.Filename ] = image;
+						blobs[ videoNode.RelativeFilename || videoNode.Filename ] = image;
 
 					}
 
@@ -262,6 +265,26 @@ import { _Math } from '../math/Math.js'
 
 				type = 'image/tiff';
 				break;
+
+ 			case 'tga':
+
+				if ( typeof TGALoader !== 'function' ) {
+
+					console.warn( 'FBXLoader: TGALoader is required to load TGA textures' );
+					return;
+
+				} else {
+
+					if ( Loader.Handlers.get( '.tga' ) === null ) {
+
+						Loader.Handlers.add( /\.tga$/i, new TGALoader() );
+
+					}
+
+					type = 'image/tga';
+					break;
+
+				}
 
 			default:
 
@@ -361,7 +384,17 @@ import { _Math } from '../math/Math.js'
 
 		}
 
-		var texture = loader.load( fileName );
+		var texture;
+
+		if ( textureNode.FileName.slice( -3 ).toLowerCase() === 'tga' ) {
+
+ 			texture = Loader.Handlers.get( '.tga' ).load( fileName );
+
+ 		} else {
+
+ 			texture = loader.load( fileName );
+
+ 		}
 
 		loader.setPath( currentPath );
 
@@ -463,26 +496,6 @@ import { _Math } from '../math/Math.js'
 			parameters.displacementScale = properties.DisplacementFactor.value;
 
 		}
-		if ( properties.ReflectionFactor ) {
-
-			parameters.reflectivity = properties.ReflectionFactor.value;
-
-		}
-		if ( properties.Specular ) {
-
-			parameters.specular = new Color().fromArray( properties.Specular.value );
-
-		} else if ( properties.SpecularColor && properties.SpecularColor.type === 'Color' ) {
-
-			// The blender exporter exports specular color here instead of in properties.Specular
-			parameters.emissive = new Color().fromArray( properties.SpecularColor.value );
-
-		}
-		if ( properties.Shininess ) {
-
-			parameters.shininess = properties.Shininess.value;
-
-		}
 		if ( properties.Emissive ) {
 
 			parameters.emissive = new Color().fromArray( properties.Emissive.value );
@@ -506,6 +519,26 @@ import { _Math } from '../math/Math.js'
 		if ( parameters.opacity < 1.0 ) {
 
 			parameters.transparent = true;
+
+		}
+		if ( properties.ReflectionFactor ) {
+
+			parameters.reflectivity = properties.ReflectionFactor.value;
+
+		}
+		if ( properties.Shininess ) {
+
+			parameters.shininess = properties.Shininess.value;
+
+		}
+		if ( properties.Specular ) {
+
+			parameters.specular = new Color().fromArray( properties.Specular.value );
+
+		} else if ( properties.SpecularColor && properties.SpecularColor.type === 'Color' ) {
+
+			// The blender exporter exports specular color here instead of in properties.Specular
+			parameters.specular = new Color().fromArray( properties.SpecularColor.value );
 
 		}
 
@@ -587,6 +620,7 @@ import { _Math } from '../math/Math.js'
 	function parseDeformers( FBXTree, connections ) {
 
 		var skeletons = {};
+		var morphTargets = {};
 
 		if ( 'Deformer' in FBXTree.Objects ) {
 
@@ -596,9 +630,9 @@ import { _Math } from '../math/Math.js'
 
 				var deformerNode = DeformerNodes[ nodeID ];
 
-				if ( deformerNode.attrType === 'Skin' ) {
+				var relationships = connections.get( parseInt( nodeID ) );
 
-					var relationships = connections.get( parseInt( nodeID ) );
+				if ( deformerNode.attrType === 'Skin' ) {
 
 					var skeleton = parseSkeleton( relationships, DeformerNodes );
 					skeleton.ID = nodeID;
@@ -608,18 +642,37 @@ import { _Math } from '../math/Math.js'
 
 					skeletons[ nodeID ] = skeleton;
 
+				} else if ( deformerNode.attrType === 'BlendShape' ) {
+
+					var morphTarget = {
+						id: nodeID,
+					};
+
+					morphTarget.rawTargets = parseMorphTargets( relationships, deformerNode, DeformerNodes, connections, FBXTree );
+					morphTarget.id = nodeID;
+
+					if ( relationships.parents.length > 1 ) console.warn( 'FBXLoader: morph target attached to more than one geometry is not supported.' );
+					morphTarget.parentGeoID = relationships.parents[ 0 ].ID;
+
+					morphTargets[ nodeID ] = morphTarget;
+
 				}
 
 			}
 
 		}
 
-		return skeletons;
+		return {
+
+			skeletons: skeletons,
+			morphTargets: morphTargets,
+
+		};
 
 	}
 
 	// Parse single nodes in FBXTree.Objects.Deformer
-	// The top level deformer nodes have type 'Skin' and subDeformer nodes have type 'Cluster'
+	// The top level skeleton node has type 'Skin' and sub nodes have type 'Cluster'
 	// Each skin node represents a skeleton and each cluster node represents a bone
 	function parseSkeleton( connections, deformerNodes ) {
 
@@ -627,25 +680,25 @@ import { _Math } from '../math/Math.js'
 
 		connections.children.forEach( function ( child ) {
 
-			var subDeformerNode = deformerNodes[ child.ID ];
+			var boneNode = deformerNodes[ child.ID ];
 
-			if ( subDeformerNode.attrType !== 'Cluster' ) return;
+			if ( boneNode.attrType !== 'Cluster' ) return;
 
 			var rawBone = {
 
 				ID: child.ID,
 				indices: [],
 				weights: [],
-				transform: new Matrix4().fromArray( subDeformerNode.Transform.a ),
-				transformLink: new Matrix4().fromArray( subDeformerNode.TransformLink.a ),
-				linkMode: subDeformerNode.Mode,
+				transform: new Matrix4().fromArray( boneNode.Transform.a ),
+				transformLink: new Matrix4().fromArray( boneNode.TransformLink.a ),
+				linkMode: boneNode.Mode,
 
 			};
 
-			if ( 'Indexes' in subDeformerNode ) {
+			if ( 'Indexes' in boneNode ) {
 
-				rawBone.indices = subDeformerNode.Indexes.a;
-				rawBone.weights = subDeformerNode.Weights.a;
+				rawBone.indices = boneNode.Indexes.a;
+				rawBone.weights = boneNode.Weights.a;
 
 			}
 
@@ -662,21 +715,76 @@ import { _Math } from '../math/Math.js'
 
 	}
 
+	// The top level morph deformer node has type "BlendShape" and sub nodes have type "BlendShapeChannel"
+	function parseMorphTargets( relationships, deformerNode, deformerNodes, connections ) {
+
+		var rawMorphTargets = [];
+
+		for ( var i = 0; i < relationships.children.length; i ++ ) {
+
+			if ( i === 8 ) {
+
+				console.warn( 'FBXLoader: maximum of 8 morph targets supported. Ignoring additional targets.' );
+
+				break;
+
+			}
+
+			var child = relationships.children[ i ];
+
+			var morphTargetNode = deformerNodes[ child.ID ];
+
+			var rawMorphTarget = {
+
+				name: morphTargetNode.attrName,
+				initialWeight: morphTargetNode.DeformPercent,
+				id: morphTargetNode.id,
+				fullWeights: morphTargetNode.FullWeights.a
+
+			};
+
+			if ( morphTargetNode.attrType !== 'BlendShapeChannel' ) return;
+
+			var targetRelationships = connections.get( parseInt( child.ID ) );
+
+			targetRelationships.children.forEach( function ( child ) {
+
+				if ( child.relationship === 'DeformPercent' ) {
+
+					// TODO: animation of morph targets is currently unsupported
+					rawMorphTarget.weightCurveID = child.ID;
+					// weightCurve = FBXTree.Objects.AnimationCurveNode[ weightCurveID ];
+
+				} else {
+
+					rawMorphTarget.geoID = child.ID;
+					// morphGeo = FBXTree.Objects.Geometry[ geoID ];
+
+				}
+
+			} );
+
+			rawMorphTargets.push( rawMorphTarget );
+
+		}
+
+		return rawMorphTargets;
+
+	}
+
 	// Parse nodes in FBXTree.Objects.Geometry
-	function parseGeometries( FBXTree, connections, skeletons ) {
+	function parseGeometries( FBXTree, connections, deformers ) {
 
 		var geometryMap = new Map();
 
 		if ( 'Geometry' in FBXTree.Objects ) {
 
-			var geometryNodes = FBXTree.Objects.Geometry;
+			var geoNodes = FBXTree.Objects.Geometry;
 
-
-
-			for ( var nodeID in geometryNodes ) {
+			for ( var nodeID in geoNodes ) {
 
 				var relationships = connections.get( parseInt( nodeID ) );
-				var geo = parseGeometry( FBXTree, relationships, geometryNodes[ nodeID ], skeletons );
+				var geo = parseGeometry( FBXTree, relationships, geoNodes[ nodeID ], deformers );
 
 				geometryMap.set( parseInt( nodeID ), geo );
 
@@ -689,25 +797,27 @@ import { _Math } from '../math/Math.js'
 	}
 
 	// Parse single node in FBXTree.Objects.Geometry
-	function parseGeometry( FBXTree, relationships, geometryNode, skeletons ) {
+	function parseGeometry( FBXTree, relationships, geoNode, deformers ) {
 
-		switch ( geometryNode.attrType ) {
+		switch ( geoNode.attrType ) {
 
 			case 'Mesh':
-				return parseMeshGeometry( FBXTree, relationships, geometryNode, skeletons );
+				return parseMeshGeometry( FBXTree, relationships, geoNode, deformers );
 				break;
 
 			case 'NurbsCurve':
-				return parseNurbsGeometry( geometryNode );
+				return parseNurbsGeometry( geoNode );
 				break;
 
 		}
 
 	}
 
-
 	// Parse single node mesh geometry in FBXTree.Objects.Geometry
-	function parseMeshGeometry( FBXTree, relationships, geometryNode, skeletons ) {
+	function parseMeshGeometry( FBXTree, relationships, geoNode, deformers ) {
+
+		var skeletons = deformers.skeletons;
+		var morphTargets = deformers.morphTargets;
 
 		var modelNodes = relationships.parents.map( function ( parent ) {
 
@@ -726,6 +836,14 @@ import { _Math } from '../math/Math.js'
 
 		}, null );
 
+		var morphTarget = relationships.children.reduce( function ( morphTarget, child ) {
+
+			if ( morphTargets[ child.ID ] !== undefined ) morphTarget = morphTargets[ child.ID ];
+
+			return morphTarget;
+
+		}, null );
+
 		var preTransform = new Matrix4();
 
 		// TODO: if there is more than one model associated with the geometry, AND the models have
@@ -734,7 +852,6 @@ import { _Math } from '../math/Math.js'
 
 		// For now just assume one model and get the preRotations from that
 		var modelNode = modelNodes[ 0 ];
-
 
 		if ( 'GeometricRotation' in modelNode ) {
 
@@ -757,68 +874,172 @@ import { _Math } from '../math/Math.js'
 
 		}
 
-		return genGeometry( FBXTree, relationships, geometryNode, skeleton, preTransform );
+		return genGeometry( FBXTree, geoNode, skeleton, morphTarget, preTransform );
 
 	}
 
 	// Generate a BufferGeometry from a node in FBXTree.Objects.Geometry
-	function genGeometry( FBXTree, relationships, geometryNode, skeleton, preTransform ) {
+	function genGeometry( FBXTree, geoNode, skeleton, morphTarget, preTransform ) {
 
-		var vertexPositions = geometryNode.Vertices.a;
-		var vertexIndices = geometryNode.PolygonVertexIndex.a;
+		var geo = new BufferGeometry();
+		if ( geoNode.attrName ) geo.name = geoNode.attrName;
 
-		// create arrays to hold the final data used to build the buffergeometry
-		var vertexBuffer = [];
-		var normalBuffer = [];
-		var colorsBuffer = [];
-		var uvsBuffer = [];
-		var materialIndexBuffer = [];
-		var vertexWeightsBuffer = [];
-		var weightsIndicesBuffer = [];
+		var geoInfo = getGeoInfo( geoNode, skeleton );
 
-		if ( geometryNode.LayerElementColor ) {
+		var buffers = genBuffers( geoInfo );
 
-			var colorInfo = getColors( geometryNode.LayerElementColor[ 0 ] );
+		var positionAttribute = new Float32BufferAttribute( buffers.vertex, 3 );
 
-		}
+		preTransform.applyToBufferAttribute( positionAttribute );
 
-		if ( geometryNode.LayerElementMaterial ) {
+		geo.addAttribute( 'position', positionAttribute );
 
-			var materialInfo = getMaterials( geometryNode.LayerElementMaterial[ 0 ] );
+		if ( buffers.colors.length > 0 ) {
+
+			geo.addAttribute( 'color', new Float32BufferAttribute( buffers.colors, 3 ) );
 
 		}
 
-		if ( geometryNode.LayerElementNormal ) {
+		if ( skeleton ) {
 
-			var normalInfo = getNormals( geometryNode.LayerElementNormal[ 0 ] );
+			geo.addAttribute( 'skinIndex', new Uint16BufferAttribute( buffers.weightsIndices, 4 ) );
+
+			geo.addAttribute( 'skinWeight', new Float32BufferAttribute( buffers.vertexWeights, 4 ) );
+
+			// used later to bind the skeleton to the model
+			geo.FBX_Deformer = skeleton;
 
 		}
 
-		if ( geometryNode.LayerElementUV ) {
+		if ( buffers.normal.length > 0 ) {
 
-			var uvInfo = [];
+			var normalAttribute = new Float32BufferAttribute( buffers.normal, 3 );
+
+			var normalMatrix = new Matrix3().getNormalMatrix( preTransform );
+			normalMatrix.applyToBufferAttribute( normalAttribute );
+
+			geo.addAttribute( 'normal', normalAttribute );
+
+		}
+
+		buffers.uvs.forEach( function ( uvBuffer, i ) {
+
+			// subsequent uv buffers are called 'uv1', 'uv2', ...
+			var name = 'uv' + ( i + 1 ).toString();
+
+			// the first uv buffer is just called 'uv'
+			if ( i === 0 ) {
+
+				name = 'uv';
+
+			}
+
+			geo.addAttribute( name, new Float32BufferAttribute( buffers.uvs[ i ], 2 ) );
+
+		} );
+
+		if ( geoInfo.material && geoInfo.material.mappingType !== 'AllSame' ) {
+
+			// Convert the material indices of each vertex into rendering groups on the geometry.
+			var prevMaterialIndex = buffers.materialIndex[ 0 ];
+			var startIndex = 0;
+
+			buffers.materialIndex.forEach( function ( currentIndex, i ) {
+
+				if ( currentIndex !== prevMaterialIndex ) {
+
+					geo.addGroup( startIndex, i - startIndex, prevMaterialIndex );
+
+					prevMaterialIndex = currentIndex;
+					startIndex = i;
+
+				}
+
+			} );
+
+			// the loop above doesn't add the last group, do that here.
+			if ( geo.groups.length > 0 ) {
+
+				var lastGroup = geo.groups[ geo.groups.length - 1 ];
+				var lastIndex = lastGroup.start + lastGroup.count;
+
+				if ( lastIndex !== buffers.materialIndex.length ) {
+
+					geo.addGroup( lastIndex, buffers.materialIndex.length - lastIndex, prevMaterialIndex );
+
+				}
+
+			}
+
+			// case where there are multiple materials but the whole geometry is only
+			// using one of them
+			if ( geo.groups.length === 0 ) {
+
+				geo.addGroup( 0, buffers.materialIndex.length, buffers.materialIndex[ 0 ] );
+
+			}
+
+		}
+
+		addMorphTargets( FBXTree, geo, geoNode, morphTarget, preTransform );
+
+		return geo;
+
+	}
+
+	function getGeoInfo( geoNode, skeleton ) {
+
+		var geoInfo = {};
+
+		geoInfo.vertexPositions = ( geoNode.Vertices !== undefined ) ? geoNode.Vertices.a : [];
+		geoInfo.vertexIndices = ( geoNode.PolygonVertexIndex !== undefined ) ? geoNode.PolygonVertexIndex.a : [];
+
+		if ( geoNode.LayerElementColor ) {
+
+			geoInfo.color = getColors( geoNode.LayerElementColor[ 0 ] );
+
+		}
+
+		if ( geoNode.LayerElementMaterial ) {
+
+			geoInfo.material = getMaterials( geoNode.LayerElementMaterial[ 0 ] );
+
+		}
+
+		if ( geoNode.LayerElementNormal ) {
+
+			geoInfo.normal = getNormals( geoNode.LayerElementNormal[ 0 ] );
+
+		}
+
+		if ( geoNode.LayerElementUV ) {
+
+			geoInfo.uv = [];
+
 			var i = 0;
-			while ( geometryNode.LayerElementUV[ i ] ) {
+			while ( geoNode.LayerElementUV[ i ] ) {
 
-				uvInfo.push( getUVs( geometryNode.LayerElementUV[ i ] ) );
+				geoInfo.uv.push( getUVs( geoNode.LayerElementUV[ i ] ) );
 				i ++;
 
 			}
 
 		}
 
-		var weightTable = {};
+		geoInfo.weightTable = {};
 
 		if ( skeleton !== null ) {
+
+			geoInfo.skeleton = skeleton;
 
 			skeleton.rawBones.forEach( function ( rawBone, i ) {
 
 				// loop over the bone's vertex indices and weights
 				rawBone.indices.forEach( function ( index, j ) {
 
-					if ( weightTable[ index ] === undefined ) weightTable[ index ] = [];
+					if ( geoInfo.weightTable[ index ] === undefined ) geoInfo.weightTable[ index ] = [];
 
-					weightTable[ index ].push( {
+					geoInfo.weightTable[ index ].push( {
 
 						id: i,
 						weight: rawBone.weights[ j ],
@@ -831,19 +1052,35 @@ import { _Math } from '../math/Math.js'
 
 		}
 
+		return geoInfo;
+
+	}
+
+	function genBuffers( geoInfo ) {
+
+		var buffers = {
+			vertex: [],
+			normal: [],
+			colors: [],
+			uvs: [],
+			materialIndex: [],
+			vertexWeights: [],
+			weightsIndices: [],
+		};
+
 		var polygonIndex = 0;
 		var faceLength = 0;
 		var displayedWeightsWarning = false;
 
 		// these will hold data for a single face
-		var vertexPositionIndexes = [];
+		var facePositionIndexes = [];
 		var faceNormals = [];
 		var faceColors = [];
 		var faceUVs = [];
 		var faceWeights = [];
 		var faceWeightIndices = [];
 
-		vertexIndices.forEach( function ( vertexIndex, polygonVertexIndex ) {
+		geoInfo.vertexIndices.forEach( function ( vertexIndex, polygonVertexIndex ) {
 
 			var endOfFace = false;
 
@@ -853,11 +1090,10 @@ import { _Math } from '../math/Math.js'
 			//  a: 0, 1, 3, -3, 2, 3, 5, -5, 4, 5, 7, -7, 6, 7, 1, -1, 1, 7, 5, -4, 6, 0, 2, -5
 			//  }
 			// Negative numbers mark the end of a face - first face here is 0, 1, 3, -3
-			// to find index of last vertex multiply by -1 and subtract 1: -3 * - 1 - 1 = 2
+			// to find index of last vertex bit shift the index: ^ - 1
 			if ( vertexIndex < 0 ) {
 
 				vertexIndex = vertexIndex ^ - 1; // equivalent to ( x * -1 ) - 1
-				vertexIndices[ polygonVertexIndex ] = vertexIndex;
 				endOfFace = true;
 
 			}
@@ -865,21 +1101,21 @@ import { _Math } from '../math/Math.js'
 			var weightIndices = [];
 			var weights = [];
 
-			vertexPositionIndexes.push( vertexIndex * 3, vertexIndex * 3 + 1, vertexIndex * 3 + 2 );
+			facePositionIndexes.push( vertexIndex * 3, vertexIndex * 3 + 1, vertexIndex * 3 + 2 );
 
-			if ( colorInfo ) {
+			if ( geoInfo.color ) {
 
-				var data = getData( polygonVertexIndex, polygonIndex, vertexIndex, colorInfo );
+				var data = getData( polygonVertexIndex, polygonIndex, vertexIndex, geoInfo.color );
 
 				faceColors.push( data[ 0 ], data[ 1 ], data[ 2 ] );
 
 			}
 
-			if ( skeleton ) {
+			if ( geoInfo.skeleton ) {
 
-				if ( weightTable[ vertexIndex ] !== undefined ) {
+				if ( geoInfo.weightTable[ vertexIndex ] !== undefined ) {
 
-					weightTable[ vertexIndex ].forEach( function ( wt ) {
+					geoInfo.weightTable[ vertexIndex ].forEach( function ( wt ) {
 
 						weights.push( wt.weight );
 						weightIndices.push( wt.id );
@@ -945,23 +1181,23 @@ import { _Math } from '../math/Math.js'
 
 			}
 
-			if ( normalInfo ) {
+			if ( geoInfo.normal ) {
 
-				var data = getData( polygonVertexIndex, polygonIndex, vertexIndex, normalInfo );
+				var data = getData( polygonVertexIndex, polygonIndex, vertexIndex, geoInfo.normal );
 
 				faceNormals.push( data[ 0 ], data[ 1 ], data[ 2 ] );
 
 			}
 
-			if ( materialInfo && materialInfo.mappingType !== 'AllSame' ) {
+			if ( geoInfo.material && geoInfo.material.mappingType !== 'AllSame' ) {
 
-				var materialIndex = getData( polygonVertexIndex, polygonIndex, vertexIndex, materialInfo )[ 0 ];
+				var materialIndex = getData( polygonVertexIndex, polygonIndex, vertexIndex, geoInfo.material )[ 0 ];
 
 			}
 
-			if ( uvInfo ) {
+			if ( geoInfo.uv ) {
 
-				uvInfo.forEach( function ( uv, i ) {
+				geoInfo.uv.forEach( function ( uv, i ) {
 
 					var data = getData( polygonVertexIndex, polygonIndex, vertexIndex, uv );
 
@@ -980,124 +1216,15 @@ import { _Math } from '../math/Math.js'
 
 			faceLength ++;
 
-			// we have reached the end of a face - it may have 4 sides though
-			// in which case the data is split to represent two 3 sided faces
 			if ( endOfFace ) {
 
-				for ( var i = 2; i < faceLength; i ++ ) {
-
-					vertexBuffer.push( vertexPositions[ vertexPositionIndexes[ 0 ] ] );
-					vertexBuffer.push( vertexPositions[ vertexPositionIndexes[ 1 ] ] );
-					vertexBuffer.push( vertexPositions[ vertexPositionIndexes[ 2 ] ] );
-
-					vertexBuffer.push( vertexPositions[ vertexPositionIndexes[ ( i - 1 ) * 3 ] ] );
-					vertexBuffer.push( vertexPositions[ vertexPositionIndexes[ ( i - 1 ) * 3 + 1 ] ] );
-					vertexBuffer.push( vertexPositions[ vertexPositionIndexes[ ( i - 1 ) * 3 + 2 ] ] );
-
-					vertexBuffer.push( vertexPositions[ vertexPositionIndexes[ i * 3 ] ] );
-					vertexBuffer.push( vertexPositions[ vertexPositionIndexes[ i * 3 + 1 ] ] );
-					vertexBuffer.push( vertexPositions[ vertexPositionIndexes[ i * 3 + 2 ] ] );
-
-					if ( skeleton ) {
-
-						vertexWeightsBuffer.push( faceWeights[ 0 ] );
-						vertexWeightsBuffer.push( faceWeights[ 1 ] );
-						vertexWeightsBuffer.push( faceWeights[ 2 ] );
-						vertexWeightsBuffer.push( faceWeights[ 3 ] );
-
-						vertexWeightsBuffer.push( faceWeights[ ( i - 1 ) * 4 ] );
-						vertexWeightsBuffer.push( faceWeights[ ( i - 1 ) * 4 + 1 ] );
-						vertexWeightsBuffer.push( faceWeights[ ( i - 1 ) * 4 + 2 ] );
-						vertexWeightsBuffer.push( faceWeights[ ( i - 1 ) * 4 + 3 ] );
-
-						vertexWeightsBuffer.push( faceWeights[ i * 4 ] );
-						vertexWeightsBuffer.push( faceWeights[ i * 4 + 1 ] );
-						vertexWeightsBuffer.push( faceWeights[ i * 4 + 2 ] );
-						vertexWeightsBuffer.push( faceWeights[ i * 4 + 3 ] );
-
-						weightsIndicesBuffer.push( faceWeightIndices[ 0 ] );
-						weightsIndicesBuffer.push( faceWeightIndices[ 1 ] );
-						weightsIndicesBuffer.push( faceWeightIndices[ 2 ] );
-						weightsIndicesBuffer.push( faceWeightIndices[ 3 ] );
-
-						weightsIndicesBuffer.push( faceWeightIndices[ ( i - 1 ) * 4 ] );
-						weightsIndicesBuffer.push( faceWeightIndices[ ( i - 1 ) * 4 + 1 ] );
-						weightsIndicesBuffer.push( faceWeightIndices[ ( i - 1 ) * 4 + 2 ] );
-						weightsIndicesBuffer.push( faceWeightIndices[ ( i - 1 ) * 4 + 3 ] );
-
-						weightsIndicesBuffer.push( faceWeightIndices[ i * 4 ] );
-						weightsIndicesBuffer.push( faceWeightIndices[ i * 4 + 1 ] );
-						weightsIndicesBuffer.push( faceWeightIndices[ i * 4 + 2 ] );
-						weightsIndicesBuffer.push( faceWeightIndices[ i * 4 + 3 ] );
-
-					}
-
-					if ( colorInfo ) {
-
-						colorsBuffer.push( faceColors[ 0 ] );
-						colorsBuffer.push( faceColors[ 1 ] );
-						colorsBuffer.push( faceColors[ 2 ] );
-
-						colorsBuffer.push( faceColors[ ( i - 1 ) * 3 ] );
-						colorsBuffer.push( faceColors[ ( i - 1 ) * 3 + 1 ] );
-						colorsBuffer.push( faceColors[ ( i - 1 ) * 3 + 2 ] );
-
-						colorsBuffer.push( faceColors[ i * 3 ] );
-						colorsBuffer.push( faceColors[ i * 3 + 1 ] );
-						colorsBuffer.push( faceColors[ i * 3 + 2 ] );
-
-					}
-
-					if ( materialInfo && materialInfo.mappingType !== 'AllSame' ) {
-
-						materialIndexBuffer.push( materialIndex );
-						materialIndexBuffer.push( materialIndex );
-						materialIndexBuffer.push( materialIndex );
-
-					}
-
-					if ( normalInfo ) {
-
-						normalBuffer.push( faceNormals[ 0 ] );
-						normalBuffer.push( faceNormals[ 1 ] );
-						normalBuffer.push( faceNormals[ 2 ] );
-
-						normalBuffer.push( faceNormals[ ( i - 1 ) * 3 ] );
-						normalBuffer.push( faceNormals[ ( i - 1 ) * 3 + 1 ] );
-						normalBuffer.push( faceNormals[ ( i - 1 ) * 3 + 2 ] );
-
-						normalBuffer.push( faceNormals[ i * 3 ] );
-						normalBuffer.push( faceNormals[ i * 3 + 1 ] );
-						normalBuffer.push( faceNormals[ i * 3 + 2 ] );
-
-					}
-
-					if ( uvInfo ) {
-
-						uvInfo.forEach( function ( uv, j ) {
-
-							if ( uvsBuffer[ j ] === undefined ) uvsBuffer[ j ] = [];
-
-							uvsBuffer[ j ].push( faceUVs[ j ][ 0 ] );
-							uvsBuffer[ j ].push( faceUVs[ j ][ 1 ] );
-
-							uvsBuffer[ j ].push( faceUVs[ j ][ ( i - 1 ) * 2 ] );
-							uvsBuffer[ j ].push( faceUVs[ j ][ ( i - 1 ) * 2 + 1 ] );
-
-							uvsBuffer[ j ].push( faceUVs[ j ][ i * 2 ] );
-							uvsBuffer[ j ].push( faceUVs[ j ][ i * 2 + 1 ] );
-
-						} );
-
-					}
-
-				}
+				genFace( buffers, geoInfo, facePositionIndexes, materialIndex, faceNormals, faceColors, faceUVs, faceWeights, faceWeightIndices, faceLength );
 
 				polygonIndex ++;
 				faceLength = 0;
 
 				// reset arrays for the next face
-				vertexPositionIndexes = [];
+				facePositionIndexes = [];
 				faceNormals = [];
 				faceColors = [];
 				faceUVs = [];
@@ -1108,106 +1235,190 @@ import { _Math } from '../math/Math.js'
 
 		} );
 
-		var geo = new BufferGeometry();
-		geo.name = geometryNode.name;
-
-		var positionAttribute = new Float32BufferAttribute( vertexBuffer, 3 );
-
-		preTransform.applyToBufferAttribute( positionAttribute );
-
-		geo.addAttribute( 'position', positionAttribute );
-
-		if ( colorsBuffer.length > 0 ) {
-
-			geo.addAttribute( 'color', new Float32BufferAttribute( colorsBuffer, 3 ) );
-
-		}
-
-		if ( skeleton ) {
-
-			geo.addAttribute( 'skinIndex', new Float32BufferAttribute( weightsIndicesBuffer, 4 ) );
-
-			geo.addAttribute( 'skinWeight', new Float32BufferAttribute( vertexWeightsBuffer, 4 ) );
-
-			// used later to bind the skeleton to the model
-			geo.FBX_Deformer = skeleton;
-
-		}
-
-		if ( normalBuffer.length > 0 ) {
-
-			var normalAttribute = new Float32BufferAttribute( normalBuffer, 3 );
-
-			var normalMatrix = new Matrix3().getNormalMatrix( preTransform );
-			normalMatrix.applyToBufferAttribute( normalAttribute );
-
-			geo.addAttribute( 'normal', normalAttribute );
-
-		}
-
-		uvsBuffer.forEach( function ( uvBuffer, i ) {
-
-			// subsequent uv buffers are called 'uv1', 'uv2', ...
-			var name = 'uv' + ( i + 1 ).toString();
-
-			// the first uv buffer is just called 'uv'
-			if ( i === 0 ) {
-
-				name = 'uv';
-
-			}
-
-			geo.addAttribute( name, new Float32BufferAttribute( uvsBuffer[ i ], 2 ) );
-
-		} );
-
-		if ( materialInfo && materialInfo.mappingType !== 'AllSame' ) {
-
-			// Convert the material indices of each vertex into rendering groups on the geometry.
-			var prevMaterialIndex = materialIndexBuffer[ 0 ];
-			var startIndex = 0;
-
-			materialIndexBuffer.forEach( function ( currentIndex, i ) {
-
-				if ( currentIndex !== prevMaterialIndex ) {
-
-					geo.addGroup( startIndex, i - startIndex, prevMaterialIndex );
-
-					prevMaterialIndex = currentIndex;
-					startIndex = i;
-
-				}
-
-			} );
-
-			// the loop above doesn't add the last group, do that here.
-			if ( geo.groups.length > 0 ) {
-
-				var lastGroup = geo.groups[ geo.groups.length - 1 ];
-				var lastIndex = lastGroup.start + lastGroup.count;
-
-				if ( lastIndex !== materialIndexBuffer.length ) {
-
-					geo.addGroup( lastIndex, materialIndexBuffer.length - lastIndex, prevMaterialIndex );
-
-				}
-
-			}
-
-			// case where there are multiple materials but the whole geometry is only
-			// using one of them
-			if ( geo.groups.length === 0 ) {
-
-				geo.addGroup( 0, materialIndexBuffer.length, materialIndexBuffer[ 0 ] );
-
-			}
-
-		}
-
-		return geo;
+		return buffers;
 
 	}
 
+	// Generate data for a single face in a geometry. If the face is a quad then split it into 2 tris
+	function genFace( buffers, geoInfo, facePositionIndexes, materialIndex, faceNormals, faceColors, faceUVs, faceWeights, faceWeightIndices, faceLength ) {
+
+		for ( var i = 2; i < faceLength; i ++ ) {
+
+			buffers.vertex.push( geoInfo.vertexPositions[ facePositionIndexes[ 0 ] ] );
+			buffers.vertex.push( geoInfo.vertexPositions[ facePositionIndexes[ 1 ] ] );
+			buffers.vertex.push( geoInfo.vertexPositions[ facePositionIndexes[ 2 ] ] );
+
+			buffers.vertex.push( geoInfo.vertexPositions[ facePositionIndexes[ ( i - 1 ) * 3 ] ] );
+			buffers.vertex.push( geoInfo.vertexPositions[ facePositionIndexes[ ( i - 1 ) * 3 + 1 ] ] );
+			buffers.vertex.push( geoInfo.vertexPositions[ facePositionIndexes[ ( i - 1 ) * 3 + 2 ] ] );
+
+			buffers.vertex.push( geoInfo.vertexPositions[ facePositionIndexes[ i * 3 ] ] );
+			buffers.vertex.push( geoInfo.vertexPositions[ facePositionIndexes[ i * 3 + 1 ] ] );
+			buffers.vertex.push( geoInfo.vertexPositions[ facePositionIndexes[ i * 3 + 2 ] ] );
+
+			if ( geoInfo.skeleton ) {
+
+				buffers.vertexWeights.push( faceWeights[ 0 ] );
+				buffers.vertexWeights.push( faceWeights[ 1 ] );
+				buffers.vertexWeights.push( faceWeights[ 2 ] );
+				buffers.vertexWeights.push( faceWeights[ 3 ] );
+
+				buffers.vertexWeights.push( faceWeights[ ( i - 1 ) * 4 ] );
+				buffers.vertexWeights.push( faceWeights[ ( i - 1 ) * 4 + 1 ] );
+				buffers.vertexWeights.push( faceWeights[ ( i - 1 ) * 4 + 2 ] );
+				buffers.vertexWeights.push( faceWeights[ ( i - 1 ) * 4 + 3 ] );
+
+				buffers.vertexWeights.push( faceWeights[ i * 4 ] );
+				buffers.vertexWeights.push( faceWeights[ i * 4 + 1 ] );
+				buffers.vertexWeights.push( faceWeights[ i * 4 + 2 ] );
+				buffers.vertexWeights.push( faceWeights[ i * 4 + 3 ] );
+
+				buffers.weightsIndices.push( faceWeightIndices[ 0 ] );
+				buffers.weightsIndices.push( faceWeightIndices[ 1 ] );
+				buffers.weightsIndices.push( faceWeightIndices[ 2 ] );
+				buffers.weightsIndices.push( faceWeightIndices[ 3 ] );
+
+				buffers.weightsIndices.push( faceWeightIndices[ ( i - 1 ) * 4 ] );
+				buffers.weightsIndices.push( faceWeightIndices[ ( i - 1 ) * 4 + 1 ] );
+				buffers.weightsIndices.push( faceWeightIndices[ ( i - 1 ) * 4 + 2 ] );
+				buffers.weightsIndices.push( faceWeightIndices[ ( i - 1 ) * 4 + 3 ] );
+
+				buffers.weightsIndices.push( faceWeightIndices[ i * 4 ] );
+				buffers.weightsIndices.push( faceWeightIndices[ i * 4 + 1 ] );
+				buffers.weightsIndices.push( faceWeightIndices[ i * 4 + 2 ] );
+				buffers.weightsIndices.push( faceWeightIndices[ i * 4 + 3 ] );
+
+			}
+
+			if ( geoInfo.color ) {
+
+				buffers.colors.push( faceColors[ 0 ] );
+				buffers.colors.push( faceColors[ 1 ] );
+				buffers.colors.push( faceColors[ 2 ] );
+
+				buffers.colors.push( faceColors[ ( i - 1 ) * 3 ] );
+				buffers.colors.push( faceColors[ ( i - 1 ) * 3 + 1 ] );
+				buffers.colors.push( faceColors[ ( i - 1 ) * 3 + 2 ] );
+
+				buffers.colors.push( faceColors[ i * 3 ] );
+				buffers.colors.push( faceColors[ i * 3 + 1 ] );
+				buffers.colors.push( faceColors[ i * 3 + 2 ] );
+
+			}
+
+			if ( geoInfo.material && geoInfo.material.mappingType !== 'AllSame' ) {
+
+				buffers.materialIndex.push( materialIndex );
+				buffers.materialIndex.push( materialIndex );
+				buffers.materialIndex.push( materialIndex );
+
+			}
+
+			if ( geoInfo.normal ) {
+
+				buffers.normal.push( faceNormals[ 0 ] );
+				buffers.normal.push( faceNormals[ 1 ] );
+				buffers.normal.push( faceNormals[ 2 ] );
+
+				buffers.normal.push( faceNormals[ ( i - 1 ) * 3 ] );
+				buffers.normal.push( faceNormals[ ( i - 1 ) * 3 + 1 ] );
+				buffers.normal.push( faceNormals[ ( i - 1 ) * 3 + 2 ] );
+
+				buffers.normal.push( faceNormals[ i * 3 ] );
+				buffers.normal.push( faceNormals[ i * 3 + 1 ] );
+				buffers.normal.push( faceNormals[ i * 3 + 2 ] );
+
+			}
+
+			if ( geoInfo.uv ) {
+
+				geoInfo.uv.forEach( function ( uv, j ) {
+
+					if ( buffers.uvs[ j ] === undefined ) buffers.uvs[ j ] = [];
+
+					buffers.uvs[ j ].push( faceUVs[ j ][ 0 ] );
+					buffers.uvs[ j ].push( faceUVs[ j ][ 1 ] );
+
+					buffers.uvs[ j ].push( faceUVs[ j ][ ( i - 1 ) * 2 ] );
+					buffers.uvs[ j ].push( faceUVs[ j ][ ( i - 1 ) * 2 + 1 ] );
+
+					buffers.uvs[ j ].push( faceUVs[ j ][ i * 2 ] );
+					buffers.uvs[ j ].push( faceUVs[ j ][ i * 2 + 1 ] );
+
+				} );
+
+			}
+
+		}
+
+	}
+
+	function addMorphTargets( FBXTree, parentGeo, parentGeoNode, morphTarget, preTransform ) {
+
+		if ( morphTarget === null ) return;
+
+		parentGeo.morphAttributes.position = [];
+		parentGeo.morphAttributes.normal = [];
+
+		morphTarget.rawTargets.forEach( function ( rawTarget ) {
+
+			var morphGeoNode = FBXTree.Objects.Geometry[ rawTarget.geoID ];
+
+			if ( morphGeoNode !== undefined ) {
+
+				genMorphGeometry( parentGeo, parentGeoNode, morphGeoNode, preTransform );
+
+			}
+
+		} );
+
+	}
+
+	// a morph geometry node is similar to a standard  node, and the node is also contained
+	// in FBXTree.Objects.Geometry, however it can only have attributes for position, normal
+	// and a special attribute Index defining which vertices of the original geometry are affected
+	// Normal and position attributes only have data for the vertices that are affected by the morph
+	function genMorphGeometry( parentGeo, parentGeoNode, morphGeoNode, preTransform ) {
+
+		var morphGeo = new BufferGeometry();
+		if ( morphGeoNode.attrName ) morphGeo.name = morphGeoNode.attrName;
+
+		var vertexIndices = ( parentGeoNode.PolygonVertexIndex !== undefined ) ? parentGeoNode.PolygonVertexIndex.a : [];
+
+		// make a copy of the parent's vertex positions
+		var vertexPositions = ( parentGeoNode.Vertices !== undefined ) ? parentGeoNode.Vertices.a.slice() : [];
+
+		var morphPositions = ( morphGeoNode.Vertices !== undefined ) ? morphGeoNode.Vertices.a : [];
+		var indices = ( morphGeoNode.Indexes !== undefined ) ? morphGeoNode.Indexes.a : [];
+
+		for ( var i = 0; i < indices.length; i ++ ) {
+
+			var morphIndex = indices[ i ] * 3;
+
+			// FBX format uses blend shapes rather than morph targets. This can be converted
+			// by additively combining the blend shape positions with the original geometry's positions
+			vertexPositions[ morphIndex ] += morphPositions[ i * 3 ];
+			vertexPositions[ morphIndex + 1 ] += morphPositions[ i * 3 + 1 ];
+			vertexPositions[ morphIndex + 2 ] += morphPositions[ i * 3 + 2 ];
+
+		}
+
+		// TODO: add morph normal support
+		var morphGeoInfo = {
+			vertexIndices: vertexIndices,
+			vertexPositions: vertexPositions,
+		};
+
+		var morphBuffers = genBuffers( morphGeoInfo );
+
+		var positionAttribute = new Float32BufferAttribute( morphBuffers.vertex, 3 );
+		positionAttribute.name = morphGeoNode.attrName;
+
+		preTransform.applyToBufferAttribute( positionAttribute );
+
+		parentGeo.morphAttributes.position.push( positionAttribute );
+
+	}
 
 	// Parse normal from FBXTree.Objects.Geometry.LayerElementNormal if it exists
 	function getNormals( NormalNode ) {
@@ -1327,101 +1538,42 @@ import { _Math } from '../math/Math.js'
 
 	}
 
-	// Functions use the infoObject and given indices to return value array of geometry.
-	// Parameters:
-	// 	- polygonVertexIndex - Index of vertex in draw order (which index of the index buffer refers to this vertex).
-	// 	- polygonIndex - Index of polygon in geometry.
-	// 	- vertexIndex - Index of vertex inside vertex buffer (used because some data refers to old index buffer that we don't use anymore).
-	// 	- infoObject: can be materialInfo, normalInfo, UVInfo or colorInfo
-	// Index type:
-	//	- Direct: index is same as polygonVertexIndex
-	//	- IndexToDirect: infoObject has it's own set of indices
 	var dataArray = [];
-
-	var GetData = {
-
-		ByPolygonVertex: {
-
-			Direct: function ( polygonVertexIndex, polygonIndex, vertexIndex, infoObject ) {
-
-				var from = ( polygonVertexIndex * infoObject.dataSize );
-				var to = ( polygonVertexIndex * infoObject.dataSize ) + infoObject.dataSize;
-
-				return slice( dataArray, infoObject.buffer, from, to );
-
-			},
-
-			IndexToDirect: function ( polygonVertexIndex, polygonIndex, vertexIndex, infoObject ) {
-
-				var index = infoObject.indices[ polygonVertexIndex ];
-				var from = ( index * infoObject.dataSize );
-				var to = ( index * infoObject.dataSize ) + infoObject.dataSize;
-
-				return slice( dataArray, infoObject.buffer, from, to );
-
-			}
-
-		},
-
-		ByPolygon: {
-
-			Direct: function ( polygonVertexIndex, polygonIndex, vertexIndex, infoObject ) {
-
-				var from = polygonIndex * infoObject.dataSize;
-				var to = polygonIndex * infoObject.dataSize + infoObject.dataSize;
-
-				return slice( dataArray, infoObject.buffer, from, to );
-
-			},
-
-			IndexToDirect: function ( polygonVertexIndex, polygonIndex, vertexIndex, infoObject ) {
-
-				var index = infoObject.indices[ polygonIndex ];
-				var from = index * infoObject.dataSize;
-				var to = index * infoObject.dataSize + infoObject.dataSize;
-
-				return slice( dataArray, infoObject.buffer, from, to );
-
-			}
-
-		},
-
-		ByVertice: {
-
-			Direct: function ( polygonVertexIndex, polygonIndex, vertexIndex, infoObject ) {
-
-				var from = ( vertexIndex * infoObject.dataSize );
-				var to = ( vertexIndex * infoObject.dataSize ) + infoObject.dataSize;
-
-				return slice( dataArray, infoObject.buffer, from, to );
-
-			}
-
-		},
-
-		AllSame: {
-
-			IndexToDirect: function ( polygonVertexIndex, polygonIndex, vertexIndex, infoObject ) {
-
-				var from = infoObject.indices[ 0 ] * infoObject.dataSize;
-				var to = infoObject.indices[ 0 ] * infoObject.dataSize + infoObject.dataSize;
-
-				return slice( dataArray, infoObject.buffer, from, to );
-
-			}
-
-		}
-
-	};
 
 	function getData( polygonVertexIndex, polygonIndex, vertexIndex, infoObject ) {
 
-		return GetData[ infoObject.mappingType ][ infoObject.referenceType ]( polygonVertexIndex, polygonIndex, vertexIndex, infoObject );
+		var index;
+
+		switch ( infoObject.mappingType ) {
+
+			case 'ByPolygonVertex' :
+				index = polygonVertexIndex;
+				break;
+			case 'ByPolygon' :
+				index = polygonIndex;
+				break;
+			case 'ByVertice' :
+				index = vertexIndex;
+				break;
+			case 'AllSame' :
+				index = infoObject.indices[ 0 ];
+				break;
+			default :
+				console.warn( 'FBXLoader: unknown attribute mapping type ' + infoObject.mappingType );
+
+		}
+
+		if ( infoObject.referenceType === 'IndexToDirect' ) index = infoObject.indices[ index ];
+
+		var from = index * infoObject.dataSize;
+		var to = from + infoObject.dataSize;
+
+		return slice( dataArray, infoObject.buffer, from, to );
 
 	}
 
 	// Generate a NurbGeometry from a node in FBXTree.Objects.Geometry
-	function parseNurbsGeometry( geometryNode ) {
+	function parseNurbsGeometry( geoNode ) {
 
 		if ( NURBSCurve === undefined ) {
 
@@ -1430,20 +1582,20 @@ import { _Math } from '../math/Math.js'
 
 		}
 
-		var order = parseInt( geometryNode.Order );
+		var order = parseInt( geoNode.Order );
 
 		if ( isNaN( order ) ) {
 
-			console.error( 'FBXLoader: Invalid Order %s given for geometry ID: %s', geometryNode.Order, geometryNode.id );
+			console.error( 'FBXLoader: Invalid Order %s given for geometry ID: %s', geoNode.Order, geoNode.id );
 			return new BufferGeometry();
 
 		}
 
 		var degree = order - 1;
 
-		var knots = geometryNode.KnotVector.a;
+		var knots = geoNode.KnotVector.a;
 		var controlPoints = [];
-		var pointsValues = geometryNode.Points.a;
+		var pointsValues = geoNode.Points.a;
 
 		for ( var i = 0, l = pointsValues.length; i < l; i += 4 ) {
 
@@ -1453,11 +1605,11 @@ import { _Math } from '../math/Math.js'
 
 		var startKnot, endKnot;
 
-		if ( geometryNode.Form === 'Closed' ) {
+		if ( geoNode.Form === 'Closed' ) {
 
 			controlPoints.push( controlPoints[ 0 ] );
 
-		} else if ( geometryNode.Form === 'Periodic' ) {
+		} else if ( geoNode.Form === 'Periodic' ) {
 
 			startKnot = degree;
 			endKnot = knots.length - 1 - startKnot;
@@ -2200,27 +2352,20 @@ import { _Math } from '../math/Math.js'
 
 				var animationCurveID = relationships.parents[ 0 ].ID;
 				var animationCurveRelationship = relationships.parents[ 0 ].relationship;
-				var axis = '';
 
 				if ( animationCurveRelationship.match( /X/ ) ) {
 
-					axis = 'x';
+					curveNodesMap.get( animationCurveID ).curves[ 'x' ] = animationCurve;
 
 				} else if ( animationCurveRelationship.match( /Y/ ) ) {
 
-					axis = 'y';
+					curveNodesMap.get( animationCurveID ).curves[ 'y' ] = animationCurve;
 
 				} else if ( animationCurveRelationship.match( /Z/ ) ) {
 
-					axis = 'z';
-
-				} else {
-
-					continue;
+					curveNodesMap.get( animationCurveID ).curves[ 'z' ] = animationCurve;
 
 				}
-
-				curveNodesMap.get( animationCurveID ).curves[ axis ] = animationCurve;
 
 			}
 
@@ -2230,7 +2375,7 @@ import { _Math } from '../math/Math.js'
 
 	// parse nodes in FBXTree.Objects.AnimationLayer. Each layers holds references
 	// to various AnimationCurveNodes and is referenced by an AnimationStack node
-	// note: theoretically a stack can multiple layers, however in practice there always seems to be one per stack
+	// note: theoretically a stack can have multiple layers, however in practice there always seems to be one per stack
 	function parseAnimationLayers( FBXTree, connections, curveNodesMap ) {
 
 		var rawLayers = FBXTree.Objects.AnimationLayer;
@@ -2424,9 +2569,24 @@ import { _Math } from '../math/Math.js'
 
 	function generateRotationTrack( modelName, curves, initialValue, preRotations ) {
 
-		if ( curves.x !== undefined ) curves.x.values = curves.x.values.map( _Math.degToRad );
-		if ( curves.y !== undefined ) curves.y.values = curves.y.values.map( _Math.degToRad );
-		if ( curves.z !== undefined ) curves.z.values = curves.z.values.map( _Math.degToRad );
+		if ( curves.x !== undefined ) {
+
+			interpolateRotations( curves.x );
+			curves.x.values = curves.x.values.map( _Math.degToRad );
+
+		}
+		if ( curves.y !== undefined ) {
+
+			interpolateRotations( curves.y );
+			curves.y.values = curves.y.values.map( _Math.degToRad );
+
+		}
+		if ( curves.z !== undefined ) {
+
+			interpolateRotations( curves.z );
+			curves.z.values = curves.z.values.map( _Math.degToRad );
+
+		}
 
 		var times = getTimesForAllAxes( curves );
 		var values = getKeyframeTrackValues( times, curves, initialValue );
@@ -2545,6 +2705,52 @@ import { _Math } from '../math/Math.js'
 		} );
 
 		return times;
+
+	}
+
+	// Rotations are defined as Euler angles which can have values  of any size
+	// These will be converted to quaternions which don't support values greater than
+	// PI, so we'll interpolate large rotations
+	function interpolateRotations( curve ) {
+
+		for ( var i = 1; i < curve.values.length; i ++ ) {
+
+			var initialValue = curve.values[ i - 1 ];
+			var valuesSpan = curve.values[ i ] - initialValue;
+
+			var absoluteSpan = Math.abs( valuesSpan );
+
+			if ( absoluteSpan >= 180 ) {
+
+				var numSubIntervals = absoluteSpan / 180;
+
+				var step = valuesSpan / numSubIntervals;
+				var nextValue = initialValue + step;
+
+				var initialTime = curve.times[ i - 1 ];
+				var timeSpan = curve.times[ i ] - initialTime;
+				var interval = timeSpan / numSubIntervals;
+				var nextTime = initialTime + interval;
+
+				var interpolatedTimes = [];
+				var interpolatedValues = [];
+
+				while ( nextTime < curve.times[ i ] ) {
+
+					interpolatedTimes.push( nextTime );
+					nextTime += interval;
+
+					interpolatedValues.push( nextValue );
+					nextValue += step;
+
+				}
+
+				curve.times = inject( curve.times, i, interpolatedTimes );
+				curve.values = inject( curve.values, i, interpolatedValues );
+
+			}
+
+		}
 
 	}
 
@@ -3569,6 +3775,13 @@ import { _Math } from '../math/Math.js'
 		}
 
 		return a;
+
+	}
+
+	// inject array a2 into array a1 at index
+	function inject( a1, index, a2 ) {
+
+		return a1.slice( 0, index ).concat( a2 ).concat( a1.slice( index ) );
 
 	}
 

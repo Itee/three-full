@@ -49,7 +49,7 @@ var CSS3DRenderer = function () {
 
 	var cache = {
 		camera: { fov: 0, style: '' },
-		objects: {}
+		objects: new WeakMap()
 	};
 
 	var domElement = document.createElement( 'div' );
@@ -60,7 +60,6 @@ var CSS3DRenderer = function () {
 	var cameraElement = document.createElement( 'div' );
 
 	cameraElement.style.WebkitTransformStyle = 'preserve-3d';
-	cameraElement.style.MozTransformStyle = 'preserve-3d';
 	cameraElement.style.transformStyle = 'preserve-3d';
 
 	domElement.appendChild( cameraElement );
@@ -186,21 +185,22 @@ var CSS3DRenderer = function () {
 			}
 
 			var element = object.element;
-			var cachedStyle = cache.objects[ object.id ] && cache.objects[ object.id ].style;
+			var cachedStyle = cache.objects.get( object );
 
 			if ( cachedStyle === undefined || cachedStyle !== style ) {
 
 				element.style.WebkitTransform = style;
-				element.style.MozTransform = style;
 				element.style.transform = style;
 
-				cache.objects[ object.id ] = { style: style };
+				var objectData = { style: style };
 
 				if ( isIE ) {
 
-					cache.objects[ object.id ].distanceToCameraSquared = getDistanceToSquared( camera, object );
+					objectData.distanceToCameraSquared = getDistanceToSquared( camera, object );
 
 				}
+
+				cache.objects.set( object, objectData );
 
 			}
 
@@ -236,26 +236,38 @@ var CSS3DRenderer = function () {
 
 	}();
 
-	function zOrder( scene ) {
+	function filterAndFlatten( scene ) {
 
-		var order = Object.keys( cache.objects ).sort( function ( a, b ) {
-
-			return cache.objects[ a ].distanceToCameraSquared - cache.objects[ b ].distanceToCameraSquared;
-
-		} );
-		var zMax = order.length;
+		var result = [];
 
 		scene.traverse( function ( object ) {
 
-			var index = order.indexOf( object.id + '' );
-
-			if ( index !== - 1 ) {
-
-				object.element.style.zIndex = zMax - index;
-
-			}
+			if ( object instanceof CSS3DObject ) result.push( object );
 
 		} );
+
+		return result;
+
+	}
+
+	function zOrder( scene ) {
+
+		var sorted = filterAndFlatten( scene ).sort( function ( a, b ) {
+
+			var distanceA = cache.objects.get( a ).distanceToCameraSquared;
+			var distanceB = cache.objects.get( b ).distanceToCameraSquared;
+
+			return distanceA - distanceB;
+
+		} );
+
+		var zMax = sorted.length;
+
+		for ( var i = 0, l = sorted.length; i < l; i ++ ) {
+
+			sorted[ i ].element.style.zIndex = zMax - i;
+
+		}
 
 	}
 
@@ -265,9 +277,12 @@ var CSS3DRenderer = function () {
 
 		if ( cache.camera.fov !== fov ) {
 
-			domElement.style.WebkitPerspective = fov + 'px';
-			domElement.style.MozPerspective = fov + 'px';
-			domElement.style.perspective = fov + 'px';
+			if ( camera.isPerspectiveCamera ) {
+
+				domElement.style.WebkitPerspective = fov + 'px';
+				domElement.style.perspective = fov + 'px';
+
+			}
 
 			cache.camera.fov = fov;
 
@@ -277,8 +292,9 @@ var CSS3DRenderer = function () {
 
 		if ( camera.parent === null ) camera.updateMatrixWorld();
 
-		var cameraCSSMatrix = 'translateZ(' + fov + 'px)' +
-			getCameraCSSMatrix( camera.matrixWorldInverse );
+		var cameraCSSMatrix = camera.isOrthographicCamera ?
+			'scale(' + fov + ')' + getCameraCSSMatrix( camera.matrixWorldInverse ) :
+			'translateZ(' + fov + 'px)' + getCameraCSSMatrix( camera.matrixWorldInverse );
 
 		var style = cameraCSSMatrix +
 			'translate(' + _widthHalf + 'px,' + _heightHalf + 'px)';
@@ -286,7 +302,6 @@ var CSS3DRenderer = function () {
 		if ( cache.camera.style !== style && ! isIE ) {
 
 			cameraElement.style.WebkitTransform = style;
-			cameraElement.style.MozTransform = style;
 			cameraElement.style.transform = style;
 
 			cache.camera.style = style;

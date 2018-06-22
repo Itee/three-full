@@ -62,7 +62,7 @@ PLYExporter.prototype = {
 					}
 
 					// form each line
-					for ( i = 0, l = vertices.count; i < l; i ++ ) {
+					for ( var i = 0, l = vertices.count; i < l; i ++ ) {
 
 						vertex.x = vertices.getX( i );
 						vertex.y = vertices.getY( i );
