@@ -40,6 +40,10 @@ var CSS2DRenderer = function () {
 	var viewMatrix = new Matrix4();
 	var viewProjectionMatrix = new Matrix4();
 
+	var cache = {
+		objects: new WeakMap()
+	};
+
 	var domElement = document.createElement( 'div' );
 	domElement.style.overflow = 'hidden';
 
@@ -82,6 +86,12 @@ var CSS2DRenderer = function () {
 			element.style.oTransform = style;
 			element.style.transform = style;
 
+			var objectData = {
+				distanceToCameraSquared: getDistanceToSquared( camera, object )
+			};
+
+			cache.objects.set( object, objectData );
+
 			if ( element.parentNode !== domElement ) {
 
 				domElement.appendChild( element );
@@ -98,6 +108,57 @@ var CSS2DRenderer = function () {
 
 	};
 
+	var getDistanceToSquared = function () {
+
+		var a = new Vector3();
+		var b = new Vector3();
+
+		return function ( object1, object2 ) {
+
+			a.setFromMatrixPosition( object1.matrixWorld );
+			b.setFromMatrixPosition( object2.matrixWorld );
+
+			return a.distanceToSquared( b );
+
+		};
+
+	}();
+
+	var filterAndFlatten = function ( scene ) {
+
+		var result = [];
+
+		scene.traverse( function ( object ) {
+
+			if ( object instanceof CSS2DObject ) result.push( object );
+
+		} );
+
+		return result;
+
+	};
+
+	var zOrder = function ( scene ) {
+
+		var sorted = filterAndFlatten( scene ).sort( function ( a, b ) {
+
+			var distanceA = cache.objects.get( a ).distanceToCameraSquared;
+			var distanceB = cache.objects.get( b ).distanceToCameraSquared;
+
+			return distanceA - distanceB;
+
+		} );
+
+		var zMax = sorted.length;
+
+		for ( var i = 0, l = sorted.length; i < l; i ++ ) {
+
+			sorted[ i ].element.style.zIndex = zMax - i;
+
+		}
+
+	};
+
 	this.render = function ( scene, camera ) {
 
 		scene.updateMatrixWorld();
@@ -108,6 +169,7 @@ var CSS2DRenderer = function () {
 		viewProjectionMatrix.multiplyMatrices( camera.projectionMatrix, viewMatrix );
 
 		renderObject( scene, camera );
+		zOrder( scene );
 
 	};
 

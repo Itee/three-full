@@ -6,10 +6,7 @@ import { WebGLRenderTargetCube } from '../renderers/WebGLRenderTargetCube.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import {
 	BackSide,
-	CustomBlending,
-	AddEquation,
-	ZeroFactor,
-	OneFactor,
+	NoBlending,
 	RGBAFormat
 } from '../constants.js'
 
@@ -108,13 +105,7 @@ EquiangularToCubeGenerator.prototype = {
 					gl_FragColor = vec4( color, 1.0 );\n\
 				}",
 
-			blending: CustomBlending,
-			premultipliedAlpha: false,
-			blendSrc: OneFactor,
-			blendDst: ZeroFactor,
-			blendSrcAlpha: OneFactor,
-			blendDstAlpha: ZeroFactor,
-			blendEquation: AddEquation
+			blending: NoBlending
 
 		} );
 

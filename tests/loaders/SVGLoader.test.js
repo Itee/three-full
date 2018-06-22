@@ -301,23 +301,12 @@ var Three = (function (exports) {
 
 					delete loading[ url ];
 
-					if ( this.status === 200 ) {
-
-						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-							var callback = callbacks[ i ];
-							if ( callback.onLoad ) callback.onLoad( response );
-
-						}
-
-						scope.manager.itemEnd( url );
-
-					} else if ( this.status === 0 ) {
+					if ( this.status === 200 || this.status === 0 ) {
 
 						// Some browsers return HTTP Status 0 when using non-http protocol
 						// e.g. 'file://' or 'data://'. Handle as success.
 
-						console.warn( 'FileLoader: HTTP Status 0 received.' );
+						if ( this.status === 0 ) console.warn( 'FileLoader: HTTP Status 0 received.' );
 
 						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
 
@@ -888,23 +877,17 @@ var Three = (function (exports) {
 
 		},
 
-		convertGammaToLinear: function () {
+		convertGammaToLinear: function ( gammaFactor ) {
 
-			var r = this.r, g = this.g, b = this.b;
-
-			this.r = r * r;
-			this.g = g * g;
-			this.b = b * b;
+			this.copyGammaToLinear( this, gammaFactor );
 
 			return this;
 
 		},
 
-		convertLinearToGamma: function () {
+		convertLinearToGamma: function ( gammaFactor ) {
 
-			this.r = Math.sqrt( this.r );
-			this.g = Math.sqrt( this.g );
-			this.b = Math.sqrt( this.b );
+			this.copyLinearToGamma( this, gammaFactor );
 
 			return this;
 
@@ -1701,6 +1684,8 @@ var Three = (function (exports) {
 
 			return function extractRotation( m ) {
 
+				// this method does not support reflection matrices
+
 				var te = this.elements;
 				var me = m.elements;
 
@@ -1711,14 +1696,22 @@ var Three = (function (exports) {
 				te[ 0 ] = me[ 0 ] * scaleX;
 				te[ 1 ] = me[ 1 ] * scaleX;
 				te[ 2 ] = me[ 2 ] * scaleX;
+				te[ 3 ] = 0;
 
 				te[ 4 ] = me[ 4 ] * scaleY;
 				te[ 5 ] = me[ 5 ] * scaleY;
 				te[ 6 ] = me[ 6 ] * scaleY;
+				te[ 7 ] = 0;
 
 				te[ 8 ] = me[ 8 ] * scaleZ;
 				te[ 9 ] = me[ 9 ] * scaleZ;
 				te[ 10 ] = me[ 10 ] * scaleZ;
+				te[ 11 ] = 0;
+
+				te[ 12 ] = 0;
+				te[ 13 ] = 0;
+				te[ 14 ] = 0;
+				te[ 15 ] = 1;
 
 				return this;
 
@@ -1839,12 +1832,12 @@ var Three = (function (exports) {
 
 			}
 
-			// last column
+			// bottom row
 			te[ 3 ] = 0;
 			te[ 7 ] = 0;
 			te[ 11 ] = 0;
 
-			// bottom row
+			// last column
 			te[ 12 ] = 0;
 			te[ 13 ] = 0;
 			te[ 14 ] = 0;
@@ -1854,42 +1847,18 @@ var Three = (function (exports) {
 
 		},
 
-		makeRotationFromQuaternion: function ( q ) {
+		makeRotationFromQuaternion: function () {
 
-			var te = this.elements;
+			var zero = new Vector3( 0, 0, 0 );
+			var one = new Vector3( 1, 1, 1 );
 
-			var x = q._x, y = q._y, z = q._z, w = q._w;
-			var x2 = x + x, y2 = y + y, z2 = z + z;
-			var xx = x * x2, xy = x * y2, xz = x * z2;
-			var yy = y * y2, yz = y * z2, zz = z * z2;
-			var wx = w * x2, wy = w * y2, wz = w * z2;
+			return function makeRotationFromQuaternion( q ) {
 
-			te[ 0 ] = 1 - ( yy + zz );
-			te[ 4 ] = xy - wz;
-			te[ 8 ] = xz + wy;
+				return this.compose( zero, q, one );
 
-			te[ 1 ] = xy + wz;
-			te[ 5 ] = 1 - ( xx + zz );
-			te[ 9 ] = yz - wx;
+			};
 
-			te[ 2 ] = xz - wy;
-			te[ 6 ] = yz + wx;
-			te[ 10 ] = 1 - ( xx + yy );
-
-			// last column
-			te[ 3 ] = 0;
-			te[ 7 ] = 0;
-			te[ 11 ] = 0;
-
-			// bottom row
-			te[ 12 ] = 0;
-			te[ 13 ] = 0;
-			te[ 14 ] = 0;
-			te[ 15 ] = 1;
-
-			return this;
-
-		},
+		}(),
 
 		lookAt: function () {
 
@@ -2330,11 +2299,37 @@ var Three = (function (exports) {
 
 		compose: function ( position, quaternion, scale ) {
 
-			this.makeRotationFromQuaternion( quaternion );
-			this.scale( scale );
-			this.setPosition( position );
+			var te = this.elements;
 
-			return this;
+			var x = quaternion._x, y = quaternion._y, z = quaternion._z, w = quaternion._w;
+			var x2 = x + x,	y2 = y + y, z2 = z + z;
+			var xx = x * x2, xy = x * y2, xz = x * z2;
+			var yy = y * y2, yz = y * z2, zz = z * z2;
+			var wx = w * x2, wy = w * y2, wz = w * z2;
+
+			var sx = scale.x, sy = scale.y, sz = scale.z;
+
+		        te[ 0 ] = ( 1 - ( yy + zz ) ) * sx;
+		        te[ 1 ] = ( xy + wz ) * sx;
+		        te[ 2 ] = ( xz - wy ) * sx;
+		        te[ 3 ] = 0;
+
+		        te[ 4 ] = ( xy - wz ) * sy;
+		        te[ 5 ] = ( 1 - ( xx + zz ) ) * sy;
+		        te[ 6 ] = ( yz + wx ) * sy;
+		        te[ 7 ] = 0;
+
+		        te[ 8 ] = ( xz + wy ) * sz;
+		        te[ 9 ] = ( yz - wx ) * sz;
+		        te[ 10 ] = ( 1 - ( xx + yy ) ) * sz;
+		        te[ 11 ] = 0;
+
+		        te[ 12 ] = position.x;
+		        te[ 13 ] = position.y;
+		        te[ 14 ] = position.z;
+		        te[ 15 ] = 1;
+
+		        return this;
 
 		},
 
@@ -7106,14 +7101,16 @@ var Three = (function (exports) {
 							break;
 
 						case 'A':
-							console.warn( command );
 							var numbers = parseFloats( data );
 							for ( var j = 0, jl = numbers.length; j < jl; j += 7 ) {
-								// TODO
+								var start = point.clone();
 								point.x = numbers[ j + 5 ];
 								point.y = numbers[ j + 6 ];
 								control.x = point.x;
 								control.y = point.y;
+								parseArcCommand(
+									path, numbers[ j ], numbers[ j + 1 ], numbers[ j + 2 ], numbers[ j + 3 ], numbers[ j + 4 ], start, point
+								);
 							}
 							break;
 
@@ -7172,6 +7169,8 @@ var Three = (function (exports) {
 									point.x + numbers[ j + 4 ],
 									point.y + numbers[ j + 5 ]
 								);
+								control.x = point.x + numbers[ j + 2 ];
+								control.y = point.y + numbers[ j + 3 ];
 								point.x += numbers[ j + 4 ];
 								point.y += numbers[ j + 5 ];
 							}
@@ -7180,8 +7179,6 @@ var Three = (function (exports) {
 						case 's':
 							var numbers = parseFloats( data );
 							path.bezierCurveTo(
-								// TODO: Not sure if point needs
-								// to be added to reflection...
 								getReflection( point.x, control.x ),
 								getReflection( point.y, control.y ),
 								point.x + numbers[ 0 ],
@@ -7226,14 +7223,16 @@ var Three = (function (exports) {
 							break;
 
 						case 'a':
-							console.warn( command );
 							var numbers = parseFloats( data );
 							for ( var j = 0, jl = numbers.length; j < jl; j += 7 ) {
-								// TODO
+								var start = point.clone();
 								point.x += numbers[ j + 5 ];
 								point.y += numbers[ j + 6 ];
 								control.x = point.x;
 								control.y = point.y;
+								parseArcCommand(
+									path, numbers[ j ], numbers[ j + 1 ], numbers[ j + 2 ], numbers[ j + 3 ], numbers[ j + 4 ], start, point
+								);
 							}
 							break;
 
@@ -7254,6 +7253,71 @@ var Three = (function (exports) {
 				}
 
 				return path;
+
+			}
+
+			
+
+			function parseArcCommand( path, rx, ry, x_axis_rotation, large_arc_flag, sweep_flag, start, end ) {
+
+				x_axis_rotation = x_axis_rotation * Math.PI / 180;
+
+				// Ensure radii are positive
+				rx = Math.abs( rx );
+				ry = Math.abs( ry );
+
+				// Compute (x1′, y1′)
+				var dx2 = ( start.x - end.x ) / 2.0;
+				var dy2 = ( start.y - end.y ) / 2.0;
+				var x1p = Math.cos( x_axis_rotation ) * dx2 + Math.sin( x_axis_rotation ) * dy2;
+				var y1p = - Math.sin( x_axis_rotation ) * dx2 + Math.cos( x_axis_rotation ) * dy2;
+
+				// Compute (cx′, cy′)
+				var rxs = rx * rx;
+				var rys = ry * ry;
+				var x1ps = x1p * x1p;
+				var y1ps = y1p * y1p;
+
+				// Ensure radii are large enough
+				var cr = x1ps / rxs + y1ps / rys;
+
+				if ( cr > 1 ) {
+
+					// scale up rx,ry equally so cr == 1
+					var s = Math.sqrt( cr );
+					rx = s * rx;
+					ry = s * ry;
+					rxs = rx * rx;
+					rys = ry * ry;
+
+				}
+
+				var dq = ( rxs * y1ps + rys * x1ps );
+				var pq = ( rxs * rys - dq ) / dq;
+				var q = Math.sqrt( Math.max( 0, pq ) );
+				if ( large_arc_flag === sweep_flag ) q = - q;
+				var cxp = q * rx * y1p / ry;
+				var cyp = - q * ry * x1p / rx;
+
+				// Step 3: Compute (cx, cy) from (cx′, cy′)
+				var cx = Math.cos( x_axis_rotation ) * cxp - Math.sin( x_axis_rotation ) * cyp + ( start.x + end.x ) / 2;
+				var cy = Math.sin( x_axis_rotation ) * cxp + Math.cos( x_axis_rotation ) * cyp + ( start.y + end.y ) / 2;
+
+				// Step 4: Compute θ1 and Δθ
+				var theta = svgAngle( 1, 0, ( x1p - cxp ) / rx, ( y1p - cyp ) / ry );
+				var delta = svgAngle( ( x1p - cxp ) / rx, ( y1p - cyp ) / ry, ( - x1p - cxp ) / rx, ( - y1p - cyp ) / ry ) % ( Math.PI * 2 );
+
+				path.currentPath.absellipse( cx, cy, rx, ry, theta, theta + delta, sweep_flag === 0, x_axis_rotation );
+
+			}
+
+			function svgAngle( ux, uy, vx, vy ) {
+
+				var dot = ux * vx + uy * vy;
+				var len = Math.sqrt( ux * ux + uy * uy ) *  Math.sqrt( vx * vx + vy * vy );
+				var ang = Math.acos( Math.max( -1, Math.min( 1, dot / len ) ) ); // floating point precision, slightly over values appear
+				if ( ( ux * vy - uy * vx ) < 0 ) ang = - ang;
+				return ang;
 
 			}
 
@@ -7426,7 +7490,7 @@ var Three = (function (exports) {
 
 			function getReflection( a, b ) {
 
-				return 2 * a - ( b - a );
+				return a - ( b - a );
 
 			}
 
@@ -7436,7 +7500,18 @@ var Three = (function (exports) {
 
 				for ( var i = 0; i < array.length; i ++ ) {
 
-					array[ i ] = parseFloat( array[ i ] );
+					var number = array[ i ];
+
+					// Handle values like 48.6037.7
+					// TODO Find a regex for this
+
+					if ( number.indexOf( '.' ) !== number.lastIndexOf( '.' ) ) {
+
+						array.splice( i + 1, 0, '0.' + number.split( '.' )[ 2 ] );
+
+					}
+
+					array[ i ] = parseFloat( number );
 
 				}
 

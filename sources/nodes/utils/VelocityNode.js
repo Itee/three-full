@@ -75,7 +75,7 @@ VelocityNode.prototype.setTarget = function ( target ) {
 
 	if ( target ) {
 
-		this.position = target.getWorldPosition();
+		this.position = target.getWorldPosition( this.position || new Vector3() );
 		this.oldPosition = this.position.clone();
 
 	}
@@ -86,7 +86,7 @@ VelocityNode.prototype.updateFrameVelocity = function ( frame ) {
 
 	if ( this.target ) {
 
-		this.position = this.target.getWorldPosition();
+		this.position = this.target.getWorldPosition( this.position || new Vector3() );
 		this.velocity.subVectors( this.position, this.oldPosition );
 		this.oldPosition.copy( this.position );
 

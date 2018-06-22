@@ -8,10 +8,7 @@ import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Vector3 } from '../math/Vector3.js'
 import {
 	BackSide,
-	CustomBlending,
-	AddEquation,
-	ZeroFactor,
-	OneFactor,
+	NoBlending,
 	LinearToneMapping,
 	CubeUVReflectionMapping,
 	LinearFilter,
@@ -186,13 +183,7 @@ PMREMCubeUVPacker.prototype = {
 					gl_FragColor = linearToOutputTexel( color );\
 				}",
 
-			blending: CustomBlending,
-			premultipliedAlpha: false,
-			blendSrc: OneFactor,
-			blendDst: ZeroFactor,
-			blendSrcAlpha: OneFactor,
-			blendDstAlpha: ZeroFactor,
-			blendEquation: AddEquation
+			blending: NoBlending
 
 		} );
 

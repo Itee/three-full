@@ -1,13 +1,8 @@
 import './polyfills.js';
 
-export {
-	CCDIKSolver,
-	CCDIKHelper
-} from './animation/CCDIKSolver.js'
-export {
-	MMDPhysics,
-	MMDPhysicsHelper
-} from './animation/MMDPhysics.js'
+export { CCDIKSolver } from './animation/CCDIKSolver.js'
+export { MMDAnimationHelper } from './animation/MMDAnimationHelper.js'
+export { MMDPhysics } from './animation/MMDPhysics.js'
 export { AnimationClipCreator } from './animation/AnimationClipCreator.js'
 export { BufferGeometryUtils } from './utils/BufferGeometryUtils.js'
 export { CinematicCamera } from './cameras/CinematicCamera.js'
@@ -61,7 +56,6 @@ export { GLTFExporter } from './exporters/GLTFExporter.js'
 export { MMDExporter } from './exporters/MMDExporter.js'
 export { OBJExporter } from './exporters/OBJExporter.js'
 export { PLYExporter } from './exporters/PLYExporter.js'
-export { STLBinaryExporter } from './exporters/STLBinaryExporter.js'
 export { STLExporter } from './exporters/STLExporter.js'
 export { TypedGeometryExporter } from './exporters/TypedGeometryExporter.js'
 export {
@@ -79,6 +73,7 @@ export {
 } from './objects/GPUParticleSystem.js'
 export { Gyroscope } from './objects/Gyroscope.js'
 export { ImprovedNoise } from './misc/ImprovedNoise.js'
+export { InteractiveScene } from './interaction/InteractiveScene.js'
 export { Line2 } from './lines/Line2.js'
 export { LineGeometry } from './lines/LineGeometry.js'
 export { LineMaterial } from './lines/LineMaterial.js'
@@ -108,12 +103,7 @@ export { KMZLoader } from './loaders/KMZLoader.js'
 export { KTXLoader } from './loaders/KTXLoader.js'
 export { LoaderSupport } from './loaders/LoaderSupport.js'
 export { MD2Loader } from './loaders/MD2Loader.js'
-export {
-	MMDLoader,
-	MMDAudioManager,
-	MMDGrantSolver,
-	MMDHelper
-} from './loaders/MMDLoader.js'
+export { MMDLoader } from './loaders/MMDLoader.js'
 export { MTLLoader } from './loaders/MTLLoader.js'
 export { NodeMaterialLoader } from './loaders/NodeMaterialLoader.js'
 export { OBJLoader } from './loaders/OBJLoader.js'
@@ -189,6 +179,7 @@ export { NodeBuilder } from './nodes/NodeBuilder.js'
 export { NodeFrame } from './nodes/NodeFrame.js'
 export { NodeLib } from './nodes/NodeLib.js'
 export { NodeMaterial } from './nodes/NodeMaterial.js'
+export { NodeUniform } from './nodes/NodeUniform.js'
 export { NodePass } from './nodes/postprocessing/NodePass.js'
 export { RawNode } from './nodes/RawNode.js'
 export { TempNode } from './nodes/TempNode.js'
@@ -293,7 +284,10 @@ export { BasicShader } from './shaders/BasicShader.js'
 export { BleachBypassShader } from './shaders/BleachBypassShader.js'
 export { BlendShader } from './shaders/BlendShader.js'
 export { BokehShader } from './shaders/BokehShader.js'
-export { BokehShader2 } from './shaders/BokehShader2.js'
+export {
+	BokehShader2,
+	BokehDepthShader
+} from './shaders/BokehShader2.js'
 export { BrightnessContrastShader } from './shaders/BrightnessContrastShader.js'
 export { ColorCorrectionShader } from './shaders/ColorCorrectionShader.js'
 export { ColorifyShader } from './shaders/ColorifyShader.js'
@@ -758,6 +752,7 @@ export { ShaderChunk } from './renderers/shaders/ShaderChunk.js'
 export { ShaderLib } from './renderers/shaders/ShaderLib.js'
 export { UniformsLib } from './renderers/shaders/UniformsLib.js'
 export { UniformsUtils } from './renderers/shaders/UniformsUtils.js'
+export { WebGLAnimation } from './renderers/webgl/WebGLAnimation.js'
 export { WebGLAttributes } from './renderers/webgl/WebGLAttributes.js'
 export { WebGLBackground } from './renderers/webgl/WebGLBackground.js'
 export { WebGLBufferRenderer } from './renderers/webgl/WebGLBufferRenderer.js'
@@ -787,6 +782,7 @@ export { WebGLRenderer } from './renderers/WebGLRenderer.js'
 export { WebGLRenderTarget } from './renderers/WebGLRenderTarget.js'
 export { WebGLRenderTargetCube } from './renderers/WebGLRenderTargetCube.js'
 export { WebVRManager } from './renderers/webvr/WebVRManager.js'
+export { WebXRManager } from './renderers/webvr/WebXRManager.js'
 export { Fog } from './scenes/Fog.js'
 export { FogExp2 } from './scenes/FogExp2.js'
 export { Scene } from './scenes/Scene.js'

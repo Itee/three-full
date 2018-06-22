@@ -767,7 +767,7 @@ var Three = (function (exports) {
 
 				if ( ! data.vertex ) {
 
-					data.vertex = material.createVertexUniform( type, this.value, ns, needsUpdate );
+					data.vertex = material.createVertexUniform( type, this, ns, needsUpdate );
 
 				}
 
@@ -777,7 +777,7 @@ var Three = (function (exports) {
 
 				if ( ! data.fragment ) {
 
-					data.fragment = material.createFragmentUniform( type, this.value, ns, needsUpdate );
+					data.fragment = material.createFragmentUniform( type, this, ns, needsUpdate );
 
 				}
 
@@ -793,7 +793,7 @@ var Three = (function (exports) {
 
 		InputNode.call( this, 'fv1' );
 
-		this.value = [ value || 0 ];
+		this.value = value || 0;
 
 	};
 
@@ -801,26 +801,11 @@ var Three = (function (exports) {
 	FloatNode.prototype.constructor = FloatNode;
 	FloatNode.prototype.nodeType = "Float";
 
-	Object.defineProperties( FloatNode.prototype, {
-		number: {
-			get: function () {
-
-				return this.value[ 0 ];
-
-			},
-			set: function ( val ) {
-
-				this.value[ 0 ] = val;
-
-			}
-		}
-	} );
-
 	FloatNode.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
-		var value = this.number;
+		var val = this.value;
 
-		return builder.format( Math.floor( value ) !== value ? value : value + ".0", type, output );
+		return builder.format( Math.floor( val ) !== val ? val : val + ".0", type, output );
 
 	};
 
@@ -832,7 +817,7 @@ var Three = (function (exports) {
 
 			data = this.createJSONNode( meta );
 
-			data.number = this.number;
+			data.value = this.value;
 
 			if ( this.readonly === true ) data.readonly = true;
 
@@ -882,19 +867,19 @@ var Three = (function (exports) {
 
 			case TimerNode.LOCAL:
 
-				this.number += frame.delta * scale;
+				this.value += frame.delta * scale;
 
 				break;
 
 			case TimerNode.DELTA:
 
-				this.number = frame.delta * scale;
+				this.value = frame.delta * scale;
 
 				break;
 
 			default:
 
-				this.number = frame.time * scale;
+				this.value = frame.time * scale;
 
 		}
 

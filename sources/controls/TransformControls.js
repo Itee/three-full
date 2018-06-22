@@ -5,22 +5,16 @@ import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix4 } from '../math/Matrix4.js'
-import { Geometry } from '../core/Geometry.js'
-import {
-	CylinderGeometry,
-	CylinderBufferGeometry
-} from '../geometries/CylinderGeometry.js'
+import { ConeBufferGeometry } from '../geometries/ConeGeometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Line } from '../objects/Line.js'
 import { OctahedronGeometry } from '../geometries/OctahedronGeometry.js'
+import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js'
 import { TorusBufferGeometry } from '../geometries/TorusGeometry.js'
 import { Euler } from '../math/Euler.js'
 import { Quaternion } from '../math/Quaternion.js'
-import {
-	BoxGeometry,
-	BoxBufferGeometry
-} from '../geometries/BoxGeometry.js'
+import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
 import { Raycaster } from '../core/Raycaster.js'
 import { Vector2 } from '../math/Vector2.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
@@ -257,12 +251,8 @@ import {
 
 		TransformGizmo.call( this );
 
-		var arrowGeometry = new Geometry();
-		var mesh = new Mesh( new CylinderGeometry( 0, 0.05, 0.2, 12, 1, false ) );
-		mesh.position.y = 0.5;
-		mesh.updateMatrix();
-
-		arrowGeometry.merge( mesh.geometry, mesh.matrix );
+		var arrowGeometry = new ConeBufferGeometry( 0.05, 0.2, 12, 1, false );
+		arrowGeometry.translate( 0, 0.5, 0 );
 
 		var lineXGeometry = new BufferGeometry();
 		lineXGeometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0, 1, 0, 0 ], 3 ) );
@@ -535,12 +525,8 @@ import {
 
 		TransformGizmo.call( this );
 
-		var arrowGeometry = new Geometry();
-		var mesh = new Mesh( new BoxGeometry( 0.125, 0.125, 0.125 ) );
-		mesh.position.y = 0.5;
-		mesh.updateMatrix();
-
-		arrowGeometry.merge( mesh.geometry, mesh.matrix );
+		var arrowGeometry = new BoxBufferGeometry( 0.125, 0.125, 0.125 );
+		arrowGeometry.translate( 0, 0.5, 0 );
 
 		var lineXGeometry = new BufferGeometry();
 		lineXGeometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0,  1, 0, 0 ], 3 ) );

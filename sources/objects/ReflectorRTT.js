@@ -6,8 +6,6 @@ var ReflectorRTT = function ( geometry, options ) {
 
 	this.geometry.setDrawRange( 0, 0 ); // avoid rendering geometry
 
-	this.renderOrder = -Infinity; // render RTT first
-
 };
 
 ReflectorRTT.prototype = Object.create( Reflector.prototype );

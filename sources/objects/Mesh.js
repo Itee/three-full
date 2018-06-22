@@ -225,7 +225,6 @@ Mesh.prototype = Object.assign( Object.create( Object3D.prototype ), {
 				Triangle.getNormal( vA, vB, vC, face.normal );
 
 				intersection.face = face;
-				intersection.faceIndex = a;
 
 			}
 
@@ -287,7 +286,7 @@ Mesh.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 						if ( intersection ) {
 
-							intersection.faceIndex = Math.floor( i / 3 ); // triangle number in indices buffer semantics
+							intersection.faceIndex = Math.floor( i / 3 ); // triangle number in indexed buffer semantics
 							intersects.push( intersection );
 
 						}
@@ -306,7 +305,12 @@ Mesh.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 						intersection = checkBufferGeometryIntersection( this, raycaster, ray, position, uv, a, b, c );
 
-						if ( intersection ) intersects.push( intersection );
+						if ( intersection ) {
+
+							intersection.faceIndex = Math.floor( i / 3 ); // triangle number in non-indexed buffer semantics
+							intersects.push( intersection );
+
+						}
 
 					}
 

@@ -12,7 +12,7 @@ var OutlineEffect = function ( renderer, parameters ) {
 	this.enabled = true;
 
 	var defaultThickness = parameters.defaultThickness !== undefined ? parameters.defaultThickness : 0.003;
-	var defaultColor = parameters.defaultColor !== undefined ? parameters.defaultColor : new Color( 0x000000 );
+	var defaultColor = new Color().fromArray( parameters.defaultColor !== undefined ? parameters.defaultColor : [ 0, 0, 0 ] );
 	var defaultAlpha = parameters.defaultAlpha !== undefined ? parameters.defaultAlpha : 1.0;
 	var defaultKeepAlive = parameters.defaultKeepAlive !== undefined ? parameters.defaultKeepAlive : false;
 
@@ -121,7 +121,7 @@ var OutlineEffect = function ( renderer, parameters ) {
 
 		var shaderID = shaderIDs[ originalMaterial.type ];
 		var originalUniforms, originalVertexShader;
-		var outlineParameters = originalMaterial.outlineParameters;
+		var outlineParameters = originalMaterial.userData.outlineParameters;
 
 		if ( shaderID !== undefined ) {
 
@@ -281,14 +281,14 @@ var OutlineEffect = function ( renderer, parameters ) {
 
 	function updateUniforms( material, originalMaterial ) {
 
-		var outlineParameters = originalMaterial.outlineParameters;
+		var outlineParameters = originalMaterial.userData.outlineParameters;
 
 		material.uniforms.outlineAlpha.value = originalMaterial.opacity;
 
 		if ( outlineParameters !== undefined ) {
 
 			if ( outlineParameters.thickness !== undefined ) material.uniforms.outlineThickness.value = outlineParameters.thickness;
-			if ( outlineParameters.color !== undefined ) material.uniforms.outlineColor.value.copy( outlineParameters.color );
+			if ( outlineParameters.color !== undefined ) material.uniforms.outlineColor.value.fromArray( outlineParameters.color );
 			if ( outlineParameters.alpha !== undefined ) material.uniforms.outlineAlpha.value = outlineParameters.alpha;
 
 		}
@@ -299,7 +299,7 @@ var OutlineEffect = function ( renderer, parameters ) {
 
 		if ( material.name === 'invisible' ) return;
 
-		var outlineParameters = originalMaterial.outlineParameters;
+		var outlineParameters = originalMaterial.userData.outlineParameters;
 
 		material.skinning = originalMaterial.skinning;
 		material.morphTargets = originalMaterial.morphTargets;

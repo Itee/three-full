@@ -1,15 +1,14 @@
 import { FileLoader } from './FileLoader.js'
-import {
-	Float32BufferAttribute,
-	Uint16BufferAttribute,
-	Uint32BufferAttribute
-} from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import {
 	TrianglesDrawMode,
 	TriangleStripDrawMode
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+import {
+	Uint16BufferAttribute,
+	Uint32BufferAttribute
+} from '../core/BufferAttribute.js'
 
 // Copyright 2016 The Draco Authors.
 //
@@ -63,19 +62,23 @@ DRACOLoader.prototype = {
 
     setPath: function(value) {
         this.path = value;
+        return this;
     },
 
     setCrossOrigin: function(value) {
         this.crossOrigin = value;
+        return this;
     },
 
     setVerbosity: function(level) {
         this.verbosity = level;
+        return this;
     },
 
     
     setDrawMode: function(drawMode) {
         this.drawMode = drawMode;
+        return this;
     },
 
     
@@ -85,20 +88,22 @@ DRACOLoader.prototype = {
           skipDequantization = skip;
         this.getAttributeOptions(attributeName).skipDequantization =
             skipDequantization;
+        return this;
     },
 
     
-    decodeDracoFile: function(rawBuffer, callback, attributeUniqueIdMap) {
+    decodeDracoFile: function(rawBuffer, callback, attributeUniqueIdMap,
+                              attributeTypeMap) {
       var scope = this;
       DRACOLoader.getDecoderModule()
           .then( function ( module ) {
             scope.decodeDracoFileInternal( rawBuffer, module.decoder, callback,
-              attributeUniqueIdMap || {});
+              attributeUniqueIdMap || {}, attributeTypeMap || {});
           });
     },
 
     decodeDracoFileInternal: function(rawBuffer, dracoDecoder, callback,
-                                      attributeUniqueIdMap) {
+                                      attributeUniqueIdMap, attributeTypeMap) {
       
       var buffer = new dracoDecoder.DecoderBuffer();
       buffer.Init(new Int8Array(rawBuffer), rawBuffer.byteLength);
@@ -120,38 +125,103 @@ DRACOLoader.prototype = {
         throw new Error(errorMsg);
       }
       callback(this.convertDracoGeometryTo3JS(dracoDecoder, decoder,
-          geometryType, buffer, attributeUniqueIdMap));
+          geometryType, buffer, attributeUniqueIdMap, attributeTypeMap));
     },
 
     addAttributeToGeometry: function(dracoDecoder, decoder, dracoGeometry,
-                                     attributeName, attribute, geometry,
-                                     geometryBuffer) {
+                                     attributeName, attributeType, attribute, 
+                                     geometry, geometryBuffer) {
       if (attribute.ptr === 0) {
         var errorMsg = 'DRACOLoader: No attribute ' + attributeName;
         console.error(errorMsg);
         throw new Error(errorMsg);
       }
+
       var numComponents = attribute.num_components();
-      var attributeData = new dracoDecoder.DracoFloat32Array();
-      decoder.GetAttributeFloatForAllPoints(
-          dracoGeometry, attribute, attributeData);
       var numPoints = dracoGeometry.num_points();
       var numValues = numPoints * numComponents;
-      // Allocate space for attribute.
-      geometryBuffer[attributeName] = new Float32Array(numValues);
+      var attributeData;
+      var TypedBufferAttribute;
+
+      switch ( attributeType ) {
+
+        case Float32Array:
+          attributeData = new dracoDecoder.DracoFloat32Array();
+          decoder.GetAttributeFloatForAllPoints(
+            dracoGeometry, attribute, attributeData);
+          geometryBuffer[ attributeName ] = new Float32Array( numValues );
+          TypedBufferAttribute = Float32BufferAttribute;
+          break;
+
+        case Int8Array:
+          attributeData = new dracoDecoder.DracoInt8Array();
+          decoder.GetAttributeInt8ForAllPoints(
+            dracoGeometry, attribute, attributeData );
+          geometryBuffer[ attributeName ] = new Int8Array( numValues );
+          TypedBufferAttribute = Int8BufferAttribute;
+          break;
+
+        case Int16Array:
+          attributeData = new dracoDecoder.DracoInt16Array();
+          decoder.GetAttributeInt16ForAllPoints(
+            dracoGeometry, attribute, attributeData);
+          geometryBuffer[ attributeName ] = new Int16Array( numValues );
+          TypedBufferAttribute = Int16BufferAttribute;
+          break;
+
+        case Int32Array:
+          attributeData = new dracoDecoder.DracoInt32Array();
+          decoder.GetAttributeInt32ForAllPoints(
+            dracoGeometry, attribute, attributeData);
+          geometryBuffer[ attributeName ] = new Int32Array( numValues );
+          TypedBufferAttribute = Int32BufferAttribute;
+          break;
+
+        case Uint8Array:
+          attributeData = new dracoDecoder.DracoUInt8Array();
+          decoder.GetAttributeUInt8ForAllPoints(
+            dracoGeometry, attribute, attributeData);
+          geometryBuffer[ attributeName ] = new Uint8Array( numValues );
+          TypedBufferAttribute = Uint8BufferAttribute;
+          break;
+
+        case Uint16Array:
+          attributeData = new dracoDecoder.DracoUInt16Array();
+          decoder.GetAttributeUInt16ForAllPoints(
+            dracoGeometry, attribute, attributeData);
+          geometryBuffer[ attributeName ] = new Uint16Array( numValues );
+          TypedBufferAttribute = Uint16BufferAttribute;
+          break;
+
+        case Uint32Array:
+          attributeData = new dracoDecoder.DracoUInt32Array();
+          decoder.GetAttributeUInt32ForAllPoints(
+            dracoGeometry, attribute, attributeData);
+          geometryBuffer[ attributeName ] = new Uint32Array( numValues );
+          TypedBufferAttribute = Uint32BufferAttribute;
+          break;
+
+        default:
+          var errorMsg = 'DRACOLoader: Unexpected attribute type.';
+          console.error( errorMsg );
+          throw new Error( errorMsg );
+
+      }
+      
       // Copy data from decoder.
       for (var i = 0; i < numValues; i++) {
         geometryBuffer[attributeName][i] = attributeData.GetValue(i);
       }
       // Add attribute to THREEJS geometry for rendering.
       geometry.addAttribute(attributeName,
-          new Float32BufferAttribute(geometryBuffer[attributeName],
+          new TypedBufferAttribute(geometryBuffer[attributeName],
             numComponents));
       dracoDecoder.destroy(attributeData);
     },
 
     convertDracoGeometryTo3JS: function(dracoDecoder, decoder, geometryType,
-                                        buffer, attributeUniqueIdMap) {
+                                        buffer, attributeUniqueIdMap,
+                                        attributeTypeMap) {
         if (this.getAttributeOptions('position').skipDequantization === true) {
           decoder.SkipAttributeTransform(dracoDecoder.POSITION);
         }
@@ -226,18 +296,19 @@ DRACOLoader.prototype = {
               }
               var attribute = decoder.GetAttribute(dracoGeometry, attId);
               this.addAttributeToGeometry(dracoDecoder, decoder, dracoGeometry,
-                  attributeName, attribute, geometry, geometryBuffer);
+                  attributeName, Float32Array, attribute, geometry, geometryBuffer);
             }
           }
         }
 
         // Add attributes of user specified unique id. E.g. GLTF models.
         for (var attributeName in attributeUniqueIdMap) {
+          var attributeType = attributeTypeMap[attributeName] || Float32Array;
           var attributeId = attributeUniqueIdMap[attributeName];
           var attribute = decoder.GetAttributeByUniqueId(dracoGeometry,
                                                          attributeId);
           this.addAttributeToGeometry(dracoDecoder, decoder, dracoGeometry,
-              attributeName, attribute, geometry, geometryBuffer);
+              attributeName, attributeType, attribute, geometry, geometryBuffer);
         }
 
         // For mesh, we need to generate the faces.

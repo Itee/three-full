@@ -187,9 +187,10 @@ Object.assign( NodeMaterialLoader.prototype, {
 
 			switch ( node.type ) {
 
+				case "IntNode":
 				case "FloatNode":
 
-					object.number = node.number;
+					object.value = node.value;
 
 					break;
 

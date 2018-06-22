@@ -42,19 +42,19 @@ TimerNode.prototype.updateFrame = function ( frame ) {
 
 		case TimerNode.LOCAL:
 
-			this.number += frame.delta * scale;
+			this.value += frame.delta * scale;
 
 			break;
 
 		case TimerNode.DELTA:
 
-			this.number = frame.delta * scale;
+			this.value = frame.delta * scale;
 
 			break;
 
 		default:
 
-			this.number = frame.time * scale;
+			this.value = frame.time * scale;
 
 	}
 
