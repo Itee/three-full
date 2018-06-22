@@ -94,7 +94,7 @@ var Three = (function (exports) {
 
 			for ( var i = 0; i < 256; i ++ ) {
 
-				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
 
 			}
 
@@ -104,10 +104,13 @@ var Three = (function (exports) {
 				var d1 = Math.random() * 0xffffffff | 0;
 				var d2 = Math.random() * 0xffffffff | 0;
 				var d3 = Math.random() * 0xffffffff | 0;
-				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+				var uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
 					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
 					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
 					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+
+				// .toUpperCase() here flattens concatenated strings to save heap memory space.
+				return uuid.toUpperCase();
 
 			};
 
@@ -2972,24 +2975,24 @@ var Three = (function (exports) {
 		var lastPosition = new Vector3();
 
 		var _state = STATE.NONE,
-		_prevState = STATE.NONE,
+			_prevState = STATE.NONE,
 
-		_eye = new Vector3(),
+			_eye = new Vector3(),
 
-		_movePrev = new Vector2(),
-		_moveCurr = new Vector2(),
+			_movePrev = new Vector2(),
+			_moveCurr = new Vector2(),
 
-		_lastAxis = new Vector3(),
-		_lastAngle = 0,
+			_lastAxis = new Vector3(),
+			_lastAngle = 0,
 
-		_zoomStart = new Vector2(),
-		_zoomEnd = new Vector2(),
+			_zoomStart = new Vector2(),
+			_zoomEnd = new Vector2(),
 
-		_touchZoomDistanceStart = 0,
-		_touchZoomDistanceEnd = 0,
+			_touchZoomDistanceStart = 0,
+			_touchZoomDistanceEnd = 0,
 
-		_panStart = new Vector2(),
-		_panEnd = new Vector2();
+			_panStart = new Vector2(),
+			_panEnd = new Vector2();
 
 		// for reset
 
@@ -3073,7 +3076,7 @@ var Three = (function (exports) {
 
 		}() );
 
-		this.rotateCamera = ( function() {
+		this.rotateCamera = ( function () {
 
 			var axis = new Vector3(),
 				quaternion = new Quaternion(),
@@ -3163,7 +3166,7 @@ var Three = (function (exports) {
 
 		};
 
-		this.panCamera = ( function() {
+		this.panCamera = ( function () {
 
 			var mouseChange = new Vector2(),
 				objectUp = new Vector3(),
@@ -3397,7 +3400,7 @@ var Three = (function (exports) {
 		function mousewheel( event ) {
 
 			if ( _this.enabled === false ) return;
-			
+
 			if ( _this.noZoom === true ) return;
 
 			event.preventDefault();
@@ -3515,7 +3518,7 @@ var Three = (function (exports) {
 
 		}
 
-		this.dispose = function() {
+		this.dispose = function () {
 
 			this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
 			this.domElement.removeEventListener( 'mousedown', mousedown, false );

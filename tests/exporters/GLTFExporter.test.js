@@ -14,7 +14,7 @@ var Three = (function (exports) {
 
 			for ( var i = 0; i < 256; i ++ ) {
 
-				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
 
 			}
 
@@ -24,10 +24,13 @@ var Three = (function (exports) {
 				var d1 = Math.random() * 0xffffffff | 0;
 				var d2 = Math.random() * 0xffffffff | 0;
 				var d3 = Math.random() * 0xffffffff | 0;
-				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+				var uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
 					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
 					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
 					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+
+				// .toUpperCase() here flattens concatenated strings to save heap memory space.
+				return uuid.toUpperCase();
 
 			};
 
@@ -4903,6 +4906,8 @@ var Three = (function (exports) {
 			this.count = array !== undefined ? array.length / this.itemSize : 0;
 			this.array = array;
 
+			return this;
+
 		},
 
 		setDynamic: function ( value ) {
@@ -4915,6 +4920,7 @@ var Three = (function (exports) {
 
 		copy: function ( source ) {
 
+			this.name = source.name;
 			this.array = new source.array.constructor( source.array );
 			this.itemSize = source.itemSize;
 			this.count = source.count;
@@ -6913,6 +6919,8 @@ var Three = (function (exports) {
 			if ( JSON.stringify( this.userData ) !== '{}' ) object.userData = this.userData;
 
 			object.matrix = this.matrix.toArray();
+
+			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
 
 			//
 
@@ -9054,6 +9062,7 @@ var Three = (function (exports) {
 			var extensionsUsed = {};
 			var cachedData = {
 
+				attributes: new Map(),
 				materials: new Map(),
 				textures: new Map()
 
@@ -9131,6 +9140,66 @@ var Three = (function (exports) {
 			}
 
 			
+			function isNormalizedNormalAttribute( normal ) {
+
+				if ( cachedData.attributes.has( normal ) ) {
+
+					return false;
+
+				}
+
+				var v = new Vector3();
+
+				for ( var i = 0, il = normal.count; i < il; i ++ ) {
+
+					// 0.0005 is from glTF-validator
+					if ( Math.abs( v.fromArray( normal.array, i * 3 ).length() - 1.0 ) > 0.0005 ) return false;
+
+				}
+
+				return true;
+
+			}
+
+			
+			function createNormalizedNormalAttribute( normal ) {
+
+				if ( cachedData.attributes.has( normal ) ) {
+
+					return cachedData.textures.get( normal );
+
+				}
+
+				var attribute = normal.clone();
+
+				var v = new Vector3();
+
+				for ( var i = 0, il = attribute.count; i < il; i ++ ) {
+
+					v.fromArray( attribute.array, i * 3 );
+
+					if ( v.x === 0 && v.y === 0 && v.z === 0 ) {
+
+						// if values can't be normalized set (1, 0, 0)
+						v.setX( 1.0 );
+
+					} else {
+
+						v.normalize();
+
+					}
+
+					v.toArray( attribute.array, i * 3 );
+
+				}
+
+				cachedData.attributes.set( normal, attribute );
+
+				return attribute;
+
+			}
+
+			
 			function getPaddedBufferSize( bufferSize ) {
 
 				return Math.ceil( bufferSize / 4 ) * 4;
@@ -9193,7 +9262,23 @@ var Three = (function (exports) {
 				}
 
 				// Create a new dataview and dump the attribute's array into it
-				var componentSize = componentType === WEBGL_CONSTANTS.UNSIGNED_SHORT ? 2 : 4;
+
+				var componentSize;
+
+				if ( componentType === WEBGL_CONSTANTS.UNSIGNED_BYTE ) {
+
+					componentSize = 1;
+
+				} else if ( componentType === WEBGL_CONSTANTS.UNSIGNED_SHORT ) {
+
+					componentSize = 2;
+
+				} else {
+
+					componentSize = 4;
+
+				}
+
 				var byteLength = getPaddedBufferSize( count * attribute.itemSize * componentSize );
 				var dataView = new DataView( new ArrayBuffer( byteLength ) );
 				var offset = 0;
@@ -9217,6 +9302,10 @@ var Three = (function (exports) {
 						} else if ( componentType === WEBGL_CONSTANTS.UNSIGNED_SHORT ) {
 
 							dataView.setUint16( offset, value, true );
+
+						} else if ( componentType === WEBGL_CONSTANTS.UNSIGNED_BYTE ) {
+
+							dataView.setUint8( offset, value );
 
 						}
 
@@ -9297,12 +9386,6 @@ var Three = (function (exports) {
 			
 			function processAccessor( attribute, geometry, start, count ) {
 
-				if ( ! outputJSON.accessors ) {
-
-					outputJSON.accessors = [];
-
-				}
-
 				var types = {
 
 					1: 'SCALAR',
@@ -9328,6 +9411,10 @@ var Three = (function (exports) {
 
 					componentType = WEBGL_CONSTANTS.UNSIGNED_SHORT;
 
+				} else if ( attribute.array.constructor === Uint8Array ) {
+
+					componentType = WEBGL_CONSTANTS.UNSIGNED_BYTE;
+
 				} else {
 
 					throw new Error( 'GLTFExporter: Unsupported bufferAttribute component type.' );
@@ -9349,6 +9436,13 @@ var Three = (function (exports) {
 					count = Math.min( end, end2 ) - start;
 
 					if ( count < 0 ) count = 0;
+
+				}
+
+				// Skip creating an accessor if the attribute doesn't have data to export
+				if ( count === 0 ) {
+
+					return null;
 
 				}
 
@@ -9377,6 +9471,12 @@ var Three = (function (exports) {
 					type: types[ attribute.itemSize ]
 
 				};
+
+				if ( ! outputJSON.accessors ) {
+
+					outputJSON.accessors = [];
+
+				}
 
 				outputJSON.accessors.push( gltfAccessor );
 
@@ -9615,9 +9715,7 @@ var Three = (function (exports) {
 
 				if ( material.isMeshBasicMaterial ||
 					material.isLineBasicMaterial ||
-					material.isPointsMaterial ) {
-
-				} else {
+					material.isPointsMaterial ) ; else {
 
 					// emissiveFactor
 					var emissive = material.emissive.clone().multiplyScalar( material.emissiveIntensity ).toArray();
@@ -9720,12 +9818,6 @@ var Three = (function (exports) {
 			
 			function processMesh( mesh ) {
 
-				if ( ! outputJSON.meshes ) {
-
-					outputJSON.meshes = [];
-
-				}
-
 				var geometry = mesh.geometry;
 
 				var mode;
@@ -9791,6 +9883,16 @@ var Three = (function (exports) {
 
 				};
 
+				var originalNormal = geometry.getAttribute( 'normal' );
+
+				if ( originalNormal !== undefined && ! isNormalizedNormalAttribute( originalNormal ) ) {
+
+					console.warn( 'GLTFExporter: Creating normalized normal attribute from the non-normalized one.' );
+
+					geometry.addAttribute( 'normal', createNormalizedNormalAttribute( originalNormal ) );
+
+				}
+
 				// @QUESTION Detect if .vertexColors = VertexColors?
 				// For every attribute create an accessor
 				for ( var attributeName in geometry.attributes ) {
@@ -9798,11 +9900,36 @@ var Three = (function (exports) {
 					var attribute = geometry.attributes[ attributeName ];
 					attributeName = nameConversion[ attributeName ] || attributeName.toUpperCase();
 
-					if ( attributeName.substr( 0, 5 ) !== 'MORPH' ) {
+					// JOINTS_0 must be UNSIGNED_BYTE or UNSIGNED_SHORT.
+					var array = attribute.array;
+					if ( attributeName === 'JOINTS_0' &&
+						! ( array instanceof Uint16Array ) &&
+						! ( array instanceof Uint8Array ) ) {
 
-						attributes[ attributeName ] = processAccessor( attribute, geometry );
+						console.warn( 'GLTFExporter: Attribute "skinIndex" converted to type UNSIGNED_SHORT.' );
+						attribute = new BufferAttribute( new Uint16Array( array ), attribute.itemSize, attribute.normalized );
 
 					}
+
+					if ( attributeName.substr( 0, 5 ) !== 'MORPH' ) {
+
+						var accessor = processAccessor( attribute, geometry );
+						if ( accessor !== null ) {
+
+							attributes[ attributeName ] = accessor;
+
+						}
+
+					}
+
+				}
+
+				if ( originalNormal !== undefined ) geometry.addAttribute( 'normal', originalNormal );
+
+				// Skip if no exportable attributes found
+				if ( Object.keys( attributes ).length === 0 ) {
+
+					return null;
 
 				}
 
@@ -9894,6 +10021,8 @@ var Three = (function (exports) {
 				var forceIndices = options.forceIndices;
 				var isMultiMaterial = Array.isArray( mesh.material );
 
+				if ( isMultiMaterial && mesh.geometry.groups.length === 0 ) return null;
+
 				if ( ! forceIndices && geometry.index === null && isMultiMaterial ) {
 
 					// temporal workaround.
@@ -9920,7 +10049,7 @@ var Three = (function (exports) {
 
 				}
 
-				var materials = isMultiMaterial ? mesh.material : [ mesh.material ] ;
+				var materials = isMultiMaterial ? mesh.material : [ mesh.material ];
 				var groups = isMultiMaterial ? mesh.geometry.groups : [ { materialIndex: 0, start: undefined, count: undefined } ];
 
 				for ( var i = 0, il = groups.length; i < il; i ++ ) {
@@ -9932,17 +10061,17 @@ var Three = (function (exports) {
 
 					if ( targets.length > 0 ) primitive.targets = targets;
 
+					if ( geometry.index !== null ) {
+
+						primitive.indices = processAccessor( geometry.index, geometry, groups[ i ].start, groups[ i ].count );
+
+					}
+
 					var material = processMaterial( materials[ groups[ i ].materialIndex ] );
 
 					if ( material !== null ) {
 
 						primitive.material = material;
-
-					}
-
-					if ( geometry.index !== null ) {
-
-						primitive.indices = processAccessor( geometry.index, geometry, groups[ i ].start, groups[ i ].count );
 
 					}
 
@@ -9957,6 +10086,12 @@ var Three = (function (exports) {
 				}
 
 				gltfMesh.primitives = primitives;
+
+				if ( ! outputJSON.meshes ) {
+
+					outputJSON.meshes = [];
+
+				}
 
 				outputJSON.meshes.push( gltfMesh );
 
@@ -10240,7 +10375,13 @@ var Three = (function (exports) {
 
 				if ( object.isMesh || object.isLine || object.isPoints ) {
 
-					gltfNode.mesh = processMesh( object );
+					var mesh = processMesh( object );
+
+					if ( mesh !== null ) {
+
+						gltfNode.mesh = mesh;
+
+					}
 
 				} else if ( object.isCamera ) {
 

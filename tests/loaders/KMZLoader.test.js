@@ -446,7 +446,7 @@ var Three = (function (exports) {
 
 			for ( var i = 0; i < 256; i ++ ) {
 
-				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
 
 			}
 
@@ -456,10 +456,13 @@ var Three = (function (exports) {
 				var d1 = Math.random() * 0xffffffff | 0;
 				var d2 = Math.random() * 0xffffffff | 0;
 				var d3 = Math.random() * 0xffffffff | 0;
-				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+				var uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
 					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
 					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
 					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+
+				// .toUpperCase() here flattens concatenated strings to save heap memory space.
+				return uuid.toUpperCase();
 
 			};
 
@@ -7566,6 +7569,8 @@ var Three = (function (exports) {
 
 			object.matrix = this.matrix.toArray();
 
+			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
+
 			//
 
 			function serialize( library, element ) {
@@ -9883,6 +9888,8 @@ var Three = (function (exports) {
 			this.count = array !== undefined ? array.length / this.itemSize : 0;
 			this.array = array;
 
+			return this;
+
 		},
 
 		setDynamic: function ( value ) {
@@ -9895,6 +9902,7 @@ var Three = (function (exports) {
 
 		copy: function ( source ) {
 
+			this.name = source.name;
 			this.array = new source.array.constructor( source.array );
 			this.itemSize = source.itemSize;
 			this.count = source.count;
@@ -13684,12 +13692,7 @@ var Three = (function (exports) {
 
 							intersection = checkBufferGeometryIntersection( this, raycaster, ray, position, uv, a, b, c );
 
-							if ( intersection ) {
-
-								intersection.index = a; // triangle number in positions buffer semantics
-								intersects.push( intersection );
-
-							}
+							if ( intersection ) intersects.push( intersection );
 
 						}
 
@@ -14179,6 +14182,12 @@ var Three = (function (exports) {
 
 		isTexture: true,
 
+		updateMatrix: function () {
+
+			this.matrix.setUvTransform( this.offset.x, this.offset.y, this.repeat.x, this.repeat.y, this.rotation, this.center.x, this.center.y );
+
+		},
+
 		clone: function () {
 
 			return new this.constructor().copy( this );
@@ -14516,13 +14525,11 @@ var Three = (function (exports) {
 
 		extractUrlBase: function ( url ) {
 
-			var parts = url.split( '/' );
+			var index = url.lastIndexOf( '/' );
 
-			if ( parts.length === 1 ) return './';
+			if ( index === - 1 ) return './';
 
-			parts.pop();
-
-			return parts.join( '/' ) + '/';
+			return url.substr( 0, index + 1 );
 
 		}
 
@@ -15089,7 +15096,7 @@ var Three = (function (exports) {
 
 		this.uniforms = UniformsUtils.clone( source.uniforms );
 
-		this.defines = source.defines;
+		this.defines = Object.assign( {}, source.defines );
 
 		this.wireframe = source.wireframe;
 		this.wireframeLinewidth = source.wireframeLinewidth;
@@ -16707,7 +16714,17 @@ var Three = (function (exports) {
 
 			function getImage( id ) {
 
-				return getBuild( library.images[ id ], buildImage );
+				var data = library.images[ id ];
+
+				if ( data !== undefined ) {
+
+					return getBuild( data, buildImage );
+
+				}
+
+				console.warn( 'ColladaLoader: Couldn\'t find image with ID:', id );
+
+				return null;
 
 			}
 
@@ -17148,7 +17165,7 @@ var Three = (function (exports) {
 				function getTexture( textureObject ) {
 
 					var sampler = effect.profile.samplers[ textureObject.id ];
-					var image;
+					var image = null;
 
 					// get image
 
@@ -17166,7 +17183,7 @@ var Three = (function (exports) {
 
 					// create texture if image is avaiable
 
-					if ( image !== undefined ) {
+					if ( image !== null ) {
 
 						var texture = textureLoader.load( image );
 
@@ -17193,7 +17210,7 @@ var Three = (function (exports) {
 
 					} else {
 
-						console.error( 'ColladaLoader: Unable to load texture with ID:', textureObject.id );
+						console.warn( 'ColladaLoader: Couldn\'t create texture with ID:', textureObject.id );
 
 						return null;
 
@@ -17218,12 +17235,11 @@ var Three = (function (exports) {
 							if ( parameter.texture ) material.specularMap = getTexture( parameter.texture );
 							break;
 						case 'shininess':
-							if ( parameter.float && material.shininess )
-								material.shininess = parameter.float;
+							if ( parameter.float && material.shininess ) material.shininess = parameter.float;
 							break;
 						case 'emission':
-							if ( parameter.color && material.emissive )
-								material.emissive.fromArray( parameter.color );
+							if ( parameter.color && material.emissive ) material.emissive.fromArray( parameter.color );
+							if ( parameter.texture ) material.emissiveMap = getTexture( parameter.texture );
 							break;
 
 					}
@@ -17263,7 +17279,8 @@ var Three = (function (exports) {
 
 					if ( transparent.data.texture ) {
 
-						material.alphaMap = getTexture( transparent.data.texture );
+						// we do not set an alpha map (see #13792)
+
 						material.transparent = true;
 
 					} else {
@@ -17861,29 +17878,56 @@ var Three = (function (exports) {
 
 				var materialKeys = [];
 
-				var start = 0, count = 0;
+				var start = 0;
 
 				for ( var p = 0; p < primitives.length; p ++ ) {
 
 					var primitive = primitives[ p ];
 					var inputs = primitive.inputs;
-					var triangleCount = 1;
-
-					if ( primitive.vcount && primitive.vcount[ 0 ] === 4 ) {
-
-						triangleCount = 2; // one quad -> two triangles
-
-					}
 
 					// groups
 
-					if ( primitive.type === 'lines' || primitive.type === 'linestrips' ) {
+					var count = 0;
 
-						count = primitive.count * 2;
+					switch ( primitive.type ) {
 
-					} else {
+						case 'lines':
+						case 'linestrips':
+							count = primitive.count * 2;
+							break;
 
-						count = primitive.count * 3 * triangleCount;
+						case 'triangles':
+							count = primitive.count * 3;
+							break;
+
+						case 'polylist':
+
+							for ( var g = 0; g < primitive.count; g ++ ) {
+
+								var vc = primitive.vcount[ g ];
+
+								switch ( vc ) {
+
+									case 3:
+										count += 3; // single triangle
+										break;
+
+									case 4:
+										count += 6; // quad, subdivided into two triangles
+										break;
+
+									default:
+										count += ( vc - 2 ) * 3; // polylist with more than four vertices
+										break;
+
+								}
+
+							}
+
+							break;
+
+						default:
+							console.warn( 'ColladaLoader: Unknow primitive type:', primitive.type );
 
 					}
 
@@ -18023,8 +18067,6 @@ var Three = (function (exports) {
 
 				}
 
-				var maxcount = 0;
-
 				var sourceArray = source.array;
 				var sourceStride = source.stride;
 
@@ -18054,19 +18096,21 @@ var Three = (function (exports) {
 
 							pushVector( a ); pushVector( b ); pushVector( c );
 
-						} else {
+						} else if ( count > 4 ) {
 
-							maxcount = Math.max( maxcount, count );
+							for ( var k = 1, kl = ( count - 2 ); k <= kl; k ++ ) {
+
+								var a = index + stride * 0;
+								var b = index + stride * k;
+								var c = index + stride * ( k + 1 );
+
+								pushVector( a ); pushVector( b ); pushVector( c );
+
+							}
 
 						}
 
 						index += stride * count;
-
-					}
-
-					if ( maxcount > 0 ) {
-
-						console.log( 'ColladaLoader: Geometry has faces with more than 4 vertices.' );
 
 					}
 
@@ -19296,19 +19340,13 @@ var Three = (function (exports) {
 
 			}
 
-			console.time( 'ColladaLoader' );
-
 			if ( text.length === 0 ) {
 
 				return { scene: new Scene() };
 
 			}
 
-			console.time( 'ColladaLoader: DOMParser' );
-
 			var xml = new DOMParser().parseFromString( text, 'application/xml' );
-
-			console.timeEnd( 'ColladaLoader: DOMParser' );
 
 			var collada = getElementsByTagName( xml, 'COLLADA' )[ 0 ];
 
@@ -19345,8 +19383,6 @@ var Three = (function (exports) {
 				kinematicsScenes: {}
 			};
 
-			console.time( 'ColladaLoader: Parse' );
-
 			parseLibrary( collada, 'library_animations', 'animation', parseAnimation );
 			parseLibrary( collada, 'library_animation_clips', 'animation_clip', parseAnimationClip );
 			parseLibrary( collada, 'library_controllers', 'controller', parseController );
@@ -19361,10 +19397,6 @@ var Three = (function (exports) {
 			parseLibrary( collada, 'library_kinematics_models', 'kinematics_model', parseKinematicsModel );
 			parseLibrary( collada, 'scene', 'instance_kinematics_scene', parseKinematicsScene );
 
-			console.timeEnd( 'ColladaLoader: Parse' );
-
-			console.time( 'ColladaLoader: Build' );
-
 			buildLibrary( library.animations, buildAnimation );
 			buildLibrary( library.clips, buildAnimationClip );
 			buildLibrary( library.controllers, buildController );
@@ -19375,8 +19407,6 @@ var Three = (function (exports) {
 			buildLibrary( library.lights, buildLight );
 			buildLibrary( library.geometries, buildGeometry );
 			buildLibrary( library.visualScenes, buildVisualScene );
-
-			console.timeEnd( 'ColladaLoader: Build' );
 
 			setupAnimations();
 			setupKinematics();
@@ -19390,8 +19420,6 @@ var Three = (function (exports) {
 			}
 
 			scene.scale.multiplyScalar( asset.unit );
-
-			console.timeEnd( 'ColladaLoader' );
 
 			return {
 				animations: animations,

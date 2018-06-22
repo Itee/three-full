@@ -107,7 +107,7 @@ var Three = (function (exports) {
 
 			for ( var i = 0; i < 256; i ++ ) {
 
-				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
 
 			}
 
@@ -117,10 +117,13 @@ var Three = (function (exports) {
 				var d1 = Math.random() * 0xffffffff | 0;
 				var d2 = Math.random() * 0xffffffff | 0;
 				var d3 = Math.random() * 0xffffffff | 0;
-				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+				var uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
 					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
 					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
 					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+
+				// .toUpperCase() here flattens concatenated strings to save heap memory space.
+				return uuid.toUpperCase();
 
 			};
 
@@ -4866,6 +4869,8 @@ var Three = (function (exports) {
 
 			object.matrix = this.matrix.toArray();
 
+			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
+
 			//
 
 			function serialize( library, element ) {
@@ -8410,6 +8415,8 @@ var Three = (function (exports) {
 			this.count = array !== undefined ? array.length / this.itemSize : 0;
 			this.array = array;
 
+			return this;
+
 		},
 
 		setDynamic: function ( value ) {
@@ -8422,6 +8429,7 @@ var Three = (function (exports) {
 
 		copy: function ( source ) {
 
+			this.name = source.name;
 			this.array = new source.array.constructor( source.array );
 			this.itemSize = source.itemSize;
 			this.count = source.count;
@@ -11723,12 +11731,7 @@ var Three = (function (exports) {
 
 							intersection = checkBufferGeometryIntersection( this, raycaster, ray, position, uv, a, b, c );
 
-							if ( intersection ) {
-
-								intersection.index = a; // triangle number in positions buffer semantics
-								intersects.push( intersection );
-
-							}
+							if ( intersection ) intersects.push( intersection );
 
 						}
 
@@ -13591,7 +13594,7 @@ var Three = (function (exports) {
 			this.oldColor = this.color.clone();
 			this.oldOpacity = this.opacity;
 
-			this.highlight = function( highlighted ) {
+			this.highlight = function ( highlighted ) {
 
 				if ( highlighted ) {
 
@@ -13628,7 +13631,7 @@ var Three = (function (exports) {
 			this.oldColor = this.color.clone();
 			this.oldOpacity = this.opacity;
 
-			this.highlight = function( highlighted ) {
+			this.highlight = function ( highlighted ) {
 
 				if ( highlighted ) {
 
@@ -13673,9 +13676,9 @@ var Three = (function (exports) {
 				var planeMaterial = new MeshBasicMaterial( { visible: false, side: DoubleSide } );
 
 				var planes = {
-					"XY":   new Mesh( planeGeometry, planeMaterial ),
-					"YZ":   new Mesh( planeGeometry, planeMaterial ),
-					"XZ":   new Mesh( planeGeometry, planeMaterial ),
+					"XY": new Mesh( planeGeometry, planeMaterial ),
+					"YZ": new Mesh( planeGeometry, planeMaterial ),
+					"XZ": new Mesh( planeGeometry, planeMaterial ),
 					"XYZE": new Mesh( planeGeometry, planeMaterial )
 				};
 
@@ -13694,7 +13697,7 @@ var Three = (function (exports) {
 
 				//// HANDLES AND PICKERS
 
-				var setupGizmos = function( gizmoMap, parent ) {
+				var setupGizmos = function ( gizmoMap, parent ) {
 
 					for ( var name in gizmoMap ) {
 
@@ -13746,7 +13749,7 @@ var Three = (function (exports) {
 
 			this.highlight = function ( axis ) {
 
-				this.traverse( function( child ) {
+				this.traverse( function ( child ) {
 
 					if ( child.material && child.material.highlight ) {
 
@@ -13777,7 +13780,7 @@ var Three = (function (exports) {
 			var vec2 = new Vector3( 0, 1, 0 );
 			var lookAtMatrix = new Matrix4();
 
-			this.traverse( function( child ) {
+			this.traverse( function ( child ) {
 
 				if ( child.name.search( "E" ) !== - 1 ) {
 
@@ -13805,13 +13808,13 @@ var Three = (function (exports) {
 			arrowGeometry.merge( mesh.geometry, mesh.matrix );
 
 			var lineXGeometry = new BufferGeometry();
-			lineXGeometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0,  1, 0, 0 ], 3 ) );
+			lineXGeometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0, 1, 0, 0 ], 3 ) );
 
 			var lineYGeometry = new BufferGeometry();
-			lineYGeometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0,  0, 1, 0 ], 3 ) );
+			lineYGeometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0, 0, 1, 0 ], 3 ) );
 
 			var lineZGeometry = new BufferGeometry();
-			lineZGeometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0,  0, 0, 1 ], 3 ) );
+			lineZGeometry.addAttribute( 'position', new Float32BufferAttribute( [ 0, 0, 0, 0, 0, 1 ], 3 ) );
 
 			this.handleGizmos = {
 
@@ -13992,10 +13995,12 @@ var Three = (function (exports) {
 				],
 
 				XYZE: [
-					[ new Mesh() ]// TODO
+					[ new Mesh( new TorusBufferGeometry( 1, 0.12, 2, 24 ), pickerMaterial ) ]
 				]
 
 			};
+
+			this.pickerGizmos.XYZE[ 0 ][ 0 ].visible = false; // disable XYZE picker gizmo
 
 			this.setActivePlane = function ( axis ) {
 
@@ -14241,12 +14246,12 @@ var Three = (function (exports) {
 			var oldScale = new Vector3();
 			var oldRotationMatrix = new Matrix4();
 
-			var parentRotationMatrix  = new Matrix4();
+			var parentRotationMatrix = new Matrix4();
 			var parentScale = new Vector3();
 
 			var worldPosition = new Vector3();
 			var worldRotation = new Euler();
-			var worldRotationMatrix  = new Matrix4();
+			var worldRotationMatrix = new Matrix4();
 			var camPosition = new Vector3();
 			var camRotation = new Euler();
 

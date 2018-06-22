@@ -14,7 +14,7 @@ var Three = (function (exports) {
 
 			for ( var i = 0; i < 256; i ++ ) {
 
-				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
 
 			}
 
@@ -24,10 +24,13 @@ var Three = (function (exports) {
 				var d1 = Math.random() * 0xffffffff | 0;
 				var d2 = Math.random() * 0xffffffff | 0;
 				var d3 = Math.random() * 0xffffffff | 0;
-				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+				var uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
 					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
 					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
 					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+
+				// .toUpperCase() here flattens concatenated strings to save heap memory space.
+				return uuid.toUpperCase();
 
 			};
 
@@ -3455,9 +3458,6 @@ var Three = (function (exports) {
 	};
 
 	( function() {
-
-		// Some constants
-		var WARNINGS = ! true; // Set to true for development
 		var ABC = [ 'a', 'b', 'c' ];
 
 
@@ -3607,12 +3607,6 @@ var Three = (function (exports) {
 					edgeVertexWeight = 0.5;
 					adjacentVertexWeight = 0;
 
-					if ( connectedFaces != 1 ) {
-
-						if ( WARNINGS ) console.warn( 'Subdivision Modifier: Number of connected faces != 2, is: ', connectedFaces, currentEdge );
-
-					}
-
 				}
 
 				newEdge.addVectors( currentEdge.a, currentEdge.b ).multiplyScalar( edgeVertexWeight );
@@ -3680,21 +3674,11 @@ var Three = (function (exports) {
 					// console.warn('crease and boundary rules');
 
 					if ( n == 2 ) {
-
-						if ( WARNINGS ) console.warn( '2 connecting edges', connectingEdges );
 						sourceVertexWeight = 3 / 4;
 						connectingVertexWeight = 1 / 8;
 
 						// sourceVertexWeight = 1;
 						// connectingVertexWeight = 0;
-
-					} else if ( n == 1 ) {
-
-						if ( WARNINGS ) console.warn( 'only 1 connecting edge' );
-
-					} else if ( n == 0 ) {
-
-						if ( WARNINGS ) console.warn( '0 connecting edges' );
 
 					}
 

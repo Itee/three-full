@@ -28,7 +28,7 @@ var Three = (function (exports) {
 
 			for ( var i = 0; i < 256; i ++ ) {
 
-				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 ).toUpperCase();
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
 
 			}
 
@@ -38,10 +38,13 @@ var Three = (function (exports) {
 				var d1 = Math.random() * 0xffffffff | 0;
 				var d2 = Math.random() * 0xffffffff | 0;
 				var d3 = Math.random() * 0xffffffff | 0;
-				return lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+				var uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
 					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
 					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
 					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+
+				// .toUpperCase() here flattens concatenated strings to save heap memory space.
+				return uuid.toUpperCase();
 
 			};
 
@@ -4374,6 +4377,12 @@ var Three = (function (exports) {
 
 		isTexture: true,
 
+		updateMatrix: function () {
+
+			this.matrix.setUvTransform( this.offset.x, this.offset.y, this.repeat.x, this.repeat.y, this.rotation, this.center.x, this.center.y );
+
+		},
+
 		clone: function () {
 
 			return new this.constructor().copy( this );
@@ -5510,7 +5519,7 @@ var Three = (function (exports) {
 
 		this.uniforms = UniformsUtils.clone( source.uniforms );
 
-		this.defines = source.defines;
+		this.defines = Object.assign( {}, source.defines );
 
 		this.wireframe = source.wireframe;
 		this.wireframeLinewidth = source.wireframeLinewidth;
@@ -6565,6 +6574,8 @@ var Three = (function (exports) {
 			if ( JSON.stringify( this.userData ) !== '{}' ) object.userData = this.userData;
 
 			object.matrix = this.matrix.toArray();
+
+			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
 
 			//
 
@@ -9058,6 +9069,8 @@ var Three = (function (exports) {
 			this.count = array !== undefined ? array.length / this.itemSize : 0;
 			this.array = array;
 
+			return this;
+
 		},
 
 		setDynamic: function ( value ) {
@@ -9070,6 +9083,7 @@ var Three = (function (exports) {
 
 		copy: function ( source ) {
 
+			this.name = source.name;
 			this.array = new source.array.constructor( source.array );
 			this.itemSize = source.itemSize;
 			this.count = source.count;
@@ -11059,12 +11073,7 @@ var Three = (function (exports) {
 
 							intersection = checkBufferGeometryIntersection( this, raycaster, ray, position, uv, a, b, c );
 
-							if ( intersection ) {
-
-								intersection.index = a; // triangle number in positions buffer semantics
-								intersects.push( intersection );
-
-							}
+							if ( intersection ) intersects.push( intersection );
 
 						}
 
@@ -12670,387 +12679,6 @@ var Three = (function (exports) {
 	PlaneBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 	PlaneBufferGeometry.prototype.constructor = PlaneBufferGeometry;
 
-	function LineBasicMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'LineBasicMaterial';
-
-		this.color = new Color( 0xffffff );
-
-		this.linewidth = 1;
-		this.linecap = 'round';
-		this.linejoin = 'round';
-
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	LineBasicMaterial.prototype = Object.create( Material.prototype );
-	LineBasicMaterial.prototype.constructor = LineBasicMaterial;
-
-	LineBasicMaterial.prototype.isLineBasicMaterial = true;
-
-	LineBasicMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-
-		this.linewidth = source.linewidth;
-		this.linecap = source.linecap;
-		this.linejoin = source.linejoin;
-
-		return this;
-
-	};
-
-	function Line( geometry, material, mode ) {
-
-		if ( mode === 1 ) {
-
-			console.error( 'Line: parameter LinePieces no longer supported. Created LineSegments instead.' );
-			
-
-		}
-
-		Object3D.call( this );
-
-		this.type = 'Line';
-
-		this.geometry = geometry !== undefined ? geometry : new BufferGeometry();
-		this.material = material !== undefined ? material : new LineBasicMaterial( { color: Math.random() * 0xffffff } );
-
-	}
-
-	Line.prototype = Object.assign( Object.create( Object3D.prototype ), {
-
-		constructor: Line,
-
-		isLine: true,
-
-		computeLineDistances: ( function () {
-
-			var start = new Vector3();
-			var end = new Vector3();
-
-			return function computeLineDistances() {
-
-				var geometry = this.geometry;
-
-				if ( geometry.isBufferGeometry ) {
-
-					// we assume non-indexed geometry
-
-					if ( geometry.index === null ) {
-
-						var positionAttribute = geometry.attributes.position;
-						var lineDistances = [ 0 ];
-
-						for ( var i = 1, l = positionAttribute.count; i < l; i ++ ) {
-
-							start.fromBufferAttribute( positionAttribute, i - 1 );
-							end.fromBufferAttribute( positionAttribute, i );
-
-							lineDistances[ i ] = lineDistances[ i - 1 ];
-							lineDistances[ i ] += start.distanceTo( end );
-
-						}
-
-						geometry.addAttribute( 'lineDistance', new Float32BufferAttribute( lineDistances, 1 ) );
-
-					} else {
-
-						console.error( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
-
-					}
-
-				} else if ( geometry.isGeometry ) {
-
-					var vertices = geometry.vertices;
-					var lineDistances = geometry.lineDistances;
-
-					lineDistances[ 0 ] = 0;
-
-					for ( var i = 1, l = vertices.length; i < l; i ++ ) {
-
-						lineDistances[ i ] = lineDistances[ i - 1 ];
-						lineDistances[ i ] += vertices[ i - 1 ].distanceTo( vertices[ i ] );
-
-					}
-
-				}
-
-				return this;
-
-			};
-
-		}() ),
-
-		raycast: ( function () {
-
-			var inverseMatrix = new Matrix4();
-			var ray = new Ray();
-			var sphere = new Sphere();
-
-			return function raycast( raycaster, intersects ) {
-
-				var precision = raycaster.linePrecision;
-				var precisionSq = precision * precision;
-
-				var geometry = this.geometry;
-				var matrixWorld = this.matrixWorld;
-
-				// Checking boundingSphere distance to ray
-
-				if ( geometry.boundingSphere === null ) geometry.computeBoundingSphere();
-
-				sphere.copy( geometry.boundingSphere );
-				sphere.applyMatrix4( matrixWorld );
-
-				if ( raycaster.ray.intersectsSphere( sphere ) === false ) return;
-
-				//
-
-				inverseMatrix.getInverse( matrixWorld );
-				ray.copy( raycaster.ray ).applyMatrix4( inverseMatrix );
-
-				var vStart = new Vector3();
-				var vEnd = new Vector3();
-				var interSegment = new Vector3();
-				var interRay = new Vector3();
-				var step = ( this && this.isLineSegments ) ? 2 : 1;
-
-				if ( geometry.isBufferGeometry ) {
-
-					var index = geometry.index;
-					var attributes = geometry.attributes;
-					var positions = attributes.position.array;
-
-					if ( index !== null ) {
-
-						var indices = index.array;
-
-						for ( var i = 0, l = indices.length - 1; i < l; i += step ) {
-
-							var a = indices[ i ];
-							var b = indices[ i + 1 ];
-
-							vStart.fromArray( positions, a * 3 );
-							vEnd.fromArray( positions, b * 3 );
-
-							var distSq = ray.distanceSqToSegment( vStart, vEnd, interRay, interSegment );
-
-							if ( distSq > precisionSq ) continue;
-
-							interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
-
-							var distance = raycaster.ray.origin.distanceTo( interRay );
-
-							if ( distance < raycaster.near || distance > raycaster.far ) continue;
-
-							intersects.push( {
-
-								distance: distance,
-								// What do we want? intersection point on the ray or on the segment??
-								// point: raycaster.ray.at( distance ),
-								point: interSegment.clone().applyMatrix4( this.matrixWorld ),
-								index: i,
-								face: null,
-								faceIndex: null,
-								object: this
-
-							} );
-
-						}
-
-					} else {
-
-						for ( var i = 0, l = positions.length / 3 - 1; i < l; i += step ) {
-
-							vStart.fromArray( positions, 3 * i );
-							vEnd.fromArray( positions, 3 * i + 3 );
-
-							var distSq = ray.distanceSqToSegment( vStart, vEnd, interRay, interSegment );
-
-							if ( distSq > precisionSq ) continue;
-
-							interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
-
-							var distance = raycaster.ray.origin.distanceTo( interRay );
-
-							if ( distance < raycaster.near || distance > raycaster.far ) continue;
-
-							intersects.push( {
-
-								distance: distance,
-								// What do we want? intersection point on the ray or on the segment??
-								// point: raycaster.ray.at( distance ),
-								point: interSegment.clone().applyMatrix4( this.matrixWorld ),
-								index: i,
-								face: null,
-								faceIndex: null,
-								object: this
-
-							} );
-
-						}
-
-					}
-
-				} else if ( geometry.isGeometry ) {
-
-					var vertices = geometry.vertices;
-					var nbVertices = vertices.length;
-
-					for ( var i = 0; i < nbVertices - 1; i += step ) {
-
-						var distSq = ray.distanceSqToSegment( vertices[ i ], vertices[ i + 1 ], interRay, interSegment );
-
-						if ( distSq > precisionSq ) continue;
-
-						interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
-
-						var distance = raycaster.ray.origin.distanceTo( interRay );
-
-						if ( distance < raycaster.near || distance > raycaster.far ) continue;
-
-						intersects.push( {
-
-							distance: distance,
-							// What do we want? intersection point on the ray or on the segment??
-							// point: raycaster.ray.at( distance ),
-							point: interSegment.clone().applyMatrix4( this.matrixWorld ),
-							index: i,
-							face: null,
-							faceIndex: null,
-							object: this
-
-						} );
-
-					}
-
-				}
-
-			};
-
-		}() ),
-
-		clone: function () {
-
-			return new this.constructor( this.geometry, this.material ).copy( this );
-
-		}
-
-	} );
-
-	function SpriteMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'SpriteMaterial';
-
-		this.color = new Color( 0xffffff );
-		this.map = null;
-
-		this.rotation = 0;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	SpriteMaterial.prototype = Object.create( Material.prototype );
-	SpriteMaterial.prototype.constructor = SpriteMaterial;
-	SpriteMaterial.prototype.isSpriteMaterial = true;
-
-	SpriteMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-		this.map = source.map;
-
-		this.rotation = source.rotation;
-
-		return this;
-
-	};
-
-	function Sprite( material ) {
-
-		Object3D.call( this );
-
-		this.type = 'Sprite';
-
-		this.material = ( material !== undefined ) ? material : new SpriteMaterial();
-
-		this.center = new Vector2( 0.5, 0.5 );
-
-	}
-
-	Sprite.prototype = Object.assign( Object.create( Object3D.prototype ), {
-
-		constructor: Sprite,
-
-		isSprite: true,
-
-		raycast: ( function () {
-
-			var intersectPoint = new Vector3();
-			var worldPosition = new Vector3();
-			var worldScale = new Vector3();
-
-			return function raycast( raycaster, intersects ) {
-
-				worldPosition.setFromMatrixPosition( this.matrixWorld );
-				raycaster.ray.closestPointToPoint( worldPosition, intersectPoint );
-
-				worldScale.setFromMatrixScale( this.matrixWorld );
-				var guessSizeSq = worldScale.x * worldScale.y / 4;
-
-				if ( worldPosition.distanceToSquared( intersectPoint ) > guessSizeSq ) return;
-
-				var distance = raycaster.ray.origin.distanceTo( intersectPoint );
-
-				if ( distance < raycaster.near || distance > raycaster.far ) return;
-
-				intersects.push( {
-
-					distance: distance,
-					point: intersectPoint.clone(),
-					face: null,
-					object: this
-
-				} );
-
-			};
-
-		}() ),
-
-		clone: function () {
-
-			return new this.constructor( this.material ).copy( this );
-
-		},
-
-		copy: function ( source ) {
-
-			Object3D.prototype.copy.call( this, source );
-
-			if ( source.center !== undefined ) this.center.copy( source.center );
-
-			return this;
-
-		}
-
-
-	} );
-
 	var CopyShader = {
 
 		uniforms: {
@@ -13253,7 +12881,21 @@ var Three = (function (exports) {
 
 			function gatherSelectedMeshesCallBack( object ) {
 
-				if ( object instanceof Mesh ) object.visible = bVisible;
+				if ( object.isMesh ) {
+
+					if ( bVisible ) {
+
+						object.visible = object.userData.oldVisible;
+						delete object.userData.oldVisible;
+
+					} else {
+
+						object.userData.oldVisible = object.visible;
+						object.visible = bVisible;
+
+					}
+
+				}
 
 			}
 
@@ -13272,7 +12914,7 @@ var Three = (function (exports) {
 
 			function gatherSelectedMeshesCallBack( object ) {
 
-				if ( object instanceof Mesh ) selectedMeshes.push( object );
+				if ( object.isMesh ) selectedMeshes.push( object );
 
 			}
 
@@ -13285,7 +12927,7 @@ var Three = (function (exports) {
 
 			function VisibilityChangeCallBack( object ) {
 
-				if ( object instanceof Mesh || object instanceof Line || object instanceof Sprite ) {
+				if ( object.isMesh || object.isLine || object.isSprite ) {
 
 					var bFound = false;
 
@@ -13333,106 +12975,116 @@ var Three = (function (exports) {
 
 		render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
 
-			if ( this.selectedObjects.length === 0 ) return;
+			if ( this.selectedObjects.length > 0 ) {
 
-			this.oldClearColor.copy( renderer.getClearColor() );
-			this.oldClearAlpha = renderer.getClearAlpha();
-			var oldAutoClear = renderer.autoClear;
+				this.oldClearColor.copy( renderer.getClearColor() );
+				this.oldClearAlpha = renderer.getClearAlpha();
+				var oldAutoClear = renderer.autoClear;
 
-			renderer.autoClear = false;
+				renderer.autoClear = false;
 
-			if ( maskActive ) renderer.context.disable( renderer.context.STENCIL_TEST );
+				if ( maskActive ) renderer.context.disable( renderer.context.STENCIL_TEST );
 
-			renderer.setClearColor( 0xffffff, 1 );
+				renderer.setClearColor( 0xffffff, 1 );
 
-			// Make selected objects invisible
-			this.changeVisibilityOfSelectedObjects( false );
+				// Make selected objects invisible
+				this.changeVisibilityOfSelectedObjects( false );
 
-			var currentBackground = this.renderScene.background;
-			this.renderScene.background = null;
+				var currentBackground = this.renderScene.background;
+				this.renderScene.background = null;
 
-			// 1. Draw Non Selected objects in the depth buffer
-			this.renderScene.overrideMaterial = this.depthMaterial;
-			renderer.render( this.renderScene, this.renderCamera, this.renderTargetDepthBuffer, true );
+				// 1. Draw Non Selected objects in the depth buffer
+				this.renderScene.overrideMaterial = this.depthMaterial;
+				renderer.render( this.renderScene, this.renderCamera, this.renderTargetDepthBuffer, true );
 
-			// Make selected objects visible
-			this.changeVisibilityOfSelectedObjects( true );
+				// Make selected objects visible
+				this.changeVisibilityOfSelectedObjects( true );
 
-			// Update Texture Matrix for Depth compare
-			this.updateTextureMatrix();
+				// Update Texture Matrix for Depth compare
+				this.updateTextureMatrix();
 
-			// Make non selected objects invisible, and draw only the selected objects, by comparing the depth buffer of non selected objects
-			this.changeVisibilityOfNonSelectedObjects( false );
-			this.renderScene.overrideMaterial = this.prepareMaskMaterial;
-			this.prepareMaskMaterial.uniforms[ "cameraNearFar" ].value = new Vector2( this.renderCamera.near, this.renderCamera.far );
-			this.prepareMaskMaterial.uniforms[ "depthTexture" ].value = this.renderTargetDepthBuffer.texture;
-			this.prepareMaskMaterial.uniforms[ "textureMatrix" ].value = this.textureMatrix;
-			renderer.render( this.renderScene, this.renderCamera, this.renderTargetMaskBuffer, true );
-			this.renderScene.overrideMaterial = null;
-			this.changeVisibilityOfNonSelectedObjects( true );
+				// Make non selected objects invisible, and draw only the selected objects, by comparing the depth buffer of non selected objects
+				this.changeVisibilityOfNonSelectedObjects( false );
+				this.renderScene.overrideMaterial = this.prepareMaskMaterial;
+				this.prepareMaskMaterial.uniforms[ "cameraNearFar" ].value = new Vector2( this.renderCamera.near, this.renderCamera.far );
+				this.prepareMaskMaterial.uniforms[ "depthTexture" ].value = this.renderTargetDepthBuffer.texture;
+				this.prepareMaskMaterial.uniforms[ "textureMatrix" ].value = this.textureMatrix;
+				renderer.render( this.renderScene, this.renderCamera, this.renderTargetMaskBuffer, true );
+				this.renderScene.overrideMaterial = null;
+				this.changeVisibilityOfNonSelectedObjects( true );
 
-			this.renderScene.background = currentBackground;
+				this.renderScene.background = currentBackground;
 
-			// 2. Downsample to Half resolution
-			this.quad.material = this.materialCopy;
-			this.copyUniforms[ "tDiffuse" ].value = this.renderTargetMaskBuffer.texture;
-			renderer.render( this.scene, this.camera, this.renderTargetMaskDownSampleBuffer, true );
+				// 2. Downsample to Half resolution
+				this.quad.material = this.materialCopy;
+				this.copyUniforms[ "tDiffuse" ].value = this.renderTargetMaskBuffer.texture;
+				renderer.render( this.scene, this.camera, this.renderTargetMaskDownSampleBuffer, true );
 
-			this.tempPulseColor1.copy( this.visibleEdgeColor );
-			this.tempPulseColor2.copy( this.hiddenEdgeColor );
+				this.tempPulseColor1.copy( this.visibleEdgeColor );
+				this.tempPulseColor2.copy( this.hiddenEdgeColor );
 
-			if ( this.pulsePeriod > 0 ) {
+				if ( this.pulsePeriod > 0 ) {
 
-				var scalar = ( 1 + 0.25 ) / 2 + Math.cos( performance.now() * 0.01 / this.pulsePeriod ) * ( 1.0 - 0.25 ) / 2;
-				this.tempPulseColor1.multiplyScalar( scalar );
-				this.tempPulseColor2.multiplyScalar( scalar );
+					var scalar = ( 1 + 0.25 ) / 2 + Math.cos( performance.now() * 0.01 / this.pulsePeriod ) * ( 1.0 - 0.25 ) / 2;
+					this.tempPulseColor1.multiplyScalar( scalar );
+					this.tempPulseColor2.multiplyScalar( scalar );
+
+				}
+
+				// 3. Apply Edge Detection Pass
+				this.quad.material = this.edgeDetectionMaterial;
+				this.edgeDetectionMaterial.uniforms[ "maskTexture" ].value = this.renderTargetMaskDownSampleBuffer.texture;
+				this.edgeDetectionMaterial.uniforms[ "texSize" ].value = new Vector2( this.renderTargetMaskDownSampleBuffer.width, this.renderTargetMaskDownSampleBuffer.height );
+				this.edgeDetectionMaterial.uniforms[ "visibleEdgeColor" ].value = this.tempPulseColor1;
+				this.edgeDetectionMaterial.uniforms[ "hiddenEdgeColor" ].value = this.tempPulseColor2;
+				renderer.render( this.scene, this.camera, this.renderTargetEdgeBuffer1, true );
+
+				// 4. Apply Blur on Half res
+				this.quad.material = this.separableBlurMaterial1;
+				this.separableBlurMaterial1.uniforms[ "colorTexture" ].value = this.renderTargetEdgeBuffer1.texture;
+				this.separableBlurMaterial1.uniforms[ "direction" ].value = OutlinePass.BlurDirectionX;
+				this.separableBlurMaterial1.uniforms[ "kernelRadius" ].value = this.edgeThickness;
+				renderer.render( this.scene, this.camera, this.renderTargetBlurBuffer1, true );
+				this.separableBlurMaterial1.uniforms[ "colorTexture" ].value = this.renderTargetBlurBuffer1.texture;
+				this.separableBlurMaterial1.uniforms[ "direction" ].value = OutlinePass.BlurDirectionY;
+				renderer.render( this.scene, this.camera, this.renderTargetEdgeBuffer1, true );
+
+				// Apply Blur on quarter res
+				this.quad.material = this.separableBlurMaterial2;
+				this.separableBlurMaterial2.uniforms[ "colorTexture" ].value = this.renderTargetEdgeBuffer1.texture;
+				this.separableBlurMaterial2.uniforms[ "direction" ].value = OutlinePass.BlurDirectionX;
+				renderer.render( this.scene, this.camera, this.renderTargetBlurBuffer2, true );
+				this.separableBlurMaterial2.uniforms[ "colorTexture" ].value = this.renderTargetBlurBuffer2.texture;
+				this.separableBlurMaterial2.uniforms[ "direction" ].value = OutlinePass.BlurDirectionY;
+				renderer.render( this.scene, this.camera, this.renderTargetEdgeBuffer2, true );
+
+				// Blend it additively over the input texture
+				this.quad.material = this.overlayMaterial;
+				this.overlayMaterial.uniforms[ "maskTexture" ].value = this.renderTargetMaskBuffer.texture;
+				this.overlayMaterial.uniforms[ "edgeTexture1" ].value = this.renderTargetEdgeBuffer1.texture;
+				this.overlayMaterial.uniforms[ "edgeTexture2" ].value = this.renderTargetEdgeBuffer2.texture;
+				this.overlayMaterial.uniforms[ "patternTexture" ].value = this.patternTexture;
+				this.overlayMaterial.uniforms[ "edgeStrength" ].value = this.edgeStrength;
+				this.overlayMaterial.uniforms[ "edgeGlow" ].value = this.edgeGlow;
+				this.overlayMaterial.uniforms[ "usePatternTexture" ].value = this.usePatternTexture;
+
+
+				if ( maskActive ) renderer.context.enable( renderer.context.STENCIL_TEST );
+
+				renderer.render( this.scene, this.camera, readBuffer, false );
+
+				renderer.setClearColor( this.oldClearColor, this.oldClearAlpha );
+				renderer.autoClear = oldAutoClear;
 
 			}
 
-			// 3. Apply Edge Detection Pass
-			this.quad.material = this.edgeDetectionMaterial;
-			this.edgeDetectionMaterial.uniforms[ "maskTexture" ].value = this.renderTargetMaskDownSampleBuffer.texture;
-			this.edgeDetectionMaterial.uniforms[ "texSize" ].value = new Vector2( this.renderTargetMaskDownSampleBuffer.width, this.renderTargetMaskDownSampleBuffer.height );
-			this.edgeDetectionMaterial.uniforms[ "visibleEdgeColor" ].value = this.tempPulseColor1;
-			this.edgeDetectionMaterial.uniforms[ "hiddenEdgeColor" ].value = this.tempPulseColor2;
-			renderer.render( this.scene, this.camera, this.renderTargetEdgeBuffer1, true );
+			if ( this.renderToScreen ) {
 
-			// 4. Apply Blur on Half res
-			this.quad.material = this.separableBlurMaterial1;
-			this.separableBlurMaterial1.uniforms[ "colorTexture" ].value = this.renderTargetEdgeBuffer1.texture;
-			this.separableBlurMaterial1.uniforms[ "direction" ].value = OutlinePass.BlurDirectionX;
-			this.separableBlurMaterial1.uniforms[ "kernelRadius" ].value = this.edgeThickness;
-			renderer.render( this.scene, this.camera, this.renderTargetBlurBuffer1, true );
-			this.separableBlurMaterial1.uniforms[ "colorTexture" ].value = this.renderTargetBlurBuffer1.texture;
-			this.separableBlurMaterial1.uniforms[ "direction" ].value = OutlinePass.BlurDirectionY;
-			renderer.render( this.scene, this.camera, this.renderTargetEdgeBuffer1, true );
+				this.quad.material = this.materialCopy;
+				this.copyUniforms[ "tDiffuse" ].value = readBuffer.texture;
+				renderer.render( this.scene, this.camera );
 
-			// Apply Blur on quarter res
-			this.quad.material = this.separableBlurMaterial2;
-			this.separableBlurMaterial2.uniforms[ "colorTexture" ].value = this.renderTargetEdgeBuffer1.texture;
-			this.separableBlurMaterial2.uniforms[ "direction" ].value = OutlinePass.BlurDirectionX;
-			renderer.render( this.scene, this.camera, this.renderTargetBlurBuffer2, true );
-			this.separableBlurMaterial2.uniforms[ "colorTexture" ].value = this.renderTargetBlurBuffer2.texture;
-			this.separableBlurMaterial2.uniforms[ "direction" ].value = OutlinePass.BlurDirectionY;
-			renderer.render( this.scene, this.camera, this.renderTargetEdgeBuffer2, true );
-
-			// Blend it additively over the input texture
-			this.quad.material = this.overlayMaterial;
-			this.overlayMaterial.uniforms[ "maskTexture" ].value = this.renderTargetMaskBuffer.texture;
-			this.overlayMaterial.uniforms[ "edgeTexture1" ].value = this.renderTargetEdgeBuffer1.texture;
-			this.overlayMaterial.uniforms[ "edgeTexture2" ].value = this.renderTargetEdgeBuffer2.texture;
-			this.overlayMaterial.uniforms[ "patternTexture" ].value = this.patternTexture;
-			this.overlayMaterial.uniforms[ "edgeStrength" ].value = this.edgeStrength;
-			this.overlayMaterial.uniforms[ "edgeGlow" ].value = this.edgeGlow;
-			this.overlayMaterial.uniforms[ "usePatternTexture" ].value = this.usePatternTexture;
-
-
-			if ( maskActive ) renderer.context.enable( renderer.context.STENCIL_TEST );
-
-			renderer.render( this.scene, this.camera, readBuffer, false );
-
-			renderer.setClearColor( this.oldClearColor, this.oldClearAlpha );
-			renderer.autoClear = oldAutoClear;
+			}
 
 		},
 
