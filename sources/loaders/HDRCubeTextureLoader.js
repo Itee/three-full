@@ -111,12 +111,13 @@ HDRCubeTextureLoader.prototype.load = function ( type, urls, onLoad, onProgress,
 	texture.anisotropy = 0;
 
 	var scope = this.hdrLoader;
+	var manager = this.manager;
 
 	var loaded = 0;
 
 	function loadHDRData( i, onLoad, onProgress, onError ) {
 
-		var loader = new FileLoader( this.manager );
+		var loader = new FileLoader( manager );
 		loader.setResponseType( 'arraybuffer' );
 		loader.load( urls[ i ], function ( buffer ) {
 
