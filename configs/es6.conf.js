@@ -527,6 +527,9 @@ module.exports = {
 				'Loader'
 			]
 		},
+		Node: {
+            imports: [ '_Math' ]
+		},
         NodeLib_Implementation: {
             importsOverride: [
                 [ 'NodeLib', 'from', './NodeLib_Declaration' ],
