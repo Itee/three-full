@@ -2548,16 +2548,6 @@ export default [
 
     // modifiers
     {
-        input:   'sources/modifiers/BufferSubdivisionModifier.js',
-        plugins: [ glsl() ],
-        output:  {
-            indent: '\t',
-            format: 'iife',
-            name:   'Three',
-            file:   'tests/modifiers/BufferSubdivisionModifier.test.js'
-        }
-    },
-    {
         input:   'sources/modifiers/ConvexObjectBreaker.js',
         plugins: [ glsl() ],
         output:  {
