@@ -435,6 +435,7 @@ gulp.task( 'create-function-node-declaration-file', ( done ) => {
         '\n' +
         'FunctionNode.prototype = Object.create( TempNode.prototype );\n' +
         'FunctionNode.prototype.constructor = FunctionNode;\n' +
+        'FunctionNode.prototype.nodeType = "Function";\n' +
         '\n' +
         'FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {\n' +
         '\n' +
