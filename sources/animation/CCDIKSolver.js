@@ -368,7 +368,6 @@ var CCDIKSolver = ( function () {
 		_init: function () {
 
 			var self = this;
-			var mesh = this.root;
 			var iks = this.iks;
 
 			function createLineGeometry( ik ) {

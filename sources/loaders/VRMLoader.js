@@ -1,4 +1,5 @@
 import { GLTFLoader } from './GLTFLoader.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 
 
 
@@ -26,7 +27,7 @@ var VRMLoader = ( function () {
 
 		constructor: VRMLoader,
 
-		crossOrigin: 'Anonymous',
+		crossOrigin: 'anonymous',
 
 		load: function ( url, onLoad, onProgress, onError ) {
 

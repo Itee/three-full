@@ -41,6 +41,8 @@ function JSONLoader( manager ) {
 
 Object.assign( JSONLoader.prototype, {
 
+	crossOrigin: 'anonymous',
+
 	load: function ( url, onLoad, onProgress, onError ) {
 
 		var scope = this;
@@ -78,9 +80,17 @@ Object.assign( JSONLoader.prototype, {
 
 	},
 
+	setCrossOrigin: function ( value ) {
+
+		this.crossOrigin = value;
+		return this;
+
+	},
+
 	setTexturePath: function ( value ) {
 
 		this.texturePath = value;
+		return this;
 
 	},
 

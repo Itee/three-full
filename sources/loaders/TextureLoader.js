@@ -22,7 +22,7 @@ function TextureLoader( manager ) {
 
 Object.assign( TextureLoader.prototype, {
 
-	crossOrigin: 'Anonymous',
+	crossOrigin: 'anonymous',
 
 	load: function ( url, onLoad, onProgress, onError ) {
 

@@ -16,7 +16,7 @@ var EditorControls = function ( object, domElement ) {
 	this.enabled = true;
 	this.center = new Vector3();
 	this.panSpeed = 0.001;
-	this.zoomSpeed = 0.001;
+	this.zoomSpeed = 0.1;
 	this.rotationSpeed = 0.005;
 
 	// internals
@@ -189,9 +189,8 @@ var EditorControls = function ( object, domElement ) {
 
 		event.preventDefault();
 
-		// if ( scope.enabled === false ) return;
-
-		scope.zoom( new Vector3( 0, 0, event.deltaY ) );
+		// Normalize deltaY due to https://bugzilla.mozilla.org/show_bug.cgi?id=1392460
+		scope.zoom( new Vector3( 0, 0, event.deltaY > 0 ? 1 : - 1 ) );
 
 	}
 

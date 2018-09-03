@@ -52,7 +52,7 @@ VRMLLoader.prototype = {
 
 	recordingFieldname: null,
 
-	crossOrigin: 'Anonymous',
+	crossOrigin: 'anonymous',
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -70,6 +70,7 @@ VRMLLoader.prototype = {
 	setCrossOrigin: function ( value ) {
 
 		this.crossOrigin = value;
+		return this;
 
 	},
 

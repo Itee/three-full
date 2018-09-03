@@ -31,7 +31,7 @@ AssimpLoader.prototype = {
 
 	constructor: AssimpLoader,
 
-	crossOrigin: 'Anonymous',
+	crossOrigin: 'anonymous',
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -53,6 +53,7 @@ AssimpLoader.prototype = {
 	setCrossOrigin: function ( value ) {
 
 		this.crossOrigin = value;
+		return this;
 
 	},
 
@@ -1081,7 +1082,7 @@ AssimpLoader.prototype = {
 			}
 
 			if ( ! key ) {
-				
+
 				return null;
 
 			} else if ( nextKey ) {
@@ -1102,7 +1103,7 @@ AssimpLoader.prototype = {
 				var l = T / dT;
 
 				return lerp( key.mValue.toTHREE(), nextKey.mValue.toTHREE(), l );
-				
+
 			}
 
 		}

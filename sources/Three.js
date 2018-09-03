@@ -12,6 +12,7 @@ export { DragControls } from './controls/DragControls.js'
 export { EditorControls } from './controls/EditorControls.js'
 export { FirstPersonControls } from './controls/FirstPersonControls.js'
 export { FlyControls } from './controls/FlyControls.js'
+export { MapControls } from './controls/MapControls.js'
 export { OrbitControls } from './controls/OrbitControls.js'
 export { OrthographicTrackballControls } from './controls/OrthographicTrackballControls.js'
 export { PointerLockControls } from './controls/PointerLockControls.js'
@@ -23,7 +24,6 @@ export {
 	TransformGizmoScale,
 	TransformControls
 } from './controls/TransformControls.js'
-export { VRControls } from './controls/VRControls.js'
 export { ConvexObjectBreaker } from './modifiers/ConvexObjectBreaker.js'
 export {
 	GrannyKnot,
@@ -51,7 +51,6 @@ export { OutlineEffect } from './effects/OutlineEffect.js'
 export { ParallaxBarrierEffect } from './effects/ParallaxBarrierEffect.js'
 export { PeppersGhostEffect } from './effects/PeppersGhostEffect.js'
 export { StereoEffect } from './effects/StereoEffect.js'
-export { VREffect } from './effects/VREffect.js'
 export { GLTFExporter } from './exporters/GLTFExporter.js'
 export { MMDExporter } from './exporters/MMDExporter.js'
 export { OBJExporter } from './exporters/OBJExporter.js'
@@ -93,7 +92,7 @@ export { ColladaLoader } from './loaders/ColladaLoader.js'
 export { DDSLoader } from './loaders/DDSLoader.js'
 export { LegacyGLTFLoader } from './loaders/deprecated/LegacyGLTFLoader.js'
 export { DRACOLoader } from './loaders/DRACOLoader.js'
-export { EquiangularToCubeGenerator } from './loaders/EquiangularToCubeGenerator.js'
+export { EquirectangularToCubeGenerator } from './loaders/EquirectangularToCubeGenerator.js'
 export { EXRLoader } from './loaders/EXRLoader.js'
 export { FBXLoader } from './loaders/FBXLoader.js'
 export { GCodeLoader } from './loaders/GCodeLoader.js'
@@ -123,7 +122,6 @@ export { SVGLoader } from './loaders/SVGLoader.js'
 export { TDSLoader } from './loaders/TDSLoader.js'
 export { TGALoader } from './loaders/TGALoader.js'
 export { TTFLoader } from './loaders/TTFLoader.js'
-export { UTF8Loader } from './loaders/UTF8Loader.js'
 export { VRMLLoader } from './loaders/VRMLLoader.js'
 export { VRMLoader } from './loaders/VRMLoader.js'
 export { VTKLoader } from './loaders/VTKLoader.js'
@@ -345,8 +343,8 @@ export { SceneUtils } from './utils/SceneUtils.js'
 export { ShadowMapViewer } from './utils/ShadowMapViewer.js'
 export { UVsDebug } from './utils/UVsDebug.js'
 export { VolumeSlice } from './audio/VolumeSlice.js'
-export { DaydreamController } from './vr/DaydreamController.js'
-export { GearVRController } from './vr/GearVRController.js'
+export { DaydreamController } from './vr/deprecated/DaydreamController.js'
+export { GearVRController } from './vr/deprecated/GearVRController.js'
 export { PaintViveController } from './vr/PaintViveController.js'
 export { ViveController } from './vr/ViveController.js'
 export { WebVR } from './vr/WebVR.js'
@@ -514,7 +512,9 @@ export {
 	RGBM16Encoding,
 	RGBDEncoding,
 	BasicDepthPacking,
-	RGBADepthPacking
+	RGBADepthPacking,
+	TangentSpaceNormalMap,
+	ObjectSpaceNormalMap
 } from './constants.js'
 export {
 	Float64BufferAttribute,

@@ -23,6 +23,7 @@ FunctionNode.rProperties = /[a-z_0-9]+/ig;
 
 FunctionNode.prototype = Object.create( TempNode.prototype );
 FunctionNode.prototype.constructor = FunctionNode;
+FunctionNode.prototype.nodeType = "Function";
 
 FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
 

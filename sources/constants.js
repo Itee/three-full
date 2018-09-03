@@ -1,6 +1,6 @@
 
 
-var REVISION = '93';
+var REVISION = '94';
 var MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2 };
 var CullFaceNone = 0;
 var CullFaceBack = 1;
@@ -139,6 +139,8 @@ var RGBM16Encoding = 3005;
 var RGBDEncoding = 3006;
 var BasicDepthPacking = 3200;
 var RGBADepthPacking = 3201;
+var TangentSpaceNormalMap = 0;
+var ObjectSpaceNormalMap = 1;
 
 export {
 	REVISION,
@@ -279,5 +281,7 @@ export {
 	RGBM16Encoding,
 	RGBDEncoding,
 	BasicDepthPacking,
-	RGBADepthPacking
+	RGBADepthPacking,
+	TangentSpaceNormalMap,
+	ObjectSpaceNormalMap
 }

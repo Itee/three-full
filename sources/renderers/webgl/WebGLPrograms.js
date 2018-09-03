@@ -4,7 +4,8 @@ import {
 	CubeUVRefractionMapping,
 	CubeUVReflectionMapping,
 	GammaEncoding,
-	LinearEncoding
+	LinearEncoding,
+	ObjectSpaceNormalMap
 } from '../../constants.js'
 import { WebGLProgram } from './WebGLProgram.js'
 
@@ -35,7 +36,7 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 
 	var parameterNames = [
 		"precision", "supportsVertexTextures", "map", "mapEncoding", "envMap", "envMapMode", "envMapEncoding",
-		"lightMap", "aoMap", "emissiveMap", "emissiveMapEncoding", "bumpMap", "normalMap", "displacementMap", "specularMap",
+		"lightMap", "aoMap", "emissiveMap", "emissiveMapEncoding", "bumpMap", "normalMap", "objectSpaceNormalMap", "displacementMap", "specularMap",
 		"roughnessMap", "metalnessMap", "gradientMap",
 		"alphaMap", "combine", "vertexColors", "fog", "useFog", "fogExp",
 		"flatShading", "sizeAttenuation", "logarithmicDepthBuffer", "skinning",
@@ -156,6 +157,7 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 			emissiveMapEncoding: getTextureEncodingFromMap( material.emissiveMap, renderer.gammaInput ),
 			bumpMap: !! material.bumpMap,
 			normalMap: !! material.normalMap,
+			objectSpaceNormalMap: material.normalMapType === ObjectSpaceNormalMap,
 			displacementMap: !! material.displacementMap,
 			roughnessMap: !! material.roughnessMap,
 			metalnessMap: !! material.metalnessMap,

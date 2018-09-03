@@ -46,6 +46,8 @@ AudioListener.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		}
 
+		return this;
+
 	},
 
 	getFilter: function () {
@@ -71,6 +73,8 @@ AudioListener.prototype = Object.assign( Object.create( Object3D.prototype ), {
 		this.gain.connect( this.filter );
 		this.filter.connect( this.context.destination );
 
+		return this;
+
 	},
 
 	getMasterVolume: function () {
@@ -82,6 +86,8 @@ AudioListener.prototype = Object.assign( Object.create( Object3D.prototype ), {
 	setMasterVolume: function ( value ) {
 
 		this.gain.gain.setTargetAtTime( value, this.context.currentTime, 0.01 );
+
+		return this;
 
 	},
 

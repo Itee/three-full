@@ -11,7 +11,7 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 var PVRLoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	CompressedTextureLoader.call( this, manager );
 
 	this._parser = PVRLoader.parse;
 

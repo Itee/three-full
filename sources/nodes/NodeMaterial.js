@@ -19,6 +19,8 @@ var NodeMaterial = function ( vertex, fragment ) {
 
 	ShaderMaterial.call( this );
 
+	this.defines.UUID = this.uuid;
+
 	this.vertex = vertex || new RawNode( new PositionNode( PositionNode.PROJECTION ) );
 	this.fragment = fragment || new RawNode( new ColorNode( 0xFF0000 ) );
 
@@ -91,13 +93,30 @@ NodeMaterial.prototype.updateFrame = function ( frame ) {
 
 };
 
-NodeMaterial.prototype.build = function () {
+NodeMaterial.prototype.onBeforeCompile = function ( shader, renderer ) {
+
+	if ( this.needsUpdate ) {
+
+		this.build( { dispose: false, renderer: renderer } );
+
+		shader.uniforms = this.uniforms;
+		shader.vertexShader = this.vertexShader;
+		shader.fragmentShader = this.fragmentShader;
+
+	}
+
+};
+
+NodeMaterial.prototype.build = function ( params ) {
+
+	params = params || {};
+	params.dispose = params.dispose !== undefined ? params.dispose : true;
 
 	var vertex, fragment;
 
 	this.nodes = [];
 
-	this.defines = {};
+	this.defines = { UUID: this.uuid };
 	this.uniforms = {};
 	this.attributes = {};
 
@@ -158,7 +177,7 @@ NodeMaterial.prototype.build = function () {
 
 	].join( "\n" );
 
-	var builder = new NodeBuilder( this );
+	var builder = new NodeBuilder( this, params.renderer );
 
 	vertex = this.vertex.build( builder.setShader( 'vertex' ), 'v4' );
 	fragment = this.fragment.build( builder.setShader( 'fragment' ), 'v4' );
@@ -266,8 +285,13 @@ NodeMaterial.prototype.build = function () {
 		'}'
 	].join( "\n" );
 
-	this.needsUpdate = true;
-	this.dispose(); // force update
+	if ( params.dispose ) {
+
+		// force update
+
+		this.dispose();
+
+	}
 
 	return this;
 
@@ -301,7 +325,7 @@ NodeMaterial.prototype.createUniform = function ( type, node, ns, needsUpdate ) 
 
 	var uniform = new NodeUniform( {
 		type: type,
-		name: ns ? ns : 'nVu' + index,
+		name: ns ? ns : 'nVu' + index + '_' + _Math.generateUUID().substr(0, 8),
 		node: node,
 		needsUpdate: needsUpdate
 	} );

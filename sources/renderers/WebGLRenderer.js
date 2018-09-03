@@ -1049,16 +1049,17 @@ function WebGLRenderer( parameters ) {
 
 	var onAnimationFrameCallback = null;
 
-	function onAnimationFrame() {
+	function onAnimationFrame( time ) {
 
 		if ( vr.isPresenting() ) return;
-		if ( onAnimationFrameCallback ) onAnimationFrameCallback();
+		if ( onAnimationFrameCallback ) onAnimationFrameCallback( time );
 
 	}
 
 	var animation = new WebGLAnimation();
 	animation.setAnimationLoop( onAnimationFrame );
-	animation.setContext( window );
+
+	if ( typeof window !== 'undefined' ) animation.setContext( window );
 
 	this.setAnimationLoop = function ( callback ) {
 
@@ -2189,10 +2190,12 @@ function WebGLRenderer( parameters ) {
 
 	function refreshUniformsPhysical( uniforms, material ) {
 
+		refreshUniformsStandard( uniforms, material );
+
+		uniforms.reflectivity.value = material.reflectivity; // also part of uniforms common
+
 		uniforms.clearCoat.value = material.clearCoat;
 		uniforms.clearCoatRoughness.value = material.clearCoatRoughness;
-
-		refreshUniformsStandard( uniforms, material );
 
 	}
 

@@ -112,7 +112,8 @@ GLTFExporter.prototype = {
 
 			attributes: new Map(),
 			materials: new Map(),
-			textures: new Map()
+			textures: new Map(),
+			images: new Map()
 
 		};
 
@@ -214,7 +215,7 @@ GLTFExporter.prototype = {
 
 			if ( cachedData.attributes.has( normal ) ) {
 
-				return cachedData.textures.get( normal );
+				return cachedData.attributes.get( normal );
 
 			}
 
@@ -495,8 +496,8 @@ GLTFExporter.prototype = {
 
 				var end = start + count;
 				var end2 = geometry.drawRange.count === Infinity
-						? attribute.count
-						: geometry.drawRange.start + geometry.drawRange.count;
+					? attribute.count
+					: geometry.drawRange.start + geometry.drawRange.count;
 
 				start = Math.max( start, geometry.drawRange.start );
 				count = Math.min( end, end2 ) - start;
@@ -551,9 +552,23 @@ GLTFExporter.prototype = {
 		}
 
 		
-		function processImage( map ) {
+		function processImage( image, format, flipY ) {
 
-			// @TODO Cache
+			if ( ! cachedData.images.has( image ) ) {
+
+				cachedData.images.set( image, {} );
+
+			}
+
+			var cachedImages = cachedData.images.get( image );
+			var mimeType = format === RGBAFormat ? 'image/png' : 'image/jpeg';
+			var key = mimeType + ":flipY/" + flipY.toString();
+
+			if ( cachedImages[ key ] !== undefined ) {
+
+				return cachedImages[ key ];
+
+			}
 
 			if ( ! outputJSON.images ) {
 
@@ -561,19 +576,18 @@ GLTFExporter.prototype = {
 
 			}
 
-			var mimeType = map.format === RGBAFormat ? 'image/png' : 'image/jpeg';
 			var gltfImage = { mimeType: mimeType };
 
 			if ( options.embedImages ) {
 
 				var canvas = cachedCanvas = cachedCanvas || document.createElement( 'canvas' );
 
-				canvas.width = map.image.width;
-				canvas.height = map.image.height;
+				canvas.width = image.width;
+				canvas.height = image.height;
 
-				if ( options.forcePowerOfTwoTextures && ! isPowerOfTwo( map.image ) ) {
+				if ( options.forcePowerOfTwoTextures && ! isPowerOfTwo( image ) ) {
 
-					console.warn( 'GLTFExporter: Resized non-power-of-two image.', map.image );
+					console.warn( 'GLTFExporter: Resized non-power-of-two image.', image );
 
 					canvas.width = _Math.floorPowerOfTwo( canvas.width );
 					canvas.height = _Math.floorPowerOfTwo( canvas.height );
@@ -582,14 +596,14 @@ GLTFExporter.prototype = {
 
 				var ctx = canvas.getContext( '2d' );
 
-				if ( map.flipY === true ) {
+				if ( flipY === true ) {
 
 					ctx.translate( 0, canvas.height );
 					ctx.scale( 1, - 1 );
 
 				}
 
-				ctx.drawImage( map.image, 0, 0, canvas.width, canvas.height );
+				ctx.drawImage( image, 0, 0, canvas.width, canvas.height );
 
 				if ( options.binary === true ) {
 
@@ -617,13 +631,16 @@ GLTFExporter.prototype = {
 
 			} else {
 
-				gltfImage.uri = map.image.src;
+				gltfImage.uri = image.src;
 
 			}
 
 			outputJSON.images.push( gltfImage );
 
-			return outputJSON.images.length - 1;
+			var index = outputJSON.images.length - 1;
+			cachedImages[ key ] = index;
+
+			return index;
 
 		}
 
@@ -669,7 +686,7 @@ GLTFExporter.prototype = {
 			var gltfTexture = {
 
 				sampler: processSampler( map ),
-				source: processImage( map )
+				source: processImage( map.image, map.format, map.flipY )
 
 			};
 
@@ -1097,7 +1114,7 @@ GLTFExporter.prototype = {
 			var forceIndices = options.forceIndices;
 			var isMultiMaterial = Array.isArray( mesh.material );
 
-			if ( isMultiMaterial && mesh.geometry.groups.length === 0 ) return null;
+			if ( isMultiMaterial && geometry.groups.length === 0 ) return null;
 
 			if ( ! forceIndices && geometry.index === null && isMultiMaterial ) {
 
@@ -1126,7 +1143,7 @@ GLTFExporter.prototype = {
 			}
 
 			var materials = isMultiMaterial ? mesh.material : [ mesh.material ];
-			var groups = isMultiMaterial ? mesh.geometry.groups : [ { materialIndex: 0, start: undefined, count: undefined } ];
+			var groups = isMultiMaterial ? geometry.groups : [ { materialIndex: 0, start: undefined, count: undefined } ];
 
 			for ( var i = 0, il = groups.length; i < il; i ++ ) {
 

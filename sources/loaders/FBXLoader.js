@@ -58,6 +58,8 @@ import { _Math } from '../math/Math.js'
 
 	Object.assign( FBXLoader.prototype, {
 
+		crossOrigin: 'anonymous',
+
 		load: function ( url, onLoad, onProgress, onError ) {
 
 			var self = this;
@@ -86,6 +88,13 @@ import { _Math } from '../math/Math.js'
 				}
 
 			}, onProgress, onError );
+
+		},
+
+		setCrossOrigin: function ( value ) {
+
+			this.crossOrigin = value;
+			return this;
 
 		},
 
@@ -119,9 +128,11 @@ import { _Math } from '../math/Math.js'
 
 			// console.log( FBXTree );
 
+			var textureLoader = new TextureLoader( this.manager ).setPath( resourceDirectory ).setCrossOrigin( this.crossOrigin );
+
 			var connections = parseConnections( FBXTree );
 			var images = parseImages( FBXTree );
-			var textures = parseTextures( FBXTree, new TextureLoader( this.manager ).setPath( resourceDirectory ), images, connections );
+			var textures = parseTextures( FBXTree, textureLoader, images, connections );
 			var materials = parseMaterials( FBXTree, textures, connections );
 			var deformers = parseDeformers( FBXTree, connections );
 			var geometryMap = parseGeometries( FBXTree, connections, deformers );
@@ -648,7 +659,7 @@ import { _Math } from '../math/Math.js'
 						id: nodeID,
 					};
 
-					morphTarget.rawTargets = parseMorphTargets( relationships, deformerNode, DeformerNodes, connections, FBXTree );
+					morphTarget.rawTargets = parseMorphTargets( relationships, deformerNode, DeformerNodes, connections );
 					morphTarget.id = nodeID;
 
 					if ( relationships.parents.length > 1 ) console.warn( 'FBXLoader: morph target attached to more than one geometry is not supported.' );

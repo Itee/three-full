@@ -22,7 +22,7 @@ var NodePass = function () {
 	this.node = new NodeMaterial();
 	this.node.fragment = this.fragment;
 
-	this.build();
+	this.needsUpdate = true;
 
 };
 
@@ -31,12 +31,20 @@ NodePass.prototype.constructor = NodePass;
 
 NodeMaterial.addShortcuts( NodePass.prototype, 'fragment', [ 'value' ] );
 
-NodePass.prototype.build = function () {
+NodePass.prototype.render = function () {
 
-	this.node.build();
+	if ( this.needsUpdate ) {
+
+		this.node.dispose();
+
+		this.needsUpdate = false;
+
+	}
 
 	this.uniforms = this.node.uniforms;
 	this.material = this.node;
+
+	ShaderPass.prototype.render.apply( this, arguments );
 
 };
 
