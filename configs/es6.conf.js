@@ -493,6 +493,11 @@ module.exports = {
             ],
 			outputOverride: 'objects/MD2CharacterComplex.js'
 		},
+        MMDAnimationHelper: {
+            exports: [
+                'MMDAnimationHelper'
+            ]
+		},
 		MMDLoader: {
 			imports: [
 				'DefaultLoadingManager',
