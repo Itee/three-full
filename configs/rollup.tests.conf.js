@@ -762,16 +762,6 @@ export default [
 		}
 	},
 	{
-		input: 'sources/exporters/STLBinaryExporter.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/exporters/STLBinaryExporter.test.js'
-		}
-	},
-	{
 		input: 'sources/exporters/STLExporter.js',
 		plugins: [ glsl() ],
 		output: {
