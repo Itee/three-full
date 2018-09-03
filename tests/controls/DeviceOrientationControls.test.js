@@ -2841,7 +2841,6 @@ var Three = (function (exports) {
 
 			}
 
-
 		};
 
 		this.dispose = function () {

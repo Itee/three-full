@@ -4205,7 +4205,6 @@ var Three = (function (exports) {
 
 				}
 
-
 				// trigger
 
 				if ( triggerIsPressed !== gamepad.buttons[ 1 ].pressed ) {

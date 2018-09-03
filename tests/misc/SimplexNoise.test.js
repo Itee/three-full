@@ -10,7 +10,6 @@ var Three = (function (exports) {
 	// Added 4D noise
 	// Joshua Koo zz85nus@gmail.com 
 
-
 	var SimplexNoise = function(r) {
 		if (r == undefined) r = Math;
 		this.grad3 = [[ 1,1,0 ],[ -1,1,0 ],[ 1,-1,0 ],[ -1,-1,0 ], 

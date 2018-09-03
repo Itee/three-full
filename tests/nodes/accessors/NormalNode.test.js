@@ -1125,7 +1125,6 @@ var Three = (function (exports) {
 
 	// Fix circular dependency, see #2
 
-
 	FunctionNode.prototype.isShared = function( builder, output ) {
 
 		return ! this.isMethod;
@@ -1240,8 +1239,6 @@ var Three = (function (exports) {
 	};
 
 	// Fix circular dependency, see #2
-
-
 
 	//
 	//	Keywords

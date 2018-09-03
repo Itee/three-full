@@ -740,7 +740,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -7532,7 +7531,6 @@ var Three = (function (exports) {
 	MTLLoader.prototype = {
 
 		constructor: MTLLoader,
-
 		
 		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -7547,7 +7545,6 @@ var Three = (function (exports) {
 			}, onProgress, onError );
 
 		},
-
 		
 		setPath: function ( path ) {
 
@@ -7555,7 +7552,6 @@ var Three = (function (exports) {
 			return this;
 
 		},
-
 		
 		setTexturePath: function ( path ) {
 
@@ -7585,7 +7581,6 @@ var Three = (function (exports) {
 			return this;
 
 		},
-
 		
 		parse: function ( text ) {
 
@@ -7647,8 +7642,6 @@ var Three = (function (exports) {
 		}
 
 	};
-
-
 
 	MTLLoader.MaterialCreator = function ( baseUrl, options ) {
 

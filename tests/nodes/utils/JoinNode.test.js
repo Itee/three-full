@@ -616,7 +616,6 @@ var Three = (function (exports) {
 
 			}
 
-
 		}
 
 		return data;

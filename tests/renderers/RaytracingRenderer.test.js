@@ -378,7 +378,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -1049,7 +1048,6 @@ var Three = (function (exports) {
 
 			if ( camera.parent === null ) camera.updateMatrixWorld();
 
-
 			sceneJSON = scene.toJSON();
 			cameraJSON = camera.toJSON();
 			++ sceneId;
@@ -1082,7 +1080,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			// Randomize painting :)
 
 			if ( scope.randomize ) {
@@ -1097,7 +1094,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 
 			pool.forEach( renderNext );
 

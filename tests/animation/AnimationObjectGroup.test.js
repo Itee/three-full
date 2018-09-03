@@ -68,7 +68,6 @@ var Three = (function (exports) {
 
 	} );
 
-
 	function PropertyBinding( rootNode, path, parsedPath ) {
 
 		this.path = path;
@@ -97,7 +96,6 @@ var Three = (function (exports) {
 			}
 
 		},
-
 		
 		sanitizeNodeName: ( function () {
 
@@ -549,7 +547,6 @@ var Three = (function (exports) {
 
 				}
 
-
 				if ( objectIndex !== undefined ) {
 
 					if ( targetObject[ objectIndex ] === undefined ) {
@@ -631,7 +628,6 @@ var Three = (function (exports) {
 							}
 
 						}
-
 
 					} else {
 

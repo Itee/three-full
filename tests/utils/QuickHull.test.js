@@ -3723,7 +3723,6 @@ var Three = (function (exports) {
 
 						this.unassigned.appendChain( faceVertices );
 
-
 					} else {
 
 						// if there's an absorbing face try to assign as many vertices as possible to it
@@ -4232,7 +4231,6 @@ var Three = (function (exports) {
 				face.getEdge( - 1 ).setTwin( horizonEdge.twin );
 
 				return face.getEdge( 0 ); // the half edge whose vertex is the eyeVertex
-
 
 			},
 

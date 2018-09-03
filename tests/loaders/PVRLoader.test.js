@@ -4321,7 +4321,6 @@ var Three = (function (exports) {
 	PVRLoader.prototype = Object.create( CompressedTextureLoader.prototype );
 	PVRLoader.prototype.constructor = PVRLoader;
 
-
 	PVRLoader.parse = function ( buffer, loadMipmaps ) {
 
 		var headerLengthInt = 13;
@@ -4357,7 +4356,6 @@ var Three = (function (exports) {
 
 		var header = pvrDatas.header;
 		var bpp, format;
-
 
 		var metaLen = header[ 12 ],
 			pixelFormat = header[ 2 ],
@@ -4425,7 +4423,6 @@ var Three = (function (exports) {
 			// pvrTag = header[ 11 ],
 			numSurfs = header[ 12 ];
 
-
 		var TYPE_MASK = 0xff;
 		var PVRTC_2 = 24,
 			PVRTC_4 = 25;
@@ -4466,7 +4463,6 @@ var Three = (function (exports) {
 		return PVRLoader._extract( pvrDatas );
 
 	};
-
 
 	PVRLoader._extract = function ( pvrDatas ) {
 

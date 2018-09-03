@@ -5093,7 +5093,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -5867,7 +5866,6 @@ var Three = (function (exports) {
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -5876,7 +5874,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -5887,7 +5884,6 @@ var Three = (function (exports) {
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -5896,7 +5892,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -5907,7 +5902,6 @@ var Three = (function (exports) {
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -5916,7 +5910,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -5927,7 +5920,6 @@ var Three = (function (exports) {
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -5936,7 +5928,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -7380,7 +7371,6 @@ var Three = (function (exports) {
 			return this;
 
 		},
-
 		
 		setFocalLength: function ( focalLength ) {
 
@@ -7391,7 +7381,6 @@ var Three = (function (exports) {
 			this.updateProjectionMatrix();
 
 		},
-
 		
 		getFocalLength: function () {
 
@@ -7421,7 +7410,6 @@ var Three = (function (exports) {
 			return this.filmGauge / Math.max( this.aspect, 1 );
 
 		},
-
 		
 		setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 
@@ -11134,8 +11122,6 @@ var Three = (function (exports) {
 
 		clone: function () {
 
-			
-
 			return new BufferGeometry().copy( this );
 
 		},
@@ -12492,8 +12478,6 @@ var Three = (function (exports) {
 
 		},
 
-		
-
 		mergeVertices: function () {
 
 			var verticesMap = {}; // Hashmap for looking up vertices by position coordinates (and making sure they are unique)
@@ -12524,7 +12508,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 
 			// if faces are completely degenerate after merging vertices, we
 			// have to remove them from the geometry.
@@ -12833,8 +12816,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new Geometry().copy( this );
 
@@ -13934,7 +13915,6 @@ var Three = (function (exports) {
 				var float_pattern = /(\b|\-|\+)([\d\.e]+)/;
 				var float2_pattern = /([\d\.\+\-e]+)\s+([\d\.\+\-e]+)/g;
 				var float3_pattern = /([\d\.\+\-e]+)\s+([\d\.\+\-e]+)\s+([\d\.\+\-e]+)/g;
-
 				
 				function paintFaces( geometry, radius, angles, colors, topDown ) {
 
@@ -14033,7 +14013,6 @@ var Three = (function (exports) {
 				function parseProperty( node, line ) {
 
 					var parts = [], part, property = {}, fieldName;
-
 					
 					var regex = /[^\s,\[\]]+/g;
 
@@ -14046,7 +14025,6 @@ var Three = (function (exports) {
 					}
 
 					fieldName = parts[ 0 ];
-
 
 					// trigger several recorders
 					switch ( fieldName ) {

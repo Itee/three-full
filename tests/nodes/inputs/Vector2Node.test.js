@@ -1822,7 +1822,6 @@ var Three = (function (exports) {
 
 	// Fix circular dependency, see #2
 
-
 	FunctionNode.prototype.isShared = function( builder, output ) {
 
 		return ! this.isMethod;
@@ -1937,8 +1936,6 @@ var Three = (function (exports) {
 	};
 
 	// Fix circular dependency, see #2
-
-
 
 	//
 	//	Keywords
@@ -5291,7 +5288,6 @@ var Three = (function (exports) {
 			"}"
 		].join( "\n" ) );
 
-
 		var LinearToRGBD = new FunctionNode( [
 			"vec3 LinearToRGBD( in vec4 value, in float maxRange ) {",
 
@@ -6366,7 +6362,6 @@ var Three = (function (exports) {
 
 		},
 
-
 		addVertexCode: function ( code ) {
 
 			this.addCode( code, 'vertex' );
@@ -6384,7 +6379,6 @@ var Three = (function (exports) {
 			this.code[ shader || this.shader ] += code + '\n';
 
 		},
-
 
 		addVertexNodeCode: function ( code ) {
 
@@ -6446,7 +6440,6 @@ var Three = (function (exports) {
 
 		},
 
-
 		addVertexParsCode: function ( code ) {
 
 			this.addParsCode( code, 'vertex' );
@@ -6465,14 +6458,12 @@ var Three = (function (exports) {
 
 		},
 
-
 		addVaryCode: function ( code ) {
 
 			this.addVertexParsCode( code );
 			this.addFragmentParsCode( code );
 
 		},
-
 
 		isCache: function ( name ) {
 
@@ -6652,7 +6643,6 @@ var Three = (function (exports) {
 				return node.name;
 
 			}
-
 
 			if ( node instanceof FunctionNode ) {
 
@@ -7161,7 +7151,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 
 			var m;
 

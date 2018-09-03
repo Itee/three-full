@@ -5616,7 +5616,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -7898,7 +7897,6 @@ var Three = (function (exports) {
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -7907,7 +7905,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -7918,7 +7915,6 @@ var Three = (function (exports) {
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -7927,7 +7923,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -7938,7 +7933,6 @@ var Three = (function (exports) {
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -7947,7 +7941,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -7958,7 +7951,6 @@ var Three = (function (exports) {
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -7967,7 +7959,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -9232,8 +9223,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new BufferGeometry().copy( this );
 
@@ -11353,7 +11342,6 @@ var Three = (function (exports) {
 	TDSLoader.prototype = {
 
 		constructor: TDSLoader,
-
 		
 		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -11372,7 +11360,6 @@ var Three = (function (exports) {
 			}, onProgress, onError );
 
 		},
-
 		
 		parse: function ( arraybuffer, path ) {
 
@@ -11392,7 +11379,6 @@ var Three = (function (exports) {
 			return this.group;
 
 		},
-
 		
 		readFile: function ( arraybuffer, path ) {
 
@@ -11430,7 +11416,6 @@ var Three = (function (exports) {
 			this.debugMessage( 'Parsed ' + this.meshes.length + ' meshes' );
 
 		},
-
 		
 		readMeshData: function ( data, path ) {
 
@@ -11473,7 +11458,6 @@ var Three = (function (exports) {
 			}
 
 		},
-
 		
 		readNamedObject: function ( data ) {
 
@@ -11504,7 +11488,6 @@ var Three = (function (exports) {
 			this.endChunk( chunk );
 
 		},
-
 		
 		readMaterialEntry: function ( data, path ) {
 
@@ -11600,7 +11583,6 @@ var Three = (function (exports) {
 			this.materials[ material.name ] = material;
 
 		},
-
 		
 		readMesh: function ( data ) {
 
@@ -11659,7 +11641,6 @@ var Three = (function (exports) {
 					}
 
 					geometry.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
-
 
 				} else if ( next === MESH_MATRIX ) {
 
@@ -11723,7 +11704,6 @@ var Three = (function (exports) {
 			return mesh;
 
 		},
-
 		
 		readFaceArray: function ( data, mesh ) {
 
@@ -11785,7 +11765,6 @@ var Three = (function (exports) {
 			this.endChunk( chunk );
 
 		},
-
 		
 		readMap: function ( data, path ) {
 
@@ -11840,7 +11819,6 @@ var Three = (function (exports) {
 			return texture;
 
 		},
-
 		
 		readMaterialGroup: function ( data ) {
 
@@ -11861,7 +11839,6 @@ var Three = (function (exports) {
 			return { name: name, index: index };
 
 		},
-
 		
 		readColor: function ( data ) {
 
@@ -11898,7 +11875,6 @@ var Three = (function (exports) {
 			return color;
 
 		},
-
 		
 		readChunk: function ( data ) {
 
@@ -11913,14 +11889,12 @@ var Three = (function (exports) {
 			return chunk;
 
 		},
-
 		
 		endChunk: function ( chunk ) {
 
 			this.position = chunk.end;
 
 		},
-
 		
 		nextChunk: function ( data, chunk ) {
 
@@ -11946,14 +11920,12 @@ var Three = (function (exports) {
 			}
 
 		},
-
 		
 		resetPosition: function () {
 
 			this.position -= 6;
 
 		},
-
 		
 		readByte: function ( data ) {
 
@@ -11962,7 +11934,6 @@ var Three = (function (exports) {
 			return v;
 
 		},
-
 		
 		readFloat: function ( data ) {
 
@@ -11979,7 +11950,6 @@ var Three = (function (exports) {
 			}
 
 		},
-
 		
 		readInt: function ( data ) {
 
@@ -11988,7 +11958,6 @@ var Three = (function (exports) {
 			return v;
 
 		},
-
 		
 		readShort: function ( data ) {
 
@@ -11997,7 +11966,6 @@ var Three = (function (exports) {
 			return v;
 
 		},
-
 		
 		readDWord: function ( data ) {
 
@@ -12006,7 +11974,6 @@ var Three = (function (exports) {
 			return v;
 
 		},
-
 		
 		readWord: function ( data ) {
 
@@ -12015,7 +11982,6 @@ var Three = (function (exports) {
 			return v;
 
 		},
-
 		
 		readString: function ( data, maxLength ) {
 
@@ -12037,7 +12003,6 @@ var Three = (function (exports) {
 			return s;
 
 		},
-
 		
 		setPath: function ( path ) {
 
@@ -12046,7 +12011,6 @@ var Three = (function (exports) {
 			return this;
 
 		},
-
 		
 		debugMessage: function ( message ) {
 

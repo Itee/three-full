@@ -378,7 +378,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -6835,8 +6834,6 @@ var Three = (function (exports) {
 
 		},
 
-		
-
 		mergeVertices: function () {
 
 			var verticesMap = {}; // Hashmap for looking up vertices by position coordinates (and making sure they are unique)
@@ -6867,7 +6864,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 
 			// if faces are completely degenerate after merging vertices, we
 			// have to remove them from the geometry.
@@ -7176,8 +7172,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new Geometry().copy( this );
 
@@ -11129,7 +11123,6 @@ var Three = (function (exports) {
 					len_tri_flat, len_tri_smooth, len_tri_flat_uv, len_tri_smooth_uv,
 					len_quad_flat, len_quad_smooth, len_quad_flat_uv;
 
-
 				Geometry.call( this );
 
 				md = parseMetaData( data, currentOffset );
@@ -11225,7 +11218,6 @@ var Three = (function (exports) {
 						'nquad_smooth_uv': parseUInt32( data, offset + 20 + 4 * 10 )
 
 					};
-					
 
 					return metaData;
 

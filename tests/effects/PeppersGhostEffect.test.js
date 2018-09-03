@@ -4230,7 +4230,6 @@ var Three = (function (exports) {
 			return this;
 
 		},
-
 		
 		setFocalLength: function ( focalLength ) {
 
@@ -4241,7 +4240,6 @@ var Three = (function (exports) {
 			this.updateProjectionMatrix();
 
 		},
-
 		
 		getFocalLength: function () {
 
@@ -4271,7 +4269,6 @@ var Three = (function (exports) {
 			return this.filmGauge / Math.max( this.aspect, 1 );
 
 		},
-
 		
 		setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 
@@ -4444,7 +4441,6 @@ var Three = (function (exports) {
 			_cameraR.lookAt( scene.position );
 			_cameraR.rotation.x += 90 * ( Math.PI / 180 );
 
-
 			renderer.clear();
 			renderer.setScissorTest( true );
 
@@ -4503,7 +4499,6 @@ var Three = (function (exports) {
 			renderer.setScissorTest( false );
 
 		};
-
 
 	};
 

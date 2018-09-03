@@ -4152,13 +4152,11 @@ var Three = (function (exports) {
 
 					this.matrixWorld.compose( translationWorld, quaternionObject, scaleWorld );
 
-
 				} else {
 
 					this.matrixWorld.copy( this.matrix );
 
 				}
-
 
 				this.matrixWorldNeedsUpdate = false;
 

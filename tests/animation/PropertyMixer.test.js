@@ -2566,7 +2566,6 @@ var Three = (function (exports) {
 
 		},
 
-
 		// mix functions
 
 		_select: function ( buffer, dstOffset, srcOffset, t, stride ) {

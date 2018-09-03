@@ -4267,7 +4267,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -4880,7 +4879,6 @@ var Three = (function (exports) {
 			return this;
 
 		},
-
 		
 		setFocalLength: function ( focalLength ) {
 
@@ -4891,7 +4889,6 @@ var Three = (function (exports) {
 			this.updateProjectionMatrix();
 
 		},
-
 		
 		getFocalLength: function () {
 
@@ -4921,7 +4918,6 @@ var Three = (function (exports) {
 			return this.filmGauge / Math.max( this.aspect, 1 );
 
 		},
-
 		
 		setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 

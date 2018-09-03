@@ -396,8 +396,6 @@ var Three = (function (exports) {
 
 		//
 
-
-
 		function setTexture2D( texture, slot ) {
 
 			var textureProperties = properties.get( texture );

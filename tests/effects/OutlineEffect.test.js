@@ -298,7 +298,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -5270,8 +5269,6 @@ var Three = (function (exports) {
 
 		},
 
-		
-
 		cube: {
 
 			uniforms: {
@@ -5763,7 +5760,6 @@ var Three = (function (exports) {
 			renderer.shadowMap.enabled = currentShadowMapEnabled;
 
 		};
-
 		
 		this.autoClear = renderer.autoClear;
 		this.domElement = renderer.domElement;

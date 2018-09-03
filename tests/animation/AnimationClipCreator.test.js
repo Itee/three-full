@@ -4080,7 +4080,6 @@ var Three = (function (exports) {
 
 	};
 
-
 	AnimationClipCreator.CreatePulsationAnimation = function ( duration, pulseScale ) {
 
 		var times = [], values = [], tmp = new Vector3();
@@ -4103,7 +4102,6 @@ var Three = (function (exports) {
 
 	};
 
-
 	AnimationClipCreator.CreateVisibilityAnimation = function ( duration ) {
 
 		var times = [ 0, duration / 2, duration ], values = [ true, false, true ];
@@ -4115,7 +4113,6 @@ var Three = (function (exports) {
 		return new AnimationClip( null, duration, [ track ] );
 
 	};
-
 
 	AnimationClipCreator.CreateMaterialColorAnimation = function ( duration, colors ) {
 

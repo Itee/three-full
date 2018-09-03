@@ -4511,7 +4511,6 @@ var Three = (function (exports) {
 
 	};
 
-
 	// Static interface
 
 	WebGLUniforms.upload = function ( gl, seq, values, renderer ) {

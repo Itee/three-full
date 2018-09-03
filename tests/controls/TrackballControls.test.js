@@ -3050,7 +3050,6 @@ var Three = (function (exports) {
 		var startEvent = { type: 'start' };
 		var endEvent = { type: 'end' };
 
-
 		// methods
 
 		this.handleResize = function () {
@@ -3164,7 +3163,6 @@ var Three = (function (exports) {
 			};
 
 		}() );
-
 
 		this.zoomCamera = function () {
 

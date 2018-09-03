@@ -1478,7 +1478,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -5268,8 +5267,6 @@ var Three = (function (exports) {
 			fragmentShader: ShaderChunk.sprite_frag
 
 		},
-
-		
 
 		cube: {
 

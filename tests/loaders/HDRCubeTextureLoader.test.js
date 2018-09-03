@@ -4256,7 +4256,6 @@ var Three = (function (exports) {
 
 			}, onProgress, onError );
 
-
 			return texture;
 
 		}
@@ -4281,7 +4280,6 @@ var Three = (function (exports) {
 		var 
 			
 			RGBE_RETURN_FAILURE = - 1,
-
 			
 			rgbe_read_error = 1,
 			rgbe_write_error = 2,
@@ -4304,7 +4302,6 @@ var Three = (function (exports) {
 				return RGBE_RETURN_FAILURE;
 
 			},
-
 			
 			RGBE_VALID_PROGRAMTYPE = 1,
 			RGBE_VALID_FORMAT = 2,
@@ -4328,7 +4325,6 @@ var Three = (function (exports) {
 				}
 
 				if ( - 1 < i ) {
-
 					
 					if ( false !== consume ) buffer.pos += len + i + 1;
 					return s + chunk.slice( 0, i );
@@ -4337,7 +4333,6 @@ var Three = (function (exports) {
 				return false;
 
 			},
-
 			
 			RGBE_ReadHeader = function ( buffer ) {
 
@@ -4535,7 +4530,6 @@ var Three = (function (exports) {
 
 					}
 
-
 					// now convert data from buffer into rgba
 					// first red, then green, then blue, then exponent (alpha)
 					l = scanline_width; //scanline_buffer.byteLength;
@@ -4650,7 +4644,6 @@ var Three = (function (exports) {
 
 			var floatView = new Float32Array( 1 );
 			var int32View = new Int32Array( floatView.buffer );
-
 			
 			function toHalf( val ) {
 
@@ -4660,10 +4653,8 @@ var Three = (function (exports) {
 				var bits = ( x >> 16 ) & 0x8000; 
 				var m = ( x >> 12 ) & 0x07ff; 
 				var e = ( x >> 23 ) & 0xff; 
-
 				
 				if ( e < 103 ) return bits;
-
 				
 				if ( e > 142 ) {
 
@@ -4673,7 +4664,6 @@ var Three = (function (exports) {
 					return bits;
 
 				}
-
 				
 				if ( e < 113 ) {
 

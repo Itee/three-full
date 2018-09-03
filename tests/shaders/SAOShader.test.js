@@ -3060,7 +3060,6 @@ var Three = (function (exports) {
 			"	return occlusionSum * ( intensity / weightSum );",
 			"}",
 
-
 			"void main() {",
 			"	float centerDepth = getDepth( vUv );",
 			"	if( centerDepth >= ( 1.0 - EPSILON ) ) {",

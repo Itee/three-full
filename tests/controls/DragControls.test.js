@@ -5704,7 +5704,6 @@ var Three = (function (exports) {
 
 			}
 
-
 		}
 
 		function onDocumentMouseCancel( event ) {
@@ -5782,7 +5781,6 @@ var Three = (function (exports) {
 				scope.dispatchEvent( { type: 'dragstart', object: _selected } );
 
 			}
-
 
 		}
 

@@ -3,8 +3,6 @@ var Three = (function (exports) {
 
 	var TypedArrayUtils = {};
 
-
-
 	TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 
 		var stack = [];
@@ -141,10 +139,6 @@ var Three = (function (exports) {
 
 	};
 
-
-
-
-
 	 TypedArrayUtils.Kdtree = function ( points, metric, eleSize ) {
 
 		var self = this;
@@ -194,8 +188,6 @@ var Three = (function (exports) {
 		};
 		
 		this.nearest = function ( point, maxNodes, maxDistance ) {
-		
-			 
 
 			var i,
 				result,
@@ -349,7 +341,6 @@ var Three = (function (exports) {
 		
 	};
 
-
 	TypedArrayUtils.Kdtree.prototype.Node = function ( obj, depth, parent, pos ) {
 
 		this.obj = obj;
@@ -360,8 +351,6 @@ var Three = (function (exports) {
 		this.pos = pos;
 
 	}; 
-
-
 
 	TypedArrayUtils.Kdtree.BinaryHeap = function ( scoreFunction ) {
 

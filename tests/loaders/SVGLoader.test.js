@@ -740,7 +740,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -4227,7 +4226,6 @@ var Three = (function (exports) {
 			normals[ 0 ].crossVectors( tangents[ 0 ], vec );
 			binormals[ 0 ].crossVectors( tangents[ 0 ], normals[ 0 ] );
 
-
 			// compute the slowly-varying normal and binormal vectors for each segment on the curve
 
 			for ( i = 1; i <= segments; i ++ ) {
@@ -4433,7 +4431,6 @@ var Three = (function (exports) {
 
 	};
 
-
 	EllipseCurve.prototype.toJSON = function () {
 
 		var data = Curve.prototype.toJSON.call( this );
@@ -4492,7 +4489,6 @@ var Three = (function (exports) {
 	function CubicPoly() {
 
 		var c0 = 0, c1 = 0, c2 = 0, c3 = 0;
-
 		
 		function init( x0, x1, t0, t1 ) {
 
@@ -6872,7 +6868,6 @@ var Three = (function (exports) {
 
 			if ( noHoles === true )	return	toShapesNoHoles( subPaths );
 
-
 			var solid, tmpPath, tmpShape, shapes = [];
 
 			if ( subPaths.length === 1 ) {
@@ -6930,7 +6925,6 @@ var Three = (function (exports) {
 
 			// only Holes? -> probably all Shapes with wrong orientation
 			if ( ! newShapes[ 0 ] )	return	toShapesNoHoles( subPaths );
-
 
 			if ( newShapes.length > 1 ) {
 
@@ -7824,8 +7818,6 @@ var Three = (function (exports) {
 
 			}
 
-			
-
 			function parseArcCommand( path, rx, ry, x_axis_rotation, large_arc_flag, sweep_flag, start, end ) {
 
 				x_axis_rotation = x_axis_rotation * Math.PI / 180;
@@ -7888,7 +7880,6 @@ var Three = (function (exports) {
 				return ang;
 
 			}
-
 			
 			function parseRectNode( node, style ) {
 
@@ -8096,7 +8087,6 @@ var Three = (function (exports) {
 				}
 
 				return array;
-
 
 			}
 
@@ -8370,7 +8360,6 @@ var Three = (function (exports) {
 			parseNode( xml.documentElement, { fill: '#000' } );
 
 			// console.log( paths );
-
 
 			console.timeEnd( 'SVGLoader: Parse' );
 

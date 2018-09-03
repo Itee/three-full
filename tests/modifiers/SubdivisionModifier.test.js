@@ -378,7 +378,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -6835,8 +6834,6 @@ var Three = (function (exports) {
 
 		},
 
-		
-
 		mergeVertices: function () {
 
 			var verticesMap = {}; // Hashmap for looking up vertices by position coordinates (and making sure they are unique)
@@ -6867,7 +6864,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 
 			// if faces are completely degenerate after merging vertices, we
 			// have to remove them from the geometry.
@@ -7177,8 +7173,6 @@ var Three = (function (exports) {
 
 		clone: function () {
 
-			
-
 			return new Geometry().copy( this );
 
 		},
@@ -7464,7 +7458,6 @@ var Three = (function (exports) {
 	( function () {
 		var ABC = [ 'a', 'b', 'c' ];
 
-
 		function getEdge( a, b, map ) {
 
 			var vertexIndexA = Math.min( a, b );
@@ -7475,7 +7468,6 @@ var Three = (function (exports) {
 			return map[ key ];
 
 		}
-
 
 		function processEdge( a, b, vertices, map, face, metaVertices ) {
 
@@ -7514,7 +7506,6 @@ var Three = (function (exports) {
 
 			metaVertices[ a ].edges.push( edge );
 			metaVertices[ b ].edges.push( edge );
-
 
 		}
 
@@ -7580,15 +7571,10 @@ var Three = (function (exports) {
 
 			var hasUvs = oldUvs !== undefined && oldUvs.length > 0;
 
-			
-
 			metaVertices = new Array( oldVertices.length );
 			sourceEdges = {}; // Edge => { oldVertex1, oldVertex2, faces[]  }
 
 			generateLookups( oldVertices, oldFaces, metaVertices, sourceEdges );
-
-
-			
 
 			newEdgeVertices = [];
 			var other, currentEdge, newEdge, face;
@@ -7641,8 +7627,6 @@ var Three = (function (exports) {
 				// console.log(currentEdge, newEdge);
 
 			}
-
-			
 
 			var beta, sourceVertexWeight, connectingVertexWeight;
 			var connectingEdge, connectingEdges, oldVertex, newSourceVertex;
@@ -7706,9 +7690,6 @@ var Three = (function (exports) {
 				newSourceVertices.push( newSourceVertex );
 
 			}
-
-
-			
 
 			newVertices = newSourceVertices.concat( newEdgeVertices );
 			var sl = newSourceVertices.length, edge1, edge2, edge3;

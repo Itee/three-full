@@ -3215,7 +3215,6 @@ var Three = (function (exports) {
 
 				spherical.makeSafe();
 
-
 				spherical.radius *= scale;
 
 				// restrict radius to be between desired limits

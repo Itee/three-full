@@ -4455,7 +4455,6 @@ var Three = (function (exports) {
 
 		}
 
-
 		function touchMove( event ) {
 
 			if ( scope.enabled === false ) return;
@@ -4491,7 +4490,6 @@ var Three = (function (exports) {
 					var distance = touches[ 0 ].distanceTo( touches[ 1 ] );
 					scope.zoom( delta.set( 0, 0, prevDistance - distance ) );
 					prevDistance = distance;
-
 
 					var offset0 = touches[ 0 ].clone().sub( getClosest( touches[ 0 ], prevTouches ) );
 					var offset1 = touches[ 1 ].clone().sub( getClosest( touches[ 1 ], prevTouches ) );

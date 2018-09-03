@@ -527,7 +527,6 @@ var Three = (function (exports) {
 			"shaderFocus":  { value: 1 },
 			"focusCoords":  { value: new Vector2() }
 
-
 		},
 
 		vertexShader: [
@@ -675,7 +674,6 @@ var Three = (function (exports) {
 				"kernel[3] = 2.0/16.0;   kernel[4] = 4.0/16.0;   kernel[5] = 2.0/16.0;",
 				"kernel[6] = 1.0/16.0;   kernel[7] = 2.0/16.0;   kernel[8] = 1.0/16.0;",
 
-
 				"for( int i=0; i<9; i++ ) {",
 					"float tmp = texture2D(tDepth, coords + offset[i]).r;",
 					"d += tmp * kernel[i];",
@@ -683,7 +681,6 @@ var Three = (function (exports) {
 
 				"return d;",
 			"}",
-
 
 			"vec3 color(vec2 coords,float blur) {",
 				"//processing the sample",
@@ -715,7 +712,6 @@ var Three = (function (exports) {
 			"float linearize(float depth) {",
 				"return -zfar * znear / (depth * (zfar - znear) - zfar);",
 			"}",
-
 
 			"float vignette() {",
 				"float dist = distance(vUv.xy, vec2(0.5,0.5));",

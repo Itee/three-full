@@ -2697,7 +2697,6 @@ var Three = (function (exports) {
 			normals[ 0 ].crossVectors( tangents[ 0 ], vec );
 			binormals[ 0 ].crossVectors( tangents[ 0 ], normals[ 0 ] );
 
-
 			// compute the slowly-varying normal and binormal vectors for each segment on the curve
 
 			for ( i = 1; i <= segments; i ++ ) {
@@ -3414,7 +3413,6 @@ var Three = (function (exports) {
 	} );
 
 	var NURBSUtils = {
-
 		
 		findSpan: function( p,  u,  U ) {
 
@@ -3455,8 +3453,6 @@ var Three = (function (exports) {
 			return mid;
 
 		},
-
-
 		
 		calcBasisFunctions: function( span, u, p, U ) {
 
@@ -3489,8 +3485,6 @@ var Three = (function (exports) {
 			 return N;
 
 		},
-
-
 		
 		calcBSplinePoint: function( p, U, P, u ) {
 
@@ -3513,8 +3507,6 @@ var Three = (function (exports) {
 			return C;
 
 		},
-
-
 		
 		calcBasisFunctionDerivatives: function( span,  u,  p,  n,  U ) {
 
@@ -3633,8 +3625,6 @@ var Three = (function (exports) {
 			return ders;
 
 		},
-
-
 		
 		calcBSplineDerivatives: function( p,  U,  P,  u,  nd ) {
 
@@ -3679,8 +3669,6 @@ var Three = (function (exports) {
 			return CK;
 
 		},
-
-
 		
 		calcKoverI: function( k, i ) {
 
@@ -3709,8 +3697,6 @@ var Three = (function (exports) {
 			return nom / denom;
 
 		},
-
-
 		
 		calcRationalCurveDerivatives: function ( Pders ) {
 
@@ -3745,8 +3731,6 @@ var Three = (function (exports) {
 			return CK;
 
 		},
-
-
 		
 		calcNURBSDerivatives: function( p,  U,  P,  u,  nd ) {
 
@@ -3754,8 +3738,6 @@ var Three = (function (exports) {
 			return this.calcRationalCurveDerivatives( Pders );
 
 		},
-
-
 		
 		calcSurfacePoint: function ( p, q, U, V, P, u, v, target ) {
 
@@ -3815,10 +3797,8 @@ var Three = (function (exports) {
 
 	};
 
-
 	NURBSCurve.prototype = Object.create( Curve.prototype );
 	NURBSCurve.prototype.constructor = NURBSCurve;
-
 
 	NURBSCurve.prototype.getPoint = function ( t ) {
 
@@ -3837,7 +3817,6 @@ var Three = (function (exports) {
 		return new Vector3( hpoint.x, hpoint.y, hpoint.z );
 
 	};
-
 
 	NURBSCurve.prototype.getTangent = function ( t ) {
 
