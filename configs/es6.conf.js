@@ -505,6 +505,11 @@ module.exports = {
 				'_Math'
 			]
 		},
+        MMDPhysics: {
+            exports: [
+                'MMDPhysics'
+            ]
+		},
 		MorphAnimMesh: {
             imports: [
                 'AnimationClip'
