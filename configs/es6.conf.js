@@ -144,11 +144,6 @@ module.exports = {
         CatmullRomCurve3: {
             outputOverride: 'curves/CatmullRomCurve3.js'
         },
-        CCDIKSolver: {
-            exports: [
-                'CCDIKSolver'
-            ]
-		},
         CinematicCamera: {
 			imports: [
 				'BokehShader',
@@ -493,25 +488,12 @@ module.exports = {
             ],
 			outputOverride: 'objects/MD2CharacterComplex.js'
 		},
-        MMDAnimationHelper: {
-            exports: [
-                'MMDAnimationHelper'
-            ]
-		},
 		MMDLoader: {
 			imports: [
 				'DefaultLoadingManager',
 				'LoaderUtils',
 				'_Math'
-			],
-            exports: [
-                'MMDLoader'
-            ]
-		},
-        MMDPhysics: {
-            exports: [
-                'MMDPhysics'
-            ]
+			]
 		},
 		MorphAnimMesh: {
             imports: [
@@ -965,9 +947,6 @@ module.exports = {
         VRMLoader: {
             imports: [
                 'DefaultLoadingManager'
-            ],
-            exports: [
-                'VRMLoader'
             ]
 		},
 		VTKLoader: {
