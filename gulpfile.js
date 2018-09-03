@@ -8,6 +8,7 @@
 const fs      = require( 'fs' )
 const gulp    = require( 'gulp' )
 const util    = require( 'gulp-util' )
+const eslint  = require( 'gulp-eslint' )
 const replace = require( 'gulp-batch-replace' )
 const del     = require( 'del' )
 const rollup  = require( 'rollup' )
@@ -700,6 +701,23 @@ gulp.task( 'clean', () => {
 
 } )
 
+/**
+ * @method npm run lint
+ * @description Will lint the sources files and try to fix the style when possible
+ */
+gulp.task( 'lint', () => {
+
+    const eslintConfig = require( './configs/eslint.conf.js' )
+    const filesToLint  = [ './sources/**/*.js' ]
+
+    return gulp.src( filesToLint )
+               .pipe( eslint( eslintConfig ) )
+               .pipe( eslint.format( 'stylish' ) )
+               .pipe( gulp.dest( './sources' ) )
+               .pipe( eslint.failAfterError() )
+
+} )
+
 /////////////////////
 ///// CONVERT ///////
 /////////////////////
@@ -1040,6 +1058,7 @@ gulp.task( 'release',
     gulp.series(
         'clean',
         'convert-three',
+        'lint',
         'build-three'
     )
 )
