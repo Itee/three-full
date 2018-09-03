@@ -427,7 +427,8 @@ module.exports = {
         LoaderSupport: {
 			imports: [ 'DefaultLoadingManager' ],
 			replacements: [
-				[ 'if ( var LoaderSupport === undefined ) { var LoaderSupport = {} }', 'var LoaderSupport = {}' ]
+				[ 'if ( var LoaderSupport === undefined )', '/*\nif ( var LoaderSupport === undefined )' ],
+				[ 'LoaderSupport.Validator = {', '*/\nvar LoaderSupport = {}\nLoaderSupport.Validator = {' ]
 			]
 		},
 		Lut: {
