@@ -788,9 +788,6 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
-		ScreenNode: {
-			imports: [ 'InputNode' ]
-		},
 		ShaderGodRays: {
 			outputOverride: 'shaders/ShaderGodRays.js'
 		},
