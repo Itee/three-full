@@ -729,16 +729,6 @@ export default [
 			file: 'tests/effects/StereoEffect.test.js'
 		}
 	},
-	{
-		input: 'sources/effects/VREffect.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/effects/VREffect.test.js'
-		}
-	},
 
 	// exporters
 	{
