@@ -148,6 +148,7 @@ module.exports = {
         CinematicCamera: {
 			imports: [
 				'BokehShader',
+				'BokehDepthShader',
 				'UniformsUtils'
 			]
 		},
