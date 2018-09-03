@@ -26,6 +26,8 @@ module.exports = {
 		'Curves.js',
 		'Geometries.js',
 		'Materials.js',
+		'Nodes.js',
+		'THREE.Nodes.js',
 
 
 		// Worker
