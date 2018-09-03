@@ -1038,7 +1038,7 @@ LoaderSupport.WorkerDirector = (function () {
 
 		this.maxQueueSize = MAX_QUEUE_SIZE ;
 		this.maxWebWorkers = MAX_WEB_WORKER;
-		this.crossOrigin = null;
+		this.crossOrigin = 'anonymous';
 
 		if ( ! Validator.isValid( classDef ) ) throw 'Provided invalid classDef: ' + classDef;
 

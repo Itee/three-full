@@ -103,7 +103,7 @@ var Three = (function (exports) {
 
   }
 
-  var _Math = {
+  var _Math$1 = {
 
   	DEG2RAD: Math.PI / 180,
   	RAD2DEG: 180 / Math.PI,
@@ -219,13 +219,13 @@ var Three = (function (exports) {
 
   	degToRad: function ( degrees ) {
 
-  		return degrees * _Math.DEG2RAD;
+  		return degrees * _Math$1.DEG2RAD;
 
   	},
 
   	radToDeg: function ( radians ) {
 
-  		return radians * _Math.RAD2DEG;
+  		return radians * _Math$1.RAD2DEG;
 
   	},
 
@@ -1762,7 +1762,7 @@ var Three = (function (exports) {
 
   		// clamp, to handle numerical problems
 
-  		return Math.acos( _Math.clamp( theta, - 1, 1 ) );
+  		return Math.acos( _Math$1.clamp( theta, - 1, 1 ) );
 
   	},
 
@@ -2415,19 +2415,21 @@ var Three = (function (exports) {
 
   		}
 
-  		var sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
+  		var sqrSinHalfTheta = 1.0 - cosHalfTheta * cosHalfTheta;
 
-  		if ( Math.abs( sinHalfTheta ) < 0.001 ) {
+  		if ( sqrSinHalfTheta <= Number.EPSILON ) {
 
-  			this._w = 0.5 * ( w + this._w );
-  			this._x = 0.5 * ( x + this._x );
-  			this._y = 0.5 * ( y + this._y );
-  			this._z = 0.5 * ( z + this._z );
+  			var s = 1 - t;
+  			this._w = s * w + t * this._w;
+  			this._x = s * x + t * this._x;
+  			this._y = s * y + t * this._y;
+  			this._z = s * z + t * this._z;
 
-  			return this;
+  			return this.normalize();
 
   		}
 
+  		var sinHalfTheta = Math.sqrt( sqrSinHalfTheta );
   		var halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
   		var ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
   			ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
@@ -2695,7 +2697,7 @@ var Three = (function (exports) {
 
   	setFromRotationMatrix: function ( m, order, update ) {
 
-  		var clamp = _Math.clamp;
+  		var clamp = _Math$1.clamp;
 
   		// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
 
@@ -3338,7 +3340,7 @@ var Three = (function (exports) {
 
   	Object.defineProperty( this, 'id', { value: object3DId ++ } );
 
-  	this.uuid = _Math.generateUUID();
+  	this.uuid = _Math$1.generateUUID();
 
   	this.name = '';
   	this.type = 'Object3D';
@@ -3986,6 +3988,7 @@ var Three = (function (exports) {
   		if ( this.renderOrder !== 0 ) { object.renderOrder = this.renderOrder; }
   		if ( JSON.stringify( this.userData ) !== '{}' ) { object.userData = this.userData; }
 
+  		object.layers = this.layers.mask;
   		object.matrix = this.matrix.toArray();
 
   		if ( this.matrixAutoUpdate === false ) { object.matrixAutoUpdate = false; }
@@ -4275,9 +4278,9 @@ var Three = (function (exports) {
   		return function setHSL( h, s, l ) {
 
   			// h,s,l ranges are in 0.0 - 1.0
-  			h = _Math.euclideanModulo( h, 1 );
-  			s = _Math.clamp( s, 0, 1 );
-  			l = _Math.clamp( l, 0, 1 );
+  			h = _Math$1.euclideanModulo( h, 1 );
+  			s = _Math$1.clamp( s, 0, 1 );
+  			l = _Math$1.clamp( l, 0, 1 );
 
   			if ( s === 0 ) {
 
@@ -4483,6 +4486,62 @@ var Three = (function (exports) {
   	convertLinearToGamma: function ( gammaFactor ) {
 
   		this.copyLinearToGamma( this, gammaFactor );
+
+  		return this;
+
+  	},
+
+  	copySRGBToLinear: function () {
+
+  		function SRGBToLinear( c ) {
+
+  			return ( c < 0.04045 ) ? c * 0.0773993808 : Math.pow( c * 0.9478672986 + 0.0521327014, 2.4 );
+
+  		}
+
+  		return function copySRGBToLinear( color ) {
+
+  			this.r = SRGBToLinear( color.r );
+  			this.g = SRGBToLinear( color.g );
+  			this.b = SRGBToLinear( color.b );
+
+  			return this;
+
+  		};
+
+  	}(),
+
+  	copyLinearToSRGB: function () {
+
+  		function LinearToSRGB( c ) {
+
+  			return ( c < 0.0031308 ) ? c * 12.92 : 1.055 * ( Math.pow( c, 0.41666 ) ) - 0.055;
+
+  		}
+
+  		return function copyLinearToSRGB( color ) {
+
+  			this.r = LinearToSRGB( color.r );
+  			this.g = LinearToSRGB( color.g );
+  			this.b = LinearToSRGB( color.b );
+
+  			return this;
+
+  		};
+
+  	}(),
+
+  	convertSRGBToLinear: function () {
+
+  		this.copySRGBToLinear( this );
+
+  		return this;
+
+  	},
+
+  	convertLinearToSRGB: function () {
+
+  		this.copyLinearToSRGB( this );
 
   		return this;
 
@@ -5995,7 +6054,7 @@ var Three = (function (exports) {
 
   	Object.defineProperty( this, 'id', { value: geometryId += 2 } );
 
-  	this.uuid = _Math.generateUUID();
+  	this.uuid = _Math$1.generateUUID();
 
   	this.name = '';
   	this.type = 'Geometry';
@@ -8565,7 +8624,7 @@ var Three = (function (exports) {
 
   		//
 
-  		if ( faces.length === 0 ) {
+  		if ( vertices.length > 0 && faces.length === 0 ) {
 
   			console.error( 'DirectGeometry: Faceless geometries are not supported.' );
 
@@ -8727,7 +8786,7 @@ var Three = (function (exports) {
 
   	Object.defineProperty( this, 'id', { value: bufferGeometryId += 2 } );
 
-  	this.uuid = _Math.generateUUID();
+  	this.uuid = _Math$1.generateUUID();
 
   	this.name = '';
   	this.type = 'BufferGeometry';
@@ -9967,7 +10026,7 @@ var Three = (function (exports) {
   SphereBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
   SphereBufferGeometry.prototype.constructor = SphereBufferGeometry;
 
-  var REVISION = '93';
+  var REVISION = '94';
   var MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2 };
   var CullFaceNone = 0;
   var CullFaceBack = 1;
@@ -10106,6 +10165,8 @@ var Three = (function (exports) {
   var RGBDEncoding = 3006;
   var BasicDepthPacking = 3200;
   var RGBADepthPacking = 3201;
+  var TangentSpaceNormalMap = 0;
+  var ObjectSpaceNormalMap = 1;
 
   var materialId = 0;
 
@@ -10113,7 +10174,7 @@ var Three = (function (exports) {
 
   	Object.defineProperty( this, 'id', { value: materialId ++ } );
 
-  	this.uuid = _Math.generateUUID();
+  	this.uuid = _Math$1.generateUUID();
 
   	this.name = '';
   	this.type = 'Material';
@@ -10296,6 +10357,7 @@ var Three = (function (exports) {
   		if ( this.normalMap && this.normalMap.isTexture ) {
 
   			data.normalMap = this.normalMap.toJSON( meta ).uuid;
+  			data.normalMapType = this.normalMapType;
   			data.normalScale = this.normalScale.toArray();
 
   		}
@@ -11235,7 +11297,7 @@ var Three = (function (exports) {
 
   			if ( clampToLine ) {
 
-  				t = _Math.clamp( t, 0, 1 );
+  				t = _Math$1.clamp( t, 0, 1 );
 
   			}
 
@@ -11968,13 +12030,13 @@ var Three = (function (exports) {
 
   		}
 
-  		function checkBufferGeometryIntersection( object, raycaster, ray, position, uv, a, b, c ) {
+  		function checkBufferGeometryIntersection( object, material, raycaster, ray, position, uv, a, b, c ) {
 
   			vA.fromBufferAttribute( position, a );
   			vB.fromBufferAttribute( position, b );
   			vC.fromBufferAttribute( position, c );
 
-  			var intersection = checkIntersection( object, object.material, raycaster, ray, vA, vB, vC, intersectionPoint );
+  			var intersection = checkIntersection( object, material, raycaster, ray, vA, vB, vC, intersectionPoint );
 
   			if ( intersection ) {
 
@@ -12039,24 +12101,64 @@ var Three = (function (exports) {
   				var index = geometry.index;
   				var position = geometry.attributes.position;
   				var uv = geometry.attributes.uv;
-  				var i, l;
+  				var groups = geometry.groups;
+  				var drawRange = geometry.drawRange;
+  				var i, j, il, jl;
+  				var group, groupMaterial;
+  				var start, end;
 
   				if ( index !== null ) {
 
   					// indexed buffer geometry
 
-  					for ( i = 0, l = index.count; i < l; i += 3 ) {
+  					if ( Array.isArray( material ) ) {
 
-  						a = index.getX( i );
-  						b = index.getX( i + 1 );
-  						c = index.getX( i + 2 );
+  						for ( i = 0, il = groups.length; i < il; i ++ ) {
 
-  						intersection = checkBufferGeometryIntersection( this$1, raycaster, ray, position, uv, a, b, c );
+  							group = groups[ i ];
+  							groupMaterial = material[ group.materialIndex ];
 
-  						if ( intersection ) {
+  							start = Math.max( group.start, drawRange.start );
+  							end = Math.min( ( group.start + group.count ), ( drawRange.start + drawRange.count ) );
 
-  							intersection.faceIndex = Math.floor( i / 3 ); // triangle number in indexed buffer semantics
-  							intersects.push( intersection );
+  							for ( j = start, jl = end; j < jl; j += 3 ) {
+
+  								a = index.getX( i );
+  								b = index.getX( i + 1 );
+  								c = index.getX( i + 2 );
+
+  								intersection = checkBufferGeometryIntersection( this$1, groupMaterial, raycaster, ray, position, uv, a, b, c );
+
+  								if ( intersection ) {
+
+  									intersection.faceIndex = Math.floor( i / 3 ); // triangle number in indexed buffer semantics
+  									intersects.push( intersection );
+
+  								}
+
+  							}
+
+  						}
+
+  					} else {
+
+  						start = Math.max( 0, drawRange.start );
+  						end = Math.min( index.count, ( drawRange.start + drawRange.count ) );
+
+  						for ( i = start, il = end; i < il; i += 3 ) {
+
+  							a = index.getX( i );
+  							b = index.getX( i + 1 );
+  							c = index.getX( i + 2 );
+
+  							intersection = checkBufferGeometryIntersection( this$1, material, raycaster, ray, position, uv, a, b, c );
+
+  							if ( intersection ) {
+
+  								intersection.faceIndex = Math.floor( i / 3 ); // triangle number in indexed buffer semantics
+  								intersects.push( intersection );
+
+  							}
 
   						}
 
@@ -12066,18 +12168,54 @@ var Three = (function (exports) {
 
   					// non-indexed buffer geometry
 
-  					for ( i = 0, l = position.count; i < l; i += 3 ) {
+  					if ( Array.isArray( material ) ) {
 
-  						a = i;
-  						b = i + 1;
-  						c = i + 2;
+  						for ( i = 0, il = groups.length; i < il; i ++ ) {
 
-  						intersection = checkBufferGeometryIntersection( this$1, raycaster, ray, position, uv, a, b, c );
+  							group = groups[ i ];
+  							groupMaterial = material[ group.materialIndex ];
 
-  						if ( intersection ) {
+  							start = Math.max( group.start, drawRange.start );
+  							end = Math.min( ( group.start + group.count ), ( drawRange.start + drawRange.count ) );
 
-  							intersection.faceIndex = Math.floor( i / 3 ); // triangle number in non-indexed buffer semantics
-  							intersects.push( intersection );
+  							for ( j = start, jl = end; j < jl; j += 3 ) {
+
+  								a = j;
+  								b = j + 1;
+  								c = j + 2;
+
+  								intersection = checkBufferGeometryIntersection( this$1, groupMaterial, raycaster, ray, position, uv, a, b, c );
+
+  								if ( intersection ) {
+
+  									intersection.faceIndex = Math.floor( i / 3 ); // triangle number in non-indexed buffer semantics
+  									intersects.push( intersection );
+
+  								}
+
+  							}
+
+  						}
+
+  					} else {
+
+  						start = Math.max( 0, drawRange.start );
+  						end = Math.min( position.count, ( drawRange.start + drawRange.count ) );
+
+  						for ( i = start, il = end; i < il; i += 3 ) {
+
+  							a = i;
+  							b = i + 1;
+  							c = i + 2;
+
+  							intersection = checkBufferGeometryIntersection( this$1, material, raycaster, ray, position, uv, a, b, c );
+
+  							if ( intersection ) {
+
+  								intersection.faceIndex = Math.floor( i / 3 ); // triangle number in non-indexed buffer semantics
+  								intersects.push( intersection );
+
+  							}
 
   						}
 
@@ -12778,7 +12916,6 @@ var Three = (function (exports) {
 
 
   			var self = this;
-  			var mesh = this.root;
   			var iks = this.iks;
 
   			function createLineGeometry( ik ) {
@@ -15665,7 +15802,7 @@ var Three = (function (exports) {
   	this.tracks = tracks;
   	this.duration = ( duration !== undefined ) ? duration : - 1;
 
-  	this.uuid = _Math.generateUUID();
+  	this.uuid = _Math$1.generateUUID();
 
   	// this means it should figure out its duration by scanning the tracks
   	if ( this.duration < 0 ) {
@@ -17974,8 +18111,8 @@ var Three = (function (exports) {
   				s = Math.sqrt( t + 1.0 ) * 2;
   				w = 0.25 * s;
   				x = ( m[ 7 ] - m[ 5 ] ) / s;
-  				y = ( m[ 2 ] - m[ 6 ] ) / s; 
-  				z = ( m[ 3 ] - m[ 1 ] ) / s; 
+  				y = ( m[ 2 ] - m[ 6 ] ) / s;
+  				z = ( m[ 3 ] - m[ 1 ] ) / s;
 
   			} else if( ( m[ 0 ] > m[ 4 ] ) && ( m[ 0 ] > m[ 8 ] ) ) {
 
@@ -18540,7 +18677,6 @@ var Three = (function (exports) {
   			var this$1 = this;
 
 
-  			var mesh = this.root;
   			var bodies = this.physics.bodies;
 
   			function createGeometry( param ) {
@@ -19700,10 +19836,10 @@ var Three = (function (exports) {
 
   		var tan1 = [], tan2 = [];
 
-  		for ( var k = 0; k < nVertices; k ++ ) {
+  		for ( var i = 0; i < nVertices; i ++ ) {
 
-  			tan1[ k ] = new Vector3();
-  			tan2[ k ] = new Vector3();
+  			tan1[ i ] = new Vector3();
+  			tan2[ i ] = new Vector3();
 
   		}
 
@@ -19778,19 +19914,19 @@ var Three = (function (exports) {
 
   		}
 
-  		for ( var j = 0, jl = groups.length; j < jl; ++ j ) {
+  		for ( var i = 0, il = groups.length; i < il; ++ i ) {
 
-  			var group = groups[ j ];
+  			var group = groups[ i ];
 
   			var start = group.start;
   			var count = group.count;
 
-  			for ( var i = start, il = start + count; i < il; i += 3 ) {
+  			for ( var j = start, jl = start + count; j < jl; j += 3 ) {
 
   				handleTriangle(
-  					indices[ i + 0 ],
-  					indices[ i + 1 ],
-  					indices[ i + 2 ]
+  					indices[ j + 0 ],
+  					indices[ j + 1 ],
+  					indices[ j + 2 ]
   				);
 
   			}
@@ -19826,18 +19962,18 @@ var Three = (function (exports) {
 
   		}
 
-  		for ( var j = 0, jl = groups.length; j < jl; ++ j ) {
+  		for ( var i = 0, il = groups.length; i < il; ++ i ) {
 
-  			var group = groups[ j ];
+  			var group = groups[ i ];
 
   			var start = group.start;
   			var count = group.count;
 
-  			for ( var i = start, il = start + count; i < il; i += 3 ) {
+  			for ( var j = start, jl = start + count; j < jl; j += 3 ) {
 
-  				handleVertex( indices[ i + 0 ] );
-  				handleVertex( indices[ i + 1 ] );
-  				handleVertex( indices[ i + 2 ] );
+  				handleVertex( indices[ j + 0 ] );
+  				handleVertex( indices[ j + 1 ] );
+  				handleVertex( indices[ j + 2 ] );
 
   			}
 
@@ -19874,7 +20010,7 @@ var Three = (function (exports) {
 
   			for ( var name in geometry.attributes ) {
 
-  				if ( !attributesUsed.has( name ) ) { return null; }
+  				if ( ! attributesUsed.has( name ) ) { return null; }
 
   				if ( attributes[ name ] === undefined ) { attributes[ name ] = []; }
 
@@ -19886,7 +20022,7 @@ var Three = (function (exports) {
 
   			for ( var name in geometry.morphAttributes ) {
 
-  				if ( !morphAttributesUsed.has( name ) ) { return null; }
+  				if ( ! morphAttributesUsed.has( name ) ) { return null; }
 
   				if ( morphAttributes[ name ] === undefined ) { morphAttributes[ name ] = []; }
 
@@ -19930,34 +20066,23 @@ var Three = (function (exports) {
   		if ( isIndexed ) {
 
   			var indexOffset = 0;
-  			var indexList = [];
+  			var mergedIndex = [];
 
   			for ( var i = 0; i < geometries.length; ++ i ) {
 
   				var index = geometries[ i ].index;
 
-  				if ( indexOffset > 0 ) {
+  				for ( var j = 0; j < index.count; ++ j ) {
 
-  					index = index.clone();
-
-  					for ( var j = 0; j < index.count; ++ j ) {
-
-  						index.setX( j, index.getX( j ) + indexOffset );
-
-  					}
+  					mergedIndex.push( index.getX( j ) + indexOffset );
 
   				}
 
-  				indexList.push( index );
   				indexOffset += geometries[ i ].attributes.position.count;
 
   			}
 
-  			var mergedIndex = this.mergeBufferAttributes( indexList );
-
-  			if ( !mergedIndex ) { return null; }
-
-  			mergedGeometry.index = mergedIndex;
+  			mergedGeometry.setIndex( mergedIndex );
 
   		}
 
@@ -19996,7 +20121,7 @@ var Three = (function (exports) {
 
   				var mergedMorphAttribute = this$1.mergeBufferAttributes( morphAttributesToMerge );
 
-  				if ( !mergedMorphAttribute ) { return null; }
+  				if ( ! mergedMorphAttribute ) { return null; }
 
   				mergedGeometry.morphAttributes[ name ].push( mergedMorphAttribute );
 
@@ -20038,11 +20163,11 @@ var Three = (function (exports) {
   		var array = new TypedArray( arrayLength );
   		var offset = 0;
 
-  		for ( var j = 0; j < attributes.length; ++ j ) {
+  		for ( var i = 0; i < attributes.length; ++ i ) {
 
-  			array.set( attributes[ j ].array, offset );
+  			array.set( attributes[ i ].array, offset );
 
-  			offset += attributes[ j ].array.length;
+  			offset += attributes[ i ].array.length;
 
   		}
 
@@ -20173,7 +20298,7 @@ var Three = (function (exports) {
   		// see http://www.bobatkins.com/photography/technical/field_of_view.html
   		var vExtentSlope = 0.5 * this.getFilmHeight() / focalLength;
 
-  		this.fov = _Math.RAD2DEG * 2 * Math.atan( vExtentSlope );
+  		this.fov = _Math$1.RAD2DEG * 2 * Math.atan( vExtentSlope );
   		this.updateProjectionMatrix();
 
   	},
@@ -20181,7 +20306,7 @@ var Three = (function (exports) {
   	
   	getFocalLength: function () {
 
-  		var vExtentSlope = Math.tan( _Math.DEG2RAD * 0.5 * this.fov );
+  		var vExtentSlope = Math.tan( _Math$1.DEG2RAD * 0.5 * this.fov );
 
   		return 0.5 * this.getFilmHeight() / vExtentSlope;
 
@@ -20189,8 +20314,8 @@ var Three = (function (exports) {
 
   	getEffectiveFOV: function () {
 
-  		return _Math.RAD2DEG * 2 * Math.atan(
-  			Math.tan( _Math.DEG2RAD * 0.5 * this.fov ) / this.zoom );
+  		return _Math$1.RAD2DEG * 2 * Math.atan(
+  			Math.tan( _Math$1.DEG2RAD * 0.5 * this.fov ) / this.zoom );
 
   	},
 
@@ -20255,7 +20380,7 @@ var Three = (function (exports) {
 
   		var near = this.near,
   			top = near * Math.tan(
-  				_Math.DEG2RAD * 0.5 * this.fov ) / this.zoom,
+  				_Math$1.DEG2RAD * 0.5 * this.fov ) / this.zoom,
   			height = 2 * top,
   			width = this.aspect * height,
   			left = - 0.5 * width,
@@ -20656,7 +20781,7 @@ var Three = (function (exports) {
 
   	Object.defineProperty( this, 'id', { value: textureId ++ } );
 
-  	this.uuid = _Math.generateUUID();
+  	this.uuid = _Math$1.generateUUID();
 
   	this.name = '';
 
@@ -20846,15 +20971,37 @@ var Three = (function (exports) {
 
   			if ( image.uuid === undefined ) {
 
-  				image.uuid = _Math.generateUUID(); // UGH
+  				image.uuid = _Math$1.generateUUID(); // UGH
 
   			}
 
   			if ( ! isRootObject && meta.images[ image.uuid ] === undefined ) {
 
+  				var url;
+
+  				if ( Array.isArray( image ) ) {
+
+  					// process array of images e.g. CubeTexture
+
+  					url = [];
+
+  					for ( var i = 0, l = image.length; i < l; i ++ ) {
+
+  						url.push( getDataURL( image[ i ] ) );
+
+  					}
+
+  				} else {
+
+  					// process single image
+
+  					url = getDataURL( image );
+
+  				}
+
   				meta.images[ image.uuid ] = {
   					uuid: image.uuid,
-  					url: getDataURL( image )
+  					url: url
   				};
 
   			}
@@ -21617,13 +21764,13 @@ var Three = (function (exports) {
 
   }
 
-  var DefaultLoadingManager$1 = new LoadingManager();
+  var DefaultLoadingManager = new LoadingManager();
 
   var loading = {};
 
   function FileLoader( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   }
 
@@ -22155,6 +22302,7 @@ var Three = (function (exports) {
   	this.bumpScale = 1;
 
   	this.normalMap = null;
+  	this.normalMapType = TangentSpaceNormalMap;
   	this.normalScale = new Vector2( 1, 1 );
 
   	this.displacementMap = null;
@@ -22188,6 +22336,7 @@ var Three = (function (exports) {
   	this.bumpScale = source.bumpScale;
 
   	this.normalMap = source.normalMap;
+  	this.normalMapType = source.normalMapType;
   	this.normalScale.copy( source.normalScale );
 
   	this.displacementMap = source.displacementMap;
@@ -22231,6 +22380,7 @@ var Three = (function (exports) {
   	this.bumpScale = 1;
 
   	this.normalMap = null;
+  	this.normalMapType = TangentSpaceNormalMap;
   	this.normalScale = new Vector2( 1, 1 );
 
   	this.displacementMap = null;
@@ -22288,6 +22438,7 @@ var Three = (function (exports) {
   	this.bumpScale = source.bumpScale;
 
   	this.normalMap = source.normalMap;
+  	this.normalMapType = source.normalMapType;
   	this.normalScale.copy( source.normalScale );
 
   	this.displacementMap = source.displacementMap;
@@ -22344,6 +22495,7 @@ var Three = (function (exports) {
   	this.bumpScale = 1;
 
   	this.normalMap = null;
+  	this.normalMapType = TangentSpaceNormalMap;
   	this.normalScale = new Vector2( 1, 1 );
 
   	this.displacementMap = null;
@@ -22405,6 +22557,7 @@ var Three = (function (exports) {
   	this.bumpScale = source.bumpScale;
 
   	this.normalMap = source.normalMap;
+  	this.normalMapType = source.normalMapType;
   	this.normalScale.copy( source.normalScale );
 
   	this.displacementMap = source.displacementMap;
@@ -22622,7 +22775,7 @@ var Three = (function (exports) {
 
   function MaterialLoader( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
   	this.textures = {};
 
   }
@@ -22755,6 +22908,7 @@ var Three = (function (exports) {
   		if ( json.bumpScale !== undefined ) { material.bumpScale = json.bumpScale; }
 
   		if ( json.normalMap !== undefined ) { material.normalMap = getTexture( json.normalMap ); }
+  		if ( json.normalMapType !== undefined ) { material.normalMapType = json.normalMapType; }
   		if ( json.normalScale !== undefined ) {
 
   			var normalScale = json.normalScale;
@@ -22803,13 +22957,13 @@ var Three = (function (exports) {
 
   function ImageLoader( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   }
 
   Object.assign( ImageLoader.prototype, {
 
-  	crossOrigin: 'Anonymous',
+  	crossOrigin: 'anonymous',
 
   	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -22901,13 +23055,13 @@ var Three = (function (exports) {
 
   function TextureLoader( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   }
 
   Object.assign( TextureLoader.prototype, {
 
-  	crossOrigin: 'Anonymous',
+  	crossOrigin: 'anonymous',
 
   	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -22992,7 +23146,7 @@ var Three = (function (exports) {
 
   Object.assign( Loader$1.prototype, {
 
-  	crossOrigin: undefined,
+  	crossOrigin: 'anonymous',
 
   	onLoadStart: function () {},
 
@@ -23086,7 +23240,7 @@ var Three = (function (exports) {
 
   				}
 
-  				var uuid = _Math.generateUUID();
+  				var uuid = _Math$1.generateUUID();
 
   				textures[ uuid ] = texture;
 
@@ -23097,7 +23251,7 @@ var Three = (function (exports) {
   			//
 
   			var json = {
-  				uuid: _Math.generateUUID(),
+  				uuid: _Math$1.generateUUID(),
   				type: 'MeshLambertMaterial'
   			};
 
@@ -23320,13 +23474,15 @@ var Three = (function (exports) {
 
   	}
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   	this.withCredentials = false;
 
   }
 
   Object.assign( JSONLoader.prototype, {
+
+  	crossOrigin: 'anonymous',
 
   	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -23365,9 +23521,17 @@ var Three = (function (exports) {
 
   	},
 
+  	setCrossOrigin: function ( value ) {
+
+  		this.crossOrigin = value;
+  		return this;
+
+  	},
+
   	setTexturePath: function ( value ) {
 
   		this.texturePath = value;
+  		return this;
 
   	},
 
@@ -23870,7 +24034,7 @@ var Three = (function (exports) {
 
   	}
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -23878,7 +24042,7 @@ var Three = (function (exports) {
 
   	constructor: BinaryLoader,
 
-  	crossOrigin: 'Anonymous',
+  	crossOrigin: 'anonymous',
 
   	// Load models generated by slim OBJ converter with BINARY option (converter_obj_three_slim.py -t binary)
   	//  - binary models consist of two files: JS and BIN
@@ -23925,18 +24089,21 @@ var Three = (function (exports) {
   	setBinaryPath: function ( value ) {
 
   		this.binaryPath = value;
+  		return this;
 
   	},
 
   	setCrossOrigin: function ( value ) {
 
   		this.crossOrigin = value;
+  		return this;
 
   	},
 
   	setTexturePath: function ( value ) {
 
   		this.texturePath = value;
+  		return this;
 
   	},
 
@@ -24647,28 +24814,28 @@ var Three = (function (exports) {
 
   		if ( controls.moveForward ) {
 
-  			this.speed = _Math.clamp( this.speed + delta * this.FRONT_ACCELERATION, this.MAX_REVERSE_SPEED, this.MAX_SPEED );
-  			this.acceleration = _Math.clamp( this.acceleration + delta, - 1, 1 );
+  			this.speed = _Math$1.clamp( this.speed + delta * this.FRONT_ACCELERATION, this.MAX_REVERSE_SPEED, this.MAX_SPEED );
+  			this.acceleration = _Math$1.clamp( this.acceleration + delta, - 1, 1 );
 
   		}
 
   		if ( controls.moveBackward ) {
 
 
-  			this.speed = _Math.clamp( this.speed - delta * this.BACK_ACCELERATION, this.MAX_REVERSE_SPEED, this.MAX_SPEED );
-  			this.acceleration = _Math.clamp( this.acceleration - delta, - 1, 1 );
+  			this.speed = _Math$1.clamp( this.speed - delta * this.BACK_ACCELERATION, this.MAX_REVERSE_SPEED, this.MAX_SPEED );
+  			this.acceleration = _Math$1.clamp( this.acceleration - delta, - 1, 1 );
 
   		}
 
   		if ( controls.moveLeft ) {
 
-  			this.wheelOrientation = _Math.clamp( this.wheelOrientation + delta * this.WHEEL_ANGULAR_ACCELERATION, - this.MAX_WHEEL_ROTATION, this.MAX_WHEEL_ROTATION );
+  			this.wheelOrientation = _Math$1.clamp( this.wheelOrientation + delta * this.WHEEL_ANGULAR_ACCELERATION, - this.MAX_WHEEL_ROTATION, this.MAX_WHEEL_ROTATION );
 
   		}
 
   		if ( controls.moveRight ) {
 
-  			this.wheelOrientation = _Math.clamp( this.wheelOrientation - delta * this.WHEEL_ANGULAR_ACCELERATION, - this.MAX_WHEEL_ROTATION, this.MAX_WHEEL_ROTATION );
+  			this.wheelOrientation = _Math$1.clamp( this.wheelOrientation - delta * this.WHEEL_ANGULAR_ACCELERATION, - this.MAX_WHEEL_ROTATION, this.MAX_WHEEL_ROTATION );
 
   		}
 
@@ -24680,15 +24847,15 @@ var Three = (function (exports) {
 
   				var k = exponentialEaseOut( this.speed / this.MAX_SPEED );
 
-  				this.speed = _Math.clamp( this.speed - k * delta * this.FRONT_DECCELERATION, 0, this.MAX_SPEED );
-  				this.acceleration = _Math.clamp( this.acceleration - k * delta, 0, 1 );
+  				this.speed = _Math$1.clamp( this.speed - k * delta * this.FRONT_DECCELERATION, 0, this.MAX_SPEED );
+  				this.acceleration = _Math$1.clamp( this.acceleration - k * delta, 0, 1 );
 
   			} else {
 
   				var k = exponentialEaseOut( this.speed / this.MAX_REVERSE_SPEED );
 
-  				this.speed = _Math.clamp( this.speed + k * delta * this.BACK_ACCELERATION, this.MAX_REVERSE_SPEED, 0 );
-  				this.acceleration = _Math.clamp( this.acceleration + k * delta, - 1, 0 );
+  				this.speed = _Math$1.clamp( this.speed + k * delta * this.BACK_ACCELERATION, this.MAX_REVERSE_SPEED, 0 );
+  				this.acceleration = _Math$1.clamp( this.acceleration + k * delta, - 1, 0 );
 
   			}
 
@@ -24701,11 +24868,11 @@ var Three = (function (exports) {
 
   			if ( this.wheelOrientation > 0 ) {
 
-  				this.wheelOrientation = _Math.clamp( this.wheelOrientation - delta * this.WHEEL_ANGULAR_DECCELERATION, 0, this.MAX_WHEEL_ROTATION );
+  				this.wheelOrientation = _Math$1.clamp( this.wheelOrientation - delta * this.WHEEL_ANGULAR_DECCELERATION, 0, this.MAX_WHEEL_ROTATION );
 
   			} else {
 
-  				this.wheelOrientation = _Math.clamp( this.wheelOrientation + delta * this.WHEEL_ANGULAR_DECCELERATION, - this.MAX_WHEEL_ROTATION, 0 );
+  				this.wheelOrientation = _Math$1.clamp( this.wheelOrientation + delta * this.WHEEL_ANGULAR_DECCELERATION, - this.MAX_WHEEL_ROTATION, 0 );
 
   			}
 
@@ -24969,13 +25136,13 @@ var Three = (function (exports) {
 
   		if ( device ) {
 
-  			var alpha = device.alpha ? _Math.degToRad( device.alpha ) + scope.alphaOffset : 0; // Z
+  			var alpha = device.alpha ? _Math$1.degToRad( device.alpha ) + scope.alphaOffset : 0; // Z
 
-  			var beta = device.beta ? _Math.degToRad( device.beta ) : 0; // X'
+  			var beta = device.beta ? _Math$1.degToRad( device.beta ) : 0; // X'
 
-  			var gamma = device.gamma ? _Math.degToRad( device.gamma ) : 0; // Y''
+  			var gamma = device.gamma ? _Math$1.degToRad( device.gamma ) : 0; // Y''
 
-  			var orient = scope.screenOrientation ? _Math.degToRad( scope.screenOrientation ) : 0; // O
+  			var orient = scope.screenOrientation ? _Math$1.degToRad( scope.screenOrientation ) : 0; // O
 
   			setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
 
@@ -25457,7 +25624,7 @@ var Three = (function (exports) {
   		} else {
 
   			this.theta = Math.atan2( vec3.x, vec3.z ); // equator angle around y-up axis
-  			this.phi = Math.acos( _Math.clamp( vec3.y / this.radius, - 1, 1 ) ); // polar angle
+  			this.phi = Math.acos( _Math$1.clamp( vec3.y / this.radius, - 1, 1 ) ); // polar angle
 
   		}
 
@@ -25476,7 +25643,7 @@ var Three = (function (exports) {
   	this.enabled = true;
   	this.center = new Vector3();
   	this.panSpeed = 0.001;
-  	this.zoomSpeed = 0.001;
+  	this.zoomSpeed = 0.1;
   	this.rotationSpeed = 0.005;
 
   	// internals
@@ -25649,9 +25816,8 @@ var Three = (function (exports) {
 
   		event.preventDefault();
 
-  		// if ( scope.enabled === false ) return;
-
-  		scope.zoom( new Vector3( 0, 0, event.deltaY ) );
+  		// Normalize deltaY due to https://bugzilla.mozilla.org/show_bug.cgi?id=1392460
+  		scope.zoom( new Vector3( 0, 0, event.deltaY > 0 ? 1 : - 1 ) );
 
   	}
 
@@ -25960,7 +26126,7 @@ var Three = (function (exports) {
 
   		if ( this.heightSpeed ) {
 
-  			var y = _Math.clamp( this.object.position.y, this.heightMin, this.heightMax );
+  			var y = _Math$1.clamp( this.object.position.y, this.heightMin, this.heightMax );
   			var heightDelta = y - this.heightMin;
 
   			this.autoSpeedFactor = delta * ( heightDelta * this.heightCoef );
@@ -26002,13 +26168,13 @@ var Three = (function (exports) {
   		if ( this.lookVertical ) { this.lat -= this.mouseY * actualLookSpeed * verticalLookRatio; }
 
   		this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
-  		this.phi = _Math.degToRad( 90 - this.lat );
+  		this.phi = _Math$1.degToRad( 90 - this.lat );
 
-  		this.theta = _Math.degToRad( this.lon );
+  		this.theta = _Math$1.degToRad( this.lon );
 
   		if ( this.constrainVertical ) {
 
-  			this.phi = _Math.mapLinear( this.phi, 0, Math.PI, this.verticalMin, this.verticalMax );
+  			this.phi = _Math$1.mapLinear( this.phi, 0, Math.PI, this.verticalMin, this.verticalMax );
 
   		}
 
@@ -26358,6 +26524,1126 @@ var Three = (function (exports) {
   	this.updateRotationVector();
 
   };
+
+  // This set of controls performs orbiting, dollying (zooming), and panning.
+  // Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
+  // This is very similar to OrbitControls, another set of touch behavior
+  //
+  //    Orbit - right mouse / touch: two-finger rotate
+  //    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
+  //    Pan - left mouse, or arrow keys / touch: one-finger move
+
+
+  var MapControls = function ( object, domElement ) {
+
+  	this.object = object;
+
+  	this.domElement = ( domElement !== undefined ) ? domElement : document;
+
+  	// Set to false to disable this control
+  	this.enabled = true;
+
+  	// "target" sets the location of focus, where the object orbits around
+  	this.target = new Vector3();
+
+  	// How far you can dolly in and out ( PerspectiveCamera only )
+  	this.minDistance = 0;
+  	this.maxDistance = Infinity;
+
+  	// How far you can zoom in and out ( OrthographicCamera only )
+  	this.minZoom = 0;
+  	this.maxZoom = Infinity;
+
+  	// How far you can orbit vertically, upper and lower limits.
+  	// Range is 0 to Math.PI radians.
+  	this.minPolarAngle = 0; // radians
+  	this.maxPolarAngle = Math.PI; // radians
+
+  	// How far you can orbit horizontally, upper and lower limits.
+  	// If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
+  	this.minAzimuthAngle = - Infinity; // radians
+  	this.maxAzimuthAngle = Infinity; // radians
+
+  	// Set to true to enable damping (inertia)
+  	// If damping is enabled, you must call controls.update() in your animation loop
+  	this.enableDamping = false;
+  	this.dampingFactor = 0.25;
+
+  	// This option actually enables dollying in and out; left as "zoom" for backwards compatibility.
+  	// Set to false to disable zooming
+  	this.enableZoom = true;
+  	this.zoomSpeed = 1.0;
+
+  	// Set to false to disable rotating
+  	this.enableRotate = true;
+  	this.rotateSpeed = 1.0;
+
+  	// Set to false to disable panning
+  	this.enablePan = true;
+  	this.panSpeed = 1.0;
+  	this.screenSpacePanning = false; // if true, pan in screen-space
+  	this.keyPanSpeed = 7.0;	// pixels moved per arrow key push
+
+  	// Set to true to automatically rotate around the target
+  	// If auto-rotate is enabled, you must call controls.update() in your animation loop
+  	this.autoRotate = false;
+  	this.autoRotateSpeed = 2.0; // 30 seconds per round when fps is 60
+
+  	// Set to false to disable use of the keys
+  	this.enableKeys = true;
+
+  	// The four arrow keys
+  	this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
+
+  	// Mouse buttons
+  	this.mouseButtons = { ORBIT: MOUSE.RIGHT, ZOOM: MOUSE.MIDDLE, PAN: MOUSE.LEFT };
+
+  	// for reset
+  	this.target0 = this.target.clone();
+  	this.position0 = this.object.position.clone();
+  	this.zoom0 = this.object.zoom;
+
+  	//
+  	// public methods
+  	//
+
+  	this.getPolarAngle = function () {
+
+  		return spherical.phi;
+
+  	};
+
+  	this.getAzimuthalAngle = function () {
+
+  		return spherical.theta;
+
+  	};
+
+  	this.saveState = function () {
+
+  		scope.target0.copy( scope.target );
+  		scope.position0.copy( scope.object.position );
+  		scope.zoom0 = scope.object.zoom;
+
+  	};
+
+  	this.reset = function () {
+
+  		scope.target.copy( scope.target0 );
+  		scope.object.position.copy( scope.position0 );
+  		scope.object.zoom = scope.zoom0;
+
+  		scope.object.updateProjectionMatrix();
+  		scope.dispatchEvent( changeEvent );
+
+  		scope.update();
+
+  		state = STATE.NONE;
+
+  	};
+
+  	// this method is exposed, but perhaps it would be better if we can make it private...
+  	this.update = function () {
+
+  		var offset = new Vector3();
+
+  		// so camera.up is the orbit axis
+  		var quat = new Quaternion().setFromUnitVectors( object.up, new Vector3( 0, 1, 0 ) );
+  		var quatInverse = quat.clone().inverse();
+
+  		var lastPosition = new Vector3();
+  		var lastQuaternion = new Quaternion();
+
+  		return function update() {
+
+  			var position = scope.object.position;
+
+  			offset.copy( position ).sub( scope.target );
+
+  			// rotate offset to "y-axis-is-up" space
+  			offset.applyQuaternion( quat );
+
+  			// angle from z-axis around y-axis
+  			spherical.setFromVector3( offset );
+
+  			if ( scope.autoRotate && state === STATE.NONE ) {
+
+  				rotateLeft( getAutoRotationAngle() );
+
+  			}
+
+  			spherical.theta += sphericalDelta.theta;
+  			spherical.phi += sphericalDelta.phi;
+
+  			// restrict theta to be between desired limits
+  			spherical.theta = Math.max( scope.minAzimuthAngle, Math.min( scope.maxAzimuthAngle, spherical.theta ) );
+
+  			// restrict phi to be between desired limits
+  			spherical.phi = Math.max( scope.minPolarAngle, Math.min( scope.maxPolarAngle, spherical.phi ) );
+
+  			spherical.makeSafe();
+
+
+  			spherical.radius *= scale;
+
+  			// restrict radius to be between desired limits
+  			spherical.radius = Math.max( scope.minDistance, Math.min( scope.maxDistance, spherical.radius ) );
+
+  			// move target to panned location
+  			scope.target.add( panOffset );
+
+  			offset.setFromSpherical( spherical );
+
+  			// rotate offset back to "camera-up-vector-is-up" space
+  			offset.applyQuaternion( quatInverse );
+
+  			position.copy( scope.target ).add( offset );
+
+  			scope.object.lookAt( scope.target );
+
+  			if ( scope.enableDamping === true ) {
+
+  				sphericalDelta.theta *= ( 1 - scope.dampingFactor );
+  				sphericalDelta.phi *= ( 1 - scope.dampingFactor );
+
+  				panOffset.multiplyScalar( 1 - scope.dampingFactor );
+
+  			} else {
+
+  				sphericalDelta.set( 0, 0, 0 );
+
+  				panOffset.set( 0, 0, 0 );
+
+  			}
+
+  			scale = 1;
+
+  			// update condition is:
+  			// min(camera displacement, camera rotation in radians)^2 > EPS
+  			// using small-angle approximation cos(x/2) = 1 - x^2 / 8
+
+  			if ( zoomChanged ||
+  				lastPosition.distanceToSquared( scope.object.position ) > EPS ||
+  				8 * ( 1 - lastQuaternion.dot( scope.object.quaternion ) ) > EPS ) {
+
+  				scope.dispatchEvent( changeEvent );
+
+  				lastPosition.copy( scope.object.position );
+  				lastQuaternion.copy( scope.object.quaternion );
+  				zoomChanged = false;
+
+  				return true;
+
+  			}
+
+  			return false;
+
+  		};
+
+  	}();
+
+  	this.dispose = function () {
+
+  		scope.domElement.removeEventListener( 'contextmenu', onContextMenu, false );
+  		scope.domElement.removeEventListener( 'mousedown', onMouseDown, false );
+  		scope.domElement.removeEventListener( 'wheel', onMouseWheel, false );
+
+  		scope.domElement.removeEventListener( 'touchstart', onTouchStart, false );
+  		scope.domElement.removeEventListener( 'touchend', onTouchEnd, false );
+  		scope.domElement.removeEventListener( 'touchmove', onTouchMove, false );
+
+  		document.removeEventListener( 'mousemove', onMouseMove, false );
+  		document.removeEventListener( 'mouseup', onMouseUp, false );
+
+  		window.removeEventListener( 'keydown', onKeyDown, false );
+
+  		//scope.dispatchEvent( { type: 'dispose' } ); // should this be added here?
+
+  	};
+
+  	//
+  	// internals
+  	//
+
+  	var scope = this;
+
+  	var changeEvent = { type: 'change' };
+  	var startEvent = { type: 'start' };
+  	var endEvent = { type: 'end' };
+
+  	var STATE = {
+  		NONE: 0,
+  		ROTATE_UP: 1,
+  		ROTATE_LEFT: 2,
+  		ROTATE: 3, // ROTATE_UP | ROTATE_LEFT
+  		DOLLY: 4,
+  		DOLLY_ROTATE: 7, // ROTATE | DOLLY
+  		PAN: 8,
+  		DOLLY_PAN: 12, // DOLLY | PAN
+  	};
+
+  	var state = STATE.NONE;
+
+  	var EPS = 0.000001;
+
+  	// current position in spherical coordinates
+  	var spherical = new Spherical();
+  	var sphericalDelta = new Spherical();
+
+  	var scale = 1;
+  	var panOffset = new Vector3();
+  	var zoomChanged = false;
+
+  	var rotateStart = new Vector2();
+  	var rotateStart2 = new Vector2();
+  	var rotateEnd = new Vector2();
+  	var rotateEnd2 = new Vector2();
+  	var rotateDelta = new Vector2();
+  	var rotateDelta2 = new Vector2();
+  	var rotateDeltaStartFingers = new Vector2();
+  	var rotateDeltaEndFingers = new Vector2();
+
+  	var panStart = new Vector2();
+  	var panEnd = new Vector2();
+  	var panDelta = new Vector2();
+
+  	var dollyStart = new Vector2();
+  	var dollyEnd = new Vector2();
+  	var dollyDelta = new Vector2();
+
+  	function getAutoRotationAngle() {
+
+  		return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
+
+  	}
+
+  	function getZoomScale() {
+
+  		return Math.pow( 0.95, scope.zoomSpeed );
+
+  	}
+
+  	function rotateLeft( angle ) {
+
+  		sphericalDelta.theta -= angle;
+
+  	}
+
+  	function rotateUp( angle ) {
+
+  		sphericalDelta.phi -= angle;
+
+  	}
+
+  	var panLeft = function () {
+
+  		var v = new Vector3();
+
+  		return function panLeft( distance, objectMatrix ) {
+
+  			v.setFromMatrixColumn( objectMatrix, 0 ); // get X column of objectMatrix
+  			v.multiplyScalar( - distance );
+
+  			panOffset.add( v );
+
+  		};
+
+  	}();
+
+  	var panUp = function () {
+
+  		var v = new Vector3();
+
+  		return function panUp( distance, objectMatrix ) {
+
+  			if ( scope.screenSpacePanning === true ) {
+
+  				v.setFromMatrixColumn( objectMatrix, 1 );
+
+  			} else {
+
+  				v.setFromMatrixColumn( objectMatrix, 0 );
+  				v.crossVectors( scope.object.up, v );
+
+  			}
+
+  			v.multiplyScalar( distance );
+
+  			panOffset.add( v );
+
+  		};
+
+  	}();
+
+  	// deltaX and deltaY are in pixels; right and down are positive
+  	var pan = function () {
+
+  		var offset = new Vector3();
+
+  		return function pan( deltaX, deltaY ) {
+
+  			var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
+
+  			if ( scope.object.isPerspectiveCamera ) {
+
+  				// perspective
+  				var position = scope.object.position;
+  				offset.copy( position ).sub( scope.target );
+  				var targetDistance = offset.length();
+
+  				// half of the fov is center to top of screen
+  				targetDistance *= Math.tan( ( scope.object.fov / 2 ) * Math.PI / 180.0 );
+
+  				// we use only clientHeight here so aspect ratio does not distort speed
+  				panLeft( 2 * deltaX * targetDistance / element.clientHeight, scope.object.matrix );
+  				panUp( 2 * deltaY * targetDistance / element.clientHeight, scope.object.matrix );
+
+  			} else if ( scope.object.isOrthographicCamera ) {
+
+  				// orthographic
+  				panLeft( deltaX * ( scope.object.right - scope.object.left ) / scope.object.zoom / element.clientWidth, scope.object.matrix );
+  				panUp( deltaY * ( scope.object.top - scope.object.bottom ) / scope.object.zoom / element.clientHeight, scope.object.matrix );
+
+  			} else {
+
+  				// camera neither orthographic nor perspective
+  				console.warn( 'WARNING: MapControls.js encountered an unknown camera type - pan disabled.' );
+  				scope.enablePan = false;
+
+  			}
+
+  		};
+
+  	}();
+
+  	function dollyIn( dollyScale ) {
+
+  		if ( scope.object.isPerspectiveCamera ) {
+
+  			scale /= dollyScale;
+
+  		} else if ( scope.object.isOrthographicCamera ) {
+
+  			scope.object.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, scope.object.zoom * dollyScale ) );
+  			scope.object.updateProjectionMatrix();
+  			zoomChanged = true;
+
+  		} else {
+
+  			console.warn( 'WARNING: MapControls.js encountered an unknown camera type - dolly/zoom disabled.' );
+  			scope.enableZoom = false;
+
+  		}
+
+  	}
+
+  	function dollyOut( dollyScale ) {
+
+  		if ( scope.object.isPerspectiveCamera ) {
+
+  			scale *= dollyScale;
+
+  		} else if ( scope.object.isOrthographicCamera ) {
+
+  			scope.object.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, scope.object.zoom / dollyScale ) );
+  			scope.object.updateProjectionMatrix();
+  			zoomChanged = true;
+
+  		} else {
+
+  			console.warn( 'WARNING: MapControls.js encountered an unknown camera type - dolly/zoom disabled.' );
+  			scope.enableZoom = false;
+
+  		}
+
+  	}
+
+  	//
+  	// event callbacks - update the object state
+  	//
+
+  	function handleMouseDownRotate( event ) {
+
+  		//console.log( 'handleMouseDownRotate' );
+
+  		rotateStart.set( event.clientX, event.clientY );
+
+  	}
+
+  	function handleMouseDownDolly( event ) {
+
+  		//console.log( 'handleMouseDownDolly' );
+
+  		dollyStart.set( event.clientX, event.clientY );
+
+  	}
+
+  	function handleMouseDownPan( event ) {
+
+  		//console.log( 'handleMouseDownPan' );
+
+  		panStart.set( event.clientX, event.clientY );
+
+  	}
+
+  	function handleMouseMoveRotate( event ) {
+
+  		//console.log( 'handleMouseMoveRotate' );
+
+  		rotateEnd.set( event.clientX, event.clientY );
+
+  		rotateDelta.subVectors( rotateEnd, rotateStart ).multiplyScalar( scope.rotateSpeed );
+
+  		var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
+
+  		rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientHeight ); // yes, height
+
+  		rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight );
+
+  		rotateStart.copy( rotateEnd );
+
+  		scope.update();
+
+  	}
+
+  	function handleMouseMoveDolly( event ) {
+
+  		//console.log( 'handleMouseMoveDolly' );
+
+  		dollyEnd.set( event.clientX, event.clientY );
+
+  		dollyDelta.subVectors( dollyEnd, dollyStart );
+
+  		if ( dollyDelta.y > 0 ) {
+
+  			dollyIn( getZoomScale() );
+
+  		} else if ( dollyDelta.y < 0 ) {
+
+  			dollyOut( getZoomScale() );
+
+  		}
+
+  		dollyStart.copy( dollyEnd );
+
+  		scope.update();
+
+  	}
+
+  	function handleMouseMovePan( event ) {
+
+  		//console.log( 'handleMouseMovePan' );
+
+  		panEnd.set( event.clientX, event.clientY );
+
+  		panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
+
+  		pan( panDelta.x, panDelta.y );
+
+  		panStart.copy( panEnd );
+
+  		scope.update();
+
+  	}
+
+  	function handleMouseWheel( event ) {
+
+  		// console.log( 'handleMouseWheel' );
+
+  		if ( event.deltaY < 0 ) {
+
+  			dollyOut( getZoomScale() );
+
+  		} else if ( event.deltaY > 0 ) {
+
+  			dollyIn( getZoomScale() );
+
+  		}
+
+  		scope.update();
+
+  	}
+
+  	function handleKeyDown( event ) {
+
+  		//console.log( 'handleKeyDown' );
+
+  		switch ( event.keyCode ) {
+
+  			case scope.keys.UP:
+  				pan( 0, scope.keyPanSpeed );
+  				scope.update();
+  				break;
+
+  			case scope.keys.BOTTOM:
+  				pan( 0, - scope.keyPanSpeed );
+  				scope.update();
+  				break;
+
+  			case scope.keys.LEFT:
+  				pan( scope.keyPanSpeed, 0 );
+  				scope.update();
+  				break;
+
+  			case scope.keys.RIGHT:
+  				pan( - scope.keyPanSpeed, 0 );
+  				scope.update();
+  				break;
+
+  		}
+
+  	}
+
+  	function handleTouchStartRotate( event ) {
+
+  		// console.log( 'handleTouchStartRotate' );
+
+  		// First finger
+  		rotateStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+
+  		// Second finger
+  		rotateStart2.set( event.touches[ 1 ].pageX, event.touches[ 1 ].pageY );
+
+  	}
+
+  	function handleTouchStartDolly( event ) {
+
+  		if ( scope.enableZoom ) {
+
+  			// console.log( 'handleTouchStartDolly' );
+
+  			var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
+  			var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
+
+  			var distance = Math.sqrt( dx * dx + dy * dy );
+
+  			dollyStart.set( 0, distance );
+
+  		}
+
+  	}
+
+  	function handleTouchStartPan( event ) {
+
+  		if ( scope.enablePan ) {
+
+  			// console.log( 'handleTouchStartPan' );
+
+  			panStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+
+  		}
+
+  	}
+
+  	function handleTouchMoveRotate( event ) {
+
+  		if ( scope.enableRotate === false ) { return; }
+  		if ( ( state & STATE.ROTATE ) === 0 ) { return; }
+
+  		// First finger
+  		rotateEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+
+  		// Second finger
+  		rotateEnd2.set( event.touches[ 1 ].pageX, event.touches[ 1 ].pageY );
+
+  		rotateDelta.subVectors( rotateEnd, rotateStart );
+  		rotateDelta2.subVectors( rotateEnd2, rotateStart2 );
+  		rotateDeltaStartFingers.subVectors( rotateStart2, rotateStart );
+  		rotateDeltaEndFingers.subVectors( rotateEnd2, rotateEnd );
+
+  		if ( isRotateUp() ) {
+
+  			var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
+
+  			// rotating up and down along whole screen attempts to go 360, but limited to 180
+  			rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight );
+
+  			// Start rotateUp ==> disable all movement to prevent flickering
+  			state = STATE.ROTATE_UP;
+
+  		} else if ( ( state & STATE.ROTATE_LEFT ) !== 0 ) {
+
+  			rotateLeft( ( rotateDeltaStartFingers.angle() - rotateDeltaEndFingers.angle() ) * scope.rotateSpeed );
+
+  		}
+
+  		rotateStart.copy( rotateEnd );
+  		rotateStart2.copy( rotateEnd2 );
+
+  	}
+
+  	function isRotateUp() {
+
+  		// At start, does the two fingers are aligned horizontally
+  		if ( ! isHorizontal( rotateDeltaStartFingers ) ) {
+
+  			return false;
+
+  		}
+
+  		// At end, does the two fingers are aligned horizontally
+  		if ( ! isHorizontal( rotateDeltaEndFingers ) ) {
+
+  			return false;
+
+  		}
+
+  		// does the first finger moved vertically between start and end
+  		if ( ! isVertical( rotateDelta ) ) {
+
+  			return false;
+
+  		}
+
+  		// does the second finger moved vertically between start and end
+  		if ( ! isVertical( rotateDelta2 ) ) {
+
+  			return false;
+
+  		}
+
+  		// Does the two finger moved in the same direction (prevent moving one finger vertically up while the other goes down)
+  		return rotateDelta.dot( rotateDelta2 ) > 0;
+
+  	}
+
+  	var isHorizontal = function () {
+
+  		var precision = Math.sin( Math.PI / 6 );
+
+  		return function isHorizontal( vector ) {
+
+  			return Math.abs( Math.sin( vector.angle() ) ) < precision;
+
+  		};
+
+  	}();
+
+  	var isVertical = function () {
+
+  		var precision = Math.cos( Math.PI / 2 - Math.PI / 6 );
+
+  		return function isVertical( vector ) {
+
+  			return Math.abs( Math.cos( vector.angle() ) ) < precision;
+
+  		};
+
+  	}();
+
+  	function handleTouchMoveDolly( event ) {
+
+  		if ( scope.enableZoom === false ) { return; }
+  		if ( ( state & STATE.DOLLY ) === 0 ) { return; }
+
+  		// console.log( 'handleTouchMoveDolly' );
+
+  		var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
+  		var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
+
+  		var distance = Math.sqrt( dx * dx + dy * dy );
+
+  		dollyEnd.set( 0, distance );
+
+  		dollyDelta.set( 0, Math.pow( dollyEnd.y / dollyStart.y, scope.zoomSpeed ) );
+
+  		dollyIn( dollyDelta.y );
+
+  		dollyStart.copy( dollyEnd );
+
+  	}
+
+  	function handleTouchMovePan( event ) {
+
+  		if ( scope.enablePan === false ) { return; }
+  		if ( ( state & STATE.PAN ) === 0 ) { return; }
+
+  		// console.log( 'handleTouchMovePan' );
+
+  		panEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+
+  		panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
+
+  		pan( panDelta.x, panDelta.y );
+
+  		panStart.copy( panEnd );
+
+  	}
+
+  	//
+  	// event handlers - FSM: listen for events and reset state
+  	//
+
+  	function onMouseDown( event ) {
+
+  		if ( scope.enabled === false ) { return; }
+
+  		event.preventDefault();
+
+  		switch ( event.button ) {
+
+  			case scope.mouseButtons.ORBIT:
+
+  				if ( scope.enableRotate === false ) { return; }
+
+  				handleMouseDownRotate( event );
+
+  				state = STATE.ROTATE;
+
+  				break;
+
+  			case scope.mouseButtons.ZOOM:
+
+  				if ( scope.enableZoom === false ) { return; }
+
+  				handleMouseDownDolly( event );
+
+  				state = STATE.DOLLY;
+
+  				break;
+
+  			case scope.mouseButtons.PAN:
+
+  				if ( scope.enablePan === false ) { return; }
+
+  				handleMouseDownPan( event );
+
+  				state = STATE.PAN;
+
+  				break;
+
+  		}
+
+  		if ( state !== STATE.NONE ) {
+
+  			document.addEventListener( 'mousemove', onMouseMove, false );
+  			document.addEventListener( 'mouseup', onMouseUp, false );
+
+  			scope.dispatchEvent( startEvent );
+
+  		}
+
+  	}
+
+  	function onMouseMove( event ) {
+
+  		if ( scope.enabled === false ) { return; }
+
+  		event.preventDefault();
+
+  		switch ( state ) {
+
+  			case STATE.ROTATE:
+
+  				if ( scope.enableRotate === false ) { return; }
+
+  				handleMouseMoveRotate( event );
+
+  				break;
+
+  			case STATE.DOLLY:
+
+  				if ( scope.enableZoom === false ) { return; }
+
+  				handleMouseMoveDolly( event );
+
+  				break;
+
+  			case STATE.PAN:
+
+  				if ( scope.enablePan === false ) { return; }
+
+  				handleMouseMovePan( event );
+
+  				break;
+
+  		}
+
+  	}
+
+  	function onMouseUp( event ) {
+
+  		if ( scope.enabled === false ) { return; }
+
+  		document.removeEventListener( 'mousemove', onMouseMove, false );
+  		document.removeEventListener( 'mouseup', onMouseUp, false );
+
+  		scope.dispatchEvent( endEvent );
+
+  		state = STATE.NONE;
+
+  	}
+
+  	function onMouseWheel( event ) {
+
+  		if ( scope.enabled === false || scope.enableZoom === false || ( state !== STATE.NONE && state !== STATE.ROTATE ) ) { return; }
+
+  		event.preventDefault();
+  		event.stopPropagation();
+
+  		scope.dispatchEvent( startEvent );
+
+  		handleMouseWheel( event );
+
+  		scope.dispatchEvent( endEvent );
+
+  	}
+
+  	function onKeyDown( event ) {
+
+  		if ( scope.enabled === false || scope.enableKeys === false || scope.enablePan === false ) { return; }
+
+  		handleKeyDown( event );
+
+  	}
+
+  	function onTouchStart( event ) {
+
+  		if ( scope.enabled === false ) { return; }
+
+  		event.preventDefault();
+
+  		switch ( event.touches.length ) {
+
+  			case 1:	// one-fingered touch: pan
+
+  				if ( scope.enablePan === false ) { return; }
+
+  				handleTouchStartPan( event );
+
+  				state = STATE.PAN;
+
+  				break;
+
+  			case 2:	// two-fingered touch: rotate-dolly
+
+  				if ( scope.enableZoom === false && scope.enableRotate === false ) { return; }
+
+  				handleTouchStartRotate( event );
+  				handleTouchStartDolly( event );
+
+  				state = STATE.DOLLY_ROTATE;
+
+  				break;
+
+  			default:
+
+  				state = STATE.NONE;
+
+  		}
+
+  		if ( state !== STATE.NONE ) {
+
+  			scope.dispatchEvent( startEvent );
+
+  		}
+
+  	}
+
+  	function onTouchMove( event ) {
+
+  		if ( scope.enabled === false ) { return; }
+
+  		event.preventDefault();
+  		event.stopPropagation();
+
+  		switch ( event.touches.length ) {
+
+  			case 1: // one-fingered touch: pan
+
+  				if ( scope.enablePan === false ) { return; }
+  				if ( state !== STATE.PAN ) { return; } // is this needed?
+
+  				handleTouchMovePan( event );
+
+  				scope.update();
+
+  				break;
+
+  			case 2: // two-fingered touch: rotate-dolly
+
+  				if ( scope.enableZoom === false && scope.enableRotate === false ) { return; }
+  				if ( ( state & STATE.DOLLY_ROTATE ) === 0 ) { return; } // is this needed?
+
+  				handleTouchMoveRotate( event );
+  				handleTouchMoveDolly( event );
+
+  				scope.update();
+
+  				break;
+
+  			default:
+
+  				state = STATE.NONE;
+
+  		}
+
+  	}
+
+  	function onTouchEnd( event ) {
+
+  		if ( scope.enabled === false ) { return; }
+
+  		scope.dispatchEvent( endEvent );
+
+  		state = STATE.NONE;
+
+  	}
+
+  	function onContextMenu( event ) {
+
+  		if ( scope.enabled === false ) { return; }
+
+  		event.preventDefault();
+
+  	}
+
+  	//
+
+  	scope.domElement.addEventListener( 'contextmenu', onContextMenu, false );
+
+  	scope.domElement.addEventListener( 'mousedown', onMouseDown, false );
+  	scope.domElement.addEventListener( 'wheel', onMouseWheel, false );
+
+  	scope.domElement.addEventListener( 'touchstart', onTouchStart, false );
+  	scope.domElement.addEventListener( 'touchend', onTouchEnd, false );
+  	scope.domElement.addEventListener( 'touchmove', onTouchMove, false );
+
+  	window.addEventListener( 'keydown', onKeyDown, false );
+
+  	// force an update at start
+
+  	this.update();
+
+  };
+
+  MapControls.prototype = Object.create( EventDispatcher.prototype );
+  MapControls.prototype.constructor = MapControls;
+
+  Object.defineProperties( MapControls.prototype, {
+
+  	center: {
+
+  		get: function () {
+
+  			console.warn( 'MapControls: .center has been renamed to .target' );
+  			return this.target;
+
+  		}
+
+  	},
+
+  	// backward compatibility
+
+  	noZoom: {
+
+  		get: function () {
+
+  			console.warn( 'MapControls: .noZoom has been deprecated. Use .enableZoom instead.' );
+  			return ! this.enableZoom;
+
+  		},
+
+  		set: function ( value ) {
+
+  			console.warn( 'MapControls: .noZoom has been deprecated. Use .enableZoom instead.' );
+  			this.enableZoom = ! value;
+
+  		}
+
+  	},
+
+  	noRotate: {
+
+  		get: function () {
+
+  			console.warn( 'MapControls: .noRotate has been deprecated. Use .enableRotate instead.' );
+  			return ! this.enableRotate;
+
+  		},
+
+  		set: function ( value ) {
+
+  			console.warn( 'MapControls: .noRotate has been deprecated. Use .enableRotate instead.' );
+  			this.enableRotate = ! value;
+
+  		}
+
+  	},
+
+  	noPan: {
+
+  		get: function () {
+
+  			console.warn( 'MapControls: .noPan has been deprecated. Use .enablePan instead.' );
+  			return ! this.enablePan;
+
+  		},
+
+  		set: function ( value ) {
+
+  			console.warn( 'MapControls: .noPan has been deprecated. Use .enablePan instead.' );
+  			this.enablePan = ! value;
+
+  		}
+
+  	},
+
+  	noKeys: {
+
+  		get: function () {
+
+  			console.warn( 'MapControls: .noKeys has been deprecated. Use .enableKeys instead.' );
+  			return ! this.enableKeys;
+
+  		},
+
+  		set: function ( value ) {
+
+  			console.warn( 'MapControls: .noKeys has been deprecated. Use .enableKeys instead.' );
+  			this.enableKeys = ! value;
+
+  		}
+
+  	},
+
+  	staticMoving: {
+
+  		get: function () {
+
+  			console.warn( 'MapControls: .staticMoving has been deprecated. Use .enableDamping instead.' );
+  			return ! this.enableDamping;
+
+  		},
+
+  		set: function ( value ) {
+
+  			console.warn( 'MapControls: .staticMoving has been deprecated. Use .enableDamping instead.' );
+  			this.enableDamping = ! value;
+
+  		}
+
+  	},
+
+  	dynamicDampingFactor: {
+
+  		get: function () {
+
+  			console.warn( 'MapControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.' );
+  			return this.dampingFactor;
+
+  		},
+
+  		set: function ( value ) {
+
+  			console.warn( 'MapControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.' );
+  			this.dampingFactor = value;
+
+  		}
+
+  	}
+
+  } );
 
   // This set of controls performs orbiting, dollying (zooming), and panning.
   // Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
@@ -30385,151 +31671,6 @@ var Three = (function (exports) {
   	TransformControls.prototype = Object.create( Object3D.prototype );
   	TransformControls.prototype.constructor = TransformControls;
 
-  var VRControls = function ( object, onError ) {
-
-  	var scope = this;
-
-  	var vrDisplay, vrDisplays;
-
-  	var standingMatrix = new Matrix4();
-
-  	var frameData = null;
-
-  	if ( 'VRFrameData' in window ) {
-
-  		frameData = new VRFrameData();
-
-  	}
-
-  	function gotVRDisplays( displays ) {
-
-  		vrDisplays = displays;
-
-  		if ( displays.length > 0 ) {
-
-  			vrDisplay = displays[ 0 ];
-
-  		} else {
-
-  			if ( onError ) { onError( 'VR input not available.' ); }
-
-  		}
-
-  	}
-
-  	if ( navigator.getVRDisplays ) {
-
-  		navigator.getVRDisplays().then( gotVRDisplays ).catch( function () {
-
-  			console.warn( 'VRControls: Unable to get VR Displays' );
-
-  		} );
-
-  	}
-
-  	// the Rift SDK returns the position in meters
-  	// this scale factor allows the user to define how meters
-  	// are converted to scene units.
-
-  	this.scale = 1;
-
-  	// If true will use "standing space" coordinate system where y=0 is the
-  	// floor and x=0, z=0 is the center of the room.
-  	this.standing = false;
-
-  	// Distance from the users eyes to the floor in meters. Used when
-  	// standing=true but the VRDisplay doesn't provide stageParameters.
-  	this.userHeight = 1.6;
-
-  	this.getVRDisplay = function () {
-
-  		return vrDisplay;
-
-  	};
-
-  	this.setVRDisplay = function ( value ) {
-
-  		vrDisplay = value;
-
-  	};
-
-  	this.getVRDisplays = function () {
-
-  		console.warn( 'VRControls: getVRDisplays() is being deprecated.' );
-  		return vrDisplays;
-
-  	};
-
-  	this.getStandingMatrix = function () {
-
-  		return standingMatrix;
-
-  	};
-
-  	this.update = function () {
-
-  		if ( vrDisplay ) {
-
-  			var pose;
-
-  			if ( vrDisplay.getFrameData ) {
-
-  				vrDisplay.getFrameData( frameData );
-  				pose = frameData.pose;
-
-  			} else if ( vrDisplay.getPose ) {
-
-  				pose = vrDisplay.getPose();
-
-  			}
-
-  			if ( pose.orientation !== null ) {
-
-  				object.quaternion.fromArray( pose.orientation );
-
-  			}
-
-  			if ( pose.position !== null ) {
-
-  				object.position.fromArray( pose.position );
-
-  			} else {
-
-  				object.position.set( 0, 0, 0 );
-
-  			}
-
-  			if ( this.standing ) {
-
-  				if ( vrDisplay.stageParameters ) {
-
-  					object.updateMatrix();
-
-  					standingMatrix.fromArray( vrDisplay.stageParameters.sittingToStandingTransform );
-  					object.applyMatrix( standingMatrix );
-
-  				} else {
-
-  					object.position.setY( object.position.y + this.userHeight );
-
-  				}
-
-  			}
-
-  			object.position.multiplyScalar( scope.scale );
-
-  		}
-
-  	};
-
-  	this.dispose = function () {
-
-  		vrDisplay = null;
-
-  	};
-
-  };
-
   var Visible = 0;
   	var Deleted = 1;
 
@@ -32598,7 +33739,7 @@ var Three = (function (exports) {
 
   				vec.normalize();
 
-  				theta = Math.acos( _Math.clamp( tangents[ i - 1 ].dot( tangents[ i ] ), - 1, 1 ) ); // clamp for floating pt errors
+  				theta = Math.acos( _Math$1.clamp( tangents[ i - 1 ].dot( tangents[ i ] ), - 1, 1 ) ); // clamp for floating pt errors
 
   				normals[ i ].applyMatrix4( mat.makeRotationAxis( vec, theta ) );
 
@@ -32612,7 +33753,7 @@ var Three = (function (exports) {
 
   		if ( closed === true ) {
 
-  			theta = Math.acos( _Math.clamp( normals[ 0 ].dot( normals[ segments ] ), - 1, 1 ) );
+  			theta = Math.acos( _Math$1.clamp( normals[ 0 ].dot( normals[ segments ] ), - 1, 1 ) );
   			theta /= segments;
 
   			if ( tangents[ 0 ].dot( vec.crossVectors( normals[ 0 ], normals[ segments ] ) ) > 0 ) {
@@ -33672,7 +34813,7 @@ var Three = (function (exports) {
   				var projectionMatrix = camera.projectionMatrix.clone();
   				eyeSep = this.eyeSep / 2;
   				var eyeSepOnProjection = eyeSep * near / focus;
-  				var ymax = ( near * Math.tan( _Math.DEG2RAD * fov * 0.5 ) ) / zoom;
+  				var ymax = ( near * Math.tan( _Math$1.DEG2RAD * fov * 0.5 ) ) / zoom;
   				var xmin, xmax;
 
   				// translate xOffset
@@ -34226,9 +35367,9 @@ var Three = (function (exports) {
 
   var normal_fragment_begin = "#ifdef FLAT_SHADED\n\tvec3 fdx = vec3( dFdx( vViewPosition.x ), dFdx( vViewPosition.y ), dFdx( vViewPosition.z ) );\n\tvec3 fdy = vec3( dFdy( vViewPosition.x ), dFdy( vViewPosition.y ), dFdy( vViewPosition.z ) );\n\tvec3 normal = normalize( cross( fdx, fdy ) );\n#else\n\tvec3 normal = normalize( vNormal );\n\t#ifdef DOUBLE_SIDED\n\t\tnormal = normal * ( float( gl_FrontFacing ) * 2.0 - 1.0 );\n\t#endif\n#endif\n";
 
-  var normal_fragment_maps = "#ifdef USE_NORMALMAP\n\tnormal = perturbNormal2Arb( -vViewPosition, normal );\n#elif defined( USE_BUMPMAP )\n\tnormal = perturbNormalArb( -vViewPosition, normal, dHdxy_fwd() );\n#endif\n";
+  var normal_fragment_maps = "#ifdef USE_NORMALMAP\n\t#ifdef OBJECTSPACE_NORMALMAP\n\t\tnormal = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0;\n\t\t#ifdef FLIP_SIDED\n\t\t\tnormal = - normal;\n\t\t#endif\n\t\t#ifdef DOUBLE_SIDED\n\t\t\tnormal = normal * ( float( gl_FrontFacing ) * 2.0 - 1.0 );\n\t\t#endif\n\t\tnormal = normalize( normalMatrix * normal );\n\t#else\n\t\tnormal = perturbNormal2Arb( -vViewPosition, normal );\n\t#endif\n#elif defined( USE_BUMPMAP )\n\tnormal = perturbNormalArb( -vViewPosition, normal, dHdxy_fwd() );\n#endif\n";
 
-  var normalmap_pars_fragment = "#ifdef USE_NORMALMAP\n\tuniform sampler2D normalMap;\n\tuniform vec2 normalScale;\n\tvec3 perturbNormal2Arb( vec3 eye_pos, vec3 surf_norm ) {\n\t\tvec3 q0 = vec3( dFdx( eye_pos.x ), dFdx( eye_pos.y ), dFdx( eye_pos.z ) );\n\t\tvec3 q1 = vec3( dFdy( eye_pos.x ), dFdy( eye_pos.y ), dFdy( eye_pos.z ) );\n\t\tvec2 st0 = dFdx( vUv.st );\n\t\tvec2 st1 = dFdy( vUv.st );\n\t\tfloat scale = sign( st1.t * st0.s - st0.t * st1.s );\n\t\tvec3 S = normalize( ( q0 * st1.t - q1 * st0.t ) * scale );\n\t\tvec3 T = normalize( ( - q0 * st1.s + q1 * st0.s ) * scale );\n\t\tvec3 N = normalize( surf_norm );\n\t\tmat3 tsn = mat3( S, T, N );\n\t\tvec3 mapN = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0;\n\t\tmapN.xy *= normalScale;\n\t\tmapN.xy *= ( float( gl_FrontFacing ) * 2.0 - 1.0 );\n\t\treturn normalize( tsn * mapN );\n\t}\n#endif\n";
+  var normalmap_pars_fragment = "#ifdef USE_NORMALMAP\n\tuniform sampler2D normalMap;\n\tuniform vec2 normalScale;\n\t#ifdef OBJECTSPACE_NORMALMAP\n\t\tuniform mat3 normalMatrix;\n\t#else\n\t\tvec3 perturbNormal2Arb( vec3 eye_pos, vec3 surf_norm ) {\n\t\t\tvec3 q0 = vec3( dFdx( eye_pos.x ), dFdx( eye_pos.y ), dFdx( eye_pos.z ) );\n\t\t\tvec3 q1 = vec3( dFdy( eye_pos.x ), dFdy( eye_pos.y ), dFdy( eye_pos.z ) );\n\t\t\tvec2 st0 = dFdx( vUv.st );\n\t\t\tvec2 st1 = dFdy( vUv.st );\n\t\t\tfloat scale = sign( st1.t * st0.s - st0.t * st1.s );\n\t\t\tvec3 S = normalize( ( q0 * st1.t - q1 * st0.t ) * scale );\n\t\t\tvec3 T = normalize( ( - q0 * st1.s + q1 * st0.s ) * scale );\n\t\t\tvec3 N = normalize( surf_norm );\n\t\t\tmat3 tsn = mat3( S, T, N );\n\t\t\tvec3 mapN = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0;\n\t\t\tmapN.xy *= normalScale;\n\t\t\tmapN.xy *= ( float( gl_FrontFacing ) * 2.0 - 1.0 );\n\t\t\treturn normalize( tsn * mapN );\n\t\t}\n\t#endif\n#endif\n";
 
   var packing = "vec3 packNormalToRGB( const in vec3 normal ) {\n\treturn normalize( normal ) * 0.5 + 0.5;\n}\nvec3 unpackRGBToNormal( const in vec3 rgb ) {\n\treturn 2.0 * rgb.xyz - 1.0;\n}\nconst float PackUpscale = 256. / 255.;const float UnpackDownscale = 255. / 256.;\nconst vec3 PackFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );\nconst vec4 UnpackFactors = UnpackDownscale / vec4( PackFactors, 1. );\nconst float ShiftRight8 = 1. / 256.;\nvec4 packDepthToRGBA( const in float v ) {\n\tvec4 r = vec4( fract( v * PackFactors ), v );\n\tr.yzw -= r.xyz * ShiftRight8;\treturn r * PackUpscale;\n}\nfloat unpackRGBAToDepth( const in vec4 v ) {\n\treturn dot( v, UnpackFactors );\n}\nfloat viewZToOrthographicDepth( const in float viewZ, const in float near, const in float far ) {\n\treturn ( viewZ + near ) / ( near - far );\n}\nfloat orthographicDepthToViewZ( const in float linearClipZ, const in float near, const in float far ) {\n\treturn linearClipZ * ( near - far ) - near;\n}\nfloat viewZToPerspectiveDepth( const in float viewZ, const in float near, const in float far ) {\n\treturn (( near + viewZ ) * far ) / (( far - near ) * viewZ );\n}\nfloat perspectiveDepthToViewZ( const in float invClipZ, const in float near, const in float far ) {\n\treturn ( near * far ) / ( ( far - near ) * invClipZ - far );\n}\n";
 
@@ -34306,11 +35447,11 @@ var Three = (function (exports) {
 
   var meshbasic_vert = "#include <common>\n#include <uv_pars_vertex>\n#include <uv2_pars_vertex>\n#include <envmap_pars_vertex>\n#include <color_pars_vertex>\n#include <fog_pars_vertex>\n#include <morphtarget_pars_vertex>\n#include <skinning_pars_vertex>\n#include <logdepthbuf_pars_vertex>\n#include <clipping_planes_pars_vertex>\nvoid main() {\n\t#include <uv_vertex>\n\t#include <uv2_vertex>\n\t#include <color_vertex>\n\t#include <skinbase_vertex>\n\t#ifdef USE_ENVMAP\n\t#include <beginnormal_vertex>\n\t#include <morphnormal_vertex>\n\t#include <skinnormal_vertex>\n\t#include <defaultnormal_vertex>\n\t#endif\n\t#include <begin_vertex>\n\t#include <morphtarget_vertex>\n\t#include <skinning_vertex>\n\t#include <project_vertex>\n\t#include <logdepthbuf_vertex>\n\t#include <worldpos_vertex>\n\t#include <clipping_planes_vertex>\n\t#include <envmap_vertex>\n\t#include <fog_vertex>\n}\n";
 
-  var meshlambert_frag = "uniform vec3 diffuse;\nuniform vec3 emissive;\nuniform float opacity;\nvarying vec3 vLightFront;\n#ifdef DOUBLE_SIDED\n\tvarying vec3 vLightBack;\n#endif\n#include <common>\n#include <packing>\n#include <dithering_pars_fragment>\n#include <color_pars_fragment>\n#include <uv_pars_fragment>\n#include <uv2_pars_fragment>\n#include <map_pars_fragment>\n#include <alphamap_pars_fragment>\n#include <aomap_pars_fragment>\n#include <lightmap_pars_fragment>\n#include <emissivemap_pars_fragment>\n#include <envmap_pars_fragment>\n#include <bsdfs>\n#include <lights_pars_begin>\n#include <lights_pars_maps>\n#include <fog_pars_fragment>\n#include <shadowmap_pars_fragment>\n#include <shadowmask_pars_fragment>\n#include <specularmap_pars_fragment>\n#include <logdepthbuf_pars_fragment>\n#include <clipping_planes_pars_fragment>\nvoid main() {\n\t#include <clipping_planes_fragment>\n\tvec4 diffuseColor = vec4( diffuse, opacity );\n\tReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );\n\tvec3 totalEmissiveRadiance = emissive;\n\t#include <logdepthbuf_fragment>\n\t#include <map_fragment>\n\t#include <color_fragment>\n\t#include <alphamap_fragment>\n\t#include <alphatest_fragment>\n\t#include <specularmap_fragment>\n\t#include <emissivemap_fragment>\n\treflectedLight.indirectDiffuse = getAmbientLightIrradiance( ambientLightColor );\n\t#include <lightmap_fragment>\n\treflectedLight.indirectDiffuse *= BRDF_Diffuse_Lambert( diffuseColor.rgb );\n\t#ifdef DOUBLE_SIDED\n\t\treflectedLight.directDiffuse = ( gl_FrontFacing ) ? vLightFront : vLightBack;\n\t#else\n\t\treflectedLight.directDiffuse = vLightFront;\n\t#endif\n\treflectedLight.directDiffuse *= BRDF_Diffuse_Lambert( diffuseColor.rgb ) * getShadowMask();\n\t#include <aomap_fragment>\n\tvec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + totalEmissiveRadiance;\n\t#include <envmap_fragment>\n\tgl_FragColor = vec4( outgoingLight, diffuseColor.a );\n\t#include <tonemapping_fragment>\n\t#include <encodings_fragment>\n\t#include <fog_fragment>\n\t#include <premultiplied_alpha_fragment>\n\t#include <dithering_fragment>\n}\n";
+  var meshlambert_frag = "uniform vec3 diffuse;\nuniform vec3 emissive;\nuniform float opacity;\nvarying vec3 vLightFront;\n#ifdef DOUBLE_SIDED\n\tvarying vec3 vLightBack;\n#endif\n#include <common>\n#include <packing>\n#include <dithering_pars_fragment>\n#include <color_pars_fragment>\n#include <uv_pars_fragment>\n#include <uv2_pars_fragment>\n#include <map_pars_fragment>\n#include <alphamap_pars_fragment>\n#include <aomap_pars_fragment>\n#include <lightmap_pars_fragment>\n#include <emissivemap_pars_fragment>\n#include <envmap_pars_fragment>\n#include <bsdfs>\n#include <lights_pars_begin>\n#include <fog_pars_fragment>\n#include <shadowmap_pars_fragment>\n#include <shadowmask_pars_fragment>\n#include <specularmap_pars_fragment>\n#include <logdepthbuf_pars_fragment>\n#include <clipping_planes_pars_fragment>\nvoid main() {\n\t#include <clipping_planes_fragment>\n\tvec4 diffuseColor = vec4( diffuse, opacity );\n\tReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );\n\tvec3 totalEmissiveRadiance = emissive;\n\t#include <logdepthbuf_fragment>\n\t#include <map_fragment>\n\t#include <color_fragment>\n\t#include <alphamap_fragment>\n\t#include <alphatest_fragment>\n\t#include <specularmap_fragment>\n\t#include <emissivemap_fragment>\n\treflectedLight.indirectDiffuse = getAmbientLightIrradiance( ambientLightColor );\n\t#include <lightmap_fragment>\n\treflectedLight.indirectDiffuse *= BRDF_Diffuse_Lambert( diffuseColor.rgb );\n\t#ifdef DOUBLE_SIDED\n\t\treflectedLight.directDiffuse = ( gl_FrontFacing ) ? vLightFront : vLightBack;\n\t#else\n\t\treflectedLight.directDiffuse = vLightFront;\n\t#endif\n\treflectedLight.directDiffuse *= BRDF_Diffuse_Lambert( diffuseColor.rgb ) * getShadowMask();\n\t#include <aomap_fragment>\n\tvec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + totalEmissiveRadiance;\n\t#include <envmap_fragment>\n\tgl_FragColor = vec4( outgoingLight, diffuseColor.a );\n\t#include <tonemapping_fragment>\n\t#include <encodings_fragment>\n\t#include <fog_fragment>\n\t#include <premultiplied_alpha_fragment>\n\t#include <dithering_fragment>\n}\n";
 
-  var meshlambert_vert = "#define LAMBERT\nvarying vec3 vLightFront;\n#ifdef DOUBLE_SIDED\n\tvarying vec3 vLightBack;\n#endif\n#include <common>\n#include <uv_pars_vertex>\n#include <uv2_pars_vertex>\n#include <envmap_pars_vertex>\n#include <bsdfs>\n#include <lights_pars_begin>\n#include <lights_pars_maps>\n#include <color_pars_vertex>\n#include <fog_pars_vertex>\n#include <morphtarget_pars_vertex>\n#include <skinning_pars_vertex>\n#include <shadowmap_pars_vertex>\n#include <logdepthbuf_pars_vertex>\n#include <clipping_planes_pars_vertex>\nvoid main() {\n\t#include <uv_vertex>\n\t#include <uv2_vertex>\n\t#include <color_vertex>\n\t#include <beginnormal_vertex>\n\t#include <morphnormal_vertex>\n\t#include <skinbase_vertex>\n\t#include <skinnormal_vertex>\n\t#include <defaultnormal_vertex>\n\t#include <begin_vertex>\n\t#include <morphtarget_vertex>\n\t#include <skinning_vertex>\n\t#include <project_vertex>\n\t#include <logdepthbuf_vertex>\n\t#include <clipping_planes_vertex>\n\t#include <worldpos_vertex>\n\t#include <envmap_vertex>\n\t#include <lights_lambert_vertex>\n\t#include <shadowmap_vertex>\n\t#include <fog_vertex>\n}\n";
+  var meshlambert_vert = "#define LAMBERT\nvarying vec3 vLightFront;\n#ifdef DOUBLE_SIDED\n\tvarying vec3 vLightBack;\n#endif\n#include <common>\n#include <uv_pars_vertex>\n#include <uv2_pars_vertex>\n#include <envmap_pars_vertex>\n#include <bsdfs>\n#include <lights_pars_begin>\n#include <color_pars_vertex>\n#include <fog_pars_vertex>\n#include <morphtarget_pars_vertex>\n#include <skinning_pars_vertex>\n#include <shadowmap_pars_vertex>\n#include <logdepthbuf_pars_vertex>\n#include <clipping_planes_pars_vertex>\nvoid main() {\n\t#include <uv_vertex>\n\t#include <uv2_vertex>\n\t#include <color_vertex>\n\t#include <beginnormal_vertex>\n\t#include <morphnormal_vertex>\n\t#include <skinbase_vertex>\n\t#include <skinnormal_vertex>\n\t#include <defaultnormal_vertex>\n\t#include <begin_vertex>\n\t#include <morphtarget_vertex>\n\t#include <skinning_vertex>\n\t#include <project_vertex>\n\t#include <logdepthbuf_vertex>\n\t#include <clipping_planes_vertex>\n\t#include <worldpos_vertex>\n\t#include <envmap_vertex>\n\t#include <lights_lambert_vertex>\n\t#include <shadowmap_vertex>\n\t#include <fog_vertex>\n}\n";
 
-  var meshphong_frag = "#define PHONG\nuniform vec3 diffuse;\nuniform vec3 emissive;\nuniform vec3 specular;\nuniform float shininess;\nuniform float opacity;\n#include <common>\n#include <packing>\n#include <dithering_pars_fragment>\n#include <color_pars_fragment>\n#include <uv_pars_fragment>\n#include <uv2_pars_fragment>\n#include <map_pars_fragment>\n#include <alphamap_pars_fragment>\n#include <aomap_pars_fragment>\n#include <lightmap_pars_fragment>\n#include <emissivemap_pars_fragment>\n#include <envmap_pars_fragment>\n#include <gradientmap_pars_fragment>\n#include <fog_pars_fragment>\n#include <bsdfs>\n#include <lights_pars_begin>\n#include <lights_pars_maps>\n#include <lights_phong_pars_fragment>\n#include <shadowmap_pars_fragment>\n#include <bumpmap_pars_fragment>\n#include <normalmap_pars_fragment>\n#include <specularmap_pars_fragment>\n#include <logdepthbuf_pars_fragment>\n#include <clipping_planes_pars_fragment>\nvoid main() {\n\t#include <clipping_planes_fragment>\n\tvec4 diffuseColor = vec4( diffuse, opacity );\n\tReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );\n\tvec3 totalEmissiveRadiance = emissive;\n\t#include <logdepthbuf_fragment>\n\t#include <map_fragment>\n\t#include <color_fragment>\n\t#include <alphamap_fragment>\n\t#include <alphatest_fragment>\n\t#include <specularmap_fragment>\n\t#include <normal_fragment_begin>\n\t#include <normal_fragment_maps>\n\t#include <emissivemap_fragment>\n\t#include <lights_phong_fragment>\n\t#include <lights_fragment_begin>\n\t#include <lights_fragment_maps>\n\t#include <lights_fragment_end>\n\t#include <aomap_fragment>\n\tvec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;\n\t#include <envmap_fragment>\n\tgl_FragColor = vec4( outgoingLight, diffuseColor.a );\n\t#include <tonemapping_fragment>\n\t#include <encodings_fragment>\n\t#include <fog_fragment>\n\t#include <premultiplied_alpha_fragment>\n\t#include <dithering_fragment>\n}\n";
+  var meshphong_frag = "#define PHONG\nuniform vec3 diffuse;\nuniform vec3 emissive;\nuniform vec3 specular;\nuniform float shininess;\nuniform float opacity;\n#include <common>\n#include <packing>\n#include <dithering_pars_fragment>\n#include <color_pars_fragment>\n#include <uv_pars_fragment>\n#include <uv2_pars_fragment>\n#include <map_pars_fragment>\n#include <alphamap_pars_fragment>\n#include <aomap_pars_fragment>\n#include <lightmap_pars_fragment>\n#include <emissivemap_pars_fragment>\n#include <envmap_pars_fragment>\n#include <gradientmap_pars_fragment>\n#include <fog_pars_fragment>\n#include <bsdfs>\n#include <lights_pars_begin>\n#include <lights_phong_pars_fragment>\n#include <shadowmap_pars_fragment>\n#include <bumpmap_pars_fragment>\n#include <normalmap_pars_fragment>\n#include <specularmap_pars_fragment>\n#include <logdepthbuf_pars_fragment>\n#include <clipping_planes_pars_fragment>\nvoid main() {\n\t#include <clipping_planes_fragment>\n\tvec4 diffuseColor = vec4( diffuse, opacity );\n\tReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );\n\tvec3 totalEmissiveRadiance = emissive;\n\t#include <logdepthbuf_fragment>\n\t#include <map_fragment>\n\t#include <color_fragment>\n\t#include <alphamap_fragment>\n\t#include <alphatest_fragment>\n\t#include <specularmap_fragment>\n\t#include <normal_fragment_begin>\n\t#include <normal_fragment_maps>\n\t#include <emissivemap_fragment>\n\t#include <lights_phong_fragment>\n\t#include <lights_fragment_begin>\n\t#include <lights_fragment_maps>\n\t#include <lights_fragment_end>\n\t#include <aomap_fragment>\n\tvec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;\n\t#include <envmap_fragment>\n\tgl_FragColor = vec4( outgoingLight, diffuseColor.a );\n\t#include <tonemapping_fragment>\n\t#include <encodings_fragment>\n\t#include <fog_fragment>\n\t#include <premultiplied_alpha_fragment>\n\t#include <dithering_fragment>\n}\n";
 
   var meshphong_vert = "#define PHONG\nvarying vec3 vViewPosition;\n#ifndef FLAT_SHADED\n\tvarying vec3 vNormal;\n#endif\n#include <common>\n#include <uv_pars_vertex>\n#include <uv2_pars_vertex>\n#include <displacementmap_pars_vertex>\n#include <envmap_pars_vertex>\n#include <color_pars_vertex>\n#include <fog_pars_vertex>\n#include <morphtarget_pars_vertex>\n#include <skinning_pars_vertex>\n#include <shadowmap_pars_vertex>\n#include <logdepthbuf_pars_vertex>\n#include <clipping_planes_pars_vertex>\nvoid main() {\n\t#include <uv_vertex>\n\t#include <uv2_vertex>\n\t#include <color_vertex>\n\t#include <beginnormal_vertex>\n\t#include <morphnormal_vertex>\n\t#include <skinbase_vertex>\n\t#include <skinnormal_vertex>\n\t#include <defaultnormal_vertex>\n#ifndef FLAT_SHADED\n\tvNormal = normalize( transformedNormal );\n#endif\n\t#include <begin_vertex>\n\t#include <morphtarget_vertex>\n\t#include <skinning_vertex>\n\t#include <displacementmap_vertex>\n\t#include <project_vertex>\n\t#include <logdepthbuf_vertex>\n\t#include <clipping_planes_vertex>\n\tvViewPosition = - mvPosition.xyz;\n\t#include <worldpos_vertex>\n\t#include <envmap_vertex>\n\t#include <shadowmap_vertex>\n\t#include <fog_vertex>\n}\n";
 
@@ -34318,9 +35459,9 @@ var Three = (function (exports) {
 
   var meshphysical_vert = "#define PHYSICAL\nvarying vec3 vViewPosition;\n#ifndef FLAT_SHADED\n\tvarying vec3 vNormal;\n#endif\n#include <common>\n#include <uv_pars_vertex>\n#include <uv2_pars_vertex>\n#include <displacementmap_pars_vertex>\n#include <color_pars_vertex>\n#include <fog_pars_vertex>\n#include <morphtarget_pars_vertex>\n#include <skinning_pars_vertex>\n#include <shadowmap_pars_vertex>\n#include <logdepthbuf_pars_vertex>\n#include <clipping_planes_pars_vertex>\nvoid main() {\n\t#include <uv_vertex>\n\t#include <uv2_vertex>\n\t#include <color_vertex>\n\t#include <beginnormal_vertex>\n\t#include <morphnormal_vertex>\n\t#include <skinbase_vertex>\n\t#include <skinnormal_vertex>\n\t#include <defaultnormal_vertex>\n#ifndef FLAT_SHADED\n\tvNormal = normalize( transformedNormal );\n#endif\n\t#include <begin_vertex>\n\t#include <morphtarget_vertex>\n\t#include <skinning_vertex>\n\t#include <displacementmap_vertex>\n\t#include <project_vertex>\n\t#include <logdepthbuf_vertex>\n\t#include <clipping_planes_vertex>\n\tvViewPosition = - mvPosition.xyz;\n\t#include <worldpos_vertex>\n\t#include <shadowmap_vertex>\n\t#include <fog_vertex>\n}\n";
 
-  var normal_frag = "#define NORMAL\nuniform float opacity;\n#if defined( FLAT_SHADED ) || defined( USE_BUMPMAP ) || defined( USE_NORMALMAP )\n\tvarying vec3 vViewPosition;\n#endif\n#ifndef FLAT_SHADED\n\tvarying vec3 vNormal;\n#endif\n#include <packing>\n#include <uv_pars_fragment>\n#include <bumpmap_pars_fragment>\n#include <normalmap_pars_fragment>\n#include <logdepthbuf_pars_fragment>\nvoid main() {\n\t#include <logdepthbuf_fragment>\n\t#include <normal_fragment_begin>\n\t#include <normal_fragment_maps>\n\tgl_FragColor = vec4( packNormalToRGB( normal ), opacity );\n}\n";
+  var normal_frag = "#define NORMAL\nuniform float opacity;\n#if defined( FLAT_SHADED ) || defined( USE_BUMPMAP ) || ( defined( USE_NORMALMAP ) && ! defined( OBJECTSPACE_NORMALMAP ) )\n\tvarying vec3 vViewPosition;\n#endif\n#ifndef FLAT_SHADED\n\tvarying vec3 vNormal;\n#endif\n#include <packing>\n#include <uv_pars_fragment>\n#include <bumpmap_pars_fragment>\n#include <normalmap_pars_fragment>\n#include <logdepthbuf_pars_fragment>\nvoid main() {\n\t#include <logdepthbuf_fragment>\n\t#include <normal_fragment_begin>\n\t#include <normal_fragment_maps>\n\tgl_FragColor = vec4( packNormalToRGB( normal ), opacity );\n}\n";
 
-  var normal_vert = "#define NORMAL\n#if defined( FLAT_SHADED ) || defined( USE_BUMPMAP ) || defined( USE_NORMALMAP )\n\tvarying vec3 vViewPosition;\n#endif\n#ifndef FLAT_SHADED\n\tvarying vec3 vNormal;\n#endif\n#include <uv_pars_vertex>\n#include <displacementmap_pars_vertex>\n#include <morphtarget_pars_vertex>\n#include <skinning_pars_vertex>\n#include <logdepthbuf_pars_vertex>\nvoid main() {\n\t#include <uv_vertex>\n\t#include <beginnormal_vertex>\n\t#include <morphnormal_vertex>\n\t#include <skinbase_vertex>\n\t#include <skinnormal_vertex>\n\t#include <defaultnormal_vertex>\n#ifndef FLAT_SHADED\n\tvNormal = normalize( transformedNormal );\n#endif\n\t#include <begin_vertex>\n\t#include <morphtarget_vertex>\n\t#include <skinning_vertex>\n\t#include <displacementmap_vertex>\n\t#include <project_vertex>\n\t#include <logdepthbuf_vertex>\n#if defined( FLAT_SHADED ) || defined( USE_BUMPMAP ) || defined( USE_NORMALMAP )\n\tvViewPosition = - mvPosition.xyz;\n#endif\n}\n";
+  var normal_vert = "#define NORMAL\n#if defined( FLAT_SHADED ) || defined( USE_BUMPMAP ) || ( defined( USE_NORMALMAP ) && ! defined( OBJECTSPACE_NORMALMAP ) )\n\tvarying vec3 vViewPosition;\n#endif\n#ifndef FLAT_SHADED\n\tvarying vec3 vNormal;\n#endif\n#include <uv_pars_vertex>\n#include <displacementmap_pars_vertex>\n#include <morphtarget_pars_vertex>\n#include <skinning_pars_vertex>\n#include <logdepthbuf_pars_vertex>\nvoid main() {\n\t#include <uv_vertex>\n\t#include <beginnormal_vertex>\n\t#include <morphnormal_vertex>\n\t#include <skinbase_vertex>\n\t#include <skinnormal_vertex>\n\t#include <defaultnormal_vertex>\n#ifndef FLAT_SHADED\n\tvNormal = normalize( transformedNormal );\n#endif\n\t#include <begin_vertex>\n\t#include <morphtarget_vertex>\n\t#include <skinning_vertex>\n\t#include <displacementmap_vertex>\n\t#include <project_vertex>\n\t#include <logdepthbuf_vertex>\n#if defined( FLAT_SHADED ) || defined( USE_BUMPMAP ) || ( defined( USE_NORMALMAP ) && ! defined( OBJECTSPACE_NORMALMAP ) )\n\tvViewPosition = - mvPosition.xyz;\n#endif\n}\n";
 
   var points_frag = "uniform vec3 diffuse;\nuniform float opacity;\n#include <common>\n#include <packing>\n#include <color_pars_fragment>\n#include <map_particle_pars_fragment>\n#include <fog_pars_fragment>\n#include <logdepthbuf_pars_fragment>\n#include <clipping_planes_pars_fragment>\nvoid main() {\n\t#include <clipping_planes_fragment>\n\tvec3 outgoingLight = vec3( 0.0 );\n\tvec4 diffuseColor = vec4( diffuse, opacity );\n\t#include <logdepthbuf_fragment>\n\t#include <map_particle_fragment>\n\t#include <color_fragment>\n\t#include <alphatest_fragment>\n\toutgoingLight = diffuseColor.rgb;\n\tgl_FragColor = vec4( outgoingLight, diffuseColor.a );\n\t#include <premultiplied_alpha_fragment>\n\t#include <tonemapping_fragment>\n\t#include <encodings_fragment>\n\t#include <fog_fragment>\n}\n";
 
@@ -35606,530 +36747,6 @@ var Three = (function (exports) {
 
   };
 
-  var VREffect = function ( renderer, onError ) {
-
-  	var vrDisplay, vrDisplays;
-  	var eyeTranslationL = new Vector3();
-  	var eyeTranslationR = new Vector3();
-  	var renderRectL, renderRectR;
-  	var headMatrix = new Matrix4();
-  	var eyeMatrixL = new Matrix4();
-  	var eyeMatrixR = new Matrix4();
-
-  	var frameData = null;
-
-  	if ( 'VRFrameData' in window ) {
-
-  		frameData = new window.VRFrameData();
-
-  	}
-
-  	function gotVRDisplays( displays ) {
-
-  		vrDisplays = displays;
-
-  		if ( displays.length > 0 ) {
-
-  			vrDisplay = displays[ 0 ];
-
-  		} else {
-
-  			if ( onError ) { onError( 'HMD not available' ); }
-
-  		}
-
-  	}
-
-  	if ( navigator.getVRDisplays ) {
-
-  		navigator.getVRDisplays().then( gotVRDisplays ).catch( function () {
-
-  			console.warn( 'VREffect: Unable to get VR Displays' );
-
-  		} );
-
-  	}
-
-  	//
-
-  	this.isPresenting = false;
-
-  	var scope = this;
-
-  	var rendererSize = renderer.getSize();
-  	var rendererUpdateStyle = false;
-  	var rendererPixelRatio = renderer.getPixelRatio();
-
-  	this.getVRDisplay = function () {
-
-  		return vrDisplay;
-
-  	};
-
-  	this.setVRDisplay = function ( value ) {
-
-  		vrDisplay = value;
-
-  	};
-
-  	this.getVRDisplays = function () {
-
-  		console.warn( 'VREffect: getVRDisplays() is being deprecated.' );
-  		return vrDisplays;
-
-  	};
-
-  	this.setSize = function ( width, height, updateStyle ) {
-
-  		rendererSize = { width: width, height: height };
-  		rendererUpdateStyle = updateStyle;
-
-  		if ( scope.isPresenting ) {
-
-  			var eyeParamsL = vrDisplay.getEyeParameters( 'left' );
-  			renderer.setPixelRatio( 1 );
-  			renderer.setSize( eyeParamsL.renderWidth * 2, eyeParamsL.renderHeight, false );
-
-  		} else {
-
-  			renderer.setPixelRatio( rendererPixelRatio );
-  			renderer.setSize( width, height, updateStyle );
-
-  		}
-
-  	};
-
-  	// VR presentation
-
-  	var canvas = renderer.domElement;
-  	var defaultLeftBounds = [ 0.0, 0.0, 0.5, 1.0 ];
-  	var defaultRightBounds = [ 0.5, 0.0, 0.5, 1.0 ];
-
-  	function onVRDisplayPresentChange() {
-
-  		var wasPresenting = scope.isPresenting;
-  		scope.isPresenting = vrDisplay !== undefined && vrDisplay.isPresenting;
-
-  		if ( scope.isPresenting ) {
-
-  			var eyeParamsL = vrDisplay.getEyeParameters( 'left' );
-  			var eyeWidth = eyeParamsL.renderWidth;
-  			var eyeHeight = eyeParamsL.renderHeight;
-
-  			if ( ! wasPresenting ) {
-
-  				rendererPixelRatio = renderer.getPixelRatio();
-  				rendererSize = renderer.getSize();
-
-  				renderer.setPixelRatio( 1 );
-  				renderer.setSize( eyeWidth * 2, eyeHeight, false );
-
-  			}
-
-  		} else if ( wasPresenting ) {
-
-  			renderer.setPixelRatio( rendererPixelRatio );
-  			renderer.setSize( rendererSize.width, rendererSize.height, rendererUpdateStyle );
-
-  		}
-
-  	}
-
-  	window.addEventListener( 'vrdisplaypresentchange', onVRDisplayPresentChange, false );
-
-  	this.setFullScreen = function ( boolean ) {
-
-  		return new Promise( function ( resolve, reject ) {
-
-  			if ( vrDisplay === undefined ) {
-
-  				reject( new Error( 'No VR hardware found.' ) );
-  				return;
-
-  			}
-
-  			if ( scope.isPresenting === boolean ) {
-
-  				resolve();
-  				return;
-
-  			}
-
-  			if ( boolean ) {
-
-  				resolve( vrDisplay.requestPresent( [ { source: canvas } ] ) );
-
-  			} else {
-
-  				resolve( vrDisplay.exitPresent() );
-
-  			}
-
-  		} );
-
-  	};
-
-  	this.requestPresent = function () {
-
-  		return this.setFullScreen( true );
-
-  	};
-
-  	this.exitPresent = function () {
-
-  		return this.setFullScreen( false );
-
-  	};
-
-  	this.requestAnimationFrame = function ( f ) {
-
-  		if ( vrDisplay !== undefined ) {
-
-  			return vrDisplay.requestAnimationFrame( f );
-
-  		} else {
-
-  			return window.requestAnimationFrame( f );
-
-  		}
-
-  	};
-
-  	this.cancelAnimationFrame = function ( h ) {
-
-  		if ( vrDisplay !== undefined ) {
-
-  			vrDisplay.cancelAnimationFrame( h );
-
-  		} else {
-
-  			window.cancelAnimationFrame( h );
-
-  		}
-
-  	};
-
-  	this.submitFrame = function () {
-
-  		if ( vrDisplay !== undefined && scope.isPresenting ) {
-
-  			vrDisplay.submitFrame();
-
-  		}
-
-  	};
-
-  	this.autoSubmitFrame = true;
-
-  	// render
-
-  	var cameraL = new PerspectiveCamera();
-  	cameraL.layers.enable( 1 );
-
-  	var cameraR = new PerspectiveCamera();
-  	cameraR.layers.enable( 2 );
-
-  	this.render = function ( scene, camera, renderTarget, forceClear ) {
-
-  		if ( vrDisplay && scope.isPresenting ) {
-
-  			var autoUpdate = scene.autoUpdate;
-
-  			if ( autoUpdate ) {
-
-  				scene.updateMatrixWorld();
-  				scene.autoUpdate = false;
-
-  			}
-
-  			if ( Array.isArray( scene ) ) {
-
-  				console.warn( 'VREffect.render() no longer supports arrays. Use object.layers instead.' );
-  				scene = scene[ 0 ];
-
-  			}
-
-  			// When rendering we don't care what the recommended size is, only what the actual size
-  			// of the backbuffer is.
-  			var size = renderer.getSize();
-  			var layers = vrDisplay.getLayers();
-  			var leftBounds;
-  			var rightBounds;
-
-  			if ( layers.length ) {
-
-  				var layer = layers[ 0 ];
-
-  				leftBounds = layer.leftBounds !== null && layer.leftBounds.length === 4 ? layer.leftBounds : defaultLeftBounds;
-  				rightBounds = layer.rightBounds !== null && layer.rightBounds.length === 4 ? layer.rightBounds : defaultRightBounds;
-
-  			} else {
-
-  				leftBounds = defaultLeftBounds;
-  				rightBounds = defaultRightBounds;
-
-  			}
-
-  			renderRectL = {
-  				x: Math.round( size.width * leftBounds[ 0 ] ),
-  				y: Math.round( size.height * leftBounds[ 1 ] ),
-  				width: Math.round( size.width * leftBounds[ 2 ] ),
-  				height: Math.round( size.height * leftBounds[ 3 ] )
-  			};
-  			renderRectR = {
-  				x: Math.round( size.width * rightBounds[ 0 ] ),
-  				y: Math.round( size.height * rightBounds[ 1 ] ),
-  				width: Math.round( size.width * rightBounds[ 2 ] ),
-  				height: Math.round( size.height * rightBounds[ 3 ] )
-  			};
-
-  			if ( renderTarget ) {
-
-  				renderer.setRenderTarget( renderTarget );
-  				renderTarget.scissorTest = true;
-
-  			} else {
-
-  				renderer.setRenderTarget( null );
-  				renderer.setScissorTest( true );
-
-  			}
-
-  			if ( renderer.autoClear || forceClear ) { renderer.clear(); }
-
-  			if ( camera.parent === null ) { camera.updateMatrixWorld(); }
-
-  			camera.matrixWorld.decompose( cameraL.position, cameraL.quaternion, cameraL.scale );
-
-  			cameraR.position.copy( cameraL.position );
-  			cameraR.quaternion.copy( cameraL.quaternion );
-  			cameraR.scale.copy( cameraL.scale );
-
-  			if ( vrDisplay.getFrameData ) {
-
-  				vrDisplay.depthNear = camera.near;
-  				vrDisplay.depthFar = camera.far;
-
-  				vrDisplay.getFrameData( frameData );
-
-  				cameraL.projectionMatrix.elements = frameData.leftProjectionMatrix;
-  				cameraR.projectionMatrix.elements = frameData.rightProjectionMatrix;
-
-  				getEyeMatrices( frameData );
-
-  				cameraL.updateMatrix();
-  				cameraL.matrix.multiply( eyeMatrixL );
-  				cameraL.matrix.decompose( cameraL.position, cameraL.quaternion, cameraL.scale );
-
-  				cameraR.updateMatrix();
-  				cameraR.matrix.multiply( eyeMatrixR );
-  				cameraR.matrix.decompose( cameraR.position, cameraR.quaternion, cameraR.scale );
-
-  			} else {
-
-  				var eyeParamsL = vrDisplay.getEyeParameters( 'left' );
-  				var eyeParamsR = vrDisplay.getEyeParameters( 'right' );
-
-  				cameraL.projectionMatrix = fovToProjection( eyeParamsL.fieldOfView, true, camera.near, camera.far );
-  				cameraR.projectionMatrix = fovToProjection( eyeParamsR.fieldOfView, true, camera.near, camera.far );
-
-  				eyeTranslationL.fromArray( eyeParamsL.offset );
-  				eyeTranslationR.fromArray( eyeParamsR.offset );
-
-  				cameraL.translateOnAxis( eyeTranslationL, cameraL.scale.x );
-  				cameraR.translateOnAxis( eyeTranslationR, cameraR.scale.x );
-
-  			}
-
-  			// render left eye
-  			if ( renderTarget ) {
-
-  				renderTarget.viewport.set( renderRectL.x, renderRectL.y, renderRectL.width, renderRectL.height );
-  				renderTarget.scissor.set( renderRectL.x, renderRectL.y, renderRectL.width, renderRectL.height );
-
-  			} else {
-
-  				renderer.setViewport( renderRectL.x, renderRectL.y, renderRectL.width, renderRectL.height );
-  				renderer.setScissor( renderRectL.x, renderRectL.y, renderRectL.width, renderRectL.height );
-
-  			}
-  			renderer.render( scene, cameraL, renderTarget, forceClear );
-
-  			// render right eye
-  			if ( renderTarget ) {
-
-  				renderTarget.viewport.set( renderRectR.x, renderRectR.y, renderRectR.width, renderRectR.height );
-  				renderTarget.scissor.set( renderRectR.x, renderRectR.y, renderRectR.width, renderRectR.height );
-
-  			} else {
-
-  				renderer.setViewport( renderRectR.x, renderRectR.y, renderRectR.width, renderRectR.height );
-  				renderer.setScissor( renderRectR.x, renderRectR.y, renderRectR.width, renderRectR.height );
-
-  			}
-  			renderer.render( scene, cameraR, renderTarget, forceClear );
-
-  			if ( renderTarget ) {
-
-  				renderTarget.viewport.set( 0, 0, size.width, size.height );
-  				renderTarget.scissor.set( 0, 0, size.width, size.height );
-  				renderTarget.scissorTest = false;
-  				renderer.setRenderTarget( null );
-
-  			} else {
-
-  				renderer.setViewport( 0, 0, size.width, size.height );
-  				renderer.setScissorTest( false );
-
-  			}
-
-  			if ( autoUpdate ) {
-
-  				scene.autoUpdate = true;
-
-  			}
-
-  			if ( scope.autoSubmitFrame ) {
-
-  				scope.submitFrame();
-
-  			}
-
-  			return;
-
-  		}
-
-  		// Regular render mode if not HMD
-
-  		renderer.render( scene, camera, renderTarget, forceClear );
-
-  	};
-
-  	this.dispose = function () {
-
-  		window.removeEventListener( 'vrdisplaypresentchange', onVRDisplayPresentChange, false );
-
-  	};
-
-  	//
-
-  	var poseOrientation = new Quaternion();
-  	var posePosition = new Vector3();
-
-  	// Compute model matrices of the eyes with respect to the head.
-  	function getEyeMatrices( frameData ) {
-
-  		// Compute the matrix for the position of the head based on the pose
-  		if ( frameData.pose.orientation ) {
-
-  			poseOrientation.fromArray( frameData.pose.orientation );
-  			headMatrix.makeRotationFromQuaternion( poseOrientation );
-
-  		}	else {
-
-  			headMatrix.identity();
-
-  		}
-
-  		if ( frameData.pose.position ) {
-
-  			posePosition.fromArray( frameData.pose.position );
-  			headMatrix.setPosition( posePosition );
-
-  		}
-
-  		// The view matrix transforms vertices from sitting space to eye space. As such, the view matrix can be thought of as a product of two matrices:
-  		// headToEyeMatrix * sittingToHeadMatrix
-
-  		// The headMatrix that we've calculated above is the model matrix of the head in sitting space, which is the inverse of sittingToHeadMatrix.
-  		// So when we multiply the view matrix with headMatrix, we're left with headToEyeMatrix:
-  		// viewMatrix * headMatrix = headToEyeMatrix * sittingToHeadMatrix * headMatrix = headToEyeMatrix
-
-  		eyeMatrixL.fromArray( frameData.leftViewMatrix );
-  		eyeMatrixL.multiply( headMatrix );
-  		eyeMatrixR.fromArray( frameData.rightViewMatrix );
-  		eyeMatrixR.multiply( headMatrix );
-
-  		// The eye's model matrix in head space is the inverse of headToEyeMatrix we calculated above.
-
-  		eyeMatrixL.getInverse( eyeMatrixL );
-  		eyeMatrixR.getInverse( eyeMatrixR );
-
-  	}
-
-  	function fovToNDCScaleOffset( fov ) {
-
-  		var pxscale = 2.0 / ( fov.leftTan + fov.rightTan );
-  		var pxoffset = ( fov.leftTan - fov.rightTan ) * pxscale * 0.5;
-  		var pyscale = 2.0 / ( fov.upTan + fov.downTan );
-  		var pyoffset = ( fov.upTan - fov.downTan ) * pyscale * 0.5;
-  		return { scale: [ pxscale, pyscale ], offset: [ pxoffset, pyoffset ] };
-
-  	}
-
-  	function fovPortToProjection( fov, rightHanded, zNear, zFar ) {
-
-  		rightHanded = rightHanded === undefined ? true : rightHanded;
-  		zNear = zNear === undefined ? 0.01 : zNear;
-  		zFar = zFar === undefined ? 10000.0 : zFar;
-
-  		var handednessScale = rightHanded ? - 1.0 : 1.0;
-
-  		// start with an identity matrix
-  		var mobj = new Matrix4();
-  		var m = mobj.elements;
-
-  		// and with scale/offset info for normalized device coords
-  		var scaleAndOffset = fovToNDCScaleOffset( fov );
-
-  		// X result, map clip edges to [-w,+w]
-  		m[ 0 * 4 + 0 ] = scaleAndOffset.scale[ 0 ];
-  		m[ 0 * 4 + 1 ] = 0.0;
-  		m[ 0 * 4 + 2 ] = scaleAndOffset.offset[ 0 ] * handednessScale;
-  		m[ 0 * 4 + 3 ] = 0.0;
-
-  		// Y result, map clip edges to [-w,+w]
-  		// Y offset is negated because this proj matrix transforms from world coords with Y=up,
-  		// but the NDC scaling has Y=down (thanks D3D?)
-  		m[ 1 * 4 + 0 ] = 0.0;
-  		m[ 1 * 4 + 1 ] = scaleAndOffset.scale[ 1 ];
-  		m[ 1 * 4 + 2 ] = - scaleAndOffset.offset[ 1 ] * handednessScale;
-  		m[ 1 * 4 + 3 ] = 0.0;
-
-  		// Z result (up to the app)
-  		m[ 2 * 4 + 0 ] = 0.0;
-  		m[ 2 * 4 + 1 ] = 0.0;
-  		m[ 2 * 4 + 2 ] = zFar / ( zNear - zFar ) * - handednessScale;
-  		m[ 2 * 4 + 3 ] = ( zFar * zNear ) / ( zNear - zFar );
-
-  		// W result (= Z in)
-  		m[ 3 * 4 + 0 ] = 0.0;
-  		m[ 3 * 4 + 1 ] = 0.0;
-  		m[ 3 * 4 + 2 ] = handednessScale;
-  		m[ 3 * 4 + 3 ] = 0.0;
-
-  		mobj.transpose();
-  		return mobj;
-
-  	}
-
-  	function fovToProjection( fov, rightHanded, zNear, zFar ) {
-
-  		var DEG2RAD = Math.PI / 180.0;
-
-  		var fovPort = {
-  			upTan: Math.tan( fov.upDegrees * DEG2RAD ),
-  			downTan: Math.tan( fov.downDegrees * DEG2RAD ),
-  			leftTan: Math.tan( fov.leftDegrees * DEG2RAD ),
-  			rightTan: Math.tan( fov.rightDegrees * DEG2RAD )
-  		};
-
-  		return fovPortToProjection( fovPort, rightHanded, zNear, zFar );
-
-  	}
-
-  };
-
   //------------------------------------------------------------------------------
   // Constants
   //------------------------------------------------------------------------------
@@ -36227,7 +36844,8 @@ var Three = (function (exports) {
 
   			attributes: new Map(),
   			materials: new Map(),
-  			textures: new Map()
+  			textures: new Map(),
+  			images: new Map()
 
   		};
 
@@ -36298,7 +36916,7 @@ var Three = (function (exports) {
   		
   		function isPowerOfTwo( image ) {
 
-  			return _Math.isPowerOfTwo( image.width ) && _Math.isPowerOfTwo( image.height );
+  			return _Math$1.isPowerOfTwo( image.width ) && _Math$1.isPowerOfTwo( image.height );
 
   		}
 
@@ -36329,7 +36947,7 @@ var Three = (function (exports) {
 
   			if ( cachedData.attributes.has( normal ) ) {
 
-  				return cachedData.textures.get( normal );
+  				return cachedData.attributes.get( normal );
 
   			}
 
@@ -36610,8 +37228,8 @@ var Three = (function (exports) {
 
   				var end = start + count;
   				var end2 = geometry.drawRange.count === Infinity
-  						? attribute.count
-  						: geometry.drawRange.start + geometry.drawRange.count;
+  					? attribute.count
+  					: geometry.drawRange.start + geometry.drawRange.count;
 
   				start = Math.max( start, geometry.drawRange.start );
   				count = Math.min( end, end2 ) - start;
@@ -36666,9 +37284,23 @@ var Three = (function (exports) {
   		}
 
   		
-  		function processImage( map ) {
+  		function processImage( image, format, flipY ) {
 
-  			// @TODO Cache
+  			if ( ! cachedData.images.has( image ) ) {
+
+  				cachedData.images.set( image, {} );
+
+  			}
+
+  			var cachedImages = cachedData.images.get( image );
+  			var mimeType = format === RGBAFormat ? 'image/png' : 'image/jpeg';
+  			var key = mimeType + ":flipY/" + flipY.toString();
+
+  			if ( cachedImages[ key ] !== undefined ) {
+
+  				return cachedImages[ key ];
+
+  			}
 
   			if ( ! outputJSON.images ) {
 
@@ -36676,35 +37308,34 @@ var Three = (function (exports) {
 
   			}
 
-  			var mimeType = map.format === RGBAFormat ? 'image/png' : 'image/jpeg';
   			var gltfImage = { mimeType: mimeType };
 
   			if ( options.embedImages ) {
 
   				var canvas = cachedCanvas = cachedCanvas || document.createElement( 'canvas' );
 
-  				canvas.width = map.image.width;
-  				canvas.height = map.image.height;
+  				canvas.width = image.width;
+  				canvas.height = image.height;
 
-  				if ( options.forcePowerOfTwoTextures && ! isPowerOfTwo( map.image ) ) {
+  				if ( options.forcePowerOfTwoTextures && ! isPowerOfTwo( image ) ) {
 
-  					console.warn( 'GLTFExporter: Resized non-power-of-two image.', map.image );
+  					console.warn( 'GLTFExporter: Resized non-power-of-two image.', image );
 
-  					canvas.width = _Math.floorPowerOfTwo( canvas.width );
-  					canvas.height = _Math.floorPowerOfTwo( canvas.height );
+  					canvas.width = _Math$1.floorPowerOfTwo( canvas.width );
+  					canvas.height = _Math$1.floorPowerOfTwo( canvas.height );
 
   				}
 
   				var ctx = canvas.getContext( '2d' );
 
-  				if ( map.flipY === true ) {
+  				if ( flipY === true ) {
 
   					ctx.translate( 0, canvas.height );
   					ctx.scale( 1, - 1 );
 
   				}
 
-  				ctx.drawImage( map.image, 0, 0, canvas.width, canvas.height );
+  				ctx.drawImage( image, 0, 0, canvas.width, canvas.height );
 
   				if ( options.binary === true ) {
 
@@ -36732,13 +37363,16 @@ var Three = (function (exports) {
 
   			} else {
 
-  				gltfImage.uri = map.image.src;
+  				gltfImage.uri = image.src;
 
   			}
 
   			outputJSON.images.push( gltfImage );
 
-  			return outputJSON.images.length - 1;
+  			var index = outputJSON.images.length - 1;
+  			cachedImages[ key ] = index;
+
+  			return index;
 
   		}
 
@@ -36784,7 +37418,7 @@ var Three = (function (exports) {
   			var gltfTexture = {
 
   				sampler: processSampler( map ),
-  				source: processImage( map )
+  				source: processImage( map.image, map.format, map.flipY )
 
   			};
 
@@ -37210,7 +37844,7 @@ var Three = (function (exports) {
   			var forceIndices = options.forceIndices;
   			var isMultiMaterial = Array.isArray( mesh.material );
 
-  			if ( isMultiMaterial && mesh.geometry.groups.length === 0 ) { return null; }
+  			if ( isMultiMaterial && geometry.groups.length === 0 ) { return null; }
 
   			if ( ! forceIndices && geometry.index === null && isMultiMaterial ) {
 
@@ -37239,7 +37873,7 @@ var Three = (function (exports) {
   			}
 
   			var materials = isMultiMaterial ? mesh.material : [ mesh.material ];
-  			var groups = isMultiMaterial ? mesh.geometry.groups : [ { materialIndex: 0, start: undefined, count: undefined } ];
+  			var groups = isMultiMaterial ? geometry.groups : [ { materialIndex: 0, start: undefined, count: undefined } ];
 
   			for ( var i = 0, il = groups.length; i < il; i ++ ) {
 
@@ -37323,7 +37957,7 @@ var Three = (function (exports) {
   				gltfCamera.perspective = {
 
   					aspectRatio: camera.aspect,
-  					yfov: _Math.degToRad( camera.fov ) / camera.aspect,
+  					yfov: _Math$1.degToRad( camera.fov ) / camera.aspect,
   					zfar: camera.far <= 0 ? 0.001 : camera.far,
   					znear: camera.near < 0 ? 0 : camera.near
 
@@ -40880,9 +41514,9 @@ var Three = (function (exports) {
   		var velY = velocity.y + particleSystem.random() * velocityRandomness;
   		var velZ = velocity.z + particleSystem.random() * velocityRandomness;
 
-  		velX = _Math.clamp( ( velX - ( - maxVel ) ) / ( maxVel - ( - maxVel ) ), 0, 1 );
-  		velY = _Math.clamp( ( velY - ( - maxVel ) ) / ( maxVel - ( - maxVel ) ), 0, 1 );
-  		velZ = _Math.clamp( ( velZ - ( - maxVel ) ) / ( maxVel - ( - maxVel ) ), 0, 1 );
+  		velX = _Math$1.clamp( ( velX - ( - maxVel ) ) / ( maxVel - ( - maxVel ) ), 0, 1 );
+  		velY = _Math$1.clamp( ( velY - ( - maxVel ) ) / ( maxVel - ( - maxVel ) ), 0, 1 );
+  		velZ = _Math$1.clamp( ( velZ - ( - maxVel ) ) / ( maxVel - ( - maxVel ) ), 0, 1 );
 
   		velocityAttribute.array[ i * 3 + 0 ] = velX;
   		velocityAttribute.array[ i * 3 + 1 ] = velY;
@@ -40890,9 +41524,9 @@ var Three = (function (exports) {
 
   		// color
 
-  		color.r = _Math.clamp( color.r + particleSystem.random() * colorRandomness, 0, 1 );
-  		color.g = _Math.clamp( color.g + particleSystem.random() * colorRandomness, 0, 1 );
-  		color.b = _Math.clamp( color.b + particleSystem.random() * colorRandomness, 0, 1 );
+  		color.r = _Math$1.clamp( color.r + particleSystem.random() * colorRandomness, 0, 1 );
+  		color.g = _Math$1.clamp( color.g + particleSystem.random() * colorRandomness, 0, 1 );
+  		color.b = _Math$1.clamp( color.b + particleSystem.random() * colorRandomness, 0, 1 );
 
   		colorAttribute.array[ i * 3 + 0 ] = color.r;
   		colorAttribute.array[ i * 3 + 1 ] = color.g;
@@ -41707,7 +42341,7 @@ var Three = (function (exports) {
   	var plane = new BufferGeometry();
 
   	var positions = [ - 1, 2, 0, 1, 2, 0, - 1, 1, 0, 1, 1, 0, - 1, 0, 0, 1, 0, 0, - 1, - 1, 0, 1, - 1, 0 ];
-  	var uvs = [ 0, 1, 1, 1, 0, .5, 1, .5, 0, .5, 1, .5, 0, 0, 1, 0 ];
+  	var uvs = [ - 1, 2, 1, 2, - 1, 1, 1, 1, - 1, - 1, 1, - 1, - 1, - 2, 1, - 2 ];
   	var index = [ 0, 2, 1, 2, 3, 1, 2, 4, 3, 4, 5, 3, 4, 6, 5, 6, 7, 5 ];
 
   	this.setIndex( index );
@@ -41976,7 +42610,7 @@ var Three = (function (exports) {
   		"\n\t\t#include <common>\n\t\t#include <color_pars_vertex>\n\t\t#include <fog_pars_vertex>\n\t\t#include <logdepthbuf_pars_vertex>\n\t\t#include <clipping_planes_pars_vertex>\n\n\t\tuniform float linewidth;\n\t\tuniform vec2 resolution;\n\n\t\tattribute vec3 instanceStart;\n\t\tattribute vec3 instanceEnd;\n\n\t\tattribute vec3 instanceColorStart;\n\t\tattribute vec3 instanceColorEnd;\n\n\t\tvarying vec2 vUv;\n\n\t\t#ifdef USE_DASH\n\n\t\t\tuniform float dashScale;\n\t\t\tattribute float instanceDistanceStart;\n\t\t\tattribute float instanceDistanceEnd;\n\t\t\tvarying float vLineDistance;\n\n\t\t#endif\n\n\t\tvoid trimSegment( const in vec4 start, inout vec4 end ) {\n\n\t\t\t// trim end segment so it terminates between the camera plane and the near plane\n\n\t\t\t// conservative estimate of the near plane\n\t\t\tfloat a = projectionMatrix[ 2 ][ 2 ]; // 3nd entry in 3th column\n\t\t\tfloat b = projectionMatrix[ 3 ][ 2 ]; // 3nd entry in 4th column\n\t\t\tfloat nearEstimate = - 0.5 * b / a;\n\n\t\t\tfloat alpha = ( nearEstimate - start.z ) / ( end.z - start.z );\n\n\t\t\tend.xyz = mix( start.xyz, end.xyz, alpha );\n\n\t\t}\n\n\t\tvoid main() {\n\n\t\t\t#ifdef USE_COLOR\n\n\t\t\t\tvColor.xyz = ( position.y < 0.5 ) ? instanceColorStart : instanceColorEnd;\n\n\t\t\t#endif\n\n\t\t\t#ifdef USE_DASH\n\n\t\t\t\tvLineDistance = ( position.y < 0.5 ) ? dashScale * instanceDistanceStart : dashScale * instanceDistanceEnd;\n\n\t\t\t#endif\n\n\t\t\tfloat aspect = resolution.x / resolution.y;\n\n\t\t\tvUv = uv;\n\n\t\t\t// camera space\n\t\t\tvec4 start = modelViewMatrix * vec4( instanceStart, 1.0 );\n\t\t\tvec4 end = modelViewMatrix * vec4( instanceEnd, 1.0 );\n\n\t\t\t// special case for perspective projection, and segments that terminate either in, or behind, the camera plane\n\t\t\t// clearly the gpu firmware has a way of addressing this issue when projecting into ndc space\n\t\t\t// but we need to perform ndc-space calculations in the shader, so we must address this issue directly\n\t\t\t// perhaps there is a more elegant solution -- WestLangley\n\n\t\t\tbool perspective = ( projectionMatrix[ 2 ][ 3 ] == - 1.0 ); // 4th entry in the 3rd column\n\n\t\t\tif ( perspective ) {\n\n\t\t\t\tif ( start.z < 0.0 && end.z >= 0.0 ) {\n\n\t\t\t\t\ttrimSegment( start, end );\n\n\t\t\t\t} else if ( end.z < 0.0 && start.z >= 0.0 ) {\n\n\t\t\t\t\ttrimSegment( end, start );\n\n\t\t\t\t}\n\n\t\t\t}\n\n\t\t\t// clip space\n\t\t\tvec4 clipStart = projectionMatrix * start;\n\t\t\tvec4 clipEnd = projectionMatrix * end;\n\n\t\t\t// ndc space\n\t\t\tvec2 ndcStart = clipStart.xy / clipStart.w;\n\t\t\tvec2 ndcEnd = clipEnd.xy / clipEnd.w;\n\n\t\t\t// direction\n\t\t\tvec2 dir = ndcEnd - ndcStart;\n\n\t\t\t// account for clip-space aspect ratio\n\t\t\tdir.x *= aspect;\n\t\t\tdir = normalize( dir );\n\n\t\t\t// perpendicular to dir\n\t\t\tvec2 offset = vec2( dir.y, - dir.x );\n\n\t\t\t// undo aspect ratio adjustment\n\t\t\tdir.x /= aspect;\n\t\t\toffset.x /= aspect;\n\n\t\t\t// sign flip\n\t\t\tif ( position.x < 0.0 ) offset *= - 1.0;\n\n\t\t\t// endcaps\n\t\t\tif ( position.y < 0.0 ) {\n\n\t\t\t\toffset += - dir;\n\n\t\t\t} else if ( position.y > 1.0 ) {\n\n\t\t\t\toffset += dir;\n\n\t\t\t}\n\n\t\t\t// adjust for linewidth\n\t\t\toffset *= linewidth;\n\n\t\t\t// adjust for clip-space to screen-space conversion // maybe resolution should be based on viewport ...\n\t\t\toffset /= resolution.y;\n\n\t\t\t// select end\n\t\t\tvec4 clip = ( position.y < 0.5 ) ? clipStart : clipEnd;\n\n\t\t\t// back to clip space\n\t\t\toffset *= clip.w;\n\n\t\t\tclip.xy += offset;\n\n\t\t\tgl_Position = clip;\n\n\t\t\tvec4 mvPosition = ( position.y < 0.5 ) ? start : end; // this is an approximation\n\n\t\t\t#include <logdepthbuf_vertex>\n\t\t\t#include <clipping_planes_vertex>\n\t\t\t#include <fog_vertex>\n\n\t\t}\n\t\t",
 
   	fragmentShader:
-  		"\n\t\tuniform vec3 diffuse;\n\t\tuniform float opacity;\n\n\t\t#ifdef USE_DASH\n\n\t\t\tuniform float dashSize;\n\t\t\tuniform float gapSize;\n\n\t\t#endif\n\n\t\tvarying float vLineDistance;\n\n\t\t#include <common>\n\t\t#include <color_pars_fragment>\n\t\t#include <fog_pars_fragment>\n\t\t#include <logdepthbuf_pars_fragment>\n\t\t#include <clipping_planes_pars_fragment>\n\n\t\tvarying vec2 vUv;\n\n\t\tvoid main() {\n\n\t\t\t#include <clipping_planes_fragment>\n\n\t\t\t#ifdef USE_DASH\n\n\t\t\t\tif ( vUv.y < 0.5 || vUv.y > 0.5 ) discard; // discard endcaps\n\n\t\t\t\tif ( mod( vLineDistance, dashSize + gapSize ) > dashSize ) discard; // todo - FIX\n\n\t\t\t#endif\n\n\t\t\tif ( vUv.y < 0.5 || vUv.y > 0.5 ) {\n\n\t\t\t\tfloat a = vUv.x - 0.5;\n\t\t\t\tfloat b = vUv.y - 0.5;\n\t\t\t\tfloat len2 = a * a + b * b;\n\n\t\t\t\tif ( len2 > 0.25 ) discard;\n\n\t\t\t}\n\n\t\t\tvec4 diffuseColor = vec4( diffuse, opacity );\n\n\t\t\t#include <logdepthbuf_fragment>\n\t\t\t#include <color_fragment>\n\n\t\t\tgl_FragColor = vec4( diffuseColor.rgb, diffuseColor.a );\n\n\t\t\t#include <premultiplied_alpha_fragment>\n\t\t\t#include <tonemapping_fragment>\n\t\t\t#include <encodings_fragment>\n\t\t\t#include <fog_fragment>\n\n\t\t}\n\t\t"
+  		"\n\t\tuniform vec3 diffuse;\n\t\tuniform float opacity;\n\n\t\t#ifdef USE_DASH\n\n\t\t\tuniform float dashSize;\n\t\t\tuniform float gapSize;\n\n\t\t#endif\n\n\t\tvarying float vLineDistance;\n\n\t\t#include <common>\n\t\t#include <color_pars_fragment>\n\t\t#include <fog_pars_fragment>\n\t\t#include <logdepthbuf_pars_fragment>\n\t\t#include <clipping_planes_pars_fragment>\n\n\t\tvarying vec2 vUv;\n\n\t\tvoid main() {\n\n\t\t\t#include <clipping_planes_fragment>\n\n\t\t\t#ifdef USE_DASH\n\n\t\t\t\tif ( vUv.y < - 1.0 || vUv.y > 1.0 ) discard; // discard endcaps\n\n\t\t\t\tif ( mod( vLineDistance, dashSize + gapSize ) > dashSize ) discard; // todo - FIX\n\n\t\t\t#endif\n\n\t\t\tif ( abs( vUv.y ) > 1.0 ) {\n\n\t\t\t\tfloat a = vUv.x;\n\t\t\t\tfloat b = ( vUv.y > 0.0 ) ? vUv.y - 1.0 : vUv.y + 1.0;\n\t\t\t\tfloat len2 = a * a + b * b;\n\n\t\t\t\tif ( len2 > 1.0 ) discard;\n\n\t\t\t}\n\n\t\t\tvec4 diffuseColor = vec4( diffuse, opacity );\n\n\t\t\t#include <logdepthbuf_fragment>\n\t\t\t#include <color_fragment>\n\n\t\t\tgl_FragColor = vec4( diffuseColor.rgb, diffuseColor.a );\n\n\t\t\t#include <premultiplied_alpha_fragment>\n\t\t\t#include <tonemapping_fragment>\n\t\t\t#include <encodings_fragment>\n\t\t\t#include <fog_fragment>\n\n\t\t}\n\t\t"
   };
 
   var LineMaterial = function ( parameters ) {
@@ -42420,7 +43054,7 @@ var Three = (function (exports) {
 
   var ThreeMFLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
   	this.availableExtensions = [];
 
   };
@@ -43013,7 +43647,7 @@ var Three = (function (exports) {
 
   var AMFLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -43481,7 +44115,7 @@ var Three = (function (exports) {
 
   var AssimpJSONLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -43489,7 +44123,7 @@ var Three = (function (exports) {
 
   	constructor: AssimpJSONLoader,
 
-  	crossOrigin: 'Anonymous',
+  	crossOrigin: 'anonymous',
 
   	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -43535,6 +44169,7 @@ var Three = (function (exports) {
   	setCrossOrigin: function ( value ) {
 
   		this.crossOrigin = value;
+  		return this;
 
   	},
 
@@ -43691,8 +44326,10 @@ var Three = (function (exports) {
 
   					case '$mat.opacity':
   						if ( value < 1 ) {
+
   							material.opacity = value;
   							material.transparent = true;
+
   						}
   						break;
 
@@ -44116,7 +44753,7 @@ var Three = (function (exports) {
 
   var AssimpLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -44124,7 +44761,7 @@ var Three = (function (exports) {
 
   	constructor: AssimpLoader,
 
-  	crossOrigin: 'Anonymous',
+  	crossOrigin: 'anonymous',
 
   	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -44146,6 +44783,7 @@ var Three = (function (exports) {
   	setCrossOrigin: function ( value ) {
 
   		this.crossOrigin = value;
+  		return this;
 
   	},
 
@@ -45108,7 +45746,7 @@ var Three = (function (exports) {
   			}
 
   			if ( ! key ) {
-  				
+
   				return null;
 
   			} else if ( nextKey ) {
@@ -45129,7 +45767,7 @@ var Three = (function (exports) {
   				var l = T / dT;
 
   				return lerp( key.mValue.toTHREE(), nextKey.mValue.toTHREE(), l );
-  				
+
   			}
 
   		}
@@ -46346,7 +46984,7 @@ var Three = (function (exports) {
 
   	var AWDLoader = function ( manager ) {
 
-  		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   		this.trunk = new Object3D();
 
@@ -47711,7 +48349,7 @@ var Three = (function (exports) {
 
   		var camera = this.camera;
 
-  		var fov = _Math.RAD2DEG * 2 * light.angle;
+  		var fov = _Math$1.RAD2DEG * 2 * light.angle;
   		var aspect = this.mapSize.width / this.mapSize.height;
   		var far = light.distance || camera.far;
 
@@ -47825,7 +48463,7 @@ var Three = (function (exports) {
 
   var BabylonLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -48068,7 +48706,7 @@ var Three = (function (exports) {
 
   var BVHLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   	this.animateBonePositions = true;
   	this.animateBoneRotations = true;
@@ -48520,7 +49158,7 @@ var Three = (function (exports) {
 
   var ColladaLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -48528,7 +49166,7 @@ var Three = (function (exports) {
 
   	constructor: ColladaLoader,
 
-  	crossOrigin: 'Anonymous',
+  	crossOrigin: 'anonymous',
 
   	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -48548,6 +49186,7 @@ var Three = (function (exports) {
   	setPath: function ( value ) {
 
   		this.path = value;
+  		return this;
 
   	},
 
@@ -48564,6 +49203,7 @@ var Three = (function (exports) {
   	setCrossOrigin: function ( value ) {
 
   		this.crossOrigin = value;
+  		return this;
 
   	},
 
@@ -49480,7 +50120,15 @@ var Three = (function (exports) {
 
   			// setup bind matrix
 
-  			build.bindMatrix = new Matrix4().fromArray( data.bindShapeMatrix ).transpose();
+  			if ( data.bindShapeMatrix ) {
+
+  				build.bindMatrix = new Matrix4().fromArray( data.bindShapeMatrix ).transpose(); 
+
+  			} else {
+
+  				build.bindMatrix = new Matrix4().transpose(); 
+
+  			}
 
   			// process bones and inverse bind matrix data
 
@@ -51192,7 +51840,7 @@ var Three = (function (exports) {
   				case 'rotate':
   					data.obj = new Vector3();
   					data.obj.fromArray( array );
-  					data.angle = _Math.degToRad( array[ 3 ] );
+  					data.angle = _Math$1.degToRad( array[ 3 ] );
   					break;
 
   			}
@@ -51464,7 +52112,7 @@ var Three = (function (exports) {
   									switch ( joint.type ) {
 
   										case 'revolute':
-  											matrix.multiply( m0.makeRotationAxis( axis, _Math.degToRad( value ) ) );
+  											matrix.multiply( m0.makeRotationAxis( axis, _Math$1.degToRad( value ) ) );
   											break;
 
   										case 'prismatic':
@@ -51560,7 +52208,7 @@ var Three = (function (exports) {
   					case 'rotate':
   						var array = parseFloats( child.textContent );
   						var vector = new Vector3().fromArray( array );
-  						var angle = _Math.degToRad( array[ 3 ] );
+  						var angle = _Math$1.degToRad( array[ 3 ] );
   						transforms.push( {
   							sid: child.getAttribute( 'sid' ),
   							type: child.nodeName,
@@ -51667,7 +52315,7 @@ var Three = (function (exports) {
 
   					case 'rotate':
   						var array = parseFloats( child.textContent );
-  						var angle = _Math.degToRad( array[ 3 ] );
+  						var angle = _Math$1.degToRad( array[ 3 ] );
   						data.matrix.multiply( matrix.makeRotationAxis( vector.fromArray( array ), angle ) );
   						data.transforms[ child.getAttribute( 'sid' ) ] = child.nodeName;
   						break;
@@ -52355,7 +53003,7 @@ var Three = (function (exports) {
 
   function CompressedTextureLoader( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   	// override in sub classes
   	this._parser = null;
@@ -52481,7 +53129,9 @@ var Three = (function (exports) {
 
   } );
 
-  var DDSLoader = function () {
+  var DDSLoader = function ( manager ) {
+
+  	CompressedTextureLoader.call( this, manager );
 
   	this._parser = DDSLoader.parse;
 
@@ -52747,7 +53397,7 @@ var Three = (function (exports) {
 
   	function LegacyGLTFLoader( manager ) {
 
-  		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   	}
 
@@ -52755,7 +53405,7 @@ var Three = (function (exports) {
 
   		constructor: LegacyGLTFLoader,
 
-  		crossOrigin: 'Anonymous',
+  		crossOrigin: 'anonymous',
 
   		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -52778,6 +53428,7 @@ var Three = (function (exports) {
   		setCrossOrigin: function ( value ) {
 
   			this.crossOrigin = value;
+  			return this;
 
   		},
 
@@ -54507,7 +55158,7 @@ var Three = (function (exports) {
   				// aspectRatio = xfov / yfov
   				var xfov = yfov * aspectRatio;
 
-  				var _camera = new PerspectiveCamera( _Math.radToDeg( xfov ), aspectRatio, camera.perspective.znear || 1, camera.perspective.zfar || 2e6 );
+  				var _camera = new PerspectiveCamera( _Math$1.radToDeg( xfov ), aspectRatio, camera.perspective.znear || 1, camera.perspective.zfar || 2e6 );
   				if ( camera.name !== undefined ) { _camera.name = camera.name; }
 
   				if ( camera.extras ) { _camera.userData = camera.extras; }
@@ -54963,7 +55614,7 @@ var Three = (function (exports) {
 
   var DRACOLoader = function(manager) {
       this.timeLoaded = 0;
-      this.manager = manager || DefaultLoadingManager$1;
+      this.manager = manager || DefaultLoadingManager;
       this.materials = null;
       this.verbosity = 0;
       this.attributeOptions = {};
@@ -54986,9 +55637,6 @@ var Three = (function (exports) {
           var loader = new FileLoader(scope.manager);
           loader.setPath(this.path);
           loader.setResponseType('arraybuffer');
-          if (this.crossOrigin !== undefined) {
-            loader.crossOrigin = this.crossOrigin;
-          }
           loader.load(url, function(blob) {
               scope.decodeDracoFile(blob, onLoad);
           }, onProgress, onError);
@@ -54996,11 +55644,6 @@ var Three = (function (exports) {
 
       setPath: function(value) {
           this.path = value;
-          return this;
-      },
-
-      setCrossOrigin: function(value) {
-          this.crossOrigin = value;
           return this;
       },
 
@@ -55063,7 +55706,7 @@ var Three = (function (exports) {
       },
 
       addAttributeToGeometry: function(dracoDecoder, decoder, dracoGeometry,
-                                       attributeName, attributeType, attribute, 
+                                       attributeName, attributeType, attribute,
                                        geometry, geometryBuffer) {
         if (attribute.ptr === 0) {
           var errorMsg = 'DRACOLoader: No attribute ' + attributeName;
@@ -55141,7 +55784,7 @@ var Three = (function (exports) {
             throw new Error( errorMsg );
 
         }
-        
+
         // Copy data from decoder.
         for (var i = 0; i < numValues; i++) {
           geometryBuffer[attributeName][i] = attributeData.GetValue(i);
@@ -55429,7 +56072,7 @@ var Three = (function (exports) {
 
   WebGLRenderTargetCube.prototype.isWebGLRenderTargetCube = true;
 
-  var EquiangularToCubeGenerator = function ( sourceTexture, resolution ) {
+  var EquirectangularToCubeGenerator = function ( sourceTexture, resolution ) {
 
   	this.sourceTexture = sourceTexture;
   	this.resolution = resolution;
@@ -55462,9 +56105,9 @@ var Three = (function (exports) {
 
   };
 
-  EquiangularToCubeGenerator.prototype = {
+  EquirectangularToCubeGenerator.prototype = {
 
-  	constructor: EquiangularToCubeGenerator,
+  	constructor: EquirectangularToCubeGenerator,
 
   	update: function ( renderer ) {
   		var this$1 = this;
@@ -55509,7 +56152,7 @@ var Three = (function (exports) {
 				varying vec3 localPosition;\n\
 				uniform sampler2D equirectangularMap;\n\
 				\n\
-				vec2 EquiangularSampleUV(vec3 v) {\n\
+				vec2 EquirectangularSampleUV(vec3 v) {\n\
 			    vec2 uv = vec2(atan(v.z, v.x), asin(v.y));\n\
 			    uv *= vec2(0.1591, 0.3183); // inverse atan\n\
 			    uv += 0.5;\n\
@@ -55517,7 +56160,7 @@ var Three = (function (exports) {
 				}\n\
 				\n\
 				void main() {\n\
-					vec2 uv = EquiangularSampleUV(normalize(localPosition));\n\
+					vec2 uv = EquirectangularSampleUV(normalize(localPosition));\n\
     			vec3 color = texture2D(equirectangularMap, uv).rgb;\n\
     			\n\
 					gl_FragColor = vec4( color, 1.0 );\n\
@@ -55527,7 +56170,7 @@ var Three = (function (exports) {
 
   		} );
 
-  		shaderMaterial.type = 'EquiangularToCubeGenerator';
+  		shaderMaterial.type = 'EquirectangularToCubeGenerator';
 
   		return shaderMaterial;
 
@@ -55545,7 +56188,7 @@ var Three = (function (exports) {
 
   function DataTextureLoader( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   	// override in sub classes
   	this._parser = null;
@@ -55667,7 +56310,7 @@ var Three = (function (exports) {
 
   var EXRLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -56764,7 +57407,7 @@ var Three = (function (exports) {
 
   var TGALoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -57299,11 +57942,13 @@ var Three = (function (exports) {
 
   var FBXLoader = function ( manager ) {
 
-  		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   	};
 
   	Object.assign( FBXLoader.prototype, {
+
+  		crossOrigin: 'anonymous',
 
   		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -57333,6 +57978,13 @@ var Three = (function (exports) {
   				}
 
   			}, onProgress, onError );
+
+  		},
+
+  		setCrossOrigin: function ( value ) {
+
+  			this.crossOrigin = value;
+  			return this;
 
   		},
 
@@ -57366,9 +58018,11 @@ var Three = (function (exports) {
 
   			// console.log( FBXTree );
 
+  			var textureLoader = new TextureLoader( this.manager ).setPath( resourceDirectory ).setCrossOrigin( this.crossOrigin );
+
   			var connections = parseConnections( FBXTree );
   			var images = parseImages( FBXTree );
-  			var textures = parseTextures( FBXTree, new TextureLoader( this.manager ).setPath( resourceDirectory ), images, connections );
+  			var textures = parseTextures( FBXTree, textureLoader, images, connections );
   			var materials = parseMaterials( FBXTree, textures, connections );
   			var deformers = parseDeformers( FBXTree, connections );
   			var geometryMap = parseGeometries( FBXTree, connections, deformers );
@@ -57895,7 +58549,7 @@ var Three = (function (exports) {
   						id: nodeID,
   					};
 
-  					morphTarget.rawTargets = parseMorphTargets( relationships, deformerNode, DeformerNodes, connections, FBXTree );
+  					morphTarget.rawTargets = parseMorphTargets( relationships, deformerNode, DeformerNodes, connections );
   					morphTarget.id = nodeID;
 
   					if ( relationships.parents.length > 1 ) { console.warn( 'FBXLoader: morph target attached to more than one geometry is not supported.' ); }
@@ -58102,7 +58756,7 @@ var Three = (function (exports) {
 
   		if ( 'GeometricRotation' in modelNode ) {
 
-  			var array = modelNode.GeometricRotation.value.map( _Math.degToRad );
+  			var array = modelNode.GeometricRotation.value.map( _Math$1.degToRad );
   			array[ 3 ] = 'ZYX';
 
   			preTransform.makeRotationFromEuler( new Euler().fromArray( array ) );
@@ -59203,7 +59857,7 @@ var Three = (function (exports) {
 
   					if ( lightAttribute.InnerAngle !== undefined ) {
 
-  						angle = _Math.degToRad( lightAttribute.InnerAngle.value );
+  						angle = _Math$1.degToRad( lightAttribute.InnerAngle.value );
 
   					}
 
@@ -59213,7 +59867,7 @@ var Three = (function (exports) {
   						// TODO: this is not correct - FBX calculates outer and inner angle in degrees
   						// with OuterAngle > InnerAngle && OuterAngle <= Math.PI
   						// while three.js uses a penumbra between (0, 1) to attenuate the inner angle
-  						penumbra = _Math.degToRad( lightAttribute.OuterAngle.value );
+  						penumbra = _Math$1.degToRad( lightAttribute.OuterAngle.value );
   						penumbra = Math.max( penumbra, 1 );
 
   					}
@@ -59424,7 +60078,7 @@ var Three = (function (exports) {
 
   		if ( 'Lcl_Rotation' in modelNode ) {
 
-  			var rotation = modelNode.Lcl_Rotation.value.map( _Math.degToRad );
+  			var rotation = modelNode.Lcl_Rotation.value.map( _Math$1.degToRad );
   			rotation.push( 'ZYX' );
   			model.quaternion.setFromEuler( new Euler().fromArray( rotation ) );
 
@@ -59438,7 +60092,7 @@ var Three = (function (exports) {
 
   		if ( 'PreRotation' in modelNode ) {
 
-  			var array = modelNode.PreRotation.value.map( _Math.degToRad );
+  			var array = modelNode.PreRotation.value.map( _Math$1.degToRad );
   			array[ 3 ] = 'ZYX';
 
   			var preRotations = new Euler().fromArray( array );
@@ -59818,19 +60472,19 @@ var Three = (function (exports) {
   		if ( curves.x !== undefined ) {
 
   			interpolateRotations( curves.x );
-  			curves.x.values = curves.x.values.map( _Math.degToRad );
+  			curves.x.values = curves.x.values.map( _Math$1.degToRad );
 
   		}
   		if ( curves.y !== undefined ) {
 
   			interpolateRotations( curves.y );
-  			curves.y.values = curves.y.values.map( _Math.degToRad );
+  			curves.y.values = curves.y.values.map( _Math$1.degToRad );
 
   		}
   		if ( curves.z !== undefined ) {
 
   			interpolateRotations( curves.z );
-  			curves.z.values = curves.z.values.map( _Math.degToRad );
+  			curves.z.values = curves.z.values.map( _Math$1.degToRad );
 
   		}
 
@@ -59839,7 +60493,7 @@ var Three = (function (exports) {
 
   		if ( preRotations !== undefined ) {
 
-  			preRotations = preRotations.map( _Math.degToRad );
+  			preRotations = preRotations.map( _Math$1.degToRad );
   			preRotations.push( 'ZYX' );
 
   			preRotations = new Euler().fromArray( preRotations );
@@ -61049,7 +61703,7 @@ var Three = (function (exports) {
 
   var GCodeLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   	this.splitLayer = false;
 
@@ -61257,7 +61911,7 @@ var Three = (function (exports) {
 
   	function GLTFLoader( manager ) {
 
-  		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
   		this.dracoLoader = null;
 
   	}
@@ -61266,7 +61920,7 @@ var Three = (function (exports) {
 
   		constructor: GLTFLoader,
 
-  		crossOrigin: 'Anonymous',
+  		crossOrigin: 'anonymous',
 
   		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -61686,7 +62340,7 @@ var Three = (function (exports) {
   	}
 
   	
-  	function GLTFDracoMeshCompressionExtension ( json, dracoLoader ) {
+  	function GLTFDracoMeshCompressionExtension( json, dracoLoader ) {
 
   		if ( ! dracoLoader ) {
 
@@ -61712,7 +62366,7 @@ var Three = (function (exports) {
 
   		for ( var attributeName in gltfAttributeMap ) {
 
-  			if ( !( attributeName in ATTRIBUTES ) ) { continue; }
+  			if ( ! ( attributeName in ATTRIBUTES ) ) { continue; }
 
   			threeAttributeMap[ ATTRIBUTES[ attributeName ] ] = gltfAttributeMap[ attributeName ];
 
@@ -61725,7 +62379,7 @@ var Three = (function (exports) {
   				var accessorDef = json.accessors[ primitive.attributes[ attributeName ] ];
   				var componentType = WEBGL_COMPONENT_TYPES[ accessorDef.componentType ];
 
-  				attributeTypeMap[ ATTRIBUTES[ attributeName ] ]  = componentType;
+  				attributeTypeMap[ ATTRIBUTES[ attributeName ] ] = componentType;
   				attributeNormalizedMap[ ATTRIBUTES[ attributeName ] ] = accessorDef.normalized === true;
 
   			}
@@ -61741,6 +62395,9 @@ var Three = (function (exports) {
   					for ( var attributeName in geometry.attributes ) {
 
   						var attribute = geometry.attributes[ attributeName ];
+  						var normalized = attributeNormalizedMap[ attributeName ];
+
+  						if ( normalized !== undefined ) { attribute.normalized = normalized; }
 
   					}
 
@@ -62062,36 +62719,13 @@ var Three = (function (exports) {
 
   					}
 
-  					var offset;
-  					var repeat;
+  					if ( uvScaleMap.matrixAutoUpdate === true ) {
 
-  					if ( uvScaleMap.matrix !== undefined ) {
-
-  						// > r88.
-
-  						if ( uvScaleMap.matrixAutoUpdate === true ) {
-
-  							offset = uvScaleMap.offset;
-  							repeat = uvScaleMap.repeat;
-  							var rotation = uvScaleMap.rotation;
-  							var center = uvScaleMap.center;
-
-  							uvScaleMap.matrix.setUvTransform( offset.x, offset.y, repeat.x, repeat.y, rotation, center.x, center.y );
-
-  						}
-
-  						uniforms.uvTransform.value.copy( uvScaleMap.matrix );
-
-  					} else {
-
-  						// <= r87. Remove when reasonable.
-
-  						offset = uvScaleMap.offset;
-  						repeat = uvScaleMap.repeat;
-
-  						uniforms.offsetRepeat.value.set( offset.x, offset.y, repeat.x, repeat.y );
+  						uvScaleMap.updateMatrix();
 
   					}
+
+  					uniforms.uvTransform.value.copy( uvScaleMap.matrix );
 
   				}
 
@@ -62146,6 +62780,7 @@ var Three = (function (exports) {
   		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
 
   	}
+
   	GLTFCubicSplineInterpolant.prototype = Object.create( Interpolant.prototype );
   	GLTFCubicSplineInterpolant.prototype.constructor = GLTFCubicSplineInterpolant;
 
@@ -62176,10 +62811,10 @@ var Three = (function (exports) {
   		//   [ inTangent_1, splineVertex_1, outTangent_1, inTangent_2, splineVertex_2, ... ]
   		for ( var i = 0; i !== stride; i ++ ) {
 
-  			var p0 = values[ offset0 + i + stride ];        // splineVertex_k
-  			var m0 = values[ offset0 + i + stride2 ] * td;  // outTangent_k * (t_k+1 - t_k)
-  			var p1 = values[ offset1 + i + stride ];        // splineVertex_k+1
-  			var m1 = values[ offset1 + i ] * td;            // inTangent_k+1 * (t_k+1 - t_k)
+  			var p0 = values[ offset0 + i + stride ]; // splineVertex_k
+  			var m0 = values[ offset0 + i + stride2 ] * td; // outTangent_k * (t_k+1 - t_k)
+  			var p1 = values[ offset1 + i + stride ]; // splineVertex_k+1
+  			var m1 = values[ offset1 + i ] * td; // inTangent_k+1 * (t_k+1 - t_k)
 
   			result[ i ] = s0 * p0 + s1 * m0 + s2 * p1 + s3 * m1;
 
@@ -63269,7 +63904,7 @@ var Three = (function (exports) {
 
   		}
 
-  		if ( materialDef.normalTexture !== undefined && materialType !== MeshBasicMaterial) {
+  		if ( materialDef.normalTexture !== undefined && materialType !== MeshBasicMaterial ) {
 
   			pending.push( parser.assignTexture( materialParams, 'normalMap', materialDef.normalTexture.index ) );
 
@@ -63283,7 +63918,7 @@ var Three = (function (exports) {
 
   		}
 
-  		if ( materialDef.occlusionTexture !== undefined && materialType !== MeshBasicMaterial) {
+  		if ( materialDef.occlusionTexture !== undefined && materialType !== MeshBasicMaterial ) {
 
   			pending.push( parser.assignTexture( materialParams, 'aoMap', materialDef.occlusionTexture.index ) );
 
@@ -63295,13 +63930,13 @@ var Three = (function (exports) {
 
   		}
 
-  		if ( materialDef.emissiveFactor !== undefined && materialType !== MeshBasicMaterial) {
+  		if ( materialDef.emissiveFactor !== undefined && materialType !== MeshBasicMaterial ) {
 
   			materialParams.emissive = new Color().fromArray( materialDef.emissiveFactor );
 
   		}
 
-  		if ( materialDef.emissiveTexture !== undefined && materialType !== MeshBasicMaterial) {
+  		if ( materialDef.emissiveTexture !== undefined && materialType !== MeshBasicMaterial ) {
 
   			pending.push( parser.assignTexture( materialParams, 'emissiveMap', materialDef.emissiveTexture.index ) );
 
@@ -63357,7 +63992,7 @@ var Three = (function (exports) {
   			var bufferAttribute = accessors[ attributes[ gltfAttributeName ] ];
 
   			// Skip attributes already provided by e.g. Draco extension.
-  			if ( !threeAttributeName ) { continue; }
+  			if ( ! threeAttributeName ) { continue; }
   			if ( threeAttributeName in geometry.attributes ) { continue; }
 
   			geometry.addAttribute( threeAttributeName, bufferAttribute );
@@ -63666,7 +64301,7 @@ var Three = (function (exports) {
   								Material.prototype.copy.call( pointsMaterial, material );
   								pointsMaterial.color.copy( material.color );
   								pointsMaterial.map = material.map;
-  								pointsMaterial.lights = false;  // PointsMaterial doesn't support lights yet
+  								pointsMaterial.lights = false; // PointsMaterial doesn't support lights yet
 
   								scope.cache.add( cacheKey, pointsMaterial );
 
@@ -63685,7 +64320,7 @@ var Three = (function (exports) {
   								lineMaterial = new LineBasicMaterial();
   								Material.prototype.copy.call( lineMaterial, material );
   								lineMaterial.color.copy( material.color );
-  								lineMaterial.lights = false;  // LineBasicMaterial doesn't support lights yet
+  								lineMaterial.lights = false; // LineBasicMaterial doesn't support lights yet
 
   								scope.cache.add( cacheKey, lineMaterial );
 
@@ -63712,8 +64347,8 @@ var Three = (function (exports) {
   							if ( ! cachedMaterial ) {
 
   								cachedMaterial = material.isGLTFSpecularGlossinessMaterial
-  										? extensions[ EXTENSIONS.KHR_MATERIALS_PBR_SPECULAR_GLOSSINESS ].cloneMaterial( material )
-  										: material.clone();
+  									? extensions[ EXTENSIONS.KHR_MATERIALS_PBR_SPECULAR_GLOSSINESS ].cloneMaterial( material )
+  									: material.clone();
 
   								if ( useSkinning ) { cachedMaterial.skinning = true; }
   								if ( useVertexColors ) { cachedMaterial.vertexColors = VertexColors; }
@@ -63791,7 +64426,7 @@ var Three = (function (exports) {
 
   		if ( cameraDef.type === 'perspective' ) {
 
-  			camera = new PerspectiveCamera( _Math.radToDeg( params.yfov ), params.aspectRatio || 1, params.znear || 1, params.zfar || 2e6 );
+  			camera = new PerspectiveCamera( _Math$1.radToDeg( params.yfov ), params.aspectRatio || 1, params.znear || 1, params.zfar || 2e6 );
 
   		} else if ( cameraDef.type === 'orthographic' ) {
 
@@ -64224,7 +64859,7 @@ var Three = (function (exports) {
 
   var RGBELoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -64582,7 +65217,7 @@ var Three = (function (exports) {
 
   var HDRCubeTextureLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
   	// override in sub classes
   	this.hdrLoader = new RGBELoader();
 
@@ -64758,7 +65393,7 @@ var Three = (function (exports) {
 
   var KMZLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -64844,7 +65479,9 @@ var Three = (function (exports) {
 
   };
 
-  var KTXLoader = function () {
+  var KTXLoader = function ( manager ) {
+
+  	CompressedTextureLoader.call( this, manager );
 
   	this._parser = KTXLoader.parse;
 
@@ -66035,7 +66672,7 @@ var Three = (function (exports) {
 
   		this.maxQueueSize = MAX_QUEUE_SIZE ;
   		this.maxWebWorkers = MAX_WEB_WORKER;
-  		this.crossOrigin = null;
+  		this.crossOrigin = 'anonymous';
 
   		if ( ! Validator.isValid( classDef ) ) { throw 'Provided invalid classDef: ' + classDef; }
 
@@ -66203,7 +66840,7 @@ var Three = (function (exports) {
   	WorkerDirector.prototype._buildLoader = function ( instanceNo ) {
   		var classDef = this.workerDescription.classDef;
   		var loader = Object.create( classDef.prototype );
-  		classDef.call( loader, DefaultLoadingManager$1 );
+  		classDef.call( loader, DefaultLoadingManager );
 
   		// verify that all required functions are implemented
   		if ( ! loader.hasOwnProperty( 'instanceNo' ) ) { throw classDef.name + ' has no property "instanceNo".'; }
@@ -66260,7 +66897,7 @@ var Three = (function (exports) {
 
   var MD2Loader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -66284,88 +66921,88 @@ var Three = (function (exports) {
 
   	parse: ( function () {
 
-  		var normals = [
-  			[ -0.525731,  0.000000,  0.850651 ], [ -0.442863,  0.238856,  0.864188 ],
-  			[ -0.295242,  0.000000,  0.955423 ], [ -0.309017,  0.500000,  0.809017 ],
-  			[ -0.162460,  0.262866,  0.951056 ], [  0.000000,  0.000000,  1.000000 ],
-  			[  0.000000,  0.850651,  0.525731 ], [ -0.147621,  0.716567,  0.681718 ],
-  			[  0.147621,  0.716567,  0.681718 ], [  0.000000,  0.525731,  0.850651 ],
-  			[  0.309017,  0.500000,  0.809017 ], [  0.525731,  0.000000,  0.850651 ],
-  			[  0.295242,  0.000000,  0.955423 ], [  0.442863,  0.238856,  0.864188 ],
-  			[  0.162460,  0.262866,  0.951056 ], [ -0.681718,  0.147621,  0.716567 ],
-  			[ -0.809017,  0.309017,  0.500000 ], [ -0.587785,  0.425325,  0.688191 ],
-  			[ -0.850651,  0.525731,  0.000000 ], [ -0.864188,  0.442863,  0.238856 ],
-  			[ -0.716567,  0.681718,  0.147621 ], [ -0.688191,  0.587785,  0.425325 ],
-  			[ -0.500000,  0.809017,  0.309017 ], [ -0.238856,  0.864188,  0.442863 ],
-  			[ -0.425325,  0.688191,  0.587785 ], [ -0.716567,  0.681718, -0.147621 ],
-  			[ -0.500000,  0.809017, -0.309017 ], [ -0.525731,  0.850651,  0.000000 ],
-  			[  0.000000,  0.850651, -0.525731 ], [ -0.238856,  0.864188, -0.442863 ],
-  			[  0.000000,  0.955423, -0.295242 ], [ -0.262866,  0.951056, -0.162460 ],
-  			[  0.000000,  1.000000,  0.000000 ], [  0.000000,  0.955423,  0.295242 ],
-  			[ -0.262866,  0.951056,  0.162460 ], [  0.238856,  0.864188,  0.442863 ],
-  			[  0.262866,  0.951056,  0.162460 ], [  0.500000,  0.809017,  0.309017 ],
-  			[  0.238856,  0.864188, -0.442863 ], [  0.262866,  0.951056, -0.162460 ],
-  			[  0.500000,  0.809017, -0.309017 ], [  0.850651,  0.525731,  0.000000 ],
-  			[  0.716567,  0.681718,  0.147621 ], [  0.716567,  0.681718, -0.147621 ],
-  			[  0.525731,  0.850651,  0.000000 ], [  0.425325,  0.688191,  0.587785 ],
-  			[  0.864188,  0.442863,  0.238856 ], [  0.688191,  0.587785,  0.425325 ],
-  			[  0.809017,  0.309017,  0.500000 ], [  0.681718,  0.147621,  0.716567 ],
-  			[  0.587785,  0.425325,  0.688191 ], [  0.955423,  0.295242,  0.000000 ],
-  			[  1.000000,  0.000000,  0.000000 ], [  0.951056,  0.162460,  0.262866 ],
-  			[  0.850651, -0.525731,  0.000000 ], [  0.955423, -0.295242,  0.000000 ],
-  			[  0.864188, -0.442863,  0.238856 ], [  0.951056, -0.162460,  0.262866 ],
-  			[  0.809017, -0.309017,  0.500000 ], [  0.681718, -0.147621,  0.716567 ],
-  			[  0.850651,  0.000000,  0.525731 ], [  0.864188,  0.442863, -0.238856 ],
-  			[  0.809017,  0.309017, -0.500000 ], [  0.951056,  0.162460, -0.262866 ],
-  			[  0.525731,  0.000000, -0.850651 ], [  0.681718,  0.147621, -0.716567 ],
-  			[  0.681718, -0.147621, -0.716567 ], [  0.850651,  0.000000, -0.525731 ],
-  			[  0.809017, -0.309017, -0.500000 ], [  0.864188, -0.442863, -0.238856 ],
-  			[  0.951056, -0.162460, -0.262866 ], [  0.147621,  0.716567, -0.681718 ],
-  			[  0.309017,  0.500000, -0.809017 ], [  0.425325,  0.688191, -0.587785 ],
-  			[  0.442863,  0.238856, -0.864188 ], [  0.587785,  0.425325, -0.688191 ],
-  			[  0.688191,  0.587785, -0.425325 ], [ -0.147621,  0.716567, -0.681718 ],
-  			[ -0.309017,  0.500000, -0.809017 ], [  0.000000,  0.525731, -0.850651 ],
-  			[ -0.525731,  0.000000, -0.850651 ], [ -0.442863,  0.238856, -0.864188 ],
-  			[ -0.295242,  0.000000, -0.955423 ], [ -0.162460,  0.262866, -0.951056 ],
-  			[  0.000000,  0.000000, -1.000000 ], [  0.295242,  0.000000, -0.955423 ],
-  			[  0.162460,  0.262866, -0.951056 ], [ -0.442863, -0.238856, -0.864188 ],
-  			[ -0.309017, -0.500000, -0.809017 ], [ -0.162460, -0.262866, -0.951056 ],
-  			[  0.000000, -0.850651, -0.525731 ], [ -0.147621, -0.716567, -0.681718 ],
-  			[  0.147621, -0.716567, -0.681718 ], [  0.000000, -0.525731, -0.850651 ],
-  			[  0.309017, -0.500000, -0.809017 ], [  0.442863, -0.238856, -0.864188 ],
-  			[  0.162460, -0.262866, -0.951056 ], [  0.238856, -0.864188, -0.442863 ],
-  			[  0.500000, -0.809017, -0.309017 ], [  0.425325, -0.688191, -0.587785 ],
-  			[  0.716567, -0.681718, -0.147621 ], [  0.688191, -0.587785, -0.425325 ],
-  			[  0.587785, -0.425325, -0.688191 ], [  0.000000, -0.955423, -0.295242 ],
-  			[  0.000000, -1.000000,  0.000000 ], [  0.262866, -0.951056, -0.162460 ],
-  			[  0.000000, -0.850651,  0.525731 ], [  0.000000, -0.955423,  0.295242 ],
-  			[  0.238856, -0.864188,  0.442863 ], [  0.262866, -0.951056,  0.162460 ],
-  			[  0.500000, -0.809017,  0.309017 ], [  0.716567, -0.681718,  0.147621 ],
-  			[  0.525731, -0.850651,  0.000000 ], [ -0.238856, -0.864188, -0.442863 ],
-  			[ -0.500000, -0.809017, -0.309017 ], [ -0.262866, -0.951056, -0.162460 ],
-  			[ -0.850651, -0.525731,  0.000000 ], [ -0.716567, -0.681718, -0.147621 ],
-  			[ -0.716567, -0.681718,  0.147621 ], [ -0.525731, -0.850651,  0.000000 ],
-  			[ -0.500000, -0.809017,  0.309017 ], [ -0.238856, -0.864188,  0.442863 ],
-  			[ -0.262866, -0.951056,  0.162460 ], [ -0.864188, -0.442863,  0.238856 ],
-  			[ -0.809017, -0.309017,  0.500000 ], [ -0.688191, -0.587785,  0.425325 ],
-  			[ -0.681718, -0.147621,  0.716567 ], [ -0.442863, -0.238856,  0.864188 ],
-  			[ -0.587785, -0.425325,  0.688191 ], [ -0.309017, -0.500000,  0.809017 ],
-  			[ -0.147621, -0.716567,  0.681718 ], [ -0.425325, -0.688191,  0.587785 ],
-  			[ -0.162460, -0.262866,  0.951056 ], [  0.442863, -0.238856,  0.864188 ],
-  			[  0.162460, -0.262866,  0.951056 ], [  0.309017, -0.500000,  0.809017 ],
-  			[  0.147621, -0.716567,  0.681718 ], [  0.000000, -0.525731,  0.850651 ],
-  			[  0.425325, -0.688191,  0.587785 ], [  0.587785, -0.425325,  0.688191 ],
-  			[  0.688191, -0.587785,  0.425325 ], [ -0.955423,  0.295242,  0.000000 ],
-  			[ -0.951056,  0.162460,  0.262866 ], [ -1.000000,  0.000000,  0.000000 ],
-  			[ -0.850651,  0.000000,  0.525731 ], [ -0.955423, -0.295242,  0.000000 ],
-  			[ -0.951056, -0.162460,  0.262866 ], [ -0.864188,  0.442863, -0.238856 ],
-  			[ -0.951056,  0.162460, -0.262866 ], [ -0.809017,  0.309017, -0.500000 ],
-  			[ -0.864188, -0.442863, -0.238856 ], [ -0.951056, -0.162460, -0.262866 ],
-  			[ -0.809017, -0.309017, -0.500000 ], [ -0.681718,  0.147621, -0.716567 ],
-  			[ -0.681718, -0.147621, -0.716567 ], [ -0.850651,  0.000000, -0.525731 ],
-  			[ -0.688191,  0.587785, -0.425325 ], [ -0.587785,  0.425325, -0.688191 ],
-  			[ -0.425325,  0.688191, -0.587785 ], [ -0.425325, -0.688191, -0.587785 ],
-  			[ -0.587785, -0.425325, -0.688191 ], [ -0.688191, -0.587785, -0.425325 ]
+  		var normalData = [
+  			[ - 0.525731, 0.000000, 0.850651 ], [ - 0.442863, 0.238856, 0.864188 ],
+  			[ - 0.295242, 0.000000, 0.955423 ], [ - 0.309017, 0.500000, 0.809017 ],
+  			[ - 0.162460, 0.262866, 0.951056 ], [ 0.000000, 0.000000, 1.000000 ],
+  			[ 0.000000, 0.850651, 0.525731 ], [ - 0.147621, 0.716567, 0.681718 ],
+  			[ 0.147621, 0.716567, 0.681718 ], [ 0.000000, 0.525731, 0.850651 ],
+  			[ 0.309017, 0.500000, 0.809017 ], [ 0.525731, 0.000000, 0.850651 ],
+  			[ 0.295242, 0.000000, 0.955423 ], [ 0.442863, 0.238856, 0.864188 ],
+  			[ 0.162460, 0.262866, 0.951056 ], [ - 0.681718, 0.147621, 0.716567 ],
+  			[ - 0.809017, 0.309017, 0.500000 ], [ - 0.587785, 0.425325, 0.688191 ],
+  			[ - 0.850651, 0.525731, 0.000000 ], [ - 0.864188, 0.442863, 0.238856 ],
+  			[ - 0.716567, 0.681718, 0.147621 ], [ - 0.688191, 0.587785, 0.425325 ],
+  			[ - 0.500000, 0.809017, 0.309017 ], [ - 0.238856, 0.864188, 0.442863 ],
+  			[ - 0.425325, 0.688191, 0.587785 ], [ - 0.716567, 0.681718, - 0.147621 ],
+  			[ - 0.500000, 0.809017, - 0.309017 ], [ - 0.525731, 0.850651, 0.000000 ],
+  			[ 0.000000, 0.850651, - 0.525731 ], [ - 0.238856, 0.864188, - 0.442863 ],
+  			[ 0.000000, 0.955423, - 0.295242 ], [ - 0.262866, 0.951056, - 0.162460 ],
+  			[ 0.000000, 1.000000, 0.000000 ], [ 0.000000, 0.955423, 0.295242 ],
+  			[ - 0.262866, 0.951056, 0.162460 ], [ 0.238856, 0.864188, 0.442863 ],
+  			[ 0.262866, 0.951056, 0.162460 ], [ 0.500000, 0.809017, 0.309017 ],
+  			[ 0.238856, 0.864188, - 0.442863 ], [ 0.262866, 0.951056, - 0.162460 ],
+  			[ 0.500000, 0.809017, - 0.309017 ], [ 0.850651, 0.525731, 0.000000 ],
+  			[ 0.716567, 0.681718, 0.147621 ], [ 0.716567, 0.681718, - 0.147621 ],
+  			[ 0.525731, 0.850651, 0.000000 ], [ 0.425325, 0.688191, 0.587785 ],
+  			[ 0.864188, 0.442863, 0.238856 ], [ 0.688191, 0.587785, 0.425325 ],
+  			[ 0.809017, 0.309017, 0.500000 ], [ 0.681718, 0.147621, 0.716567 ],
+  			[ 0.587785, 0.425325, 0.688191 ], [ 0.955423, 0.295242, 0.000000 ],
+  			[ 1.000000, 0.000000, 0.000000 ], [ 0.951056, 0.162460, 0.262866 ],
+  			[ 0.850651, - 0.525731, 0.000000 ], [ 0.955423, - 0.295242, 0.000000 ],
+  			[ 0.864188, - 0.442863, 0.238856 ], [ 0.951056, - 0.162460, 0.262866 ],
+  			[ 0.809017, - 0.309017, 0.500000 ], [ 0.681718, - 0.147621, 0.716567 ],
+  			[ 0.850651, 0.000000, 0.525731 ], [ 0.864188, 0.442863, - 0.238856 ],
+  			[ 0.809017, 0.309017, - 0.500000 ], [ 0.951056, 0.162460, - 0.262866 ],
+  			[ 0.525731, 0.000000, - 0.850651 ], [ 0.681718, 0.147621, - 0.716567 ],
+  			[ 0.681718, - 0.147621, - 0.716567 ], [ 0.850651, 0.000000, - 0.525731 ],
+  			[ 0.809017, - 0.309017, - 0.500000 ], [ 0.864188, - 0.442863, - 0.238856 ],
+  			[ 0.951056, - 0.162460, - 0.262866 ], [ 0.147621, 0.716567, - 0.681718 ],
+  			[ 0.309017, 0.500000, - 0.809017 ], [ 0.425325, 0.688191, - 0.587785 ],
+  			[ 0.442863, 0.238856, - 0.864188 ], [ 0.587785, 0.425325, - 0.688191 ],
+  			[ 0.688191, 0.587785, - 0.425325 ], [ - 0.147621, 0.716567, - 0.681718 ],
+  			[ - 0.309017, 0.500000, - 0.809017 ], [ 0.000000, 0.525731, - 0.850651 ],
+  			[ - 0.525731, 0.000000, - 0.850651 ], [ - 0.442863, 0.238856, - 0.864188 ],
+  			[ - 0.295242, 0.000000, - 0.955423 ], [ - 0.162460, 0.262866, - 0.951056 ],
+  			[ 0.000000, 0.000000, - 1.000000 ], [ 0.295242, 0.000000, - 0.955423 ],
+  			[ 0.162460, 0.262866, - 0.951056 ], [ - 0.442863, - 0.238856, - 0.864188 ],
+  			[ - 0.309017, - 0.500000, - 0.809017 ], [ - 0.162460, - 0.262866, - 0.951056 ],
+  			[ 0.000000, - 0.850651, - 0.525731 ], [ - 0.147621, - 0.716567, - 0.681718 ],
+  			[ 0.147621, - 0.716567, - 0.681718 ], [ 0.000000, - 0.525731, - 0.850651 ],
+  			[ 0.309017, - 0.500000, - 0.809017 ], [ 0.442863, - 0.238856, - 0.864188 ],
+  			[ 0.162460, - 0.262866, - 0.951056 ], [ 0.238856, - 0.864188, - 0.442863 ],
+  			[ 0.500000, - 0.809017, - 0.309017 ], [ 0.425325, - 0.688191, - 0.587785 ],
+  			[ 0.716567, - 0.681718, - 0.147621 ], [ 0.688191, - 0.587785, - 0.425325 ],
+  			[ 0.587785, - 0.425325, - 0.688191 ], [ 0.000000, - 0.955423, - 0.295242 ],
+  			[ 0.000000, - 1.000000, 0.000000 ], [ 0.262866, - 0.951056, - 0.162460 ],
+  			[ 0.000000, - 0.850651, 0.525731 ], [ 0.000000, - 0.955423, 0.295242 ],
+  			[ 0.238856, - 0.864188, 0.442863 ], [ 0.262866, - 0.951056, 0.162460 ],
+  			[ 0.500000, - 0.809017, 0.309017 ], [ 0.716567, - 0.681718, 0.147621 ],
+  			[ 0.525731, - 0.850651, 0.000000 ], [ - 0.238856, - 0.864188, - 0.442863 ],
+  			[ - 0.500000, - 0.809017, - 0.309017 ], [ - 0.262866, - 0.951056, - 0.162460 ],
+  			[ - 0.850651, - 0.525731, 0.000000 ], [ - 0.716567, - 0.681718, - 0.147621 ],
+  			[ - 0.716567, - 0.681718, 0.147621 ], [ - 0.525731, - 0.850651, 0.000000 ],
+  			[ - 0.500000, - 0.809017, 0.309017 ], [ - 0.238856, - 0.864188, 0.442863 ],
+  			[ - 0.262866, - 0.951056, 0.162460 ], [ - 0.864188, - 0.442863, 0.238856 ],
+  			[ - 0.809017, - 0.309017, 0.500000 ], [ - 0.688191, - 0.587785, 0.425325 ],
+  			[ - 0.681718, - 0.147621, 0.716567 ], [ - 0.442863, - 0.238856, 0.864188 ],
+  			[ - 0.587785, - 0.425325, 0.688191 ], [ - 0.309017, - 0.500000, 0.809017 ],
+  			[ - 0.147621, - 0.716567, 0.681718 ], [ - 0.425325, - 0.688191, 0.587785 ],
+  			[ - 0.162460, - 0.262866, 0.951056 ], [ 0.442863, - 0.238856, 0.864188 ],
+  			[ 0.162460, - 0.262866, 0.951056 ], [ 0.309017, - 0.500000, 0.809017 ],
+  			[ 0.147621, - 0.716567, 0.681718 ], [ 0.000000, - 0.525731, 0.850651 ],
+  			[ 0.425325, - 0.688191, 0.587785 ], [ 0.587785, - 0.425325, 0.688191 ],
+  			[ 0.688191, - 0.587785, 0.425325 ], [ - 0.955423, 0.295242, 0.000000 ],
+  			[ - 0.951056, 0.162460, 0.262866 ], [ - 1.000000, 0.000000, 0.000000 ],
+  			[ - 0.850651, 0.000000, 0.525731 ], [ - 0.955423, - 0.295242, 0.000000 ],
+  			[ - 0.951056, - 0.162460, 0.262866 ], [ - 0.864188, 0.442863, - 0.238856 ],
+  			[ - 0.951056, 0.162460, - 0.262866 ], [ - 0.809017, 0.309017, - 0.500000 ],
+  			[ - 0.864188, - 0.442863, - 0.238856 ], [ - 0.951056, - 0.162460, - 0.262866 ],
+  			[ - 0.809017, - 0.309017, - 0.500000 ], [ - 0.681718, 0.147621, - 0.716567 ],
+  			[ - 0.681718, - 0.147621, - 0.716567 ], [ - 0.850651, 0.000000, - 0.525731 ],
+  			[ - 0.688191, 0.587785, - 0.425325 ], [ - 0.587785, 0.425325, - 0.688191 ],
+  			[ - 0.425325, 0.688191, - 0.587785 ], [ - 0.425325, - 0.688191, - 0.587785 ],
+  			[ - 0.587785, - 0.425325, - 0.688191 ], [ - 0.688191, - 0.587785, - 0.425325 ]
   		];
 
   		return function ( buffer ) {
@@ -66407,11 +67044,11 @@ var Three = (function (exports) {
 
   			//
 
-  			var geometry = new Geometry();
+  			var geometry = new BufferGeometry();
 
   			// uvs
 
-  			var uvs = [];
+  			var uvsTemp = [];
   			var offset = header.offset_st;
 
   			for ( var i = 0, l = header.num_st; i < l; i ++ ) {
@@ -66419,7 +67056,7 @@ var Three = (function (exports) {
   				var u = data.getInt16( offset + 0, true );
   				var v = data.getInt16( offset + 2, true );
 
-  				uvs.push( new Vector2( u / header.skinwidth, 1 - ( v / header.skinheight ) ) );
+  				uvsTemp.push( u / header.skinwidth, 1 - ( v / header.skinheight ) );
 
   				offset += 4;
 
@@ -66427,21 +67064,24 @@ var Three = (function (exports) {
 
   			// triangles
 
-  			var offset = header.offset_tris;
+  			offset = header.offset_tris;
+
+  			var vertexIndices = [];
+  			var uvIndices = [];
 
   			for ( var i = 0, l = header.num_tris; i < l; i ++ ) {
 
-  				var a = data.getUint16( offset + 0, true );
-  				var b = data.getUint16( offset + 2, true );
-  				var c = data.getUint16( offset + 4, true );
+  				vertexIndices.push(
+  					data.getUint16( offset + 0, true ),
+  					data.getUint16( offset + 2, true ),
+  					data.getUint16( offset + 4, true )
+  				);
 
-  				geometry.faces.push( new Face3( a, b, c ) );
-
-  				geometry.faceVertexUvs[ 0 ].push( [
-  					uvs[ data.getUint16( offset + 6, true ) ],
-  					uvs[ data.getUint16( offset + 8, true ) ],
-  					uvs[ data.getUint16( offset + 10, true ) ]
-  				] );
+  				uvIndices.push(
+  					data.getUint16( offset + 6, true ),
+  					data.getUint16( offset + 8, true ),
+  					data.getUint16( offset + 10, true )
+  				);
 
   				offset += 12;
 
@@ -66453,7 +67093,9 @@ var Three = (function (exports) {
   			var scale = new Vector3();
   			var string = [];
 
-  			var offset = header.offset_frames;
+  			var frames = [];
+
+  			offset = header.offset_frames;
 
   			for ( var i = 0, l = header.num_frames; i < l; i ++ ) {
 
@@ -66493,68 +67135,131 @@ var Three = (function (exports) {
   					var x = data.getUint8( offset ++, true );
   					var y = data.getUint8( offset ++, true );
   					var z = data.getUint8( offset ++, true );
-  					var n = normals[ data.getUint8( offset ++, true ) ];
+  					var n = normalData[ data.getUint8( offset ++, true ) ];
 
-  					var vertex = new Vector3(
-  						x * scale.x + translation.x,
-  						z * scale.z + translation.z,
-  						y * scale.y + translation.y
-  					);
+  					x = x * scale.x + translation.x;
+  					y = y * scale.y + translation.y;
+  					z = z * scale.z + translation.z;
 
-  					var normal = new Vector3( n[ 0 ], n[ 2 ], n[ 1 ] );
-
-  					frame.vertices.push( vertex );
-  					frame.normals.push( normal );
+  					frame.vertices.push( x, z, y ); // convert to Y-up
+  					frame.normals.push( n[ 0 ], n[ 2 ], n[ 1 ] ); // convert to Y-up
 
   				}
 
-  				geometry.morphTargets.push( frame );
+  				frames.push( frame );
 
   			}
 
-  			// Static
+  			// static
 
-  			geometry.vertices = geometry.morphTargets[ 0 ].vertices;
+  			var positions = [];
+  			var normals = [];
+  			var uvs = [];
 
-  			var morphTarget = geometry.morphTargets[ 0 ];
+  			var verticesTemp = frames[ 0 ].vertices;
+  			var normalsTemp = frames[ 0 ].normals;
 
-  			for ( var j = 0, jl = geometry.faces.length; j < jl; j ++ ) {
+  			for ( var i = 0, l = vertexIndices.length; i < l; i ++ ) {
 
-  				var face = geometry.faces[ j ];
+  				var vertexIndex = vertexIndices[ i ];
+  				var stride = vertexIndex * 3;
 
-  				face.vertexNormals = [
-  					morphTarget.normals[ face.a ],
-  					morphTarget.normals[ face.b ],
-  					morphTarget.normals[ face.c ]
-  				];
+  				//
+
+  				var x = verticesTemp[ stride ];
+  				var y = verticesTemp[ stride + 1 ];
+  				var z = verticesTemp[ stride + 2 ];
+
+  				positions.push( x, y, z );
+
+  				//
+
+  				var nx = normalsTemp[ stride ];
+  				var ny = normalsTemp[ stride + 1 ];
+  				var nz = normalsTemp[ stride + 2 ];
+
+  				normals.push( nx, ny, nz );
+
+  				//
+
+  				var uvIndex = uvIndices[ i ];
+  				stride = uvIndex * 2;
+
+  				var u = uvsTemp[ stride ];
+  				var v = uvsTemp[ stride + 1 ];
+
+  				uvs.push( u, v );
 
   			}
 
+  			geometry.addAttribute( 'position', new Float32BufferAttribute$1( positions, 3 ) );
+  			geometry.addAttribute( 'normal', new Float32BufferAttribute$1( normals, 3 ) );
+  			geometry.addAttribute( 'uv', new Float32BufferAttribute$1( uvs, 2 ) );
 
-  			// Convert to geometry.morphNormals
+  			// animation
 
-  			for ( var i = 0, l = geometry.morphTargets.length; i < l; i ++ ) {
+  			var morphPositions = [];
+  			var morphNormals = [];
 
-  				var morphTarget = geometry.morphTargets[ i ];
-  				var vertexNormals = [];
+  			for ( var i = 0, l = frames.length; i < l; i ++ ) {
 
-  				for ( var j = 0, jl = geometry.faces.length; j < jl; j ++ ) {
+  				var frame = frames[ i ];
+  				var attributeName = frame.name;
 
-  					var face = geometry.faces[ j ];
+  				if ( frame.vertices.length > 0 ) {
 
-  					vertexNormals.push( {
-  						a: morphTarget.normals[ face.a ],
-  						b: morphTarget.normals[ face.b ],
-  						c: morphTarget.normals[ face.c ]
-  					} );
+  					var positions = [];
+
+  					for ( var j = 0, jl = vertexIndices.length; j < jl; j ++ ) {
+
+  						var vertexIndex = vertexIndices[ j ];
+  						var stride = vertexIndex * 3;
+
+  						var x = frame.vertices[ stride ];
+  						var y = frame.vertices[ stride + 1 ];
+  						var z = frame.vertices[ stride + 2 ];
+
+  						positions.push( x, y, z );
+
+  					}
+
+  					var positionAttribute = new Float32BufferAttribute$1( positions, 3 );
+  					positionAttribute.name = attributeName;
+
+  					morphPositions.push( positionAttribute );
 
   				}
 
-  				geometry.morphNormals.push( { vertexNormals: vertexNormals } );
+  				if ( frame.normals.length > 0 ) {
+
+  					var normals = [];
+
+  					for ( var j = 0, jl = vertexIndices.length; j < jl; j ++ ) {
+
+  						var vertexIndex = vertexIndices[ j ];
+  						var stride = vertexIndex * 3;
+
+  						var nx = frame.normals[ stride ];
+  						var ny = frame.normals[ stride + 1 ];
+  						var nz = frame.normals[ stride + 2 ];
+
+  						normals.push( nx, ny, nz );
+
+  					}
+
+  					var normalAttribute = new Float32BufferAttribute$1( normals, 3 );
+  					normalAttribute.name = attributeName;
+
+  					morphNormals.push( normalAttribute );
+
+  				}
 
   			}
 
-  			geometry.animations = AnimationClip.CreateClipsFromMorphTargetSequences( geometry.morphTargets, 10 );
+  			geometry.morphAttributes.position = morphPositions;
+  			geometry.morphAttributes.normal = morphNormals;
+
+  			geometry.animations = AnimationClip.CreateClipsFromMorphTargetSequences( frames, 10 );
 
   			console.timeEnd( 'MD2Loader' );
 
@@ -66571,7 +67276,7 @@ var Three = (function (exports) {
   	
   	function MMDLoader( manager ) {
 
-  		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   		this.loader = new FileLoader( this.manager );
 
@@ -66585,7 +67290,7 @@ var Three = (function (exports) {
 
   		constructor: MMDLoader,
 
-  		crossOrigin: undefined,
+  		crossOrigin: 'anonymous',
 
   		
   		setCrossOrigin: function ( crossOrigin ) {
@@ -66799,7 +67504,7 @@ var Three = (function (exports) {
 
   		constructor: MeshBuilder,
 
-  		crossOrigin: undefined,
+  		crossOrigin: 'anonymous',
 
   		
   		setCrossOrigin: function ( crossOrigin ) {
@@ -67296,7 +68001,7 @@ var Three = (function (exports) {
 
   		constructor: MaterialBuilder,
 
-  		crossOrigin: undefined,
+  		crossOrigin: 'anonymous',
 
   		texturePath: undefined,
 
@@ -67345,7 +68050,7 @@ var Three = (function (exports) {
   				params.shininess = Math.max( material.shininess, 1e-4 ); // to prevent pow( 0.0, 0.0 )
   				params.transparent = params.opacity !== 1.0;
 
-  				// 
+  				//
 
   				params.skinning = geometry.bones.length > 0 ? true : false;
   				params.morphTargets = geometry.morphTargets.length > 0 ? true : false;
@@ -68245,7 +68950,7 @@ var Three = (function (exports) {
 
   var MTLLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -68388,11 +69093,12 @@ var Three = (function (exports) {
 
   	constructor: MTLLoader.MaterialCreator,
 
-  	crossOrigin: 'Anonymous',
+  	crossOrigin: 'anonymous',
 
   	setCrossOrigin: function ( value ) {
 
   		this.crossOrigin = value;
+  		return this;
 
   	},
 
@@ -68727,7 +69433,7 @@ var Three = (function (exports) {
 
   		var texture;
   		var loader = Loader$1.Handlers.get( url );
-  		var manager = ( this.manager !== undefined ) ? this.manager : DefaultLoadingManager$1;
+  		var manager = ( this.manager !== undefined ) ? this.manager : DefaultLoadingManager;
 
   		if ( loader === null ) {
 
@@ -68748,7 +69454,7 @@ var Three = (function (exports) {
 
   var GLNode = function ( type ) {
 
-  	this.uuid = _Math.generateUUID();
+  	this.uuid = _Math$1.generateUUID();
 
   	this.name = "";
   	this.allows = {};
@@ -68927,7 +69633,7 @@ var Three = (function (exports) {
 
   		if ( isUnique && this.constructor.uuid === undefined ) {
 
-  			this.constructor.uuid = _Math.generateUUID();
+  			this.constructor.uuid = _Math$1.generateUUID();
 
   		}
 
@@ -69050,6 +69756,7 @@ var Three = (function (exports) {
 
   FunctionNode.prototype = Object.create( TempNode.prototype );
   FunctionNode.prototype.constructor = FunctionNode;
+  FunctionNode.prototype.nodeType = "Function";
 
   FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
   	var this$1 = this;
@@ -70159,7 +70866,7 @@ var Three = (function (exports) {
 
   var NodeMaterialLoader = function ( manager, library ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   	this.nodes = {};
   	this.materials = {};
@@ -70670,8 +71377,6 @@ var Three = (function (exports) {
 
   			}
 
-  			object.build();
-
   			if ( node.fog !== undefined ) { object.fog = node.fog; }
   			if ( node.lights !== undefined ) { object.lights = node.lights; }
 
@@ -70685,8 +71390,6 @@ var Three = (function (exports) {
   			object = this$1.passes[ uuid ];
 
   			object.value = this$1.getNode( node.value );
-
-  			object.build();
 
   		}
 
@@ -71064,7 +71767,7 @@ var Three = (function (exports) {
 
   	function OBJLoader( manager ) {
 
-  		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   		this.materials = null;
 
@@ -71495,7 +72198,7 @@ var Three = (function (exports) {
   	function OBJLoader2( manager ) {
   		console.info( 'Using OBJLoader2 version: ' + OBJLOADER2_VERSION );
 
-  		this.manager = Validator.verifyInput( manager, DefaultLoadingManager$1 );
+  		this.manager = Validator.verifyInput( manager, DefaultLoadingManager );
   		this.logging = {
   			enabled: true,
   			debug: false
@@ -72773,7 +73476,7 @@ var Three = (function (exports) {
 
   var PCDLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
   	this.littleEndian = true;
 
   };
@@ -73050,7 +73753,7 @@ var Three = (function (exports) {
 
   var PDBLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -73237,7 +73940,7 @@ var Three = (function (exports) {
 
   var PlayCanvasLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -73428,7 +74131,7 @@ var Three = (function (exports) {
 
   var PLYLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   	this.propertyNameMapping = {};
 
@@ -74093,7 +74796,7 @@ var Three = (function (exports) {
 
   	var PRWMLoader = function PRWMLoader( manager ) {
 
-  		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   	};
 
@@ -74157,7 +74860,7 @@ var Three = (function (exports) {
 
   var PVRLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	CompressedTextureLoader.call( this, manager );
 
   	this._parser = PVRLoader.parse;
 
@@ -74394,7 +75097,7 @@ var Three = (function (exports) {
 
   var STLLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -75859,7 +76562,7 @@ var Three = (function (exports) {
 
   			var curve = curves[ i ];
   			var resolution = ( curve && curve.isEllipseCurve ) ? divisions * 2
-  				: ( curve && curve.isLineCurve ) ? 1
+  				: ( curve && ( curve.isLineCurve || curve.isLineCurve3 ) ) ? 1
   					: ( curve && curve.isSplineCurve ) ? divisions * curve.points.length
   						: divisions;
 
@@ -76132,7 +76835,7 @@ var Three = (function (exports) {
 
   	Path.call( this, points );
 
-  	this.uuid = _Math.generateUUID();
+  	this.uuid = _Math$1.generateUUID();
 
   	this.type = 'Shape';
 
@@ -77404,7 +78107,7 @@ var Three = (function (exports) {
 
   var SVGLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -77575,48 +78278,54 @@ var Three = (function (exports) {
 
   					case 'S':
   						var numbers = parseFloats( data );
-  						path.bezierCurveTo(
-  							getReflection( point.x, control.x ),
-  							getReflection( point.y, control.y ),
-  							numbers[ 0 ],
-  							numbers[ 1 ],
-  							numbers[ 2 ],
-  							numbers[ 3 ]
-  						);
-  						control.x = numbers[ 0 ];
-  						control.y = numbers[ 1 ];
-  						point.x = numbers[ 2 ];
-  						point.y = numbers[ 3 ];
+  						for ( var j = 0, jl = numbers.length; j < jl; j += 4 ) {
+  							path.bezierCurveTo(
+  								getReflection( point.x, control.x ),
+  								getReflection( point.y, control.y ),
+  								numbers[ j + 0 ],
+  								numbers[ j + 1 ],
+  								numbers[ j + 2 ],
+  								numbers[ j + 3 ]
+  							);
+  							control.x = numbers[ j + 0 ];
+  							control.y = numbers[ j + 1 ];
+  							point.x = numbers[ j + 2 ];
+  							point.y = numbers[ j + 3 ];
+  						}
   						break;
 
   					case 'Q':
   						var numbers = parseFloats( data );
-  						path.quadraticCurveTo(
-  							numbers[ 0 ],
-  							numbers[ 1 ],
-  							numbers[ 2 ],
-  							numbers[ 3 ]
-  						);
-  						control.x = numbers[ 0 ];
-  						control.y = numbers[ 1 ];
-  						point.x = numbers[ 2 ];
-  						point.y = numbers[ 3 ];
+  						for ( var j = 0, jl = numbers.length; j < jl; j += 4 ) {
+  							path.quadraticCurveTo(
+  								numbers[ j + 0 ],
+  								numbers[ j + 1 ],
+  								numbers[ j + 2 ],
+  								numbers[ j + 3 ]
+  							);
+  							control.x = numbers[ j + 0 ];
+  							control.y = numbers[ j + 1 ];
+  							point.x = numbers[ j + 2 ];
+  							point.y = numbers[ j + 3 ];
+  						}
   						break;
 
   					case 'T':
   						var numbers = parseFloats( data );
-  						var rx = getReflection( point.x, control.x );
-  						var ry = getReflection( point.y, control.y );
-  						path.quadraticCurveTo(
-  							rx,
-  							ry,
-  							numbers[ 0 ],
-  							numbers[ 1 ]
-  						);
-  						control.x = rx;
-  						control.y = ry;
-  						point.x = numbers[ 0 ];
-  						point.y = numbers[ 1 ];
+  						for ( var j = 0, jl = numbers.length; j < jl; j += 2 ) {
+  							var rx = getReflection( point.x, control.x );
+  							var ry = getReflection( point.y, control.y );
+  							path.quadraticCurveTo(
+  								rx,
+  								ry,
+  								numbers[ j + 0 ],
+  								numbers[ j + 1 ]
+  							);
+  							control.x = rx;
+  							control.y = ry;
+  							point.x = numbers[ j + 0 ];
+  							point.y = numbers[ j + 1 ];
+  						}
   						break;
 
   					case 'A':
@@ -77697,48 +78406,54 @@ var Three = (function (exports) {
 
   					case 's':
   						var numbers = parseFloats( data );
-  						path.bezierCurveTo(
-  							getReflection( point.x, control.x ),
-  							getReflection( point.y, control.y ),
-  							point.x + numbers[ 0 ],
-  							point.y + numbers[ 1 ],
-  							point.x + numbers[ 2 ],
-  							point.y + numbers[ 3 ]
-  						);
-  						control.x = point.x + numbers[ 0 ];
-  						control.y = point.y + numbers[ 1 ];
-  						point.x += numbers[ 2 ];
-  						point.y += numbers[ 3 ];
+  						for ( var j = 0, jl = numbers.length; j < jl; j += 4 ) {
+  							path.bezierCurveTo(
+  								getReflection( point.x, control.x ),
+  								getReflection( point.y, control.y ),
+  								point.x + numbers[ j + 0 ],
+  								point.y + numbers[ j + 1 ],
+  								point.x + numbers[ j + 2 ],
+  								point.y + numbers[ j + 3 ]
+  							);
+  							control.x = point.x + numbers[ j + 0 ];
+  							control.y = point.y + numbers[ j + 1 ];
+  							point.x += numbers[ j + 2 ];
+  							point.y += numbers[ j + 3 ];
+  						}
   						break;
 
   					case 'q':
   						var numbers = parseFloats( data );
-  						path.quadraticCurveTo(
-  							point.x + numbers[ 0 ],
-  							point.y + numbers[ 1 ],
-  							point.x + numbers[ 2 ],
-  							point.y + numbers[ 3 ]
-  						);
-  						control.x = point.x + numbers[ 0 ];
-  						control.y = point.y + numbers[ 1 ];
-  						point.x += numbers[ 2 ];
-  						point.y += numbers[ 3 ];
+  						for ( var j = 0, jl = numbers.length; j < jl; j += 4 ) {
+  							path.quadraticCurveTo(
+  								point.x + numbers[ j + 0 ],
+  								point.y + numbers[ j + 1 ],
+  								point.x + numbers[ j + 2 ],
+  								point.y + numbers[ j + 3 ]
+  							);
+  							control.x = point.x + numbers[ j + 0 ];
+  							control.y = point.y + numbers[ j + 1 ];
+  							point.x += numbers[ j + 2 ];
+  							point.y += numbers[ j + 3 ];
+  						}
   						break;
 
   					case 't':
   						var numbers = parseFloats( data );
-  						var rx = getReflection( point.x, control.x );
-  						var ry = getReflection( point.y, control.y );
-  						path.quadraticCurveTo(
-  							rx,
-  							ry,
-  							point.x + numbers[ 0 ],
-  							point.y + numbers[ 1 ]
-  						);
-  						control.x = rx;
-  						control.y = ry;
-  						point.x = point.x + numbers[ 0 ];
-  						point.y = point.y + numbers[ 1 ];
+  						for ( var j = 0, jl = numbers.length; j < jl; j += 2 ) {
+  							var rx = getReflection( point.x, control.x );
+  							var ry = getReflection( point.y, control.y );
+  							path.quadraticCurveTo(
+  								rx,
+  								ry,
+  								point.x + numbers[ j + 0 ],
+  								point.y + numbers[ j + 1 ]
+  							);
+  							control.x = rx;
+  							control.y = ry;
+  							point.x = point.x + numbers[ j + 0 ];
+  							point.y = point.y + numbers[ j + 1 ];
+  						}
   						break;
 
   					case 'a':
@@ -77760,6 +78475,24 @@ var Three = (function (exports) {
   					case 'Z':
   					case 'z':
   						path.currentPath.autoClose = true;
+  						if ( path.currentPath.curves.length > 0 ) {
+  							// Reset point to beginning of Path
+  							var curve = path.currentPath.curves[ 0 ];
+  							if ( curve.isLineCurve ) {
+  								point.x = curve.v1.x;
+  								point.y = curve.v1.y;
+  							} else if ( curve.isEllipseCurve || curve.isArcCurve ) {
+  								point.x = curve.aX;
+  								point.y = curve.aY;
+  							} else if ( curve.isCubicBezierCurve || curve.isQuadraticBezierCurve ) {
+  								point.x = curve.v0.x;
+  								point.y = curve.v0.y;
+  							} else if ( curve.isSplineCurve ) {
+  								point.x = curve.points[ 0 ].x;
+  								point.y = curve.points[ 0 ].y;
+  							}
+  							path.currentPath.currentPoint.copy( point );
+  						}
   						break;
 
   					default:
@@ -78021,12 +78754,18 @@ var Three = (function (exports) {
 
   				var number = array[ i ];
 
-  				// Handle values like 48.6037.7
+  				// Handle values like 48.6037.7.8
   				// TODO Find a regex for this
 
   				if ( number.indexOf( '.' ) !== number.lastIndexOf( '.' ) ) {
 
-  					array.splice( i + 1, 0, '0.' + number.split( '.' )[ 2 ] );
+  					var split = number.split( '.' );
+
+  					for ( var s = 2; s < split.length; s ++ ) {
+
+  						array.splice( i + s - 1, 0, '0.' + split[ s ] );
+
+  					}
 
   				}
 
@@ -78066,7 +78805,7 @@ var Three = (function (exports) {
 
   var TDSLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
   	this.debug = false;
 
   	this.group = null;
@@ -78345,14 +79084,9 @@ var Three = (function (exports) {
 
   		var chunk = this.readChunk( data );
   		var next = this.nextChunk( data, chunk );
-  		var geometry = null;
+
+  		var geometry = new BufferGeometry();
   		var uvs = [];
-
-  		{
-
-  			geometry = new Geometry();
-
-  		}
 
   		var material = new MeshPhongMaterial();
   		var mesh = new Mesh( geometry, material );
@@ -78368,20 +79102,17 @@ var Three = (function (exports) {
 
   				//BufferGeometry
 
-  				if ( false )	{
-  					for ( var i = 0; i < points; i ++ )		{
+  				var vertices = [];
 
-  					}
+  				for ( var i = 0; i < points; i ++ )		{
 
-  				} else	{ //Geometry
-
-  					for ( var i = 0; i < points; i ++ )		{
-
-  						geometry.vertices.push( new Vector3( this$1.readFloat( data ), this$1.readFloat( data ), this$1.readFloat( data ) ) );
-
-  					}
+  					vertices.push( this$1.readFloat( data ) );
+  					vertices.push( this$1.readFloat( data ) );
+  					vertices.push( this$1.readFloat( data ) );
 
   				}
+
+  				geometry.addAttribute( 'position', new Float32BufferAttribute$1( vertices, 3 ) );
 
   			} else if ( next === FACE_ARRAY ) {
 
@@ -78396,23 +79127,17 @@ var Three = (function (exports) {
 
   				//BufferGeometry
 
-  				if ( false )	{
+  				var uvs = [];
 
-  					var uvs = [];
-  					for ( var i = 0; i < texels; i ++ )		{
+  				for ( var i = 0; i < texels; i ++ )		{
 
-  					}
-
-  				} else { //Geometry
-
-  					uvs = [];
-  					for ( var i = 0; i < texels; i ++ )		{
-
-  						uvs.push( new Vector2( this$1.readFloat( data ), this$1.readFloat( data ) ) );
-
-  					}
+  					uvs.push( this$1.readFloat( data ) );
+  					uvs.push( this$1.readFloat( data ) );
 
   				}
+
+  				geometry.addAttribute( 'uv', new Float32BufferAttribute$1( uvs, 2 ) );
+
 
   			} else if ( next === MESH_MATRIX ) {
 
@@ -78471,27 +79196,7 @@ var Three = (function (exports) {
 
   		this.endChunk( chunk );
 
-  		{
-
-  			//geometry.faceVertexUvs[0][faceIndex][vertexIndex]
-
-  			if ( uvs.length > 0 ) {
-
-  				var faceUV = [];
-
-  				for ( var i = 0; i < geometry.faces.length; i ++ ) {
-
-  					faceUV.push( [ uvs[ geometry.faces[ i ].a ], uvs[ geometry.faces[ i ].b ], uvs[ geometry.faces[ i ].c ] ] );
-
-  				}
-
-  				geometry.faceVertexUvs[ 0 ] = faceUV;
-
-  			}
-
-  			geometry.computeVertexNormals();
-
-  		}
+  		geometry.computeVertexNormals();
 
   		return mesh;
 
@@ -78507,13 +79212,17 @@ var Three = (function (exports) {
 
   		this.debugMessage( '   Faces: ' + faces );
 
+  		var index = [];
+
   		for ( var i = 0; i < faces; ++ i ) {
 
-  			mesh.geometry.faces.push( new Face3( this$1.readWord( data ), this$1.readWord( data ), this$1.readWord( data ) ) );
+  			index.push( this$1.readWord( data ), this$1.readWord( data ), this$1.readWord( data ) );
 
   			var visibility = this$1.readWord( data );
 
   		}
+
+  		mesh.geometry.setIndex( index );
 
   		//The rest of the FACE_ARRAY chunk is subchunks
 
@@ -78875,7 +79584,7 @@ var Three = (function (exports) {
 
   var TTFLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
   	this.reversed = false;
 
   };
@@ -79057,741 +79766,9 @@ var Three = (function (exports) {
 
   };
 
-  var UTF8Loader = function () {};
-
-
-
-  UTF8Loader.prototype.load = function ( jsonUrl, callback, options ) {
-
-  	this.downloadModelJson( jsonUrl, callback, options );
-
-  };
-
-  // BufferGeometryCreator
-
-  UTF8Loader.BufferGeometryCreator = function () {
-  };
-
-  UTF8Loader.BufferGeometryCreator.prototype.create = function ( attribArray, indices ) {
-
-  	var ntris = indices.length / 3;
-
-  	var geometry = new BufferGeometry();
-
-  	var positions = new Float32Array( ntris * 3 * 3 );
-  	var normals = new Float32Array( ntris * 3 * 3 );
-  	var uvs = new Float32Array( ntris * 3 * 2 );
-
-  	var i, j, offset;
-
-  	var end = attribArray.length;
-  	var stride = 8;
-
-  	// extract positions
-
-  	j = 0;
-  	offset = 0;
-
-  	for ( i = offset; i < end; i += stride ) {
-
-  		positions[ j ++ ] = attribArray[ i ];
-  		positions[ j ++ ] = attribArray[ i + 1 ];
-  		positions[ j ++ ] = attribArray[ i + 2 ];
-
-  	}
-
-  	// extract uvs
-
-  	j = 0;
-  	offset = 3;
-
-  	for ( i = offset; i < end; i += stride ) {
-
-  		uvs[ j ++ ] = attribArray[ i ];
-  		uvs[ j ++ ] = attribArray[ i + 1 ];
-
-  	}
-
-  	// extract normals
-
-  	j = 0;
-  	offset = 5;
-
-  	for ( i = offset; i < end; i += stride ) {
-
-  		normals[ j ++ ] = attribArray[ i ];
-  		normals[ j ++ ] = attribArray[ i + 1 ];
-  		normals[ j ++ ] = attribArray[ i + 2 ];
-
-  	}
-
-  	geometry.setIndex( new BufferAttribute( indices, 1 ) );
-  	geometry.addAttribute( 'position', new BufferAttribute( positions, 3 ) );
-  	geometry.addAttribute( 'normal', new BufferAttribute( normals, 3 ) );
-  	geometry.addAttribute( 'uv', new BufferAttribute( uvs, 2 ) );
-
-  	geometry.computeBoundingSphere();
-
-  	return geometry;
-
-  };
-
-
-  // UTF-8 decoder from webgl-loader (r100)
-  // http://code.google.com/p/webgl-loader/
-
-  // Model manifest description. Contains objects like:
-  // name: {
-  //   materials: { 'material_name': { ... } ... },
-  //   decodeParams: {
-  //     decodeOffsets: [ ... ],
-  //     decodeScales: [ ... ],
-  //   },
-  //   urls: {
-  //     'url': [
-  //       { material: 'material_name',
-  //         attribRange: [#, #],
-  //         indexRange: [#, #],
-  //         names: [ 'object names' ... ],
-  //         lengths: [#, #, # ... ]
-  //       }
-  //     ],
-  //     ...
-  //   }
-  // }
-
-  var DEFAULT_DECODE_PARAMS = {
-
-  	decodeOffsets: [ - 4095, - 4095, - 4095, 0, 0, - 511, - 511, - 511 ],
-  	decodeScales: [ 1 / 8191, 1 / 8191, 1 / 8191, 1 / 1023, 1 / 1023, 1 / 1023, 1 / 1023, 1 / 1023 ]
-
-  	// TODO: normal decoding? (see walt.js)
-  	// needs to know: input, output (from vertex format!)
-  	//
-  	// Should split attrib/index.
-  	// 1) Decode position and non-normal attributes.
-  	// 2) Decode indices, computing normals
-  	// 3) Maybe normalize normals? Only necessary for refinement, or fixed?
-  	// 4) Maybe refine normals? Should this be part of regular refinement?
-  	// 5) Morphing
-
-  };
-
-  // Triangle strips!
-
-  // TODO: will it be an optimization to specialize this method at
-  // runtime for different combinations of stride, decodeOffset and
-  // decodeScale?
-
-  UTF8Loader.prototype.decompressAttribsInner_ = function ( str, inputStart, inputEnd,
-  	output, outputStart, stride, decodeOffset, decodeScale ) {
-
-  	var prev = 0;
-
-  	for ( var j = inputStart; j < inputEnd; j ++ ) {
-
-  		var code = str.charCodeAt( j );
-  		prev += ( code >> 1 ) ^ ( - ( code & 1 ) );
-
-  		output[ outputStart ] = decodeScale * ( prev + decodeOffset );
-  		outputStart += stride;
-
-  	}
-
-  };
-
-  UTF8Loader.prototype.decompressIndices_ = function ( str, inputStart, numIndices, output, outputStart ) {
-
-  	var highest = 0;
-
-  	for ( var i = 0; i < numIndices; i ++ ) {
-
-  		var code = str.charCodeAt( inputStart ++ );
-
-  		output[ outputStart ++ ] = highest - code;
-
-  		if ( code === 0 ) {
-
-  			highest ++;
-
-  		}
-
-  	}
-
-  };
-
-  UTF8Loader.prototype.decompressAABBs_ = function ( str, inputStart, numBBoxen, decodeOffsets, decodeScales ) {
-
-  	var numFloats = 6 * numBBoxen;
-
-  	var inputEnd = inputStart + numFloats;
-  	var outputStart = 0;
-
-  	var bboxen = new Float32Array( numFloats );
-
-  	for ( var i = inputStart; i < inputEnd; i += 6 ) {
-
-  		var minX = str.charCodeAt( i + 0 ) + decodeOffsets[ 0 ];
-  		var minY = str.charCodeAt( i + 1 ) + decodeOffsets[ 1 ];
-  		var minZ = str.charCodeAt( i + 2 ) + decodeOffsets[ 2 ];
-
-  		var radiusX = ( str.charCodeAt( i + 3 ) + 1 ) >> 1;
-  		var radiusY = ( str.charCodeAt( i + 4 ) + 1 ) >> 1;
-  		var radiusZ = ( str.charCodeAt( i + 5 ) + 1 ) >> 1;
-
-  		bboxen[ outputStart ++ ] = decodeScales[ 0 ] * ( minX + radiusX );
-  		bboxen[ outputStart ++ ] = decodeScales[ 1 ] * ( minY + radiusY );
-  		bboxen[ outputStart ++ ] = decodeScales[ 2 ] * ( minZ + radiusZ );
-
-  		bboxen[ outputStart ++ ] = decodeScales[ 0 ] * radiusX;
-  		bboxen[ outputStart ++ ] = decodeScales[ 1 ] * radiusY;
-  		bboxen[ outputStart ++ ] = decodeScales[ 2 ] * radiusZ;
-
-  	}
-
-  	return bboxen;
-
-  };
-
-  UTF8Loader.prototype.decompressMesh = function ( str, meshParams, decodeParams, name, idx, callback ) {
-  	var this$1 = this;
-
-
-  	// Extract conversion parameters from attribArrays.
-
-  	var stride = decodeParams.decodeScales.length;
-
-  	var decodeOffsets = decodeParams.decodeOffsets;
-  	var decodeScales = decodeParams.decodeScales;
-
-  	var attribStart = meshParams.attribRange[ 0 ];
-  	var numVerts = meshParams.attribRange[ 1 ];
-
-  	// Decode attributes.
-
-  	var inputOffset = attribStart;
-  	var attribsOut = new Float32Array( stride * numVerts );
-
-  	for ( var j = 0; j < stride; j ++ ) {
-
-  		var end = inputOffset + numVerts;
-
-  		var decodeScale = decodeScales[ j ];
-
-  		if ( decodeScale ) {
-
-  			// Assume if decodeScale is never set, simply ignore the
-  			// attribute.
-
-  			this$1.decompressAttribsInner_( str, inputOffset, end, attribsOut, j, stride, decodeOffsets[ j ], decodeScale );
-
-  		}
-
-  		inputOffset = end;
-
-  	}
-
-  	var numIndices = 3 * meshParams.indexRange[ 1 ];
-
-  	var indicesOut = new Uint16Array( numIndices );
-
-  	this.decompressIndices_( str, inputOffset, numIndices, indicesOut, 0 );
-
-  	// Decode bboxen.
-
-  	var bboxen = undefined;
-  	var bboxOffset = meshParams.bboxes;
-
-  	if ( bboxOffset ) {
-
-  		bboxen = this.decompressAABBs_( str, bboxOffset, meshParams.names.length, decodeOffsets, decodeScales );
-
-  	}
-
-  	callback( name, idx, attribsOut, indicesOut, bboxen, meshParams );
-
-  };
-
-  UTF8Loader.prototype.copyAttrib = function ( stride, attribsOutFixed, lastAttrib, index ) {
-
-  	for ( var j = 0; j < stride; j ++ ) {
-
-  		lastAttrib[ j ] = attribsOutFixed[ stride * index + j ];
-
-  	}
-
-  };
-
-  UTF8Loader.prototype.decodeAttrib2 = function ( str, stride, decodeOffsets, decodeScales, deltaStart,
-  	numVerts, attribsOut, attribsOutFixed, lastAttrib, index ) {
-
-  	for ( var j = 0; j < 5; j ++ ) {
-
-  		var code = str.charCodeAt( deltaStart + numVerts * j + index );
-  		var delta = ( code >> 1 ) ^ ( - ( code & 1 ) );
-
-  		lastAttrib[ j ] += delta;
-  		attribsOutFixed[ stride * index + j ] = lastAttrib[ j ];
-  		attribsOut[ stride * index + j ] = decodeScales[ j ] * ( lastAttrib[ j ] + decodeOffsets[ j ] );
-
-  	}
-
-  };
-
-  UTF8Loader.prototype.accumulateNormal = function ( i0, i1, i2, attribsOutFixed, crosses ) {
-
-  	var p0x = attribsOutFixed[ 8 * i0 ];
-  	var p0y = attribsOutFixed[ 8 * i0 + 1 ];
-  	var p0z = attribsOutFixed[ 8 * i0 + 2 ];
-
-  	var p1x = attribsOutFixed[ 8 * i1 ];
-  	var p1y = attribsOutFixed[ 8 * i1 + 1 ];
-  	var p1z = attribsOutFixed[ 8 * i1 + 2 ];
-
-  	var p2x = attribsOutFixed[ 8 * i2 ];
-  	var p2y = attribsOutFixed[ 8 * i2 + 1 ];
-  	var p2z = attribsOutFixed[ 8 * i2 + 2 ];
-
-  	p1x -= p0x;
-  	p1y -= p0y;
-  	p1z -= p0z;
-
-  	p2x -= p0x;
-  	p2y -= p0y;
-  	p2z -= p0z;
-
-  	p0x = p1y * p2z - p1z * p2y;
-  	p0y = p1z * p2x - p1x * p2z;
-  	p0z = p1x * p2y - p1y * p2x;
-
-  	crosses[ 3 * i0 ] += p0x;
-  	crosses[ 3 * i0 + 1 ] += p0y;
-  	crosses[ 3 * i0 + 2 ] += p0z;
-
-  	crosses[ 3 * i1 ] += p0x;
-  	crosses[ 3 * i1 + 1 ] += p0y;
-  	crosses[ 3 * i1 + 2 ] += p0z;
-
-  	crosses[ 3 * i2 ] += p0x;
-  	crosses[ 3 * i2 + 1 ] += p0y;
-  	crosses[ 3 * i2 + 2 ] += p0z;
-
-  };
-
-  UTF8Loader.prototype.decompressMesh2 = function ( str, meshParams, decodeParams, name, idx, callback ) {
-  	var this$1 = this;
-
-
-  	var MAX_BACKREF = 96;
-
-  	// Extract conversion parameters from attribArrays.
-
-  	var stride = decodeParams.decodeScales.length;
-
-  	var decodeOffsets = decodeParams.decodeOffsets;
-  	var decodeScales = decodeParams.decodeScales;
-
-  	var deltaStart = meshParams.attribRange[ 0 ];
-  	var numVerts = meshParams.attribRange[ 1 ];
-
-  	var codeStart = meshParams.codeRange[ 0 ];
-
-  	var numIndices = 3 * meshParams.codeRange[ 2 ];
-
-  	var indicesOut = new Uint16Array( numIndices );
-
-  	var crosses = new Int32Array( 3 * numVerts );
-
-  	var lastAttrib = new Uint16Array( stride );
-
-  	var attribsOutFixed = new Uint16Array( stride * numVerts );
-  	var attribsOut = new Float32Array( stride * numVerts );
-
-  	var highest = 0;
-  	var outputStart = 0;
-
-  	for ( var i = 0; i < numIndices; i += 3 ) {
-
-  		var code = str.charCodeAt( codeStart ++ );
-
-  		var max_backref = Math.min( i, MAX_BACKREF );
-
-  		if ( code < max_backref ) {
-
-    		// Parallelogram
-
-  			var winding = code % 3;
-  			var backref = i - ( code - winding );
-  			var i0, i1, i2;
-
-  			switch ( winding ) {
-
-  				case 0:
-
-  					i0 = indicesOut[ backref + 2 ];
-  					i1 = indicesOut[ backref + 1 ];
-  					i2 = indicesOut[ backref + 0 ];
-  					break;
-
-  				case 1:
-
-  					i0 = indicesOut[ backref + 0 ];
-  					i1 = indicesOut[ backref + 2 ];
-  					i2 = indicesOut[ backref + 1 ];
-  					break;
-
-  				case 2:
-
-  					i0 = indicesOut[ backref + 1 ];
-  					i1 = indicesOut[ backref + 0 ];
-  					i2 = indicesOut[ backref + 2 ];
-  					break;
-
-  			}
-
-  			indicesOut[ outputStart ++ ] = i0;
-  			indicesOut[ outputStart ++ ] = i1;
-
-  			code = str.charCodeAt( codeStart ++ );
-
-  			var index = highest - code;
-  			indicesOut[ outputStart ++ ] = index;
-
-  			if ( code === 0 ) {
-
-  				for ( var j = 0; j < 5; j ++ ) {
-
-  					var deltaCode = str.charCodeAt( deltaStart + numVerts * j + highest );
-
-  					var prediction = ( ( deltaCode >> 1 ) ^ ( - ( deltaCode & 1 ) ) ) +
-  						attribsOutFixed[ stride * i0 + j ] +
-  						attribsOutFixed[ stride * i1 + j ] -
-  						attribsOutFixed[ stride * i2 + j ];
-
-  					lastAttrib[ j ] = prediction;
-
-  					attribsOutFixed[ stride * highest + j ] = prediction;
-  					attribsOut[ stride * highest + j ] = decodeScales[ j ] * ( prediction + decodeOffsets[ j ] );
-
-  				}
-
-  				highest ++;
-
-  			} else {
-
-  				this$1.copyAttrib( stride, attribsOutFixed, lastAttrib, index );
-
-  			}
-
-  			this$1.accumulateNormal( i0, i1, index, attribsOutFixed, crosses );
-
-  		} else {
-
-  			// Simple
-
-  			var index0 = highest - ( code - max_backref );
-
-  			indicesOut[ outputStart ++ ] = index0;
-
-  			if ( code === max_backref ) {
-
-  				this$1.decodeAttrib2( str, stride, decodeOffsets, decodeScales, deltaStart,
-  					numVerts, attribsOut, attribsOutFixed, lastAttrib, highest ++ );
-
-  			} else {
-
-  				this$1.copyAttrib( stride, attribsOutFixed, lastAttrib, index0 );
-
-  			}
-
-  			code = str.charCodeAt( codeStart ++ );
-
-  			var index1 = highest - code;
-  			indicesOut[ outputStart ++ ] = index1;
-
-  			if ( code === 0 ) {
-
-  				this$1.decodeAttrib2( str, stride, decodeOffsets, decodeScales, deltaStart,
-  					numVerts, attribsOut, attribsOutFixed, lastAttrib, highest ++ );
-
-  			} else {
-
-  				this$1.copyAttrib( stride, attribsOutFixed, lastAttrib, index1 );
-
-  			}
-
-  			code = str.charCodeAt( codeStart ++ );
-
-  			var index2 = highest - code;
-  			indicesOut[ outputStart ++ ] = index2;
-
-  			if ( code === 0 ) {
-
-  				for ( var j = 0; j < 5; j ++ ) {
-
-  					lastAttrib[ j ] = ( attribsOutFixed[ stride * index0 + j ] + attribsOutFixed[ stride * index1 + j ] ) / 2;
-
-  				}
-
-  				this$1.decodeAttrib2( str, stride, decodeOffsets, decodeScales, deltaStart,
-  					numVerts, attribsOut, attribsOutFixed, lastAttrib, highest ++ );
-
-  			} else {
-
-  				this$1.copyAttrib( stride, attribsOutFixed, lastAttrib, index2 );
-
-  			}
-
-  			this$1.accumulateNormal( index0, index1, index2, attribsOutFixed, crosses );
-
-  		}
-
-  	}
-
-  	for ( var i = 0; i < numVerts; i ++ ) {
-
-  		var nx = crosses[ 3 * i ];
-  		var ny = crosses[ 3 * i + 1 ];
-  		var nz = crosses[ 3 * i + 2 ];
-
-  		var norm = 511.0 / Math.sqrt( nx * nx + ny * ny + nz * nz );
-
-  		var cx = str.charCodeAt( deltaStart + 5 * numVerts + i );
-  		var cy = str.charCodeAt( deltaStart + 6 * numVerts + i );
-  		var cz = str.charCodeAt( deltaStart + 7 * numVerts + i );
-
-  		attribsOut[ stride * i + 5 ] = norm * nx + ( ( cx >> 1 ) ^ ( - ( cx & 1 ) ) );
-  		attribsOut[ stride * i + 6 ] = norm * ny + ( ( cy >> 1 ) ^ ( - ( cy & 1 ) ) );
-  		attribsOut[ stride * i + 7 ] = norm * nz + ( ( cz >> 1 ) ^ ( - ( cz & 1 ) ) );
-
-  	}
-
-  	callback( name, idx, attribsOut, indicesOut, undefined, meshParams );
-
-  };
-
-  UTF8Loader.prototype.downloadMesh = function ( path, name, meshEntry, decodeParams, callback ) {
-
-  	var loader = this;
-  	var idx = 0;
-
-  	function onprogress( data ) {
-
-  		while ( idx < meshEntry.length ) {
-
-  			var meshParams = meshEntry[ idx ];
-  			var indexRange = meshParams.indexRange;
-
-  			if ( indexRange ) {
-
-  				var meshEnd = indexRange[ 0 ] + 3 * indexRange[ 1 ];
-
-  				if ( data.length < meshEnd ) { break; }
-
-  				loader.decompressMesh( data, meshParams, decodeParams, name, idx, callback );
-
-  			} else {
-
-  				var codeRange = meshParams.codeRange;
-  				var meshEnd = codeRange[ 0 ] + codeRange[ 1 ];
-
-  				if ( data.length < meshEnd ) { break; }
-
-  				loader.decompressMesh2( data, meshParams, decodeParams, name, idx, callback );
-
-  			}
-
-  			++ idx;
-
-  		}
-
-  	}
-
-  	getHttpRequest( path, function ( data ) {
-
-  		onprogress( data );
-
-  		// TODO: handle errors.
-
-  	} );
-
-  };
-
-  UTF8Loader.prototype.downloadMeshes = function ( path, meshUrlMap, decodeParams, callback ) {
-  	var this$1 = this;
-
-
-  	for ( var url in meshUrlMap ) {
-
-  		var meshEntry = meshUrlMap[ url ];
-  		this$1.downloadMesh( path + url, url, meshEntry, decodeParams, callback );
-
-  	}
-
-  };
-
-  UTF8Loader.prototype.createMeshCallback = function ( materialBaseUrl, loadModelInfo, allDoneCallback ) {
-
-  	var nCompletedUrls = 0;
-  	var nExpectedUrls = 0;
-
-  	var expectedMeshesPerUrl = {};
-  	var decodedMeshesPerUrl = {};
-
-  	var modelParts = {};
-
-  	var meshUrlMap = loadModelInfo.urls;
-
-  	for ( var url in meshUrlMap ) {
-
-  		expectedMeshesPerUrl[ url ] = meshUrlMap[ url ].length;
-  		decodedMeshesPerUrl[ url ] = 0;
-
-  		nExpectedUrls ++;
-
-  		modelParts[ url ] = new Object3D();
-
-  	}
-
-  	var model = new Object3D();
-
-  	// Prepare materials first...
-
-  	var materialCreator = new MTLLoader.MaterialCreator( materialBaseUrl, loadModelInfo.options );
-  	materialCreator.setMaterials( loadModelInfo.materials );
-
-  	materialCreator.preload();
-
-  	// Create callback for creating mesh parts
-
-  	var bufferGeometryCreator = new UTF8Loader.BufferGeometryCreator();
-
-  	var meshCallback = function ( name, idx, attribArray, indexArray, bboxen, meshParams ) {
-
-  		// Got ourselves a new mesh
-
-  		// name identifies this part of the model (url)
-  		// idx is the mesh index of this mesh of the part
-  		// attribArray defines the vertices
-  		// indexArray defines the faces
-  		// bboxen defines the bounding box
-  		// meshParams contains the material info
-
-  		var geometry = bufferGeometryCreator.create( attribArray, indexArray );
-  		var material = materialCreator.create( meshParams.material );
-
-  		var mesh = new Mesh( geometry, material );
-  		modelParts[ name ].add( mesh );
-
-  		//model.add(new Mesh(geometry, material));
-
-  		decodedMeshesPerUrl[ name ] ++;
-
-  		if ( decodedMeshesPerUrl[ name ] === expectedMeshesPerUrl[ name ] ) {
-
-  			nCompletedUrls ++;
-
-  			model.add( modelParts[ name ] );
-
-  			if ( nCompletedUrls === nExpectedUrls ) {
-
-  				// ALL DONE!!!
-
-  				allDoneCallback( model );
-
-  			}
-
-  		}
-
-  	};
-
-  	return meshCallback;
-
-  };
-
-  UTF8Loader.prototype.downloadModel = function ( geometryBase, materialBase, model, callback ) {
-
-  	var meshCallback = this.createMeshCallback( materialBase, model, callback );
-  	this.downloadMeshes( geometryBase, model.urls, model.decodeParams, meshCallback );
-
-  };
-
-  UTF8Loader.prototype.downloadModelJson = function ( jsonUrl, callback, options ) {
-
-  	getJsonRequest( jsonUrl, function ( loaded ) {
-
-  		if ( ! loaded.decodeParams ) {
-
-  			if ( options && options.decodeParams ) {
-
-  				loaded.decodeParams = options.decodeParams;
-
-  			} else {
-
-  				loaded.decodeParams = DEFAULT_DECODE_PARAMS;
-
-  			}
-
-  		}
-
-  		loaded.options = options;
-
-  		var geometryBase = jsonUrl.substr( 0, jsonUrl.lastIndexOf( "/" ) + 1 );
-  		var materialBase = geometryBase;
-
-  		if ( options && options.geometryBase ) {
-
-  			geometryBase = options.geometryBase;
-
-  			if ( geometryBase.charAt( geometryBase.length - 1 ) !== "/" ) {
-
-  				geometryBase = geometryBase + "/";
-
-  			}
-
-  		}
-
-  		if ( options && options.materialBase ) {
-
-  			materialBase = options.materialBase;
-
-  			if ( materialBase.charAt( materialBase.length - 1 ) !== "/" ) {
-
-  				materialBase = materialBase + "/";
-
-  			}
-
-  		}
-
-  		this.downloadModel( geometryBase, materialBase, loaded, callback );
-
-  	}.bind( this ) );
-
-  };
-
-  // XMLHttpRequest stuff
-
-  function getHttpRequest( url, onload, opt_onprogress ) {
-
-  	var req = new FileLoader();
-  	req.load( url, onload, opt_onprogress );
-
-  }
-
-  function getJsonRequest( url, onjson ) {
-
-  	getHttpRequest( url, function ( e ) {
-
-  		onjson( JSON.parse( e ) );
-
-  	},
-  	function () {} );
-
-  }
-
   var VRMLLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -79813,7 +79790,7 @@ var Three = (function (exports) {
 
   	recordingFieldname: null,
 
-  	crossOrigin: 'Anonymous',
+  	crossOrigin: 'anonymous',
 
   	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -79831,6 +79808,7 @@ var Three = (function (exports) {
   	setCrossOrigin: function ( value ) {
 
   		this.crossOrigin = value;
+  		return this;
 
   	},
 
@@ -80900,7 +80878,7 @@ var Three = (function (exports) {
 
   		constructor: VRMLoader,
 
-  		crossOrigin: 'Anonymous',
+  		crossOrigin: 'anonymous',
 
   		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -80955,7 +80933,7 @@ var Three = (function (exports) {
 
   var VTKLoader = function ( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   };
 
@@ -81194,76 +81172,50 @@ var Three = (function (exports) {
 
   			}
 
-  			var geometry;
-  			var stagger = 'point';
+  			var geometry = new BufferGeometry();
+  			geometry.setIndex( indices );
+  			geometry.addAttribute( 'position', new Float32BufferAttribute$1( positions, 3 ) );
 
-  			if ( colors.length === indices.length ) {
+  			if ( normals.length === positions.length ) {
 
-  				stagger = 'cell';
+  				geometry.addAttribute( 'normal', new Float32BufferAttribute$1( normals, 3 ) );
 
   			}
 
-  			if ( stagger === 'point' ) {
+  			if ( colors.length !== indices.length ) {
 
-  				// Nodal. Use BufferGeometry
-  				geometry = new BufferGeometry();
-  				geometry.setIndex( new BufferAttribute( new Uint32Array( indices ), 1 ) );
-  				geometry.addAttribute( 'position', new BufferAttribute( new Float32Array( positions ), 3 ) );
+  				// stagger
 
   				if ( colors.length === positions.length ) {
 
-  					geometry.addAttribute( 'color', new BufferAttribute( new Float32Array( colors ), 3 ) );
-
-  				}
-
-  				if ( normals.length === positions.length ) {
-
-  					geometry.addAttribute( 'normal', new BufferAttribute( new Float32Array( normals ), 3 ) );
+  					geometry.addAttribute( 'color', new Float32BufferAttribute$1( colors, 3 ) );
 
   				}
 
   			} else {
 
-  				// Cell centered colors. The only way to attach a solid color to each triangle
-  				// is to use Geometry, which is less efficient than BufferGeometry
-  				geometry = new Geometry();
+  				// cell
 
-  				var numTriangles = indices.length / 3;
-  				var numPoints = positions.length / 3;
-  				var face;
-  				var ia, ib, ic;
-  				var x, y, z;
-  				var r, g, b;
+  				geometry = geometry.toNonIndexed();
+  				var numTriangles = geometry.attributes.position.count / 3;
 
-  				for ( var j = 0; j < numPoints; ++ j ) {
+  				if ( colors.length === ( numTriangles * 3 ) ) {
 
-  					x = positions[ 3 * j + 0 ];
-  					y = positions[ 3 * j + 1 ];
-  					z = positions[ 3 * j + 2 ];
-  					geometry.vertices.push( new Vector3( x, y, z ) );
+  					var newColors = [];
 
-  				}
+  					for ( var i = 0; i < numTriangles; i ++ ) {
 
-  				for ( var i = 0; i < numTriangles; ++ i ) {
+  						var r = colors[ 3 * i + 0 ];
+  						var g = colors[ 3 * i + 1 ];
+  						var b = colors[ 3 * i + 2 ];
 
-  					ia = indices[ 3 * i + 0 ];
-  					ib = indices[ 3 * i + 1 ];
-  					ic = indices[ 3 * i + 2 ];
-  					geometry.faces.push( new Face3( ia, ib, ic ) );
-
-  				}
-
-  				if ( colors.length === numTriangles * 3 ) {
-
-  					for ( var i = 0; i < numTriangles; ++ i ) {
-
-  						face = geometry.faces[ i ];
-  						r = colors[ 3 * i + 0 ];
-  						g = colors[ 3 * i + 1 ];
-  						b = colors[ 3 * i + 2 ];
-  						face.color = new Color().setRGB( r, g, b );
+  						newColors.push( r, g, b );
+  						newColors.push( r, g, b );
+  						newColors.push( r, g, b );
 
   					}
+
+  					geometry.addAttribute( 'color', new Float32BufferAttribute$1( newColors, 3 ) );
 
   				}
 
@@ -83208,9 +83160,9 @@ var Three = (function (exports) {
 
   		// https://gist.github.com/xpansive/1337890#file-index-js
 
-  		h = _Math.euclideanModulo( h, 1 );
-  		s = _Math.clamp( s, 0, 1 );
-  		v = _Math.clamp( v, 0, 1 );
+  		h = _Math$1.euclideanModulo( h, 1 );
+  		s = _Math$1.clamp( s, 0, 1 );
+  		v = _Math$1.clamp( v, 0, 1 );
 
   		return color.setHSL( h, ( s * v ) / ( ( h = ( 2 - s ) * v ) < 1 ? h : ( 2 - h ) ), h * 0.5 );
 
@@ -83319,18 +83271,80 @@ var Three = (function (exports) {
   	raycast: ( function () {
 
   		var intersectPoint = new Vector3();
-  		var worldPosition = new Vector3();
   		var worldScale = new Vector3();
+  		var mvPosition = new Vector3();
+
+  		var alignedPosition = new Vector2();
+  		var rotatedPosition = new Vector2();
+  		var viewWorldMatrix = new Matrix4();
+
+  		var vA = new Vector3();
+  		var vB = new Vector3();
+  		var vC = new Vector3();
+
+  		function transformVertex( vertexPosition, mvPosition, center, scale, sin, cos ) {
+
+  			// compute position in camera space
+  			alignedPosition.subVectors( vertexPosition, center ).addScalar( 0.5 ).multiply( scale );
+
+  			// to check if rotation is not zero
+  			if ( sin !== undefined ) {
+
+  				rotatedPosition.x = ( cos * alignedPosition.x ) - ( sin * alignedPosition.y );
+  				rotatedPosition.y = ( sin * alignedPosition.x ) + ( cos * alignedPosition.y );
+
+  			} else {
+
+  				rotatedPosition.copy( alignedPosition );
+
+  			}
+
+
+  			vertexPosition.copy( mvPosition );
+  			vertexPosition.x += rotatedPosition.x;
+  			vertexPosition.y += rotatedPosition.y;
+
+  			// transform to world space
+  			vertexPosition.applyMatrix4( viewWorldMatrix );
+
+  		}
 
   		return function raycast( raycaster, intersects ) {
 
-  			worldPosition.setFromMatrixPosition( this.matrixWorld );
-  			raycaster.ray.closestPointToPoint( worldPosition, intersectPoint );
-
   			worldScale.setFromMatrixScale( this.matrixWorld );
-  			var guessSizeSq = worldScale.x * worldScale.y / 4;
+  			viewWorldMatrix.getInverse( this.modelViewMatrix ).premultiply( this.matrixWorld );
+  			mvPosition.setFromMatrixPosition( this.modelViewMatrix );
 
-  			if ( worldPosition.distanceToSquared( intersectPoint ) > guessSizeSq ) { return; }
+  			var rotation = this.material.rotation;
+  			var sin, cos;
+  			if ( rotation !== 0 ) {
+
+  				cos = Math.cos( rotation );
+  				sin = Math.sin( rotation );
+
+  			}
+
+  			var center = this.center;
+
+  			transformVertex( vA.set( - 0.5, - 0.5, 0 ), mvPosition, center, worldScale, sin, cos );
+  			transformVertex( vB.set( 0.5, - 0.5, 0 ), mvPosition, center, worldScale, sin, cos );
+  			transformVertex( vC.set( 0.5, 0.5, 0 ), mvPosition, center, worldScale, sin, cos );
+
+  			// check first triangle
+  			var intersect = raycaster.ray.intersectTriangle( vA, vB, vC, false, intersectPoint );
+
+  			if ( intersect === null ) {
+
+  				// check second triangle
+  				transformVertex( vB.set( - 0.5, 0.5, 0 ), mvPosition, center, worldScale, sin, cos );
+  				intersect = raycaster.ray.intersectTriangle( vA, vC, vB, false, intersectPoint );
+  				if ( intersect === null ) {
+
+  					return;
+
+  				}
+
+  			}
 
   			var distance = raycaster.ray.origin.distanceTo( intersectPoint );
 
@@ -84136,9 +84150,9 @@ var Three = (function (exports) {
   	// prepare default animation
   	// (all frames played together in 1 second)
 
-  	var numFrames = this.geometry.morphTargets.length;
+  	var numFrames = Object.keys( this.morphTargetDictionary ).length;
 
-  	var name = "__default";
+  	var name = '__default';
 
   	var startFrame = 0;
   	var endFrame = numFrames - 1;
@@ -84185,7 +84199,7 @@ var Three = (function (exports) {
 
   	},
 
-  		autoCreateAnimations: function ( fps ) {
+  	autoCreateAnimations: function ( fps ) {
   		var this$1 = this;
 
 
@@ -84193,12 +84207,11 @@ var Three = (function (exports) {
 
   		var firstAnimation, frameRanges = {};
 
-  		var geometry = this.geometry;
+  		var i = 0;
 
-  		for ( var i = 0, il = geometry.morphTargets.length; i < il; i ++ ) {
+  		for ( var key in this$1.morphTargetDictionary ) {
 
-  			var morph = geometry.morphTargets[ i ];
-  			var chunks = morph.name.match( pattern );
+  			var chunks = key.match( pattern );
 
   			if ( chunks && chunks.length > 1 ) {
 
@@ -84214,6 +84227,8 @@ var Three = (function (exports) {
   				if ( ! firstAnimation ) { firstAnimation = name; }
 
   			}
+
+  			i ++;
 
   		}
 
@@ -84409,7 +84424,7 @@ var Three = (function (exports) {
 
   			}
 
-  			var keyframe = animation.start + _Math.clamp( Math.floor( animation.time / frameTime ), 0, animation.length - 1 );
+  			var keyframe = animation.start + _Math$1.clamp( Math.floor( animation.time / frameTime ), 0, animation.length - 1 );
   			var weight = animation.weight;
 
   			if ( keyframe !== animation.currentFrame ) {
@@ -84900,8 +84915,8 @@ var Three = (function (exports) {
 
   		this.maxReverseSpeed = - this.maxSpeed;
 
-  		if ( controls.moveForward )  { this.speed = _Math.clamp( this.speed + delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed ); }
-  		if ( controls.moveBackward ) { this.speed = _Math.clamp( this.speed - delta * this.backAcceleration, this.maxReverseSpeed, this.maxSpeed ); }
+  		if ( controls.moveForward )  { this.speed = _Math$1.clamp( this.speed + delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed ); }
+  		if ( controls.moveBackward ) { this.speed = _Math$1.clamp( this.speed - delta * this.backAcceleration, this.maxReverseSpeed, this.maxSpeed ); }
 
   		// orientation based on controls
   		// (don't just stand while turning)
@@ -84911,14 +84926,14 @@ var Three = (function (exports) {
   		if ( controls.moveLeft ) {
 
   			this.bodyOrientation += delta * this.angularSpeed;
-  			this.speed = _Math.clamp( this.speed + dir * delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
+  			this.speed = _Math$1.clamp( this.speed + dir * delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
 
   		}
 
   		if ( controls.moveRight ) {
 
   			this.bodyOrientation -= delta * this.angularSpeed;
-  			this.speed = _Math.clamp( this.speed + dir * delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
+  			this.speed = _Math$1.clamp( this.speed + dir * delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
 
   		}
 
@@ -84929,12 +84944,12 @@ var Three = (function (exports) {
   			if ( this.speed > 0 ) {
 
   				var k = exponentialEaseOut( this.speed / this.maxSpeed );
-  				this.speed = _Math.clamp( this.speed - k * delta * this.frontDecceleration, 0, this.maxSpeed );
+  				this.speed = _Math$1.clamp( this.speed - k * delta * this.frontDecceleration, 0, this.maxSpeed );
 
   			} else {
 
   				var k = exponentialEaseOut( this.speed / this.maxReverseSpeed );
-  				this.speed = _Math.clamp( this.speed + k * delta * this.backAcceleration, this.maxReverseSpeed, 0 );
+  				this.speed = _Math$1.clamp( this.speed + k * delta * this.backAcceleration, this.maxReverseSpeed, 0 );
 
   			}
 
@@ -85749,24 +85764,22 @@ var Three = (function (exports) {
 
   };
 
-  var SimplifyModifier = function() {
+  var SimplifyModifier = function () {};
 
-  };
-
-  (function() {
+  ( function () {
 
   	var cb = new Vector3(), ab = new Vector3();
 
   	function pushIfUnique( array, object ) {
 
-  		if ( array.indexOf( object ) === -1 ) { array.push( object ); }
+  		if ( array.indexOf( object ) === - 1 ) { array.push( object ); }
 
   	}
 
   	function removeFromArray( array, object ) {
 
   		var k = array.indexOf( object );
-  		if ( k > -1 ) { array.splice( k, 1 ); }
+  		if ( k > - 1 ) { array.splice( k, 1 ); }
 
   	}
 
@@ -85779,14 +85792,14 @@ var Three = (function (exports) {
   		var curvature = 0;
 
   		var sideFaces = [];
-  		var i, uFaces = u.faces, il = u.faces.length, face, sideFace;
+  		var i, il = u.faces.length, face, sideFace;
 
   		// find the "sides" triangles that are on the edge uv
-  		for ( i = 0 ; i < il; i ++ ) {
+  		for ( i = 0; i < il; i ++ ) {
 
   			face = u.faces[ i ];
 
-  			if ( face.hasVertex(v) ) {
+  			if ( face.hasVertex( v ) ) {
 
   				sideFaces.push( face );
 
@@ -85796,20 +85809,22 @@ var Three = (function (exports) {
 
   		// use the triangle facing most away from the sides
   		// to determine our curvature term
-  		for ( i = 0 ; i < il; i ++ ) {
+  		for ( i = 0; i < il; i ++ ) {
 
   			var minCurvature = 1;
   			face = u.faces[ i ];
 
-  			for( var j = 0; j < sideFaces.length; j ++ ) {
+  			for ( var j = 0; j < sideFaces.length; j ++ ) {
 
   				sideFace = sideFaces[ j ];
   				// use dot product of face normals.
   				var dotProd = face.normal.dot( sideFace.normal );
-  				minCurvature = Math.min( minCurvature, ( 1.001 - dotProd ) / 2);
+  				minCurvature = Math.min( minCurvature, ( 1.001 - dotProd ) / 2 );
+
   			}
 
   			curvature = Math.max( curvature, minCurvature );
+
   		}
 
   		// crude approach in attempt to preserve borders
@@ -85820,6 +85835,7 @@ var Three = (function (exports) {
   			// we add some arbitrary cost for borders,
   			// borders += 10;
   			curvature = 1;
+
   		}
 
   		var amt = edgelength * curvature + borders;
@@ -85829,6 +85845,7 @@ var Three = (function (exports) {
   	}
 
   	function computeEdgeCostAtVertex( v ) {
+
   		// compute the edge collapse cost for all edges that start
   		// from vertex v.  Since we are only interested in reducing
   		// the object by selecting the min cost edge at each step, we
@@ -85854,12 +85871,14 @@ var Three = (function (exports) {
 
   			var collapseCost = computeEdgeCollapseCost( v, v.neighbors[ i ] );
 
-  			if ( !v.collapseNeighbor ) {
+  			if ( ! v.collapseNeighbor ) {
+
   				v.collapseNeighbor = v.neighbors[ i ];
   				v.collapseCost = collapseCost;
   				v.minCost = collapseCost;
   				v.totalCost = 0;
   				v.costCount = 0;
+
   			}
 
   			v.costCount ++;
@@ -85907,13 +85926,16 @@ var Three = (function (exports) {
   		var vs = [ this.v1, this.v2, this.v3 ];
   		var v1, v2;
 
-  		for( var i = 0 ; i < 3 ; i ++ ) {
-  			v1 = vs[ i ];
-  			v2 = vs[( i+1) % 3 ];
+  		for ( var i = 0; i < 3; i ++ ) {
 
-  			if( !v1 || !v2 ) { continue; }
+  			v1 = vs[ i ];
+  			v2 = vs[ ( i + 1 ) % 3 ];
+
+  			if ( ! v1 || ! v2 ) { continue; }
+
   			v1.removeIfNonNeighbor( v2 );
   			v2.removeIfNonNeighbor( v1 );
+
   		}
 
   	}
@@ -85922,7 +85944,7 @@ var Three = (function (exports) {
 
   		// Collapse the edge uv by moving vertex u onto v
 
-  		if ( !v ) {
+  		if ( ! v ) {
 
   			// u is a vertex all by itself so just delete it..
   			removeVertex( u, vertices );
@@ -85933,7 +85955,7 @@ var Three = (function (exports) {
   		var i;
   		var tmpVertices = [];
 
-  		for( i = 0 ; i < u.neighbors.length; i ++ ) {
+  		for ( i = 0; i < u.neighbors.length; i ++ ) {
 
   			tmpVertices.push( u.neighbors[ i ] );
 
@@ -85941,7 +85963,7 @@ var Three = (function (exports) {
 
 
   		// delete triangles on edge uv:
-  		for( i = u.faces.length - 1; i >= 0; i -- ) {
+  		for ( i = u.faces.length - 1; i >= 0; i -- ) {
 
   			if ( u.faces[ i ].hasVertex( v ) ) {
 
@@ -85952,9 +85974,9 @@ var Three = (function (exports) {
   		}
 
   		// update remaining triangles to have v instead of u
-  		for( i = u.faces.length -1 ; i >= 0; i -- ) {
+  		for ( i = u.faces.length - 1; i >= 0; i -- ) {
 
-  			u.faces[i].replaceVertex( u, v );
+  			u.faces[ i ].replaceVertex( u, v );
 
   		}
 
@@ -85962,7 +85984,7 @@ var Three = (function (exports) {
   		removeVertex( u, vertices );
 
   		// recompute the edge collapse costs in neighborhood
-  		for( i = 0; i < tmpVertices.length; i ++ ) {
+  		for ( i = 0; i < tmpVertices.length; i ++ ) {
 
   			computeEdgeCostAtVertex( tmpVertices[ i ] );
 
@@ -85978,13 +86000,14 @@ var Three = (function (exports) {
 
   		var least = vertices[ 0 ];
 
-  		for (var i = 0; i < vertices.length; i ++ ) {
+  		for ( var i = 0; i < vertices.length; i ++ ) {
 
   			if ( vertices[ i ].collapseCost < least.collapseCost ) {
 
   				least = vertices[ i ];
 
   			}
+
   		}
 
   		return least;
@@ -85994,6 +86017,7 @@ var Three = (function (exports) {
   	// we use a triangle class to represent structure of face slightly differently
 
   	function Triangle( v1, v2, v3, a, b, c ) {
+
   		this.a = a;
   		this.b = b;
   		this.c = c;
@@ -86021,7 +86045,7 @@ var Three = (function (exports) {
 
   	}
 
-  	Triangle.prototype.computeNormal = function() {
+  	Triangle.prototype.computeNormal = function () {
 
   		var vA = this.v1.position;
   		var vB = this.v2.position;
@@ -86035,13 +86059,13 @@ var Three = (function (exports) {
 
   	};
 
-  	Triangle.prototype.hasVertex = function( v ) {
+  	Triangle.prototype.hasVertex = function ( v ) {
 
   		return v === this.v1 || v === this.v2 || v === this.v3;
 
   	};
 
-  	Triangle.prototype.replaceVertex = function( oldv, newv ) {
+  	Triangle.prototype.replaceVertex = function ( oldv, newv ) {
 
   		if ( oldv === this.v1 ) { this.v1 = newv; }
   		else if ( oldv === this.v2 ) { this.v2 = newv; }
@@ -86088,17 +86112,19 @@ var Three = (function (exports) {
 
   	}
 
-  	Vertex.prototype.addUniqueNeighbor = function( vertex ) {
-  		pushIfUnique(this.neighbors, vertex);
+  	Vertex.prototype.addUniqueNeighbor = function ( vertex ) {
+
+  		pushIfUnique( this.neighbors, vertex );
+
   	};
 
-  	Vertex.prototype.removeIfNonNeighbor = function( n ) {
+  	Vertex.prototype.removeIfNonNeighbor = function ( n ) {
 
   		var neighbors = this.neighbors;
   		var faces = this.faces;
 
   		var offset = neighbors.indexOf( n );
-  		if ( offset === -1 ) { return; }
+  		if ( offset === - 1 ) { return; }
   		for ( var i = 0; i < faces.length; i ++ ) {
 
   			if ( faces[ i ].hasVertex( n ) ) { return; }
@@ -86106,13 +86132,15 @@ var Three = (function (exports) {
   		}
 
   		neighbors.splice( offset, 1 );
+
   	};
 
-  	SimplifyModifier.prototype.modify = function( geometry, count ) {
+  	SimplifyModifier.prototype.modify = function ( geometry, count ) {
 
-  		if ( geometry instanceof BufferGeometry && !geometry.vertices && !geometry.faces ) {
-  			console.log('converting BufferGeometry to Geometry');
+  		if ( geometry.isBufferGeometry ) {
+
   			geometry = new Geometry().fromBufferGeometry( geometry );
+
   		}
 
   		geometry.mergeVertices();
@@ -86120,34 +86148,42 @@ var Three = (function (exports) {
   		var oldVertices = geometry.vertices; // Three Position
   		var oldFaces = geometry.faces; // Three Face
 
-  		var newGeometry = new Geometry();
-
   		// conversion
-  		var vertices = new Array( oldVertices.length ); // Simplify Custom Vertex Struct
-  		var faces = new Array( oldFaces.length ); // Simplify Custom Traignle Struct
+  		var vertices = [];
+  		var faces = [];
 
-  		var i, il, face;
+  		var i, il;
 
   		//
   		// put data of original geometry in different data structures
   		//
 
   		// add vertices
+
   		for ( i = 0, il = oldVertices.length; i < il; i ++ ) {
 
-  			vertices[ i ] = new Vertex( oldVertices[ i ], i );
+  			var vertex = new Vertex( oldVertices[ i ], i );
+  			vertices.push( vertex );
 
   		}
 
   		// add faces
+
   		for ( i = 0, il = oldFaces.length; i < il; i ++ ) {
 
-  			face = oldFaces[ i ];
-  			faces[ i ] = new Triangle( vertices[ face.a ], vertices[ face.b ], vertices[ face.c ], face.a, face.b, face.c );
+  			var face = oldFaces[ i ];
+
+  			var a = face.a;
+  			var b = face.b;
+  			var c = face.c;
+
+  			var triangle = new Triangle( vertices[ a ], vertices[ b ], vertices[ c ], a, b, c );
+  			faces.push( triangle );
 
   		}
 
   		// compute all edge collapse costs
+
   		for ( i = 0, il = vertices.length; i < il; i ++ ) {
 
   			computeEdgeCostAtVertex( vertices[ i ] );
@@ -86158,45 +86194,60 @@ var Three = (function (exports) {
 
   		var z = count;
 
-  		// console.time('z')
-  		// console.profile('zz');
+  		while ( z -- ) {
 
-  		while( z-- ) {
   			nextVertex = minimumCostEdge( vertices );
-  			if (!nextVertex) {
-  				console.log('no next vertex');
+
+  			if ( ! nextVertex ) {
+
+  				console.log( 'SimplifyModifier: No next vertex' );
   				break;
+
   			}
+
   			collapse( vertices, faces, nextVertex, nextVertex.collapseNeighbor );
+
   		}
 
-  		// console.profileEnd('zz');
-  		// console.timeEnd('z')
+  		//
 
-  		// TODO convert to buffer geometry.
-  		var newGeo = new Geometry();
+  		var simplifiedGeometry = new BufferGeometry();
+  		var position = [];
+  		var index = [];
+
+  		//
 
   		for ( i = 0; i < vertices.length; i ++ ) {
 
-  			var v = vertices[ i ];
-  			newGeo.vertices.push( v.position );
+  			var vertex = vertices[ i ].position;
+  			position.push( vertex.x, vertex.y, vertex.z );
 
   		}
+
+  		//
 
   		for ( i = 0; i < faces.length; i ++ ) {
 
-  			var tri = faces[ i ];
-  			newGeo.faces.push( new Face3(
-  				vertices.indexOf(tri.v1),
-  				vertices.indexOf(tri.v2),
-  				vertices.indexOf(tri.v3)
-  			) );
+  			var face = faces[ i ];
+
+  			var a = vertices.indexOf( face.v1 );
+  			var b = vertices.indexOf( face.v2 );
+  			var c = vertices.indexOf( face.v3 );
+
+  			index.push( a, b, c );
 
   		}
 
-  		return newGeo;
+  		//
+
+  		simplifiedGeometry.addAttribute( 'position', new Float32BufferAttribute$1( position, 3 ) );
+  		simplifiedGeometry.setIndex( index );
+
+  		return simplifiedGeometry;
+
   	};
-  })();
+
+  } )();
 
   var SubdivisionModifier = function ( subdivisions ) {
 
@@ -86222,7 +86273,7 @@ var Three = (function (exports) {
 
   };
 
-  ( function() {
+  ( function () {
   	var ABC = [ 'a', 'b', 'c' ];
 
 
@@ -86301,9 +86352,9 @@ var Three = (function (exports) {
 
   	}
 
-  	function newFace( newFaces, a, b, c ) {
+  	function newFace( newFaces, a, b, c, materialIndex ) {
 
-  		newFaces.push( new Face3( a, b, c ) );
+  		newFaces.push( new Face3( a, b, c, undefined, undefined, materialIndex ) );
 
   	}
 
@@ -86492,10 +86543,10 @@ var Three = (function (exports) {
 
   			// create 4 faces.
 
-  			newFace( newFaces, edge1, edge2, edge3 );
-  			newFace( newFaces, face.a, edge1, edge3 );
-  			newFace( newFaces, face.b, edge2, edge1 );
-  			newFace( newFaces, face.c, edge3, edge2 );
+  			newFace( newFaces, edge1, edge2, edge3, face.materialIndex );
+  			newFace( newFaces, face.a, edge1, edge3, face.materialIndex );
+  			newFace( newFaces, face.b, edge2, edge1, face.materialIndex );
+  			newFace( newFaces, face.c, edge3, edge2, face.materialIndex );
 
   			// create 4 new uv's
 
@@ -87247,9 +87298,10 @@ var Three = (function (exports) {
 
   };
 
-  var NodeBuilder = function ( material ) {
+  var NodeBuilder = function ( material, renderer ) {
 
   	this.material = material;
+  	this.renderer = renderer;
 
   	this.caches = [];
   	this.slots = [];
@@ -87536,6 +87588,8 @@ var Three = (function (exports) {
 
   	ShaderMaterial.call( this );
 
+  	this.defines.UUID = this.uuid;
+
   	this.vertex = vertex || new RawNode( new PositionNode( PositionNode.PROJECTION ) );
   	this.fragment = fragment || new RawNode( new ColorNode( 0xFF0000 ) );
 
@@ -87610,13 +87664,30 @@ var Three = (function (exports) {
 
   };
 
-  NodeMaterial.prototype.build = function () {
+  NodeMaterial.prototype.onBeforeCompile = function ( shader, renderer ) {
+
+  	if ( this.needsUpdate ) {
+
+  		this.build( { dispose: false, renderer: renderer } );
+
+  		shader.uniforms = this.uniforms;
+  		shader.vertexShader = this.vertexShader;
+  		shader.fragmentShader = this.fragmentShader;
+
+  	}
+
+  };
+
+  NodeMaterial.prototype.build = function ( params ) {
+
+  	params = params || {};
+  	params.dispose = params.dispose !== undefined ? params.dispose : true;
 
   	var vertex, fragment;
 
   	this.nodes = [];
 
-  	this.defines = {};
+  	this.defines = { UUID: this.uuid };
   	this.uniforms = {};
   	this.attributes = {};
 
@@ -87677,7 +87748,7 @@ var Three = (function (exports) {
 
   	].join( "\n" );
 
-  	var builder = new NodeBuilder( this );
+  	var builder = new NodeBuilder( this, params.renderer );
 
   	vertex = this.vertex.build( builder.setShader( 'vertex' ), 'v4' );
   	fragment = this.fragment.build( builder.setShader( 'fragment' ), 'v4' );
@@ -87785,8 +87856,13 @@ var Three = (function (exports) {
   		'}'
   	].join( "\n" );
 
-  	this.needsUpdate = true;
-  	this.dispose(); // force update
+  	if ( params.dispose ) {
+
+  		// force update
+
+  		this.dispose();
+
+  	}
 
   	return this;
 
@@ -87822,7 +87898,7 @@ var Three = (function (exports) {
 
   	var uniform = new NodeUniform( {
   		type: type,
-  		name: ns ? ns : 'nVu' + index,
+  		name: ns ? ns : 'nVu' + index + '_' + _Math.generateUUID().substr(0, 8),
   		node: node,
   		needsUpdate: needsUpdate
   	} );
@@ -90244,7 +90320,7 @@ var Three = (function (exports) {
   	ShaderPass.call( this );
 
   	this.name = "";
-  	this.uuid = _Math.generateUUID();
+  	this.uuid = _Math$1.generateUUID();
 
   	this.userData = {};
 
@@ -90255,7 +90331,7 @@ var Three = (function (exports) {
   	this.node = new NodeMaterial();
   	this.node.fragment = this.fragment;
 
-  	this.build();
+  	this.needsUpdate = true;
 
   };
 
@@ -90264,12 +90340,20 @@ var Three = (function (exports) {
 
   NodeMaterial.addShortcuts( NodePass.prototype, 'fragment', [ 'value' ] );
 
-  NodePass.prototype.build = function () {
+  NodePass.prototype.render = function () {
 
-  	this.node.build();
+  	if ( this.needsUpdate ) {
+
+  		this.node.dispose();
+
+  		this.needsUpdate = false;
+
+  	}
 
   	this.uniforms = this.node.uniforms;
   	this.material = this.node;
+
+  	ShaderPass.prototype.render.apply( this, arguments );
 
   };
 
@@ -91855,7 +91939,7 @@ var Three = (function (exports) {
 
   	var renderTarget = new WebGLRenderTarget( textureWidth, textureHeight, parameters );
 
-  	if ( ! _Math.isPowerOfTwo( textureWidth ) || ! _Math.isPowerOfTwo( textureHeight ) ) {
+  	if ( ! _Math$1.isPowerOfTwo( textureWidth ) || ! _Math$1.isPowerOfTwo( textureHeight ) ) {
 
   		renderTarget.texture.generateMipmaps = false;
 
@@ -92118,7 +92202,7 @@ var Three = (function (exports) {
 
   	var renderTarget = new WebGLRenderTarget( textureWidth, textureHeight, parameters );
 
-  	if ( ! _Math.isPowerOfTwo( textureWidth ) || ! _Math.isPowerOfTwo( textureHeight ) ) {
+  	if ( ! _Math$1.isPowerOfTwo( textureWidth ) || ! _Math$1.isPowerOfTwo( textureHeight ) ) {
 
   		renderTarget.texture.generateMipmaps = false;
 
@@ -92729,7 +92813,7 @@ var Three = (function (exports) {
 
   	var renderTarget = new WebGLRenderTarget( textureWidth, textureHeight, parameters );
 
-  	if ( ! _Math.isPowerOfTwo( textureWidth ) || ! _Math.isPowerOfTwo( textureHeight ) ) {
+  	if ( ! _Math$1.isPowerOfTwo( textureWidth ) || ! _Math$1.isPowerOfTwo( textureHeight ) ) {
 
   		renderTarget.texture.generateMipmaps = false;
 
@@ -94003,7 +94087,7 @@ var Three = (function (exports) {
 
   			if ( ! object.uuid ) {
 
-  				object.uuid = _Math.generateUUID();
+  				object.uuid = _Math$1.generateUUID();
 
   			}
 
@@ -97991,22 +98075,22 @@ var Three = (function (exports) {
   		if ( this.curF % this.randX == 0 || this.goWild == true ) {
 
   			this.uniforms[ 'amount' ].value = Math.random() / 30;
-  			this.uniforms[ 'angle' ].value = _Math.randFloat( - Math.PI, Math.PI );
-  			this.uniforms[ 'seed_x' ].value = _Math.randFloat( - 1, 1 );
-  			this.uniforms[ 'seed_y' ].value = _Math.randFloat( - 1, 1 );
-  			this.uniforms[ 'distortion_x' ].value = _Math.randFloat( 0, 1 );
-  			this.uniforms[ 'distortion_y' ].value = _Math.randFloat( 0, 1 );
+  			this.uniforms[ 'angle' ].value = _Math$1.randFloat( - Math.PI, Math.PI );
+  			this.uniforms[ 'seed_x' ].value = _Math$1.randFloat( - 1, 1 );
+  			this.uniforms[ 'seed_y' ].value = _Math$1.randFloat( - 1, 1 );
+  			this.uniforms[ 'distortion_x' ].value = _Math$1.randFloat( 0, 1 );
+  			this.uniforms[ 'distortion_y' ].value = _Math$1.randFloat( 0, 1 );
   			this.curF = 0;
   			this.generateTrigger();
 
   		} else if ( this.curF % this.randX < this.randX / 5 ) {
 
   			this.uniforms[ 'amount' ].value = Math.random() / 90;
-  			this.uniforms[ 'angle' ].value = _Math.randFloat( - Math.PI, Math.PI );
-  			this.uniforms[ 'distortion_x' ].value = _Math.randFloat( 0, 1 );
-  			this.uniforms[ 'distortion_y' ].value = _Math.randFloat( 0, 1 );
-  			this.uniforms[ 'seed_x' ].value = _Math.randFloat( - 0.3, 0.3 );
-  			this.uniforms[ 'seed_y' ].value = _Math.randFloat( - 0.3, 0.3 );
+  			this.uniforms[ 'angle' ].value = _Math$1.randFloat( - Math.PI, Math.PI );
+  			this.uniforms[ 'distortion_x' ].value = _Math$1.randFloat( 0, 1 );
+  			this.uniforms[ 'distortion_y' ].value = _Math$1.randFloat( 0, 1 );
+  			this.uniforms[ 'seed_x' ].value = _Math$1.randFloat( - 0.3, 0.3 );
+  			this.uniforms[ 'seed_y' ].value = _Math$1.randFloat( - 0.3, 0.3 );
 
   		} else if ( this.goWild == false ) {
 
@@ -98031,7 +98115,7 @@ var Three = (function (exports) {
 
   	generateTrigger: function() {
 
-  		this.randX = _Math.randInt( 120, 240 );
+  		this.randX = _Math$1.randInt( 120, 240 );
 
   	},
 
@@ -98042,7 +98126,7 @@ var Three = (function (exports) {
 
   		for ( var i = 0; i < length; i ++ ) {
 
-  			var val = _Math.randFloat( 0, 1 );
+  			var val = _Math$1.randFloat( 0, 1 );
   			data_arr[ i * 3 + 0 ] = val;
   			data_arr[ i * 3 + 1 ] = val;
   			data_arr[ i * 3 + 2 ] = val;
@@ -105926,7 +106010,7 @@ var Three = (function (exports) {
   		}
 
   		var size = image.width > image.height ? image.width : image.height;
-  		size = _Math.ceilPowerOfTwo( size );
+  		size = _Math$1.ceilPowerOfTwo( size );
 
   		if ( canvas.width != size || canvas.height != size ) {
 
@@ -108526,7 +108610,7 @@ var Three = (function (exports) {
   	extensions = extensions || {};
 
   	var chunks = [
-  		( extensions.derivatives || parameters.envMapCubeUV || parameters.bumpMap || parameters.normalMap || parameters.flatShading ) ? '#extension GL_OES_standard_derivatives : enable' : '',
+  		( extensions.derivatives || parameters.envMapCubeUV || parameters.bumpMap || ( parameters.normalMap && ! parameters.objectSpaceNormalMap ) || parameters.flatShading ) ? '#extension GL_OES_standard_derivatives : enable' : '',
   		( extensions.fragDepth || parameters.logarithmicDepthBuffer ) && rendererExtensions.get( 'EXT_frag_depth' ) ? '#extension GL_EXT_frag_depth : enable' : '',
   		( extensions.drawBuffers ) && rendererExtensions.get( 'WEBGL_draw_buffers' ) ? '#extension GL_EXT_draw_buffers : require' : '',
   		( extensions.shaderTextureLOD || parameters.envMap ) && rendererExtensions.get( 'EXT_shader_texture_lod' ) ? '#extension GL_EXT_shader_texture_lod : enable' : ''
@@ -108791,6 +108875,7 @@ var Three = (function (exports) {
   			parameters.emissiveMap ? '#define USE_EMISSIVEMAP' : '',
   			parameters.bumpMap ? '#define USE_BUMPMAP' : '',
   			parameters.normalMap ? '#define USE_NORMALMAP' : '',
+  			( parameters.normalMap && parameters.objectSpaceNormalMap ) ? '#define OBJECTSPACE_NORMALMAP' : '',
   			parameters.displacementMap && parameters.supportsVertexTextures ? '#define USE_DISPLACEMENTMAP' : '',
   			parameters.specularMap ? '#define USE_SPECULARMAP' : '',
   			parameters.roughnessMap ? '#define USE_ROUGHNESSMAP' : '',
@@ -108897,6 +108982,7 @@ var Three = (function (exports) {
   			parameters.emissiveMap ? '#define USE_EMISSIVEMAP' : '',
   			parameters.bumpMap ? '#define USE_BUMPMAP' : '',
   			parameters.normalMap ? '#define USE_NORMALMAP' : '',
+  			( parameters.normalMap && parameters.objectSpaceNormalMap ) ? '#define OBJECTSPACE_NORMALMAP' : '',
   			parameters.specularMap ? '#define USE_SPECULARMAP' : '',
   			parameters.roughnessMap ? '#define USE_ROUGHNESSMAP' : '',
   			parameters.metalnessMap ? '#define USE_METALNESSMAP' : '',
@@ -109143,7 +109229,7 @@ var Three = (function (exports) {
 
   	var parameterNames = [
   		"precision", "supportsVertexTextures", "map", "mapEncoding", "envMap", "envMapMode", "envMapEncoding",
-  		"lightMap", "aoMap", "emissiveMap", "emissiveMapEncoding", "bumpMap", "normalMap", "displacementMap", "specularMap",
+  		"lightMap", "aoMap", "emissiveMap", "emissiveMapEncoding", "bumpMap", "normalMap", "objectSpaceNormalMap", "displacementMap", "specularMap",
   		"roughnessMap", "metalnessMap", "gradientMap",
   		"alphaMap", "combine", "vertexColors", "fog", "useFog", "fogExp",
   		"flatShading", "sizeAttenuation", "logarithmicDepthBuffer", "skinning",
@@ -109264,6 +109350,7 @@ var Three = (function (exports) {
   			emissiveMapEncoding: getTextureEncodingFromMap( material.emissiveMap, renderer.gammaInput ),
   			bumpMap: !! material.bumpMap,
   			normalMap: !! material.normalMap,
+  			objectSpaceNormalMap: material.normalMapType === ObjectSpaceNormalMap,
   			displacementMap: !! material.displacementMap,
   			roughnessMap: !! material.roughnessMap,
   			metalnessMap: !! material.metalnessMap,
@@ -109964,9 +110051,9 @@ var Three = (function (exports) {
 
   	}
 
-  	function pushSprite( shadowLight ) {
+  	function pushSprite( sprite ) {
 
-  		spritesArray.push( shadowLight );
+  		spritesArray.push( sprite );
 
   	}
 
@@ -111469,9 +111556,9 @@ var Three = (function (exports) {
 
   		setFlipSided( flipSided );
 
-  		material.transparent === true
-  			? setBlending( material.blending, material.blendEquation, material.blendSrc, material.blendDst, material.blendEquationAlpha, material.blendSrcAlpha, material.blendDstAlpha, material.premultipliedAlpha )
-  			: setBlending( NoBlending );
+  		( material.blending === NormalBlending && material.transparent === false )
+  			? setBlending( NoBlending )
+  			: setBlending( material.blending, material.blendEquation, material.blendSrc, material.blendDst, material.blendEquationAlpha, material.blendSrcAlpha, material.blendDstAlpha, material.premultipliedAlpha );
 
   		depthBuffer.setFunc( material.depthFunc );
   		depthBuffer.setTest( material.depthTest );
@@ -111803,7 +111890,7 @@ var Three = (function (exports) {
 
   	function isPowerOfTwo( image ) {
 
-  		return _Math.isPowerOfTwo( image.width ) && _Math.isPowerOfTwo( image.height );
+  		return _Math$1.isPowerOfTwo( image.width ) && _Math$1.isPowerOfTwo( image.height );
 
   	}
 
@@ -111813,8 +111900,8 @@ var Three = (function (exports) {
 
   			if ( _canvas === undefined ) { _canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' ); }
 
-  			_canvas.width = _Math.floorPowerOfTwo( image.width );
-  			_canvas.height = _Math.floorPowerOfTwo( image.height );
+  			_canvas.width = _Math$1.floorPowerOfTwo( image.width );
+  			_canvas.height = _Math$1.floorPowerOfTwo( image.height );
 
   			var context = _canvas.getContext( '2d' );
   			context.drawImage( image, 0, 0, _canvas.width, _canvas.height );
@@ -112797,6 +112884,7 @@ var Three = (function (exports) {
 
   	var poseTarget = null;
 
+  	var controllers = [];
   	var standingMatrix = new Matrix4();
   	var standingMatrixInverse = new Matrix4();
 
@@ -112860,8 +112948,110 @@ var Three = (function (exports) {
 
   	//
 
+  	var isTriggerPressed = false;
+
+  	function findGamepad( id ) {
+
+  		var gamepads = navigator.getGamepads && navigator.getGamepads();
+
+  		for ( var i = 0, j = 0, l = gamepads.length; i < l; i ++ ) {
+
+  			var gamepad = gamepads[ i ];
+
+  			if ( gamepad && ( gamepad.id === 'Daydream Controller' ||
+  				gamepad.id === 'Gear VR Controller' || gamepad.id === 'Oculus Go Controller' ||
+  				gamepad.id === 'OpenVR Gamepad' || gamepad.id.startsWith( 'Oculus Touch' ) ||
+  				gamepad.id.startsWith( 'Spatial Controller' ) ) ) {
+
+  				if ( j === id ) { return gamepad; }
+
+  				j ++;
+
+  			}
+
+  		}
+
+  	}
+
+  	function updateControllers() {
+
+  		for ( var i = 0; i < controllers.length; i ++ ) {
+
+  			var controller = controllers[ i ];
+
+  			var gamepad = findGamepad( i );
+
+  			if ( gamepad !== undefined && gamepad.pose !== undefined ) {
+
+  				if ( gamepad.pose === null ) { return; }
+
+  				//  Pose
+
+  				var pose = gamepad.pose;
+
+  				if ( pose.hasPosition === false ) { controller.position.set( 0.2, - 0.6, - 0.05 ); }
+
+  				if ( pose.position !== null ) { controller.position.fromArray( pose.position ); }
+  				if ( pose.orientation !== null ) { controller.quaternion.fromArray( pose.orientation ); }
+  				controller.matrix.compose( controller.position, controller.quaternion, controller.scale );
+  				controller.matrix.premultiply( standingMatrix );
+  				controller.matrix.decompose( controller.position, controller.quaternion, controller.scale );
+  				controller.matrixWorldNeedsUpdate = true;
+  				controller.visible = true;
+
+  				//  Trigger
+
+  				var buttonId = gamepad.id === 'Daydream Controller' ? 0 : 1;
+
+  				if ( isTriggerPressed !== gamepad.buttons[ buttonId ].pressed ) {
+
+  					isTriggerPressed = gamepad.buttons[ buttonId ].pressed;
+
+  					if ( isTriggerPressed ) {
+
+  						controller.dispatchEvent( { type: 'selectstart' } );
+
+  					} else {
+
+  						controller.dispatchEvent( { type: 'selectend' } );
+  						controller.dispatchEvent( { type: 'select' } );
+
+  					}
+
+  				}
+
+  			} else {
+
+  				controller.visible = false;
+
+  			}
+
+  		}
+
+  	}
+
+  	//
+
   	this.enabled = false;
   	this.userHeight = 1.6;
+
+  	this.getController = function ( id ) {
+
+  		var controller = controllers[ id ];
+
+  		if ( controller === undefined ) {
+
+  			controller = new Group();
+  			controller.matrixAutoUpdate = false;
+  			controller.visible = false;
+
+  			controllers[ id ] = controller;
+
+  		}
+
+  		return controller;
+
+  	};
 
   	this.getDevice = function () {
 
@@ -112885,7 +113075,12 @@ var Three = (function (exports) {
 
   	this.getCamera = function ( camera ) {
 
-  		if ( device === null ) { return camera; }
+  		if ( device === null ) {
+
+  			camera.position.set( 0, scope.userHeight, 0 );
+  			return camera;
+
+  		}
 
   		device.depthNear = camera.near;
   		device.depthFar = camera.far;
@@ -113001,6 +113196,8 @@ var Three = (function (exports) {
 
   		}
 
+  		updateControllers();
+
   		return cameraVR;
 
   	};
@@ -113052,9 +113249,13 @@ var Three = (function (exports) {
 
   	var pose = null;
 
+  	var controllers = [];
+  	var inputSources = [];
+
   	function isPresenting() {
 
   		return session !== null && frameOfRef !== null;
+
 
   	}
 
@@ -113076,6 +113277,24 @@ var Three = (function (exports) {
 
   	this.enabled = false;
 
+  	this.getController = function ( id ) {
+
+  		var controller = controllers[ id ];
+
+  		if ( controller === undefined ) {
+
+  			controller = new Group();
+  			controller.matrixAutoUpdate = false;
+  			controller.visible = false;
+
+  			controllers[ id ] = controller;
+
+  		}
+
+  		return controller;
+
+  	};
+
   	this.getDevice = function () {
 
   		return device;
@@ -113092,18 +113311,30 @@ var Three = (function (exports) {
 
   	//
 
+  	function onSessionEvent( event ) {
+
+  		var controller = controllers[ inputSources.indexOf( event.inputSource ) ];
+  		if ( controller ) { controller.dispatchEvent( { type: event.type } ); }
+
+  	}
+
+  	function onSessionEnd() {
+
+  		renderer.setFramebuffer( null );
+  		animation.stop();
+
+  	}
+
   	this.setSession = function ( value, options ) {
 
   		session = value;
 
   		if ( session !== null ) {
 
-  			session.addEventListener( 'end', function () {
-
-  				renderer.setFramebuffer( null );
-  				animation.stop();
-
-  			} );
+  			session.addEventListener( 'select', onSessionEvent );
+  			session.addEventListener( 'selectstart', onSessionEvent );
+  			session.addEventListener( 'selectend', onSessionEvent );
+  			session.addEventListener( 'end', onSessionEnd );
 
   			session.baseLayer = new XRWebGLLayer( session, gl );
   			session.requestFrameOfReference( options.frameOfReferenceType ).then( function ( value ) {
@@ -113114,6 +113345,17 @@ var Three = (function (exports) {
 
   				animation.setContext( session );
   				animation.start();
+
+  			} );
+
+  			//
+
+  			inputSources = session.getInputSources();
+
+  			session.addEventListener( 'inputsourceschange', function () {
+
+  				inputSources = session.getInputSources();
+  				console.log( inputSources );
 
   			} );
 
@@ -113184,34 +113426,66 @@ var Three = (function (exports) {
 
   		pose = frame.getDevicePose( frameOfRef );
 
-  		var layer = session.baseLayer;
-  		var views = frame.views;
+  		if ( pose !== null ) {
 
-  		for ( var i = 0; i < views.length; i ++ ) {
+  			var layer = session.baseLayer;
+  			var views = frame.views;
 
-  			var view = views[ i ];
-  			var viewport = layer.getViewport( view );
-  			var viewMatrix = pose.getViewMatrix( view );
+  			for ( var i = 0; i < views.length; i ++ ) {
 
-  			var camera = cameraVR.cameras[ i ];
-  			camera.matrix.fromArray( viewMatrix ).getInverse( camera.matrix );
-  			camera.projectionMatrix.fromArray( view.projectionMatrix );
-  			camera.viewport.set( viewport.x, viewport.y, viewport.width, viewport.height );
+  				var view = views[ i ];
+  				var viewport = layer.getViewport( view );
+  				var viewMatrix = pose.getViewMatrix( view );
 
-  			if ( i === 0 ) {
+  				var camera = cameraVR.cameras[ i ];
+  				camera.matrix.fromArray( viewMatrix ).getInverse( camera.matrix );
+  				camera.projectionMatrix.fromArray( view.projectionMatrix );
+  				camera.viewport.set( viewport.x, viewport.y, viewport.width, viewport.height );
 
-  				cameraVR.matrix.copy( camera.matrix );
+  				if ( i === 0 ) {
 
-  				// HACK (mrdoob)
-  				// https://github.com/w3c/webvr/issues/203
+  					cameraVR.matrix.copy( camera.matrix );
 
-  				cameraVR.projectionMatrix.copy( camera.projectionMatrix );
+  					// HACK (mrdoob)
+  					// https://github.com/w3c/webvr/issues/203
+
+  					cameraVR.projectionMatrix.copy( camera.projectionMatrix );
+
+  				}
 
   			}
 
   		}
 
-  		if ( onAnimationFrameCallback ) { onAnimationFrameCallback(); }
+  		//
+
+  		for ( var i = 0; i < controllers.length; i ++ ) {
+
+  			var controller = controllers[ i ];
+
+  			var inputSource = inputSources[ i ];
+
+  			if ( inputSource ) {
+
+  				var inputPose = frame.getInputPose( inputSource, frameOfRef );
+
+  				if ( inputPose !== null ) {
+
+  					controller.matrix.elements = inputPose.pointerMatrix;
+  					controller.matrix.decompose( controller.position, controller.rotation, controller.scale );
+  					controller.visible = true;
+
+  					continue;
+
+  				}
+
+  			}
+
+  			controller.visible = false;
+
+  		}
+
+  		if ( onAnimationFrameCallback ) { onAnimationFrameCallback( time ); }
 
   	}
 
@@ -113223,6 +113497,8 @@ var Three = (function (exports) {
   		onAnimationFrameCallback = callback;
 
   	};
+
+  	this.dispose = function () {};
 
   	// DEPRECATED
 
@@ -114204,16 +114480,17 @@ var Three = (function (exports) {
 
   	var onAnimationFrameCallback = null;
 
-  	function onAnimationFrame() {
+  	function onAnimationFrame( time ) {
 
   		if ( vr.isPresenting() ) { return; }
-  		if ( onAnimationFrameCallback ) { onAnimationFrameCallback(); }
+  		if ( onAnimationFrameCallback ) { onAnimationFrameCallback( time ); }
 
   	}
 
   	var animation = new WebGLAnimation();
   	animation.setAnimationLoop( onAnimationFrame );
-  	animation.setContext( window );
+
+  	if ( typeof window !== 'undefined' ) { animation.setContext( window ); }
 
   	this.setAnimationLoop = function ( callback ) {
 
@@ -114880,7 +115157,7 @@ var Three = (function (exports) {
 
 
   						var size = Math.sqrt( bones.length * 4 ); // 4 pixels needed for 1 matrix
-  						size = _Math.ceilPowerOfTwo( size );
+  						size = _Math$1.ceilPowerOfTwo( size );
   						size = Math.max( size, 4 );
 
   						var boneMatrices = new Float32Array( size * size * 4 ); // 4 floats per RGBA pixel
@@ -115344,10 +115621,12 @@ var Three = (function (exports) {
 
   	function refreshUniformsPhysical( uniforms, material ) {
 
+  		refreshUniformsStandard( uniforms, material );
+
+  		uniforms.reflectivity.value = material.reflectivity; // also part of uniforms common
+
   		uniforms.clearCoat.value = material.clearCoat;
   		uniforms.clearCoatRoughness.value = material.clearCoatRoughness;
-
-  		refreshUniformsStandard( uniforms, material );
 
   	}
 
@@ -119256,7 +119535,7 @@ var Three = (function (exports) {
 
   	var quaternion = new Quaternion();
   	var prevQuaternion = new Quaternion();
-  	prevQuaternion.setFromAxisAngle( up , Math.PI / 2 );
+  	prevQuaternion.setFromAxisAngle( up, Math.PI / 2 );
 
   	var point = new Vector3();
   	var prevPoint = new Vector3();
@@ -119265,13 +119544,13 @@ var Three = (function (exports) {
   	// shapes
 
   	var step = [
-  		new Vector3( -0.225,  0, 0 ),
-  		new Vector3(  0, -0.050, 0 ),
-  		new Vector3(  0, -0.175, 0 ),
+  		new Vector3( - 0.225, 0, 0 ),
+  		new Vector3( 0, - 0.050, 0 ),
+  		new Vector3( 0, - 0.175, 0 ),
 
-  		new Vector3(  0, -0.050, 0 ),
-  		new Vector3(  0.225,  0, 0 ),
-  		new Vector3(  0, -0.175, 0 )
+  		new Vector3( 0, - 0.050, 0 ),
+  		new Vector3( 0.225, 0, 0 ),
+  		new Vector3( 0, - 0.175, 0 )
   	];
 
   	var PI2 = Math.PI * 2;
@@ -119301,7 +119580,7 @@ var Three = (function (exports) {
 
   	function drawShape( shape, color ) {
 
-  		normal.set( 0, 0, -1 ).applyQuaternion( quaternion );
+  		normal.set( 0, 0, - 1 ).applyQuaternion( quaternion );
 
   		for ( var j = 0; j < shape.length; j ++ ) {
 
@@ -119330,6 +119609,7 @@ var Three = (function (exports) {
   		}
 
   	}
+
   	var vector1 = new Vector3();
   	var vector2 = new Vector3();
   	var vector3 = new Vector3();
@@ -119408,6 +119688,7 @@ var Three = (function (exports) {
   		}
 
   	}
+
   	var offset = new Vector3();
 
   	for ( var i = 1; i <= divisions; i ++ ) {
@@ -119430,9 +119711,9 @@ var Three = (function (exports) {
 
   		}
 
-  		extrudeShape( tube1, offset.set(  0,  -0.125, 0 ), color2 );
-  		extrudeShape( tube2, offset.set(  0.2, 0,     0 ), color1 );
-  		extrudeShape( tube2, offset.set( -0.2, 0,     0 ), color1 );
+  		extrudeShape( tube1, offset.set( 0, - 0.125, 0 ), color2 );
+  		extrudeShape( tube2, offset.set( 0.2, 0, 0 ), color1 );
+  		extrudeShape( tube2, offset.set( - 0.2, 0, 0 ), color1 );
 
   		prevPoint.copy( point );
   		prevQuaternion.copy( quaternion );
@@ -119446,6 +119727,7 @@ var Three = (function (exports) {
   	this.addAttribute( 'color', new BufferAttribute( new Float32Array( colors ), 3 ) );
 
   }
+
   RollerCoasterGeometry.prototype = Object.create( BufferGeometry.prototype );
 
   function RollerCoasterLiftersGeometry( curve, divisions ) {
@@ -119465,21 +119747,21 @@ var Three = (function (exports) {
   	// shapes
 
   	var tube1 = [
-  		new Vector3(  0,  0.05, -0.05 ),
-  		new Vector3(  0,  0.05,  0.05 ),
-  		new Vector3(  0, -0.05,  0 )
+  		new Vector3( 0, 0.05, - 0.05 ),
+  		new Vector3( 0, 0.05, 0.05 ),
+  		new Vector3( 0, - 0.05, 0 )
   	];
 
   	var tube2 = [
-  		new Vector3( -0.05, 0,  0.05 ),
-  		new Vector3( -0.05, 0, -0.05 ),
-  		new Vector3(  0.05, 0,  0 )
+  		new Vector3( - 0.05, 0, 0.05 ),
+  		new Vector3( - 0.05, 0, - 0.05 ),
+  		new Vector3( 0.05, 0, 0 )
   	];
 
   	var tube3 = [
-  		new Vector3(  0.05, 0, -0.05 ),
-  		new Vector3(  0.05, 0,  0.05 ),
-  		new Vector3( -0.05, 0,  0 )
+  		new Vector3( 0.05, 0, - 0.05 ),
+  		new Vector3( 0.05, 0, 0.05 ),
+  		new Vector3( - 0.05, 0, 0 )
   	];
 
   	var vector1 = new Vector3();
@@ -119552,6 +119834,7 @@ var Three = (function (exports) {
   		}
 
   	}
+
   	var fromPoint = new Vector3();
   	var toPoint = new Vector3();
 
@@ -119568,31 +119851,31 @@ var Three = (function (exports) {
 
   		if ( point.y > 10 ) {
 
-  			fromPoint.set( -0.75, -0.35, 0 );
+  			fromPoint.set( - 0.75, - 0.35, 0 );
   			fromPoint.applyQuaternion( quaternion );
   			fromPoint.add( point );
 
-  			toPoint.set( 0.75, -0.35, 0 );
+  			toPoint.set( 0.75, - 0.35, 0 );
   			toPoint.applyQuaternion( quaternion );
   			toPoint.add( point );
 
   			extrudeShape( tube1, fromPoint, toPoint );
 
-  			fromPoint.set( -0.7, -0.3, 0 );
+  			fromPoint.set( - 0.7, - 0.3, 0 );
   			fromPoint.applyQuaternion( quaternion );
   			fromPoint.add( point );
 
-  			toPoint.set( -0.7, -point.y, 0 );
+  			toPoint.set( - 0.7, - point.y, 0 );
   			toPoint.applyQuaternion( quaternion );
   			toPoint.add( point );
 
   			extrudeShape( tube2, fromPoint, toPoint );
 
-  			fromPoint.set( 0.7, -0.3, 0 );
+  			fromPoint.set( 0.7, - 0.3, 0 );
   			fromPoint.applyQuaternion( quaternion );
   			fromPoint.add( point );
 
-  			toPoint.set( 0.7, -point.y, 0 );
+  			toPoint.set( 0.7, - point.y, 0 );
   			toPoint.applyQuaternion( quaternion );
   			toPoint.add( point );
 
@@ -119600,11 +119883,11 @@ var Three = (function (exports) {
 
   		} else {
 
-  			fromPoint.set( 0, -0.2, 0 );
+  			fromPoint.set( 0, - 0.2, 0 );
   			fromPoint.applyQuaternion( quaternion );
   			fromPoint.add( point );
 
-  			toPoint.set( 0, -point.y, 0 );
+  			toPoint.set( 0, - point.y, 0 );
   			toPoint.applyQuaternion( quaternion );
   			toPoint.add( point );
 
@@ -119618,6 +119901,7 @@ var Three = (function (exports) {
   	this.addAttribute( 'normal', new BufferAttribute( new Float32Array( normals ), 3 ) );
 
   }
+
   RollerCoasterLiftersGeometry.prototype = Object.create( BufferGeometry.prototype );
 
   function RollerCoasterShadowGeometry( curve, divisions ) {
@@ -119631,7 +119915,7 @@ var Three = (function (exports) {
 
   	var quaternion = new Quaternion();
   	var prevQuaternion = new Quaternion();
-  	prevQuaternion.setFromAxisAngle( up , Math.PI / 2 );
+  	prevQuaternion.setFromAxisAngle( up, Math.PI / 2 );
 
   	var point = new Vector3();
 
@@ -119655,19 +119939,19 @@ var Three = (function (exports) {
 
   		quaternion.setFromAxisAngle( up, angle );
 
-  		vector1.set( -0.3, 0, 0 );
+  		vector1.set( - 0.3, 0, 0 );
   		vector1.applyQuaternion( quaternion );
   		vector1.add( point );
 
-  		vector2.set(  0.3, 0, 0 );
+  		vector2.set( 0.3, 0, 0 );
   		vector2.applyQuaternion( quaternion );
   		vector2.add( point );
 
-  		vector3.set(  0.3, 0, 0 );
+  		vector3.set( 0.3, 0, 0 );
   		vector3.applyQuaternion( prevQuaternion );
   		vector3.add( prevPoint );
 
-  		vector4.set( -0.3, 0, 0 );
+  		vector4.set( - 0.3, 0, 0 );
   		vector4.applyQuaternion( prevQuaternion );
   		vector4.add( prevPoint );
 
@@ -119687,6 +119971,7 @@ var Three = (function (exports) {
   	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
 
   }
+
   RollerCoasterShadowGeometry.prototype = Object.create( BufferGeometry.prototype );
 
   function SkyGeometry() {
@@ -119717,6 +120002,7 @@ var Three = (function (exports) {
   	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
 
   }
+
   SkyGeometry.prototype = Object.create( BufferGeometry.prototype );
 
   function TreesGeometry( landscape ) {
@@ -119727,7 +120013,7 @@ var Three = (function (exports) {
   	var colors = [];
 
   	var raycaster = new Raycaster();
-  	raycaster.ray.direction.set( 0, -1, 0 );
+  	raycaster.ray.direction.set( 0, - 1, 0 );
 
   	for ( var i = 0; i < 2000; i ++ ) {
 
@@ -119770,6 +120056,7 @@ var Three = (function (exports) {
   	this.addAttribute( 'color', new BufferAttribute( new Float32Array( colors ), 3 ) );
 
   }
+
   TreesGeometry.prototype = Object.create( BufferGeometry.prototype );
 
   var ShaderGodRays = {
@@ -125710,26 +125997,24 @@ var Three = (function (exports) {
 
   ShadowMapViewer.prototype.constructor = ShadowMapViewer;
 
-  var UVsDebug = function( geometry, size ) {
+  var UVsDebug = function ( geometry, size ) {
 
   	// handles wrapping of uv.x > 1 only
-      
+
   	var abc = 'abc';
-
-  	var uv, u;
-  	var i, il, j, jl;
-  	var vnum;
-
   	var a = new Vector2();
   	var b = new Vector2();
 
-  	var geo = ( geometry instanceof BufferGeometry ) ? new Geometry().fromBufferGeometry( geometry ) : geometry;
+  	var uvs = [
+  		new Vector2(),
+  		new Vector2(),
+  		new Vector2()
+  	];
 
-  	var faces = geo.faces;
-  	var uvs = geo.faceVertexUvs[ 0 ];
+  	var face = [];
 
   	var canvas = document.createElement( 'canvas' );
-  	var width = size || 1024;   // power of 2 required for wrapping
+  	var width = size || 1024; // power of 2 required for wrapping
   	var height = size || 1024;
   	canvas.width = width;
   	canvas.height = height;
@@ -125744,30 +126029,97 @@ var Three = (function (exports) {
   	ctx.fillStyle = 'rgba( 255, 255, 255, 1.0 )';
   	ctx.fillRect( 0, 0, width, height );
 
-  	for ( i = 0, il = uvs.length; i < il; i ++ ) {
+  	if ( geometry.isGeometry ) {
 
-  		uv = uvs[ i ];
+  		var faces = geometry.faces;
+  		var uvSet = geometry.faceVertexUvs[ 0 ];
 
-  		// draw lines
+  		for ( var i = 0, il = uvSet.length; i < il; i ++ ) {
+
+  			var face = faces[ i ];
+  			var uv = uvSet[ i ];
+
+  			face[ 0 ] = face.a;
+  			face[ 1 ] = face.b;
+  			face[ 2 ] = face.c;
+
+  			uvs[ 0 ].copy( uv[ 0 ] );
+  			uvs[ 1 ].copy( uv[ 1 ] );
+  			uvs[ 2 ].copy( uv[ 2 ] );
+
+  			processFace( face, uvs, i );
+
+  		}
+
+  	} else {
+
+  		var index = geometry.index;
+  		var uvAttribute = geometry.attributes.uv;
+
+  		if ( index ) {
+
+  			// indexed geometry
+
+  			for ( var i = 0, il = index.count; i < il; i += 3 ) {
+
+  				face[ 0 ] = index.getX( i );
+  				face[ 1 ] = index.getX( i + 1 );
+  				face[ 2 ] = index.getX( i + 2 );
+
+  				uvs[ 0 ].fromBufferAttribute( uvAttribute, face[ 0 ] );
+  				uvs[ 1 ].fromBufferAttribute( uvAttribute, face[ 1 ] );
+  				uvs[ 2 ].fromBufferAttribute( uvAttribute, face[ 2 ] );
+
+  				processFace( face, uvs, i );
+
+  			}
+
+  		} else {
+
+  			// non-indexed geometry
+
+  			for ( var i = 0, il = uvAttribute.count; i < il; i += 3 ) {
+
+  				face[ 0 ] = i;
+  				face[ 1 ] = i + 1;
+  				face[ 2 ] = i + 2;
+
+  				uvs[ 0 ].fromBufferAttribute( uvAttribute, face[ 0 ] );
+  				uvs[ 1 ].fromBufferAttribute( uvAttribute, face[ 1 ] );
+  				uvs[ 2 ].fromBufferAttribute( uvAttribute, face[ 2 ] );
+
+  				processFace( face, uvs, i );
+
+  			}
+
+  		}
+
+  	}
+
+  	return canvas;
+
+  	function processFace( face, uvs, index ) {
+
+  		// draw contour of face
 
   		ctx.beginPath();
 
   		a.set( 0, 0 );
 
-  		for ( j = 0, jl = uv.length; j < jl; j ++ ) {
+  		for ( var j = 0, jl = uvs.length; j < jl; j ++ ) {
 
-  			u = uv[ j ];
+  			var uv = uvs[ j ];
 
-  			a.x += u.x;
-  			a.y += u.y;
+  			a.x += uv.x;
+  			a.y += uv.y;
 
-  			if ( j == 0 ) {
+  			if ( j === 0 ) {
 
-  				ctx.moveTo( u.x * width, ( 1 - u.y ) * height );
+  				ctx.moveTo( uv.x * width, ( 1 - uv.y ) * height );
 
   			} else {
 
-  				ctx.lineTo( u.x * width, ( 1 - u.y ) * height );
+  				ctx.lineTo( uv.x * width, ( 1 - uv.y ) * height );
 
   			}
 
@@ -125776,33 +126128,37 @@ var Three = (function (exports) {
   		ctx.closePath();
   		ctx.stroke();
 
-  		a.divideScalar( jl );
+  		// calculate center of face
+
+  		a.divideScalar( uvs.length );
 
   		// label the face number
 
-  		ctx.font = "12pt Arial bold";
+  		ctx.font = '12pt Arial bold';
   		ctx.fillStyle = 'rgba( 0, 0, 0, 1.0 )';
-  		ctx.fillText( i, a.x * width, ( 1 - a.y ) * height );
+  		ctx.fillText( index, a.x * width, ( 1 - a.y ) * height );
 
   		if ( a.x > 0.95 ) {
 
   			// wrap x // 0.95 is arbitrary
 
-  			ctx.fillText( i, ( a.x % 1 ) * width, ( 1 - a.y ) * height );
+  			ctx.fillText( index, ( a.x % 1 ) * width, ( 1 - a.y ) * height );
 
   		}
 
-  		ctx.font = "8pt Arial bold";
+  		//
+
+  		ctx.font = '8pt Arial bold';
   		ctx.fillStyle = 'rgba( 0, 0, 0, 1.0 )';
 
   		// label uv edge orders
 
-  		for ( j = 0, jl = uv.length; j < jl; j ++ ) {
+  		for ( j = 0, jl = uvs.length; j < jl; j ++ ) {
 
-  			u = uv[ j ];
-  			b.addVectors( a, u ).divideScalar( 2 );
+  			var uv = uvs[ j ];
+  			b.addVectors( a, uv ).divideScalar( 2 );
 
-  			vnum = faces[ i ][ abc[ j ] ];
+  			var vnum = face[ j ];
   			ctx.fillText( abc[ j ] + vnum, b.x * width, ( 1 - b.y ) * height );
 
   			if ( b.x > 0.95 ) {
@@ -125816,8 +126172,6 @@ var Three = (function (exports) {
   		}
 
   	}
-
-  	return canvas;
 
   };
 
@@ -127135,7 +127489,7 @@ var Three = (function (exports) {
   	var arguments$1 = arguments;
 
 
-  	this.uuid = _Math.generateUUID();
+  	this.uuid = _Math$1.generateUUID();
 
   	// cached objects followed by the active ones
   	this._objects = Array.prototype.slice.call( arguments );
@@ -127894,6 +128248,8 @@ var Three = (function (exports) {
 
   		}
 
+  		return this;
+
   	},
 
   	getFilter: function () {
@@ -127919,6 +128275,8 @@ var Three = (function (exports) {
   		this.gain.connect( this.filter );
   		this.filter.connect( this.context.destination );
 
+  		return this;
+
   	},
 
   	getMasterVolume: function () {
@@ -127930,6 +128288,8 @@ var Three = (function (exports) {
   	setMasterVolume: function ( value ) {
 
   		this.gain.gain.setTargetAtTime( value, this.context.currentTime, 0.01 );
+
+  		return this;
 
   	},
 
@@ -128006,6 +128366,8 @@ var Three = (function (exports) {
 
   		this.panner.refDistance = value;
 
+  		return this;
+
   	},
 
   	getRolloffFactor: function () {
@@ -128017,6 +128379,8 @@ var Three = (function (exports) {
   	setRolloffFactor: function ( value ) {
 
   		this.panner.rolloffFactor = value;
+
+  		return this;
 
   	},
 
@@ -128030,6 +128394,8 @@ var Three = (function (exports) {
 
   		this.panner.distanceModel = value;
 
+  		return this;
+
   	},
 
   	getMaxDistance: function () {
@@ -128042,19 +128408,39 @@ var Three = (function (exports) {
 
   		this.panner.maxDistance = value;
 
+  		return this;
+
+  	},
+
+  	setDirectionalCone: function ( coneInnerAngle, coneOuterAngle, coneOuterGain ) {
+
+  		this.panner.coneInnerAngle = coneInnerAngle;
+  		this.panner.coneOuterAngle = coneOuterAngle;
+  		this.panner.coneOuterGain = coneOuterGain;
+
+  		return this;
+
   	},
 
   	updateMatrixWorld: ( function () {
 
   		var position = new Vector3();
+  		var quaternion = new Quaternion();
+  		var scale = new Vector3();
+
+  		var orientation = new Vector3();
 
   		return function updateMatrixWorld( force ) {
 
   			Object3D.prototype.updateMatrixWorld.call( this, force );
 
-  			position.setFromMatrixPosition( this.matrixWorld );
+  			var panner = this.panner;
+  			this.matrixWorld.decompose( position, quaternion, scale );
 
-  			this.panner.setPosition( position.x, position.y, position.z );
+  			orientation.set( 0, 0, 1 ).applyQuaternion( quaternion );
+
+  			panner.setPosition( position.x, position.y, position.z );
+  			panner.setOrientation( orientation.x, orientation.y, orientation.z );
 
   		};
 
@@ -128199,13 +128585,12 @@ var Three = (function (exports) {
 
   	isFont: true,
 
-  	generateShapes: function ( text, size, divisions ) {
+  	generateShapes: function ( text, size ) {
 
   		if ( size === undefined ) { size = 100; }
-  		if ( divisions === undefined ) { divisions = 4; }
 
   		var shapes = [];
-  		var paths = createPaths( text, size, divisions, this.data );
+  		var paths = createPaths( text, size, this.data );
 
   		for ( var p = 0, pl = paths.length; p < pl; p ++ ) {
 
@@ -128219,7 +128604,7 @@ var Three = (function (exports) {
 
   } );
 
-  function createPaths( text, size, divisions, data ) {
+  function createPaths( text, size, data ) {
 
   	var chars = Array.from ? Array.from( text ) : String( text ).split( '' ); // see #13988
   	var scale = size / data.resolution;
@@ -128240,7 +128625,7 @@ var Three = (function (exports) {
 
   		} else {
 
-  			var ret = createPath( char, divisions, scale, offsetX, offsetY, data );
+  			var ret = createPath( char, scale, offsetX, offsetY, data );
   			offsetX += ret.offsetX;
   			paths.push( ret.path );
 
@@ -128252,7 +128637,7 @@ var Three = (function (exports) {
 
   }
 
-  function createPath( char, divisions, scale, offsetX, offsetY, data ) {
+  function createPath( char, scale, offsetX, offsetY, data ) {
 
   	var glyph = data.glyphs[ char ] || data.glyphs[ '?' ];
 
@@ -128420,7 +128805,7 @@ var Three = (function (exports) {
 
   	// helper variables
 
-  	var thresholdDot = Math.cos( _Math.DEG2RAD * thresholdAngle );
+  	var thresholdDot = Math.cos( _Math$1.DEG2RAD * thresholdAngle );
   	var edge = [ 0, 0 ], edges = {}, edge1, edge2;
   	var key, keys = [ 'a', 'b', 'c' ];
 
@@ -129347,7 +129732,7 @@ var Three = (function (exports) {
 
   	// clamp phiLength so it's in range of [ 0, 2PI ]
 
-  	phiLength = _Math.clamp( phiLength, 0, Math.PI * 2 );
+  	phiLength = _Math$1.clamp( phiLength, 0, Math.PI * 2 );
 
 
   	// buffers
@@ -129844,7 +130229,7 @@ var Three = (function (exports) {
 
   	}
 
-  	var shapes = font.generateShapes( text, parameters.size, parameters.curveSegments );
+  	var shapes = font.generateShapes( text, parameters.size );
 
   	// translate parameters to ExtrudeGeometry API
 
@@ -131539,7 +131924,7 @@ var Three = (function (exports) {
 
   function AnimationLoader( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   }
 
@@ -131578,7 +131963,7 @@ var Three = (function (exports) {
 
   function AudioLoader( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   }
 
@@ -131590,9 +131975,12 @@ var Three = (function (exports) {
   		loader.setResponseType( 'arraybuffer' );
   		loader.load( url, function ( buffer ) {
 
-  			var context = AudioContext.getContext();
+  			// Create a copy of the buffer. The `decodeAudioData` method
+  			// detaches the buffer when complete, preventing reuse.
+  			var bufferCopy = buffer.slice( 0 );
 
-  			context.decodeAudioData( buffer, function ( audioBuffer ) {
+  			var context = AudioContext.getContext();
+  			context.decodeAudioData( bufferCopy, function ( audioBuffer ) {
 
   				onLoad( audioBuffer );
 
@@ -131606,7 +131994,7 @@ var Three = (function (exports) {
 
   function BufferGeometryLoader( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   }
 
@@ -131700,13 +132088,13 @@ var Three = (function (exports) {
 
   function CubeTextureLoader( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   }
 
   Object.assign( CubeTextureLoader.prototype, {
 
-  	crossOrigin: 'Anonymous',
+  	crossOrigin: 'anonymous',
 
   	load: function ( urls, onLoad, onProgress, onError ) {
 
@@ -131766,7 +132154,7 @@ var Three = (function (exports) {
 
   function FontLoader( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
   }
 
@@ -131830,7 +132218,7 @@ var Three = (function (exports) {
 
   	}
 
-  	this.manager = manager !== undefined ? manager : DefaultLoadingManager$1;
+  	this.manager = manager !== undefined ? manager : DefaultLoadingManager;
   	this.options = undefined;
 
   }
@@ -132184,12 +132572,14 @@ var Three = (function (exports) {
   };
   function ObjectLoader( manager ) {
 
-  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager$1;
+  	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
   	this.texturePath = '';
 
   }
 
   Object.assign( ObjectLoader.prototype, {
+
+  	crossOrigin: 'anonymous',
 
   	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -132659,12 +133049,36 @@ var Three = (function (exports) {
   			var loader = new ImageLoader( manager );
   			loader.setCrossOrigin( this.crossOrigin );
 
-  			for ( var i = 0, l = json.length; i < l; i ++ ) {
+  			for ( var i = 0, il = json.length; i < il; i ++ ) {
 
   				var image = json[ i ];
-  				var path = /^(\/\/)|([a-z]+:(\/\/)?)/i.test( image.url ) ? image.url : scope.texturePath + image.url;
+  				var url = image.url;
 
-  				images[ image.uuid ] = loadImage( path );
+  				if ( Array.isArray( url ) ) {
+
+  					// load array of images e.g CubeTexture
+
+  					images[ image.uuid ] = [];
+
+  					for ( var j = 0, jl = url.length; j < jl; j ++ ) {
+
+  						var currentUrl = url[ j ];
+
+  						var path = /^(\/\/)|([a-z]+:(\/\/)?)/i.test( currentUrl ) ? currentUrl : scope.texturePath + currentUrl;
+
+  						images[ image.uuid ].push( loadImage( path ) );
+
+  					}
+
+  				} else {
+
+  					// load single image
+
+  					var path = /^(\/\/)|([a-z]+:(\/\/)?)/i.test( image.url ) ? image.url : scope.texturePath + image.url;
+
+  					images[ image.uuid ] = loadImage( path );
+
+  				}
 
   			}
 
@@ -132706,7 +133120,18 @@ var Three = (function (exports) {
 
   				}
 
-  				var texture = new Texture( images[ data.image ] );
+  				var texture;
+
+  				if ( Array.isArray( images[ data.image ] ) ) {
+
+  					texture = new CubeTexture( images[ data.image ] );
+
+  				} else {
+
+  					texture = new Texture( images[ data.image ] );
+
+  				}
+
   				texture.needsUpdate = true;
 
   				texture.uuid = data.uuid;
@@ -132994,6 +133419,7 @@ var Three = (function (exports) {
   		if ( data.frustumCulled !== undefined ) { object.frustumCulled = data.frustumCulled; }
   		if ( data.renderOrder !== undefined ) { object.renderOrder = data.renderOrder; }
   		if ( data.userData !== undefined ) { object.userData = data.userData; }
+  		if ( data.layers !== undefined ) { object.layers.mask = data.layers; }
 
   		if ( data.children !== undefined ) {
 
@@ -133322,6 +133748,7 @@ var Three = (function (exports) {
   exports.EditorControls = EditorControls;
   exports.FirstPersonControls = FirstPersonControls;
   exports.FlyControls = FlyControls;
+  exports.MapControls = MapControls;
   exports.OrbitControls = OrbitControls;
   exports.OrthographicTrackballControls = OrthographicTrackballControls;
   exports.PointerLockControls = PointerLockControls;
@@ -133331,7 +133758,6 @@ var Three = (function (exports) {
   exports.TransformGizmoRotate = TransformGizmoRotate;
   exports.TransformGizmoScale = TransformGizmoScale;
   exports.TransformControls = TransformControls;
-  exports.VRControls = VRControls;
   exports.ConvexObjectBreaker = ConvexObjectBreaker;
   exports.GrannyKnot = GrannyKnot;
   exports.HeartCurve = HeartCurve;
@@ -133357,7 +133783,6 @@ var Three = (function (exports) {
   exports.ParallaxBarrierEffect = ParallaxBarrierEffect;
   exports.PeppersGhostEffect = PeppersGhostEffect;
   exports.StereoEffect = StereoEffect;
-  exports.VREffect = VREffect;
   exports.GLTFExporter = GLTFExporter;
   exports.MMDExporter = MMDExporter;
   exports.OBJExporter = OBJExporter;
@@ -133395,7 +133820,7 @@ var Three = (function (exports) {
   exports.DDSLoader = DDSLoader;
   exports.LegacyGLTFLoader = LegacyGLTFLoader;
   exports.DRACOLoader = DRACOLoader;
-  exports.EquiangularToCubeGenerator = EquiangularToCubeGenerator;
+  exports.EquirectangularToCubeGenerator = EquirectangularToCubeGenerator;
   exports.EXRLoader = EXRLoader;
   exports.FBXLoader = FBXLoader;
   exports.GCodeLoader = GCodeLoader;
@@ -133423,7 +133848,6 @@ var Three = (function (exports) {
   exports.TDSLoader = TDSLoader;
   exports.TGALoader = TGALoader;
   exports.TTFLoader = TTFLoader;
-  exports.UTF8Loader = UTF8Loader;
   exports.VRMLLoader = VRMLLoader;
   exports.VRMLoader = VRMLoader;
   exports.VTKLoader = VTKLoader;
@@ -133792,6 +134216,8 @@ var Three = (function (exports) {
   exports.RGBDEncoding = RGBDEncoding;
   exports.BasicDepthPacking = BasicDepthPacking;
   exports.RGBADepthPacking = RGBADepthPacking;
+  exports.TangentSpaceNormalMap = TangentSpaceNormalMap;
+  exports.ObjectSpaceNormalMap = ObjectSpaceNormalMap;
   exports.Float64BufferAttribute = Float64BufferAttribute;
   exports.Float32BufferAttribute = Float32BufferAttribute$1;
   exports.Uint32BufferAttribute = Uint32BufferAttribute;
@@ -133921,7 +134347,7 @@ var Three = (function (exports) {
   exports.JSONLoader = JSONLoader;
   exports.Loader = Loader$1;
   exports.LoaderUtils = LoaderUtils$1;
-  exports.DefaultLoadingManager = DefaultLoadingManager$1;
+  exports.DefaultLoadingManager = DefaultLoadingManager;
   exports.LoadingManager = LoadingManager;
   exports.MaterialLoader = MaterialLoader;
   exports.ObjectLoader = ObjectLoader;
@@ -133955,7 +134381,7 @@ var Three = (function (exports) {
   exports.LinearInterpolant = LinearInterpolant;
   exports.QuaternionLinearInterpolant = QuaternionLinearInterpolant;
   exports.Line3 = Line3;
-  exports._Math = _Math;
+  exports._Math = _Math$1;
   exports.Matrix3 = Matrix3;
   exports.Matrix4 = Matrix4;
   exports.Plane = Plane;

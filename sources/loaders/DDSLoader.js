@@ -9,7 +9,9 @@ import {
 
 
 
-var DDSLoader = function () {
+var DDSLoader = function ( manager ) {
+
+	CompressedTextureLoader.call( this, manager );
 
 	this._parser = DDSLoader.parse;
 

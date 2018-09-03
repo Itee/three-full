@@ -12,7 +12,7 @@ import {
 
 
 
-var EquiangularToCubeGenerator = function ( sourceTexture, resolution ) {
+var EquirectangularToCubeGenerator = function ( sourceTexture, resolution ) {
 
 	this.sourceTexture = sourceTexture;
 	this.resolution = resolution;
@@ -46,9 +46,9 @@ var EquiangularToCubeGenerator = function ( sourceTexture, resolution ) {
 
 };
 
-EquiangularToCubeGenerator.prototype = {
+EquirectangularToCubeGenerator.prototype = {
 
-	constructor: EquiangularToCubeGenerator,
+	constructor: EquirectangularToCubeGenerator,
 
 	update: function ( renderer ) {
 
@@ -91,7 +91,7 @@ EquiangularToCubeGenerator.prototype = {
 				varying vec3 localPosition;\n\
 				uniform sampler2D equirectangularMap;\n\
 				\n\
-				vec2 EquiangularSampleUV(vec3 v) {\n\
+				vec2 EquirectangularSampleUV(vec3 v) {\n\
 			    vec2 uv = vec2(atan(v.z, v.x), asin(v.y));\n\
 			    uv *= vec2(0.1591, 0.3183); // inverse atan\n\
 			    uv += 0.5;\n\
@@ -99,7 +99,7 @@ EquiangularToCubeGenerator.prototype = {
 				}\n\
 				\n\
 				void main() {\n\
-					vec2 uv = EquiangularSampleUV(normalize(localPosition));\n\
+					vec2 uv = EquirectangularSampleUV(normalize(localPosition));\n\
     			vec3 color = texture2D(equirectangularMap, uv).rgb;\n\
     			\n\
 					gl_FragColor = vec4( color, 1.0 );\n\
@@ -109,7 +109,7 @@ EquiangularToCubeGenerator.prototype = {
 
 		} );
 
-		shaderMaterial.type = 'EquiangularToCubeGenerator';
+		shaderMaterial.type = 'EquirectangularToCubeGenerator';
 
 		return shaderMaterial;
 
@@ -125,4 +125,4 @@ EquiangularToCubeGenerator.prototype = {
 
 };
 
-export { EquiangularToCubeGenerator }
+export { EquirectangularToCubeGenerator }

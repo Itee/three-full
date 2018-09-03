@@ -103,7 +103,7 @@ var LegacyGLTFLoader = ( function () {
 
 		constructor: LegacyGLTFLoader,
 
-		crossOrigin: 'Anonymous',
+		crossOrigin: 'anonymous',
 
 		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -126,6 +126,7 @@ var LegacyGLTFLoader = ( function () {
 		setCrossOrigin: function ( value ) {
 
 			this.crossOrigin = value;
+			return this;
 
 		},
 

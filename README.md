@@ -194,6 +194,10 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+##### 9.0.0:
+
+* Support of Three r94
+
 ##### 8.0.0:
 
 * Support of Three r93

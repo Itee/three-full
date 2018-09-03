@@ -50,7 +50,7 @@ ColladaLoader.prototype = {
 
 	constructor: ColladaLoader,
 
-	crossOrigin: 'Anonymous',
+	crossOrigin: 'anonymous',
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -70,6 +70,7 @@ ColladaLoader.prototype = {
 	setPath: function ( value ) {
 
 		this.path = value;
+		return this;
 
 	},
 
@@ -86,6 +87,7 @@ ColladaLoader.prototype = {
 	setCrossOrigin: function ( value ) {
 
 		this.crossOrigin = value;
+		return this;
 
 	},
 
@@ -1002,7 +1004,15 @@ ColladaLoader.prototype = {
 
 			// setup bind matrix
 
-			build.bindMatrix = new Matrix4().fromArray( data.bindShapeMatrix ).transpose();
+			if ( data.bindShapeMatrix ) {
+
+				build.bindMatrix = new Matrix4().fromArray( data.bindShapeMatrix ).transpose(); 
+
+			} else {
+
+				build.bindMatrix = new Matrix4().transpose(); 
+
+			}
 
 			// process bones and inverse bind matrix data
 

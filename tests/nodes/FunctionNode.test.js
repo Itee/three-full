@@ -451,6 +451,7 @@ var Three = (function (exports) {
 
 	FunctionNode.prototype = Object.create( TempNode.prototype );
 	FunctionNode.prototype.constructor = FunctionNode;
+	FunctionNode.prototype.nodeType = "Function";
 
 	FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
 

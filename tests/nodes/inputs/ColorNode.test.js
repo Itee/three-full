@@ -1,7 +1,7 @@
 var Three = (function (exports) {
 	'use strict';
 
-	var _Math = {
+	var _Math$1 = {
 
 		DEG2RAD: Math.PI / 180,
 		RAD2DEG: 180 / Math.PI,
@@ -117,13 +117,13 @@ var Three = (function (exports) {
 
 		degToRad: function ( degrees ) {
 
-			return degrees * _Math.DEG2RAD;
+			return degrees * _Math$1.DEG2RAD;
 
 		},
 
 		radToDeg: function ( radians ) {
 
-			return radians * _Math.RAD2DEG;
+			return radians * _Math$1.RAD2DEG;
 
 		},
 
@@ -149,7 +149,7 @@ var Three = (function (exports) {
 
 	var GLNode = function ( type ) {
 
-		this.uuid = _Math.generateUUID();
+		this.uuid = _Math$1.generateUUID();
 
 		this.name = "";
 		this.allows = {};
@@ -328,7 +328,7 @@ var Three = (function (exports) {
 
 			if ( isUnique && this.constructor.uuid === undefined ) {
 
-				this.constructor.uuid = _Math.generateUUID();
+				this.constructor.uuid = _Math$1.generateUUID();
 
 			}
 
@@ -606,9 +606,9 @@ var Three = (function (exports) {
 			return function setHSL( h, s, l ) {
 
 				// h,s,l ranges are in 0.0 - 1.0
-				h = _Math.euclideanModulo( h, 1 );
-				s = _Math.clamp( s, 0, 1 );
-				l = _Math.clamp( l, 0, 1 );
+				h = _Math$1.euclideanModulo( h, 1 );
+				s = _Math$1.clamp( s, 0, 1 );
+				l = _Math$1.clamp( l, 0, 1 );
 
 				if ( s === 0 ) {
 
@@ -814,6 +814,62 @@ var Three = (function (exports) {
 		convertLinearToGamma: function ( gammaFactor ) {
 
 			this.copyLinearToGamma( this, gammaFactor );
+
+			return this;
+
+		},
+
+		copySRGBToLinear: function () {
+
+			function SRGBToLinear( c ) {
+
+				return ( c < 0.04045 ) ? c * 0.0773993808 : Math.pow( c * 0.9478672986 + 0.0521327014, 2.4 );
+
+			}
+
+			return function copySRGBToLinear( color ) {
+
+				this.r = SRGBToLinear( color.r );
+				this.g = SRGBToLinear( color.g );
+				this.b = SRGBToLinear( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		copyLinearToSRGB: function () {
+
+			function LinearToSRGB( c ) {
+
+				return ( c < 0.0031308 ) ? c * 12.92 : 1.055 * ( Math.pow( c, 0.41666 ) ) - 0.055;
+
+			}
+
+			return function copyLinearToSRGB( color ) {
+
+				this.r = LinearToSRGB( color.r );
+				this.g = LinearToSRGB( color.g );
+				this.b = LinearToSRGB( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		convertSRGBToLinear: function () {
+
+			this.copySRGBToLinear( this );
+
+			return this;
+
+		},
+
+		convertLinearToSRGB: function () {
+
+			this.copyLinearToSRGB( this );
 
 			return this;
 
@@ -1119,7 +1175,7 @@ var Three = (function (exports) {
 
 		Object.defineProperty( this, 'id', { value: materialId ++ } );
 
-		this.uuid = _Math.generateUUID();
+		this.uuid = _Math$1.generateUUID();
 
 		this.name = '';
 		this.type = 'Material';
@@ -1300,6 +1356,7 @@ var Three = (function (exports) {
 			if ( this.normalMap && this.normalMap.isTexture ) {
 
 				data.normalMap = this.normalMap.toJSON( meta ).uuid;
+				data.normalMapType = this.normalMapType;
 				data.normalScale = this.normalScale.toArray();
 
 			}
@@ -1802,9 +1859,10 @@ var Three = (function (exports) {
 
 	};
 
-	var NodeBuilder = function ( material ) {
+	var NodeBuilder = function ( material, renderer ) {
 
 		this.material = material;
+		this.renderer = renderer;
 
 		this.caches = [];
 		this.slots = [];
@@ -4014,19 +4072,21 @@ var Three = (function (exports) {
 
 			}
 
-			var sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
+			var sqrSinHalfTheta = 1.0 - cosHalfTheta * cosHalfTheta;
 
-			if ( Math.abs( sinHalfTheta ) < 0.001 ) {
+			if ( sqrSinHalfTheta <= Number.EPSILON ) {
 
-				this._w = 0.5 * ( w + this._w );
-				this._x = 0.5 * ( x + this._x );
-				this._y = 0.5 * ( y + this._y );
-				this._z = 0.5 * ( z + this._z );
+				var s = 1 - t;
+				this._w = s * w + t * this._w;
+				this._x = s * x + t * this._x;
+				this._y = s * y + t * this._y;
+				this._z = s * z + t * this._z;
 
-				return this;
+				return this.normalize();
 
 			}
 
+			var sinHalfTheta = Math.sqrt( sqrSinHalfTheta );
 			var halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
 			var ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
 				ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
@@ -4677,7 +4737,7 @@ var Three = (function (exports) {
 
 			// clamp, to handle numerical problems
 
-			return Math.acos( _Math.clamp( theta, - 1, 1 ) );
+			return Math.acos( _Math$1.clamp( theta, - 1, 1 ) );
 
 		},
 
@@ -5187,7 +5247,7 @@ var Three = (function (exports) {
 
 		Object.defineProperty( this, 'id', { value: textureId ++ } );
 
-		this.uuid = _Math.generateUUID();
+		this.uuid = _Math$1.generateUUID();
 
 		this.name = '';
 
@@ -5377,15 +5437,37 @@ var Three = (function (exports) {
 
 				if ( image.uuid === undefined ) {
 
-					image.uuid = _Math.generateUUID(); // UGH
+					image.uuid = _Math$1.generateUUID(); // UGH
 
 				}
 
 				if ( ! isRootObject && meta.images[ image.uuid ] === undefined ) {
 
+					var url;
+
+					if ( Array.isArray( image ) ) {
+
+						// process array of images e.g. CubeTexture
+
+						url = [];
+
+						for ( var i = 0, l = image.length; i < l; i ++ ) {
+
+							url.push( getDataURL( image[ i ] ) );
+
+						}
+
+					} else {
+
+						// process single image
+
+						url = getDataURL( image );
+
+					}
+
 					meta.images[ image.uuid ] = {
 						uuid: image.uuid,
-						url: getDataURL( image )
+						url: url
 					};
 
 				}
@@ -5549,6 +5631,7 @@ var Three = (function (exports) {
 
 	FunctionNode.prototype = Object.create( TempNode.prototype );
 	FunctionNode.prototype.constructor = FunctionNode;
+	FunctionNode.prototype.nodeType = "Function";
 
 	FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
 
@@ -6299,6 +6382,8 @@ var Three = (function (exports) {
 
 		ShaderMaterial.call( this );
 
+		this.defines.UUID = this.uuid;
+
 		this.vertex = vertex || new RawNode( new PositionNode( PositionNode.PROJECTION ) );
 		this.fragment = fragment || new RawNode( new ColorNode( 0xFF0000 ) );
 
@@ -6371,13 +6456,30 @@ var Three = (function (exports) {
 
 	};
 
-	NodeMaterial.prototype.build = function () {
+	NodeMaterial.prototype.onBeforeCompile = function ( shader, renderer ) {
+
+		if ( this.needsUpdate ) {
+
+			this.build( { dispose: false, renderer: renderer } );
+
+			shader.uniforms = this.uniforms;
+			shader.vertexShader = this.vertexShader;
+			shader.fragmentShader = this.fragmentShader;
+
+		}
+
+	};
+
+	NodeMaterial.prototype.build = function ( params ) {
+
+		params = params || {};
+		params.dispose = params.dispose !== undefined ? params.dispose : true;
 
 		var vertex, fragment;
 
 		this.nodes = [];
 
-		this.defines = {};
+		this.defines = { UUID: this.uuid };
 		this.uniforms = {};
 		this.attributes = {};
 
@@ -6438,7 +6540,7 @@ var Three = (function (exports) {
 
 		].join( "\n" );
 
-		var builder = new NodeBuilder( this );
+		var builder = new NodeBuilder( this, params.renderer );
 
 		vertex = this.vertex.build( builder.setShader( 'vertex' ), 'v4' );
 		fragment = this.fragment.build( builder.setShader( 'fragment' ), 'v4' );
@@ -6546,8 +6648,13 @@ var Three = (function (exports) {
 			'}'
 		].join( "\n" );
 
-		this.needsUpdate = true;
-		this.dispose(); // force update
+		if ( params.dispose ) {
+
+			// force update
+
+			this.dispose();
+
+		}
 
 		return this;
 
@@ -6581,7 +6688,7 @@ var Three = (function (exports) {
 
 		var uniform = new NodeUniform( {
 			type: type,
-			name: ns ? ns : 'nVu' + index,
+			name: ns ? ns : 'nVu' + index + '_' + _Math.generateUUID().substr(0, 8),
 			node: node,
 			needsUpdate: needsUpdate
 		} );

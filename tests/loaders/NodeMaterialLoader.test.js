@@ -1356,6 +1356,7 @@ var Three = (function (exports) {
 
 	FunctionNode.prototype = Object.create( TempNode.prototype );
 	FunctionNode.prototype.constructor = FunctionNode;
+	FunctionNode.prototype.nodeType = "Function";
 
 	FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
 
@@ -3018,8 +3019,6 @@ var Three = (function (exports) {
 
 				}
 
-				object.build();
-
 				if ( node.fog !== undefined ) object.fog = node.fog;
 				if ( node.lights !== undefined ) object.lights = node.lights;
 
@@ -3033,8 +3032,6 @@ var Three = (function (exports) {
 				object = this.passes[ uuid ];
 
 				object.value = this.getNode( node.value );
-
-				object.build();
 
 			}
 

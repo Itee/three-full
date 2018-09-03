@@ -52,9 +52,6 @@ DRACOLoader.prototype = {
         var loader = new FileLoader(scope.manager);
         loader.setPath(this.path);
         loader.setResponseType('arraybuffer');
-        if (this.crossOrigin !== undefined) {
-          loader.crossOrigin = this.crossOrigin;
-        }
         loader.load(url, function(blob) {
             scope.decodeDracoFile(blob, onLoad);
         }, onProgress, onError);
@@ -62,11 +59,6 @@ DRACOLoader.prototype = {
 
     setPath: function(value) {
         this.path = value;
-        return this;
-    },
-
-    setCrossOrigin: function(value) {
-        this.crossOrigin = value;
         return this;
     },
 
@@ -129,7 +121,7 @@ DRACOLoader.prototype = {
     },
 
     addAttributeToGeometry: function(dracoDecoder, decoder, dracoGeometry,
-                                     attributeName, attributeType, attribute, 
+                                     attributeName, attributeType, attribute,
                                      geometry, geometryBuffer) {
       if (attribute.ptr === 0) {
         var errorMsg = 'DRACOLoader: No attribute ' + attributeName;
@@ -207,7 +199,7 @@ DRACOLoader.prototype = {
           throw new Error( errorMsg );
 
       }
-      
+
       // Copy data from decoder.
       for (var i = 0; i < numValues; i++) {
         geometryBuffer[attributeName][i] = attributeData.GetValue(i);

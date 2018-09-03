@@ -125,11 +125,7 @@ var WebVR = {
 
 		}
 
-		var isWebXR = false;
-
 		if ( 'xr' in navigator ) {
-
-			isWebXR = true;
 
 			var button = document.createElement( 'button' );
 			button.style.display = 'none';

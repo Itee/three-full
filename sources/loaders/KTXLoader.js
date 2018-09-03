@@ -3,7 +3,9 @@ import { CompressedTextureLoader } from './CompressedTextureLoader.js'
 
 
 
-var KTXLoader = function () {
+var KTXLoader = function ( manager ) {
+
+	CompressedTextureLoader.call( this, manager );
 
 	this._parser = KTXLoader.parse;
 

@@ -2309,19 +2309,21 @@ var Three = (function (exports) {
 
 			}
 
-			var sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
+			var sqrSinHalfTheta = 1.0 - cosHalfTheta * cosHalfTheta;
 
-			if ( Math.abs( sinHalfTheta ) < 0.001 ) {
+			if ( sqrSinHalfTheta <= Number.EPSILON ) {
 
-				this._w = 0.5 * ( w + this._w );
-				this._x = 0.5 * ( x + this._x );
-				this._y = 0.5 * ( y + this._y );
-				this._z = 0.5 * ( z + this._z );
+				var s = 1 - t;
+				this._w = s * w + t * this._w;
+				this._x = s * x + t * this._x;
+				this._y = s * y + t * this._y;
+				this._z = s * z + t * this._z;
 
-				return this;
+				return this.normalize();
 
 			}
 
+			var sinHalfTheta = Math.sqrt( sqrSinHalfTheta );
 			var halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
 			var ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
 				ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
@@ -3864,6 +3866,7 @@ var Three = (function (exports) {
 			if ( this.renderOrder !== 0 ) object.renderOrder = this.renderOrder;
 			if ( JSON.stringify( this.userData ) !== '{}' ) object.userData = this.userData;
 
+			object.layers = this.layers.mask;
 			object.matrix = this.matrix.toArray();
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
@@ -4039,7 +4042,7 @@ var Three = (function (exports) {
 
 	} );
 
-	var DaydreamController = function () {
+	var GearVRController = function () {
 
 		Object3D.call( this );
 
@@ -4048,14 +4051,12 @@ var Three = (function (exports) {
 
 		var axes = [ 0, 0 ];
 		var touchpadIsPressed = false;
+		var triggerIsPressed = false;
 		var angularVelocity = new Vector3();
 
-		this.matrixAutoUpdate = false;
+		this.matrixAutoUpdate = true;
 
 		function findGamepad() {
-
-			// iterate across gamepads as the Daydream Controller may not be
-			// in position 0
 
 			var gamepads = navigator.getGamepads && navigator.getGamepads();
 
@@ -4063,7 +4064,7 @@ var Three = (function (exports) {
 
 				var gamepad = gamepads[ i ];
 
-				if ( gamepad && ( gamepad.id === 'Daydream Controller' ) ) {
+				if ( gamepad && ( gamepad.id === 'Gear VR Controller' || gamepad.id === 'Oculus Go Controller' ) ) {
 
 					return gamepad;
 
@@ -4126,11 +4127,21 @@ var Three = (function (exports) {
 				if ( touchpadIsPressed !== gamepad.buttons[ 0 ].pressed ) {
 
 					touchpadIsPressed = gamepad.buttons[ 0 ].pressed;
-					scope.dispatchEvent( { type: touchpadIsPressed ? 'touchpaddown' : 'touchpadup' } );
+					scope.dispatchEvent( { type: touchpadIsPressed ? 'touchpaddown' : 'touchpadup', axes: axes } );
 
 				}
 
-				// app button not available, reserved for use by the browser
+
+				// trigger
+
+				if ( triggerIsPressed !== gamepad.buttons[ 1 ].pressed ) {
+
+					triggerIsPressed = gamepad.buttons[ 1 ].pressed;
+					scope.dispatchEvent( { type: triggerIsPressed ? 'triggerdown' : 'triggerup' } );
+
+				}
+
+			// app button not available, reserved for use by the browser
 
 			} else {
 
@@ -4144,17 +4155,23 @@ var Three = (function (exports) {
 
 		this.getTouchPadState = function () {
 
-			console.warn( 'DaydreamController: getTouchPadState() is now getTouchpadState()' );
+			console.warn( 'GearVRController: getTouchPadState() is now getTouchpadState()' );
 			return touchpadIsPressed;
+
+		};
+
+		this.setHand = function () {
+
+			console.warn( 'GearVRController: setHand() has been removed.' );
 
 		};
 
 	};
 
-	DaydreamController.prototype = Object.create( Object3D.prototype );
-	DaydreamController.prototype.constructor = DaydreamController;
+	GearVRController.prototype = Object.create( Object3D.prototype );
+	GearVRController.prototype.constructor = GearVRController;
 
-	exports.DaydreamController = DaydreamController;
+	exports.GearVRController = GearVRController;
 
 	return exports;
 

@@ -52,7 +52,7 @@ var MMDLoader = ( function () {
 
 		constructor: MMDLoader,
 
-		crossOrigin: undefined,
+		crossOrigin: 'anonymous',
 
 		
 		setCrossOrigin: function ( crossOrigin ) {
@@ -266,7 +266,7 @@ var MMDLoader = ( function () {
 
 		constructor: MeshBuilder,
 
-		crossOrigin: undefined,
+		crossOrigin: 'anonymous',
 
 		
 		setCrossOrigin: function ( crossOrigin ) {
@@ -795,7 +795,7 @@ var MMDLoader = ( function () {
 
 		constructor: MaterialBuilder,
 
-		crossOrigin: undefined,
+		crossOrigin: 'anonymous',
 
 		texturePath: undefined,
 
@@ -842,7 +842,7 @@ var MMDLoader = ( function () {
 				params.shininess = Math.max( material.shininess, 1e-4 ); // to prevent pow( 0.0, 0.0 )
 				params.transparent = params.opacity !== 1.0;
 
-				// 
+				//
 
 				params.skinning = geometry.bones.length > 0 ? true : false;
 				params.morphTargets = geometry.morphTargets.length > 0 ? true : false;

@@ -472,6 +472,62 @@ var Three = (function (exports) {
 
 		},
 
+		copySRGBToLinear: function () {
+
+			function SRGBToLinear( c ) {
+
+				return ( c < 0.04045 ) ? c * 0.0773993808 : Math.pow( c * 0.9478672986 + 0.0521327014, 2.4 );
+
+			}
+
+			return function copySRGBToLinear( color ) {
+
+				this.r = SRGBToLinear( color.r );
+				this.g = SRGBToLinear( color.g );
+				this.b = SRGBToLinear( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		copyLinearToSRGB: function () {
+
+			function LinearToSRGB( c ) {
+
+				return ( c < 0.0031308 ) ? c * 12.92 : 1.055 * ( Math.pow( c, 0.41666 ) ) - 0.055;
+
+			}
+
+			return function copyLinearToSRGB( color ) {
+
+				this.r = LinearToSRGB( color.r );
+				this.g = LinearToSRGB( color.g );
+				this.b = LinearToSRGB( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		convertSRGBToLinear: function () {
+
+			this.copySRGBToLinear( this );
+
+			return this;
+
+		},
+
+		convertLinearToSRGB: function () {
+
+			this.copyLinearToSRGB( this );
+
+			return this;
+
+		},
+
 		getHex: function () {
 
 			return ( this.r * 255 ) << 16 ^ ( this.g * 255 ) << 8 ^ ( this.b * 255 ) << 0;
@@ -2598,19 +2654,21 @@ var Three = (function (exports) {
 
 			}
 
-			var sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
+			var sqrSinHalfTheta = 1.0 - cosHalfTheta * cosHalfTheta;
 
-			if ( Math.abs( sinHalfTheta ) < 0.001 ) {
+			if ( sqrSinHalfTheta <= Number.EPSILON ) {
 
-				this._w = 0.5 * ( w + this._w );
-				this._x = 0.5 * ( x + this._x );
-				this._y = 0.5 * ( y + this._y );
-				this._z = 0.5 * ( z + this._z );
+				var s = 1 - t;
+				this._w = s * w + t * this._w;
+				this._x = s * x + t * this._x;
+				this._y = s * y + t * this._y;
+				this._z = s * z + t * this._z;
 
-				return this;
+				return this.normalize();
 
 			}
 
+			var sinHalfTheta = Math.sqrt( sqrSinHalfTheta );
 			var halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
 			var ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
 				ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
@@ -4935,7 +4993,7 @@ var Three = (function (exports) {
 
 				var curve = curves[ i ];
 				var resolution = ( curve && curve.isEllipseCurve ) ? divisions * 2
-					: ( curve && curve.isLineCurve ) ? 1
+					: ( curve && ( curve.isLineCurve || curve.isLineCurve3 ) ) ? 1
 						: ( curve && curve.isSplineCurve ) ? divisions * curve.points.length
 							: divisions;
 
@@ -6474,13 +6532,12 @@ var Three = (function (exports) {
 
 		isFont: true,
 
-		generateShapes: function ( text, size, divisions ) {
+		generateShapes: function ( text, size ) {
 
 			if ( size === undefined ) size = 100;
-			if ( divisions === undefined ) divisions = 4;
 
 			var shapes = [];
-			var paths = createPaths( text, size, divisions, this.data );
+			var paths = createPaths( text, size, this.data );
 
 			for ( var p = 0, pl = paths.length; p < pl; p ++ ) {
 
@@ -6494,7 +6551,7 @@ var Three = (function (exports) {
 
 	} );
 
-	function createPaths( text, size, divisions, data ) {
+	function createPaths( text, size, data ) {
 
 		var chars = Array.from ? Array.from( text ) : String( text ).split( '' ); // see #13988
 		var scale = size / data.resolution;
@@ -6515,7 +6572,7 @@ var Three = (function (exports) {
 
 			} else {
 
-				var ret = createPath( char, divisions, scale, offsetX, offsetY, data );
+				var ret = createPath( char, scale, offsetX, offsetY, data );
 				offsetX += ret.offsetX;
 				paths.push( ret.path );
 
@@ -6527,7 +6584,7 @@ var Three = (function (exports) {
 
 	}
 
-	function createPath( char, divisions, scale, offsetX, offsetY, data ) {
+	function createPath( char, scale, offsetX, offsetY, data ) {
 
 		var glyph = data.glyphs[ char ] || data.glyphs[ '?' ];
 

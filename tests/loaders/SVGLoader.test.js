@@ -893,6 +893,62 @@ var Three = (function (exports) {
 
 		},
 
+		copySRGBToLinear: function () {
+
+			function SRGBToLinear( c ) {
+
+				return ( c < 0.04045 ) ? c * 0.0773993808 : Math.pow( c * 0.9478672986 + 0.0521327014, 2.4 );
+
+			}
+
+			return function copySRGBToLinear( color ) {
+
+				this.r = SRGBToLinear( color.r );
+				this.g = SRGBToLinear( color.g );
+				this.b = SRGBToLinear( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		copyLinearToSRGB: function () {
+
+			function LinearToSRGB( c ) {
+
+				return ( c < 0.0031308 ) ? c * 12.92 : 1.055 * ( Math.pow( c, 0.41666 ) ) - 0.055;
+
+			}
+
+			return function copyLinearToSRGB( color ) {
+
+				this.r = LinearToSRGB( color.r );
+				this.g = LinearToSRGB( color.g );
+				this.b = LinearToSRGB( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		convertSRGBToLinear: function () {
+
+			this.copySRGBToLinear( this );
+
+			return this;
+
+		},
+
+		convertLinearToSRGB: function () {
+
+			this.copyLinearToSRGB( this );
+
+			return this;
+
+		},
+
 		getHex: function () {
 
 			return ( this.r * 255 ) << 16 ^ ( this.g * 255 ) << 8 ^ ( this.b * 255 ) << 0;
@@ -3019,19 +3075,21 @@ var Three = (function (exports) {
 
 			}
 
-			var sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
+			var sqrSinHalfTheta = 1.0 - cosHalfTheta * cosHalfTheta;
 
-			if ( Math.abs( sinHalfTheta ) < 0.001 ) {
+			if ( sqrSinHalfTheta <= Number.EPSILON ) {
 
-				this._w = 0.5 * ( w + this._w );
-				this._x = 0.5 * ( x + this._x );
-				this._y = 0.5 * ( y + this._y );
-				this._z = 0.5 * ( z + this._z );
+				var s = 1 - t;
+				this._w = s * w + t * this._w;
+				this._x = s * x + t * this._x;
+				this._y = s * y + t * this._y;
+				this._z = s * z + t * this._z;
 
-				return this;
+				return this.normalize();
 
 			}
 
+			var sinHalfTheta = Math.sqrt( sqrSinHalfTheta );
 			var halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
 			var ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
 				ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
@@ -5356,7 +5414,7 @@ var Three = (function (exports) {
 
 				var curve = curves[ i ];
 				var resolution = ( curve && curve.isEllipseCurve ) ? divisions * 2
-					: ( curve && curve.isLineCurve ) ? 1
+					: ( curve && ( curve.isLineCurve || curve.isLineCurve3 ) ) ? 1
 						: ( curve && curve.isSplineCurve ) ? divisions * curve.points.length
 							: divisions;
 
@@ -7056,48 +7114,54 @@ var Three = (function (exports) {
 
 						case 'S':
 							var numbers = parseFloats( data );
-							path.bezierCurveTo(
-								getReflection( point.x, control.x ),
-								getReflection( point.y, control.y ),
-								numbers[ 0 ],
-								numbers[ 1 ],
-								numbers[ 2 ],
-								numbers[ 3 ]
-							);
-							control.x = numbers[ 0 ];
-							control.y = numbers[ 1 ];
-							point.x = numbers[ 2 ];
-							point.y = numbers[ 3 ];
+							for ( var j = 0, jl = numbers.length; j < jl; j += 4 ) {
+								path.bezierCurveTo(
+									getReflection( point.x, control.x ),
+									getReflection( point.y, control.y ),
+									numbers[ j + 0 ],
+									numbers[ j + 1 ],
+									numbers[ j + 2 ],
+									numbers[ j + 3 ]
+								);
+								control.x = numbers[ j + 0 ];
+								control.y = numbers[ j + 1 ];
+								point.x = numbers[ j + 2 ];
+								point.y = numbers[ j + 3 ];
+							}
 							break;
 
 						case 'Q':
 							var numbers = parseFloats( data );
-							path.quadraticCurveTo(
-								numbers[ 0 ],
-								numbers[ 1 ],
-								numbers[ 2 ],
-								numbers[ 3 ]
-							);
-							control.x = numbers[ 0 ];
-							control.y = numbers[ 1 ];
-							point.x = numbers[ 2 ];
-							point.y = numbers[ 3 ];
+							for ( var j = 0, jl = numbers.length; j < jl; j += 4 ) {
+								path.quadraticCurveTo(
+									numbers[ j + 0 ],
+									numbers[ j + 1 ],
+									numbers[ j + 2 ],
+									numbers[ j + 3 ]
+								);
+								control.x = numbers[ j + 0 ];
+								control.y = numbers[ j + 1 ];
+								point.x = numbers[ j + 2 ];
+								point.y = numbers[ j + 3 ];
+							}
 							break;
 
 						case 'T':
 							var numbers = parseFloats( data );
-							var rx = getReflection( point.x, control.x );
-							var ry = getReflection( point.y, control.y );
-							path.quadraticCurveTo(
-								rx,
-								ry,
-								numbers[ 0 ],
-								numbers[ 1 ]
-							);
-							control.x = rx;
-							control.y = ry;
-							point.x = numbers[ 0 ];
-							point.y = numbers[ 1 ];
+							for ( var j = 0, jl = numbers.length; j < jl; j += 2 ) {
+								var rx = getReflection( point.x, control.x );
+								var ry = getReflection( point.y, control.y );
+								path.quadraticCurveTo(
+									rx,
+									ry,
+									numbers[ j + 0 ],
+									numbers[ j + 1 ]
+								);
+								control.x = rx;
+								control.y = ry;
+								point.x = numbers[ j + 0 ];
+								point.y = numbers[ j + 1 ];
+							}
 							break;
 
 						case 'A':
@@ -7178,48 +7242,54 @@ var Three = (function (exports) {
 
 						case 's':
 							var numbers = parseFloats( data );
-							path.bezierCurveTo(
-								getReflection( point.x, control.x ),
-								getReflection( point.y, control.y ),
-								point.x + numbers[ 0 ],
-								point.y + numbers[ 1 ],
-								point.x + numbers[ 2 ],
-								point.y + numbers[ 3 ]
-							);
-							control.x = point.x + numbers[ 0 ];
-							control.y = point.y + numbers[ 1 ];
-							point.x += numbers[ 2 ];
-							point.y += numbers[ 3 ];
+							for ( var j = 0, jl = numbers.length; j < jl; j += 4 ) {
+								path.bezierCurveTo(
+									getReflection( point.x, control.x ),
+									getReflection( point.y, control.y ),
+									point.x + numbers[ j + 0 ],
+									point.y + numbers[ j + 1 ],
+									point.x + numbers[ j + 2 ],
+									point.y + numbers[ j + 3 ]
+								);
+								control.x = point.x + numbers[ j + 0 ];
+								control.y = point.y + numbers[ j + 1 ];
+								point.x += numbers[ j + 2 ];
+								point.y += numbers[ j + 3 ];
+							}
 							break;
 
 						case 'q':
 							var numbers = parseFloats( data );
-							path.quadraticCurveTo(
-								point.x + numbers[ 0 ],
-								point.y + numbers[ 1 ],
-								point.x + numbers[ 2 ],
-								point.y + numbers[ 3 ]
-							);
-							control.x = point.x + numbers[ 0 ];
-							control.y = point.y + numbers[ 1 ];
-							point.x += numbers[ 2 ];
-							point.y += numbers[ 3 ];
+							for ( var j = 0, jl = numbers.length; j < jl; j += 4 ) {
+								path.quadraticCurveTo(
+									point.x + numbers[ j + 0 ],
+									point.y + numbers[ j + 1 ],
+									point.x + numbers[ j + 2 ],
+									point.y + numbers[ j + 3 ]
+								);
+								control.x = point.x + numbers[ j + 0 ];
+								control.y = point.y + numbers[ j + 1 ];
+								point.x += numbers[ j + 2 ];
+								point.y += numbers[ j + 3 ];
+							}
 							break;
 
 						case 't':
 							var numbers = parseFloats( data );
-							var rx = getReflection( point.x, control.x );
-							var ry = getReflection( point.y, control.y );
-							path.quadraticCurveTo(
-								rx,
-								ry,
-								point.x + numbers[ 0 ],
-								point.y + numbers[ 1 ]
-							);
-							control.x = rx;
-							control.y = ry;
-							point.x = point.x + numbers[ 0 ];
-							point.y = point.y + numbers[ 1 ];
+							for ( var j = 0, jl = numbers.length; j < jl; j += 2 ) {
+								var rx = getReflection( point.x, control.x );
+								var ry = getReflection( point.y, control.y );
+								path.quadraticCurveTo(
+									rx,
+									ry,
+									point.x + numbers[ j + 0 ],
+									point.y + numbers[ j + 1 ]
+								);
+								control.x = rx;
+								control.y = ry;
+								point.x = point.x + numbers[ j + 0 ];
+								point.y = point.y + numbers[ j + 1 ];
+							}
 							break;
 
 						case 'a':
@@ -7241,6 +7311,24 @@ var Three = (function (exports) {
 						case 'Z':
 						case 'z':
 							path.currentPath.autoClose = true;
+							if ( path.currentPath.curves.length > 0 ) {
+								// Reset point to beginning of Path
+								var curve = path.currentPath.curves[ 0 ];
+								if ( curve.isLineCurve ) {
+									point.x = curve.v1.x;
+									point.y = curve.v1.y;
+								} else if ( curve.isEllipseCurve || curve.isArcCurve ) {
+									point.x = curve.aX;
+									point.y = curve.aY;
+								} else if ( curve.isCubicBezierCurve || curve.isQuadraticBezierCurve ) {
+									point.x = curve.v0.x;
+									point.y = curve.v0.y;
+								} else if ( curve.isSplineCurve ) {
+									point.x = curve.points[ 0 ].x;
+									point.y = curve.points[ 0 ].y;
+								}
+								path.currentPath.currentPoint.copy( point );
+							}
 							break;
 
 						default:
@@ -7502,12 +7590,18 @@ var Three = (function (exports) {
 
 					var number = array[ i ];
 
-					// Handle values like 48.6037.7
+					// Handle values like 48.6037.7.8
 					// TODO Find a regex for this
 
 					if ( number.indexOf( '.' ) !== number.lastIndexOf( '.' ) ) {
 
-						array.splice( i + 1, 0, '0.' + number.split( '.' )[ 2 ] );
+						var split = number.split( '.' );
+
+						for ( var s = 2; s < split.length; s ++ ) {
+
+							array.splice( i + s - 1, 0, '0.' + split[ s ] );
+
+						}
 
 					}
 

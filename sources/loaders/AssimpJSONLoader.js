@@ -23,7 +23,7 @@ AssimpJSONLoader.prototype = {
 
 	constructor: AssimpJSONLoader,
 
-	crossOrigin: 'Anonymous',
+	crossOrigin: 'anonymous',
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -69,6 +69,7 @@ AssimpJSONLoader.prototype = {
 	setCrossOrigin: function ( value ) {
 
 		this.crossOrigin = value;
+		return this;
 
 	},
 
@@ -223,8 +224,10 @@ AssimpJSONLoader.prototype = {
 
 					case '$mat.opacity':
 						if ( value < 1 ) {
+
 							material.opacity = value;
 							material.transparent = true;
+
 						}
 						break;
 
