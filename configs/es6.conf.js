@@ -503,7 +503,10 @@ module.exports = {
 				'DefaultLoadingManager',
 				'LoaderUtils',
 				'_Math'
-			]
+			],
+            exports: [
+                'MMDLoader'
+            ]
 		},
         MMDPhysics: {
             exports: [
