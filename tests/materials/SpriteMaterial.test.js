@@ -1195,8 +1195,8 @@ var Three = (function (exports) {
 
 		this.rotation = 0;
 
-		this.fog = false;
 		this.lights = false;
+		this.transparent = true;
 
 		this.setValues( parameters );
 

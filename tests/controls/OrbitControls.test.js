@@ -1534,6 +1534,26 @@ var Three = (function (exports) {
 
 		}(),
 
+		angleTo: function ( q ) {
+
+			return 2 * Math.acos( Math.abs( _Math.clamp( this.dot( q ), - 1, 1 ) ) );
+
+		},
+
+		rotateTowards: function ( q, step ) {
+
+			var angle = this.angleTo( q );
+
+			if ( angle === 0 ) return this;
+
+			var t = Math.min( 1, step / angle );
+
+			this.slerp( q, t );
+
+			return this;
+
+		},
+
 		inverse: function () {
 
 			// quaternion is assumed to have unit length
@@ -2884,6 +2904,12 @@ var Three = (function (exports) {
 
 		},
 
+		cross: function ( v ) {
+
+			return this.x * v.y - this.y * v.x;
+
+		},
+
 		lengthSq: function () {
 
 			return this.x * this.x + this.y * this.y;
@@ -3027,7 +3053,7 @@ var Three = (function (exports) {
 	//
 	//    Orbit - left mouse / touch: one-finger move
 	//    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
-	//    Pan - right mouse, or arrow keys / touch: two-finger move
+	//    Pan - right mouse, or left mouse + ctrl/metaKey, or arrow keys / touch: two-finger move
 
 	var OrbitControls = function ( object, domElement ) {
 
@@ -3091,7 +3117,7 @@ var Three = (function (exports) {
 		this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
 
 		// Mouse buttons
-		this.mouseButtons = { ORBIT: MOUSE.LEFT, ZOOM: MOUSE.MIDDLE, PAN: MOUSE.RIGHT };
+		this.mouseButtons = { LEFT: MOUSE.LEFT, MIDDLE: MOUSE.MIDDLE, RIGHT: MOUSE.RIGHT };
 
 		// for reset
 		this.target0 = this.target.clone();
@@ -3681,17 +3707,29 @@ var Three = (function (exports) {
 
 			switch ( event.button ) {
 
-				case scope.mouseButtons.ORBIT:
+				case scope.mouseButtons.LEFT:
 
-					if ( scope.enableRotate === false ) return;
+					if ( event.ctrlKey || event.metaKey ) {
 
-					handleMouseDownRotate( event );
+						if ( scope.enablePan === false ) return;
 
-					state = STATE.ROTATE;
+						handleMouseDownPan( event );
+
+						state = STATE.PAN;
+
+					} else {
+
+						if ( scope.enableRotate === false ) return;
+
+						handleMouseDownRotate( event );
+
+						state = STATE.ROTATE;
+
+					}
 
 					break;
 
-				case scope.mouseButtons.ZOOM:
+				case scope.mouseButtons.MIDDLE:
 
 					if ( scope.enableZoom === false ) return;
 
@@ -3701,7 +3739,7 @@ var Three = (function (exports) {
 
 					break;
 
-				case scope.mouseButtons.PAN:
+				case scope.mouseButtons.RIGHT:
 
 					if ( scope.enablePan === false ) return;
 

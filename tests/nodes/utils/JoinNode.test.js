@@ -147,180 +147,198 @@ var Three = (function (exports) {
 
 	};
 
-	var GLNode = function ( type ) {
+	function Node( type ) {
 
 		this.uuid = _Math.generateUUID();
 
 		this.name = "";
-		this.allows = {};
 
 		this.type = type;
 
 		this.userData = {};
 
-	};
+	}
 
-	GLNode.prototype.isNode = true;
+	Node.prototype = {
 
-	GLNode.prototype.parse = function ( builder, context ) {
+		constructor: Node,
 
-		context = context || {};
+		isNode: true,
 
-		builder.parsing = true;
+		parse: function ( builder, settings ) {
 
-		var material = builder.material;
+			settings = settings || {};
 
-		this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), 'v4' );
+			builder.parsing = true;
 
-		material.clearVertexNode();
-		material.clearFragmentNode();
+			this.build( builder.addFlow( settings.slot, settings.cache, settings.context ), 'v4' );
 
-		builder.removeCache().removeSlot();
+			builder.clearVertexNodeCode();
+			builder.clearFragmentNodeCode();
 
-		builder.parsing = false;
+			builder.removeFlow();
 
-	};
+			builder.parsing = false;
 
-	GLNode.prototype.parseAndBuildCode = function ( builder, output, context ) {
+		},
 
-		context = context || {};
+		parseAndBuildCode: function ( builder, output, settings ) {
 
-		this.parse( builder, context );
+			settings = settings || {};
 
-		return this.buildCode( builder, output, context );
+			this.parse( builder, settings );
 
-	};
+			return this.buildCode( builder, output, settings );
 
-	GLNode.prototype.buildCode = function ( builder, output, context ) {
+		},
 
-		context = context || {};
+		buildCode: function ( builder, output, settings ) {
 
-		var material = builder.material;
+			settings = settings || {};
 
-		var data = { result: this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
+			var data = { result: this.build( builder.addFlow( settings.slot, settings.cache, settings.context ), output ) };
 
-		if ( builder.isShader( 'vertex' ) ) data.code = material.clearVertexNode();
-		else data.code = material.clearFragmentNode();
+			data.code = builder.clearNodeCode();
 
-		builder.removeCache().removeSlot();
+			builder.removeFlow();
 
-		return data;
+			return data;
 
-	};
+		},
 
-	GLNode.prototype.build = function ( builder, output, uuid ) {
+		build: function ( builder, output, uuid ) {
 
-		output = output || this.getType( builder, output );
+			output = output || this.getType( builder, output );
 
-		var material = builder.material, data = material.getDataNode( uuid || this.uuid );
+			var data = builder.getNodeData( uuid || this );
 
-		if ( builder.parsing ) this.appendDepsNode( builder, data, output );
+			if ( builder.parsing ) {
 
-		if ( this.allows[ builder.shader ] === false ) {
+				this.appendDepsNode( builder, data, output );
 
-			throw new Error( 'Shader ' + shader + ' is not compatible with this node.' );
+			}
+
+			if ( builder.nodes.indexOf( this ) === - 1 ) {
+
+				builder.nodes.push( this );
+
+			}
+
+			if ( this.updateFrame !== undefined && builder.updaters.indexOf( this ) === - 1 ) {
+
+				builder.updaters.push( this );
+
+			}
+
+			return this.generate( builder, output, uuid );
+
+		},
+
+		appendDepsNode: function ( builder, data, output ) {
+
+			data.deps = ( data.deps || 0 ) + 1;
+
+			var outputLen = builder.getTypeLength( output );
+
+			if ( outputLen > ( data.outputMax || 0 ) || this.getType( builder, output ) ) {
+
+				data.outputMax = outputLen;
+				data.output = output;
+
+			}
+
+		},
+
+		setName: function ( name ) {
+
+			this.name = name;
+
+			return this;
+
+		},
+
+		getName: function ( builder ) {
+
+			return this.name;
+
+		},
+
+		getType: function ( builder, output ) {
+
+			return output === 'sampler2D' || output === 'samplerCube' ? output : this.type;
+
+		},
+
+		getJSONNode: function ( meta ) {
+
+			var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+			if ( ! isRootObject && meta.nodes[ this.uuid ] !== undefined ) {
+
+				return meta.nodes[ this.uuid ];
+
+			}
+
+		},
+
+		copy: function ( source ) {
+
+			if ( source.name !== undefined ) this.name = source.name;
+
+			if ( source.userData !== undefined ) this.userData = JSON.parse( JSON.stringify( source.userData ) );
+
+		},
+
+		createJSONNode: function ( meta ) {
+
+			var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+			var data = {};
+
+			if ( typeof this.nodeType !== "string" ) throw new Error( "Node does not allow serialization." );
+
+			data.uuid = this.uuid;
+			data.nodeType = this.nodeType;
+
+			if ( this.name !== "" ) data.name = this.name;
+
+			if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
+
+			if ( ! isRootObject ) {
+
+				meta.nodes[ this.uuid ] = data;
+
+			}
+
+			return data;
+
+		},
+
+		toJSON: function ( meta ) {
+
+			return this.getJSONNode( meta ) || this.createJSONNode( meta );
 
 		}
 
-		if ( material.nodes.indexOf( this ) === - 1 ) {
-
-			material.nodes.push( this );
-
-		}
-
-		if ( this.updateFrame !== undefined && material.updaters.indexOf( this ) === - 1 ) {
-
-			material.updaters.push( this );
-
-		}
-
-		return this.generate( builder, output, uuid );
-
 	};
 
-	GLNode.prototype.appendDepsNode = function ( builder, data, output ) {
+	function TempNode( type, params ) {
 
-		data.deps = ( data.deps || 0 ) + 1;
-
-		var outputLen = builder.getFormatLength( output );
-
-		if ( outputLen > ( data.outputMax || 0 ) || this.getType( builder, output ) ) {
-
-			data.outputMax = outputLen;
-			data.output = output;
-
-		}
-
-	};
-
-	GLNode.prototype.getType = function ( builder, output ) {
-
-		return output === 'sampler2D' || output === 'samplerCube' ? output : this.type;
-
-	};
-
-	GLNode.prototype.getJSONNode = function ( meta ) {
-
-		var isRootObject = ( meta === undefined || typeof meta === 'string' );
-
-		if ( ! isRootObject && meta.nodes[ this.uuid ] !== undefined ) {
-
-			return meta.nodes[ this.uuid ];
-
-		}
-
-	};
-
-	GLNode.prototype.createJSONNode = function ( meta ) {
-
-		var isRootObject = ( meta === undefined || typeof meta === 'string' );
-
-		var data = {};
-
-		if ( typeof this.nodeType !== "string" ) throw new Error( "Node does not allow serialization." );
-
-		data.uuid = this.uuid;
-		data.type = this.nodeType + "Node";
-
-		if ( this.name !== "" ) data.name = this.name;
-
-		if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
-
-		if ( ! isRootObject ) {
-
-			meta.nodes[ this.uuid ] = data;
-
-		}
-
-		return data;
-
-	};
-
-	GLNode.prototype.toJSON = function ( meta ) {
-
-		return this.getJSONNode( meta ) || this.createJSONNode( meta );
-
-	};
-
-	var TempNode = function ( type, params ) {
-
-		GLNode.call( this, type );
+		Node.call( this, type );
 
 		params = params || {};
 
 		this.shared = params.shared !== undefined ? params.shared : true;
 		this.unique = params.unique !== undefined ? params.unique : false;
 
-	};
+	}
 
-	TempNode.prototype = Object.create( GLNode.prototype );
+	TempNode.prototype = Object.create( Node.prototype );
 	TempNode.prototype.constructor = TempNode;
 
 	TempNode.prototype.build = function ( builder, output, uuid, ns ) {
 
 		output = output || this.getType( builder );
-
-		var material = builder.material;
 
 		if ( this.isShared( builder, output ) ) {
 
@@ -334,36 +352,36 @@ var Three = (function (exports) {
 
 			uuid = builder.getUuid( uuid || this.getUuid(), ! isUnique );
 
-			var data = material.getDataNode( uuid );
+			var data = builder.getNodeData( uuid ),
+				type = data.output || this.getType( builder );
 
 			if ( builder.parsing ) {
 
-				if ( data.deps || 0 > 0 ) {
+				if ( ( data.deps || 0 ) > 0 ) {
 
 					this.appendDepsNode( builder, data, output );
 
-					return this.generate( builder, type, uuid );
+					return this.generate( builder, output, uuid );
 
 				}
 
-				return GLNode.prototype.build.call( this, builder, output, uuid );
+				return Node.prototype.build.call( this, builder, output, uuid );
 
 			} else if ( isUnique ) {
 
-				data.name = data.name || GLNode.prototype.build.call( this, builder, output, uuid );
+				data.name = data.name || Node.prototype.build.call( this, builder, output, uuid );
 
 				return data.name;
 
-			} else if ( ! builder.optimize || data.deps == 1 ) {
+			} else if ( ! this.isShared( builder, type ) || ( ! builder.optimize || data.deps == 1 ) ) {
 
-				return GLNode.prototype.build.call( this, builder, output, uuid );
+				return Node.prototype.build.call( this, builder, output, uuid );
 
 			}
 
 			uuid = this.getUuid( false );
 
 			var name = this.getTemp( builder, uuid );
-			var type = data.output || this.getType( builder );
 
 			if ( name ) {
 
@@ -375,8 +393,7 @@ var Three = (function (exports) {
 
 				var code = this.generate( builder, type, uuid );
 
-				if ( builder.isShader( 'vertex' ) ) material.addVertexNode( name + '=' + code + ';' );
-				else material.addFragmentNode( name + '=' + code + ';' );
+				builder.addNodeCode( name + ' = ' + code + ';' );
 
 				return builder.format( name, type, output );
 
@@ -384,7 +401,7 @@ var Three = (function (exports) {
 
 		}
 
-		return GLNode.prototype.build.call( this, builder, output, uuid );
+		return Node.prototype.build.call( this, builder, output, uuid );
 
 	};
 
@@ -414,10 +431,9 @@ var Three = (function (exports) {
 
 		uuid = uuid || this.uuid;
 
-		var material = builder.material;
+		var tempVar = builder.getVars()[ uuid ];
 
-		if ( builder.isShader( 'vertex' ) && material.vertexTemps[ uuid ] ) return material.vertexTemps[ uuid ].name;
-		else if ( material.fragmentTemps[ uuid ] ) return material.fragmentTemps[ uuid ].name;
+		return tempVar ? tempVar.name : undefined;
 
 	};
 
@@ -427,23 +443,92 @@ var Three = (function (exports) {
 
 		uuid = uuid || this.uuid;
 
-		if ( builder.isShader( 'vertex' ) ) return builder.material.getVertexTemp( uuid, type || this.getType( builder ), ns ).name;
-		else return builder.material.getFragmentTemp( uuid, type || this.getType( builder ), ns ).name;
+		return builder.getTempVar( uuid, type || this.getType( builder ), ns ).name;
 
 	};
 
-	var JoinNode = function ( x, y, z, w ) {
+	var NodeUtils = {
 
-		TempNode.call( this, 'fv1' );
+		elements: [ 'x', 'y', 'z', 'w' ],
+
+		addShortcuts: function () {
+
+			function applyShortcut( proxy, property, subProperty ) {
+
+				if ( subProperty ) {
+
+					return {
+
+						get: function () {
+
+							return this[ proxy ][ property ][ subProperty ];
+
+						},
+
+						set: function ( val ) {
+
+							this[ proxy ][ property ][ subProperty ] = val;
+
+						}
+
+					};
+
+				} else {
+
+					return {
+
+						get: function () {
+
+							return this[ proxy ][ property ];
+
+						},
+
+						set: function ( val ) {
+
+							this[ proxy ][ property ] = val;
+
+						}
+
+					};
+
+				}
+
+			}
+
+			return function addShortcuts( proto, proxy, list ) {
+
+				var shortcuts = {};
+
+				for ( var i = 0; i < list.length; ++ i ) {
+
+					var data = list[ i ].split( "." ),
+						property = data[ 0 ],
+						subProperty = data[ 1 ];
+
+					shortcuts[ property ] = applyShortcut( proxy, property, subProperty );
+
+				}
+
+				Object.defineProperties( proto, shortcuts );
+
+			};
+
+		}()
+
+	};
+
+	var inputs = NodeUtils.elements;
+
+	function JoinNode( x, y, z, w ) {
+
+		TempNode.call( this, 'f' );
 
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		this.w = w;
 
-	};
-
-	JoinNode.inputs = [ 'x', 'y', 'z', 'w' ];
+	}
 
 	JoinNode.prototype = Object.create( TempNode.prototype );
 	JoinNode.prototype.constructor = JoinNode;
@@ -451,7 +536,6 @@ var Three = (function (exports) {
 
 	JoinNode.prototype.getNumElements = function () {
 
-		var inputs = JoinNode.inputs;
 		var i = inputs.length;
 
 		while ( i -- ) {
@@ -459,6 +543,7 @@ var Three = (function (exports) {
 			if ( this[ inputs[ i ] ] !== undefined ) {
 
 				++ i;
+
 				break;
 
 			}
@@ -471,31 +556,39 @@ var Three = (function (exports) {
 
 	JoinNode.prototype.getType = function ( builder ) {
 
-		return builder.getFormatFromLength( this.getNumElements() );
+		return builder.getTypeFromLength( this.getNumElements() );
 
 	};
 
 	JoinNode.prototype.generate = function ( builder, output ) {
 
-		var material = builder.material;
-
-		var type = this.getType( builder );
-		var length = this.getNumElements();
-
-		var inputs = JoinNode.inputs;
-		var outputs = [];
+		var type = this.getType( builder ),
+			length = this.getNumElements(),
+			outputs = [];
 
 		for ( var i = 0; i < length; i ++ ) {
 
 			var elm = this[ inputs[ i ] ];
 
-			outputs.push( elm ? elm.build( builder, 'fv1' ) : '0.' );
+			outputs.push( elm ? elm.build( builder, 'f' ) : '0.0' );
 
 		}
 
-		var code = ( length > 1 ? builder.getConstructorFromLength( length ) : '' ) + '(' + outputs.join( ',' ) + ')';
+		var code = ( length > 1 ? builder.getConstructorFromLength( length ) : '' ) + '( ' + outputs.join( ', ' ) + ' )';
 
 		return builder.format( code, type, output );
+
+	};
+
+	JoinNode.prototype.copy = function ( source ) {
+
+		TempNode.prototype.copy.call( this, source );
+
+		for ( var prop in source.inputs ) {
+
+			this[ prop ] = source.inputs[ prop ];
+
+		}
 
 	};
 
@@ -510,7 +603,6 @@ var Three = (function (exports) {
 			data.inputs = {};
 
 			var length = this.getNumElements();
-			var inputs = JoinNode.inputs;
 
 			for ( var i = 0; i < length; i ++ ) {
 

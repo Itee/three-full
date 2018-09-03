@@ -803,7 +803,7 @@ var Three = (function (exports) {
 
 	} );
 
-	var REVISION = '94';
+	var REVISION = '95';
 
 	var RaytracingRenderer = function ( parameters ) {
 
