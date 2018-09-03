@@ -2057,16 +2057,6 @@ export default [
 		}
 	},
 	{
-		input: 'sources/loaders/UTF8Loader.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/loaders/UTF8Loader.test.js'
-		}
-	},
-	{
 		input: 'sources/loaders/VRMLLoader.js',
 		plugins: [ glsl() ],
 		output: {
