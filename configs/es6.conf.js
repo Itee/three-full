@@ -65,6 +65,12 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
+		AfterimagePass: {
+            imports: [
+                'AfterimageShader',
+                'UniformsUtils'
+            ]
+		},
 		AMFLoader: {
 			imports: [
 				'DefaultLoadingManager',
@@ -142,6 +148,7 @@ module.exports = {
         CinematicCamera: {
 			imports: [
 				'BokehShader',
+				'BokehDepthShader',
 				'UniformsUtils'
 			]
 		},
@@ -248,8 +255,13 @@ module.exports = {
         DRACOLoader: {
             imports: [
                 'DefaultLoadingManager',
+                'Uint8BufferAttribute',
                 'Uint16BufferAttribute',
-                'Uint32BufferAttribute'
+                'Uint32BufferAttribute',
+                'Int8BufferAttribute',
+                'Int16BufferAttribute',
+                'Int32BufferAttribute',
+                'Float32BufferAttribute',
             ]
         },
 		Earcut: {
@@ -334,7 +346,8 @@ module.exports = {
 				'NumberKeyframeTrack',
 				'QuaternionKeyframeTrack',
 				'VectorKeyframeTrack',
-				'PropertyBinding'
+				'PropertyBinding',
+				'BufferGeometryUtils'
 			],
             exportsOverride: [
             	'GLTFLoader'
@@ -350,6 +363,12 @@ module.exports = {
 		},
 		Gyroscope: {
 			outputOverride: 'objects/Gyroscope.js'
+		},
+		HalftonePass: {
+            imports: [
+            	'UniformsUtils',
+            	'HalftoneShader'
+			]
 		},
 		HDRCubeTextureLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -508,6 +527,12 @@ module.exports = {
 				'Loader'
 			]
 		},
+		Node: {
+            imports: [ '_Math' ]
+		},
+        NodeBuilder: {
+            imports: [ 'TextureCubeNode' ]
+        },
         NodeLib_Implementation: {
             importsOverride: [
                 [ 'NodeLib', 'from', './NodeLib_Declaration' ],
@@ -643,7 +668,10 @@ module.exports = {
             exportsOverride: [ 'OBJLoader' ]
 		},
 		OBJLoader2: {
-            imports: [ 'DefaultLoadingManager' ],
+            imports: [
+            	'DefaultLoadingManager',
+				'LoaderUtils'
+			],
             replacements: [
 				[ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ],
 				[ 'THREE = { LoaderSupport: {} };', 'var LoaderSupport = {};' ]
