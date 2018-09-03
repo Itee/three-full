@@ -4835,13 +4835,13 @@ export default [
 
 	// vr
 	{
-		input: 'sources/vr/DaydreamController.js',
+		input: 'sources/vr/deprecated/DaydreamController.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/vr/DaydreamController.test.js'
+			file: 'tests/vr/deprecated/DaydreamController.test.js'
 		}
 	},
 	{
