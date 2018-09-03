@@ -1,22 +1,33 @@
-import { NodeMaterial } from '../NodeMaterial.js'
-import { SpriteNode } from './SpriteNode.js'
+import { SpriteNode } from './nodes/SpriteNode.js'
+import { NodeMaterial } from './NodeMaterial.js'
+import { NodeUtils } from '../core/NodeUtils.js'
 
 
 
-var SpriteNodeMaterial = function () {
 
-	this.node = new SpriteNode();
 
-	NodeMaterial.call( this, this.node, this.node );
+
+
+function SpriteNodeMaterial() {
+
+	var node = new SpriteNode();
+
+	NodeMaterial.call( this, node, node );
 
 	this.type = "SpriteNodeMaterial";
 
-};
+}
 
 SpriteNodeMaterial.prototype = Object.create( NodeMaterial.prototype );
 SpriteNodeMaterial.prototype.constructor = SpriteNodeMaterial;
 
-NodeMaterial.addShortcuts( SpriteNodeMaterial.prototype, 'node',
-	[ 'color', 'alpha', 'transform', 'spherical' ] );
+NodeUtils.addShortcuts( SpriteNodeMaterial.prototype, 'fragment', [
+	'color',
+	'alpha',
+	'position',
+	'spherical'
+] );
+
+;
 
 export { SpriteNodeMaterial }

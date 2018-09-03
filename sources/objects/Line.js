@@ -18,13 +18,11 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
 
 
-
 function Line( geometry, material, mode ) {
 
 	if ( mode === 1 ) {
 
-		console.error( 'Line: parameter LinePieces no longer supported. Created LineSegments instead.' );
-		
+		console.error( 'Line: parameter LinePieces no longer supported. Use LineSegments instead.' );
 
 	}
 

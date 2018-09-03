@@ -10,7 +10,15 @@ PLYExporter.prototype = {
 
 	constructor: PLYExporter,
 
-	parse: function ( object, options ) {
+	parse: function ( object, onDone, options ) {
+
+		if ( onDone && typeof onDone === 'object' ) {
+
+			console.warn( 'PLYExporter: The options parameter is now the third argument to the "parse" function. See the documentation for the new API.' );
+			options = onDone;
+			onDone = undefined;
+
+		}
 
 		// Iterate over the valid meshes in the object
 		function traverseMeshes( cb ) {
@@ -200,6 +208,7 @@ PLYExporter.prototype = {
 		// Generate attribute data
 		var vertex = new Vector3();
 		var normalMatrixWorld = new Matrix3();
+		var result = null;
 
 		if ( options.binary === true ) {
 
@@ -391,7 +400,7 @@ PLYExporter.prototype = {
 
 			} );
 
-			return output;
+			result = output.buffer;
 
 		} else {
 
@@ -521,9 +530,12 @@ PLYExporter.prototype = {
 
 			} );
 
-			return `${ header }${vertexList}\n${ includeIndices ? `${faceList}\n` : '' }`;
+			result = `${ header }${vertexList}\n${ includeIndices ? `${faceList}\n` : '' }`;
 
 		}
+
+		if ( typeof onDone === 'function' ) requestAnimationFrame( () => onDone( result ) );
+		return result;
 
 	}
 

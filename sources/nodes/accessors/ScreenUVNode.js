@@ -1,14 +1,18 @@
-import { TempNode } from '../TempNode.js'
+import { TempNode } from '../core/TempNode.js'
+import { ResolutionNode } from './ResolutionNode.js'
 
 
 
-var ScreenUVNode = function ( resolution ) {
+
+
+
+function ScreenUVNode( resolution ) {
 
 	TempNode.call( this, 'v2' );
 
-	this.resolution = resolution;
+	this.resolution = resolution || new ResolutionNode();
 
-};
+}
 
 ScreenUVNode.prototype = Object.create( TempNode.prototype );
 ScreenUVNode.prototype.constructor = ScreenUVNode;
@@ -16,12 +20,11 @@ ScreenUVNode.prototype.nodeType = "ScreenUV";
 
 ScreenUVNode.prototype.generate = function ( builder, output ) {
 
-	var material = builder.material;
 	var result;
 
 	if ( builder.isShader( 'fragment' ) ) {
 
-		result = '(gl_FragCoord.xy/' + this.resolution.build( builder, 'v2' ) + ')';
+		result = '( gl_FragCoord.xy / ' + this.resolution.build( builder, 'v2' ) + ')';
 
 	} else {
 
@@ -32,6 +35,14 @@ ScreenUVNode.prototype.generate = function ( builder, output ) {
 	}
 
 	return builder.format( result, this.getType( builder ), output );
+
+};
+
+ScreenUVNode.prototype.copy = function ( source ) {
+
+	TempNode.prototype.copy.call( this, source );
+
+	this.resolution = source.resolution;
 
 };
 
@@ -50,5 +61,8 @@ ScreenUVNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
+
+;
+
 
 export { ScreenUVNode }

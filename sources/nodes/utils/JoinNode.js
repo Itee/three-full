@@ -1,19 +1,23 @@
-import { TempNode } from '../TempNode.js'
+import { TempNode } from '../core/TempNode.js'
+import { NodeUtils } from '../core/NodeUtils.js'
 
 
 
-var JoinNode = function ( x, y, z, w ) {
 
-	TempNode.call( this, 'fv1' );
+
+
+var inputs = NodeUtils.elements;
+
+function JoinNode( x, y, z, w ) {
+
+	TempNode.call( this, 'f' );
 
 	this.x = x;
 	this.y = y;
 	this.z = z;
 	this.w = w;
 
-};
-
-JoinNode.inputs = [ 'x', 'y', 'z', 'w' ];
+}
 
 JoinNode.prototype = Object.create( TempNode.prototype );
 JoinNode.prototype.constructor = JoinNode;
@@ -21,7 +25,6 @@ JoinNode.prototype.nodeType = "Join";
 
 JoinNode.prototype.getNumElements = function () {
 
-	var inputs = JoinNode.inputs;
 	var i = inputs.length;
 
 	while ( i -- ) {
@@ -29,6 +32,7 @@ JoinNode.prototype.getNumElements = function () {
 		if ( this[ inputs[ i ] ] !== undefined ) {
 
 			++ i;
+
 			break;
 
 		}
@@ -41,31 +45,39 @@ JoinNode.prototype.getNumElements = function () {
 
 JoinNode.prototype.getType = function ( builder ) {
 
-	return builder.getFormatFromLength( this.getNumElements() );
+	return builder.getTypeFromLength( this.getNumElements() );
 
 };
 
 JoinNode.prototype.generate = function ( builder, output ) {
 
-	var material = builder.material;
-
-	var type = this.getType( builder );
-	var length = this.getNumElements();
-
-	var inputs = JoinNode.inputs;
-	var outputs = [];
+	var type = this.getType( builder ),
+		length = this.getNumElements(),
+		outputs = [];
 
 	for ( var i = 0; i < length; i ++ ) {
 
 		var elm = this[ inputs[ i ] ];
 
-		outputs.push( elm ? elm.build( builder, 'fv1' ) : '0.' );
+		outputs.push( elm ? elm.build( builder, 'f' ) : '0.0' );
 
 	}
 
-	var code = ( length > 1 ? builder.getConstructorFromLength( length ) : '' ) + '(' + outputs.join( ',' ) + ')';
+	var code = ( length > 1 ? builder.getConstructorFromLength( length ) : '' ) + '( ' + outputs.join( ', ' ) + ' )';
 
 	return builder.format( code, type, output );
+
+};
+
+JoinNode.prototype.copy = function ( source ) {
+
+	TempNode.prototype.copy.call( this, source );
+
+	for ( var prop in source.inputs ) {
+
+		this[ prop ] = source.inputs[ prop ];
+
+	}
 
 };
 
@@ -80,7 +92,6 @@ JoinNode.prototype.toJSON = function ( meta ) {
 		data.inputs = {};
 
 		var length = this.getNumElements();
-		var inputs = JoinNode.inputs;
 
 		for ( var i = 0; i < length; i ++ ) {
 
@@ -100,5 +111,7 @@ JoinNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
+
+;
 
 export { JoinNode }

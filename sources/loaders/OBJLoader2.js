@@ -3,6 +3,7 @@ import { LoaderSupport } from './LoaderSupport.js'
 import { FileLoader } from './FileLoader.js'
 import { MTLLoader } from './MTLLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+import { LoaderUtils } from './LoaderUtils.js'
 
 
 

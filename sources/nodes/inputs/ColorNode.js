@@ -1,26 +1,38 @@
-import { InputNode } from '../InputNode.js'
+import { InputNode } from '../core/InputNode.js'
+import { NodeUtils } from '../core/NodeUtils.js'
 import { Color } from '../../math/Color.js'
-import { NodeMaterial } from '../NodeMaterial.js'
+import { NodeMaterial } from '../materials/NodeMaterial.js'
 
 
 
-var ColorNode = function ( color ) {
+
+
+
+function ColorNode( color, g, b ) {
 
 	InputNode.call( this, 'c' );
 
-	this.value = new Color( color || 0 );
+	this.value = color instanceof Color ? color : new Color( color || 0, g, b );
 
-};
+}
 
 ColorNode.prototype = Object.create( InputNode.prototype );
 ColorNode.prototype.constructor = ColorNode;
 ColorNode.prototype.nodeType = "Color";
 
-NodeMaterial.addShortcuts( ColorNode.prototype, 'value', [ 'r', 'g', 'b' ] );
+NodeUtils.addShortcuts( ColorNode.prototype, 'value', [ 'r', 'g', 'b' ] );
 
 ColorNode.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
 	return builder.format( "vec3( " + this.r + ", " + this.g + ", " + this.b + " )", type, output );
+
+};
+
+ColorNode.prototype.copy = function ( source ) {
+
+	InputNode.prototype.copy.call( this, source );
+
+	this.value.copy( source );
 
 };
 
@@ -43,5 +55,7 @@ ColorNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
+
+;
 
 export { ColorNode }

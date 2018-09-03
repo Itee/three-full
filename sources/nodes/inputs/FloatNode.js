@@ -1,14 +1,16 @@
-import { InputNode } from '../InputNode.js'
+import { InputNode } from '../core/InputNode.js'
 
 
 
-var FloatNode = function ( value ) {
 
-	InputNode.call( this, 'fv1' );
+
+function FloatNode( value ) {
+
+	InputNode.call( this, 'f' );
 
 	this.value = value || 0;
 
-};
+}
 
 FloatNode.prototype = Object.create( InputNode.prototype );
 FloatNode.prototype.constructor = FloatNode;
@@ -16,9 +18,15 @@ FloatNode.prototype.nodeType = "Float";
 
 FloatNode.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
-	var val = this.value;
+	return builder.format( this.value + ( this.value % 1 ? '' : '.0' ), type, output );
 
-	return builder.format( Math.floor( val ) !== val ? val : val + ".0", type, output );
+};
+
+FloatNode.prototype.copy = function ( source ) {
+
+	InputNode.prototype.copy.call( this, source );
+
+	this.value = source.value;
 
 };
 
@@ -39,5 +47,7 @@ FloatNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
+
+;
 
 export { FloatNode }

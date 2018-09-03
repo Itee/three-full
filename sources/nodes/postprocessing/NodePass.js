@@ -1,12 +1,14 @@
-import { ShaderPass } from '../../postprocessing/ShaderPass.js'
-import { RawNode } from '../RawNode.js'
+import { NodeMaterial } from '../materials/NodeMaterial.js'
 import { ScreenNode } from '../inputs/ScreenNode.js'
-import { NodeMaterial } from '../NodeMaterial.js'
+import { ShaderPass } from '../../postprocessing/ShaderPass.js'
 import { _Math } from '../../math/Math.js'
 
 
 
-var NodePass = function () {
+
+
+
+function NodePass() {
 
 	ShaderPass.call( this );
 
@@ -17,34 +19,38 @@ var NodePass = function () {
 
 	this.textureID = 'renderTexture';
 
-	this.fragment = new RawNode( new ScreenNode() );
+	this.input = new ScreenNode();
 
-	this.node = new NodeMaterial();
-	this.node.fragment = this.fragment;
+	this.material = new NodeMaterial();
 
 	this.needsUpdate = true;
 
-};
+}
 
 NodePass.prototype = Object.create( ShaderPass.prototype );
 NodePass.prototype.constructor = NodePass;
-
-NodeMaterial.addShortcuts( NodePass.prototype, 'fragment', [ 'value' ] );
 
 NodePass.prototype.render = function () {
 
 	if ( this.needsUpdate ) {
 
-		this.node.dispose();
+		this.material.dispose();
+
+		this.material.fragment.value = this.input;
 
 		this.needsUpdate = false;
 
 	}
 
-	this.uniforms = this.node.uniforms;
-	this.material = this.node;
+	this.uniforms = this.material.uniforms;
 
 	ShaderPass.prototype.render.apply( this, arguments );
+
+};
+
+NodePass.prototype.copy = function ( source ) {
+
+	this.input = source.input;
 
 };
 
@@ -75,7 +81,7 @@ NodePass.prototype.toJSON = function ( meta ) {
 
 		if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
 
-		data.value = this.value.toJSON( meta ).uuid;
+		data.input = this.input.toJSON( meta ).uuid;
 
 	}
 
@@ -84,5 +90,7 @@ NodePass.prototype.toJSON = function ( meta ) {
 	return meta;
 
 };
+
+;
 
 export { NodePass }

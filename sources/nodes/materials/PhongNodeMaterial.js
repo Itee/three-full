@@ -1,22 +1,42 @@
-import { NodeMaterial } from '../NodeMaterial.js'
-import { PhongNode } from './PhongNode.js'
+import { PhongNode } from './nodes/PhongNode.js'
+import { NodeMaterial } from './NodeMaterial.js'
+import { NodeUtils } from '../core/NodeUtils.js'
 
 
 
-var PhongNodeMaterial = function () {
 
-	this.node = new PhongNode();
 
-	NodeMaterial.call( this, this.node, this.node );
+
+
+function PhongNodeMaterial() {
+
+	var node = new PhongNode();
+
+	NodeMaterial.call( this, node, node );
 
 	this.type = "PhongNodeMaterial";
 
-};
+}
 
 PhongNodeMaterial.prototype = Object.create( NodeMaterial.prototype );
 PhongNodeMaterial.prototype.constructor = PhongNodeMaterial;
 
-NodeMaterial.addShortcuts( PhongNodeMaterial.prototype, 'node',
-	[ 'color', 'alpha', 'specular', 'shininess', 'normal', 'normalScale', 'emissive', 'ambient', 'light', 'shadow', 'ao', 'environment', 'environmentAlpha', 'transform' ] );
+NodeUtils.addShortcuts( PhongNodeMaterial.prototype, 'fragment', [
+	'color',
+	'alpha',
+	'specular',
+	'shininess',
+	'normal',
+	'emissive',
+	'ambient',
+	'light',
+	'shadow',
+	'ao',
+	'environment',
+	'environmentAlpha',
+	'position'
+] );
+
+;
 
 export { PhongNodeMaterial }

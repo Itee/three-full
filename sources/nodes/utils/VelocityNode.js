@@ -3,7 +3,9 @@ import { Vector3 } from '../../math/Vector3.js'
 
 
 
-var VelocityNode = function ( target, params ) {
+
+
+function VelocityNode( target, params ) {
 
 	Vector3Node.call( this );
 
@@ -14,7 +16,7 @@ var VelocityNode = function ( target, params ) {
 	this.setTarget( target );
 	this.setParams( params );
 
-};
+}
 
 VelocityNode.prototype = Object.create( Vector3Node.prototype );
 VelocityNode.prototype.constructor = VelocityNode;
@@ -141,6 +143,16 @@ VelocityNode.prototype.updateFrame = function ( frame ) {
 
 };
 
+VelocityNode.prototype.copy = function ( source ) {
+
+	Vector3Node.prototype.copy.call( this, source );
+
+	if ( source.target ) object.setTarget( source.target );
+
+	object.setParams( source.params );
+
+};
+
 VelocityNode.prototype.toJSON = function ( meta ) {
 
 	var data = this.getJSONNode( meta );
@@ -159,5 +171,7 @@ VelocityNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
+
+;
 
 export { VelocityNode }

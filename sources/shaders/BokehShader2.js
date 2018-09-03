@@ -59,7 +59,6 @@ var BokehShader2 = {
 	fragmentShader: [
 
 		"#include <common>",
-		"#include <packing>",
 
 		"varying vec2 vUv;",
 

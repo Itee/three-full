@@ -91,7 +91,7 @@ function WebVRManager( renderer ) {
 
 	//
 
-	var isTriggerPressed = false;
+	var triggers = [];
 
 	function findGamepad( id ) {
 
@@ -146,11 +146,11 @@ function WebVRManager( renderer ) {
 
 				var buttonId = gamepad.id === 'Daydream Controller' ? 0 : 1;
 
-				if ( isTriggerPressed !== gamepad.buttons[ buttonId ].pressed ) {
+				if ( triggers[ i ] !== gamepad.buttons[ buttonId ].pressed ) {
 
-					isTriggerPressed = gamepad.buttons[ buttonId ].pressed;
+					triggers[ i ] = gamepad.buttons[ buttonId ].pressed;
 
-					if ( isTriggerPressed ) {
+					if ( triggers[ i ] === true ) {
 
 						controller.dispatchEvent( { type: 'selectstart' } );
 

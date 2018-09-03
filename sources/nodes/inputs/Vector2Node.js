@@ -1,26 +1,38 @@
-import { InputNode } from '../InputNode.js'
+import { InputNode } from '../core/InputNode.js'
+import { NodeUtils } from '../core/NodeUtils.js'
 import { Vector2 } from '../../math/Vector2.js'
-import { NodeMaterial } from '../NodeMaterial.js'
+import { NodeMaterial } from '../materials/NodeMaterial.js'
 
 
 
-var Vector2Node = function ( x, y ) {
+
+
+
+function Vector2Node( x, y ) {
 
 	InputNode.call( this, 'v2' );
 
-	this.value = new Vector2( x, y );
+	this.value = x instanceof Vector2 ? x : new Vector2( x, y );
 
-};
+}
 
 Vector2Node.prototype = Object.create( InputNode.prototype );
 Vector2Node.prototype.constructor = Vector2Node;
 Vector2Node.prototype.nodeType = "Vector2";
 
-NodeMaterial.addShortcuts( Vector2Node.prototype, 'value', [ 'x', 'y' ] );
+NodeUtils.addShortcuts( Vector2Node.prototype, 'value', [ 'x', 'y' ] );
 
 Vector2Node.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
 	return builder.format( "vec2( " + this.x + ", " + this.y + " )", type, output );
+
+};
+
+Vector2Node.prototype.copy = function ( source ) {
+
+	InputNode.prototype.copy.call( this, source );
+
+	this.value.copy( source );
 
 };
 
@@ -42,5 +54,7 @@ Vector2Node.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
+
+;
 
 export { Vector2Node }

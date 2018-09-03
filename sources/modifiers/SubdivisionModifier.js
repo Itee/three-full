@@ -1,3 +1,4 @@
+import { Geometry } from '../core/Geometry.js'
 import { Face3 } from '../core/Face3.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
@@ -13,6 +14,18 @@ var SubdivisionModifier = function ( subdivisions ) {
 // Applies the "modify" pattern
 SubdivisionModifier.prototype.modify = function ( geometry ) {
 
+	if ( geometry.isBufferGeometry ) {
+
+		geometry = new Geometry().fromBufferGeometry( geometry );
+
+	} else {
+
+		geometry = geometry.clone();
+
+	}
+
+	geometry.mergeVertices();
+
 	var repeats = this.subdivisions;
 
 	while ( repeats -- > 0 ) {
@@ -23,6 +36,8 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 
 	geometry.computeFaceNormals();
 	geometry.computeVertexNormals();
+
+	return geometry;
 
 };
 

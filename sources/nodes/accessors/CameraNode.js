@@ -1,29 +1,49 @@
-import { TempNode } from '../TempNode.js'
-import { FunctionNode } from '../FunctionNode.js'
+import { TempNode } from '../core/TempNode.js'
+import { FunctionNode } from '../core/FunctionNode.js'
 import { FloatNode } from '../inputs/FloatNode.js'
 import { PositionNode } from './PositionNode.js'
 
 
 
-var CameraNode = function ( scope, camera ) {
+
+
+
+
+
+function CameraNode( scope, camera ) {
 
 	TempNode.call( this, 'v3' );
 
 	this.setScope( scope || CameraNode.POSITION );
 	this.setCamera( camera );
 
-};
+}
 
-CameraNode.fDepthColor = new FunctionNode( [
-	"float depthColor( float mNear, float mFar ) {",
-	"	#ifdef USE_LOGDEPTHBUF_EXT",
-	"		float depth = gl_FragDepthEXT / gl_FragCoord.w;",
-	"	#else",
-	"		float depth = gl_FragCoord.z / gl_FragCoord.w;",
-	"	#endif",
-	"	return 1.0 - smoothstep( mNear, mFar, depth );",
-	"}"
-].join( "\n" ) );
+CameraNode.Nodes = ( function () {
+
+	var depthColor = new FunctionNode( [
+		"float depthColor( float mNear, float mFar ) {",
+
+		"	#ifdef USE_LOGDEPTHBUF_EXT",
+
+		"		float depth = gl_FragDepthEXT / gl_FragCoord.w;",
+
+		"	#else",
+
+		"		float depth = gl_FragCoord.z / gl_FragCoord.w;",
+
+		"	#endif",
+
+		"	return 1.0 - smoothstep( mNear, mFar, depth );",
+
+		"}"
+	].join( "\n" ) );
+
+	return {
+		depthColor: depthColor
+	};
+
+} )();
 
 CameraNode.POSITION = 'position';
 CameraNode.DEPTH = 'depth';
@@ -75,7 +95,8 @@ CameraNode.prototype.getType = function ( builder ) {
 	switch ( this.scope ) {
 
 		case CameraNode.DEPTH:
-			return 'fv1';
+
+			return 'f';
 
 	}
 
@@ -89,6 +110,7 @@ CameraNode.prototype.isUnique = function ( builder ) {
 
 		case CameraNode.DEPTH:
 		case CameraNode.TO_VERTEX:
+
 			return true;
 
 	}
@@ -102,6 +124,7 @@ CameraNode.prototype.isShared = function ( builder ) {
 	switch ( this.scope ) {
 
 		case CameraNode.POSITION:
+
 			return false;
 
 	}
@@ -112,7 +135,6 @@ CameraNode.prototype.isShared = function ( builder ) {
 
 CameraNode.prototype.generate = function ( builder, output ) {
 
-	var material = builder.material;
 	var result;
 
 	switch ( this.scope ) {
@@ -125,11 +147,9 @@ CameraNode.prototype.generate = function ( builder, output ) {
 
 		case CameraNode.DEPTH:
 
-			var func = CameraNode.fDepthColor;
+			var depthColor = builder.include( CameraNode.Nodes.depthColor );
 
-			builder.include( func );
-
-			result = func.name + '(' + this.near.build( builder, 'fv1' ) + ',' + this.far.build( builder, 'fv1' ) + ')';
+			result = depthColor + '( ' + this.near.build( builder, 'f' ) + ', ' + this.far.build( builder, 'f' ) + ' )';
 
 			break;
 
@@ -155,6 +175,31 @@ CameraNode.prototype.onUpdateFrame = function ( frame ) {
 
 			this.near.value = camera.near;
 			this.far.value = camera.far;
+
+			break;
+
+	}
+
+};
+
+CameraNode.prototype.copy = function ( source ) {
+
+	TempNode.prototype.copy.call( this, source );
+
+	this.setScope( source.scope );
+
+	if ( source.camera ) {
+
+		this.setCamera( source.camera );
+
+	}
+
+	switch ( source.scope ) {
+
+		case CameraNode.DEPTH:
+
+			this.near.number = source.near;
+			this.far.number = source.far;
 
 			break;
 
@@ -190,5 +235,7 @@ CameraNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
+
+;
 
 export { CameraNode }

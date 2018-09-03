@@ -72,7 +72,7 @@ import {
 
 
 
-function WebGLUtils( gl, extensions ) {
+function WebGLUtils( gl, extensions, capabilities ) {
 
 	function convert( p ) {
 
@@ -103,6 +103,8 @@ function WebGLUtils( gl, extensions ) {
 		if ( p === FloatType ) return gl.FLOAT;
 
 		if ( p === HalfFloatType ) {
+
+			if ( capabilities.isWebGL2 ) return gl.HALF_FLOAT;
 
 			extension = extensions.get( 'OES_texture_half_float' );
 
@@ -193,6 +195,13 @@ function WebGLUtils( gl, extensions ) {
 
 		if ( p === MinEquation || p === MaxEquation ) {
 
+			if ( capabilities.isWebGL2 ) {
+
+				if ( p === MinEquation ) return gl.MIN;
+				if ( p === MaxEquation ) return gl.MAX;
+
+			}
+
 			extension = extensions.get( 'EXT_blend_minmax' );
 
 			if ( extension !== null ) {
@@ -205,6 +214,8 @@ function WebGLUtils( gl, extensions ) {
 		}
 
 		if ( p === UnsignedInt248Type ) {
+
+			if ( capabilities.isWebGL2 ) return gl.UNSIGNED_INT_24_8;
 
 			extension = extensions.get( 'WEBGL_depth_texture' );
 

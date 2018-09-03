@@ -1,9 +1,9 @@
 import { Pass } from './Pass.js'
 import { Vector2 } from '../math/Vector2.js'
+import { Color } from '../math/Color.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Vector3 } from '../math/Vector3.js'
-import { Color } from '../math/Color.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
@@ -27,6 +27,9 @@ var UnrealBloomPass = function ( resolution, strength, radius, threshold ) {
 	this.radius = radius;
 	this.threshold = threshold;
 	this.resolution = ( resolution !== undefined ) ? new Vector2( resolution.x, resolution.y ) : new Vector2( 256, 256 );
+
+	// create color only once here, reuse it later inside the render function
+	this.clearColor = new Color( 0, 0, 0 );
 
 	// render targets
 	var pars = { minFilter: LinearFilter, magFilter: LinearFilter, format: RGBAFormat };
@@ -204,7 +207,7 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		var oldAutoClear = renderer.autoClear;
 		renderer.autoClear = false;
 
-		renderer.setClearColor( new Color( 0, 0, 0 ), 0 );
+		renderer.setClearColor( this.clearColor, 0 );
 
 		if ( maskActive ) renderer.context.disable( renderer.context.STENCIL_TEST );
 

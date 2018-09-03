@@ -1,28 +1,32 @@
-import { FunctionNode } from '../FunctionNode.js'
-import { UVNode } from '../accessors/UVNode.js'
+import { ExpressionNode } from '../core/ExpressionNode.js'
 import { Matrix3Node } from '../inputs/Matrix3Node.js'
+import { UVNode } from '../accessors/UVNode.js'
 
 
 
-var UVTransformNode = function () {
 
-	FunctionNode.call( this, "( uvTransform * vec3( uvNode, 1 ) ).xy", "vec2" );
 
-	this.uv = new UVNode();
-	this.transform = new Matrix3Node();
 
-};
 
-UVTransformNode.prototype = Object.create( FunctionNode.prototype );
+function UVTransformNode( uv, position ) {
+
+	ExpressionNode.call( this, "( uvTransform * vec3( uvNode, 1 ) ).xy", "vec2" );
+
+	this.uv = uv || new UVNode();
+	this.position = position || new Matrix3Node();
+
+}
+
+UVTransformNode.prototype = Object.create( ExpressionNode.prototype );
 UVTransformNode.prototype.constructor = UVTransformNode;
 UVTransformNode.prototype.nodeType = "UVTransform";
 
 UVTransformNode.prototype.generate = function ( builder, output ) {
 
 	this.keywords[ "uvNode" ] = this.uv;
-	this.keywords[ "uvTransform" ] = this.transform;
+	this.keywords[ "uvTransform" ] = this.position;
 
-	return FunctionNode.prototype.generate.call( this, builder, output );
+	return ExpressionNode.prototype.generate.call( this, builder, output );
 
 };
 
@@ -31,7 +35,16 @@ UVTransformNode.prototype.setUvTransform = function ( tx, ty, sx, sy, rotation, 
 	cx = cx !== undefined ? cx : .5;
 	cy = cy !== undefined ? cy : .5;
 
-	this.transform.value.setUvTransform( tx, ty, sx, sy, rotation, cx, cy );
+	this.position.value.setUvTransform( tx, ty, sx, sy, rotation, cx, cy );
+
+};
+
+UVTransformNode.prototype.copy = function ( source ) {
+
+	ExpressionNode.prototype.copy.call( this, source );
+
+	this.uv = source.uv;
+	this.position = source.position;
 
 };
 
@@ -44,12 +57,14 @@ UVTransformNode.prototype.toJSON = function ( meta ) {
 		data = this.createJSONNode( meta );
 
 		data.uv = this.uv.toJSON( meta ).uuid;
-		data.transform = this.transform.toJSON( meta ).uuid;
+		data.position = this.position.toJSON( meta ).uuid;
 
 	}
 
 	return data;
 
 };
+
+;
 
 export { UVTransformNode }
