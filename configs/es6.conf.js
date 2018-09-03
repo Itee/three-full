@@ -144,6 +144,11 @@ module.exports = {
         CatmullRomCurve3: {
             outputOverride: 'curves/CatmullRomCurve3.js'
         },
+        CCDIKSolver: {
+            exports: [
+                'CCDIKSolver'
+            ]
+		},
         CinematicCamera: {
 			imports: [
 				'BokehShader',
