@@ -4394,7 +4394,6 @@ Object.assign( Color.prototype, {
 
 		}
 
-
 		var m;
 
 		if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -6976,8 +6975,6 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 
 	},
 
-	
-
 	mergeVertices: function () {
 		var this$1 = this;
 
@@ -7010,7 +7007,6 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 			}
 
 		}
-
 
 		// if faces are completely degenerate after merging vertices, we
 		// have to remove them from the geometry.
@@ -7323,8 +7319,6 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 	},
 
 	clone: function () {
-
-		
 
 		return new Geometry().copy( this );
 
@@ -8522,7 +8516,6 @@ function Int8BufferAttribute( array, itemSize, normalized ) {
 Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 	BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -8531,7 +8524,6 @@ function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -8542,7 +8534,6 @@ function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 function Int16BufferAttribute( array, itemSize, normalized ) {
 
 	BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -8551,7 +8542,6 @@ function Int16BufferAttribute( array, itemSize, normalized ) {
 
 Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -8562,7 +8552,6 @@ function Uint16BufferAttribute( array, itemSize, normalized ) {
 Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 function Int32BufferAttribute( array, itemSize, normalized ) {
 
 	BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -8571,7 +8560,6 @@ function Int32BufferAttribute( array, itemSize, normalized ) {
 
 Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -8582,7 +8570,6 @@ function Uint32BufferAttribute( array, itemSize, normalized ) {
 Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 function Float32BufferAttribute( array, itemSize, normalized ) {
 
 	BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -8591,7 +8578,6 @@ function Float32BufferAttribute( array, itemSize, normalized ) {
 
 Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -9876,8 +9862,6 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 	},
 
 	clone: function () {
-
-		
 
 		return new BufferGeometry().copy( this );
 
@@ -12336,7 +12320,6 @@ Line.prototype = Object.assign( Object.create( Object3D.prototype ), {
 } );
 
 var CCDIKSolver = ( function () {
-
 	
 	function CCDIKSolver( mesh, iks ) {
 
@@ -12350,7 +12333,6 @@ var CCDIKSolver = ( function () {
 	CCDIKSolver.prototype = {
 
 		constructor: CCDIKSolver,
-
 		
 		update: function () {
 
@@ -12503,7 +12485,6 @@ var CCDIKSolver = ( function () {
 			};
 
 		}(),
-
 		
 		createHelper: function () {
 
@@ -12546,7 +12527,6 @@ var CCDIKSolver = ( function () {
 		}
 
 	};
-
 	
 	function CCDIKHelper( mesh, iks ) {
 
@@ -12595,7 +12575,6 @@ var CCDIKSolver = ( function () {
 	CCDIKHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		constructor: CCDIKHelper,
-
 		
 		updateMatrixWorld: function () {
 
@@ -13752,7 +13731,6 @@ Object.assign( Composite.prototype, {
 
 } );
 
-
 function PropertyBinding( rootNode, path, parsedPath ) {
 
 	this.path = path;
@@ -13781,7 +13759,6 @@ Object.assign( PropertyBinding, {
 		}
 
 	},
-
 	
 	sanitizeNodeName: ( function () {
 
@@ -14233,7 +14210,6 @@ Object.assign( PropertyBinding.prototype, { // prototype, continued
 
 			}
 
-
 			if ( objectIndex !== undefined ) {
 
 				if ( targetObject[ objectIndex ] === undefined ) {
@@ -14315,7 +14291,6 @@ Object.assign( PropertyBinding.prototype, { // prototype, continued
 						}
 
 					}
-
 
 				} else {
 
@@ -14549,7 +14524,6 @@ Object.assign( PropertyMixer.prototype, {
 		this.binding.setValue( this.buffer, originalValueOffset );
 
 	},
-
 
 	// mix functions
 
@@ -16112,12 +16086,10 @@ AnimationMixer.prototype = Object.assign( Object.create( EventDispatcher.prototy
 		// 		actionByRoot: AnimationAction			- lookup
 		// }
 
-
 		this._bindings = []; // 'nActiveBindings' followed by inactive ones
 		this._nActiveBindings = 0;
 
 		this._bindingsByRootAndName = {}; // inside: Map< name, PropertyMixer >
-
 
 		this._controlInterpolants = []; // same game as above
 		this._nActiveControlInterpolants = 0;
@@ -16223,7 +16195,6 @@ AnimationMixer.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 		action._cacheIndex = null;
 
-
 		var clipUuid = action._clip.uuid,
 			actionsByClip = this._actionsByClip,
 			actionsForClip = actionsByClip[ clipUuid ],
@@ -16239,7 +16210,6 @@ AnimationMixer.prototype = Object.assign( Object.create( EventDispatcher.prototy
 		knownActionsForClip.pop();
 
 		action._byClipCacheIndex = null;
-
 
 		var actionByRoot = actionsForClip.actionByRoot,
 			rootUuid = ( action._localRoot || this._root ).uuid;
@@ -16405,7 +16375,6 @@ AnimationMixer.prototype = Object.assign( Object.create( EventDispatcher.prototy
 		bindings[ prevIndex ] = lastActiveBinding;
 
 	},
-
 
 	// Memory management of Interpolants for weight and time scale
 
@@ -17206,7 +17175,6 @@ CylinderBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 CylinderBufferGeometry.prototype.constructor = CylinderBufferGeometry;
 
 var MMDPhysics = ( function () {
-
 	
 	function MMDPhysics( mesh, rigidBodyParams, constraintParams, params ) {
 
@@ -17222,7 +17190,6 @@ var MMDPhysics = ( function () {
 		this.manager = new ResourceManager();
 
 		this.mesh = mesh;
-
 		
 		this.unitStep = ( params.unitStep !== undefined ) ? params.unitStep : 1 / 65;
 		this.maxStepNum = ( params.maxStepNum !== undefined ) ? params.maxStepNum : 3;
@@ -17242,7 +17209,6 @@ var MMDPhysics = ( function () {
 	MMDPhysics.prototype = {
 
 		constructor: MMDPhysics,
-
 		
 		update: function ( delta ) {
 
@@ -17305,7 +17271,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-
 		
 		reset: function () {
 			var this$1 = this;
@@ -17320,7 +17285,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-
 		
 		warmup: function ( cycles ) {
 			var this$1 = this;
@@ -17335,7 +17299,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-
 		
 		setGravity: function ( gravity ) {
 
@@ -17345,7 +17308,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-
 		
 		createHelper: function () {
 
@@ -17445,7 +17407,6 @@ var MMDPhysics = ( function () {
 
 			}
 
-
 		},
 
 		_stepSimulation: function ( delta ) {
@@ -17496,7 +17457,6 @@ var MMDPhysics = ( function () {
 		}
 
 	};
-
 	
 	function ResourceManager() {
 
@@ -17947,7 +17907,6 @@ var MMDPhysics = ( function () {
 		}
 
 	};
-
 	
 	function RigidBody( mesh, world, params, manager ) {
 
@@ -17968,7 +17927,6 @@ var MMDPhysics = ( function () {
 	RigidBody.prototype = {
 
 		constructor: MMDPhysics.RigidBody,
-
 		
 		reset: function () {
 
@@ -17976,7 +17934,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-
 		
 		updateFromBone: function () {
 
@@ -17990,7 +17947,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-
 		
 		updateBone: function () {
 
@@ -18085,7 +18041,6 @@ var MMDPhysics = ( function () {
 			if ( params.type === 0 ) {
 
 				body.setCollisionFlags( body.getCollisionFlags() | 2 );
-
 				
 				body.setActivationState( 4 );
 
@@ -18230,7 +18185,6 @@ var MMDPhysics = ( function () {
 		}
 
 	};
-
 	
 	function Constraint( mesh, world, bodyA, bodyB, params, manager ) {
 
@@ -18323,7 +18277,6 @@ var MMDPhysics = ( function () {
 				}
 
 			}
-
 			
 			if ( constraint.setParam !== undefined ) {
 
@@ -18354,7 +18307,6 @@ var MMDPhysics = ( function () {
 		}
 
 	};
-
 	
 	function MMDPhysicsHelper( mesh, physics ) {
 
@@ -18408,7 +18360,6 @@ var MMDPhysics = ( function () {
 	MMDPhysicsHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		constructor: MMDPhysicsHelper,
-
 		
 		updateMatrixWorld: function () {
 
@@ -18532,7 +18483,6 @@ var MMDPhysics = ( function () {
 } )();
 
 var MMDAnimationHelper = ( function () {
-
 	
 	function MMDAnimationHelper( params ) {
 
@@ -18577,7 +18527,6 @@ var MMDAnimationHelper = ( function () {
 	MMDAnimationHelper.prototype = {
 
 		constructor: MMDAnimationHelper,
-
 		
 		add: function ( object, params ) {
 
@@ -18610,7 +18559,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-
 		
 		remove: function ( object ) {
 
@@ -18641,7 +18589,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-
 		
 		update: function ( delta ) {
 			var this$1 = this;
@@ -18662,7 +18609,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-
 		
 		pose: function ( mesh, vpd, params ) {
 
@@ -18714,7 +18660,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-
 		
 		enable: function ( key, enabled ) {
 			var this$1 = this;
@@ -18742,7 +18687,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-
 		
 		createGrantSolver: function ( mesh ) {
 
@@ -19111,7 +19055,6 @@ var MMDAnimationHelper = ( function () {
 				params );
 
 		},
-
 		
 		_syncDuration: function () {
 			var this$1 = this;
@@ -19245,7 +19188,6 @@ var MMDAnimationHelper = ( function () {
 			}
 
 		},
-
 		
 		_saveBones: function ( mesh ) {
 
@@ -19358,7 +19300,6 @@ var MMDAnimationHelper = ( function () {
 	};
 
 	//
-
 	
 	function AudioManager( audio, params ) {
 
@@ -19379,7 +19320,6 @@ var MMDAnimationHelper = ( function () {
 	AudioManager.prototype = {
 
 		constructor: AudioManager,
-
 		
 		control: function ( delta ) {
 
@@ -19423,7 +19363,6 @@ var MMDAnimationHelper = ( function () {
 		}
 
 	};
-
 	
 	function GrantSolver( mesh, grants ) {
 
@@ -19435,7 +19374,6 @@ var MMDAnimationHelper = ( function () {
 	GrantSolver.prototype = {
 
 		constructor: GrantSolver,
-
 		
 		update: function () {
 
@@ -19539,7 +19477,6 @@ AnimationClipCreator.CreateShakeAnimation = function ( duration, shakeScale ) {
 
 };
 
-
 AnimationClipCreator.CreatePulsationAnimation = function ( duration, pulseScale ) {
 
 	var times = [], values = [], tmp = new Vector3();
@@ -19562,7 +19499,6 @@ AnimationClipCreator.CreatePulsationAnimation = function ( duration, pulseScale 
 
 };
 
-
 AnimationClipCreator.CreateVisibilityAnimation = function ( duration ) {
 
 	var times = [ 0, duration / 2, duration ], values = [ true, false, true ];
@@ -19574,7 +19510,6 @@ AnimationClipCreator.CreateVisibilityAnimation = function ( duration ) {
 	return new AnimationClip( null, duration, [ track ] );
 
 };
-
 
 AnimationClipCreator.CreateMaterialColorAnimation = function ( duration, colors ) {
 
@@ -19710,7 +19645,6 @@ PerspectiveCamera.prototype = Object.assign( Object.create( Camera.prototype ), 
 		return this;
 
 	},
-
 	
 	setFocalLength: function ( focalLength ) {
 
@@ -19721,7 +19655,6 @@ PerspectiveCamera.prototype = Object.assign( Object.create( Camera.prototype ), 
 		this.updateProjectionMatrix();
 
 	},
-
 	
 	getFocalLength: function () {
 
@@ -19751,7 +19684,6 @@ PerspectiveCamera.prototype = Object.assign( Object.create( Camera.prototype ), 
 		return this.filmGauge / Math.max( this.aspect, 1 );
 
 	},
-
 	
 	setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 
@@ -20865,7 +20797,6 @@ var BokehShader = {
 		"	return orthographicDepthToViewZ( depth, nearClip, farClip );",
 		"	#endif",
 		"}",
-		
 
 		"void main() {",
 
@@ -20972,7 +20903,6 @@ var BokehShader2 = {
 
 		"shaderFocus":  { value: 1 },
 		"focusCoords":  { value: new Vector2() }
-
 
 	},
 
@@ -21121,7 +21051,6 @@ var BokehShader2 = {
 			"kernel[3] = 2.0/16.0;   kernel[4] = 4.0/16.0;   kernel[5] = 2.0/16.0;",
 			"kernel[6] = 1.0/16.0;   kernel[7] = 2.0/16.0;   kernel[8] = 1.0/16.0;",
 
-
 			"for( int i=0; i<9; i++ ) {",
 				"float tmp = texture2D(tDepth, coords + offset[i]).r;",
 				"d += tmp * kernel[i];",
@@ -21129,7 +21058,6 @@ var BokehShader2 = {
 
 			"return d;",
 		"}",
-
 
 		"vec3 color(vec2 coords,float blur) {",
 			"//processing the sample",
@@ -21161,7 +21089,6 @@ var BokehShader2 = {
 		"float linearize(float depth) {",
 			"return -zfar * znear / (depth * (zfar - znear) - zfar);",
 		"}",
-
 
 		"float vignette() {",
 			"float dist = distance(vUv.xy, vec2(0.5,0.5));",
@@ -21351,7 +21278,6 @@ var CinematicCamera = function ( fov, aspect, near, far ) {
 CinematicCamera.prototype = Object.create( PerspectiveCamera.prototype );
 CinematicCamera.prototype.constructor = CinematicCamera;
 
-
 // providing fnumber and coc(Circle of Confusion) as extra arguments
 CinematicCamera.prototype.setLens = function ( focalLength, filmGauge, fNumber, coc ) {
 
@@ -21461,7 +21387,6 @@ CinematicCamera.prototype.initPostProcessing = function () {
 
 		this.postprocessing.bokeh_uniforms[ "znear" ].value = this.near;
 		this.postprocessing.bokeh_uniforms[ "zfar" ].value = this.near;
-
 
 		this.postprocessing.bokeh_uniforms[ "textureWidth" ].value = window.innerWidth;
 
@@ -23515,7 +23440,6 @@ Object.assign( JSONLoader.prototype, {
 
 				nUvLayers = 0;
 
-
 			if ( json.uvs !== undefined ) {
 
 				// disregard empty arrays
@@ -23645,14 +23569,12 @@ Object.assign( JSONLoader.prototype, {
 								normals[ normalIndex ]
 							);
 
-
 							if ( i !== 2 ) { faceA.vertexNormals.push( normal ); }
 							if ( i !== 0 ) { faceB.vertexNormals.push( normal ); }
 
 						}
 
 					}
-
 
 					if ( hasFaceColor ) {
 
@@ -23663,7 +23585,6 @@ Object.assign( JSONLoader.prototype, {
 						faceB.color.setHex( hex );
 
 					}
-
 
 					if ( hasFaceVertexColor ) {
 
@@ -23755,14 +23676,12 @@ Object.assign( JSONLoader.prototype, {
 
 					}
 
-
 					if ( hasFaceColor ) {
 
 						colorIndex = faces[ offset ++ ];
 						face.color.setHex( colors[ colorIndex ] );
 
 					}
-
 
 					if ( hasFaceVertexColor ) {
 
@@ -24066,7 +23985,6 @@ BinaryLoader.prototype = {
 				len_tri_flat, len_tri_smooth, len_tri_flat_uv, len_tri_smooth_uv,
 				len_quad_flat, len_quad_smooth, len_quad_flat_uv;
 
-
 			Geometry.call( this );
 
 			md = parseMetaData( data, currentOffset );
@@ -24162,7 +24080,6 @@ BinaryLoader.prototype = {
 					'nquad_smooth_uv': parseUInt32( data, offset + 20 + 4 * 10 )
 
 				};
-				
 
 				return metaData;
 
@@ -24765,7 +24682,6 @@ var Car = function () {
 
 		if ( controls.moveBackward ) {
 
-
 			this.speed = _Math.clamp( this.speed - delta * this.BACK_ACCELERATION, this.MAX_REVERSE_SPEED, this.MAX_SPEED );
 			this.acceleration = _Math.clamp( this.acceleration - delta, - 1, 1 );
 
@@ -24802,7 +24718,6 @@ var Car = function () {
 				this.acceleration = _Math.clamp( this.acceleration + k * delta, - 1, 0 );
 
 			}
-
 
 		}
 
@@ -25091,7 +25006,6 @@ var DeviceOrientationControls = function ( object ) {
 			setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
 
 		}
-
 
 	};
 
@@ -25602,7 +25516,6 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 
 		}
 
-
 	}
 
 	function onDocumentMouseCancel( event ) {
@@ -25680,7 +25593,6 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 			scope.dispatchEvent( { type: 'dragstart', object: _selected } );
 
 		}
-
 
 	}
 
@@ -26066,7 +25978,6 @@ var EditorControls = function ( object, domElement ) {
 
 	}
 
-
 	function touchMove( event ) {
 
 		if ( scope.enabled === false ) { return; }
@@ -26102,7 +26013,6 @@ var EditorControls = function ( object, domElement ) {
 				var distance = touches[ 0 ].distanceTo( touches[ 1 ] );
 				scope.zoom( delta.set( 0, 0, prevDistance - distance ) );
 				prevDistance = distance;
-
 
 				var offset0 = touches[ 0 ].clone().sub( getClosest( touches[ 0 ], prevTouches ) );
 				var offset1 = touches[ 1 ].clone().sub( getClosest( touches[ 1 ], prevTouches ) );
@@ -26610,7 +26520,6 @@ var FlyControls = function ( object, domElement ) {
 		// expose the rotation vector for convenience
 		this.object.rotation.setFromQuaternion( this.object.quaternion, this.object.rotation.order );
 
-
 	};
 
 	this.updateMovementVector = function () {
@@ -26859,7 +26768,6 @@ var MapControls = function ( object, domElement ) {
 			spherical.phi = Math.max( scope.minPolarAngle, Math.min( scope.maxPolarAngle, spherical.phi ) );
 
 			spherical.makeSafe();
-
 
 			spherical.radius *= scale;
 
@@ -27990,7 +27898,6 @@ var OrbitControls = function ( object, domElement ) {
 
 			spherical.makeSafe();
 
-
 			spherical.radius *= scale;
 
 			// restrict radius to be between desired limits
@@ -28933,7 +28840,6 @@ var OrthographicTrackballControls = function ( object, domElement ) {
 	var startEvent = { type: 'start' };
 	var endEvent = { type: 'end' };
 
-
 	// methods
 
 	this.handleResize = function () {
@@ -29037,7 +28943,6 @@ var OrthographicTrackballControls = function ( object, domElement ) {
 
 		var axis = new Vector3(),
 			quaternion = new Quaternion();
-
 
 		return function rotateCamera() {
 
@@ -29618,7 +29523,6 @@ var TrackballControls = function ( object, domElement ) {
 	var startEvent = { type: 'start' };
 	var endEvent = { type: 'end' };
 
-
 	// methods
 
 	this.handleResize = function () {
@@ -29732,7 +29636,6 @@ var TrackballControls = function ( object, domElement ) {
 		};
 
 	}() );
-
 
 	this.zoomCamera = function () {
 
@@ -30472,7 +30375,6 @@ function PolyhedronBufferGeometry( vertices, indices, radius, detail ) {
 		return Math.atan2( vector.z, - vector.x );
 
 	}
-
 
 	// Angle above the XZ plane.
 
@@ -31280,7 +31182,6 @@ TransformControls.prototype = Object.assign( Object.create( Object3D.prototype )
 
 } );
 
-
 var TransformControlsGizmo = function () {
 
 	Object3D.call( this );
@@ -31705,7 +31606,6 @@ var TransformControlsGizmo = function () {
 		this.helper[ "rotate" ].visible = this.mode === "rotate";
 		this.helper[ "scale" ].visible = this.mode === "scale";
 
-
 		var handles = [];
 		handles = handles.concat( this.picker[ this.mode ].children );
 		handles = handles.concat( this.gizmo[ this.mode ].children );
@@ -31784,7 +31684,6 @@ var TransformControlsGizmo = function () {
 
 					}
 
-
 				} else if ( handle.name === 'START' ) {
 
 					handle.position.copy( this$1.worldPositionStart );
@@ -31842,7 +31741,6 @@ var TransformControlsGizmo = function () {
 				var AXIS_HIDE_TRESHOLD = 0.99;
 				var PLANE_HIDE_TRESHOLD = 0.2;
 				var AXIS_FLIP_TRESHOLD = -0.4;
-
 
 				if ( handle.name === 'X' || handle.name === 'XYZX' ) {
 					if ( Math.abs( alignVector.copy( unitX ).applyQuaternion( quaternion ).dot( this$1.eye ) ) > AXIS_HIDE_TRESHOLD ) {
@@ -32013,7 +31911,6 @@ TransformControlsGizmo.prototype = Object.assign( Object.create( Object3D.protot
 	isTransformControlsGizmo: true
 
 } );
-
 
 var TransformControlsPlane = function () {
 
@@ -32478,7 +32375,6 @@ var Visible = 0;
 					// mark the vertices to be reassigned to some other face
 
 					this.unassigned.appendChain( faceVertices );
-
 
 				} else {
 
@@ -32998,7 +32894,6 @@ var Visible = 0;
 			face.getEdge( - 1 ).setTwin( horizonEdge.twin );
 
 			return face.getEdge( 0 ); // the half edge whose vertex is the eyeVertex
-
 
 		},
 
@@ -33601,7 +33496,6 @@ ConvexObjectBreaker.prototype = {
 		userData.breakable = breakable;
 
 	},
-
 	
 	subdivideByImpact: function ( object, pointOfImpact, normal, maxRadialIterations, maxRandomIterations ) {
 
@@ -34033,7 +33927,6 @@ ConvexObjectBreaker.transformPlaneToLocalSpace = function () {
 		// recalculate constant (like in setFromNormalAndCoplanarPoint)
 		resultPlane.constant = - referencePoint.dot( resultPlane.normal );
 
-
 	};
 
 }();
@@ -34332,7 +34225,6 @@ Object.assign( Curve.prototype, {
 
 		normals[ 0 ].crossVectors( tangents[ 0 ], vec );
 		binormals[ 0 ].crossVectors( tangents[ 0 ], normals[ 0 ] );
-
 
 		// compute the slowly-varying normal and binormal vectors for each segment on the curve
 
@@ -34823,7 +34715,6 @@ Object.assign( Curve.prototype, {
 	};
 
 var NURBSUtils = {
-
 	
 	findSpan: function( p,  u,  U ) {
 
@@ -34864,8 +34755,6 @@ var NURBSUtils = {
 		return mid;
 
 	},
-
-
 	
 	calcBasisFunctions: function( span, u, p, U ) {
 
@@ -34898,8 +34787,6 @@ var NURBSUtils = {
 		 return N;
 
 	},
-
-
 	
 	calcBSplinePoint: function( p, U, P, u ) {
 
@@ -34922,8 +34809,6 @@ var NURBSUtils = {
 		return C;
 
 	},
-
-
 	
 	calcBasisFunctionDerivatives: function( span,  u,  p,  n,  U ) {
 
@@ -35042,8 +34927,6 @@ var NURBSUtils = {
 		return ders;
 
 	},
-
-
 	
 	calcBSplineDerivatives: function( p,  U,  P,  u,  nd ) {
 
@@ -35088,8 +34971,6 @@ var NURBSUtils = {
 		return CK;
 
 	},
-
-
 	
 	calcKoverI: function( k, i ) {
 
@@ -35118,8 +34999,6 @@ var NURBSUtils = {
 		return nom / denom;
 
 	},
-
-
 	
 	calcRationalCurveDerivatives: function ( Pders ) {
 		var this$1 = this;
@@ -35156,8 +35035,6 @@ var NURBSUtils = {
 		return CK;
 
 	},
-
-
 	
 	calcNURBSDerivatives: function( p,  U,  P,  u,  nd ) {
 
@@ -35165,8 +35042,6 @@ var NURBSUtils = {
 		return this.calcRationalCurveDerivatives( Pders );
 
 	},
-
-
 	
 	calcSurfacePoint: function ( p, q, U, V, P, u, v, target ) {
 
@@ -35228,10 +35103,8 @@ var NURBSCurve = function ( degree, knots , controlPoints , startKnot , endKnot 
 
 };
 
-
 NURBSCurve.prototype = Object.create( Curve.prototype );
 NURBSCurve.prototype.constructor = NURBSCurve;
-
 
 NURBSCurve.prototype.getPoint = function ( t ) {
 
@@ -35250,7 +35123,6 @@ NURBSCurve.prototype.getPoint = function ( t ) {
 	return new Vector3( hpoint.x, hpoint.y, hpoint.z );
 
 };
-
 
 NURBSCurve.prototype.getTangent = function ( t ) {
 
@@ -35290,7 +35162,6 @@ var NURBSSurface = function ( degree1, degree2, knots1, knots2 , controlPoints  
 	}
 
 };
-
 
 NURBSSurface.prototype = {
 
@@ -35561,7 +35432,6 @@ var AnaglyphEffect = function ( renderer, width, height ) {
 			"			: pow( c, 0.41666 ) * 1.055 - 0.055;",
 			"}",
 
-
 			"void main() {",
 
 			"	vec2 uv = vUv;",
@@ -35667,7 +35537,6 @@ var AsciiEffect = function ( renderer, charSet, options ) {
 
 	};
 
-
 	this.render = function ( scene, camera ) {
 
 		renderer.render( scene, camera );
@@ -35677,10 +35546,7 @@ var AsciiEffect = function ( renderer, charSet, options ) {
 
 	this.domElement = domElement;
 
-
 	// Throw in ascii library from http://www.nihilogic.dk/labs/jsascii/jsascii.js
-
-	
 
 	function initAsciiSize() {
 
@@ -35720,7 +35586,6 @@ var AsciiEffect = function ( renderer, charSet, options ) {
 		oStyle.textDecoration = "none";
 
 	}
-
 
 	var aDefaultCharList = ( " .,:;i1tfLCG08@" ).split( "" );
 	var aDefaultColorCharList = ( " CGO08@" ).split( "" );
@@ -35779,9 +35644,7 @@ var AsciiEffect = function ( renderer, charSet, options ) {
 
 	}
 
-
 	// can't get a span or div to flow like an img element, but a table works?
-
 
 	// convert img element to ascii
 
@@ -36573,8 +36436,6 @@ var ShaderLib = {
 
 	},
 
-	
-
 	cube: {
 
 		uniforms: {
@@ -37065,7 +36926,6 @@ var OutlineEffect = function ( renderer, parameters ) {
 		renderer.shadowMap.enabled = currentShadowMapEnabled;
 
 	};
-
 	
 	this.autoClear = renderer.autoClear;
 	this.domElement = renderer.domElement;
@@ -37293,7 +37153,6 @@ var PeppersGhostEffect = function ( renderer ) {
 		_cameraR.lookAt( scene.position );
 		_cameraR.rotation.x += 90 * ( Math.PI / 180 );
 
-
 		renderer.clear();
 		renderer.setScissorTest( true );
 
@@ -37352,7 +37211,6 @@ var PeppersGhostEffect = function ( renderer ) {
 		renderer.setScissorTest( false );
 
 	};
-
 
 };
 
@@ -37903,7 +37761,6 @@ ColladaExporter.prototype = {
 					.fill()
 					.map( function ( v, i ) { return processMaterial( materials[ i % materials.length ] ); } );
 
-
 				node +=
 					"<instance_geometry url=\"#" + meshid + "\">" +
 
@@ -38042,7 +37899,6 @@ var GLTFExporter = function () {};
 GLTFExporter.prototype = {
 
 	constructor: GLTFExporter,
-
 	
 	parse: function ( input, onDone, options ) {
 
@@ -38093,8 +37949,6 @@ GLTFExporter.prototype = {
 		};
 
 		var cachedCanvas;
-
-		
 		
 		function equalArray( array1, array2 ) {
 
@@ -38105,7 +37959,6 @@ GLTFExporter.prototype = {
 			} );
 
 		}
-
 		
 		function stringToArrayBuffer( text ) {
 
@@ -38129,7 +37982,6 @@ GLTFExporter.prototype = {
 			return array.buffer;
 
 		}
-
 		
 		function getMinMax( attribute, start, count ) {
 
@@ -38155,14 +38007,12 @@ GLTFExporter.prototype = {
 			return output;
 
 		}
-
 		
 		function isPowerOfTwo( image ) {
 
 			return _Math.isPowerOfTwo( image.width ) && _Math.isPowerOfTwo( image.height );
 
 		}
-
 		
 		function isNormalizedNormalAttribute( normal ) {
 
@@ -38184,7 +38034,6 @@ GLTFExporter.prototype = {
 			return true;
 
 		}
-
 		
 		function createNormalizedNormalAttribute( normal ) {
 
@@ -38222,14 +38071,12 @@ GLTFExporter.prototype = {
 			return attribute;
 
 		}
-
 		
 		function getPaddedBufferSize( bufferSize ) {
 
 			return Math.ceil( bufferSize / 4 ) * 4;
 
 		}
-
 		
 		function getPaddedArrayBuffer( arrayBuffer, paddingByte ) {
 
@@ -38259,7 +38106,6 @@ GLTFExporter.prototype = {
 			return arrayBuffer;
 
 		}
-
 		
 		function serializeUserData( object ) {
 
@@ -38277,7 +38123,6 @@ GLTFExporter.prototype = {
 			}
 
 		}
-
 		
 		function processBuffer( buffer ) {
 
@@ -38293,7 +38138,6 @@ GLTFExporter.prototype = {
 			return 0;
 
 		}
-
 		
 		function processBufferView( attribute, componentType, start, count, target ) {
 
@@ -38389,7 +38233,6 @@ GLTFExporter.prototype = {
 			return output;
 
 		}
-
 		
 		function processBufferViewImage( blob ) {
 
@@ -38424,7 +38267,6 @@ GLTFExporter.prototype = {
 			} );
 
 		}
-
 		
 		function processAccessor( attribute, geometry, start, count ) {
 
@@ -38525,7 +38367,6 @@ GLTFExporter.prototype = {
 			return outputJSON.accessors.length - 1;
 
 		}
-
 		
 		function processImage( image, format, flipY ) {
 
@@ -38618,7 +38459,6 @@ GLTFExporter.prototype = {
 			return index;
 
 		}
-
 		
 		function processSampler( map ) {
 
@@ -38642,7 +38482,6 @@ GLTFExporter.prototype = {
 			return outputJSON.samplers.length - 1;
 
 		}
-
 		
 		function processTexture( map ) {
 
@@ -38673,7 +38512,6 @@ GLTFExporter.prototype = {
 			return index;
 
 		}
-
 		
 		function processMaterial( material ) {
 
@@ -38878,7 +38716,6 @@ GLTFExporter.prototype = {
 			return index;
 
 		}
-
 		
 		function processMesh( mesh ) {
 
@@ -39166,7 +39003,6 @@ GLTFExporter.prototype = {
 			return outputJSON.meshes.length - 1;
 
 		}
-
 		
 		function processCamera( camera ) {
 
@@ -39219,7 +39055,6 @@ GLTFExporter.prototype = {
 			return outputJSON.cameras.length - 1;
 
 		}
-
 		
 		function processAnimation( clip, root ) {
 
@@ -39376,7 +39211,6 @@ GLTFExporter.prototype = {
 			return skinIndex;
 
 		}
-
 		
 		function processNode( object ) {
 
@@ -39493,7 +39327,6 @@ GLTFExporter.prototype = {
 
 				}
 
-
 			}
 
 			outputJSON.nodes.push( gltfNode );
@@ -39504,7 +39337,6 @@ GLTFExporter.prototype = {
 			return nodeIndex;
 
 		}
-
 		
 		function processScene( scene ) {
 
@@ -39556,7 +39388,6 @@ GLTFExporter.prototype = {
 			}
 
 		}
-
 		
 		function processObjects( objects ) {
 
@@ -39778,11 +39609,6 @@ var MMDExporter = function () {
 		return poseSkin.skeleton.bones;
 
 	}
-
-	
-
-	
-
 	
 	this.parseVpd = function ( skin, outputShiftJis, useOriginalBones ) {
 
@@ -39851,7 +39677,6 @@ var MMDExporter = function () {
 
 			var bone = bones[ i ];
 			var bone2 = bones2[ i ];
-
 			
 			if ( useOriginalBones === true &&
 				bone.userData.ik !== undefined &&
@@ -39891,8 +39716,6 @@ var MMDExporter = function () {
 		return ( outputShiftJis === true ) ? unicodeToShiftjis( lines ) : lines;
 
 	};
-
-	
 
 };
 
@@ -40270,7 +40093,6 @@ PLYExporter.prototype = {
 		includeColors = includeColors && excludeAttributes.indexOf( 'color' ) === - 1;
 		includeUVs = includeUVs && excludeAttributes.indexOf( 'uv' ) === - 1;
 
-
 		if ( includeIndices && faceCount !== Math.floor( faceCount ) ) {
 
 			// point cloud meshes will not have an index array and may not have a
@@ -40302,7 +40124,6 @@ PLYExporter.prototype = {
 			indexByteCount = 4;
 
 		}
-
 
 		var header =
 			'ply\n' +
@@ -40354,7 +40175,6 @@ PLYExporter.prototype = {
 
 		header += 'end_header\n';
 
-
 		// Generate attribute data
 		var vertex = new Vector3();
 		var normalMatrixWorld = new Matrix3();
@@ -40377,7 +40197,6 @@ PLYExporter.prototype = {
 			var output = new DataView( new ArrayBuffer( headerBin.length + vertexListLength + faceListLength ) );
 			new Uint8Array( output.buffer ).set( headerBin, 0 );
 
-
 			var vOffset = headerBin.length;
 			var fOffset = headerBin.length + vertexListLength;
 			var writtenVertices = 0;
@@ -40398,7 +40217,6 @@ PLYExporter.prototype = {
 					vertex.z = vertices.getZ( i );
 
 					vertex.applyMatrix4( mesh.matrixWorld );
-
 
 					// Position information
 					output.setFloat32( vOffset, vertex.x );
@@ -40543,7 +40361,6 @@ PLYExporter.prototype = {
 
 				}
 
-
 				// Save the amount of verts we've already written so we can offset
 				// the face index on the next mesh
 				writtenVertices += vertices.count;
@@ -40578,7 +40395,6 @@ PLYExporter.prototype = {
 					vertex.z = vertices.getZ( i );
 
 					vertex.applyMatrix4( mesh.matrixWorld );
-
 
 					// Position information
 					var line =
@@ -41792,7 +41608,6 @@ var TeapotBufferGeometry = function ( size, segments, bottom, lid, body, fitLid,
 
 	};
 
-
 	for ( i = 0; i < 3; i ++ ) {
 
 		mgm[ i ] = new Matrix4();
@@ -41999,7 +41814,6 @@ var TeapotBufferGeometry = function ( size, segments, bottom, lid, body, fitLid,
 
 };
 
-
 TeapotBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 TeapotBufferGeometry.prototype.constructor = TeapotBufferGeometry;
 
@@ -42042,7 +41856,6 @@ function GPUComputationRenderer( sizeX, sizeY, renderer ) {
 
 	var mesh = new Mesh( new PlaneBufferGeometry( 2, 2 ), passThruShader );
 	scene.add( mesh );
-
 
 	this.addVariable = function( variableName, computeFragmentShader, initialValueTexture ) {
 
@@ -42191,7 +42004,6 @@ function GPUComputationRenderer( sizeX, sizeY, renderer ) {
 	}
 	this.addResolutionDefine = addResolutionDefine;
 
-
 	// The following functions can be used to compute things manually
 
 	function createShaderMaterial( computeFragmentShader, uniforms ) {
@@ -42245,7 +42057,6 @@ function GPUComputationRenderer( sizeX, sizeY, renderer ) {
 		return texture;
 
 	};
-
 
 	this.renderTexture = function( input, output ) {
 
@@ -42688,7 +42499,6 @@ var GPUParticleSystem = function ( options ) {
 GPUParticleSystem.prototype = Object.create( Object3D.prototype );
 GPUParticleSystem.prototype.constructor = GPUParticleSystem;
 
-
 // Subclass for particle containers, allows for very large arrays to be spread out
 
 var GPUParticleContainer = function ( maxParticles, particleSystem ) {
@@ -42962,13 +42772,11 @@ Gyroscope.prototype.updateMatrixWorld = ( function () {
 
 				this.matrixWorld.compose( translationWorld, quaternionObject, scaleWorld );
 
-
 			} else {
 
 				this.matrixWorld.copy( this.matrix );
 
 			}
-
 
 			this.matrixWorldNeedsUpdate = false;
 
@@ -46898,7 +46706,6 @@ AssimpLoader.prototype = {
 
 		}
 
-
 		function veclerp( v1, v2, l ) {
 
 			var v = new Vector3();
@@ -47646,8 +47453,6 @@ AssimpLoader.prototype = {
 
 						}
 
-
-
 					}
 
 					if ( f.mNumIndices === 3 ) {
@@ -47670,8 +47475,6 @@ AssimpLoader.prototype = {
 						throw ( new Error( "Sorry, can't currently triangulate polys. Use the triangulate preprocessor in Assimp." ) );
 
 					}
-
-
 
 				}
 
@@ -48267,7 +48070,6 @@ var AWD_FIELD_INT8 = 1,
 				flags = this.readU8(),
 				len = this.readU32();
 
-
 			switch ( type ) {
 
 				case 1:
@@ -48329,12 +48131,10 @@ var AWD_FIELD_INT8 = 1,
 
 			}
 
-
 			// Store block reference for later use
 			this._blocks[ blockId ] = block = new Block();
 			block.data = assetData;
 			block.id = blockId;
-
 
 		},
 
@@ -48455,16 +48255,13 @@ var AWD_FIELD_INT8 = 1,
 			mesh.applyMatrix( mtx );
 			mesh.name = name;
 
-
 			parent = this.getBlock( par_id ) || this.trunk;
 			parent.add( mesh );
-
 
 			var matLen = materials.length;
 			var maxLen = Math.max( meshLen, matLen );
 			for ( i = 0; i < maxLen; i ++ )
 				{ meshes[ i % meshLen ].material = materials[ i % matLen ]; }
-
 
 			// Ignore for now
 			this.parseProperties( null );
@@ -48539,7 +48336,6 @@ var AWD_FIELD_INT8 = 1,
 			mat.extra = attributes;
 			mat.alphaThreshold = props.get( 12, 0.0 );
 			mat.repeat = props.get( 13, false );
-
 
 			return mat;
 
@@ -48624,7 +48420,6 @@ var AWD_FIELD_INT8 = 1,
 
 			// Discard attributes for now
 			this.parseUserAttributes();
-
 
 			return skeleton;
 
@@ -48741,7 +48536,6 @@ var AWD_FIELD_INT8 = 1,
 
 			this.parseUserAttributes();
 
-
 			return skeletonFrames;
 
 		},
@@ -48784,14 +48578,12 @@ var AWD_FIELD_INT8 = 1,
 
 			if ( type == 1 ) {
 
-
 				thisAnimator = {
 					animationSet: targetAnimationSet,
 					skeleton: this._blocks[ props.get( 1, 0 ) ].data
 				};
 
 			}
-
 
 			for ( i = 0; i < targetMeshes.length; i ++ ) {
 
@@ -48827,10 +48619,8 @@ var AWD_FIELD_INT8 = 1,
 				geom.name = name;
 				geometries.push( geom );
 
-
 				sm_len = this$1.readU32();
 				sm_end = this$1._ptr + sm_len;
-
 
 				// Ignore for now
 				this$1.parseProperties( { 1: this$1._geoNrType, 2: this$1._geoNrType } );
@@ -49033,7 +48823,6 @@ var AWD_FIELD_INT8 = 1,
 
 							}
 
-
 							subMeshParsed ++;
 
 						} else
@@ -49043,7 +48832,6 @@ var AWD_FIELD_INT8 = 1,
 					}
 
 				}
-
 
 				frames_parsed ++;
 
@@ -49280,7 +49068,6 @@ var AWD_FIELD_INT8 = 1,
 			return a;
 
 		},
-
 		
 		readUTF: function () {
 
@@ -49288,7 +49075,6 @@ var AWD_FIELD_INT8 = 1,
 			return this.readUTFBytes( len );
 
 		},
-
 		
 		readUTFBytes: function ( len ) {
 			var this$1 = this;
@@ -49924,7 +49710,6 @@ BVHLoader.prototype = {
 	},
 
 	parse: function ( text ) {
-
 		
 		function readBvh( lines ) {
 
@@ -49981,7 +49766,6 @@ BVHLoader.prototype = {
 			return list;
 
 		}
-
 		
 		function readFrameData( data, frameTime, bone ) {
 
@@ -50048,7 +49832,6 @@ BVHLoader.prototype = {
 			}
 
 		}
-
 		
 		function readNode( lines, firstline, list ) {
 
@@ -50144,7 +49927,6 @@ BVHLoader.prototype = {
 			}
 
 		}
-
 		
 		function toTHREEBone( source, list ) {
 
@@ -50167,7 +49949,6 @@ BVHLoader.prototype = {
 			return bone;
 
 		}
-
 		
 		function toTHREEAnimation( bones ) {
 
@@ -50225,7 +50006,6 @@ BVHLoader.prototype = {
 			return new AnimationClip( 'animation', - 1, tracks );
 
 		}
-
 		
 		function nextLine( lines ) {
 
@@ -55288,8 +55068,6 @@ var LegacyGLTFLoader = ( function () {
 
 	};
 
-	
-
 	function GLTFRegistry() {
 
 		var objects = {};
@@ -55340,8 +55118,6 @@ var LegacyGLTFLoader = ( function () {
 
 	}
 
-	
-
 	LegacyGLTFLoader.Shaders = {
 
 		update: function () {
@@ -55351,8 +55127,6 @@ var LegacyGLTFLoader = ( function () {
 		}
 
 	};
-
-	
 
 	function GLTFShader( targetNode, allNodes ) {
 
@@ -55457,9 +55231,6 @@ var LegacyGLTFLoader = ( function () {
 
 	};
 
-
-	
-
 	LegacyGLTFLoader.Animations = {
 
 		update: function () {
@@ -55470,16 +55241,10 @@ var LegacyGLTFLoader = ( function () {
 
 	};
 
-	
-	
-	
-
 	var EXTENSIONS = {
 		KHR_BINARY_GLTF: 'KHR_binary_glTF',
 		KHR_MATERIALS_COMMON: 'KHR_materials_common'
 	};
-
-	
 
 	function GLTFMaterialsCommonExtension( json ) {
 		var this$1 = this;
@@ -55532,8 +55297,6 @@ var LegacyGLTFLoader = ( function () {
 
 	}
 
-	
-
 	var BINARY_EXTENSION_BUFFER_NAME = 'binary_glTF';
 
 	var BINARY_EXTENSION_HEADER_DEFAULTS = { magic: 'glTF', version: 1, contentFormat: 0 };
@@ -55582,12 +55345,6 @@ var LegacyGLTFLoader = ( function () {
 		return LoaderUtils.decodeText( array );
 
 	};
-
-	
-	
-	
-
-	
 
 	var WEBGL_CONSTANTS = {
 		FLOAT: 5126,
@@ -55730,8 +55487,6 @@ var LegacyGLTFLoader = ( function () {
 		32823: 'POLYGON_OFFSET_FILL',
 		32926: 'SAMPLE_ALPHA_TO_COVERAGE'
 	};
-
-	
 
 	function _each( object, callback, thisObj ) {
 		var this$1 = this;
@@ -55999,8 +55754,6 @@ var LegacyGLTFLoader = ( function () {
 		return new RawShaderMaterial( this.params );
 
 	};
-
-	
 
 	function GLTFParser( json, extensions, options ) {
 
@@ -57451,13 +57204,11 @@ DRACOLoader.prototype = {
         this.verbosity = level;
         return this;
     },
-
     
     setDrawMode: function(drawMode) {
         this.drawMode = drawMode;
         return this;
     },
-
     
     setSkipDequantization: function(attributeName, skip) {
         var skipDequantization = true;
@@ -57467,7 +57218,6 @@ DRACOLoader.prototype = {
             skipDequantization;
         return this;
     },
-
     
     decodeDracoFile: function(rawBuffer, callback, attributeUniqueIdMap,
                               attributeTypeMap) {
@@ -57485,7 +57235,6 @@ DRACOLoader.prototype = {
       var buffer = new dracoDecoder.DecoderBuffer();
       buffer.Init(new Int8Array(rawBuffer), rawBuffer.byteLength);
       var decoder = new dracoDecoder.Decoder();
-
       
       var geometryType = decoder.GetEncodedGeometryType(buffer);
       if (geometryType == dracoDecoder.TRIANGULAR_MESH) {
@@ -57768,11 +57517,9 @@ DRACOLoader.decoderPath = './';
 DRACOLoader.decoderConfig = {};
 DRACOLoader.decoderModulePromise = null;
 
-
 DRACOLoader.setDecoderPath = function ( path ) {
   DRACOLoader.decoderPath = path;
 };
-
 
 DRACOLoader.setDecoderConfig = function ( config ) {
   var wasmBinary = DRACOLoader.decoderConfig.wasmBinary;
@@ -57783,11 +57530,9 @@ DRACOLoader.setDecoderConfig = function ( config ) {
   if ( wasmBinary ) { DRACOLoader.decoderConfig.wasmBinary = wasmBinary; }
 };
 
-
 DRACOLoader.releaseDecoderModule = function () {
   DRACOLoader.decoderModulePromise = null;
 };
-
 
 DRACOLoader.getDecoderModule = function () {
   var scope = this;
@@ -57832,7 +57577,6 @@ DRACOLoader.getDecoderModule = function () {
   return promise;
 };
 
-
 DRACOLoader._loadScript = function ( src ) {
   var prevScript = document.getElementById( 'decoder_script' );
   if ( prevScript !== null ) {
@@ -57848,7 +57592,6 @@ DRACOLoader._loadScript = function ( src ) {
     head.appendChild( script );
   });
 };
-
 
 DRACOLoader._loadArrayBuffer = function ( src ) {
   var loader = new FileLoader();
@@ -58060,7 +57803,6 @@ Object.assign( DataTextureLoader.prototype, {
 			if ( onLoad ) { onLoad( texture, texData ); }
 
 		}, onProgress, onError );
-
 
 		return texture;
 
@@ -59774,7 +59516,6 @@ var FBXLoader = ( function () {
 						parameters.displacementMap = self.getTexture( textureMap, child.ID );
 						break;
 
-
 					case 'EmissiveColor':
 						parameters.emissiveMap = self.getTexture( textureMap, child.ID );
 						break;
@@ -60006,7 +59747,6 @@ var FBXLoader = ( function () {
 
 				}
 
-
 			} );
 
 			this.bindSkeleton( deformers.skeletons, geometryMap, modelMap );
@@ -60171,7 +59911,6 @@ var FBXLoader = ( function () {
 					farClippingPlane = cameraAttribute.FarPlane.value / 1000;
 
 				}
-
 
 				var width = window.innerWidth;
 				var height = window.innerHeight;
@@ -60965,7 +60704,6 @@ var FBXLoader = ( function () {
 
 						} );
 
-
 					}
 
 					if ( weights.length > 4 ) {
@@ -61465,7 +61203,6 @@ var FBXLoader = ( function () {
 
 
 			var animationClips = [];
-
 
 			var rawClips = this.parseClips();
 
@@ -63619,7 +63356,6 @@ var BufferGeometryUtils = {
 		}
 
 	},
-
 	
 	mergeBufferGeometries: function ( geometries, useGroups ) {
 		var this$1 = this;
@@ -63771,7 +63507,6 @@ var BufferGeometryUtils = {
 		return mergedGeometry;
 
 	},
-
 	
 	mergeBufferAttributes: function ( attributes ) {
 
@@ -64026,8 +63761,6 @@ var GLTFLoader = ( function () {
 
 	};
 
-	
-
 	function GLTFRegistry() {
 
 		var objects = {};
@@ -64062,10 +63795,6 @@ var GLTFLoader = ( function () {
 
 	}
 
-	
-	
-	
-
 	var EXTENSIONS = {
 		KHR_BINARY_GLTF: 'KHR_binary_glTF',
 		KHR_DRACO_MESH_COMPRESSION: 'KHR_draco_mesh_compression',
@@ -64074,7 +63803,6 @@ var GLTFLoader = ( function () {
 		KHR_MATERIALS_UNLIT: 'KHR_materials_unlit',
 		MSFT_TEXTURE_DDS: 'MSFT_texture_dds'
 	};
-
 	
 	function GLTFTextureDDSExtension() {
 
@@ -64088,7 +63816,6 @@ var GLTFLoader = ( function () {
 		this.ddsLoader = new DDSLoader();
 
 	}
-
 	
 	function GLTFLightsExtension( json ) {
 		var this$1 = this;
@@ -64153,7 +63880,6 @@ var GLTFLoader = ( function () {
 		}
 
 	}
-
 	
 	function GLTFMaterialsUnlitExtension( json ) {
 
@@ -64264,7 +63990,6 @@ var GLTFLoader = ( function () {
 		}
 
 	}
-
 	
 	function GLTFDracoMeshCompressionExtension( json, dracoLoader ) {
 
@@ -64336,7 +64061,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	function GLTFMaterialsPbrSpecularGlossinessExtension() {
 
@@ -64545,7 +64269,6 @@ var GLTFLoader = ( function () {
 				return material;
 
 			},
-
 			
 			cloneMaterial: function ( source ) {
 
@@ -64695,10 +64418,6 @@ var GLTFLoader = ( function () {
 
 	}
 
-	
-	
-	
-
 	// Spline Interpolation
 	// Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#appendix-c-spline-interpolation
 	function GLTFCubicSplineInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
@@ -64773,12 +64492,6 @@ var GLTFLoader = ( function () {
 		return result;
 
 	};
-
-	
-	
-	
-
-	
 
 	var WEBGL_CONSTANTS = {
 		FLOAT: 5126,
@@ -64879,8 +64592,6 @@ var GLTFLoader = ( function () {
 		'image/jpeg': RGBFormat
 	};
 
-	
-
 	function resolveURL( url, path ) {
 
 		// Invalid URL
@@ -64899,7 +64610,6 @@ var GLTFLoader = ( function () {
 		return path + url;
 
 	}
-
 	
 	function createDefaultMaterial() {
 
@@ -64931,7 +64641,6 @@ var GLTFLoader = ( function () {
 		}
 
 	}
-
 	
 	function assignExtrasToUserData( object, gltfDef ) {
 
@@ -64950,7 +64659,6 @@ var GLTFLoader = ( function () {
 		}
 
 	}
-
 	
 	function addMorphTargets( geometry, targets, accessors ) {
 
@@ -65061,7 +64769,6 @@ var GLTFLoader = ( function () {
 		if ( hasMorphNormal ) { geometry.morphAttributes.normal = morphNormals; }
 
 	}
-
 	
 	function updateMorphTargets( mesh, meshDef ) {
 
@@ -65208,7 +64915,6 @@ var GLTFLoader = ( function () {
 		return attribute.clone();
 
 	}
-
 	
 	function isMultiPassGeometry( primitives ) {
 
@@ -65242,8 +64948,6 @@ var GLTFLoader = ( function () {
 		return true;
 
 	}
-
-	
 
 	function GLTFParser( json, extensions, options ) {
 
@@ -65296,7 +65000,6 @@ var GLTFLoader = ( function () {
 		} ).catch( onError );
 
 	};
-
 	
 	GLTFParser.prototype.markDefs = function () {
 
@@ -65357,7 +65060,6 @@ var GLTFLoader = ( function () {
 		this.json.meshUses = meshUses;
 
 	};
-
 	
 	GLTFParser.prototype.getDependency = function ( type, index ) {
 
@@ -65424,7 +65126,6 @@ var GLTFLoader = ( function () {
 		return dependency;
 
 	};
-
 	
 	GLTFParser.prototype.getDependencies = function ( type ) {
 
@@ -65448,7 +65149,6 @@ var GLTFLoader = ( function () {
 		return dependencies;
 
 	};
-
 	
 	GLTFParser.prototype.getMultiDependencies = function ( types ) {
 		var this$1 = this;
@@ -65479,7 +65179,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadBuffer = function ( bufferIndex ) {
 
@@ -65512,7 +65211,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadBufferView = function ( bufferViewIndex ) {
 
@@ -65527,7 +65225,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadAccessor = function ( accessorIndex ) {
 
@@ -65653,7 +65350,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadTexture = function ( textureIndex ) {
 
@@ -65752,7 +65448,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.assignTexture = function ( materialParams, textureName, textureIndex ) {
 
@@ -65763,7 +65458,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadMaterial = function ( materialIndex ) {
 
@@ -65930,7 +65624,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	function addPrimitiveAttributes( geometry, primitiveDef, accessors ) {
 
@@ -65964,7 +65657,6 @@ var GLTFLoader = ( function () {
 		assignExtrasToUserData( geometry, primitiveDef );
 
 	}
-
 	
 	GLTFParser.prototype.loadGeometries = function ( primitives ) {
 
@@ -66120,7 +65812,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadMesh = function ( meshIndex ) {
 
@@ -66355,7 +66046,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadCamera = function ( cameraIndex ) {
 
@@ -66387,7 +66077,6 @@ var GLTFLoader = ( function () {
 		return Promise.resolve( camera );
 
 	};
-
 	
 	GLTFParser.prototype.loadSkin = function ( skinIndex ) {
 
@@ -66410,7 +66099,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadAnimation = function ( animationIndex ) {
 
@@ -66549,7 +66237,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadNode = function ( nodeIndex ) {
 
@@ -66664,7 +66351,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadScene = function () {
 
@@ -66799,7 +66485,6 @@ RGBELoader.prototype._parser = function ( buffer ) {
 	var 
 		
 		RGBE_RETURN_FAILURE = - 1,
-
 		
 		rgbe_read_error = 1,
 		rgbe_write_error = 2,
@@ -66822,7 +66507,6 @@ RGBELoader.prototype._parser = function ( buffer ) {
 			return RGBE_RETURN_FAILURE;
 
 		},
-
 		
 		RGBE_VALID_PROGRAMTYPE = 1,
 		RGBE_VALID_FORMAT = 2,
@@ -66846,7 +66530,6 @@ RGBELoader.prototype._parser = function ( buffer ) {
 			}
 
 			if ( - 1 < i ) {
-
 				
 				if ( false !== consume ) { buffer.pos += len + i + 1; }
 				return s + chunk.slice( 0, i );
@@ -66855,7 +66538,6 @@ RGBELoader.prototype._parser = function ( buffer ) {
 			return false;
 
 		},
-
 		
 		RGBE_ReadHeader = function ( buffer ) {
 
@@ -67053,7 +66735,6 @@ RGBELoader.prototype._parser = function ( buffer ) {
 
 				}
 
-
 				// now convert data from buffer into rgba
 				// first red, then green, then blue, then exponent (alpha)
 				l = scanline_width; //scanline_buffer.byteLength;
@@ -67169,7 +66850,6 @@ HDRCubeTextureLoader.prototype.load = function ( type, urls, onLoad, onProgress,
 
 		var floatView = new Float32Array( 1 );
 		var int32View = new Int32Array( floatView.buffer );
-
 		
 		function toHalf( val ) {
 
@@ -67179,10 +66859,8 @@ HDRCubeTextureLoader.prototype.load = function ( type, urls, onLoad, onProgress,
 			var bits = ( x >> 16 ) & 0x8000; 
 			var m = ( x >> 12 ) & 0x07ff; 
 			var e = ( x >> 23 ) & 0xff; 
-
 			
 			if ( e < 103 ) { return bits; }
-
 			
 			if ( e > 142 ) {
 
@@ -67192,7 +66870,6 @@ HDRCubeTextureLoader.prototype.load = function ( type, urls, onLoad, onProgress,
 				return bits;
 
 			}
-
 			
 			if ( e < 113 ) {
 
@@ -67446,7 +67123,6 @@ KTXLoader.parse = function ( buffer, loadMipmaps ) {
 };
 
 var KhronosTextureContainer = ( function () {
-
 	
 	function KhronosTextureContainer( arrayBuffer, facesExpected, threeDExpected, textureArrayExpected ) {
 
@@ -67588,7 +67264,6 @@ if ( var LoaderSupport === undefined ) {
 
 }
 
-
 */
 var LoaderSupport = {};
 LoaderSupport.Validator = {
@@ -67602,8 +67277,6 @@ LoaderSupport.Validator = {
 	}
 };
 
-
-
 LoaderSupport.Callbacks = (function () {
 
 	var Validator = LoaderSupport.Validator;
@@ -67615,27 +67288,22 @@ LoaderSupport.Callbacks = (function () {
 		this.onLoad = null;
 		this.onLoadMaterials = null;
 	}
-
 	
 	Callbacks.prototype.setCallbackOnProgress = function ( callbackOnProgress ) {
 		this.onProgress = Validator.verifyInput( callbackOnProgress, this.onProgress );
 	};
-
 	
 	Callbacks.prototype.setCallbackOnReportError = function ( callbackOnReportError ) {
 		this.onReportError = Validator.verifyInput( callbackOnReportError, this.onReportError );
 	};
-
 	
 	Callbacks.prototype.setCallbackOnMeshAlter = function ( callbackOnMeshAlter ) {
 		this.onMeshAlter = Validator.verifyInput( callbackOnMeshAlter, this.onMeshAlter );
 	};
-
 	
 	Callbacks.prototype.setCallbackOnLoad = function ( callbackOnLoad ) {
 		this.onLoad = Validator.verifyInput( callbackOnLoad, this.onLoad );
 	};
-
 	
 	Callbacks.prototype.setCallbackOnLoadMaterials = function ( callbackOnLoadMaterials ) {
 		this.onLoadMaterials = Validator.verifyInput( callbackOnLoadMaterials, this.onLoadMaterials );
@@ -67644,8 +67312,6 @@ LoaderSupport.Callbacks = (function () {
 	return Callbacks;
 })();
 
-
-
 LoaderSupport.LoadedMeshUserOverride = (function () {
 
 	function LoadedMeshUserOverride( disregardMesh, alteredMesh ) {
@@ -67653,18 +67319,15 @@ LoaderSupport.LoadedMeshUserOverride = (function () {
 		this.alteredMesh = alteredMesh === true;
 		this.meshes = [];
 	}
-
 	
 	LoadedMeshUserOverride.prototype.addMesh = function ( mesh ) {
 		this.meshes.push( mesh );
 		this.alteredMesh = true;
 	};
-
 	
 	LoadedMeshUserOverride.prototype.isDisregardMesh = function () {
 		return this.disregardMesh;
 	};
-
 	
 	LoadedMeshUserOverride.prototype.providesAlteredMeshes = function () {
 		return this.alteredMesh;
@@ -67672,8 +67335,6 @@ LoaderSupport.LoadedMeshUserOverride = (function () {
 
 	return LoadedMeshUserOverride;
 })();
-
-
 
 LoaderSupport.ResourceDescriptor = (function () {
 
@@ -67700,7 +67361,6 @@ LoaderSupport.ResourceDescriptor = (function () {
 		this.extension = this.extension.trim();
 		this.content = null;
 	}
-
 	
 	ResourceDescriptor.prototype.setContent = function ( content ) {
 		this.content = Validator.verifyInput( content, null );
@@ -67708,8 +67368,6 @@ LoaderSupport.ResourceDescriptor = (function () {
 
 	return ResourceDescriptor;
 })();
-
-
 
 LoaderSupport.PrepData = (function () {
 
@@ -67724,23 +67382,19 @@ LoaderSupport.PrepData = (function () {
 		this.resources = [];
 		this.callbacks = new LoaderSupport.Callbacks();
 	}
-
 	
 	PrepData.prototype.setLogging = function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 	};
-
 	
 	PrepData.prototype.getCallbacks = function () {
 		return this.callbacks;
 	};
-
 	
 	PrepData.prototype.addResource = function ( resource ) {
 		this.resources.push( resource );
 	};
-
 	
 	PrepData.prototype.clone = function () {
 		var this$1 = this;
@@ -67764,8 +67418,6 @@ LoaderSupport.PrepData = (function () {
 
 		return clone;
 	};
-
-
 	
 	PrepData.prototype.checkResourceDescriptorFiles = function ( resources, fileDesc ) {
 		var resource, triple, i, found;
@@ -67833,7 +67485,6 @@ LoaderSupport.PrepData = (function () {
 	return PrepData;
 })();
 
-
 LoaderSupport.MeshBuilder = (function () {
 
 	var LOADER_MESH_BUILDER_VERSION = '1.2.2';
@@ -67850,13 +67501,11 @@ LoaderSupport.MeshBuilder = (function () {
 		this.callbacks = new LoaderSupport.Callbacks();
 		this.materials = [];
 	}
-
 	
 	MeshBuilder.prototype.setLogging = function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 	};
-
 	
 	MeshBuilder.prototype.init = function () {
 		var defaultMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
@@ -67889,7 +67538,6 @@ LoaderSupport.MeshBuilder = (function () {
 			}
 		);
 	};
-
 	
 	MeshBuilder.prototype.setMaterials = function ( materials ) {
 		var payload = {
@@ -67910,7 +67558,6 @@ LoaderSupport.MeshBuilder = (function () {
 		if ( Validator.isValid( callbacks.onLoad ) ) { this.callbacks.setCallbackOnLoad( callbacks.onLoad ); }
 		if ( Validator.isValid( callbacks.onLoadMaterials ) ) { this.callbacks.setCallbackOnLoadMaterials( callbacks.onLoadMaterials ); }
 	};
-
 	
 	MeshBuilder.prototype.processPayload = function ( payload ) {
 		if ( payload.cmd === 'meshData' ) {
@@ -67924,7 +67571,6 @@ LoaderSupport.MeshBuilder = (function () {
 
 		}
 	};
-
 	
 	MeshBuilder.prototype.buildMeshes = function ( meshPayload ) {
 		var this$1 = this;
@@ -68079,7 +67725,6 @@ LoaderSupport.MeshBuilder = (function () {
 
 		return meshes;
 	};
-
 	
 	MeshBuilder.prototype.updateMaterials = function ( materialPayload ) {
 		var this$1 = this;
@@ -68145,7 +67790,6 @@ LoaderSupport.MeshBuilder = (function () {
 
 		}
 	};
-
 	
 	MeshBuilder.prototype.getMaterialsJSON = function () {
 		var this$1 = this;
@@ -68160,7 +67804,6 @@ LoaderSupport.MeshBuilder = (function () {
 
 		return materialsJSON;
 	};
-
 	
 	MeshBuilder.prototype.getMaterials = function () {
 		return this.materials;
@@ -68168,7 +67811,6 @@ LoaderSupport.MeshBuilder = (function () {
 
 	return MeshBuilder;
 })();
-
 
 LoaderSupport.WorkerRunnerRefImpl = (function () {
 
@@ -68179,7 +67821,6 @@ LoaderSupport.WorkerRunnerRefImpl = (function () {
 		};
 		self.addEventListener( 'message', scopedRunner, false );
 	}
-
 	
 	WorkerRunnerRefImpl.prototype.applyProperties = function ( parser, params ) {
 		var property, funcName, values;
@@ -68198,7 +67839,6 @@ LoaderSupport.WorkerRunnerRefImpl = (function () {
 			}
 		}
 	};
-
 	
 	WorkerRunnerRefImpl.prototype.processMessage = function ( payload ) {
 		if ( payload.cmd === 'run' ) {
@@ -68237,7 +67877,6 @@ LoaderSupport.WorkerRunnerRefImpl = (function () {
 
 	return WorkerRunnerRefImpl;
 })();
-
 
 LoaderSupport.WorkerSupport = (function () {
 
@@ -68289,7 +67928,6 @@ LoaderSupport.WorkerSupport = (function () {
 			// process stored queuedMessage
 			this._postMessage();
 		};
-
 		
 		LoaderWorker.prototype._receiveWorkerMessage = function ( e ) {
 			var payload = e.data;
@@ -68429,19 +68067,16 @@ LoaderSupport.WorkerSupport = (function () {
 
 		this.loaderWorker = new LoaderWorker();
 	}
-
 	
 	WorkerSupport.prototype.setLogging = function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 		this.loaderWorker.setLogging( this.logging.enabled, this.logging.debug );
 	};
-
 	
 	WorkerSupport.prototype.setForceWorkerDataCopy = function ( forceWorkerDataCopy ) {
 		this.loaderWorker.setForceCopy( forceWorkerDataCopy );
 	};
-
 	
 	WorkerSupport.prototype.validate = function ( functionCodeBuilder, parserName, libLocations, libPath, runnerImpl ) {
 		if ( Validator.isValid( this.loaderWorker.worker ) ) { return; }
@@ -68502,17 +68137,14 @@ LoaderSupport.WorkerSupport = (function () {
 
 		}
 	};
-
 	
 	WorkerSupport.prototype.setCallbacks = function ( meshBuilder, onLoad ) {
 		this.loaderWorker.setCallbacks( meshBuilder, onLoad );
 	};
-
 	
 	WorkerSupport.prototype.run = function ( payload ) {
 		this.loaderWorker.run( payload );
 	};
-
 	
 	WorkerSupport.prototype.setTerminateRequested = function ( terminateRequested ) {
 		this.loaderWorker.setTerminateRequested( terminateRequested );
@@ -68607,7 +68239,6 @@ LoaderSupport.WorkerSupport = (function () {
 
 })();
 
-
 LoaderSupport.WorkerDirector = (function () {
 
 	var LOADER_WORKER_DIRECTOR_VERSION = '2.2.2';
@@ -68642,33 +68273,27 @@ LoaderSupport.WorkerDirector = (function () {
 
 		this.callbackOnFinishedProcessing = null;
 	}
-
 	
 	WorkerDirector.prototype.setLogging = function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 	};
-
 	
 	WorkerDirector.prototype.getMaxQueueSize = function () {
 		return this.maxQueueSize;
 	};
-
 	
 	WorkerDirector.prototype.getMaxWebWorkers = function () {
 		return this.maxWebWorkers;
 	};
-
 	
 	WorkerDirector.prototype.setCrossOrigin = function ( crossOrigin ) {
 		this.crossOrigin = crossOrigin;
 	};
-
 	
 	WorkerDirector.prototype.setForceWorkerDataCopy = function ( forceWorkerDataCopy ) {
 		this.workerDescription.forceWorkerDataCopy = forceWorkerDataCopy === true;
 	};
-
 	
 	WorkerDirector.prototype.prepareWorkers = function ( globalCallbacks, maxQueueSize, maxWebWorkers ) {
 		var this$1 = this;
@@ -68696,20 +68321,17 @@ LoaderSupport.WorkerDirector = (function () {
 
 		}
 	};
-
 	
 	WorkerDirector.prototype.enqueueForRun = function ( prepData ) {
 		if ( this.instructionQueue.length < this.maxQueueSize ) {
 			this.instructionQueue.push( prepData );
 		}
 	};
-
 	
 	WorkerDirector.prototype.isRunning = function () {
 		var wsKeys = Object.keys( this.workerDescription.workerSupports );
 		return ( ( this.instructionQueue.length > 0 && this.instructionQueuePointer < this.instructionQueue.length ) || wsKeys.length > 0 );
 	};
-
 	
 	WorkerDirector.prototype.processQueue = function () {
 		var this$1 = this;
@@ -68848,7 +68470,6 @@ LoaderSupport.WorkerDirector = (function () {
 
 		}
 	};
-
 	
 	WorkerDirector.prototype.tearDown = function ( callbackOnFinishedProcessing ) {
 		var this$1 = this;
@@ -69246,7 +68867,6 @@ MD2Loader.prototype = {
 };
 
 var MMDLoader = ( function () {
-
 	
 	function MMDLoader( manager ) {
 
@@ -69265,7 +68885,6 @@ var MMDLoader = ( function () {
 		constructor: MMDLoader,
 
 		crossOrigin: 'anonymous',
-
 		
 		setCrossOrigin: function ( crossOrigin ) {
 
@@ -69275,7 +68894,6 @@ var MMDLoader = ( function () {
 		},
 
 		// Load MMD assets as Three.js Object
-
 		
 		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -69300,7 +68918,6 @@ var MMDLoader = ( function () {
 			}, onProgress, onError );
 
 		},
-
 		
 		loadAnimation: function ( url, object, onLoad, onProgress, onError ) {
 
@@ -69315,7 +68932,6 @@ var MMDLoader = ( function () {
 			}, onProgress, onError );
 
 		},
-
 		
 		loadWithAnimation: function ( modelUrl, vmdUrl, onLoad, onProgress, onError ) {
 
@@ -69337,7 +68953,6 @@ var MMDLoader = ( function () {
 		},
 
 		// Load MMD assets as Object data parsed by MMDParser
-
 		
 		loadPMD: function ( url, onLoad, onProgress, onError ) {
 
@@ -69353,7 +68968,6 @@ var MMDLoader = ( function () {
 				}, onProgress, onError );
 
 		},
-
 		
 		loadPMX: function ( url, onLoad, onProgress, onError ) {
 
@@ -69369,7 +68983,6 @@ var MMDLoader = ( function () {
 				}, onProgress, onError );
 
 		},
-
 		
 		loadVMD: function ( url, onLoad, onProgress, onError ) {
 			var this$1 = this;
@@ -69399,7 +69012,6 @@ var MMDLoader = ( function () {
 			}
 
 		},
-
 		
 		loadVPD: function ( url, isUnicode, onLoad, onProgress, onError ) {
 
@@ -69446,7 +69058,6 @@ var MMDLoader = ( function () {
 	};
 
 	// Utilities
-
 	
 	var DEFAULT_TOON_TEXTURES = [
 		'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAL0lEQVRYR+3QQREAAAzCsOFfNJPBJ1XQS9r2hsUAAQIECBAgQIAAAQIECBAgsBZ4MUx/ofm2I/kAAAAASUVORK5CYII=',
@@ -69463,7 +69074,6 @@ var MMDLoader = ( function () {
 	];
 
 	// Builders. They build Three.js object from Object data parsed by MMDParser.
-
 	
 	function MeshBuilder( manager ) {
 
@@ -69477,7 +69087,6 @@ var MMDLoader = ( function () {
 		constructor: MeshBuilder,
 
 		crossOrigin: 'anonymous',
-
 		
 		setCrossOrigin: function ( crossOrigin ) {
 
@@ -69485,7 +69094,6 @@ var MMDLoader = ( function () {
 			return this;
 
 		},
-
 		
 		build: function ( data, texturePath, onProgress, onError ) {
 
@@ -69514,7 +69122,6 @@ var MMDLoader = ( function () {
 	GeometryBuilder.prototype = {
 
 		constructor: GeometryBuilder,
-
 		
 		build: function ( data ) {
 
@@ -69867,7 +69474,6 @@ var MMDLoader = ( function () {
 					params[ key ] = rigidBody[ key ];
 
 				}
-
 				
 				if ( data.metadata.format === 'pmx' ) {
 
@@ -69958,7 +69564,6 @@ var MMDLoader = ( function () {
 	};
 
 	//
-
 	
 	function MaterialBuilder( manager ) {
 
@@ -69976,7 +69581,6 @@ var MMDLoader = ( function () {
 		crossOrigin: 'anonymous',
 
 		texturePath: undefined,
-
 		
 		setCrossOrigin: function ( crossOrigin ) {
 
@@ -69984,7 +69588,6 @@ var MMDLoader = ( function () {
 			return this;
 
 		},
-
 		
 		setTexturePath: function ( texturePath ) {
 
@@ -69992,7 +69595,6 @@ var MMDLoader = ( function () {
 			return this;
 
 		},
-
 		
 		build: function ( data, geometry, onProgress, onError ) {
 			var this$1 = this;
@@ -70013,7 +69615,6 @@ var MMDLoader = ( function () {
 				var params = { userData: {} };
 
 				if ( material.name !== undefined ) { params.name = material.name; }
-
 				
 				params.color = new Color().fromArray( material.diffuse );
 				params.opacity = material.diffuse[ 3 ];
@@ -70423,7 +70024,6 @@ var MMDLoader = ( function () {
 					return false;
 
 				}
-
 				
 				function getAlphaByUv( image, uv ) {
 
@@ -70472,7 +70072,6 @@ var MMDLoader = ( function () {
 	AnimationBuilder.prototype = {
 
 		constructor: AnimationBuilder,
-
 		
 		build: function ( vmd, mesh ) {
 
@@ -70490,7 +70089,6 @@ var MMDLoader = ( function () {
 			return new AnimationClip( '', - 1, tracks );
 
 		},
-
 		
 		buildSkeletalAnimation: function ( vmd, mesh ) {
 			var this$1 = this;
@@ -70574,7 +70172,6 @@ var MMDLoader = ( function () {
 			return new AnimationClip( '', - 1, tracks );
 
 		},
-
 		
 		buildMorphAnimation: function ( vmd, mesh ) {
 
@@ -70622,7 +70219,6 @@ var MMDLoader = ( function () {
 			return new AnimationClip( '', - 1, tracks );
 
 		},
-
 		
 		buildCameraAnimation: function ( vmd ) {
 
@@ -70741,7 +70337,6 @@ var MMDLoader = ( function () {
 		// private method
 
 		_createTrack: function ( node, typedKeyframeTrack, times, values, interpolations ) {
-
 			
 			if ( times.length > 2 ) {
 
@@ -70884,8 +70479,6 @@ var MMDLoader = ( function () {
 
 		_calculate: function ( x1, x2, y1, y2, x ) {
 
-			
-
 			var c = 0.5;
 			var t = c;
 			var s = 1.0 - t;
@@ -70931,7 +70524,6 @@ var MTLLoader = function ( manager ) {
 MTLLoader.prototype = {
 
 	constructor: MTLLoader,
-
 	
 	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -70946,7 +70538,6 @@ MTLLoader.prototype = {
 		}, onProgress, onError );
 
 	},
-
 	
 	setPath: function ( path ) {
 
@@ -70954,7 +70545,6 @@ MTLLoader.prototype = {
 		return this;
 
 	},
-
 	
 	setTexturePath: function ( path ) {
 
@@ -70984,7 +70574,6 @@ MTLLoader.prototype = {
 		return this;
 
 	},
-
 	
 	parse: function ( text ) {
 
@@ -71046,8 +70635,6 @@ MTLLoader.prototype = {
 	}
 
 };
-
-
 
 MTLLoader.MaterialCreator = function ( baseUrl, options ) {
 
@@ -72512,8 +72099,6 @@ ConstNode.prototype.toJSON = function ( meta ) {
 
 // Fix circular dependency, see #2
 
-
-
 //
 //	Keywords
 //
@@ -72663,7 +72248,6 @@ NodeLib.add( new FunctionNode( [
 ].join( "\n" ) ) );
 
 // Fix circular dependency, see #2
-
 
 FunctionNode.prototype.isShared = function( builder, output ) {
 
@@ -73814,7 +73398,6 @@ var OBJLoader = ( function () {
 					// This requires some care to not create extra material on each smooth value for "normal" obj files.
 					// where explicit usemtl defines geometry groups.
 					// Example asset: examples/models/obj/cerberus/Cerberus.obj
-
 					
 					if ( result.length > 1 ) {
 
@@ -74008,7 +73591,6 @@ var OBJLoader = ( function () {
 
 if ( LoaderSupport === undefined ) { console.error( '"LoaderSupport" is not available. "OBJLoader2" requires it. Please include "LoaderSupport.js" in your HTML.' ); }
 
-
 var OBJLoader2 = (function () {
 
 	var OBJLOADER2_VERSION = '2.4.2';
@@ -74037,49 +73619,40 @@ var OBJLoader2 = (function () {
 		this.workerSupport = new LoaderSupport.WorkerSupport();
 		this.terminateWorkerOnLoad = true;
 	}
-
 	
 	OBJLoader2.prototype.setLogging = function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 		this.meshBuilder.setLogging( this.logging.enabled, this.logging.debug );
 	};
-
 	
 	OBJLoader2.prototype.setModelName = function ( modelName ) {
 		this.modelName = Validator.verifyInput( modelName, this.modelName );
 	};
-
 	
 	OBJLoader2.prototype.setPath = function ( path ) {
 		this.path = Validator.verifyInput( path, this.path );
 	};
-
 	
 	OBJLoader2.prototype.setStreamMeshesTo = function ( streamMeshesTo ) {
 		this.loaderRootNode = Validator.verifyInput( streamMeshesTo, this.loaderRootNode );
 	};
-
 	
 	OBJLoader2.prototype.setMaterials = function ( materials ) {
 		this.meshBuilder.setMaterials( materials );
 	};
-
 	
 	OBJLoader2.prototype.setUseIndices = function ( useIndices ) {
 		this.useIndices = useIndices === true;
 	};
-
 	
 	OBJLoader2.prototype.setDisregardNormals = function ( disregardNormals ) {
 		this.disregardNormals = disregardNormals === true;
 	};
-
 	
 	OBJLoader2.prototype.setMaterialPerSmoothingGroup = function ( materialPerSmoothingGroup ) {
 		this.materialPerSmoothingGroup = materialPerSmoothingGroup === true;
 	};
-
 	
 	OBJLoader2.prototype.setUseOAsMesh = function ( useOAsMesh ) {
 		this.useOAsMesh = useOAsMesh === true;
@@ -74094,7 +73667,6 @@ var OBJLoader2 = (function () {
 
 		this.meshBuilder._setCallbacks( this.callbacks );
 	};
-
 	
 	OBJLoader2.prototype.onProgress = function ( type, text, numericalValue ) {
 		var content = Validator.isValid( text ) ? text: '';
@@ -74136,7 +73708,6 @@ var OBJLoader2 = (function () {
 
 		}
 	};
-
 	
 	OBJLoader2.prototype.load = function ( url, onLoad, onProgress, onError, onMeshAlter, useAsync ) {
 		var resource = new LoaderSupport.ResourceDescriptor( url, 'OBJ' );
@@ -74202,7 +73773,6 @@ var OBJLoader2 = (function () {
 				};
 			}
 
-
 			var fileLoader = new FileLoader( this.manager );
 			fileLoader.setPath( this.path );
 			fileLoader.setResponseType( 'arraybuffer' );
@@ -74210,8 +73780,6 @@ var OBJLoader2 = (function () {
 
 		}
 	};
-
-
 	
 	OBJLoader2.prototype.run = function ( prepData, workerSupportExternal ) {
 		this._applyPrepData( prepData );
@@ -74255,7 +73823,6 @@ var OBJLoader2 = (function () {
 
 		}
 	};
-
 	
 	OBJLoader2.prototype.parse = function ( content ) {
 		// fast-fail in case of illegal data
@@ -74311,7 +73878,6 @@ var OBJLoader2 = (function () {
 
 		return this.loaderRootNode;
 	};
-
 	
 	OBJLoader2.prototype.parseAsync = function ( content, onLoad ) {
 		var scope = this;
@@ -74394,8 +73960,6 @@ var OBJLoader2 = (function () {
 			}
 		);
 	};
-
-
 	
 	var Parser = (function () {
 
@@ -74535,7 +74099,6 @@ var OBJLoader2 = (function () {
 				console.info( printedConfig );
 			}
 		};
-
 		
 		Parser.prototype.parse = function ( arrayBuffer ) {
 			var this$1 = this;
@@ -74588,7 +74151,6 @@ var OBJLoader2 = (function () {
 			this.finalizeParsing();
 			if ( this.logging.enabled ) { console.timeEnd(  'OBJLoader2.Parser.parse' ); }
 		};
-
 		
 		Parser.prototype.parseText = function ( text ) {
 			var this$1 = this;
@@ -74652,7 +74214,6 @@ var OBJLoader2 = (function () {
 						for ( i = start; i < stop; i++ ) { line += content[ i ]; }
 
 					} else {
-
 
 						for ( i = start; i < stop; i++ ) { line += String.fromCharCode( content[ i ] ); }
 
@@ -74813,7 +74374,6 @@ var OBJLoader2 = (function () {
 
 			}
 		};
-
 		
 		Parser.prototype.checkFaceType = function ( faceType ) {
 			if ( this.rawMesh.faceType !== faceType ) {
@@ -74931,7 +74491,6 @@ var OBJLoader2 = (function () {
 				'\n\tMaterial count: ' + this.rawMesh.counts.mtlCount +
 				'\n\tReal MeshOutputGroup count: ' + this.rawMesh.subGroups.length;
 		};
-
 		
 		Parser.prototype.finalizeRawMesh = function () {
 			var this$1 = this;
@@ -75010,7 +74569,6 @@ var OBJLoader2 = (function () {
 				return false;
 			}
 		};
-
 		
 		Parser.prototype.buildMesh = function ( result ) {
 			var this$1 = this;
@@ -75056,7 +74614,6 @@ var OBJLoader2 = (function () {
 				if ( this$1.rawMesh.faceType < 4 ) {
 
 					materialName = materialNameOrg + ( haveVertexColors ? '_vertexColor' : '' ) + ( meshOutputGroup.smoothingGroup === 0 ? '_flat' : '' );
-
 
 				} else {
 
@@ -75233,14 +74790,12 @@ var OBJLoader2 = (function () {
 
 		return Parser;
 	})();
-
 	
 	OBJLoader2.prototype.loadMtl = function ( url, content, onLoad, onProgress, onError, crossOrigin, materialOptions ) {
 		var resource = new LoaderSupport.ResourceDescriptor( url, 'MTL' );
 		resource.setContent( content );
 		this._loadMtl( resource, onLoad, onProgress, onError, crossOrigin, materialOptions );
 	};
-
 
 	OBJLoader2.prototype._loadMtl = function ( resource, onLoad, onProgress, onError, crossOrigin, materialOptions ) {
 		if ( MTLLoader === undefined ) { console.error( '"MTLLoader" is not available. "OBJLoader2" requires it for loading MTL files.' ); }
@@ -75342,7 +74897,6 @@ var PCDLoader = function ( manager ) {
 	this.littleEndian = true;
 
 };
-
 
 PCDLoader.prototype = {
 
@@ -75998,7 +75552,6 @@ PlayCanvasLoader.prototype = {
 
 			model.nodes[ parent ]._object.add( model.nodes[ i ]._object );
 
-
 		}
 
 		return model.nodes[ 0 ]._object;
@@ -76137,7 +75690,6 @@ PLYLoader.prototype = {
 						currentElement.properties.push( make_ply_element_property( lineValues, scope.propertyNameMapping ) );
 
 						break;
-
 
 					default:
 
@@ -76459,7 +76011,6 @@ PLYLoader.prototype = {
 };
 
 var bigEndianPlatform = null;
-
 	
 	function isBigEndianPlatform() {
 
@@ -76504,7 +76055,6 @@ var bigEndianPlatform = null;
 		Float64Array: 'getFloat64'
 	};
 
-
 	function copyFromBuffer( sourceArrayBuffer, viewType, position, length, fromBigEndian ) {
 
 		var bytesPerElement = viewType.BYTES_PER_ELEMENT,
@@ -76535,7 +76085,6 @@ var bigEndianPlatform = null;
 
 	}
 
-
 	function decodePrwm( buffer ) {
 
 		var array = new Uint8Array( buffer ),
@@ -76560,8 +76109,6 @@ var bigEndianPlatform = null;
 
 		}
 
-		
-
 		if ( version === 0 ) {
 
 			throw new Error( 'PRWM decoder: Invalid format version: 0' );
@@ -76585,8 +76132,6 @@ var bigEndianPlatform = null;
 			}
 
 		}
-
-		
 
 		var pos = 8;
 
@@ -76747,7 +76292,6 @@ var PVRLoader = function ( manager ) {
 PVRLoader.prototype = Object.create( CompressedTextureLoader.prototype );
 PVRLoader.prototype.constructor = PVRLoader;
 
-
 PVRLoader.parse = function ( buffer, loadMipmaps ) {
 
 	var headerLengthInt = 13;
@@ -76783,7 +76327,6 @@ PVRLoader._parseV3 = function ( pvrDatas ) {
 
 	var header = pvrDatas.header;
 	var bpp, format;
-
 
 	var metaLen = header[ 12 ],
 		pixelFormat = header[ 2 ],
@@ -76851,7 +76394,6 @@ PVRLoader._parseV2 = function ( pvrDatas ) {
 		// pvrTag = header[ 11 ],
 		numSurfs = header[ 12 ];
 
-
 	var TYPE_MASK = 0xff;
 	var PVRTC_2 = 24,
 		PVRTC_4 = 25;
@@ -76892,7 +76434,6 @@ PVRLoader._parseV2 = function ( pvrDatas ) {
 	return PVRLoader._extract( pvrDatas );
 
 };
-
 
 PVRLoader._extract = function ( pvrDatas ) {
 
@@ -77385,7 +76926,6 @@ EllipseCurve.prototype.copy = function ( source ) {
 
 };
 
-
 EllipseCurve.prototype.toJSON = function () {
 
 	var data = Curve.prototype.toJSON.call( this );
@@ -77444,7 +76984,6 @@ ArcCurve.prototype.isArcCurve = true;
 function CubicPoly() {
 
 	var c0 = 0, c1 = 0, c2 = 0, c3 = 0;
-
 	
 	function init( x0, x1, t0, t1 ) {
 
@@ -79858,7 +79397,6 @@ Object.assign( ShapePath.prototype, {
 
 		if ( noHoles === true )	{ return	toShapesNoHoles( subPaths ); }
 
-
 		var solid, tmpPath, tmpShape, shapes = [];
 
 		if ( subPaths.length === 1 ) {
@@ -79916,7 +79454,6 @@ Object.assign( ShapePath.prototype, {
 
 		// only Holes? -> probably all Shapes with wrong orientation
 		if ( ! newShapes[ 0 ] )	{ return	toShapesNoHoles( subPaths ); }
-
 
 		if ( newShapes.length > 1 ) {
 
@@ -80433,8 +79970,6 @@ SVGLoader.prototype = {
 
 		}
 
-		
-
 		function parseArcCommand( path, rx, ry, x_axis_rotation, large_arc_flag, sweep_flag, start, end ) {
 
 			x_axis_rotation = x_axis_rotation * Math.PI / 180;
@@ -80497,7 +80032,6 @@ SVGLoader.prototype = {
 			return ang;
 
 		}
-
 		
 		function parseRectNode( node, style ) {
 
@@ -80705,7 +80239,6 @@ SVGLoader.prototype = {
 			}
 
 			return array;
-
 
 		}
 
@@ -80980,7 +80513,6 @@ SVGLoader.prototype = {
 
 		// console.log( paths );
 
-
 		console.timeEnd( 'SVGLoader: Parse' );
 
 		return paths;
@@ -81005,7 +80537,6 @@ var TDSLoader = function ( manager ) {
 TDSLoader.prototype = {
 
 	constructor: TDSLoader,
-
 	
 	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -81024,7 +80555,6 @@ TDSLoader.prototype = {
 		}, onProgress, onError );
 
 	},
-
 	
 	parse: function ( arraybuffer, path ) {
 		var this$1 = this;
@@ -81046,7 +80576,6 @@ TDSLoader.prototype = {
 		return this.group;
 
 	},
-
 	
 	readFile: function ( arraybuffer, path ) {
 		var this$1 = this;
@@ -81086,7 +80615,6 @@ TDSLoader.prototype = {
 		this.debugMessage( 'Parsed ' + this.meshes.length + ' meshes' );
 
 	},
-
 	
 	readMeshData: function ( data, path ) {
 		var this$1 = this;
@@ -81131,7 +80659,6 @@ TDSLoader.prototype = {
 		}
 
 	},
-
 	
 	readNamedObject: function ( data ) {
 		var this$1 = this;
@@ -81164,7 +80691,6 @@ TDSLoader.prototype = {
 		this.endChunk( chunk );
 
 	},
-
 	
 	readMaterialEntry: function ( data, path ) {
 		var this$1 = this;
@@ -81262,7 +80788,6 @@ TDSLoader.prototype = {
 		this.materials[ material.name ] = material;
 
 	},
-
 	
 	readMesh: function ( data ) {
 		var this$1 = this;
@@ -81323,7 +80848,6 @@ TDSLoader.prototype = {
 				}
 
 				geometry.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
-
 
 			} else if ( next === MESH_MATRIX ) {
 
@@ -81387,7 +80911,6 @@ TDSLoader.prototype = {
 		return mesh;
 
 	},
-
 	
 	readFaceArray: function ( data, mesh ) {
 		var this$1 = this;
@@ -81451,7 +80974,6 @@ TDSLoader.prototype = {
 		this.endChunk( chunk );
 
 	},
-
 	
 	readMap: function ( data, path ) {
 		var this$1 = this;
@@ -81508,7 +81030,6 @@ TDSLoader.prototype = {
 		return texture;
 
 	},
-
 	
 	readMaterialGroup: function ( data ) {
 		var this$1 = this;
@@ -81531,7 +81052,6 @@ TDSLoader.prototype = {
 		return { name: name, index: index };
 
 	},
-
 	
 	readColor: function ( data ) {
 
@@ -81568,7 +81088,6 @@ TDSLoader.prototype = {
 		return color;
 
 	},
-
 	
 	readChunk: function ( data ) {
 
@@ -81583,14 +81102,12 @@ TDSLoader.prototype = {
 		return chunk;
 
 	},
-
 	
 	endChunk: function ( chunk ) {
 
 		this.position = chunk.end;
 
 	},
-
 	
 	nextChunk: function ( data, chunk ) {
 
@@ -81616,14 +81133,12 @@ TDSLoader.prototype = {
 		}
 
 	},
-
 	
 	resetPosition: function () {
 
 		this.position -= 6;
 
 	},
-
 	
 	readByte: function ( data ) {
 
@@ -81632,7 +81147,6 @@ TDSLoader.prototype = {
 		return v;
 
 	},
-
 	
 	readFloat: function ( data ) {
 
@@ -81649,7 +81163,6 @@ TDSLoader.prototype = {
 		}
 
 	},
-
 	
 	readInt: function ( data ) {
 
@@ -81658,7 +81171,6 @@ TDSLoader.prototype = {
 		return v;
 
 	},
-
 	
 	readShort: function ( data ) {
 
@@ -81667,7 +81179,6 @@ TDSLoader.prototype = {
 		return v;
 
 	},
-
 	
 	readDWord: function ( data ) {
 
@@ -81676,7 +81187,6 @@ TDSLoader.prototype = {
 		return v;
 
 	},
-
 	
 	readWord: function ( data ) {
 
@@ -81685,7 +81195,6 @@ TDSLoader.prototype = {
 		return v;
 
 	},
-
 	
 	readString: function ( data, maxLength ) {
 		var this$1 = this;
@@ -81709,7 +81218,6 @@ TDSLoader.prototype = {
 		return s;
 
 	},
-
 	
 	setPath: function ( path ) {
 
@@ -81718,7 +81226,6 @@ TDSLoader.prototype = {
 		return this;
 
 	},
-
 	
 	debugMessage: function ( message ) {
 
@@ -82012,7 +81519,6 @@ VRMLLoader.prototype = {
 			var float_pattern = /(\b|\-|\+)([\d\.e]+)/;
 			var float2_pattern = /([\d\.\+\-e]+)\s+([\d\.\+\-e]+)/g;
 			var float3_pattern = /([\d\.\+\-e]+)\s+([\d\.\+\-e]+)\s+([\d\.\+\-e]+)/g;
-
 			
 			function paintFaces( geometry, radius, angles, colors, topDown ) {
 
@@ -82111,7 +81617,6 @@ VRMLLoader.prototype = {
 			function parseProperty( node, line ) {
 
 				var parts = [], part, property = {}, fieldName;
-
 				
 				var regex = /[^\s,\[\]]+/g;
 
@@ -82124,7 +81629,6 @@ VRMLLoader.prototype = {
 				}
 
 				fieldName = parts[ 0 ];
-
 
 				// trigger several recorders
 				switch ( fieldName ) {
@@ -83506,7 +83010,6 @@ Object.assign( VTKLoader.prototype, EventDispatcher.prototype, {
 
 							} else {
 
-
 								indices[ indicesIndex ++ ] = strip[ j ];
 								indices[ indicesIndex ++ ] = strip[ j + 1 ];
 								indices[ indicesIndex ++ ] = strip[ j + 2 ];
@@ -83781,7 +83284,6 @@ Object.assign( VTKLoader.prototype, EventDispatcher.prototype, {
 					numBytes = 4;
 
 				}
-
 
 				// Check the format
 				if ( ele.attributes.format === 'binary' && compressed ) {
@@ -84648,7 +84150,6 @@ var MarchingCubes = function ( resolution, material, enableUvs, enableColors ) {
 			scope.normalArray[ c + 7 ] = ny;
 			scope.normalArray[ c + 8 ] = nz;
 
-
 		} else {
 
 			scope.normalArray[ c + 0 ] = norm[ o1 + 0 ];
@@ -84799,7 +84300,6 @@ var MarchingCubes = function ( resolution, material, enableUvs, enableColors ) {
 		var max_y = Math.floor( ys + radius ); if ( max_y > this.size - 1 ) { max_y = this.size - 1; }
 		var min_x = Math.floor( xs - radius ); if ( min_x < 1 ) { min_x = 1; }
 		var max_x = Math.floor( xs + radius ); if ( max_x > this.size - 1 ) { max_x = this.size - 1; }
-
 
 		// Don't polygonize in the outer layer because normals aren't
 		// well-defined there.
@@ -85060,7 +84560,6 @@ var MarchingCubes = function ( resolution, material, enableUvs, enableColors ) {
 
 MarchingCubes.prototype = Object.create( ImmediateRenderObject.prototype );
 MarchingCubes.prototype.constructor = MarchingCubes;
-
 
 /////////////////////////////////////
 // Marching cubes lookup tables
@@ -85443,7 +84942,6 @@ var ColorConverter = {
 
 	}
 
-
 };
 
 function CanvasTexture( canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy ) {
@@ -85533,7 +85031,6 @@ Sprite.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 			}
 
-
 			vertexPosition.copy( mvPosition );
 			vertexPosition.x += rotatedPosition.x;
 			vertexPosition.y += rotatedPosition.y;
@@ -85619,7 +85116,6 @@ Sprite.prototype = Object.assign( Object.create( Object3D.prototype ), {
 		return this;
 
 	}
-
 
 } );
 
@@ -86074,7 +85570,6 @@ Lut.prototype = {
 
 				var points = [];
 
-
 				if ( this$1.legend.layout == 'vertical' ) {
 
 					var linePosition = ( this$1.legend.position.y - ( this$1.legend.dimensions.height * 0.5 ) + 0.01 ) + ( this$1.legend.dimensions.height ) * ( ( value - this$1.minV ) / ( this$1.maxV - this$1.minV ) * 0.99 );
@@ -86111,7 +85606,6 @@ Lut.prototype = {
 	}
 
 };
-
 
 var ColorMapKeywords = {
 
@@ -86793,7 +86287,6 @@ var MD2CharacterComplex = function () {
 
 	};
 
-
 	this.shareParts = function ( original ) {
 		var this$1 = this;
 
@@ -86988,7 +86481,6 @@ var MD2CharacterComplex = function () {
 
 		}
 
-
 	};
 
 	this.update = function ( delta ) {
@@ -87092,7 +86584,6 @@ var MD2CharacterComplex = function () {
 			}
 
 		}
-
 
 		if ( Math.abs( this.speed ) < 0.2 * this.maxSpeed && ! ( controls.moveLeft || controls.moveRight || controls.moveForward || controls.moveBackward ) ) {
 
@@ -87498,7 +86989,6 @@ var SimplifyModifier = function () {};
 
 		}
 
-
 		// delete triangles on edge uv:
 		for ( i = u.faces.length - 1; i >= 0; i -- ) {
 
@@ -87517,7 +87007,6 @@ var SimplifyModifier = function () {};
 
 		}
 
-
 		removeVertex( u, vertices );
 
 		// recompute the edge collapse costs in neighborhood
@@ -87528,8 +87017,6 @@ var SimplifyModifier = function () {};
 		}
 
 	}
-
-
 
 	function minimumCostEdge( vertices ) {
 
@@ -87575,7 +87062,6 @@ var SimplifyModifier = function () {};
 		v2.addUniqueNeighbor( v1 );
 		v2.addUniqueNeighbor( v3 );
 
-
 		v3.faces.push( this );
 		v3.addUniqueNeighbor( v1 );
 		v3.addUniqueNeighbor( v2 );
@@ -87610,7 +87096,6 @@ var SimplifyModifier = function () {};
 
 		removeFromArray( oldv.faces, this );
 		newv.faces.push( this );
-
 
 		oldv.removeIfNonNeighbor( this.v1 );
 		this.v1.removeIfNonNeighbor( oldv );
@@ -87827,7 +87312,6 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 ( function () {
 	var ABC = [ 'a', 'b', 'c' ];
 
-
 	function getEdge( a, b, map ) {
 
 		var vertexIndexA = Math.min( a, b );
@@ -87838,7 +87322,6 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 		return map[ key ];
 
 	}
-
 
 	function processEdge( a, b, vertices, map, face, metaVertices ) {
 
@@ -87877,7 +87360,6 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 
 		metaVertices[ a ].edges.push( edge );
 		metaVertices[ b ].edges.push( edge );
-
 
 	}
 
@@ -87943,15 +87425,10 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 
 		var hasUvs = oldUvs !== undefined && oldUvs.length > 0;
 
-		
-
 		metaVertices = new Array( oldVertices.length );
 		sourceEdges = {}; // Edge => { oldVertex1, oldVertex2, faces[]  }
 
 		generateLookups( oldVertices, oldFaces, metaVertices, sourceEdges );
-
-
-		
 
 		newEdgeVertices = [];
 		var other, currentEdge, newEdge, face;
@@ -88004,8 +87481,6 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 			// console.log(currentEdge, newEdge);
 
 		}
-
-		
 
 		var beta, sourceVertexWeight, connectingVertexWeight;
 		var connectingEdge, connectingEdges, oldVertex, newSourceVertex;
@@ -88069,9 +87544,6 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 			newSourceVertices.push( newSourceVertex );
 
 		}
-
-
-		
 
 		newVertices = newSourceVertices.concat( newEdgeVertices );
 		var sl = newSourceVertices.length, edge1, edge2, edge3;
@@ -89033,7 +88505,6 @@ ColorSpaceNode.Nodes = ( function () {
 
 		"}"
 	].join( "\n" ) );
-
 
 	var LinearToRGBD = new FunctionNode( [
 		"vec3 LinearToRGBD( in vec4 value, in float maxRange ) {",
@@ -90013,7 +89484,6 @@ NodeBuilder.prototype = {
 
 	},
 
-
 	addVertexCode: function ( code ) {
 
 		this.addCode( code, 'vertex' );
@@ -90031,7 +89501,6 @@ NodeBuilder.prototype = {
 		this.code[ shader || this.shader ] += code + '\n';
 
 	},
-
 
 	addVertexNodeCode: function ( code ) {
 
@@ -90093,7 +89562,6 @@ NodeBuilder.prototype = {
 
 	},
 
-
 	addVertexParsCode: function ( code ) {
 
 		this.addParsCode( code, 'vertex' );
@@ -90112,14 +89580,12 @@ NodeBuilder.prototype = {
 
 	},
 
-
 	addVaryCode: function ( code ) {
 
 		this.addVertexParsCode( code );
 		this.addFragmentParsCode( code );
 
 	},
-
 
 	isCache: function ( name ) {
 
@@ -90303,7 +89769,6 @@ NodeBuilder.prototype = {
 			return node.name;
 
 		}
-
 
 		if ( node instanceof FunctionNode ) {
 
@@ -91594,7 +91059,6 @@ BlurNode.Nodes = ( function () {
 
 } )();
 
-
 BlurNode.prototype = Object.create( TempNode.prototype );
 BlurNode.prototype.constructor = BlurNode;
 BlurNode.prototype.nodeType = "Blur";
@@ -91964,7 +91428,6 @@ Matrix3Node.prototype.generateReadonly = function ( builder, output, uuid, type,
 	return builder.format( "mat3( " + this.value.elements.join( ", " ) + " )", type, output );
 
 };
-
 
 Matrix3Node.prototype.copy = function ( source ) {
 
@@ -95065,7 +94528,6 @@ JoinNode.prototype.toJSON = function ( meta ) {
 
 		}
 
-
 	}
 
 	return data;
@@ -96725,7 +96187,6 @@ Sky.SkyShader = {
 		'	return ( ( x * ( A * x + C * B ) + D * E ) / ( x * ( A * x + B ) + D * F ) ) - E / F;',
 		'}',
 
-
 		'void main() {',
 		// optical length
 		// cutoff angle at 90 to avoid singularity in next formula.
@@ -97881,8 +97342,6 @@ BoxHelper.prototype.update = ( function () {
 		var min = box.min;
 		var max = box.max;
 
-		
-
 		var position = this.geometry.attributes.position;
 		var array = position.array;
 
@@ -97961,8 +97420,6 @@ function isNumber( n ) {
 		return - 1;
 
 	}
-
-	
 
 	var Octree = function ( parameters ) {
 
@@ -98514,8 +97971,6 @@ function isNumber( n ) {
 
 	};
 
-	
-
 	var OctreeObjectData = function ( object, part ) {
 
 		// properties
@@ -98610,8 +98065,6 @@ function isNumber( n ) {
 		}
 
 	};
-
-	
 
 	var OctreeNode = function ( parameters ) {
 
@@ -99690,7 +99143,6 @@ function isNumber( n ) {
 
 			}
 
-
 			if ( deltaZ - radiusObj > - overlap ) {
 
 				// z right
@@ -99988,8 +99440,6 @@ function isNumber( n ) {
 		}
 
 	};
-
-	
 
 	Raycaster.prototype.intersectOctreeObject = function ( object, recursive ) {
 
@@ -100304,7 +99754,6 @@ var PMREMGenerator = function ( sourceTexture, samplesPerLevel, resolution ) {
 PMREMGenerator.prototype = {
 
 	constructor: PMREMGenerator,
-
 	
 	update: function ( renderer ) {
 		var this$1 = this;
@@ -101203,7 +100652,6 @@ var ConvolutionShader = {
 
 		"}"
 
-
 	].join( "\n" ),
 
 	buildKernel: function ( sigma ) {
@@ -101330,7 +100778,6 @@ BloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		this.convolutionUniforms[ "uImageIncrement" ].value = BloomPass.blurX;
 
 		renderer.render( this.scene, this.camera, this.renderTargetX, true );
-
 
 		// Render quad with blured scene into texture (convolution pass 2)
 
@@ -101763,7 +101210,6 @@ MaskPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 } );
 
-
 var ClearMaskPass = function () {
 
 	Pass.call( this );
@@ -102129,7 +101575,6 @@ var DigitalGlitch = {
 			
 		"varying vec2 vUv;",
 		
-		
 		"float rand(vec2 co){",
 			"return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);",
 		"}",
@@ -102189,9 +101634,7 @@ var GlitchPass = function ( dt_size ) {
 
 	if ( dt_size == undefined ) { dt_size = 64; }
 
-
 	this.uniforms[ "tDisp" ].value = this.generateHeightmap( dt_size );
-
 
 	this.material = new ShaderMaterial( {
 		uniforms: this.uniforms,
@@ -103019,7 +102462,6 @@ OutlinePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 			this.overlayMaterial.uniforms[ "edgeGlow" ].value = this.edgeGlow;
 			this.overlayMaterial.uniforms[ "usePatternTexture" ].value = this.usePatternTexture;
 
-
 			if ( maskActive ) { renderer.context.enable( renderer.context.STENCIL_TEST ); }
 
 			renderer.render( this.scene, this.camera, readBuffer, false );
@@ -103487,7 +102929,6 @@ var SAOShader = {
 
 		"	return occlusionSum * ( intensity / weightSum );",
 		"}",
-
 
 		"void main() {",
 		"	float centerDepth = getDepth( vUv );",
@@ -104898,7 +104339,6 @@ SSAARenderPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 } );
 
-
 // These jitter vectors are specified in integers because it is easier.
 // I am assuming a [-8,8) integer grid, but it needs to be mapped onto [-0.5,0.5)
 // before being used, thus these integers need to be scaled by 1/16.
@@ -105001,7 +104441,6 @@ var SSAOShader = {
 		"const float diffArea = 0.4;",   // self-shadowing reduction
 		"const float gDisplace = 0.4;",  // gauss bell center
 
-
 		// RGBA depth
 
 		"#include <packing>",
@@ -105051,7 +104490,6 @@ var SSAOShader = {
 			"#endif",
 
 			"return cameraCoef / ( cameraFarPlusNear - z * cameraFarMinusNear );",
-
 
 		"}",
 
@@ -105258,7 +104696,6 @@ var SSAOPass = function ( scene, camera, width, height ) {
 
 SSAOPass.prototype = Object.create( ShaderPass.prototype );
 
-
 SSAOPass.prototype.render = function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
 
 	//Render depth into depthRenderTarget
@@ -105268,19 +104705,16 @@ SSAOPass.prototype.render = function ( renderer, writeBuffer, readBuffer, delta,
 
 	this.scene2.overrideMaterial = null;
 
-
 	//SSAO shaderPass
 	ShaderPass.prototype.render.call( this, renderer, writeBuffer, readBuffer, delta, maskActive );
 
 };
-
 
 SSAOPass.prototype.setScene = function ( scene ) {
 
 	this.scene2 = scene;
 
 };
-
 
 SSAOPass.prototype.setCamera = function ( camera ) {
 
@@ -105290,7 +104724,6 @@ SSAOPass.prototype.setCamera = function ( camera ) {
 	this.uniforms[ 'cameraFar' ].value = this.camera2.far;
 
 };
-
 
 SSAOPass.prototype.setSize = function ( width, height ) {
 
@@ -105791,7 +105224,6 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		this.copyUniforms[ "tDiffuse" ].value = this.renderTargetsHorizontal[ 0 ].texture;
 
 		if ( maskActive ) { renderer.context.enable( renderer.context.STENCIL_TEST ); }
-
 
 		if ( this.renderToScreen ) {
 
@@ -107102,7 +106534,6 @@ var Projector = function () {
 
 		return _facePool[ _faceCount ++ ];
 
-
 	}
 
 	function getNextLineInPool() {
@@ -107336,8 +106767,6 @@ var CanvasRenderer = function ( parameters ) {
 		_normal = new Vector3(),
 		_normalViewMatrix = new Matrix3();
 
-	
-
 	// dash+gap fallbacks for Firefox and everything else
 
 	if ( _context.setLineDash === undefined ) {
@@ -107561,8 +106990,6 @@ var CanvasRenderer = function ( parameters ) {
 
 		_normalViewMatrix.getNormalMatrix( camera.matrixWorldInverse );
 
-		
-
 		calculateLights();
 
 		for ( var e = 0, el = _elements.length; e < el; e ++ ) {
@@ -107634,13 +107061,9 @@ var CanvasRenderer = function ( parameters ) {
 
 			}
 
-			
-
 			_clearBox.union( _elemBox );
 
 		}
-
-		
 
 		_context.setTransform( 1, 0, 0, 1, 0, 0 );
 
@@ -107817,8 +107240,6 @@ var CanvasRenderer = function ( parameters ) {
 			_context.restore();
 
 		}
-
-		
 
 	}
 
@@ -108188,8 +107609,6 @@ var CanvasRenderer = function ( parameters ) {
 		_context.restore();
 
 	}
-
-	
 
 	// Hide anti-alias gaps
 
@@ -109033,7 +108452,6 @@ var RaytracingRenderer = function ( parameters ) {
 
 		if ( camera.parent === null ) { camera.updateMatrixWorld(); }
 
-
 		sceneJSON = scene.toJSON();
 		cameraJSON = camera.toJSON();
 		++ sceneId;
@@ -109066,7 +108484,6 @@ var RaytracingRenderer = function ( parameters ) {
 
 		}
 
-
 		// Randomize painting :)
 
 		if ( scope.randomize ) {
@@ -109081,7 +108498,6 @@ var RaytracingRenderer = function ( parameters ) {
 			}
 
 		}
-
 
 		pool.forEach( renderNext );
 
@@ -109234,7 +108650,6 @@ var SoftwareRenderer = function ( parameters ) {
 
 	};
 
-
 	this.render = function ( scene, camera ) {
 
 		// TODO: Check why autoClear can't be false.
@@ -109282,7 +108697,6 @@ var SoftwareRenderer = function ( parameters ) {
 					);
 
 				}
-
 
 			} else if ( element instanceof RenderableSprite ) {
 
@@ -109380,8 +108794,6 @@ var SoftwareRenderer = function ( parameters ) {
 		var y = Math.min( recty1, prevrecty1 );
 		var width = Math.max( rectx2, prevrectx2 ) - x;
 		var height = Math.max( recty2, prevrecty2 ) - y;
-
-		
 
 		if ( x !== Infinity ) {
 
@@ -109611,7 +109023,6 @@ var SoftwareRenderer = function ( parameters ) {
 
 					}
 
-
 				} else {
 
 					if ( material.vertexColors === FaceColors ) {
@@ -109679,8 +109090,6 @@ var SoftwareRenderer = function ( parameters ) {
 		return shader;
 
 	}
-
-	
 
 	function drawTriangle( v1, v2, v3, uv1, uv2, uv3, shader, face, material ) {
 
@@ -110189,7 +109598,6 @@ var SoftwareRenderer = function ( parameters ) {
 						cynz = cbnz;
 
 					}
-
 
 					for ( var iy = 0; iy < q; iy ++ ) {
 
@@ -111687,7 +111095,6 @@ function WebGLClipping() {
 
 		}
 
-
 	};
 
 	function resetGlobalState() {
@@ -113038,7 +112445,6 @@ WebGLUniforms.prototype.setOptional = function ( gl, object, name ) {
 
 };
 
-
 // Static interface
 
 WebGLUniforms.upload = function ( gl, seq, values, renderer ) {
@@ -113817,7 +113223,6 @@ function WebGLProgram( renderer, extensions, code, material, shader, parameters,
 
 	} );
 
-
 	//
 
 	this.name = shader.name;
@@ -113865,7 +113270,6 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 		"shadowMapEnabled", "shadowMapType", "toneMapping", 'physicallyCorrectLights',
 		"alphaTest", "doubleSided", "flipSided", "numClippingPlanes", "numClipIntersection", "depthPacking", "dithering"
 	];
-
 
 	function allocateBones( object ) {
 
@@ -114220,7 +113624,6 @@ function reversePainterSortStable( a, b ) {
 
 }
 
-
 function WebGLRenderList() {
 
 	var renderItems = [];
@@ -114269,7 +113672,6 @@ function WebGLRenderList() {
 			renderItem.group = group;
 
 		}
-
 
 		( material.transparent === true ? transparent : opaque ).push( renderItem );
 
@@ -116362,8 +115764,6 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 
 	//
 
-
-
 	function setTexture2D( texture, slot ) {
 
 		var textureProperties = properties.get( texture );
@@ -117438,7 +116838,6 @@ function WebVRManager( renderer ) {
 
 		}
 
-
 		var pose = frameData.pose;
 		var poseObject = poseTarget !== null ? poseTarget : camera;
 
@@ -118380,7 +117779,6 @@ function WebGLRenderer( parameters ) {
 
 	}
 
-
 	function releaseMaterialProgramReference( material ) {
 
 		var programInfo = properties.get( material ).program;
@@ -118589,7 +117987,6 @@ function WebGLRenderer( parameters ) {
 				}
 
 			}
-
 
 		} else if ( object.isLine ) {
 
@@ -118983,8 +118380,6 @@ function WebGLRenderer( parameters ) {
 		currentRenderState = null;
 
 	};
-
-	
 
 	function projectObject( object, camera, sortObjects ) {
 
@@ -119540,7 +118935,6 @@ function WebGLRenderer( parameters ) {
 						//       16x16 pixel texture max   64 bones * 4 pixels = (16 * 16)
 						//       32x32 pixel texture max  256 bones * 4 pixels = (32 * 32)
 						//       64x64 pixel texture max 1024 bones * 4 pixels = (64 * 64)
-
 
 						var size = Math.sqrt( bones.length * 4 ); // 4 pixels needed for 1 matrix
 						size = _Math.ceilPowerOfTwo( size );
@@ -122280,7 +121674,6 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		return mesh;
 
 	}
-
 	
 	function createDeferredPointLightMaterial() {
 
@@ -122702,8 +122095,6 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 	}
 
-	
-
 	function renderNormalDepth( scene, camera ) {
 
 		scene.traverse( setMaterialNormalDepth );
@@ -122724,8 +122115,6 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 	}
 
-	
-
 	function renderColor( scene, camera ) {
 
 		scene.traverse( setMaterialColor );
@@ -122744,8 +122133,6 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		scene.traverse( restoreOriginalMaterial );
 
 	}
-
-	
 
 	function renderLight( scene, camera ) {
 
@@ -122767,8 +122154,6 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		_gl.disable( _gl.STENCIL_TEST );
 
 	}
-
-	
 
 	function renderLightPre( scene, camera ) {
 
@@ -122792,8 +122177,6 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 	}
 
-	
-
 	function renderReconstruction( scene, camera ) {
 
 		scene.traverse( setMaterialReconstruction );
@@ -122811,8 +122194,6 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		scene.traverse( restoreOriginalMaterial );
 
 	}
-
-	
 
 	function renderFinal( scene, camera ) {
 
@@ -123593,7 +122974,6 @@ var ShaderDeferred = {
 			ShaderDeferredCommon[ 'commonUniforms' ]
 
 		),
-
 
 		vertexShader: [
 
@@ -124415,7 +123795,6 @@ function SkyGeometry() {
 
 	}
 
-
 	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
 
 }
@@ -124511,15 +123890,11 @@ var ShaderGodRays = {
 
 			"	gl_FragColor = vec4( 1.0 ) - texture2D( tInput, vUv );",
 
-
 			"}"
 
 		].join( "\n" )
 
 	},
-
-
-	
 
 	'godrays_generate': {
 
@@ -124582,8 +123957,6 @@ var ShaderGodRays = {
 				// This breaks ANGLE in Chrome 22
 				//	- see http://code.google.com/p/chromium/issues/detail?id=153105
 
-				
-
 				// Unrolling loop manually makes it work in ANGLE
 
 				"if ( 0.0 <= iters && uv.y < 1.0 ) col += texture2D( tInput, uv ).r;",
@@ -124619,8 +123992,6 @@ var ShaderGodRays = {
 		].join( "\n" )
 
 	},
-
-	
 
 	'godrays_combine': {
 
@@ -124681,9 +124052,6 @@ var ShaderGodRays = {
 		].join( "\n" )
 
 	},
-
-
-	
 
 	'godrays_fake_sun': {
 
@@ -125151,7 +124519,6 @@ var FocusShader = {
 
 		"}"
 
-
 	].join( "\n" )
 };
 
@@ -125185,7 +124552,6 @@ var FreiChenShader = {
 
 		"vec2 texel = vec2(1.0 / aspect.x, 1.0 / aspect.y);",
 
-
 		"mat3 G[9];",
 
 		// hard coded matrix values!!!! as suggested in https://github.com/neilmendoza/ofxPostProcessing/blob/master/src/EdgePass.cpp#L45
@@ -125216,7 +124582,6 @@ var FreiChenShader = {
 			"mat3 I;",
 			"float cnv[9];",
 			"vec3 sample;",
-
 			
 			"for (float i=0.0; i<3.0; i++) {",
 				"for (float j=0.0; j<3.0; j++) {",
@@ -125224,7 +124589,6 @@ var FreiChenShader = {
 					"I[int(i)][int(j)] = length(sample);",
 				"}",
 			"}",
-
 			
 			"for (int i=0; i<9; i++) {",
 				"float dp3 = dot(G[i][0], I[0]) + dot(G[i][1], I[1]) + dot(G[i][2], I[2]);",
@@ -126308,8 +125672,6 @@ var VignetteShader = {
 			"vec2 uv = ( vUv - vec2( 0.5 ) ) * vec2( offset );",
 			"gl_FragColor = vec4( mix( texel.rgb, vec3( 1.0 - darkness ), dot( uv, uv ) ), texel.a );",
 
-			
-
 		"}"
 
 	].join( "\n" )
@@ -126414,8 +125776,6 @@ var WaterRefractionShader = {
 };
 
 var ShaderSkin = {
-
-	
 
 	'skinSimple' : {
 
@@ -126687,8 +126047,6 @@ var ShaderSkin = {
 
 	},
 
-	
-
 	'skin' : {
 
 		uniforms: UniformsUtils.merge( [
@@ -126864,7 +126222,6 @@ var ShaderSkin = {
 
 						"float dirDiffuseWeight = max( dot( normal, dirVector ), 0.0 );",
 
-
 						"totalDiffuseLight += directionalLights[ i ].color * dirDiffuseWeight;",
 
 						"if ( passID == 1 ) {",
@@ -126878,7 +126235,6 @@ var ShaderSkin = {
 					"}",
 
 				"#endif",
-
 
 				"outgoingLight += diffuseColor.rgb * ( totalDiffuseLight + totalSpecularLight );",
 
@@ -126905,13 +126261,11 @@ var ShaderSkin = {
 					"vec3 blur3Color = texture2D( tBlur3, vUv ).xyz;",
 					"vec3 blur4Color = texture2D( tBlur4, vUv ).xyz;",
 
-
 					//"gl_FragColor = vec4( blur1Color, gl_FragColor.w );",
 
 					//"gl_FragColor = vec4( vec3( 0.22, 0.5, 0.7 ) * nonblurColor + vec3( 0.2, 0.5, 0.3 ) * blur1Color + vec3( 0.58, 0.0, 0.0 ) * blur2Color, gl_FragColor.w );",
 
 					//"gl_FragColor = vec4( vec3( 0.25, 0.6, 0.8 ) * nonblurColor + vec3( 0.15, 0.25, 0.2 ) * blur1Color + vec3( 0.15, 0.15, 0.0 ) * blur2Color + vec3( 0.45, 0.0, 0.0 ) * blur3Color, gl_FragColor.w );",
-
 
 					"outgoingLight = vec3( vec3( 0.22,  0.437, 0.635 ) * nonblurColor + ",
 										 "vec3( 0.101, 0.355, 0.365 ) * blur1Color + ",
@@ -127017,8 +126371,6 @@ var ShaderSkin = {
 
 	},
 
-	
-
 	"beckmann" : {
 
 		uniforms: {},
@@ -127073,8 +126425,6 @@ var ShaderSkin = {
 };
 
 var ShaderTerrain = {
-
-	
 
 	'terrain' : {
 
@@ -127708,8 +127058,6 @@ var ShaderToon = {
 
 var TranslucentShader = function TranslucentShader() {
 
-	
-
 	this.uniforms = UniformsUtils.merge( [
 
 		UniformsLib[ "common" ],
@@ -127909,7 +127257,6 @@ var TranslucentShader = function TranslucentShader() {
 //
 // Added 4D noise
 // Joshua Koo zz85nus@gmail.com 
-
 
 var SimplexNoise = function(r) {
 	var this$1 = this;
@@ -128496,8 +127843,6 @@ TimelinerController.prototype = {
 
 var TypedArrayUtils = {};
 
-
-
 TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 
 	var stack = [];
@@ -128634,10 +127979,6 @@ TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 
 };
 
-
-
-
-
  TypedArrayUtils.Kdtree = function ( points, metric, eleSize ) {
 
 	var self = this;
@@ -128687,8 +128028,6 @@ TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 	};
 	
 	this.nearest = function ( point, maxNodes, maxDistance ) {
-	
-		 
 
 		var i,
 			result,
@@ -128842,7 +128181,6 @@ TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 	
 };
 
-
 TypedArrayUtils.Kdtree.prototype.Node = function ( obj, depth, parent, pos ) {
 
 	this.obj = obj;
@@ -128853,8 +128191,6 @@ TypedArrayUtils.Kdtree.prototype.Node = function ( obj, depth, parent, pos ) {
 	this.pos = pos;
 
 }; 
-
-
 
 TypedArrayUtils.Kdtree.BinaryHeap = function ( scoreFunction ) {
 
@@ -129595,7 +128931,6 @@ var ShadowMapViewer = function ( light ) {
 
 	scene.add( mesh );
 
-
 	//Label for light's name
 	var labelCanvas, labelMesh;
 
@@ -129628,7 +128963,6 @@ var ShadowMapViewer = function ( light ) {
 		scene.add( labelMesh );
 
 	}
-
 
 	function resetPosition () {
 
@@ -130570,15 +129904,11 @@ var VolumeSlice = function ( volume, index, axis ) {
 	} );
 	
 	this.axis = axis || 'z';
-
-	
 	
 	this.canvas = document.createElement( 'canvas' );
 	
-	
 	this.canvasBuffer = document.createElement( 'canvas' );
 	this.updateGeometry();
-
 
 	var canvasMap = new Texture( this.canvas );
 	canvasMap.minFilter = LinearFilter;
@@ -130590,19 +129920,11 @@ var VolumeSlice = function ( volume, index, axis ) {
 	this.geometryNeedsUpdate = true;
 	this.repaint();
 
-	
-
-	
-
-	
-
-
 };
 
 VolumeSlice.prototype = {
 
 	constructor: VolumeSlice,
-
 	
 	repaint: function () {
 		var this$1 = this;
@@ -130620,7 +129942,6 @@ VolumeSlice.prototype = {
 			volume = this.volume,
 			canvas = this.canvasBuffer,
 			ctx = this.ctxBuffer;
-
 
 		// get the imageData and pixel array from the canvas
 		var imgData = ctx.getImageData( 0, 0, iLength, jLength );
@@ -130682,11 +130003,9 @@ VolumeSlice.prototype = {
 		ctx.putImageData( imgData, 0, 0 );
 		this.ctx.drawImage( canvas, 0, 0, iLength, jLength, 0, 0, this.canvas.width, this.canvas.height );
 
-
 		this.mesh.material.map.needsUpdate = true;
 
 	},
-
 	
 	updateGeometry: function () {
 
@@ -130923,7 +130242,6 @@ var GearVRController = function () {
 				scope.dispatchEvent( { type: touchpadIsPressed ? 'touchpaddown' : 'touchpadup', axes: axes } );
 
 			}
-
 
 			// trigger
 
@@ -131345,7 +130663,6 @@ function ShapeBufferGeometry( shapes, curveSegments ) {
 	this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
 	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
-
 	// helper functions
 
 	function addShape( shape ) {
@@ -131522,7 +130839,6 @@ var PaintViveController = function ( id ) {
 	var ball = new Mesh( geometry, material );
 	colorUI.add( ball );
 
-
 	// SIZE UI
 	var sizeUI = new Group();
 	sizeUI.position.set( 0, 0.005, 0.0495 );
@@ -131551,8 +130867,6 @@ var PaintViveController = function ( id ) {
 	sizeUI.add( sizeUIFill );
 
 	sizeUI.visible = false;
-
-
 
 	function onAxisChanged( event ) {
 
@@ -132837,7 +132151,6 @@ PositionalAudio.prototype = Object.assign( Object.create( Audio.prototype ), {
 
 	} )()
 
-
 } );
 
 function CubeCamera( near, far, cubeResolution ) {
@@ -133498,10 +132811,7 @@ function ExtrudeBufferGeometry( shapes, options ) {
 
 		}
 
-
 		var faces = ShapeUtils.triangulateShape( vertices, holes );
-
-		
 
 		var contour = vertices; // vertices has all points but contour has only points of circumference
 
@@ -133512,7 +132822,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			vertices = vertices.concat( ahole );
 
 		}
-
 
 		function scalePt2( pt, vec, size ) {
 
@@ -133526,9 +132835,7 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			vert, vlen = vertices.length,
 			face, flen = faces.length;
 
-
 		// Find directions for point movement
-
 
 		function getBevelVec( inPt, inPrev, inNext ) {
 
@@ -133652,7 +132959,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 
 		}
 
-
 		var contourMovements = [];
 
 		for ( var i = 0, il = contour.length, j = il - 1, k = i + 1; i < il; i ++, j ++, k ++ ) {
@@ -133690,7 +132996,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			verticesMovements = verticesMovements.concat( oneHoleMovements );
 
 		}
-
 
 		// Loop bevelSegments, 1 for the front, 1 for the back
 
@@ -133790,7 +133095,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 
 		}
 
-
 		// Add bevel segments planes
 
 		//for ( b = 1; b <= bevelSegments; b ++ ) {
@@ -133836,8 +133140,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 
 		}
 
-		
-
 		// Top and bottom faces
 
 		buildLidFaces();
@@ -133845,7 +133147,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 		// Sides faces
 
 		buildSideFaces();
-
 
 		/////  Internal functions
 
@@ -133924,9 +133225,7 @@ function ExtrudeBufferGeometry( shapes, options ) {
 
 			}
 
-
 			scope.addGroup( start, verticesArray.length / 3 - start, 1 );
-
 
 		}
 
@@ -133972,7 +133271,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 
 		}
 
-
 		function f3( a, b, c ) {
 
 			addVertex( a );
@@ -133998,7 +133296,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			addVertex( c );
 			addVertex( d );
 
-
 			var nextIndex = verticesArray.length / 3;
 			var uvs = uvgen.generateSideWallUV( scope, verticesArray, nextIndex - 6, nextIndex - 3, nextIndex - 2, nextIndex - 1 );
 
@@ -134019,7 +133316,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			verticesArray.push( placeholder[ index * 3 + 2 ] );
 
 		}
-
 
 		function addUV( vector2 ) {
 
@@ -134181,7 +133477,6 @@ function LatheBufferGeometry( points, segments, phiStart, phiLength ) {
 
 	phiLength = _Math.clamp( phiLength, 0, Math.PI * 2 );
 
-
 	// buffers
 
 	var indices = [];
@@ -134221,7 +133516,6 @@ function LatheBufferGeometry( points, segments, phiStart, phiLength ) {
 			uv.y = j / ( points.length - 1 );
 
 			uvs.push( uv.x, uv.y );
-
 
 		}
 
@@ -135810,9 +135104,6 @@ function PointLightHelper( light, sphereSize, color ) {
 
 	this.update();
 
-
-	
-
 }
 
 PointLightHelper.prototype = Object.create( Mesh.prototype );
@@ -135836,8 +135127,6 @@ PointLightHelper.prototype.update = function () {
 		this.material.color.copy( this.light.color );
 
 	}
-
-	
 
 };
 
@@ -135942,7 +135231,6 @@ function RectAreaLightHelper( light, color ) {
 
 	this.line = new Line( geometry, material );
 	this.add( this.line );
-
 
 	this.update();
 
@@ -137232,7 +136520,6 @@ Object.assign( ObjectLoader.prototype, {
 						);
 
 						break;
-
 
 					case 'ExtrudeGeometry':
 					case 'ExtrudeBufferGeometry':

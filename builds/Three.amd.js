@@ -4390,7 +4390,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-
   		var m;
 
   		if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -6972,8 +6971,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	},
 
-  	
-
   	mergeVertices: function () {
   		var this$1 = this;
 
@@ -7006,7 +7003,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
 
   		}
-
 
   		// if faces are completely degenerate after merging vertices, we
   		// have to remove them from the geometry.
@@ -7319,8 +7315,6 @@ define(['exports'], function (exports) { 'use strict';
   	},
 
   	clone: function () {
-
-  		
 
   		return new Geometry().copy( this );
 
@@ -8518,7 +8512,6 @@ define(['exports'], function (exports) { 'use strict';
   Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
   function Uint8BufferAttribute( array, itemSize, normalized ) {
 
   	BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -8527,7 +8520,6 @@ define(['exports'], function (exports) { 'use strict';
 
   Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
   function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -8538,7 +8530,6 @@ define(['exports'], function (exports) { 'use strict';
   Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
   function Int16BufferAttribute( array, itemSize, normalized ) {
 
   	BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -8547,7 +8538,6 @@ define(['exports'], function (exports) { 'use strict';
 
   Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
   function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -8558,7 +8548,6 @@ define(['exports'], function (exports) { 'use strict';
   Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
   function Int32BufferAttribute( array, itemSize, normalized ) {
 
   	BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -8567,7 +8556,6 @@ define(['exports'], function (exports) { 'use strict';
 
   Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
   function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -8578,7 +8566,6 @@ define(['exports'], function (exports) { 'use strict';
   Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
   function Float32BufferAttribute( array, itemSize, normalized ) {
 
   	BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -8587,7 +8574,6 @@ define(['exports'], function (exports) { 'use strict';
 
   Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
   function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -9872,8 +9858,6 @@ define(['exports'], function (exports) { 'use strict';
   	},
 
   	clone: function () {
-
-  		
 
   		return new BufferGeometry().copy( this );
 
@@ -12332,7 +12316,6 @@ define(['exports'], function (exports) { 'use strict';
   } );
 
   var CCDIKSolver = ( function () {
-
   	
   	function CCDIKSolver( mesh, iks ) {
 
@@ -12346,7 +12329,6 @@ define(['exports'], function (exports) { 'use strict';
   	CCDIKSolver.prototype = {
 
   		constructor: CCDIKSolver,
-
   		
   		update: function () {
 
@@ -12499,7 +12481,6 @@ define(['exports'], function (exports) { 'use strict';
   			};
 
   		}(),
-
   		
   		createHelper: function () {
 
@@ -12542,7 +12523,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	};
-
   	
   	function CCDIKHelper( mesh, iks ) {
 
@@ -12591,7 +12571,6 @@ define(['exports'], function (exports) { 'use strict';
   	CCDIKHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
   		constructor: CCDIKHelper,
-
   		
   		updateMatrixWorld: function () {
 
@@ -13748,7 +13727,6 @@ define(['exports'], function (exports) { 'use strict';
 
   } );
 
-
   function PropertyBinding( rootNode, path, parsedPath ) {
 
   	this.path = path;
@@ -13777,7 +13755,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	},
-
   	
   	sanitizeNodeName: ( function () {
 
@@ -14229,7 +14206,6 @@ define(['exports'], function (exports) { 'use strict';
 
   			}
 
-
   			if ( objectIndex !== undefined ) {
 
   				if ( targetObject[ objectIndex ] === undefined ) {
@@ -14311,7 +14287,6 @@ define(['exports'], function (exports) { 'use strict';
   						}
 
   					}
-
 
   				} else {
 
@@ -14545,7 +14520,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.binding.setValue( this.buffer, originalValueOffset );
 
   	},
-
 
   	// mix functions
 
@@ -16108,12 +16082,10 @@ define(['exports'], function (exports) { 'use strict';
   		// 		actionByRoot: AnimationAction			- lookup
   		// }
 
-
   		this._bindings = []; // 'nActiveBindings' followed by inactive ones
   		this._nActiveBindings = 0;
 
   		this._bindingsByRootAndName = {}; // inside: Map< name, PropertyMixer >
-
 
   		this._controlInterpolants = []; // same game as above
   		this._nActiveControlInterpolants = 0;
@@ -16219,7 +16191,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		action._cacheIndex = null;
 
-
   		var clipUuid = action._clip.uuid,
   			actionsByClip = this._actionsByClip,
   			actionsForClip = actionsByClip[ clipUuid ],
@@ -16235,7 +16206,6 @@ define(['exports'], function (exports) { 'use strict';
   		knownActionsForClip.pop();
 
   		action._byClipCacheIndex = null;
-
 
   		var actionByRoot = actionsForClip.actionByRoot,
   			rootUuid = ( action._localRoot || this._root ).uuid;
@@ -16401,7 +16371,6 @@ define(['exports'], function (exports) { 'use strict';
   		bindings[ prevIndex ] = lastActiveBinding;
 
   	},
-
 
   	// Memory management of Interpolants for weight and time scale
 
@@ -17202,7 +17171,6 @@ define(['exports'], function (exports) { 'use strict';
   CylinderBufferGeometry.prototype.constructor = CylinderBufferGeometry;
 
   var MMDPhysics = ( function () {
-
   	
   	function MMDPhysics( mesh, rigidBodyParams, constraintParams, params ) {
 
@@ -17218,7 +17186,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.manager = new ResourceManager();
 
   		this.mesh = mesh;
-
   		
   		this.unitStep = ( params.unitStep !== undefined ) ? params.unitStep : 1 / 65;
   		this.maxStepNum = ( params.maxStepNum !== undefined ) ? params.maxStepNum : 3;
@@ -17238,7 +17205,6 @@ define(['exports'], function (exports) { 'use strict';
   	MMDPhysics.prototype = {
 
   		constructor: MMDPhysics,
-
   		
   		update: function ( delta ) {
 
@@ -17301,7 +17267,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this;
 
   		},
-
   		
   		reset: function () {
   			var this$1 = this;
@@ -17316,7 +17281,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this;
 
   		},
-
   		
   		warmup: function ( cycles ) {
   			var this$1 = this;
@@ -17331,7 +17295,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this;
 
   		},
-
   		
   		setGravity: function ( gravity ) {
 
@@ -17341,7 +17304,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this;
 
   		},
-
   		
   		createHelper: function () {
 
@@ -17441,7 +17403,6 @@ define(['exports'], function (exports) { 'use strict';
 
   			}
 
-
   		},
 
   		_stepSimulation: function ( delta ) {
@@ -17492,7 +17453,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	};
-
   	
   	function ResourceManager() {
 
@@ -17943,7 +17903,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	};
-
   	
   	function RigidBody( mesh, world, params, manager ) {
 
@@ -17964,7 +17923,6 @@ define(['exports'], function (exports) { 'use strict';
   	RigidBody.prototype = {
 
   		constructor: MMDPhysics.RigidBody,
-
   		
   		reset: function () {
 
@@ -17972,7 +17930,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this;
 
   		},
-
   		
   		updateFromBone: function () {
 
@@ -17986,7 +17943,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this;
 
   		},
-
   		
   		updateBone: function () {
 
@@ -18081,7 +18037,6 @@ define(['exports'], function (exports) { 'use strict';
   			if ( params.type === 0 ) {
 
   				body.setCollisionFlags( body.getCollisionFlags() | 2 );
-
   				
   				body.setActivationState( 4 );
 
@@ -18226,7 +18181,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	};
-
   	
   	function Constraint( mesh, world, bodyA, bodyB, params, manager ) {
 
@@ -18319,7 +18273,6 @@ define(['exports'], function (exports) { 'use strict';
   				}
 
   			}
-
   			
   			if ( constraint.setParam !== undefined ) {
 
@@ -18350,7 +18303,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	};
-
   	
   	function MMDPhysicsHelper( mesh, physics ) {
 
@@ -18404,7 +18356,6 @@ define(['exports'], function (exports) { 'use strict';
   	MMDPhysicsHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
   		constructor: MMDPhysicsHelper,
-
   		
   		updateMatrixWorld: function () {
 
@@ -18528,7 +18479,6 @@ define(['exports'], function (exports) { 'use strict';
   } )();
 
   var MMDAnimationHelper = ( function () {
-
   	
   	function MMDAnimationHelper( params ) {
 
@@ -18573,7 +18523,6 @@ define(['exports'], function (exports) { 'use strict';
   	MMDAnimationHelper.prototype = {
 
   		constructor: MMDAnimationHelper,
-
   		
   		add: function ( object, params ) {
 
@@ -18606,7 +18555,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this;
 
   		},
-
   		
   		remove: function ( object ) {
 
@@ -18637,7 +18585,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this;
 
   		},
-
   		
   		update: function ( delta ) {
   			var this$1 = this;
@@ -18658,7 +18605,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this;
 
   		},
-
   		
   		pose: function ( mesh, vpd, params ) {
 
@@ -18710,7 +18656,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this;
 
   		},
-
   		
   		enable: function ( key, enabled ) {
   			var this$1 = this;
@@ -18738,7 +18683,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this;
 
   		},
-
   		
   		createGrantSolver: function ( mesh ) {
 
@@ -19107,7 +19051,6 @@ define(['exports'], function (exports) { 'use strict';
   				params );
 
   		},
-
   		
   		_syncDuration: function () {
   			var this$1 = this;
@@ -19241,7 +19184,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
 
   		},
-
   		
   		_saveBones: function ( mesh ) {
 
@@ -19354,7 +19296,6 @@ define(['exports'], function (exports) { 'use strict';
   	};
 
   	//
-
   	
   	function AudioManager( audio, params ) {
 
@@ -19375,7 +19316,6 @@ define(['exports'], function (exports) { 'use strict';
   	AudioManager.prototype = {
 
   		constructor: AudioManager,
-
   		
   		control: function ( delta ) {
 
@@ -19419,7 +19359,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	};
-
   	
   	function GrantSolver( mesh, grants ) {
 
@@ -19431,7 +19370,6 @@ define(['exports'], function (exports) { 'use strict';
   	GrantSolver.prototype = {
 
   		constructor: GrantSolver,
-
   		
   		update: function () {
 
@@ -19535,7 +19473,6 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-
   AnimationClipCreator.CreatePulsationAnimation = function ( duration, pulseScale ) {
 
   	var times = [], values = [], tmp = new Vector3();
@@ -19558,7 +19495,6 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-
   AnimationClipCreator.CreateVisibilityAnimation = function ( duration ) {
 
   	var times = [ 0, duration / 2, duration ], values = [ true, false, true ];
@@ -19570,7 +19506,6 @@ define(['exports'], function (exports) { 'use strict';
   	return new AnimationClip( null, duration, [ track ] );
 
   };
-
 
   AnimationClipCreator.CreateMaterialColorAnimation = function ( duration, colors ) {
 
@@ -19706,7 +19641,6 @@ define(['exports'], function (exports) { 'use strict';
   		return this;
 
   	},
-
   	
   	setFocalLength: function ( focalLength ) {
 
@@ -19717,7 +19651,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.updateProjectionMatrix();
 
   	},
-
   	
   	getFocalLength: function () {
 
@@ -19747,7 +19680,6 @@ define(['exports'], function (exports) { 'use strict';
   		return this.filmGauge / Math.max( this.aspect, 1 );
 
   	},
-
   	
   	setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 
@@ -20861,7 +20793,6 @@ define(['exports'], function (exports) { 'use strict';
   		"	return orthographicDepthToViewZ( depth, nearClip, farClip );",
   		"	#endif",
   		"}",
-  		
 
   		"void main() {",
 
@@ -20968,7 +20899,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		"shaderFocus":  { value: 1 },
   		"focusCoords":  { value: new Vector2() }
-
 
   	},
 
@@ -21117,7 +21047,6 @@ define(['exports'], function (exports) { 'use strict';
   			"kernel[3] = 2.0/16.0;   kernel[4] = 4.0/16.0;   kernel[5] = 2.0/16.0;",
   			"kernel[6] = 1.0/16.0;   kernel[7] = 2.0/16.0;   kernel[8] = 1.0/16.0;",
 
-
   			"for( int i=0; i<9; i++ ) {",
   				"float tmp = texture2D(tDepth, coords + offset[i]).r;",
   				"d += tmp * kernel[i];",
@@ -21125,7 +21054,6 @@ define(['exports'], function (exports) { 'use strict';
 
   			"return d;",
   		"}",
-
 
   		"vec3 color(vec2 coords,float blur) {",
   			"//processing the sample",
@@ -21157,7 +21085,6 @@ define(['exports'], function (exports) { 'use strict';
   		"float linearize(float depth) {",
   			"return -zfar * znear / (depth * (zfar - znear) - zfar);",
   		"}",
-
 
   		"float vignette() {",
   			"float dist = distance(vUv.xy, vec2(0.5,0.5));",
@@ -21347,7 +21274,6 @@ define(['exports'], function (exports) { 'use strict';
   CinematicCamera.prototype = Object.create( PerspectiveCamera.prototype );
   CinematicCamera.prototype.constructor = CinematicCamera;
 
-
   // providing fnumber and coc(Circle of Confusion) as extra arguments
   CinematicCamera.prototype.setLens = function ( focalLength, filmGauge, fNumber, coc ) {
 
@@ -21457,7 +21383,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		this.postprocessing.bokeh_uniforms[ "znear" ].value = this.near;
   		this.postprocessing.bokeh_uniforms[ "zfar" ].value = this.near;
-
 
   		this.postprocessing.bokeh_uniforms[ "textureWidth" ].value = window.innerWidth;
 
@@ -23511,7 +23436,6 @@ define(['exports'], function (exports) { 'use strict';
 
   				nUvLayers = 0;
 
-
   			if ( json.uvs !== undefined ) {
 
   				// disregard empty arrays
@@ -23641,14 +23565,12 @@ define(['exports'], function (exports) { 'use strict';
   								normals[ normalIndex ]
   							);
 
-
   							if ( i !== 2 ) { faceA.vertexNormals.push( normal ); }
   							if ( i !== 0 ) { faceB.vertexNormals.push( normal ); }
 
   						}
 
   					}
-
 
   					if ( hasFaceColor ) {
 
@@ -23659,7 +23581,6 @@ define(['exports'], function (exports) { 'use strict';
   						faceB.color.setHex( hex );
 
   					}
-
 
   					if ( hasFaceVertexColor ) {
 
@@ -23751,14 +23672,12 @@ define(['exports'], function (exports) { 'use strict';
 
   					}
 
-
   					if ( hasFaceColor ) {
 
   						colorIndex = faces[ offset ++ ];
   						face.color.setHex( colors[ colorIndex ] );
 
   					}
-
 
   					if ( hasFaceVertexColor ) {
 
@@ -24062,7 +23981,6 @@ define(['exports'], function (exports) { 'use strict';
   				len_tri_flat, len_tri_smooth, len_tri_flat_uv, len_tri_smooth_uv,
   				len_quad_flat, len_quad_smooth, len_quad_flat_uv;
 
-
   			Geometry.call( this );
 
   			md = parseMetaData( data, currentOffset );
@@ -24158,7 +24076,6 @@ define(['exports'], function (exports) { 'use strict';
   					'nquad_smooth_uv': parseUInt32( data, offset + 20 + 4 * 10 )
 
   				};
-  				
 
   				return metaData;
 
@@ -24761,7 +24678,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		if ( controls.moveBackward ) {
 
-
   			this.speed = _Math.clamp( this.speed - delta * this.BACK_ACCELERATION, this.MAX_REVERSE_SPEED, this.MAX_SPEED );
   			this.acceleration = _Math.clamp( this.acceleration - delta, - 1, 1 );
 
@@ -24798,7 +24714,6 @@ define(['exports'], function (exports) { 'use strict';
   				this.acceleration = _Math.clamp( this.acceleration + k * delta, - 1, 0 );
 
   			}
-
 
   		}
 
@@ -25087,7 +25002,6 @@ define(['exports'], function (exports) { 'use strict';
   			setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
 
   		}
-
 
   	};
 
@@ -25598,7 +25512,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-
   	}
 
   	function onDocumentMouseCancel( event ) {
@@ -25676,7 +25589,6 @@ define(['exports'], function (exports) { 'use strict';
   			scope.dispatchEvent( { type: 'dragstart', object: _selected } );
 
   		}
-
 
   	}
 
@@ -26062,7 +25974,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	}
 
-
   	function touchMove( event ) {
 
   		if ( scope.enabled === false ) { return; }
@@ -26098,7 +26009,6 @@ define(['exports'], function (exports) { 'use strict';
   				var distance = touches[ 0 ].distanceTo( touches[ 1 ] );
   				scope.zoom( delta.set( 0, 0, prevDistance - distance ) );
   				prevDistance = distance;
-
 
   				var offset0 = touches[ 0 ].clone().sub( getClosest( touches[ 0 ], prevTouches ) );
   				var offset1 = touches[ 1 ].clone().sub( getClosest( touches[ 1 ], prevTouches ) );
@@ -26606,7 +26516,6 @@ define(['exports'], function (exports) { 'use strict';
   		// expose the rotation vector for convenience
   		this.object.rotation.setFromQuaternion( this.object.quaternion, this.object.rotation.order );
 
-
   	};
 
   	this.updateMovementVector = function () {
@@ -26855,7 +26764,6 @@ define(['exports'], function (exports) { 'use strict';
   			spherical.phi = Math.max( scope.minPolarAngle, Math.min( scope.maxPolarAngle, spherical.phi ) );
 
   			spherical.makeSafe();
-
 
   			spherical.radius *= scale;
 
@@ -27986,7 +27894,6 @@ define(['exports'], function (exports) { 'use strict';
 
   			spherical.makeSafe();
 
-
   			spherical.radius *= scale;
 
   			// restrict radius to be between desired limits
@@ -28929,7 +28836,6 @@ define(['exports'], function (exports) { 'use strict';
   	var startEvent = { type: 'start' };
   	var endEvent = { type: 'end' };
 
-
   	// methods
 
   	this.handleResize = function () {
@@ -29033,7 +28939,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		var axis = new Vector3(),
   			quaternion = new Quaternion();
-
 
   		return function rotateCamera() {
 
@@ -29614,7 +29519,6 @@ define(['exports'], function (exports) { 'use strict';
   	var startEvent = { type: 'start' };
   	var endEvent = { type: 'end' };
 
-
   	// methods
 
   	this.handleResize = function () {
@@ -29728,7 +29632,6 @@ define(['exports'], function (exports) { 'use strict';
   		};
 
   	}() );
-
 
   	this.zoomCamera = function () {
 
@@ -30468,7 +30371,6 @@ define(['exports'], function (exports) { 'use strict';
   		return Math.atan2( vector.z, - vector.x );
 
   	}
-
 
   	// Angle above the XZ plane.
 
@@ -31276,7 +31178,6 @@ define(['exports'], function (exports) { 'use strict';
 
   } );
 
-
   var TransformControlsGizmo = function () {
 
   	Object3D.call( this );
@@ -31701,7 +31602,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.helper[ "rotate" ].visible = this.mode === "rotate";
   		this.helper[ "scale" ].visible = this.mode === "scale";
 
-
   		var handles = [];
   		handles = handles.concat( this.picker[ this.mode ].children );
   		handles = handles.concat( this.gizmo[ this.mode ].children );
@@ -31780,7 +31680,6 @@ define(['exports'], function (exports) { 'use strict';
 
   					}
 
-
   				} else if ( handle.name === 'START' ) {
 
   					handle.position.copy( this$1.worldPositionStart );
@@ -31838,7 +31737,6 @@ define(['exports'], function (exports) { 'use strict';
   				var AXIS_HIDE_TRESHOLD = 0.99;
   				var PLANE_HIDE_TRESHOLD = 0.2;
   				var AXIS_FLIP_TRESHOLD = -0.4;
-
 
   				if ( handle.name === 'X' || handle.name === 'XYZX' ) {
   					if ( Math.abs( alignVector.copy( unitX ).applyQuaternion( quaternion ).dot( this$1.eye ) ) > AXIS_HIDE_TRESHOLD ) {
@@ -32009,7 +31907,6 @@ define(['exports'], function (exports) { 'use strict';
   	isTransformControlsGizmo: true
 
   } );
-
 
   var TransformControlsPlane = function () {
 
@@ -32474,7 +32371,6 @@ define(['exports'], function (exports) { 'use strict';
   					// mark the vertices to be reassigned to some other face
 
   					this.unassigned.appendChain( faceVertices );
-
 
   				} else {
 
@@ -32994,7 +32890,6 @@ define(['exports'], function (exports) { 'use strict';
   			face.getEdge( - 1 ).setTwin( horizonEdge.twin );
 
   			return face.getEdge( 0 ); // the half edge whose vertex is the eyeVertex
-
 
   		},
 
@@ -33597,7 +33492,6 @@ define(['exports'], function (exports) { 'use strict';
   		userData.breakable = breakable;
 
   	},
-
   	
   	subdivideByImpact: function ( object, pointOfImpact, normal, maxRadialIterations, maxRandomIterations ) {
 
@@ -34029,7 +33923,6 @@ define(['exports'], function (exports) { 'use strict';
   		// recalculate constant (like in setFromNormalAndCoplanarPoint)
   		resultPlane.constant = - referencePoint.dot( resultPlane.normal );
 
-
   	};
 
   }();
@@ -34328,7 +34221,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		normals[ 0 ].crossVectors( tangents[ 0 ], vec );
   		binormals[ 0 ].crossVectors( tangents[ 0 ], normals[ 0 ] );
-
 
   		// compute the slowly-varying normal and binormal vectors for each segment on the curve
 
@@ -34819,7 +34711,6 @@ define(['exports'], function (exports) { 'use strict';
   	};
 
   var NURBSUtils = {
-
   	
   	findSpan: function( p,  u,  U ) {
 
@@ -34860,8 +34751,6 @@ define(['exports'], function (exports) { 'use strict';
   		return mid;
 
   	},
-
-
   	
   	calcBasisFunctions: function( span, u, p, U ) {
 
@@ -34894,8 +34783,6 @@ define(['exports'], function (exports) { 'use strict';
   		 return N;
 
   	},
-
-
   	
   	calcBSplinePoint: function( p, U, P, u ) {
 
@@ -34918,8 +34805,6 @@ define(['exports'], function (exports) { 'use strict';
   		return C;
 
   	},
-
-
   	
   	calcBasisFunctionDerivatives: function( span,  u,  p,  n,  U ) {
 
@@ -35038,8 +34923,6 @@ define(['exports'], function (exports) { 'use strict';
   		return ders;
 
   	},
-
-
   	
   	calcBSplineDerivatives: function( p,  U,  P,  u,  nd ) {
 
@@ -35084,8 +34967,6 @@ define(['exports'], function (exports) { 'use strict';
   		return CK;
 
   	},
-
-
   	
   	calcKoverI: function( k, i ) {
 
@@ -35114,8 +34995,6 @@ define(['exports'], function (exports) { 'use strict';
   		return nom / denom;
 
   	},
-
-
   	
   	calcRationalCurveDerivatives: function ( Pders ) {
   		var this$1 = this;
@@ -35152,8 +35031,6 @@ define(['exports'], function (exports) { 'use strict';
   		return CK;
 
   	},
-
-
   	
   	calcNURBSDerivatives: function( p,  U,  P,  u,  nd ) {
 
@@ -35161,8 +35038,6 @@ define(['exports'], function (exports) { 'use strict';
   		return this.calcRationalCurveDerivatives( Pders );
 
   	},
-
-
   	
   	calcSurfacePoint: function ( p, q, U, V, P, u, v, target ) {
 
@@ -35224,10 +35099,8 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-
   NURBSCurve.prototype = Object.create( Curve.prototype );
   NURBSCurve.prototype.constructor = NURBSCurve;
-
 
   NURBSCurve.prototype.getPoint = function ( t ) {
 
@@ -35246,7 +35119,6 @@ define(['exports'], function (exports) { 'use strict';
   	return new Vector3( hpoint.x, hpoint.y, hpoint.z );
 
   };
-
 
   NURBSCurve.prototype.getTangent = function ( t ) {
 
@@ -35286,7 +35158,6 @@ define(['exports'], function (exports) { 'use strict';
   	}
 
   };
-
 
   NURBSSurface.prototype = {
 
@@ -35557,7 +35428,6 @@ define(['exports'], function (exports) { 'use strict';
   			"			: pow( c, 0.41666 ) * 1.055 - 0.055;",
   			"}",
 
-
   			"void main() {",
 
   			"	vec2 uv = vUv;",
@@ -35663,7 +35533,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	};
 
-
   	this.render = function ( scene, camera ) {
 
   		renderer.render( scene, camera );
@@ -35673,10 +35542,7 @@ define(['exports'], function (exports) { 'use strict';
 
   	this.domElement = domElement;
 
-
   	// Throw in ascii library from http://www.nihilogic.dk/labs/jsascii/jsascii.js
-
-  	
 
   	function initAsciiSize() {
 
@@ -35716,7 +35582,6 @@ define(['exports'], function (exports) { 'use strict';
   		oStyle.textDecoration = "none";
 
   	}
-
 
   	var aDefaultCharList = ( " .,:;i1tfLCG08@" ).split( "" );
   	var aDefaultColorCharList = ( " CGO08@" ).split( "" );
@@ -35775,9 +35640,7 @@ define(['exports'], function (exports) { 'use strict';
 
   	}
 
-
   	// can't get a span or div to flow like an img element, but a table works?
-
 
   	// convert img element to ascii
 
@@ -36569,8 +36432,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	},
 
-  	
-
   	cube: {
 
   		uniforms: {
@@ -37061,7 +36922,6 @@ define(['exports'], function (exports) { 'use strict';
   		renderer.shadowMap.enabled = currentShadowMapEnabled;
 
   	};
-
   	
   	this.autoClear = renderer.autoClear;
   	this.domElement = renderer.domElement;
@@ -37289,7 +37149,6 @@ define(['exports'], function (exports) { 'use strict';
   		_cameraR.lookAt( scene.position );
   		_cameraR.rotation.x += 90 * ( Math.PI / 180 );
 
-
   		renderer.clear();
   		renderer.setScissorTest( true );
 
@@ -37348,7 +37207,6 @@ define(['exports'], function (exports) { 'use strict';
   		renderer.setScissorTest( false );
 
   	};
-
 
   };
 
@@ -37899,7 +37757,6 @@ define(['exports'], function (exports) { 'use strict';
   					.fill()
   					.map( function ( v, i ) { return processMaterial( materials[ i % materials.length ] ); } );
 
-
   				node +=
   					"<instance_geometry url=\"#" + meshid + "\">" +
 
@@ -38038,7 +37895,6 @@ define(['exports'], function (exports) { 'use strict';
   GLTFExporter.prototype = {
 
   	constructor: GLTFExporter,
-
   	
   	parse: function ( input, onDone, options ) {
 
@@ -38089,8 +37945,6 @@ define(['exports'], function (exports) { 'use strict';
   		};
 
   		var cachedCanvas;
-
-  		
   		
   		function equalArray( array1, array2 ) {
 
@@ -38101,7 +37955,6 @@ define(['exports'], function (exports) { 'use strict';
   			} );
 
   		}
-
   		
   		function stringToArrayBuffer( text ) {
 
@@ -38125,7 +37978,6 @@ define(['exports'], function (exports) { 'use strict';
   			return array.buffer;
 
   		}
-
   		
   		function getMinMax( attribute, start, count ) {
 
@@ -38151,14 +38003,12 @@ define(['exports'], function (exports) { 'use strict';
   			return output;
 
   		}
-
   		
   		function isPowerOfTwo( image ) {
 
   			return _Math.isPowerOfTwo( image.width ) && _Math.isPowerOfTwo( image.height );
 
   		}
-
   		
   		function isNormalizedNormalAttribute( normal ) {
 
@@ -38180,7 +38030,6 @@ define(['exports'], function (exports) { 'use strict';
   			return true;
 
   		}
-
   		
   		function createNormalizedNormalAttribute( normal ) {
 
@@ -38218,14 +38067,12 @@ define(['exports'], function (exports) { 'use strict';
   			return attribute;
 
   		}
-
   		
   		function getPaddedBufferSize( bufferSize ) {
 
   			return Math.ceil( bufferSize / 4 ) * 4;
 
   		}
-
   		
   		function getPaddedArrayBuffer( arrayBuffer, paddingByte ) {
 
@@ -38255,7 +38102,6 @@ define(['exports'], function (exports) { 'use strict';
   			return arrayBuffer;
 
   		}
-
   		
   		function serializeUserData( object ) {
 
@@ -38273,7 +38119,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
 
   		}
-
   		
   		function processBuffer( buffer ) {
 
@@ -38289,7 +38134,6 @@ define(['exports'], function (exports) { 'use strict';
   			return 0;
 
   		}
-
   		
   		function processBufferView( attribute, componentType, start, count, target ) {
 
@@ -38385,7 +38229,6 @@ define(['exports'], function (exports) { 'use strict';
   			return output;
 
   		}
-
   		
   		function processBufferViewImage( blob ) {
 
@@ -38420,7 +38263,6 @@ define(['exports'], function (exports) { 'use strict';
   			} );
 
   		}
-
   		
   		function processAccessor( attribute, geometry, start, count ) {
 
@@ -38521,7 +38363,6 @@ define(['exports'], function (exports) { 'use strict';
   			return outputJSON.accessors.length - 1;
 
   		}
-
   		
   		function processImage( image, format, flipY ) {
 
@@ -38614,7 +38455,6 @@ define(['exports'], function (exports) { 'use strict';
   			return index;
 
   		}
-
   		
   		function processSampler( map ) {
 
@@ -38638,7 +38478,6 @@ define(['exports'], function (exports) { 'use strict';
   			return outputJSON.samplers.length - 1;
 
   		}
-
   		
   		function processTexture( map ) {
 
@@ -38669,7 +38508,6 @@ define(['exports'], function (exports) { 'use strict';
   			return index;
 
   		}
-
   		
   		function processMaterial( material ) {
 
@@ -38874,7 +38712,6 @@ define(['exports'], function (exports) { 'use strict';
   			return index;
 
   		}
-
   		
   		function processMesh( mesh ) {
 
@@ -39162,7 +38999,6 @@ define(['exports'], function (exports) { 'use strict';
   			return outputJSON.meshes.length - 1;
 
   		}
-
   		
   		function processCamera( camera ) {
 
@@ -39215,7 +39051,6 @@ define(['exports'], function (exports) { 'use strict';
   			return outputJSON.cameras.length - 1;
 
   		}
-
   		
   		function processAnimation( clip, root ) {
 
@@ -39372,7 +39207,6 @@ define(['exports'], function (exports) { 'use strict';
   			return skinIndex;
 
   		}
-
   		
   		function processNode( object ) {
 
@@ -39489,7 +39323,6 @@ define(['exports'], function (exports) { 'use strict';
 
   				}
 
-
   			}
 
   			outputJSON.nodes.push( gltfNode );
@@ -39500,7 +39333,6 @@ define(['exports'], function (exports) { 'use strict';
   			return nodeIndex;
 
   		}
-
   		
   		function processScene( scene ) {
 
@@ -39552,7 +39384,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
 
   		}
-
   		
   		function processObjects( objects ) {
 
@@ -39774,11 +39605,6 @@ define(['exports'], function (exports) { 'use strict';
   		return poseSkin.skeleton.bones;
 
   	}
-
-  	
-
-  	
-
   	
   	this.parseVpd = function ( skin, outputShiftJis, useOriginalBones ) {
 
@@ -39847,7 +39673,6 @@ define(['exports'], function (exports) { 'use strict';
 
   			var bone = bones[ i ];
   			var bone2 = bones2[ i ];
-
   			
   			if ( useOriginalBones === true &&
   				bone.userData.ik !== undefined &&
@@ -39887,8 +39712,6 @@ define(['exports'], function (exports) { 'use strict';
   		return ( outputShiftJis === true ) ? unicodeToShiftjis( lines ) : lines;
 
   	};
-
-  	
 
   };
 
@@ -40266,7 +40089,6 @@ define(['exports'], function (exports) { 'use strict';
   		includeColors = includeColors && excludeAttributes.indexOf( 'color' ) === - 1;
   		includeUVs = includeUVs && excludeAttributes.indexOf( 'uv' ) === - 1;
 
-
   		if ( includeIndices && faceCount !== Math.floor( faceCount ) ) {
 
   			// point cloud meshes will not have an index array and may not have a
@@ -40298,7 +40120,6 @@ define(['exports'], function (exports) { 'use strict';
   			indexByteCount = 4;
 
   		}
-
 
   		var header =
   			'ply\n' +
@@ -40350,7 +40171,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		header += 'end_header\n';
 
-
   		// Generate attribute data
   		var vertex = new Vector3();
   		var normalMatrixWorld = new Matrix3();
@@ -40373,7 +40193,6 @@ define(['exports'], function (exports) { 'use strict';
   			var output = new DataView( new ArrayBuffer( headerBin.length + vertexListLength + faceListLength ) );
   			new Uint8Array( output.buffer ).set( headerBin, 0 );
 
-
   			var vOffset = headerBin.length;
   			var fOffset = headerBin.length + vertexListLength;
   			var writtenVertices = 0;
@@ -40394,7 +40213,6 @@ define(['exports'], function (exports) { 'use strict';
   					vertex.z = vertices.getZ( i );
 
   					vertex.applyMatrix4( mesh.matrixWorld );
-
 
   					// Position information
   					output.setFloat32( vOffset, vertex.x );
@@ -40539,7 +40357,6 @@ define(['exports'], function (exports) { 'use strict';
 
   				}
 
-
   				// Save the amount of verts we've already written so we can offset
   				// the face index on the next mesh
   				writtenVertices += vertices.count;
@@ -40574,7 +40391,6 @@ define(['exports'], function (exports) { 'use strict';
   					vertex.z = vertices.getZ( i );
 
   					vertex.applyMatrix4( mesh.matrixWorld );
-
 
   					// Position information
   					var line =
@@ -41788,7 +41604,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	};
 
-
   	for ( i = 0; i < 3; i ++ ) {
 
   		mgm[ i ] = new Matrix4();
@@ -41995,7 +41810,6 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-
   TeapotBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
   TeapotBufferGeometry.prototype.constructor = TeapotBufferGeometry;
 
@@ -42038,7 +41852,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	var mesh = new Mesh( new PlaneBufferGeometry( 2, 2 ), passThruShader );
   	scene.add( mesh );
-
 
   	this.addVariable = function( variableName, computeFragmentShader, initialValueTexture ) {
 
@@ -42187,7 +42000,6 @@ define(['exports'], function (exports) { 'use strict';
   	}
   	this.addResolutionDefine = addResolutionDefine;
 
-
   	// The following functions can be used to compute things manually
 
   	function createShaderMaterial( computeFragmentShader, uniforms ) {
@@ -42241,7 +42053,6 @@ define(['exports'], function (exports) { 'use strict';
   		return texture;
 
   	};
-
 
   	this.renderTexture = function( input, output ) {
 
@@ -42684,7 +42495,6 @@ define(['exports'], function (exports) { 'use strict';
   GPUParticleSystem.prototype = Object.create( Object3D.prototype );
   GPUParticleSystem.prototype.constructor = GPUParticleSystem;
 
-
   // Subclass for particle containers, allows for very large arrays to be spread out
 
   var GPUParticleContainer = function ( maxParticles, particleSystem ) {
@@ -42958,13 +42768,11 @@ define(['exports'], function (exports) { 'use strict';
 
   				this.matrixWorld.compose( translationWorld, quaternionObject, scaleWorld );
 
-
   			} else {
 
   				this.matrixWorld.copy( this.matrix );
 
   			}
-
 
   			this.matrixWorldNeedsUpdate = false;
 
@@ -46894,7 +46702,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-
   		function veclerp( v1, v2, l ) {
 
   			var v = new Vector3();
@@ -47642,8 +47449,6 @@ define(['exports'], function (exports) { 'use strict';
 
   						}
 
-
-
   					}
 
   					if ( f.mNumIndices === 3 ) {
@@ -47666,8 +47471,6 @@ define(['exports'], function (exports) { 'use strict';
   						throw ( new Error( "Sorry, can't currently triangulate polys. Use the triangulate preprocessor in Assimp." ) );
 
   					}
-
-
 
   				}
 
@@ -48263,7 +48066,6 @@ define(['exports'], function (exports) { 'use strict';
   				flags = this.readU8(),
   				len = this.readU32();
 
-
   			switch ( type ) {
 
   				case 1:
@@ -48325,12 +48127,10 @@ define(['exports'], function (exports) { 'use strict';
 
   			}
 
-
   			// Store block reference for later use
   			this._blocks[ blockId ] = block = new Block();
   			block.data = assetData;
   			block.id = blockId;
-
 
   		},
 
@@ -48451,16 +48251,13 @@ define(['exports'], function (exports) { 'use strict';
   			mesh.applyMatrix( mtx );
   			mesh.name = name;
 
-
   			parent = this.getBlock( par_id ) || this.trunk;
   			parent.add( mesh );
-
 
   			var matLen = materials.length;
   			var maxLen = Math.max( meshLen, matLen );
   			for ( i = 0; i < maxLen; i ++ )
   				{ meshes[ i % meshLen ].material = materials[ i % matLen ]; }
-
 
   			// Ignore for now
   			this.parseProperties( null );
@@ -48535,7 +48332,6 @@ define(['exports'], function (exports) { 'use strict';
   			mat.extra = attributes;
   			mat.alphaThreshold = props.get( 12, 0.0 );
   			mat.repeat = props.get( 13, false );
-
 
   			return mat;
 
@@ -48620,7 +48416,6 @@ define(['exports'], function (exports) { 'use strict';
 
   			// Discard attributes for now
   			this.parseUserAttributes();
-
 
   			return skeleton;
 
@@ -48737,7 +48532,6 @@ define(['exports'], function (exports) { 'use strict';
 
   			this.parseUserAttributes();
 
-
   			return skeletonFrames;
 
   		},
@@ -48780,14 +48574,12 @@ define(['exports'], function (exports) { 'use strict';
 
   			if ( type == 1 ) {
 
-
   				thisAnimator = {
   					animationSet: targetAnimationSet,
   					skeleton: this._blocks[ props.get( 1, 0 ) ].data
   				};
 
   			}
-
 
   			for ( i = 0; i < targetMeshes.length; i ++ ) {
 
@@ -48823,10 +48615,8 @@ define(['exports'], function (exports) { 'use strict';
   				geom.name = name;
   				geometries.push( geom );
 
-
   				sm_len = this$1.readU32();
   				sm_end = this$1._ptr + sm_len;
-
 
   				// Ignore for now
   				this$1.parseProperties( { 1: this$1._geoNrType, 2: this$1._geoNrType } );
@@ -49029,7 +48819,6 @@ define(['exports'], function (exports) { 'use strict';
 
   							}
 
-
   							subMeshParsed ++;
 
   						} else
@@ -49039,7 +48828,6 @@ define(['exports'], function (exports) { 'use strict';
   					}
 
   				}
-
 
   				frames_parsed ++;
 
@@ -49276,7 +49064,6 @@ define(['exports'], function (exports) { 'use strict';
   			return a;
 
   		},
-
   		
   		readUTF: function () {
 
@@ -49284,7 +49071,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this.readUTFBytes( len );
 
   		},
-
   		
   		readUTFBytes: function ( len ) {
   			var this$1 = this;
@@ -49920,7 +49706,6 @@ define(['exports'], function (exports) { 'use strict';
   	},
 
   	parse: function ( text ) {
-
   		
   		function readBvh( lines ) {
 
@@ -49977,7 +49762,6 @@ define(['exports'], function (exports) { 'use strict';
   			return list;
 
   		}
-
   		
   		function readFrameData( data, frameTime, bone ) {
 
@@ -50044,7 +49828,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
 
   		}
-
   		
   		function readNode( lines, firstline, list ) {
 
@@ -50140,7 +49923,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
 
   		}
-
   		
   		function toTHREEBone( source, list ) {
 
@@ -50163,7 +49945,6 @@ define(['exports'], function (exports) { 'use strict';
   			return bone;
 
   		}
-
   		
   		function toTHREEAnimation( bones ) {
 
@@ -50221,7 +50002,6 @@ define(['exports'], function (exports) { 'use strict';
   			return new AnimationClip( 'animation', - 1, tracks );
 
   		}
-
   		
   		function nextLine( lines ) {
 
@@ -55284,8 +55064,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	};
 
-  	
-
   	function GLTFRegistry() {
 
   		var objects = {};
@@ -55336,8 +55114,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	}
 
-  	
-
   	LegacyGLTFLoader.Shaders = {
 
   		update: function () {
@@ -55347,8 +55123,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	};
-
-  	
 
   	function GLTFShader( targetNode, allNodes ) {
 
@@ -55453,9 +55227,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	};
 
-
-  	
-
   	LegacyGLTFLoader.Animations = {
 
   		update: function () {
@@ -55466,16 +55237,10 @@ define(['exports'], function (exports) { 'use strict';
 
   	};
 
-  	
-  	
-  	
-
   	var EXTENSIONS = {
   		KHR_BINARY_GLTF: 'KHR_binary_glTF',
   		KHR_MATERIALS_COMMON: 'KHR_materials_common'
   	};
-
-  	
 
   	function GLTFMaterialsCommonExtension( json ) {
   		var this$1 = this;
@@ -55528,8 +55293,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	}
 
-  	
-
   	var BINARY_EXTENSION_BUFFER_NAME = 'binary_glTF';
 
   	var BINARY_EXTENSION_HEADER_DEFAULTS = { magic: 'glTF', version: 1, contentFormat: 0 };
@@ -55578,12 +55341,6 @@ define(['exports'], function (exports) { 'use strict';
   		return LoaderUtils.decodeText( array );
 
   	};
-
-  	
-  	
-  	
-
-  	
 
   	var WEBGL_CONSTANTS = {
   		FLOAT: 5126,
@@ -55726,8 +55483,6 @@ define(['exports'], function (exports) { 'use strict';
   		32823: 'POLYGON_OFFSET_FILL',
   		32926: 'SAMPLE_ALPHA_TO_COVERAGE'
   	};
-
-  	
 
   	function _each( object, callback, thisObj ) {
   		var this$1 = this;
@@ -55995,8 +55750,6 @@ define(['exports'], function (exports) { 'use strict';
   		return new RawShaderMaterial( this.params );
 
   	};
-
-  	
 
   	function GLTFParser( json, extensions, options ) {
 
@@ -57447,13 +57200,11 @@ define(['exports'], function (exports) { 'use strict';
           this.verbosity = level;
           return this;
       },
-
       
       setDrawMode: function(drawMode) {
           this.drawMode = drawMode;
           return this;
       },
-
       
       setSkipDequantization: function(attributeName, skip) {
           var skipDequantization = true;
@@ -57463,7 +57214,6 @@ define(['exports'], function (exports) { 'use strict';
               skipDequantization;
           return this;
       },
-
       
       decodeDracoFile: function(rawBuffer, callback, attributeUniqueIdMap,
                                 attributeTypeMap) {
@@ -57481,7 +57231,6 @@ define(['exports'], function (exports) { 'use strict';
         var buffer = new dracoDecoder.DecoderBuffer();
         buffer.Init(new Int8Array(rawBuffer), rawBuffer.byteLength);
         var decoder = new dracoDecoder.Decoder();
-
         
         var geometryType = decoder.GetEncodedGeometryType(buffer);
         if (geometryType == dracoDecoder.TRIANGULAR_MESH) {
@@ -57764,11 +57513,9 @@ define(['exports'], function (exports) { 'use strict';
   DRACOLoader.decoderConfig = {};
   DRACOLoader.decoderModulePromise = null;
 
-
   DRACOLoader.setDecoderPath = function ( path ) {
     DRACOLoader.decoderPath = path;
   };
-
 
   DRACOLoader.setDecoderConfig = function ( config ) {
     var wasmBinary = DRACOLoader.decoderConfig.wasmBinary;
@@ -57779,11 +57526,9 @@ define(['exports'], function (exports) { 'use strict';
     if ( wasmBinary ) { DRACOLoader.decoderConfig.wasmBinary = wasmBinary; }
   };
 
-
   DRACOLoader.releaseDecoderModule = function () {
     DRACOLoader.decoderModulePromise = null;
   };
-
 
   DRACOLoader.getDecoderModule = function () {
     var scope = this;
@@ -57828,7 +57573,6 @@ define(['exports'], function (exports) { 'use strict';
     return promise;
   };
 
-
   DRACOLoader._loadScript = function ( src ) {
     var prevScript = document.getElementById( 'decoder_script' );
     if ( prevScript !== null ) {
@@ -57844,7 +57588,6 @@ define(['exports'], function (exports) { 'use strict';
       head.appendChild( script );
     });
   };
-
 
   DRACOLoader._loadArrayBuffer = function ( src ) {
     var loader = new FileLoader();
@@ -58056,7 +57799,6 @@ define(['exports'], function (exports) { 'use strict';
   			if ( onLoad ) { onLoad( texture, texData ); }
 
   		}, onProgress, onError );
-
 
   		return texture;
 
@@ -59770,7 +59512,6 @@ define(['exports'], function (exports) { 'use strict';
   						parameters.displacementMap = self.getTexture( textureMap, child.ID );
   						break;
 
-
   					case 'EmissiveColor':
   						parameters.emissiveMap = self.getTexture( textureMap, child.ID );
   						break;
@@ -60002,7 +59743,6 @@ define(['exports'], function (exports) { 'use strict';
 
   				}
 
-
   			} );
 
   			this.bindSkeleton( deformers.skeletons, geometryMap, modelMap );
@@ -60167,7 +59907,6 @@ define(['exports'], function (exports) { 'use strict';
   					farClippingPlane = cameraAttribute.FarPlane.value / 1000;
 
   				}
-
 
   				var width = window.innerWidth;
   				var height = window.innerHeight;
@@ -60961,7 +60700,6 @@ define(['exports'], function (exports) { 'use strict';
 
   						} );
 
-
   					}
 
   					if ( weights.length > 4 ) {
@@ -61461,7 +61199,6 @@ define(['exports'], function (exports) { 'use strict';
 
 
   			var animationClips = [];
-
 
   			var rawClips = this.parseClips();
 
@@ -63615,7 +63352,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	},
-
   	
   	mergeBufferGeometries: function ( geometries, useGroups ) {
   		var this$1 = this;
@@ -63767,7 +63503,6 @@ define(['exports'], function (exports) { 'use strict';
   		return mergedGeometry;
 
   	},
-
   	
   	mergeBufferAttributes: function ( attributes ) {
 
@@ -64022,8 +63757,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	};
 
-  	
-
   	function GLTFRegistry() {
 
   		var objects = {};
@@ -64058,10 +63791,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	}
 
-  	
-  	
-  	
-
   	var EXTENSIONS = {
   		KHR_BINARY_GLTF: 'KHR_binary_glTF',
   		KHR_DRACO_MESH_COMPRESSION: 'KHR_draco_mesh_compression',
@@ -64070,7 +63799,6 @@ define(['exports'], function (exports) { 'use strict';
   		KHR_MATERIALS_UNLIT: 'KHR_materials_unlit',
   		MSFT_TEXTURE_DDS: 'MSFT_texture_dds'
   	};
-
   	
   	function GLTFTextureDDSExtension() {
 
@@ -64084,7 +63812,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.ddsLoader = new DDSLoader();
 
   	}
-
   	
   	function GLTFLightsExtension( json ) {
   		var this$1 = this;
@@ -64149,7 +63876,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	}
-
   	
   	function GLTFMaterialsUnlitExtension( json ) {
 
@@ -64260,7 +63986,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	}
-
   	
   	function GLTFDracoMeshCompressionExtension( json, dracoLoader ) {
 
@@ -64332,7 +64057,6 @@ define(['exports'], function (exports) { 'use strict';
   		} );
 
   	};
-
   	
   	function GLTFMaterialsPbrSpecularGlossinessExtension() {
 
@@ -64541,7 +64265,6 @@ define(['exports'], function (exports) { 'use strict';
   				return material;
 
   			},
-
   			
   			cloneMaterial: function ( source ) {
 
@@ -64691,10 +64414,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	}
 
-  	
-  	
-  	
-
   	// Spline Interpolation
   	// Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#appendix-c-spline-interpolation
   	function GLTFCubicSplineInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
@@ -64769,12 +64488,6 @@ define(['exports'], function (exports) { 'use strict';
   		return result;
 
   	};
-
-  	
-  	
-  	
-
-  	
 
   	var WEBGL_CONSTANTS = {
   		FLOAT: 5126,
@@ -64875,8 +64588,6 @@ define(['exports'], function (exports) { 'use strict';
   		'image/jpeg': RGBFormat
   	};
 
-  	
-
   	function resolveURL( url, path ) {
 
   		// Invalid URL
@@ -64895,7 +64606,6 @@ define(['exports'], function (exports) { 'use strict';
   		return path + url;
 
   	}
-
   	
   	function createDefaultMaterial() {
 
@@ -64927,7 +64637,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	}
-
   	
   	function assignExtrasToUserData( object, gltfDef ) {
 
@@ -64946,7 +64655,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	}
-
   	
   	function addMorphTargets( geometry, targets, accessors ) {
 
@@ -65057,7 +64765,6 @@ define(['exports'], function (exports) { 'use strict';
   		if ( hasMorphNormal ) { geometry.morphAttributes.normal = morphNormals; }
 
   	}
-
   	
   	function updateMorphTargets( mesh, meshDef ) {
 
@@ -65204,7 +64911,6 @@ define(['exports'], function (exports) { 'use strict';
   		return attribute.clone();
 
   	}
-
   	
   	function isMultiPassGeometry( primitives ) {
 
@@ -65238,8 +64944,6 @@ define(['exports'], function (exports) { 'use strict';
   		return true;
 
   	}
-
-  	
 
   	function GLTFParser( json, extensions, options ) {
 
@@ -65292,7 +64996,6 @@ define(['exports'], function (exports) { 'use strict';
   		} ).catch( onError );
 
   	};
-
   	
   	GLTFParser.prototype.markDefs = function () {
 
@@ -65353,7 +65056,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.json.meshUses = meshUses;
 
   	};
-
   	
   	GLTFParser.prototype.getDependency = function ( type, index ) {
 
@@ -65420,7 +65122,6 @@ define(['exports'], function (exports) { 'use strict';
   		return dependency;
 
   	};
-
   	
   	GLTFParser.prototype.getDependencies = function ( type ) {
 
@@ -65444,7 +65145,6 @@ define(['exports'], function (exports) { 'use strict';
   		return dependencies;
 
   	};
-
   	
   	GLTFParser.prototype.getMultiDependencies = function ( types ) {
   		var this$1 = this;
@@ -65475,7 +65175,6 @@ define(['exports'], function (exports) { 'use strict';
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadBuffer = function ( bufferIndex ) {
 
@@ -65508,7 +65207,6 @@ define(['exports'], function (exports) { 'use strict';
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadBufferView = function ( bufferViewIndex ) {
 
@@ -65523,7 +65221,6 @@ define(['exports'], function (exports) { 'use strict';
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadAccessor = function ( accessorIndex ) {
 
@@ -65649,7 +65346,6 @@ define(['exports'], function (exports) { 'use strict';
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadTexture = function ( textureIndex ) {
 
@@ -65748,7 +65444,6 @@ define(['exports'], function (exports) { 'use strict';
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.assignTexture = function ( materialParams, textureName, textureIndex ) {
 
@@ -65759,7 +65454,6 @@ define(['exports'], function (exports) { 'use strict';
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadMaterial = function ( materialIndex ) {
 
@@ -65926,7 +65620,6 @@ define(['exports'], function (exports) { 'use strict';
   		} );
 
   	};
-
   	
   	function addPrimitiveAttributes( geometry, primitiveDef, accessors ) {
 
@@ -65960,7 +65653,6 @@ define(['exports'], function (exports) { 'use strict';
   		assignExtrasToUserData( geometry, primitiveDef );
 
   	}
-
   	
   	GLTFParser.prototype.loadGeometries = function ( primitives ) {
 
@@ -66116,7 +65808,6 @@ define(['exports'], function (exports) { 'use strict';
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadMesh = function ( meshIndex ) {
 
@@ -66351,7 +66042,6 @@ define(['exports'], function (exports) { 'use strict';
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadCamera = function ( cameraIndex ) {
 
@@ -66383,7 +66073,6 @@ define(['exports'], function (exports) { 'use strict';
   		return Promise.resolve( camera );
 
   	};
-
   	
   	GLTFParser.prototype.loadSkin = function ( skinIndex ) {
 
@@ -66406,7 +66095,6 @@ define(['exports'], function (exports) { 'use strict';
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadAnimation = function ( animationIndex ) {
 
@@ -66545,7 +66233,6 @@ define(['exports'], function (exports) { 'use strict';
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadNode = function ( nodeIndex ) {
 
@@ -66660,7 +66347,6 @@ define(['exports'], function (exports) { 'use strict';
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadScene = function () {
 
@@ -66795,7 +66481,6 @@ define(['exports'], function (exports) { 'use strict';
   	var 
   		
   		RGBE_RETURN_FAILURE = - 1,
-
   		
   		rgbe_read_error = 1,
   		rgbe_write_error = 2,
@@ -66818,7 +66503,6 @@ define(['exports'], function (exports) { 'use strict';
   			return RGBE_RETURN_FAILURE;
 
   		},
-
   		
   		RGBE_VALID_PROGRAMTYPE = 1,
   		RGBE_VALID_FORMAT = 2,
@@ -66842,7 +66526,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
 
   			if ( - 1 < i ) {
-
   				
   				if ( false !== consume ) { buffer.pos += len + i + 1; }
   				return s + chunk.slice( 0, i );
@@ -66851,7 +66534,6 @@ define(['exports'], function (exports) { 'use strict';
   			return false;
 
   		},
-
   		
   		RGBE_ReadHeader = function ( buffer ) {
 
@@ -67049,7 +66731,6 @@ define(['exports'], function (exports) { 'use strict';
 
   				}
 
-
   				// now convert data from buffer into rgba
   				// first red, then green, then blue, then exponent (alpha)
   				l = scanline_width; //scanline_buffer.byteLength;
@@ -67165,7 +66846,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		var floatView = new Float32Array( 1 );
   		var int32View = new Int32Array( floatView.buffer );
-
   		
   		function toHalf( val ) {
 
@@ -67175,10 +66855,8 @@ define(['exports'], function (exports) { 'use strict';
   			var bits = ( x >> 16 ) & 0x8000; 
   			var m = ( x >> 12 ) & 0x07ff; 
   			var e = ( x >> 23 ) & 0xff; 
-
   			
   			if ( e < 103 ) { return bits; }
-
   			
   			if ( e > 142 ) {
 
@@ -67188,7 +66866,6 @@ define(['exports'], function (exports) { 'use strict';
   				return bits;
 
   			}
-
   			
   			if ( e < 113 ) {
 
@@ -67442,7 +67119,6 @@ define(['exports'], function (exports) { 'use strict';
   };
 
   var KhronosTextureContainer = ( function () {
-
   	
   	function KhronosTextureContainer( arrayBuffer, facesExpected, threeDExpected, textureArrayExpected ) {
 
@@ -67584,7 +67260,6 @@ define(['exports'], function (exports) { 'use strict';
 
   }
 
-
   */
   var LoaderSupport = {};
   LoaderSupport.Validator = {
@@ -67598,8 +67273,6 @@ define(['exports'], function (exports) { 'use strict';
   	}
   };
 
-
-
   LoaderSupport.Callbacks = (function () {
 
   	var Validator = LoaderSupport.Validator;
@@ -67611,27 +67284,22 @@ define(['exports'], function (exports) { 'use strict';
   		this.onLoad = null;
   		this.onLoadMaterials = null;
   	}
-
   	
   	Callbacks.prototype.setCallbackOnProgress = function ( callbackOnProgress ) {
   		this.onProgress = Validator.verifyInput( callbackOnProgress, this.onProgress );
   	};
-
   	
   	Callbacks.prototype.setCallbackOnReportError = function ( callbackOnReportError ) {
   		this.onReportError = Validator.verifyInput( callbackOnReportError, this.onReportError );
   	};
-
   	
   	Callbacks.prototype.setCallbackOnMeshAlter = function ( callbackOnMeshAlter ) {
   		this.onMeshAlter = Validator.verifyInput( callbackOnMeshAlter, this.onMeshAlter );
   	};
-
   	
   	Callbacks.prototype.setCallbackOnLoad = function ( callbackOnLoad ) {
   		this.onLoad = Validator.verifyInput( callbackOnLoad, this.onLoad );
   	};
-
   	
   	Callbacks.prototype.setCallbackOnLoadMaterials = function ( callbackOnLoadMaterials ) {
   		this.onLoadMaterials = Validator.verifyInput( callbackOnLoadMaterials, this.onLoadMaterials );
@@ -67640,8 +67308,6 @@ define(['exports'], function (exports) { 'use strict';
   	return Callbacks;
   })();
 
-
-
   LoaderSupport.LoadedMeshUserOverride = (function () {
 
   	function LoadedMeshUserOverride( disregardMesh, alteredMesh ) {
@@ -67649,18 +67315,15 @@ define(['exports'], function (exports) { 'use strict';
   		this.alteredMesh = alteredMesh === true;
   		this.meshes = [];
   	}
-
   	
   	LoadedMeshUserOverride.prototype.addMesh = function ( mesh ) {
   		this.meshes.push( mesh );
   		this.alteredMesh = true;
   	};
-
   	
   	LoadedMeshUserOverride.prototype.isDisregardMesh = function () {
   		return this.disregardMesh;
   	};
-
   	
   	LoadedMeshUserOverride.prototype.providesAlteredMeshes = function () {
   		return this.alteredMesh;
@@ -67668,8 +67331,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	return LoadedMeshUserOverride;
   })();
-
-
 
   LoaderSupport.ResourceDescriptor = (function () {
 
@@ -67696,7 +67357,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.extension = this.extension.trim();
   		this.content = null;
   	}
-
   	
   	ResourceDescriptor.prototype.setContent = function ( content ) {
   		this.content = Validator.verifyInput( content, null );
@@ -67704,8 +67364,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	return ResourceDescriptor;
   })();
-
-
 
   LoaderSupport.PrepData = (function () {
 
@@ -67720,23 +67378,19 @@ define(['exports'], function (exports) { 'use strict';
   		this.resources = [];
   		this.callbacks = new LoaderSupport.Callbacks();
   	}
-
   	
   	PrepData.prototype.setLogging = function ( enabled, debug ) {
   		this.logging.enabled = enabled === true;
   		this.logging.debug = debug === true;
   	};
-
   	
   	PrepData.prototype.getCallbacks = function () {
   		return this.callbacks;
   	};
-
   	
   	PrepData.prototype.addResource = function ( resource ) {
   		this.resources.push( resource );
   	};
-
   	
   	PrepData.prototype.clone = function () {
   		var this$1 = this;
@@ -67760,8 +67414,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		return clone;
   	};
-
-
   	
   	PrepData.prototype.checkResourceDescriptorFiles = function ( resources, fileDesc ) {
   		var resource, triple, i, found;
@@ -67829,7 +67481,6 @@ define(['exports'], function (exports) { 'use strict';
   	return PrepData;
   })();
 
-
   LoaderSupport.MeshBuilder = (function () {
 
   	var LOADER_MESH_BUILDER_VERSION = '1.2.2';
@@ -67846,13 +67497,11 @@ define(['exports'], function (exports) { 'use strict';
   		this.callbacks = new LoaderSupport.Callbacks();
   		this.materials = [];
   	}
-
   	
   	MeshBuilder.prototype.setLogging = function ( enabled, debug ) {
   		this.logging.enabled = enabled === true;
   		this.logging.debug = debug === true;
   	};
-
   	
   	MeshBuilder.prototype.init = function () {
   		var defaultMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
@@ -67885,7 +67534,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
   		);
   	};
-
   	
   	MeshBuilder.prototype.setMaterials = function ( materials ) {
   		var payload = {
@@ -67906,7 +67554,6 @@ define(['exports'], function (exports) { 'use strict';
   		if ( Validator.isValid( callbacks.onLoad ) ) { this.callbacks.setCallbackOnLoad( callbacks.onLoad ); }
   		if ( Validator.isValid( callbacks.onLoadMaterials ) ) { this.callbacks.setCallbackOnLoadMaterials( callbacks.onLoadMaterials ); }
   	};
-
   	
   	MeshBuilder.prototype.processPayload = function ( payload ) {
   		if ( payload.cmd === 'meshData' ) {
@@ -67920,7 +67567,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
   	};
-
   	
   	MeshBuilder.prototype.buildMeshes = function ( meshPayload ) {
   		var this$1 = this;
@@ -68075,7 +67721,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		return meshes;
   	};
-
   	
   	MeshBuilder.prototype.updateMaterials = function ( materialPayload ) {
   		var this$1 = this;
@@ -68141,7 +67786,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
   	};
-
   	
   	MeshBuilder.prototype.getMaterialsJSON = function () {
   		var this$1 = this;
@@ -68156,7 +67800,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		return materialsJSON;
   	};
-
   	
   	MeshBuilder.prototype.getMaterials = function () {
   		return this.materials;
@@ -68164,7 +67807,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	return MeshBuilder;
   })();
-
 
   LoaderSupport.WorkerRunnerRefImpl = (function () {
 
@@ -68175,7 +67817,6 @@ define(['exports'], function (exports) { 'use strict';
   		};
   		self.addEventListener( 'message', scopedRunner, false );
   	}
-
   	
   	WorkerRunnerRefImpl.prototype.applyProperties = function ( parser, params ) {
   		var property, funcName, values;
@@ -68194,7 +67835,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
   		}
   	};
-
   	
   	WorkerRunnerRefImpl.prototype.processMessage = function ( payload ) {
   		if ( payload.cmd === 'run' ) {
@@ -68233,7 +67873,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	return WorkerRunnerRefImpl;
   })();
-
 
   LoaderSupport.WorkerSupport = (function () {
 
@@ -68285,7 +67924,6 @@ define(['exports'], function (exports) { 'use strict';
   			// process stored queuedMessage
   			this._postMessage();
   		};
-
   		
   		LoaderWorker.prototype._receiveWorkerMessage = function ( e ) {
   			var payload = e.data;
@@ -68425,19 +68063,16 @@ define(['exports'], function (exports) { 'use strict';
 
   		this.loaderWorker = new LoaderWorker();
   	}
-
   	
   	WorkerSupport.prototype.setLogging = function ( enabled, debug ) {
   		this.logging.enabled = enabled === true;
   		this.logging.debug = debug === true;
   		this.loaderWorker.setLogging( this.logging.enabled, this.logging.debug );
   	};
-
   	
   	WorkerSupport.prototype.setForceWorkerDataCopy = function ( forceWorkerDataCopy ) {
   		this.loaderWorker.setForceCopy( forceWorkerDataCopy );
   	};
-
   	
   	WorkerSupport.prototype.validate = function ( functionCodeBuilder, parserName, libLocations, libPath, runnerImpl ) {
   		if ( Validator.isValid( this.loaderWorker.worker ) ) { return; }
@@ -68498,17 +68133,14 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
   	};
-
   	
   	WorkerSupport.prototype.setCallbacks = function ( meshBuilder, onLoad ) {
   		this.loaderWorker.setCallbacks( meshBuilder, onLoad );
   	};
-
   	
   	WorkerSupport.prototype.run = function ( payload ) {
   		this.loaderWorker.run( payload );
   	};
-
   	
   	WorkerSupport.prototype.setTerminateRequested = function ( terminateRequested ) {
   		this.loaderWorker.setTerminateRequested( terminateRequested );
@@ -68603,7 +68235,6 @@ define(['exports'], function (exports) { 'use strict';
 
   })();
 
-
   LoaderSupport.WorkerDirector = (function () {
 
   	var LOADER_WORKER_DIRECTOR_VERSION = '2.2.2';
@@ -68638,33 +68269,27 @@ define(['exports'], function (exports) { 'use strict';
 
   		this.callbackOnFinishedProcessing = null;
   	}
-
   	
   	WorkerDirector.prototype.setLogging = function ( enabled, debug ) {
   		this.logging.enabled = enabled === true;
   		this.logging.debug = debug === true;
   	};
-
   	
   	WorkerDirector.prototype.getMaxQueueSize = function () {
   		return this.maxQueueSize;
   	};
-
   	
   	WorkerDirector.prototype.getMaxWebWorkers = function () {
   		return this.maxWebWorkers;
   	};
-
   	
   	WorkerDirector.prototype.setCrossOrigin = function ( crossOrigin ) {
   		this.crossOrigin = crossOrigin;
   	};
-
   	
   	WorkerDirector.prototype.setForceWorkerDataCopy = function ( forceWorkerDataCopy ) {
   		this.workerDescription.forceWorkerDataCopy = forceWorkerDataCopy === true;
   	};
-
   	
   	WorkerDirector.prototype.prepareWorkers = function ( globalCallbacks, maxQueueSize, maxWebWorkers ) {
   		var this$1 = this;
@@ -68692,20 +68317,17 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
   	};
-
   	
   	WorkerDirector.prototype.enqueueForRun = function ( prepData ) {
   		if ( this.instructionQueue.length < this.maxQueueSize ) {
   			this.instructionQueue.push( prepData );
   		}
   	};
-
   	
   	WorkerDirector.prototype.isRunning = function () {
   		var wsKeys = Object.keys( this.workerDescription.workerSupports );
   		return ( ( this.instructionQueue.length > 0 && this.instructionQueuePointer < this.instructionQueue.length ) || wsKeys.length > 0 );
   	};
-
   	
   	WorkerDirector.prototype.processQueue = function () {
   		var this$1 = this;
@@ -68844,7 +68466,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
   	};
-
   	
   	WorkerDirector.prototype.tearDown = function ( callbackOnFinishedProcessing ) {
   		var this$1 = this;
@@ -69242,7 +68863,6 @@ define(['exports'], function (exports) { 'use strict';
   };
 
   var MMDLoader = ( function () {
-
   	
   	function MMDLoader( manager ) {
 
@@ -69261,7 +68881,6 @@ define(['exports'], function (exports) { 'use strict';
   		constructor: MMDLoader,
 
   		crossOrigin: 'anonymous',
-
   		
   		setCrossOrigin: function ( crossOrigin ) {
 
@@ -69271,7 +68890,6 @@ define(['exports'], function (exports) { 'use strict';
   		},
 
   		// Load MMD assets as Three.js Object
-
   		
   		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -69296,7 +68914,6 @@ define(['exports'], function (exports) { 'use strict';
   			}, onProgress, onError );
 
   		},
-
   		
   		loadAnimation: function ( url, object, onLoad, onProgress, onError ) {
 
@@ -69311,7 +68928,6 @@ define(['exports'], function (exports) { 'use strict';
   			}, onProgress, onError );
 
   		},
-
   		
   		loadWithAnimation: function ( modelUrl, vmdUrl, onLoad, onProgress, onError ) {
 
@@ -69333,7 +68949,6 @@ define(['exports'], function (exports) { 'use strict';
   		},
 
   		// Load MMD assets as Object data parsed by MMDParser
-
   		
   		loadPMD: function ( url, onLoad, onProgress, onError ) {
 
@@ -69349,7 +68964,6 @@ define(['exports'], function (exports) { 'use strict';
   				}, onProgress, onError );
 
   		},
-
   		
   		loadPMX: function ( url, onLoad, onProgress, onError ) {
 
@@ -69365,7 +68979,6 @@ define(['exports'], function (exports) { 'use strict';
   				}, onProgress, onError );
 
   		},
-
   		
   		loadVMD: function ( url, onLoad, onProgress, onError ) {
   			var this$1 = this;
@@ -69395,7 +69008,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
 
   		},
-
   		
   		loadVPD: function ( url, isUnicode, onLoad, onProgress, onError ) {
 
@@ -69442,7 +69054,6 @@ define(['exports'], function (exports) { 'use strict';
   	};
 
   	// Utilities
-
   	
   	var DEFAULT_TOON_TEXTURES = [
   		'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAL0lEQVRYR+3QQREAAAzCsOFfNJPBJ1XQS9r2hsUAAQIECBAgQIAAAQIECBAgsBZ4MUx/ofm2I/kAAAAASUVORK5CYII=',
@@ -69459,7 +69070,6 @@ define(['exports'], function (exports) { 'use strict';
   	];
 
   	// Builders. They build Three.js object from Object data parsed by MMDParser.
-
   	
   	function MeshBuilder( manager ) {
 
@@ -69473,7 +69083,6 @@ define(['exports'], function (exports) { 'use strict';
   		constructor: MeshBuilder,
 
   		crossOrigin: 'anonymous',
-
   		
   		setCrossOrigin: function ( crossOrigin ) {
 
@@ -69481,7 +69090,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this;
 
   		},
-
   		
   		build: function ( data, texturePath, onProgress, onError ) {
 
@@ -69510,7 +69118,6 @@ define(['exports'], function (exports) { 'use strict';
   	GeometryBuilder.prototype = {
 
   		constructor: GeometryBuilder,
-
   		
   		build: function ( data ) {
 
@@ -69863,7 +69470,6 @@ define(['exports'], function (exports) { 'use strict';
   					params[ key ] = rigidBody[ key ];
 
   				}
-
   				
   				if ( data.metadata.format === 'pmx' ) {
 
@@ -69954,7 +69560,6 @@ define(['exports'], function (exports) { 'use strict';
   	};
 
   	//
-
   	
   	function MaterialBuilder( manager ) {
 
@@ -69972,7 +69577,6 @@ define(['exports'], function (exports) { 'use strict';
   		crossOrigin: 'anonymous',
 
   		texturePath: undefined,
-
   		
   		setCrossOrigin: function ( crossOrigin ) {
 
@@ -69980,7 +69584,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this;
 
   		},
-
   		
   		setTexturePath: function ( texturePath ) {
 
@@ -69988,7 +69591,6 @@ define(['exports'], function (exports) { 'use strict';
   			return this;
 
   		},
-
   		
   		build: function ( data, geometry, onProgress, onError ) {
   			var this$1 = this;
@@ -70009,7 +69611,6 @@ define(['exports'], function (exports) { 'use strict';
   				var params = { userData: {} };
 
   				if ( material.name !== undefined ) { params.name = material.name; }
-
   				
   				params.color = new Color().fromArray( material.diffuse );
   				params.opacity = material.diffuse[ 3 ];
@@ -70419,7 +70020,6 @@ define(['exports'], function (exports) { 'use strict';
   					return false;
 
   				}
-
   				
   				function getAlphaByUv( image, uv ) {
 
@@ -70468,7 +70068,6 @@ define(['exports'], function (exports) { 'use strict';
   	AnimationBuilder.prototype = {
 
   		constructor: AnimationBuilder,
-
   		
   		build: function ( vmd, mesh ) {
 
@@ -70486,7 +70085,6 @@ define(['exports'], function (exports) { 'use strict';
   			return new AnimationClip( '', - 1, tracks );
 
   		},
-
   		
   		buildSkeletalAnimation: function ( vmd, mesh ) {
   			var this$1 = this;
@@ -70570,7 +70168,6 @@ define(['exports'], function (exports) { 'use strict';
   			return new AnimationClip( '', - 1, tracks );
 
   		},
-
   		
   		buildMorphAnimation: function ( vmd, mesh ) {
 
@@ -70618,7 +70215,6 @@ define(['exports'], function (exports) { 'use strict';
   			return new AnimationClip( '', - 1, tracks );
 
   		},
-
   		
   		buildCameraAnimation: function ( vmd ) {
 
@@ -70737,7 +70333,6 @@ define(['exports'], function (exports) { 'use strict';
   		// private method
 
   		_createTrack: function ( node, typedKeyframeTrack, times, values, interpolations ) {
-
   			
   			if ( times.length > 2 ) {
 
@@ -70880,8 +70475,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		_calculate: function ( x1, x2, y1, y2, x ) {
 
-  			
-
   			var c = 0.5;
   			var t = c;
   			var s = 1.0 - t;
@@ -70927,7 +70520,6 @@ define(['exports'], function (exports) { 'use strict';
   MTLLoader.prototype = {
 
   	constructor: MTLLoader,
-
   	
   	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -70942,7 +70534,6 @@ define(['exports'], function (exports) { 'use strict';
   		}, onProgress, onError );
 
   	},
-
   	
   	setPath: function ( path ) {
 
@@ -70950,7 +70541,6 @@ define(['exports'], function (exports) { 'use strict';
   		return this;
 
   	},
-
   	
   	setTexturePath: function ( path ) {
 
@@ -70980,7 +70570,6 @@ define(['exports'], function (exports) { 'use strict';
   		return this;
 
   	},
-
   	
   	parse: function ( text ) {
 
@@ -71042,8 +70631,6 @@ define(['exports'], function (exports) { 'use strict';
   	}
 
   };
-
-
 
   MTLLoader.MaterialCreator = function ( baseUrl, options ) {
 
@@ -72508,8 +72095,6 @@ define(['exports'], function (exports) { 'use strict';
 
   // Fix circular dependency, see #2
 
-
-
   //
   //	Keywords
   //
@@ -72659,7 +72244,6 @@ define(['exports'], function (exports) { 'use strict';
   ].join( "\n" ) ) );
 
   // Fix circular dependency, see #2
-
 
   FunctionNode.prototype.isShared = function( builder, output ) {
 
@@ -73810,7 +73394,6 @@ define(['exports'], function (exports) { 'use strict';
   					// This requires some care to not create extra material on each smooth value for "normal" obj files.
   					// where explicit usemtl defines geometry groups.
   					// Example asset: examples/models/obj/cerberus/Cerberus.obj
-
   					
   					if ( result.length > 1 ) {
 
@@ -74004,7 +73587,6 @@ define(['exports'], function (exports) { 'use strict';
 
   if ( LoaderSupport === undefined ) { console.error( '"LoaderSupport" is not available. "OBJLoader2" requires it. Please include "LoaderSupport.js" in your HTML.' ); }
 
-
   var OBJLoader2 = (function () {
 
   	var OBJLOADER2_VERSION = '2.4.2';
@@ -74033,49 +73615,40 @@ define(['exports'], function (exports) { 'use strict';
   		this.workerSupport = new LoaderSupport.WorkerSupport();
   		this.terminateWorkerOnLoad = true;
   	}
-
   	
   	OBJLoader2.prototype.setLogging = function ( enabled, debug ) {
   		this.logging.enabled = enabled === true;
   		this.logging.debug = debug === true;
   		this.meshBuilder.setLogging( this.logging.enabled, this.logging.debug );
   	};
-
   	
   	OBJLoader2.prototype.setModelName = function ( modelName ) {
   		this.modelName = Validator.verifyInput( modelName, this.modelName );
   	};
-
   	
   	OBJLoader2.prototype.setPath = function ( path ) {
   		this.path = Validator.verifyInput( path, this.path );
   	};
-
   	
   	OBJLoader2.prototype.setStreamMeshesTo = function ( streamMeshesTo ) {
   		this.loaderRootNode = Validator.verifyInput( streamMeshesTo, this.loaderRootNode );
   	};
-
   	
   	OBJLoader2.prototype.setMaterials = function ( materials ) {
   		this.meshBuilder.setMaterials( materials );
   	};
-
   	
   	OBJLoader2.prototype.setUseIndices = function ( useIndices ) {
   		this.useIndices = useIndices === true;
   	};
-
   	
   	OBJLoader2.prototype.setDisregardNormals = function ( disregardNormals ) {
   		this.disregardNormals = disregardNormals === true;
   	};
-
   	
   	OBJLoader2.prototype.setMaterialPerSmoothingGroup = function ( materialPerSmoothingGroup ) {
   		this.materialPerSmoothingGroup = materialPerSmoothingGroup === true;
   	};
-
   	
   	OBJLoader2.prototype.setUseOAsMesh = function ( useOAsMesh ) {
   		this.useOAsMesh = useOAsMesh === true;
@@ -74090,7 +73663,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		this.meshBuilder._setCallbacks( this.callbacks );
   	};
-
   	
   	OBJLoader2.prototype.onProgress = function ( type, text, numericalValue ) {
   		var content = Validator.isValid( text ) ? text: '';
@@ -74132,7 +73704,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
   	};
-
   	
   	OBJLoader2.prototype.load = function ( url, onLoad, onProgress, onError, onMeshAlter, useAsync ) {
   		var resource = new LoaderSupport.ResourceDescriptor( url, 'OBJ' );
@@ -74198,7 +73769,6 @@ define(['exports'], function (exports) { 'use strict';
   				};
   			}
 
-
   			var fileLoader = new FileLoader( this.manager );
   			fileLoader.setPath( this.path );
   			fileLoader.setResponseType( 'arraybuffer' );
@@ -74206,8 +73776,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
   	};
-
-
   	
   	OBJLoader2.prototype.run = function ( prepData, workerSupportExternal ) {
   		this._applyPrepData( prepData );
@@ -74251,7 +73819,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
   	};
-
   	
   	OBJLoader2.prototype.parse = function ( content ) {
   		// fast-fail in case of illegal data
@@ -74307,7 +73874,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		return this.loaderRootNode;
   	};
-
   	
   	OBJLoader2.prototype.parseAsync = function ( content, onLoad ) {
   		var scope = this;
@@ -74390,8 +73956,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
   		);
   	};
-
-
   	
   	var Parser = (function () {
 
@@ -74531,7 +74095,6 @@ define(['exports'], function (exports) { 'use strict';
   				console.info( printedConfig );
   			}
   		};
-
   		
   		Parser.prototype.parse = function ( arrayBuffer ) {
   			var this$1 = this;
@@ -74584,7 +74147,6 @@ define(['exports'], function (exports) { 'use strict';
   			this.finalizeParsing();
   			if ( this.logging.enabled ) { console.timeEnd(  'OBJLoader2.Parser.parse' ); }
   		};
-
   		
   		Parser.prototype.parseText = function ( text ) {
   			var this$1 = this;
@@ -74648,7 +74210,6 @@ define(['exports'], function (exports) { 'use strict';
   						for ( i = start; i < stop; i++ ) { line += content[ i ]; }
 
   					} else {
-
 
   						for ( i = start; i < stop; i++ ) { line += String.fromCharCode( content[ i ] ); }
 
@@ -74809,7 +74370,6 @@ define(['exports'], function (exports) { 'use strict';
 
   			}
   		};
-
   		
   		Parser.prototype.checkFaceType = function ( faceType ) {
   			if ( this.rawMesh.faceType !== faceType ) {
@@ -74927,7 +74487,6 @@ define(['exports'], function (exports) { 'use strict';
   				'\n\tMaterial count: ' + this.rawMesh.counts.mtlCount +
   				'\n\tReal MeshOutputGroup count: ' + this.rawMesh.subGroups.length;
   		};
-
   		
   		Parser.prototype.finalizeRawMesh = function () {
   			var this$1 = this;
@@ -75006,7 +74565,6 @@ define(['exports'], function (exports) { 'use strict';
   				return false;
   			}
   		};
-
   		
   		Parser.prototype.buildMesh = function ( result ) {
   			var this$1 = this;
@@ -75052,7 +74610,6 @@ define(['exports'], function (exports) { 'use strict';
   				if ( this$1.rawMesh.faceType < 4 ) {
 
   					materialName = materialNameOrg + ( haveVertexColors ? '_vertexColor' : '' ) + ( meshOutputGroup.smoothingGroup === 0 ? '_flat' : '' );
-
 
   				} else {
 
@@ -75229,14 +74786,12 @@ define(['exports'], function (exports) { 'use strict';
 
   		return Parser;
   	})();
-
   	
   	OBJLoader2.prototype.loadMtl = function ( url, content, onLoad, onProgress, onError, crossOrigin, materialOptions ) {
   		var resource = new LoaderSupport.ResourceDescriptor( url, 'MTL' );
   		resource.setContent( content );
   		this._loadMtl( resource, onLoad, onProgress, onError, crossOrigin, materialOptions );
   	};
-
 
   	OBJLoader2.prototype._loadMtl = function ( resource, onLoad, onProgress, onError, crossOrigin, materialOptions ) {
   		if ( MTLLoader === undefined ) { console.error( '"MTLLoader" is not available. "OBJLoader2" requires it for loading MTL files.' ); }
@@ -75338,7 +74893,6 @@ define(['exports'], function (exports) { 'use strict';
   	this.littleEndian = true;
 
   };
-
 
   PCDLoader.prototype = {
 
@@ -75994,7 +75548,6 @@ define(['exports'], function (exports) { 'use strict';
 
   			model.nodes[ parent ]._object.add( model.nodes[ i ]._object );
 
-
   		}
 
   		return model.nodes[ 0 ]._object;
@@ -76133,7 +75686,6 @@ define(['exports'], function (exports) { 'use strict';
   						currentElement.properties.push( make_ply_element_property( lineValues, scope.propertyNameMapping ) );
 
   						break;
-
 
   					default:
 
@@ -76455,7 +76007,6 @@ define(['exports'], function (exports) { 'use strict';
   };
 
   var bigEndianPlatform = null;
-
   	
   	function isBigEndianPlatform() {
 
@@ -76500,7 +76051,6 @@ define(['exports'], function (exports) { 'use strict';
   		Float64Array: 'getFloat64'
   	};
 
-
   	function copyFromBuffer( sourceArrayBuffer, viewType, position, length, fromBigEndian ) {
 
   		var bytesPerElement = viewType.BYTES_PER_ELEMENT,
@@ -76531,7 +76081,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	}
 
-
   	function decodePrwm( buffer ) {
 
   		var array = new Uint8Array( buffer ),
@@ -76556,8 +76105,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-  		
-
   		if ( version === 0 ) {
 
   			throw new Error( 'PRWM decoder: Invalid format version: 0' );
@@ -76581,8 +76128,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
 
   		}
-
-  		
 
   		var pos = 8;
 
@@ -76743,7 +76288,6 @@ define(['exports'], function (exports) { 'use strict';
   PVRLoader.prototype = Object.create( CompressedTextureLoader.prototype );
   PVRLoader.prototype.constructor = PVRLoader;
 
-
   PVRLoader.parse = function ( buffer, loadMipmaps ) {
 
   	var headerLengthInt = 13;
@@ -76779,7 +76323,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	var header = pvrDatas.header;
   	var bpp, format;
-
 
   	var metaLen = header[ 12 ],
   		pixelFormat = header[ 2 ],
@@ -76847,7 +76390,6 @@ define(['exports'], function (exports) { 'use strict';
   		// pvrTag = header[ 11 ],
   		numSurfs = header[ 12 ];
 
-
   	var TYPE_MASK = 0xff;
   	var PVRTC_2 = 24,
   		PVRTC_4 = 25;
@@ -76888,7 +76430,6 @@ define(['exports'], function (exports) { 'use strict';
   	return PVRLoader._extract( pvrDatas );
 
   };
-
 
   PVRLoader._extract = function ( pvrDatas ) {
 
@@ -77381,7 +76922,6 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-
   EllipseCurve.prototype.toJSON = function () {
 
   	var data = Curve.prototype.toJSON.call( this );
@@ -77440,7 +76980,6 @@ define(['exports'], function (exports) { 'use strict';
   function CubicPoly() {
 
   	var c0 = 0, c1 = 0, c2 = 0, c3 = 0;
-
   	
   	function init( x0, x1, t0, t1 ) {
 
@@ -79854,7 +79393,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		if ( noHoles === true )	{ return	toShapesNoHoles( subPaths ); }
 
-
   		var solid, tmpPath, tmpShape, shapes = [];
 
   		if ( subPaths.length === 1 ) {
@@ -79912,7 +79450,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		// only Holes? -> probably all Shapes with wrong orientation
   		if ( ! newShapes[ 0 ] )	{ return	toShapesNoHoles( subPaths ); }
-
 
   		if ( newShapes.length > 1 ) {
 
@@ -80429,8 +79966,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-  		
-
   		function parseArcCommand( path, rx, ry, x_axis_rotation, large_arc_flag, sweep_flag, start, end ) {
 
   			x_axis_rotation = x_axis_rotation * Math.PI / 180;
@@ -80493,7 +80028,6 @@ define(['exports'], function (exports) { 'use strict';
   			return ang;
 
   		}
-
   		
   		function parseRectNode( node, style ) {
 
@@ -80701,7 +80235,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
 
   			return array;
-
 
   		}
 
@@ -80976,7 +80509,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		// console.log( paths );
 
-
   		console.timeEnd( 'SVGLoader: Parse' );
 
   		return paths;
@@ -81001,7 +80533,6 @@ define(['exports'], function (exports) { 'use strict';
   TDSLoader.prototype = {
 
   	constructor: TDSLoader,
-
   	
   	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -81020,7 +80551,6 @@ define(['exports'], function (exports) { 'use strict';
   		}, onProgress, onError );
 
   	},
-
   	
   	parse: function ( arraybuffer, path ) {
   		var this$1 = this;
@@ -81042,7 +80572,6 @@ define(['exports'], function (exports) { 'use strict';
   		return this.group;
 
   	},
-
   	
   	readFile: function ( arraybuffer, path ) {
   		var this$1 = this;
@@ -81082,7 +80611,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.debugMessage( 'Parsed ' + this.meshes.length + ' meshes' );
 
   	},
-
   	
   	readMeshData: function ( data, path ) {
   		var this$1 = this;
@@ -81127,7 +80655,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	},
-
   	
   	readNamedObject: function ( data ) {
   		var this$1 = this;
@@ -81160,7 +80687,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.endChunk( chunk );
 
   	},
-
   	
   	readMaterialEntry: function ( data, path ) {
   		var this$1 = this;
@@ -81258,7 +80784,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.materials[ material.name ] = material;
 
   	},
-
   	
   	readMesh: function ( data ) {
   		var this$1 = this;
@@ -81319,7 +80844,6 @@ define(['exports'], function (exports) { 'use strict';
   				}
 
   				geometry.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
-
 
   			} else if ( next === MESH_MATRIX ) {
 
@@ -81383,7 +80907,6 @@ define(['exports'], function (exports) { 'use strict';
   		return mesh;
 
   	},
-
   	
   	readFaceArray: function ( data, mesh ) {
   		var this$1 = this;
@@ -81447,7 +80970,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.endChunk( chunk );
 
   	},
-
   	
   	readMap: function ( data, path ) {
   		var this$1 = this;
@@ -81504,7 +81026,6 @@ define(['exports'], function (exports) { 'use strict';
   		return texture;
 
   	},
-
   	
   	readMaterialGroup: function ( data ) {
   		var this$1 = this;
@@ -81527,7 +81048,6 @@ define(['exports'], function (exports) { 'use strict';
   		return { name: name, index: index };
 
   	},
-
   	
   	readColor: function ( data ) {
 
@@ -81564,7 +81084,6 @@ define(['exports'], function (exports) { 'use strict';
   		return color;
 
   	},
-
   	
   	readChunk: function ( data ) {
 
@@ -81579,14 +81098,12 @@ define(['exports'], function (exports) { 'use strict';
   		return chunk;
 
   	},
-
   	
   	endChunk: function ( chunk ) {
 
   		this.position = chunk.end;
 
   	},
-
   	
   	nextChunk: function ( data, chunk ) {
 
@@ -81612,14 +81129,12 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	},
-
   	
   	resetPosition: function () {
 
   		this.position -= 6;
 
   	},
-
   	
   	readByte: function ( data ) {
 
@@ -81628,7 +81143,6 @@ define(['exports'], function (exports) { 'use strict';
   		return v;
 
   	},
-
   	
   	readFloat: function ( data ) {
 
@@ -81645,7 +81159,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	},
-
   	
   	readInt: function ( data ) {
 
@@ -81654,7 +81167,6 @@ define(['exports'], function (exports) { 'use strict';
   		return v;
 
   	},
-
   	
   	readShort: function ( data ) {
 
@@ -81663,7 +81175,6 @@ define(['exports'], function (exports) { 'use strict';
   		return v;
 
   	},
-
   	
   	readDWord: function ( data ) {
 
@@ -81672,7 +81183,6 @@ define(['exports'], function (exports) { 'use strict';
   		return v;
 
   	},
-
   	
   	readWord: function ( data ) {
 
@@ -81681,7 +81191,6 @@ define(['exports'], function (exports) { 'use strict';
   		return v;
 
   	},
-
   	
   	readString: function ( data, maxLength ) {
   		var this$1 = this;
@@ -81705,7 +81214,6 @@ define(['exports'], function (exports) { 'use strict';
   		return s;
 
   	},
-
   	
   	setPath: function ( path ) {
 
@@ -81714,7 +81222,6 @@ define(['exports'], function (exports) { 'use strict';
   		return this;
 
   	},
-
   	
   	debugMessage: function ( message ) {
 
@@ -82008,7 +81515,6 @@ define(['exports'], function (exports) { 'use strict';
   			var float_pattern = /(\b|\-|\+)([\d\.e]+)/;
   			var float2_pattern = /([\d\.\+\-e]+)\s+([\d\.\+\-e]+)/g;
   			var float3_pattern = /([\d\.\+\-e]+)\s+([\d\.\+\-e]+)\s+([\d\.\+\-e]+)/g;
-
   			
   			function paintFaces( geometry, radius, angles, colors, topDown ) {
 
@@ -82107,7 +81613,6 @@ define(['exports'], function (exports) { 'use strict';
   			function parseProperty( node, line ) {
 
   				var parts = [], part, property = {}, fieldName;
-
   				
   				var regex = /[^\s,\[\]]+/g;
 
@@ -82120,7 +81625,6 @@ define(['exports'], function (exports) { 'use strict';
   				}
 
   				fieldName = parts[ 0 ];
-
 
   				// trigger several recorders
   				switch ( fieldName ) {
@@ -83502,7 +83006,6 @@ define(['exports'], function (exports) { 'use strict';
 
   							} else {
 
-
   								indices[ indicesIndex ++ ] = strip[ j ];
   								indices[ indicesIndex ++ ] = strip[ j + 1 ];
   								indices[ indicesIndex ++ ] = strip[ j + 2 ];
@@ -83777,7 +83280,6 @@ define(['exports'], function (exports) { 'use strict';
   					numBytes = 4;
 
   				}
-
 
   				// Check the format
   				if ( ele.attributes.format === 'binary' && compressed ) {
@@ -84644,7 +84146,6 @@ define(['exports'], function (exports) { 'use strict';
   			scope.normalArray[ c + 7 ] = ny;
   			scope.normalArray[ c + 8 ] = nz;
 
-
   		} else {
 
   			scope.normalArray[ c + 0 ] = norm[ o1 + 0 ];
@@ -84795,7 +84296,6 @@ define(['exports'], function (exports) { 'use strict';
   		var max_y = Math.floor( ys + radius ); if ( max_y > this.size - 1 ) { max_y = this.size - 1; }
   		var min_x = Math.floor( xs - radius ); if ( min_x < 1 ) { min_x = 1; }
   		var max_x = Math.floor( xs + radius ); if ( max_x > this.size - 1 ) { max_x = this.size - 1; }
-
 
   		// Don't polygonize in the outer layer because normals aren't
   		// well-defined there.
@@ -85056,7 +84556,6 @@ define(['exports'], function (exports) { 'use strict';
 
   MarchingCubes.prototype = Object.create( ImmediateRenderObject.prototype );
   MarchingCubes.prototype.constructor = MarchingCubes;
-
 
   /////////////////////////////////////
   // Marching cubes lookup tables
@@ -85439,7 +84938,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	}
 
-
   };
 
   function CanvasTexture( canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy ) {
@@ -85529,7 +85027,6 @@ define(['exports'], function (exports) { 'use strict';
 
   			}
 
-
   			vertexPosition.copy( mvPosition );
   			vertexPosition.x += rotatedPosition.x;
   			vertexPosition.y += rotatedPosition.y;
@@ -85615,7 +85112,6 @@ define(['exports'], function (exports) { 'use strict';
   		return this;
 
   	}
-
 
   } );
 
@@ -86070,7 +85566,6 @@ define(['exports'], function (exports) { 'use strict';
 
   				var points = [];
 
-
   				if ( this$1.legend.layout == 'vertical' ) {
 
   					var linePosition = ( this$1.legend.position.y - ( this$1.legend.dimensions.height * 0.5 ) + 0.01 ) + ( this$1.legend.dimensions.height ) * ( ( value - this$1.minV ) / ( this$1.maxV - this$1.minV ) * 0.99 );
@@ -86107,7 +85602,6 @@ define(['exports'], function (exports) { 'use strict';
   	}
 
   };
-
 
   var ColorMapKeywords = {
 
@@ -86789,7 +86283,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	};
 
-
   	this.shareParts = function ( original ) {
   		var this$1 = this;
 
@@ -86984,7 +86477,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-
   	};
 
   	this.update = function ( delta ) {
@@ -87088,7 +86580,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
 
   		}
-
 
   		if ( Math.abs( this.speed ) < 0.2 * this.maxSpeed && ! ( controls.moveLeft || controls.moveRight || controls.moveForward || controls.moveBackward ) ) {
 
@@ -87494,7 +86985,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-
   		// delete triangles on edge uv:
   		for ( i = u.faces.length - 1; i >= 0; i -- ) {
 
@@ -87513,7 +87003,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-
   		removeVertex( u, vertices );
 
   		// recompute the edge collapse costs in neighborhood
@@ -87524,8 +87013,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	}
-
-
 
   	function minimumCostEdge( vertices ) {
 
@@ -87571,7 +87058,6 @@ define(['exports'], function (exports) { 'use strict';
   		v2.addUniqueNeighbor( v1 );
   		v2.addUniqueNeighbor( v3 );
 
-
   		v3.faces.push( this );
   		v3.addUniqueNeighbor( v1 );
   		v3.addUniqueNeighbor( v2 );
@@ -87606,7 +87092,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		removeFromArray( oldv.faces, this );
   		newv.faces.push( this );
-
 
   		oldv.removeIfNonNeighbor( this.v1 );
   		this.v1.removeIfNonNeighbor( oldv );
@@ -87823,7 +87308,6 @@ define(['exports'], function (exports) { 'use strict';
   ( function () {
   	var ABC = [ 'a', 'b', 'c' ];
 
-
   	function getEdge( a, b, map ) {
 
   		var vertexIndexA = Math.min( a, b );
@@ -87834,7 +87318,6 @@ define(['exports'], function (exports) { 'use strict';
   		return map[ key ];
 
   	}
-
 
   	function processEdge( a, b, vertices, map, face, metaVertices ) {
 
@@ -87873,7 +87356,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		metaVertices[ a ].edges.push( edge );
   		metaVertices[ b ].edges.push( edge );
-
 
   	}
 
@@ -87939,15 +87421,10 @@ define(['exports'], function (exports) { 'use strict';
 
   		var hasUvs = oldUvs !== undefined && oldUvs.length > 0;
 
-  		
-
   		metaVertices = new Array( oldVertices.length );
   		sourceEdges = {}; // Edge => { oldVertex1, oldVertex2, faces[]  }
 
   		generateLookups( oldVertices, oldFaces, metaVertices, sourceEdges );
-
-
-  		
 
   		newEdgeVertices = [];
   		var other, currentEdge, newEdge, face;
@@ -88000,8 +87477,6 @@ define(['exports'], function (exports) { 'use strict';
   			// console.log(currentEdge, newEdge);
 
   		}
-
-  		
 
   		var beta, sourceVertexWeight, connectingVertexWeight;
   		var connectingEdge, connectingEdges, oldVertex, newSourceVertex;
@@ -88065,9 +87540,6 @@ define(['exports'], function (exports) { 'use strict';
   			newSourceVertices.push( newSourceVertex );
 
   		}
-
-
-  		
 
   		newVertices = newSourceVertices.concat( newEdgeVertices );
   		var sl = newSourceVertices.length, edge1, edge2, edge3;
@@ -89029,7 +88501,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		"}"
   	].join( "\n" ) );
-
 
   	var LinearToRGBD = new FunctionNode( [
   		"vec3 LinearToRGBD( in vec4 value, in float maxRange ) {",
@@ -90009,7 +89480,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	},
 
-
   	addVertexCode: function ( code ) {
 
   		this.addCode( code, 'vertex' );
@@ -90027,7 +89497,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.code[ shader || this.shader ] += code + '\n';
 
   	},
-
 
   	addVertexNodeCode: function ( code ) {
 
@@ -90089,7 +89558,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	},
 
-
   	addVertexParsCode: function ( code ) {
 
   		this.addParsCode( code, 'vertex' );
@@ -90108,14 +89576,12 @@ define(['exports'], function (exports) { 'use strict';
 
   	},
 
-
   	addVaryCode: function ( code ) {
 
   		this.addVertexParsCode( code );
   		this.addFragmentParsCode( code );
 
   	},
-
 
   	isCache: function ( name ) {
 
@@ -90299,7 +89765,6 @@ define(['exports'], function (exports) { 'use strict';
   			return node.name;
 
   		}
-
 
   		if ( node instanceof FunctionNode ) {
 
@@ -91590,7 +91055,6 @@ define(['exports'], function (exports) { 'use strict';
 
   } )();
 
-
   BlurNode.prototype = Object.create( TempNode.prototype );
   BlurNode.prototype.constructor = BlurNode;
   BlurNode.prototype.nodeType = "Blur";
@@ -91960,7 +91424,6 @@ define(['exports'], function (exports) { 'use strict';
   	return builder.format( "mat3( " + this.value.elements.join( ", " ) + " )", type, output );
 
   };
-
 
   Matrix3Node.prototype.copy = function ( source ) {
 
@@ -95061,7 +94524,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-
   	}
 
   	return data;
@@ -96721,7 +96183,6 @@ define(['exports'], function (exports) { 'use strict';
   		'	return ( ( x * ( A * x + C * B ) + D * E ) / ( x * ( A * x + B ) + D * F ) ) - E / F;',
   		'}',
 
-
   		'void main() {',
   		// optical length
   		// cutoff angle at 90 to avoid singularity in next formula.
@@ -97877,8 +97338,6 @@ define(['exports'], function (exports) { 'use strict';
   		var min = box.min;
   		var max = box.max;
 
-  		
-
   		var position = this.geometry.attributes.position;
   		var array = position.array;
 
@@ -97957,8 +97416,6 @@ define(['exports'], function (exports) { 'use strict';
   		return - 1;
 
   	}
-
-  	
 
   	var Octree = function ( parameters ) {
 
@@ -98510,8 +97967,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	};
 
-  	
-
   	var OctreeObjectData = function ( object, part ) {
 
   		// properties
@@ -98606,8 +98061,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	};
-
-  	
 
   	var OctreeNode = function ( parameters ) {
 
@@ -99686,7 +99139,6 @@ define(['exports'], function (exports) { 'use strict';
 
   			}
 
-
   			if ( deltaZ - radiusObj > - overlap ) {
 
   				// z right
@@ -99984,8 +99436,6 @@ define(['exports'], function (exports) { 'use strict';
   		}
 
   	};
-
-  	
 
   	Raycaster.prototype.intersectOctreeObject = function ( object, recursive ) {
 
@@ -100300,7 +99750,6 @@ define(['exports'], function (exports) { 'use strict';
   PMREMGenerator.prototype = {
 
   	constructor: PMREMGenerator,
-
   	
   	update: function ( renderer ) {
   		var this$1 = this;
@@ -101199,7 +100648,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		"}"
 
-
   	].join( "\n" ),
 
   	buildKernel: function ( sigma ) {
@@ -101326,7 +100774,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.convolutionUniforms[ "uImageIncrement" ].value = BloomPass.blurX;
 
   		renderer.render( this.scene, this.camera, this.renderTargetX, true );
-
 
   		// Render quad with blured scene into texture (convolution pass 2)
 
@@ -101759,7 +101206,6 @@ define(['exports'], function (exports) { 'use strict';
 
   } );
 
-
   var ClearMaskPass = function () {
 
   	Pass.call( this );
@@ -102125,7 +101571,6 @@ define(['exports'], function (exports) { 'use strict';
   			
   		"varying vec2 vUv;",
   		
-  		
   		"float rand(vec2 co){",
   			"return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);",
   		"}",
@@ -102185,9 +101630,7 @@ define(['exports'], function (exports) { 'use strict';
 
   	if ( dt_size == undefined ) { dt_size = 64; }
 
-
   	this.uniforms[ "tDisp" ].value = this.generateHeightmap( dt_size );
-
 
   	this.material = new ShaderMaterial( {
   		uniforms: this.uniforms,
@@ -103015,7 +102458,6 @@ define(['exports'], function (exports) { 'use strict';
   			this.overlayMaterial.uniforms[ "edgeGlow" ].value = this.edgeGlow;
   			this.overlayMaterial.uniforms[ "usePatternTexture" ].value = this.usePatternTexture;
 
-
   			if ( maskActive ) { renderer.context.enable( renderer.context.STENCIL_TEST ); }
 
   			renderer.render( this.scene, this.camera, readBuffer, false );
@@ -103483,7 +102925,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		"	return occlusionSum * ( intensity / weightSum );",
   		"}",
-
 
   		"void main() {",
   		"	float centerDepth = getDepth( vUv );",
@@ -104894,7 +104335,6 @@ define(['exports'], function (exports) { 'use strict';
 
   } );
 
-
   // These jitter vectors are specified in integers because it is easier.
   // I am assuming a [-8,8) integer grid, but it needs to be mapped onto [-0.5,0.5)
   // before being used, thus these integers need to be scaled by 1/16.
@@ -104997,7 +104437,6 @@ define(['exports'], function (exports) { 'use strict';
   		"const float diffArea = 0.4;",   // self-shadowing reduction
   		"const float gDisplace = 0.4;",  // gauss bell center
 
-
   		// RGBA depth
 
   		"#include <packing>",
@@ -105047,7 +104486,6 @@ define(['exports'], function (exports) { 'use strict';
   			"#endif",
 
   			"return cameraCoef / ( cameraFarPlusNear - z * cameraFarMinusNear );",
-
 
   		"}",
 
@@ -105254,7 +104692,6 @@ define(['exports'], function (exports) { 'use strict';
 
   SSAOPass.prototype = Object.create( ShaderPass.prototype );
 
-
   SSAOPass.prototype.render = function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
 
   	//Render depth into depthRenderTarget
@@ -105264,19 +104701,16 @@ define(['exports'], function (exports) { 'use strict';
 
   	this.scene2.overrideMaterial = null;
 
-
   	//SSAO shaderPass
   	ShaderPass.prototype.render.call( this, renderer, writeBuffer, readBuffer, delta, maskActive );
 
   };
-
 
   SSAOPass.prototype.setScene = function ( scene ) {
 
   	this.scene2 = scene;
 
   };
-
 
   SSAOPass.prototype.setCamera = function ( camera ) {
 
@@ -105286,7 +104720,6 @@ define(['exports'], function (exports) { 'use strict';
   	this.uniforms[ 'cameraFar' ].value = this.camera2.far;
 
   };
-
 
   SSAOPass.prototype.setSize = function ( width, height ) {
 
@@ -105787,7 +105220,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.copyUniforms[ "tDiffuse" ].value = this.renderTargetsHorizontal[ 0 ].texture;
 
   		if ( maskActive ) { renderer.context.enable( renderer.context.STENCIL_TEST ); }
-
 
   		if ( this.renderToScreen ) {
 
@@ -107098,7 +106530,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		return _facePool[ _faceCount ++ ];
 
-
   	}
 
   	function getNextLineInPool() {
@@ -107332,8 +106763,6 @@ define(['exports'], function (exports) { 'use strict';
   		_normal = new Vector3(),
   		_normalViewMatrix = new Matrix3();
 
-  	
-
   	// dash+gap fallbacks for Firefox and everything else
 
   	if ( _context.setLineDash === undefined ) {
@@ -107557,8 +106986,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		_normalViewMatrix.getNormalMatrix( camera.matrixWorldInverse );
 
-  		
-
   		calculateLights();
 
   		for ( var e = 0, el = _elements.length; e < el; e ++ ) {
@@ -107630,13 +107057,9 @@ define(['exports'], function (exports) { 'use strict';
 
   			}
 
-  			
-
   			_clearBox.union( _elemBox );
 
   		}
-
-  		
 
   		_context.setTransform( 1, 0, 0, 1, 0, 0 );
 
@@ -107813,8 +107236,6 @@ define(['exports'], function (exports) { 'use strict';
   			_context.restore();
 
   		}
-
-  		
 
   	}
 
@@ -108184,8 +107605,6 @@ define(['exports'], function (exports) { 'use strict';
   		_context.restore();
 
   	}
-
-  	
 
   	// Hide anti-alias gaps
 
@@ -109029,7 +108448,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		if ( camera.parent === null ) { camera.updateMatrixWorld(); }
 
-
   		sceneJSON = scene.toJSON();
   		cameraJSON = camera.toJSON();
   		++ sceneId;
@@ -109062,7 +108480,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-
   		// Randomize painting :)
 
   		if ( scope.randomize ) {
@@ -109077,7 +108494,6 @@ define(['exports'], function (exports) { 'use strict';
   			}
 
   		}
-
 
   		pool.forEach( renderNext );
 
@@ -109230,7 +108646,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	};
 
-
   	this.render = function ( scene, camera ) {
 
   		// TODO: Check why autoClear can't be false.
@@ -109278,7 +108693,6 @@ define(['exports'], function (exports) { 'use strict';
   					);
 
   				}
-
 
   			} else if ( element instanceof RenderableSprite ) {
 
@@ -109376,8 +108790,6 @@ define(['exports'], function (exports) { 'use strict';
   		var y = Math.min( recty1, prevrecty1 );
   		var width = Math.max( rectx2, prevrectx2 ) - x;
   		var height = Math.max( recty2, prevrecty2 ) - y;
-
-  		
 
   		if ( x !== Infinity ) {
 
@@ -109607,7 +109019,6 @@ define(['exports'], function (exports) { 'use strict';
 
   					}
 
-
   				} else {
 
   					if ( material.vertexColors === FaceColors ) {
@@ -109675,8 +109086,6 @@ define(['exports'], function (exports) { 'use strict';
   		return shader;
 
   	}
-
-  	
 
   	function drawTriangle( v1, v2, v3, uv1, uv2, uv3, shader, face, material ) {
 
@@ -110185,7 +109594,6 @@ define(['exports'], function (exports) { 'use strict';
   						cynz = cbnz;
 
   					}
-
 
   					for ( var iy = 0; iy < q; iy ++ ) {
 
@@ -111683,7 +111091,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-
   	};
 
   	function resetGlobalState() {
@@ -113034,7 +112441,6 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-
   // Static interface
 
   WebGLUniforms.upload = function ( gl, seq, values, renderer ) {
@@ -113813,7 +113219,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	} );
 
-
   	//
 
   	this.name = shader.name;
@@ -113861,7 +113266,6 @@ define(['exports'], function (exports) { 'use strict';
   		"shadowMapEnabled", "shadowMapType", "toneMapping", 'physicallyCorrectLights',
   		"alphaTest", "doubleSided", "flipSided", "numClippingPlanes", "numClipIntersection", "depthPacking", "dithering"
   	];
-
 
   	function allocateBones( object ) {
 
@@ -114216,7 +113620,6 @@ define(['exports'], function (exports) { 'use strict';
 
   }
 
-
   function WebGLRenderList() {
 
   	var renderItems = [];
@@ -114265,7 +113668,6 @@ define(['exports'], function (exports) { 'use strict';
   			renderItem.group = group;
 
   		}
-
 
   		( material.transparent === true ? transparent : opaque ).push( renderItem );
 
@@ -116358,8 +115760,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	//
 
-
-
   	function setTexture2D( texture, slot ) {
 
   		var textureProperties = properties.get( texture );
@@ -117434,7 +116834,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-
   		var pose = frameData.pose;
   		var poseObject = poseTarget !== null ? poseTarget : camera;
 
@@ -118376,7 +117775,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	}
 
-
   	function releaseMaterialProgramReference( material ) {
 
   		var programInfo = properties.get( material ).program;
@@ -118585,7 +117983,6 @@ define(['exports'], function (exports) { 'use strict';
   				}
 
   			}
-
 
   		} else if ( object.isLine ) {
 
@@ -118979,8 +118376,6 @@ define(['exports'], function (exports) { 'use strict';
   		currentRenderState = null;
 
   	};
-
-  	
 
   	function projectObject( object, camera, sortObjects ) {
 
@@ -119536,7 +118931,6 @@ define(['exports'], function (exports) { 'use strict';
   						//       16x16 pixel texture max   64 bones * 4 pixels = (16 * 16)
   						//       32x32 pixel texture max  256 bones * 4 pixels = (32 * 32)
   						//       64x64 pixel texture max 1024 bones * 4 pixels = (64 * 64)
-
 
   						var size = Math.sqrt( bones.length * 4 ); // 4 pixels needed for 1 matrix
   						size = _Math.ceilPowerOfTwo( size );
@@ -122276,7 +121670,6 @@ define(['exports'], function (exports) { 'use strict';
   		return mesh;
 
   	}
-
   	
   	function createDeferredPointLightMaterial() {
 
@@ -122698,8 +122091,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	}
 
-  	
-
   	function renderNormalDepth( scene, camera ) {
 
   		scene.traverse( setMaterialNormalDepth );
@@ -122720,8 +122111,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	}
 
-  	
-
   	function renderColor( scene, camera ) {
 
   		scene.traverse( setMaterialColor );
@@ -122740,8 +122129,6 @@ define(['exports'], function (exports) { 'use strict';
   		scene.traverse( restoreOriginalMaterial );
 
   	}
-
-  	
 
   	function renderLight( scene, camera ) {
 
@@ -122763,8 +122150,6 @@ define(['exports'], function (exports) { 'use strict';
   		_gl.disable( _gl.STENCIL_TEST );
 
   	}
-
-  	
 
   	function renderLightPre( scene, camera ) {
 
@@ -122788,8 +122173,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	}
 
-  	
-
   	function renderReconstruction( scene, camera ) {
 
   		scene.traverse( setMaterialReconstruction );
@@ -122807,8 +122190,6 @@ define(['exports'], function (exports) { 'use strict';
   		scene.traverse( restoreOriginalMaterial );
 
   	}
-
-  	
 
   	function renderFinal( scene, camera ) {
 
@@ -123589,7 +122970,6 @@ define(['exports'], function (exports) { 'use strict';
   			ShaderDeferredCommon[ 'commonUniforms' ]
 
   		),
-
 
   		vertexShader: [
 
@@ -124411,7 +123791,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	}
 
-
   	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
 
   }
@@ -124507,15 +123886,11 @@ define(['exports'], function (exports) { 'use strict';
 
   			"	gl_FragColor = vec4( 1.0 ) - texture2D( tInput, vUv );",
 
-
   			"}"
 
   		].join( "\n" )
 
   	},
-
-
-  	
 
   	'godrays_generate': {
 
@@ -124578,8 +123953,6 @@ define(['exports'], function (exports) { 'use strict';
   				// This breaks ANGLE in Chrome 22
   				//	- see http://code.google.com/p/chromium/issues/detail?id=153105
 
-  				
-
   				// Unrolling loop manually makes it work in ANGLE
 
   				"if ( 0.0 <= iters && uv.y < 1.0 ) col += texture2D( tInput, uv ).r;",
@@ -124615,8 +123988,6 @@ define(['exports'], function (exports) { 'use strict';
   		].join( "\n" )
 
   	},
-
-  	
 
   	'godrays_combine': {
 
@@ -124677,9 +124048,6 @@ define(['exports'], function (exports) { 'use strict';
   		].join( "\n" )
 
   	},
-
-
-  	
 
   	'godrays_fake_sun': {
 
@@ -125147,7 +124515,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		"}"
 
-
   	].join( "\n" )
   };
 
@@ -125181,7 +124548,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		"vec2 texel = vec2(1.0 / aspect.x, 1.0 / aspect.y);",
 
-
   		"mat3 G[9];",
 
   		// hard coded matrix values!!!! as suggested in https://github.com/neilmendoza/ofxPostProcessing/blob/master/src/EdgePass.cpp#L45
@@ -125212,7 +124578,6 @@ define(['exports'], function (exports) { 'use strict';
   			"mat3 I;",
   			"float cnv[9];",
   			"vec3 sample;",
-
   			
   			"for (float i=0.0; i<3.0; i++) {",
   				"for (float j=0.0; j<3.0; j++) {",
@@ -125220,7 +124585,6 @@ define(['exports'], function (exports) { 'use strict';
   					"I[int(i)][int(j)] = length(sample);",
   				"}",
   			"}",
-
   			
   			"for (int i=0; i<9; i++) {",
   				"float dp3 = dot(G[i][0], I[0]) + dot(G[i][1], I[1]) + dot(G[i][2], I[2]);",
@@ -126304,8 +125668,6 @@ define(['exports'], function (exports) { 'use strict';
   			"vec2 uv = ( vUv - vec2( 0.5 ) ) * vec2( offset );",
   			"gl_FragColor = vec4( mix( texel.rgb, vec3( 1.0 - darkness ), dot( uv, uv ) ), texel.a );",
 
-  			
-
   		"}"
 
   	].join( "\n" )
@@ -126410,8 +125772,6 @@ define(['exports'], function (exports) { 'use strict';
   };
 
   var ShaderSkin = {
-
-  	
 
   	'skinSimple' : {
 
@@ -126683,8 +126043,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	},
 
-  	
-
   	'skin' : {
 
   		uniforms: UniformsUtils.merge( [
@@ -126860,7 +126218,6 @@ define(['exports'], function (exports) { 'use strict';
 
   						"float dirDiffuseWeight = max( dot( normal, dirVector ), 0.0 );",
 
-
   						"totalDiffuseLight += directionalLights[ i ].color * dirDiffuseWeight;",
 
   						"if ( passID == 1 ) {",
@@ -126874,7 +126231,6 @@ define(['exports'], function (exports) { 'use strict';
   					"}",
 
   				"#endif",
-
 
   				"outgoingLight += diffuseColor.rgb * ( totalDiffuseLight + totalSpecularLight );",
 
@@ -126901,13 +126257,11 @@ define(['exports'], function (exports) { 'use strict';
   					"vec3 blur3Color = texture2D( tBlur3, vUv ).xyz;",
   					"vec3 blur4Color = texture2D( tBlur4, vUv ).xyz;",
 
-
   					//"gl_FragColor = vec4( blur1Color, gl_FragColor.w );",
 
   					//"gl_FragColor = vec4( vec3( 0.22, 0.5, 0.7 ) * nonblurColor + vec3( 0.2, 0.5, 0.3 ) * blur1Color + vec3( 0.58, 0.0, 0.0 ) * blur2Color, gl_FragColor.w );",
 
   					//"gl_FragColor = vec4( vec3( 0.25, 0.6, 0.8 ) * nonblurColor + vec3( 0.15, 0.25, 0.2 ) * blur1Color + vec3( 0.15, 0.15, 0.0 ) * blur2Color + vec3( 0.45, 0.0, 0.0 ) * blur3Color, gl_FragColor.w );",
-
 
   					"outgoingLight = vec3( vec3( 0.22,  0.437, 0.635 ) * nonblurColor + ",
   										 "vec3( 0.101, 0.355, 0.365 ) * blur1Color + ",
@@ -127013,8 +126367,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	},
 
-  	
-
   	"beckmann" : {
 
   		uniforms: {},
@@ -127069,8 +126421,6 @@ define(['exports'], function (exports) { 'use strict';
   };
 
   var ShaderTerrain = {
-
-  	
 
   	'terrain' : {
 
@@ -127704,8 +127054,6 @@ define(['exports'], function (exports) { 'use strict';
 
   var TranslucentShader = function TranslucentShader() {
 
-  	
-
   	this.uniforms = UniformsUtils.merge( [
 
   		UniformsLib[ "common" ],
@@ -127905,7 +127253,6 @@ define(['exports'], function (exports) { 'use strict';
   //
   // Added 4D noise
   // Joshua Koo zz85nus@gmail.com 
-
 
   var SimplexNoise = function(r) {
   	var this$1 = this;
@@ -128492,8 +127839,6 @@ define(['exports'], function (exports) { 'use strict';
 
   var TypedArrayUtils = {};
 
-
-
   TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 
   	var stack = [];
@@ -128630,10 +127975,6 @@ define(['exports'], function (exports) { 'use strict';
 
   };
 
-
-
-
-
    TypedArrayUtils.Kdtree = function ( points, metric, eleSize ) {
 
   	var self = this;
@@ -128683,8 +128024,6 @@ define(['exports'], function (exports) { 'use strict';
   	};
   	
   	this.nearest = function ( point, maxNodes, maxDistance ) {
-  	
-  		 
 
   		var i,
   			result,
@@ -128838,7 +128177,6 @@ define(['exports'], function (exports) { 'use strict';
   	
   };
 
-
   TypedArrayUtils.Kdtree.prototype.Node = function ( obj, depth, parent, pos ) {
 
   	this.obj = obj;
@@ -128849,8 +128187,6 @@ define(['exports'], function (exports) { 'use strict';
   	this.pos = pos;
 
   }; 
-
-
 
   TypedArrayUtils.Kdtree.BinaryHeap = function ( scoreFunction ) {
 
@@ -129591,7 +128927,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	scene.add( mesh );
 
-
   	//Label for light's name
   	var labelCanvas, labelMesh;
 
@@ -129624,7 +128959,6 @@ define(['exports'], function (exports) { 'use strict';
   		scene.add( labelMesh );
 
   	}
-
 
   	function resetPosition () {
 
@@ -130566,15 +129900,11 @@ define(['exports'], function (exports) { 'use strict';
   	} );
   	
   	this.axis = axis || 'z';
-
-  	
   	
   	this.canvas = document.createElement( 'canvas' );
   	
-  	
   	this.canvasBuffer = document.createElement( 'canvas' );
   	this.updateGeometry();
-
 
   	var canvasMap = new Texture( this.canvas );
   	canvasMap.minFilter = LinearFilter;
@@ -130586,19 +129916,11 @@ define(['exports'], function (exports) { 'use strict';
   	this.geometryNeedsUpdate = true;
   	this.repaint();
 
-  	
-
-  	
-
-  	
-
-
   };
 
   VolumeSlice.prototype = {
 
   	constructor: VolumeSlice,
-
   	
   	repaint: function () {
   		var this$1 = this;
@@ -130616,7 +129938,6 @@ define(['exports'], function (exports) { 'use strict';
   			volume = this.volume,
   			canvas = this.canvasBuffer,
   			ctx = this.ctxBuffer;
-
 
   		// get the imageData and pixel array from the canvas
   		var imgData = ctx.getImageData( 0, 0, iLength, jLength );
@@ -130678,11 +129999,9 @@ define(['exports'], function (exports) { 'use strict';
   		ctx.putImageData( imgData, 0, 0 );
   		this.ctx.drawImage( canvas, 0, 0, iLength, jLength, 0, 0, this.canvas.width, this.canvas.height );
 
-
   		this.mesh.material.map.needsUpdate = true;
 
   	},
-
   	
   	updateGeometry: function () {
 
@@ -130919,7 +130238,6 @@ define(['exports'], function (exports) { 'use strict';
   				scope.dispatchEvent( { type: touchpadIsPressed ? 'touchpaddown' : 'touchpadup', axes: axes } );
 
   			}
-
 
   			// trigger
 
@@ -131341,7 +130659,6 @@ define(['exports'], function (exports) { 'use strict';
   	this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
   	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
-
   	// helper functions
 
   	function addShape( shape ) {
@@ -131518,7 +130835,6 @@ define(['exports'], function (exports) { 'use strict';
   	var ball = new Mesh( geometry, material );
   	colorUI.add( ball );
 
-
   	// SIZE UI
   	var sizeUI = new Group();
   	sizeUI.position.set( 0, 0.005, 0.0495 );
@@ -131547,8 +130863,6 @@ define(['exports'], function (exports) { 'use strict';
   	sizeUI.add( sizeUIFill );
 
   	sizeUI.visible = false;
-
-
 
   	function onAxisChanged( event ) {
 
@@ -132833,7 +132147,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	} )()
 
-
   } );
 
   function CubeCamera( near, far, cubeResolution ) {
@@ -133494,10 +132807,7 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-
   		var faces = ShapeUtils.triangulateShape( vertices, holes );
-
-  		
 
   		var contour = vertices; // vertices has all points but contour has only points of circumference
 
@@ -133508,7 +132818,6 @@ define(['exports'], function (exports) { 'use strict';
   			vertices = vertices.concat( ahole );
 
   		}
-
 
   		function scalePt2( pt, vec, size ) {
 
@@ -133522,9 +132831,7 @@ define(['exports'], function (exports) { 'use strict';
   			vert, vlen = vertices.length,
   			face, flen = faces.length;
 
-
   		// Find directions for point movement
-
 
   		function getBevelVec( inPt, inPrev, inNext ) {
 
@@ -133648,7 +132955,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-
   		var contourMovements = [];
 
   		for ( var i = 0, il = contour.length, j = il - 1, k = i + 1; i < il; i ++, j ++, k ++ ) {
@@ -133686,7 +132992,6 @@ define(['exports'], function (exports) { 'use strict';
   			verticesMovements = verticesMovements.concat( oneHoleMovements );
 
   		}
-
 
   		// Loop bevelSegments, 1 for the front, 1 for the back
 
@@ -133786,7 +133091,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-
   		// Add bevel segments planes
 
   		//for ( b = 1; b <= bevelSegments; b ++ ) {
@@ -133832,8 +133136,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-  		
-
   		// Top and bottom faces
 
   		buildLidFaces();
@@ -133841,7 +133143,6 @@ define(['exports'], function (exports) { 'use strict';
   		// Sides faces
 
   		buildSideFaces();
-
 
   		/////  Internal functions
 
@@ -133920,9 +133221,7 @@ define(['exports'], function (exports) { 'use strict';
 
   			}
 
-
   			scope.addGroup( start, verticesArray.length / 3 - start, 1 );
-
 
   		}
 
@@ -133968,7 +133267,6 @@ define(['exports'], function (exports) { 'use strict';
 
   		}
 
-
   		function f3( a, b, c ) {
 
   			addVertex( a );
@@ -133994,7 +133292,6 @@ define(['exports'], function (exports) { 'use strict';
   			addVertex( c );
   			addVertex( d );
 
-
   			var nextIndex = verticesArray.length / 3;
   			var uvs = uvgen.generateSideWallUV( scope, verticesArray, nextIndex - 6, nextIndex - 3, nextIndex - 2, nextIndex - 1 );
 
@@ -134015,7 +133312,6 @@ define(['exports'], function (exports) { 'use strict';
   			verticesArray.push( placeholder[ index * 3 + 2 ] );
 
   		}
-
 
   		function addUV( vector2 ) {
 
@@ -134177,7 +133473,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	phiLength = _Math.clamp( phiLength, 0, Math.PI * 2 );
 
-
   	// buffers
 
   	var indices = [];
@@ -134217,7 +133512,6 @@ define(['exports'], function (exports) { 'use strict';
   			uv.y = j / ( points.length - 1 );
 
   			uvs.push( uv.x, uv.y );
-
 
   		}
 
@@ -135806,9 +135100,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	this.update();
 
-
-  	
-
   }
 
   PointLightHelper.prototype = Object.create( Mesh.prototype );
@@ -135832,8 +135123,6 @@ define(['exports'], function (exports) { 'use strict';
   		this.material.color.copy( this.light.color );
 
   	}
-
-  	
 
   };
 
@@ -135938,7 +135227,6 @@ define(['exports'], function (exports) { 'use strict';
 
   	this.line = new Line( geometry, material );
   	this.add( this.line );
-
 
   	this.update();
 
@@ -137228,7 +136516,6 @@ define(['exports'], function (exports) { 'use strict';
   						);
 
   						break;
-
 
   					case 'ExtrudeGeometry':
   					case 'ExtrudeBufferGeometry':
