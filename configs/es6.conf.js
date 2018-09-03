@@ -817,8 +817,7 @@ module.exports = {
             imports: [
                 'UniformsUtils',
                 'UniformsLib',
-                'ShaderChunk',
-                'Color',
+                'ShaderChunk'
             ],
             outputOverride: 'shaders/ShaderTranslucent.js'
         },
