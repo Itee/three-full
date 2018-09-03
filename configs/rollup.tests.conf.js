@@ -453,16 +453,6 @@ export default [
 			file: 'tests/controls/TransformControls.test.js'
 		}
 	},
-	{
-		input: 'sources/controls/VRControls.js',
-		plugins: [ glsl() ],
-		output: {
-			indent: '\t',
-			format: 'iife',
-			name: 'Three',
-			file: 'tests/controls/VRControls.test.js'
-		}
-	},
 
 	// core
 	{
