@@ -1,8 +1,6 @@
 import { LineSegmentsGeometry } from './LineSegmentsGeometry.js'
 import { WireframeGeometry } from '../geometries/WireframeGeometry.js'
 
-
-
 var WireframeGeometry2 = function ( geometry ) {
 
 	LineSegmentsGeometry.call( this );

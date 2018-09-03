@@ -3,13 +3,6 @@ import { Quaternion } from '../math/Quaternion.js'
 import { Object3D } from '../core/Object3D.js'
 import { AudioContext } from './AudioContext.js'
 
-
-
-
-
-
-
-
 function AudioListener() {
 
 	Object3D.call( this );

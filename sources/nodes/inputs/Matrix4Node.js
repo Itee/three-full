@@ -1,10 +1,6 @@
 import { InputNode } from '../core/InputNode.js'
 import { Matrix4 } from '../../math/Matrix4.js'
 
-
-
-
-
 function Matrix4Node( matrix ) {
 
 	InputNode.call( this, 'm4' );

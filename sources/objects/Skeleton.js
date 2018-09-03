@@ -1,9 +1,5 @@
 import { Matrix4 } from '../math/Matrix4.js'
 
-
-
-
-
 function Skeleton( bones, boneInverses ) {
 
 	// copy the bone array
@@ -170,7 +166,6 @@ Object.assign( Skeleton.prototype, {
 	}
 
 } );
-
 
 ;
 

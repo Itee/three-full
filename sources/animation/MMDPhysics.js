@@ -11,10 +11,7 @@ import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
 import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js'
 import { Mesh } from '../objects/Mesh.js'
 
-
-
 var MMDPhysics = ( function () {
-
 	
 	function MMDPhysics( mesh, rigidBodyParams, constraintParams, params ) {
 
@@ -30,7 +27,6 @@ var MMDPhysics = ( function () {
 		this.manager = new ResourceManager();
 
 		this.mesh = mesh;
-
 		
 		this.unitStep = ( params.unitStep !== undefined ) ? params.unitStep : 1 / 65;
 		this.maxStepNum = ( params.maxStepNum !== undefined ) ? params.maxStepNum : 3;
@@ -50,7 +46,6 @@ var MMDPhysics = ( function () {
 	MMDPhysics.prototype = {
 
 		constructor: MMDPhysics,
-
 		
 		update: function ( delta ) {
 
@@ -113,7 +108,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-
 		
 		reset: function () {
 
@@ -126,7 +120,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-
 		
 		warmup: function ( cycles ) {
 
@@ -139,7 +132,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-
 		
 		setGravity: function ( gravity ) {
 
@@ -149,7 +141,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-
 		
 		createHelper: function () {
 
@@ -245,7 +236,6 @@ var MMDPhysics = ( function () {
 
 			}
 
-
 		},
 
 		_stepSimulation: function ( delta ) {
@@ -292,7 +282,6 @@ var MMDPhysics = ( function () {
 		}
 
 	};
-
 	
 	function ResourceManager() {
 
@@ -743,7 +732,6 @@ var MMDPhysics = ( function () {
 		}
 
 	};
-
 	
 	function RigidBody( mesh, world, params, manager ) {
 
@@ -764,7 +752,6 @@ var MMDPhysics = ( function () {
 	RigidBody.prototype = {
 
 		constructor: MMDPhysics.RigidBody,
-
 		
 		reset: function () {
 
@@ -772,7 +759,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-
 		
 		updateFromBone: function () {
 
@@ -786,7 +772,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-
 		
 		updateBone: function () {
 
@@ -881,7 +866,6 @@ var MMDPhysics = ( function () {
 			if ( params.type === 0 ) {
 
 				body.setCollisionFlags( body.getCollisionFlags() | 2 );
-
 				
 				body.setActivationState( 4 );
 
@@ -1026,7 +1010,6 @@ var MMDPhysics = ( function () {
 		}
 
 	};
-
 	
 	function Constraint( mesh, world, bodyA, bodyB, params, manager ) {
 
@@ -1119,7 +1102,6 @@ var MMDPhysics = ( function () {
 				}
 
 			}
-
 			
 			if ( constraint.setParam !== undefined ) {
 
@@ -1150,7 +1132,6 @@ var MMDPhysics = ( function () {
 		}
 
 	};
-
 	
 	function MMDPhysicsHelper( mesh, physics ) {
 
@@ -1204,7 +1185,6 @@ var MMDPhysics = ( function () {
 	MMDPhysicsHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		constructor: MMDPhysicsHelper,
-
 		
 		updateMatrixWorld: function () {
 

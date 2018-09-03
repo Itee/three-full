@@ -3,14 +3,9 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
-
-
 	'use strict';
 
 	var bigEndianPlatform = null;
-
 	
 	function isBigEndianPlatform() {
 
@@ -55,7 +50,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 		Float64Array: 'getFloat64'
 	};
 
-
 	function copyFromBuffer( sourceArrayBuffer, viewType, position, length, fromBigEndian ) {
 
 		var bytesPerElement = viewType.BYTES_PER_ELEMENT,
@@ -86,7 +80,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 	}
 
-
 	function decodePrwm( buffer ) {
 
 		var array = new Uint8Array( buffer ),
@@ -111,8 +104,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 		}
 
-		
-
 		if ( version === 0 ) {
 
 			throw new Error( 'PRWM decoder: Invalid format version: 0' );
@@ -136,8 +127,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			}
 
 		}
-
-		
 
 		var pos = 8;
 
@@ -286,7 +275,5 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 		return isBigEndianPlatform();
 
 	};
-
-
 
 export { PRWMLoader }

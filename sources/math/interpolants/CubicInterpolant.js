@@ -5,12 +5,6 @@ import {
 } from '../../constants.js'
 import { Interpolant } from '../Interpolant.js'
 
-
-
-
-
-
-
 function CubicInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 	Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -150,7 +144,6 @@ CubicInterpolant.prototype = Object.assign( Object.create( Interpolant.prototype
 	}
 
 } );
-
 
 ;
 

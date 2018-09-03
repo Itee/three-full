@@ -1,8 +1,6 @@
 import { Vector2 } from '../math/Vector2.js'
 import { Color } from '../math/Color.js'
 
-
-
 var ShaderGodRays = {
 
 	'godrays_depthMask': {
@@ -38,15 +36,11 @@ var ShaderGodRays = {
 
 			"	gl_FragColor = vec4( 1.0 ) - texture2D( tInput, vUv );",
 
-
 			"}"
 
 		].join( "\n" )
 
 	},
-
-
-	
 
 	'godrays_generate': {
 
@@ -109,8 +103,6 @@ var ShaderGodRays = {
 				// This breaks ANGLE in Chrome 22
 				//	- see http://code.google.com/p/chromium/issues/detail?id=153105
 
-				
-
 				// Unrolling loop manually makes it work in ANGLE
 
 				"if ( 0.0 <= iters && uv.y < 1.0 ) col += texture2D( tInput, uv ).r;",
@@ -146,8 +138,6 @@ var ShaderGodRays = {
 		].join( "\n" )
 
 	},
-
-	
 
 	'godrays_combine': {
 
@@ -208,9 +198,6 @@ var ShaderGodRays = {
 		].join( "\n" )
 
 	},
-
-
-	
 
 	'godrays_fake_sun': {
 

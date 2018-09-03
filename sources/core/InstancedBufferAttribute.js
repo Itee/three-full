@@ -1,9 +1,5 @@
 import { BufferAttribute } from './BufferAttribute.js'
 
-
-
-
-
 function InstancedBufferAttribute( array, itemSize, normalized, meshPerAttribute ) {
 
 	if ( typeof ( normalized ) === 'number' ) {
@@ -39,8 +35,6 @@ InstancedBufferAttribute.prototype = Object.assign( Object.create( BufferAttribu
 	}
 
 } );
-
-
 
 ;
 

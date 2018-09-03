@@ -128,44 +128,6 @@ import {
 	BoxBufferGeometry
 } from '../geometries/BoxGeometry.js'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 var Geometries = {
     WireframeGeometry: WireframeGeometry,
     TetrahedronGeometry: TetrahedronGeometry,
@@ -529,7 +491,6 @@ Object.assign( ObjectLoader.prototype, {
 						);
 
 						break;
-
 
 					case 'ExtrudeGeometry':
 					case 'ExtrudeBufferGeometry':
@@ -1116,7 +1077,6 @@ var TEXTURE_FILTER = {
 	LinearMipMapNearestFilter: LinearMipMapNearestFilter,
 	LinearMipMapLinearFilter: LinearMipMapLinearFilter
 };
-
 
 ;
 

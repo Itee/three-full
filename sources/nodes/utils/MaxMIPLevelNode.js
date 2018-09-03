@@ -1,9 +1,5 @@
 import { FloatNode } from '../inputs/FloatNode.js'
 
-
-
-
-
 function MaxMIPLevelNode( texture ) {
 
 	FloatNode.call( this );

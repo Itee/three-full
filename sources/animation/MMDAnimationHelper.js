@@ -5,10 +5,7 @@ import { AnimationMixer } from './AnimationMixer.js'
 import { CCDIKSolver } from './CCDIKSolver.js'
 import { MMDPhysics } from './MMDPhysics.js'
 
-
-
 var MMDAnimationHelper = ( function () {
-
 	
 	function MMDAnimationHelper( params ) {
 
@@ -53,7 +50,6 @@ var MMDAnimationHelper = ( function () {
 	MMDAnimationHelper.prototype = {
 
 		constructor: MMDAnimationHelper,
-
 		
 		add: function ( object, params ) {
 
@@ -86,7 +82,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-
 		
 		remove: function ( object ) {
 
@@ -117,7 +112,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-
 		
 		update: function ( delta ) {
 
@@ -136,7 +130,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-
 		
 		pose: function ( mesh, vpd, params ) {
 
@@ -188,7 +181,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-
 		
 		enable: function ( key, enabled ) {
 
@@ -214,7 +206,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-
 		
 		createGrantSolver: function ( mesh ) {
 
@@ -581,7 +572,6 @@ var MMDAnimationHelper = ( function () {
 				params );
 
 		},
-
 		
 		_syncDuration: function () {
 
@@ -713,7 +703,6 @@ var MMDAnimationHelper = ( function () {
 			}
 
 		},
-
 		
 		_saveBones: function ( mesh ) {
 
@@ -822,7 +811,6 @@ var MMDAnimationHelper = ( function () {
 	};
 
 	//
-
 	
 	function AudioManager( audio, params ) {
 
@@ -843,7 +831,6 @@ var MMDAnimationHelper = ( function () {
 	AudioManager.prototype = {
 
 		constructor: AudioManager,
-
 		
 		control: function ( delta ) {
 
@@ -885,7 +872,6 @@ var MMDAnimationHelper = ( function () {
 		}
 
 	};
-
 	
 	function GrantSolver( mesh, grants ) {
 
@@ -897,7 +883,6 @@ var MMDAnimationHelper = ( function () {
 	GrantSolver.prototype = {
 
 		constructor: GrantSolver,
-
 		
 		update: function () {
 

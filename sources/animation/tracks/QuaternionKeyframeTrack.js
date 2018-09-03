@@ -2,12 +2,6 @@ import { InterpolateLinear } from '../../constants.js'
 import { KeyframeTrack } from '../KeyframeTrack.js'
 import { QuaternionLinearInterpolant } from '../../math/interpolants/QuaternionLinearInterpolant.js'
 
-
-
-
-
-
-
 function QuaternionKeyframeTrack( name, times, values, interpolation ) {
 
 	KeyframeTrack.call( this, name, times, values, interpolation );

@@ -1,7 +1,4 @@
 
-
-
-
 function addLineNumbers( string ) {
 
 	var lines = string.split( '\n' );
@@ -41,7 +38,6 @@ function WebGLShader( gl, type, string ) {
 	return shader;
 
 }
-
 
 ;
 

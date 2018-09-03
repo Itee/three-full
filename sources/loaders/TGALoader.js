@@ -2,8 +2,6 @@ import { Texture } from '../textures/Texture.js'
 import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
 var TGALoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

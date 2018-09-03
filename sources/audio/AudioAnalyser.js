@@ -1,7 +1,4 @@
 
-
-
-
 function AudioAnalyser( audio, fftSize ) {
 
 	this.analyser = audio.context.createAnalyser();

@@ -1,8 +1,5 @@
 import { CompressedTextureLoader } from './CompressedTextureLoader.js'
 
-
-
-
 var KTXLoader = function ( manager ) {
 
 	CompressedTextureLoader.call( this, manager );
@@ -30,7 +27,6 @@ KTXLoader.parse = function ( buffer, loadMipmaps ) {
 };
 
 var KhronosTextureContainer = ( function () {
-
 	
 	function KhronosTextureContainer( arrayBuffer, facesExpected, threeDExpected, textureArrayExpected ) {
 

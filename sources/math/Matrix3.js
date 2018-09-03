@@ -1,9 +1,5 @@
 import { Vector3 } from './Vector3.js'
 
-
-
-
-
 function Matrix3() {
 
 	this.elements = [
@@ -380,7 +376,6 @@ Object.assign( Matrix3.prototype, {
 	}
 
 } );
-
 
 ;
 

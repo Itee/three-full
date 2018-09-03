@@ -8,18 +8,6 @@ import { Color } from '../../math/Color.js'
 import { Mesh } from '../../objects/Mesh.js'
 import { ShaderLib } from '../shaders/ShaderLib.js'
 
-
-
-
-
-
-
-
-
-
-
-
-
 function WebGLBackground( renderer, state, objects, premultipliedAlpha ) {
 
 	var clearColor = new Color( 0x000000 );
@@ -144,7 +132,6 @@ function WebGLBackground( renderer, state, objects, premultipliedAlpha ) {
 	};
 
 }
-
 
 ;
 

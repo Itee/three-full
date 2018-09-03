@@ -1,9 +1,5 @@
 import { Vector2Node } from '../inputs/Vector2Node.js'
 
-
-
-
-
 function ResolutionNode() {
 
 	Vector2Node.call( this );

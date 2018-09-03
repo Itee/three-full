@@ -4,14 +4,6 @@ import { FunctionNode } from '../core/FunctionNode.js'
 import { NormalNode } from '../accessors/NormalNode.js'
 import { PositionNode } from '../accessors/PositionNode.js'
 
-
-
-
-
-
-
-
-
 function BumpMapNode( value, scale ) {
 
 	TempNode.call( this, 'v3' );

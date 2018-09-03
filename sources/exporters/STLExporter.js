@@ -2,8 +2,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { Matrix3 } from '../math/Matrix3.js'
 import { Geometry } from '../core/Geometry.js'
 
-
-
 var STLExporter = function () {};
 
 STLExporter.prototype = {

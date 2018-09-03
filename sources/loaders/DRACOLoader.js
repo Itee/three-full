@@ -31,7 +31,6 @@ import {
 //
 'use strict';
 
-
 var DRACOLoader = function(manager) {
     this.timeLoaded = 0;
     this.manager = manager || DefaultLoadingManager;
@@ -71,13 +70,11 @@ DRACOLoader.prototype = {
         this.verbosity = level;
         return this;
     },
-
     
     setDrawMode: function(drawMode) {
         this.drawMode = drawMode;
         return this;
     },
-
     
     setSkipDequantization: function(attributeName, skip) {
         var skipDequantization = true;
@@ -87,7 +84,6 @@ DRACOLoader.prototype = {
             skipDequantization;
         return this;
     },
-
     
     decodeDracoFile: function(rawBuffer, callback, attributeUniqueIdMap,
                               attributeTypeMap) {
@@ -105,7 +101,6 @@ DRACOLoader.prototype = {
       var buffer = new dracoDecoder.DecoderBuffer();
       buffer.Init(new Int8Array(rawBuffer), rawBuffer.byteLength);
       var decoder = new dracoDecoder.Decoder();
-
       
       var geometryType = decoder.GetEncodedGeometryType(buffer);
       if (geometryType == dracoDecoder.TRIANGULAR_MESH) {
@@ -386,11 +381,9 @@ DRACOLoader.decoderPath = './';
 DRACOLoader.decoderConfig = {};
 DRACOLoader.decoderModulePromise = null;
 
-
 DRACOLoader.setDecoderPath = function ( path ) {
   DRACOLoader.decoderPath = path;
 };
-
 
 DRACOLoader.setDecoderConfig = function ( config ) {
   var wasmBinary = DRACOLoader.decoderConfig.wasmBinary;
@@ -401,11 +394,9 @@ DRACOLoader.setDecoderConfig = function ( config ) {
   if ( wasmBinary ) DRACOLoader.decoderConfig.wasmBinary = wasmBinary;
 };
 
-
 DRACOLoader.releaseDecoderModule = function () {
   DRACOLoader.decoderModulePromise = null;
 };
-
 
 DRACOLoader.getDecoderModule = function () {
   var scope = this;
@@ -450,7 +441,6 @@ DRACOLoader.getDecoderModule = function () {
   return promise;
 };
 
-
 DRACOLoader._loadScript = function ( src ) {
   var prevScript = document.getElementById( 'decoder_script' );
   if ( prevScript !== null ) {
@@ -466,7 +456,6 @@ DRACOLoader._loadScript = function ( src ) {
     head.appendChild( script );
   });
 };
-
 
 DRACOLoader._loadArrayBuffer = function ( src ) {
   var loader = new FileLoader();

@@ -1,10 +1,6 @@
 import { Node } from './Node.js'
 import { _Math } from '../../math/Math.js'
 
-
-
-
-
 function TempNode( type, params ) {
 
 	Node.call( this, type );

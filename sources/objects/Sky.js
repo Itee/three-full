@@ -5,8 +5,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { BackSide } from '../constants.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-
-
 var Sky = function () {
 
 	var shader = Sky.SkyShader;
@@ -164,7 +162,6 @@ Sky.SkyShader = {
 		'vec3 Uncharted2Tonemap( vec3 x ) {',
 		'	return ( ( x * ( A * x + C * B ) + D * E ) / ( x * ( A * x + B ) + D * F ) ) - E / F;',
 		'}',
-
 
 		'void main() {',
 		// optical length

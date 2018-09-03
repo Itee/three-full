@@ -7,13 +7,6 @@ import { FileLoader } from './FileLoader.js'
 import { DataTexture } from '../textures/DataTexture.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
-
-
-
-
-
 function DataTextureLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -89,13 +82,11 @@ Object.assign( DataTextureLoader.prototype, {
 
 		}, onProgress, onError );
 
-
 		return texture;
 
 	}
 
 } );
-
 
 ;
 

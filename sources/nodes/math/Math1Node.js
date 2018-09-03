@@ -1,9 +1,5 @@
 import { TempNode } from '../core/TempNode.js'
 
-
-
-
-
 function Math1Node( a, method ) {
 
 	TempNode.call( this );

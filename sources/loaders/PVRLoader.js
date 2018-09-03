@@ -7,8 +7,6 @@ import {
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
 var PVRLoader = function ( manager ) {
 
 	CompressedTextureLoader.call( this, manager );
@@ -19,7 +17,6 @@ var PVRLoader = function ( manager ) {
 
 PVRLoader.prototype = Object.create( CompressedTextureLoader.prototype );
 PVRLoader.prototype.constructor = PVRLoader;
-
 
 PVRLoader.parse = function ( buffer, loadMipmaps ) {
 
@@ -56,7 +53,6 @@ PVRLoader._parseV3 = function ( pvrDatas ) {
 
 	var header = pvrDatas.header;
 	var bpp, format;
-
 
 	var metaLen = header[ 12 ],
 		pixelFormat = header[ 2 ],
@@ -124,7 +120,6 @@ PVRLoader._parseV2 = function ( pvrDatas ) {
 		// pvrTag = header[ 11 ],
 		numSurfs = header[ 12 ];
 
-
 	var TYPE_MASK = 0xff;
 	var PVRTC_2 = 24,
 		PVRTC_4 = 25;
@@ -165,7 +160,6 @@ PVRLoader._parseV2 = function ( pvrDatas ) {
 	return PVRLoader._extract( pvrDatas );
 
 };
-
 
 PVRLoader._extract = function ( pvrDatas ) {
 

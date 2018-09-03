@@ -1,7 +1,4 @@
 
-
-
-
 var AnimationUtils = {
 
 	// same as Array.prototype.slice, but also works on typed arrays
@@ -159,7 +156,6 @@ var AnimationUtils = {
 	}
 
 };
-
 
 ;
 

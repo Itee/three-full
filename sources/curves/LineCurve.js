@@ -1,10 +1,6 @@
 import { Vector2 } from '../math/Vector2.js'
 import { Curve } from './Curve.js'
 
-
-
-
-
 function LineCurve( v1, v2 ) {
 
 	Curve.call( this );
@@ -88,7 +84,6 @@ LineCurve.prototype.fromJSON = function ( json ) {
 	return this;
 
 };
-
 
 ;
 

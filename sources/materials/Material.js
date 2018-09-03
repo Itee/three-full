@@ -13,12 +13,6 @@ import {
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
 
-
-
-
-
-
-
 var materialId = 0;
 
 function Material() {
@@ -394,7 +388,6 @@ Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 	}
 
 } );
-
 
 ;
 

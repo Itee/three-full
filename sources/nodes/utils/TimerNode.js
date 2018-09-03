@@ -1,11 +1,6 @@
 import { FloatNode } from '../inputs/FloatNode.js'
 import { NodeLib } from '../core/NodeLib.js'
 
-
-
-
-
-
 function TimerNode( scale, scope, timeScale ) {
 
 	FloatNode.call( this );

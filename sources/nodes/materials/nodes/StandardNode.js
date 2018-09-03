@@ -5,13 +5,6 @@ import { RoughnessToBlinnExponentNode } from '../../bsdfs/RoughnessToBlinnExpone
 import { UniformsUtils } from '../../../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../../../renderers/shaders/UniformsLib.js'
 
-
-
-
-
-
-
-
 function StandardNode() {
 
 	Node.call( this );

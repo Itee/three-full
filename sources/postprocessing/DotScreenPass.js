@@ -7,8 +7,6 @@ import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { DotScreenShader } from '../shaders/DotScreenShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-
-
 var DotScreenPass = function ( center, angle, scale ) {
 
 	Pass.call( this );

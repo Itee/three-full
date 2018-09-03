@@ -1,7 +1,4 @@
 
-
-
-
 function Layers() {
 
 	this.mask = 1 | 0;
@@ -41,7 +38,6 @@ Object.assign( Layers.prototype, {
 	}
 
 } );
-
 
 ;
 

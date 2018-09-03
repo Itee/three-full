@@ -1,7 +1,4 @@
 
-
-
-
 function Vector4( x, y, z, w ) {
 
 	this.x = x || 0;
@@ -620,7 +617,6 @@ Object.assign( Vector4.prototype, {
 	}
 
 } );
-
 
 ;
 

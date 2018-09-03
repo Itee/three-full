@@ -2,8 +2,6 @@ import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { CameraNode } from '../nodes/accessors/CameraNode.js'
 
-
-
 var NodeMaterialLoader = function ( manager, library ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

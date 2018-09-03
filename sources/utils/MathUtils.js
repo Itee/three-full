@@ -1,7 +1,4 @@
 
-
-
-
 var MathUtils = {
 
     setQuaternionFromProperEuler: function ( q, a, b, c, order ) {

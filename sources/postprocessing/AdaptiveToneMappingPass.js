@@ -17,8 +17,6 @@ import { LuminosityShader } from '../shaders/LuminosityShader.js'
 import { ToneMapShader } from '../shaders/ToneMapShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-
-
 var AdaptiveToneMappingPass = function ( adaptive, resolution ) {
 
 	Pass.call( this );

@@ -1,13 +1,7 @@
 import { Vector4 } from '../math/Vector4.js'
 import { Vector3 } from '../math/Vector3.js'
 
-
-
-
-
-
 var NURBSUtils = {
-
 	
 	findSpan: function( p,  u,  U ) {
 
@@ -48,8 +42,6 @@ var NURBSUtils = {
 		return mid;
 
 	},
-
-
 	
 	calcBasisFunctions: function( span, u, p, U ) {
 
@@ -82,8 +74,6 @@ var NURBSUtils = {
 		 return N;
 
 	},
-
-
 	
 	calcBSplinePoint: function( p, U, P, u ) {
 
@@ -106,8 +96,6 @@ var NURBSUtils = {
 		return C;
 
 	},
-
-
 	
 	calcBasisFunctionDerivatives: function( span,  u,  p,  n,  U ) {
 
@@ -226,8 +214,6 @@ var NURBSUtils = {
 		return ders;
 
 	},
-
-
 	
 	calcBSplineDerivatives: function( p,  U,  P,  u,  nd ) {
 
@@ -272,8 +258,6 @@ var NURBSUtils = {
 		return CK;
 
 	},
-
-
 	
 	calcKoverI: function( k, i ) {
 
@@ -302,8 +286,6 @@ var NURBSUtils = {
 		return nom / denom;
 
 	},
-
-
 	
 	calcRationalCurveDerivatives: function ( Pders ) {
 
@@ -338,8 +320,6 @@ var NURBSUtils = {
 		return CK;
 
 	},
-
-
 	
 	calcNURBSDerivatives: function( p,  U,  P,  u,  nd ) {
 
@@ -347,8 +327,6 @@ var NURBSUtils = {
 		return this.calcRationalCurveDerivatives( Pders );
 
 	},
-
-
 	
 	calcSurfacePoint: function ( p, q, U, V, P, u, v, target ) {
 

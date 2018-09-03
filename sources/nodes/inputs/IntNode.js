@@ -1,9 +1,5 @@
 import { InputNode } from '../core/InputNode.js'
 
-
-
-
-
 function IntNode( value ) {
 
 	InputNode.call( this, 'i' );

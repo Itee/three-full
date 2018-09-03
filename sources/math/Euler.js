@@ -3,13 +3,6 @@ import { Vector3 } from './Vector3.js'
 import { Matrix4 } from './Matrix4.js'
 import { _Math } from './Math.js'
 
-
-
-
-
-
-
-
 function Euler( x, y, z, order ) {
 
 	this._x = x || 0;
@@ -348,7 +341,6 @@ Object.assign( Euler.prototype, {
 	onChangeCallback: function () {}
 
 } );
-
 
 ;
 

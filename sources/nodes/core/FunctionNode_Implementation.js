@@ -1,12 +1,7 @@
 import { FunctionNode } from './FunctionNode_Declaration'
 import { NodeLib } from './NodeLib.js'
 
-
-
-
-
 // Fix circular dependency, see #2
-
 
 FunctionNode.prototype.isShared = function( builder, output ) {
 
@@ -120,6 +115,5 @@ FunctionNode.prototype.generate = function( builder, output ) {
 	}
 
 };
-
 
 export { FunctionNode }

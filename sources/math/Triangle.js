@@ -1,9 +1,5 @@
 import { Vector3 } from './Vector3.js'
 
-
-
-
-
 function Triangle( a, b, c ) {
 
 	this.a = ( a !== undefined ) ? a : new Vector3();
@@ -343,7 +339,6 @@ Object.assign( Triangle.prototype, {
 	}
 
 } );
-
 
 ;
 

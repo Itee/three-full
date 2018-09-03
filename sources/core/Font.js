@@ -1,10 +1,5 @@
 import { ShapePath } from './ShapePath.js'
 
-
-
-
-
-
 function Font( data ) {
 
 	this.type = 'Font';

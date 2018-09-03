@@ -12,8 +12,6 @@ import {
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
 
-
-
 var GPUParticleSystem = function ( options ) {
 
 	Object3D.apply( this, arguments );
@@ -262,7 +260,6 @@ var GPUParticleSystem = function ( options ) {
 
 GPUParticleSystem.prototype = Object.create( Object3D.prototype );
 GPUParticleSystem.prototype.constructor = GPUParticleSystem;
-
 
 // Subclass for particle containers, allows for very large arrays to be spread out
 

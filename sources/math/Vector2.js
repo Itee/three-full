@@ -1,7 +1,4 @@
 
-
-
-
 function Vector2( x, y ) {
 
 	this.x = x || 0;
@@ -491,7 +488,6 @@ Object.assign( Vector2.prototype, {
 	}
 
 } );
-
 
 ;
 

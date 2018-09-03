@@ -10,13 +10,6 @@ import { QuadraticBezierCurve } from '../curves/QuadraticBezierCurve.js'
 import { QuadraticBezierCurve3 } from '../curves/QuadraticBezierCurve3.js'
 import { SplineCurve } from '../curves/SplineCurve.js'
 
-
-
-
-
-
-
-
 var Curves = {
     ArcCurve: ArcCurve,
     CatmullRomCurve3: CatmullRomCurve3,
@@ -274,7 +267,6 @@ CurvePath.prototype = Object.assign( Object.create( Curve.prototype ), {
 	}
 
 } );
-
 
 ;
 

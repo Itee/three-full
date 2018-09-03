@@ -5,15 +5,6 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Color } from '../math/Color.js'
 
-
-
-
-
-
-
-
-
-
 function PolarGridHelper( radius, radials, circles, divisions, color1, color2 ) {
 
 	radius = radius || 10;

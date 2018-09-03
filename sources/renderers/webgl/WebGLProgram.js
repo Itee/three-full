@@ -28,13 +28,6 @@ import {
 	LinearEncoding
 } from '../../constants.js'
 
-
-
-
-
-
-
-
 var programIdCount = 0;
 
 function getEncodingComponents( encoding ) {
@@ -737,7 +730,6 @@ function WebGLProgram( renderer, extensions, code, material, shader, parameters,
 		}
 
 	} );
-
 
 	//
 

@@ -1,7 +1,4 @@
 
-
-
-
 var UniformsUtils = {
 
 	merge: function ( uniforms ) {
@@ -62,7 +59,6 @@ var UniformsUtils = {
 	}
 
 };
-
 
 ;
 

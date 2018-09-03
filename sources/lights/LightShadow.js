@@ -1,11 +1,6 @@
 import { Matrix4 } from '../math/Matrix4.js'
 import { Vector2 } from '../math/Vector2.js'
 
-
-
-
-
-
 function LightShadow( camera ) {
 
 	this.camera = camera;
@@ -57,7 +52,6 @@ Object.assign( LightShadow.prototype, {
 	}
 
 } );
-
 
 ;
 

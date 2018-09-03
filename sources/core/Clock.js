@@ -1,7 +1,4 @@
 
-
-
-
 function Clock( autoStart ) {
 
 	this.autoStart = ( autoStart !== undefined ) ? autoStart : true;
@@ -68,7 +65,6 @@ Object.assign( Clock.prototype, {
 	}
 
 } );
-
 
 ;
 

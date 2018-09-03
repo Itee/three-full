@@ -3,8 +3,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 
-
-
 var BufferGeometryUtils = {
 
 	computeTangents: function ( geometry ) {
@@ -186,7 +184,6 @@ var BufferGeometryUtils = {
 		}
 
 	},
-
 	
 	mergeBufferGeometries: function ( geometries, useGroups ) {
 
@@ -336,7 +333,6 @@ var BufferGeometryUtils = {
 		return mergedGeometry;
 
 	},
-
 	
 	mergeBufferAttributes: function ( attributes ) {
 

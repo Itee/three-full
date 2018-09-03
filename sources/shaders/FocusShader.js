@@ -1,7 +1,4 @@
 
-
-
-
 var FocusShader = {
 
 	uniforms : {
@@ -81,7 +78,6 @@ var FocusShader = {
 			"gl_FragColor = vec4( color.rgb * color.rgb * vec3( 0.95 ) + color.rgb, 1.0 );",
 
 		"}"
-
 
 	].join( "\n" )
 };

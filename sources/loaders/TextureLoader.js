@@ -6,14 +6,6 @@ import { ImageLoader } from './ImageLoader.js'
 import { Texture } from '../textures/Texture.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
-
-
-
-
-
-
 function TextureLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -69,7 +61,6 @@ Object.assign( TextureLoader.prototype, {
 	}
 
 } );
-
 
 ;
 

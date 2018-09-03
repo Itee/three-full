@@ -1,7 +1,4 @@
 
-
-
-
 var BokehShader = {
 
 	defines: {
@@ -69,7 +66,6 @@ var BokehShader = {
 		"	return orthographicDepthToViewZ( depth, nearClip, farClip );",
 		"	#endif",
 		"}",
-		
 
 		"void main() {",
 

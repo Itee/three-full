@@ -2,13 +2,6 @@ import { Light } from './Light.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { LightShadow } from './LightShadow.js'
 
-
-
-
-
-
-
-
 function PointLight( color, intensity, distance, decay ) {
 
 	Light.call( this, color, intensity );
@@ -59,7 +52,6 @@ PointLight.prototype = Object.assign( Object.create( Light.prototype ), {
 	}
 
 } );
-
 
 ;
 

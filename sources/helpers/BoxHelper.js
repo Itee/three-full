@@ -4,14 +4,6 @@ import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 
-
-
-
-
-
-
-
-
 function BoxHelper( object, color ) {
 
 	this.object = object;
@@ -59,8 +51,6 @@ BoxHelper.prototype.update = ( function () {
 		var min = box.min;
 		var max = box.max;
 
-		
-
 		var position = this.geometry.attributes.position;
 		var array = position.array;
 
@@ -89,7 +79,6 @@ BoxHelper.prototype.setFromObject = function ( object ) {
 	return this;
 
 };
-
 
 ;
 

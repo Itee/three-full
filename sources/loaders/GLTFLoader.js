@@ -95,8 +95,6 @@ import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
 import { PropertyBinding } from '../animation/PropertyBinding.js'
 import { BufferGeometryUtils } from '../utils/BufferGeometryUtils.js'
 
-
-
 var GLTFLoader = ( function () {
 
 	function GLTFLoader( manager ) {
@@ -305,8 +303,6 @@ var GLTFLoader = ( function () {
 
 	};
 
-	
-
 	function GLTFRegistry() {
 
 		var objects = {};
@@ -341,10 +337,6 @@ var GLTFLoader = ( function () {
 
 	}
 
-	
-	
-	
-
 	var EXTENSIONS = {
 		KHR_BINARY_GLTF: 'KHR_binary_glTF',
 		KHR_DRACO_MESH_COMPRESSION: 'KHR_draco_mesh_compression',
@@ -353,7 +345,6 @@ var GLTFLoader = ( function () {
 		KHR_MATERIALS_UNLIT: 'KHR_materials_unlit',
 		MSFT_TEXTURE_DDS: 'MSFT_texture_dds'
 	};
-
 	
 	function GLTFTextureDDSExtension() {
 
@@ -367,7 +358,6 @@ var GLTFLoader = ( function () {
 		this.ddsLoader = new DDSLoader();
 
 	}
-
 	
 	function GLTFLightsExtension( json ) {
 
@@ -430,7 +420,6 @@ var GLTFLoader = ( function () {
 		}
 
 	}
-
 	
 	function GLTFMaterialsUnlitExtension( json ) {
 
@@ -475,8 +464,6 @@ var GLTFLoader = ( function () {
 		return Promise.all( pending );
 
 	};
-
-	
 
 	var BINARY_EXTENSION_BUFFER_NAME = 'binary_glTF';
 	var BINARY_EXTENSION_HEADER_MAGIC = 'glTF';
@@ -543,7 +530,6 @@ var GLTFLoader = ( function () {
 		}
 
 	}
-
 	
 	function GLTFDracoMeshCompressionExtension( json, dracoLoader ) {
 
@@ -615,7 +601,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	function GLTFMaterialsPbrSpecularGlossinessExtension() {
 
@@ -826,7 +811,6 @@ var GLTFLoader = ( function () {
 				return material;
 
 			},
-
 			
 			cloneMaterial: function ( source ) {
 
@@ -976,10 +960,6 @@ var GLTFLoader = ( function () {
 
 	}
 
-	
-	
-	
-
 	// Spline Interpolation
 	// Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#appendix-c-spline-interpolation
 	function GLTFCubicSplineInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
@@ -1054,12 +1034,6 @@ var GLTFLoader = ( function () {
 		return result;
 
 	};
-
-	
-	
-	
-
-	
 
 	var WEBGL_CONSTANTS = {
 		FLOAT: 5126,
@@ -1222,8 +1196,6 @@ var GLTFLoader = ( function () {
 		'image/jpeg': RGBFormat
 	};
 
-	
-
 	function resolveURL( url, path ) {
 
 		// Invalid URL
@@ -1242,7 +1214,6 @@ var GLTFLoader = ( function () {
 		return path + url;
 
 	}
-
 	
 	function createDefaultMaterial() {
 
@@ -1274,7 +1245,6 @@ var GLTFLoader = ( function () {
 		}
 
 	}
-
 	
 	function assignExtrasToUserData( object, gltfDef ) {
 
@@ -1293,7 +1263,6 @@ var GLTFLoader = ( function () {
 		}
 
 	}
-
 	
 	function addMorphTargets( geometry, targets, accessors ) {
 
@@ -1404,7 +1373,6 @@ var GLTFLoader = ( function () {
 		if ( hasMorphNormal ) geometry.morphAttributes.normal = morphNormals;
 
 	}
-
 	
 	function updateMorphTargets( mesh, meshDef ) {
 
@@ -1551,7 +1519,6 @@ var GLTFLoader = ( function () {
 		return attribute.clone();
 
 	}
-
 	
 	function isMultiPassGeometry( primitives ) {
 
@@ -1585,8 +1552,6 @@ var GLTFLoader = ( function () {
 		return true;
 
 	}
-
-	
 
 	function GLTFParser( json, extensions, options ) {
 
@@ -1639,7 +1604,6 @@ var GLTFLoader = ( function () {
 		} ).catch( onError );
 
 	};
-
 	
 	GLTFParser.prototype.markDefs = function () {
 
@@ -1700,7 +1664,6 @@ var GLTFLoader = ( function () {
 		this.json.meshUses = meshUses;
 
 	};
-
 	
 	GLTFParser.prototype.getDependency = function ( type, index ) {
 
@@ -1767,7 +1730,6 @@ var GLTFLoader = ( function () {
 		return dependency;
 
 	};
-
 	
 	GLTFParser.prototype.getDependencies = function ( type ) {
 
@@ -1791,7 +1753,6 @@ var GLTFLoader = ( function () {
 		return dependencies;
 
 	};
-
 	
 	GLTFParser.prototype.getMultiDependencies = function ( types ) {
 
@@ -1820,7 +1781,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadBuffer = function ( bufferIndex ) {
 
@@ -1853,7 +1813,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadBufferView = function ( bufferViewIndex ) {
 
@@ -1868,7 +1827,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadAccessor = function ( accessorIndex ) {
 
@@ -1994,7 +1952,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadTexture = function ( textureIndex ) {
 
@@ -2093,7 +2050,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.assignTexture = function ( materialParams, textureName, textureIndex ) {
 
@@ -2104,7 +2060,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadMaterial = function ( materialIndex ) {
 
@@ -2271,7 +2226,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	function addPrimitiveAttributes( geometry, primitiveDef, accessors ) {
 
@@ -2305,7 +2259,6 @@ var GLTFLoader = ( function () {
 		assignExtrasToUserData( geometry, primitiveDef );
 
 	}
-
 	
 	GLTFParser.prototype.loadGeometries = function ( primitives ) {
 
@@ -2461,7 +2414,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadMesh = function ( meshIndex ) {
 
@@ -2696,7 +2648,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadCamera = function ( cameraIndex ) {
 
@@ -2728,7 +2679,6 @@ var GLTFLoader = ( function () {
 		return Promise.resolve( camera );
 
 	};
-
 	
 	GLTFParser.prototype.loadSkin = function ( skinIndex ) {
 
@@ -2751,7 +2701,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadAnimation = function ( animationIndex ) {
 
@@ -2890,7 +2839,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadNode = function ( nodeIndex ) {
 
@@ -3005,7 +2953,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-
 	
 	GLTFParser.prototype.loadScene = function () {
 

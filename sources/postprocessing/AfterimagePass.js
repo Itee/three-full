@@ -14,8 +14,6 @@ import {
 import { AfterimageShader } from '../shaders/AfterimageShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-
-
 var AfterimagePass = function ( damp ) {
 
 	Pass.call( this );

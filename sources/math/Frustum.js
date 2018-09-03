@@ -2,12 +2,6 @@ import { Vector3 } from './Vector3.js'
 import { Sphere } from './Sphere.js'
 import { Plane } from './Plane.js'
 
-
-
-
-
-
-
 function Frustum( p0, p1, p2, p3, p4, p5 ) {
 
 	this.planes = [
@@ -189,7 +183,6 @@ Object.assign( Frustum.prototype, {
 	}
 
 } );
-
 
 ;
 

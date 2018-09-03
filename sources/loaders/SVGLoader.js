@@ -6,8 +6,6 @@ import { Matrix3 } from '../math/Matrix3.js'
 import { Vector3 } from '../math/Vector3.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
 var SVGLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -441,8 +439,6 @@ SVGLoader.prototype = {
 
 		}
 
-		
-
 		function parseArcCommand( path, rx, ry, x_axis_rotation, large_arc_flag, sweep_flag, start, end ) {
 
 			x_axis_rotation = x_axis_rotation * Math.PI / 180;
@@ -505,7 +501,6 @@ SVGLoader.prototype = {
 			return ang;
 
 		}
-
 		
 		function parseRectNode( node, style ) {
 
@@ -713,7 +708,6 @@ SVGLoader.prototype = {
 			}
 
 			return array;
-
 
 		}
 
@@ -987,7 +981,6 @@ SVGLoader.prototype = {
 		parseNode( xml.documentElement, { fill: '#000' } );
 
 		// console.log( paths );
-
 
 		console.timeEnd( 'SVGLoader: Parse' );
 

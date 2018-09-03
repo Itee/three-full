@@ -1,9 +1,5 @@
 import { Interpolant } from '../Interpolant.js'
 
-
-
-
-
 function LinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 	Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -39,7 +35,6 @@ LinearInterpolant.prototype = Object.assign( Object.create( Interpolant.prototyp
 	}
 
 } );
-
 
 ;
 

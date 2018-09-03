@@ -17,8 +17,6 @@ import {
 	RGBFormat
 } from '../constants.js'
 
-
-
 var Lensflare = function () {
 
 	Mesh.call( this, Lensflare.Geometry, new MeshBasicMaterial( { opacity: 0, transparent: true } ) );

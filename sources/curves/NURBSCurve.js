@@ -3,11 +3,6 @@ import { Vector4 } from '../math/Vector4.js'
 import { Vector3 } from '../math/Vector3.js'
 import { NURBSUtils } from './NURBSUtils.js'
 
-
-
-
-
-
 var NURBSCurve = function ( degree, knots , controlPoints , startKnot , endKnot  ) {
 
 	Curve.call( this );
@@ -28,10 +23,8 @@ var NURBSCurve = function ( degree, knots , controlPoints , startKnot , endKnot 
 
 };
 
-
 NURBSCurve.prototype = Object.create( Curve.prototype );
 NURBSCurve.prototype.constructor = NURBSCurve;
-
 
 NURBSCurve.prototype.getPoint = function ( t ) {
 
@@ -50,7 +43,6 @@ NURBSCurve.prototype.getPoint = function ( t ) {
 	return new Vector3( hpoint.x, hpoint.y, hpoint.z );
 
 };
-
 
 NURBSCurve.prototype.getTangent = function ( t ) {
 

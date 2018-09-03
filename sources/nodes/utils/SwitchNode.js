@@ -1,9 +1,5 @@
 import { Node } from '../core/Node.js'
 
-
-
-
-
 function SwitchNode( node, components ) {
 
 	Node.call( this );

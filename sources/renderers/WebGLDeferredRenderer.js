@@ -32,8 +32,6 @@ import {
 import { CopyShader } from '../shaders/CopyShader.js'
 import { FXAAShader } from '../shaders/FXAAShader.js'
 
-
-
 var WebGLDeferredRenderer = function ( parameters ) {
 
 	parameters = parameters || {};
@@ -804,7 +802,6 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		return mesh;
 
 	}
-
 	
 	function createDeferredPointLightMaterial() {
 
@@ -1226,8 +1223,6 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 	}
 
-	
-
 	function renderNormalDepth( scene, camera ) {
 
 		scene.traverse( setMaterialNormalDepth );
@@ -1248,8 +1243,6 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 	}
 
-	
-
 	function renderColor( scene, camera ) {
 
 		scene.traverse( setMaterialColor );
@@ -1268,8 +1261,6 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		scene.traverse( restoreOriginalMaterial );
 
 	}
-
-	
 
 	function renderLight( scene, camera ) {
 
@@ -1291,8 +1282,6 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		_gl.disable( _gl.STENCIL_TEST );
 
 	}
-
-	
 
 	function renderLightPre( scene, camera ) {
 
@@ -1316,8 +1305,6 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 	}
 
-	
-
 	function renderReconstruction( scene, camera ) {
 
 		scene.traverse( setMaterialReconstruction );
@@ -1335,8 +1322,6 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		scene.traverse( restoreOriginalMaterial );
 
 	}
-
-	
 
 	function renderFinal( scene, camera ) {
 
@@ -2117,7 +2102,6 @@ var ShaderDeferred = {
 			ShaderDeferredCommon[ 'commonUniforms' ]
 
 		),
-
 
 		vertexShader: [
 

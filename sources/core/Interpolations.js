@@ -1,7 +1,4 @@
 
-
-
-
 function CatmullRom( t, p0, p1, p2, p3 ) {
 
 	var v0 = ( p2 - p0 ) * 0.5;

@@ -4,14 +4,6 @@ import { Vector3 } from '../../math/Vector3.js'
 import { UniformsLib } from './UniformsLib.js'
 import { Color } from '../../math/Color.js'
 
-
-
-
-
-
-
-
-
 var ShaderLib = {
 
 	basic: {
@@ -176,8 +168,6 @@ var ShaderLib = {
 
 	},
 
-	
-
 	cube: {
 
 		uniforms: {
@@ -251,7 +241,6 @@ ShaderLib.physical = {
 	fragmentShader: ShaderChunk.meshphysical_frag
 
 };
-
 
 ;
 

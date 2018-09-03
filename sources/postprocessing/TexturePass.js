@@ -7,8 +7,6 @@ import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { CopyShader } from '../shaders/CopyShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-
-
 var TexturePass = function ( map, opacity ) {
 
 	Pass.call( this );

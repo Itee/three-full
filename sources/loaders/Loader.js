@@ -17,14 +17,6 @@ import { MaterialLoader } from './MaterialLoader.js'
 import { TextureLoader } from './TextureLoader.js'
 import { Color } from '../math/Color.js'
 
-
-
-
-
-
-
-
-
 function Loader() {}
 
 Loader.Handlers = {

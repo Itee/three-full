@@ -1,9 +1,5 @@
 import { Earcut } from '../misc/Earcut.js'
 
-
-
-
-
 var ShapeUtils = {
 
 	// calculate area of the contour polygon

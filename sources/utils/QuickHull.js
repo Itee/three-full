@@ -3,10 +3,6 @@ import { Line3 } from '../math/Line3.js'
 import { Plane } from '../math/Plane.js'
 import { Triangle } from '../math/Triangle.js'
 
-
-
-
-
 	var Visible = 0;
 	var Deleted = 1;
 
@@ -223,7 +219,6 @@ import { Triangle } from '../math/Triangle.js'
 					// mark the vertices to be reassigned to some other face
 
 					this.unassigned.appendChain( faceVertices );
-
 
 				} else {
 
@@ -734,7 +729,6 @@ import { Triangle } from '../math/Triangle.js'
 
 			return face.getEdge( 0 ); // the half edge whose vertex is the eyeVertex
 
-
 		},
 
 		//  Adds 'horizon.length' faces to the hull, each face will be linked with the
@@ -1210,10 +1204,5 @@ import { Triangle } from '../math/Triangle.js'
 	} );
 
 	// export
-
-	
-
-
-
 
 export { QuickHull }

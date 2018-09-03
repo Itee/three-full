@@ -26,8 +26,6 @@ import {
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
 var VRMLLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -88,7 +86,6 @@ VRMLLoader.prototype = {
 			var float_pattern = /(\b|\-|\+)([\d\.e]+)/;
 			var float2_pattern = /([\d\.\+\-e]+)\s+([\d\.\+\-e]+)/g;
 			var float3_pattern = /([\d\.\+\-e]+)\s+([\d\.\+\-e]+)\s+([\d\.\+\-e]+)/g;
-
 			
 			function paintFaces( geometry, radius, angles, colors, topDown ) {
 
@@ -187,7 +184,6 @@ VRMLLoader.prototype = {
 			function parseProperty( node, line ) {
 
 				var parts = [], part, property = {}, fieldName;
-
 				
 				var regex = /[^\s,\[\]]+/g;
 
@@ -200,7 +196,6 @@ VRMLLoader.prototype = {
 				}
 
 				fieldName = parts[ 0 ];
-
 
 				// trigger several recorders
 				switch ( fieldName ) {

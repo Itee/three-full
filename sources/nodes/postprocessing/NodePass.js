@@ -3,11 +3,6 @@ import { ScreenNode } from '../inputs/ScreenNode.js'
 import { ShaderPass } from '../../postprocessing/ShaderPass.js'
 import { _Math } from '../../math/Math.js'
 
-
-
-
-
-
 function NodePass() {
 
 	ShaderPass.call( this );

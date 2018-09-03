@@ -19,20 +19,6 @@ import {
 } from '../../constants.js'
 import { TextureCubeNode } from '../misc/TextureCubeNode.js'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 var elements = NodeUtils.elements,
 	constructors = [ 'float', 'vec2', 'vec3', 'vec4' ],
 	convertFormatToType = {
@@ -329,7 +315,6 @@ NodeBuilder.prototype = {
 
 	},
 
-
 	addVertexCode: function ( code ) {
 
 		this.addCode( code, 'vertex' );
@@ -347,7 +332,6 @@ NodeBuilder.prototype = {
 		this.code[ shader || this.shader ] += code + '\n';
 
 	},
-
 
 	addVertexNodeCode: function ( code ) {
 
@@ -409,7 +393,6 @@ NodeBuilder.prototype = {
 
 	},
 
-
 	addVertexParsCode: function ( code ) {
 
 		this.addParsCode( code, 'vertex' );
@@ -428,14 +411,12 @@ NodeBuilder.prototype = {
 
 	},
 
-
 	addVaryCode: function ( code ) {
 
 		this.addVertexParsCode( code );
 		this.addFragmentParsCode( code );
 
 	},
-
 
 	isCache: function ( name ) {
 
@@ -615,7 +596,6 @@ NodeBuilder.prototype = {
 			return node.name;
 
 		}
-
 
 		if ( node instanceof FunctionNode ) {
 

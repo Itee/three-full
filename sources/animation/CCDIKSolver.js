@@ -11,10 +11,7 @@ import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Line } from '../objects/Line.js'
 
-
-
 var CCDIKSolver = ( function () {
-
 	
 	function CCDIKSolver( mesh, iks ) {
 
@@ -28,7 +25,6 @@ var CCDIKSolver = ( function () {
 	CCDIKSolver.prototype = {
 
 		constructor: CCDIKSolver,
-
 		
 		update: function () {
 
@@ -181,7 +177,6 @@ var CCDIKSolver = ( function () {
 			};
 
 		}(),
-
 		
 		createHelper: function () {
 
@@ -224,7 +219,6 @@ var CCDIKSolver = ( function () {
 		}
 
 	};
-
 	
 	function CCDIKHelper( mesh, iks ) {
 
@@ -273,7 +267,6 @@ var CCDIKSolver = ( function () {
 	CCDIKHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		constructor: CCDIKHelper,
-
 		
 		updateMatrixWorld: function () {
 

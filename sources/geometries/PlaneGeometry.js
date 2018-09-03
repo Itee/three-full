@@ -2,12 +2,6 @@ import { Geometry } from '../core/Geometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
-
-
-
-
-
-
 // PlaneGeometry
 
 function PlaneGeometry( width, height, widthSegments, heightSegments ) {
@@ -122,7 +116,6 @@ function PlaneBufferGeometry( width, height, widthSegments, heightSegments ) {
 
 PlaneBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 PlaneBufferGeometry.prototype.constructor = PlaneBufferGeometry;
-
 
 ;
 

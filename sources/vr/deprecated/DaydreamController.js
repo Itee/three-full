@@ -1,8 +1,6 @@
 import { Object3D } from '../../core/Object3D.js'
 import { Vector3 } from '../../math/Vector3.js'
 
-
-
 var DaydreamController = function () {
 
 	Object3D.call( this );

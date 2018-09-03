@@ -31,10 +31,7 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
 import { _Math } from '../math/Math.js'
 
-
-
 var MMDLoader = ( function () {
-
 	
 	function MMDLoader( manager ) {
 
@@ -53,7 +50,6 @@ var MMDLoader = ( function () {
 		constructor: MMDLoader,
 
 		crossOrigin: 'anonymous',
-
 		
 		setCrossOrigin: function ( crossOrigin ) {
 
@@ -63,7 +59,6 @@ var MMDLoader = ( function () {
 		},
 
 		// Load MMD assets as Three.js Object
-
 		
 		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -88,7 +83,6 @@ var MMDLoader = ( function () {
 			}, onProgress, onError );
 
 		},
-
 		
 		loadAnimation: function ( url, object, onLoad, onProgress, onError ) {
 
@@ -103,7 +97,6 @@ var MMDLoader = ( function () {
 			}, onProgress, onError );
 
 		},
-
 		
 		loadWithAnimation: function ( modelUrl, vmdUrl, onLoad, onProgress, onError ) {
 
@@ -125,7 +118,6 @@ var MMDLoader = ( function () {
 		},
 
 		// Load MMD assets as Object data parsed by MMDParser
-
 		
 		loadPMD: function ( url, onLoad, onProgress, onError ) {
 
@@ -141,7 +133,6 @@ var MMDLoader = ( function () {
 				}, onProgress, onError );
 
 		},
-
 		
 		loadPMX: function ( url, onLoad, onProgress, onError ) {
 
@@ -157,7 +148,6 @@ var MMDLoader = ( function () {
 				}, onProgress, onError );
 
 		},
-
 		
 		loadVMD: function ( url, onLoad, onProgress, onError ) {
 
@@ -185,7 +175,6 @@ var MMDLoader = ( function () {
 			}
 
 		},
-
 		
 		loadVPD: function ( url, isUnicode, onLoad, onProgress, onError ) {
 
@@ -232,7 +221,6 @@ var MMDLoader = ( function () {
 	};
 
 	// Utilities
-
 	
 	var DEFAULT_TOON_TEXTURES = [
 		'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAL0lEQVRYR+3QQREAAAzCsOFfNJPBJ1XQS9r2hsUAAQIECBAgQIAAAQIECBAgsBZ4MUx/ofm2I/kAAAAASUVORK5CYII=',
@@ -249,7 +237,6 @@ var MMDLoader = ( function () {
 	];
 
 	// Builders. They build Three.js object from Object data parsed by MMDParser.
-
 	
 	function MeshBuilder( manager ) {
 
@@ -263,7 +250,6 @@ var MMDLoader = ( function () {
 		constructor: MeshBuilder,
 
 		crossOrigin: 'anonymous',
-
 		
 		setCrossOrigin: function ( crossOrigin ) {
 
@@ -271,7 +257,6 @@ var MMDLoader = ( function () {
 			return this;
 
 		},
-
 		
 		build: function ( data, texturePath, onProgress, onError ) {
 
@@ -300,7 +285,6 @@ var MMDLoader = ( function () {
 	GeometryBuilder.prototype = {
 
 		constructor: GeometryBuilder,
-
 		
 		build: function ( data ) {
 
@@ -685,7 +669,6 @@ var MMDLoader = ( function () {
 					params[ key ] = rigidBody[ key ];
 
 				}
-
 				
 				if ( data.metadata.format === 'pmx' ) {
 
@@ -776,7 +759,6 @@ var MMDLoader = ( function () {
 	};
 
 	//
-
 	
 	function MaterialBuilder( manager ) {
 
@@ -794,7 +776,6 @@ var MMDLoader = ( function () {
 		crossOrigin: 'anonymous',
 
 		texturePath: undefined,
-
 		
 		setCrossOrigin: function ( crossOrigin ) {
 
@@ -802,7 +783,6 @@ var MMDLoader = ( function () {
 			return this;
 
 		},
-
 		
 		setTexturePath: function ( texturePath ) {
 
@@ -810,7 +790,6 @@ var MMDLoader = ( function () {
 			return this;
 
 		},
-
 		
 		build: function ( data, geometry, onProgress, onError ) {
 
@@ -829,7 +808,6 @@ var MMDLoader = ( function () {
 				var params = { userData: {} };
 
 				if ( material.name !== undefined ) params.name = material.name;
-
 				
 				params.color = new Color().fromArray( material.diffuse );
 				params.opacity = material.diffuse[ 3 ];
@@ -1239,7 +1217,6 @@ var MMDLoader = ( function () {
 					return false;
 
 				}
-
 				
 				function getAlphaByUv( image, uv ) {
 
@@ -1288,7 +1265,6 @@ var MMDLoader = ( function () {
 	AnimationBuilder.prototype = {
 
 		constructor: AnimationBuilder,
-
 		
 		build: function ( vmd, mesh ) {
 
@@ -1306,7 +1282,6 @@ var MMDLoader = ( function () {
 			return new AnimationClip( '', - 1, tracks );
 
 		},
-
 		
 		buildSkeletalAnimation: function ( vmd, mesh ) {
 
@@ -1388,7 +1363,6 @@ var MMDLoader = ( function () {
 			return new AnimationClip( '', - 1, tracks );
 
 		},
-
 		
 		buildMorphAnimation: function ( vmd, mesh ) {
 
@@ -1436,7 +1410,6 @@ var MMDLoader = ( function () {
 			return new AnimationClip( '', - 1, tracks );
 
 		},
-
 		
 		buildCameraAnimation: function ( vmd ) {
 
@@ -1555,7 +1528,6 @@ var MMDLoader = ( function () {
 		// private method
 
 		_createTrack: function ( node, typedKeyframeTrack, times, values, interpolations ) {
-
 			
 			if ( times.length > 2 ) {
 
@@ -1695,8 +1667,6 @@ var MMDLoader = ( function () {
 		},
 
 		_calculate: function ( x1, x2, y1, y2, x ) {
-
-			
 
 			var c = 0.5;
 			var t = c;

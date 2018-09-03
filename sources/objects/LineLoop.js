@@ -1,9 +1,5 @@
 import { Line } from './Line.js'
 
-
-
-
-
 function LineLoop( geometry, material ) {
 
 	Line.call( this, geometry, material );
@@ -19,7 +15,6 @@ LineLoop.prototype = Object.assign( Object.create( Line.prototype ), {
 	isLineLoop: true,
 
 } );
-
 
 ;
 

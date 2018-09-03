@@ -7,8 +7,6 @@ import {
 	RGB_ETC1_Format
 } from '../constants.js'
 
-
-
 var DDSLoader = function ( manager ) {
 
 	CompressedTextureLoader.call( this, manager );

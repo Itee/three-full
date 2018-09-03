@@ -1,9 +1,5 @@
 import { Vector3 } from './Vector3.js'
 
-
-
-
-
 function Matrix4() {
 
 	this.elements = [
@@ -924,7 +920,6 @@ Object.assign( Matrix4.prototype, {
 	}
 
 } );
-
 
 ;
 

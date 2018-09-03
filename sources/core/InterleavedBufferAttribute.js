@@ -1,8 +1,4 @@
 
-
-
-
-
 function InterleavedBufferAttribute( interleavedBuffer, itemSize, offset, normalized ) {
 
 	this.data = interleavedBuffer;
@@ -134,7 +130,6 @@ Object.assign( InterleavedBufferAttribute.prototype, {
 	}
 
 } );
-
 
 ;
 

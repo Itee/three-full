@@ -3,8 +3,6 @@ import { Geometry } from '../core/Geometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
-
-
 var SimplifyModifier = function () {};
 
 ( function () {
@@ -202,7 +200,6 @@ var SimplifyModifier = function () {};
 
 		}
 
-
 		// delete triangles on edge uv:
 		for ( i = u.faces.length - 1; i >= 0; i -- ) {
 
@@ -221,7 +218,6 @@ var SimplifyModifier = function () {};
 
 		}
 
-
 		removeVertex( u, vertices );
 
 		// recompute the edge collapse costs in neighborhood
@@ -232,8 +228,6 @@ var SimplifyModifier = function () {};
 		}
 
 	}
-
-
 
 	function minimumCostEdge( vertices ) {
 
@@ -279,7 +273,6 @@ var SimplifyModifier = function () {};
 		v2.addUniqueNeighbor( v1 );
 		v2.addUniqueNeighbor( v3 );
 
-
 		v3.faces.push( this );
 		v3.addUniqueNeighbor( v1 );
 		v3.addUniqueNeighbor( v2 );
@@ -314,7 +307,6 @@ var SimplifyModifier = function () {};
 
 		removeFromArray( oldv.faces, this );
 		newv.faces.push( this );
-
 
 		oldv.removeIfNonNeighbor( this.v1 );
 		this.v1.removeIfNonNeighbor( oldv );

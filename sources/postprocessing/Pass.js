@@ -1,5 +1,4 @@
 
-
 var Pass = function () {
 	this.enabled = true;
 	this.needsSwap = true;

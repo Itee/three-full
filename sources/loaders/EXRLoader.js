@@ -6,8 +6,6 @@ import {
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
 // 
 
 // // TinyEXR contains some OpenEXR code, which is licensed under ------------

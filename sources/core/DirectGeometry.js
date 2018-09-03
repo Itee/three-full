@@ -1,9 +1,5 @@
 import { Vector2 } from '../math/Vector2.js'
 
-
-
-
-
 function DirectGeometry() {
 
 	this.vertices = [];
@@ -269,7 +265,6 @@ Object.assign( DirectGeometry.prototype, {
 	}
 
 } );
-
 
 ;
 

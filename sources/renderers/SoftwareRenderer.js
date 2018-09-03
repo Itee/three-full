@@ -19,8 +19,6 @@ import {
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
 
-
-
 var SoftwareRenderer = function ( parameters ) {
 
 	console.log( 'SoftwareRenderer', REVISION );
@@ -164,7 +162,6 @@ var SoftwareRenderer = function ( parameters ) {
 
 	};
 
-
 	this.render = function ( scene, camera ) {
 
 		// TODO: Check why autoClear can't be false.
@@ -212,7 +209,6 @@ var SoftwareRenderer = function ( parameters ) {
 					);
 
 				}
-
 
 			} else if ( element instanceof RenderableSprite ) {
 
@@ -310,8 +306,6 @@ var SoftwareRenderer = function ( parameters ) {
 		var y = Math.min( recty1, prevrecty1 );
 		var width = Math.max( rectx2, prevrectx2 ) - x;
 		var height = Math.max( recty2, prevrecty2 ) - y;
-
-		
 
 		if ( x !== Infinity ) {
 
@@ -541,7 +535,6 @@ var SoftwareRenderer = function ( parameters ) {
 
 					}
 
-
 				} else {
 
 					if ( material.vertexColors === FaceColors ) {
@@ -609,8 +602,6 @@ var SoftwareRenderer = function ( parameters ) {
 		return shader;
 
 	}
-
-	
 
 	function drawTriangle( v1, v2, v3, uv1, uv2, uv3, shader, face, material ) {
 
@@ -1119,7 +1110,6 @@ var SoftwareRenderer = function ( parameters ) {
 						cynz = cbnz;
 
 					}
-
 
 					for ( var iy = 0; iy < q; iy ++ ) {
 

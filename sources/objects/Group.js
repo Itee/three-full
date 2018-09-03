@@ -1,9 +1,5 @@
 import { Object3D } from '../core/Object3D.js'
 
-
-
-
-
 function Group() {
 
 	Object3D.call( this );
@@ -19,7 +15,6 @@ Group.prototype = Object.assign( Object.create( Object3D.prototype ), {
 	isGroup: true
 
 } );
-
 
 ;
 

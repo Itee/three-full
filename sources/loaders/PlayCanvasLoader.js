@@ -11,8 +11,6 @@ import { Mesh } from '../objects/Mesh.js'
 import { Euler } from '../math/Euler.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
 var PlayCanvasLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -194,7 +192,6 @@ PlayCanvasLoader.prototype = {
 			if ( parent === - 1 ) continue;
 
 			model.nodes[ parent ]._object.add( model.nodes[ i ]._object );
-
 
 		}
 

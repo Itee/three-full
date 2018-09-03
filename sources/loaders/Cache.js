@@ -1,7 +1,4 @@
 
-
-
-
 var Cache = {
 
 	enabled: false,
@@ -41,7 +38,6 @@ var Cache = {
 	}
 
 };
-
 
 ;
 

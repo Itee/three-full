@@ -1,7 +1,4 @@
 
-
-
-
 function painterSortStable( a, b ) {
 
 	if ( a.renderOrder !== b.renderOrder ) {
@@ -45,7 +42,6 @@ function reversePainterSortStable( a, b ) {
 	}
 
 }
-
 
 function WebGLRenderList() {
 
@@ -95,7 +91,6 @@ function WebGLRenderList() {
 			renderItem.group = group;
 
 		}
-
 
 		( material.transparent === true ? transparent : opaque ).push( renderItem );
 
@@ -156,7 +151,6 @@ function WebGLRenderLists() {
 	};
 
 }
-
 
 ;
 

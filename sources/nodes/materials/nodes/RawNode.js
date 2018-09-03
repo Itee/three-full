@@ -1,9 +1,5 @@
 import { Node } from '../../core/Node.js'
 
-
-
-
-
 function RawNode( value ) {
 
 	Node.call( this, 'v4' );

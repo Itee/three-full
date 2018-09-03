@@ -5,8 +5,6 @@ import { Matrix3 } from '../math/Matrix3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Spherical } from '../math/Spherical.js'
 
-
-
 var EditorControls = function ( object, domElement ) {
 
 	domElement = ( domElement !== undefined ) ? domElement : document;
@@ -253,7 +251,6 @@ var EditorControls = function ( object, domElement ) {
 
 	}
 
-
 	function touchMove( event ) {
 
 		if ( scope.enabled === false ) return;
@@ -289,7 +286,6 @@ var EditorControls = function ( object, domElement ) {
 				var distance = touches[ 0 ].distanceTo( touches[ 1 ] );
 				scope.zoom( delta.set( 0, 0, prevDistance - distance ) );
 				prevDistance = distance;
-
 
 				var offset0 = touches[ 0 ].clone().sub( getClosest( touches[ 0 ], prevTouches ) );
 				var offset1 = touches[ 1 ].clone().sub( getClosest( touches[ 1 ], prevTouches ) );

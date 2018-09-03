@@ -10,8 +10,6 @@ import {
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { Loader } from './Loader.js'
 
-
-
 var MTLLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -21,7 +19,6 @@ var MTLLoader = function ( manager ) {
 MTLLoader.prototype = {
 
 	constructor: MTLLoader,
-
 	
 	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -36,7 +33,6 @@ MTLLoader.prototype = {
 		}, onProgress, onError );
 
 	},
-
 	
 	setPath: function ( path ) {
 
@@ -44,7 +40,6 @@ MTLLoader.prototype = {
 		return this;
 
 	},
-
 	
 	setTexturePath: function ( path ) {
 
@@ -74,7 +69,6 @@ MTLLoader.prototype = {
 		return this;
 
 	},
-
 	
 	parse: function ( text ) {
 
@@ -136,8 +130,6 @@ MTLLoader.prototype = {
 	}
 
 };
-
-
 
 MTLLoader.MaterialCreator = function ( baseUrl, options ) {
 

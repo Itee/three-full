@@ -12,8 +12,6 @@ import {
 } from '../constants.js'
 import { UnpackDepthRGBAShader } from '../shaders/UnpackDepthRGBAShader.js'
 
-
-
 var ShadowMapViewer = function ( light ) {
 
 	//- Internals
@@ -47,7 +45,6 @@ var ShadowMapViewer = function ( light ) {
 
 	scene.add( mesh );
 
-
 	//Label for light's name
 	var labelCanvas, labelMesh;
 
@@ -80,7 +77,6 @@ var ShadowMapViewer = function ( light ) {
 		scene.add( labelMesh );
 
 	}
-
 
 	function resetPosition () {
 

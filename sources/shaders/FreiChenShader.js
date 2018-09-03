@@ -1,7 +1,5 @@
 import { Vector2 } from '../math/Vector2.js'
 
-
-
 var FreiChenShader = {
 
 	uniforms: {
@@ -31,7 +29,6 @@ var FreiChenShader = {
 		"uniform vec2 aspect;",
 
 		"vec2 texel = vec2(1.0 / aspect.x, 1.0 / aspect.y);",
-
 
 		"mat3 G[9];",
 
@@ -63,7 +60,6 @@ var FreiChenShader = {
 			"mat3 I;",
 			"float cnv[9];",
 			"vec3 sample;",
-
 			
 			"for (float i=0.0; i<3.0; i++) {",
 				"for (float j=0.0; j<3.0; j++) {",
@@ -71,7 +67,6 @@ var FreiChenShader = {
 					"I[int(i)][int(j)] = length(sample);",
 				"}",
 			"}",
-
 			
 			"for (int i=0; i<9; i++) {",
 				"float dp3 = dot(G[i][0], I[0]) + dot(G[i][1], I[1]) + dot(G[i][2], I[2]);",

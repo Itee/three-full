@@ -5,15 +5,6 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Color } from '../math/Color.js'
 
-
-
-
-
-
-
-
-
-
 function GridHelper( size, divisions, color1, color2 ) {
 
 	size = size || 10;

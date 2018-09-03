@@ -12,8 +12,6 @@ import { Mesh } from '../objects/Mesh.js'
 import { Group } from '../objects/Group.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
 var BabylonLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

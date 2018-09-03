@@ -5,8 +5,6 @@ import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js'
 import { BooleanKeyframeTrack } from './tracks/BooleanKeyframeTrack.js'
 import { ColorKeyframeTrack } from './tracks/ColorKeyframeTrack.js'
 
-
-
 var AnimationClipCreator = function () {};
 
 AnimationClipCreator.CreateRotationAnimation = function ( period, axis ) {
@@ -57,7 +55,6 @@ AnimationClipCreator.CreateShakeAnimation = function ( duration, shakeScale ) {
 
 };
 
-
 AnimationClipCreator.CreatePulsationAnimation = function ( duration, pulseScale ) {
 
 	var times = [], values = [], tmp = new Vector3();
@@ -80,7 +77,6 @@ AnimationClipCreator.CreatePulsationAnimation = function ( duration, pulseScale 
 
 };
 
-
 AnimationClipCreator.CreateVisibilityAnimation = function ( duration ) {
 
 	var times = [ 0, duration / 2, duration ], values = [ true, false, true ];
@@ -92,7 +88,6 @@ AnimationClipCreator.CreateVisibilityAnimation = function ( duration ) {
 	return new AnimationClip( null, duration, [ track ] );
 
 };
-
 
 AnimationClipCreator.CreateMaterialColorAnimation = function ( duration, colors ) {
 

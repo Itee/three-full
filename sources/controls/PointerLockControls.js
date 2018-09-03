@@ -2,8 +2,6 @@ import { Object3D } from '../core/Object3D.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Euler } from '../math/Euler.js'
 
-
-
 var PointerLockControls = function ( camera ) {
 
 	var scope = this;

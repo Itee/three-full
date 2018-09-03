@@ -5,8 +5,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { InstancedInterleavedBuffer } from '../core/InstancedInterleavedBuffer.js'
 import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js'
 
-
-
 var Wireframe = function ( geometry, material ) {
 
 	Mesh.call( this );

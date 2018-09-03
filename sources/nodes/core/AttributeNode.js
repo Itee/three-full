@@ -1,9 +1,5 @@
 import { Node } from './Node.js'
 
-
-
-
-
 function AttributeNode( name, type ) {
 
 	Node.call( this, type );

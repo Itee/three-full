@@ -1,9 +1,6 @@
 import { AnimationUtils } from '../animation/AnimationUtils.js'
 
-
 var TypedArrayUtils = {};
-
-
 
 TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 
@@ -141,10 +138,6 @@ TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 
 };
 
-
-
-
-
  TypedArrayUtils.Kdtree = function ( points, metric, eleSize ) {
 
 	var self = this;
@@ -194,8 +187,6 @@ TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 	};
 	
 	this.nearest = function ( point, maxNodes, maxDistance ) {
-	
-		 
 
 		var i,
 			result,
@@ -349,7 +340,6 @@ TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 	
 };
 
-
 TypedArrayUtils.Kdtree.prototype.Node = function ( obj, depth, parent, pos ) {
 
 	this.obj = obj;
@@ -360,8 +350,6 @@ TypedArrayUtils.Kdtree.prototype.Node = function ( obj, depth, parent, pos ) {
 	this.pos = pos;
 
 }; 
-
-
 
 TypedArrayUtils.Kdtree.BinaryHeap = function ( scoreFunction ) {
 

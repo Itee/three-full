@@ -1,9 +1,5 @@
 import { WebGLLights } from './WebGLLights.js'
 
-
-
-
-
 function WebGLRenderState() {
 
 	var lights = new WebGLLights();
@@ -99,7 +95,6 @@ function WebGLRenderStates() {
 	};
 
 }
-
 
 ;
 

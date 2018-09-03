@@ -6,8 +6,6 @@ import { MorphBlendMesh } from './MorphBlendMesh.js'
 import { UVMapping } from '../constants.js'
 import { _Math } from '../math/Math.js'
 
-
-
 var MD2CharacterComplex = function () {
 
 	var scope = this;
@@ -96,7 +94,6 @@ var MD2CharacterComplex = function () {
 		}
 
 	};
-
 
 	this.shareParts = function ( original ) {
 
@@ -288,7 +285,6 @@ var MD2CharacterComplex = function () {
 
 		}
 
-
 	};
 
 	this.update = function ( delta ) {
@@ -392,7 +388,6 @@ var MD2CharacterComplex = function () {
 			}
 
 		}
-
 
 		if ( Math.abs( this.speed ) < 0.2 * this.maxSpeed && ! ( controls.moveLeft || controls.moveRight || controls.moveForward || controls.moveBackward ) ) {
 

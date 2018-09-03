@@ -1,9 +1,5 @@
 import { Ray } from '../math/Ray.js'
 
-
-
-
-
 function Raycaster( origin, direction, near, far ) {
 
 	this.ray = new Ray( origin, direction );
@@ -127,7 +123,6 @@ Object.assign( Raycaster.prototype, {
 	}
 
 } );
-
 
 ;
 

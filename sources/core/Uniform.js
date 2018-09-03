@@ -1,7 +1,4 @@
 
-
-
-
 function Uniform( value ) {
 
 	if ( typeof value === 'string' ) {

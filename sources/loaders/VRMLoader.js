@@ -1,8 +1,6 @@
 import { GLTFLoader } from './GLTFLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
 // VRM Specification: https://dwango.github.io/vrm/vrm_spec/
 //
 // VRM is based on glTF 2.0 and VRM extension is defined

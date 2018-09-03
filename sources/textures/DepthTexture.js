@@ -7,11 +7,6 @@ import {
 	DepthStencilFormat
 } from '../constants.js'
 
-
-
-
-
-
 function DepthTexture( width, height, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, format ) {
 
 	format = format !== undefined ? format : DepthFormat;

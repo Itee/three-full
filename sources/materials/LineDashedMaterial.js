@@ -1,9 +1,5 @@
 import { LineBasicMaterial } from './LineBasicMaterial.js'
 
-
-
-
-
 function LineDashedMaterial( parameters ) {
 
 	LineBasicMaterial.call( this );
@@ -34,7 +30,6 @@ LineDashedMaterial.prototype.copy = function ( source ) {
 	return this;
 
 };
-
 
 ;
 

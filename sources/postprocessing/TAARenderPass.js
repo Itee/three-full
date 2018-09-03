@@ -1,8 +1,6 @@
 import { SSAARenderPass } from './SSAARenderPass.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 
-
-
 var TAARenderPass = function ( scene, camera, params ) {
 
 	if ( SSAARenderPass === undefined ) {

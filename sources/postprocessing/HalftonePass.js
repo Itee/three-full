@@ -7,8 +7,6 @@ import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { HalftoneShader } from '../shaders/HalftoneShader.js'
 
-
-
 var HalftonePass = function ( width, height, params ) {
 
 	Pass.call( this );

@@ -5,15 +5,6 @@ import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 
-
-
-
-
-
-
-
-
-
 function VertexNormalsHelper( object, size, hex, linewidth ) {
 
 	this.object = object;
@@ -152,7 +143,6 @@ VertexNormalsHelper.prototype.update = ( function () {
 	};
 
 }() );
-
 
 ;
 

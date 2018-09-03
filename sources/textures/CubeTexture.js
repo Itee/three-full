@@ -1,11 +1,6 @@
 import { Texture } from './Texture.js'
 import { CubeReflectionMapping } from '../constants.js'
 
-
-
-
-
-
 function CubeTexture( images, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
 
 	images = images !== undefined ? images : [];
@@ -37,7 +32,6 @@ Object.defineProperty( CubeTexture.prototype, 'images', {
 	}
 
 } );
-
 
 ;
 

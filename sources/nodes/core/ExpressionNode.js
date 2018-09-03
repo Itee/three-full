@@ -1,9 +1,5 @@
 import { FunctionNode } from './FunctionNode.js'
 
-
-
-
-
 function ExpressionNode( src, type, keywords, extensions, includes ) {
 
 	FunctionNode.call( this, src, includes, extensions, keywords, type );

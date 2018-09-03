@@ -5,8 +5,6 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { AnimationClip } from '../animation/AnimationClip.js'
 
-
-
 var MD2Loader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

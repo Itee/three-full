@@ -1,7 +1,5 @@
 import { Vector2 } from '../math/Vector2.js'
 
-
-
 var ConvolutionShader = {
 
 	defines: {
@@ -58,7 +56,6 @@ var ConvolutionShader = {
 			"gl_FragColor = sum;",
 
 		"}"
-
 
 	].join( "\n" ),
 

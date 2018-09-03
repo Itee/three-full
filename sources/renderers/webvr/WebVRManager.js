@@ -7,17 +7,6 @@ import { ArrayCamera } from '../../cameras/ArrayCamera.js'
 import { PerspectiveCamera } from '../../cameras/PerspectiveCamera.js'
 import { WebGLAnimation } from '../webgl/WebGLAnimation.js'
 
-
-
-
-
-
-
-
-
-
-
-
 function WebVRManager( renderer ) {
 
 	var scope = this;
@@ -260,7 +249,6 @@ function WebVRManager( renderer ) {
 			}
 
 		}
-
 
 		var pose = frameData.pose;
 		var poseObject = poseTarget !== null ? poseTarget : camera;

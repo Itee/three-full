@@ -1,11 +1,6 @@
 import { TempNode } from '../core/TempNode.js'
 import { TextureCubeUVNode } from './TextureCubeUVNode.js'
 
-
-
-
-
-
 function TextureCubeNode( value, uv ) {
 
 	TempNode.call( this, 'v4' );

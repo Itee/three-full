@@ -1,7 +1,4 @@
 
-
-
-
 var WebVR = {
 
 	createButton: function ( renderer, options ) {

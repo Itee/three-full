@@ -3,11 +3,6 @@ import { NodeUtils } from '../core/NodeUtils.js'
 import { Color } from '../../math/Color.js'
 import { NodeMaterial } from '../materials/NodeMaterial.js'
 
-
-
-
-
-
 function ColorNode( color, g, b ) {
 
 	InputNode.call( this, 'c' );

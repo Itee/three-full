@@ -1,11 +1,6 @@
 import { TempNode } from '../core/TempNode.js'
 import { NodeLib } from '../core/NodeLib.js'
 
-
-
-
-
-
 function PositionNode( scope ) {
 
 	TempNode.call( this, 'v3' );

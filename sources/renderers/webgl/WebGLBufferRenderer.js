@@ -1,7 +1,4 @@
 
-
-
-
 function WebGLBufferRenderer( gl, extensions, info, capabilities ) {
 
 	var mode;
@@ -54,7 +51,6 @@ function WebGLBufferRenderer( gl, extensions, info, capabilities ) {
 	this.renderInstances = renderInstances;
 
 }
-
 
 ;
 

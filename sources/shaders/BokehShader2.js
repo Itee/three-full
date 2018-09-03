@@ -1,9 +1,5 @@
 import { Vector2 } from '../math/Vector2.js'
 
-
-
-
-
 var BokehShader2 = {
 
 	uniforms: {
@@ -39,7 +35,6 @@ var BokehShader2 = {
 
 		"shaderFocus":  { value: 1 },
 		"focusCoords":  { value: new Vector2() }
-
 
 	},
 
@@ -188,7 +183,6 @@ var BokehShader2 = {
 			"kernel[3] = 2.0/16.0;   kernel[4] = 4.0/16.0;   kernel[5] = 2.0/16.0;",
 			"kernel[6] = 1.0/16.0;   kernel[7] = 2.0/16.0;   kernel[8] = 1.0/16.0;",
 
-
 			"for( int i=0; i<9; i++ ) {",
 				"float tmp = texture2D(tDepth, coords + offset[i]).r;",
 				"d += tmp * kernel[i];",
@@ -196,7 +190,6 @@ var BokehShader2 = {
 
 			"return d;",
 		"}",
-
 
 		"vec3 color(vec2 coords,float blur) {",
 			"//processing the sample",
@@ -228,7 +221,6 @@ var BokehShader2 = {
 		"float linearize(float depth) {",
 			"return -zfar * znear / (depth * (zfar - znear) - zfar);",
 		"}",
-
 
 		"float vignette() {",
 			"float dist = distance(vUv.xy, vec2(0.5,0.5));",

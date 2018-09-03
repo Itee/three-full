@@ -14,8 +14,6 @@ import {
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
 var OBJLoader = ( function () {
 
 	// o object_name | g group_name
@@ -604,7 +602,6 @@ var OBJLoader = ( function () {
 					// This requires some care to not create extra material on each smooth value for "normal" obj files.
 					// where explicit usemtl defines geometry groups.
 					// Example asset: examples/models/obj/cerberus/Cerberus.obj
-
 					
 					if ( result.length > 1 ) {
 

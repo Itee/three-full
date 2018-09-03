@@ -1,7 +1,4 @@
 
-
-
-
 function Interpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 	this.parameterPositions = parameterPositions;
@@ -236,7 +233,6 @@ Object.assign( Interpolant.prototype, {
 	afterEnd_: Interpolant.prototype.copySampleValue_,
 
 } );
-
 
 ;
 

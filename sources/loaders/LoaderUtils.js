@@ -1,7 +1,4 @@
 
-
-
-
 var LoaderUtils = {
 
 	decodeText: function ( array ) {

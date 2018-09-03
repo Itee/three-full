@@ -3,8 +3,6 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
 var PDBLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

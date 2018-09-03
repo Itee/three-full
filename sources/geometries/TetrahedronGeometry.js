@@ -1,11 +1,6 @@
 import { Geometry } from '../core/Geometry.js'
 import { PolyhedronBufferGeometry } from './PolyhedronGeometry.js'
 
-
-
-
-
-
 // TetrahedronGeometry
 
 function TetrahedronGeometry( radius, detail ) {
@@ -52,7 +47,6 @@ function TetrahedronBufferGeometry( radius, detail ) {
 
 TetrahedronBufferGeometry.prototype = Object.create( PolyhedronBufferGeometry.prototype );
 TetrahedronBufferGeometry.prototype.constructor = TetrahedronBufferGeometry;
-
 
 ;
 

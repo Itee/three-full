@@ -22,8 +22,6 @@ import {
 	VertexColors
 } from '../constants.js'
 
-
-
 var RenderableObject = function () {
 
 	this.id = 0;
@@ -993,7 +991,6 @@ var Projector = function () {
 		}
 
 		return _facePool[ _faceCount ++ ];
-
 
 	}
 

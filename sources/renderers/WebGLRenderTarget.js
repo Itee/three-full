@@ -3,14 +3,6 @@ import { Texture } from '../textures/Texture.js'
 import { LinearFilter } from '../constants.js'
 import { Vector4 } from '../math/Vector4.js'
 
-
-
-
-
-
-
-
-
 function WebGLRenderTarget( width, height, options ) {
 
 	this.width = width;
@@ -87,7 +79,6 @@ WebGLRenderTarget.prototype = Object.assign( Object.create( EventDispatcher.prot
 	}
 
 } );
-
 
 ;
 

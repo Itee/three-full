@@ -13,8 +13,6 @@ import { DigitalGlitch } from '../shaders/DigitalGlitch.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { _Math } from '../math/Math.js'
 
-
-
 var GlitchPass = function ( dt_size ) {
 
 	Pass.call( this );
@@ -26,9 +24,7 @@ var GlitchPass = function ( dt_size ) {
 
 	if ( dt_size == undefined ) dt_size = 64;
 
-
 	this.uniforms[ "tDisp" ].value = this.generateHeightmap( dt_size );
-
 
 	this.material = new ShaderMaterial( {
 		uniforms: this.uniforms,

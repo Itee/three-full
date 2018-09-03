@@ -1,9 +1,5 @@
 import { KeyframeTrack } from '../KeyframeTrack.js'
 
-
-
-
-
 function NumberKeyframeTrack( name, times, values, interpolation ) {
 
 	KeyframeTrack.call( this, name, times, values, interpolation );

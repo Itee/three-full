@@ -2,12 +2,6 @@ import { PhongNode } from './nodes/PhongNode.js'
 import { NodeMaterial } from './NodeMaterial.js'
 import { NodeUtils } from '../core/NodeUtils.js'
 
-
-
-
-
-
-
 function PhongNodeMaterial() {
 
 	var node = new PhongNode();

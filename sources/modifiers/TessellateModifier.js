@@ -1,7 +1,5 @@
 import { Face3 } from '../core/Face3.js'
 
-
-
 var TessellateModifier = function ( maxEdgeLength ) {
 
 	this.maxEdgeLength = maxEdgeLength;

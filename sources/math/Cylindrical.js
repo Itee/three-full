@@ -1,7 +1,4 @@
 
-
-
-
 function Cylindrical( radius, theta, y ) {
 
 	this.radius = ( radius !== undefined ) ? radius : 1.0; // distance from the origin to a point in the x-z plane
@@ -57,7 +54,6 @@ Object.assign( Cylindrical.prototype, {
 	}
 
 } );
-
 
 ;
 

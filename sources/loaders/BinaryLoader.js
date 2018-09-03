@@ -7,8 +7,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
 import { Loader } from './Loader.js'
 
-
-
 var BinaryLoader = function ( manager ) {
 
 	if ( typeof manager === 'boolean' ) {
@@ -106,7 +104,6 @@ BinaryLoader.prototype = {
 				len_tri_flat, len_tri_smooth, len_tri_flat_uv, len_tri_smooth_uv,
 				len_quad_flat, len_quad_smooth, len_quad_flat_uv;
 
-
 			Geometry.call( this );
 
 			md = parseMetaData( data, currentOffset );
@@ -202,7 +199,6 @@ BinaryLoader.prototype = {
 					'nquad_smooth_uv': parseUInt32( data, offset + 20 + 4 * 10 )
 
 				};
-				
 
 				return metaData;
 

@@ -2,8 +2,6 @@ import { EventDispatcher } from '../core/EventDispatcher.js'
 import { Color } from '../math/Color.js'
 import { REVISION } from '../constants.js'
 
-
-
 var RaytracingRenderer = function ( parameters ) {
 
 	console.log( 'RaytracingRenderer', REVISION );
@@ -226,7 +224,6 @@ var RaytracingRenderer = function ( parameters ) {
 
 		if ( camera.parent === null ) camera.updateMatrixWorld();
 
-
 		sceneJSON = scene.toJSON();
 		cameraJSON = camera.toJSON();
 		++ sceneId;
@@ -259,7 +256,6 @@ var RaytracingRenderer = function ( parameters ) {
 
 		}
 
-
 		// Randomize painting :)
 
 		if ( scope.randomize ) {
@@ -274,7 +270,6 @@ var RaytracingRenderer = function ( parameters ) {
 			}
 
 		}
-
 
 		pool.forEach( renderNext );
 

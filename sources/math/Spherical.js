@@ -1,9 +1,5 @@
 import { _Math } from './Math.js'
 
-
-
-
-
 function Spherical( radius, phi, theta ) {
 
 	this.radius = ( radius !== undefined ) ? radius : 1.0;
@@ -79,7 +75,6 @@ Object.assign( Spherical.prototype, {
 	}
 
 } );
-
 
 ;
 

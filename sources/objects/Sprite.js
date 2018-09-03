@@ -8,18 +8,6 @@ import { InterleavedBuffer } from '../core/InterleavedBuffer.js'
 import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js'
 import { SpriteMaterial } from '../materials/SpriteMaterial.js'
 
-
-
-
-
-
-
-
-
-
-
-
-
 var geometry;
 
 function Sprite( material ) {
@@ -94,7 +82,6 @@ Sprite.prototype = Object.assign( Object.create( Object3D.prototype ), {
 				rotatedPosition.copy( alignedPosition );
 
 			}
-
 
 			vertexPosition.copy( mvPosition );
 			vertexPosition.x += rotatedPosition.x;
@@ -181,7 +168,6 @@ Sprite.prototype = Object.assign( Object.create( Object3D.prototype ), {
 		return this;
 
 	}
-
 
 } );
 

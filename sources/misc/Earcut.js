@@ -1,7 +1,4 @@
 
-
-
-
 var Earcut = {
 
 	triangulate: function ( data, holeIndices, dim ) {

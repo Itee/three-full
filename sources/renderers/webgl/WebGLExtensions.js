@@ -1,7 +1,4 @@
 
-
-
-
 function WebGLExtensions( gl ) {
 
 	var extensions = {};
@@ -56,7 +53,6 @@ function WebGLExtensions( gl ) {
 	};
 
 }
-
 
 ;
 

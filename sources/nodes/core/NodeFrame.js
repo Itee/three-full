@@ -1,7 +1,4 @@
 
-
-
-
 function NodeFrame( time ) {
 
 	this.time = time !== undefined ? time : 0;

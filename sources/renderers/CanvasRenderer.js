@@ -25,8 +25,6 @@ import {
 	MirroredRepeatWrapping
 } from '../constants.js'
 
-
-
 var SpriteCanvasMaterial = function ( parameters ) {
 
 	Material.call( this );
@@ -128,8 +126,6 @@ var CanvasRenderer = function ( parameters ) {
 		_centroid = new Vector3(),
 		_normal = new Vector3(),
 		_normalViewMatrix = new Matrix3();
-
-	
 
 	// dash+gap fallbacks for Firefox and everything else
 
@@ -354,8 +350,6 @@ var CanvasRenderer = function ( parameters ) {
 
 		_normalViewMatrix.getNormalMatrix( camera.matrixWorldInverse );
 
-		
-
 		calculateLights();
 
 		for ( var e = 0, el = _elements.length; e < el; e ++ ) {
@@ -427,13 +421,9 @@ var CanvasRenderer = function ( parameters ) {
 
 			}
 
-			
-
 			_clearBox.union( _elemBox );
 
 		}
-
-		
 
 		_context.setTransform( 1, 0, 0, 1, 0, 0 );
 
@@ -610,8 +600,6 @@ var CanvasRenderer = function ( parameters ) {
 			_context.restore();
 
 		}
-
-		
 
 	}
 
@@ -981,8 +969,6 @@ var CanvasRenderer = function ( parameters ) {
 		_context.restore();
 
 	}
-
-	
 
 	// Hide anti-alias gaps
 

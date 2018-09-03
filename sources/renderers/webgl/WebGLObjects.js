@@ -1,7 +1,4 @@
 
-
-
-
 function WebGLObjects( geometries, info ) {
 
 	var updateList = {};
@@ -47,7 +44,6 @@ function WebGLObjects( geometries, info ) {
 	};
 
 }
-
 
 ;
 

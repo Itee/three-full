@@ -1,7 +1,5 @@
 import { LineSegmentsGeometry } from './LineSegmentsGeometry.js'
 
-
-
 var LineGeometry = function () {
 
 	LineSegmentsGeometry.call( this );

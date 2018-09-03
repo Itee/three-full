@@ -13,8 +13,6 @@ import { BokehShader } from '../shaders/BokehShader.js'
 import { BokehDepthShader } from '../shaders/BokehShader2.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-
-
 var CinematicCamera = function ( fov, aspect, near, far ) {
 
 	PerspectiveCamera.call( this, fov, aspect, near, far );
@@ -47,7 +45,6 @@ var CinematicCamera = function ( fov, aspect, near, far ) {
 
 CinematicCamera.prototype = Object.create( PerspectiveCamera.prototype );
 CinematicCamera.prototype.constructor = CinematicCamera;
-
 
 // providing fnumber and coc(Circle of Confusion) as extra arguments
 CinematicCamera.prototype.setLens = function ( focalLength, filmGauge, fNumber, coc ) {
@@ -158,7 +155,6 @@ CinematicCamera.prototype.initPostProcessing = function () {
 
 		this.postprocessing.bokeh_uniforms[ "znear" ].value = this.near;
 		this.postprocessing.bokeh_uniforms[ "zfar" ].value = this.near;
-
 
 		this.postprocessing.bokeh_uniforms[ "textureWidth" ].value = window.innerWidth;
 

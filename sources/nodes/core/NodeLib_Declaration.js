@@ -1,7 +1,4 @@
 
-
-
-
 var NodeLib = {
 
 	nodes: {},
@@ -64,6 +61,5 @@ var NodeLib = {
 	}
 
 };
-
 
 export { NodeLib }

@@ -1,9 +1,5 @@
 import { Color } from '../math/Color.js'
 
-
-
-
-
 function FogExp2( color, density ) {
 
 	this.name = '';
