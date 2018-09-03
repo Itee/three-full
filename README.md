@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 8.0.0 is now available under Three r0.93.0 !!!**
+**The version 11.0.0 is now available under Three r0.96.0 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
