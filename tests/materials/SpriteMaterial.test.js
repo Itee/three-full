@@ -473,6 +473,10 @@ var Three = (function (exports) {
 			// rotation (SpriteMaterial)
 			if ( this.rotation !== 0 ) data.rotation = this.rotation;
 
+			if ( this.polygonOffset === true ) data.polygonOffset = true;
+			if ( this.polygonOffsetFactor !== 0 ) data.polygonOffsetFactor = this.polygonOffsetFactor;
+			if ( this.polygonOffsetUnits !== 0 ) data.polygonOffsetUnits = this.polygonOffsetUnits;
+
 			if ( this.linewidth !== 1 ) data.linewidth = this.linewidth;
 			if ( this.dashSize !== undefined ) data.dashSize = this.dashSize;
 			if ( this.gapSize !== undefined ) data.gapSize = this.gapSize;
@@ -1145,6 +1149,28 @@ var Three = (function (exports) {
 
 		},
 
+		lerpHSL: function () {
+
+			var hslA = { h: 0, s: 0, l: 0 };
+			var hslB = { h: 0, s: 0, l: 0 };
+
+			return function lerpHSL( color, alpha ) {
+
+				this.getHSL( hslA );
+				color.getHSL( hslB );
+
+				var h = _Math.lerp( hslA.h, hslB.h, alpha );
+				var s = _Math.lerp( hslA.s, hslB.s, alpha );
+				var l = _Math.lerp( hslA.l, hslB.l, alpha );
+
+				this.setHSL( h, s, l );
+
+				return this;
+
+			};
+
+		}(),
+
 		equals: function ( c ) {
 
 			return ( c.r === this.r ) && ( c.g === this.g ) && ( c.b === this.b );
@@ -1195,6 +1221,8 @@ var Three = (function (exports) {
 
 		this.rotation = 0;
 
+		this.sizeAttenuation = true;
+
 		this.lights = false;
 		this.transparent = true;
 
@@ -1214,6 +1242,8 @@ var Three = (function (exports) {
 		this.map = source.map;
 
 		this.rotation = source.rotation;
+
+		this.sizeAttenuation = source.sizeAttenuation;
 
 		return this;
 

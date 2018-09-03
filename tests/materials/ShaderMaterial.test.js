@@ -473,6 +473,10 @@ var Three = (function (exports) {
 			// rotation (SpriteMaterial)
 			if ( this.rotation !== 0 ) data.rotation = this.rotation;
 
+			if ( this.polygonOffset === true ) data.polygonOffset = true;
+			if ( this.polygonOffsetFactor !== 0 ) data.polygonOffsetFactor = this.polygonOffsetFactor;
+			if ( this.polygonOffsetUnits !== 0 ) data.polygonOffsetUnits = this.polygonOffsetUnits;
+
 			if ( this.linewidth !== 1 ) data.linewidth = this.linewidth;
 			if ( this.dashSize !== undefined ) data.dashSize = this.dashSize;
 			if ( this.gapSize !== undefined ) data.gapSize = this.gapSize;
@@ -763,7 +767,69 @@ var Three = (function (exports) {
 
 		var data = Material.prototype.toJSON.call( this, meta );
 
-		data.uniforms = this.uniforms;
+		data.uniforms = {};
+
+		for ( var name in this.uniforms ) {
+
+			var uniform = this.uniforms[ name ];
+			var value = uniform.value;
+
+			if ( value.isTexture ) {
+
+				data.uniforms[ name ] = {
+					type: 't',
+					value: value.toJSON( meta ).uuid
+				};
+
+			} else if ( value.isColor ) {
+
+				data.uniforms[ name ] = {
+					type: 'c',
+					value: value.getHex()
+				};
+
+			} else if ( value.isVector2 ) {
+
+				data.uniforms[ name ] = {
+					type: 'v2',
+					value: value.toArray()
+				};
+
+			} else if ( value.isVector3 ) {
+
+				data.uniforms[ name ] = {
+					type: 'v3',
+					value: value.toArray()
+				};
+
+			} else if ( value.isVector4 ) {
+
+				data.uniforms[ name ] = {
+					type: 'v4',
+					value: value.toArray()
+				};
+
+			} else if ( value.isMatrix4 ) {
+
+				data.uniforms[ name ] = {
+					type: 'm4',
+					value: value.toArray()
+				};
+
+			} else {
+
+				data.uniforms[ name ] = {
+					value: value
+				};
+
+				// note: the array variants v2v, v3v, v4v, m4v and tv are not supported so far
+
+			}
+
+		}
+
+		if ( Object.keys( this.defines ).length > 0 ) data.defines = this.defines;
+
 		data.vertexShader = this.vertexShader;
 		data.fragmentShader = this.fragmentShader;
 

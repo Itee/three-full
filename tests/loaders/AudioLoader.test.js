@@ -74,6 +74,9 @@ var Three = (function (exports) {
 		var itemsTotal = 0;
 		var urlModifier = undefined;
 
+		// Refer to #5689 for the reason why we don't set .onStart
+		// in the constructor
+
 		this.onStart = undefined;
 		this.onLoad = onLoad;
 		this.onProgress = onProgress;
@@ -371,6 +374,24 @@ var Three = (function (exports) {
 				}, false );
 
 				request.addEventListener( 'error', function ( event ) {
+
+					var callbacks = loading[ url ];
+
+					delete loading[ url ];
+
+					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
+
+						var callback = callbacks[ i ];
+						if ( callback.onError ) callback.onError( event );
+
+					}
+
+					scope.manager.itemEnd( url );
+					scope.manager.itemError( url );
+
+				}, false );
+
+				request.addEventListener( 'abort', function ( event ) {
 
 					var callbacks = loading[ url ];
 

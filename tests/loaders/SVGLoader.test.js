@@ -50,6 +50,9 @@ var Three = (function (exports) {
 		var itemsTotal = 0;
 		var urlModifier = undefined;
 
+		// Refer to #5689 for the reason why we don't set .onStart
+		// in the constructor
+
 		this.onStart = undefined;
 		this.onLoad = onLoad;
 		this.onProgress = onProgress;
@@ -347,6 +350,24 @@ var Three = (function (exports) {
 				}, false );
 
 				request.addEventListener( 'error', function ( event ) {
+
+					var callbacks = loading[ url ];
+
+					delete loading[ url ];
+
+					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
+
+						var callback = callbacks[ i ];
+						if ( callback.onError ) callback.onError( event );
+
+					}
+
+					scope.manager.itemEnd( url );
+					scope.manager.itemError( url );
+
+				}, false );
+
+				request.addEventListener( 'abort', function ( event ) {
 
 					var callbacks = loading[ url ];
 
@@ -1104,6 +1125,28 @@ var Three = (function (exports) {
 			return this;
 
 		},
+
+		lerpHSL: function () {
+
+			var hslA = { h: 0, s: 0, l: 0 };
+			var hslB = { h: 0, s: 0, l: 0 };
+
+			return function lerpHSL( color, alpha ) {
+
+				this.getHSL( hslA );
+				color.getHSL( hslB );
+
+				var h = _Math.lerp( hslA.h, hslB.h, alpha );
+				var s = _Math.lerp( hslA.s, hslB.s, alpha );
+				var l = _Math.lerp( hslA.l, hslB.l, alpha );
+
+				this.setHSL( h, s, l );
+
+				return this;
+
+			};
+
+		}(),
 
 		equals: function ( c ) {
 
@@ -3479,18 +3522,11 @@ var Three = (function (exports) {
 
 		},
 
-		project: function () {
+		project: function ( camera ) {
 
-			var matrix = new Matrix4();
+			return this.applyMatrix4( camera.matrixWorldInverse ).applyMatrix4( camera.projectionMatrix );
 
-			return function project( camera ) {
-
-				matrix.multiplyMatrices( camera.projectionMatrix, matrix.getInverse( camera.matrixWorld ) );
-				return this.applyMatrix4( matrix );
-
-			};
-
-		}(),
+		},
 
 		unproject: function () {
 
@@ -3498,8 +3534,7 @@ var Three = (function (exports) {
 
 			return function unproject( camera ) {
 
-				matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
-				return this.applyMatrix4( matrix );
+				return this.applyMatrix4( matrix.getInverse( camera.projectionMatrix ) ).applyMatrix4( camera.matrixWorld );
 
 			};
 
@@ -3792,11 +3827,17 @@ var Three = (function (exports) {
 
 		setFromSpherical: function ( s ) {
 
-			var sinPhiRadius = Math.sin( s.phi ) * s.radius;
+			return this.setFromSphericalCoords( s.radius, s.phi, s.theta );
 
-			this.x = sinPhiRadius * Math.sin( s.theta );
-			this.y = Math.cos( s.phi ) * s.radius;
-			this.z = sinPhiRadius * Math.cos( s.theta );
+		},
+
+		setFromSphericalCoords: function ( radius, phi, theta ) {
+
+			var sinPhiRadius = Math.sin( phi ) * radius;
+
+			this.x = sinPhiRadius * Math.sin( theta );
+			this.y = Math.cos( phi ) * radius;
+			this.z = sinPhiRadius * Math.cos( theta );
 
 			return this;
 
@@ -3804,9 +3845,15 @@ var Three = (function (exports) {
 
 		setFromCylindrical: function ( c ) {
 
-			this.x = c.radius * Math.sin( c.theta );
-			this.y = c.y;
-			this.z = c.radius * Math.cos( c.theta );
+			return this.setFromCylindricalCoords( c.radius, c.theta, c.y );
+
+		},
+
+		setFromCylindricalCoords: function ( radius, theta, y ) {
+
+			this.x = radius * Math.sin( theta );
+			this.y = y;
+			this.z = radius * Math.cos( theta );
 
 			return this;
 
@@ -5964,7 +6011,7 @@ var Three = (function (exports) {
 					ear = cureLocalIntersections( ear, triangles, dim );
 					earcutLinked( ear, triangles, dim, minX, minY, invSize, 2 );
 
-				// as a last resort, try splitting the remaining polygon into two
+					// as a last resort, try splitting the remaining polygon into two
 
 				} else if ( pass === 2 ) {
 

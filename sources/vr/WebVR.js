@@ -6,6 +6,12 @@ var WebVR = {
 
 	createButton: function ( renderer, options ) {
 
+		if ( options && options.frameOfReferenceType ) {
+
+			renderer.vr.setFrameOfReferenceType( options.frameOfReferenceType );
+
+		}
+
 		function showEnterVR( device ) {
 
 			button.style.display = '';
@@ -35,12 +41,9 @@ var WebVR = {
 
 			function onSessionStarted( session ) {
 
-				if ( options === undefined ) options = {};
-				if ( options.frameOfReferenceType === undefined ) options.frameOfReferenceType = 'stage';
-
 				session.addEventListener( 'end', onSessionEnded );
 
-				renderer.vr.setSession( session, options );
+				renderer.vr.setSession( session );
 				button.textContent = 'EXIT VR';
 
 				currentSession = session;

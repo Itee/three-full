@@ -6,16 +6,15 @@ import { WebGLRenderTargetCube } from '../renderers/WebGLRenderTargetCube.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import {
 	BackSide,
-	NoBlending,
-	RGBAFormat
+	NoBlending
 } from '../constants.js'
 
 
 
-var EquirectangularToCubeGenerator = function ( sourceTexture, resolution ) {
+var EquirectangularToCubeGenerator = function ( sourceTexture, options ) {
 
 	this.sourceTexture = sourceTexture;
-	this.resolution = resolution;
+	this.resolution = options.resolution || 512;
 
  	this.views = [
 		{ t: [ 1, 0, 0 ], u: [ 0, - 1, 0 ] },
@@ -33,10 +32,10 @@ var EquirectangularToCubeGenerator = function ( sourceTexture, resolution ) {
 	this.scene.add( this.boxMesh );
 
 	var params = {
-		format: RGBAFormat,
+		format: options.format || this.sourceTexture.format,
 		magFilter: this.sourceTexture.magFilter,
 		minFilter: this.sourceTexture.minFilter,
-		type: this.sourceTexture.type,
+		type: options.type || this.sourceTexture.type,
 		generateMipmaps: this.sourceTexture.generateMipmaps,
 		anisotropy: this.sourceTexture.anisotropy,
 		encoding: this.sourceTexture.encoding

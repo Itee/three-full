@@ -165,7 +165,7 @@ var Three = (function (exports) {
 					ear = cureLocalIntersections( ear, triangles, dim );
 					earcutLinked( ear, triangles, dim, minX, minY, invSize, 2 );
 
-				// as a last resort, try splitting the remaining polygon into two
+					// as a last resort, try splitting the remaining polygon into two
 
 				} else if ( pass === 2 ) {
 

@@ -13,7 +13,7 @@ import { SSAOShader } from '../shaders/SSAOShader.js'
 
 var SSAOPass = function ( scene, camera, width, height ) {
 
-	if ( SSAOShader === undefined) {
+	if ( SSAOShader === undefined ) {
 
 		console.warn( 'SSAOPass depends on SSAOShader' );
 		return new ShaderPass();
@@ -38,7 +38,7 @@ var SSAOPass = function ( scene, camera, width, height ) {
 	//Depth render target
 	this.depthRenderTarget = new WebGLRenderTarget( this.width, this.height, { minFilter: LinearFilter, magFilter: LinearFilter } );
 	//this.depthRenderTarget.texture.name = 'SSAOShader.rt';
-	
+
 	//Shader uniforms
 	this.uniforms[ 'tDepth' ].value = this.depthRenderTarget.texture;
 	this.uniforms[ 'size' ].value.set( this.width, this.height );
@@ -51,42 +51,75 @@ var SSAOPass = function ( scene, camera, width, height ) {
 	this.uniforms[ 'lumInfluence' ].value = 0.7;
 
 	//Setters and getters for uniforms
-	var self = this;
-	Object.defineProperties(this, {
+
+	Object.defineProperties( this, {
 
 		radius: {
-			get: function() { return this.uniforms[ 'radius' ].value; },
-			set: function( value ) { this.uniforms[ 'radius' ].value = value; }
+			get: function () {
+
+				return this.uniforms[ 'radius' ].value;
+
+			},
+			set: function ( value ) {
+
+				this.uniforms[ 'radius' ].value = value;
+
+			}
 		},
 
 		onlyAO: {
-			get: function() { return this.uniforms[ 'onlyAO' ].value; },
-			set: function( value ) { this.uniforms[ 'onlyAO' ].value = value; }
+			get: function () {
+
+				return this.uniforms[ 'onlyAO' ].value;
+
+			},
+			set: function ( value ) {
+
+				this.uniforms[ 'onlyAO' ].value = value;
+
+			}
 		},
 
 		aoClamp: {
-			get: function() { return this.uniforms[ 'aoClamp' ].value; },
-			set: function( value ) { this.uniforms[ 'aoClamp' ].value = value; }
+			get: function () {
+
+				return this.uniforms[ 'aoClamp' ].value;
+
+			},
+			set: function ( value ) {
+
+				this.uniforms[ 'aoClamp' ].value = value;
+
+			}
 		},
 
 		lumInfluence: {
-			get: function() { return this.uniforms[ 'lumInfluence' ].value; },
-			set: function( value ) { this.uniforms[ 'lumInfluence' ].value = value; }
+			get: function () {
+
+				return this.uniforms[ 'lumInfluence' ].value;
+
+			},
+			set: function ( value ) {
+
+				this.uniforms[ 'lumInfluence' ].value = value;
+
+			}
 		},
 
-	});
-}
+	} );
+
+};
 
 SSAOPass.prototype = Object.create( ShaderPass.prototype );
 
 
-SSAOPass.prototype.render = function( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+SSAOPass.prototype.render = function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
 
 	//Render depth into depthRenderTarget
 	this.scene2.overrideMaterial = this.depthMaterial;
-	
+
 	renderer.render( this.scene2, this.camera2, this.depthRenderTarget, true );
-	
+
 	this.scene2.overrideMaterial = null;
 
 
@@ -96,14 +129,14 @@ SSAOPass.prototype.render = function( renderer, writeBuffer, readBuffer, delta, 
 };
 
 
-SSAOPass.prototype.setScene = function(scene) {
-	
+SSAOPass.prototype.setScene = function ( scene ) {
+
 	this.scene2 = scene;
 
 };
 
 
-SSAOPass.prototype.setCamera = function( camera ) {
+SSAOPass.prototype.setCamera = function ( camera ) {
 
 	this.camera2 = camera;
 
@@ -113,7 +146,7 @@ SSAOPass.prototype.setCamera = function( camera ) {
 };
 
 
-SSAOPass.prototype.setSize = function( width, height ) {
+SSAOPass.prototype.setSize = function ( width, height ) {
 
 	this.width = width;
 	this.height = height;

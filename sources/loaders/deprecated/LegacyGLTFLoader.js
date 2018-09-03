@@ -164,8 +164,9 @@ var LegacyGLTFLoader = ( function () {
 
 			var parser = new GLTFParser( json, extensions, {
 
-				path: path || this.path,
-				crossOrigin: this.crossOrigin
+				crossOrigin: this.crossOrigin,
+				manager: this.manager,
+				path: path || this.path
 
 			} );
 
@@ -1008,7 +1009,7 @@ var LegacyGLTFLoader = ( function () {
 
 				return new Promise( function ( resolve ) {
 
-					var loader = new FileLoader();
+					var loader = new FileLoader( options.manager );
 					loader.setResponseType( 'text' );
 					loader.load( resolveURL( shader.uri, options.path ), function ( shaderText ) {
 
@@ -1042,7 +1043,7 @@ var LegacyGLTFLoader = ( function () {
 
 				return new Promise( function ( resolve ) {
 
-					var loader = new FileLoader();
+					var loader = new FileLoader( options.manager );
 					loader.setResponseType( 'arraybuffer' );
 					loader.load( resolveURL( buffer.uri, options.path ), function ( buffer ) {
 
@@ -1167,7 +1168,7 @@ var LegacyGLTFLoader = ( function () {
 
 						if ( textureLoader === null ) {
 
-							textureLoader = new TextureLoader();
+							textureLoader = new TextureLoader( options.manager );
 
 						}
 

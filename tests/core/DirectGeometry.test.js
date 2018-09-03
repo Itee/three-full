@@ -590,7 +590,10 @@ var Three = (function (exports) {
 
 				for ( var i = 0; i < morphTargetsLength; i ++ ) {
 
-					morphTargetsPosition[ i ] = [];
+					morphTargetsPosition[ i ] = {
+						name: morphTargets[ i ].name,
+					 	data: []
+					};
 
 				}
 
@@ -609,7 +612,10 @@ var Three = (function (exports) {
 
 				for ( var i = 0; i < morphNormalsLength; i ++ ) {
 
-					morphTargetsNormal[ i ] = [];
+					morphTargetsNormal[ i ] = {
+						name: morphNormals[ i ].name,
+					 	data: []
+					};
 
 				}
 
@@ -709,7 +715,7 @@ var Three = (function (exports) {
 
 					var morphTarget = morphTargets[ j ].vertices;
 
-					morphTargetsPosition[ j ].push( morphTarget[ face.a ], morphTarget[ face.b ], morphTarget[ face.c ] );
+					morphTargetsPosition[ j ].data.push( morphTarget[ face.a ], morphTarget[ face.b ], morphTarget[ face.c ] );
 
 				}
 
@@ -717,7 +723,7 @@ var Three = (function (exports) {
 
 					var morphNormal = morphNormals[ j ].vertexNormals[ i ];
 
-					morphTargetsNormal[ j ].push( morphNormal.a, morphNormal.b, morphNormal.c );
+					morphTargetsNormal[ j ].data.push( morphNormal.a, morphNormal.b, morphNormal.c );
 
 				}
 

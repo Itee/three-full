@@ -117,7 +117,7 @@ DRACOLoader.prototype = {
           console.log('Loaded a point cloud.');
         }
       } else {
-        var errorMsg = 'DRACOLoader: Unknown geometry type.'
+        var errorMsg = 'DRACOLoader: Unknown geometry type.';
         console.error(errorMsg);
         throw new Error(errorMsg);
       }

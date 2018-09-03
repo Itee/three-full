@@ -6,7 +6,7 @@ import { TextureLoader } from '../loaders/TextureLoader.js'
 import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
 import { UVMapping } from '../constants.js'
 
-var UCSCharacter = function() {
+var UCSCharacter = function () {
 
 	var scope = this;
 
@@ -47,7 +47,7 @@ var UCSCharacter = function() {
 		// CHARACTER
 		var loader = new JSONLoader();
 		console.log( config.baseUrl + config.character );
-		loader.load( config.baseUrl + config.character, function( geometry ) {
+		loader.load( config.baseUrl + config.character, function ( geometry ) {
 
 			geometry.computeBoundingBox();
 			geometry.computeVertexNormals();
@@ -63,7 +63,7 @@ var UCSCharacter = function() {
 			mesh.castShadow = true;
 			mesh.receiveShadow = true;
 
-			scope.mixer.clipAction( geometry.animations[0], mesh ).play();
+			scope.mixer.clipAction( geometry.animations[ 0 ], mesh ).play();
 
 			scope.setSkin( 0 );
 
@@ -73,7 +73,7 @@ var UCSCharacter = function() {
 
 	};
 
-	this.setSkin = function( index ) {
+	this.setSkin = function ( index ) {
 
 		if ( mesh && scope.materials ) {
 
@@ -83,7 +83,7 @@ var UCSCharacter = function() {
 
 	};
 
-	this.updateMorphs = function( influences ) {
+	this.updateMorphs = function ( influences ) {
 
 		if ( mesh ) {
 
@@ -144,7 +144,7 @@ var UCSCharacter = function() {
 
 		}
 
-	}
+	};
 
 };
 

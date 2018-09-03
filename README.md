@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 8.0.0 is now available under Three r0.93.0 !!!**
+**The version 11.0.0 is now available under Three r0.96.0 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -203,6 +203,11 @@ All others folders under example file tree will be mapped to their counter-part 
 
 
 #### Change log ####
+
+##### 11.0.0:
+
+* Support of Three r96
+* Update edgecase replacement for LoaderSupport
 
 ##### 10.0.0:
 

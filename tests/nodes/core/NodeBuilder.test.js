@@ -2725,6 +2725,28 @@ var Three = (function (exports) {
 
 		},
 
+		lerpHSL: function () {
+
+			var hslA = { h: 0, s: 0, l: 0 };
+			var hslB = { h: 0, s: 0, l: 0 };
+
+			return function lerpHSL( color, alpha ) {
+
+				this.getHSL( hslA );
+				color.getHSL( hslB );
+
+				var h = _Math.lerp( hslA.h, hslB.h, alpha );
+				var s = _Math.lerp( hslA.s, hslB.s, alpha );
+				var l = _Math.lerp( hslA.l, hslB.l, alpha );
+
+				this.setHSL( h, s, l );
+
+				return this;
+
+			};
+
+		}(),
+
 		equals: function ( c ) {
 
 			return ( c.r === this.r ) && ( c.g === this.g ) && ( c.b === this.b );
@@ -3204,6 +3226,10 @@ var Three = (function (exports) {
 			// rotation (SpriteMaterial)
 			if ( this.rotation !== 0 ) data.rotation = this.rotation;
 
+			if ( this.polygonOffset === true ) data.polygonOffset = true;
+			if ( this.polygonOffsetFactor !== 0 ) data.polygonOffsetFactor = this.polygonOffsetFactor;
+			if ( this.polygonOffsetUnits !== 0 ) data.polygonOffsetUnits = this.polygonOffsetUnits;
+
 			if ( this.linewidth !== 1 ) data.linewidth = this.linewidth;
 			if ( this.dashSize !== undefined ) data.dashSize = this.dashSize;
 			if ( this.gapSize !== undefined ) data.gapSize = this.gapSize;
@@ -3494,7 +3520,69 @@ var Three = (function (exports) {
 
 		var data = Material.prototype.toJSON.call( this, meta );
 
-		data.uniforms = this.uniforms;
+		data.uniforms = {};
+
+		for ( var name in this.uniforms ) {
+
+			var uniform = this.uniforms[ name ];
+			var value = uniform.value;
+
+			if ( value.isTexture ) {
+
+				data.uniforms[ name ] = {
+					type: 't',
+					value: value.toJSON( meta ).uuid
+				};
+
+			} else if ( value.isColor ) {
+
+				data.uniforms[ name ] = {
+					type: 'c',
+					value: value.getHex()
+				};
+
+			} else if ( value.isVector2 ) {
+
+				data.uniforms[ name ] = {
+					type: 'v2',
+					value: value.toArray()
+				};
+
+			} else if ( value.isVector3 ) {
+
+				data.uniforms[ name ] = {
+					type: 'v3',
+					value: value.toArray()
+				};
+
+			} else if ( value.isVector4 ) {
+
+				data.uniforms[ name ] = {
+					type: 'v4',
+					value: value.toArray()
+				};
+
+			} else if ( value.isMatrix4 ) {
+
+				data.uniforms[ name ] = {
+					type: 'm4',
+					value: value.toArray()
+				};
+
+			} else {
+
+				data.uniforms[ name ] = {
+					value: value
+				};
+
+				// note: the array variants v2v, v3v, v4v, m4v and tv are not supported so far
+
+			}
+
+		}
+
+		if ( Object.keys( this.defines ).length > 0 ) data.defines = this.defines;
+
 		data.vertexShader = this.vertexShader;
 		data.fragmentShader = this.fragmentShader;
 
@@ -5569,18 +5657,11 @@ var Three = (function (exports) {
 
 		},
 
-		project: function () {
+		project: function ( camera ) {
 
-			var matrix = new Matrix4();
+			return this.applyMatrix4( camera.matrixWorldInverse ).applyMatrix4( camera.projectionMatrix );
 
-			return function project( camera ) {
-
-				matrix.multiplyMatrices( camera.projectionMatrix, matrix.getInverse( camera.matrixWorld ) );
-				return this.applyMatrix4( matrix );
-
-			};
-
-		}(),
+		},
 
 		unproject: function () {
 
@@ -5588,8 +5669,7 @@ var Three = (function (exports) {
 
 			return function unproject( camera ) {
 
-				matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
-				return this.applyMatrix4( matrix );
+				return this.applyMatrix4( matrix.getInverse( camera.projectionMatrix ) ).applyMatrix4( camera.matrixWorld );
 
 			};
 
@@ -5882,11 +5962,17 @@ var Three = (function (exports) {
 
 		setFromSpherical: function ( s ) {
 
-			var sinPhiRadius = Math.sin( s.phi ) * s.radius;
+			return this.setFromSphericalCoords( s.radius, s.phi, s.theta );
 
-			this.x = sinPhiRadius * Math.sin( s.theta );
-			this.y = Math.cos( s.phi ) * s.radius;
-			this.z = sinPhiRadius * Math.cos( s.theta );
+		},
+
+		setFromSphericalCoords: function ( radius, phi, theta ) {
+
+			var sinPhiRadius = Math.sin( phi ) * radius;
+
+			this.x = sinPhiRadius * Math.sin( theta );
+			this.y = Math.cos( phi ) * radius;
+			this.z = sinPhiRadius * Math.cos( theta );
 
 			return this;
 
@@ -5894,9 +5980,15 @@ var Three = (function (exports) {
 
 		setFromCylindrical: function ( c ) {
 
-			this.x = c.radius * Math.sin( c.theta );
-			this.y = c.y;
-			this.z = c.radius * Math.cos( c.theta );
+			return this.setFromCylindricalCoords( c.radius, c.theta, c.y );
+
+		},
+
+		setFromCylindricalCoords: function ( radius, theta, y ) {
+
+			this.x = radius * Math.sin( theta );
+			this.y = y;
+			this.z = radius * Math.cos( theta );
 
 			return this;
 

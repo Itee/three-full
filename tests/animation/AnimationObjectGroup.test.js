@@ -581,15 +581,15 @@ var Three = (function (exports) {
 			// determine versioning scheme
 			var versioning = this.Versioning.None;
 
+			this.targetObject = targetObject;
+
 			if ( targetObject.needsUpdate !== undefined ) { // material
 
 				versioning = this.Versioning.NeedsUpdate;
-				this.targetObject = targetObject;
 
 			} else if ( targetObject.matrixWorldNeedsUpdate !== undefined ) { // node transform
 
 				versioning = this.Versioning.MatrixWorldNeedsUpdate;
-				this.targetObject = targetObject;
 
 			}
 

@@ -45,6 +45,7 @@ var TransformControls = function ( camera, domElement ) {
 
 	defineProperty( "camera", camera );
 	defineProperty( "object", undefined );
+	defineProperty( "enabled", true );
 	defineProperty( "axis", null );
 	defineProperty( "mode", "translate" );
 	defineProperty( "translationSnap", null );
@@ -52,6 +53,9 @@ var TransformControls = function ( camera, domElement ) {
 	defineProperty( "space", "world" );
 	defineProperty( "size", 1 );
 	defineProperty( "dragging", false );
+	defineProperty( "showX", true );
+	defineProperty( "showY", true );
+	defineProperty( "showZ", true );
 
 	var changeEvent = { type: "change" };
 	var mouseDownEvent = { type: "mouseDown" };
@@ -69,7 +73,7 @@ var TransformControls = function ( camera, domElement ) {
 		X: new Vector3( 1, 0, 0 ),
 		Y: new Vector3( 0, 1, 0 ),
 		Z: new Vector3( 0, 0, 1 )
-	}
+	};
 	var _identityQuaternion = new Quaternion();
 	var _alignVector = new Vector3();
 
@@ -121,11 +125,9 @@ var TransformControls = function ( camera, domElement ) {
 		domElement.addEventListener( "touchstart", onPointerDown, false );
 		domElement.addEventListener( "mousemove", onPointerHover, false );
 		domElement.addEventListener( "touchmove", onPointerHover, false );
-		domElement.addEventListener( "mousemove", onPointerMove, false );
+		document.addEventListener( "mousemove", onPointerMove, false );
 		domElement.addEventListener( "touchmove", onPointerMove, false );
-		domElement.addEventListener( "mouseup", onPointerUp, false );
-		domElement.addEventListener( "mouseleave", onPointerUp, false );
-		domElement.addEventListener( "mouseout", onPointerUp, false );
+		document.addEventListener( "mouseup", onPointerUp, false );
 		domElement.addEventListener( "touchend", onPointerUp, false );
 		domElement.addEventListener( "touchcancel", onPointerUp, false );
 		domElement.addEventListener( "touchleave", onPointerUp, false );
@@ -139,11 +141,9 @@ var TransformControls = function ( camera, domElement ) {
 		domElement.removeEventListener( "touchstart", onPointerDown );
 		domElement.removeEventListener( "mousemove", onPointerHover );
 		domElement.removeEventListener( "touchmove", onPointerHover );
-		domElement.removeEventListener( "mousemove", onPointerMove );
+		document.removeEventListener( "mousemove", onPointerMove );
 		domElement.removeEventListener( "touchmove", onPointerMove );
-		domElement.removeEventListener( "mouseup", onPointerUp );
-		domElement.removeEventListener( "mouseleave", onPointerUp );
-		domElement.removeEventListener( "mouseout", onPointerUp );
+		document.removeEventListener( "mouseup", onPointerUp );
 		domElement.removeEventListener( "touchend", onPointerUp );
 		domElement.removeEventListener( "touchcancel", onPointerUp );
 		domElement.removeEventListener( "touchleave", onPointerUp );
@@ -189,6 +189,7 @@ var TransformControls = function ( camera, domElement ) {
 					_plane[ propName ] = value;
 					_gizmo[ propName ] = value;
 
+					scope.dispatchEvent( { type: propName + "-changed", value: value } );
 					scope.dispatchEvent( changeEvent );
 
 				}
@@ -249,7 +250,7 @@ var TransformControls = function ( camera, domElement ) {
 
 		}
 
-	}
+	};
 
 	this.pointerDown = function( pointer ) {
 
@@ -306,7 +307,7 @@ var TransformControls = function ( camera, domElement ) {
 
 		}
 
-	}
+	};
 
 	this.pointerMove = function( pointer ) {
 
@@ -500,7 +501,7 @@ var TransformControls = function ( camera, domElement ) {
 		this.dispatchEvent( changeEvent );
 		this.dispatchEvent( objectChangeEvent );
 
-	}
+	};
 
 	this.pointerUp = function( pointer ) {
 
@@ -517,7 +518,7 @@ var TransformControls = function ( camera, domElement ) {
 
 		if ( pointer.button === undefined ) this.axis = null;
 
-	}
+	};
 
 	// normalize mouse / touch pointer and remap {x,y} to view space.
 
@@ -545,7 +546,7 @@ var TransformControls = function ( camera, domElement ) {
 
 	function onPointerHover( event ) {
 
-		// event.preventDefault();
+		if ( !scope.enabled ) return;
 
 		scope.pointerHover( getPointer( event ) );
 
@@ -553,8 +554,9 @@ var TransformControls = function ( camera, domElement ) {
 
 	function onPointerDown( event ) {
 
+		if ( !scope.enabled ) return;
+
 		event.preventDefault();
-		event.stopPropagation();
 
 		scope.pointerHover( getPointer( event ) );
 		scope.pointerDown( getPointer( event ) );
@@ -563,14 +565,17 @@ var TransformControls = function ( camera, domElement ) {
 
 	function onPointerMove( event ) {
 
+		if ( !scope.enabled ) return;
+
 		event.preventDefault();
-		event.stopPropagation();
 
 		scope.pointerMove( getPointer( event ) );
 
 	}
 
 	function onPointerUp( event ) {
+
+		if ( !scope.enabled ) return;
 
 		event.preventDefault(); // Prevent MouseEvent on mobile
 
@@ -705,9 +710,6 @@ var TransformControlsGizmo = function () {
 
 	var matLineMagenta = gizmoLineMaterial.clone();
 	matLineMagenta.color.set( 0xff00ff );
-
-	var matLineBlue = gizmoLineMaterial.clone();
-	matLineBlue.color.set( 0x0000ff );
 
 	var matLineYellow = gizmoLineMaterial.clone();
 	matLineYellow.color.set( 0xffff00 );
@@ -1214,6 +1216,7 @@ var TransformControlsGizmo = function () {
 				var PLANE_HIDE_TRESHOLD = 0.2;
 				var AXIS_FLIP_TRESHOLD = -0.4;
 
+
 				if ( handle.name === 'X' || handle.name === 'XYZX' ) {
 					if ( Math.abs( alignVector.copy( unitX ).applyQuaternion( quaternion ).dot( this.eye ) ) > AXIS_HIDE_TRESHOLD ) {
 						handle.scale.set( 1e-10, 1e-10, 1e-10 );
@@ -1328,6 +1331,12 @@ var TransformControlsGizmo = function () {
 
 			}
 
+			// Hide disabled axes
+			handle.visible = handle.visible && ( handle.name.indexOf( "X" ) === -1 || this.showX );
+			handle.visible = handle.visible && ( handle.name.indexOf( "Y" ) === -1 || this.showY );
+			handle.visible = handle.visible && ( handle.name.indexOf( "Z" ) === -1 || this.showZ );
+			handle.visible = handle.visible && ( handle.name.indexOf( "E" ) === -1 || ( this.showX && this.showY && this.showZ ) );
+
 			// highlight selected axis
 
 			handle.material._opacity = handle.material._opacity || handle.material.opacity;
@@ -1336,7 +1345,12 @@ var TransformControlsGizmo = function () {
 			handle.material.color.copy( handle.material._color );
 			handle.material.opacity = handle.material._opacity;
 
-			if ( this.axis ) {
+			if ( !this.enabled ) {
+
+				handle.material.opacity *= 0.5;
+				handle.material.color.lerp( new Color( 1, 1, 1 ), 0.5 );
+
+			} else if ( this.axis ) {
 
 				if ( handle.name === this.axis ) {
 
@@ -1350,7 +1364,8 @@ var TransformControlsGizmo = function () {
 
 				} else {
 
-					handle.material.opacity *= 0.05;
+					handle.material.opacity *= 0.25;
+					handle.material.color.lerp( new Color( 1, 1, 1 ), 0.5 );
 
 				}
 
@@ -1392,7 +1407,6 @@ var TransformControlsPlane = function () {
 	var dirVector = new Vector3();
 	var alignVector = new Vector3();
 	var tempMatrix = new Matrix4();
-	var camRotation = new Euler();
 	var identityQuaternion = new Quaternion();
 
 	this.updateMatrixWorld = function() {

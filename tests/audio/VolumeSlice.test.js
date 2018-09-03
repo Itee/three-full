@@ -2584,18 +2584,11 @@ var Three = (function (exports) {
 
 		},
 
-		project: function () {
+		project: function ( camera ) {
 
-			var matrix = new Matrix4();
+			return this.applyMatrix4( camera.matrixWorldInverse ).applyMatrix4( camera.projectionMatrix );
 
-			return function project( camera ) {
-
-				matrix.multiplyMatrices( camera.projectionMatrix, matrix.getInverse( camera.matrixWorld ) );
-				return this.applyMatrix4( matrix );
-
-			};
-
-		}(),
+		},
 
 		unproject: function () {
 
@@ -2603,8 +2596,7 @@ var Three = (function (exports) {
 
 			return function unproject( camera ) {
 
-				matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
-				return this.applyMatrix4( matrix );
+				return this.applyMatrix4( matrix.getInverse( camera.projectionMatrix ) ).applyMatrix4( camera.matrixWorld );
 
 			};
 
@@ -2897,11 +2889,17 @@ var Three = (function (exports) {
 
 		setFromSpherical: function ( s ) {
 
-			var sinPhiRadius = Math.sin( s.phi ) * s.radius;
+			return this.setFromSphericalCoords( s.radius, s.phi, s.theta );
 
-			this.x = sinPhiRadius * Math.sin( s.theta );
-			this.y = Math.cos( s.phi ) * s.radius;
-			this.z = sinPhiRadius * Math.cos( s.theta );
+		},
+
+		setFromSphericalCoords: function ( radius, phi, theta ) {
+
+			var sinPhiRadius = Math.sin( phi ) * radius;
+
+			this.x = sinPhiRadius * Math.sin( theta );
+			this.y = Math.cos( phi ) * radius;
+			this.z = sinPhiRadius * Math.cos( theta );
 
 			return this;
 
@@ -2909,9 +2907,15 @@ var Three = (function (exports) {
 
 		setFromCylindrical: function ( c ) {
 
-			this.x = c.radius * Math.sin( c.theta );
-			this.y = c.y;
-			this.z = c.radius * Math.cos( c.theta );
+			return this.setFromCylindricalCoords( c.radius, c.theta, c.y );
+
+		},
+
+		setFromCylindricalCoords: function ( radius, theta, y ) {
+
+			this.x = radius * Math.sin( theta );
+			this.y = y;
+			this.z = radius * Math.cos( theta );
 
 			return this;
 
@@ -3387,17 +3391,9 @@ var Three = (function (exports) {
 
 			} else {
 
-				if ( typeof OffscreenCanvas !== 'undefined' ) {
-
-					canvas = new OffscreenCanvas( image.width, image.height );
-
-				} else {
-
-					canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
-					canvas.width = image.width;
-					canvas.height = image.height;
-
-				}
+				canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
+				canvas.width = image.width;
+				canvas.height = image.height;
 
 				var context = canvas.getContext( '2d' );
 
@@ -3640,7 +3636,7 @@ var Three = (function (exports) {
 
 		transformUv: function ( uv ) {
 
-			if ( this.mapping !== UVMapping ) return;
+			if ( this.mapping !== UVMapping ) return uv;
 
 			uv.applyMatrix3( this.matrix );
 
@@ -3711,6 +3707,8 @@ var Three = (function (exports) {
 				uv.y = 1 - uv.y;
 
 			}
+
+			return uv;
 
 		}
 
@@ -3962,6 +3960,10 @@ var Three = (function (exports) {
 
 			// rotation (SpriteMaterial)
 			if ( this.rotation !== 0 ) data.rotation = this.rotation;
+
+			if ( this.polygonOffset === true ) data.polygonOffset = true;
+			if ( this.polygonOffsetFactor !== 0 ) data.polygonOffsetFactor = this.polygonOffsetFactor;
+			if ( this.polygonOffsetUnits !== 0 ) data.polygonOffsetUnits = this.polygonOffsetUnits;
 
 			if ( this.linewidth !== 1 ) data.linewidth = this.linewidth;
 			if ( this.dashSize !== undefined ) data.dashSize = this.dashSize;
@@ -4635,6 +4637,28 @@ var Three = (function (exports) {
 
 		},
 
+		lerpHSL: function () {
+
+			var hslA = { h: 0, s: 0, l: 0 };
+			var hslB = { h: 0, s: 0, l: 0 };
+
+			return function lerpHSL( color, alpha ) {
+
+				this.getHSL( hslA );
+				color.getHSL( hslB );
+
+				var h = _Math.lerp( hslA.h, hslB.h, alpha );
+				var s = _Math.lerp( hslA.s, hslB.s, alpha );
+				var l = _Math.lerp( hslA.l, hslB.l, alpha );
+
+				this.setHSL( h, s, l );
+
+				return this;
+
+			};
+
+		}(),
+
 		equals: function ( c ) {
 
 			return ( c.r === this.r ) && ( c.g === this.g ) && ( c.b === this.b );
@@ -5306,30 +5330,41 @@ var Three = (function (exports) {
 
 		},
 
-		applyMatrix4: function ( matrix ) {
+		applyMatrix4: function () {
 
-			// transform of empty box is an empty box.
-			if ( this.isEmpty( ) ) return this;
+			var points = [
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3()
+			];
 
-			var m = matrix.elements;
+			return function applyMatrix4( matrix ) {
 
-			var xax = m[ 0 ] * this.min.x, xay = m[ 1 ] * this.min.x, xaz = m[ 2 ] * this.min.x;
-			var xbx = m[ 0 ] * this.max.x, xby = m[ 1 ] * this.max.x, xbz = m[ 2 ] * this.max.x;
-			var yax = m[ 4 ] * this.min.y, yay = m[ 5 ] * this.min.y, yaz = m[ 6 ] * this.min.y;
-			var ybx = m[ 4 ] * this.max.y, yby = m[ 5 ] * this.max.y, ybz = m[ 6 ] * this.max.y;
-			var zax = m[ 8 ] * this.min.z, zay = m[ 9 ] * this.min.z, zaz = m[ 10 ] * this.min.z;
-			var zbx = m[ 8 ] * this.max.z, zby = m[ 9 ] * this.max.z, zbz = m[ 10 ] * this.max.z;
+				// transform of empty box is an empty box.
+				if ( this.isEmpty() ) return this;
 
-			this.min.x = Math.min( xax, xbx ) + Math.min( yax, ybx ) + Math.min( zax, zbx ) + m[ 12 ];
-			this.min.y = Math.min( xay, xby ) + Math.min( yay, yby ) + Math.min( zay, zby ) + m[ 13 ];
-			this.min.z = Math.min( xaz, xbz ) + Math.min( yaz, ybz ) + Math.min( zaz, zbz ) + m[ 14 ];
-			this.max.x = Math.max( xax, xbx ) + Math.max( yax, ybx ) + Math.max( zax, zbx ) + m[ 12 ];
-			this.max.y = Math.max( xay, xby ) + Math.max( yay, yby ) + Math.max( zay, zby ) + m[ 13 ];
-			this.max.z = Math.max( xaz, xbz ) + Math.max( yaz, ybz ) + Math.max( zaz, zbz ) + m[ 14 ];
+				// NOTE: I am using a binary pattern to specify all 2^3 combinations below
+				points[ 0 ].set( this.min.x, this.min.y, this.min.z ).applyMatrix4( matrix ); // 000
+				points[ 1 ].set( this.min.x, this.min.y, this.max.z ).applyMatrix4( matrix ); // 001
+				points[ 2 ].set( this.min.x, this.max.y, this.min.z ).applyMatrix4( matrix ); // 010
+				points[ 3 ].set( this.min.x, this.max.y, this.max.z ).applyMatrix4( matrix ); // 011
+				points[ 4 ].set( this.max.x, this.min.y, this.min.z ).applyMatrix4( matrix ); // 100
+				points[ 5 ].set( this.max.x, this.min.y, this.max.z ).applyMatrix4( matrix ); // 101
+				points[ 6 ].set( this.max.x, this.max.y, this.min.z ).applyMatrix4( matrix ); // 110
+				points[ 7 ].set( this.max.x, this.max.y, this.max.z ).applyMatrix4( matrix ); // 111
 
-			return this;
+				this.setFromPoints( points );
 
-		},
+				return this;
+
+			};
+
+		}(),
 
 		translate: function ( offset ) {
 
@@ -5804,7 +5839,7 @@ var Three = (function (exports) {
 
 		intersectsSphere: function ( sphere ) {
 
-			return this.distanceToPoint( sphere.center ) <= sphere.radius;
+			return this.distanceSqToPoint( sphere.center ) <= ( sphere.radius * sphere.radius );
 
 		},
 
@@ -6723,34 +6758,50 @@ var Three = (function (exports) {
 
 		lookAt: function () {
 
-			// This method does not support objects with rotated and/or translated parent(s)
+			// This method does not support objects having non-uniformly-scaled parent(s)
 
+			var q1 = new Quaternion();
 			var m1 = new Matrix4();
-			var vector = new Vector3();
+			var target = new Vector3();
+			var position = new Vector3();
 
 			return function lookAt( x, y, z ) {
 
 				if ( x.isVector3 ) {
 
-					vector.copy( x );
+					target.copy( x );
 
 				} else {
 
-					vector.set( x, y, z );
+					target.set( x, y, z );
 
 				}
 
+				var parent = this.parent;
+
+				this.updateWorldMatrix( true, false );
+
+				position.setFromMatrixPosition( this.matrixWorld );
+
 				if ( this.isCamera ) {
 
-					m1.lookAt( this.position, vector, this.up );
+					m1.lookAt( position, target, this.up );
 
 				} else {
 
-					m1.lookAt( vector, this.position, this.up );
+					m1.lookAt( target, position, this.up );
 
 				}
 
 				this.quaternion.setFromRotationMatrix( m1 );
+
+				if ( parent ) {
+
+					m1.extractRotation( parent.matrixWorld );
+					q1.setFromRotationMatrix( m1 );
+					this.quaternion.premultiply( q1.inverse() );
+
+				}
 
 			};
 
@@ -6926,26 +6977,22 @@ var Three = (function (exports) {
 
 		}(),
 
-		getWorldDirection: function () {
+		getWorldDirection: function ( target ) {
 
-			var quaternion = new Quaternion();
+			if ( target === undefined ) {
 
-			return function getWorldDirection( target ) {
+				console.warn( 'Object3D: .getWorldDirection() target is now required' );
+				target = new Vector3();
 
-				if ( target === undefined ) {
+			}
 
-					console.warn( 'Object3D: .getWorldDirection() target is now required' );
-					target = new Vector3();
+			this.updateMatrixWorld( true );
 
-				}
+			var e = this.matrixWorld.elements;
 
-				this.getWorldQuaternion( quaternion );
+			return target.set( e[ 8 ], e[ 9 ], e[ 10 ] ).normalize();
 
-				return target.set( 0, 0, 1 ).applyQuaternion( quaternion );
-
-			};
-
-		}(),
+		},
 
 		raycast: function () {},
 
@@ -7030,6 +7077,44 @@ var Three = (function (exports) {
 			for ( var i = 0, l = children.length; i < l; i ++ ) {
 
 				children[ i ].updateMatrixWorld( force );
+
+			}
+
+		},
+
+		updateWorldMatrix: function ( updateParents, updateChildren ) {
+
+			var parent = this.parent;
+
+			if ( updateParents === true && parent !== null ) {
+
+				parent.updateWorldMatrix( true, false );
+
+			}
+
+			if ( this.matrixAutoUpdate ) this.updateMatrix();
+
+			if ( this.parent === null ) {
+
+				this.matrixWorld.copy( this.matrix );
+
+			} else {
+
+				this.matrixWorld.multiplyMatrices( this.parent.matrixWorld, this.matrix );
+
+			}
+
+			// update children
+
+			if ( updateChildren === true ) {
+
+				var children = this.children;
+
+				for ( var i = 0, l = children.length; i < l; i ++ ) {
+
+					children[ i ].updateWorldMatrix( false, true );
+
+				}
 
 			}
 
@@ -7356,6 +7441,25 @@ var Three = (function (exports) {
 
 			};
 
+		}(),
+
+		getUV: function () {
+
+			var barycoord = new Vector3();
+
+			return function getUV( point, p1, p2, p3, uv1, uv2, uv3, target ) {
+
+				this.getBarycoord( point, p1, p2, p3, barycoord );
+
+				target.set( 0, 0 );
+				target.addScaledVector( uv1, barycoord.x );
+				target.addScaledVector( uv2, barycoord.y );
+				target.addScaledVector( uv3, barycoord.z );
+
+				return target;
+
+			};
+
 		}()
 
 	} );
@@ -7455,6 +7559,12 @@ var Three = (function (exports) {
 		containsPoint: function ( point ) {
 
 			return Triangle.containsPoint( point, this.a, this.b, this.c );
+
+		},
+
+		getUV: function ( point, uv1, uv2, uv3, result ) {
+
+			return Triangle.getUV( point, this.a, this.b, this.c, uv1, uv2, uv3, result );
 
 		},
 
@@ -8748,7 +8858,10 @@ var Three = (function (exports) {
 
 				for ( var i = 0; i < morphTargetsLength; i ++ ) {
 
-					morphTargetsPosition[ i ] = [];
+					morphTargetsPosition[ i ] = {
+						name: morphTargets[ i ].name,
+					 	data: []
+					};
 
 				}
 
@@ -8767,7 +8880,10 @@ var Three = (function (exports) {
 
 				for ( var i = 0; i < morphNormalsLength; i ++ ) {
 
-					morphTargetsNormal[ i ] = [];
+					morphTargetsNormal[ i ] = {
+						name: morphNormals[ i ].name,
+					 	data: []
+					};
 
 				}
 
@@ -8867,7 +8983,7 @@ var Three = (function (exports) {
 
 					var morphTarget = morphTargets[ j ].vertices;
 
-					morphTargetsPosition[ j ].push( morphTarget[ face.a ], morphTarget[ face.b ], morphTarget[ face.c ] );
+					morphTargetsPosition[ j ].data.push( morphTarget[ face.a ], morphTarget[ face.b ], morphTarget[ face.c ] );
 
 				}
 
@@ -8875,7 +8991,7 @@ var Three = (function (exports) {
 
 					var morphNormal = morphNormals[ j ].vertexNormals[ i ];
 
-					morphTargetsNormal[ j ].push( morphNormal.a, morphNormal.b, morphNormal.c );
+					morphTargetsNormal[ j ].data.push( morphNormal.a, morphNormal.b, morphNormal.c );
 
 				}
 
@@ -9452,9 +9568,10 @@ var Three = (function (exports) {
 
 					var morphTarget = morphTargets[ i ];
 
-					var attribute = new Float32BufferAttribute( morphTarget.length * 3, 3 );
+					var attribute = new Float32BufferAttribute( morphTarget.data.length * 3, 3 );
+					attribute.name = morphTarget.name;
 
-					array.push( attribute.copyVector3sArray( morphTarget ) );
+					array.push( attribute.copyVector3sArray( morphTarget.data ) );
 
 				}
 
@@ -9584,7 +9701,6 @@ var Three = (function (exports) {
 
 			var index = this.index;
 			var attributes = this.attributes;
-			var groups = this.groups;
 
 			if ( attributes.position ) {
 
@@ -9620,46 +9736,31 @@ var Three = (function (exports) {
 
 					var indices = index.array;
 
-					if ( groups.length === 0 ) {
+					for ( var i = 0, il = index.count; i < il; i += 3 ) {
 
-						this.addGroup( 0, indices.length );
+						vA = indices[ i + 0 ] * 3;
+						vB = indices[ i + 1 ] * 3;
+						vC = indices[ i + 2 ] * 3;
 
-					}
+						pA.fromArray( positions, vA );
+						pB.fromArray( positions, vB );
+						pC.fromArray( positions, vC );
 
-					for ( var j = 0, jl = groups.length; j < jl; ++ j ) {
+						cb.subVectors( pC, pB );
+						ab.subVectors( pA, pB );
+						cb.cross( ab );
 
-						var group = groups[ j ];
+						normals[ vA ] += cb.x;
+						normals[ vA + 1 ] += cb.y;
+						normals[ vA + 2 ] += cb.z;
 
-						var start = group.start;
-						var count = group.count;
+						normals[ vB ] += cb.x;
+						normals[ vB + 1 ] += cb.y;
+						normals[ vB + 2 ] += cb.z;
 
-						for ( var i = start, il = start + count; i < il; i += 3 ) {
-
-							vA = indices[ i + 0 ] * 3;
-							vB = indices[ i + 1 ] * 3;
-							vC = indices[ i + 2 ] * 3;
-
-							pA.fromArray( positions, vA );
-							pB.fromArray( positions, vB );
-							pC.fromArray( positions, vC );
-
-							cb.subVectors( pC, pB );
-							ab.subVectors( pA, pB );
-							cb.cross( ab );
-
-							normals[ vA ] += cb.x;
-							normals[ vA + 1 ] += cb.y;
-							normals[ vA + 2 ] += cb.z;
-
-							normals[ vB ] += cb.x;
-							normals[ vB + 1 ] += cb.y;
-							normals[ vB + 2 ] += cb.z;
-
-							normals[ vC ] += cb.x;
-							normals[ vC + 1 ] += cb.y;
-							normals[ vC + 2 ] += cb.z;
-
-						}
+						normals[ vC ] += cb.x;
+						normals[ vC + 1 ] += cb.y;
+						normals[ vC + 2 ] += cb.z;
 
 					}
 
@@ -10151,24 +10252,8 @@ var Three = (function (exports) {
 			var uvB = new Vector2();
 			var uvC = new Vector2();
 
-			var barycoord = new Vector3();
-
 			var intersectionPoint = new Vector3();
 			var intersectionPointWorld = new Vector3();
-
-			function uvIntersection( point, p1, p2, p3, uv1, uv2, uv3 ) {
-
-				Triangle.getBarycoord( point, p1, p2, p3, barycoord );
-
-				uv1.multiplyScalar( barycoord.x );
-				uv2.multiplyScalar( barycoord.y );
-				uv3.multiplyScalar( barycoord.z );
-
-				uv1.add( uv2 ).add( uv3 );
-
-				return uv1.clone();
-
-			}
 
 			function checkIntersection( object, material, raycaster, ray, pA, pB, pC, point ) {
 
@@ -10217,7 +10302,7 @@ var Three = (function (exports) {
 						uvB.fromBufferAttribute( uv, b );
 						uvC.fromBufferAttribute( uv, c );
 
-						intersection.uv = uvIntersection( intersectionPoint, vA, vB, vC, uvA, uvB, uvC );
+						intersection.uv = Triangle.getUV( intersectionPoint, vA, vB, vC, uvA, uvB, uvC, new Vector2() );
 
 					}
 
@@ -10459,7 +10544,7 @@ var Three = (function (exports) {
 								uvB.copy( uvs_f[ 1 ] );
 								uvC.copy( uvs_f[ 2 ] );
 
-								intersection.uv = uvIntersection( intersectionPoint, fvA, fvB, fvC, uvA, uvB, uvC );
+								intersection.uv = Triangle.getUV( intersectionPoint, fvA, fvB, fvC, uvA, uvB, uvC, new Vector2() );
 
 							}
 
@@ -11992,7 +12077,7 @@ var Three = (function (exports) {
 	PlaneBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 	PlaneBufferGeometry.prototype.constructor = PlaneBufferGeometry;
 
-	var VolumeSlice = function( volume, index, axis ) {
+	var VolumeSlice = function ( volume, index, axis ) {
 
 		var slice = this;
 		
@@ -12000,12 +12085,12 @@ var Three = (function (exports) {
 		
 		index = index || 0;
 		Object.defineProperty( this, 'index', {
-			get : function() {
+			get: function () {
 
 				return index;
 
 			},
-			set : function( value ) {
+			set: function ( value ) {
 
 				index = value;
 				slice.geometryNeedsUpdate = true;
@@ -12028,7 +12113,7 @@ var Three = (function (exports) {
 		var canvasMap = new Texture( this.canvas );
 		canvasMap.minFilter = LinearFilter;
 		canvasMap.wrapS = canvasMap.wrapT = ClampToEdgeWrapping;
-		var material = new MeshBasicMaterial( { map: canvasMap, side: DoubleSide, transparent : true } );
+		var material = new MeshBasicMaterial( { map: canvasMap, side: DoubleSide, transparent: true } );
 		
 		this.mesh = new Mesh( this.geometry, material );
 		
@@ -12046,10 +12131,10 @@ var Three = (function (exports) {
 
 	VolumeSlice.prototype = {
 
-		constructor : VolumeSlice,
+		constructor: VolumeSlice,
 
 		
-		repaint : function() {
+		repaint: function () {
 
 			if ( this.geometryNeedsUpdate ) {
 
@@ -12058,13 +12143,11 @@ var Three = (function (exports) {
 			}
 
 			var iLength = this.iLength,
-			jLength = this.jLength,
-			sliceAccess = this.sliceAccess,
-			volume = this.volume,
-			axis = this.axis,
-			index = this.index,
-			canvas = this.canvasBuffer,
-			ctx = this.ctxBuffer;
+				jLength = this.jLength,
+				sliceAccess = this.sliceAccess,
+				volume = this.volume,
+				canvas = this.canvasBuffer,
+				ctx = this.ctxBuffer;
 
 
 			// get the imageData and pixel array from the canvas
@@ -12099,8 +12182,7 @@ var Three = (function (exports) {
 
 				}
 
-			}
-			else {
+			} else {
 
 				for ( var j = 0; j < jLength; j ++ ) {
 
@@ -12134,7 +12216,7 @@ var Three = (function (exports) {
 		},
 
 		
-		updateGeometry : function() {
+		updateGeometry: function () {
 
 			var extracted = this.volume.extractPerpendicularPlane( this.axis, this.index );
 			this.sliceAccess = extracted.sliceAccess;
@@ -12149,7 +12231,7 @@ var Three = (function (exports) {
 			this.ctx = this.canvas.getContext( '2d' );
 			this.ctxBuffer = this.canvasBuffer.getContext( '2d' );
 
-			this.geometry = new PlaneGeometry( extracted.planeWidth, extracted.planeHeight );
+			this.geometry = new PlaneBufferGeometry( extracted.planeWidth, extracted.planeHeight );
 
 			if ( this.mesh ) {
 

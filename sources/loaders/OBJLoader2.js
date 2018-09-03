@@ -16,7 +16,7 @@ if ( LoaderSupport === undefined ) console.error( '"LoaderSupport" is not availa
 
 var OBJLoader2 = (function () {
 
-	var OBJLOADER2_VERSION = '2.4.1';
+	var OBJLOADER2_VERSION = '2.4.2';
 	var Validator = LoaderSupport.Validator;
 
 	function OBJLoader2( manager ) {
@@ -92,6 +92,7 @@ var OBJLoader2 = (function () {
 
 	OBJLoader2.prototype._setCallbacks = function ( callbacks ) {
 		if ( Validator.isValid( callbacks.onProgress ) ) this.callbacks.setCallbackOnProgress( callbacks.onProgress );
+		if ( Validator.isValid( callbacks.onReportError ) ) this.callbacks.setCallbackOnReportError( callbacks.onReportError );
 		if ( Validator.isValid( callbacks.onMeshAlter ) ) this.callbacks.setCallbackOnMeshAlter( callbacks.onMeshAlter );
 		if ( Validator.isValid( callbacks.onLoad ) ) this.callbacks.setCallbackOnLoad( callbacks.onLoad );
 		if ( Validator.isValid( callbacks.onLoadMaterials ) ) this.callbacks.setCallbackOnLoadMaterials( callbacks.onLoadMaterials );
@@ -126,7 +127,19 @@ var OBJLoader2 = (function () {
 
 		}
 		this.onProgress( 'error', output, -1 );
-		throw output;
+		this._throwError( output );
+	};
+
+	OBJLoader2.prototype._throwError = function ( errorMessage ) {
+		if ( Validator.isValid( this.callbacks.onReportError ) )  {
+
+			this.callbacks.onReportError( errorMessage );
+
+		} else {
+
+			throw errorMessage;
+
+		}
 	};
 
 	
@@ -136,11 +149,15 @@ var OBJLoader2 = (function () {
 	};
 
 	OBJLoader2.prototype._loadObj = function ( resource, onLoad, onProgress, onError, onMeshAlter, useAsync ) {
-		if ( ! Validator.isValid( onError ) ) onError = this._onError;
+		var scope = this;
+		if ( ! Validator.isValid( onError ) ) {
+			onError = function ( event ) {
+				scope._onError( event );
+			};
+		}
 
 		// fast-fail
 		if ( ! Validator.isValid( resource ) ) onError( 'An invalid ResourceDescriptor was provided. Unable to continue!' );
-		var scope = this;
 		var fileLoaderOnLoad = function ( content ) {
 
 			resource.content = content;
@@ -224,7 +241,7 @@ var OBJLoader2 = (function () {
 			scope._loadObj( available.obj, scope.callbacks.onLoad, null, null, scope.callbacks.onMeshAlter, prepData.useAsync );
 
 		};
-		this._loadMtl( available.mtl, onMaterialsLoaded, prepData.crossOrigin, prepData.materialOptions );
+		this._loadMtl( available.mtl, onMaterialsLoaded, null, null, prepData.crossOrigin, prepData.materialOptions );
 	};
 
 	OBJLoader2.prototype._applyPrepData = function ( prepData ) {
@@ -292,7 +309,7 @@ var OBJLoader2 = (function () {
 
 		} else {
 
-			throw 'Provided content was neither of type String nor Uint8Array! Aborting...';
+			this._throwError( 'Provided content was neither of type String nor Uint8Array! Aborting...' );
 
 		}
 		if ( this.logging.enabled ) console.timeEnd( 'OBJLoader2 parse: ' + this.modelName );
@@ -320,7 +337,7 @@ var OBJLoader2 = (function () {
 		if ( ! Validator.isValid( content ) ) {
 
 			console.warn( 'Provided content is not a valid ArrayBuffer.' );
-			scopedOnLoad()
+			scopedOnLoad();
 
 		} else {
 
@@ -487,7 +504,11 @@ var OBJLoader2 = (function () {
 		};
 
 		Parser.prototype.setCallbackMeshBuilder = function ( callbackMeshBuilder ) {
-			if ( ! LoaderSupport.Validator.isValid( callbackMeshBuilder ) ) throw 'Unable to run as no "MeshBuilder" callback is set.';
+			if ( ! LoaderSupport.Validator.isValid( callbackMeshBuilder ) ) {
+
+				this._throwError( 'Unable to run as no "MeshBuilder" callback is set.' );
+
+			}
 			this.callbackMeshBuilder = callbackMeshBuilder;
 		};
 
@@ -969,7 +990,7 @@ var OBJLoader2 = (function () {
 
 				if ( this.colors.length > 0 && this.colors.length !== this.vertices.length ) {
 
-					throw 'Vertex Colors were detected, but vertex count and color count do not match!';
+					this._throwError( 'Vertex Colors were detected, but vertex count and color count do not match!' );
 
 				}
 				if ( this.logging.enabled && this.logging.debug ) console.debug( this.createRawMeshReport( this.inputObjectCount ) );
@@ -1209,14 +1230,14 @@ var OBJLoader2 = (function () {
 	})();
 
 	
-	OBJLoader2.prototype.loadMtl = function ( url, content, callbackOnLoad, crossOrigin, materialOptions ) {
+	OBJLoader2.prototype.loadMtl = function ( url, content, onLoad, onProgress, onError, crossOrigin, materialOptions ) {
 		var resource = new LoaderSupport.ResourceDescriptor( url, 'MTL' );
 		resource.setContent( content );
-		this._loadMtl( resource, callbackOnLoad, crossOrigin, materialOptions );
+		this._loadMtl( resource, onLoad, onProgress, onError, crossOrigin, materialOptions );
 	};
 
 
-	OBJLoader2.prototype._loadMtl = function ( resource, callbackOnLoad, crossOrigin, materialOptions ) {
+	OBJLoader2.prototype._loadMtl = function ( resource, onLoad, onProgress, onError, crossOrigin, materialOptions ) {
 		if ( MTLLoader === undefined ) console.error( '"MTLLoader" is not available. "OBJLoader2" requires it for loading MTL files.' );
 		if ( Validator.isValid( resource ) && this.logging.enabled ) console.time( 'Loading MTL: ' + resource.name );
 
@@ -1239,7 +1260,7 @@ var OBJLoader2 = (function () {
 			}
 
 			if ( Validator.isValid( resource ) && scope.logging.enabled ) console.timeEnd( 'Loading MTL: ' + resource.name );
-			callbackOnLoad( materials, materialCreator );
+			onLoad( materials, materialCreator );
 		};
 
 		// fast-fail
@@ -1265,7 +1286,7 @@ var OBJLoader2 = (function () {
 
 					} else {
 
-						throw 'Unable to parse mtl as it it seems to be neither a String, an Array or an ArrayBuffer!';
+						this._throwError( 'Unable to parse mtl as it it seems to be neither a String, an Array or an ArrayBuffer!' );
 					}
 
 				}
@@ -1279,7 +1300,29 @@ var OBJLoader2 = (function () {
 			} else if ( Validator.isValid( resource.url ) ) {
 
 				var fileLoader = new FileLoader( this.manager );
-				fileLoader.load( resource.url, parseTextWithMtlLoader, this._onProgress, this._onError );
+				if ( ! Validator.isValid( onError ) ) {
+					onError = function ( event ) {
+						scope._onError( event );
+					};
+				}
+				if ( ! Validator.isValid( onProgress ) ) {
+					var numericalValueRef = 0;
+					var numericalValue = 0;
+					onProgress = function ( event ) {
+						if ( ! event.lengthComputable ) return;
+
+						numericalValue = event.loaded / event.total;
+						if ( numericalValue > numericalValueRef ) {
+
+							numericalValueRef = numericalValue;
+							var output = 'Download of "' + resource.url + '": ' + ( numericalValue * 100 ).toFixed( 2 ) + '%';
+							scope.onProgress( 'progressLoad', output, numericalValue );
+
+						}
+					};
+				}
+
+				fileLoader.load( resource.url, parseTextWithMtlLoader, onProgress, onError );
 
 			}
 		}

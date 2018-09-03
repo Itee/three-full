@@ -19,8 +19,6 @@ var RaytracingRenderer = function ( parameters ) {
 		alpha: parameters.alpha === true
 	} );
 
-	var maxRecursionDepth = 3;
-
 	var canvasWidth, canvasHeight;
 
 	var clearColor = new Color( 0x000000 );
@@ -37,15 +35,16 @@ var RaytracingRenderer = function ( parameters ) {
 
 	console.log( '%cSpinning off ' + workers + ' Workers ', 'font-size: 20px; background: black; color: white; font-family: monospace;' );
 
-	this.setWorkers = function( w ) {
+	this.setWorkers = function ( w ) {
 
 		workers = w || navigator.hardwareConcurrency || 4;
 
 		while ( pool.length < workers ) {
-			var worker = new Worker( parameters.workerPath );
-			worker.id = workerId++;
 
-			worker.onmessage = function( e ) {
+			var worker = new Worker( parameters.workerPath );
+			worker.id = workerId ++;
+
+			worker.onmessage = function ( e ) {
 
 				var data = e.data;
 
@@ -73,7 +72,7 @@ var RaytracingRenderer = function ( parameters ) {
 
 			};
 
-			worker.color = new Color().setHSL( Math.random() , 0.8, 0.8 ).getHexString();
+			worker.color = new Color().setHSL( Math.random(), 0.8, 0.8 ).getHexString();
 			pool.push( worker );
 
 			updateSettings( worker );
@@ -107,7 +106,7 @@ var RaytracingRenderer = function ( parameters ) {
 
 	this.setWorkers( workers );
 
-	this.setClearColor = function ( color, alpha ) {
+	this.setClearColor = function ( color  ) {
 
 		clearColor.set( color );
 
@@ -153,6 +152,7 @@ var RaytracingRenderer = function ( parameters ) {
 	}
 
 	function renderNext( worker ) {
+
 		if ( ! toRender.length ) {
 
 			renderering = false;
@@ -211,6 +211,7 @@ var RaytracingRenderer = function ( parameters ) {
 		}
 
 		materials[ mat.uuid ] = props;
+
 	}
 
 	this.render = function ( scene, camera ) {
@@ -232,7 +233,7 @@ var RaytracingRenderer = function ( parameters ) {
 
 		scene.traverse( serializeObject );
 
-		pool.forEach( function( worker ) {
+		pool.forEach( function ( worker ) {
 
 			worker.postMessage( {
 				scene: sceneJSON,
@@ -240,6 +241,7 @@ var RaytracingRenderer = function ( parameters ) {
 				annex: materials,
 				sceneId: sceneId
 			} );
+
 		} );
 
 		context.clearRect( 0, 0, canvasWidth, canvasHeight );
@@ -264,7 +266,7 @@ var RaytracingRenderer = function ( parameters ) {
 
 			for ( var i = 0; i < totalBlocks; i ++ ) {
 
-				var swap = Math.random()  * totalBlocks | 0;
+				var swap = Math.random() * totalBlocks | 0;
 				var tmp = toRender[ swap ];
 				toRender[ swap ] = toRender[ i ];
 				toRender[ i ] = tmp;

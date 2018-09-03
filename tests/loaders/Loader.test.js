@@ -178,1369 +178,6 @@ var Three = (function (exports) {
 
 	};
 
-	function Vector2( x, y ) {
-
-		this.x = x || 0;
-		this.y = y || 0;
-
-	}
-
-	Object.defineProperties( Vector2.prototype, {
-
-		"width": {
-
-			get: function () {
-
-				return this.x;
-
-			},
-
-			set: function ( value ) {
-
-				this.x = value;
-
-			}
-
-		},
-
-		"height": {
-
-			get: function () {
-
-				return this.y;
-
-			},
-
-			set: function ( value ) {
-
-				this.y = value;
-
-			}
-
-		}
-
-	} );
-
-	Object.assign( Vector2.prototype, {
-
-		isVector2: true,
-
-		set: function ( x, y ) {
-
-			this.x = x;
-			this.y = y;
-
-			return this;
-
-		},
-
-		setScalar: function ( scalar ) {
-
-			this.x = scalar;
-			this.y = scalar;
-
-			return this;
-
-		},
-
-		setX: function ( x ) {
-
-			this.x = x;
-
-			return this;
-
-		},
-
-		setY: function ( y ) {
-
-			this.y = y;
-
-			return this;
-
-		},
-
-		setComponent: function ( index, value ) {
-
-			switch ( index ) {
-
-				case 0: this.x = value; break;
-				case 1: this.y = value; break;
-				default: throw new Error( 'index is out of range: ' + index );
-
-			}
-
-			return this;
-
-		},
-
-		getComponent: function ( index ) {
-
-			switch ( index ) {
-
-				case 0: return this.x;
-				case 1: return this.y;
-				default: throw new Error( 'index is out of range: ' + index );
-
-			}
-
-		},
-
-		clone: function () {
-
-			return new this.constructor( this.x, this.y );
-
-		},
-
-		copy: function ( v ) {
-
-			this.x = v.x;
-			this.y = v.y;
-
-			return this;
-
-		},
-
-		add: function ( v, w ) {
-
-			if ( w !== undefined ) {
-
-				console.warn( 'Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
-				return this.addVectors( v, w );
-
-			}
-
-			this.x += v.x;
-			this.y += v.y;
-
-			return this;
-
-		},
-
-		addScalar: function ( s ) {
-
-			this.x += s;
-			this.y += s;
-
-			return this;
-
-		},
-
-		addVectors: function ( a, b ) {
-
-			this.x = a.x + b.x;
-			this.y = a.y + b.y;
-
-			return this;
-
-		},
-
-		addScaledVector: function ( v, s ) {
-
-			this.x += v.x * s;
-			this.y += v.y * s;
-
-			return this;
-
-		},
-
-		sub: function ( v, w ) {
-
-			if ( w !== undefined ) {
-
-				console.warn( 'Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
-				return this.subVectors( v, w );
-
-			}
-
-			this.x -= v.x;
-			this.y -= v.y;
-
-			return this;
-
-		},
-
-		subScalar: function ( s ) {
-
-			this.x -= s;
-			this.y -= s;
-
-			return this;
-
-		},
-
-		subVectors: function ( a, b ) {
-
-			this.x = a.x - b.x;
-			this.y = a.y - b.y;
-
-			return this;
-
-		},
-
-		multiply: function ( v ) {
-
-			this.x *= v.x;
-			this.y *= v.y;
-
-			return this;
-
-		},
-
-		multiplyScalar: function ( scalar ) {
-
-			this.x *= scalar;
-			this.y *= scalar;
-
-			return this;
-
-		},
-
-		divide: function ( v ) {
-
-			this.x /= v.x;
-			this.y /= v.y;
-
-			return this;
-
-		},
-
-		divideScalar: function ( scalar ) {
-
-			return this.multiplyScalar( 1 / scalar );
-
-		},
-
-		applyMatrix3: function ( m ) {
-
-			var x = this.x, y = this.y;
-			var e = m.elements;
-
-			this.x = e[ 0 ] * x + e[ 3 ] * y + e[ 6 ];
-			this.y = e[ 1 ] * x + e[ 4 ] * y + e[ 7 ];
-
-			return this;
-
-		},
-
-		min: function ( v ) {
-
-			this.x = Math.min( this.x, v.x );
-			this.y = Math.min( this.y, v.y );
-
-			return this;
-
-		},
-
-		max: function ( v ) {
-
-			this.x = Math.max( this.x, v.x );
-			this.y = Math.max( this.y, v.y );
-
-			return this;
-
-		},
-
-		clamp: function ( min, max ) {
-
-			// assumes min < max, componentwise
-
-			this.x = Math.max( min.x, Math.min( max.x, this.x ) );
-			this.y = Math.max( min.y, Math.min( max.y, this.y ) );
-
-			return this;
-
-		},
-
-		clampScalar: function () {
-
-			var min = new Vector2();
-			var max = new Vector2();
-
-			return function clampScalar( minVal, maxVal ) {
-
-				min.set( minVal, minVal );
-				max.set( maxVal, maxVal );
-
-				return this.clamp( min, max );
-
-			};
-
-		}(),
-
-		clampLength: function ( min, max ) {
-
-			var length = this.length();
-
-			return this.divideScalar( length || 1 ).multiplyScalar( Math.max( min, Math.min( max, length ) ) );
-
-		},
-
-		floor: function () {
-
-			this.x = Math.floor( this.x );
-			this.y = Math.floor( this.y );
-
-			return this;
-
-		},
-
-		ceil: function () {
-
-			this.x = Math.ceil( this.x );
-			this.y = Math.ceil( this.y );
-
-			return this;
-
-		},
-
-		round: function () {
-
-			this.x = Math.round( this.x );
-			this.y = Math.round( this.y );
-
-			return this;
-
-		},
-
-		roundToZero: function () {
-
-			this.x = ( this.x < 0 ) ? Math.ceil( this.x ) : Math.floor( this.x );
-			this.y = ( this.y < 0 ) ? Math.ceil( this.y ) : Math.floor( this.y );
-
-			return this;
-
-		},
-
-		negate: function () {
-
-			this.x = - this.x;
-			this.y = - this.y;
-
-			return this;
-
-		},
-
-		dot: function ( v ) {
-
-			return this.x * v.x + this.y * v.y;
-
-		},
-
-		cross: function ( v ) {
-
-			return this.x * v.y - this.y * v.x;
-
-		},
-
-		lengthSq: function () {
-
-			return this.x * this.x + this.y * this.y;
-
-		},
-
-		length: function () {
-
-			return Math.sqrt( this.x * this.x + this.y * this.y );
-
-		},
-
-		manhattanLength: function () {
-
-			return Math.abs( this.x ) + Math.abs( this.y );
-
-		},
-
-		normalize: function () {
-
-			return this.divideScalar( this.length() || 1 );
-
-		},
-
-		angle: function () {
-
-			// computes the angle in radians with respect to the positive x-axis
-
-			var angle = Math.atan2( this.y, this.x );
-
-			if ( angle < 0 ) angle += 2 * Math.PI;
-
-			return angle;
-
-		},
-
-		distanceTo: function ( v ) {
-
-			return Math.sqrt( this.distanceToSquared( v ) );
-
-		},
-
-		distanceToSquared: function ( v ) {
-
-			var dx = this.x - v.x, dy = this.y - v.y;
-			return dx * dx + dy * dy;
-
-		},
-
-		manhattanDistanceTo: function ( v ) {
-
-			return Math.abs( this.x - v.x ) + Math.abs( this.y - v.y );
-
-		},
-
-		setLength: function ( length ) {
-
-			return this.normalize().multiplyScalar( length );
-
-		},
-
-		lerp: function ( v, alpha ) {
-
-			this.x += ( v.x - this.x ) * alpha;
-			this.y += ( v.y - this.y ) * alpha;
-
-			return this;
-
-		},
-
-		lerpVectors: function ( v1, v2, alpha ) {
-
-			return this.subVectors( v2, v1 ).multiplyScalar( alpha ).add( v1 );
-
-		},
-
-		equals: function ( v ) {
-
-			return ( ( v.x === this.x ) && ( v.y === this.y ) );
-
-		},
-
-		fromArray: function ( array, offset ) {
-
-			if ( offset === undefined ) offset = 0;
-
-			this.x = array[ offset ];
-			this.y = array[ offset + 1 ];
-
-			return this;
-
-		},
-
-		toArray: function ( array, offset ) {
-
-			if ( array === undefined ) array = [];
-			if ( offset === undefined ) offset = 0;
-
-			array[ offset ] = this.x;
-			array[ offset + 1 ] = this.y;
-
-			return array;
-
-		},
-
-		fromBufferAttribute: function ( attribute, index, offset ) {
-
-			if ( offset !== undefined ) {
-
-				console.warn( 'Vector2: offset has been removed from .fromBufferAttribute().' );
-
-			}
-
-			this.x = attribute.getX( index );
-			this.y = attribute.getY( index );
-
-			return this;
-
-		},
-
-		rotateAround: function ( center, angle ) {
-
-			var c = Math.cos( angle ), s = Math.sin( angle );
-
-			var x = this.x - center.x;
-			var y = this.y - center.y;
-
-			this.x = x * c - y * s + center.x;
-			this.y = x * s + y * c + center.y;
-
-			return this;
-
-		}
-
-	} );
-
-	var Cache = {
-
-		enabled: false,
-
-		files: {},
-
-		add: function ( key, file ) {
-
-			if ( this.enabled === false ) return;
-
-			// console.log( 'Cache', 'Adding key:', key );
-
-			this.files[ key ] = file;
-
-		},
-
-		get: function ( key ) {
-
-			if ( this.enabled === false ) return;
-
-			// console.log( 'Cache', 'Checking key:', key );
-
-			return this.files[ key ];
-
-		},
-
-		remove: function ( key ) {
-
-			delete this.files[ key ];
-
-		},
-
-		clear: function () {
-
-			this.files = {};
-
-		}
-
-	};
-
-	function LoadingManager( onLoad, onProgress, onError ) {
-
-		var scope = this;
-
-		var isLoading = false;
-		var itemsLoaded = 0;
-		var itemsTotal = 0;
-		var urlModifier = undefined;
-
-		this.onStart = undefined;
-		this.onLoad = onLoad;
-		this.onProgress = onProgress;
-		this.onError = onError;
-
-		this.itemStart = function ( url ) {
-
-			itemsTotal ++;
-
-			if ( isLoading === false ) {
-
-				if ( scope.onStart !== undefined ) {
-
-					scope.onStart( url, itemsLoaded, itemsTotal );
-
-				}
-
-			}
-
-			isLoading = true;
-
-		};
-
-		this.itemEnd = function ( url ) {
-
-			itemsLoaded ++;
-
-			if ( scope.onProgress !== undefined ) {
-
-				scope.onProgress( url, itemsLoaded, itemsTotal );
-
-			}
-
-			if ( itemsLoaded === itemsTotal ) {
-
-				isLoading = false;
-
-				if ( scope.onLoad !== undefined ) {
-
-					scope.onLoad();
-
-				}
-
-			}
-
-		};
-
-		this.itemError = function ( url ) {
-
-			if ( scope.onError !== undefined ) {
-
-				scope.onError( url );
-
-			}
-
-		};
-
-		this.resolveURL = function ( url ) {
-
-			if ( urlModifier ) {
-
-				return urlModifier( url );
-
-			}
-
-			return url;
-
-		};
-
-		this.setURLModifier = function ( transform ) {
-
-			urlModifier = transform;
-			return this;
-
-		};
-
-	}
-
-	var DefaultLoadingManager = new LoadingManager();
-
-	var loading = {};
-
-	function FileLoader( manager ) {
-
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
-
-	}
-
-	Object.assign( FileLoader.prototype, {
-
-		load: function ( url, onLoad, onProgress, onError ) {
-
-			if ( url === undefined ) url = '';
-
-			if ( this.path !== undefined ) url = this.path + url;
-
-			url = this.manager.resolveURL( url );
-
-			var scope = this;
-
-			var cached = Cache.get( url );
-
-			if ( cached !== undefined ) {
-
-				scope.manager.itemStart( url );
-
-				setTimeout( function () {
-
-					if ( onLoad ) onLoad( cached );
-
-					scope.manager.itemEnd( url );
-
-				}, 0 );
-
-				return cached;
-
-			}
-
-			// Check if request is duplicate
-
-			if ( loading[ url ] !== undefined ) {
-
-				loading[ url ].push( {
-
-					onLoad: onLoad,
-					onProgress: onProgress,
-					onError: onError
-
-				} );
-
-				return;
-
-			}
-
-			// Check for data: URI
-			var dataUriRegex = /^data:(.*?)(;base64)?,(.*)$/;
-			var dataUriRegexResult = url.match( dataUriRegex );
-
-			// Safari can not handle Data URIs through XMLHttpRequest so process manually
-			if ( dataUriRegexResult ) {
-
-				var mimeType = dataUriRegexResult[ 1 ];
-				var isBase64 = !! dataUriRegexResult[ 2 ];
-				var data = dataUriRegexResult[ 3 ];
-
-				data = window.decodeURIComponent( data );
-
-				if ( isBase64 ) data = window.atob( data );
-
-				try {
-
-					var response;
-					var responseType = ( this.responseType || '' ).toLowerCase();
-
-					switch ( responseType ) {
-
-						case 'arraybuffer':
-						case 'blob':
-
-							var view = new Uint8Array( data.length );
-
-							for ( var i = 0; i < data.length; i ++ ) {
-
-								view[ i ] = data.charCodeAt( i );
-
-							}
-
-							if ( responseType === 'blob' ) {
-
-								response = new Blob( [ view.buffer ], { type: mimeType } );
-
-							} else {
-
-								response = view.buffer;
-
-							}
-
-							break;
-
-						case 'document':
-
-							var parser = new DOMParser();
-							response = parser.parseFromString( data, mimeType );
-
-							break;
-
-						case 'json':
-
-							response = JSON.parse( data );
-
-							break;
-
-						default: // 'text' or other
-
-							response = data;
-
-							break;
-
-					}
-
-					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
-
-						if ( onLoad ) onLoad( response );
-
-						scope.manager.itemEnd( url );
-
-					}, 0 );
-
-				} catch ( error ) {
-
-					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
-
-						if ( onError ) onError( error );
-
-						scope.manager.itemEnd( url );
-						scope.manager.itemError( url );
-
-					}, 0 );
-
-				}
-
-			} else {
-
-				// Initialise array for duplicate requests
-
-				loading[ url ] = [];
-
-				loading[ url ].push( {
-
-					onLoad: onLoad,
-					onProgress: onProgress,
-					onError: onError
-
-				} );
-
-				var request = new XMLHttpRequest();
-
-				request.open( 'GET', url, true );
-
-				request.addEventListener( 'load', function ( event ) {
-
-					var response = this.response;
-
-					Cache.add( url, response );
-
-					var callbacks = loading[ url ];
-
-					delete loading[ url ];
-
-					if ( this.status === 200 || this.status === 0 ) {
-
-						// Some browsers return HTTP Status 0 when using non-http protocol
-						// e.g. 'file://' or 'data://'. Handle as success.
-
-						if ( this.status === 0 ) console.warn( 'FileLoader: HTTP Status 0 received.' );
-
-						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-							var callback = callbacks[ i ];
-							if ( callback.onLoad ) callback.onLoad( response );
-
-						}
-
-						scope.manager.itemEnd( url );
-
-					} else {
-
-						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-							var callback = callbacks[ i ];
-							if ( callback.onError ) callback.onError( event );
-
-						}
-
-						scope.manager.itemEnd( url );
-						scope.manager.itemError( url );
-
-					}
-
-				}, false );
-
-				request.addEventListener( 'progress', function ( event ) {
-
-					var callbacks = loading[ url ];
-
-					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-						var callback = callbacks[ i ];
-						if ( callback.onProgress ) callback.onProgress( event );
-
-					}
-
-				}, false );
-
-				request.addEventListener( 'error', function ( event ) {
-
-					var callbacks = loading[ url ];
-
-					delete loading[ url ];
-
-					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-						var callback = callbacks[ i ];
-						if ( callback.onError ) callback.onError( event );
-
-					}
-
-					scope.manager.itemEnd( url );
-					scope.manager.itemError( url );
-
-				}, false );
-
-				if ( this.responseType !== undefined ) request.responseType = this.responseType;
-				if ( this.withCredentials !== undefined ) request.withCredentials = this.withCredentials;
-
-				if ( request.overrideMimeType ) request.overrideMimeType( this.mimeType !== undefined ? this.mimeType : 'text/plain' );
-
-				for ( var header in this.requestHeader ) {
-
-					request.setRequestHeader( header, this.requestHeader[ header ] );
-
-				}
-
-				request.send( null );
-
-			}
-
-			scope.manager.itemStart( url );
-
-			return request;
-
-		},
-
-		setPath: function ( value ) {
-
-			this.path = value;
-			return this;
-
-		},
-
-		setResponseType: function ( value ) {
-
-			this.responseType = value;
-			return this;
-
-		},
-
-		setWithCredentials: function ( value ) {
-
-			this.withCredentials = value;
-			return this;
-
-		},
-
-		setMimeType: function ( value ) {
-
-			this.mimeType = value;
-			return this;
-
-		},
-
-		setRequestHeader: function ( value ) {
-
-			this.requestHeader = value;
-			return this;
-
-		}
-
-	} );
-
-	function EventDispatcher() {}
-
-	Object.assign( EventDispatcher.prototype, {
-
-		addEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) this._listeners = {};
-
-			var listeners = this._listeners;
-
-			if ( listeners[ type ] === undefined ) {
-
-				listeners[ type ] = [];
-
-			}
-
-			if ( listeners[ type ].indexOf( listener ) === - 1 ) {
-
-				listeners[ type ].push( listener );
-
-			}
-
-		},
-
-		hasEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) return false;
-
-			var listeners = this._listeners;
-
-			return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
-
-		},
-
-		removeEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) return;
-
-			var listeners = this._listeners;
-			var listenerArray = listeners[ type ];
-
-			if ( listenerArray !== undefined ) {
-
-				var index = listenerArray.indexOf( listener );
-
-				if ( index !== - 1 ) {
-
-					listenerArray.splice( index, 1 );
-
-				}
-
-			}
-
-		},
-
-		dispatchEvent: function ( event ) {
-
-			if ( this._listeners === undefined ) return;
-
-			var listeners = this._listeners;
-			var listenerArray = listeners[ event.type ];
-
-			if ( listenerArray !== undefined ) {
-
-				event.target = this;
-
-				var array = listenerArray.slice( 0 );
-
-				for ( var i = 0, l = array.length; i < l; i ++ ) {
-
-					array[ i ].call( this, event );
-
-				}
-
-			}
-
-		}
-
-	} );
-
-	var materialId = 0;
-
-	function Material() {
-
-		Object.defineProperty( this, 'id', { value: materialId ++ } );
-
-		this.uuid = _Math.generateUUID();
-
-		this.name = '';
-		this.type = 'Material';
-
-		this.fog = true;
-		this.lights = true;
-
-		this.blending = NormalBlending;
-		this.side = FrontSide;
-		this.flatShading = false;
-		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
-
-		this.opacity = 1;
-		this.transparent = false;
-
-		this.blendSrc = SrcAlphaFactor;
-		this.blendDst = OneMinusSrcAlphaFactor;
-		this.blendEquation = AddEquation;
-		this.blendSrcAlpha = null;
-		this.blendDstAlpha = null;
-		this.blendEquationAlpha = null;
-
-		this.depthFunc = LessEqualDepth;
-		this.depthTest = true;
-		this.depthWrite = true;
-
-		this.clippingPlanes = null;
-		this.clipIntersection = false;
-		this.clipShadows = false;
-
-		this.shadowSide = null;
-
-		this.colorWrite = true;
-
-		this.precision = null; // override the renderer's default precision for this material
-
-		this.polygonOffset = false;
-		this.polygonOffsetFactor = 0;
-		this.polygonOffsetUnits = 0;
-
-		this.dithering = false;
-
-		this.alphaTest = 0;
-		this.premultipliedAlpha = false;
-
-		this.overdraw = 0; // Overdrawn pixels (typically between 0 and 1) for fixing antialiasing gaps in CanvasRenderer
-
-		this.visible = true;
-
-		this.userData = {};
-
-		this.needsUpdate = true;
-
-	}
-
-	Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
-
-		constructor: Material,
-
-		isMaterial: true,
-
-		onBeforeCompile: function () {},
-
-		setValues: function ( values ) {
-
-			if ( values === undefined ) return;
-
-			for ( var key in values ) {
-
-				var newValue = values[ key ];
-
-				if ( newValue === undefined ) {
-
-					console.warn( "Material: '" + key + "' parameter is undefined." );
-					continue;
-
-				}
-
-				// for backward compatability if shading is set in the constructor
-				if ( key === 'shading' ) {
-
-					console.warn( '' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
-					this.flatShading = ( newValue === FlatShading ) ? true : false;
-					continue;
-
-				}
-
-				var currentValue = this[ key ];
-
-				if ( currentValue === undefined ) {
-
-					console.warn( "" + this.type + ": '" + key + "' is not a property of this material." );
-					continue;
-
-				}
-
-				if ( currentValue && currentValue.isColor ) {
-
-					currentValue.set( newValue );
-
-				} else if ( ( currentValue && currentValue.isVector3 ) && ( newValue && newValue.isVector3 ) ) {
-
-					currentValue.copy( newValue );
-
-				} else if ( key === 'overdraw' ) {
-
-					// ensure overdraw is backwards-compatible with legacy boolean type
-					this[ key ] = Number( newValue );
-
-				} else {
-
-					this[ key ] = newValue;
-
-				}
-
-			}
-
-		},
-
-		toJSON: function ( meta ) {
-
-			var isRoot = ( meta === undefined || typeof meta === 'string' );
-
-			if ( isRoot ) {
-
-				meta = {
-					textures: {},
-					images: {}
-				};
-
-			}
-
-			var data = {
-				metadata: {
-					version: 4.5,
-					type: 'Material',
-					generator: 'Material.toJSON'
-				}
-			};
-
-			// standard Material serialization
-			data.uuid = this.uuid;
-			data.type = this.type;
-
-			if ( this.name !== '' ) data.name = this.name;
-
-			if ( this.color && this.color.isColor ) data.color = this.color.getHex();
-
-			if ( this.roughness !== undefined ) data.roughness = this.roughness;
-			if ( this.metalness !== undefined ) data.metalness = this.metalness;
-
-			if ( this.emissive && this.emissive.isColor ) data.emissive = this.emissive.getHex();
-			if ( this.emissiveIntensity !== 1 ) data.emissiveIntensity = this.emissiveIntensity;
-
-			if ( this.specular && this.specular.isColor ) data.specular = this.specular.getHex();
-			if ( this.shininess !== undefined ) data.shininess = this.shininess;
-			if ( this.clearCoat !== undefined ) data.clearCoat = this.clearCoat;
-			if ( this.clearCoatRoughness !== undefined ) data.clearCoatRoughness = this.clearCoatRoughness;
-
-			if ( this.map && this.map.isTexture ) data.map = this.map.toJSON( meta ).uuid;
-			if ( this.alphaMap && this.alphaMap.isTexture ) data.alphaMap = this.alphaMap.toJSON( meta ).uuid;
-			if ( this.lightMap && this.lightMap.isTexture ) data.lightMap = this.lightMap.toJSON( meta ).uuid;
-
-			if ( this.aoMap && this.aoMap.isTexture ) {
-
-				data.aoMap = this.aoMap.toJSON( meta ).uuid;
-				data.aoMapIntensity = this.aoMapIntensity;
-
-			}
-
-			if ( this.bumpMap && this.bumpMap.isTexture ) {
-
-				data.bumpMap = this.bumpMap.toJSON( meta ).uuid;
-				data.bumpScale = this.bumpScale;
-
-			}
-
-			if ( this.normalMap && this.normalMap.isTexture ) {
-
-				data.normalMap = this.normalMap.toJSON( meta ).uuid;
-				data.normalMapType = this.normalMapType;
-				data.normalScale = this.normalScale.toArray();
-
-			}
-
-			if ( this.displacementMap && this.displacementMap.isTexture ) {
-
-				data.displacementMap = this.displacementMap.toJSON( meta ).uuid;
-				data.displacementScale = this.displacementScale;
-				data.displacementBias = this.displacementBias;
-
-			}
-
-			if ( this.roughnessMap && this.roughnessMap.isTexture ) data.roughnessMap = this.roughnessMap.toJSON( meta ).uuid;
-			if ( this.metalnessMap && this.metalnessMap.isTexture ) data.metalnessMap = this.metalnessMap.toJSON( meta ).uuid;
-
-			if ( this.emissiveMap && this.emissiveMap.isTexture ) data.emissiveMap = this.emissiveMap.toJSON( meta ).uuid;
-			if ( this.specularMap && this.specularMap.isTexture ) data.specularMap = this.specularMap.toJSON( meta ).uuid;
-
-			if ( this.envMap && this.envMap.isTexture ) {
-
-				data.envMap = this.envMap.toJSON( meta ).uuid;
-				data.reflectivity = this.reflectivity; // Scale behind envMap
-
-			}
-
-			if ( this.gradientMap && this.gradientMap.isTexture ) {
-
-				data.gradientMap = this.gradientMap.toJSON( meta ).uuid;
-
-			}
-
-			if ( this.size !== undefined ) data.size = this.size;
-			if ( this.sizeAttenuation !== undefined ) data.sizeAttenuation = this.sizeAttenuation;
-
-			if ( this.blending !== NormalBlending ) data.blending = this.blending;
-			if ( this.flatShading === true ) data.flatShading = this.flatShading;
-			if ( this.side !== FrontSide ) data.side = this.side;
-			if ( this.vertexColors !== NoColors ) data.vertexColors = this.vertexColors;
-
-			if ( this.opacity < 1 ) data.opacity = this.opacity;
-			if ( this.transparent === true ) data.transparent = this.transparent;
-
-			data.depthFunc = this.depthFunc;
-			data.depthTest = this.depthTest;
-			data.depthWrite = this.depthWrite;
-
-			// rotation (SpriteMaterial)
-			if ( this.rotation !== 0 ) data.rotation = this.rotation;
-
-			if ( this.linewidth !== 1 ) data.linewidth = this.linewidth;
-			if ( this.dashSize !== undefined ) data.dashSize = this.dashSize;
-			if ( this.gapSize !== undefined ) data.gapSize = this.gapSize;
-			if ( this.scale !== undefined ) data.scale = this.scale;
-
-			if ( this.dithering === true ) data.dithering = true;
-
-			if ( this.alphaTest > 0 ) data.alphaTest = this.alphaTest;
-			if ( this.premultipliedAlpha === true ) data.premultipliedAlpha = this.premultipliedAlpha;
-
-			if ( this.wireframe === true ) data.wireframe = this.wireframe;
-			if ( this.wireframeLinewidth > 1 ) data.wireframeLinewidth = this.wireframeLinewidth;
-			if ( this.wireframeLinecap !== 'round' ) data.wireframeLinecap = this.wireframeLinecap;
-			if ( this.wireframeLinejoin !== 'round' ) data.wireframeLinejoin = this.wireframeLinejoin;
-
-			if ( this.morphTargets === true ) data.morphTargets = true;
-			if ( this.skinning === true ) data.skinning = true;
-
-			if ( this.visible === false ) data.visible = false;
-			if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
-
-			// TODO: Copied from Object3D.toJSON
-
-			function extractFromCache( cache ) {
-
-				var values = [];
-
-				for ( var key in cache ) {
-
-					var data = cache[ key ];
-					delete data.metadata;
-					values.push( data );
-
-				}
-
-				return values;
-
-			}
-
-			if ( isRoot ) {
-
-				var textures = extractFromCache( meta.textures );
-				var images = extractFromCache( meta.images );
-
-				if ( textures.length > 0 ) data.textures = textures;
-				if ( images.length > 0 ) data.images = images;
-
-			}
-
-			return data;
-
-		},
-
-		clone: function () {
-
-			return new this.constructor().copy( this );
-
-		},
-
-		copy: function ( source ) {
-
-			this.name = source.name;
-
-			this.fog = source.fog;
-			this.lights = source.lights;
-
-			this.blending = source.blending;
-			this.side = source.side;
-			this.flatShading = source.flatShading;
-			this.vertexColors = source.vertexColors;
-
-			this.opacity = source.opacity;
-			this.transparent = source.transparent;
-
-			this.blendSrc = source.blendSrc;
-			this.blendDst = source.blendDst;
-			this.blendEquation = source.blendEquation;
-			this.blendSrcAlpha = source.blendSrcAlpha;
-			this.blendDstAlpha = source.blendDstAlpha;
-			this.blendEquationAlpha = source.blendEquationAlpha;
-
-			this.depthFunc = source.depthFunc;
-			this.depthTest = source.depthTest;
-			this.depthWrite = source.depthWrite;
-
-			this.colorWrite = source.colorWrite;
-
-			this.precision = source.precision;
-
-			this.polygonOffset = source.polygonOffset;
-			this.polygonOffsetFactor = source.polygonOffsetFactor;
-			this.polygonOffsetUnits = source.polygonOffsetUnits;
-
-			this.dithering = source.dithering;
-
-			this.alphaTest = source.alphaTest;
-			this.premultipliedAlpha = source.premultipliedAlpha;
-
-			this.overdraw = source.overdraw;
-
-			this.visible = source.visible;
-			this.userData = JSON.parse( JSON.stringify( source.userData ) );
-
-			this.clipShadows = source.clipShadows;
-			this.clipIntersection = source.clipIntersection;
-
-			var srcPlanes = source.clippingPlanes,
-				dstPlanes = null;
-
-			if ( srcPlanes !== null ) {
-
-				var n = srcPlanes.length;
-				dstPlanes = new Array( n );
-
-				for ( var i = 0; i !== n; ++ i )
-					dstPlanes[ i ] = srcPlanes[ i ].clone();
-
-			}
-
-			this.clippingPlanes = dstPlanes;
-
-			this.shadowSide = source.shadowSide;
-
-			return this;
-
-		},
-
-		dispose: function () {
-
-			this.dispatchEvent( { type: 'dispose' } );
-
-		}
-
-	} );
-
 	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
 		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
 		'brown': 0xA52A2A, 'burlywood': 0xDEB887, 'cadetblue': 0x5F9EA0, 'chartreuse': 0x7FFF00, 'chocolate': 0xD2691E, 'coral': 0xFF7F50,
@@ -2078,6 +715,28 @@ var Three = (function (exports) {
 
 		},
 
+		lerpHSL: function () {
+
+			var hslA = { h: 0, s: 0, l: 0 };
+			var hslB = { h: 0, s: 0, l: 0 };
+
+			return function lerpHSL( color, alpha ) {
+
+				this.getHSL( hslA );
+				color.getHSL( hslB );
+
+				var h = _Math.lerp( hslA.h, hslB.h, alpha );
+				var s = _Math.lerp( hslA.s, hslB.s, alpha );
+				var l = _Math.lerp( hslA.l, hslB.l, alpha );
+
+				this.setHSL( h, s, l );
+
+				return this;
+
+			};
+
+		}(),
+
 		equals: function ( c ) {
 
 			return ( c.r === this.r ) && ( c.g === this.g ) && ( c.b === this.b );
@@ -2117,210 +776,495 @@ var Three = (function (exports) {
 
 	} );
 
-	function LineBasicMaterial( parameters ) {
+	function Vector2( x, y ) {
 
-		Material.call( this );
-
-		this.type = 'LineBasicMaterial';
-
-		this.color = new Color( 0xffffff );
-
-		this.linewidth = 1;
-		this.linecap = 'round';
-		this.linejoin = 'round';
-
-		this.lights = false;
-
-		this.setValues( parameters );
+		this.x = x || 0;
+		this.y = y || 0;
 
 	}
 
-	LineBasicMaterial.prototype = Object.create( Material.prototype );
-	LineBasicMaterial.prototype.constructor = LineBasicMaterial;
+	Object.defineProperties( Vector2.prototype, {
 
-	LineBasicMaterial.prototype.isLineBasicMaterial = true;
+		"width": {
 
-	LineBasicMaterial.prototype.copy = function ( source ) {
+			get: function () {
 
-		Material.prototype.copy.call( this, source );
+				return this.x;
 
-		this.color.copy( source.color );
+			},
 
-		this.linewidth = source.linewidth;
-		this.linecap = source.linecap;
-		this.linejoin = source.linejoin;
+			set: function ( value ) {
 
-		return this;
+				this.x = value;
 
-	};
+			}
 
-	function LineDashedMaterial( parameters ) {
+		},
 
-		LineBasicMaterial.call( this );
+		"height": {
 
-		this.type = 'LineDashedMaterial';
+			get: function () {
 
-		this.scale = 1;
-		this.dashSize = 3;
-		this.gapSize = 1;
+				return this.y;
 
-		this.setValues( parameters );
+			},
 
-	}
+			set: function ( value ) {
 
-	LineDashedMaterial.prototype = Object.create( LineBasicMaterial.prototype );
-	LineDashedMaterial.prototype.constructor = LineDashedMaterial;
+				this.y = value;
 
-	LineDashedMaterial.prototype.isLineDashedMaterial = true;
+			}
 
-	LineDashedMaterial.prototype.copy = function ( source ) {
+		}
 
-		LineBasicMaterial.prototype.copy.call( this, source );
+	} );
 
-		this.scale = source.scale;
-		this.dashSize = source.dashSize;
-		this.gapSize = source.gapSize;
+	Object.assign( Vector2.prototype, {
 
-		return this;
+		isVector2: true,
 
-	};
+		set: function ( x, y ) {
 
-	function MeshBasicMaterial( parameters ) {
+			this.x = x;
+			this.y = y;
 
-		Material.call( this );
+			return this;
 
-		this.type = 'MeshBasicMaterial';
+		},
 
-		this.color = new Color( 0xffffff ); // emissive
+		setScalar: function ( scalar ) {
 
-		this.map = null;
+			this.x = scalar;
+			this.y = scalar;
 
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
+			return this;
 
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
+		},
 
-		this.specularMap = null;
+		setX: function ( x ) {
 
-		this.alphaMap = null;
+			this.x = x;
 
-		this.envMap = null;
-		this.combine = MultiplyOperation;
-		this.reflectivity = 1;
-		this.refractionRatio = 0.98;
+			return this;
 
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
+		},
 
-		this.skinning = false;
-		this.morphTargets = false;
+		setY: function ( y ) {
 
-		this.lights = false;
+			this.y = y;
 
-		this.setValues( parameters );
+			return this;
 
-	}
+		},
 
-	MeshBasicMaterial.prototype = Object.create( Material.prototype );
-	MeshBasicMaterial.prototype.constructor = MeshBasicMaterial;
+		setComponent: function ( index, value ) {
 
-	MeshBasicMaterial.prototype.isMeshBasicMaterial = true;
+			switch ( index ) {
 
-	MeshBasicMaterial.prototype.copy = function ( source ) {
+				case 0: this.x = value; break;
+				case 1: this.y = value; break;
+				default: throw new Error( 'index is out of range: ' + index );
 
-		Material.prototype.copy.call( this, source );
+			}
 
-		this.color.copy( source.color );
+			return this;
 
-		this.map = source.map;
+		},
 
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
+		getComponent: function ( index ) {
 
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
+			switch ( index ) {
 
-		this.specularMap = source.specularMap;
+				case 0: return this.x;
+				case 1: return this.y;
+				default: throw new Error( 'index is out of range: ' + index );
 
-		this.alphaMap = source.alphaMap;
+			}
 
-		this.envMap = source.envMap;
-		this.combine = source.combine;
-		this.reflectivity = source.reflectivity;
-		this.refractionRatio = source.refractionRatio;
+		},
 
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
+		clone: function () {
 
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
+			return new this.constructor( this.x, this.y );
 
-		return this;
+		},
 
-	};
+		copy: function ( v ) {
 
-	function MeshDepthMaterial( parameters ) {
+			this.x = v.x;
+			this.y = v.y;
 
-		Material.call( this );
+			return this;
 
-		this.type = 'MeshDepthMaterial';
+		},
 
-		this.depthPacking = BasicDepthPacking;
+		add: function ( v, w ) {
 
-		this.skinning = false;
-		this.morphTargets = false;
+			if ( w !== undefined ) {
 
-		this.map = null;
+				console.warn( 'Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				return this.addVectors( v, w );
 
-		this.alphaMap = null;
+			}
 
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
+			this.x += v.x;
+			this.y += v.y;
 
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
+			return this;
 
-		this.fog = false;
-		this.lights = false;
+		},
 
-		this.setValues( parameters );
+		addScalar: function ( s ) {
 
-	}
+			this.x += s;
+			this.y += s;
 
-	MeshDepthMaterial.prototype = Object.create( Material.prototype );
-	MeshDepthMaterial.prototype.constructor = MeshDepthMaterial;
+			return this;
 
-	MeshDepthMaterial.prototype.isMeshDepthMaterial = true;
+		},
 
-	MeshDepthMaterial.prototype.copy = function ( source ) {
+		addVectors: function ( a, b ) {
 
-		Material.prototype.copy.call( this, source );
+			this.x = a.x + b.x;
+			this.y = a.y + b.y;
 
-		this.depthPacking = source.depthPacking;
+			return this;
 
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
+		},
 
-		this.map = source.map;
+		addScaledVector: function ( v, s ) {
 
-		this.alphaMap = source.alphaMap;
+			this.x += v.x * s;
+			this.y += v.y * s;
 
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
+			return this;
 
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
+		},
 
-		return this;
+		sub: function ( v, w ) {
 
-	};
+			if ( w !== undefined ) {
+
+				console.warn( 'Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				return this.subVectors( v, w );
+
+			}
+
+			this.x -= v.x;
+			this.y -= v.y;
+
+			return this;
+
+		},
+
+		subScalar: function ( s ) {
+
+			this.x -= s;
+			this.y -= s;
+
+			return this;
+
+		},
+
+		subVectors: function ( a, b ) {
+
+			this.x = a.x - b.x;
+			this.y = a.y - b.y;
+
+			return this;
+
+		},
+
+		multiply: function ( v ) {
+
+			this.x *= v.x;
+			this.y *= v.y;
+
+			return this;
+
+		},
+
+		multiplyScalar: function ( scalar ) {
+
+			this.x *= scalar;
+			this.y *= scalar;
+
+			return this;
+
+		},
+
+		divide: function ( v ) {
+
+			this.x /= v.x;
+			this.y /= v.y;
+
+			return this;
+
+		},
+
+		divideScalar: function ( scalar ) {
+
+			return this.multiplyScalar( 1 / scalar );
+
+		},
+
+		applyMatrix3: function ( m ) {
+
+			var x = this.x, y = this.y;
+			var e = m.elements;
+
+			this.x = e[ 0 ] * x + e[ 3 ] * y + e[ 6 ];
+			this.y = e[ 1 ] * x + e[ 4 ] * y + e[ 7 ];
+
+			return this;
+
+		},
+
+		min: function ( v ) {
+
+			this.x = Math.min( this.x, v.x );
+			this.y = Math.min( this.y, v.y );
+
+			return this;
+
+		},
+
+		max: function ( v ) {
+
+			this.x = Math.max( this.x, v.x );
+			this.y = Math.max( this.y, v.y );
+
+			return this;
+
+		},
+
+		clamp: function ( min, max ) {
+
+			// assumes min < max, componentwise
+
+			this.x = Math.max( min.x, Math.min( max.x, this.x ) );
+			this.y = Math.max( min.y, Math.min( max.y, this.y ) );
+
+			return this;
+
+		},
+
+		clampScalar: function () {
+
+			var min = new Vector2();
+			var max = new Vector2();
+
+			return function clampScalar( minVal, maxVal ) {
+
+				min.set( minVal, minVal );
+				max.set( maxVal, maxVal );
+
+				return this.clamp( min, max );
+
+			};
+
+		}(),
+
+		clampLength: function ( min, max ) {
+
+			var length = this.length();
+
+			return this.divideScalar( length || 1 ).multiplyScalar( Math.max( min, Math.min( max, length ) ) );
+
+		},
+
+		floor: function () {
+
+			this.x = Math.floor( this.x );
+			this.y = Math.floor( this.y );
+
+			return this;
+
+		},
+
+		ceil: function () {
+
+			this.x = Math.ceil( this.x );
+			this.y = Math.ceil( this.y );
+
+			return this;
+
+		},
+
+		round: function () {
+
+			this.x = Math.round( this.x );
+			this.y = Math.round( this.y );
+
+			return this;
+
+		},
+
+		roundToZero: function () {
+
+			this.x = ( this.x < 0 ) ? Math.ceil( this.x ) : Math.floor( this.x );
+			this.y = ( this.y < 0 ) ? Math.ceil( this.y ) : Math.floor( this.y );
+
+			return this;
+
+		},
+
+		negate: function () {
+
+			this.x = - this.x;
+			this.y = - this.y;
+
+			return this;
+
+		},
+
+		dot: function ( v ) {
+
+			return this.x * v.x + this.y * v.y;
+
+		},
+
+		cross: function ( v ) {
+
+			return this.x * v.y - this.y * v.x;
+
+		},
+
+		lengthSq: function () {
+
+			return this.x * this.x + this.y * this.y;
+
+		},
+
+		length: function () {
+
+			return Math.sqrt( this.x * this.x + this.y * this.y );
+
+		},
+
+		manhattanLength: function () {
+
+			return Math.abs( this.x ) + Math.abs( this.y );
+
+		},
+
+		normalize: function () {
+
+			return this.divideScalar( this.length() || 1 );
+
+		},
+
+		angle: function () {
+
+			// computes the angle in radians with respect to the positive x-axis
+
+			var angle = Math.atan2( this.y, this.x );
+
+			if ( angle < 0 ) angle += 2 * Math.PI;
+
+			return angle;
+
+		},
+
+		distanceTo: function ( v ) {
+
+			return Math.sqrt( this.distanceToSquared( v ) );
+
+		},
+
+		distanceToSquared: function ( v ) {
+
+			var dx = this.x - v.x, dy = this.y - v.y;
+			return dx * dx + dy * dy;
+
+		},
+
+		manhattanDistanceTo: function ( v ) {
+
+			return Math.abs( this.x - v.x ) + Math.abs( this.y - v.y );
+
+		},
+
+		setLength: function ( length ) {
+
+			return this.normalize().multiplyScalar( length );
+
+		},
+
+		lerp: function ( v, alpha ) {
+
+			this.x += ( v.x - this.x ) * alpha;
+			this.y += ( v.y - this.y ) * alpha;
+
+			return this;
+
+		},
+
+		lerpVectors: function ( v1, v2, alpha ) {
+
+			return this.subVectors( v2, v1 ).multiplyScalar( alpha ).add( v1 );
+
+		},
+
+		equals: function ( v ) {
+
+			return ( ( v.x === this.x ) && ( v.y === this.y ) );
+
+		},
+
+		fromArray: function ( array, offset ) {
+
+			if ( offset === undefined ) offset = 0;
+
+			this.x = array[ offset ];
+			this.y = array[ offset + 1 ];
+
+			return this;
+
+		},
+
+		toArray: function ( array, offset ) {
+
+			if ( array === undefined ) array = [];
+			if ( offset === undefined ) offset = 0;
+
+			array[ offset ] = this.x;
+			array[ offset + 1 ] = this.y;
+
+			return array;
+
+		},
+
+		fromBufferAttribute: function ( attribute, index, offset ) {
+
+			if ( offset !== undefined ) {
+
+				console.warn( 'Vector2: offset has been removed from .fromBufferAttribute().' );
+
+			}
+
+			this.x = attribute.getX( index );
+			this.y = attribute.getY( index );
+
+			return this;
+
+		},
+
+		rotateAround: function ( center, angle ) {
+
+			var c = Math.cos( angle ), s = Math.sin( angle );
+
+			var x = this.x - center.x;
+			var y = this.y - center.y;
+
+			this.x = x * c - y * s + center.x;
+			this.y = x * s + y * c + center.y;
+
+			return this;
+
+		}
+
+	} );
 
 	function Matrix4() {
 
@@ -4167,18 +3111,11 @@ var Three = (function (exports) {
 
 		},
 
-		project: function () {
+		project: function ( camera ) {
 
-			var matrix = new Matrix4();
+			return this.applyMatrix4( camera.matrixWorldInverse ).applyMatrix4( camera.projectionMatrix );
 
-			return function project( camera ) {
-
-				matrix.multiplyMatrices( camera.projectionMatrix, matrix.getInverse( camera.matrixWorld ) );
-				return this.applyMatrix4( matrix );
-
-			};
-
-		}(),
+		},
 
 		unproject: function () {
 
@@ -4186,8 +3123,7 @@ var Three = (function (exports) {
 
 			return function unproject( camera ) {
 
-				matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
-				return this.applyMatrix4( matrix );
+				return this.applyMatrix4( matrix.getInverse( camera.projectionMatrix ) ).applyMatrix4( camera.matrixWorld );
 
 			};
 
@@ -4480,11 +3416,17 @@ var Three = (function (exports) {
 
 		setFromSpherical: function ( s ) {
 
-			var sinPhiRadius = Math.sin( s.phi ) * s.radius;
+			return this.setFromSphericalCoords( s.radius, s.phi, s.theta );
 
-			this.x = sinPhiRadius * Math.sin( s.theta );
-			this.y = Math.cos( s.phi ) * s.radius;
-			this.z = sinPhiRadius * Math.cos( s.theta );
+		},
+
+		setFromSphericalCoords: function ( radius, phi, theta ) {
+
+			var sinPhiRadius = Math.sin( phi ) * radius;
+
+			this.x = sinPhiRadius * Math.sin( theta );
+			this.y = Math.cos( phi ) * radius;
+			this.z = sinPhiRadius * Math.cos( theta );
 
 			return this;
 
@@ -4492,9 +3434,15 @@ var Three = (function (exports) {
 
 		setFromCylindrical: function ( c ) {
 
-			this.x = c.radius * Math.sin( c.theta );
-			this.y = c.y;
-			this.z = c.radius * Math.cos( c.theta );
+			return this.setFromCylindricalCoords( c.radius, c.theta, c.y );
+
+		},
+
+		setFromCylindricalCoords: function ( radius, theta, y ) {
+
+			this.x = radius * Math.sin( theta );
+			this.y = y;
+			this.z = radius * Math.cos( theta );
 
 			return this;
 
@@ -4580,6 +3528,1728 @@ var Three = (function (exports) {
 		}
 
 	} );
+
+	function Vector4( x, y, z, w ) {
+
+		this.x = x || 0;
+		this.y = y || 0;
+		this.z = z || 0;
+		this.w = ( w !== undefined ) ? w : 1;
+
+	}
+
+	Object.assign( Vector4.prototype, {
+
+		isVector4: true,
+
+		set: function ( x, y, z, w ) {
+
+			this.x = x;
+			this.y = y;
+			this.z = z;
+			this.w = w;
+
+			return this;
+
+		},
+
+		setScalar: function ( scalar ) {
+
+			this.x = scalar;
+			this.y = scalar;
+			this.z = scalar;
+			this.w = scalar;
+
+			return this;
+
+		},
+
+		setX: function ( x ) {
+
+			this.x = x;
+
+			return this;
+
+		},
+
+		setY: function ( y ) {
+
+			this.y = y;
+
+			return this;
+
+		},
+
+		setZ: function ( z ) {
+
+			this.z = z;
+
+			return this;
+
+		},
+
+		setW: function ( w ) {
+
+			this.w = w;
+
+			return this;
+
+		},
+
+		setComponent: function ( index, value ) {
+
+			switch ( index ) {
+
+				case 0: this.x = value; break;
+				case 1: this.y = value; break;
+				case 2: this.z = value; break;
+				case 3: this.w = value; break;
+				default: throw new Error( 'index is out of range: ' + index );
+
+			}
+
+			return this;
+
+		},
+
+		getComponent: function ( index ) {
+
+			switch ( index ) {
+
+				case 0: return this.x;
+				case 1: return this.y;
+				case 2: return this.z;
+				case 3: return this.w;
+				default: throw new Error( 'index is out of range: ' + index );
+
+			}
+
+		},
+
+		clone: function () {
+
+			return new this.constructor( this.x, this.y, this.z, this.w );
+
+		},
+
+		copy: function ( v ) {
+
+			this.x = v.x;
+			this.y = v.y;
+			this.z = v.z;
+			this.w = ( v.w !== undefined ) ? v.w : 1;
+
+			return this;
+
+		},
+
+		add: function ( v, w ) {
+
+			if ( w !== undefined ) {
+
+				console.warn( 'Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				return this.addVectors( v, w );
+
+			}
+
+			this.x += v.x;
+			this.y += v.y;
+			this.z += v.z;
+			this.w += v.w;
+
+			return this;
+
+		},
+
+		addScalar: function ( s ) {
+
+			this.x += s;
+			this.y += s;
+			this.z += s;
+			this.w += s;
+
+			return this;
+
+		},
+
+		addVectors: function ( a, b ) {
+
+			this.x = a.x + b.x;
+			this.y = a.y + b.y;
+			this.z = a.z + b.z;
+			this.w = a.w + b.w;
+
+			return this;
+
+		},
+
+		addScaledVector: function ( v, s ) {
+
+			this.x += v.x * s;
+			this.y += v.y * s;
+			this.z += v.z * s;
+			this.w += v.w * s;
+
+			return this;
+
+		},
+
+		sub: function ( v, w ) {
+
+			if ( w !== undefined ) {
+
+				console.warn( 'Vector4: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				return this.subVectors( v, w );
+
+			}
+
+			this.x -= v.x;
+			this.y -= v.y;
+			this.z -= v.z;
+			this.w -= v.w;
+
+			return this;
+
+		},
+
+		subScalar: function ( s ) {
+
+			this.x -= s;
+			this.y -= s;
+			this.z -= s;
+			this.w -= s;
+
+			return this;
+
+		},
+
+		subVectors: function ( a, b ) {
+
+			this.x = a.x - b.x;
+			this.y = a.y - b.y;
+			this.z = a.z - b.z;
+			this.w = a.w - b.w;
+
+			return this;
+
+		},
+
+		multiplyScalar: function ( scalar ) {
+
+			this.x *= scalar;
+			this.y *= scalar;
+			this.z *= scalar;
+			this.w *= scalar;
+
+			return this;
+
+		},
+
+		applyMatrix4: function ( m ) {
+
+			var x = this.x, y = this.y, z = this.z, w = this.w;
+			var e = m.elements;
+
+			this.x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * z + e[ 12 ] * w;
+			this.y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * z + e[ 13 ] * w;
+			this.z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z + e[ 14 ] * w;
+			this.w = e[ 3 ] * x + e[ 7 ] * y + e[ 11 ] * z + e[ 15 ] * w;
+
+			return this;
+
+		},
+
+		divideScalar: function ( scalar ) {
+
+			return this.multiplyScalar( 1 / scalar );
+
+		},
+
+		setAxisAngleFromQuaternion: function ( q ) {
+
+			// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle/index.htm
+
+			// q is assumed to be normalized
+
+			this.w = 2 * Math.acos( q.w );
+
+			var s = Math.sqrt( 1 - q.w * q.w );
+
+			if ( s < 0.0001 ) {
+
+				this.x = 1;
+				this.y = 0;
+				this.z = 0;
+
+			} else {
+
+				this.x = q.x / s;
+				this.y = q.y / s;
+				this.z = q.z / s;
+
+			}
+
+			return this;
+
+		},
+
+		setAxisAngleFromRotationMatrix: function ( m ) {
+
+			// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToAngle/index.htm
+
+			// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
+
+			var angle, x, y, z,		// variables for result
+				epsilon = 0.01,		// margin to allow for rounding errors
+				epsilon2 = 0.1,		// margin to distinguish between 0 and 180 degrees
+
+				te = m.elements,
+
+				m11 = te[ 0 ], m12 = te[ 4 ], m13 = te[ 8 ],
+				m21 = te[ 1 ], m22 = te[ 5 ], m23 = te[ 9 ],
+				m31 = te[ 2 ], m32 = te[ 6 ], m33 = te[ 10 ];
+
+			if ( ( Math.abs( m12 - m21 ) < epsilon ) &&
+			     ( Math.abs( m13 - m31 ) < epsilon ) &&
+			     ( Math.abs( m23 - m32 ) < epsilon ) ) {
+
+				// singularity found
+				// first check for identity matrix which must have +1 for all terms
+				// in leading diagonal and zero in other terms
+
+				if ( ( Math.abs( m12 + m21 ) < epsilon2 ) &&
+				     ( Math.abs( m13 + m31 ) < epsilon2 ) &&
+				     ( Math.abs( m23 + m32 ) < epsilon2 ) &&
+				     ( Math.abs( m11 + m22 + m33 - 3 ) < epsilon2 ) ) {
+
+					// this singularity is identity matrix so angle = 0
+
+					this.set( 1, 0, 0, 0 );
+
+					return this; // zero angle, arbitrary axis
+
+				}
+
+				// otherwise this singularity is angle = 180
+
+				angle = Math.PI;
+
+				var xx = ( m11 + 1 ) / 2;
+				var yy = ( m22 + 1 ) / 2;
+				var zz = ( m33 + 1 ) / 2;
+				var xy = ( m12 + m21 ) / 4;
+				var xz = ( m13 + m31 ) / 4;
+				var yz = ( m23 + m32 ) / 4;
+
+				if ( ( xx > yy ) && ( xx > zz ) ) {
+
+					// m11 is the largest diagonal term
+
+					if ( xx < epsilon ) {
+
+						x = 0;
+						y = 0.707106781;
+						z = 0.707106781;
+
+					} else {
+
+						x = Math.sqrt( xx );
+						y = xy / x;
+						z = xz / x;
+
+					}
+
+				} else if ( yy > zz ) {
+
+					// m22 is the largest diagonal term
+
+					if ( yy < epsilon ) {
+
+						x = 0.707106781;
+						y = 0;
+						z = 0.707106781;
+
+					} else {
+
+						y = Math.sqrt( yy );
+						x = xy / y;
+						z = yz / y;
+
+					}
+
+				} else {
+
+					// m33 is the largest diagonal term so base result on this
+
+					if ( zz < epsilon ) {
+
+						x = 0.707106781;
+						y = 0.707106781;
+						z = 0;
+
+					} else {
+
+						z = Math.sqrt( zz );
+						x = xz / z;
+						y = yz / z;
+
+					}
+
+				}
+
+				this.set( x, y, z, angle );
+
+				return this; // return 180 deg rotation
+
+			}
+
+			// as we have reached here there are no singularities so we can handle normally
+
+			var s = Math.sqrt( ( m32 - m23 ) * ( m32 - m23 ) +
+			                   ( m13 - m31 ) * ( m13 - m31 ) +
+			                   ( m21 - m12 ) * ( m21 - m12 ) ); // used to normalize
+
+			if ( Math.abs( s ) < 0.001 ) s = 1;
+
+			// prevent divide by zero, should not happen if matrix is orthogonal and should be
+			// caught by singularity test above, but I've left it in just in case
+
+			this.x = ( m32 - m23 ) / s;
+			this.y = ( m13 - m31 ) / s;
+			this.z = ( m21 - m12 ) / s;
+			this.w = Math.acos( ( m11 + m22 + m33 - 1 ) / 2 );
+
+			return this;
+
+		},
+
+		min: function ( v ) {
+
+			this.x = Math.min( this.x, v.x );
+			this.y = Math.min( this.y, v.y );
+			this.z = Math.min( this.z, v.z );
+			this.w = Math.min( this.w, v.w );
+
+			return this;
+
+		},
+
+		max: function ( v ) {
+
+			this.x = Math.max( this.x, v.x );
+			this.y = Math.max( this.y, v.y );
+			this.z = Math.max( this.z, v.z );
+			this.w = Math.max( this.w, v.w );
+
+			return this;
+
+		},
+
+		clamp: function ( min, max ) {
+
+			// assumes min < max, componentwise
+
+			this.x = Math.max( min.x, Math.min( max.x, this.x ) );
+			this.y = Math.max( min.y, Math.min( max.y, this.y ) );
+			this.z = Math.max( min.z, Math.min( max.z, this.z ) );
+			this.w = Math.max( min.w, Math.min( max.w, this.w ) );
+
+			return this;
+
+		},
+
+		clampScalar: function () {
+
+			var min, max;
+
+			return function clampScalar( minVal, maxVal ) {
+
+				if ( min === undefined ) {
+
+					min = new Vector4();
+					max = new Vector4();
+
+				}
+
+				min.set( minVal, minVal, minVal, minVal );
+				max.set( maxVal, maxVal, maxVal, maxVal );
+
+				return this.clamp( min, max );
+
+			};
+
+		}(),
+
+		clampLength: function ( min, max ) {
+
+			var length = this.length();
+
+			return this.divideScalar( length || 1 ).multiplyScalar( Math.max( min, Math.min( max, length ) ) );
+
+		},
+
+		floor: function () {
+
+			this.x = Math.floor( this.x );
+			this.y = Math.floor( this.y );
+			this.z = Math.floor( this.z );
+			this.w = Math.floor( this.w );
+
+			return this;
+
+		},
+
+		ceil: function () {
+
+			this.x = Math.ceil( this.x );
+			this.y = Math.ceil( this.y );
+			this.z = Math.ceil( this.z );
+			this.w = Math.ceil( this.w );
+
+			return this;
+
+		},
+
+		round: function () {
+
+			this.x = Math.round( this.x );
+			this.y = Math.round( this.y );
+			this.z = Math.round( this.z );
+			this.w = Math.round( this.w );
+
+			return this;
+
+		},
+
+		roundToZero: function () {
+
+			this.x = ( this.x < 0 ) ? Math.ceil( this.x ) : Math.floor( this.x );
+			this.y = ( this.y < 0 ) ? Math.ceil( this.y ) : Math.floor( this.y );
+			this.z = ( this.z < 0 ) ? Math.ceil( this.z ) : Math.floor( this.z );
+			this.w = ( this.w < 0 ) ? Math.ceil( this.w ) : Math.floor( this.w );
+
+			return this;
+
+		},
+
+		negate: function () {
+
+			this.x = - this.x;
+			this.y = - this.y;
+			this.z = - this.z;
+			this.w = - this.w;
+
+			return this;
+
+		},
+
+		dot: function ( v ) {
+
+			return this.x * v.x + this.y * v.y + this.z * v.z + this.w * v.w;
+
+		},
+
+		lengthSq: function () {
+
+			return this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w;
+
+		},
+
+		length: function () {
+
+			return Math.sqrt( this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w );
+
+		},
+
+		manhattanLength: function () {
+
+			return Math.abs( this.x ) + Math.abs( this.y ) + Math.abs( this.z ) + Math.abs( this.w );
+
+		},
+
+		normalize: function () {
+
+			return this.divideScalar( this.length() || 1 );
+
+		},
+
+		setLength: function ( length ) {
+
+			return this.normalize().multiplyScalar( length );
+
+		},
+
+		lerp: function ( v, alpha ) {
+
+			this.x += ( v.x - this.x ) * alpha;
+			this.y += ( v.y - this.y ) * alpha;
+			this.z += ( v.z - this.z ) * alpha;
+			this.w += ( v.w - this.w ) * alpha;
+
+			return this;
+
+		},
+
+		lerpVectors: function ( v1, v2, alpha ) {
+
+			return this.subVectors( v2, v1 ).multiplyScalar( alpha ).add( v1 );
+
+		},
+
+		equals: function ( v ) {
+
+			return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) && ( v.w === this.w ) );
+
+		},
+
+		fromArray: function ( array, offset ) {
+
+			if ( offset === undefined ) offset = 0;
+
+			this.x = array[ offset ];
+			this.y = array[ offset + 1 ];
+			this.z = array[ offset + 2 ];
+			this.w = array[ offset + 3 ];
+
+			return this;
+
+		},
+
+		toArray: function ( array, offset ) {
+
+			if ( array === undefined ) array = [];
+			if ( offset === undefined ) offset = 0;
+
+			array[ offset ] = this.x;
+			array[ offset + 1 ] = this.y;
+			array[ offset + 2 ] = this.z;
+			array[ offset + 3 ] = this.w;
+
+			return array;
+
+		},
+
+		fromBufferAttribute: function ( attribute, index, offset ) {
+
+			if ( offset !== undefined ) {
+
+				console.warn( 'Vector4: offset has been removed from .fromBufferAttribute().' );
+
+			}
+
+			this.x = attribute.getX( index );
+			this.y = attribute.getY( index );
+			this.z = attribute.getZ( index );
+			this.w = attribute.getW( index );
+
+			return this;
+
+		}
+
+	} );
+
+	var Cache = {
+
+		enabled: false,
+
+		files: {},
+
+		add: function ( key, file ) {
+
+			if ( this.enabled === false ) return;
+
+			// console.log( 'Cache', 'Adding key:', key );
+
+			this.files[ key ] = file;
+
+		},
+
+		get: function ( key ) {
+
+			if ( this.enabled === false ) return;
+
+			// console.log( 'Cache', 'Checking key:', key );
+
+			return this.files[ key ];
+
+		},
+
+		remove: function ( key ) {
+
+			delete this.files[ key ];
+
+		},
+
+		clear: function () {
+
+			this.files = {};
+
+		}
+
+	};
+
+	function LoadingManager( onLoad, onProgress, onError ) {
+
+		var scope = this;
+
+		var isLoading = false;
+		var itemsLoaded = 0;
+		var itemsTotal = 0;
+		var urlModifier = undefined;
+
+		// Refer to #5689 for the reason why we don't set .onStart
+		// in the constructor
+
+		this.onStart = undefined;
+		this.onLoad = onLoad;
+		this.onProgress = onProgress;
+		this.onError = onError;
+
+		this.itemStart = function ( url ) {
+
+			itemsTotal ++;
+
+			if ( isLoading === false ) {
+
+				if ( scope.onStart !== undefined ) {
+
+					scope.onStart( url, itemsLoaded, itemsTotal );
+
+				}
+
+			}
+
+			isLoading = true;
+
+		};
+
+		this.itemEnd = function ( url ) {
+
+			itemsLoaded ++;
+
+			if ( scope.onProgress !== undefined ) {
+
+				scope.onProgress( url, itemsLoaded, itemsTotal );
+
+			}
+
+			if ( itemsLoaded === itemsTotal ) {
+
+				isLoading = false;
+
+				if ( scope.onLoad !== undefined ) {
+
+					scope.onLoad();
+
+				}
+
+			}
+
+		};
+
+		this.itemError = function ( url ) {
+
+			if ( scope.onError !== undefined ) {
+
+				scope.onError( url );
+
+			}
+
+		};
+
+		this.resolveURL = function ( url ) {
+
+			if ( urlModifier ) {
+
+				return urlModifier( url );
+
+			}
+
+			return url;
+
+		};
+
+		this.setURLModifier = function ( transform ) {
+
+			urlModifier = transform;
+			return this;
+
+		};
+
+	}
+
+	var DefaultLoadingManager = new LoadingManager();
+
+	var loading = {};
+
+	function FileLoader( manager ) {
+
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+
+	}
+
+	Object.assign( FileLoader.prototype, {
+
+		load: function ( url, onLoad, onProgress, onError ) {
+
+			if ( url === undefined ) url = '';
+
+			if ( this.path !== undefined ) url = this.path + url;
+
+			url = this.manager.resolveURL( url );
+
+			var scope = this;
+
+			var cached = Cache.get( url );
+
+			if ( cached !== undefined ) {
+
+				scope.manager.itemStart( url );
+
+				setTimeout( function () {
+
+					if ( onLoad ) onLoad( cached );
+
+					scope.manager.itemEnd( url );
+
+				}, 0 );
+
+				return cached;
+
+			}
+
+			// Check if request is duplicate
+
+			if ( loading[ url ] !== undefined ) {
+
+				loading[ url ].push( {
+
+					onLoad: onLoad,
+					onProgress: onProgress,
+					onError: onError
+
+				} );
+
+				return;
+
+			}
+
+			// Check for data: URI
+			var dataUriRegex = /^data:(.*?)(;base64)?,(.*)$/;
+			var dataUriRegexResult = url.match( dataUriRegex );
+
+			// Safari can not handle Data URIs through XMLHttpRequest so process manually
+			if ( dataUriRegexResult ) {
+
+				var mimeType = dataUriRegexResult[ 1 ];
+				var isBase64 = !! dataUriRegexResult[ 2 ];
+				var data = dataUriRegexResult[ 3 ];
+
+				data = window.decodeURIComponent( data );
+
+				if ( isBase64 ) data = window.atob( data );
+
+				try {
+
+					var response;
+					var responseType = ( this.responseType || '' ).toLowerCase();
+
+					switch ( responseType ) {
+
+						case 'arraybuffer':
+						case 'blob':
+
+							var view = new Uint8Array( data.length );
+
+							for ( var i = 0; i < data.length; i ++ ) {
+
+								view[ i ] = data.charCodeAt( i );
+
+							}
+
+							if ( responseType === 'blob' ) {
+
+								response = new Blob( [ view.buffer ], { type: mimeType } );
+
+							} else {
+
+								response = view.buffer;
+
+							}
+
+							break;
+
+						case 'document':
+
+							var parser = new DOMParser();
+							response = parser.parseFromString( data, mimeType );
+
+							break;
+
+						case 'json':
+
+							response = JSON.parse( data );
+
+							break;
+
+						default: // 'text' or other
+
+							response = data;
+
+							break;
+
+					}
+
+					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
+					window.setTimeout( function () {
+
+						if ( onLoad ) onLoad( response );
+
+						scope.manager.itemEnd( url );
+
+					}, 0 );
+
+				} catch ( error ) {
+
+					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
+					window.setTimeout( function () {
+
+						if ( onError ) onError( error );
+
+						scope.manager.itemEnd( url );
+						scope.manager.itemError( url );
+
+					}, 0 );
+
+				}
+
+			} else {
+
+				// Initialise array for duplicate requests
+
+				loading[ url ] = [];
+
+				loading[ url ].push( {
+
+					onLoad: onLoad,
+					onProgress: onProgress,
+					onError: onError
+
+				} );
+
+				var request = new XMLHttpRequest();
+
+				request.open( 'GET', url, true );
+
+				request.addEventListener( 'load', function ( event ) {
+
+					var response = this.response;
+
+					Cache.add( url, response );
+
+					var callbacks = loading[ url ];
+
+					delete loading[ url ];
+
+					if ( this.status === 200 || this.status === 0 ) {
+
+						// Some browsers return HTTP Status 0 when using non-http protocol
+						// e.g. 'file://' or 'data://'. Handle as success.
+
+						if ( this.status === 0 ) console.warn( 'FileLoader: HTTP Status 0 received.' );
+
+						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
+
+							var callback = callbacks[ i ];
+							if ( callback.onLoad ) callback.onLoad( response );
+
+						}
+
+						scope.manager.itemEnd( url );
+
+					} else {
+
+						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
+
+							var callback = callbacks[ i ];
+							if ( callback.onError ) callback.onError( event );
+
+						}
+
+						scope.manager.itemEnd( url );
+						scope.manager.itemError( url );
+
+					}
+
+				}, false );
+
+				request.addEventListener( 'progress', function ( event ) {
+
+					var callbacks = loading[ url ];
+
+					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
+
+						var callback = callbacks[ i ];
+						if ( callback.onProgress ) callback.onProgress( event );
+
+					}
+
+				}, false );
+
+				request.addEventListener( 'error', function ( event ) {
+
+					var callbacks = loading[ url ];
+
+					delete loading[ url ];
+
+					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
+
+						var callback = callbacks[ i ];
+						if ( callback.onError ) callback.onError( event );
+
+					}
+
+					scope.manager.itemEnd( url );
+					scope.manager.itemError( url );
+
+				}, false );
+
+				request.addEventListener( 'abort', function ( event ) {
+
+					var callbacks = loading[ url ];
+
+					delete loading[ url ];
+
+					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
+
+						var callback = callbacks[ i ];
+						if ( callback.onError ) callback.onError( event );
+
+					}
+
+					scope.manager.itemEnd( url );
+					scope.manager.itemError( url );
+
+				}, false );
+
+				if ( this.responseType !== undefined ) request.responseType = this.responseType;
+				if ( this.withCredentials !== undefined ) request.withCredentials = this.withCredentials;
+
+				if ( request.overrideMimeType ) request.overrideMimeType( this.mimeType !== undefined ? this.mimeType : 'text/plain' );
+
+				for ( var header in this.requestHeader ) {
+
+					request.setRequestHeader( header, this.requestHeader[ header ] );
+
+				}
+
+				request.send( null );
+
+			}
+
+			scope.manager.itemStart( url );
+
+			return request;
+
+		},
+
+		setPath: function ( value ) {
+
+			this.path = value;
+			return this;
+
+		},
+
+		setResponseType: function ( value ) {
+
+			this.responseType = value;
+			return this;
+
+		},
+
+		setWithCredentials: function ( value ) {
+
+			this.withCredentials = value;
+			return this;
+
+		},
+
+		setMimeType: function ( value ) {
+
+			this.mimeType = value;
+			return this;
+
+		},
+
+		setRequestHeader: function ( value ) {
+
+			this.requestHeader = value;
+			return this;
+
+		}
+
+	} );
+
+	function EventDispatcher() {}
+
+	Object.assign( EventDispatcher.prototype, {
+
+		addEventListener: function ( type, listener ) {
+
+			if ( this._listeners === undefined ) this._listeners = {};
+
+			var listeners = this._listeners;
+
+			if ( listeners[ type ] === undefined ) {
+
+				listeners[ type ] = [];
+
+			}
+
+			if ( listeners[ type ].indexOf( listener ) === - 1 ) {
+
+				listeners[ type ].push( listener );
+
+			}
+
+		},
+
+		hasEventListener: function ( type, listener ) {
+
+			if ( this._listeners === undefined ) return false;
+
+			var listeners = this._listeners;
+
+			return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
+
+		},
+
+		removeEventListener: function ( type, listener ) {
+
+			if ( this._listeners === undefined ) return;
+
+			var listeners = this._listeners;
+			var listenerArray = listeners[ type ];
+
+			if ( listenerArray !== undefined ) {
+
+				var index = listenerArray.indexOf( listener );
+
+				if ( index !== - 1 ) {
+
+					listenerArray.splice( index, 1 );
+
+				}
+
+			}
+
+		},
+
+		dispatchEvent: function ( event ) {
+
+			if ( this._listeners === undefined ) return;
+
+			var listeners = this._listeners;
+			var listenerArray = listeners[ event.type ];
+
+			if ( listenerArray !== undefined ) {
+
+				event.target = this;
+
+				var array = listenerArray.slice( 0 );
+
+				for ( var i = 0, l = array.length; i < l; i ++ ) {
+
+					array[ i ].call( this, event );
+
+				}
+
+			}
+
+		}
+
+	} );
+
+	var materialId = 0;
+
+	function Material() {
+
+		Object.defineProperty( this, 'id', { value: materialId ++ } );
+
+		this.uuid = _Math.generateUUID();
+
+		this.name = '';
+		this.type = 'Material';
+
+		this.fog = true;
+		this.lights = true;
+
+		this.blending = NormalBlending;
+		this.side = FrontSide;
+		this.flatShading = false;
+		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
+
+		this.opacity = 1;
+		this.transparent = false;
+
+		this.blendSrc = SrcAlphaFactor;
+		this.blendDst = OneMinusSrcAlphaFactor;
+		this.blendEquation = AddEquation;
+		this.blendSrcAlpha = null;
+		this.blendDstAlpha = null;
+		this.blendEquationAlpha = null;
+
+		this.depthFunc = LessEqualDepth;
+		this.depthTest = true;
+		this.depthWrite = true;
+
+		this.clippingPlanes = null;
+		this.clipIntersection = false;
+		this.clipShadows = false;
+
+		this.shadowSide = null;
+
+		this.colorWrite = true;
+
+		this.precision = null; // override the renderer's default precision for this material
+
+		this.polygonOffset = false;
+		this.polygonOffsetFactor = 0;
+		this.polygonOffsetUnits = 0;
+
+		this.dithering = false;
+
+		this.alphaTest = 0;
+		this.premultipliedAlpha = false;
+
+		this.overdraw = 0; // Overdrawn pixels (typically between 0 and 1) for fixing antialiasing gaps in CanvasRenderer
+
+		this.visible = true;
+
+		this.userData = {};
+
+		this.needsUpdate = true;
+
+	}
+
+	Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Material,
+
+		isMaterial: true,
+
+		onBeforeCompile: function () {},
+
+		setValues: function ( values ) {
+
+			if ( values === undefined ) return;
+
+			for ( var key in values ) {
+
+				var newValue = values[ key ];
+
+				if ( newValue === undefined ) {
+
+					console.warn( "Material: '" + key + "' parameter is undefined." );
+					continue;
+
+				}
+
+				// for backward compatability if shading is set in the constructor
+				if ( key === 'shading' ) {
+
+					console.warn( '' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
+					this.flatShading = ( newValue === FlatShading ) ? true : false;
+					continue;
+
+				}
+
+				var currentValue = this[ key ];
+
+				if ( currentValue === undefined ) {
+
+					console.warn( "" + this.type + ": '" + key + "' is not a property of this material." );
+					continue;
+
+				}
+
+				if ( currentValue && currentValue.isColor ) {
+
+					currentValue.set( newValue );
+
+				} else if ( ( currentValue && currentValue.isVector3 ) && ( newValue && newValue.isVector3 ) ) {
+
+					currentValue.copy( newValue );
+
+				} else if ( key === 'overdraw' ) {
+
+					// ensure overdraw is backwards-compatible with legacy boolean type
+					this[ key ] = Number( newValue );
+
+				} else {
+
+					this[ key ] = newValue;
+
+				}
+
+			}
+
+		},
+
+		toJSON: function ( meta ) {
+
+			var isRoot = ( meta === undefined || typeof meta === 'string' );
+
+			if ( isRoot ) {
+
+				meta = {
+					textures: {},
+					images: {}
+				};
+
+			}
+
+			var data = {
+				metadata: {
+					version: 4.5,
+					type: 'Material',
+					generator: 'Material.toJSON'
+				}
+			};
+
+			// standard Material serialization
+			data.uuid = this.uuid;
+			data.type = this.type;
+
+			if ( this.name !== '' ) data.name = this.name;
+
+			if ( this.color && this.color.isColor ) data.color = this.color.getHex();
+
+			if ( this.roughness !== undefined ) data.roughness = this.roughness;
+			if ( this.metalness !== undefined ) data.metalness = this.metalness;
+
+			if ( this.emissive && this.emissive.isColor ) data.emissive = this.emissive.getHex();
+			if ( this.emissiveIntensity !== 1 ) data.emissiveIntensity = this.emissiveIntensity;
+
+			if ( this.specular && this.specular.isColor ) data.specular = this.specular.getHex();
+			if ( this.shininess !== undefined ) data.shininess = this.shininess;
+			if ( this.clearCoat !== undefined ) data.clearCoat = this.clearCoat;
+			if ( this.clearCoatRoughness !== undefined ) data.clearCoatRoughness = this.clearCoatRoughness;
+
+			if ( this.map && this.map.isTexture ) data.map = this.map.toJSON( meta ).uuid;
+			if ( this.alphaMap && this.alphaMap.isTexture ) data.alphaMap = this.alphaMap.toJSON( meta ).uuid;
+			if ( this.lightMap && this.lightMap.isTexture ) data.lightMap = this.lightMap.toJSON( meta ).uuid;
+
+			if ( this.aoMap && this.aoMap.isTexture ) {
+
+				data.aoMap = this.aoMap.toJSON( meta ).uuid;
+				data.aoMapIntensity = this.aoMapIntensity;
+
+			}
+
+			if ( this.bumpMap && this.bumpMap.isTexture ) {
+
+				data.bumpMap = this.bumpMap.toJSON( meta ).uuid;
+				data.bumpScale = this.bumpScale;
+
+			}
+
+			if ( this.normalMap && this.normalMap.isTexture ) {
+
+				data.normalMap = this.normalMap.toJSON( meta ).uuid;
+				data.normalMapType = this.normalMapType;
+				data.normalScale = this.normalScale.toArray();
+
+			}
+
+			if ( this.displacementMap && this.displacementMap.isTexture ) {
+
+				data.displacementMap = this.displacementMap.toJSON( meta ).uuid;
+				data.displacementScale = this.displacementScale;
+				data.displacementBias = this.displacementBias;
+
+			}
+
+			if ( this.roughnessMap && this.roughnessMap.isTexture ) data.roughnessMap = this.roughnessMap.toJSON( meta ).uuid;
+			if ( this.metalnessMap && this.metalnessMap.isTexture ) data.metalnessMap = this.metalnessMap.toJSON( meta ).uuid;
+
+			if ( this.emissiveMap && this.emissiveMap.isTexture ) data.emissiveMap = this.emissiveMap.toJSON( meta ).uuid;
+			if ( this.specularMap && this.specularMap.isTexture ) data.specularMap = this.specularMap.toJSON( meta ).uuid;
+
+			if ( this.envMap && this.envMap.isTexture ) {
+
+				data.envMap = this.envMap.toJSON( meta ).uuid;
+				data.reflectivity = this.reflectivity; // Scale behind envMap
+
+			}
+
+			if ( this.gradientMap && this.gradientMap.isTexture ) {
+
+				data.gradientMap = this.gradientMap.toJSON( meta ).uuid;
+
+			}
+
+			if ( this.size !== undefined ) data.size = this.size;
+			if ( this.sizeAttenuation !== undefined ) data.sizeAttenuation = this.sizeAttenuation;
+
+			if ( this.blending !== NormalBlending ) data.blending = this.blending;
+			if ( this.flatShading === true ) data.flatShading = this.flatShading;
+			if ( this.side !== FrontSide ) data.side = this.side;
+			if ( this.vertexColors !== NoColors ) data.vertexColors = this.vertexColors;
+
+			if ( this.opacity < 1 ) data.opacity = this.opacity;
+			if ( this.transparent === true ) data.transparent = this.transparent;
+
+			data.depthFunc = this.depthFunc;
+			data.depthTest = this.depthTest;
+			data.depthWrite = this.depthWrite;
+
+			// rotation (SpriteMaterial)
+			if ( this.rotation !== 0 ) data.rotation = this.rotation;
+
+			if ( this.polygonOffset === true ) data.polygonOffset = true;
+			if ( this.polygonOffsetFactor !== 0 ) data.polygonOffsetFactor = this.polygonOffsetFactor;
+			if ( this.polygonOffsetUnits !== 0 ) data.polygonOffsetUnits = this.polygonOffsetUnits;
+
+			if ( this.linewidth !== 1 ) data.linewidth = this.linewidth;
+			if ( this.dashSize !== undefined ) data.dashSize = this.dashSize;
+			if ( this.gapSize !== undefined ) data.gapSize = this.gapSize;
+			if ( this.scale !== undefined ) data.scale = this.scale;
+
+			if ( this.dithering === true ) data.dithering = true;
+
+			if ( this.alphaTest > 0 ) data.alphaTest = this.alphaTest;
+			if ( this.premultipliedAlpha === true ) data.premultipliedAlpha = this.premultipliedAlpha;
+
+			if ( this.wireframe === true ) data.wireframe = this.wireframe;
+			if ( this.wireframeLinewidth > 1 ) data.wireframeLinewidth = this.wireframeLinewidth;
+			if ( this.wireframeLinecap !== 'round' ) data.wireframeLinecap = this.wireframeLinecap;
+			if ( this.wireframeLinejoin !== 'round' ) data.wireframeLinejoin = this.wireframeLinejoin;
+
+			if ( this.morphTargets === true ) data.morphTargets = true;
+			if ( this.skinning === true ) data.skinning = true;
+
+			if ( this.visible === false ) data.visible = false;
+			if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
+
+			// TODO: Copied from Object3D.toJSON
+
+			function extractFromCache( cache ) {
+
+				var values = [];
+
+				for ( var key in cache ) {
+
+					var data = cache[ key ];
+					delete data.metadata;
+					values.push( data );
+
+				}
+
+				return values;
+
+			}
+
+			if ( isRoot ) {
+
+				var textures = extractFromCache( meta.textures );
+				var images = extractFromCache( meta.images );
+
+				if ( textures.length > 0 ) data.textures = textures;
+				if ( images.length > 0 ) data.images = images;
+
+			}
+
+			return data;
+
+		},
+
+		clone: function () {
+
+			return new this.constructor().copy( this );
+
+		},
+
+		copy: function ( source ) {
+
+			this.name = source.name;
+
+			this.fog = source.fog;
+			this.lights = source.lights;
+
+			this.blending = source.blending;
+			this.side = source.side;
+			this.flatShading = source.flatShading;
+			this.vertexColors = source.vertexColors;
+
+			this.opacity = source.opacity;
+			this.transparent = source.transparent;
+
+			this.blendSrc = source.blendSrc;
+			this.blendDst = source.blendDst;
+			this.blendEquation = source.blendEquation;
+			this.blendSrcAlpha = source.blendSrcAlpha;
+			this.blendDstAlpha = source.blendDstAlpha;
+			this.blendEquationAlpha = source.blendEquationAlpha;
+
+			this.depthFunc = source.depthFunc;
+			this.depthTest = source.depthTest;
+			this.depthWrite = source.depthWrite;
+
+			this.colorWrite = source.colorWrite;
+
+			this.precision = source.precision;
+
+			this.polygonOffset = source.polygonOffset;
+			this.polygonOffsetFactor = source.polygonOffsetFactor;
+			this.polygonOffsetUnits = source.polygonOffsetUnits;
+
+			this.dithering = source.dithering;
+
+			this.alphaTest = source.alphaTest;
+			this.premultipliedAlpha = source.premultipliedAlpha;
+
+			this.overdraw = source.overdraw;
+
+			this.visible = source.visible;
+			this.userData = JSON.parse( JSON.stringify( source.userData ) );
+
+			this.clipShadows = source.clipShadows;
+			this.clipIntersection = source.clipIntersection;
+
+			var srcPlanes = source.clippingPlanes,
+				dstPlanes = null;
+
+			if ( srcPlanes !== null ) {
+
+				var n = srcPlanes.length;
+				dstPlanes = new Array( n );
+
+				for ( var i = 0; i !== n; ++ i )
+					dstPlanes[ i ] = srcPlanes[ i ].clone();
+
+			}
+
+			this.clippingPlanes = dstPlanes;
+
+			this.shadowSide = source.shadowSide;
+
+			return this;
+
+		},
+
+		dispose: function () {
+
+			this.dispatchEvent( { type: 'dispose' } );
+
+		}
+
+	} );
+
+	function LineBasicMaterial( parameters ) {
+
+		Material.call( this );
+
+		this.type = 'LineBasicMaterial';
+
+		this.color = new Color( 0xffffff );
+
+		this.linewidth = 1;
+		this.linecap = 'round';
+		this.linejoin = 'round';
+
+		this.lights = false;
+
+		this.setValues( parameters );
+
+	}
+
+	LineBasicMaterial.prototype = Object.create( Material.prototype );
+	LineBasicMaterial.prototype.constructor = LineBasicMaterial;
+
+	LineBasicMaterial.prototype.isLineBasicMaterial = true;
+
+	LineBasicMaterial.prototype.copy = function ( source ) {
+
+		Material.prototype.copy.call( this, source );
+
+		this.color.copy( source.color );
+
+		this.linewidth = source.linewidth;
+		this.linecap = source.linecap;
+		this.linejoin = source.linejoin;
+
+		return this;
+
+	};
+
+	function LineDashedMaterial( parameters ) {
+
+		LineBasicMaterial.call( this );
+
+		this.type = 'LineDashedMaterial';
+
+		this.scale = 1;
+		this.dashSize = 3;
+		this.gapSize = 1;
+
+		this.setValues( parameters );
+
+	}
+
+	LineDashedMaterial.prototype = Object.create( LineBasicMaterial.prototype );
+	LineDashedMaterial.prototype.constructor = LineDashedMaterial;
+
+	LineDashedMaterial.prototype.isLineDashedMaterial = true;
+
+	LineDashedMaterial.prototype.copy = function ( source ) {
+
+		LineBasicMaterial.prototype.copy.call( this, source );
+
+		this.scale = source.scale;
+		this.dashSize = source.dashSize;
+		this.gapSize = source.gapSize;
+
+		return this;
+
+	};
+
+	function MeshBasicMaterial( parameters ) {
+
+		Material.call( this );
+
+		this.type = 'MeshBasicMaterial';
+
+		this.color = new Color( 0xffffff ); // emissive
+
+		this.map = null;
+
+		this.lightMap = null;
+		this.lightMapIntensity = 1.0;
+
+		this.aoMap = null;
+		this.aoMapIntensity = 1.0;
+
+		this.specularMap = null;
+
+		this.alphaMap = null;
+
+		this.envMap = null;
+		this.combine = MultiplyOperation;
+		this.reflectivity = 1;
+		this.refractionRatio = 0.98;
+
+		this.wireframe = false;
+		this.wireframeLinewidth = 1;
+		this.wireframeLinecap = 'round';
+		this.wireframeLinejoin = 'round';
+
+		this.skinning = false;
+		this.morphTargets = false;
+
+		this.lights = false;
+
+		this.setValues( parameters );
+
+	}
+
+	MeshBasicMaterial.prototype = Object.create( Material.prototype );
+	MeshBasicMaterial.prototype.constructor = MeshBasicMaterial;
+
+	MeshBasicMaterial.prototype.isMeshBasicMaterial = true;
+
+	MeshBasicMaterial.prototype.copy = function ( source ) {
+
+		Material.prototype.copy.call( this, source );
+
+		this.color.copy( source.color );
+
+		this.map = source.map;
+
+		this.lightMap = source.lightMap;
+		this.lightMapIntensity = source.lightMapIntensity;
+
+		this.aoMap = source.aoMap;
+		this.aoMapIntensity = source.aoMapIntensity;
+
+		this.specularMap = source.specularMap;
+
+		this.alphaMap = source.alphaMap;
+
+		this.envMap = source.envMap;
+		this.combine = source.combine;
+		this.reflectivity = source.reflectivity;
+		this.refractionRatio = source.refractionRatio;
+
+		this.wireframe = source.wireframe;
+		this.wireframeLinewidth = source.wireframeLinewidth;
+		this.wireframeLinecap = source.wireframeLinecap;
+		this.wireframeLinejoin = source.wireframeLinejoin;
+
+		this.skinning = source.skinning;
+		this.morphTargets = source.morphTargets;
+
+		return this;
+
+	};
+
+	function MeshDepthMaterial( parameters ) {
+
+		Material.call( this );
+
+		this.type = 'MeshDepthMaterial';
+
+		this.depthPacking = BasicDepthPacking;
+
+		this.skinning = false;
+		this.morphTargets = false;
+
+		this.map = null;
+
+		this.alphaMap = null;
+
+		this.displacementMap = null;
+		this.displacementScale = 1;
+		this.displacementBias = 0;
+
+		this.wireframe = false;
+		this.wireframeLinewidth = 1;
+
+		this.fog = false;
+		this.lights = false;
+
+		this.setValues( parameters );
+
+	}
+
+	MeshDepthMaterial.prototype = Object.create( Material.prototype );
+	MeshDepthMaterial.prototype.constructor = MeshDepthMaterial;
+
+	MeshDepthMaterial.prototype.isMeshDepthMaterial = true;
+
+	MeshDepthMaterial.prototype.copy = function ( source ) {
+
+		Material.prototype.copy.call( this, source );
+
+		this.depthPacking = source.depthPacking;
+
+		this.skinning = source.skinning;
+		this.morphTargets = source.morphTargets;
+
+		this.map = source.map;
+
+		this.alphaMap = source.alphaMap;
+
+		this.displacementMap = source.displacementMap;
+		this.displacementScale = source.displacementScale;
+		this.displacementBias = source.displacementBias;
+
+		this.wireframe = source.wireframe;
+		this.wireframeLinewidth = source.wireframeLinewidth;
+
+		return this;
+
+	};
 
 	function MeshDistanceMaterial( parameters ) {
 
@@ -5284,7 +5954,69 @@ var Three = (function (exports) {
 
 		var data = Material.prototype.toJSON.call( this, meta );
 
-		data.uniforms = this.uniforms;
+		data.uniforms = {};
+
+		for ( var name in this.uniforms ) {
+
+			var uniform = this.uniforms[ name ];
+			var value = uniform.value;
+
+			if ( value.isTexture ) {
+
+				data.uniforms[ name ] = {
+					type: 't',
+					value: value.toJSON( meta ).uuid
+				};
+
+			} else if ( value.isColor ) {
+
+				data.uniforms[ name ] = {
+					type: 'c',
+					value: value.getHex()
+				};
+
+			} else if ( value.isVector2 ) {
+
+				data.uniforms[ name ] = {
+					type: 'v2',
+					value: value.toArray()
+				};
+
+			} else if ( value.isVector3 ) {
+
+				data.uniforms[ name ] = {
+					type: 'v3',
+					value: value.toArray()
+				};
+
+			} else if ( value.isVector4 ) {
+
+				data.uniforms[ name ] = {
+					type: 'v4',
+					value: value.toArray()
+				};
+
+			} else if ( value.isMatrix4 ) {
+
+				data.uniforms[ name ] = {
+					type: 'm4',
+					value: value.toArray()
+				};
+
+			} else {
+
+				data.uniforms[ name ] = {
+					value: value
+				};
+
+				// note: the array variants v2v, v3v, v4v, m4v and tv are not supported so far
+
+			}
+
+		}
+
+		if ( Object.keys( this.defines ).length > 0 ) data.defines = this.defines;
+
 		data.vertexShader = this.vertexShader;
 		data.fragmentShader = this.fragmentShader;
 
@@ -5344,6 +6076,8 @@ var Three = (function (exports) {
 
 		this.rotation = 0;
 
+		this.sizeAttenuation = true;
+
 		this.lights = false;
 		this.transparent = true;
 
@@ -5363,6 +6097,8 @@ var Three = (function (exports) {
 		this.map = source.map;
 
 		this.rotation = source.rotation;
+
+		this.sizeAttenuation = source.sizeAttenuation;
 
 		return this;
 
@@ -5442,9 +6178,6 @@ var Three = (function (exports) {
 			if ( json.shininess !== undefined ) material.shininess = json.shininess;
 			if ( json.clearCoat !== undefined ) material.clearCoat = json.clearCoat;
 			if ( json.clearCoatRoughness !== undefined ) material.clearCoatRoughness = json.clearCoatRoughness;
-			if ( json.uniforms !== undefined ) material.uniforms = json.uniforms;
-			if ( json.vertexShader !== undefined ) material.vertexShader = json.vertexShader;
-			if ( json.fragmentShader !== undefined ) material.fragmentShader = json.fragmentShader;
 			if ( json.vertexColors !== undefined ) material.vertexColors = json.vertexColors;
 			if ( json.fog !== undefined ) material.fog = json.fog;
 			if ( json.flatShading !== undefined ) material.flatShading = json.flatShading;
@@ -5478,6 +6211,55 @@ var Three = (function (exports) {
 
 			if ( json.visible !== undefined ) material.visible = json.visible;
 			if ( json.userData !== undefined ) material.userData = json.userData;
+
+			// Shader Material
+
+			if ( json.uniforms !== undefined ) {
+
+				for ( var name in json.uniforms ) {
+
+					var uniform = json.uniforms[ name ];
+
+					material.uniforms[ name ] = {};
+
+					switch ( uniform.type ) {
+
+						case 't':
+							material.uniforms[ name ].value = getTexture( uniform.value );
+							break;
+
+						case 'c':
+							material.uniforms[ name ].value = new Color().setHex( uniform.value );
+							break;
+
+						case 'v2':
+							material.uniforms[ name ].value = new Vector2().fromArray( uniform.value );
+							break;
+
+						case 'v3':
+							material.uniforms[ name ].value = new Vector3().fromArray( uniform.value );
+							break;
+
+						case 'v4':
+							material.uniforms[ name ].value = new Vector4().fromArray( uniform.value );
+							break;
+
+						case 'm4':
+							material.uniforms[ name ].value = new Matrix4().fromArray( uniform.value );
+							break;
+
+						default:
+							material.uniforms[ name ].value = uniform.value;
+
+					}
+
+				}
+
+			}
+
+			if ( json.defines !== undefined ) material.defines = json.defines;
+			if ( json.vertexShader !== undefined ) material.vertexShader = json.vertexShader;
+			if ( json.fragmentShader !== undefined ) material.fragmentShader = json.fragmentShader;
 
 			// Deprecated
 
@@ -6037,17 +6819,9 @@ var Three = (function (exports) {
 
 			} else {
 
-				if ( typeof OffscreenCanvas !== 'undefined' ) {
-
-					canvas = new OffscreenCanvas( image.width, image.height );
-
-				} else {
-
-					canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
-					canvas.width = image.width;
-					canvas.height = image.height;
-
-				}
+				canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
+				canvas.width = image.width;
+				canvas.height = image.height;
 
 				var context = canvas.getContext( '2d' );
 
@@ -6290,7 +7064,7 @@ var Three = (function (exports) {
 
 		transformUv: function ( uv ) {
 
-			if ( this.mapping !== UVMapping ) return;
+			if ( this.mapping !== UVMapping ) return uv;
 
 			uv.applyMatrix3( this.matrix );
 
@@ -6362,6 +7136,8 @@ var Three = (function (exports) {
 
 			}
 
+			return uv;
+
 		}
 
 	} );
@@ -6399,7 +7175,7 @@ var Three = (function (exports) {
 				texture.image = image;
 
 				// JPEGs can't have an alpha channel, so memory can be saved by storing them as RGB.
-				var isJPEG = url.search( /\.(jpg|jpeg)$/ ) > 0 || url.search( /^data\:image\/jpeg/ ) === 0;
+				var isJPEG = url.search( /\.jpe?g$/i ) > 0 || url.search( /^data\:image\/jpeg/ ) === 0;
 
 				texture.format = isJPEG ? RGBFormat : RGBAFormat;
 				texture.needsUpdate = true;

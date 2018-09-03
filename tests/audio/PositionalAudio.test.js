@@ -1992,18 +1992,11 @@ var Three = (function (exports) {
 
 		},
 
-		project: function () {
+		project: function ( camera ) {
 
-			var matrix = new Matrix4();
+			return this.applyMatrix4( camera.matrixWorldInverse ).applyMatrix4( camera.projectionMatrix );
 
-			return function project( camera ) {
-
-				matrix.multiplyMatrices( camera.projectionMatrix, matrix.getInverse( camera.matrixWorld ) );
-				return this.applyMatrix4( matrix );
-
-			};
-
-		}(),
+		},
 
 		unproject: function () {
 
@@ -2011,8 +2004,7 @@ var Three = (function (exports) {
 
 			return function unproject( camera ) {
 
-				matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
-				return this.applyMatrix4( matrix );
+				return this.applyMatrix4( matrix.getInverse( camera.projectionMatrix ) ).applyMatrix4( camera.matrixWorld );
 
 			};
 
@@ -2305,11 +2297,17 @@ var Three = (function (exports) {
 
 		setFromSpherical: function ( s ) {
 
-			var sinPhiRadius = Math.sin( s.phi ) * s.radius;
+			return this.setFromSphericalCoords( s.radius, s.phi, s.theta );
 
-			this.x = sinPhiRadius * Math.sin( s.theta );
-			this.y = Math.cos( s.phi ) * s.radius;
-			this.z = sinPhiRadius * Math.cos( s.theta );
+		},
+
+		setFromSphericalCoords: function ( radius, phi, theta ) {
+
+			var sinPhiRadius = Math.sin( phi ) * radius;
+
+			this.x = sinPhiRadius * Math.sin( theta );
+			this.y = Math.cos( phi ) * radius;
+			this.z = sinPhiRadius * Math.cos( theta );
 
 			return this;
 
@@ -2317,9 +2315,15 @@ var Three = (function (exports) {
 
 		setFromCylindrical: function ( c ) {
 
-			this.x = c.radius * Math.sin( c.theta );
-			this.y = c.y;
-			this.z = c.radius * Math.cos( c.theta );
+			return this.setFromCylindricalCoords( c.radius, c.theta, c.y );
+
+		},
+
+		setFromCylindricalCoords: function ( radius, theta, y ) {
+
+			this.x = radius * Math.sin( theta );
+			this.y = y;
+			this.z = radius * Math.cos( theta );
 
 			return this;
 
@@ -3530,34 +3534,50 @@ var Three = (function (exports) {
 
 		lookAt: function () {
 
-			// This method does not support objects with rotated and/or translated parent(s)
+			// This method does not support objects having non-uniformly-scaled parent(s)
 
+			var q1 = new Quaternion();
 			var m1 = new Matrix4();
-			var vector = new Vector3();
+			var target = new Vector3();
+			var position = new Vector3();
 
 			return function lookAt( x, y, z ) {
 
 				if ( x.isVector3 ) {
 
-					vector.copy( x );
+					target.copy( x );
 
 				} else {
 
-					vector.set( x, y, z );
+					target.set( x, y, z );
 
 				}
 
+				var parent = this.parent;
+
+				this.updateWorldMatrix( true, false );
+
+				position.setFromMatrixPosition( this.matrixWorld );
+
 				if ( this.isCamera ) {
 
-					m1.lookAt( this.position, vector, this.up );
+					m1.lookAt( position, target, this.up );
 
 				} else {
 
-					m1.lookAt( vector, this.position, this.up );
+					m1.lookAt( target, position, this.up );
 
 				}
 
 				this.quaternion.setFromRotationMatrix( m1 );
+
+				if ( parent ) {
+
+					m1.extractRotation( parent.matrixWorld );
+					q1.setFromRotationMatrix( m1 );
+					this.quaternion.premultiply( q1.inverse() );
+
+				}
 
 			};
 
@@ -3733,26 +3753,22 @@ var Three = (function (exports) {
 
 		}(),
 
-		getWorldDirection: function () {
+		getWorldDirection: function ( target ) {
 
-			var quaternion = new Quaternion();
+			if ( target === undefined ) {
 
-			return function getWorldDirection( target ) {
+				console.warn( 'Object3D: .getWorldDirection() target is now required' );
+				target = new Vector3();
 
-				if ( target === undefined ) {
+			}
 
-					console.warn( 'Object3D: .getWorldDirection() target is now required' );
-					target = new Vector3();
+			this.updateMatrixWorld( true );
 
-				}
+			var e = this.matrixWorld.elements;
 
-				this.getWorldQuaternion( quaternion );
+			return target.set( e[ 8 ], e[ 9 ], e[ 10 ] ).normalize();
 
-				return target.set( 0, 0, 1 ).applyQuaternion( quaternion );
-
-			};
-
-		}(),
+		},
 
 		raycast: function () {},
 
@@ -3837,6 +3853,44 @@ var Three = (function (exports) {
 			for ( var i = 0, l = children.length; i < l; i ++ ) {
 
 				children[ i ].updateMatrixWorld( force );
+
+			}
+
+		},
+
+		updateWorldMatrix: function ( updateParents, updateChildren ) {
+
+			var parent = this.parent;
+
+			if ( updateParents === true && parent !== null ) {
+
+				parent.updateWorldMatrix( true, false );
+
+			}
+
+			if ( this.matrixAutoUpdate ) this.updateMatrix();
+
+			if ( this.parent === null ) {
+
+				this.matrixWorld.copy( this.matrix );
+
+			} else {
+
+				this.matrixWorld.multiplyMatrices( this.parent.matrixWorld, this.matrix );
+
+			}
+
+			// update children
+
+			if ( updateChildren === true ) {
+
+				var children = this.children;
+
+				for ( var i = 0, l = children.length; i < l; i ++ ) {
+
+					children[ i ].updateWorldMatrix( false, true );
+
+				}
 
 			}
 
