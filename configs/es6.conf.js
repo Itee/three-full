@@ -255,8 +255,13 @@ module.exports = {
         DRACOLoader: {
             imports: [
                 'DefaultLoadingManager',
+                'Uint8BufferAttribute',
                 'Uint16BufferAttribute',
-                'Uint32BufferAttribute'
+                'Uint32BufferAttribute',
+                'Int8BufferAttribute',
+                'Int16BufferAttribute',
+                'Int32BufferAttribute',
+                'Float32BufferAttribute',
             ]
         },
 		Earcut: {
