@@ -813,6 +813,15 @@ module.exports = {
 		ShaderToon: {
 			outputOverride: 'shaders/ShaderToon.js'
 		},
+        ShaderTranslucent: {
+            imports: [
+                'UniformsUtils',
+                'UniformsLib',
+                'ShaderChunk',
+                'Color',
+            ],
+            outputOverride: 'shaders/ShaderTranslucent.js'
+        },
 		ShadowMapViewer: {
 			imports: [ 'UnpackDepthRGBAShader' ]
 		},
