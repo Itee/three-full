@@ -2,7 +2,7 @@ import { Line3 } from '../math/Line3.js'
 import { Plane } from '../math/Plane.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Mesh } from '../objects/Mesh.js'
-import { ConvexGeometry } from '../geometries/ConvexGeometry.js'
+import { ConvexBufferGeometry } from '../geometries/ConvexGeometry.js'
 
 
 
@@ -14,11 +14,19 @@ var ConvexObjectBreaker = function ( minSizeForBreak, smallDelta ) {
 	this.tempLine1 = new Line3();
 	this.tempPlane1 = new Plane();
 	this.tempPlane2 = new Plane();
+	this.tempPlane_Cut = new Plane();
 	this.tempCM1 = new Vector3();
 	this.tempCM2 = new Vector3();
 	this.tempVector3 = new Vector3();
 	this.tempVector3_2 = new Vector3();
 	this.tempVector3_3 = new Vector3();
+	this.tempVector3_P0 = new Vector3();
+	this.tempVector3_P1 = new Vector3();
+	this.tempVector3_P2 = new Vector3();
+	this.tempVector3_N0 = new Vector3();
+	this.tempVector3_N1 = new Vector3();
+	this.tempVector3_AB = new Vector3();
+	this.tempVector3_CB = new Vector3();
 	this.tempResultObjects = { object1: null, object2: null };
 
 	this.segments = [];
@@ -33,13 +41,15 @@ ConvexObjectBreaker.prototype = {
 
 	prepareBreakableObject: function ( object, mass, velocity, angularVelocity, breakable ) {
 
-		// object is a Object3d (normally a Mesh), must have a Geometry, and it must be convex.
+		// object is a Object3d (normally a Mesh), must have a BufferGeometry, and it must be convex.
 		// Its material property is propagated to its children (sub-pieces)
 		// mass must be > 0
 
-		// Create vertices mark
-		var vertices = object.geometry.vertices;
-		for ( var i = 0, il = vertices.length; i < il; i ++ ) vertices[ i ].mark = 0;
+		if ( ! object.geometry.isBufferGeometry ) {
+
+			console.error( 'ConvexObjectBreaker.prepareBreakableObject(): Parameter object must have a BufferGeometry.' );
+
+		}
 
 		var userData = object.userData;
 		userData.mass = mass;
@@ -138,43 +148,67 @@ ConvexObjectBreaker.prototype = {
 		// Returned value is number of pieces, 0 for error.
 
 		var geometry = object.geometry;
-		var points = geometry.vertices;
-		var faces = geometry.faces;
+		var coords = geometry.attributes.position.array;
+		var normals = geometry.attributes.normal.array;
 
-		var numPoints = points.length;
+		var numPoints = coords.length / 3;
+		var numFaces = numPoints / 3;
+
+		var indices = geometry.getIndex();
+
+		if ( indices ) {
+
+			indices = indices.array;
+			numFaces = indices.length / 3;
+
+		}
+
+		function getVertexIndex( faceIdx, vert ) {
+
+			// vert = 0, 1 or 2.
+
+			var idx = faceIdx * 3 + vert;
+
+			return indices ? indices[ idx ] : idx;
+
+		}
 
 		var points1 = [];
 		var points2 = [];
 
 		var delta = this.smallDelta;
 
-		// Reset vertices mark
-		for ( var i = 0; i < numPoints; i ++ ) points[ i ].mark = 0;
-
 		// Reset segments mark
 		var numPointPairs = numPoints * numPoints;
 		for ( var i = 0; i < numPointPairs; i ++ ) this.segments[ i ] = false;
 
+		var p0 = this.tempVector3_P0;
+		var p1 = this.tempVector3_P1;
+		var n0 = this.tempVector3_N0;
+		var n1 = this.tempVector3_N1;
+
 		// Iterate through the faces to mark edges shared by coplanar faces
-		for ( var i = 0, il = faces.length - 1; i < il; i ++ ) {
+		for ( var i = 0; i < numFaces - 1; i ++ ) {
 
-			var face1 = faces[ i ];
+			var a1 = getVertexIndex( i, 0 );
+			var b1 = getVertexIndex( i, 1 );
+			var c1 = getVertexIndex( i, 2 );
 
-			for ( var j = i + 1, jl = faces.length; j < jl; j ++ ) {
+			// Assuming all 3 vertices have the same normal
+			n0.set( normals[ a1 ], normals[ a1 ] + 1, normals[ a1 ] + 2 );
 
-				var face2 = faces[ j ];
+			for ( var j = i + 1; j < numFaces; j ++ ) {
 
-				var coplanar = 1 - face1.normal.dot( face2.normal ) < delta;
+				var a2 = getVertexIndex( j, 0 );
+				var b2 = getVertexIndex( j, 1 );
+				var c2 = getVertexIndex( j, 2 );
+
+				// Assuming all 3 vertices have the same normal
+				n1.set( normals[ a2 ], normals[ a2 ] + 1, normals[ a2 ] + 2 );
+
+				var coplanar = 1 - n0.dot( n1 ) < delta;
 
 				if ( coplanar ) {
-
-					var a1 = face1.a;
-					var b1 = face1.b;
-					var c1 = face1.c;
-					var a2 = face2.a;
-					var b2 = face2.b;
-					var c2 = face2.c;
-
 
 					if ( a1 === a2 || a1 === b2 || a1 === c2 ) {
 
@@ -204,19 +238,21 @@ ConvexObjectBreaker.prototype = {
 		}
 
 		// Transform the plane to object local space
-		var localPlane = this.tempPlane1;
+		var localPlane = this.tempPlane_Cut;
 		object.updateMatrix();
 		ConvexObjectBreaker.transformPlaneToLocalSpace( plane, object.matrix, localPlane );
 
 		// Iterate through the faces adding points to both pieces
-		for ( var i = 0, il = faces.length; i < il; i ++ ) {
+		for ( var i = 0; i < numFaces; i ++ ) {
 
-			var face = faces[ i ];
+			var va = getVertexIndex( i, 0 );
+			var vb = getVertexIndex( i, 1 );
+			var vc = getVertexIndex( i, 2 );
 
 			for ( var segment = 0; segment < 3; segment ++ ) {
 
-				var i0 = segment === 0 ? face.a : ( segment === 1 ? face.b : face.c );
-				var i1 = segment === 0 ? face.b : ( segment === 1 ? face.c : face.a );
+				var i0 = segment === 0 ? va : ( segment === 1 ? vb : vc );
+				var i1 = segment === 0 ? vb : ( segment === 1 ? vc : va );
 
 				var segmentState = this.segments[ i0 * numPoints + i1 ];
 
@@ -226,65 +262,54 @@ ConvexObjectBreaker.prototype = {
 				this.segments[ i0 * numPoints + i1 ] = true;
 				this.segments[ i1 * numPoints + i0 ] = true;
 
-				var p0 = points[ i0 ];
-				var p1 = points[ i1 ];
+				p0.set( coords[ 3 * i0 ], coords[ 3 * i0 + 1 ], coords[ 3 * i0 + 2 ] );
+				p1.set( coords[ 3 * i1 ], coords[ 3 * i1 + 1 ], coords[ 3 * i1 + 2 ] );
 
-				if ( p0.mark === 0 ) {
+				// mark: 1 for negative side, 2 for positive side, 3 for coplanar point
+				var mark0 = 0;
 
-					var d = localPlane.distanceToPoint( p0 );
+				var d = localPlane.distanceToPoint( p0 );
 
-					// mark: 1 for negative side, 2 for positive side, 3 for coplanar point
-					if ( d > delta ) {
+				if ( d > delta ) {
 
-						p0.mark = 2;
-						points2.push( p0 );
+					mark0 = 2;
+					points2.push( p0.clone() );
 
-					} else if ( d < - delta ) {
+				} else if ( d < - delta ) {
 
-						p0.mark = 1;
-						points1.push( p0 );
+					mark0 = 1;
+					points1.push( p0.clone() );
 
-					} else {
+				} else {
 
-						p0.mark = 3;
-						points1.push( p0 );
-						var p0_2 = p0.clone();
-						p0_2.mark = 3;
-						points2.push( p0_2 );
-
-					}
+					mark0 = 3;
+					points1.push( p0.clone() );
+					points2.push( p0.clone() );
 
 				}
 
-				if ( p1.mark === 0 ) {
+				// mark: 1 for negative side, 2 for positive side, 3 for coplanar point
+				var mark1 = 0;
 
-					var d = localPlane.distanceToPoint( p1 );
+				var d = localPlane.distanceToPoint( p1 );
 
-					// mark: 1 for negative side, 2 for positive side, 3 for coplanar point
-					if ( d > delta ) {
+				if ( d > delta ) {
 
-						p1.mark = 2;
-						points2.push( p1 );
+					mark1 = 2;
+					points2.push( p1.clone() );
 
-					} else if ( d < - delta ) {
+				} else if ( d < - delta ) {
 
-						p1.mark = 1;
-						points1.push( p1 );
+					mark1 = 1;
+					points1.push( p1.clone() );
 
-					}	else {
+				}	else {
 
-						p1.mark = 3;
-						points1.push( p1 );
-						var p1_2 = p1.clone();
-						p1_2.mark = 3;
-						points2.push( p1_2 );
-
-					}
+					mark1 = 3;
+					points1.push( p1.clone() );
+					points2.push( p1.clone() );
 
 				}
-
-				var mark0 = p0.mark;
-				var mark1 = p1.mark;
 
 				if ( ( mark0 === 1 && mark1 === 2 ) || ( mark0 === 2 && mark1 === 1 ) ) {
 
@@ -306,11 +331,8 @@ ConvexObjectBreaker.prototype = {
 
 					}
 
-					intersection.mark = 1;
 					points1.push( intersection );
-					var intersection_2 = intersection.clone();
-					intersection_2.mark = 2;
-					points2.push( intersection_2 );
+					points2.push( intersection.clone() );
 
 				}
 
@@ -368,7 +390,7 @@ ConvexObjectBreaker.prototype = {
 
 		if ( numPoints1 > 4 ) {
 
-			object1 = new Mesh( new ConvexGeometry( points1 ), object.material );
+			object1 = new Mesh( new ConvexBufferGeometry( points1 ), object.material );
 			object1.position.copy( this.tempCM1 );
 			object1.quaternion.copy( object.quaternion );
 
@@ -380,7 +402,7 @@ ConvexObjectBreaker.prototype = {
 
 		if ( numPoints2 > 4 ) {
 
-			object2 = new Mesh( new ConvexGeometry( points2 ), object.material );
+			object2 = new Mesh( new ConvexBufferGeometry( points2 ), object.material );
 			object2.position.copy( this.tempCM2 );
 			object2.quaternion.copy( object.quaternion );
 

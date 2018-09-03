@@ -15,9 +15,16 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 'use strict';
 
+/*
+if ( var LoaderSupport === undefined ) {
+
+	var LoaderSupport = {};
+
+}
+
+
+*/
 var LoaderSupport = {}
-
-
 LoaderSupport.Validator = {
 	
 	isValid: function( input ) {
@@ -37,6 +44,7 @@ LoaderSupport.Callbacks = (function () {
 
 	function Callbacks() {
 		this.onProgress = null;
+		this.onReportError = null;
 		this.onMeshAlter = null;
 		this.onLoad = null;
 		this.onLoadMaterials = null;
@@ -45,6 +53,11 @@ LoaderSupport.Callbacks = (function () {
 	
 	Callbacks.prototype.setCallbackOnProgress = function ( callbackOnProgress ) {
 		this.onProgress = Validator.verifyInput( callbackOnProgress, this.onProgress );
+	};
+
+	
+	Callbacks.prototype.setCallbackOnReportError = function ( callbackOnReportError ) {
+		this.onReportError = Validator.verifyInput( callbackOnReportError, this.onReportError );
 	};
 
 	
@@ -255,7 +268,7 @@ LoaderSupport.PrepData = (function () {
 
 LoaderSupport.MeshBuilder = (function () {
 
-	var LOADER_MESH_BUILDER_VERSION = '1.2.1';
+	var LOADER_MESH_BUILDER_VERSION = '1.2.2';
 
 	var Validator = LoaderSupport.Validator;
 
@@ -324,6 +337,7 @@ LoaderSupport.MeshBuilder = (function () {
 
 	MeshBuilder.prototype._setCallbacks = function ( callbacks ) {
 		if ( Validator.isValid( callbacks.onProgress ) ) this.callbacks.setCallbackOnProgress( callbacks.onProgress );
+		if ( Validator.isValid( callbacks.onReportError ) ) this.callbacks.setCallbackOnReportError( callbacks.onReportError );
 		if ( Validator.isValid( callbacks.onMeshAlter ) ) this.callbacks.setCallbackOnMeshAlter( callbacks.onMeshAlter );
 		if ( Validator.isValid( callbacks.onLoad ) ) this.callbacks.setCallbackOnLoad( callbacks.onLoad );
 		if ( Validator.isValid( callbacks.onLoadMaterials ) ) this.callbacks.setCallbackOnLoadMaterials( callbacks.onLoadMaterials );
@@ -653,7 +667,7 @@ LoaderSupport.WorkerRunnerRefImpl = (function () {
 
 LoaderSupport.WorkerSupport = (function () {
 
-	var WORKER_SUPPORT_VERSION = '2.2.0';
+	var WORKER_SUPPORT_VERSION = '2.2.1';
 
 	var Validator = LoaderSupport.Validator;
 
@@ -776,7 +790,7 @@ LoaderSupport.WorkerSupport = (function () {
 				payload.logging = {
 					enabled: true,
 					debug: false
-				}
+				};
 
 			}
 			this._postMessage();
@@ -1022,7 +1036,7 @@ LoaderSupport.WorkerSupport = (function () {
 
 LoaderSupport.WorkerDirector = (function () {
 
-	var LOADER_WORKER_DIRECTOR_VERSION = '2.2.1';
+	var LOADER_WORKER_DIRECTOR_VERSION = '2.2.2';
 
 	var Validator = LoaderSupport.Validator;
 
@@ -1038,7 +1052,7 @@ LoaderSupport.WorkerDirector = (function () {
 
 		this.maxQueueSize = MAX_QUEUE_SIZE ;
 		this.maxWebWorkers = MAX_WEB_WORKER;
-		this.crossOrigin = 'anonymous';
+		this.crossOrigin = null;
 
 		if ( ! Validator.isValid( classDef ) ) throw 'Provided invalid classDef: ' + classDef;
 
@@ -1187,11 +1201,31 @@ LoaderSupport.WorkerDirector = (function () {
 			return materials;
 		};
 
+		var wrapperOnReportError = function ( errorMessage ) {
+			var continueProcessing = true;
+			if ( Validator.isValid( globalCallbacks.onReportError ) ) continueProcessing = globalCallbacks.onReportError( supportDesc, errorMessage );
+			if ( Validator.isValid( prepDataCallbacks.onReportError ) )	continueProcessing = prepDataCallbacks.onReportError( supportDesc, errorMessage );
+
+			if ( ! Validator.isValid( globalCallbacks.onReportError ) && ! Validator.isValid( prepDataCallbacks.onReportError ) ) {
+
+				console.error( 'Loader reported an error: ' );
+				console.error( errorMessage );
+
+			}
+			if ( continueProcessing ) {
+
+				supportDesc.inUse = false;
+				scope.processQueue();
+
+			}
+		};
+
 		supportDesc.loader = this._buildLoader( supportDesc.instanceNo );
 
 		var updatedCallbacks = new LoaderSupport.Callbacks();
 		updatedCallbacks.setCallbackOnLoad( wrapperOnLoad );
 		updatedCallbacks.setCallbackOnProgress( wrapperOnProgress );
+		updatedCallbacks.setCallbackOnReportError( wrapperOnReportError );
 		updatedCallbacks.setCallbackOnMeshAlter( wrapperOnMeshAlter );
 		updatedCallbacks.setCallbackOnLoadMaterials( wrapperOnLoadMaterials );
 		prepData.callbacks = updatedCallbacks;

@@ -4,9 +4,19 @@ import { BufferAttribute } from './BufferAttribute.js'
 
 
 
-function InstancedBufferAttribute( array, itemSize, meshPerAttribute ) {
+function InstancedBufferAttribute( array, itemSize, normalized, meshPerAttribute ) {
 
-	BufferAttribute.call( this, array, itemSize );
+	if ( typeof ( normalized ) === 'number' ) {
+
+		meshPerAttribute = normalized;
+
+		normalized = false;
+
+		console.error( 'InstancedBufferAttribute: The constructor now expects normalized as the third argument.' );
+
+	}
+
+	BufferAttribute.call( this, array, itemSize, normalized );
 
 	this.meshPerAttribute = meshPerAttribute || 1;
 

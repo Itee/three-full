@@ -17,6 +17,8 @@ function SpriteMaterial( parameters ) {
 
 	this.rotation = 0;
 
+	this.sizeAttenuation = true;
+
 	this.lights = false;
 	this.transparent = true;
 
@@ -36,6 +38,8 @@ SpriteMaterial.prototype.copy = function ( source ) {
 	this.map = source.map;
 
 	this.rotation = source.rotation;
+
+	this.sizeAttenuation = source.sizeAttenuation;
 
 	return this;
 
