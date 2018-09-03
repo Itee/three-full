@@ -530,6 +530,9 @@ module.exports = {
 		Node: {
             imports: [ '_Math' ]
 		},
+        NodeBuilder: {
+            imports: [ 'TextureCubeNode' ]
+        },
         NodeLib_Implementation: {
             importsOverride: [
                 [ 'NodeLib', 'from', './NodeLib_Declaration' ],
