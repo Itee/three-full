@@ -962,6 +962,14 @@ module.exports = {
 		VRMLLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
+        VRMLoader: {
+            imports: [
+                'DefaultLoadingManager'
+            ],
+            exports: [
+                'VRMLoader'
+            ]
+		},
 		VTKLoader: {
 			imports: [
 				'DefaultLoadingManager',
