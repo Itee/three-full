@@ -26,6 +26,8 @@ module.exports = {
 		'Curves.js',
 		'Geometries.js',
 		'Materials.js',
+		'Nodes.js',
+		'THREE.Nodes.js',
 
 
 		// Worker
@@ -124,13 +126,6 @@ module.exports = {
         },
 		BufferGeometryUtils: {
 			outputOverride: 'utils/BufferGeometryUtils.js'
-		},
-		BufferSubdivisionModifier: {
-			imports: [
-				'Face3',
-				'Vector3',
-				'Vector2'
-			]
 		},
 		BVHLoader: {
 			imports: [ 'DefaultLoadingManager' ]
@@ -792,9 +787,6 @@ module.exports = {
 				'CopyShader',
 				'UniformsUtils'
 			]
-		},
-		ScreenNode: {
-			imports: [ 'InputNode' ]
 		},
 		ShaderGodRays: {
 			outputOverride: 'shaders/ShaderGodRays.js'
