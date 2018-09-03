@@ -4845,13 +4845,13 @@ export default [
 		}
 	},
 	{
-		input: 'sources/vr/GearVRController.js',
+		input: 'sources/vr/deprecated/GearVRController.js',
 		plugins: [ glsl() ],
 		output: {
 			indent: '\t',
 			format: 'iife',
 			name: 'Three',
-			file: 'tests/vr/GearVRController.test.js'
+			file: 'tests/vr/deprecated/GearVRController.test.js'
 		}
 	},
 	{
