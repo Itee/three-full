@@ -125,13 +125,6 @@ module.exports = {
 		BufferGeometryUtils: {
 			outputOverride: 'utils/BufferGeometryUtils.js'
 		},
-		BufferSubdivisionModifier: {
-			imports: [
-				'Face3',
-				'Vector3',
-				'Vector2'
-			]
-		},
 		BVHLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
