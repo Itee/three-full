@@ -2072,18 +2072,11 @@ var Three = (function (exports) {
 
 		},
 
-		project: function () {
+		project: function ( camera ) {
 
-			var matrix = new Matrix4();
+			return this.applyMatrix4( camera.matrixWorldInverse ).applyMatrix4( camera.projectionMatrix );
 
-			return function project( camera ) {
-
-				matrix.multiplyMatrices( camera.projectionMatrix, matrix.getInverse( camera.matrixWorld ) );
-				return this.applyMatrix4( matrix );
-
-			};
-
-		}(),
+		},
 
 		unproject: function () {
 
@@ -2091,8 +2084,7 @@ var Three = (function (exports) {
 
 			return function unproject( camera ) {
 
-				matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
-				return this.applyMatrix4( matrix );
+				return this.applyMatrix4( matrix.getInverse( camera.projectionMatrix ) ).applyMatrix4( camera.matrixWorld );
 
 			};
 
@@ -2385,11 +2377,17 @@ var Three = (function (exports) {
 
 		setFromSpherical: function ( s ) {
 
-			var sinPhiRadius = Math.sin( s.phi ) * s.radius;
+			return this.setFromSphericalCoords( s.radius, s.phi, s.theta );
 
-			this.x = sinPhiRadius * Math.sin( s.theta );
-			this.y = Math.cos( s.phi ) * s.radius;
-			this.z = sinPhiRadius * Math.cos( s.theta );
+		},
+
+		setFromSphericalCoords: function ( radius, phi, theta ) {
+
+			var sinPhiRadius = Math.sin( phi ) * radius;
+
+			this.x = sinPhiRadius * Math.sin( theta );
+			this.y = Math.cos( phi ) * radius;
+			this.z = sinPhiRadius * Math.cos( theta );
 
 			return this;
 
@@ -2397,9 +2395,15 @@ var Three = (function (exports) {
 
 		setFromCylindrical: function ( c ) {
 
-			this.x = c.radius * Math.sin( c.theta );
-			this.y = c.y;
-			this.z = c.radius * Math.cos( c.theta );
+			return this.setFromCylindricalCoords( c.radius, c.theta, c.y );
+
+		},
+
+		setFromCylindricalCoords: function ( radius, theta, y ) {
+
+			this.x = radius * Math.sin( theta );
+			this.y = y;
+			this.z = radius * Math.cos( theta );
 
 			return this;
 
@@ -3014,21 +3018,21 @@ var Three = (function (exports) {
 		var _changed = true;
 
 		var _state = STATE.NONE,
-		_prevState = STATE.NONE,
+			_prevState = STATE.NONE,
 
-		_eye = new Vector3(),
+			_eye = new Vector3(),
 
-		_rotateStart = new Vector3(),
-		_rotateEnd = new Vector3(),
+			_rotateStart = new Vector3(),
+			_rotateEnd = new Vector3(),
 
-		_zoomStart = new Vector2(),
-		_zoomEnd = new Vector2(),
+			_zoomStart = new Vector2(),
+			_zoomEnd = new Vector2(),
 
-		_touchZoomDistanceStart = 0,
-		_touchZoomDistanceEnd = 0,
+			_touchZoomDistanceStart = 0,
+			_touchZoomDistanceEnd = 0,
 
-		_panStart = new Vector2(),
-		_panEnd = new Vector2();
+			_panStart = new Vector2(),
+			_panEnd = new Vector2();
 
 		// for reset
 
@@ -3077,16 +3081,6 @@ var Three = (function (exports) {
 			this.right0 = this.object.right;
 			this.top0 = this.object.top;
 			this.bottom0 = this.object.bottom;
-
-		};
-
-		this.handleEvent = function ( event ) {
-
-			if ( typeof this[ event.type ] == 'function' ) {
-
-				this[ event.type ]( event );
-
-			}
 
 		};
 
@@ -3157,7 +3151,7 @@ var Three = (function (exports) {
 
 		}() );
 
-		this.rotateCamera = ( function() {
+		this.rotateCamera = ( function () {
 
 			var axis = new Vector3(),
 				quaternion = new Quaternion();
@@ -3195,7 +3189,7 @@ var Three = (function (exports) {
 
 				}
 
-			}
+			};
 
 		}() );
 
@@ -3236,7 +3230,7 @@ var Three = (function (exports) {
 
 		};
 
-		this.panCamera = ( function() {
+		this.panCamera = ( function () {
 
 			var mouseChange = new Vector2(),
 				objectUp = new Vector3(),
@@ -3274,7 +3268,7 @@ var Three = (function (exports) {
 
 				}
 
-			}
+			};
 
 		}() );
 
@@ -3567,7 +3561,7 @@ var Three = (function (exports) {
 
 		}
 
-		this.dispose = function() {
+		this.dispose = function () {
 
 			this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
 			this.domElement.removeEventListener( 'mousedown', mousedown, false );

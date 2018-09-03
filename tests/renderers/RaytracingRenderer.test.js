@@ -764,6 +764,28 @@ var Three = (function (exports) {
 
 		},
 
+		lerpHSL: function () {
+
+			var hslA = { h: 0, s: 0, l: 0 };
+			var hslB = { h: 0, s: 0, l: 0 };
+
+			return function lerpHSL( color, alpha ) {
+
+				this.getHSL( hslA );
+				color.getHSL( hslB );
+
+				var h = _Math.lerp( hslA.h, hslB.h, alpha );
+				var s = _Math.lerp( hslA.s, hslB.s, alpha );
+				var l = _Math.lerp( hslA.l, hslB.l, alpha );
+
+				this.setHSL( h, s, l );
+
+				return this;
+
+			};
+
+		}(),
+
 		equals: function ( c ) {
 
 			return ( c.r === this.r ) && ( c.g === this.g ) && ( c.b === this.b );
@@ -803,7 +825,7 @@ var Three = (function (exports) {
 
 	} );
 
-	var REVISION = '95';
+	var REVISION = '96';
 
 	var RaytracingRenderer = function ( parameters ) {
 
@@ -836,15 +858,16 @@ var Three = (function (exports) {
 
 		console.log( '%cSpinning off ' + workers + ' Workers ', 'font-size: 20px; background: black; color: white; font-family: monospace;' );
 
-		this.setWorkers = function( w ) {
+		this.setWorkers = function ( w ) {
 
 			workers = w || navigator.hardwareConcurrency || 4;
 
 			while ( pool.length < workers ) {
-				var worker = new Worker( parameters.workerPath );
-				worker.id = workerId++;
 
-				worker.onmessage = function( e ) {
+				var worker = new Worker( parameters.workerPath );
+				worker.id = workerId ++;
+
+				worker.onmessage = function ( e ) {
 
 					var data = e.data;
 
@@ -872,7 +895,7 @@ var Three = (function (exports) {
 
 				};
 
-				worker.color = new Color().setHSL( Math.random() , 0.8, 0.8 ).getHexString();
+				worker.color = new Color().setHSL( Math.random(), 0.8, 0.8 ).getHexString();
 				pool.push( worker );
 
 				updateSettings( worker );
@@ -906,7 +929,7 @@ var Three = (function (exports) {
 
 		this.setWorkers( workers );
 
-		this.setClearColor = function ( color, alpha ) {
+		this.setClearColor = function ( color  ) {
 
 			clearColor.set( color );
 
@@ -952,6 +975,7 @@ var Three = (function (exports) {
 		}
 
 		function renderNext( worker ) {
+
 			if ( ! toRender.length ) {
 
 				renderering = false;
@@ -1010,6 +1034,7 @@ var Three = (function (exports) {
 			}
 
 			materials[ mat.uuid ] = props;
+
 		}
 
 		this.render = function ( scene, camera ) {
@@ -1031,7 +1056,7 @@ var Three = (function (exports) {
 
 			scene.traverse( serializeObject );
 
-			pool.forEach( function( worker ) {
+			pool.forEach( function ( worker ) {
 
 				worker.postMessage( {
 					scene: sceneJSON,
@@ -1039,6 +1064,7 @@ var Three = (function (exports) {
 					annex: materials,
 					sceneId: sceneId
 				} );
+
 			} );
 
 			context.clearRect( 0, 0, canvasWidth, canvasHeight );
@@ -1063,7 +1089,7 @@ var Three = (function (exports) {
 
 				for ( var i = 0; i < totalBlocks; i ++ ) {
 
-					var swap = Math.random()  * totalBlocks | 0;
+					var swap = Math.random() * totalBlocks | 0;
 					var tmp = toRender[ swap ];
 					toRender[ swap ] = toRender[ i ];
 					toRender[ i ] = tmp;

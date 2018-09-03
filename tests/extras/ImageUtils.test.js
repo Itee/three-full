@@ -13,17 +13,9 @@ var Three = (function (exports) {
 
 			} else {
 
-				if ( typeof OffscreenCanvas !== 'undefined' ) {
-
-					canvas = new OffscreenCanvas( image.width, image.height );
-
-				} else {
-
-					canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
-					canvas.width = image.width;
-					canvas.height = image.height;
-
-				}
+				canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
+				canvas.width = image.width;
+				canvas.height = image.height;
 
 				var context = canvas.getContext( '2d' );
 

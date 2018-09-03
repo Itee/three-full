@@ -50,6 +50,9 @@ var Three = (function (exports) {
 		var itemsTotal = 0;
 		var urlModifier = undefined;
 
+		// Refer to #5689 for the reason why we don't set .onStart
+		// in the constructor
+
 		this.onStart = undefined;
 		this.onLoad = onLoad;
 		this.onProgress = onProgress;
@@ -347,6 +350,24 @@ var Three = (function (exports) {
 				}, false );
 
 				request.addEventListener( 'error', function ( event ) {
+
+					var callbacks = loading[ url ];
+
+					delete loading[ url ];
+
+					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
+
+						var callback = callbacks[ i ];
+						if ( callback.onError ) callback.onError( event );
+
+					}
+
+					scope.manager.itemEnd( url );
+					scope.manager.itemError( url );
+
+				}, false );
+
+				request.addEventListener( 'abort', function ( event ) {
 
 					var callbacks = loading[ url ];
 
@@ -3113,18 +3134,11 @@ var Three = (function (exports) {
 
 		},
 
-		project: function () {
+		project: function ( camera ) {
 
-			var matrix = new Matrix4();
+			return this.applyMatrix4( camera.matrixWorldInverse ).applyMatrix4( camera.projectionMatrix );
 
-			return function project( camera ) {
-
-				matrix.multiplyMatrices( camera.projectionMatrix, matrix.getInverse( camera.matrixWorld ) );
-				return this.applyMatrix4( matrix );
-
-			};
-
-		}(),
+		},
 
 		unproject: function () {
 
@@ -3132,8 +3146,7 @@ var Three = (function (exports) {
 
 			return function unproject( camera ) {
 
-				matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
-				return this.applyMatrix4( matrix );
+				return this.applyMatrix4( matrix.getInverse( camera.projectionMatrix ) ).applyMatrix4( camera.matrixWorld );
 
 			};
 
@@ -3426,11 +3439,17 @@ var Three = (function (exports) {
 
 		setFromSpherical: function ( s ) {
 
-			var sinPhiRadius = Math.sin( s.phi ) * s.radius;
+			return this.setFromSphericalCoords( s.radius, s.phi, s.theta );
 
-			this.x = sinPhiRadius * Math.sin( s.theta );
-			this.y = Math.cos( s.phi ) * s.radius;
-			this.z = sinPhiRadius * Math.cos( s.theta );
+		},
+
+		setFromSphericalCoords: function ( radius, phi, theta ) {
+
+			var sinPhiRadius = Math.sin( phi ) * radius;
+
+			this.x = sinPhiRadius * Math.sin( theta );
+			this.y = Math.cos( phi ) * radius;
+			this.z = sinPhiRadius * Math.cos( theta );
 
 			return this;
 
@@ -3438,9 +3457,15 @@ var Three = (function (exports) {
 
 		setFromCylindrical: function ( c ) {
 
-			this.x = c.radius * Math.sin( c.theta );
-			this.y = c.y;
-			this.z = c.radius * Math.cos( c.theta );
+			return this.setFromCylindricalCoords( c.radius, c.theta, c.y );
+
+		},
+
+		setFromCylindricalCoords: function ( radius, theta, y ) {
+
+			this.x = radius * Math.sin( theta );
+			this.y = y;
+			this.z = radius * Math.cos( theta );
 
 			return this;
 
@@ -3916,17 +3941,9 @@ var Three = (function (exports) {
 
 			} else {
 
-				if ( typeof OffscreenCanvas !== 'undefined' ) {
-
-					canvas = new OffscreenCanvas( image.width, image.height );
-
-				} else {
-
-					canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
-					canvas.width = image.width;
-					canvas.height = image.height;
-
-				}
+				canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
+				canvas.width = image.width;
+				canvas.height = image.height;
 
 				var context = canvas.getContext( '2d' );
 
@@ -4169,7 +4186,7 @@ var Three = (function (exports) {
 
 		transformUv: function ( uv ) {
 
-			if ( this.mapping !== UVMapping ) return;
+			if ( this.mapping !== UVMapping ) return uv;
 
 			uv.applyMatrix3( this.matrix );
 
@@ -4241,6 +4258,8 @@ var Three = (function (exports) {
 
 			}
 
+			return uv;
+
 		}
 
 	} );
@@ -4278,7 +4297,7 @@ var Three = (function (exports) {
 				texture.image = image;
 
 				// JPEGs can't have an alpha channel, so memory can be saved by storing them as RGB.
-				var isJPEG = url.search( /\.(jpg|jpeg)$/ ) > 0 || url.search( /^data\:image\/jpeg/ ) === 0;
+				var isJPEG = url.search( /\.jpe?g$/i ) > 0 || url.search( /^data\:image\/jpeg/ ) === 0;
 
 				texture.format = isJPEG ? RGBFormat : RGBAFormat;
 				texture.needsUpdate = true;
@@ -5091,6 +5110,10 @@ var Three = (function (exports) {
 			// rotation (SpriteMaterial)
 			if ( this.rotation !== 0 ) data.rotation = this.rotation;
 
+			if ( this.polygonOffset === true ) data.polygonOffset = true;
+			if ( this.polygonOffsetFactor !== 0 ) data.polygonOffsetFactor = this.polygonOffsetFactor;
+			if ( this.polygonOffsetUnits !== 0 ) data.polygonOffsetUnits = this.polygonOffsetUnits;
+
 			if ( this.linewidth !== 1 ) data.linewidth = this.linewidth;
 			if ( this.dashSize !== undefined ) data.dashSize = this.dashSize;
 			if ( this.gapSize !== undefined ) data.gapSize = this.gapSize;
@@ -5762,6 +5785,28 @@ var Three = (function (exports) {
 			return this;
 
 		},
+
+		lerpHSL: function () {
+
+			var hslA = { h: 0, s: 0, l: 0 };
+			var hslB = { h: 0, s: 0, l: 0 };
+
+			return function lerpHSL( color, alpha ) {
+
+				this.getHSL( hslA );
+				color.getHSL( hslB );
+
+				var h = _Math.lerp( hslA.h, hslB.h, alpha );
+				var s = _Math.lerp( hslA.s, hslB.s, alpha );
+				var l = _Math.lerp( hslA.l, hslB.l, alpha );
+
+				this.setHSL( h, s, l );
+
+				return this;
+
+			};
+
+		}(),
 
 		equals: function ( c ) {
 
@@ -6669,34 +6714,50 @@ var Three = (function (exports) {
 
 		lookAt: function () {
 
-			// This method does not support objects with rotated and/or translated parent(s)
+			// This method does not support objects having non-uniformly-scaled parent(s)
 
+			var q1 = new Quaternion();
 			var m1 = new Matrix4();
-			var vector = new Vector3();
+			var target = new Vector3();
+			var position = new Vector3();
 
 			return function lookAt( x, y, z ) {
 
 				if ( x.isVector3 ) {
 
-					vector.copy( x );
+					target.copy( x );
 
 				} else {
 
-					vector.set( x, y, z );
+					target.set( x, y, z );
 
 				}
 
+				var parent = this.parent;
+
+				this.updateWorldMatrix( true, false );
+
+				position.setFromMatrixPosition( this.matrixWorld );
+
 				if ( this.isCamera ) {
 
-					m1.lookAt( this.position, vector, this.up );
+					m1.lookAt( position, target, this.up );
 
 				} else {
 
-					m1.lookAt( vector, this.position, this.up );
+					m1.lookAt( target, position, this.up );
 
 				}
 
 				this.quaternion.setFromRotationMatrix( m1 );
+
+				if ( parent ) {
+
+					m1.extractRotation( parent.matrixWorld );
+					q1.setFromRotationMatrix( m1 );
+					this.quaternion.premultiply( q1.inverse() );
+
+				}
 
 			};
 
@@ -6872,26 +6933,22 @@ var Three = (function (exports) {
 
 		}(),
 
-		getWorldDirection: function () {
+		getWorldDirection: function ( target ) {
 
-			var quaternion = new Quaternion();
+			if ( target === undefined ) {
 
-			return function getWorldDirection( target ) {
+				console.warn( 'Object3D: .getWorldDirection() target is now required' );
+				target = new Vector3();
 
-				if ( target === undefined ) {
+			}
 
-					console.warn( 'Object3D: .getWorldDirection() target is now required' );
-					target = new Vector3();
+			this.updateMatrixWorld( true );
 
-				}
+			var e = this.matrixWorld.elements;
 
-				this.getWorldQuaternion( quaternion );
+			return target.set( e[ 8 ], e[ 9 ], e[ 10 ] ).normalize();
 
-				return target.set( 0, 0, 1 ).applyQuaternion( quaternion );
-
-			};
-
-		}(),
+		},
 
 		raycast: function () {},
 
@@ -6976,6 +7033,44 @@ var Three = (function (exports) {
 			for ( var i = 0, l = children.length; i < l; i ++ ) {
 
 				children[ i ].updateMatrixWorld( force );
+
+			}
+
+		},
+
+		updateWorldMatrix: function ( updateParents, updateChildren ) {
+
+			var parent = this.parent;
+
+			if ( updateParents === true && parent !== null ) {
+
+				parent.updateWorldMatrix( true, false );
+
+			}
+
+			if ( this.matrixAutoUpdate ) this.updateMatrix();
+
+			if ( this.parent === null ) {
+
+				this.matrixWorld.copy( this.matrix );
+
+			} else {
+
+				this.matrixWorld.multiplyMatrices( this.parent.matrixWorld, this.matrix );
+
+			}
+
+			// update children
+
+			if ( updateChildren === true ) {
+
+				var children = this.children;
+
+				for ( var i = 0, l = children.length; i < l; i ++ ) {
+
+					children[ i ].updateWorldMatrix( false, true );
+
+				}
 
 			}
 
@@ -7240,7 +7335,9 @@ var Three = (function (exports) {
 		this.type = 'Camera';
 
 		this.matrixWorldInverse = new Matrix4();
+
 		this.projectionMatrix = new Matrix4();
+		this.projectionMatrixInverse = new Matrix4();
 
 	}
 
@@ -7255,32 +7352,30 @@ var Three = (function (exports) {
 			Object3D.prototype.copy.call( this, source, recursive );
 
 			this.matrixWorldInverse.copy( source.matrixWorldInverse );
+
 			this.projectionMatrix.copy( source.projectionMatrix );
+			this.projectionMatrixInverse.copy( source.projectionMatrixInverse );
 
 			return this;
 
 		},
 
-		getWorldDirection: function () {
+		getWorldDirection: function ( target ) {
 
-			var quaternion = new Quaternion();
+			if ( target === undefined ) {
 
-			return function getWorldDirection( target ) {
+				console.warn( 'Camera: .getWorldDirection() target is now required' );
+				target = new Vector3();
 
-				if ( target === undefined ) {
+			}
 
-					console.warn( 'Camera: .getWorldDirection() target is now required' );
-					target = new Vector3();
+			this.updateMatrixWorld( true );
 
-				}
+			var e = this.matrixWorld.elements;
 
-				this.getWorldQuaternion( quaternion );
+			return target.set( - e[ 8 ], - e[ 9 ], - e[ 10 ] ).normalize();
 
-				return target.set( 0, 0, - 1 ).applyQuaternion( quaternion );
-
-			};
-
-		}(),
+		},
 
 		updateMatrixWorld: function ( force ) {
 
@@ -7435,8 +7530,7 @@ var Three = (function (exports) {
 		updateProjectionMatrix: function () {
 
 			var near = this.near,
-				top = near * Math.tan(
-					_Math.DEG2RAD * 0.5 * this.fov ) / this.zoom,
+				top = near * Math.tan( _Math.DEG2RAD * 0.5 * this.fov ) / this.zoom,
 				height = 2 * top,
 				width = this.aspect * height,
 				left = - 0.5 * width,
@@ -7458,6 +7552,8 @@ var Three = (function (exports) {
 			if ( skew !== 0 ) left += near * skew / this.getFilmWidth();
 
 			this.projectionMatrix.makePerspective( left, left + width, top, top - height, near, this.far );
+
+			this.projectionMatrixInverse.getInverse( this.projectionMatrix );
 
 		},
 
@@ -7597,6 +7693,8 @@ var Three = (function (exports) {
 			}
 
 			this.projectionMatrix.makeOrthographic( left, right, top, bottom, this.near, this.far );
+
+			this.projectionMatrixInverse.getInverse( this.projectionMatrix );
 
 		},
 
@@ -8470,30 +8568,41 @@ var Three = (function (exports) {
 
 		},
 
-		applyMatrix4: function ( matrix ) {
+		applyMatrix4: function () {
 
-			// transform of empty box is an empty box.
-			if ( this.isEmpty( ) ) return this;
+			var points = [
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3()
+			];
 
-			var m = matrix.elements;
+			return function applyMatrix4( matrix ) {
 
-			var xax = m[ 0 ] * this.min.x, xay = m[ 1 ] * this.min.x, xaz = m[ 2 ] * this.min.x;
-			var xbx = m[ 0 ] * this.max.x, xby = m[ 1 ] * this.max.x, xbz = m[ 2 ] * this.max.x;
-			var yax = m[ 4 ] * this.min.y, yay = m[ 5 ] * this.min.y, yaz = m[ 6 ] * this.min.y;
-			var ybx = m[ 4 ] * this.max.y, yby = m[ 5 ] * this.max.y, ybz = m[ 6 ] * this.max.y;
-			var zax = m[ 8 ] * this.min.z, zay = m[ 9 ] * this.min.z, zaz = m[ 10 ] * this.min.z;
-			var zbx = m[ 8 ] * this.max.z, zby = m[ 9 ] * this.max.z, zbz = m[ 10 ] * this.max.z;
+				// transform of empty box is an empty box.
+				if ( this.isEmpty() ) return this;
 
-			this.min.x = Math.min( xax, xbx ) + Math.min( yax, ybx ) + Math.min( zax, zbx ) + m[ 12 ];
-			this.min.y = Math.min( xay, xby ) + Math.min( yay, yby ) + Math.min( zay, zby ) + m[ 13 ];
-			this.min.z = Math.min( xaz, xbz ) + Math.min( yaz, ybz ) + Math.min( zaz, zbz ) + m[ 14 ];
-			this.max.x = Math.max( xax, xbx ) + Math.max( yax, ybx ) + Math.max( zax, zbx ) + m[ 12 ];
-			this.max.y = Math.max( xay, xby ) + Math.max( yay, yby ) + Math.max( zay, zby ) + m[ 13 ];
-			this.max.z = Math.max( xaz, xbz ) + Math.max( yaz, ybz ) + Math.max( zaz, zbz ) + m[ 14 ];
+				// NOTE: I am using a binary pattern to specify all 2^3 combinations below
+				points[ 0 ].set( this.min.x, this.min.y, this.min.z ).applyMatrix4( matrix ); // 000
+				points[ 1 ].set( this.min.x, this.min.y, this.max.z ).applyMatrix4( matrix ); // 001
+				points[ 2 ].set( this.min.x, this.max.y, this.min.z ).applyMatrix4( matrix ); // 010
+				points[ 3 ].set( this.min.x, this.max.y, this.max.z ).applyMatrix4( matrix ); // 011
+				points[ 4 ].set( this.max.x, this.min.y, this.min.z ).applyMatrix4( matrix ); // 100
+				points[ 5 ].set( this.max.x, this.min.y, this.max.z ).applyMatrix4( matrix ); // 101
+				points[ 6 ].set( this.max.x, this.max.y, this.min.z ).applyMatrix4( matrix ); // 110
+				points[ 7 ].set( this.max.x, this.max.y, this.max.z ).applyMatrix4( matrix ); // 111
 
-			return this;
+				this.setFromPoints( points );
 
-		},
+				return this;
+
+			};
+
+		}(),
 
 		translate: function ( offset ) {
 
@@ -8968,7 +9077,7 @@ var Three = (function (exports) {
 
 		intersectsSphere: function ( sphere ) {
 
-			return this.distanceToPoint( sphere.center ) <= sphere.radius;
+			return this.distanceSqToPoint( sphere.center ) <= ( sphere.radius * sphere.radius );
 
 		},
 
@@ -9321,6 +9430,25 @@ var Three = (function (exports) {
 
 			};
 
+		}(),
+
+		getUV: function () {
+
+			var barycoord = new Vector3();
+
+			return function getUV( point, p1, p2, p3, uv1, uv2, uv3, target ) {
+
+				this.getBarycoord( point, p1, p2, p3, barycoord );
+
+				target.set( 0, 0 );
+				target.addScaledVector( uv1, barycoord.x );
+				target.addScaledVector( uv2, barycoord.y );
+				target.addScaledVector( uv3, barycoord.z );
+
+				return target;
+
+			};
+
 		}()
 
 	} );
@@ -9420,6 +9548,12 @@ var Three = (function (exports) {
 		containsPoint: function ( point ) {
 
 			return Triangle.containsPoint( point, this.a, this.b, this.c );
+
+		},
+
+		getUV: function ( point, uv1, uv2, uv3, result ) {
+
+			return Triangle.getUV( point, this.a, this.b, this.c, uv1, uv2, uv3, result );
 
 		},
 
@@ -10792,7 +10926,10 @@ var Three = (function (exports) {
 
 				for ( var i = 0; i < morphTargetsLength; i ++ ) {
 
-					morphTargetsPosition[ i ] = [];
+					morphTargetsPosition[ i ] = {
+						name: morphTargets[ i ].name,
+					 	data: []
+					};
 
 				}
 
@@ -10811,7 +10948,10 @@ var Three = (function (exports) {
 
 				for ( var i = 0; i < morphNormalsLength; i ++ ) {
 
-					morphTargetsNormal[ i ] = [];
+					morphTargetsNormal[ i ] = {
+						name: morphNormals[ i ].name,
+					 	data: []
+					};
 
 				}
 
@@ -10911,7 +11051,7 @@ var Three = (function (exports) {
 
 					var morphTarget = morphTargets[ j ].vertices;
 
-					morphTargetsPosition[ j ].push( morphTarget[ face.a ], morphTarget[ face.b ], morphTarget[ face.c ] );
+					morphTargetsPosition[ j ].data.push( morphTarget[ face.a ], morphTarget[ face.b ], morphTarget[ face.c ] );
 
 				}
 
@@ -10919,7 +11059,7 @@ var Three = (function (exports) {
 
 					var morphNormal = morphNormals[ j ].vertexNormals[ i ];
 
-					morphTargetsNormal[ j ].push( morphNormal.a, morphNormal.b, morphNormal.c );
+					morphTargetsNormal[ j ].data.push( morphNormal.a, morphNormal.b, morphNormal.c );
 
 				}
 
@@ -11496,9 +11636,10 @@ var Three = (function (exports) {
 
 					var morphTarget = morphTargets[ i ];
 
-					var attribute = new Float32BufferAttribute( morphTarget.length * 3, 3 );
+					var attribute = new Float32BufferAttribute( morphTarget.data.length * 3, 3 );
+					attribute.name = morphTarget.name;
 
-					array.push( attribute.copyVector3sArray( morphTarget ) );
+					array.push( attribute.copyVector3sArray( morphTarget.data ) );
 
 				}
 
@@ -11628,7 +11769,6 @@ var Three = (function (exports) {
 
 			var index = this.index;
 			var attributes = this.attributes;
-			var groups = this.groups;
 
 			if ( attributes.position ) {
 
@@ -11664,46 +11804,31 @@ var Three = (function (exports) {
 
 					var indices = index.array;
 
-					if ( groups.length === 0 ) {
+					for ( var i = 0, il = index.count; i < il; i += 3 ) {
 
-						this.addGroup( 0, indices.length );
+						vA = indices[ i + 0 ] * 3;
+						vB = indices[ i + 1 ] * 3;
+						vC = indices[ i + 2 ] * 3;
 
-					}
+						pA.fromArray( positions, vA );
+						pB.fromArray( positions, vB );
+						pC.fromArray( positions, vC );
 
-					for ( var j = 0, jl = groups.length; j < jl; ++ j ) {
+						cb.subVectors( pC, pB );
+						ab.subVectors( pA, pB );
+						cb.cross( ab );
 
-						var group = groups[ j ];
+						normals[ vA ] += cb.x;
+						normals[ vA + 1 ] += cb.y;
+						normals[ vA + 2 ] += cb.z;
 
-						var start = group.start;
-						var count = group.count;
+						normals[ vB ] += cb.x;
+						normals[ vB + 1 ] += cb.y;
+						normals[ vB + 2 ] += cb.z;
 
-						for ( var i = start, il = start + count; i < il; i += 3 ) {
-
-							vA = indices[ i + 0 ] * 3;
-							vB = indices[ i + 1 ] * 3;
-							vC = indices[ i + 2 ] * 3;
-
-							pA.fromArray( positions, vA );
-							pB.fromArray( positions, vB );
-							pC.fromArray( positions, vC );
-
-							cb.subVectors( pC, pB );
-							ab.subVectors( pA, pB );
-							cb.cross( ab );
-
-							normals[ vA ] += cb.x;
-							normals[ vA + 1 ] += cb.y;
-							normals[ vA + 2 ] += cb.z;
-
-							normals[ vB ] += cb.x;
-							normals[ vB + 1 ] += cb.y;
-							normals[ vB + 2 ] += cb.z;
-
-							normals[ vC ] += cb.x;
-							normals[ vC + 1 ] += cb.y;
-							normals[ vC + 2 ] += cb.z;
-
-						}
+						normals[ vC ] += cb.x;
+						normals[ vC + 1 ] += cb.y;
+						normals[ vC + 2 ] += cb.z;
 
 					}
 
@@ -12195,24 +12320,8 @@ var Three = (function (exports) {
 			var uvB = new Vector2();
 			var uvC = new Vector2();
 
-			var barycoord = new Vector3();
-
 			var intersectionPoint = new Vector3();
 			var intersectionPointWorld = new Vector3();
-
-			function uvIntersection( point, p1, p2, p3, uv1, uv2, uv3 ) {
-
-				Triangle.getBarycoord( point, p1, p2, p3, barycoord );
-
-				uv1.multiplyScalar( barycoord.x );
-				uv2.multiplyScalar( barycoord.y );
-				uv3.multiplyScalar( barycoord.z );
-
-				uv1.add( uv2 ).add( uv3 );
-
-				return uv1.clone();
-
-			}
 
 			function checkIntersection( object, material, raycaster, ray, pA, pB, pC, point ) {
 
@@ -12261,7 +12370,7 @@ var Three = (function (exports) {
 						uvB.fromBufferAttribute( uv, b );
 						uvC.fromBufferAttribute( uv, c );
 
-						intersection.uv = uvIntersection( intersectionPoint, vA, vB, vC, uvA, uvB, uvC );
+						intersection.uv = Triangle.getUV( intersectionPoint, vA, vB, vC, uvA, uvB, uvC, new Vector2() );
 
 					}
 
@@ -12503,7 +12612,7 @@ var Three = (function (exports) {
 								uvB.copy( uvs_f[ 1 ] );
 								uvC.copy( uvs_f[ 2 ] );
 
-								intersection.uv = uvIntersection( intersectionPoint, fvA, fvB, fvC, uvA, uvB, uvC );
+								intersection.uv = Triangle.getUV( intersectionPoint, fvA, fvB, fvC, uvA, uvB, uvC, new Vector2() );
 
 							}
 
@@ -13018,7 +13127,6 @@ var Three = (function (exports) {
 			return function raycast( raycaster, intersects ) {
 
 				var precision = raycaster.linePrecision;
-				var precisionSq = precision * precision;
 
 				var geometry = this.geometry;
 				var matrixWorld = this.matrixWorld;
@@ -13029,6 +13137,7 @@ var Three = (function (exports) {
 
 				sphere.copy( geometry.boundingSphere );
 				sphere.applyMatrix4( matrixWorld );
+				sphere.radius += precision;
 
 				if ( raycaster.ray.intersectsSphere( sphere ) === false ) return;
 
@@ -13036,6 +13145,9 @@ var Three = (function (exports) {
 
 				inverseMatrix.getInverse( matrixWorld );
 				ray.copy( raycaster.ray ).applyMatrix4( inverseMatrix );
+
+				var localPrecision = precision / ( ( this.scale.x + this.scale.y + this.scale.z ) / 3 );
+				var localPrecisionSq = localPrecision * localPrecision;
 
 				var vStart = new Vector3();
 				var vEnd = new Vector3();
@@ -13063,7 +13175,7 @@ var Three = (function (exports) {
 
 							var distSq = ray.distanceSqToSegment( vStart, vEnd, interRay, interSegment );
 
-							if ( distSq > precisionSq ) continue;
+							if ( distSq > localPrecisionSq ) continue;
 
 							interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
 
@@ -13095,7 +13207,7 @@ var Three = (function (exports) {
 
 							var distSq = ray.distanceSqToSegment( vStart, vEnd, interRay, interSegment );
 
-							if ( distSq > precisionSq ) continue;
+							if ( distSq > localPrecisionSq ) continue;
 
 							interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
 
@@ -13129,7 +13241,7 @@ var Three = (function (exports) {
 
 						var distSq = ray.distanceSqToSegment( vertices[ i ], vertices[ i + 1 ], interRay, interSegment );
 
-						if ( distSq > precisionSq ) continue;
+						if ( distSq > localPrecisionSq ) continue;
 
 						interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
 
@@ -16237,15 +16349,15 @@ var Three = (function (exports) {
 			// determine versioning scheme
 			var versioning = this.Versioning.None;
 
+			this.targetObject = targetObject;
+
 			if ( targetObject.needsUpdate !== undefined ) { // material
 
 				versioning = this.Versioning.NeedsUpdate;
-				this.targetObject = targetObject;
 
 			} else if ( targetObject.matrixWorldNeedsUpdate !== undefined ) { // node transform
 
 				versioning = this.Versioning.MatrixWorldNeedsUpdate;
-				this.targetObject = targetObject;
 
 			}
 
@@ -16368,7 +16480,7 @@ var Three = (function (exports) {
 
 	var FBXLoader = ( function () {
 
-		var FBXTree;
+		var fbxTree;
 		var connections;
 		var sceneGraph;
 
@@ -16385,7 +16497,6 @@ var Three = (function (exports) {
 			crossOrigin: 'anonymous',
 
 			load: function ( url, onLoad, onProgress, onError ) {
-
 				var self = this;
 
 				var resourceDirectory = LoaderUtils.extractUrlBase( url );
@@ -16412,7 +16523,6 @@ var Three = (function (exports) {
 					}
 
 				}, onProgress, onError );
-
 			},
 
 			setCrossOrigin: function ( value ) {
@@ -16426,7 +16536,7 @@ var Three = (function (exports) {
 
 				if ( isFbxFormatBinary( FBXBuffer ) ) {
 
-					FBXTree = new BinaryParser().parse( FBXBuffer );
+					fbxTree = new BinaryParser().parse( FBXBuffer );
 
 				} else {
 
@@ -16444,7 +16554,7 @@ var Three = (function (exports) {
 
 					}
 
-					FBXTree = new TextParser().parse( FBXText );
+					fbxTree = new TextParser().parse( FBXText );
 
 				}
 
@@ -16452,7 +16562,7 @@ var Three = (function (exports) {
 
 				var textureLoader = new TextureLoader( this.manager ).setPath( resourceDirectory ).setCrossOrigin( this.crossOrigin );
 
-				return new FBXTreeParser( textureLoader ).parse( FBXTree );
+				return new FBXTreeParser( textureLoader ).parse( fbxTree );
 
 			}
 
@@ -16491,9 +16601,9 @@ var Three = (function (exports) {
 
 				var connectionMap = new Map();
 
-				if ( 'Connections' in FBXTree ) {
+				if ( 'Connections' in fbxTree ) {
 
-					var rawConnections = FBXTree.Connections.connections;
+					var rawConnections = fbxTree.Connections.connections;
 
 					rawConnections.forEach( function ( rawConnection ) {
 
@@ -16541,9 +16651,9 @@ var Three = (function (exports) {
 				var images = {};
 				var blobs = {};
 
-				if ( 'Video' in FBXTree.Objects ) {
+				if ( 'Video' in fbxTree.Objects ) {
 
-					var videoNodes = FBXTree.Objects.Video;
+					var videoNodes = fbxTree.Objects.Video;
 
 					for ( var nodeID in videoNodes ) {
 
@@ -16665,9 +16775,9 @@ var Three = (function (exports) {
 
 				var textureMap = new Map();
 
-				if ( 'Texture' in FBXTree.Objects ) {
+				if ( 'Texture' in fbxTree.Objects ) {
 
-					var textureNodes = FBXTree.Objects.Texture;
+					var textureNodes = fbxTree.Objects.Texture;
 					for ( var nodeID in textureNodes ) {
 
 						var texture = this.parseTexture( textureNodes[ nodeID ], images );
@@ -16738,9 +16848,27 @@ var Three = (function (exports) {
 
 				var texture;
 
-				if ( textureNode.FileName.slice( - 3 ).toLowerCase() === 'tga' ) {
+				var extension = textureNode.FileName.slice( - 3 ).toLowerCase();
 
-					texture = Loader.Handlers.get( '.tga' ).load( fileName );
+				if ( extension === 'tga' ) {
+
+					var loader = Loader.Handlers.get( '.tga' );
+
+					if ( loader === null ) {
+
+						console.warn( 'FBXLoader: TGALoader not found, creating empty placeholder texture for', fileName );
+						texture = new Texture();
+
+					} else {
+
+						texture = loader.load( fileName );
+
+					}
+
+				} else if ( extension === 'psd' ) {
+
+					console.warn( 'FBXLoader: PSD textures are not supported, creating empty placeholder texture for', fileName );
+					texture = new Texture();
 
 				} else {
 
@@ -16759,9 +16887,9 @@ var Three = (function (exports) {
 
 				var materialMap = new Map();
 
-				if ( 'Material' in FBXTree.Objects ) {
+				if ( 'Material' in fbxTree.Objects ) {
 
-					var materialNodes = FBXTree.Objects.Material;
+					var materialNodes = fbxTree.Objects.Material;
 
 					for ( var nodeID in materialNodes ) {
 
@@ -16956,7 +17084,7 @@ var Three = (function (exports) {
 			getTexture: function ( textureMap, id ) {
 
 				// if the texture is a layered texture, just use the first layer and issue a warning
-				if ( 'LayeredTexture' in FBXTree.Objects && id in FBXTree.Objects.LayeredTexture ) {
+				if ( 'LayeredTexture' in fbxTree.Objects && id in fbxTree.Objects.LayeredTexture ) {
 
 					console.warn( 'FBXLoader: layered textures are not supported in three.js. Discarding all but first layer.' );
 					id = connections.get( id ).children[ 0 ].ID;
@@ -16975,9 +17103,9 @@ var Three = (function (exports) {
 				var skeletons = {};
 				var morphTargets = {};
 
-				if ( 'Deformer' in FBXTree.Objects ) {
+				if ( 'Deformer' in fbxTree.Objects ) {
 
-					var DeformerNodes = FBXTree.Objects.Deformer;
+					var DeformerNodes = fbxTree.Objects.Deformer;
 
 					for ( var nodeID in DeformerNodes ) {
 
@@ -17120,7 +17248,7 @@ var Three = (function (exports) {
 
 				var modelMap = this.parseModels( deformers.skeletons, geometryMap, materialMap );
 
-				var modelNodes = FBXTree.Objects.Model;
+				var modelNodes = fbxTree.Objects.Model;
 
 				var self = this;
 				modelMap.forEach( function ( model ) {
@@ -17170,7 +17298,7 @@ var Three = (function (exports) {
 			parseModels: function ( skeletons, geometryMap, materialMap ) {
 
 				var modelMap = new Map();
-				var modelNodes = FBXTree.Objects.Model;
+				var modelNodes = fbxTree.Objects.Model;
 
 				for ( var nodeID in modelNodes ) {
 
@@ -17270,7 +17398,7 @@ var Three = (function (exports) {
 
 				relationships.children.forEach( function ( child ) {
 
-					var attr = FBXTree.Objects.NodeAttribute[ child.ID ];
+					var attr = fbxTree.Objects.NodeAttribute[ child.ID ];
 
 					if ( attr !== undefined ) {
 
@@ -17361,7 +17489,7 @@ var Three = (function (exports) {
 
 				relationships.children.forEach( function ( child ) {
 
-					var attr = FBXTree.Objects.NodeAttribute[ child.ID ];
+					var attr = fbxTree.Objects.NodeAttribute[ child.ID ];
 
 					if ( attr !== undefined ) {
 
@@ -17591,7 +17719,7 @@ var Three = (function (exports) {
 
 						if ( child.relationship === 'LookAtProperty' ) {
 
-							var lookAtTarget = FBXTree.Objects.Model[ child.ID ];
+							var lookAtTarget = fbxTree.Objects.Model[ child.ID ];
 
 							if ( 'Lcl_Translation' in lookAtTarget ) {
 
@@ -17660,9 +17788,9 @@ var Three = (function (exports) {
 
 				var bindMatrices = {};
 
-				if ( 'Pose' in FBXTree.Objects ) {
+				if ( 'Pose' in fbxTree.Objects ) {
 
-					var BindPoseNode = FBXTree.Objects.Pose;
+					var BindPoseNode = fbxTree.Objects.Pose;
 
 					for ( var nodeID in BindPoseNode ) {
 
@@ -17697,9 +17825,9 @@ var Three = (function (exports) {
 			// Parse ambient color in FBXTree.GlobalSettings - if it's not set to black (default), create an ambient light
 			createAmbientLight: function () {
 
-				if ( 'GlobalSettings' in FBXTree && 'AmbientColor' in FBXTree.GlobalSettings ) {
+				if ( 'GlobalSettings' in fbxTree && 'AmbientColor' in fbxTree.GlobalSettings ) {
 
-					var ambientColor = FBXTree.GlobalSettings.AmbientColor.value;
+					var ambientColor = fbxTree.GlobalSettings.AmbientColor.value;
 					var r = ambientColor[ 0 ];
 					var g = ambientColor[ 1 ];
 					var b = ambientColor[ 2 ];
@@ -17765,9 +17893,9 @@ var Three = (function (exports) {
 
 				var geometryMap = new Map();
 
-				if ( 'Geometry' in FBXTree.Objects ) {
+				if ( 'Geometry' in fbxTree.Objects ) {
 
-					var geoNodes = FBXTree.Objects.Geometry;
+					var geoNodes = fbxTree.Objects.Geometry;
 
 					for ( var nodeID in geoNodes ) {
 
@@ -17809,7 +17937,7 @@ var Three = (function (exports) {
 
 				var modelNodes = relationships.parents.map( function ( parent ) {
 
-					return FBXTree.Objects.Model[ parent.ID ];
+					return fbxTree.Objects.Model[ parent.ID ];
 
 				} );
 
@@ -18337,7 +18465,7 @@ var Three = (function (exports) {
 				var self = this;
 				morphTarget.rawTargets.forEach( function ( rawTarget ) {
 
-					var morphGeoNode = FBXTree.Objects.Geometry[ rawTarget.geoID ];
+					var morphGeoNode = fbxTree.Objects.Geometry[ rawTarget.geoID ];
 
 					if ( morphGeoNode !== undefined ) {
 
@@ -18618,7 +18746,7 @@ var Three = (function (exports) {
 
 				// since the actual transformation data is stored in FBXTree.Objects.AnimationCurve,
 				// if this is undefined we can safely assume there are no animations
-				if ( FBXTree.Objects.AnimationCurve === undefined ) return undefined;
+				if ( fbxTree.Objects.AnimationCurve === undefined ) return undefined;
 
 				var curveNodesMap = this.parseAnimationCurveNodes();
 
@@ -18636,7 +18764,7 @@ var Three = (function (exports) {
 			// and is referenced by an AnimationLayer
 			parseAnimationCurveNodes: function () {
 
-				var rawCurveNodes = FBXTree.Objects.AnimationCurveNode;
+				var rawCurveNodes = fbxTree.Objects.AnimationCurveNode;
 
 				var curveNodesMap = new Map();
 
@@ -18669,7 +18797,7 @@ var Three = (function (exports) {
 			// axis ( e.g. times and values of x rotation)
 			parseAnimationCurves: function ( curveNodesMap ) {
 
-				var rawCurves = FBXTree.Objects.AnimationCurve;
+				var rawCurves = fbxTree.Objects.AnimationCurve;
 
 				// TODO: Many values are identical up to roundoff error, but won't be optimised
 				// e.g. position times: [0, 0.4, 0. 8]
@@ -18724,7 +18852,7 @@ var Three = (function (exports) {
 			// note: theoretically a stack can have multiple layers, however in practice there always seems to be one per stack
 			parseAnimationLayers: function ( curveNodesMap ) {
 
-				var rawLayers = FBXTree.Objects.AnimationLayer;
+				var rawLayers = fbxTree.Objects.AnimationLayer;
 
 				var layersMap = new Map();
 
@@ -18759,7 +18887,7 @@ var Three = (function (exports) {
 
 										} );
 
-										var rawModel = FBXTree.Objects.Model[ modelID.toString() ];
+										var rawModel = fbxTree.Objects.Model[ modelID.toString() ];
 
 										var node = {
 
@@ -18800,12 +18928,12 @@ var Three = (function (exports) {
 										// assuming geometry is not used in more than one model
 										var modelID = connections.get( geoID ).parents[ 0 ].ID;
 
-										var rawModel = FBXTree.Objects.Model[ modelID ];
+										var rawModel = fbxTree.Objects.Model[ modelID ];
 
 										var node = {
 
 											modelName: PropertyBinding.sanitizeNodeName( rawModel.attrName ),
-											morphName: FBXTree.Objects.Deformer[ deformerID ].attrName,
+											morphName: fbxTree.Objects.Deformer[ deformerID ].attrName,
 
 										};
 
@@ -18855,7 +18983,7 @@ var Three = (function (exports) {
 			// hierarchy. Each Stack node will be used to create a AnimationClip
 			parseAnimStacks: function ( layersMap ) {
 
-				var rawStacks = FBXTree.Objects.AnimationStack;
+				var rawStacks = fbxTree.Objects.AnimationStack;
 
 				// connect the stacks (clips) up to the layers
 				var rawClips = {};
@@ -19221,6 +19349,7 @@ var Three = (function (exports) {
 			parse: function ( text ) {
 
 				this.currentIndent = 0;
+				console.log("FBXTree: ", FBXTree);
 				this.allNodes = new FBXTree();
 				this.nodeStack = [];
 				this.currentProp = [];

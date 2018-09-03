@@ -684,6 +684,28 @@ var Three = (function (exports) {
 
 		},
 
+		lerpHSL: function () {
+
+			var hslA = { h: 0, s: 0, l: 0 };
+			var hslB = { h: 0, s: 0, l: 0 };
+
+			return function lerpHSL( color, alpha ) {
+
+				this.getHSL( hslA );
+				color.getHSL( hslB );
+
+				var h = _Math.lerp( hslA.h, hslB.h, alpha );
+				var s = _Math.lerp( hslA.s, hslB.s, alpha );
+				var l = _Math.lerp( hslA.l, hslB.l, alpha );
+
+				this.setHSL( h, s, l );
+
+				return this;
+
+			};
+
+		}(),
+
 		equals: function ( c ) {
 
 			return ( c.r === this.r ) && ( c.g === this.g ) && ( c.b === this.b );
@@ -3160,18 +3182,11 @@ var Three = (function (exports) {
 
 		},
 
-		project: function () {
+		project: function ( camera ) {
 
-			var matrix = new Matrix4();
+			return this.applyMatrix4( camera.matrixWorldInverse ).applyMatrix4( camera.projectionMatrix );
 
-			return function project( camera ) {
-
-				matrix.multiplyMatrices( camera.projectionMatrix, matrix.getInverse( camera.matrixWorld ) );
-				return this.applyMatrix4( matrix );
-
-			};
-
-		}(),
+		},
 
 		unproject: function () {
 
@@ -3179,8 +3194,7 @@ var Three = (function (exports) {
 
 			return function unproject( camera ) {
 
-				matrix.multiplyMatrices( camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
-				return this.applyMatrix4( matrix );
+				return this.applyMatrix4( matrix.getInverse( camera.projectionMatrix ) ).applyMatrix4( camera.matrixWorld );
 
 			};
 
@@ -3473,11 +3487,17 @@ var Three = (function (exports) {
 
 		setFromSpherical: function ( s ) {
 
-			var sinPhiRadius = Math.sin( s.phi ) * s.radius;
+			return this.setFromSphericalCoords( s.radius, s.phi, s.theta );
 
-			this.x = sinPhiRadius * Math.sin( s.theta );
-			this.y = Math.cos( s.phi ) * s.radius;
-			this.z = sinPhiRadius * Math.cos( s.theta );
+		},
+
+		setFromSphericalCoords: function ( radius, phi, theta ) {
+
+			var sinPhiRadius = Math.sin( phi ) * radius;
+
+			this.x = sinPhiRadius * Math.sin( theta );
+			this.y = Math.cos( phi ) * radius;
+			this.z = sinPhiRadius * Math.cos( theta );
 
 			return this;
 
@@ -3485,9 +3505,15 @@ var Three = (function (exports) {
 
 		setFromCylindrical: function ( c ) {
 
-			this.x = c.radius * Math.sin( c.theta );
-			this.y = c.y;
-			this.z = c.radius * Math.cos( c.theta );
+			return this.setFromCylindricalCoords( c.radius, c.theta, c.y );
+
+		},
+
+		setFromCylindricalCoords: function ( radius, theta, y ) {
+
+			this.x = radius * Math.sin( theta );
+			this.y = y;
+			this.z = radius * Math.cos( theta );
 
 			return this;
 
@@ -3963,17 +3989,9 @@ var Three = (function (exports) {
 
 			} else {
 
-				if ( typeof OffscreenCanvas !== 'undefined' ) {
-
-					canvas = new OffscreenCanvas( image.width, image.height );
-
-				} else {
-
-					canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
-					canvas.width = image.width;
-					canvas.height = image.height;
-
-				}
+				canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
+				canvas.width = image.width;
+				canvas.height = image.height;
 
 				var context = canvas.getContext( '2d' );
 
@@ -4216,7 +4234,7 @@ var Three = (function (exports) {
 
 		transformUv: function ( uv ) {
 
-			if ( this.mapping !== UVMapping ) return;
+			if ( this.mapping !== UVMapping ) return uv;
 
 			uv.applyMatrix3( this.matrix );
 
@@ -4287,6 +4305,8 @@ var Three = (function (exports) {
 				uv.y = 1 - uv.y;
 
 			}
+
+			return uv;
 
 		}
 
@@ -4908,30 +4928,41 @@ var Three = (function (exports) {
 
 		},
 
-		applyMatrix4: function ( matrix ) {
+		applyMatrix4: function () {
 
-			// transform of empty box is an empty box.
-			if ( this.isEmpty( ) ) return this;
+			var points = [
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3(),
+				new Vector3()
+			];
 
-			var m = matrix.elements;
+			return function applyMatrix4( matrix ) {
 
-			var xax = m[ 0 ] * this.min.x, xay = m[ 1 ] * this.min.x, xaz = m[ 2 ] * this.min.x;
-			var xbx = m[ 0 ] * this.max.x, xby = m[ 1 ] * this.max.x, xbz = m[ 2 ] * this.max.x;
-			var yax = m[ 4 ] * this.min.y, yay = m[ 5 ] * this.min.y, yaz = m[ 6 ] * this.min.y;
-			var ybx = m[ 4 ] * this.max.y, yby = m[ 5 ] * this.max.y, ybz = m[ 6 ] * this.max.y;
-			var zax = m[ 8 ] * this.min.z, zay = m[ 9 ] * this.min.z, zaz = m[ 10 ] * this.min.z;
-			var zbx = m[ 8 ] * this.max.z, zby = m[ 9 ] * this.max.z, zbz = m[ 10 ] * this.max.z;
+				// transform of empty box is an empty box.
+				if ( this.isEmpty() ) return this;
 
-			this.min.x = Math.min( xax, xbx ) + Math.min( yax, ybx ) + Math.min( zax, zbx ) + m[ 12 ];
-			this.min.y = Math.min( xay, xby ) + Math.min( yay, yby ) + Math.min( zay, zby ) + m[ 13 ];
-			this.min.z = Math.min( xaz, xbz ) + Math.min( yaz, ybz ) + Math.min( zaz, zbz ) + m[ 14 ];
-			this.max.x = Math.max( xax, xbx ) + Math.max( yax, ybx ) + Math.max( zax, zbx ) + m[ 12 ];
-			this.max.y = Math.max( xay, xby ) + Math.max( yay, yby ) + Math.max( zay, zby ) + m[ 13 ];
-			this.max.z = Math.max( xaz, xbz ) + Math.max( yaz, ybz ) + Math.max( zaz, zbz ) + m[ 14 ];
+				// NOTE: I am using a binary pattern to specify all 2^3 combinations below
+				points[ 0 ].set( this.min.x, this.min.y, this.min.z ).applyMatrix4( matrix ); // 000
+				points[ 1 ].set( this.min.x, this.min.y, this.max.z ).applyMatrix4( matrix ); // 001
+				points[ 2 ].set( this.min.x, this.max.y, this.min.z ).applyMatrix4( matrix ); // 010
+				points[ 3 ].set( this.min.x, this.max.y, this.max.z ).applyMatrix4( matrix ); // 011
+				points[ 4 ].set( this.max.x, this.min.y, this.min.z ).applyMatrix4( matrix ); // 100
+				points[ 5 ].set( this.max.x, this.min.y, this.max.z ).applyMatrix4( matrix ); // 101
+				points[ 6 ].set( this.max.x, this.max.y, this.min.z ).applyMatrix4( matrix ); // 110
+				points[ 7 ].set( this.max.x, this.max.y, this.max.z ).applyMatrix4( matrix ); // 111
 
-			return this;
+				this.setFromPoints( points );
 
-		},
+				return this;
+
+			};
+
+		}(),
 
 		translate: function ( offset ) {
 
@@ -5787,34 +5818,50 @@ var Three = (function (exports) {
 
 		lookAt: function () {
 
-			// This method does not support objects with rotated and/or translated parent(s)
+			// This method does not support objects having non-uniformly-scaled parent(s)
 
+			var q1 = new Quaternion();
 			var m1 = new Matrix4();
-			var vector = new Vector3();
+			var target = new Vector3();
+			var position = new Vector3();
 
 			return function lookAt( x, y, z ) {
 
 				if ( x.isVector3 ) {
 
-					vector.copy( x );
+					target.copy( x );
 
 				} else {
 
-					vector.set( x, y, z );
+					target.set( x, y, z );
 
 				}
 
+				var parent = this.parent;
+
+				this.updateWorldMatrix( true, false );
+
+				position.setFromMatrixPosition( this.matrixWorld );
+
 				if ( this.isCamera ) {
 
-					m1.lookAt( this.position, vector, this.up );
+					m1.lookAt( position, target, this.up );
 
 				} else {
 
-					m1.lookAt( vector, this.position, this.up );
+					m1.lookAt( target, position, this.up );
 
 				}
 
 				this.quaternion.setFromRotationMatrix( m1 );
+
+				if ( parent ) {
+
+					m1.extractRotation( parent.matrixWorld );
+					q1.setFromRotationMatrix( m1 );
+					this.quaternion.premultiply( q1.inverse() );
+
+				}
 
 			};
 
@@ -5990,26 +6037,22 @@ var Three = (function (exports) {
 
 		}(),
 
-		getWorldDirection: function () {
+		getWorldDirection: function ( target ) {
 
-			var quaternion = new Quaternion();
+			if ( target === undefined ) {
 
-			return function getWorldDirection( target ) {
+				console.warn( 'Object3D: .getWorldDirection() target is now required' );
+				target = new Vector3();
 
-				if ( target === undefined ) {
+			}
 
-					console.warn( 'Object3D: .getWorldDirection() target is now required' );
-					target = new Vector3();
+			this.updateMatrixWorld( true );
 
-				}
+			var e = this.matrixWorld.elements;
 
-				this.getWorldQuaternion( quaternion );
+			return target.set( e[ 8 ], e[ 9 ], e[ 10 ] ).normalize();
 
-				return target.set( 0, 0, 1 ).applyQuaternion( quaternion );
-
-			};
-
-		}(),
+		},
 
 		raycast: function () {},
 
@@ -6094,6 +6137,44 @@ var Three = (function (exports) {
 			for ( var i = 0, l = children.length; i < l; i ++ ) {
 
 				children[ i ].updateMatrixWorld( force );
+
+			}
+
+		},
+
+		updateWorldMatrix: function ( updateParents, updateChildren ) {
+
+			var parent = this.parent;
+
+			if ( updateParents === true && parent !== null ) {
+
+				parent.updateWorldMatrix( true, false );
+
+			}
+
+			if ( this.matrixAutoUpdate ) this.updateMatrix();
+
+			if ( this.parent === null ) {
+
+				this.matrixWorld.copy( this.matrix );
+
+			} else {
+
+				this.matrixWorld.multiplyMatrices( this.parent.matrixWorld, this.matrix );
+
+			}
+
+			// update children
+
+			if ( updateChildren === true ) {
+
+				var children = this.children;
+
+				for ( var i = 0, l = children.length; i < l; i ++ ) {
+
+					children[ i ].updateWorldMatrix( false, true );
+
+				}
 
 			}
 
@@ -8836,7 +8917,10 @@ var Three = (function (exports) {
 
 				for ( var i = 0; i < morphTargetsLength; i ++ ) {
 
-					morphTargetsPosition[ i ] = [];
+					morphTargetsPosition[ i ] = {
+						name: morphTargets[ i ].name,
+					 	data: []
+					};
 
 				}
 
@@ -8855,7 +8939,10 @@ var Three = (function (exports) {
 
 				for ( var i = 0; i < morphNormalsLength; i ++ ) {
 
-					morphTargetsNormal[ i ] = [];
+					morphTargetsNormal[ i ] = {
+						name: morphNormals[ i ].name,
+					 	data: []
+					};
 
 				}
 
@@ -8955,7 +9042,7 @@ var Three = (function (exports) {
 
 					var morphTarget = morphTargets[ j ].vertices;
 
-					morphTargetsPosition[ j ].push( morphTarget[ face.a ], morphTarget[ face.b ], morphTarget[ face.c ] );
+					morphTargetsPosition[ j ].data.push( morphTarget[ face.a ], morphTarget[ face.b ], morphTarget[ face.c ] );
 
 				}
 
@@ -8963,7 +9050,7 @@ var Three = (function (exports) {
 
 					var morphNormal = morphNormals[ j ].vertexNormals[ i ];
 
-					morphTargetsNormal[ j ].push( morphNormal.a, morphNormal.b, morphNormal.c );
+					morphTargetsNormal[ j ].data.push( morphNormal.a, morphNormal.b, morphNormal.c );
 
 				}
 
@@ -9540,9 +9627,10 @@ var Three = (function (exports) {
 
 					var morphTarget = morphTargets[ i ];
 
-					var attribute = new Float32BufferAttribute( morphTarget.length * 3, 3 );
+					var attribute = new Float32BufferAttribute( morphTarget.data.length * 3, 3 );
+					attribute.name = morphTarget.name;
 
-					array.push( attribute.copyVector3sArray( morphTarget ) );
+					array.push( attribute.copyVector3sArray( morphTarget.data ) );
 
 				}
 
@@ -9672,7 +9760,6 @@ var Three = (function (exports) {
 
 			var index = this.index;
 			var attributes = this.attributes;
-			var groups = this.groups;
 
 			if ( attributes.position ) {
 
@@ -9708,46 +9795,31 @@ var Three = (function (exports) {
 
 					var indices = index.array;
 
-					if ( groups.length === 0 ) {
+					for ( var i = 0, il = index.count; i < il; i += 3 ) {
 
-						this.addGroup( 0, indices.length );
+						vA = indices[ i + 0 ] * 3;
+						vB = indices[ i + 1 ] * 3;
+						vC = indices[ i + 2 ] * 3;
 
-					}
+						pA.fromArray( positions, vA );
+						pB.fromArray( positions, vB );
+						pC.fromArray( positions, vC );
 
-					for ( var j = 0, jl = groups.length; j < jl; ++ j ) {
+						cb.subVectors( pC, pB );
+						ab.subVectors( pA, pB );
+						cb.cross( ab );
 
-						var group = groups[ j ];
+						normals[ vA ] += cb.x;
+						normals[ vA + 1 ] += cb.y;
+						normals[ vA + 2 ] += cb.z;
 
-						var start = group.start;
-						var count = group.count;
+						normals[ vB ] += cb.x;
+						normals[ vB + 1 ] += cb.y;
+						normals[ vB + 2 ] += cb.z;
 
-						for ( var i = start, il = start + count; i < il; i += 3 ) {
-
-							vA = indices[ i + 0 ] * 3;
-							vB = indices[ i + 1 ] * 3;
-							vC = indices[ i + 2 ] * 3;
-
-							pA.fromArray( positions, vA );
-							pB.fromArray( positions, vB );
-							pC.fromArray( positions, vC );
-
-							cb.subVectors( pC, pB );
-							ab.subVectors( pA, pB );
-							cb.cross( ab );
-
-							normals[ vA ] += cb.x;
-							normals[ vA + 1 ] += cb.y;
-							normals[ vA + 2 ] += cb.z;
-
-							normals[ vB ] += cb.x;
-							normals[ vB + 1 ] += cb.y;
-							normals[ vB + 2 ] += cb.z;
-
-							normals[ vC ] += cb.x;
-							normals[ vC + 1 ] += cb.y;
-							normals[ vC + 2 ] += cb.z;
-
-						}
+						normals[ vC ] += cb.x;
+						normals[ vC + 1 ] += cb.y;
+						normals[ vC + 2 ] += cb.z;
 
 					}
 
@@ -10468,6 +10540,10 @@ var Three = (function (exports) {
 			// rotation (SpriteMaterial)
 			if ( this.rotation !== 0 ) data.rotation = this.rotation;
 
+			if ( this.polygonOffset === true ) data.polygonOffset = true;
+			if ( this.polygonOffsetFactor !== 0 ) data.polygonOffsetFactor = this.polygonOffsetFactor;
+			if ( this.polygonOffsetUnits !== 0 ) data.polygonOffsetUnits = this.polygonOffsetUnits;
+
 			if ( this.linewidth !== 1 ) data.linewidth = this.linewidth;
 			if ( this.dashSize !== undefined ) data.dashSize = this.dashSize;
 			if ( this.gapSize !== undefined ) data.gapSize = this.gapSize;
@@ -10968,7 +11044,7 @@ var Three = (function (exports) {
 
 		intersectsSphere: function ( sphere ) {
 
-			return this.distanceToPoint( sphere.center ) <= sphere.radius;
+			return this.distanceSqToPoint( sphere.center ) <= ( sphere.radius * sphere.radius );
 
 		},
 
@@ -11321,6 +11397,25 @@ var Three = (function (exports) {
 
 			};
 
+		}(),
+
+		getUV: function () {
+
+			var barycoord = new Vector3();
+
+			return function getUV( point, p1, p2, p3, uv1, uv2, uv3, target ) {
+
+				this.getBarycoord( point, p1, p2, p3, barycoord );
+
+				target.set( 0, 0 );
+				target.addScaledVector( uv1, barycoord.x );
+				target.addScaledVector( uv2, barycoord.y );
+				target.addScaledVector( uv3, barycoord.z );
+
+				return target;
+
+			};
+
 		}()
 
 	} );
@@ -11420,6 +11515,12 @@ var Three = (function (exports) {
 		containsPoint: function ( point ) {
 
 			return Triangle.containsPoint( point, this.a, this.b, this.c );
+
+		},
+
+		getUV: function ( point, uv1, uv2, uv3, result ) {
+
+			return Triangle.getUV( point, this.a, this.b, this.c, uv1, uv2, uv3, result );
 
 		},
 
@@ -11658,24 +11759,8 @@ var Three = (function (exports) {
 			var uvB = new Vector2();
 			var uvC = new Vector2();
 
-			var barycoord = new Vector3();
-
 			var intersectionPoint = new Vector3();
 			var intersectionPointWorld = new Vector3();
-
-			function uvIntersection( point, p1, p2, p3, uv1, uv2, uv3 ) {
-
-				Triangle.getBarycoord( point, p1, p2, p3, barycoord );
-
-				uv1.multiplyScalar( barycoord.x );
-				uv2.multiplyScalar( barycoord.y );
-				uv3.multiplyScalar( barycoord.z );
-
-				uv1.add( uv2 ).add( uv3 );
-
-				return uv1.clone();
-
-			}
 
 			function checkIntersection( object, material, raycaster, ray, pA, pB, pC, point ) {
 
@@ -11724,7 +11809,7 @@ var Three = (function (exports) {
 						uvB.fromBufferAttribute( uv, b );
 						uvC.fromBufferAttribute( uv, c );
 
-						intersection.uv = uvIntersection( intersectionPoint, vA, vB, vC, uvA, uvB, uvC );
+						intersection.uv = Triangle.getUV( intersectionPoint, vA, vB, vC, uvA, uvB, uvC, new Vector2() );
 
 					}
 
@@ -11966,7 +12051,7 @@ var Three = (function (exports) {
 								uvB.copy( uvs_f[ 1 ] );
 								uvC.copy( uvs_f[ 2 ] );
 
-								intersection.uv = uvIntersection( intersectionPoint, fvA, fvB, fvC, uvA, uvB, uvC );
+								intersection.uv = Triangle.getUV( intersectionPoint, fvA, fvB, fvC, uvA, uvB, uvC, new Vector2() );
 
 							}
 
@@ -12015,6 +12100,8 @@ var Three = (function (exports) {
 
 		this.rotation = 0;
 
+		this.sizeAttenuation = true;
+
 		this.lights = false;
 		this.transparent = true;
 
@@ -12034,6 +12121,8 @@ var Three = (function (exports) {
 		this.map = source.map;
 
 		this.rotation = source.rotation;
+
+		this.sizeAttenuation = source.sizeAttenuation;
 
 		return this;
 
@@ -12329,6 +12418,10 @@ var Three = (function (exports) {
 			var vB = new Vector3();
 			var vC = new Vector3();
 
+			var uvA = new Vector2();
+			var uvB = new Vector2();
+			var uvC = new Vector2();
+
 			function transformVertex( vertexPosition, mvPosition, center, scale, sin, cos ) {
 
 				// compute position in camera space
@@ -12377,6 +12470,10 @@ var Three = (function (exports) {
 				transformVertex( vB.set( 0.5, - 0.5, 0 ), mvPosition, center, worldScale, sin, cos );
 				transformVertex( vC.set( 0.5, 0.5, 0 ), mvPosition, center, worldScale, sin, cos );
 
+				uvA.set( 0, 0 );
+				uvB.set( 1, 0 );
+				uvC.set( 1, 1 );
+
 				// check first triangle
 				var intersect = raycaster.ray.intersectTriangle( vA, vB, vC, false, intersectPoint );
 
@@ -12384,6 +12481,8 @@ var Three = (function (exports) {
 
 					// check second triangle
 					transformVertex( vB.set( - 0.5, 0.5, 0 ), mvPosition, center, worldScale, sin, cos );
+					uvB.set( 0, 1 );
+
 					intersect = raycaster.ray.intersectTriangle( vA, vC, vB, false, intersectPoint );
 					if ( intersect === null ) {
 
@@ -12401,6 +12500,7 @@ var Three = (function (exports) {
 
 					distance: distance,
 					point: intersectPoint.clone(),
+					uv: Triangle.getUV( intersectPoint, vA, vB, vC, uvA, uvB, uvC, new Vector2() ),
 					face: null,
 					object: this
 
@@ -12556,7 +12656,6 @@ var Three = (function (exports) {
 			return function raycast( raycaster, intersects ) {
 
 				var precision = raycaster.linePrecision;
-				var precisionSq = precision * precision;
 
 				var geometry = this.geometry;
 				var matrixWorld = this.matrixWorld;
@@ -12567,6 +12666,7 @@ var Three = (function (exports) {
 
 				sphere.copy( geometry.boundingSphere );
 				sphere.applyMatrix4( matrixWorld );
+				sphere.radius += precision;
 
 				if ( raycaster.ray.intersectsSphere( sphere ) === false ) return;
 
@@ -12574,6 +12674,9 @@ var Three = (function (exports) {
 
 				inverseMatrix.getInverse( matrixWorld );
 				ray.copy( raycaster.ray ).applyMatrix4( inverseMatrix );
+
+				var localPrecision = precision / ( ( this.scale.x + this.scale.y + this.scale.z ) / 3 );
+				var localPrecisionSq = localPrecision * localPrecision;
 
 				var vStart = new Vector3();
 				var vEnd = new Vector3();
@@ -12601,7 +12704,7 @@ var Three = (function (exports) {
 
 							var distSq = ray.distanceSqToSegment( vStart, vEnd, interRay, interSegment );
 
-							if ( distSq > precisionSq ) continue;
+							if ( distSq > localPrecisionSq ) continue;
 
 							interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
 
@@ -12633,7 +12736,7 @@ var Three = (function (exports) {
 
 							var distSq = ray.distanceSqToSegment( vStart, vEnd, interRay, interSegment );
 
-							if ( distSq > precisionSq ) continue;
+							if ( distSq > localPrecisionSq ) continue;
 
 							interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
 
@@ -12667,7 +12770,7 @@ var Three = (function (exports) {
 
 						var distSq = ray.distanceSqToSegment( vertices[ i ], vertices[ i + 1 ], interRay, interSegment );
 
-						if ( distSq > precisionSq ) continue;
+						if ( distSq > localPrecisionSq ) continue;
 
 						interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
 
@@ -12816,7 +12919,7 @@ var Three = (function (exports) {
 
 			alpha = ( alpha - this.minV ) / ( this.maxV - this.minV );
 
-			var colorPosition = Math.round ( alpha * this.n );
+			var colorPosition = Math.round( alpha * this.n );
 			colorPosition == this.n ? colorPosition -= 1 : colorPosition;
 
 			return this.lut[ colorPosition ];
@@ -12841,7 +12944,7 @@ var Three = (function (exports) {
 
 			this.legend.layout = parameters.hasOwnProperty( 'layout' ) ? parameters[ 'layout' ] : 'vertical';
 
-			this.legend.position = parameters.hasOwnProperty( 'position' ) ? parameters[ 'position' ] : { 'x': 21.5, 'y': 8, 'z': 5 };
+			this.legend.position = parameters.hasOwnProperty( 'position' ) ? parameters[ 'position' ] : { 'x': 4, 'y': 0, 'z': 0 };
 
 			this.legend.dimensions = parameters.hasOwnProperty( 'dimensions' ) ? parameters[ 'dimensions' ] : { 'width': 0.5, 'height': 3 };
 
@@ -12854,7 +12957,7 @@ var Three = (function (exports) {
 
 			this.legend.ctx = this.legend.canvas.getContext( '2d' );
 
-			this.legend.canvas.setAttribute( 'width',  1 );
+			this.legend.canvas.setAttribute( 'width', 1 );
 			this.legend.canvas.setAttribute( 'height', this.n );
 
 			this.legend.texture = new Texture( this.legend.canvas );
@@ -12873,7 +12976,7 @@ var Three = (function (exports) {
 
 				for ( var j = this.map.length - 1; j >= 0; j -- ) {
 
-					if ( i < this.map[ j ][ 0 ] && i >= this.map[ j - 1 ][ 0 ]  ) {
+					if ( i < this.map[ j ][ 0 ] && i >= this.map[ j - 1 ][ 0 ] ) {
 
 						var min = this.map[ j - 1 ][ 0 ];
 						var max = this.map[ j ][ 0 ];
@@ -12900,7 +13003,7 @@ var Three = (function (exports) {
 			this.legend.texture.needsUpdate = true;
 
 			this.legend.legendGeometry = new PlaneBufferGeometry( this.legend.dimensions.width, this.legend.dimensions.height );
-			this.legend.legendMaterial = new MeshBasicMaterial( { map : this.legend.texture, side : DoubleSide } );
+			this.legend.legendMaterial = new MeshBasicMaterial( { map: this.legend.texture, side: DoubleSide } );
 
 			this.legend.mesh = new Mesh( this.legend.legendGeometry, this.legend.legendMaterial );
 
@@ -13007,7 +13110,7 @@ var Three = (function (exports) {
 			this.legend.labels.notation = parameters.hasOwnProperty( 'notation' ) ? parameters[ 'notation' ] : 'standard';
 
 			var backgroundColor = { r: 255, g: 100, b: 100, a: 0.8 };
-			var borderColor =  { r: 255, g: 0, b: 0, a: 1.0 };
+			var borderColor = { r: 255, g: 0, b: 0, a: 1.0 };
 			var borderThickness = 4;
 
 			var canvasTitle = document.createElement( 'canvas' );
@@ -13015,10 +13118,7 @@ var Three = (function (exports) {
 
 			contextTitle.font = 'Normal ' + this.legend.labels.fontsize * 1.2 + 'px ' + this.legend.labels.fontface;
 
-			var metrics = contextTitle.measureText( this.legend.labels.title.toString() + this.legend.labels.um.toString() );
-			var textWidth = metrics.width;
-
-			contextTitle.fillStyle   = 'rgba(' + backgroundColor.r + ',' + backgroundColor.g + ',' + backgroundColor.b + ',' + backgroundColor.a + ')';
+			contextTitle.fillStyle = 'rgba(' + backgroundColor.r + ',' + backgroundColor.g + ',' + backgroundColor.b + ',' + backgroundColor.a + ')';
 
 			contextTitle.strokeStyle = 'rgba(' + borderColor.r + ',' + borderColor.g + ',' + borderColor.b + ',' + borderColor.a + ')';
 
@@ -13064,17 +13164,17 @@ var Three = (function (exports) {
 				if ( this.legend.layout == 'horizontal' ) {
 
 					var topPositionX = this.legend.position.x + ( this.legend.dimensions.height * 0.75 );
-					var bottomPositionX = this.legend.position.x - ( this.legend.dimensions.width * 1.2  ) ;
+					var bottomPositionX = this.legend.position.x - ( this.legend.dimensions.width * 1.2 );
 
 				}
 
 				for ( var i = 0; i < this.legend.labels.ticks; i ++ ) {
 
-					var value = ( this.maxV - this.minV ) / ( this.legend.labels.ticks - 1  ) * i + this.minV;
+					var value = ( this.maxV - this.minV ) / ( this.legend.labels.ticks - 1 ) * i + this.minV;
 
 					if ( callback ) {
 
-						value = callback ( value );
+						value = callback( value );
 
 					} else {
 
@@ -13095,10 +13195,7 @@ var Three = (function (exports) {
 
 					contextTick.font = 'Normal ' + this.legend.labels.fontsize + 'px ' + this.legend.labels.fontface;
 
-					var metrics = contextTick.measureText( value.toString() );
-					var textWidth = metrics.width;
-
-					contextTick.fillStyle   = 'rgba(' + backgroundColor.r + ',' + backgroundColor.g + ',' + backgroundColor.b + ',' + backgroundColor.a + ')';
+					contextTick.fillStyle = 'rgba(' + backgroundColor.r + ',' + backgroundColor.g + ',' + backgroundColor.b + ',' + backgroundColor.a + ')';
 
 					contextTick.strokeStyle = 'rgba(' + borderColor.r + ',' + borderColor.g + ',' + borderColor.b + ',' + borderColor.a + ')';
 
@@ -13160,9 +13257,9 @@ var Three = (function (exports) {
 
 						var linePosition = ( this.legend.position.y - ( this.legend.dimensions.height * 0.5 ) + 0.01 ) + ( this.legend.dimensions.height ) * ( ( value - this.minV ) / ( this.maxV - this.minV ) * 0.99 );
 
-						points.push( new Vector3( this.legend.position.x + this.legend.dimensions.width * 0.55, linePosition, this.legend.position.z  ) );
+						points.push( new Vector3( this.legend.position.x + this.legend.dimensions.width * 0.55, linePosition, this.legend.position.z ) );
 
-						points.push( new Vector3( this.legend.position.x + this.legend.dimensions.width * 0.7, linePosition, this.legend.position.z  ) );
+						points.push( new Vector3( this.legend.position.x + this.legend.dimensions.width * 0.7, linePosition, this.legend.position.z ) );
 
 					}
 
@@ -13170,9 +13267,9 @@ var Three = (function (exports) {
 
 						var linePosition = ( this.legend.position.x - ( this.legend.dimensions.height * 0.5 ) + 0.01 ) + ( this.legend.dimensions.height ) * ( ( value - this.minV ) / ( this.maxV - this.minV ) * 0.99 );
 
-						points.push( new Vector3( linePosition, this.legend.position.y - this.legend.dimensions.width * 0.55, this.legend.position.z  ) );
+						points.push( new Vector3( linePosition, this.legend.position.y - this.legend.dimensions.width * 0.55, this.legend.position.z ) );
 
-						points.push( new Vector3( linePosition, this.legend.position.y - this.legend.dimensions.width * 0.7, this.legend.position.z  ) );
+						points.push( new Vector3( linePosition, this.legend.position.y - this.legend.dimensions.width * 0.7, this.legend.position.z ) );
 
 					}
 
@@ -13187,7 +13284,7 @@ var Three = (function (exports) {
 
 			}
 
-			return { 'title': spriteTitle,  'ticks': ticks, 'lines': lines };
+			return { 'title': spriteTitle, 'ticks': ticks, 'lines': lines };
 
 		}
 
@@ -13196,10 +13293,10 @@ var Three = (function (exports) {
 
 	var ColorMapKeywords = {
 
-		"rainbow":    [ [ 0.0, '0x0000FF' ], [ 0.2, '0x00FFFF' ], [ 0.5, '0x00FF00' ], [ 0.8, '0xFFFF00' ],  [ 1.0, '0xFF0000' ] ],
-		"cooltowarm": [ [ 0.0, '0x3C4EC2' ], [ 0.2, '0x9BBCFF' ], [ 0.5, '0xDCDCDC' ], [ 0.8, '0xF6A385' ],  [ 1.0, '0xB40426' ] ],
-		"blackbody" : [ [ 0.0, '0x000000' ], [ 0.2, '0x780000' ], [ 0.5, '0xE63200' ], [ 0.8, '0xFFFF00' ],  [ 1.0, '0xFFFFFF' ] ],
-		"grayscale" : [ [ 0.0, '0x000000' ], [ 0.2, '0x404040' ], [ 0.5, '0x7F7F80' ], [ 0.8, '0xBFBFBF' ],  [ 1.0, '0xFFFFFF' ] ]
+		"rainbow": [[ 0.0, '0x0000FF' ], [ 0.2, '0x00FFFF' ], [ 0.5, '0x00FF00' ], [ 0.8, '0xFFFF00' ], [ 1.0, '0xFF0000' ]],
+		"cooltowarm": [[ 0.0, '0x3C4EC2' ], [ 0.2, '0x9BBCFF' ], [ 0.5, '0xDCDCDC' ], [ 0.8, '0xF6A385' ], [ 1.0, '0xB40426' ]],
+		"blackbody": [[ 0.0, '0x000000' ], [ 0.2, '0x780000' ], [ 0.5, '0xE63200' ], [ 0.8, '0xFFFF00' ], [ 1.0, '0xFFFFFF' ]],
+		"grayscale": [[ 0.0, '0x000000' ], [ 0.2, '0x404040' ], [ 0.5, '0x7F7F80' ], [ 0.8, '0xBFBFBF' ], [ 1.0, '0xFFFFFF' ]]
 
 	};
 

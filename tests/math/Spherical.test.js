@@ -150,8 +150,8 @@ var Three = (function (exports) {
 	function Spherical( radius, phi, theta ) {
 
 		this.radius = ( radius !== undefined ) ? radius : 1.0;
-		this.phi = ( phi !== undefined ) ? phi : 0; // up / down towards top and bottom pole
-		this.theta = ( theta !== undefined ) ? theta : 0; // around the equator of the sphere
+		this.phi = ( phi !== undefined ) ? phi : 0; // polar angle
+		this.theta = ( theta !== undefined ) ? theta : 0; // azimuthal angle
 
 		return this;
 
@@ -195,9 +195,15 @@ var Three = (function (exports) {
 
 		},
 
-		setFromVector3: function ( vec3 ) {
+		setFromVector3: function ( v ) {
 
-			this.radius = vec3.length();
+			return this.setFromCartesianCoords( v.x, v.y, v.z );
+
+		},
+
+		setFromCartesianCoords: function ( x, y, z ) {
+
+			this.radius = Math.sqrt( x * x + y * y + z * z );
 
 			if ( this.radius === 0 ) {
 
@@ -206,8 +212,8 @@ var Three = (function (exports) {
 
 			} else {
 
-				this.theta = Math.atan2( vec3.x, vec3.z ); // equator angle around y-up axis
-				this.phi = Math.acos( _Math.clamp( vec3.y / this.radius, - 1, 1 ) ); // polar angle
+				this.theta = Math.atan2( x, z );
+				this.phi = Math.acos( _Math.clamp( y / this.radius, - 1, 1 ) );
 
 			}
 
