@@ -65,6 +65,12 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
+		AfterimagePass: {
+            imports: [
+                'AfterimageShader',
+                'UniformsUtils'
+            ]
+		},
 		AMFLoader: {
 			imports: [
 				'DefaultLoadingManager',
