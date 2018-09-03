@@ -70,8 +70,7 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
             // danger zone
             acorn:         undefined,
             context:       undefined,
-            moduleContext: {},
-            legacy:        undefined
+            moduleContext: {}
         },
         outputOptions: {
             // core options
