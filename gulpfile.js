@@ -5,13 +5,12 @@
  * @license MIT
  */
 
-const fs          = require( 'fs' )
-const runSequence = require( 'run-sequence' )
-const gulp        = require( 'gulp' )
-const util        = require( 'gulp-util' )
-const replace     = require( 'gulp-batch-replace' )
-const del         = require( 'del' )
-const rollup      = require( 'rollup' )
+const fs      = require( 'fs' )
+const gulp    = require( 'gulp' )
+const util    = require( 'gulp-util' )
+const replace = require( 'gulp-batch-replace' )
+const del     = require( 'del' )
+const rollup  = require( 'rollup' )
 
 gulp.task( 'help', ( done ) => {
 
@@ -49,25 +48,6 @@ gulp.task( 'help', ( done ) => {
 /////////////////////
 ////// PATCHS ///////
 /////////////////////
-
-gulp.task( 'patch-three', ( done ) => {
-
-    runSequence(
-        [
-            'fix-effect-composer',
-            'create-pass-file',
-            'fix-node-lib-export',
-            'create-node-lib-declaration-file',
-            'create-node-lib-implementation-file',
-            'fix-function-node-export',
-            'create-function-node-declaration-file',
-            'create-function-node-implementation-file',
-            'fix-line'
-        ],
-        done
-    )
-
-} )
 
 /**
  * Remove the Pass object from Effect composer and create a new file for Pass class in
@@ -114,7 +94,6 @@ gulp.task( 'create-pass-file', ( done ) => {
     } );
 
 } )
-
 
 gulp.task( 'fix-node-lib-export', ( done ) => {
 
@@ -404,7 +383,6 @@ gulp.task( 'create-node-lib-implementation-file', ( done ) => {
 
 } )
 
-
 gulp.task( 'fix-function-node-export', ( done ) => {
 
     const stringFile = '/**\n' +
@@ -680,7 +658,6 @@ gulp.task( 'create-function-node-implementation-file', ( done ) => {
 
 } )
 
-
 /**
  * Fix circular dependency between Line and LineSegments
  */
@@ -693,6 +670,20 @@ gulp.task( 'fix-line', () => {
                .pipe( gulp.dest( './node_modules/three/src/objects' ) )
 
 } )
+
+gulp.task( 'patch-three',
+    gulp.parallel(
+        'fix-effect-composer',
+        'create-pass-file',
+        'fix-node-lib-export',
+        'create-node-lib-declaration-file',
+        'create-node-lib-implementation-file',
+        'fix-function-node-export',
+        'create-function-node-declaration-file',
+        'create-function-node-implementation-file',
+        'fix-line'
+    )
+)
 
 /////////////////////
 ////// CLEAN ////////
@@ -768,24 +759,6 @@ gulp.task( 'convert-three', ( done ) => {
 /////////////////////
 ////// BUILDS ///////
 /////////////////////
-
-gulp.task( 'build-three', ( done ) => {
-
-    runSequence(
-        'build-amd-dev',
-        'build-amd-prod',
-        'build-umd-dev',
-        'build-umd-prod',
-        'build-cjs-dev',
-        'build-cjs-prod',
-        'build-es-dev',
-        'build-es-prod',
-        'build-iife-dev',
-        'build-iife-prod',
-        done
-    )
-
-} )
 
 gulp.task( 'build-amd-dev', ( done ) => {
 
@@ -1043,17 +1016,29 @@ gulp.task( 'build-iife-prod', ( done ) => {
 
 } )
 
+gulp.task( 'build-three',
+    gulp.series(
+        'build-amd-dev',
+        'build-amd-prod',
+        'build-umd-dev',
+        'build-umd-prod',
+        'build-cjs-dev',
+        'build-cjs-prod',
+        'build-es-dev',
+        'build-es-prod',
+        'build-iife-dev',
+        'build-iife-prod'
+    )
+)
+
 //////////////////////
 ////// RELEASE ///////
 //////////////////////
 
-gulp.task( 'release', ( done ) => {
-
-    runSequence(
+gulp.task( 'release',
+    gulp.series(
         'clean',
         'convert-three',
-        'build-three',
-        done
+        'build-three'
     )
-
-} )
+)
