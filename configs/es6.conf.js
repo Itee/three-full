@@ -364,6 +364,12 @@ module.exports = {
 		Gyroscope: {
 			outputOverride: 'objects/Gyroscope.js'
 		},
+		HalftonePass: {
+            imports: [
+            	'UniformsUtils',
+            	'HalftoneShader'
+			]
+		},
 		HDRCubeTextureLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
