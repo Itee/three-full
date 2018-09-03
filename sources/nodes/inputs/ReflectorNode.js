@@ -1,16 +1,24 @@
-import { TempNode } from '../TempNode.js'
-import { Matrix4Node } from './Matrix4Node.js'
+import { TempNode } from '../core/TempNode.js'
 import { PositionNode } from '../accessors/PositionNode.js'
 import { OperatorNode } from '../math/OperatorNode.js'
 import { TextureNode } from './TextureNode.js'
+import { Matrix4Node } from './Matrix4Node.js'
 
-var ReflectorNode = function ( mirror ) {
+
+
+
+
+
+
+
+
+function ReflectorNode( mirror ) {
 
 	TempNode.call( this, 'v4' );
 
 	if ( mirror ) this.setMirror( mirror );
 
-};
+}
 
 ReflectorNode.prototype = Object.create( TempNode.prototype );
 ReflectorNode.prototype.constructor = ReflectorNode;
@@ -24,21 +32,19 @@ ReflectorNode.prototype.setMirror = function ( mirror ) {
 
 	this.localPosition = new PositionNode( PositionNode.LOCAL );
 
-	this.coord = new OperatorNode( this.textureMatrix, this.localPosition, OperatorNode.MUL );
-	this.coordResult = new OperatorNode( null, this.coord, OperatorNode.ADD );
+	this.uv = new OperatorNode( this.textureMatrix, this.localPosition, OperatorNode.MUL );
+	this.uvResult = new OperatorNode( null, this.uv, OperatorNode.ADD );
 
-	this.texture = new TextureNode( this.mirror.material.uniforms.tDiffuse.value, this.coord, null, true );
+	this.texture = new TextureNode( this.mirror.material.uniforms.tDiffuse.value, this.uv, null, true );
 
 };
 
 ReflectorNode.prototype.generate = function ( builder, output ) {
 
-	var material = builder.material;
-
 	if ( builder.isShader( 'fragment' ) ) {
 
-		this.coordResult.a = this.offset;
-		this.texture.coord = this.offset ? this.coordResult : this.coord;
+		this.uvResult.a = this.offset;
+		this.texture.uv = this.offset ? this.uvResult : this.uv;
 
 		if ( output === 'sampler2D' ) {
 
@@ -52,9 +58,17 @@ ReflectorNode.prototype.generate = function ( builder, output ) {
 
 		console.warn( "ReflectorNode is not compatible with " + builder.shader + " shader." );
 
-		return builder.format( 'vec4(0.0)', this.type, output );
+		return builder.format( 'vec4( 0.0 )', this.type, output );
 
 	}
+
+};
+
+ReflectorNode.prototype.copy = function ( source ) {
+
+	InputNode.prototype.copy.call( this, source );
+
+	this.scope.mirror = source.mirror;
 
 };
 
@@ -75,5 +89,7 @@ ReflectorNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
+
+;
 
 export { ReflectorNode }

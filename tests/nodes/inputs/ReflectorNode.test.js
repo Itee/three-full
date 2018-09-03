@@ -147,180 +147,198 @@ var Three = (function (exports) {
 
 	};
 
-	var GLNode = function ( type ) {
+	function Node( type ) {
 
 		this.uuid = _Math.generateUUID();
 
 		this.name = "";
-		this.allows = {};
 
 		this.type = type;
 
 		this.userData = {};
 
-	};
+	}
 
-	GLNode.prototype.isNode = true;
+	Node.prototype = {
 
-	GLNode.prototype.parse = function ( builder, context ) {
+		constructor: Node,
 
-		context = context || {};
+		isNode: true,
 
-		builder.parsing = true;
+		parse: function ( builder, settings ) {
 
-		var material = builder.material;
+			settings = settings || {};
 
-		this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), 'v4' );
+			builder.parsing = true;
 
-		material.clearVertexNode();
-		material.clearFragmentNode();
+			this.build( builder.addFlow( settings.slot, settings.cache, settings.context ), 'v4' );
 
-		builder.removeCache().removeSlot();
+			builder.clearVertexNodeCode();
+			builder.clearFragmentNodeCode();
 
-		builder.parsing = false;
+			builder.removeFlow();
 
-	};
+			builder.parsing = false;
 
-	GLNode.prototype.parseAndBuildCode = function ( builder, output, context ) {
+		},
 
-		context = context || {};
+		parseAndBuildCode: function ( builder, output, settings ) {
 
-		this.parse( builder, context );
+			settings = settings || {};
 
-		return this.buildCode( builder, output, context );
+			this.parse( builder, settings );
 
-	};
+			return this.buildCode( builder, output, settings );
 
-	GLNode.prototype.buildCode = function ( builder, output, context ) {
+		},
 
-		context = context || {};
+		buildCode: function ( builder, output, settings ) {
 
-		var material = builder.material;
+			settings = settings || {};
 
-		var data = { result: this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
+			var data = { result: this.build( builder.addFlow( settings.slot, settings.cache, settings.context ), output ) };
 
-		if ( builder.isShader( 'vertex' ) ) data.code = material.clearVertexNode();
-		else data.code = material.clearFragmentNode();
+			data.code = builder.clearNodeCode();
 
-		builder.removeCache().removeSlot();
+			builder.removeFlow();
 
-		return data;
+			return data;
 
-	};
+		},
 
-	GLNode.prototype.build = function ( builder, output, uuid ) {
+		build: function ( builder, output, uuid ) {
 
-		output = output || this.getType( builder, output );
+			output = output || this.getType( builder, output );
 
-		var material = builder.material, data = material.getDataNode( uuid || this.uuid );
+			var data = builder.getNodeData( uuid || this );
 
-		if ( builder.parsing ) this.appendDepsNode( builder, data, output );
+			if ( builder.parsing ) {
 
-		if ( this.allows[ builder.shader ] === false ) {
+				this.appendDepsNode( builder, data, output );
 
-			throw new Error( 'Shader ' + shader + ' is not compatible with this node.' );
+			}
+
+			if ( builder.nodes.indexOf( this ) === - 1 ) {
+
+				builder.nodes.push( this );
+
+			}
+
+			if ( this.updateFrame !== undefined && builder.updaters.indexOf( this ) === - 1 ) {
+
+				builder.updaters.push( this );
+
+			}
+
+			return this.generate( builder, output, uuid );
+
+		},
+
+		appendDepsNode: function ( builder, data, output ) {
+
+			data.deps = ( data.deps || 0 ) + 1;
+
+			var outputLen = builder.getTypeLength( output );
+
+			if ( outputLen > ( data.outputMax || 0 ) || this.getType( builder, output ) ) {
+
+				data.outputMax = outputLen;
+				data.output = output;
+
+			}
+
+		},
+
+		setName: function ( name ) {
+
+			this.name = name;
+
+			return this;
+
+		},
+
+		getName: function ( builder ) {
+
+			return this.name;
+
+		},
+
+		getType: function ( builder, output ) {
+
+			return output === 'sampler2D' || output === 'samplerCube' ? output : this.type;
+
+		},
+
+		getJSONNode: function ( meta ) {
+
+			var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+			if ( ! isRootObject && meta.nodes[ this.uuid ] !== undefined ) {
+
+				return meta.nodes[ this.uuid ];
+
+			}
+
+		},
+
+		copy: function ( source ) {
+
+			if ( source.name !== undefined ) this.name = source.name;
+
+			if ( source.userData !== undefined ) this.userData = JSON.parse( JSON.stringify( source.userData ) );
+
+		},
+
+		createJSONNode: function ( meta ) {
+
+			var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+			var data = {};
+
+			if ( typeof this.nodeType !== "string" ) throw new Error( "Node does not allow serialization." );
+
+			data.uuid = this.uuid;
+			data.nodeType = this.nodeType;
+
+			if ( this.name !== "" ) data.name = this.name;
+
+			if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
+
+			if ( ! isRootObject ) {
+
+				meta.nodes[ this.uuid ] = data;
+
+			}
+
+			return data;
+
+		},
+
+		toJSON: function ( meta ) {
+
+			return this.getJSONNode( meta ) || this.createJSONNode( meta );
 
 		}
 
-		if ( material.nodes.indexOf( this ) === - 1 ) {
-
-			material.nodes.push( this );
-
-		}
-
-		if ( this.updateFrame !== undefined && material.updaters.indexOf( this ) === - 1 ) {
-
-			material.updaters.push( this );
-
-		}
-
-		return this.generate( builder, output, uuid );
-
 	};
 
-	GLNode.prototype.appendDepsNode = function ( builder, data, output ) {
+	function TempNode( type, params ) {
 
-		data.deps = ( data.deps || 0 ) + 1;
-
-		var outputLen = builder.getFormatLength( output );
-
-		if ( outputLen > ( data.outputMax || 0 ) || this.getType( builder, output ) ) {
-
-			data.outputMax = outputLen;
-			data.output = output;
-
-		}
-
-	};
-
-	GLNode.prototype.getType = function ( builder, output ) {
-
-		return output === 'sampler2D' || output === 'samplerCube' ? output : this.type;
-
-	};
-
-	GLNode.prototype.getJSONNode = function ( meta ) {
-
-		var isRootObject = ( meta === undefined || typeof meta === 'string' );
-
-		if ( ! isRootObject && meta.nodes[ this.uuid ] !== undefined ) {
-
-			return meta.nodes[ this.uuid ];
-
-		}
-
-	};
-
-	GLNode.prototype.createJSONNode = function ( meta ) {
-
-		var isRootObject = ( meta === undefined || typeof meta === 'string' );
-
-		var data = {};
-
-		if ( typeof this.nodeType !== "string" ) throw new Error( "Node does not allow serialization." );
-
-		data.uuid = this.uuid;
-		data.type = this.nodeType + "Node";
-
-		if ( this.name !== "" ) data.name = this.name;
-
-		if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
-
-		if ( ! isRootObject ) {
-
-			meta.nodes[ this.uuid ] = data;
-
-		}
-
-		return data;
-
-	};
-
-	GLNode.prototype.toJSON = function ( meta ) {
-
-		return this.getJSONNode( meta ) || this.createJSONNode( meta );
-
-	};
-
-	var TempNode = function ( type, params ) {
-
-		GLNode.call( this, type );
+		Node.call( this, type );
 
 		params = params || {};
 
 		this.shared = params.shared !== undefined ? params.shared : true;
 		this.unique = params.unique !== undefined ? params.unique : false;
 
-	};
+	}
 
-	TempNode.prototype = Object.create( GLNode.prototype );
+	TempNode.prototype = Object.create( Node.prototype );
 	TempNode.prototype.constructor = TempNode;
 
 	TempNode.prototype.build = function ( builder, output, uuid, ns ) {
 
 		output = output || this.getType( builder );
-
-		var material = builder.material;
 
 		if ( this.isShared( builder, output ) ) {
 
@@ -334,36 +352,36 @@ var Three = (function (exports) {
 
 			uuid = builder.getUuid( uuid || this.getUuid(), ! isUnique );
 
-			var data = material.getDataNode( uuid );
+			var data = builder.getNodeData( uuid ),
+				type = data.output || this.getType( builder );
 
 			if ( builder.parsing ) {
 
-				if ( data.deps || 0 > 0 ) {
+				if ( ( data.deps || 0 ) > 0 ) {
 
 					this.appendDepsNode( builder, data, output );
 
-					return this.generate( builder, type, uuid );
+					return this.generate( builder, output, uuid );
 
 				}
 
-				return GLNode.prototype.build.call( this, builder, output, uuid );
+				return Node.prototype.build.call( this, builder, output, uuid );
 
 			} else if ( isUnique ) {
 
-				data.name = data.name || GLNode.prototype.build.call( this, builder, output, uuid );
+				data.name = data.name || Node.prototype.build.call( this, builder, output, uuid );
 
 				return data.name;
 
-			} else if ( ! builder.optimize || data.deps == 1 ) {
+			} else if ( ! this.isShared( builder, type ) || ( ! builder.optimize || data.deps == 1 ) ) {
 
-				return GLNode.prototype.build.call( this, builder, output, uuid );
+				return Node.prototype.build.call( this, builder, output, uuid );
 
 			}
 
 			uuid = this.getUuid( false );
 
 			var name = this.getTemp( builder, uuid );
-			var type = data.output || this.getType( builder );
 
 			if ( name ) {
 
@@ -375,8 +393,7 @@ var Three = (function (exports) {
 
 				var code = this.generate( builder, type, uuid );
 
-				if ( builder.isShader( 'vertex' ) ) material.addVertexNode( name + '=' + code + ';' );
-				else material.addFragmentNode( name + '=' + code + ';' );
+				builder.addNodeCode( name + ' = ' + code + ';' );
 
 				return builder.format( name, type, output );
 
@@ -384,7 +401,7 @@ var Three = (function (exports) {
 
 		}
 
-		return GLNode.prototype.build.call( this, builder, output, uuid );
+		return Node.prototype.build.call( this, builder, output, uuid );
 
 	};
 
@@ -414,10 +431,9 @@ var Three = (function (exports) {
 
 		uuid = uuid || this.uuid;
 
-		var material = builder.material;
+		var tempVar = builder.getVars()[ uuid ];
 
-		if ( builder.isShader( 'vertex' ) && material.vertexTemps[ uuid ] ) return material.vertexTemps[ uuid ].name;
-		else if ( material.fragmentTemps[ uuid ] ) return material.fragmentTemps[ uuid ].name;
+		return tempVar ? tempVar.name : undefined;
 
 	};
 
@@ -427,12 +443,241 @@ var Three = (function (exports) {
 
 		uuid = uuid || this.uuid;
 
-		if ( builder.isShader( 'vertex' ) ) return builder.material.getVertexTemp( uuid, type || this.getType( builder ), ns ).name;
-		else return builder.material.getFragmentTemp( uuid, type || this.getType( builder ), ns ).name;
+		return builder.getTempVar( uuid, type || this.getType( builder ), ns ).name;
 
 	};
 
-	var InputNode = function ( type, params ) {
+	var NodeLib = {
+
+		nodes: {},
+		keywords: {},
+
+		add: function( node ) {
+
+			this.nodes[ node.name ] = node;
+
+		},
+
+		addKeyword: function( name, callback, cache ) {
+
+			cache = cache !== undefined ? cache : true;
+
+			this.keywords[ name ] = { callback : callback, cache : cache };
+
+		},
+
+		remove: function( node ) {
+
+			delete this.nodes[ node.name ];
+
+		},
+
+		removeKeyword: function( name ) {
+
+			delete this.keywords[ name ];
+
+		},
+
+		get: function( name ) {
+
+			return this.nodes[ name ];
+
+		},
+
+		getKeyword: function( name, material ) {
+
+			return this.keywords[ name ].callback.call( this, material );
+
+		},
+
+		getKeywordData: function( name ) {
+
+			return this.keywords[ name ];
+
+		},
+
+		contains: function( name ) {
+
+			return this.nodes[ name ] != undefined;
+
+		},
+
+		containsKeyword: function( name ) {
+
+			return this.keywords[ name ] != undefined;
+
+		}
+
+	};
+
+	var vertexDict = [ 'uv', 'uv2' ],
+		fragmentDict = [ 'vUv', 'vUv2' ];
+
+	function UVNode( index ) {
+
+		TempNode.call( this, 'v2', { shared: false } );
+
+		this.index = index || 0;
+
+	}
+
+	UVNode.prototype = Object.create( TempNode.prototype );
+	UVNode.prototype.constructor = UVNode;
+	UVNode.prototype.nodeType = "UV";
+
+	UVNode.prototype.generate = function ( builder, output ) {
+
+		builder.requires.uv[ this.index ] = true;
+
+		var result = builder.isShader( 'vertex' ) ? vertexDict[ this.index ] : fragmentDict[ this.index ];
+
+		return builder.format( result, this.getType( builder ), output );
+
+	};
+
+	UVNode.prototype.copy = function ( source ) {
+
+		TempNode.prototype.copy.call( this, source );
+
+		this.index = source.index;
+
+	};
+
+	UVNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.index = this.index;
+
+		}
+
+		return data;
+
+	};
+
+	NodeLib.addKeyword( 'uv', function () {
+
+		return new UVNode();
+
+	} );
+
+	NodeLib.addKeyword( 'uv2', function () {
+
+		return new UVNode( 1 );
+
+	} );
+
+	function NormalNode$1( scope ) {
+
+		TempNode.call( this, 'v3' );
+
+		this.scope = scope || NormalNode$1.LOCAL;
+
+	}
+
+	NormalNode$1.LOCAL = 'local';
+	NormalNode$1.WORLD = 'world';
+	NormalNode$1.VIEW = 'view';
+
+	NormalNode$1.prototype = Object.create( TempNode.prototype );
+	NormalNode$1.prototype.constructor = NormalNode$1;
+	NormalNode$1.prototype.nodeType = "Normal";
+
+	NormalNode$1.prototype.isShared = function ( builder ) {
+
+		switch ( this.scope ) {
+
+			case NormalNode$1.WORLD:
+
+				return true;
+
+		}
+
+		return false;
+
+	};
+
+	NormalNode$1.prototype.generate = function ( builder, output ) {
+
+		var result;
+
+		switch ( this.scope ) {
+
+			case NormalNode$1.LOCAL:
+
+				builder.requires.normal = true;
+
+				result = 'normal';
+
+				break;
+
+			case NormalNode$1.WORLD:
+
+				builder.requires.worldNormal = true;
+
+				result = builder.isShader( 'vertex' ) ? '( modelMatrix * vec4( objectNormal, 0.0 ) ).xyz' : 'vWNormal';
+
+				break;
+
+			case NormalNode$1.VIEW:
+
+				result = 'vNormal';
+
+				break;
+
+		}
+
+		return builder.format( result, this.getType( builder ), output );
+
+	};
+
+	NormalNode$1.prototype.copy = function ( source ) {
+
+		TempNode.prototype.copy.call( this, source );
+
+		this.scope = source.scope;
+
+	};
+
+	NormalNode$1.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.scope = this.scope;
+
+		}
+
+		return data;
+
+	};
+
+	NodeLib.addKeyword( 'normal', function () {
+
+		return new NormalNode$1();
+
+	} );
+
+	NodeLib.addKeyword( 'worldNormal', function () {
+
+		return new NormalNode$1( NormalNode$1.WORLD );
+
+	} );
+
+	NodeLib.addKeyword( 'viewNormal', function () {
+
+		return new NormalNode$1( NormalNode$1.VIEW );
+
+	} );
+
+	function InputNode$1( type, params ) {
 
 		params = params || {};
 		params.shared = params.shared !== undefined ? params.shared : false;
@@ -441,25 +686,41 @@ var Three = (function (exports) {
 
 		this.readonly = false;
 
-	};
+	}
 
-	InputNode.prototype = Object.create( TempNode.prototype );
-	InputNode.prototype.constructor = InputNode;
+	InputNode$1.prototype = Object.create( TempNode.prototype );
+	InputNode$1.prototype.constructor = InputNode$1;
 
-	InputNode.prototype.isReadonly = function ( builder ) {
+	InputNode$1.prototype.isReadonly = function ( builder ) {
 
 		return this.readonly;
 
 	};
 
-	InputNode.prototype.generate = function ( builder, output, uuid, type, ns, needsUpdate ) {
+	InputNode$1.prototype.copy = function ( source ) {
 
-		var material = builder.material;
+		TempNode.prototype.copy.call( this, source );
+
+		if ( source.readonly !== undefined ) this.readonly = source.readonly;
+
+	};
+
+	InputNode$1.prototype.createJSONNode = function ( meta ) {
+
+		var data = TempNode.prototype.createJSONNode.call( this, meta );
+
+		if ( this.readonly === true ) data.readonly = this.readonly;
+
+		return data;
+
+	};
+
+	InputNode$1.prototype.generate = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
 		uuid = builder.getUuid( uuid || this.getUuid() );
 		type = type || this.getType( builder );
 
-		var data = material.getDataNode( uuid ),
+		var data = builder.getNodeData( uuid ),
 			readonly = this.isReadonly( builder ) && this.generateReadonly !== undefined;
 
 		if ( readonly ) {
@@ -472,7 +733,7 @@ var Three = (function (exports) {
 
 				if ( ! data.vertex ) {
 
-					data.vertex = material.createVertexUniform( type, this, ns, needsUpdate );
+					data.vertex = builder.createVertexUniform( type, this, ns, needsUpdate );
 
 				}
 
@@ -482,7 +743,7 @@ var Three = (function (exports) {
 
 				if ( ! data.fragment ) {
 
-					data.fragment = material.createFragmentUniform( type, this, ns, needsUpdate );
+					data.fragment = builder.createFragmentUniform( type, this, ns, needsUpdate );
 
 				}
 
@@ -491,6 +752,1218 @@ var Three = (function (exports) {
 			}
 
 		}
+
+	};
+
+	function FloatNode( value ) {
+
+		InputNode$1.call( this, 'f' );
+
+		this.value = value || 0;
+
+	}
+
+	FloatNode.prototype = Object.create( InputNode$1.prototype );
+	FloatNode.prototype.constructor = FloatNode;
+	FloatNode.prototype.nodeType = "Float";
+
+	FloatNode.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
+
+		return builder.format( this.value + ( this.value % 1 ? '' : '.0' ), type, output );
+
+	};
+
+	FloatNode.prototype.copy = function ( source ) {
+
+		InputNode$1.prototype.copy.call( this, source );
+
+		this.value = source.value;
+
+	};
+
+	FloatNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.value = this.value;
+
+			if ( this.readonly === true ) data.readonly = true;
+
+		}
+
+		return data;
+
+	};
+
+	function TimerNode( scale, scope, timeScale ) {
+
+		FloatNode.call( this );
+
+		this.scale = scale !== undefined ? scale : 1;
+		this.scope = scope || TimerNode.GLOBAL;
+
+		this.timeScale = timeScale !== undefined ? timeScale : this.scale !== 1;
+
+	}
+
+	TimerNode.GLOBAL = 'global';
+	TimerNode.LOCAL = 'local';
+	TimerNode.DELTA = 'delta';
+
+	TimerNode.prototype = Object.create( FloatNode.prototype );
+	TimerNode.prototype.constructor = TimerNode;
+	TimerNode.prototype.nodeType = "Timer";
+
+	TimerNode.prototype.isReadonly = function () {
+
+		// never use TimerNode as readonly but aways as "uniform"
+
+		return false;
+
+	};
+
+	TimerNode.prototype.isUnique = function () {
+
+		// share TimerNode "uniform" input if is used on more time with others TimerNode
+
+		return this.timeScale && ( this.scope === TimerNode.GLOBAL || this.scope === TimerNode.DELTA );
+
+	};
+
+	TimerNode.prototype.updateFrame = function ( frame ) {
+
+		var scale = this.timeScale ? this.scale : 1;
+
+		switch ( this.scope ) {
+
+			case TimerNode.LOCAL:
+
+				this.value += frame.delta * scale;
+
+				break;
+
+			case TimerNode.DELTA:
+
+				this.value = frame.delta * scale;
+
+				break;
+
+			default:
+
+				this.value = frame.time * scale;
+
+		}
+
+	};
+
+	TimerNode.prototype.copy = function ( source ) {
+
+		FloatNode.prototype.copy.call( this, source );
+
+		this.scope = source.scope;
+		this.scale = source.scale;
+
+		this.timeScale = source.timeScale;
+
+	};
+
+	TimerNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.scope = this.scope;
+			data.scale = this.scale;
+
+			data.timeScale = this.timeScale;
+
+		}
+
+		return data;
+
+	};
+
+	NodeLib.addKeyword( 'time', function () {
+
+		return new TimerNode();
+
+	} );
+
+	var declarationRegexp = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\=?\s?(.*?)(\;|$)/i;
+
+	function ConstNode( src, useDefine ) {
+
+		TempNode.call( this );
+
+		this.eval( src || ConstNode.PI, useDefine );
+
+	}
+
+	ConstNode.PI = 'PI';
+	ConstNode.PI2 = 'PI2';
+	ConstNode.RECIPROCAL_PI = 'RECIPROCAL_PI';
+	ConstNode.RECIPROCAL_PI2 = 'RECIPROCAL_PI2';
+	ConstNode.LOG2 = 'LOG2';
+	ConstNode.EPSILON = 'EPSILON';
+
+	ConstNode.prototype = Object.create( TempNode.prototype );
+	ConstNode.prototype.constructor = ConstNode;
+	ConstNode.prototype.nodeType = "Const";
+
+	ConstNode.prototype.getType = function ( builder ) {
+
+		return builder.getTypeByFormat( this.type );
+
+	};
+
+	ConstNode.prototype.eval = function ( src, useDefine ) {
+
+		this.src = src || '';
+
+		var name, type, value = "";
+
+		var match = this.src.match( declarationRegexp );
+
+		this.useDefine = useDefine || this.src.charAt( 0 ) === '#';
+
+		if ( match && match.length > 1 ) {
+
+			type = match[ 1 ];
+			name = match[ 2 ];
+			value = match[ 3 ];
+
+		} else {
+
+			name = this.src;
+			type = 'f';
+
+		}
+
+		this.name = name;
+		this.type = type;
+		this.value = value;
+
+	};
+
+	ConstNode.prototype.build = function ( builder, output ) {
+
+		if ( output === 'source' ) {
+
+			if ( this.value ) {
+
+				if ( this.useDefine ) {
+
+					return '#define ' + this.name + ' ' + this.value;
+
+				}
+
+				return 'const ' + this.type + ' ' + this.name + ' = ' + this.value + ';';
+
+			} else if ( this.useDefine ) {
+
+				return this.src;
+
+			}
+
+		} else {
+
+			builder.include( this );
+
+			return builder.format( this.name, this.getType( builder ), output );
+
+		}
+
+	};
+
+	ConstNode.prototype.generate = function ( builder, output ) {
+
+		return builder.format( this.name, this.getType( builder ), output );
+
+	};
+
+	ConstNode.prototype.copy = function ( source ) {
+
+		TempNode.prototype.copy.call( this, source );
+
+		this.eval( source.src, source.useDefine );
+
+	};
+
+	ConstNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.src = this.src;
+
+			if ( data.useDefine === true ) data.useDefine = true;
+
+		}
+
+		return data;
+
+	};
+
+	var FunctionNode = function( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ) {
+
+		src = src || '';
+
+		this.isMethod = typeof includesOrType !== "string";
+		this.useKeywords = true;
+
+		TempNode.call( this, this.isMethod ? null : includesOrType );
+
+		if ( this.isMethod ) this.eval( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions );
+		else this.eval( src, extensionsOrIncludes, keywordsOrExtensions );
+
+	};
+
+	FunctionNode.rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\((.*?)\)/i;
+	FunctionNode.rProperties = /[a-z_0-9]+/ig;
+
+	FunctionNode.prototype = Object.create( TempNode.prototype );
+	FunctionNode.prototype.constructor = FunctionNode;
+	FunctionNode.prototype.nodeType = "Function";
+
+	FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
+
+		src = ( src || '' ).trim();
+
+		this.includes = includes || [];
+		this.extensions = extensions || {};
+		this.keywords = keywords || {};
+
+		if ( this.isMethod ) {
+
+			var match = src.match( FunctionNode.rDeclaration );
+
+			this.inputs = [];
+
+			if ( match && match.length == 4 ) {
+
+				this.type = match[ 1 ];
+				this.name = match[ 2 ];
+
+				var inputs = match[ 3 ].match( FunctionNode.rProperties );
+
+				if ( inputs ) {
+
+					var i = 0;
+
+					while ( i < inputs.length ) {
+
+						var qualifier = inputs[ i ++ ];
+						var type, name;
+
+						if ( qualifier == 'in' || qualifier == 'out' || qualifier == 'inout' ) {
+
+							type = inputs[ i ++ ];
+
+						} else {
+
+							type = qualifier;
+							qualifier = '';
+
+						}
+
+						name = inputs[ i ++ ];
+
+						this.inputs.push( {
+							name : name,
+							type : type,
+							qualifier : qualifier
+						} );
+
+					}
+
+				}
+
+			} else {
+
+				this.type = '';
+				this.name = '';
+
+			}
+
+		}
+
+		this.value = src;
+
+	};
+
+	// Fix circular dependency, see #2
+
+
+	FunctionNode.prototype.isShared = function( builder, output ) {
+
+		return ! this.isMethod;
+
+	};
+
+	FunctionNode.prototype.getType = function( builder ) {
+
+		return builder.getTypeByFormat( this.type );
+
+	};
+
+	FunctionNode.prototype.getInputByName = function( name ) {
+
+		var i = this.inputs.length;
+
+		while ( i -- ) {
+
+			if ( this.inputs[ i ].name === name )
+				return this.inputs[ i ];
+
+		}
+
+	};
+
+	FunctionNode.prototype.getIncludeByName = function( name ) {
+
+		var i = this.includes.length;
+
+		while ( i -- ) {
+
+			if ( this.includes[ i ].name === name )
+				return this.includes[ i ];
+
+		}
+
+	};
+
+	FunctionNode.prototype.generate = function( builder, output ) {
+
+		var match, offset = 0, src = this.value;
+
+		for ( var i = 0; i < this.includes.length; i ++ ) {
+
+			builder.include( this.includes[ i ], this );
+
+		}
+
+		for ( var ext in this.extensions ) {
+
+			builder.material.extensions[ ext ] = true;
+
+		}
+
+		while ( match = FunctionNode.rProperties.exec( this.value ) ) {
+
+			var prop = match[ 0 ], isGlobal = this.isMethod ? ! this.getInputByName( prop ) : true;
+			var reference = prop;
+
+			if ( this.keywords[ prop ] || ( this.useKeywords && isGlobal && NodeLib.containsKeyword( prop ) ) ) {
+
+				var node = this.keywords[ prop ];
+
+				if ( ! node ) {
+
+					var keyword = NodeLib.getKeywordData( prop );
+
+					if ( keyword.cache ) node = builder.keywords[ prop ];
+
+					node = node || NodeLib.getKeyword( prop, builder );
+
+					if ( keyword.cache ) builder.keywords[ prop ] = node;
+
+				}
+
+				reference = node.build( builder );
+
+			}
+
+			if ( prop != reference ) {
+
+				src = src.substring( 0, match.index + offset ) + reference + src.substring( match.index + prop.length + offset );
+
+				offset += reference.length - prop.length;
+
+			}
+
+			if ( this.getIncludeByName( reference ) === undefined && NodeLib.contains( reference ) ) {
+
+				builder.include( NodeLib.get( reference ) );
+
+			}
+
+		}
+
+		if ( output === 'source' ) {
+
+			return src;
+
+		} else if ( this.isMethod ) {
+
+			builder.include( this, false, src );
+
+			return this.name;
+
+		} else {
+
+			return builder.format( "(" + src + ")", this.getType( builder ), output );
+
+		}
+
+	};
+
+	// Fix circular dependency, see #2
+
+
+
+	//
+	//	Keywords
+	//
+
+	NodeLib.addKeyword( 'uv', function() {
+
+		return new UVNode();
+
+	} );
+
+	NodeLib.addKeyword( 'uv2', function() {
+
+		return new UVNode( 1 );
+
+	} );
+
+	NodeLib.addKeyword( 'position', function() {
+
+		return new PositionNode();
+
+	} );
+
+	NodeLib.addKeyword( 'worldPosition', function() {
+
+		return new PositionNode( PositionNode.WORLD );
+
+	} );
+
+	NodeLib.addKeyword( 'normal', function() {
+
+		return new NormalNode$1();
+
+	} );
+
+	NodeLib.addKeyword( 'worldNormal', function() {
+
+		return new NormalNode$1( NormalNode$1.WORLD );
+
+	} );
+
+	NodeLib.addKeyword( 'viewPosition', function() {
+
+		return new PositionNode( NormalNode$1.VIEW );
+
+	} );
+
+	NodeLib.addKeyword( 'viewNormal', function() {
+
+		return new NormalNode$1( NormalNode$1.VIEW );
+
+	} );
+
+	NodeLib.addKeyword( 'time', function() {
+
+		return new TimerNode();
+
+	} );
+
+	//
+	//	Luma
+	//
+
+	NodeLib.add( new ConstNode( "vec3 LUMA vec3(0.2125, 0.7154, 0.0721)" ) );
+
+	//
+	//	NormalMap
+	//
+
+	NodeLib.add( new FunctionNode( [
+		// Per-Pixel Tangent Space Normal Mapping
+		// http://hacksoflife.blogspot.ch/2009/11/per-pixel-tangent-space-normal-mapping.html
+		"vec3 perturbNormal2Arb( vec3 eye_pos, vec3 surf_norm, vec3 map, vec2 mUv, vec2 scale ) {",
+		"	vec3 q0 = dFdx( eye_pos );",
+		"	vec3 q1 = dFdy( eye_pos );",
+		"	vec2 st0 = dFdx( mUv.st );",
+		"	vec2 st1 = dFdy( mUv.st );",
+		"	vec3 S = normalize( q0 * st1.t - q1 * st0.t );",
+		"	vec3 T = normalize( -q0 * st1.s + q1 * st0.s );",
+		"	vec3 N = normalize( surf_norm );",
+		"	vec3 mapN = map * 2.0 - 1.0;",
+		"	mapN.xy = scale * mapN.xy;",
+		"	mat3 tsn = mat3( S, T, N );",
+		"	return normalize( tsn * mapN );",
+		"}"
+	].join( "\n" ), null, { derivatives: true } ) );
+
+	//
+	//	Noise
+	//
+
+	NodeLib.add( new FunctionNode( [
+		"float snoise(vec2 co) {",
+		"	return fract( sin( dot(co.xy, vec2(12.9898,78.233) ) ) * 43758.5453 );",
+		"}"
+	].join( "\n" ) ) );
+
+	//
+	//	Hue
+	//
+
+	NodeLib.add( new FunctionNode( [
+		"vec3 hue_rgb(vec3 rgb, float adjustment) {",
+		"	const mat3 RGBtoYIQ = mat3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263, 0.211456, -0.522591, 0.311135);",
+		"	const mat3 YIQtoRGB = mat3(1.0, 0.9563, 0.6210, 1.0, -0.2721, -0.6474, 1.0, -1.107, 1.7046);",
+		"	vec3 yiq = RGBtoYIQ * rgb;",
+		"	float hue = atan(yiq.z, yiq.y) + adjustment;",
+		"	float chroma = sqrt(yiq.z * yiq.z + yiq.y * yiq.y);",
+		"	return YIQtoRGB * vec3(yiq.x, chroma * cos(hue), chroma * sin(hue));",
+		"}"
+	].join( "\n" ) ) );
+
+	//
+	//	Saturation
+	//
+
+	NodeLib.add( new FunctionNode( [
+		// Algorithm from Chapter 16 of OpenGL Shading Language
+		"vec3 saturation_rgb(vec3 rgb, float adjustment) {",
+		"	vec3 intensity = vec3(dot(rgb, LUMA));",
+		"	return mix(intensity, rgb, adjustment);",
+		"}"
+	].join( "\n" ) ) );
+
+	//
+	//	Luminance
+	//
+
+	NodeLib.add( new FunctionNode( [
+		// Algorithm from Chapter 10 of Graphics Shaders
+		"float luminance_rgb(vec3 rgb) {",
+		"	return dot(rgb, LUMA);",
+		"}"
+	].join( "\n" ) ) );
+
+	//
+	//	Vibrance
+	//
+
+	NodeLib.add( new FunctionNode( [
+		// Shader by Evan Wallace adapted by @lo-th
+		"vec3 vibrance_rgb(vec3 rgb, float adjustment) {",
+		"	float average = (rgb.r + rgb.g + rgb.b) / 3.0;",
+		"	float mx = max(rgb.r, max(rgb.g, rgb.b));",
+		"	float amt = (mx - average) * (-3.0 * adjustment);",
+		"	return mix(rgb.rgb, vec3(mx), amt);",
+		"}"
+	].join( "\n" ) ) );
+
+	function PositionNode( scope ) {
+
+		TempNode.call( this, 'v3' );
+
+		this.scope = scope || PositionNode.LOCAL;
+
+	}
+
+	PositionNode.LOCAL = 'local';
+	PositionNode.WORLD = 'world';
+	PositionNode.VIEW = 'view';
+	PositionNode.PROJECTION = 'projection';
+
+	PositionNode.prototype = Object.create( TempNode.prototype );
+	PositionNode.prototype.constructor = PositionNode;
+	PositionNode.prototype.nodeType = "Position";
+
+	PositionNode.prototype.getType = function ( ) {
+
+		switch ( this.scope ) {
+
+			case PositionNode.PROJECTION:
+
+				return 'v4';
+
+		}
+
+		return this.type;
+
+	};
+
+	PositionNode.prototype.isShared = function ( builder ) {
+
+		switch ( this.scope ) {
+
+			case PositionNode.LOCAL:
+			case PositionNode.WORLD:
+
+				return false;
+
+		}
+
+		return true;
+
+	};
+
+	PositionNode.prototype.generate = function ( builder, output ) {
+
+		var result;
+
+		switch ( this.scope ) {
+
+			case PositionNode.LOCAL:
+
+				builder.requires.position = true;
+
+				result = builder.isShader( 'vertex' ) ? 'transformed' : 'vPosition';
+
+				break;
+
+			case PositionNode.WORLD:
+
+				builder.requires.worldPosition = true;
+
+				result = 'vWPosition';
+
+				break;
+
+			case PositionNode.VIEW:
+
+				result = builder.isShader( 'vertex' ) ? '-mvPosition.xyz' : 'vViewPosition';
+
+				break;
+
+			case PositionNode.PROJECTION:
+
+				result = builder.isShader( 'vertex' ) ? '( projectionMatrix * modelViewMatrix * vec4( position, 1.0 ) )' : 'vec4( 0.0 )';
+
+				break;
+
+		}
+
+		return builder.format( result, this.getType( builder ), output );
+
+	};
+
+	PositionNode.prototype.copy = function ( source ) {
+
+		TempNode.prototype.copy.call( this, source );
+
+		this.scope = source.scope;
+
+	};
+
+	PositionNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.scope = this.scope;
+
+		}
+
+		return data;
+
+	};
+
+	NodeLib.addKeyword( 'position', function () {
+
+		return new PositionNode();
+
+	} );
+
+	NodeLib.addKeyword( 'worldPosition', function () {
+
+		return new PositionNode( PositionNode.WORLD );
+
+	} );
+
+	NodeLib.addKeyword( 'viewPosition', function () {
+
+		return new PositionNode( NormalNode.VIEW );
+
+	} );
+
+	function OperatorNode( a, b, op ) {
+
+		TempNode.call( this );
+
+		this.a = a;
+		this.b = b;
+		this.op = op;
+
+	}
+
+	OperatorNode.ADD = '+';
+	OperatorNode.SUB = '-';
+	OperatorNode.MUL = '*';
+	OperatorNode.DIV = '/';
+
+	OperatorNode.prototype = Object.create( TempNode.prototype );
+	OperatorNode.prototype.constructor = OperatorNode;
+	OperatorNode.prototype.nodeType = "Operator";
+
+	OperatorNode.prototype.getType = function ( builder ) {
+
+		var a = this.a.getType( builder ),
+			b = this.b.getType( builder );
+
+		if ( builder.isTypeMatrix( a ) ) {
+
+			return 'v4';
+
+		} else if ( builder.getTypeLength( b ) > builder.getTypeLength( a ) ) {
+
+			// use the greater length vector
+
+			return b;
+
+		}
+
+		return a;
+
+	};
+
+	OperatorNode.prototype.generate = function ( builder, output ) {
+
+		var data = builder.getNodeData( this ),
+			type = this.getType( builder );
+
+		var a = this.a.build( builder, type ),
+			b = this.b.build( builder, type );
+
+		return builder.format( '( ' + a + ' ' + this.op + ' ' + b + ' )', type, output );
+
+	};
+
+	OperatorNode.prototype.copy = function ( source ) {
+
+		TempNode.prototype.copy.call( this, source );
+
+		this.a = source.a;
+		this.b = source.b;
+		this.op = source.op;
+
+	};
+
+	OperatorNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.a = this.a.toJSON( meta ).uuid;
+			data.b = this.b.toJSON( meta ).uuid;
+			data.op = this.op;
+
+		}
+
+		return data;
+
+	};
+
+	var LinearEncoding = 3000;
+	var sRGBEncoding = 3001;
+	var GammaEncoding = 3007;
+	var RGBEEncoding = 3002;
+	var RGBM7Encoding = 3004;
+	var RGBM16Encoding = 3005;
+	var RGBDEncoding = 3006;
+
+	function ColorSpaceNode( input, method ) {
+
+		TempNode.call( this, 'v4' );
+
+		this.input = input;
+
+		this.method = method || ColorSpaceNode.LINEAR;
+
+	}
+
+	ColorSpaceNode.Nodes = ( function () {
+
+		// For a discussion of what this is, please read this: http://lousodrome.net/blog/light/2013/05/26/gamma-correct-and-hdr-rendering-in-a-32-bits-buffer/
+
+		var LinearToLinear = new FunctionNode( [
+			"vec4 LinearToLinear( in vec4 value ) {",
+
+			"	return value;",
+
+			"}"
+		].join( "\n" ) );
+
+		var GammaToLinear = new FunctionNode( [
+			"vec4 GammaToLinear( in vec4 value, in float gammaFactor ) {",
+
+			"	return vec4( pow( value.xyz, vec3( gammaFactor ) ), value.w );",
+
+			"}"
+		].join( "\n" ) );
+
+		var LinearToGamma = new FunctionNode( [
+			"vec4 LinearToGamma( in vec4 value, in float gammaFactor ) {",
+
+			"	return vec4( pow( value.xyz, vec3( 1.0 / gammaFactor ) ), value.w );",
+
+			"}"
+		].join( "\n" ) );
+
+		var sRGBToLinear = new FunctionNode( [
+			"vec4 sRGBToLinear( in vec4 value ) {",
+
+			"	return vec4( mix( pow( value.rgb * 0.9478672986 + vec3( 0.0521327014 ), vec3( 2.4 ) ), value.rgb * 0.0773993808, vec3( lessThanEqual( value.rgb, vec3( 0.04045 ) ) ) ), value.w );",
+
+			"}"
+		].join( "\n" ) );
+
+		var LinearTosRGB = new FunctionNode( [
+			"vec4 LinearTosRGB( in vec4 value ) {",
+
+			"	return vec4( mix( pow( value.rgb, vec3( 0.41666 ) ) * 1.055 - vec3( 0.055 ), value.rgb * 12.92, vec3( lessThanEqual( value.rgb, vec3( 0.0031308 ) ) ) ), value.w );",
+
+			"}"
+		].join( "\n" ) );
+
+		var RGBEToLinear = new FunctionNode( [
+			"vec4 RGBEToLinear( in vec4 value ) {",
+
+			"	return vec4( value.rgb * exp2( value.a * 255.0 - 128.0 ), 1.0 );",
+
+			"}"
+		].join( "\n" ) );
+
+		var LinearToRGBE = new FunctionNode( [
+			"vec4 LinearToRGBE( in vec4 value ) {",
+
+			"	float maxComponent = max( max( value.r, value.g ), value.b );",
+			"	float fExp = clamp( ceil( log2( maxComponent ) ), -128.0, 127.0 );",
+			"	return vec4( value.rgb / exp2( fExp ), ( fExp + 128.0 ) / 255.0 );",
+			//  return vec4( value.brg, ( 3.0 + 128.0 ) / 256.0 );
+
+			"}"
+		].join( "\n" ) );
+
+		// reference: http://iwasbeingirony.blogspot.ca/2010/06/difference-between-rgbm-and-rgbd.html
+
+		var RGBMToLinear = new FunctionNode( [
+			"vec3 RGBMToLinear( in vec4 value, in float maxRange ) {",
+
+			"	return vec4( value.xyz * value.w * maxRange, 1.0 );",
+
+			"}"
+		].join( "\n" ) );
+
+		var LinearToRGBM = new FunctionNode( [
+			"vec3 LinearToRGBM( in vec4 value, in float maxRange ) {",
+
+			"	float maxRGB = max( value.x, max( value.g, value.b ) );",
+			"	float M      = clamp( maxRGB / maxRange, 0.0, 1.0 );",
+			"	M            = ceil( M * 255.0 ) / 255.0;",
+			"	return vec4( value.rgb / ( M * maxRange ), M );",
+
+			"}"
+		].join( "\n" ) );
+
+		// reference: http://iwasbeingirony.blogspot.ca/2010/06/difference-between-rgbm-and-rgbd.html
+
+		var RGBDToLinear = new FunctionNode( [
+			"vec3 RGBDToLinear( in vec4 value, in float maxRange ) {",
+
+			"	return vec4( value.rgb * ( ( maxRange / 255.0 ) / value.a ), 1.0 );",
+
+			"}"
+		].join( "\n" ) );
+
+
+		var LinearToRGBD = new FunctionNode( [
+			"vec3 LinearToRGBD( in vec4 value, in float maxRange ) {",
+
+			"	float maxRGB = max( value.x, max( value.g, value.b ) );",
+			"	float D      = max( maxRange / maxRGB, 1.0 );",
+			"	D            = min( floor( D ) / 255.0, 1.0 );",
+			"	return vec4( value.rgb * ( D * ( 255.0 / maxRange ) ), D );",
+
+			"}"
+		].join( "\n" ) );
+
+		// LogLuv reference: http://graphicrants.blogspot.ca/2009/04/rgbm-color-encoding.html
+
+		// M matrix, for encoding
+
+		var cLogLuvM = new ConstNode( "const mat3 cLogLuvM = mat3( 0.2209, 0.3390, 0.4184, 0.1138, 0.6780, 0.7319, 0.0102, 0.1130, 0.2969 );" );
+
+		var LinearToLogLuv = new FunctionNode( [
+			"vec4 LinearToLogLuv( in vec4 value ) {",
+
+			"	vec3 Xp_Y_XYZp = value.rgb * cLogLuvM;",
+			"	Xp_Y_XYZp = max(Xp_Y_XYZp, vec3(1e-6, 1e-6, 1e-6));",
+			"	vec4 vResult;",
+			"	vResult.xy = Xp_Y_XYZp.xy / Xp_Y_XYZp.z;",
+			"	float Le = 2.0 * log2(Xp_Y_XYZp.y) + 127.0;",
+			"	vResult.w = fract(Le);",
+			"	vResult.z = (Le - (floor(vResult.w*255.0))/255.0)/255.0;",
+			"	return vResult;",
+
+			"}"
+		].join( "\n" ), [ cLogLuvM ] );
+
+		// Inverse M matrix, for decoding
+
+		var cLogLuvInverseM = new ConstNode( "const mat3 cLogLuvInverseM = mat3( 6.0014, -2.7008, -1.7996, -1.3320, 3.1029, -5.7721, 0.3008, -1.0882, 5.6268 );" );
+
+		var LogLuvToLinear = new FunctionNode( [
+			"vec4 LogLuvToLinear( in vec4 value ) {",
+
+			"	float Le = value.z * 255.0 + value.w;",
+			"	vec3 Xp_Y_XYZp;",
+			"	Xp_Y_XYZp.y = exp2((Le - 127.0) / 2.0);",
+			"	Xp_Y_XYZp.z = Xp_Y_XYZp.y / value.y;",
+			"	Xp_Y_XYZp.x = value.x * Xp_Y_XYZp.z;",
+			"	vec3 vRGB = Xp_Y_XYZp.rgb * cLogLuvInverseM;",
+			"	return vec4( max(vRGB, 0.0), 1.0 );",
+
+			"}"
+		].join( "\n" ), [ cLogLuvInverseM ] );
+
+		return {
+			LinearToLinear: LinearToLinear,
+			GammaToLinear: GammaToLinear,
+			LinearToGamma: LinearToGamma,
+			sRGBToLinear: sRGBToLinear,
+			LinearTosRGB: LinearTosRGB,
+			RGBEToLinear: RGBEToLinear,
+			LinearToRGBE: LinearToRGBE,
+			RGBMToLinear: RGBMToLinear,
+			LinearToRGBM: LinearToRGBM,
+			RGBDToLinear: RGBDToLinear,
+			LinearToRGBD: LinearToRGBD,
+			cLogLuvM: cLogLuvM,
+			LinearToLogLuv: LinearToLogLuv,
+			cLogLuvInverseM: cLogLuvInverseM,
+			LogLuvToLinear: LogLuvToLinear
+		};
+
+	} )();
+
+	ColorSpaceNode.LINEAR_TO_LINEAR = 'LinearToLinear';
+
+	ColorSpaceNode.GAMMA_TO_LINEAR = 'GammaToLinear';
+	ColorSpaceNode.LINEAR_TO_GAMMA = 'LinearToGamma';
+
+	ColorSpaceNode.SRGB_TO_LINEAR = 'sRGBToLinear';
+	ColorSpaceNode.LINEAR_TO_SRGB = 'LinearTosRGB';
+
+	ColorSpaceNode.RGBE_TO_LINEAR = 'RGBEToLinear';
+	ColorSpaceNode.LINEAR_TO_RGBE = 'LinearToRGBE';
+
+	ColorSpaceNode.RGBM_TO_LINEAR = 'RGBMToLinear';
+	ColorSpaceNode.LINEAR_TO_RGBM = 'LinearToRGBM';
+
+	ColorSpaceNode.RGBD_TO_LINEAR = 'RGBDToLinear';
+	ColorSpaceNode.LINEAR_TO_RGBD = 'LinearToRGBD';
+
+	ColorSpaceNode.LINEAR_TO_LOG_LUV = 'LinearToLogLuv';
+	ColorSpaceNode.LOG_LUV_TO_LINEAR = 'LogLuvToLinear';
+
+	ColorSpaceNode.prototype = Object.create( TempNode.prototype );
+	ColorSpaceNode.prototype.constructor = ColorSpaceNode;
+	ColorSpaceNode.prototype.nodeType = "ColorAdjustment";
+
+	ColorSpaceNode.prototype.generate = function ( builder, output ) {
+
+		var input = builder.context.input || this.input.build( builder, 'v4' ),
+			encodingMethod = builder.context.encoding !== undefined ? this.getEncodingMethod( builder.context.encoding ) : [ this.method ],
+			factor = this.factor ? this.factor.build( builder, 'f' ) : encodingMethod[ 1 ];
+
+		var method = builder.include( ColorSpaceNode.Nodes[ encodingMethod[ 0 ] ] );
+
+		if ( factor ) {
+
+			return builder.format( method + '( ' + input + ', ' + factor + ' )', this.getType( builder ), output );
+
+		} else {
+
+			return builder.format( method + '( ' + input + ' )', this.getType( builder ), output );
+
+		}
+
+	};
+
+	ColorSpaceNode.prototype.getDecodingMethod = function ( encoding ) {
+
+		var components = this.getEncodingComponents( encoding );
+
+		components[ 0 ] += 'ToLinear';
+
+		return components;
+
+	};
+
+	ColorSpaceNode.prototype.getEncodingMethod = function ( encoding ) {
+
+		var components = this.getEncodingComponents( encoding );
+
+		components[ 0 ] = 'LinearTo' + components[ 0 ];
+
+		return components;
+
+	};
+
+	ColorSpaceNode.prototype.getEncodingComponents = function ( encoding ) {
+
+		switch ( encoding ) {
+
+			case LinearEncoding:
+				return [ 'Linear' ];
+			case sRGBEncoding:
+				return [ 'sRGB' ];
+			case RGBEEncoding:
+				return [ 'RGBE' ];
+			case RGBM7Encoding:
+				return [ 'RGBM', '7.0' ];
+			case RGBM16Encoding:
+				return [ 'RGBM', '16.0' ];
+			case RGBDEncoding:
+				return [ 'RGBD', '256.0' ];
+			case GammaEncoding:
+				return [ 'Gamma', 'float( GAMMA_FACTOR )' ];
+
+		}
+
+	};
+
+	ColorSpaceNode.prototype.copy = function ( source ) {
+
+		TempNode.prototype.copy.call( this, source );
+
+		this.input = source.input;
+		this.method = source.method;
+
+	};
+
+	ColorSpaceNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.input = this.input.toJSON( meta ).uuid;
+			data.method = this.method;
+
+		}
+
+		return data;
+
+	};
+
+	function TextureNode( value, uv, bias, project ) {
+
+		InputNode$1.call( this, 'v4', { shared: true } );
+
+		this.value = value;
+		this.uv = uv || new UVNode();
+		this.bias = bias;
+		this.project = project !== undefined ? project : false;
+
+	}
+
+	TextureNode.prototype = Object.create( InputNode$1.prototype );
+	TextureNode.prototype.constructor = TextureNode;
+	TextureNode.prototype.nodeType = "Texture";
+
+	TextureNode.prototype.getTexture = function ( builder, output ) {
+
+		return InputNode$1.prototype.generate.call( this, builder, output, this.value.uuid, 't' );
+
+	};
+
+	TextureNode.prototype.generate = function ( builder, output ) {
+
+		if ( output === 'sampler2D' ) {
+
+			return this.getTexture( builder, output );
+
+		}
+
+		var tex = this.getTexture( builder, output ),
+			uv = this.uv.build( builder, this.project ? 'v4' : 'v2' ),
+			bias = this.bias ? this.bias.build( builder, 'f' ) : undefined;
+
+		if ( bias == undefined && builder.context.bias ) {
+
+			bias = new builder.context.bias( this ).build( builder, 'f' );
+
+		}
+
+		var method, code;
+
+		if ( this.project ) method = 'texture2DProj';
+		else method = bias ? 'tex2DBias' : 'tex2D';
+
+		if ( bias ) code = method + '( ' + tex + ', ' + uv + ', ' + bias + ' )';
+		else code = method + '( ' + tex + ', ' + uv + ' )';
+
+		// add this context to replace ColorSpaceNode.input to code
+
+		builder.addContext( { input: code, encoding: builder.getTextureEncodingFromMap( this.value ), include: builder.isShader( 'vertex' ) } );
+
+		this.colorSpace = this.colorSpace || new ColorSpaceNode( this );
+		code = this.colorSpace.build( builder, this.type );
+
+		builder.removeContext();
+
+		return builder.format( code, this.type, output );
+
+	};
+
+	TextureNode.prototype.copy = function ( source ) {
+
+		InputNode$1.prototype.copy.call( this, source );
+
+		if ( source.value ) this.value = source.value;
+
+		this.uv = source.uv;
+
+		if ( source.bias ) this.bias = source.bias;
+		if ( source.project !== undefined ) this.project = source.project;
+
+	};
+
+	TextureNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			if ( this.value ) data.value = this.value.uuid;
+
+			data.uv = this.uv.toJSON( meta ).uuid;
+			data.project = this.project;
+
+			if ( this.bias ) data.bias = this.bias.toJSON( meta ).uuid;
+
+		}
+
+		return data;
 
 	};
 
@@ -879,6 +2352,26 @@ var Three = (function (exports) {
 			};
 
 		}(),
+
+		angleTo: function ( q ) {
+
+			return 2 * Math.acos( Math.abs( _Math.clamp( this.dot( q ), - 1, 1 ) ) );
+
+		},
+
+		rotateTowards: function ( q, step ) {
+
+			var angle = this.angleTo( q );
+
+			if ( angle === 0 ) return this;
+
+			var t = Math.min( 1, step / angle );
+
+			this.slerp( q, t );
+
+			return this;
+
+		},
 
 		inverse: function () {
 
@@ -2733,21 +4226,49 @@ var Three = (function (exports) {
 
 	} );
 
-	var Matrix4Node = function ( matrix ) {
+	function Matrix4Node( matrix ) {
 
-		InputNode.call( this, 'm4' );
+		InputNode$1.call( this, 'm4' );
 
 		this.value = matrix || new Matrix4();
 
-	};
+	}
 
-	Matrix4Node.prototype = Object.create( InputNode.prototype );
+	Matrix4Node.prototype = Object.create( InputNode$1.prototype );
 	Matrix4Node.prototype.constructor = Matrix4Node;
 	Matrix4Node.prototype.nodeType = "Matrix4";
+
+	Object.defineProperties( Matrix4Node.prototype, {
+
+		elements: {
+
+			set: function ( val ) {
+
+				this.value.elements = val;
+
+			},
+
+			get: function () {
+
+				return this.value.elements;
+
+			}
+
+		}
+
+	} );
 
 	Matrix4Node.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
 		return builder.format( "mat4( " + this.value.elements.join( ", " ) + " )", type, output );
+
+	};
+
+	Matrix4Node.prototype.copy = function ( source ) {
+
+		InputNode$1.prototype.copy.call( this, source );
+
+		this.scope.value.fromArray( source.elements );
 
 	};
 
@@ -2761,329 +4282,19 @@ var Three = (function (exports) {
 
 			data.elements = this.value.elements.concat();
 
-			if ( this.readonly === true ) data.readonly = true;
-
 		}
 
 		return data;
 
 	};
 
-	var PositionNode = function ( scope ) {
-
-		TempNode.call( this, 'v3' );
-
-		this.scope = scope || PositionNode.LOCAL;
-
-	};
-
-	PositionNode.LOCAL = 'local';
-	PositionNode.WORLD = 'world';
-	PositionNode.VIEW = 'view';
-	PositionNode.PROJECTION = 'projection';
-
-	PositionNode.prototype = Object.create( TempNode.prototype );
-	PositionNode.prototype.constructor = PositionNode;
-	PositionNode.prototype.nodeType = "Position";
-
-	PositionNode.prototype.getType = function ( builder ) {
-
-		switch ( this.scope ) {
-
-			case PositionNode.PROJECTION:
-				return 'v4';
-
-		}
-
-		return this.type;
-
-	};
-
-	PositionNode.prototype.isShared = function ( builder ) {
-
-		switch ( this.scope ) {
-
-			case PositionNode.LOCAL:
-			case PositionNode.WORLD:
-				return false;
-
-		}
-
-		return true;
-
-	};
-
-	PositionNode.prototype.generate = function ( builder, output ) {
-
-		var material = builder.material;
-		var result;
-
-		switch ( this.scope ) {
-
-			case PositionNode.LOCAL:
-
-				material.requires.position = true;
-
-				if ( builder.isShader( 'vertex' ) ) result = 'transformed';
-				else result = 'vPosition';
-
-				break;
-
-			case PositionNode.WORLD:
-
-				material.requires.worldPosition = true;
-
-				if ( builder.isShader( 'vertex' ) ) result = 'vWPosition';
-				else result = 'vWPosition';
-
-				break;
-
-			case PositionNode.VIEW:
-
-				if ( builder.isShader( 'vertex' ) ) result = '-mvPosition.xyz';
-				else result = 'vViewPosition';
-
-				break;
-
-			case PositionNode.PROJECTION:
-
-				if ( builder.isShader( 'vertex' ) ) result = '(projectionMatrix * modelViewMatrix * vec4( position, 1.0 ))';
-				else result = 'vec4( 0.0 )';
-
-				break;
-
-		}
-
-		return builder.format( result, this.getType( builder ), output );
-
-	};
-
-	PositionNode.prototype.toJSON = function ( meta ) {
-
-		var data = this.getJSONNode( meta );
-
-		if ( ! data ) {
-
-			data = this.createJSONNode( meta );
-
-			data.scope = this.scope;
-
-		}
-
-		return data;
-
-	};
-
-	var OperatorNode = function ( a, b, op ) {
-
-		TempNode.call( this );
-
-		this.a = a;
-		this.b = b;
-		this.op = op || OperatorNode.ADD;
-
-	};
-
-	OperatorNode.ADD = '+';
-	OperatorNode.SUB = '-';
-	OperatorNode.MUL = '*';
-	OperatorNode.DIV = '/';
-
-	OperatorNode.prototype = Object.create( TempNode.prototype );
-	OperatorNode.prototype.constructor = OperatorNode;
-	OperatorNode.prototype.nodeType = "Operator";
-
-	OperatorNode.prototype.getType = function ( builder ) {
-
-		var a = this.a.getType( builder );
-		var b = this.b.getType( builder );
-
-		if ( builder.isFormatMatrix( a ) ) {
-
-			return 'v4';
-
-		} else if ( builder.getFormatLength( b ) > builder.getFormatLength( a ) ) {
-
-			// use the greater length vector
-
-			return b;
-
-		}
-
-		return a;
-
-	};
-
-	OperatorNode.prototype.generate = function ( builder, output ) {
-
-		var material = builder.material,
-			data = material.getDataNode( this.uuid );
-
-		var type = this.getType( builder );
-
-		var a = this.a.build( builder, type );
-		var b = this.b.build( builder, type );
-
-		return builder.format( '(' + a + this.op + b + ')', type, output );
-
-	};
-
-	OperatorNode.prototype.toJSON = function ( meta ) {
-
-		var data = this.getJSONNode( meta );
-
-		if ( ! data ) {
-
-			data = this.createJSONNode( meta );
-
-			data.a = this.a.toJSON( meta ).uuid;
-			data.b = this.b.toJSON( meta ).uuid;
-			data.op = this.op;
-
-		}
-
-		return data;
-
-	};
-
-	var UVNode = function ( index ) {
-
-		TempNode.call( this, 'v2', { shared: false } );
-
-		this.index = index || 0;
-
-	};
-
-	UVNode.vertexDict = [ 'uv', 'uv2' ];
-	UVNode.fragmentDict = [ 'vUv', 'vUv2' ];
-
-	UVNode.prototype = Object.create( TempNode.prototype );
-	UVNode.prototype.constructor = UVNode;
-	UVNode.prototype.nodeType = "UV";
-
-	UVNode.prototype.generate = function ( builder, output ) {
-
-		var material = builder.material;
-		var result;
-
-		material.requires.uv[ this.index ] = true;
-
-		if ( builder.isShader( 'vertex' ) ) result = UVNode.vertexDict[ this.index ];
-		else result = UVNode.fragmentDict[ this.index ];
-
-		return builder.format( result, this.getType( builder ), output );
-
-	};
-
-	UVNode.prototype.toJSON = function ( meta ) {
-
-		var data = this.getJSONNode( meta );
-
-		if ( ! data ) {
-
-			data = this.createJSONNode( meta );
-
-			data.index = this.index;
-
-		}
-
-		return data;
-
-	};
-
-	var TextureNode = function ( value, coord, bias, project ) {
-
-		InputNode.call( this, 'v4', { shared: true } );
-
-		this.value = value;
-		this.coord = coord || new UVNode();
-		this.bias = bias;
-		this.project = project !== undefined ? project : false;
-
-	};
-
-	TextureNode.prototype = Object.create( InputNode.prototype );
-	TextureNode.prototype.constructor = TextureNode;
-	TextureNode.prototype.nodeType = "Texture";
-
-	TextureNode.prototype.getTexture = function ( builder, output ) {
-
-		return InputNode.prototype.generate.call( this, builder, output, this.value.uuid, 't' );
-
-	};
-
-	TextureNode.prototype.generate = function ( builder, output ) {
-
-		if ( output === 'sampler2D' ) {
-
-			return this.getTexture( builder, output );
-
-		}
-
-		var tex = this.getTexture( builder, output );
-		var coord = this.coord.build( builder, this.project ? 'v4' : 'v2' );
-		var bias = this.bias ? this.bias.build( builder, 'fv1' ) : undefined;
-
-		if ( bias == undefined && builder.requires.bias ) {
-
-			bias = builder.requires.bias.build( builder, 'fv1' );
-
-		}
-
-		var method, code;
-
-		if ( this.project ) method = 'texture2DProj';
-		else method = bias ? 'tex2DBias' : 'tex2D';
-
-		if ( bias ) code = method + '(' + tex + ',' + coord + ',' + bias + ')';
-		else code = method + '(' + tex + ',' + coord + ')';
-
-		if ( builder.isSlot( 'color' ) ) {
-
-			code = 'mapTexelToLinear(' + code + ')';
-
-		} else if ( builder.isSlot( 'emissive' ) ) {
-
-			code = 'emissiveMapTexelToLinear(' + code + ')';
-
-		} else if ( builder.isSlot( 'environment' ) ) {
-
-			code = 'envMapTexelToLinear(' + code + ')';
-
-		}
-
-		return builder.format( code, this.type, output );
-
-	};
-
-	TextureNode.prototype.toJSON = function ( meta ) {
-
-		var data = this.getJSONNode( meta );
-
-		if ( ! data ) {
-
-			data = this.createJSONNode( meta );
-
-			if ( this.value ) data.value = this.value.uuid;
-
-			data.coord = this.coord.toJSON( meta ).uuid;
-			data.project = this.project;
-
-			if ( this.bias ) data.bias = this.bias.toJSON( meta ).uuid;
-
-		}
-
-		return data;
-
-	};
-
-	var ReflectorNode = function ( mirror ) {
+	function ReflectorNode( mirror ) {
 
 		TempNode.call( this, 'v4' );
 
 		if ( mirror ) this.setMirror( mirror );
 
-	};
+	}
 
 	ReflectorNode.prototype = Object.create( TempNode.prototype );
 	ReflectorNode.prototype.constructor = ReflectorNode;
@@ -3097,21 +4308,19 @@ var Three = (function (exports) {
 
 		this.localPosition = new PositionNode( PositionNode.LOCAL );
 
-		this.coord = new OperatorNode( this.textureMatrix, this.localPosition, OperatorNode.MUL );
-		this.coordResult = new OperatorNode( null, this.coord, OperatorNode.ADD );
+		this.uv = new OperatorNode( this.textureMatrix, this.localPosition, OperatorNode.MUL );
+		this.uvResult = new OperatorNode( null, this.uv, OperatorNode.ADD );
 
-		this.texture = new TextureNode( this.mirror.material.uniforms.tDiffuse.value, this.coord, null, true );
+		this.texture = new TextureNode( this.mirror.material.uniforms.tDiffuse.value, this.uv, null, true );
 
 	};
 
 	ReflectorNode.prototype.generate = function ( builder, output ) {
 
-		var material = builder.material;
-
 		if ( builder.isShader( 'fragment' ) ) {
 
-			this.coordResult.a = this.offset;
-			this.texture.coord = this.offset ? this.coordResult : this.coord;
+			this.uvResult.a = this.offset;
+			this.texture.uv = this.offset ? this.uvResult : this.uv;
 
 			if ( output === 'sampler2D' ) {
 
@@ -3125,9 +4334,17 @@ var Three = (function (exports) {
 
 			console.warn( "ReflectorNode is not compatible with " + builder.shader + " shader." );
 
-			return builder.format( 'vec4(0.0)', this.type, output );
+			return builder.format( 'vec4( 0.0 )', this.type, output );
 
 		}
+
+	};
+
+	ReflectorNode.prototype.copy = function ( source ) {
+
+		InputNode.prototype.copy.call( this, source );
+
+		this.scope.mirror = source.mirror;
 
 	};
 

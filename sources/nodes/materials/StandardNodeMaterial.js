@@ -1,22 +1,44 @@
-import { NodeMaterial } from '../NodeMaterial.js'
-import { StandardNode } from './StandardNode.js'
+import { StandardNode } from './nodes/StandardNode.js'
+import { NodeMaterial } from './NodeMaterial.js'
+import { NodeUtils } from '../core/NodeUtils.js'
 
 
 
-var StandardNodeMaterial = function () {
 
-	this.node = new StandardNode();
 
-	NodeMaterial.call( this, this.node, this.node );
+
+
+function StandardNodeMaterial() {
+
+	var node = new StandardNode();
+
+	NodeMaterial.call( this, node, node );
 
 	this.type = "StandardNodeMaterial";
 
-};
+}
 
 StandardNodeMaterial.prototype = Object.create( NodeMaterial.prototype );
 StandardNodeMaterial.prototype.constructor = StandardNodeMaterial;
 
-NodeMaterial.addShortcuts( StandardNodeMaterial.prototype, 'node',
-	[ 'color', 'alpha', 'roughness', 'metalness', 'reflectivity', 'clearCoat', 'clearCoatRoughness', 'normal', 'normalScale', 'emissive', 'ambient', 'light', 'shadow', 'ao', 'environment', 'transform' ] );
+NodeUtils.addShortcuts( StandardNodeMaterial.prototype, 'fragment', [
+	'color',
+	'alpha',
+	'roughness',
+	'metalness',
+	'reflectivity',
+	'clearCoat',
+	'clearCoatRoughness',
+	'normal',
+	'emissive',
+	'ambient',
+	'light',
+	'shadow',
+	'ao',
+	'environment',
+	'position'
+] );
+
+;
 
 export { StandardNodeMaterial }

@@ -4,6 +4,8 @@ import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { HalftoneShader } from '../shaders/HalftoneShader.js'
 
 
 

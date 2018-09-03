@@ -1,7 +1,7 @@
 var Three = (function (exports) {
 	'use strict';
 
-	function WebGLBufferRenderer( gl, extensions, info ) {
+	function WebGLBufferRenderer( gl, extensions, info, capabilities ) {
 
 		var mode;
 
@@ -21,16 +21,26 @@ var Three = (function (exports) {
 
 		function renderInstances( geometry, start, count ) {
 
-			var extension = extensions.get( 'ANGLE_instanced_arrays' );
+			var extension;
 
-			if ( extension === null ) {
+			if ( capabilities.isWebGL2 ) {
 
-				console.error( 'WebGLBufferRenderer: using InstancedBufferGeometry but hardware does not support extension ANGLE_instanced_arrays.' );
-				return;
+				extension = gl;
+
+			} else {
+
+				extension = extensions.get( 'ANGLE_instanced_arrays' );
+
+				if ( extension === null ) {
+
+					console.error( 'WebGLBufferRenderer: using InstancedBufferGeometry but hardware does not support extension ANGLE_instanced_arrays.' );
+					return;
+
+				}
 
 			}
 
-			extension.drawArraysInstancedANGLE( mode, start, count, geometry.maxInstancedCount );
+			extension[ capabilities.isWebGL2 ? 'drawArraysInstanced' : 'drawArraysInstancedANGLE' ]( mode, start, count, geometry.maxInstancedCount );
 
 			info.update( count, mode, geometry.maxInstancedCount );
 

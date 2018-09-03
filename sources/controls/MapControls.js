@@ -11,10 +11,9 @@ import { MOUSE } from '../constants.js'
 // Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
 // This is very similar to OrbitControls, another set of touch behavior
 //
-//    Orbit - right mouse / touch: two-finger rotate
+//    Orbit - right mouse, or left mouse + ctrl/metaKey / touch: two-finger rotate
 //    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
 //    Pan - left mouse, or arrow keys / touch: one-finger move
-
 
 var MapControls = function ( object, domElement ) {
 
@@ -78,7 +77,7 @@ var MapControls = function ( object, domElement ) {
 	this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
 
 	// Mouse buttons
-	this.mouseButtons = { ORBIT: MOUSE.RIGHT, ZOOM: MOUSE.MIDDLE, PAN: MOUSE.LEFT };
+	this.mouseButtons = { LEFT: MOUSE.LEFT, MIDDLE: MOUSE.MIDDLE, RIGHT: MOUSE.RIGHT };
 
 	// for reset
 	this.target0 = this.target.clone();
@@ -776,17 +775,29 @@ var MapControls = function ( object, domElement ) {
 
 		switch ( event.button ) {
 
-			case scope.mouseButtons.ORBIT:
+			case scope.mouseButtons.LEFT:
 
-				if ( scope.enableRotate === false ) return;
+				if ( event.ctrlKey || event.metaKey ) {
 
-				handleMouseDownRotate( event );
+					if ( scope.enableRotate === false ) return;
 
-				state = STATE.ROTATE;
+					handleMouseDownRotate( event );
+
+					state = STATE.ROTATE;
+
+				} else {
+
+					if ( scope.enablePan === false ) return;
+
+					handleMouseDownPan( event );
+
+					state = STATE.PAN;
+
+				}
 
 				break;
 
-			case scope.mouseButtons.ZOOM:
+			case scope.mouseButtons.MIDDLE:
 
 				if ( scope.enableZoom === false ) return;
 
@@ -796,13 +807,13 @@ var MapControls = function ( object, domElement ) {
 
 				break;
 
-			case scope.mouseButtons.PAN:
+			case scope.mouseButtons.RIGHT:
 
-				if ( scope.enablePan === false ) return;
+				if ( scope.enableRotate === false ) return;
 
-				handleMouseDownPan( event );
+				handleMouseDownRotate( event );
 
-				state = STATE.PAN;
+				state = STATE.ROTATE;
 
 				break;
 

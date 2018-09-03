@@ -1,26 +1,38 @@
-import { InputNode } from '../InputNode.js'
+import { InputNode } from '../core/InputNode.js'
+import { NodeUtils } from '../core/NodeUtils.js'
 import { Vector4 } from '../../math/Vector4.js'
-import { NodeMaterial } from '../NodeMaterial.js'
+import { NodeMaterial } from '../materials/NodeMaterial.js'
 
 
 
-var Vector4Node = function ( x, y, z, w ) {
+
+
+
+function Vector4Node( x, y, z, w ) {
 
 	InputNode.call( this, 'v4' );
 
-	this.value = new Vector4( x, y, z, w );
+	this.value = x instanceof Vector4 ? x : new Vector4( x, y, z, w );
 
-};
+}
 
 Vector4Node.prototype = Object.create( InputNode.prototype );
 Vector4Node.prototype.constructor = Vector4Node;
 Vector4Node.prototype.nodeType = "Vector4";
 
-NodeMaterial.addShortcuts( Vector4Node.prototype, 'value', [ 'x', 'y', 'z', 'w' ] );
+NodeUtils.addShortcuts( Vector4Node.prototype, 'value', [ 'x', 'y', 'z', 'w' ] );
 
 Vector4Node.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
 	return builder.format( "vec4( " + this.x + ", " + this.y + ", " + this.z + ", " + this.w + " )", type, output );
+
+};
+
+Vector4Node.prototype.copy = function ( source ) {
+
+	InputNode.prototype.copy.call( this, source );
+
+	this.value.copy( source );
 
 };
 
@@ -44,5 +56,7 @@ Vector4Node.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
+
+;
 
 export { Vector4Node }

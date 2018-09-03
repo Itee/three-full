@@ -1071,6 +1071,12 @@ var Three = (function (exports) {
 
 		},
 
+		cross: function ( v ) {
+
+			return this.x * v.y - this.y * v.x;
+
+		},
+
 		lengthSq: function () {
 
 			return this.x * this.x + this.y * this.y;
@@ -2513,6 +2519,26 @@ var Three = (function (exports) {
 			};
 
 		}(),
+
+		angleTo: function ( q ) {
+
+			return 2 * Math.acos( Math.abs( _Math.clamp( this.dot( q ), - 1, 1 ) ) );
+
+		},
+
+		rotateTowards: function ( q, step ) {
+
+			var angle = this.angleTo( q );
+
+			if ( angle === 0 ) return this;
+
+			var t = Math.min( 1, step / angle );
+
+			this.slerp( q, t );
+
+			return this;
+
+		},
 
 		inverse: function () {
 
@@ -3996,6 +4022,17 @@ var Three = (function (exports) {
 			opacity: { value: 1.0 },
 			size: { value: 1.0 },
 			scale: { value: 1.0 },
+			map: { value: null },
+			uvTransform: { value: new Matrix3() }
+
+		},
+
+		sprite: {
+
+			diffuse: { value: new Color( 0xeeeeee ) },
+			opacity: { value: 1.0 },
+			center: { value: new Vector2( 0.5, 0.5 ) },
+			rotation: { value: 0.0 },
 			map: { value: null },
 			uvTransform: { value: new Matrix3() }
 

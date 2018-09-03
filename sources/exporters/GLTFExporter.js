@@ -1292,6 +1292,16 @@ GLTFExporter.prototype = {
 
 				if ( trackProperty === PATH_PROPERTIES.morphTargetInfluences ) {
 
+					if ( trackNode.morphTargetInfluences.length !== 1 &&
+						trackBinding.propertyIndex !== undefined ) {
+
+						console.warn( 'GLTFExporter: Skipping animation track "%s". ' +
+							'Morph target keyframe tracks must target all available morph targets ' +
+							'for the given mesh.', track.name );
+						continue;
+
+					}
+
 					outputItemSize /= trackNode.morphTargetInfluences.length;
 
 				}

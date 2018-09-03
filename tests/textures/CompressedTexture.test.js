@@ -585,6 +585,12 @@ var Three = (function (exports) {
 
 		},
 
+		cross: function ( v ) {
+
+			return this.x * v.y - this.y * v.x;
+
+		},
+
 		lengthSq: function () {
 
 			return this.x * this.x + this.y * this.y;
@@ -2028,6 +2034,26 @@ var Three = (function (exports) {
 
 		}(),
 
+		angleTo: function ( q ) {
+
+			return 2 * Math.acos( Math.abs( _Math.clamp( this.dot( q ), - 1, 1 ) ) );
+
+		},
+
+		rotateTowards: function ( q, step ) {
+
+			var angle = this.angleTo( q );
+
+			if ( angle === 0 ) return this;
+
+			var t = Math.min( 1, step / angle );
+
+			this.slerp( q, t );
+
+			return this;
+
+		},
+
 		inverse: function () {
 
 			// quaternion is assumed to have unit length
@@ -3337,6 +3363,58 @@ var Three = (function (exports) {
 
 	} );
 
+	var ImageUtils = {
+
+		getDataURL: function ( image ) {
+
+			var canvas;
+
+			if ( image instanceof HTMLCanvasElement ) {
+
+				canvas = image;
+
+			} else {
+
+				if ( typeof OffscreenCanvas !== 'undefined' ) {
+
+					canvas = new OffscreenCanvas( image.width, image.height );
+
+				} else {
+
+					canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
+					canvas.width = image.width;
+					canvas.height = image.height;
+
+				}
+
+				var context = canvas.getContext( '2d' );
+
+				if ( image instanceof ImageData ) {
+
+					context.putImageData( image, 0, 0 );
+
+				} else {
+
+					context.drawImage( image, 0, 0, image.width, image.height );
+
+				}
+
+			}
+
+			if ( canvas.width > 2048 || canvas.height > 2048 ) {
+
+				return canvas.toDataURL( 'image/jpeg', 0.6 );
+
+			} else {
+
+				return canvas.toDataURL( 'image/png' );
+
+			}
+
+		}
+
+	};
+
 	var textureId = 0;
 
 	function Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
@@ -3456,46 +3534,6 @@ var Three = (function (exports) {
 
 			}
 
-			function getDataURL( image ) {
-
-				var canvas;
-
-				if ( image instanceof HTMLCanvasElement ) {
-
-					canvas = image;
-
-				} else {
-
-					canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
-					canvas.width = image.width;
-					canvas.height = image.height;
-
-					var context = canvas.getContext( '2d' );
-
-					if ( image instanceof ImageData ) {
-
-						context.putImageData( image, 0, 0 );
-
-					} else {
-
-						context.drawImage( image, 0, 0, image.width, image.height );
-
-					}
-
-				}
-
-				if ( canvas.width > 2048 || canvas.height > 2048 ) {
-
-					return canvas.toDataURL( 'image/jpeg', 0.6 );
-
-				} else {
-
-					return canvas.toDataURL( 'image/png' );
-
-				}
-
-			}
-
 			var output = {
 
 				metadata: {
@@ -3549,7 +3587,7 @@ var Three = (function (exports) {
 
 						for ( var i = 0, l = image.length; i < l; i ++ ) {
 
-							url.push( getDataURL( image[ i ] ) );
+							url.push( ImageUtils.getDataURL( image[ i ] ) );
 
 						}
 
@@ -3557,7 +3595,7 @@ var Three = (function (exports) {
 
 						// process single image
 
-						url = getDataURL( image );
+						url = ImageUtils.getDataURL( image );
 
 					}
 

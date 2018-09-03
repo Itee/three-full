@@ -349,6 +349,12 @@ var Three = (function (exports) {
 
 		},
 
+		cross: function ( v ) {
+
+			return this.x * v.y - this.y * v.x;
+
+		},
+
 		lengthSq: function () {
 
 			return this.x * this.x + this.y * this.y;
@@ -540,7 +546,6 @@ var Three = (function (exports) {
 		fragmentShader: [
 
 			"#include <common>",
-			"#include <packing>",
 
 			"varying vec2 vUv;",
 

@@ -1454,6 +1454,26 @@ var Three = (function (exports) {
 
 		}(),
 
+		angleTo: function ( q ) {
+
+			return 2 * Math.acos( Math.abs( _Math.clamp( this.dot( q ), - 1, 1 ) ) );
+
+		},
+
+		rotateTowards: function ( q, step ) {
+
+			var angle = this.angleTo( q );
+
+			if ( angle === 0 ) return this;
+
+			var t = Math.min( 1, step / angle );
+
+			this.slerp( q, t );
+
+			return this;
+
+		},
+
 		inverse: function () {
 
 			// quaternion is assumed to have unit length
@@ -2386,762 +2406,6 @@ var Three = (function (exports) {
 
 	} );
 
-	function Line3( start, end ) {
-
-		this.start = ( start !== undefined ) ? start : new Vector3();
-		this.end = ( end !== undefined ) ? end : new Vector3();
-
-	}
-
-	Object.assign( Line3.prototype, {
-
-		set: function ( start, end ) {
-
-			this.start.copy( start );
-			this.end.copy( end );
-
-			return this;
-
-		},
-
-		clone: function () {
-
-			return new this.constructor().copy( this );
-
-		},
-
-		copy: function ( line ) {
-
-			this.start.copy( line.start );
-			this.end.copy( line.end );
-
-			return this;
-
-		},
-
-		getCenter: function ( target ) {
-
-			if ( target === undefined ) {
-
-				console.warn( 'Line3: .getCenter() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return target.addVectors( this.start, this.end ).multiplyScalar( 0.5 );
-
-		},
-
-		delta: function ( target ) {
-
-			if ( target === undefined ) {
-
-				console.warn( 'Line3: .delta() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return target.subVectors( this.end, this.start );
-
-		},
-
-		distanceSq: function () {
-
-			return this.start.distanceToSquared( this.end );
-
-		},
-
-		distance: function () {
-
-			return this.start.distanceTo( this.end );
-
-		},
-
-		at: function ( t, target ) {
-
-			if ( target === undefined ) {
-
-				console.warn( 'Line3: .at() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return this.delta( target ).multiplyScalar( t ).add( this.start );
-
-		},
-
-		closestPointToPointParameter: function () {
-
-			var startP = new Vector3();
-			var startEnd = new Vector3();
-
-			return function closestPointToPointParameter( point, clampToLine ) {
-
-				startP.subVectors( point, this.start );
-				startEnd.subVectors( this.end, this.start );
-
-				var startEnd2 = startEnd.dot( startEnd );
-				var startEnd_startP = startEnd.dot( startP );
-
-				var t = startEnd_startP / startEnd2;
-
-				if ( clampToLine ) {
-
-					t = _Math.clamp( t, 0, 1 );
-
-				}
-
-				return t;
-
-			};
-
-		}(),
-
-		closestPointToPoint: function ( point, clampToLine, target ) {
-
-			var t = this.closestPointToPointParameter( point, clampToLine );
-
-			if ( target === undefined ) {
-
-				console.warn( 'Line3: .closestPointToPoint() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return this.delta( target ).multiplyScalar( t ).add( this.start );
-
-		},
-
-		applyMatrix4: function ( matrix ) {
-
-			this.start.applyMatrix4( matrix );
-			this.end.applyMatrix4( matrix );
-
-			return this;
-
-		},
-
-		equals: function ( line ) {
-
-			return line.start.equals( this.start ) && line.end.equals( this.end );
-
-		}
-
-	} );
-
-	function Matrix3() {
-
-		this.elements = [
-
-			1, 0, 0,
-			0, 1, 0,
-			0, 0, 1
-
-		];
-
-		if ( arguments.length > 0 ) {
-
-			console.error( 'Matrix3: the constructor no longer reads arguments. use .set() instead.' );
-
-		}
-
-	}
-
-	Object.assign( Matrix3.prototype, {
-
-		isMatrix3: true,
-
-		set: function ( n11, n12, n13, n21, n22, n23, n31, n32, n33 ) {
-
-			var te = this.elements;
-
-			te[ 0 ] = n11; te[ 1 ] = n21; te[ 2 ] = n31;
-			te[ 3 ] = n12; te[ 4 ] = n22; te[ 5 ] = n32;
-			te[ 6 ] = n13; te[ 7 ] = n23; te[ 8 ] = n33;
-
-			return this;
-
-		},
-
-		identity: function () {
-
-			this.set(
-
-				1, 0, 0,
-				0, 1, 0,
-				0, 0, 1
-
-			);
-
-			return this;
-
-		},
-
-		clone: function () {
-
-			return new this.constructor().fromArray( this.elements );
-
-		},
-
-		copy: function ( m ) {
-
-			var te = this.elements;
-			var me = m.elements;
-
-			te[ 0 ] = me[ 0 ]; te[ 1 ] = me[ 1 ]; te[ 2 ] = me[ 2 ];
-			te[ 3 ] = me[ 3 ]; te[ 4 ] = me[ 4 ]; te[ 5 ] = me[ 5 ];
-			te[ 6 ] = me[ 6 ]; te[ 7 ] = me[ 7 ]; te[ 8 ] = me[ 8 ];
-
-			return this;
-
-		},
-
-		setFromMatrix4: function ( m ) {
-
-			var me = m.elements;
-
-			this.set(
-
-				me[ 0 ], me[ 4 ], me[ 8 ],
-				me[ 1 ], me[ 5 ], me[ 9 ],
-				me[ 2 ], me[ 6 ], me[ 10 ]
-
-			);
-
-			return this;
-
-		},
-
-		applyToBufferAttribute: function () {
-
-			var v1 = new Vector3();
-
-			return function applyToBufferAttribute( attribute ) {
-
-				for ( var i = 0, l = attribute.count; i < l; i ++ ) {
-
-					v1.x = attribute.getX( i );
-					v1.y = attribute.getY( i );
-					v1.z = attribute.getZ( i );
-
-					v1.applyMatrix3( this );
-
-					attribute.setXYZ( i, v1.x, v1.y, v1.z );
-
-				}
-
-				return attribute;
-
-			};
-
-		}(),
-
-		multiply: function ( m ) {
-
-			return this.multiplyMatrices( this, m );
-
-		},
-
-		premultiply: function ( m ) {
-
-			return this.multiplyMatrices( m, this );
-
-		},
-
-		multiplyMatrices: function ( a, b ) {
-
-			var ae = a.elements;
-			var be = b.elements;
-			var te = this.elements;
-
-			var a11 = ae[ 0 ], a12 = ae[ 3 ], a13 = ae[ 6 ];
-			var a21 = ae[ 1 ], a22 = ae[ 4 ], a23 = ae[ 7 ];
-			var a31 = ae[ 2 ], a32 = ae[ 5 ], a33 = ae[ 8 ];
-
-			var b11 = be[ 0 ], b12 = be[ 3 ], b13 = be[ 6 ];
-			var b21 = be[ 1 ], b22 = be[ 4 ], b23 = be[ 7 ];
-			var b31 = be[ 2 ], b32 = be[ 5 ], b33 = be[ 8 ];
-
-			te[ 0 ] = a11 * b11 + a12 * b21 + a13 * b31;
-			te[ 3 ] = a11 * b12 + a12 * b22 + a13 * b32;
-			te[ 6 ] = a11 * b13 + a12 * b23 + a13 * b33;
-
-			te[ 1 ] = a21 * b11 + a22 * b21 + a23 * b31;
-			te[ 4 ] = a21 * b12 + a22 * b22 + a23 * b32;
-			te[ 7 ] = a21 * b13 + a22 * b23 + a23 * b33;
-
-			te[ 2 ] = a31 * b11 + a32 * b21 + a33 * b31;
-			te[ 5 ] = a31 * b12 + a32 * b22 + a33 * b32;
-			te[ 8 ] = a31 * b13 + a32 * b23 + a33 * b33;
-
-			return this;
-
-		},
-
-		multiplyScalar: function ( s ) {
-
-			var te = this.elements;
-
-			te[ 0 ] *= s; te[ 3 ] *= s; te[ 6 ] *= s;
-			te[ 1 ] *= s; te[ 4 ] *= s; te[ 7 ] *= s;
-			te[ 2 ] *= s; te[ 5 ] *= s; te[ 8 ] *= s;
-
-			return this;
-
-		},
-
-		determinant: function () {
-
-			var te = this.elements;
-
-			var a = te[ 0 ], b = te[ 1 ], c = te[ 2 ],
-				d = te[ 3 ], e = te[ 4 ], f = te[ 5 ],
-				g = te[ 6 ], h = te[ 7 ], i = te[ 8 ];
-
-			return a * e * i - a * f * h - b * d * i + b * f * g + c * d * h - c * e * g;
-
-		},
-
-		getInverse: function ( matrix, throwOnDegenerate ) {
-
-			if ( matrix && matrix.isMatrix4 ) {
-
-				console.error( "Matrix3: .getInverse() no longer takes a Matrix4 argument." );
-
-			}
-
-			var me = matrix.elements,
-				te = this.elements,
-
-				n11 = me[ 0 ], n21 = me[ 1 ], n31 = me[ 2 ],
-				n12 = me[ 3 ], n22 = me[ 4 ], n32 = me[ 5 ],
-				n13 = me[ 6 ], n23 = me[ 7 ], n33 = me[ 8 ],
-
-				t11 = n33 * n22 - n32 * n23,
-				t12 = n32 * n13 - n33 * n12,
-				t13 = n23 * n12 - n22 * n13,
-
-				det = n11 * t11 + n21 * t12 + n31 * t13;
-
-			if ( det === 0 ) {
-
-				var msg = "Matrix3: .getInverse() can't invert matrix, determinant is 0";
-
-				if ( throwOnDegenerate === true ) {
-
-					throw new Error( msg );
-
-				} else {
-
-					console.warn( msg );
-
-				}
-
-				return this.identity();
-
-			}
-
-			var detInv = 1 / det;
-
-			te[ 0 ] = t11 * detInv;
-			te[ 1 ] = ( n31 * n23 - n33 * n21 ) * detInv;
-			te[ 2 ] = ( n32 * n21 - n31 * n22 ) * detInv;
-
-			te[ 3 ] = t12 * detInv;
-			te[ 4 ] = ( n33 * n11 - n31 * n13 ) * detInv;
-			te[ 5 ] = ( n31 * n12 - n32 * n11 ) * detInv;
-
-			te[ 6 ] = t13 * detInv;
-			te[ 7 ] = ( n21 * n13 - n23 * n11 ) * detInv;
-			te[ 8 ] = ( n22 * n11 - n21 * n12 ) * detInv;
-
-			return this;
-
-		},
-
-		transpose: function () {
-
-			var tmp, m = this.elements;
-
-			tmp = m[ 1 ]; m[ 1 ] = m[ 3 ]; m[ 3 ] = tmp;
-			tmp = m[ 2 ]; m[ 2 ] = m[ 6 ]; m[ 6 ] = tmp;
-			tmp = m[ 5 ]; m[ 5 ] = m[ 7 ]; m[ 7 ] = tmp;
-
-			return this;
-
-		},
-
-		getNormalMatrix: function ( matrix4 ) {
-
-			return this.setFromMatrix4( matrix4 ).getInverse( this ).transpose();
-
-		},
-
-		transposeIntoArray: function ( r ) {
-
-			var m = this.elements;
-
-			r[ 0 ] = m[ 0 ];
-			r[ 1 ] = m[ 3 ];
-			r[ 2 ] = m[ 6 ];
-			r[ 3 ] = m[ 1 ];
-			r[ 4 ] = m[ 4 ];
-			r[ 5 ] = m[ 7 ];
-			r[ 6 ] = m[ 2 ];
-			r[ 7 ] = m[ 5 ];
-			r[ 8 ] = m[ 8 ];
-
-			return this;
-
-		},
-
-		setUvTransform: function ( tx, ty, sx, sy, rotation, cx, cy ) {
-
-			var c = Math.cos( rotation );
-			var s = Math.sin( rotation );
-
-			this.set(
-				sx * c, sx * s, - sx * ( c * cx + s * cy ) + cx + tx,
-				- sy * s, sy * c, - sy * ( - s * cx + c * cy ) + cy + ty,
-				0, 0, 1
-			);
-
-		},
-
-		scale: function ( sx, sy ) {
-
-			var te = this.elements;
-
-			te[ 0 ] *= sx; te[ 3 ] *= sx; te[ 6 ] *= sx;
-			te[ 1 ] *= sy; te[ 4 ] *= sy; te[ 7 ] *= sy;
-
-			return this;
-
-		},
-
-		rotate: function ( theta ) {
-
-			var c = Math.cos( theta );
-			var s = Math.sin( theta );
-
-			var te = this.elements;
-
-			var a11 = te[ 0 ], a12 = te[ 3 ], a13 = te[ 6 ];
-			var a21 = te[ 1 ], a22 = te[ 4 ], a23 = te[ 7 ];
-
-			te[ 0 ] = c * a11 + s * a21;
-			te[ 3 ] = c * a12 + s * a22;
-			te[ 6 ] = c * a13 + s * a23;
-
-			te[ 1 ] = - s * a11 + c * a21;
-			te[ 4 ] = - s * a12 + c * a22;
-			te[ 7 ] = - s * a13 + c * a23;
-
-			return this;
-
-		},
-
-		translate: function ( tx, ty ) {
-
-			var te = this.elements;
-
-			te[ 0 ] += tx * te[ 2 ]; te[ 3 ] += tx * te[ 5 ]; te[ 6 ] += tx * te[ 8 ];
-			te[ 1 ] += ty * te[ 2 ]; te[ 4 ] += ty * te[ 5 ]; te[ 7 ] += ty * te[ 8 ];
-
-			return this;
-
-		},
-
-		equals: function ( matrix ) {
-
-			var te = this.elements;
-			var me = matrix.elements;
-
-			for ( var i = 0; i < 9; i ++ ) {
-
-				if ( te[ i ] !== me[ i ] ) return false;
-
-			}
-
-			return true;
-
-		},
-
-		fromArray: function ( array, offset ) {
-
-			if ( offset === undefined ) offset = 0;
-
-			for ( var i = 0; i < 9; i ++ ) {
-
-				this.elements[ i ] = array[ i + offset ];
-
-			}
-
-			return this;
-
-		},
-
-		toArray: function ( array, offset ) {
-
-			if ( array === undefined ) array = [];
-			if ( offset === undefined ) offset = 0;
-
-			var te = this.elements;
-
-			array[ offset ] = te[ 0 ];
-			array[ offset + 1 ] = te[ 1 ];
-			array[ offset + 2 ] = te[ 2 ];
-
-			array[ offset + 3 ] = te[ 3 ];
-			array[ offset + 4 ] = te[ 4 ];
-			array[ offset + 5 ] = te[ 5 ];
-
-			array[ offset + 6 ] = te[ 6 ];
-			array[ offset + 7 ] = te[ 7 ];
-			array[ offset + 8 ] = te[ 8 ];
-
-			return array;
-
-		}
-
-	} );
-
-	function Plane( normal, constant ) {
-
-		// normal is assumed to be normalized
-
-		this.normal = ( normal !== undefined ) ? normal : new Vector3( 1, 0, 0 );
-		this.constant = ( constant !== undefined ) ? constant : 0;
-
-	}
-
-	Object.assign( Plane.prototype, {
-
-		set: function ( normal, constant ) {
-
-			this.normal.copy( normal );
-			this.constant = constant;
-
-			return this;
-
-		},
-
-		setComponents: function ( x, y, z, w ) {
-
-			this.normal.set( x, y, z );
-			this.constant = w;
-
-			return this;
-
-		},
-
-		setFromNormalAndCoplanarPoint: function ( normal, point ) {
-
-			this.normal.copy( normal );
-			this.constant = - point.dot( this.normal );
-
-			return this;
-
-		},
-
-		setFromCoplanarPoints: function () {
-
-			var v1 = new Vector3();
-			var v2 = new Vector3();
-
-			return function setFromCoplanarPoints( a, b, c ) {
-
-				var normal = v1.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
-
-				// Q: should an error be thrown if normal is zero (e.g. degenerate plane)?
-
-				this.setFromNormalAndCoplanarPoint( normal, a );
-
-				return this;
-
-			};
-
-		}(),
-
-		clone: function () {
-
-			return new this.constructor().copy( this );
-
-		},
-
-		copy: function ( plane ) {
-
-			this.normal.copy( plane.normal );
-			this.constant = plane.constant;
-
-			return this;
-
-		},
-
-		normalize: function () {
-
-			// Note: will lead to a divide by zero if the plane is invalid.
-
-			var inverseNormalLength = 1.0 / this.normal.length();
-			this.normal.multiplyScalar( inverseNormalLength );
-			this.constant *= inverseNormalLength;
-
-			return this;
-
-		},
-
-		negate: function () {
-
-			this.constant *= - 1;
-			this.normal.negate();
-
-			return this;
-
-		},
-
-		distanceToPoint: function ( point ) {
-
-			return this.normal.dot( point ) + this.constant;
-
-		},
-
-		distanceToSphere: function ( sphere ) {
-
-			return this.distanceToPoint( sphere.center ) - sphere.radius;
-
-		},
-
-		projectPoint: function ( point, target ) {
-
-			if ( target === undefined ) {
-
-				console.warn( 'Plane: .projectPoint() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return target.copy( this.normal ).multiplyScalar( - this.distanceToPoint( point ) ).add( point );
-
-		},
-
-		intersectLine: function () {
-
-			var v1 = new Vector3();
-
-			return function intersectLine( line, target ) {
-
-				if ( target === undefined ) {
-
-					console.warn( 'Plane: .intersectLine() target is now required' );
-					target = new Vector3();
-
-				}
-
-				var direction = line.delta( v1 );
-
-				var denominator = this.normal.dot( direction );
-
-				if ( denominator === 0 ) {
-
-					// line is coplanar, return origin
-					if ( this.distanceToPoint( line.start ) === 0 ) {
-
-						return target.copy( line.start );
-
-					}
-
-					// Unsure if this is the correct method to handle this case.
-					return undefined;
-
-				}
-
-				var t = - ( line.start.dot( this.normal ) + this.constant ) / denominator;
-
-				if ( t < 0 || t > 1 ) {
-
-					return undefined;
-
-				}
-
-				return target.copy( direction ).multiplyScalar( t ).add( line.start );
-
-			};
-
-		}(),
-
-		intersectsLine: function ( line ) {
-
-			// Note: this tests if a line intersects the plane, not whether it (or its end-points) are coplanar with it.
-
-			var startSign = this.distanceToPoint( line.start );
-			var endSign = this.distanceToPoint( line.end );
-
-			return ( startSign < 0 && endSign > 0 ) || ( endSign < 0 && startSign > 0 );
-
-		},
-
-		intersectsBox: function ( box ) {
-
-			return box.intersectsPlane( this );
-
-		},
-
-		intersectsSphere: function ( sphere ) {
-
-			return sphere.intersectsPlane( this );
-
-		},
-
-		coplanarPoint: function ( target ) {
-
-			if ( target === undefined ) {
-
-				console.warn( 'Plane: .coplanarPoint() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return target.copy( this.normal ).multiplyScalar( - this.constant );
-
-		},
-
-		applyMatrix4: function () {
-
-			var v1 = new Vector3();
-			var m1 = new Matrix3();
-
-			return function applyMatrix4( matrix, optionalNormalMatrix ) {
-
-				var normalMatrix = optionalNormalMatrix || m1.getNormalMatrix( matrix );
-
-				var referencePoint = this.coplanarPoint( v1 ).applyMatrix4( matrix );
-
-				var normal = this.normal.applyMatrix3( normalMatrix ).normalize();
-
-				this.constant = - referencePoint.dot( normal );
-
-				return this;
-
-			};
-
-		}(),
-
-		translate: function ( offset ) {
-
-			this.constant -= offset.dot( this.normal );
-
-			return this;
-
-		},
-
-		equals: function ( plane ) {
-
-			return plane.normal.equals( this.normal ) && ( plane.constant === this.constant );
-
-		}
-
-	} );
-
 	function Triangle( a, b, c ) {
 
 		this.a = ( a !== undefined ) ? a : new Vector3();
@@ -3353,12 +2617,14 @@ var Three = (function (exports) {
 
 		closestPointToPoint: function () {
 
-			var plane = new Plane();
-			var edgeList = [ new Line3(), new Line3(), new Line3() ];
-			var projectedPoint = new Vector3();
-			var closestPoint = new Vector3();
+			var vab = new Vector3();
+			var vac = new Vector3();
+			var vbc = new Vector3();
+			var vap = new Vector3();
+			var vbp = new Vector3();
+			var vcp = new Vector3();
 
-			return function closestPointToPoint( point, target ) {
+			return function closestPointToPoint( p, target ) {
 
 				if ( target === undefined ) {
 
@@ -3367,48 +2633,81 @@ var Three = (function (exports) {
 
 				}
 
-				var minDistance = Infinity;
+				var a = this.a, b = this.b, c = this.c;
+				var v, w;
 
-				// project the point onto the plane of the triangle
+				// algorithm thanks to Real-Time Collision Detection by Christer Ericson,
+				// published by Morgan Kaufmann Publishers, (c) 2005 Elsevier Inc.,
+				// under the accompanying license; see chapter 5.1.5 for detailed explanation.
+				// basically, we're distinguishing which of the voronoi regions of the triangle
+				// the point lies in with the minimum amount of redundant computation.
 
-				plane.setFromCoplanarPoints( this.a, this.b, this.c );
-				plane.projectPoint( point, projectedPoint );
+				vab.subVectors( b, a );
+				vac.subVectors( c, a );
+				vap.subVectors( p, a );
+				var d1 = vab.dot( vap );
+				var d2 = vac.dot( vap );
+				if ( d1 <= 0 && d2 <= 0 ) {
 
-				// check if the projection lies within the triangle
-
-				if ( this.containsPoint( projectedPoint ) === true ) {
-
-					// if so, this is the closest point
-
-					target.copy( projectedPoint );
-
-				} else {
-
-					// if not, the point falls outside the triangle. the target is the closest point to the triangle's edges or vertices
-
-					edgeList[ 0 ].set( this.a, this.b );
-					edgeList[ 1 ].set( this.b, this.c );
-					edgeList[ 2 ].set( this.c, this.a );
-
-					for ( var i = 0; i < edgeList.length; i ++ ) {
-
-						edgeList[ i ].closestPointToPoint( projectedPoint, true, closestPoint );
-
-						var distance = projectedPoint.distanceToSquared( closestPoint );
-
-						if ( distance < minDistance ) {
-
-							minDistance = distance;
-
-							target.copy( closestPoint );
-
-						}
-
-					}
+					// vertex region of A; barycentric coords (1, 0, 0)
+					return target.copy( a );
 
 				}
 
-				return target;
+				vbp.subVectors( p, b );
+				var d3 = vab.dot( vbp );
+				var d4 = vac.dot( vbp );
+				if ( d3 >= 0 && d4 <= d3 ) {
+
+					// vertex region of B; barycentric coords (0, 1, 0)
+					return target.copy( b );
+
+				}
+
+				var vc = d1 * d4 - d3 * d2;
+				if ( vc <= 0 && d1 >= 0 && d3 <= 0 ) {
+
+					v = d1 / ( d1 - d3 );
+					// edge region of AB; barycentric coords (1-v, v, 0)
+					return target.copy( a ).addScaledVector( vab, v );
+
+				}
+
+				vcp.subVectors( p, c );
+				var d5 = vab.dot( vcp );
+				var d6 = vac.dot( vcp );
+				if ( d6 >= 0 && d5 <= d6 ) {
+
+					// vertex region of C; barycentric coords (0, 0, 1)
+					return target.copy( c );
+
+				}
+
+				var vb = d5 * d2 - d1 * d6;
+				if ( vb <= 0 && d2 >= 0 && d6 <= 0 ) {
+
+					w = d2 / ( d2 - d6 );
+					// edge region of AC; barycentric coords (1-w, 0, w)
+					return target.copy( a ).addScaledVector( vac, w );
+
+				}
+
+				var va = d3 * d6 - d5 * d4;
+				if ( va <= 0 && ( d4 - d3 ) >= 0 && ( d5 - d6 ) >= 0 ) {
+
+					vbc.subVectors( c, b );
+					w = ( d4 - d3 ) / ( ( d4 - d3 ) + ( d5 - d6 ) );
+					// edge region of BC; barycentric coords (0, 1-w, w)
+					return target.copy( b ).addScaledVector( vbc, w ); // edge region of BC
+
+				}
+
+				// face region
+				var denom = 1 / ( va + vb + vc );
+				// u = va * denom
+				v = vb * denom;
+				w = vc * denom;
+				return target.copy( a ).addScaledVector( vab, v ).addScaledVector( vac, w );
 
 			};
 

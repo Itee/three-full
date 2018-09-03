@@ -69,7 +69,7 @@ var Three = (function (exports) {
 	var RGBA_ASTC_12x10_Format = 37820;
 	var RGBA_ASTC_12x12_Format = 37821;
 
-	function WebGLUtils( gl, extensions ) {
+	function WebGLUtils( gl, extensions, capabilities ) {
 
 		function convert( p ) {
 
@@ -100,6 +100,8 @@ var Three = (function (exports) {
 			if ( p === FloatType ) return gl.FLOAT;
 
 			if ( p === HalfFloatType ) {
+
+				if ( capabilities.isWebGL2 ) return gl.HALF_FLOAT;
 
 				extension = extensions.get( 'OES_texture_half_float' );
 
@@ -190,6 +192,13 @@ var Three = (function (exports) {
 
 			if ( p === MinEquation || p === MaxEquation ) {
 
+				if ( capabilities.isWebGL2 ) {
+
+					if ( p === MinEquation ) return gl.MIN;
+					if ( p === MaxEquation ) return gl.MAX;
+
+				}
+
 				extension = extensions.get( 'EXT_blend_minmax' );
 
 				if ( extension !== null ) {
@@ -202,6 +211,8 @@ var Three = (function (exports) {
 			}
 
 			if ( p === UnsignedInt248Type ) {
+
+				if ( capabilities.isWebGL2 ) return gl.UNSIGNED_INT_24_8;
 
 				extension = extensions.get( 'WEBGL_depth_texture' );
 

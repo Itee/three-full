@@ -2494,6 +2494,26 @@ var Three = (function (exports) {
 
 		}(),
 
+		angleTo: function ( q ) {
+
+			return 2 * Math.acos( Math.abs( _Math.clamp( this.dot( q ), - 1, 1 ) ) );
+
+		},
+
+		rotateTowards: function ( q, step ) {
+
+			var angle = this.angleTo( q );
+
+			if ( angle === 0 ) return this;
+
+			var t = Math.min( 1, step / angle );
+
+			this.slerp( q, t );
+
+			return this;
+
+		},
+
 		inverse: function () {
 
 			// quaternion is assumed to have unit length
@@ -3771,6 +3791,12 @@ var Three = (function (exports) {
 		dot: function ( v ) {
 
 			return this.x * v.x + this.y * v.y;
+
+		},
+
+		cross: function ( v ) {
+
+			return this.x * v.y - this.y * v.x;
 
 		},
 
@@ -7417,7 +7443,7 @@ var Three = (function (exports) {
 
 			}
 
-			if ( this.geometry !== undefined ) {
+			if ( this.isMesh || this.isLine || this.isPoints ) {
 
 				object.geometry = serialize( meta.geometries, this.geometry );
 
@@ -9746,385 +9772,6 @@ var Three = (function (exports) {
 
 	} );
 
-	function Line3( start, end ) {
-
-		this.start = ( start !== undefined ) ? start : new Vector3();
-		this.end = ( end !== undefined ) ? end : new Vector3();
-
-	}
-
-	Object.assign( Line3.prototype, {
-
-		set: function ( start, end ) {
-
-			this.start.copy( start );
-			this.end.copy( end );
-
-			return this;
-
-		},
-
-		clone: function () {
-
-			return new this.constructor().copy( this );
-
-		},
-
-		copy: function ( line ) {
-
-			this.start.copy( line.start );
-			this.end.copy( line.end );
-
-			return this;
-
-		},
-
-		getCenter: function ( target ) {
-
-			if ( target === undefined ) {
-
-				console.warn( 'Line3: .getCenter() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return target.addVectors( this.start, this.end ).multiplyScalar( 0.5 );
-
-		},
-
-		delta: function ( target ) {
-
-			if ( target === undefined ) {
-
-				console.warn( 'Line3: .delta() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return target.subVectors( this.end, this.start );
-
-		},
-
-		distanceSq: function () {
-
-			return this.start.distanceToSquared( this.end );
-
-		},
-
-		distance: function () {
-
-			return this.start.distanceTo( this.end );
-
-		},
-
-		at: function ( t, target ) {
-
-			if ( target === undefined ) {
-
-				console.warn( 'Line3: .at() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return this.delta( target ).multiplyScalar( t ).add( this.start );
-
-		},
-
-		closestPointToPointParameter: function () {
-
-			var startP = new Vector3();
-			var startEnd = new Vector3();
-
-			return function closestPointToPointParameter( point, clampToLine ) {
-
-				startP.subVectors( point, this.start );
-				startEnd.subVectors( this.end, this.start );
-
-				var startEnd2 = startEnd.dot( startEnd );
-				var startEnd_startP = startEnd.dot( startP );
-
-				var t = startEnd_startP / startEnd2;
-
-				if ( clampToLine ) {
-
-					t = _Math.clamp( t, 0, 1 );
-
-				}
-
-				return t;
-
-			};
-
-		}(),
-
-		closestPointToPoint: function ( point, clampToLine, target ) {
-
-			var t = this.closestPointToPointParameter( point, clampToLine );
-
-			if ( target === undefined ) {
-
-				console.warn( 'Line3: .closestPointToPoint() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return this.delta( target ).multiplyScalar( t ).add( this.start );
-
-		},
-
-		applyMatrix4: function ( matrix ) {
-
-			this.start.applyMatrix4( matrix );
-			this.end.applyMatrix4( matrix );
-
-			return this;
-
-		},
-
-		equals: function ( line ) {
-
-			return line.start.equals( this.start ) && line.end.equals( this.end );
-
-		}
-
-	} );
-
-	function Plane( normal, constant ) {
-
-		// normal is assumed to be normalized
-
-		this.normal = ( normal !== undefined ) ? normal : new Vector3( 1, 0, 0 );
-		this.constant = ( constant !== undefined ) ? constant : 0;
-
-	}
-
-	Object.assign( Plane.prototype, {
-
-		set: function ( normal, constant ) {
-
-			this.normal.copy( normal );
-			this.constant = constant;
-
-			return this;
-
-		},
-
-		setComponents: function ( x, y, z, w ) {
-
-			this.normal.set( x, y, z );
-			this.constant = w;
-
-			return this;
-
-		},
-
-		setFromNormalAndCoplanarPoint: function ( normal, point ) {
-
-			this.normal.copy( normal );
-			this.constant = - point.dot( this.normal );
-
-			return this;
-
-		},
-
-		setFromCoplanarPoints: function () {
-
-			var v1 = new Vector3();
-			var v2 = new Vector3();
-
-			return function setFromCoplanarPoints( a, b, c ) {
-
-				var normal = v1.subVectors( c, b ).cross( v2.subVectors( a, b ) ).normalize();
-
-				// Q: should an error be thrown if normal is zero (e.g. degenerate plane)?
-
-				this.setFromNormalAndCoplanarPoint( normal, a );
-
-				return this;
-
-			};
-
-		}(),
-
-		clone: function () {
-
-			return new this.constructor().copy( this );
-
-		},
-
-		copy: function ( plane ) {
-
-			this.normal.copy( plane.normal );
-			this.constant = plane.constant;
-
-			return this;
-
-		},
-
-		normalize: function () {
-
-			// Note: will lead to a divide by zero if the plane is invalid.
-
-			var inverseNormalLength = 1.0 / this.normal.length();
-			this.normal.multiplyScalar( inverseNormalLength );
-			this.constant *= inverseNormalLength;
-
-			return this;
-
-		},
-
-		negate: function () {
-
-			this.constant *= - 1;
-			this.normal.negate();
-
-			return this;
-
-		},
-
-		distanceToPoint: function ( point ) {
-
-			return this.normal.dot( point ) + this.constant;
-
-		},
-
-		distanceToSphere: function ( sphere ) {
-
-			return this.distanceToPoint( sphere.center ) - sphere.radius;
-
-		},
-
-		projectPoint: function ( point, target ) {
-
-			if ( target === undefined ) {
-
-				console.warn( 'Plane: .projectPoint() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return target.copy( this.normal ).multiplyScalar( - this.distanceToPoint( point ) ).add( point );
-
-		},
-
-		intersectLine: function () {
-
-			var v1 = new Vector3();
-
-			return function intersectLine( line, target ) {
-
-				if ( target === undefined ) {
-
-					console.warn( 'Plane: .intersectLine() target is now required' );
-					target = new Vector3();
-
-				}
-
-				var direction = line.delta( v1 );
-
-				var denominator = this.normal.dot( direction );
-
-				if ( denominator === 0 ) {
-
-					// line is coplanar, return origin
-					if ( this.distanceToPoint( line.start ) === 0 ) {
-
-						return target.copy( line.start );
-
-					}
-
-					// Unsure if this is the correct method to handle this case.
-					return undefined;
-
-				}
-
-				var t = - ( line.start.dot( this.normal ) + this.constant ) / denominator;
-
-				if ( t < 0 || t > 1 ) {
-
-					return undefined;
-
-				}
-
-				return target.copy( direction ).multiplyScalar( t ).add( line.start );
-
-			};
-
-		}(),
-
-		intersectsLine: function ( line ) {
-
-			// Note: this tests if a line intersects the plane, not whether it (or its end-points) are coplanar with it.
-
-			var startSign = this.distanceToPoint( line.start );
-			var endSign = this.distanceToPoint( line.end );
-
-			return ( startSign < 0 && endSign > 0 ) || ( endSign < 0 && startSign > 0 );
-
-		},
-
-		intersectsBox: function ( box ) {
-
-			return box.intersectsPlane( this );
-
-		},
-
-		intersectsSphere: function ( sphere ) {
-
-			return sphere.intersectsPlane( this );
-
-		},
-
-		coplanarPoint: function ( target ) {
-
-			if ( target === undefined ) {
-
-				console.warn( 'Plane: .coplanarPoint() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return target.copy( this.normal ).multiplyScalar( - this.constant );
-
-		},
-
-		applyMatrix4: function () {
-
-			var v1 = new Vector3();
-			var m1 = new Matrix3();
-
-			return function applyMatrix4( matrix, optionalNormalMatrix ) {
-
-				var normalMatrix = optionalNormalMatrix || m1.getNormalMatrix( matrix );
-
-				var referencePoint = this.coplanarPoint( v1 ).applyMatrix4( matrix );
-
-				var normal = this.normal.applyMatrix3( normalMatrix ).normalize();
-
-				this.constant = - referencePoint.dot( normal );
-
-				return this;
-
-			};
-
-		}(),
-
-		translate: function ( offset ) {
-
-			this.constant -= offset.dot( this.normal );
-
-			return this;
-
-		},
-
-		equals: function ( plane ) {
-
-			return plane.normal.equals( this.normal ) && ( plane.constant === this.constant );
-
-		}
-
-	} );
-
 	function Triangle( a, b, c ) {
 
 		this.a = ( a !== undefined ) ? a : new Vector3();
@@ -10336,12 +9983,14 @@ var Three = (function (exports) {
 
 		closestPointToPoint: function () {
 
-			var plane = new Plane();
-			var edgeList = [ new Line3(), new Line3(), new Line3() ];
-			var projectedPoint = new Vector3();
-			var closestPoint = new Vector3();
+			var vab = new Vector3();
+			var vac = new Vector3();
+			var vbc = new Vector3();
+			var vap = new Vector3();
+			var vbp = new Vector3();
+			var vcp = new Vector3();
 
-			return function closestPointToPoint( point, target ) {
+			return function closestPointToPoint( p, target ) {
 
 				if ( target === undefined ) {
 
@@ -10350,48 +9999,81 @@ var Three = (function (exports) {
 
 				}
 
-				var minDistance = Infinity;
+				var a = this.a, b = this.b, c = this.c;
+				var v, w;
 
-				// project the point onto the plane of the triangle
+				// algorithm thanks to Real-Time Collision Detection by Christer Ericson,
+				// published by Morgan Kaufmann Publishers, (c) 2005 Elsevier Inc.,
+				// under the accompanying license; see chapter 5.1.5 for detailed explanation.
+				// basically, we're distinguishing which of the voronoi regions of the triangle
+				// the point lies in with the minimum amount of redundant computation.
 
-				plane.setFromCoplanarPoints( this.a, this.b, this.c );
-				plane.projectPoint( point, projectedPoint );
+				vab.subVectors( b, a );
+				vac.subVectors( c, a );
+				vap.subVectors( p, a );
+				var d1 = vab.dot( vap );
+				var d2 = vac.dot( vap );
+				if ( d1 <= 0 && d2 <= 0 ) {
 
-				// check if the projection lies within the triangle
-
-				if ( this.containsPoint( projectedPoint ) === true ) {
-
-					// if so, this is the closest point
-
-					target.copy( projectedPoint );
-
-				} else {
-
-					// if not, the point falls outside the triangle. the target is the closest point to the triangle's edges or vertices
-
-					edgeList[ 0 ].set( this.a, this.b );
-					edgeList[ 1 ].set( this.b, this.c );
-					edgeList[ 2 ].set( this.c, this.a );
-
-					for ( var i = 0; i < edgeList.length; i ++ ) {
-
-						edgeList[ i ].closestPointToPoint( projectedPoint, true, closestPoint );
-
-						var distance = projectedPoint.distanceToSquared( closestPoint );
-
-						if ( distance < minDistance ) {
-
-							minDistance = distance;
-
-							target.copy( closestPoint );
-
-						}
-
-					}
+					// vertex region of A; barycentric coords (1, 0, 0)
+					return target.copy( a );
 
 				}
 
-				return target;
+				vbp.subVectors( p, b );
+				var d3 = vab.dot( vbp );
+				var d4 = vac.dot( vbp );
+				if ( d3 >= 0 && d4 <= d3 ) {
+
+					// vertex region of B; barycentric coords (0, 1, 0)
+					return target.copy( b );
+
+				}
+
+				var vc = d1 * d4 - d3 * d2;
+				if ( vc <= 0 && d1 >= 0 && d3 <= 0 ) {
+
+					v = d1 / ( d1 - d3 );
+					// edge region of AB; barycentric coords (1-v, v, 0)
+					return target.copy( a ).addScaledVector( vab, v );
+
+				}
+
+				vcp.subVectors( p, c );
+				var d5 = vab.dot( vcp );
+				var d6 = vac.dot( vcp );
+				if ( d6 >= 0 && d5 <= d6 ) {
+
+					// vertex region of C; barycentric coords (0, 0, 1)
+					return target.copy( c );
+
+				}
+
+				var vb = d5 * d2 - d1 * d6;
+				if ( vb <= 0 && d2 >= 0 && d6 <= 0 ) {
+
+					w = d2 / ( d2 - d6 );
+					// edge region of AC; barycentric coords (1-w, 0, w)
+					return target.copy( a ).addScaledVector( vac, w );
+
+				}
+
+				var va = d3 * d6 - d5 * d4;
+				if ( va <= 0 && ( d4 - d3 ) >= 0 && ( d5 - d6 ) >= 0 ) {
+
+					vbc.subVectors( c, b );
+					w = ( d4 - d3 ) / ( ( d4 - d3 ) + ( d5 - d6 ) );
+					// edge region of BC; barycentric coords (0, 1-w, w)
+					return target.copy( b ).addScaledVector( vbc, w ); // edge region of BC
+
+				}
+
+				// face region
+				var denom = 1 / ( va + vb + vc );
+				// u = va * denom
+				v = vb * denom;
+				w = vc * denom;
+				return target.copy( a ).addScaledVector( vab, v ).addScaledVector( vac, w );
 
 			};
 
@@ -10801,15 +10483,15 @@ var Three = (function (exports) {
 
 								for ( j = start, jl = end; j < jl; j += 3 ) {
 
-									a = index.getX( i );
-									b = index.getX( i + 1 );
-									c = index.getX( i + 2 );
+									a = index.getX( j );
+									b = index.getX( j + 1 );
+									c = index.getX( j + 2 );
 
 									intersection = checkBufferGeometryIntersection( this, groupMaterial, raycaster, ray, position, uv, a, b, c );
 
 									if ( intersection ) {
 
-										intersection.faceIndex = Math.floor( i / 3 ); // triangle number in indexed buffer semantics
+										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in indexed buffer semantics
 										intersects.push( intersection );
 
 									}
@@ -10866,7 +10548,7 @@ var Three = (function (exports) {
 
 									if ( intersection ) {
 
-										intersection.faceIndex = Math.floor( i / 3 ); // triangle number in non-indexed buffer semantics
+										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in non-indexed buffer semantics
 										intersects.push( intersection );
 
 									}

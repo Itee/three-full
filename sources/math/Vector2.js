@@ -350,6 +350,12 @@ Object.assign( Vector2.prototype, {
 
 	},
 
+	cross: function ( v ) {
+
+		return this.x * v.y - this.y * v.x;
+
+	},
+
 	lengthSq: function () {
 
 		return this.x * this.x + this.y * this.y;

@@ -1,18 +1,23 @@
-import { InputNode } from '../InputNode.js'
+import { InputNode } from '../core/InputNode.js'
 import { UVNode } from '../accessors/UVNode.js'
+import { ColorSpaceNode } from '../utils/ColorSpaceNode.js'
 
 
 
-var TextureNode = function ( value, coord, bias, project ) {
+
+
+
+
+function TextureNode( value, uv, bias, project ) {
 
 	InputNode.call( this, 'v4', { shared: true } );
 
 	this.value = value;
-	this.coord = coord || new UVNode();
+	this.uv = uv || new UVNode();
 	this.bias = bias;
 	this.project = project !== undefined ? project : false;
 
-};
+}
 
 TextureNode.prototype = Object.create( InputNode.prototype );
 TextureNode.prototype.constructor = TextureNode;
@@ -32,13 +37,13 @@ TextureNode.prototype.generate = function ( builder, output ) {
 
 	}
 
-	var tex = this.getTexture( builder, output );
-	var coord = this.coord.build( builder, this.project ? 'v4' : 'v2' );
-	var bias = this.bias ? this.bias.build( builder, 'fv1' ) : undefined;
+	var tex = this.getTexture( builder, output ),
+		uv = this.uv.build( builder, this.project ? 'v4' : 'v2' ),
+		bias = this.bias ? this.bias.build( builder, 'f' ) : undefined;
 
-	if ( bias == undefined && builder.requires.bias ) {
+	if ( bias == undefined && builder.context.bias ) {
 
-		bias = builder.requires.bias.build( builder, 'fv1' );
+		bias = new builder.context.bias( this ).build( builder, 'f' );
 
 	}
 
@@ -47,24 +52,32 @@ TextureNode.prototype.generate = function ( builder, output ) {
 	if ( this.project ) method = 'texture2DProj';
 	else method = bias ? 'tex2DBias' : 'tex2D';
 
-	if ( bias ) code = method + '(' + tex + ',' + coord + ',' + bias + ')';
-	else code = method + '(' + tex + ',' + coord + ')';
+	if ( bias ) code = method + '( ' + tex + ', ' + uv + ', ' + bias + ' )';
+	else code = method + '( ' + tex + ', ' + uv + ' )';
 
-	if ( builder.isSlot( 'color' ) ) {
+	// add this context to replace ColorSpaceNode.input to code
 
-		code = 'mapTexelToLinear(' + code + ')';
+	builder.addContext( { input: code, encoding: builder.getTextureEncodingFromMap( this.value ), include: builder.isShader( 'vertex' ) } );
 
-	} else if ( builder.isSlot( 'emissive' ) ) {
+	this.colorSpace = this.colorSpace || new ColorSpaceNode( this );
+	code = this.colorSpace.build( builder, this.type );
 
-		code = 'emissiveMapTexelToLinear(' + code + ')';
-
-	} else if ( builder.isSlot( 'environment' ) ) {
-
-		code = 'envMapTexelToLinear(' + code + ')';
-
-	}
+	builder.removeContext();
 
 	return builder.format( code, this.type, output );
+
+};
+
+TextureNode.prototype.copy = function ( source ) {
+
+	InputNode.prototype.copy.call( this, source );
+
+	if ( source.value ) this.value = source.value;
+
+	this.uv = source.uv;
+
+	if ( source.bias ) this.bias = source.bias;
+	if ( source.project !== undefined ) this.project = source.project;
 
 };
 
@@ -78,7 +91,7 @@ TextureNode.prototype.toJSON = function ( meta ) {
 
 		if ( this.value ) data.value = this.value.uuid;
 
-		data.coord = this.coord.toJSON( meta ).uuid;
+		data.uv = this.uv.toJSON( meta ).uuid;
 		data.project = this.project;
 
 		if ( this.bias ) data.bias = this.bias.toJSON( meta ).uuid;
@@ -88,5 +101,7 @@ TextureNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
+
+;
 
 export { TextureNode }

@@ -1,14 +1,18 @@
-import { TempNode } from '../TempNode.js'
+import { TempNode } from '../core/TempNode.js'
+import { NodeLib } from '../core/NodeLib.js'
 
 
 
-var PositionNode = function ( scope ) {
+
+
+
+function PositionNode( scope ) {
 
 	TempNode.call( this, 'v3' );
 
 	this.scope = scope || PositionNode.LOCAL;
 
-};
+}
 
 PositionNode.LOCAL = 'local';
 PositionNode.WORLD = 'world';
@@ -19,11 +23,12 @@ PositionNode.prototype = Object.create( TempNode.prototype );
 PositionNode.prototype.constructor = PositionNode;
 PositionNode.prototype.nodeType = "Position";
 
-PositionNode.prototype.getType = function ( builder ) {
+PositionNode.prototype.getType = function ( ) {
 
 	switch ( this.scope ) {
 
 		case PositionNode.PROJECTION:
+
 			return 'v4';
 
 	}
@@ -38,6 +43,7 @@ PositionNode.prototype.isShared = function ( builder ) {
 
 		case PositionNode.LOCAL:
 		case PositionNode.WORLD:
+
 			return false;
 
 	}
@@ -48,46 +54,49 @@ PositionNode.prototype.isShared = function ( builder ) {
 
 PositionNode.prototype.generate = function ( builder, output ) {
 
-	var material = builder.material;
 	var result;
 
 	switch ( this.scope ) {
 
 		case PositionNode.LOCAL:
 
-			material.requires.position = true;
+			builder.requires.position = true;
 
-			if ( builder.isShader( 'vertex' ) ) result = 'transformed';
-			else result = 'vPosition';
+			result = builder.isShader( 'vertex' ) ? 'transformed' : 'vPosition';
 
 			break;
 
 		case PositionNode.WORLD:
 
-			material.requires.worldPosition = true;
+			builder.requires.worldPosition = true;
 
-			if ( builder.isShader( 'vertex' ) ) result = 'vWPosition';
-			else result = 'vWPosition';
+			result = 'vWPosition';
 
 			break;
 
 		case PositionNode.VIEW:
 
-			if ( builder.isShader( 'vertex' ) ) result = '-mvPosition.xyz';
-			else result = 'vViewPosition';
+			result = builder.isShader( 'vertex' ) ? '-mvPosition.xyz' : 'vViewPosition';
 
 			break;
 
 		case PositionNode.PROJECTION:
 
-			if ( builder.isShader( 'vertex' ) ) result = '(projectionMatrix * modelViewMatrix * vec4( position, 1.0 ))';
-			else result = 'vec4( 0.0 )';
+			result = builder.isShader( 'vertex' ) ? '( projectionMatrix * modelViewMatrix * vec4( position, 1.0 ) )' : 'vec4( 0.0 )';
 
 			break;
 
 	}
 
 	return builder.format( result, this.getType( builder ), output );
+
+};
+
+PositionNode.prototype.copy = function ( source ) {
+
+	TempNode.prototype.copy.call( this, source );
+
+	this.scope = source.scope;
 
 };
 
@@ -106,5 +115,25 @@ PositionNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
+
+NodeLib.addKeyword( 'position', function () {
+
+	return new PositionNode();
+
+} );
+
+NodeLib.addKeyword( 'worldPosition', function () {
+
+	return new PositionNode( PositionNode.WORLD );
+
+} );
+
+NodeLib.addKeyword( 'viewPosition', function () {
+
+	return new PositionNode( NormalNode.VIEW );
+
+} );
+
+;
 
 export { PositionNode }

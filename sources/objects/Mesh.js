@@ -292,15 +292,15 @@ Mesh.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 							for ( j = start, jl = end; j < jl; j += 3 ) {
 
-								a = index.getX( i );
-								b = index.getX( i + 1 );
-								c = index.getX( i + 2 );
+								a = index.getX( j );
+								b = index.getX( j + 1 );
+								c = index.getX( j + 2 );
 
 								intersection = checkBufferGeometryIntersection( this, groupMaterial, raycaster, ray, position, uv, a, b, c );
 
 								if ( intersection ) {
 
-									intersection.faceIndex = Math.floor( i / 3 ); // triangle number in indexed buffer semantics
+									intersection.faceIndex = Math.floor( j / 3 ); // triangle number in indexed buffer semantics
 									intersects.push( intersection );
 
 								}
@@ -357,7 +357,7 @@ Mesh.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 								if ( intersection ) {
 
-									intersection.faceIndex = Math.floor( i / 3 ); // triangle number in non-indexed buffer semantics
+									intersection.faceIndex = Math.floor( j / 3 ); // triangle number in non-indexed buffer semantics
 									intersects.push( intersection );
 
 								}

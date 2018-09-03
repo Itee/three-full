@@ -1,14 +1,16 @@
-import { TempNode } from '../TempNode.js'
+import { TempNode } from '../core/TempNode.js'
 
 
 
-var ReflectNode = function ( scope ) {
+
+
+function ReflectNode( scope ) {
 
 	TempNode.call( this, 'v3', { unique: true } );
 
 	this.scope = scope || ReflectNode.CUBE;
 
-};
+}
 
 ReflectNode.CUBE = 'cube';
 ReflectNode.SPHERE = 'sphere';
@@ -23,6 +25,7 @@ ReflectNode.prototype.getType = function ( builder ) {
 	switch ( this.scope ) {
 
 		case ReflectNode.SPHERE:
+
 			return 'v2';
 
 	}
@@ -33,41 +36,51 @@ ReflectNode.prototype.getType = function ( builder ) {
 
 ReflectNode.prototype.generate = function ( builder, output ) {
 
-	var result;
+	if ( builder.isShader( 'fragment' ) ) {
 
-	switch ( this.scope ) {
+		var result;
 
-		case ReflectNode.VECTOR:
+		switch ( this.scope ) {
 
-			builder.material.addFragmentNode( 'vec3 reflectVec = inverseTransformDirection( reflect( -normalize( vViewPosition ), normal ), viewMatrix );' );
+			case ReflectNode.VECTOR:
 
-			result = 'reflectVec';
+				builder.addNodeCode( 'vec3 reflectVec = inverseTransformDirection( reflect( -normalize( vViewPosition ), normal ), viewMatrix );' );
 
-			break;
+				result = 'reflectVec';
 
-		case ReflectNode.CUBE:
+				break;
 
-			var reflectVec = new ReflectNode( ReflectNode.VECTOR ).build( builder, 'v3' );
+			case ReflectNode.CUBE:
 
-			builder.material.addFragmentNode( 'vec3 reflectCubeVec = vec3( -1.0 * ' + reflectVec + '.x, ' + reflectVec + '.yz );' );
+				var reflectVec = new ReflectNode( ReflectNode.VECTOR ).build( builder, 'v3' );
 
-			result = 'reflectCubeVec';
+				builder.addNodeCode( 'vec3 reflectCubeVec = vec3( -1.0 * ' + reflectVec + '.x, ' + reflectVec + '.yz );' );
 
-			break;
+				result = 'reflectCubeVec';
 
-		case ReflectNode.SPHERE:
+				break;
 
-			var reflectVec = new ReflectNode( ReflectNode.VECTOR ).build( builder, 'v3' );
+			case ReflectNode.SPHERE:
 
-			builder.material.addFragmentNode( 'vec2 reflectSphereVec = normalize((viewMatrix * vec4(' + reflectVec + ', 0.0 )).xyz + vec3(0.0,0.0,1.0)).xy * 0.5 + 0.5;' );
+				var reflectVec = new ReflectNode( ReflectNode.VECTOR ).build( builder, 'v3' );
 
-			result = 'reflectSphereVec';
+				builder.addNodeCode( 'vec2 reflectSphereVec = normalize( ( viewMatrix * vec4( ' + reflectVec + ', 0.0 ) ).xyz + vec3( 0.0, 0.0, 1.0 ) ).xy * 0.5 + 0.5;' );
 
-			break;
+				result = 'reflectSphereVec';
+
+				break;
+
+		}
+
+		return builder.format( result, this.getType( builder ), output );
+
+	} else {
+
+		console.warn( "ReflectNode is not compatible with " + builder.shader + " shader." );
+
+		return builder.format( 'vec3( 0.0 )', this.type, output );
 
 	}
-
-	return builder.format( result, this.getType( this.type ), output );
 
 };
 
@@ -86,5 +99,7 @@ ReflectNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
+
+;
 
 export { ReflectNode }

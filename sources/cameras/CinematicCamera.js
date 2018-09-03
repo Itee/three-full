@@ -10,6 +10,7 @@ import {
 	RGBFormat
 } from '../constants.js'
 import { BokehShader } from '../shaders/BokehShader.js'
+import { BokehDepthShader } from '../shaders/BokehShader2.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
 

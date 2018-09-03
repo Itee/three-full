@@ -10,7 +10,7 @@ import { ShaderPass } from '../postprocessing/ShaderPass.js'
 import { Scene } from '../scenes/Scene.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { Mesh } from '../objects/Mesh.js'
-import { SphereGeometry } from '../geometries/SphereGeometry.js'
+import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
 import { Uniform } from '../core/Uniform.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Vector4 } from '../math/Vector4.js'
@@ -799,7 +799,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 	function createDeferredPointLight( light ) {
 
-		var mesh = createDeferredLightMesh( light, new SphereGeometry( 1, 16, 8 ) );
+		var mesh = createDeferredLightMesh( light, new SphereBufferGeometry( 1, 16, 8 ) );
 		mesh.onBeforeRender = updateDeferredPointLightUniforms;
 		return mesh;
 

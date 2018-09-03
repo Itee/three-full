@@ -1,13 +1,16 @@
+import { InputNode } from '../core/InputNode.js'
 import { TextureNode } from './TextureNode.js'
-import { InputNode } from '../InputNode.js'
 
 
 
-var ScreenNode = function ( coord ) {
 
-	TextureNode.call( this, undefined, coord );
 
-};
+
+function ScreenNode( uv ) {
+
+	TextureNode.call( this, undefined, uv );
+
+}
 
 ScreenNode.prototype = Object.create( TextureNode.prototype );
 ScreenNode.prototype.constructor = ScreenNode;
@@ -24,5 +27,7 @@ ScreenNode.prototype.getTexture = function ( builder, output ) {
 	return InputNode.prototype.generate.call( this, builder, output, this.getUuid(), 't', 'renderTexture' );
 
 };
+
+;
 
 export { ScreenNode }

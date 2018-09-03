@@ -1,14 +1,16 @@
-import { InputNode } from '../InputNode.js'
+import { InputNode } from '../core/InputNode.js'
 
 
 
-var IntNode = function ( value ) {
 
-	InputNode.call( this, 'iv1' );
+
+function IntNode( value ) {
+
+	InputNode.call( this, 'i' );
 
 	this.value = Math.floor( value || 0 );
 
-};
+}
 
 IntNode.prototype = Object.create( InputNode.prototype );
 IntNode.prototype.constructor = IntNode;
@@ -17,6 +19,14 @@ IntNode.prototype.nodeType = "Int";
 IntNode.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
 	return builder.format( this.value, type, output );
+
+};
+
+IntNode.prototype.copy = function ( source ) {
+
+	InputNode.prototype.copy.call( this, source );
+
+	this.value = source.value;
 
 };
 
@@ -37,5 +47,7 @@ IntNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
+
+;
 
 export { IntNode }

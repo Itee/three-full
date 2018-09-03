@@ -147,180 +147,198 @@ var Three = (function (exports) {
 
 	};
 
-	var GLNode = function ( type ) {
+	function Node( type ) {
 
 		this.uuid = _Math.generateUUID();
 
 		this.name = "";
-		this.allows = {};
 
 		this.type = type;
 
 		this.userData = {};
 
-	};
+	}
 
-	GLNode.prototype.isNode = true;
+	Node.prototype = {
 
-	GLNode.prototype.parse = function ( builder, context ) {
+		constructor: Node,
 
-		context = context || {};
+		isNode: true,
 
-		builder.parsing = true;
+		parse: function ( builder, settings ) {
 
-		var material = builder.material;
+			settings = settings || {};
 
-		this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), 'v4' );
+			builder.parsing = true;
 
-		material.clearVertexNode();
-		material.clearFragmentNode();
+			this.build( builder.addFlow( settings.slot, settings.cache, settings.context ), 'v4' );
 
-		builder.removeCache().removeSlot();
+			builder.clearVertexNodeCode();
+			builder.clearFragmentNodeCode();
 
-		builder.parsing = false;
+			builder.removeFlow();
 
-	};
+			builder.parsing = false;
 
-	GLNode.prototype.parseAndBuildCode = function ( builder, output, context ) {
+		},
 
-		context = context || {};
+		parseAndBuildCode: function ( builder, output, settings ) {
 
-		this.parse( builder, context );
+			settings = settings || {};
 
-		return this.buildCode( builder, output, context );
+			this.parse( builder, settings );
 
-	};
+			return this.buildCode( builder, output, settings );
 
-	GLNode.prototype.buildCode = function ( builder, output, context ) {
+		},
 
-		context = context || {};
+		buildCode: function ( builder, output, settings ) {
 
-		var material = builder.material;
+			settings = settings || {};
 
-		var data = { result: this.build( builder.addCache( context.cache, context.requires ).addSlot( context.slot ), output ) };
+			var data = { result: this.build( builder.addFlow( settings.slot, settings.cache, settings.context ), output ) };
 
-		if ( builder.isShader( 'vertex' ) ) data.code = material.clearVertexNode();
-		else data.code = material.clearFragmentNode();
+			data.code = builder.clearNodeCode();
 
-		builder.removeCache().removeSlot();
+			builder.removeFlow();
 
-		return data;
+			return data;
 
-	};
+		},
 
-	GLNode.prototype.build = function ( builder, output, uuid ) {
+		build: function ( builder, output, uuid ) {
 
-		output = output || this.getType( builder, output );
+			output = output || this.getType( builder, output );
 
-		var material = builder.material, data = material.getDataNode( uuid || this.uuid );
+			var data = builder.getNodeData( uuid || this );
 
-		if ( builder.parsing ) this.appendDepsNode( builder, data, output );
+			if ( builder.parsing ) {
 
-		if ( this.allows[ builder.shader ] === false ) {
+				this.appendDepsNode( builder, data, output );
 
-			throw new Error( 'Shader ' + shader + ' is not compatible with this node.' );
+			}
+
+			if ( builder.nodes.indexOf( this ) === - 1 ) {
+
+				builder.nodes.push( this );
+
+			}
+
+			if ( this.updateFrame !== undefined && builder.updaters.indexOf( this ) === - 1 ) {
+
+				builder.updaters.push( this );
+
+			}
+
+			return this.generate( builder, output, uuid );
+
+		},
+
+		appendDepsNode: function ( builder, data, output ) {
+
+			data.deps = ( data.deps || 0 ) + 1;
+
+			var outputLen = builder.getTypeLength( output );
+
+			if ( outputLen > ( data.outputMax || 0 ) || this.getType( builder, output ) ) {
+
+				data.outputMax = outputLen;
+				data.output = output;
+
+			}
+
+		},
+
+		setName: function ( name ) {
+
+			this.name = name;
+
+			return this;
+
+		},
+
+		getName: function ( builder ) {
+
+			return this.name;
+
+		},
+
+		getType: function ( builder, output ) {
+
+			return output === 'sampler2D' || output === 'samplerCube' ? output : this.type;
+
+		},
+
+		getJSONNode: function ( meta ) {
+
+			var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+			if ( ! isRootObject && meta.nodes[ this.uuid ] !== undefined ) {
+
+				return meta.nodes[ this.uuid ];
+
+			}
+
+		},
+
+		copy: function ( source ) {
+
+			if ( source.name !== undefined ) this.name = source.name;
+
+			if ( source.userData !== undefined ) this.userData = JSON.parse( JSON.stringify( source.userData ) );
+
+		},
+
+		createJSONNode: function ( meta ) {
+
+			var isRootObject = ( meta === undefined || typeof meta === 'string' );
+
+			var data = {};
+
+			if ( typeof this.nodeType !== "string" ) throw new Error( "Node does not allow serialization." );
+
+			data.uuid = this.uuid;
+			data.nodeType = this.nodeType;
+
+			if ( this.name !== "" ) data.name = this.name;
+
+			if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
+
+			if ( ! isRootObject ) {
+
+				meta.nodes[ this.uuid ] = data;
+
+			}
+
+			return data;
+
+		},
+
+		toJSON: function ( meta ) {
+
+			return this.getJSONNode( meta ) || this.createJSONNode( meta );
 
 		}
 
-		if ( material.nodes.indexOf( this ) === - 1 ) {
-
-			material.nodes.push( this );
-
-		}
-
-		if ( this.updateFrame !== undefined && material.updaters.indexOf( this ) === - 1 ) {
-
-			material.updaters.push( this );
-
-		}
-
-		return this.generate( builder, output, uuid );
-
 	};
 
-	GLNode.prototype.appendDepsNode = function ( builder, data, output ) {
+	function TempNode( type, params ) {
 
-		data.deps = ( data.deps || 0 ) + 1;
-
-		var outputLen = builder.getFormatLength( output );
-
-		if ( outputLen > ( data.outputMax || 0 ) || this.getType( builder, output ) ) {
-
-			data.outputMax = outputLen;
-			data.output = output;
-
-		}
-
-	};
-
-	GLNode.prototype.getType = function ( builder, output ) {
-
-		return output === 'sampler2D' || output === 'samplerCube' ? output : this.type;
-
-	};
-
-	GLNode.prototype.getJSONNode = function ( meta ) {
-
-		var isRootObject = ( meta === undefined || typeof meta === 'string' );
-
-		if ( ! isRootObject && meta.nodes[ this.uuid ] !== undefined ) {
-
-			return meta.nodes[ this.uuid ];
-
-		}
-
-	};
-
-	GLNode.prototype.createJSONNode = function ( meta ) {
-
-		var isRootObject = ( meta === undefined || typeof meta === 'string' );
-
-		var data = {};
-
-		if ( typeof this.nodeType !== "string" ) throw new Error( "Node does not allow serialization." );
-
-		data.uuid = this.uuid;
-		data.type = this.nodeType + "Node";
-
-		if ( this.name !== "" ) data.name = this.name;
-
-		if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
-
-		if ( ! isRootObject ) {
-
-			meta.nodes[ this.uuid ] = data;
-
-		}
-
-		return data;
-
-	};
-
-	GLNode.prototype.toJSON = function ( meta ) {
-
-		return this.getJSONNode( meta ) || this.createJSONNode( meta );
-
-	};
-
-	var TempNode = function ( type, params ) {
-
-		GLNode.call( this, type );
+		Node.call( this, type );
 
 		params = params || {};
 
 		this.shared = params.shared !== undefined ? params.shared : true;
 		this.unique = params.unique !== undefined ? params.unique : false;
 
-	};
+	}
 
-	TempNode.prototype = Object.create( GLNode.prototype );
+	TempNode.prototype = Object.create( Node.prototype );
 	TempNode.prototype.constructor = TempNode;
 
 	TempNode.prototype.build = function ( builder, output, uuid, ns ) {
 
 		output = output || this.getType( builder );
-
-		var material = builder.material;
 
 		if ( this.isShared( builder, output ) ) {
 
@@ -334,36 +352,36 @@ var Three = (function (exports) {
 
 			uuid = builder.getUuid( uuid || this.getUuid(), ! isUnique );
 
-			var data = material.getDataNode( uuid );
+			var data = builder.getNodeData( uuid ),
+				type = data.output || this.getType( builder );
 
 			if ( builder.parsing ) {
 
-				if ( data.deps || 0 > 0 ) {
+				if ( ( data.deps || 0 ) > 0 ) {
 
 					this.appendDepsNode( builder, data, output );
 
-					return this.generate( builder, type, uuid );
+					return this.generate( builder, output, uuid );
 
 				}
 
-				return GLNode.prototype.build.call( this, builder, output, uuid );
+				return Node.prototype.build.call( this, builder, output, uuid );
 
 			} else if ( isUnique ) {
 
-				data.name = data.name || GLNode.prototype.build.call( this, builder, output, uuid );
+				data.name = data.name || Node.prototype.build.call( this, builder, output, uuid );
 
 				return data.name;
 
-			} else if ( ! builder.optimize || data.deps == 1 ) {
+			} else if ( ! this.isShared( builder, type ) || ( ! builder.optimize || data.deps == 1 ) ) {
 
-				return GLNode.prototype.build.call( this, builder, output, uuid );
+				return Node.prototype.build.call( this, builder, output, uuid );
 
 			}
 
 			uuid = this.getUuid( false );
 
 			var name = this.getTemp( builder, uuid );
-			var type = data.output || this.getType( builder );
 
 			if ( name ) {
 
@@ -375,8 +393,7 @@ var Three = (function (exports) {
 
 				var code = this.generate( builder, type, uuid );
 
-				if ( builder.isShader( 'vertex' ) ) material.addVertexNode( name + '=' + code + ';' );
-				else material.addFragmentNode( name + '=' + code + ';' );
+				builder.addNodeCode( name + ' = ' + code + ';' );
 
 				return builder.format( name, type, output );
 
@@ -384,7 +401,7 @@ var Three = (function (exports) {
 
 		}
 
-		return GLNode.prototype.build.call( this, builder, output, uuid );
+		return Node.prototype.build.call( this, builder, output, uuid );
 
 	};
 
@@ -414,10 +431,9 @@ var Three = (function (exports) {
 
 		uuid = uuid || this.uuid;
 
-		var material = builder.material;
+		var tempVar = builder.getVars()[ uuid ];
 
-		if ( builder.isShader( 'vertex' ) && material.vertexTemps[ uuid ] ) return material.vertexTemps[ uuid ].name;
-		else if ( material.fragmentTemps[ uuid ] ) return material.fragmentTemps[ uuid ].name;
+		return tempVar ? tempVar.name : undefined;
 
 	};
 
@@ -427,8 +443,7 @@ var Three = (function (exports) {
 
 		uuid = uuid || this.uuid;
 
-		if ( builder.isShader( 'vertex' ) ) return builder.material.getVertexTemp( uuid, type || this.getType( builder ), ns ).name;
-		else return builder.material.getFragmentTemp( uuid, type || this.getType( builder ), ns ).name;
+		return builder.getTempVar( uuid, type || this.getType( builder ), ns ).name;
 
 	};
 
@@ -582,16 +597,16 @@ var Three = (function (exports) {
 
 	};
 
-	var UVNode = function ( index ) {
+	var vertexDict = [ 'uv', 'uv2' ],
+		fragmentDict = [ 'vUv', 'vUv2' ];
+
+	function UVNode( index ) {
 
 		TempNode.call( this, 'v2', { shared: false } );
 
 		this.index = index || 0;
 
-	};
-
-	UVNode.vertexDict = [ 'uv', 'uv2' ];
-	UVNode.fragmentDict = [ 'vUv', 'vUv2' ];
+	}
 
 	UVNode.prototype = Object.create( TempNode.prototype );
 	UVNode.prototype.constructor = UVNode;
@@ -599,15 +614,19 @@ var Three = (function (exports) {
 
 	UVNode.prototype.generate = function ( builder, output ) {
 
-		var material = builder.material;
-		var result;
+		builder.requires.uv[ this.index ] = true;
 
-		material.requires.uv[ this.index ] = true;
-
-		if ( builder.isShader( 'vertex' ) ) result = UVNode.vertexDict[ this.index ];
-		else result = UVNode.fragmentDict[ this.index ];
+		var result = builder.isShader( 'vertex' ) ? vertexDict[ this.index ] : fragmentDict[ this.index ];
 
 		return builder.format( result, this.getType( builder ), output );
+
+	};
+
+	UVNode.prototype.copy = function ( source ) {
+
+		TempNode.prototype.copy.call( this, source );
+
+		this.index = source.index;
 
 	};
 
@@ -627,13 +646,25 @@ var Three = (function (exports) {
 
 	};
 
-	var PositionNode = function ( scope ) {
+	NodeLib.addKeyword( 'uv', function () {
+
+		return new UVNode();
+
+	} );
+
+	NodeLib.addKeyword( 'uv2', function () {
+
+		return new UVNode( 1 );
+
+	} );
+
+	function PositionNode( scope ) {
 
 		TempNode.call( this, 'v3' );
 
 		this.scope = scope || PositionNode.LOCAL;
 
-	};
+	}
 
 	PositionNode.LOCAL = 'local';
 	PositionNode.WORLD = 'world';
@@ -644,11 +675,12 @@ var Three = (function (exports) {
 	PositionNode.prototype.constructor = PositionNode;
 	PositionNode.prototype.nodeType = "Position";
 
-	PositionNode.prototype.getType = function ( builder ) {
+	PositionNode.prototype.getType = function ( ) {
 
 		switch ( this.scope ) {
 
 			case PositionNode.PROJECTION:
+
 				return 'v4';
 
 		}
@@ -663,6 +695,7 @@ var Three = (function (exports) {
 
 			case PositionNode.LOCAL:
 			case PositionNode.WORLD:
+
 				return false;
 
 		}
@@ -673,46 +706,49 @@ var Three = (function (exports) {
 
 	PositionNode.prototype.generate = function ( builder, output ) {
 
-		var material = builder.material;
 		var result;
 
 		switch ( this.scope ) {
 
 			case PositionNode.LOCAL:
 
-				material.requires.position = true;
+				builder.requires.position = true;
 
-				if ( builder.isShader( 'vertex' ) ) result = 'transformed';
-				else result = 'vPosition';
+				result = builder.isShader( 'vertex' ) ? 'transformed' : 'vPosition';
 
 				break;
 
 			case PositionNode.WORLD:
 
-				material.requires.worldPosition = true;
+				builder.requires.worldPosition = true;
 
-				if ( builder.isShader( 'vertex' ) ) result = 'vWPosition';
-				else result = 'vWPosition';
+				result = 'vWPosition';
 
 				break;
 
 			case PositionNode.VIEW:
 
-				if ( builder.isShader( 'vertex' ) ) result = '-mvPosition.xyz';
-				else result = 'vViewPosition';
+				result = builder.isShader( 'vertex' ) ? '-mvPosition.xyz' : 'vViewPosition';
 
 				break;
 
 			case PositionNode.PROJECTION:
 
-				if ( builder.isShader( 'vertex' ) ) result = '(projectionMatrix * modelViewMatrix * vec4( position, 1.0 ))';
-				else result = 'vec4( 0.0 )';
+				result = builder.isShader( 'vertex' ) ? '( projectionMatrix * modelViewMatrix * vec4( position, 1.0 ) )' : 'vec4( 0.0 )';
 
 				break;
 
 		}
 
 		return builder.format( result, this.getType( builder ), output );
+
+	};
+
+	PositionNode.prototype.copy = function ( source ) {
+
+		TempNode.prototype.copy.call( this, source );
+
+		this.scope = source.scope;
 
 	};
 
@@ -732,27 +768,46 @@ var Three = (function (exports) {
 
 	};
 
-	var NormalNode = function ( scope ) {
+	NodeLib.addKeyword( 'position', function () {
+
+		return new PositionNode();
+
+	} );
+
+	NodeLib.addKeyword( 'worldPosition', function () {
+
+		return new PositionNode( PositionNode.WORLD );
+
+	} );
+
+	NodeLib.addKeyword( 'viewPosition', function () {
+
+		return new PositionNode( NormalNode.VIEW );
+
+	} );
+
+	function NormalNode$1( scope ) {
 
 		TempNode.call( this, 'v3' );
 
-		this.scope = scope || NormalNode.LOCAL;
+		this.scope = scope || NormalNode$1.LOCAL;
 
-	};
+	}
 
-	NormalNode.LOCAL = 'local';
-	NormalNode.WORLD = 'world';
-	NormalNode.VIEW = 'view';
+	NormalNode$1.LOCAL = 'local';
+	NormalNode$1.WORLD = 'world';
+	NormalNode$1.VIEW = 'view';
 
-	NormalNode.prototype = Object.create( TempNode.prototype );
-	NormalNode.prototype.constructor = NormalNode;
-	NormalNode.prototype.nodeType = "Normal";
+	NormalNode$1.prototype = Object.create( TempNode.prototype );
+	NormalNode$1.prototype.constructor = NormalNode$1;
+	NormalNode$1.prototype.nodeType = "Normal";
 
-	NormalNode.prototype.isShared = function ( builder ) {
+	NormalNode$1.prototype.isShared = function ( builder ) {
 
 		switch ( this.scope ) {
 
-			case NormalNode.WORLD:
+			case NormalNode$1.WORLD:
+
 				return true;
 
 		}
@@ -761,32 +816,29 @@ var Three = (function (exports) {
 
 	};
 
-	NormalNode.prototype.generate = function ( builder, output ) {
+	NormalNode$1.prototype.generate = function ( builder, output ) {
 
-		var material = builder.material;
 		var result;
 
 		switch ( this.scope ) {
 
-			case NormalNode.LOCAL:
+			case NormalNode$1.LOCAL:
 
-				material.requires.normal = true;
+				builder.requires.normal = true;
 
-				if ( builder.isShader( 'vertex' ) ) result = 'normal';
-				else result = 'vObjectNormal';
-
-				break;
-
-			case NormalNode.WORLD:
-
-				material.requires.worldNormal = true;
-
-				if ( builder.isShader( 'vertex' ) ) result = '( modelMatrix * vec4( objectNormal, 0.0 ) ).xyz';
-				else result = 'vWNormal';
+				result = 'normal';
 
 				break;
 
-			case NormalNode.VIEW:
+			case NormalNode$1.WORLD:
+
+				builder.requires.worldNormal = true;
+
+				result = builder.isShader( 'vertex' ) ? '( modelMatrix * vec4( objectNormal, 0.0 ) ).xyz' : 'vWNormal';
+
+				break;
+
+			case NormalNode$1.VIEW:
 
 				result = 'vNormal';
 
@@ -798,7 +850,15 @@ var Three = (function (exports) {
 
 	};
 
-	NormalNode.prototype.toJSON = function ( meta ) {
+	NormalNode$1.prototype.copy = function ( source ) {
+
+		TempNode.prototype.copy.call( this, source );
+
+		this.scope = source.scope;
+
+	};
+
+	NormalNode$1.prototype.toJSON = function ( meta ) {
 
 		var data = this.getJSONNode( meta );
 
@@ -814,7 +874,25 @@ var Three = (function (exports) {
 
 	};
 
-	var InputNode = function ( type, params ) {
+	NodeLib.addKeyword( 'normal', function () {
+
+		return new NormalNode$1();
+
+	} );
+
+	NodeLib.addKeyword( 'worldNormal', function () {
+
+		return new NormalNode$1( NormalNode$1.WORLD );
+
+	} );
+
+	NodeLib.addKeyword( 'viewNormal', function () {
+
+		return new NormalNode$1( NormalNode$1.VIEW );
+
+	} );
+
+	function InputNode( type, params ) {
 
 		params = params || {};
 		params.shared = params.shared !== undefined ? params.shared : false;
@@ -823,7 +901,7 @@ var Three = (function (exports) {
 
 		this.readonly = false;
 
-	};
+	}
 
 	InputNode.prototype = Object.create( TempNode.prototype );
 	InputNode.prototype.constructor = InputNode;
@@ -834,14 +912,30 @@ var Three = (function (exports) {
 
 	};
 
-	InputNode.prototype.generate = function ( builder, output, uuid, type, ns, needsUpdate ) {
+	InputNode.prototype.copy = function ( source ) {
 
-		var material = builder.material;
+		TempNode.prototype.copy.call( this, source );
+
+		if ( source.readonly !== undefined ) this.readonly = source.readonly;
+
+	};
+
+	InputNode.prototype.createJSONNode = function ( meta ) {
+
+		var data = TempNode.prototype.createJSONNode.call( this, meta );
+
+		if ( this.readonly === true ) data.readonly = this.readonly;
+
+		return data;
+
+	};
+
+	InputNode.prototype.generate = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
 		uuid = builder.getUuid( uuid || this.getUuid() );
 		type = type || this.getType( builder );
 
-		var data = material.getDataNode( uuid ),
+		var data = builder.getNodeData( uuid ),
 			readonly = this.isReadonly( builder ) && this.generateReadonly !== undefined;
 
 		if ( readonly ) {
@@ -854,7 +948,7 @@ var Three = (function (exports) {
 
 				if ( ! data.vertex ) {
 
-					data.vertex = material.createVertexUniform( type, this, ns, needsUpdate );
+					data.vertex = builder.createVertexUniform( type, this, ns, needsUpdate );
 
 				}
 
@@ -864,7 +958,7 @@ var Three = (function (exports) {
 
 				if ( ! data.fragment ) {
 
-					data.fragment = material.createFragmentUniform( type, this, ns, needsUpdate );
+					data.fragment = builder.createFragmentUniform( type, this, ns, needsUpdate );
 
 				}
 
@@ -876,13 +970,13 @@ var Three = (function (exports) {
 
 	};
 
-	var FloatNode = function ( value ) {
+	function FloatNode( value ) {
 
-		InputNode.call( this, 'fv1' );
+		InputNode.call( this, 'f' );
 
 		this.value = value || 0;
 
-	};
+	}
 
 	FloatNode.prototype = Object.create( InputNode.prototype );
 	FloatNode.prototype.constructor = FloatNode;
@@ -890,9 +984,15 @@ var Three = (function (exports) {
 
 	FloatNode.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
-		var val = this.value;
+		return builder.format( this.value + ( this.value % 1 ? '' : '.0' ), type, output );
 
-		return builder.format( Math.floor( val ) !== val ? val : val + ".0", type, output );
+	};
+
+	FloatNode.prototype.copy = function ( source ) {
+
+		InputNode.prototype.copy.call( this, source );
+
+		this.value = source.value;
 
 	};
 
@@ -914,16 +1014,16 @@ var Three = (function (exports) {
 
 	};
 
-	var TimerNode = function ( scale, scope ) {
+	function TimerNode( scale, scope, timeScale ) {
 
 		FloatNode.call( this );
 
 		this.scale = scale !== undefined ? scale : 1;
 		this.scope = scope || TimerNode.GLOBAL;
 
-		this.timeScale = this.scale !== 1;
+		this.timeScale = timeScale !== undefined ? timeScale : this.scale !== 1;
 
-	};
+	}
 
 	TimerNode.GLOBAL = 'global';
 	TimerNode.LOCAL = 'local';
@@ -933,15 +1033,18 @@ var Three = (function (exports) {
 	TimerNode.prototype.constructor = TimerNode;
 	TimerNode.prototype.nodeType = "Timer";
 
-	TimerNode.prototype.isReadonly = function ( builder ) {
+	TimerNode.prototype.isReadonly = function () {
+
+		// never use TimerNode as readonly but aways as "uniform"
 
 		return false;
 
 	};
 
-	TimerNode.prototype.isUnique = function ( builder ) {
+	TimerNode.prototype.isUnique = function () {
 
 		// share TimerNode "uniform" input if is used on more time with others TimerNode
+
 		return this.timeScale && ( this.scope === TimerNode.GLOBAL || this.scope === TimerNode.DELTA );
 
 	};
@@ -950,7 +1053,7 @@ var Three = (function (exports) {
 
 		var scale = this.timeScale ? this.scale : 1;
 
-		switch( this.scope ) {
+		switch ( this.scope ) {
 
 			case TimerNode.LOCAL:
 
@@ -972,6 +1075,17 @@ var Three = (function (exports) {
 
 	};
 
+	TimerNode.prototype.copy = function ( source ) {
+
+		FloatNode.prototype.copy.call( this, source );
+
+		this.scope = source.scope;
+		this.scale = source.scale;
+
+		this.timeScale = source.timeScale;
+
+	};
+
 	TimerNode.prototype.toJSON = function ( meta ) {
 
 		var data = this.getJSONNode( meta );
@@ -982,6 +1096,7 @@ var Three = (function (exports) {
 
 			data.scope = this.scope;
 			data.scale = this.scale;
+
 			data.timeScale = this.timeScale;
 
 		}
@@ -990,13 +1105,21 @@ var Three = (function (exports) {
 
 	};
 
-	var ConstNode = function ( src, useDefine ) {
+	NodeLib.addKeyword( 'time', function () {
+
+		return new TimerNode();
+
+	} );
+
+	var declarationRegexp = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\=?\s?(.*?)(\;|$)/i;
+
+	function ConstNode( src, useDefine ) {
 
 		TempNode.call( this );
 
 		this.eval( src || ConstNode.PI, useDefine );
 
-	};
+	}
 
 	ConstNode.PI = 'PI';
 	ConstNode.PI2 = 'PI2';
@@ -1017,14 +1140,13 @@ var Three = (function (exports) {
 
 	ConstNode.prototype.eval = function ( src, useDefine ) {
 
-		src = ( src || '' ).trim();
+		this.src = src || '';
 
 		var name, type, value = "";
 
-		var rDeclaration = /^([a-z_0-9]+)\s([a-z_0-9]+)\s?\=?\s?(.*?)(\;|$)/i;
-		var match = src.match( rDeclaration );
+		var match = this.src.match( declarationRegexp );
 
-		this.useDefine = useDefine;
+		this.useDefine = useDefine || this.src.charAt( 0 ) === '#';
 
 		if ( match && match.length > 1 ) {
 
@@ -1034,8 +1156,8 @@ var Three = (function (exports) {
 
 		} else {
 
-			name = src;
-			type = 'fv1';
+			name = this.src;
+			type = 'f';
 
 		}
 
@@ -1059,6 +1181,10 @@ var Three = (function (exports) {
 
 				return 'const ' + this.type + ' ' + this.name + ' = ' + this.value + ';';
 
+			} else if ( this.useDefine ) {
+
+				return this.src;
+
 			}
 
 		} else {
@@ -1077,6 +1203,14 @@ var Three = (function (exports) {
 
 	};
 
+	ConstNode.prototype.copy = function ( source ) {
+
+		TempNode.prototype.copy.call( this, source );
+
+		this.eval( source.src, source.useDefine );
+
+	};
+
 	ConstNode.prototype.toJSON = function ( meta ) {
 
 		var data = this.getJSONNode( meta );
@@ -1085,10 +1219,8 @@ var Three = (function (exports) {
 
 			data = this.createJSONNode( meta );
 
-			data.name = this.name;
-			data.out = this.type;
+			data.src = this.src;
 
-			if ( this.value ) data.value = this.value;
 			if ( data.useDefine === true ) data.useDefine = true;
 
 		}
@@ -1131,25 +1263,25 @@ var Three = (function (exports) {
 
 	NodeLib.addKeyword( 'normal', function() {
 
-		return new NormalNode();
+		return new NormalNode$1();
 
 	} );
 
 	NodeLib.addKeyword( 'worldNormal', function() {
 
-		return new NormalNode( NormalNode.WORLD );
+		return new NormalNode$1( NormalNode$1.WORLD );
 
 	} );
 
 	NodeLib.addKeyword( 'viewPosition', function() {
 
-		return new PositionNode( NormalNode.VIEW );
+		return new PositionNode( NormalNode$1.VIEW );
 
 	} );
 
 	NodeLib.addKeyword( 'viewNormal', function() {
 
-		return new NormalNode( NormalNode.VIEW );
+		return new NormalNode$1( NormalNode$1.VIEW );
 
 	} );
 
@@ -1365,25 +1497,40 @@ var Three = (function (exports) {
 
 	};
 
-	var CameraNode = function ( scope, camera ) {
+	function CameraNode( scope, camera ) {
 
 		TempNode.call( this, 'v3' );
 
 		this.setScope( scope || CameraNode.POSITION );
 		this.setCamera( camera );
 
-	};
+	}
 
-	CameraNode.fDepthColor = new FunctionNode( [
-		"float depthColor( float mNear, float mFar ) {",
-		"	#ifdef USE_LOGDEPTHBUF_EXT",
-		"		float depth = gl_FragDepthEXT / gl_FragCoord.w;",
-		"	#else",
-		"		float depth = gl_FragCoord.z / gl_FragCoord.w;",
-		"	#endif",
-		"	return 1.0 - smoothstep( mNear, mFar, depth );",
-		"}"
-	].join( "\n" ) );
+	CameraNode.Nodes = ( function () {
+
+		var depthColor = new FunctionNode( [
+			"float depthColor( float mNear, float mFar ) {",
+
+			"	#ifdef USE_LOGDEPTHBUF_EXT",
+
+			"		float depth = gl_FragDepthEXT / gl_FragCoord.w;",
+
+			"	#else",
+
+			"		float depth = gl_FragCoord.z / gl_FragCoord.w;",
+
+			"	#endif",
+
+			"	return 1.0 - smoothstep( mNear, mFar, depth );",
+
+			"}"
+		].join( "\n" ) );
+
+		return {
+			depthColor: depthColor
+		};
+
+	} )();
 
 	CameraNode.POSITION = 'position';
 	CameraNode.DEPTH = 'depth';
@@ -1435,7 +1582,8 @@ var Three = (function (exports) {
 		switch ( this.scope ) {
 
 			case CameraNode.DEPTH:
-				return 'fv1';
+
+				return 'f';
 
 		}
 
@@ -1449,6 +1597,7 @@ var Three = (function (exports) {
 
 			case CameraNode.DEPTH:
 			case CameraNode.TO_VERTEX:
+
 				return true;
 
 		}
@@ -1462,6 +1611,7 @@ var Three = (function (exports) {
 		switch ( this.scope ) {
 
 			case CameraNode.POSITION:
+
 				return false;
 
 		}
@@ -1472,7 +1622,6 @@ var Three = (function (exports) {
 
 	CameraNode.prototype.generate = function ( builder, output ) {
 
-		var material = builder.material;
 		var result;
 
 		switch ( this.scope ) {
@@ -1485,11 +1634,9 @@ var Three = (function (exports) {
 
 			case CameraNode.DEPTH:
 
-				var func = CameraNode.fDepthColor;
+				var depthColor = builder.include( CameraNode.Nodes.depthColor );
 
-				builder.include( func );
-
-				result = func.name + '(' + this.near.build( builder, 'fv1' ) + ',' + this.far.build( builder, 'fv1' ) + ')';
+				result = depthColor + '( ' + this.near.build( builder, 'f' ) + ', ' + this.far.build( builder, 'f' ) + ' )';
 
 				break;
 
@@ -1515,6 +1662,31 @@ var Three = (function (exports) {
 
 				this.near.value = camera.near;
 				this.far.value = camera.far;
+
+				break;
+
+		}
+
+	};
+
+	CameraNode.prototype.copy = function ( source ) {
+
+		TempNode.prototype.copy.call( this, source );
+
+		this.setScope( source.scope );
+
+		if ( source.camera ) {
+
+			this.setCamera( source.camera );
+
+		}
+
+		switch ( source.scope ) {
+
+			case CameraNode.DEPTH:
+
+				this.near.number = source.near;
+				this.far.number = source.far;
 
 				break;
 

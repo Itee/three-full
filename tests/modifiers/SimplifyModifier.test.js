@@ -1454,6 +1454,26 @@ var Three = (function (exports) {
 
 		}(),
 
+		angleTo: function ( q ) {
+
+			return 2 * Math.acos( Math.abs( _Math.clamp( this.dot( q ), - 1, 1 ) ) );
+
+		},
+
+		rotateTowards: function ( q, step ) {
+
+			var angle = this.angleTo( q );
+
+			if ( angle === 0 ) return this;
+
+			var t = Math.min( 1, step / angle );
+
+			this.slerp( q, t );
+
+			return this;
+
+		},
+
 		inverse: function () {
 
 			// quaternion is assumed to have unit length
@@ -4585,6 +4605,12 @@ var Three = (function (exports) {
 
 		},
 
+		cross: function ( v ) {
+
+			return this.x * v.y - this.y * v.x;
+
+		},
+
 		lengthSq: function () {
 
 			return this.x * this.x + this.y * this.y;
@@ -5763,7 +5789,7 @@ var Three = (function (exports) {
 
 			}
 
-			if ( this.geometry !== undefined ) {
+			if ( this.isMesh || this.isLine || this.isPoints ) {
 
 				object.geometry = serialize( meta.geometries, this.geometry );
 

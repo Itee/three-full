@@ -1,14 +1,18 @@
-import { TempNode } from '../TempNode.js'
+import { TempNode } from '../core/TempNode.js'
+import { NodeLib } from '../core/NodeLib.js'
 
 
 
-var NormalNode = function ( scope ) {
+
+
+
+function NormalNode( scope ) {
 
 	TempNode.call( this, 'v3' );
 
 	this.scope = scope || NormalNode.LOCAL;
 
-};
+}
 
 NormalNode.LOCAL = 'local';
 NormalNode.WORLD = 'world';
@@ -23,6 +27,7 @@ NormalNode.prototype.isShared = function ( builder ) {
 	switch ( this.scope ) {
 
 		case NormalNode.WORLD:
+
 			return true;
 
 	}
@@ -33,26 +38,23 @@ NormalNode.prototype.isShared = function ( builder ) {
 
 NormalNode.prototype.generate = function ( builder, output ) {
 
-	var material = builder.material;
 	var result;
 
 	switch ( this.scope ) {
 
 		case NormalNode.LOCAL:
 
-			material.requires.normal = true;
+			builder.requires.normal = true;
 
-			if ( builder.isShader( 'vertex' ) ) result = 'normal';
-			else result = 'vObjectNormal';
+			result = 'normal';
 
 			break;
 
 		case NormalNode.WORLD:
 
-			material.requires.worldNormal = true;
+			builder.requires.worldNormal = true;
 
-			if ( builder.isShader( 'vertex' ) ) result = '( modelMatrix * vec4( objectNormal, 0.0 ) ).xyz';
-			else result = 'vWNormal';
+			result = builder.isShader( 'vertex' ) ? '( modelMatrix * vec4( objectNormal, 0.0 ) ).xyz' : 'vWNormal';
 
 			break;
 
@@ -65,6 +67,14 @@ NormalNode.prototype.generate = function ( builder, output ) {
 	}
 
 	return builder.format( result, this.getType( builder ), output );
+
+};
+
+NormalNode.prototype.copy = function ( source ) {
+
+	TempNode.prototype.copy.call( this, source );
+
+	this.scope = source.scope;
 
 };
 
@@ -83,5 +93,25 @@ NormalNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
+
+NodeLib.addKeyword( 'normal', function () {
+
+	return new NormalNode();
+
+} );
+
+NodeLib.addKeyword( 'worldNormal', function () {
+
+	return new NormalNode( NormalNode.WORLD );
+
+} );
+
+NodeLib.addKeyword( 'viewNormal', function () {
+
+	return new NormalNode( NormalNode.VIEW );
+
+} );
+
+;
 
 export { NormalNode }

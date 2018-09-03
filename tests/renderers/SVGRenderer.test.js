@@ -2169,6 +2169,26 @@ var Three = (function (exports) {
 
 		}(),
 
+		angleTo: function ( q ) {
+
+			return 2 * Math.acos( Math.abs( _Math.clamp( this.dot( q ), - 1, 1 ) ) );
+
+		},
+
+		rotateTowards: function ( q, step ) {
+
+			var angle = this.angleTo( q );
+
+			if ( angle === 0 ) return this;
+
+			var t = Math.min( 1, step / angle );
+
+			this.slerp( q, t );
+
+			return this;
+
+		},
+
 		inverse: function () {
 
 			// quaternion is assumed to have unit length
@@ -3885,7 +3905,7 @@ var Three = (function (exports) {
 
 			}
 
-			if ( this.geometry !== undefined ) {
+			if ( this.isMesh || this.isLine || this.isPoints ) {
 
 				object.geometry = serialize( meta.geometries, this.geometry );
 
@@ -4963,6 +4983,12 @@ var Three = (function (exports) {
 		dot: function ( v ) {
 
 			return this.x * v.x + this.y * v.y;
+
+		},
+
+		cross: function ( v ) {
+
+			return this.x * v.y - this.y * v.x;
 
 		},
 
@@ -6854,8 +6880,7 @@ var Three = (function (exports) {
 
 		intersectsBox: function () {
 
-			var p1 = new Vector3(),
-				p2 = new Vector3();
+			var p = new Vector3();
 
 			return function intersectsBox( box ) {
 
@@ -6865,19 +6890,13 @@ var Three = (function (exports) {
 
 					var plane = planes[ i ];
 
-					p1.x = plane.normal.x > 0 ? box.min.x : box.max.x;
-					p2.x = plane.normal.x > 0 ? box.max.x : box.min.x;
-					p1.y = plane.normal.y > 0 ? box.min.y : box.max.y;
-					p2.y = plane.normal.y > 0 ? box.max.y : box.min.y;
-					p1.z = plane.normal.z > 0 ? box.min.z : box.max.z;
-					p2.z = plane.normal.z > 0 ? box.max.z : box.min.z;
+					// corner at max distance
 
-					var d1 = plane.distanceToPoint( p1 );
-					var d2 = plane.distanceToPoint( p2 );
+					p.x = plane.normal.x > 0 ? box.max.x : box.min.x;
+					p.y = plane.normal.y > 0 ? box.max.y : box.min.y;
+					p.z = plane.normal.z > 0 ? box.max.z : box.min.z;
 
-					// if both outside plane, no intersection
-
-					if ( d1 < 0 && d2 < 0 ) {
+					if ( plane.distanceToPoint( p ) < 0 ) {
 
 						return false;
 
@@ -7501,149 +7520,6 @@ var Three = (function (exports) {
 
 	} );
 
-	function Line3( start, end ) {
-
-		this.start = ( start !== undefined ) ? start : new Vector3();
-		this.end = ( end !== undefined ) ? end : new Vector3();
-
-	}
-
-	Object.assign( Line3.prototype, {
-
-		set: function ( start, end ) {
-
-			this.start.copy( start );
-			this.end.copy( end );
-
-			return this;
-
-		},
-
-		clone: function () {
-
-			return new this.constructor().copy( this );
-
-		},
-
-		copy: function ( line ) {
-
-			this.start.copy( line.start );
-			this.end.copy( line.end );
-
-			return this;
-
-		},
-
-		getCenter: function ( target ) {
-
-			if ( target === undefined ) {
-
-				console.warn( 'Line3: .getCenter() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return target.addVectors( this.start, this.end ).multiplyScalar( 0.5 );
-
-		},
-
-		delta: function ( target ) {
-
-			if ( target === undefined ) {
-
-				console.warn( 'Line3: .delta() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return target.subVectors( this.end, this.start );
-
-		},
-
-		distanceSq: function () {
-
-			return this.start.distanceToSquared( this.end );
-
-		},
-
-		distance: function () {
-
-			return this.start.distanceTo( this.end );
-
-		},
-
-		at: function ( t, target ) {
-
-			if ( target === undefined ) {
-
-				console.warn( 'Line3: .at() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return this.delta( target ).multiplyScalar( t ).add( this.start );
-
-		},
-
-		closestPointToPointParameter: function () {
-
-			var startP = new Vector3();
-			var startEnd = new Vector3();
-
-			return function closestPointToPointParameter( point, clampToLine ) {
-
-				startP.subVectors( point, this.start );
-				startEnd.subVectors( this.end, this.start );
-
-				var startEnd2 = startEnd.dot( startEnd );
-				var startEnd_startP = startEnd.dot( startP );
-
-				var t = startEnd_startP / startEnd2;
-
-				if ( clampToLine ) {
-
-					t = _Math.clamp( t, 0, 1 );
-
-				}
-
-				return t;
-
-			};
-
-		}(),
-
-		closestPointToPoint: function ( point, clampToLine, target ) {
-
-			var t = this.closestPointToPointParameter( point, clampToLine );
-
-			if ( target === undefined ) {
-
-				console.warn( 'Line3: .closestPointToPoint() target is now required' );
-				target = new Vector3();
-
-			}
-
-			return this.delta( target ).multiplyScalar( t ).add( this.start );
-
-		},
-
-		applyMatrix4: function ( matrix ) {
-
-			this.start.applyMatrix4( matrix );
-			this.end.applyMatrix4( matrix );
-
-			return this;
-
-		},
-
-		equals: function ( line ) {
-
-			return line.start.equals( this.start ) && line.end.equals( this.end );
-
-		}
-
-	} );
-
 	function Triangle( a, b, c ) {
 
 		this.a = ( a !== undefined ) ? a : new Vector3();
@@ -7855,12 +7731,14 @@ var Three = (function (exports) {
 
 		closestPointToPoint: function () {
 
-			var plane = new Plane();
-			var edgeList = [ new Line3(), new Line3(), new Line3() ];
-			var projectedPoint = new Vector3();
-			var closestPoint = new Vector3();
+			var vab = new Vector3();
+			var vac = new Vector3();
+			var vbc = new Vector3();
+			var vap = new Vector3();
+			var vbp = new Vector3();
+			var vcp = new Vector3();
 
-			return function closestPointToPoint( point, target ) {
+			return function closestPointToPoint( p, target ) {
 
 				if ( target === undefined ) {
 
@@ -7869,48 +7747,81 @@ var Three = (function (exports) {
 
 				}
 
-				var minDistance = Infinity;
+				var a = this.a, b = this.b, c = this.c;
+				var v, w;
 
-				// project the point onto the plane of the triangle
+				// algorithm thanks to Real-Time Collision Detection by Christer Ericson,
+				// published by Morgan Kaufmann Publishers, (c) 2005 Elsevier Inc.,
+				// under the accompanying license; see chapter 5.1.5 for detailed explanation.
+				// basically, we're distinguishing which of the voronoi regions of the triangle
+				// the point lies in with the minimum amount of redundant computation.
 
-				plane.setFromCoplanarPoints( this.a, this.b, this.c );
-				plane.projectPoint( point, projectedPoint );
+				vab.subVectors( b, a );
+				vac.subVectors( c, a );
+				vap.subVectors( p, a );
+				var d1 = vab.dot( vap );
+				var d2 = vac.dot( vap );
+				if ( d1 <= 0 && d2 <= 0 ) {
 
-				// check if the projection lies within the triangle
-
-				if ( this.containsPoint( projectedPoint ) === true ) {
-
-					// if so, this is the closest point
-
-					target.copy( projectedPoint );
-
-				} else {
-
-					// if not, the point falls outside the triangle. the target is the closest point to the triangle's edges or vertices
-
-					edgeList[ 0 ].set( this.a, this.b );
-					edgeList[ 1 ].set( this.b, this.c );
-					edgeList[ 2 ].set( this.c, this.a );
-
-					for ( var i = 0; i < edgeList.length; i ++ ) {
-
-						edgeList[ i ].closestPointToPoint( projectedPoint, true, closestPoint );
-
-						var distance = projectedPoint.distanceToSquared( closestPoint );
-
-						if ( distance < minDistance ) {
-
-							minDistance = distance;
-
-							target.copy( closestPoint );
-
-						}
-
-					}
+					// vertex region of A; barycentric coords (1, 0, 0)
+					return target.copy( a );
 
 				}
 
-				return target;
+				vbp.subVectors( p, b );
+				var d3 = vab.dot( vbp );
+				var d4 = vac.dot( vbp );
+				if ( d3 >= 0 && d4 <= d3 ) {
+
+					// vertex region of B; barycentric coords (0, 1, 0)
+					return target.copy( b );
+
+				}
+
+				var vc = d1 * d4 - d3 * d2;
+				if ( vc <= 0 && d1 >= 0 && d3 <= 0 ) {
+
+					v = d1 / ( d1 - d3 );
+					// edge region of AB; barycentric coords (1-v, v, 0)
+					return target.copy( a ).addScaledVector( vab, v );
+
+				}
+
+				vcp.subVectors( p, c );
+				var d5 = vab.dot( vcp );
+				var d6 = vac.dot( vcp );
+				if ( d6 >= 0 && d5 <= d6 ) {
+
+					// vertex region of C; barycentric coords (0, 0, 1)
+					return target.copy( c );
+
+				}
+
+				var vb = d5 * d2 - d1 * d6;
+				if ( vb <= 0 && d2 >= 0 && d6 <= 0 ) {
+
+					w = d2 / ( d2 - d6 );
+					// edge region of AC; barycentric coords (1-w, 0, w)
+					return target.copy( a ).addScaledVector( vac, w );
+
+				}
+
+				var va = d3 * d6 - d5 * d4;
+				if ( va <= 0 && ( d4 - d3 ) >= 0 && ( d5 - d6 ) >= 0 ) {
+
+					vbc.subVectors( c, b );
+					w = ( d4 - d3 ) / ( ( d4 - d3 ) + ( d5 - d6 ) );
+					// edge region of BC; barycentric coords (0, 1-w, w)
+					return target.copy( b ).addScaledVector( vbc, w ); // edge region of BC
+
+				}
+
+				// face region
+				var denom = 1 / ( va + vb + vc );
+				// u = va * denom
+				v = vb * denom;
+				w = vc * denom;
+				return target.copy( a ).addScaledVector( vab, v ).addScaledVector( vac, w );
 
 			};
 
@@ -7977,7 +7888,7 @@ var Three = (function (exports) {
 
 	} );
 
-	var REVISION = '94';
+	var REVISION = '95';
 	var FrontSide = 0;
 	var BackSide = 1;
 	var DoubleSide = 2;
@@ -10494,15 +10405,15 @@ var Three = (function (exports) {
 
 								for ( j = start, jl = end; j < jl; j += 3 ) {
 
-									a = index.getX( i );
-									b = index.getX( i + 1 );
-									c = index.getX( i + 2 );
+									a = index.getX( j );
+									b = index.getX( j + 1 );
+									c = index.getX( j + 2 );
 
 									intersection = checkBufferGeometryIntersection( this, groupMaterial, raycaster, ray, position, uv, a, b, c );
 
 									if ( intersection ) {
 
-										intersection.faceIndex = Math.floor( i / 3 ); // triangle number in indexed buffer semantics
+										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in indexed buffer semantics
 										intersects.push( intersection );
 
 									}
@@ -10559,7 +10470,7 @@ var Three = (function (exports) {
 
 									if ( intersection ) {
 
-										intersection.faceIndex = Math.floor( i / 3 ); // triangle number in non-indexed buffer semantics
+										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in non-indexed buffer semantics
 										intersects.push( intersection );
 
 									}
@@ -10728,8 +10639,7 @@ var Three = (function (exports) {
 
 		if ( mode === 1 ) {
 
-			console.error( 'Line: parameter LinePieces no longer supported. Created LineSegments instead.' );
-			
+			console.error( 'Line: parameter LinePieces no longer supported. Use LineSegments instead.' );
 
 		}
 
@@ -11140,6 +11050,242 @@ var Three = (function (exports) {
 
 	} );
 
+	function InterleavedBuffer( array, stride ) {
+
+		this.array = array;
+		this.stride = stride;
+		this.count = array !== undefined ? array.length / stride : 0;
+
+		this.dynamic = false;
+		this.updateRange = { offset: 0, count: - 1 };
+
+		this.version = 0;
+
+	}
+
+	Object.defineProperty( InterleavedBuffer.prototype, 'needsUpdate', {
+
+		set: function ( value ) {
+
+			if ( value === true ) this.version ++;
+
+		}
+
+	} );
+
+	Object.assign( InterleavedBuffer.prototype, {
+
+		isInterleavedBuffer: true,
+
+		onUploadCallback: function () {},
+
+		setArray: function ( array ) {
+
+			if ( Array.isArray( array ) ) {
+
+				throw new TypeError( 'BufferAttribute: array should be a Typed Array.' );
+
+			}
+
+			this.count = array !== undefined ? array.length / this.stride : 0;
+			this.array = array;
+
+			return this;
+
+		},
+
+		setDynamic: function ( value ) {
+
+			this.dynamic = value;
+
+			return this;
+
+		},
+
+		copy: function ( source ) {
+
+			this.array = new source.array.constructor( source.array );
+			this.count = source.count;
+			this.stride = source.stride;
+			this.dynamic = source.dynamic;
+
+			return this;
+
+		},
+
+		copyAt: function ( index1, attribute, index2 ) {
+
+			index1 *= this.stride;
+			index2 *= attribute.stride;
+
+			for ( var i = 0, l = this.stride; i < l; i ++ ) {
+
+				this.array[ index1 + i ] = attribute.array[ index2 + i ];
+
+			}
+
+			return this;
+
+		},
+
+		set: function ( value, offset ) {
+
+			if ( offset === undefined ) offset = 0;
+
+			this.array.set( value, offset );
+
+			return this;
+
+		},
+
+		clone: function () {
+
+			return new this.constructor().copy( this );
+
+		},
+
+		onUpload: function ( callback ) {
+
+			this.onUploadCallback = callback;
+
+			return this;
+
+		}
+
+	} );
+
+	function InterleavedBufferAttribute( interleavedBuffer, itemSize, offset, normalized ) {
+
+		this.data = interleavedBuffer;
+		this.itemSize = itemSize;
+		this.offset = offset;
+
+		this.normalized = normalized === true;
+
+	}
+
+	Object.defineProperties( InterleavedBufferAttribute.prototype, {
+
+		count: {
+
+			get: function () {
+
+				return this.data.count;
+
+			}
+
+		},
+
+		array: {
+
+			get: function () {
+
+				return this.data.array;
+
+			}
+
+		}
+
+	} );
+
+	Object.assign( InterleavedBufferAttribute.prototype, {
+
+		isInterleavedBufferAttribute: true,
+
+		setX: function ( index, x ) {
+
+			this.data.array[ index * this.data.stride + this.offset ] = x;
+
+			return this;
+
+		},
+
+		setY: function ( index, y ) {
+
+			this.data.array[ index * this.data.stride + this.offset + 1 ] = y;
+
+			return this;
+
+		},
+
+		setZ: function ( index, z ) {
+
+			this.data.array[ index * this.data.stride + this.offset + 2 ] = z;
+
+			return this;
+
+		},
+
+		setW: function ( index, w ) {
+
+			this.data.array[ index * this.data.stride + this.offset + 3 ] = w;
+
+			return this;
+
+		},
+
+		getX: function ( index ) {
+
+			return this.data.array[ index * this.data.stride + this.offset ];
+
+		},
+
+		getY: function ( index ) {
+
+			return this.data.array[ index * this.data.stride + this.offset + 1 ];
+
+		},
+
+		getZ: function ( index ) {
+
+			return this.data.array[ index * this.data.stride + this.offset + 2 ];
+
+		},
+
+		getW: function ( index ) {
+
+			return this.data.array[ index * this.data.stride + this.offset + 3 ];
+
+		},
+
+		setXY: function ( index, x, y ) {
+
+			index = index * this.data.stride + this.offset;
+
+			this.data.array[ index + 0 ] = x;
+			this.data.array[ index + 1 ] = y;
+
+			return this;
+
+		},
+
+		setXYZ: function ( index, x, y, z ) {
+
+			index = index * this.data.stride + this.offset;
+
+			this.data.array[ index + 0 ] = x;
+			this.data.array[ index + 1 ] = y;
+			this.data.array[ index + 2 ] = z;
+
+			return this;
+
+		},
+
+		setXYZW: function ( index, x, y, z, w ) {
+
+			index = index * this.data.stride + this.offset;
+
+			this.data.array[ index + 0 ] = x;
+			this.data.array[ index + 1 ] = y;
+			this.data.array[ index + 2 ] = z;
+			this.data.array[ index + 3 ] = w;
+
+			return this;
+
+		}
+
+	} );
+
 	function SpriteMaterial( parameters ) {
 
 		Material.call( this );
@@ -11151,8 +11297,8 @@ var Three = (function (exports) {
 
 		this.rotation = 0;
 
-		this.fog = false;
 		this.lights = false;
+		this.transparent = true;
 
 		this.setValues( parameters );
 
@@ -11175,12 +11321,34 @@ var Three = (function (exports) {
 
 	};
 
+	var geometry;
+
 	function Sprite( material ) {
 
 		Object3D.call( this );
 
 		this.type = 'Sprite';
 
+		if ( geometry === undefined ) {
+
+			geometry = new BufferGeometry();
+
+			var float32Array = new Float32Array( [
+				- 0.5, - 0.5, 0, 0, 0,
+				0.5, - 0.5, 0, 1, 0,
+				0.5, 0.5, 0, 1, 1,
+				- 0.5, 0.5, 0, 0, 1
+			] );
+
+			var interleavedBuffer = new InterleavedBuffer( float32Array, 5 );
+
+			geometry.setIndex( [ 0, 1, 2,	0, 2, 3 ] );
+			geometry.addAttribute( 'position', new InterleavedBufferAttribute( interleavedBuffer, 3, 0, false ) );
+			geometry.addAttribute( 'uv', new InterleavedBufferAttribute( interleavedBuffer, 2, 3, false ) );
+
+		}
+
+		this.geometry = geometry;
 		this.material = ( material !== undefined ) ? material : new SpriteMaterial();
 
 		this.center = new Vector2( 0.5, 0.5 );
@@ -13051,7 +13219,7 @@ var Three = (function (exports) {
 
 			}
 
-			function pushTriangle( a, b, c ) {
+			function pushTriangle( a, b, c, material ) {
 
 				var v1 = _vertexPool[ a ];
 				var v2 = _vertexPool[ b ];
@@ -13070,9 +13238,11 @@ var Three = (function (exports) {
 					_face.z = ( v1.positionScreen.z + v2.positionScreen.z + v3.positionScreen.z ) / 3;
 					_face.renderOrder = object.renderOrder;
 
-					// use first vertex normal as face normal
-
-					_face.normalModel.fromArray( normals, a * 3 );
+					// face normal
+					_vector3.subVectors( v3.position, v2.position );
+					_vector4.subVectors( v1.position, v2.position );
+					_vector3.cross( _vector4 );
+					_face.normalModel.copy( _vector3 );
 					_face.normalModel.applyMatrix3( normalMatrix ).normalize();
 
 					for ( var i = 0; i < 3; i ++ ) {
@@ -13088,7 +13258,7 @@ var Three = (function (exports) {
 
 					_face.vertexNormalsLength = 3;
 
-					_face.material = object.material;
+					_face.material = material;
 
 					_renderData.elements.push( _face );
 
@@ -13212,6 +13382,10 @@ var Three = (function (exports) {
 
 					if ( geometry instanceof BufferGeometry ) {
 
+						var material = object.material;
+
+						var isMultiMaterial = Array.isArray( material );
+
 						var attributes = geometry.attributes;
 						var groups = geometry.groups;
 
@@ -13259,9 +13433,15 @@ var Three = (function (exports) {
 
 									var group = groups[ g ];
 
+									material = isMultiMaterial === true
+										 ? object.material[ group.materialIndex ]
+										 : object.material;
+
+									if ( material === undefined ) continue;
+
 									for ( var i = group.start, l = group.start + group.count; i < l; i += 3 ) {
 
-										renderList.pushTriangle( indices[ i ], indices[ i + 1 ], indices[ i + 2 ] );
+										renderList.pushTriangle( indices[ i ], indices[ i + 1 ], indices[ i + 2 ], material );
 
 									}
 
@@ -13271,7 +13451,7 @@ var Three = (function (exports) {
 
 								for ( var i = 0, l = indices.length; i < l; i += 3 ) {
 
-									renderList.pushTriangle( indices[ i ], indices[ i + 1 ], indices[ i + 2 ] );
+									renderList.pushTriangle( indices[ i ], indices[ i + 1 ], indices[ i + 2 ], material );
 
 								}
 
@@ -13279,9 +13459,33 @@ var Three = (function (exports) {
 
 						} else {
 
-							for ( var i = 0, l = positions.length / 3; i < l; i += 3 ) {
+							if ( groups.length > 0 ) {
 
-								renderList.pushTriangle( i, i + 1, i + 2 );
+								for ( var g = 0; g < groups.length; g ++ ) {
+
+									var group = groups[ g ];
+
+									material = isMultiMaterial === true
+										 ? object.material[ group.materialIndex ]
+										 : object.material;
+
+									if ( material === undefined ) continue;
+
+									for ( var i = group.start, l = group.start + group.count; i < l; i += 3 ) {
+
+										renderList.pushTriangle( i, i + 1, i + 2, material );
+
+									}
+
+								}
+
+							} else {
+
+								for ( var i = 0, l = positions.length / 3; i < l; i += 3 ) {
+
+									renderList.pushTriangle( i, i + 1, i + 2, material );
+
+								}
 
 							}
 

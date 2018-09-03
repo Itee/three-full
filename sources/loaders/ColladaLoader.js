@@ -27,6 +27,7 @@ import { SkinnedMesh } from '../objects/SkinnedMesh.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Scene } from '../scenes/Scene.js'
 import { TextureLoader } from './TextureLoader.js'
+import { TGALoader } from './TGALoader.js'
 import { Euler } from '../math/Euler.js'
 import {
 	DoubleSide,
@@ -1006,11 +1007,11 @@ ColladaLoader.prototype = {
 
 			if ( data.bindShapeMatrix ) {
 
-				build.bindMatrix = new Matrix4().fromArray( data.bindShapeMatrix ).transpose(); 
+				build.bindMatrix = new Matrix4().fromArray( data.bindShapeMatrix ).transpose();
 
 			} else {
 
-				build.bindMatrix = new Matrix4().transpose(); 
+				build.bindMatrix = new Matrix4().identity();
 
 			}
 
@@ -1486,6 +1487,28 @@ ColladaLoader.prototype = {
 
 		}
 
+		function getTextureLoader( image ) {
+
+			var loader;
+
+			var extension = image.slice( ( image.lastIndexOf( '.' ) - 1 >>> 0 ) + 2 ); // http://www.jstips.co/en/javascript/get-file-extension/
+			extension = extension.toLowerCase();
+
+			switch ( extension ) {
+
+				case 'tga':
+					loader = tgaLoader;
+					break;
+
+				default:
+					loader = textureLoader;
+
+			}
+
+			return loader;
+
+		}
+
 		function buildMaterial( data ) {
 
 			var effect = getEffect( data.url );
@@ -1536,28 +1559,40 @@ ColladaLoader.prototype = {
 
 				if ( image !== null ) {
 
-					var texture = textureLoader.load( image );
+					var loader = getTextureLoader( image );
 
-					var extra = textureObject.extra;
+					if ( loader !== undefined ) {
 
-					if ( extra !== undefined && extra.technique !== undefined && isEmpty( extra.technique ) === false ) {
+						var texture = loader.load( image );
 
-						var technique = extra.technique;
+						var extra = textureObject.extra;
 
-						texture.wrapS = technique.wrapU ? RepeatWrapping : ClampToEdgeWrapping;
-						texture.wrapT = technique.wrapV ? RepeatWrapping : ClampToEdgeWrapping;
+						if ( extra !== undefined && extra.technique !== undefined && isEmpty( extra.technique ) === false ) {
 
-						texture.offset.set( technique.offsetU || 0, technique.offsetV || 0 );
-						texture.repeat.set( technique.repeatU || 1, technique.repeatV || 1 );
+							var technique = extra.technique;
+
+							texture.wrapS = technique.wrapU ? RepeatWrapping : ClampToEdgeWrapping;
+							texture.wrapT = technique.wrapV ? RepeatWrapping : ClampToEdgeWrapping;
+
+							texture.offset.set( technique.offsetU || 0, technique.offsetV || 0 );
+							texture.repeat.set( technique.repeatU || 1, technique.repeatV || 1 );
+
+						} else {
+
+							texture.wrapS = RepeatWrapping;
+							texture.wrapT = RepeatWrapping;
+
+						}
+
+						return texture;
 
 					} else {
 
-						texture.wrapS = RepeatWrapping;
-						texture.wrapT = RepeatWrapping;
+						console.warn( 'ColladaLoader: Loader for texture %s not found.', image );
+
+						return null;
 
 					}
-
-					return texture;
 
 				} else {
 
@@ -3220,7 +3255,15 @@ ColladaLoader.prototype = {
 
 			}
 
-			library.nodes[ data.id ] = data;
+			if ( hasNode( data.id ) ) {
+
+				console.warn( 'ColladaLoader: There is already a node with ID %s. Exclude current node from further processing.', data.id );
+
+			} else {
+
+				library.nodes[ data.id ] = data;
+
+			}
 
 			return data;
 
@@ -3556,6 +3599,8 @@ ColladaLoader.prototype = {
 
 		}
 
+		var fallbackMaterial = new MeshBasicMaterial( { color: 0xff00ff } );
+
 		function resolveMaterialBinding( keys, instanceMaterials ) {
 
 			var materials = [];
@@ -3563,7 +3608,17 @@ ColladaLoader.prototype = {
 			for ( var i = 0, l = keys.length; i < l; i ++ ) {
 
 				var id = instanceMaterials[ keys[ i ] ];
-				materials.push( getMaterial( id ) );
+
+				if ( id === undefined ) {
+
+					console.warn( 'ColladaLoader: Material with key %s not found. Apply fallback material.', keys[ i ] );
+					materials.push( fallbackMaterial );
+
+				} else {
+
+					materials.push( getMaterial( id ) );
+
+				}
 
 			}
 
@@ -3785,6 +3840,15 @@ ColladaLoader.prototype = {
 		var asset = parseAsset( getElementsByTagName( collada, 'asset' )[ 0 ] );
 		var textureLoader = new TextureLoader( this.manager );
 		textureLoader.setPath( path ).setCrossOrigin( this.crossOrigin );
+
+		var tgaLoader;
+
+		if ( TGALoader ) {
+
+			tgaLoader = new TGALoader( this.manager );
+			tgaLoader.setPath( path );
+
+		}
 
 		//
 

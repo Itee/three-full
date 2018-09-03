@@ -106,7 +106,7 @@ npm run build
 ````
 This command will build converted sources as UMD, AMD, ES ([*](#bug)), CJS and IIFE using [Rollup](https://rollupjs.org/)
 
-#### <a id="miss"></a>Missings ####
+#### <a id="miss"></a>Missings Files ####
 
 This is the list of unsupported part of example, which cannot/won't be converted.
 
@@ -133,6 +133,15 @@ This is the list of unsupported part of example, which cannot/won't be converted
     * **Volume.js** //*Use Eval !*
     * **NRRDLoader.js** //*Import Volume.js*
     * **XLoader.js** //*Unprocessable AMD module style*
+
+#### <a id="miss"></a>Missings Imports ####
+
+* **MMDLoader** Require MMDParser available at three/examples/js/libs/mmdparser.min.js
+* **MMDExporter** Require MMDParser available at three/examples/js/libs/mmdparser.min.js
+* **FBXLoader** Require Zlib.Inflate available at three/examples/js/libs/inflate.min.js
+* **VTKLoader** Require Zlib.Inflate available at three/examples/js/libs/inflate.min.js
+* **TTFLoader** Require opentype available at three/examples/js/libs/opentype.min.js
+* **TimelinerController** Require Timeliner available at three/examples/js/libs/timeliner_gui.min.js
 
 #### <a id="redirectedFiles"></a>Redirected Files ####
 
@@ -176,6 +185,7 @@ This is the list of unsupported part of example, which cannot/won't be converted
 * ShaderSkin ---> 'shaders/ShaderSkin.js'
 * ShaderTerrain ---> 'shaders/ShaderTerrain.js'
 * ShaderToon ---> 'shaders/ShaderToon.js'
+* ShaderTranslucent ---> 'shaders/ShaderTranslucent.js'
 * Shape ---> 'core/Shape.js'
 * ShapePath ---> 'core/ShapePath.js'
 * ShapeUtils ---> 'utils/ShapeUtils.js'
@@ -193,6 +203,21 @@ All others folders under example file tree will be mapped to their counter-part 
 
 
 #### Change log ####
+
+##### 10.0.0:
+
+* Support of Three r95
+* Use a generator function that iterate over all files under sources and create the rollup config to build them separatly
+* Fix missing LoaderUtils import in OBJLoader2
+* Fix missing TextureCubeNode import in NodeBuilder
+* Fix missing _Math import in Node
+* Fix missing BufferGeometryUtils import in GLTFLoader
+* Fix missing BokehDepthShader import in CinematicCamera
+* Fix missing UniformsUtils and HalftoneShader import in HalftonePass
+* Fix missing UniformsUtils and AfterimageShader import in AfterimagePass
+* Fix missing Uint8BufferAttribute, Int8BufferAttribute, Int16BufferAttribute, Int32BufferAttribute and Float32BufferAttribute import in DRACOLoader
+* Ignore Nodes and THREE.Nodes intermediary files
+* Move ShaderTranslucent in shader folder
 
 ##### 9.0.0:
 

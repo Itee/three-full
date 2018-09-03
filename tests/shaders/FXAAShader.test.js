@@ -349,6 +349,12 @@ var Three = (function (exports) {
 
 		},
 
+		cross: function ( v ) {
+
+			return this.x * v.y - this.y * v.x;
+
+		},
+
 		lengthSq: function () {
 
 			return this.x * this.x + this.y * this.y;
@@ -1158,8 +1164,8 @@ var Three = (function (exports) {
 	        "    //",
 	        "    // Extra constants for 360 FXAA Console only.",
 	        "    // Use zeros or anything else for other platforms.",
-	        "    // These must be in physical constant registers and NOT immedates.",
-	        "    // Immedates will result in compiler un-optimizing.",
+	        "    // These must be in physical constant registers and NOT immediates.",
+	        "    // Immediates will result in compiler un-optimizing.",
 	        "    // {xyzw} = float4(1.0, -1.0, 0.25, -0.25)",
 	        "    FxaaFloat4 fxaaConsole360ConstDir",
 	        ") {",
