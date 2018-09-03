@@ -204,6 +204,11 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+##### 11.0.0:
+
+* Support of Three r96
+* Update edgecase replacement for LoaderSupport
+
 ##### 10.0.0:
 
 * Support of Three r95
