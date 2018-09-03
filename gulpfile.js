@@ -104,7 +104,7 @@ gulp.task( 'fix-node-lib-export', ( done ) => {
         '\n' +
         'export { NodeLib } from \'./NodeLib_Implementation\'\n'
 
-    fs.writeFile( "./node_modules/three/examples/js/nodes/NodeLib.js", stringFile, ( error ) => {
+    fs.writeFile( "./node_modules/three/examples/js/nodes/core/NodeLib.js", stringFile, ( error ) => {
 
         if ( error ) {
             return console.error( error )
@@ -189,7 +189,7 @@ gulp.task( 'create-node-lib-declaration-file', ( done ) => {
         '\n' +
         'export { NodeLib }\n'
 
-    fs.writeFile( "./node_modules/three/examples/js/nodes/NodeLib_Declaration.js", stringFile, ( error ) => {
+    fs.writeFile( "./node_modules/three/examples/js/nodes/core/NodeLib_Declaration.js", stringFile, ( error ) => {
 
         if ( error ) {
             return console.error( error )
@@ -370,7 +370,7 @@ gulp.task( 'create-node-lib-implementation-file', ( done ) => {
         '\n' +
         'export { NodeLib }\n'
 
-    fs.writeFile( "./node_modules/three/examples/js/nodes/NodeLib_Implementation.js", stringFile, ( error ) => {
+    fs.writeFile( "./node_modules/three/examples/js/nodes/core/NodeLib_Implementation.js", stringFile, ( error ) => {
 
         if ( error ) {
             return console.error( error )
@@ -393,7 +393,7 @@ gulp.task( 'fix-function-node-export', ( done ) => {
         '\n' +
         'export { FunctionNode } from \'./FunctionNode_Implementation\'\n'
 
-    fs.writeFile( "./node_modules/three/examples/js/nodes/FunctionNode.js", stringFile, ( error ) => {
+    fs.writeFile( "./node_modules/three/examples/js/nodes/core/FunctionNode.js", stringFile, ( error ) => {
 
         if ( error ) {
             return console.error( error )
@@ -505,7 +505,7 @@ gulp.task( 'create-function-node-declaration-file', ( done ) => {
         '\n' +
         'export { FunctionNode }\n'
 
-    fs.writeFile( "./node_modules/three/examples/js/nodes/FunctionNode_Declaration.js", stringFile, ( error ) => {
+    fs.writeFile( "./node_modules/three/examples/js/nodes/core/FunctionNode_Declaration.js", stringFile, ( error ) => {
 
         if ( error ) {
             return console.error( error )
@@ -646,7 +646,7 @@ gulp.task( 'create-function-node-implementation-file', ( done ) => {
         '\n' +
         'export { FunctionNode }\n'
 
-    fs.writeFile( "./node_modules/three/examples/js/nodes/FunctionNode_Implementation.js", stringFile, ( error ) => {
+    fs.writeFile( "./node_modules/three/examples/js/nodes/core/FunctionNode_Implementation.js", stringFile, ( error ) => {
 
         if ( error ) {
             return console.error( error )
