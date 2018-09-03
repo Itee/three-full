@@ -1,6 +1,22 @@
 var Three = (function (exports) {
 	'use strict';
 
+	var FrontSide = 0;
+	var BackSide = 1;
+	var DoubleSide = 2;
+	var FlatShading = 1;
+	var NoColors = 0;
+	var VertexColors = 2;
+	var NormalBlending = 1;
+	var AddEquation = 100;
+	var SrcAlphaFactor = 204;
+	var OneMinusSrcAlphaFactor = 205;
+	var LessEqualDepth = 3;
+	var MultiplyOperation = 0;
+	var TrianglesDrawMode = 0;
+	var BasicDepthPacking = 3200;
+	var TangentSpaceNormalMap = 0;
+
 	function EventDispatcher() {}
 
 	Object.assign( EventDispatcher.prototype, {
@@ -80,21 +96,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	var FrontSide = 0;
-	var BackSide = 1;
-	var DoubleSide = 2;
-	var FlatShading = 1;
-	var NoColors = 0;
-	var VertexColors = 2;
-	var NormalBlending = 1;
-	var AddEquation = 100;
-	var SrcAlphaFactor = 204;
-	var OneMinusSrcAlphaFactor = 205;
-	var LessEqualDepth = 3;
-	var MultiplyOperation = 0;
-	var TrianglesDrawMode = 0;
-	var BasicDepthPacking = 3200;
 
 	var _Math = {
 
@@ -429,6 +430,7 @@ var Three = (function (exports) {
 			if ( this.normalMap && this.normalMap.isTexture ) {
 
 				data.normalMap = this.normalMap.toJSON( meta ).uuid;
+				data.normalMapType = this.normalMapType;
 				data.normalScale = this.normalScale.toArray();
 
 			}
@@ -1422,6 +1424,62 @@ var Three = (function (exports) {
 
 		},
 
+		copySRGBToLinear: function () {
+
+			function SRGBToLinear( c ) {
+
+				return ( c < 0.04045 ) ? c * 0.0773993808 : Math.pow( c * 0.9478672986 + 0.0521327014, 2.4 );
+
+			}
+
+			return function copySRGBToLinear( color ) {
+
+				this.r = SRGBToLinear( color.r );
+				this.g = SRGBToLinear( color.g );
+				this.b = SRGBToLinear( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		copyLinearToSRGB: function () {
+
+			function LinearToSRGB( c ) {
+
+				return ( c < 0.0031308 ) ? c * 12.92 : 1.055 * ( Math.pow( c, 0.41666 ) ) - 0.055;
+
+			}
+
+			return function copyLinearToSRGB( color ) {
+
+				this.r = LinearToSRGB( color.r );
+				this.g = LinearToSRGB( color.g );
+				this.b = LinearToSRGB( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		convertSRGBToLinear: function () {
+
+			this.copySRGBToLinear( this );
+
+			return this;
+
+		},
+
+		convertLinearToSRGB: function () {
+
+			this.copyLinearToSRGB( this );
+
+			return this;
+
+		},
+
 		getHex: function () {
 
 			return ( this.r * 255 ) << 16 ^ ( this.g * 255 ) << 8 ^ ( this.b * 255 ) << 0;
@@ -1645,6 +1703,7 @@ var Three = (function (exports) {
 		this.bumpScale = 1;
 
 		this.normalMap = null;
+		this.normalMapType = TangentSpaceNormalMap;
 		this.normalScale = new Vector2( 1, 1 );
 
 		this.displacementMap = null;
@@ -1706,6 +1765,7 @@ var Three = (function (exports) {
 		this.bumpScale = source.bumpScale;
 
 		this.normalMap = source.normalMap;
+		this.normalMapType = source.normalMapType;
 		this.normalScale.copy( source.normalScale );
 
 		this.displacementMap = source.displacementMap;
@@ -3263,19 +3323,21 @@ var Three = (function (exports) {
 
 			}
 
-			var sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
+			var sqrSinHalfTheta = 1.0 - cosHalfTheta * cosHalfTheta;
 
-			if ( Math.abs( sinHalfTheta ) < 0.001 ) {
+			if ( sqrSinHalfTheta <= Number.EPSILON ) {
 
-				this._w = 0.5 * ( w + this._w );
-				this._x = 0.5 * ( x + this._x );
-				this._y = 0.5 * ( y + this._y );
-				this._z = 0.5 * ( z + this._z );
+				var s = 1 - t;
+				this._w = s * w + t * this._w;
+				this._x = s * x + t * this._x;
+				this._y = s * y + t * this._y;
+				this._z = s * z + t * this._z;
 
-				return this;
+				return this.normalize();
 
 			}
 
+			var sinHalfTheta = Math.sqrt( sqrSinHalfTheta );
 			var halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
 			var ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
 				ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
@@ -5980,7 +6042,7 @@ var Three = (function (exports) {
 
 			//
 
-			if ( faces.length === 0 ) {
+			if ( vertices.length > 0 && faces.length === 0 ) {
 
 				console.error( 'DirectGeometry: Faceless geometries are not supported.' );
 
@@ -7504,6 +7566,7 @@ var Three = (function (exports) {
 			if ( this.renderOrder !== 0 ) object.renderOrder = this.renderOrder;
 			if ( JSON.stringify( this.userData ) !== '{}' ) object.userData = this.userData;
 
+			object.layers = this.layers.mask;
 			object.matrix = this.matrix.toArray();
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
@@ -10300,13 +10363,13 @@ var Three = (function (exports) {
 
 			}
 
-			function checkBufferGeometryIntersection( object, raycaster, ray, position, uv, a, b, c ) {
+			function checkBufferGeometryIntersection( object, material, raycaster, ray, position, uv, a, b, c ) {
 
 				vA.fromBufferAttribute( position, a );
 				vB.fromBufferAttribute( position, b );
 				vC.fromBufferAttribute( position, c );
 
-				var intersection = checkIntersection( object, object.material, raycaster, ray, vA, vB, vC, intersectionPoint );
+				var intersection = checkIntersection( object, material, raycaster, ray, vA, vB, vC, intersectionPoint );
 
 				if ( intersection ) {
 
@@ -10369,24 +10432,64 @@ var Three = (function (exports) {
 					var index = geometry.index;
 					var position = geometry.attributes.position;
 					var uv = geometry.attributes.uv;
-					var i, l;
+					var groups = geometry.groups;
+					var drawRange = geometry.drawRange;
+					var i, j, il, jl;
+					var group, groupMaterial;
+					var start, end;
 
 					if ( index !== null ) {
 
 						// indexed buffer geometry
 
-						for ( i = 0, l = index.count; i < l; i += 3 ) {
+						if ( Array.isArray( material ) ) {
 
-							a = index.getX( i );
-							b = index.getX( i + 1 );
-							c = index.getX( i + 2 );
+							for ( i = 0, il = groups.length; i < il; i ++ ) {
 
-							intersection = checkBufferGeometryIntersection( this, raycaster, ray, position, uv, a, b, c );
+								group = groups[ i ];
+								groupMaterial = material[ group.materialIndex ];
 
-							if ( intersection ) {
+								start = Math.max( group.start, drawRange.start );
+								end = Math.min( ( group.start + group.count ), ( drawRange.start + drawRange.count ) );
 
-								intersection.faceIndex = Math.floor( i / 3 ); // triangle number in indexed buffer semantics
-								intersects.push( intersection );
+								for ( j = start, jl = end; j < jl; j += 3 ) {
+
+									a = index.getX( i );
+									b = index.getX( i + 1 );
+									c = index.getX( i + 2 );
+
+									intersection = checkBufferGeometryIntersection( this, groupMaterial, raycaster, ray, position, uv, a, b, c );
+
+									if ( intersection ) {
+
+										intersection.faceIndex = Math.floor( i / 3 ); // triangle number in indexed buffer semantics
+										intersects.push( intersection );
+
+									}
+
+								}
+
+							}
+
+						} else {
+
+							start = Math.max( 0, drawRange.start );
+							end = Math.min( index.count, ( drawRange.start + drawRange.count ) );
+
+							for ( i = start, il = end; i < il; i += 3 ) {
+
+								a = index.getX( i );
+								b = index.getX( i + 1 );
+								c = index.getX( i + 2 );
+
+								intersection = checkBufferGeometryIntersection( this, material, raycaster, ray, position, uv, a, b, c );
+
+								if ( intersection ) {
+
+									intersection.faceIndex = Math.floor( i / 3 ); // triangle number in indexed buffer semantics
+									intersects.push( intersection );
+
+								}
 
 							}
 
@@ -10396,18 +10499,54 @@ var Three = (function (exports) {
 
 						// non-indexed buffer geometry
 
-						for ( i = 0, l = position.count; i < l; i += 3 ) {
+						if ( Array.isArray( material ) ) {
 
-							a = i;
-							b = i + 1;
-							c = i + 2;
+							for ( i = 0, il = groups.length; i < il; i ++ ) {
 
-							intersection = checkBufferGeometryIntersection( this, raycaster, ray, position, uv, a, b, c );
+								group = groups[ i ];
+								groupMaterial = material[ group.materialIndex ];
 
-							if ( intersection ) {
+								start = Math.max( group.start, drawRange.start );
+								end = Math.min( ( group.start + group.count ), ( drawRange.start + drawRange.count ) );
 
-								intersection.faceIndex = Math.floor( i / 3 ); // triangle number in non-indexed buffer semantics
-								intersects.push( intersection );
+								for ( j = start, jl = end; j < jl; j += 3 ) {
+
+									a = j;
+									b = j + 1;
+									c = j + 2;
+
+									intersection = checkBufferGeometryIntersection( this, groupMaterial, raycaster, ray, position, uv, a, b, c );
+
+									if ( intersection ) {
+
+										intersection.faceIndex = Math.floor( i / 3 ); // triangle number in non-indexed buffer semantics
+										intersects.push( intersection );
+
+									}
+
+								}
+
+							}
+
+						} else {
+
+							start = Math.max( 0, drawRange.start );
+							end = Math.min( position.count, ( drawRange.start + drawRange.count ) );
+
+							for ( i = start, il = end; i < il; i += 3 ) {
+
+								a = i;
+								b = i + 1;
+								c = i + 2;
+
+								intersection = checkBufferGeometryIntersection( this, material, raycaster, ray, position, uv, a, b, c );
+
+								if ( intersection ) {
+
+									intersection.faceIndex = Math.floor( i / 3 ); // triangle number in non-indexed buffer semantics
+									intersects.push( intersection );
+
+								}
 
 							}
 
@@ -11619,6 +11758,7 @@ var Three = (function (exports) {
 		this.bumpScale = 1;
 
 		this.normalMap = null;
+		this.normalMapType = TangentSpaceNormalMap;
 		this.normalScale = new Vector2( 1, 1 );
 
 		this.displacementMap = null;
@@ -11652,6 +11792,7 @@ var Three = (function (exports) {
 		this.bumpScale = source.bumpScale;
 
 		this.normalMap = source.normalMap;
+		this.normalMapType = source.normalMapType;
 		this.normalScale.copy( source.normalScale );
 
 		this.displacementMap = source.displacementMap;
@@ -11695,6 +11836,7 @@ var Three = (function (exports) {
 		this.bumpScale = 1;
 
 		this.normalMap = null;
+		this.normalMapType = TangentSpaceNormalMap;
 		this.normalScale = new Vector2( 1, 1 );
 
 		this.displacementMap = null;
@@ -11752,6 +11894,7 @@ var Three = (function (exports) {
 		this.bumpScale = source.bumpScale;
 
 		this.normalMap = source.normalMap;
+		this.normalMapType = source.normalMapType;
 		this.normalScale.copy( source.normalScale );
 
 		this.displacementMap = source.displacementMap;
@@ -12220,6 +12363,7 @@ var Three = (function (exports) {
 			if ( json.bumpScale !== undefined ) material.bumpScale = json.bumpScale;
 
 			if ( json.normalMap !== undefined ) material.normalMap = getTexture( json.normalMap );
+			if ( json.normalMapType !== undefined ) material.normalMapType = json.normalMapType;
 			if ( json.normalScale !== undefined ) {
 
 				var normalScale = json.normalScale;
@@ -13289,7 +13433,7 @@ var Three = (function (exports) {
 
 			this.maxQueueSize = MAX_QUEUE_SIZE ;
 			this.maxWebWorkers = MAX_WEB_WORKER;
-			this.crossOrigin = null;
+			this.crossOrigin = 'anonymous';
 
 			if ( ! Validator.isValid( classDef ) ) throw 'Provided invalid classDef: ' + classDef;
 

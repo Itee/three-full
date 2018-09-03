@@ -1,6 +1,16 @@
 var Three = (function (exports) {
 	'use strict';
 
+	var FrontSide = 0;
+	var FlatShading = 1;
+	var NoColors = 0;
+	var NormalBlending = 1;
+	var AddEquation = 100;
+	var SrcAlphaFactor = 204;
+	var OneMinusSrcAlphaFactor = 205;
+	var LessEqualDepth = 3;
+	var TangentSpaceNormalMap = 0;
+
 	function EventDispatcher() {}
 
 	Object.assign( EventDispatcher.prototype, {
@@ -80,15 +90,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	var FrontSide = 0;
-	var FlatShading = 1;
-	var NoColors = 0;
-	var NormalBlending = 1;
-	var AddEquation = 100;
-	var SrcAlphaFactor = 204;
-	var OneMinusSrcAlphaFactor = 205;
-	var LessEqualDepth = 3;
 
 	var _Math = {
 
@@ -423,6 +424,7 @@ var Three = (function (exports) {
 			if ( this.normalMap && this.normalMap.isTexture ) {
 
 				data.normalMap = this.normalMap.toJSON( meta ).uuid;
+				data.normalMapType = this.normalMapType;
 				data.normalScale = this.normalScale.toArray();
 
 			}
@@ -1416,6 +1418,62 @@ var Three = (function (exports) {
 
 		},
 
+		copySRGBToLinear: function () {
+
+			function SRGBToLinear( c ) {
+
+				return ( c < 0.04045 ) ? c * 0.0773993808 : Math.pow( c * 0.9478672986 + 0.0521327014, 2.4 );
+
+			}
+
+			return function copySRGBToLinear( color ) {
+
+				this.r = SRGBToLinear( color.r );
+				this.g = SRGBToLinear( color.g );
+				this.b = SRGBToLinear( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		copyLinearToSRGB: function () {
+
+			function LinearToSRGB( c ) {
+
+				return ( c < 0.0031308 ) ? c * 12.92 : 1.055 * ( Math.pow( c, 0.41666 ) ) - 0.055;
+
+			}
+
+			return function copyLinearToSRGB( color ) {
+
+				this.r = LinearToSRGB( color.r );
+				this.g = LinearToSRGB( color.g );
+				this.b = LinearToSRGB( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		convertSRGBToLinear: function () {
+
+			this.copySRGBToLinear( this );
+
+			return this;
+
+		},
+
+		convertLinearToSRGB: function () {
+
+			this.copyLinearToSRGB( this );
+
+			return this;
+
+		},
+
 		getHex: function () {
 
 			return ( this.r * 255 ) << 16 ^ ( this.g * 255 ) << 8 ^ ( this.b * 255 ) << 0;
@@ -1639,6 +1697,7 @@ var Three = (function (exports) {
 		this.bumpScale = 1;
 
 		this.normalMap = null;
+		this.normalMapType = TangentSpaceNormalMap;
 		this.normalScale = new Vector2( 1, 1 );
 
 		this.displacementMap = null;
@@ -1700,6 +1759,7 @@ var Three = (function (exports) {
 		this.bumpScale = source.bumpScale;
 
 		this.normalMap = source.normalMap;
+		this.normalMapType = source.normalMapType;
 		this.normalScale.copy( source.normalScale );
 
 		this.displacementMap = source.displacementMap;

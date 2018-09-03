@@ -1594,19 +1594,21 @@ var Three = (function (exports) {
 
 			}
 
-			var sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
+			var sqrSinHalfTheta = 1.0 - cosHalfTheta * cosHalfTheta;
 
-			if ( Math.abs( sinHalfTheta ) < 0.001 ) {
+			if ( sqrSinHalfTheta <= Number.EPSILON ) {
 
-				this._w = 0.5 * ( w + this._w );
-				this._x = 0.5 * ( x + this._x );
-				this._y = 0.5 * ( y + this._y );
-				this._z = 0.5 * ( z + this._z );
+				var s = 1 - t;
+				this._w = s * w + t * this._w;
+				this._x = s * x + t * this._x;
+				this._y = s * y + t * this._y;
+				this._z = s * z + t * this._z;
 
-				return this;
+				return this.normalize();
 
 			}
 
+			var sinHalfTheta = Math.sqrt( sqrSinHalfTheta );
 			var halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
 			var ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
 				ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
@@ -4657,6 +4659,62 @@ var Three = (function (exports) {
 
 		},
 
+		copySRGBToLinear: function () {
+
+			function SRGBToLinear( c ) {
+
+				return ( c < 0.04045 ) ? c * 0.0773993808 : Math.pow( c * 0.9478672986 + 0.0521327014, 2.4 );
+
+			}
+
+			return function copySRGBToLinear( color ) {
+
+				this.r = SRGBToLinear( color.r );
+				this.g = SRGBToLinear( color.g );
+				this.b = SRGBToLinear( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		copyLinearToSRGB: function () {
+
+			function LinearToSRGB( c ) {
+
+				return ( c < 0.0031308 ) ? c * 12.92 : 1.055 * ( Math.pow( c, 0.41666 ) ) - 0.055;
+
+			}
+
+			return function copyLinearToSRGB( color ) {
+
+				this.r = LinearToSRGB( color.r );
+				this.g = LinearToSRGB( color.g );
+				this.b = LinearToSRGB( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		convertSRGBToLinear: function () {
+
+			this.copySRGBToLinear( this );
+
+			return this;
+
+		},
+
+		convertLinearToSRGB: function () {
+
+			this.copyLinearToSRGB( this );
+
+			return this;
+
+		},
+
 		getHex: function () {
 
 			return ( this.r * 255 ) << 16 ^ ( this.g * 255 ) << 8 ^ ( this.b * 255 ) << 0;
@@ -5395,7 +5453,7 @@ var Three = (function (exports) {
 
 			//
 
-			if ( faces.length === 0 ) {
+			if ( vertices.length > 0 && faces.length === 0 ) {
 
 				console.error( 'DirectGeometry: Faceless geometries are not supported.' );
 
@@ -6919,6 +6977,7 @@ var Three = (function (exports) {
 			if ( this.renderOrder !== 0 ) object.renderOrder = this.renderOrder;
 			if ( JSON.stringify( this.userData ) !== '{}' ) object.userData = this.userData;
 
+			object.layers = this.layers.mask;
 			object.matrix = this.matrix.toArray();
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
@@ -9071,7 +9130,8 @@ var Three = (function (exports) {
 
 				attributes: new Map(),
 				materials: new Map(),
-				textures: new Map()
+				textures: new Map(),
+				images: new Map()
 
 			};
 
@@ -9173,7 +9233,7 @@ var Three = (function (exports) {
 
 				if ( cachedData.attributes.has( normal ) ) {
 
-					return cachedData.textures.get( normal );
+					return cachedData.attributes.get( normal );
 
 				}
 
@@ -9454,8 +9514,8 @@ var Three = (function (exports) {
 
 					var end = start + count;
 					var end2 = geometry.drawRange.count === Infinity
-							? attribute.count
-							: geometry.drawRange.start + geometry.drawRange.count;
+						? attribute.count
+						: geometry.drawRange.start + geometry.drawRange.count;
 
 					start = Math.max( start, geometry.drawRange.start );
 					count = Math.min( end, end2 ) - start;
@@ -9510,9 +9570,23 @@ var Three = (function (exports) {
 			}
 
 			
-			function processImage( map ) {
+			function processImage( image, format, flipY ) {
 
-				// @TODO Cache
+				if ( ! cachedData.images.has( image ) ) {
+
+					cachedData.images.set( image, {} );
+
+				}
+
+				var cachedImages = cachedData.images.get( image );
+				var mimeType = format === RGBAFormat ? 'image/png' : 'image/jpeg';
+				var key = mimeType + ":flipY/" + flipY.toString();
+
+				if ( cachedImages[ key ] !== undefined ) {
+
+					return cachedImages[ key ];
+
+				}
 
 				if ( ! outputJSON.images ) {
 
@@ -9520,19 +9594,18 @@ var Three = (function (exports) {
 
 				}
 
-				var mimeType = map.format === RGBAFormat ? 'image/png' : 'image/jpeg';
 				var gltfImage = { mimeType: mimeType };
 
 				if ( options.embedImages ) {
 
 					var canvas = cachedCanvas = cachedCanvas || document.createElement( 'canvas' );
 
-					canvas.width = map.image.width;
-					canvas.height = map.image.height;
+					canvas.width = image.width;
+					canvas.height = image.height;
 
-					if ( options.forcePowerOfTwoTextures && ! isPowerOfTwo( map.image ) ) {
+					if ( options.forcePowerOfTwoTextures && ! isPowerOfTwo( image ) ) {
 
-						console.warn( 'GLTFExporter: Resized non-power-of-two image.', map.image );
+						console.warn( 'GLTFExporter: Resized non-power-of-two image.', image );
 
 						canvas.width = _Math.floorPowerOfTwo( canvas.width );
 						canvas.height = _Math.floorPowerOfTwo( canvas.height );
@@ -9541,14 +9614,14 @@ var Three = (function (exports) {
 
 					var ctx = canvas.getContext( '2d' );
 
-					if ( map.flipY === true ) {
+					if ( flipY === true ) {
 
 						ctx.translate( 0, canvas.height );
 						ctx.scale( 1, - 1 );
 
 					}
 
-					ctx.drawImage( map.image, 0, 0, canvas.width, canvas.height );
+					ctx.drawImage( image, 0, 0, canvas.width, canvas.height );
 
 					if ( options.binary === true ) {
 
@@ -9576,13 +9649,16 @@ var Three = (function (exports) {
 
 				} else {
 
-					gltfImage.uri = map.image.src;
+					gltfImage.uri = image.src;
 
 				}
 
 				outputJSON.images.push( gltfImage );
 
-				return outputJSON.images.length - 1;
+				var index = outputJSON.images.length - 1;
+				cachedImages[ key ] = index;
+
+				return index;
 
 			}
 
@@ -9628,7 +9704,7 @@ var Three = (function (exports) {
 				var gltfTexture = {
 
 					sampler: processSampler( map ),
-					source: processImage( map )
+					source: processImage( map.image, map.format, map.flipY )
 
 				};
 
@@ -10054,7 +10130,7 @@ var Three = (function (exports) {
 				var forceIndices = options.forceIndices;
 				var isMultiMaterial = Array.isArray( mesh.material );
 
-				if ( isMultiMaterial && mesh.geometry.groups.length === 0 ) return null;
+				if ( isMultiMaterial && geometry.groups.length === 0 ) return null;
 
 				if ( ! forceIndices && geometry.index === null && isMultiMaterial ) {
 
@@ -10083,7 +10159,7 @@ var Three = (function (exports) {
 				}
 
 				var materials = isMultiMaterial ? mesh.material : [ mesh.material ];
-				var groups = isMultiMaterial ? mesh.geometry.groups : [ { materialIndex: 0, start: undefined, count: undefined } ];
+				var groups = isMultiMaterial ? geometry.groups : [ { materialIndex: 0, start: undefined, count: undefined } ];
 
 				for ( var i = 0, il = groups.length; i < il; i ++ ) {
 

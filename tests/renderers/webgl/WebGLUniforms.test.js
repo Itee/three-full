@@ -2169,19 +2169,21 @@ var Three = (function (exports) {
 
 			}
 
-			var sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
+			var sqrSinHalfTheta = 1.0 - cosHalfTheta * cosHalfTheta;
 
-			if ( Math.abs( sinHalfTheta ) < 0.001 ) {
+			if ( sqrSinHalfTheta <= Number.EPSILON ) {
 
-				this._w = 0.5 * ( w + this._w );
-				this._x = 0.5 * ( x + this._x );
-				this._y = 0.5 * ( y + this._y );
-				this._z = 0.5 * ( z + this._z );
+				var s = 1 - t;
+				this._w = s * w + t * this._w;
+				this._x = s * x + t * this._x;
+				this._y = s * y + t * this._y;
+				this._z = s * z + t * this._z;
 
-				return this;
+				return this.normalize();
 
 			}
 
+			var sinHalfTheta = Math.sqrt( sqrSinHalfTheta );
 			var halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
 			var ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
 				ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
@@ -3538,9 +3540,31 @@ var Three = (function (exports) {
 
 				if ( ! isRootObject && meta.images[ image.uuid ] === undefined ) {
 
+					var url;
+
+					if ( Array.isArray( image ) ) {
+
+						// process array of images e.g. CubeTexture
+
+						url = [];
+
+						for ( var i = 0, l = image.length; i < l; i ++ ) {
+
+							url.push( getDataURL( image[ i ] ) );
+
+						}
+
+					} else {
+
+						// process single image
+
+						url = getDataURL( image );
+
+					}
+
 					meta.images[ image.uuid ] = {
 						uuid: image.uuid,
-						url: getDataURL( image )
+						url: url
 					};
 
 				}

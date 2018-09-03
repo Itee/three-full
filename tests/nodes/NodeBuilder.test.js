@@ -1,9 +1,10 @@
 var Three = (function (exports) {
 	'use strict';
 
-	var NodeBuilder = function ( material ) {
+	var NodeBuilder = function ( material, renderer ) {
 
 		this.material = material;
+		this.renderer = renderer;
 
 		this.caches = [];
 		this.slots = [];

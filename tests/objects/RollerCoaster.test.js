@@ -1594,19 +1594,21 @@ var Three = (function (exports) {
 
 			}
 
-			var sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
+			var sqrSinHalfTheta = 1.0 - cosHalfTheta * cosHalfTheta;
 
-			if ( Math.abs( sinHalfTheta ) < 0.001 ) {
+			if ( sqrSinHalfTheta <= Number.EPSILON ) {
 
-				this._w = 0.5 * ( w + this._w );
-				this._x = 0.5 * ( x + this._x );
-				this._y = 0.5 * ( y + this._y );
-				this._z = 0.5 * ( z + this._z );
+				var s = 1 - t;
+				this._w = s * w + t * this._w;
+				this._x = s * x + t * this._x;
+				this._y = s * y + t * this._y;
+				this._z = s * z + t * this._z;
 
-				return this;
+				return this.normalize();
 
 			}
 
+			var sinHalfTheta = Math.sqrt( sqrSinHalfTheta );
 			var halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
 			var ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
 				ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
@@ -4657,6 +4659,62 @@ var Three = (function (exports) {
 
 		},
 
+		copySRGBToLinear: function () {
+
+			function SRGBToLinear( c ) {
+
+				return ( c < 0.04045 ) ? c * 0.0773993808 : Math.pow( c * 0.9478672986 + 0.0521327014, 2.4 );
+
+			}
+
+			return function copySRGBToLinear( color ) {
+
+				this.r = SRGBToLinear( color.r );
+				this.g = SRGBToLinear( color.g );
+				this.b = SRGBToLinear( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		copyLinearToSRGB: function () {
+
+			function LinearToSRGB( c ) {
+
+				return ( c < 0.0031308 ) ? c * 12.92 : 1.055 * ( Math.pow( c, 0.41666 ) ) - 0.055;
+
+			}
+
+			return function copyLinearToSRGB( color ) {
+
+				this.r = LinearToSRGB( color.r );
+				this.g = LinearToSRGB( color.g );
+				this.b = LinearToSRGB( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		convertSRGBToLinear: function () {
+
+			this.copySRGBToLinear( this );
+
+			return this;
+
+		},
+
+		convertLinearToSRGB: function () {
+
+			this.copyLinearToSRGB( this );
+
+			return this;
+
+		},
+
 		getHex: function () {
 
 			return ( this.r * 255 ) << 16 ^ ( this.g * 255 ) << 8 ^ ( this.b * 255 ) << 0;
@@ -5395,7 +5453,7 @@ var Three = (function (exports) {
 
 			//
 
-			if ( faces.length === 0 ) {
+			if ( vertices.length > 0 && faces.length === 0 ) {
 
 				console.error( 'DirectGeometry: Faceless geometries are not supported.' );
 
@@ -6919,6 +6977,7 @@ var Three = (function (exports) {
 			if ( this.renderOrder !== 0 ) object.renderOrder = this.renderOrder;
 			if ( JSON.stringify( this.userData ) !== '{}' ) object.userData = this.userData;
 
+			object.layers = this.layers.mask;
 			object.matrix = this.matrix.toArray();
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
@@ -8892,7 +8951,7 @@ var Three = (function (exports) {
 
 		var quaternion = new Quaternion();
 		var prevQuaternion = new Quaternion();
-		prevQuaternion.setFromAxisAngle( up , Math.PI / 2 );
+		prevQuaternion.setFromAxisAngle( up, Math.PI / 2 );
 
 		var point = new Vector3();
 		var prevPoint = new Vector3();
@@ -8901,13 +8960,13 @@ var Three = (function (exports) {
 		// shapes
 
 		var step = [
-			new Vector3( -0.225,  0, 0 ),
-			new Vector3(  0, -0.050, 0 ),
-			new Vector3(  0, -0.175, 0 ),
+			new Vector3( - 0.225, 0, 0 ),
+			new Vector3( 0, - 0.050, 0 ),
+			new Vector3( 0, - 0.175, 0 ),
 
-			new Vector3(  0, -0.050, 0 ),
-			new Vector3(  0.225,  0, 0 ),
-			new Vector3(  0, -0.175, 0 )
+			new Vector3( 0, - 0.050, 0 ),
+			new Vector3( 0.225, 0, 0 ),
+			new Vector3( 0, - 0.175, 0 )
 		];
 
 		var PI2 = Math.PI * 2;
@@ -8937,7 +8996,7 @@ var Three = (function (exports) {
 
 		function drawShape( shape, color ) {
 
-			normal.set( 0, 0, -1 ).applyQuaternion( quaternion );
+			normal.set( 0, 0, - 1 ).applyQuaternion( quaternion );
 
 			for ( var j = 0; j < shape.length; j ++ ) {
 
@@ -8966,6 +9025,7 @@ var Three = (function (exports) {
 			}
 
 		}
+
 		var vector1 = new Vector3();
 		var vector2 = new Vector3();
 		var vector3 = new Vector3();
@@ -9044,6 +9104,7 @@ var Three = (function (exports) {
 			}
 
 		}
+
 		var offset = new Vector3();
 
 		for ( var i = 1; i <= divisions; i ++ ) {
@@ -9066,9 +9127,9 @@ var Three = (function (exports) {
 
 			}
 
-			extrudeShape( tube1, offset.set(  0,  -0.125, 0 ), color2 );
-			extrudeShape( tube2, offset.set(  0.2, 0,     0 ), color1 );
-			extrudeShape( tube2, offset.set( -0.2, 0,     0 ), color1 );
+			extrudeShape( tube1, offset.set( 0, - 0.125, 0 ), color2 );
+			extrudeShape( tube2, offset.set( 0.2, 0, 0 ), color1 );
+			extrudeShape( tube2, offset.set( - 0.2, 0, 0 ), color1 );
 
 			prevPoint.copy( point );
 			prevQuaternion.copy( quaternion );
@@ -9082,6 +9143,7 @@ var Three = (function (exports) {
 		this.addAttribute( 'color', new BufferAttribute( new Float32Array( colors ), 3 ) );
 
 	}
+
 	RollerCoasterGeometry.prototype = Object.create( BufferGeometry.prototype );
 
 	function RollerCoasterLiftersGeometry( curve, divisions ) {
@@ -9101,21 +9163,21 @@ var Three = (function (exports) {
 		// shapes
 
 		var tube1 = [
-			new Vector3(  0,  0.05, -0.05 ),
-			new Vector3(  0,  0.05,  0.05 ),
-			new Vector3(  0, -0.05,  0 )
+			new Vector3( 0, 0.05, - 0.05 ),
+			new Vector3( 0, 0.05, 0.05 ),
+			new Vector3( 0, - 0.05, 0 )
 		];
 
 		var tube2 = [
-			new Vector3( -0.05, 0,  0.05 ),
-			new Vector3( -0.05, 0, -0.05 ),
-			new Vector3(  0.05, 0,  0 )
+			new Vector3( - 0.05, 0, 0.05 ),
+			new Vector3( - 0.05, 0, - 0.05 ),
+			new Vector3( 0.05, 0, 0 )
 		];
 
 		var tube3 = [
-			new Vector3(  0.05, 0, -0.05 ),
-			new Vector3(  0.05, 0,  0.05 ),
-			new Vector3( -0.05, 0,  0 )
+			new Vector3( 0.05, 0, - 0.05 ),
+			new Vector3( 0.05, 0, 0.05 ),
+			new Vector3( - 0.05, 0, 0 )
 		];
 
 		var vector1 = new Vector3();
@@ -9188,6 +9250,7 @@ var Three = (function (exports) {
 			}
 
 		}
+
 		var fromPoint = new Vector3();
 		var toPoint = new Vector3();
 
@@ -9204,31 +9267,31 @@ var Three = (function (exports) {
 
 			if ( point.y > 10 ) {
 
-				fromPoint.set( -0.75, -0.35, 0 );
+				fromPoint.set( - 0.75, - 0.35, 0 );
 				fromPoint.applyQuaternion( quaternion );
 				fromPoint.add( point );
 
-				toPoint.set( 0.75, -0.35, 0 );
+				toPoint.set( 0.75, - 0.35, 0 );
 				toPoint.applyQuaternion( quaternion );
 				toPoint.add( point );
 
 				extrudeShape( tube1, fromPoint, toPoint );
 
-				fromPoint.set( -0.7, -0.3, 0 );
+				fromPoint.set( - 0.7, - 0.3, 0 );
 				fromPoint.applyQuaternion( quaternion );
 				fromPoint.add( point );
 
-				toPoint.set( -0.7, -point.y, 0 );
+				toPoint.set( - 0.7, - point.y, 0 );
 				toPoint.applyQuaternion( quaternion );
 				toPoint.add( point );
 
 				extrudeShape( tube2, fromPoint, toPoint );
 
-				fromPoint.set( 0.7, -0.3, 0 );
+				fromPoint.set( 0.7, - 0.3, 0 );
 				fromPoint.applyQuaternion( quaternion );
 				fromPoint.add( point );
 
-				toPoint.set( 0.7, -point.y, 0 );
+				toPoint.set( 0.7, - point.y, 0 );
 				toPoint.applyQuaternion( quaternion );
 				toPoint.add( point );
 
@@ -9236,11 +9299,11 @@ var Three = (function (exports) {
 
 			} else {
 
-				fromPoint.set( 0, -0.2, 0 );
+				fromPoint.set( 0, - 0.2, 0 );
 				fromPoint.applyQuaternion( quaternion );
 				fromPoint.add( point );
 
-				toPoint.set( 0, -point.y, 0 );
+				toPoint.set( 0, - point.y, 0 );
 				toPoint.applyQuaternion( quaternion );
 				toPoint.add( point );
 
@@ -9254,6 +9317,7 @@ var Three = (function (exports) {
 		this.addAttribute( 'normal', new BufferAttribute( new Float32Array( normals ), 3 ) );
 
 	}
+
 	RollerCoasterLiftersGeometry.prototype = Object.create( BufferGeometry.prototype );
 
 	function RollerCoasterShadowGeometry( curve, divisions ) {
@@ -9267,7 +9331,7 @@ var Three = (function (exports) {
 
 		var quaternion = new Quaternion();
 		var prevQuaternion = new Quaternion();
-		prevQuaternion.setFromAxisAngle( up , Math.PI / 2 );
+		prevQuaternion.setFromAxisAngle( up, Math.PI / 2 );
 
 		var point = new Vector3();
 
@@ -9291,19 +9355,19 @@ var Three = (function (exports) {
 
 			quaternion.setFromAxisAngle( up, angle );
 
-			vector1.set( -0.3, 0, 0 );
+			vector1.set( - 0.3, 0, 0 );
 			vector1.applyQuaternion( quaternion );
 			vector1.add( point );
 
-			vector2.set(  0.3, 0, 0 );
+			vector2.set( 0.3, 0, 0 );
 			vector2.applyQuaternion( quaternion );
 			vector2.add( point );
 
-			vector3.set(  0.3, 0, 0 );
+			vector3.set( 0.3, 0, 0 );
 			vector3.applyQuaternion( prevQuaternion );
 			vector3.add( prevPoint );
 
-			vector4.set( -0.3, 0, 0 );
+			vector4.set( - 0.3, 0, 0 );
 			vector4.applyQuaternion( prevQuaternion );
 			vector4.add( prevPoint );
 
@@ -9323,6 +9387,7 @@ var Three = (function (exports) {
 		this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
 
 	}
+
 	RollerCoasterShadowGeometry.prototype = Object.create( BufferGeometry.prototype );
 
 	function SkyGeometry() {
@@ -9353,6 +9418,7 @@ var Three = (function (exports) {
 		this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
 
 	}
+
 	SkyGeometry.prototype = Object.create( BufferGeometry.prototype );
 
 	function TreesGeometry( landscape ) {
@@ -9363,7 +9429,7 @@ var Three = (function (exports) {
 		var colors = [];
 
 		var raycaster = new Raycaster();
-		raycaster.ray.direction.set( 0, -1, 0 );
+		raycaster.ray.direction.set( 0, - 1, 0 );
 
 		for ( var i = 0; i < 2000; i ++ ) {
 
@@ -9406,6 +9472,7 @@ var Three = (function (exports) {
 		this.addAttribute( 'color', new BufferAttribute( new Float32Array( colors ), 3 ) );
 
 	}
+
 	TreesGeometry.prototype = Object.create( BufferGeometry.prototype );
 
 	exports.RollerCoasterGeometry = RollerCoasterGeometry;

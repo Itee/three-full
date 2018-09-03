@@ -552,6 +552,62 @@ var Three = (function (exports) {
 
 		},
 
+		copySRGBToLinear: function () {
+
+			function SRGBToLinear( c ) {
+
+				return ( c < 0.04045 ) ? c * 0.0773993808 : Math.pow( c * 0.9478672986 + 0.0521327014, 2.4 );
+
+			}
+
+			return function copySRGBToLinear( color ) {
+
+				this.r = SRGBToLinear( color.r );
+				this.g = SRGBToLinear( color.g );
+				this.b = SRGBToLinear( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		copyLinearToSRGB: function () {
+
+			function LinearToSRGB( c ) {
+
+				return ( c < 0.0031308 ) ? c * 12.92 : 1.055 * ( Math.pow( c, 0.41666 ) ) - 0.055;
+
+			}
+
+			return function copyLinearToSRGB( color ) {
+
+				this.r = LinearToSRGB( color.r );
+				this.g = LinearToSRGB( color.g );
+				this.b = LinearToSRGB( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		convertSRGBToLinear: function () {
+
+			this.copySRGBToLinear( this );
+
+			return this;
+
+		},
+
+		convertLinearToSRGB: function () {
+
+			this.copyLinearToSRGB( this );
+
+			return this;
+
+		},
+
 		getHex: function () {
 
 			return ( this.r * 255 ) << 16 ^ ( this.g * 255 ) << 8 ^ ( this.b * 255 ) << 0;
@@ -2194,19 +2250,21 @@ var Three = (function (exports) {
 
 			}
 
-			var sinHalfTheta = Math.sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
+			var sqrSinHalfTheta = 1.0 - cosHalfTheta * cosHalfTheta;
 
-			if ( Math.abs( sinHalfTheta ) < 0.001 ) {
+			if ( sqrSinHalfTheta <= Number.EPSILON ) {
 
-				this._w = 0.5 * ( w + this._w );
-				this._x = 0.5 * ( x + this._x );
-				this._y = 0.5 * ( y + this._y );
-				this._z = 0.5 * ( z + this._z );
+				var s = 1 - t;
+				this._w = s * w + t * this._w;
+				this._x = s * x + t * this._x;
+				this._y = s * y + t * this._y;
+				this._z = s * z + t * this._z;
 
-				return this;
+				return this.normalize();
 
 			}
 
+			var sinHalfTheta = Math.sqrt( sqrSinHalfTheta );
 			var halfTheta = Math.atan2( sinHalfTheta, cosHalfTheta );
 			var ratioA = Math.sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
 				ratioB = Math.sin( t * halfTheta ) / sinHalfTheta;
@@ -5686,6 +5744,7 @@ var Three = (function (exports) {
 			if ( this.renderOrder !== 0 ) object.renderOrder = this.renderOrder;
 			if ( JSON.stringify( this.userData ) !== '{}' ) object.userData = this.userData;
 
+			object.layers = this.layers.mask;
 			object.matrix = this.matrix.toArray();
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
@@ -7742,6 +7801,7 @@ var Three = (function (exports) {
 	var RGBAFormat = 1023;
 	var LinearEncoding = 3000;
 	var BasicDepthPacking = 3200;
+	var TangentSpaceNormalMap = 0;
 
 	var materialId = 0;
 
@@ -7930,6 +7990,7 @@ var Three = (function (exports) {
 			if ( this.normalMap && this.normalMap.isTexture ) {
 
 				data.normalMap = this.normalMap.toJSON( meta ).uuid;
+				data.normalMapType = this.normalMapType;
 				data.normalScale = this.normalScale.toArray();
 
 			}
@@ -8472,6 +8533,7 @@ var Three = (function (exports) {
 		this.bumpScale = 1;
 
 		this.normalMap = null;
+		this.normalMapType = TangentSpaceNormalMap;
 		this.normalScale = new Vector2( 1, 1 );
 
 		this.displacementMap = null;
@@ -8505,6 +8567,7 @@ var Three = (function (exports) {
 		this.bumpScale = source.bumpScale;
 
 		this.normalMap = source.normalMap;
+		this.normalMapType = source.normalMapType;
 		this.normalScale.copy( source.normalScale );
 
 		this.displacementMap = source.displacementMap;
@@ -8548,6 +8611,7 @@ var Three = (function (exports) {
 		this.bumpScale = 1;
 
 		this.normalMap = null;
+		this.normalMapType = TangentSpaceNormalMap;
 		this.normalScale = new Vector2( 1, 1 );
 
 		this.displacementMap = null;
@@ -8605,6 +8669,7 @@ var Three = (function (exports) {
 		this.bumpScale = source.bumpScale;
 
 		this.normalMap = source.normalMap;
+		this.normalMapType = source.normalMapType;
 		this.normalScale.copy( source.normalScale );
 
 		this.displacementMap = source.displacementMap;
@@ -8661,6 +8726,7 @@ var Three = (function (exports) {
 		this.bumpScale = 1;
 
 		this.normalMap = null;
+		this.normalMapType = TangentSpaceNormalMap;
 		this.normalScale = new Vector2( 1, 1 );
 
 		this.displacementMap = null;
@@ -8722,6 +8788,7 @@ var Three = (function (exports) {
 		this.bumpScale = source.bumpScale;
 
 		this.normalMap = source.normalMap;
+		this.normalMapType = source.normalMapType;
 		this.normalScale.copy( source.normalScale );
 
 		this.displacementMap = source.displacementMap;
@@ -9235,6 +9302,7 @@ var Three = (function (exports) {
 			if ( json.bumpScale !== undefined ) material.bumpScale = json.bumpScale;
 
 			if ( json.normalMap !== undefined ) material.normalMap = getTexture( json.normalMap );
+			if ( json.normalMapType !== undefined ) material.normalMapType = json.normalMapType;
 			if ( json.normalScale !== undefined ) {
 
 				var normalScale = json.normalScale;
@@ -9289,7 +9357,7 @@ var Three = (function (exports) {
 
 	Object.assign( ImageLoader.prototype, {
 
-		crossOrigin: 'Anonymous',
+		crossOrigin: 'anonymous',
 
 		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -9581,9 +9649,31 @@ var Three = (function (exports) {
 
 				if ( ! isRootObject && meta.images[ image.uuid ] === undefined ) {
 
+					var url;
+
+					if ( Array.isArray( image ) ) {
+
+						// process array of images e.g. CubeTexture
+
+						url = [];
+
+						for ( var i = 0, l = image.length; i < l; i ++ ) {
+
+							url.push( getDataURL( image[ i ] ) );
+
+						}
+
+					} else {
+
+						// process single image
+
+						url = getDataURL( image );
+
+					}
+
 					meta.images[ image.uuid ] = {
 						uuid: image.uuid,
-						url: getDataURL( image )
+						url: url
 					};
 
 				}
@@ -9704,7 +9794,7 @@ var Three = (function (exports) {
 
 	Object.assign( TextureLoader.prototype, {
 
-		crossOrigin: 'Anonymous',
+		crossOrigin: 'anonymous',
 
 		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -9789,7 +9879,7 @@ var Three = (function (exports) {
 
 	Object.assign( Loader.prototype, {
 
-		crossOrigin: undefined,
+		crossOrigin: 'anonymous',
 
 		onLoadStart: function () {},
 
@@ -10084,7 +10174,7 @@ var Three = (function (exports) {
 
 		constructor: BinaryLoader,
 
-		crossOrigin: 'Anonymous',
+		crossOrigin: 'anonymous',
 
 		// Load models generated by slim OBJ converter with BINARY option (converter_obj_three_slim.py -t binary)
 		//  - binary models consist of two files: JS and BIN
@@ -10131,18 +10221,21 @@ var Three = (function (exports) {
 		setBinaryPath: function ( value ) {
 
 			this.binaryPath = value;
+			return this;
 
 		},
 
 		setCrossOrigin: function ( value ) {
 
 			this.crossOrigin = value;
+			return this;
 
 		},
 
 		setTexturePath: function ( value ) {
 
 			this.texturePath = value;
+			return this;
 
 		},
 
