@@ -346,7 +346,8 @@ module.exports = {
 				'NumberKeyframeTrack',
 				'QuaternionKeyframeTrack',
 				'VectorKeyframeTrack',
-				'PropertyBinding'
+				'PropertyBinding',
+				'BufferGeometryUtils'
 			],
             exportsOverride: [
             	'GLTFLoader'
