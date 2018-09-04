@@ -12,8 +12,6 @@ import { RepeatWrapping } from '../constants.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 
-
-
 function Water2( geometry, options ) {
 
 	Mesh.call( this, geometry );

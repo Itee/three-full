@@ -1,7 +1,5 @@
 import { _Math } from '../../math/Math.js'
 
-
-
 function Node( type ) {
 
 	this.uuid = _Math.generateUUID();

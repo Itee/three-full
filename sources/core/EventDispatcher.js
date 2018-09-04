@@ -1,7 +1,4 @@
 
-
-
-
 function EventDispatcher() {}
 
 Object.assign( EventDispatcher.prototype, {
@@ -81,7 +78,6 @@ Object.assign( EventDispatcher.prototype, {
 	}
 
 } );
-
 
 ;
 

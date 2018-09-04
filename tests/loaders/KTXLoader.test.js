@@ -4333,7 +4333,6 @@ var Three = (function (exports) {
 	};
 
 	var KhronosTextureContainer = ( function () {
-
 		
 		function KhronosTextureContainer( arrayBuffer, facesExpected, threeDExpected, textureArrayExpected ) {
 

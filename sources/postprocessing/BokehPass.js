@@ -16,9 +16,6 @@ import {
 import { BokehShader } from '../shaders/BokehShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-
-
-
 var BokehPass = function ( scene, camera, params ) {
 
 	Pass.call( this );

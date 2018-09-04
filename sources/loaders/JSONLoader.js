@@ -10,20 +10,6 @@ import { Geometry } from '../core/Geometry.js'
 import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function JSONLoader( manager ) {
 
 	if ( typeof manager === 'boolean' ) {
@@ -129,7 +115,6 @@ Object.assign( JSONLoader.prototype, {
 				scale = json.scale,
 
 				nUvLayers = 0;
-
 
 			if ( json.uvs !== undefined ) {
 
@@ -260,14 +245,12 @@ Object.assign( JSONLoader.prototype, {
 								normals[ normalIndex ]
 							);
 
-
 							if ( i !== 2 ) faceA.vertexNormals.push( normal );
 							if ( i !== 0 ) faceB.vertexNormals.push( normal );
 
 						}
 
 					}
-
 
 					if ( hasFaceColor ) {
 
@@ -278,7 +261,6 @@ Object.assign( JSONLoader.prototype, {
 						faceB.color.setHex( hex );
 
 					}
-
 
 					if ( hasFaceVertexColor ) {
 
@@ -370,14 +352,12 @@ Object.assign( JSONLoader.prototype, {
 
 					}
 
-
 					if ( hasFaceColor ) {
 
 						colorIndex = faces[ offset ++ ];
 						face.color.setHex( colors[ colorIndex ] );
 
 					}
-
 
 					if ( hasFaceVertexColor ) {
 
@@ -583,7 +563,6 @@ Object.assign( JSONLoader.prototype, {
 	} )()
 
 } );
-
 
 ;
 

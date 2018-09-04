@@ -1,7 +1,5 @@
 import { Vector2 } from '../math/Vector2.js'
 
-
-
 var UVsDebug = function ( geometry, size ) {
 
 	// handles wrapping of uv.x > 1 only

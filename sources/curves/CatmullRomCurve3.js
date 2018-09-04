@@ -1,18 +1,9 @@
 import { Vector3 } from '../math/Vector3.js'
 import { Curve } from './Curve.js'
 
-
-
-
-
-
-
-
-
 function CubicPoly() {
 
 	var c0 = 0, c1 = 0, c2 = 0, c3 = 0;
-
 	
 	function init( x0, x1, t0, t1 ) {
 
@@ -229,7 +220,6 @@ CatmullRomCurve3.prototype.fromJSON = function ( json ) {
 	return this;
 
 };
-
 
 ;
 

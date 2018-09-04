@@ -6,18 +6,7 @@ import { TimerNode } from '../utils/TimerNode.js'
 import { ConstNode } from './ConstNode.js'
 import { FunctionNode } from './FunctionNode.js'
 
-
-
-
-
-
-
-
-
-
 // Fix circular dependency, see #2
-
-
 
 //
 //	Keywords
@@ -166,6 +155,5 @@ NodeLib.add( new FunctionNode( [
 	"	return mix(rgb.rgb, vec3(mx), amt);",
 	"}"
 ].join( "\n" ) ) );
-
 
 export { NodeLib }

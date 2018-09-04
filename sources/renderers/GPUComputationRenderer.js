@@ -13,8 +13,6 @@ import {
 	RGBAFormat
 } from '../constants.js'
 
-
-
 function GPUComputationRenderer( sizeX, sizeY, renderer ) {
 
 	this.variables = [];
@@ -34,7 +32,6 @@ function GPUComputationRenderer( sizeX, sizeY, renderer ) {
 
 	var mesh = new Mesh( new PlaneBufferGeometry( 2, 2 ), passThruShader );
 	scene.add( mesh );
-
 
 	this.addVariable = function( variableName, computeFragmentShader, initialValueTexture ) {
 
@@ -179,7 +176,6 @@ function GPUComputationRenderer( sizeX, sizeY, renderer ) {
 	}
 	this.addResolutionDefine = addResolutionDefine;
 
-
 	// The following functions can be used to compute things manually
 
 	function createShaderMaterial( computeFragmentShader, uniforms ) {
@@ -233,7 +229,6 @@ function GPUComputationRenderer( sizeX, sizeY, renderer ) {
 		return texture;
 
 	};
-
 
 	this.renderTexture = function( input, output ) {
 

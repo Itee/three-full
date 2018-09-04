@@ -1,7 +1,4 @@
 
-
-
-
 function WebGLAnimation() {
 
 	var context = null;

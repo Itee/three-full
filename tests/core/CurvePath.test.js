@@ -2697,7 +2697,6 @@ var Three = (function (exports) {
 			normals[ 0 ].crossVectors( tangents[ 0 ], vec );
 			binormals[ 0 ].crossVectors( tangents[ 0 ], normals[ 0 ] );
 
-
 			// compute the slowly-varying normal and binormal vectors for each segment on the curve
 
 			for ( i = 1; i <= segments; i ++ ) {
@@ -3393,7 +3392,6 @@ var Three = (function (exports) {
 
 	};
 
-
 	EllipseCurve.prototype.toJSON = function () {
 
 		var data = Curve.prototype.toJSON.call( this );
@@ -3452,7 +3450,6 @@ var Three = (function (exports) {
 	function CubicPoly() {
 
 		var c0 = 0, c1 = 0, c2 = 0, c3 = 0;
-
 		
 		function init( x0, x1, t0, t1 ) {
 

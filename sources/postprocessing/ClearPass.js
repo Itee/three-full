@@ -1,7 +1,5 @@
 import { Pass } from './Pass.js'
 
-
-
 var ClearPass = function ( clearColor, clearAlpha ) {
 
 	Pass.call( this );

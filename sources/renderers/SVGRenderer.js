@@ -16,8 +16,6 @@ import {
 	FaceColors
 } from '../constants.js'
 
-
-
 var SVGObject = function ( node ) {
 
 	Object3D.call( this );

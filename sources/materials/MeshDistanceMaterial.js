@@ -1,11 +1,6 @@
 import { Material } from './Material.js'
 import { Vector3 } from '../math/Vector3.js'
 
-
-
-
-
-
 function MeshDistanceMaterial( parameters ) {
 
 	Material.call( this );
@@ -61,7 +56,6 @@ MeshDistanceMaterial.prototype.copy = function ( source ) {
 	return this;
 
 };
-
 
 ;
 

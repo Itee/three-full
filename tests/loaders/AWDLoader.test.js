@@ -6853,7 +6853,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -8777,7 +8776,6 @@ var Three = (function (exports) {
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -8786,7 +8784,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -8797,7 +8794,6 @@ var Three = (function (exports) {
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -8806,7 +8802,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -8817,7 +8812,6 @@ var Three = (function (exports) {
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -8826,7 +8820,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -8837,7 +8830,6 @@ var Three = (function (exports) {
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -8846,7 +8838,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -10111,8 +10102,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new BufferGeometry().copy( this );
 
@@ -11389,7 +11378,6 @@ var Three = (function (exports) {
 					flags = this.readU8(),
 					len = this.readU32();
 
-
 				switch ( type ) {
 
 					case 1:
@@ -11451,12 +11439,10 @@ var Three = (function (exports) {
 
 				}
 
-
 				// Store block reference for later use
 				this._blocks[ blockId ] = block = new Block();
 				block.data = assetData;
 				block.id = blockId;
-
 
 			},
 
@@ -11575,16 +11561,13 @@ var Three = (function (exports) {
 				mesh.applyMatrix( mtx );
 				mesh.name = name;
 
-
 				parent = this.getBlock( par_id ) || this.trunk;
 				parent.add( mesh );
-
 
 				var matLen = materials.length;
 				var maxLen = Math.max( meshLen, matLen );
 				for ( i = 0; i < maxLen; i ++ )
 					meshes[ i % meshLen ].material = materials[ i % matLen ];
-
 
 				// Ignore for now
 				this.parseProperties( null );
@@ -11657,7 +11640,6 @@ var Three = (function (exports) {
 				mat.extra = attributes;
 				mat.alphaThreshold = props.get( 12, 0.0 );
 				mat.repeat = props.get( 13, false );
-
 
 				return mat;
 
@@ -11740,7 +11722,6 @@ var Three = (function (exports) {
 
 				// Discard attributes for now
 				this.parseUserAttributes();
-
 
 				return skeleton;
 
@@ -11851,7 +11832,6 @@ var Three = (function (exports) {
 
 				this.parseUserAttributes();
 
-
 				return skeletonFrames;
 
 			},
@@ -11893,14 +11873,12 @@ var Three = (function (exports) {
 
 				if ( type == 1 ) {
 
-
 					thisAnimator = {
 						animationSet: targetAnimationSet,
 						skeleton: this._blocks[ props.get( 1, 0 ) ].data
 					};
 
 				}
-
 
 				for ( i = 0; i < targetMeshes.length; i ++ ) {
 
@@ -11934,10 +11912,8 @@ var Three = (function (exports) {
 					geom.name = name;
 					geometries.push( geom );
 
-
 					sm_len = this.readU32();
 					sm_end = this._ptr + sm_len;
-
 
 					// Ignore for now
 					this.parseProperties( { 1: this._geoNrType, 2: this._geoNrType } );
@@ -12138,7 +12114,6 @@ var Three = (function (exports) {
 
 								}
 
-
 								subMeshParsed ++;
 
 							} else
@@ -12148,7 +12123,6 @@ var Three = (function (exports) {
 						}
 
 					}
-
 
 					frames_parsed ++;
 
@@ -12381,7 +12355,6 @@ var Three = (function (exports) {
 				return a;
 
 			},
-
 			
 			readUTF: function () {
 
@@ -12389,7 +12362,6 @@ var Three = (function (exports) {
 				return this.readUTFBytes( len );
 
 			},
-
 			
 			readUTFBytes: function ( len ) {
 

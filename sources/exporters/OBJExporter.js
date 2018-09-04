@@ -6,8 +6,6 @@ import { Geometry } from '../core/Geometry.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Line } from '../objects/Line.js'
 
-
-
 var OBJExporter = function () {};
 
 OBJExporter.prototype = {

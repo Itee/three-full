@@ -1,9 +1,5 @@
 import { TempNode } from './TempNode.js'
 
-
-
-
-
 var FunctionNode = function( src, includesOrType, extensionsOrIncludes, keywordsOrExtensions ) {
 
 	src = src || '';
@@ -90,6 +86,5 @@ FunctionNode.prototype.eval = function( src, includes, extensions, keywords ) {
 	this.value = src;
 
 };
-
 
 export { FunctionNode }

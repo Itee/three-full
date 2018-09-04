@@ -39,8 +39,6 @@ import { LoaderUtils } from './LoaderUtils.js'
 import { Loader } from './Loader.js'
 import { _Math } from '../math/Math.js'
 
-
-
 var ColladaLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

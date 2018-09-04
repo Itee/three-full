@@ -3,11 +3,6 @@ import { NodeUtils } from '../core/NodeUtils.js'
 import { Vector3 } from '../../math/Vector3.js'
 import { NodeMaterial } from '../materials/NodeMaterial.js'
 
-
-
-
-
-
 function Vector3Node( x, y, z ) {
 
 	InputNode.call( this, 'v3' );

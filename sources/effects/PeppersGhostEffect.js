@@ -2,8 +2,6 @@ import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
 
-
-
 var PeppersGhostEffect = function ( renderer ) {
 
 	var scope = this;
@@ -79,7 +77,6 @@ var PeppersGhostEffect = function ( renderer ) {
 		_cameraR.lookAt( scene.position );
 		_cameraR.rotation.x += 90 * ( Math.PI / 180 );
 
-
 		renderer.clear();
 		renderer.setScissorTest( true );
 
@@ -138,7 +135,6 @@ var PeppersGhostEffect = function ( renderer ) {
 		renderer.setScissorTest( false );
 
 	};
-
 
 };
 

@@ -1,7 +1,4 @@
 
-
-
-
 // Characters [].:/ are reserved for track binding syntax.
 var RESERVED_CHARS_RE = '\\[\\]\\.:\\/';
 
@@ -69,7 +66,6 @@ Object.assign( Composite.prototype, {
 
 } );
 
-
 function PropertyBinding( rootNode, path, parsedPath ) {
 
 	this.path = path;
@@ -98,7 +94,6 @@ Object.assign( PropertyBinding, {
 		}
 
 	},
-
 	
 	sanitizeNodeName: ( function () {
 
@@ -550,7 +545,6 @@ Object.assign( PropertyBinding.prototype, { // prototype, continued
 
 			}
 
-
 			if ( objectIndex !== undefined ) {
 
 				if ( targetObject[ objectIndex ] === undefined ) {
@@ -632,7 +626,6 @@ Object.assign( PropertyBinding.prototype, { // prototype, continued
 						}
 
 					}
-
 
 				} else {
 

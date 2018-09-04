@@ -3,8 +3,6 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { NoColors } from '../constants.js'
 
-
-
 var MarchingCubes = function ( resolution, material, enableUvs, enableColors ) {
 
 	ImmediateRenderObject.call( this, material );
@@ -361,7 +359,6 @@ var MarchingCubes = function ( resolution, material, enableUvs, enableColors ) {
 			scope.normalArray[ c + 7 ] = ny;
 			scope.normalArray[ c + 8 ] = nz;
 
-
 		} else {
 
 			scope.normalArray[ c + 0 ] = norm[ o1 + 0 ];
@@ -508,7 +505,6 @@ var MarchingCubes = function ( resolution, material, enableUvs, enableColors ) {
 		var max_y = Math.floor( ys + radius ); if ( max_y > this.size - 1 ) max_y = this.size - 1;
 		var min_x = Math.floor( xs - radius ); if ( min_x < 1 ) min_x = 1;
 		var max_x = Math.floor( xs + radius ); if ( max_x > this.size - 1 ) max_x = this.size - 1;
-
 
 		// Don't polygonize in the outer layer because normals aren't
 		// well-defined there.
@@ -765,7 +761,6 @@ var MarchingCubes = function ( resolution, material, enableUvs, enableColors ) {
 
 MarchingCubes.prototype = Object.create( ImmediateRenderObject.prototype );
 MarchingCubes.prototype.constructor = MarchingCubes;
-
 
 /////////////////////////////////////
 // Marching cubes lookup tables

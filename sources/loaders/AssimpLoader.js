@@ -19,8 +19,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
 import { Loader } from './Loader.js'
 
-
-
 var AssimpLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -1041,7 +1039,6 @@ AssimpLoader.prototype = {
 
 		}
 
-
 		function veclerp( v1, v2, l ) {
 
 			var v = new Vector3();
@@ -1842,8 +1839,6 @@ AssimpLoader.prototype = {
 
 						}
 
-
-
 					}
 
 					if ( f.mNumIndices === 3 ) {
@@ -1866,8 +1861,6 @@ AssimpLoader.prototype = {
 						throw ( new Error( "Sorry, can't currently triangulate polys. Use the triangulate preprocessor in Assimp." ) );
 
 					}
-
-
 
 				}
 

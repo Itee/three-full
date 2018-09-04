@@ -3030,7 +3030,6 @@ var Three = (function (exports) {
 	} );
 
 	var NURBSUtils = {
-
 		
 		findSpan: function( p,  u,  U ) {
 
@@ -3071,8 +3070,6 @@ var Three = (function (exports) {
 			return mid;
 
 		},
-
-
 		
 		calcBasisFunctions: function( span, u, p, U ) {
 
@@ -3105,8 +3102,6 @@ var Three = (function (exports) {
 			 return N;
 
 		},
-
-
 		
 		calcBSplinePoint: function( p, U, P, u ) {
 
@@ -3129,8 +3124,6 @@ var Three = (function (exports) {
 			return C;
 
 		},
-
-
 		
 		calcBasisFunctionDerivatives: function( span,  u,  p,  n,  U ) {
 
@@ -3249,8 +3242,6 @@ var Three = (function (exports) {
 			return ders;
 
 		},
-
-
 		
 		calcBSplineDerivatives: function( p,  U,  P,  u,  nd ) {
 
@@ -3295,8 +3286,6 @@ var Three = (function (exports) {
 			return CK;
 
 		},
-
-
 		
 		calcKoverI: function( k, i ) {
 
@@ -3325,8 +3314,6 @@ var Three = (function (exports) {
 			return nom / denom;
 
 		},
-
-
 		
 		calcRationalCurveDerivatives: function ( Pders ) {
 
@@ -3361,8 +3348,6 @@ var Three = (function (exports) {
 			return CK;
 
 		},
-
-
 		
 		calcNURBSDerivatives: function( p,  U,  P,  u,  nd ) {
 
@@ -3370,8 +3355,6 @@ var Three = (function (exports) {
 			return this.calcRationalCurveDerivatives( Pders );
 
 		},
-
-
 		
 		calcSurfacePoint: function ( p, q, U, V, P, u, v, target ) {
 

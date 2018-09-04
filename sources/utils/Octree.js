@@ -8,12 +8,7 @@ import { Object3D } from '../core/Object3D.js'
 import { Raycaster } from '../core/Raycaster.js'
 import { _Math } from '../math/Math.js'
 
-
-
-
 	"use strict";
-
-	
 
 	function isNumber( n ) {
 
@@ -64,8 +59,6 @@ import { _Math } from '../math/Math.js'
 		return - 1;
 
 	}
-
-	
 
 	var Octree = function ( parameters ) {
 
@@ -607,8 +600,6 @@ import { _Math } from '../math/Math.js'
 
 	};
 
-	
-
 	var OctreeObjectData = function ( object, part ) {
 
 		// properties
@@ -703,8 +694,6 @@ import { _Math } from '../math/Math.js'
 		}
 
 	};
-
-	
 
 	var OctreeNode = function ( parameters ) {
 
@@ -1768,7 +1757,6 @@ import { _Math } from '../math/Math.js'
 
 			}
 
-
 			if ( deltaZ - radiusObj > - overlap ) {
 
 				// z right
@@ -2055,8 +2043,6 @@ import { _Math } from '../math/Math.js'
 
 	};
 
-	
-
 	Raycaster.prototype.intersectOctreeObject = function ( object, recursive ) {
 
 		var intersects,
@@ -2116,8 +2102,6 @@ import { _Math } from '../math/Math.js'
 		return intersects;
 
 	};
-
-
 
 export {
 	Octree,

@@ -3,13 +3,6 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { ShapeUtils } from '../utils/ShapeUtils.js'
 
-
-
-
-
-
-
-
 // ShapeGeometry
 
 function ShapeGeometry( shapes, curveSegments ) {
@@ -103,7 +96,6 @@ function ShapeBufferGeometry( shapes, curveSegments ) {
 	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 	this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
 	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
-
 
 	// helper functions
 
@@ -219,7 +211,6 @@ function toJSON( shapes, data ) {
 	return data;
 
 }
-
 
 ;
 

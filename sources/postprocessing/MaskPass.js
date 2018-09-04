@@ -1,7 +1,5 @@
 import { Pass } from './Pass.js'
 
-
-
 var MaskPass = function ( scene, camera ) {
 
 	Pass.call( this );
@@ -74,7 +72,6 @@ MaskPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 	}
 
 } );
-
 
 var ClearMaskPass = function () {
 

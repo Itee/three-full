@@ -43,42 +43,6 @@ import { WebGLUtils } from './webgl/WebGLUtils.js'
 import { WebVRManager } from './webvr/WebVRManager.js'
 import { WebXRManager } from './webvr/WebXRManager.js'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function WebGLRenderer( parameters ) {
 
 	console.log( 'WebGLRenderer', REVISION );
@@ -589,7 +553,6 @@ function WebGLRenderer( parameters ) {
 
 	}
 
-
 	function releaseMaterialProgramReference( material ) {
 
 		var programInfo = properties.get( material ).program;
@@ -798,7 +761,6 @@ function WebGLRenderer( parameters ) {
 				}
 
 			}
-
 
 		} else if ( object.isLine ) {
 
@@ -1192,8 +1154,6 @@ function WebGLRenderer( parameters ) {
 		currentRenderState = null;
 
 	};
-
-	
 
 	function projectObject( object, camera, sortObjects ) {
 
@@ -1749,7 +1709,6 @@ function WebGLRenderer( parameters ) {
 						//       16x16 pixel texture max   64 bones * 4 pixels = (16 * 16)
 						//       32x32 pixel texture max  256 bones * 4 pixels = (32 * 32)
 						//       64x64 pixel texture max 1024 bones * 4 pixels = (64 * 64)
-
 
 						var size = Math.sqrt( bones.length * 4 ); // 4 pixels needed for 1 matrix
 						size = _Math.ceilPowerOfTwo( size );
@@ -2617,7 +2576,6 @@ function WebGLRenderer( parameters ) {
 	};
 
 }
-
 
 ;
 

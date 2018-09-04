@@ -1,12 +1,6 @@
 import { Cache } from './Cache.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
-
-
-
-
 function ImageBitmapLoader( manager ) {
 
 	if ( typeof createImageBitmap === 'undefined' ) {

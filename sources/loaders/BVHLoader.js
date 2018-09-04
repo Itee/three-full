@@ -8,8 +8,6 @@ import { AnimationClip } from '../animation/AnimationClip.js'
 import { Skeleton } from '../objects/Skeleton.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
 var BVHLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -37,7 +35,6 @@ BVHLoader.prototype = {
 	},
 
 	parse: function ( text ) {
-
 		
 		function readBvh( lines ) {
 
@@ -94,7 +91,6 @@ BVHLoader.prototype = {
 			return list;
 
 		}
-
 		
 		function readFrameData( data, frameTime, bone ) {
 
@@ -161,7 +157,6 @@ BVHLoader.prototype = {
 			}
 
 		}
-
 		
 		function readNode( lines, firstline, list ) {
 
@@ -257,7 +252,6 @@ BVHLoader.prototype = {
 			}
 
 		}
-
 		
 		function toTHREEBone( source, list ) {
 
@@ -280,7 +274,6 @@ BVHLoader.prototype = {
 			return bone;
 
 		}
-
 		
 		function toTHREEAnimation( bones ) {
 
@@ -338,7 +331,6 @@ BVHLoader.prototype = {
 			return new AnimationClip( 'animation', - 1, tracks );
 
 		}
-
 		
 		function nextLine( lines ) {
 

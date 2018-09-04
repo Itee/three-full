@@ -5,14 +5,9 @@ import { MTLLoader } from './MTLLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
 
-
-
 'use strict';
 
-
-
 if ( LoaderSupport === undefined ) console.error( '"LoaderSupport" is not available. "OBJLoader2" requires it. Please include "LoaderSupport.js" in your HTML.' );
-
 
 var OBJLoader2 = (function () {
 
@@ -42,49 +37,40 @@ var OBJLoader2 = (function () {
 		this.workerSupport = new LoaderSupport.WorkerSupport();
 		this.terminateWorkerOnLoad = true;
 	}
-
 	
 	OBJLoader2.prototype.setLogging = function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 		this.meshBuilder.setLogging( this.logging.enabled, this.logging.debug );
 	};
-
 	
 	OBJLoader2.prototype.setModelName = function ( modelName ) {
 		this.modelName = Validator.verifyInput( modelName, this.modelName );
 	};
-
 	
 	OBJLoader2.prototype.setPath = function ( path ) {
 		this.path = Validator.verifyInput( path, this.path );
 	};
-
 	
 	OBJLoader2.prototype.setStreamMeshesTo = function ( streamMeshesTo ) {
 		this.loaderRootNode = Validator.verifyInput( streamMeshesTo, this.loaderRootNode );
 	};
-
 	
 	OBJLoader2.prototype.setMaterials = function ( materials ) {
 		this.meshBuilder.setMaterials( materials );
 	};
-
 	
 	OBJLoader2.prototype.setUseIndices = function ( useIndices ) {
 		this.useIndices = useIndices === true;
 	};
-
 	
 	OBJLoader2.prototype.setDisregardNormals = function ( disregardNormals ) {
 		this.disregardNormals = disregardNormals === true;
 	};
-
 	
 	OBJLoader2.prototype.setMaterialPerSmoothingGroup = function ( materialPerSmoothingGroup ) {
 		this.materialPerSmoothingGroup = materialPerSmoothingGroup === true;
 	};
-
 	
 	OBJLoader2.prototype.setUseOAsMesh = function ( useOAsMesh ) {
 		this.useOAsMesh = useOAsMesh === true;
@@ -99,7 +85,6 @@ var OBJLoader2 = (function () {
 
 		this.meshBuilder._setCallbacks( this.callbacks );
 	};
-
 	
 	OBJLoader2.prototype.onProgress = function ( type, text, numericalValue ) {
 		var content = Validator.isValid( text ) ? text: '';
@@ -141,7 +126,6 @@ var OBJLoader2 = (function () {
 
 		}
 	};
-
 	
 	OBJLoader2.prototype.load = function ( url, onLoad, onProgress, onError, onMeshAlter, useAsync ) {
 		var resource = new LoaderSupport.ResourceDescriptor( url, 'OBJ' );
@@ -207,7 +191,6 @@ var OBJLoader2 = (function () {
 				};
 			}
 
-
 			var fileLoader = new FileLoader( this.manager );
 			fileLoader.setPath( this.path );
 			fileLoader.setResponseType( 'arraybuffer' );
@@ -215,8 +198,6 @@ var OBJLoader2 = (function () {
 
 		}
 	};
-
-
 	
 	OBJLoader2.prototype.run = function ( prepData, workerSupportExternal ) {
 		this._applyPrepData( prepData );
@@ -260,7 +241,6 @@ var OBJLoader2 = (function () {
 
 		}
 	};
-
 	
 	OBJLoader2.prototype.parse = function ( content ) {
 		// fast-fail in case of illegal data
@@ -316,7 +296,6 @@ var OBJLoader2 = (function () {
 
 		return this.loaderRootNode;
 	};
-
 	
 	OBJLoader2.prototype.parseAsync = function ( content, onLoad ) {
 		var scope = this;
@@ -399,8 +378,6 @@ var OBJLoader2 = (function () {
 			}
 		);
 	};
-
-
 	
 	var Parser = (function () {
 
@@ -540,7 +517,6 @@ var OBJLoader2 = (function () {
 				console.info( printedConfig );
 			}
 		};
-
 		
 		Parser.prototype.parse = function ( arrayBuffer ) {
 			if ( this.logging.enabled ) console.time( 'OBJLoader2.Parser.parse' );
@@ -591,7 +567,6 @@ var OBJLoader2 = (function () {
 			this.finalizeParsing();
 			if ( this.logging.enabled ) console.timeEnd(  'OBJLoader2.Parser.parse' );
 		};
-
 		
 		Parser.prototype.parseText = function ( text ) {
 			if ( this.logging.enabled ) console.time(  'OBJLoader2.Parser.parseText' );
@@ -651,7 +626,6 @@ var OBJLoader2 = (function () {
 						for ( i = start; i < stop; i++ ) line += content[ i ];
 
 					} else {
-
 
 						for ( i = start; i < stop; i++ ) line += String.fromCharCode( content[ i ] );
 
@@ -812,7 +786,6 @@ var OBJLoader2 = (function () {
 
 			}
 		};
-
 		
 		Parser.prototype.checkFaceType = function ( faceType ) {
 			if ( this.rawMesh.faceType !== faceType ) {
@@ -930,7 +903,6 @@ var OBJLoader2 = (function () {
 				'\n\tMaterial count: ' + this.rawMesh.counts.mtlCount +
 				'\n\tReal MeshOutputGroup count: ' + this.rawMesh.subGroups.length;
 		};
-
 		
 		Parser.prototype.finalizeRawMesh = function () {
 			var meshOutputGroupTemp = [];
@@ -1007,7 +979,6 @@ var OBJLoader2 = (function () {
 				return false;
 			}
 		};
-
 		
 		Parser.prototype.buildMesh = function ( result ) {
 			var meshOutputGroups = result.subGroups;
@@ -1051,7 +1022,6 @@ var OBJLoader2 = (function () {
 				if ( this.rawMesh.faceType < 4 ) {
 
 					materialName = materialNameOrg + ( haveVertexColors ? '_vertexColor' : '' ) + ( meshOutputGroup.smoothingGroup === 0 ? '_flat' : '' );
-
 
 				} else {
 
@@ -1228,14 +1198,12 @@ var OBJLoader2 = (function () {
 
 		return Parser;
 	})();
-
 	
 	OBJLoader2.prototype.loadMtl = function ( url, content, onLoad, onProgress, onError, crossOrigin, materialOptions ) {
 		var resource = new LoaderSupport.ResourceDescriptor( url, 'MTL' );
 		resource.setContent( content );
 		this._loadMtl( resource, onLoad, onProgress, onError, crossOrigin, materialOptions );
 	};
-
 
 	OBJLoader2.prototype._loadMtl = function ( resource, onLoad, onProgress, onError, crossOrigin, materialOptions ) {
 		if ( MTLLoader === undefined ) console.error( '"MTLLoader" is not available. "OBJLoader2" requires it for loading MTL files.' );

@@ -1,11 +1,6 @@
 import { _Math } from './Math.js'
 import { Vector3 } from './Vector3.js'
 
-
-
-
-
-
 function Quaternion( x, y, z, w ) {
 
 	this._x = x || 0;
@@ -628,7 +623,6 @@ Object.assign( Quaternion.prototype, {
 	onChangeCallback: function () {}
 
 } );
-
 
 ;
 

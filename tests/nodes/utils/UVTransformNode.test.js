@@ -1231,8 +1231,6 @@ var Three = (function (exports) {
 
 	// Fix circular dependency, see #2
 
-
-
 	//
 	//	Keywords
 	//
@@ -1382,7 +1380,6 @@ var Three = (function (exports) {
 	].join( "\n" ) ) );
 
 	// Fix circular dependency, see #2
-
 
 	FunctionNode.prototype.isShared = function( builder, output ) {
 
@@ -4184,7 +4181,6 @@ var Three = (function (exports) {
 		return builder.format( "mat3( " + this.value.elements.join( ", " ) + " )", type, output );
 
 	};
-
 
 	Matrix3Node.prototype.copy = function ( source ) {
 

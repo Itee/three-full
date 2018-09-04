@@ -1,7 +1,4 @@
 
-
-
-
 var ExplodeModifier = function () {
 
 };

@@ -298,7 +298,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -5097,8 +5096,6 @@ var Three = (function (exports) {
 
 	var ShaderSkin = {
 
-		
-
 		'skinSimple' : {
 
 			uniforms: UniformsUtils.merge( [
@@ -5369,8 +5366,6 @@ var Three = (function (exports) {
 
 		},
 
-		
-
 		'skin' : {
 
 			uniforms: UniformsUtils.merge( [
@@ -5546,7 +5541,6 @@ var Three = (function (exports) {
 
 							"float dirDiffuseWeight = max( dot( normal, dirVector ), 0.0 );",
 
-
 							"totalDiffuseLight += directionalLights[ i ].color * dirDiffuseWeight;",
 
 							"if ( passID == 1 ) {",
@@ -5560,7 +5554,6 @@ var Three = (function (exports) {
 						"}",
 
 					"#endif",
-
 
 					"outgoingLight += diffuseColor.rgb * ( totalDiffuseLight + totalSpecularLight );",
 
@@ -5587,13 +5580,11 @@ var Three = (function (exports) {
 						"vec3 blur3Color = texture2D( tBlur3, vUv ).xyz;",
 						"vec3 blur4Color = texture2D( tBlur4, vUv ).xyz;",
 
-
 						//"gl_FragColor = vec4( blur1Color, gl_FragColor.w );",
 
 						//"gl_FragColor = vec4( vec3( 0.22, 0.5, 0.7 ) * nonblurColor + vec3( 0.2, 0.5, 0.3 ) * blur1Color + vec3( 0.58, 0.0, 0.0 ) * blur2Color, gl_FragColor.w );",
 
 						//"gl_FragColor = vec4( vec3( 0.25, 0.6, 0.8 ) * nonblurColor + vec3( 0.15, 0.25, 0.2 ) * blur1Color + vec3( 0.15, 0.15, 0.0 ) * blur2Color + vec3( 0.45, 0.0, 0.0 ) * blur3Color, gl_FragColor.w );",
-
 
 						"outgoingLight = vec3( vec3( 0.22,  0.437, 0.635 ) * nonblurColor + ",
 											 "vec3( 0.101, 0.355, 0.365 ) * blur1Color + ",
@@ -5670,7 +5661,6 @@ var Three = (function (exports) {
 
 				"}",
 
-
 			].join( "\n" ),
 
 			vertexShaderUV: [
@@ -5701,8 +5691,6 @@ var Three = (function (exports) {
 			].join( "\n" )
 
 		},
-
-		
 
 		"beckmann" : {
 

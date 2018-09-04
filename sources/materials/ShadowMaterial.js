@@ -1,11 +1,6 @@
 import { Material } from './Material.js'
 import { Color } from '../math/Color.js'
 
-
-
-
-
-
 function ShadowMaterial( parameters ) {
 
 	Material.call( this );
@@ -33,7 +28,6 @@ ShadowMaterial.prototype.copy = function ( source ) {
 	return this;
 
 };
-
 
 ;
 

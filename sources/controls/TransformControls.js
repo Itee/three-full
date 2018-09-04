@@ -21,8 +21,6 @@ import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { DoubleSide } from '../constants.js'
 
-
-
 var TransformControls = function ( camera, domElement ) {
 
 	Object3D.call( this );
@@ -637,7 +635,6 @@ TransformControls.prototype = Object.assign( Object.create( Object3D.prototype )
 
 } );
 
-
 var TransformControlsGizmo = function () {
 
 	'use strict';
@@ -1078,7 +1075,6 @@ var TransformControlsGizmo = function () {
 		this.helper[ "rotate" ].visible = this.mode === "rotate";
 		this.helper[ "scale" ].visible = this.mode === "scale";
 
-
 		var handles = [];
 		handles = handles.concat( this.picker[ this.mode ].children );
 		handles = handles.concat( this.gizmo[ this.mode ].children );
@@ -1157,7 +1153,6 @@ var TransformControlsGizmo = function () {
 
 					}
 
-
 				} else if ( handle.name === 'START' ) {
 
 					handle.position.copy( this.worldPositionStart );
@@ -1215,7 +1210,6 @@ var TransformControlsGizmo = function () {
 				var AXIS_HIDE_TRESHOLD = 0.99;
 				var PLANE_HIDE_TRESHOLD = 0.2;
 				var AXIS_FLIP_TRESHOLD = -0.4;
-
 
 				if ( handle.name === 'X' || handle.name === 'XYZX' ) {
 					if ( Math.abs( alignVector.copy( unitX ).applyQuaternion( quaternion ).dot( this.eye ) ) > AXIS_HIDE_TRESHOLD ) {
@@ -1386,7 +1380,6 @@ TransformControlsGizmo.prototype = Object.assign( Object.create( Object3D.protot
 	isTransformControlsGizmo: true
 
 } );
-
 
 var TransformControlsPlane = function () {
 

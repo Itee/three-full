@@ -3,13 +3,6 @@ import { FunctionNode } from '../core/FunctionNode.js'
 import { FloatNode } from '../inputs/FloatNode.js'
 import { PositionNode } from './PositionNode.js'
 
-
-
-
-
-
-
-
 function CameraNode( scope, camera ) {
 
 	TempNode.call( this, 'v3' );

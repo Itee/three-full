@@ -1,11 +1,6 @@
 import { PropertyBinding } from './PropertyBinding.js'
 import { _Math } from '../math/Math.js'
 
-
-
-
-
-
 function AnimationObjectGroup() {
 
 	this.uuid = _Math.generateUUID();
@@ -350,7 +345,6 @@ Object.assign( AnimationObjectGroup.prototype, {
 	}
 
 } );
-
 
 ;
 

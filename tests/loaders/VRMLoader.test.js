@@ -4979,7 +4979,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -7077,7 +7076,6 @@ var Three = (function (exports) {
 			return this;
 
 		},
-
 		
 		setFocalLength: function ( focalLength ) {
 
@@ -7088,7 +7086,6 @@ var Three = (function (exports) {
 			this.updateProjectionMatrix();
 
 		},
-
 		
 		getFocalLength: function () {
 
@@ -7118,7 +7115,6 @@ var Three = (function (exports) {
 			return this.filmGauge / Math.max( this.aspect, 1 );
 
 		},
-
 		
 		setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 
@@ -9030,7 +9026,6 @@ var Three = (function (exports) {
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -9039,7 +9034,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -9050,7 +9044,6 @@ var Three = (function (exports) {
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -9059,7 +9052,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -9070,7 +9062,6 @@ var Three = (function (exports) {
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -9079,7 +9070,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -9090,7 +9080,6 @@ var Three = (function (exports) {
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -9099,7 +9088,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -11530,8 +11518,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new BufferGeometry().copy( this );
 
@@ -16365,8 +16351,6 @@ var Three = (function (exports) {
 
 		},
 
-		
-
 		cube: {
 
 			uniforms: {
@@ -17443,7 +17427,6 @@ var Three = (function (exports) {
 
 	} );
 
-
 	function PropertyBinding( rootNode, path, parsedPath ) {
 
 		this.path = path;
@@ -17472,7 +17455,6 @@ var Three = (function (exports) {
 			}
 
 		},
-
 		
 		sanitizeNodeName: ( function () {
 
@@ -17924,7 +17906,6 @@ var Three = (function (exports) {
 
 				}
 
-
 				if ( objectIndex !== undefined ) {
 
 					if ( targetObject[ objectIndex ] === undefined ) {
@@ -18006,7 +17987,6 @@ var Three = (function (exports) {
 							}
 
 						}
-
 
 					} else {
 
@@ -18266,7 +18246,6 @@ var Three = (function (exports) {
 			}
 
 		},
-
 		
 		mergeBufferGeometries: function ( geometries, useGroups ) {
 
@@ -18416,7 +18395,6 @@ var Three = (function (exports) {
 			return mergedGeometry;
 
 		},
-
 		
 		mergeBufferAttributes: function ( attributes ) {
 
@@ -18669,8 +18647,6 @@ var Three = (function (exports) {
 
 		};
 
-		
-
 		function GLTFRegistry() {
 
 			var objects = {};
@@ -18705,10 +18681,6 @@ var Three = (function (exports) {
 
 		}
 
-		
-		
-		
-
 		var EXTENSIONS = {
 			KHR_BINARY_GLTF: 'KHR_binary_glTF',
 			KHR_DRACO_MESH_COMPRESSION: 'KHR_draco_mesh_compression',
@@ -18717,7 +18689,6 @@ var Three = (function (exports) {
 			KHR_MATERIALS_UNLIT: 'KHR_materials_unlit',
 			MSFT_TEXTURE_DDS: 'MSFT_texture_dds'
 		};
-
 		
 		function GLTFTextureDDSExtension() {
 
@@ -18731,7 +18702,6 @@ var Three = (function (exports) {
 			this.ddsLoader = new DDSLoader();
 
 		}
-
 		
 		function GLTFLightsExtension( json ) {
 
@@ -18794,7 +18764,6 @@ var Three = (function (exports) {
 			}
 
 		}
-
 		
 		function GLTFMaterialsUnlitExtension( json ) {
 
@@ -18903,7 +18872,6 @@ var Three = (function (exports) {
 			}
 
 		}
-
 		
 		function GLTFDracoMeshCompressionExtension( json, dracoLoader ) {
 
@@ -18975,7 +18943,6 @@ var Three = (function (exports) {
 			} );
 
 		};
-
 		
 		function GLTFMaterialsPbrSpecularGlossinessExtension() {
 
@@ -19186,7 +19153,6 @@ var Three = (function (exports) {
 					return material;
 
 				},
-
 				
 				cloneMaterial: function ( source ) {
 
@@ -19336,10 +19302,6 @@ var Three = (function (exports) {
 
 		}
 
-		
-		
-		
-
 		// Spline Interpolation
 		// Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#appendix-c-spline-interpolation
 		function GLTFCubicSplineInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
@@ -19414,12 +19376,6 @@ var Three = (function (exports) {
 			return result;
 
 		};
-
-		
-		
-		
-
-		
 
 		var WEBGL_CONSTANTS = {
 			FLOAT: 5126,
@@ -19520,8 +19476,6 @@ var Three = (function (exports) {
 			'image/jpeg': RGBFormat
 		};
 
-		
-
 		function resolveURL( url, path ) {
 
 			// Invalid URL
@@ -19540,7 +19494,6 @@ var Three = (function (exports) {
 			return path + url;
 
 		}
-
 		
 		function createDefaultMaterial() {
 
@@ -19572,7 +19525,6 @@ var Three = (function (exports) {
 			}
 
 		}
-
 		
 		function assignExtrasToUserData( object, gltfDef ) {
 
@@ -19591,7 +19543,6 @@ var Three = (function (exports) {
 			}
 
 		}
-
 		
 		function addMorphTargets( geometry, targets, accessors ) {
 
@@ -19702,7 +19653,6 @@ var Three = (function (exports) {
 			if ( hasMorphNormal ) geometry.morphAttributes.normal = morphNormals;
 
 		}
-
 		
 		function updateMorphTargets( mesh, meshDef ) {
 
@@ -19849,7 +19799,6 @@ var Three = (function (exports) {
 			return attribute.clone();
 
 		}
-
 		
 		function isMultiPassGeometry( primitives ) {
 
@@ -19883,8 +19832,6 @@ var Three = (function (exports) {
 			return true;
 
 		}
-
-		
 
 		function GLTFParser( json, extensions, options ) {
 
@@ -19937,7 +19884,6 @@ var Three = (function (exports) {
 			} ).catch( onError );
 
 		};
-
 		
 		GLTFParser.prototype.markDefs = function () {
 
@@ -19998,7 +19944,6 @@ var Three = (function (exports) {
 			this.json.meshUses = meshUses;
 
 		};
-
 		
 		GLTFParser.prototype.getDependency = function ( type, index ) {
 
@@ -20065,7 +20010,6 @@ var Three = (function (exports) {
 			return dependency;
 
 		};
-
 		
 		GLTFParser.prototype.getDependencies = function ( type ) {
 
@@ -20089,7 +20033,6 @@ var Three = (function (exports) {
 			return dependencies;
 
 		};
-
 		
 		GLTFParser.prototype.getMultiDependencies = function ( types ) {
 
@@ -20118,7 +20061,6 @@ var Three = (function (exports) {
 			} );
 
 		};
-
 		
 		GLTFParser.prototype.loadBuffer = function ( bufferIndex ) {
 
@@ -20151,7 +20093,6 @@ var Three = (function (exports) {
 			} );
 
 		};
-
 		
 		GLTFParser.prototype.loadBufferView = function ( bufferViewIndex ) {
 
@@ -20166,7 +20107,6 @@ var Three = (function (exports) {
 			} );
 
 		};
-
 		
 		GLTFParser.prototype.loadAccessor = function ( accessorIndex ) {
 
@@ -20292,7 +20232,6 @@ var Three = (function (exports) {
 			} );
 
 		};
-
 		
 		GLTFParser.prototype.loadTexture = function ( textureIndex ) {
 
@@ -20391,7 +20330,6 @@ var Three = (function (exports) {
 			} );
 
 		};
-
 		
 		GLTFParser.prototype.assignTexture = function ( materialParams, textureName, textureIndex ) {
 
@@ -20402,7 +20340,6 @@ var Three = (function (exports) {
 			} );
 
 		};
-
 		
 		GLTFParser.prototype.loadMaterial = function ( materialIndex ) {
 
@@ -20569,7 +20506,6 @@ var Three = (function (exports) {
 			} );
 
 		};
-
 		
 		function addPrimitiveAttributes( geometry, primitiveDef, accessors ) {
 
@@ -20603,7 +20539,6 @@ var Three = (function (exports) {
 			assignExtrasToUserData( geometry, primitiveDef );
 
 		}
-
 		
 		GLTFParser.prototype.loadGeometries = function ( primitives ) {
 
@@ -20759,7 +20694,6 @@ var Three = (function (exports) {
 			} );
 
 		};
-
 		
 		GLTFParser.prototype.loadMesh = function ( meshIndex ) {
 
@@ -20994,7 +20928,6 @@ var Three = (function (exports) {
 			} );
 
 		};
-
 		
 		GLTFParser.prototype.loadCamera = function ( cameraIndex ) {
 
@@ -21026,7 +20959,6 @@ var Three = (function (exports) {
 			return Promise.resolve( camera );
 
 		};
-
 		
 		GLTFParser.prototype.loadSkin = function ( skinIndex ) {
 
@@ -21049,7 +20981,6 @@ var Three = (function (exports) {
 			} );
 
 		};
-
 		
 		GLTFParser.prototype.loadAnimation = function ( animationIndex ) {
 
@@ -21188,7 +21119,6 @@ var Three = (function (exports) {
 			} );
 
 		};
-
 		
 		GLTFParser.prototype.loadNode = function ( nodeIndex ) {
 
@@ -21303,7 +21233,6 @@ var Three = (function (exports) {
 			} );
 
 		};
-
 		
 		GLTFParser.prototype.loadScene = function () {
 

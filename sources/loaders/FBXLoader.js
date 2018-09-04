@@ -47,9 +47,6 @@ import { LoaderUtils } from './LoaderUtils.js'
 import { PropertyBinding } from '../animation/PropertyBinding.js'
 import { _Math } from '../math/Math.js'
 
-
-
-
 var FBXLoader = ( function () {
 
 	var fbxTree;
@@ -613,7 +610,6 @@ var FBXLoader = ( function () {
 						parameters.displacementMap = self.getTexture( textureMap, child.ID );
 						break;
 
-
 					case 'EmissiveColor':
 						parameters.emissiveMap = self.getTexture( textureMap, child.ID );
 						break;
@@ -843,7 +839,6 @@ var FBXLoader = ( function () {
 
 				}
 
-
 			} );
 
 			this.bindSkeleton( deformers.skeletons, geometryMap, modelMap );
@@ -1006,7 +1001,6 @@ var FBXLoader = ( function () {
 					farClippingPlane = cameraAttribute.FarPlane.value / 1000;
 
 				}
-
 
 				var width = window.innerWidth;
 				var height = window.innerHeight;
@@ -1796,7 +1790,6 @@ var FBXLoader = ( function () {
 
 						} );
 
-
 					}
 
 					if ( weights.length > 4 ) {
@@ -2294,7 +2287,6 @@ var FBXLoader = ( function () {
 		parse: function () {
 
 			var animationClips = [];
-
 
 			var rawClips = this.parseClips();
 

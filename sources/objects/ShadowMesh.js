@@ -2,8 +2,6 @@ import { Mesh } from './Mesh.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { Matrix4 } from '../math/Matrix4.js'
 
-
-
 var ShadowMesh = function ( mesh ) {
 
 	var shadowMaterial = new MeshBasicMaterial( {

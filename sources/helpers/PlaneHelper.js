@@ -10,17 +10,6 @@ import {
 	BackSide
 } from '../constants.js'
 
-
-
-
-
-
-
-
-
-
-
-
 function PlaneHelper( plane, size, hex ) {
 
 	this.type = 'PlaneHelper';

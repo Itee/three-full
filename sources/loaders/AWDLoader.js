@@ -10,10 +10,6 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
-
-
 	var UNCOMPRESSED = 0,
 		DEFLATE = 1,
 		LZMA = 2,
@@ -175,7 +171,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 				flags = this.readU8(),
 				len = this.readU32();
 
-
 			switch ( type ) {
 
 				case 1:
@@ -237,12 +232,10 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 			}
 
-
 			// Store block reference for later use
 			this._blocks[ blockId ] = block = new Block();
 			block.data = assetData;
 			block.id = blockId;
-
 
 		},
 
@@ -361,16 +354,13 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			mesh.applyMatrix( mtx );
 			mesh.name = name;
 
-
 			parent = this.getBlock( par_id ) || this.trunk;
 			parent.add( mesh );
-
 
 			var matLen = materials.length;
 			var maxLen = Math.max( meshLen, matLen );
 			for ( i = 0; i < maxLen; i ++ )
 				meshes[ i % meshLen ].material = materials[ i % matLen ];
-
 
 			// Ignore for now
 			this.parseProperties( null );
@@ -444,7 +434,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			mat.extra = attributes;
 			mat.alphaThreshold = props.get( 12, 0.0 );
 			mat.repeat = props.get( 13, false );
-
 
 			return mat;
 
@@ -529,7 +518,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 			// Discard attributes for now
 			this.parseUserAttributes();
-
 
 			return skeleton;
 
@@ -643,7 +631,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 			this.parseUserAttributes();
 
-
 			return skeletonFrames;
 
 		},
@@ -690,7 +677,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 			if ( type == 1 ) {
 
-
 				thisAnimator = {
 					animationSet: targetAnimationSet,
 					skeleton: this._blocks[ props.get( 1, 0 ) ].data
@@ -699,7 +685,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			} else if ( type == 2 ) {
 				// debug( "vertex Anim???");
 			}
-
 
 			for ( i = 0; i < targetMeshes.length; i ++ ) {
 
@@ -734,10 +719,8 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 				geom.name = name;
 				geometries.push( geom );
 
-
 				sm_len = this.readU32();
 				sm_end = this._ptr + sm_len;
-
 
 				// Ignore for now
 				this.parseProperties( { 1: this._geoNrType, 2: this._geoNrType } );
@@ -944,7 +927,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 							}
 
-
 							subMeshParsed ++;
 
 						} else
@@ -954,7 +936,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 					}
 
 				}
-
 
 				frames_parsed ++;
 
@@ -1187,7 +1168,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			return a;
 
 		},
-
 		
 		readUTF: function () {
 
@@ -1195,7 +1175,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			return this.readUTFBytes( len );
 
 		},
-
 		
 		readUTFBytes: function ( len ) {
 
@@ -1228,7 +1207,5 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 		}
 
 	};
-
-
 
 export { AWDLoader }

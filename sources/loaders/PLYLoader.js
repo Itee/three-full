@@ -4,9 +4,6 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
 
-
-
-
 var PLYLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -137,7 +134,6 @@ PLYLoader.prototype = {
 						currentElement.properties.push( make_ply_element_property( lineValues, scope.propertyNameMapping ) );
 
 						break;
-
 
 					default:
 

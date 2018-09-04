@@ -5,15 +5,6 @@ import { UVNode } from '../accessors/UVNode.js'
 import { NormalNode } from '../accessors/NormalNode.js'
 import { PositionNode } from '../accessors/PositionNode.js'
 
-
-
-
-
-
-
-
-
-
 function NormalMapNode( value, scale ) {
 
 	TempNode.call( this, 'v3' );

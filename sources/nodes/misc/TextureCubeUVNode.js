@@ -6,16 +6,6 @@ import { ReflectNode } from '../accessors/ReflectNode.js'
 import { FloatNode } from '../inputs/FloatNode.js'
 import { BlinnExponentToRoughnessNode } from '../bsdfs/BlinnExponentToRoughnessNode.js'
 
-
-
-
-
-
-
-
-
-
-
 function TextureCubeUVNode( uv, textureSize, blinnExponentToRoughness ) {
 
 	TempNode.call( this, 'TextureCubeUVData' ); // TextureCubeUVData is type as StructNode

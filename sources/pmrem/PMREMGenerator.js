@@ -16,8 +16,6 @@ import {
 	GammaEncoding
 } from '../constants.js'
 
-
-
 var PMREMGenerator = function ( sourceTexture, samplesPerLevel, resolution ) {
 
 	this.sourceTexture = sourceTexture;
@@ -74,7 +72,6 @@ var PMREMGenerator = function ( sourceTexture, samplesPerLevel, resolution ) {
 PMREMGenerator.prototype = {
 
 	constructor: PMREMGenerator,
-
 	
 	update: function ( renderer ) {
 

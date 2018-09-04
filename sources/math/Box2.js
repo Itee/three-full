@@ -1,9 +1,5 @@
 import { Vector2 } from './Vector2.js'
 
-
-
-
-
 function Box2( min, max ) {
 
 	this.min = ( min !== undefined ) ? min : new Vector2( + Infinity, + Infinity );
@@ -239,7 +235,6 @@ Object.assign( Box2.prototype, {
 	}
 
 } );
-
 
 ;
 

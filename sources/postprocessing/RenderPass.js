@@ -1,7 +1,5 @@
 import { Pass } from './Pass.js'
 
-
-
 var RenderPass = function ( scene, camera, overrideMaterial, clearColor, clearAlpha ) {
 
 	Pass.call( this );

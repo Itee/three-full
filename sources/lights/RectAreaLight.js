@@ -1,9 +1,5 @@
 import { Light } from './Light.js'
 
-
-
-
-
 function RectAreaLight( color, intensity, width, height ) {
 
 	Light.call( this, color, intensity );

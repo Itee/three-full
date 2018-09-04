@@ -1,7 +1,4 @@
 
-
-
-
 var AsciiEffect = function ( renderer, charSet, options ) {
 
 	// its fun to create one your own!
@@ -47,7 +44,6 @@ var AsciiEffect = function ( renderer, charSet, options ) {
 
 	};
 
-
 	this.render = function ( scene, camera ) {
 
 		renderer.render( scene, camera );
@@ -57,10 +53,7 @@ var AsciiEffect = function ( renderer, charSet, options ) {
 
 	this.domElement = domElement;
 
-
 	// Throw in ascii library from http://www.nihilogic.dk/labs/jsascii/jsascii.js
-
-	
 
 	function initAsciiSize() {
 
@@ -100,7 +93,6 @@ var AsciiEffect = function ( renderer, charSet, options ) {
 		oStyle.textDecoration = "none";
 
 	}
-
 
 	var aDefaultCharList = ( " .,:;i1tfLCG08@" ).split( "" );
 	var aDefaultColorCharList = ( " CGO08@" ).split( "" );
@@ -183,9 +175,7 @@ var AsciiEffect = function ( renderer, charSet, options ) {
 
 	}
 
-
 	// can't get a span or div to flow like an img element, but a table works?
-
 
 	// convert img element to ascii
 

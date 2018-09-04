@@ -4251,7 +4251,6 @@ var Three = (function (exports) {
 
 			}, onProgress, onError );
 
-
 			return texture;
 
 		}
@@ -4276,7 +4275,6 @@ var Three = (function (exports) {
 		var 
 			
 			RGBE_RETURN_FAILURE = - 1,
-
 			
 			rgbe_read_error = 1,
 			rgbe_write_error = 2,
@@ -4299,7 +4297,6 @@ var Three = (function (exports) {
 				return RGBE_RETURN_FAILURE;
 
 			},
-
 			
 			RGBE_VALID_PROGRAMTYPE = 1,
 			RGBE_VALID_FORMAT = 2,
@@ -4323,7 +4320,6 @@ var Three = (function (exports) {
 				}
 
 				if ( - 1 < i ) {
-
 					
 					if ( false !== consume ) buffer.pos += len + i + 1;
 					return s + chunk.slice( 0, i );
@@ -4332,7 +4328,6 @@ var Three = (function (exports) {
 				return false;
 
 			},
-
 			
 			RGBE_ReadHeader = function ( buffer ) {
 
@@ -4529,7 +4524,6 @@ var Three = (function (exports) {
 						}
 
 					}
-
 
 					// now convert data from buffer into rgba
 					// first red, then green, then blue, then exponent (alpha)

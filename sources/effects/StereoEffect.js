@@ -1,7 +1,5 @@
 import { StereoCamera } from '../cameras/StereoCamera.js'
 
-
-
 var StereoEffect = function ( renderer ) {
 
 	var _stereo = new StereoCamera();

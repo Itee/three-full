@@ -1,7 +1,4 @@
 
-
-
-
 function NodeUniform( params ) {
 
 	params = params || {};

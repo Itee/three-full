@@ -10,8 +10,6 @@ import { Shape } from '../core/Shape.js'
 import { ShapeBufferGeometry } from '../geometries/ShapeGeometry.js'
 import { DoubleSide } from '../constants.js'
 
-
-
 var PaintViveController = function ( id ) {
 
 	ViveController.call( this, id );
@@ -73,7 +71,6 @@ var PaintViveController = function ( id ) {
 	var ball = new Mesh( geometry, material );
 	colorUI.add( ball );
 
-
 	// SIZE UI
 	var sizeUI = new Group();
 	sizeUI.position.set( 0, 0.005, 0.0495 );
@@ -102,8 +99,6 @@ var PaintViveController = function ( id ) {
 	sizeUI.add( sizeUIFill );
 
 	sizeUI.visible = false;
-
-
 
 	function onAxisChanged( event ) {
 

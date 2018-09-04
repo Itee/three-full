@@ -1,10 +1,6 @@
 import { Vector3Node } from '../inputs/Vector3Node.js'
 import { Vector3 } from '../../math/Vector3.js'
 
-
-
-
-
 function VelocityNode( target, params ) {
 
 	Vector3Node.call( this );

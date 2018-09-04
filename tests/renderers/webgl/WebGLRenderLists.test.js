@@ -45,7 +45,6 @@ var Three = (function (exports) {
 
 	}
 
-
 	function WebGLRenderList() {
 
 		var renderItems = [];
@@ -94,7 +93,6 @@ var Three = (function (exports) {
 				renderItem.group = group;
 
 			}
-
 
 			( material.transparent === true ? transparent : opaque ).push( renderItem );
 

@@ -1,7 +1,5 @@
 import { Color } from '../math/Color.js'
 
-
-
 var ColorifyShader = {
 
 	uniforms: {

@@ -2,12 +2,6 @@ import { Mesh } from '../objects/Mesh.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
 
-
-
-
-
-
-
 function PointLightHelper( light, sphereSize, color ) {
 
 	this.light = light;
@@ -24,9 +18,6 @@ function PointLightHelper( light, sphereSize, color ) {
 	this.matrixAutoUpdate = false;
 
 	this.update();
-
-
-	
 
 }
 
@@ -52,10 +43,7 @@ PointLightHelper.prototype.update = function () {
 
 	}
 
-	
-
 };
-
 
 ;
 

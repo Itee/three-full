@@ -4250,7 +4250,6 @@ var Three = (function (exports) {
 
 			}, onProgress, onError );
 
-
 			return texture;
 
 		}

@@ -16,8 +16,6 @@ import {
 	RGBM16Encoding
 } from '../constants.js'
 
-
-
 var PMREMCubeUVPacker = function ( cubeTextureLods ) {
 
 	this.cubeLods = cubeTextureLods;

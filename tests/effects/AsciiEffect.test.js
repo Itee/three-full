@@ -46,7 +46,6 @@ var Three = (function (exports) {
 
 		};
 
-
 		this.render = function ( scene, camera ) {
 
 			renderer.render( scene, camera );
@@ -56,10 +55,7 @@ var Three = (function (exports) {
 
 		this.domElement = domElement;
 
-
 		// Throw in ascii library from http://www.nihilogic.dk/labs/jsascii/jsascii.js
-
-		
 
 		function initAsciiSize() {
 
@@ -99,7 +95,6 @@ var Three = (function (exports) {
 			oStyle.textDecoration = "none";
 
 		}
-
 
 		var aDefaultCharList = ( " .,:;i1tfLCG08@" ).split( "" );
 		var aDefaultColorCharList = ( " CGO08@" ).split( "" );
@@ -158,9 +153,7 @@ var Three = (function (exports) {
 
 		}
 
-
 		// can't get a span or div to flow like an img element, but a table works?
-
 
 		// convert img element to ascii
 

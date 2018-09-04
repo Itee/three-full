@@ -1,7 +1,5 @@
 import { _Math } from './Math.js'
 
-
-
 var ColorConverter = {
 
 	setHSV: function ( color, h, s, v ) {
@@ -82,7 +80,6 @@ var ColorConverter = {
 		return target;
 
 	}
-
 
 };
 

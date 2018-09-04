@@ -335,7 +335,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -12061,8 +12060,6 @@ var Three = (function (exports) {
 
 		},
 
-		
-
 		mergeVertices: function () {
 
 			var verticesMap = {}; // Hashmap for looking up vertices by position coordinates (and making sure they are unique)
@@ -12093,7 +12090,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 
 			// if faces are completely degenerate after merging vertices, we
 			// have to remove them from the geometry.
@@ -12402,8 +12398,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new Geometry().copy( this );
 
@@ -12757,7 +12751,6 @@ var Three = (function (exports) {
 
 					nUvLayers = 0;
 
-
 				if ( json.uvs !== undefined ) {
 
 					// disregard empty arrays
@@ -12887,14 +12880,12 @@ var Three = (function (exports) {
 									normals[ normalIndex ]
 								);
 
-
 								if ( i !== 2 ) faceA.vertexNormals.push( normal );
 								if ( i !== 0 ) faceB.vertexNormals.push( normal );
 
 							}
 
 						}
-
 
 						if ( hasFaceColor ) {
 
@@ -12905,7 +12896,6 @@ var Three = (function (exports) {
 							faceB.color.setHex( hex );
 
 						}
-
 
 						if ( hasFaceVertexColor ) {
 
@@ -12997,14 +12987,12 @@ var Three = (function (exports) {
 
 						}
 
-
 						if ( hasFaceColor ) {
 
 							colorIndex = faces[ offset ++ ];
 							face.color.setHex( colors[ colorIndex ] );
 
 						}
-
 
 						if ( hasFaceVertexColor ) {
 

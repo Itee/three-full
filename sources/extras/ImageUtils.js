@@ -1,7 +1,4 @@
 
-
-
-
 var ImageUtils = {
 
 	getDataURL: function ( image ) {

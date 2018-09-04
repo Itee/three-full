@@ -8,18 +8,6 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Object3D } from '../core/Object3D.js'
 
-
-
-
-
-
-
-
-
-
-
-
-
 function getBoneList( object ) {
 
 	var boneList = [];

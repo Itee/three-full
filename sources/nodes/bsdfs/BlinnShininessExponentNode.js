@@ -1,9 +1,5 @@
 import { TempNode } from '../core/TempNode.js'
 
-
-
-
-
 function BlinnShininessExponentNode() {
 
 	TempNode.call( this, 'f' );

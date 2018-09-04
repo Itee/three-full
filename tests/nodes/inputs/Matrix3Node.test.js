@@ -3203,7 +3203,6 @@ var Three = (function (exports) {
 
 	};
 
-
 	Matrix3Node.prototype.copy = function ( source ) {
 
 		InputNode.prototype.copy.call( this, source );

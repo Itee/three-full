@@ -1,7 +1,4 @@
 
-
-
-
 function WebGLProperties() {
 
 	var properties = new WeakMap();
@@ -47,7 +44,6 @@ function WebGLProperties() {
 	};
 
 }
-
 
 ;
 

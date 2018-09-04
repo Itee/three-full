@@ -548,7 +548,6 @@ var Three = (function (exports) {
 
 			"}"
 
-
 		].join( "\n" ),
 
 		buildKernel: function ( sigma ) {

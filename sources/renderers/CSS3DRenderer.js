@@ -3,8 +3,6 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { Vector3 } from '../math/Vector3.js'
 import { REVISION } from '../constants.js'
 
-
-
 var CSS3DObject = function ( element ) {
 
 	Object3D.call( this );

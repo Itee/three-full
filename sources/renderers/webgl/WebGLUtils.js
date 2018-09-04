@@ -68,10 +68,6 @@ import {
 	RepeatWrapping
 } from '../../constants.js'
 
-
-
-
-
 function WebGLUtils( gl, extensions, capabilities ) {
 
 	function convert( p ) {
@@ -230,7 +226,6 @@ function WebGLUtils( gl, extensions, capabilities ) {
 	return { convert: convert };
 
 }
-
 
 ;
 

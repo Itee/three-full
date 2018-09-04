@@ -1,9 +1,5 @@
 import { TempNode } from '../core/TempNode.js'
 
-
-
-
-
 function OperatorNode( a, b, op ) {
 
 	TempNode.call( this );

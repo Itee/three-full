@@ -8,8 +8,6 @@ import { Box3 } from '../math/Box3.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Sphere } from '../math/Sphere.js'
 
-
-
 var LineSegmentsGeometry = function () {
 
 	InstancedBufferGeometry.call( this );

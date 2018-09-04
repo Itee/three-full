@@ -1,11 +1,6 @@
 import { TempNode } from '../core/TempNode.js'
 import { NodeLib } from '../core/NodeLib.js'
 
-
-
-
-
-
 var vertexDict = [ 'uv', 'uv2' ],
 	fragmentDict = [ 'vUv', 'vUv2' ];
 

@@ -1,9 +1,5 @@
 import { TempNode } from '../core/TempNode.js'
 
-
-
-
-
 function LightNode( scope ) {
 
 	TempNode.call( this, 'v3', { shared: false } );

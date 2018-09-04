@@ -1,11 +1,6 @@
 import { Color } from '../math/Color.js'
 import { Vector3 } from '../math/Vector3.js'
 
-
-
-
-
-
 function Face3( a, b, c, normal, color, materialIndex ) {
 
 	this.a = a;
@@ -58,7 +53,6 @@ Object.assign( Face3.prototype, {
 	}
 
 } );
-
 
 ;
 

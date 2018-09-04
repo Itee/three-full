@@ -68,7 +68,6 @@ var Three = (function (exports) {
 			"	return orthographicDepthToViewZ( depth, nearClip, farClip );",
 			"	#endif",
 			"}",
-			
 
 			"void main() {",
 

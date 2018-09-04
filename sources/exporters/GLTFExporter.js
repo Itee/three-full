@@ -13,8 +13,6 @@ import {
 import { _Math } from '../math/Math.js'
 import { PropertyBinding } from '../animation/PropertyBinding.js'
 
-
-
 //------------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------------
@@ -67,7 +65,6 @@ var GLTFExporter = function () {};
 GLTFExporter.prototype = {
 
 	constructor: GLTFExporter,
-
 	
 	parse: function ( input, onDone, options ) {
 
@@ -118,8 +115,6 @@ GLTFExporter.prototype = {
 		};
 
 		var cachedCanvas;
-
-		
 		
 		function equalArray( array1, array2 ) {
 
@@ -130,7 +125,6 @@ GLTFExporter.prototype = {
 			} );
 
 		}
-
 		
 		function stringToArrayBuffer( text ) {
 
@@ -154,7 +148,6 @@ GLTFExporter.prototype = {
 			return array.buffer;
 
 		}
-
 		
 		function getMinMax( attribute, start, count ) {
 
@@ -180,14 +173,12 @@ GLTFExporter.prototype = {
 			return output;
 
 		}
-
 		
 		function isPowerOfTwo( image ) {
 
 			return _Math.isPowerOfTwo( image.width ) && _Math.isPowerOfTwo( image.height );
 
 		}
-
 		
 		function isNormalizedNormalAttribute( normal ) {
 
@@ -209,7 +200,6 @@ GLTFExporter.prototype = {
 			return true;
 
 		}
-
 		
 		function createNormalizedNormalAttribute( normal ) {
 
@@ -247,14 +237,12 @@ GLTFExporter.prototype = {
 			return attribute;
 
 		}
-
 		
 		function getPaddedBufferSize( bufferSize ) {
 
 			return Math.ceil( bufferSize / 4 ) * 4;
 
 		}
-
 		
 		function getPaddedArrayBuffer( arrayBuffer, paddingByte ) {
 
@@ -284,7 +272,6 @@ GLTFExporter.prototype = {
 			return arrayBuffer;
 
 		}
-
 		
 		function serializeUserData( object ) {
 
@@ -302,7 +289,6 @@ GLTFExporter.prototype = {
 			}
 
 		}
-
 		
 		function processBuffer( buffer ) {
 
@@ -318,7 +304,6 @@ GLTFExporter.prototype = {
 			return 0;
 
 		}
-
 		
 		function processBufferView( attribute, componentType, start, count, target ) {
 
@@ -414,7 +399,6 @@ GLTFExporter.prototype = {
 			return output;
 
 		}
-
 		
 		function processBufferViewImage( blob ) {
 
@@ -449,7 +433,6 @@ GLTFExporter.prototype = {
 			} );
 
 		}
-
 		
 		function processAccessor( attribute, geometry, start, count ) {
 
@@ -550,7 +533,6 @@ GLTFExporter.prototype = {
 			return outputJSON.accessors.length - 1;
 
 		}
-
 		
 		function processImage( image, format, flipY ) {
 
@@ -643,7 +625,6 @@ GLTFExporter.prototype = {
 			return index;
 
 		}
-
 		
 		function processSampler( map ) {
 
@@ -667,7 +648,6 @@ GLTFExporter.prototype = {
 			return outputJSON.samplers.length - 1;
 
 		}
-
 		
 		function processTexture( map ) {
 
@@ -698,7 +678,6 @@ GLTFExporter.prototype = {
 			return index;
 
 		}
-
 		
 		function processMaterial( material ) {
 
@@ -905,7 +884,6 @@ GLTFExporter.prototype = {
 			return index;
 
 		}
-
 		
 		function processMesh( mesh ) {
 
@@ -1193,7 +1171,6 @@ GLTFExporter.prototype = {
 			return outputJSON.meshes.length - 1;
 
 		}
-
 		
 		function processCamera( camera ) {
 
@@ -1246,7 +1223,6 @@ GLTFExporter.prototype = {
 			return outputJSON.cameras.length - 1;
 
 		}
-
 		
 		function processAnimation( clip, root ) {
 
@@ -1403,7 +1379,6 @@ GLTFExporter.prototype = {
 			return skinIndex;
 
 		}
-
 		
 		function processNode( object ) {
 
@@ -1520,7 +1495,6 @@ GLTFExporter.prototype = {
 
 				}
 
-
 			}
 
 			outputJSON.nodes.push( gltfNode );
@@ -1531,7 +1505,6 @@ GLTFExporter.prototype = {
 			return nodeIndex;
 
 		}
-
 		
 		function processScene( scene ) {
 
@@ -1583,7 +1556,6 @@ GLTFExporter.prototype = {
 			}
 
 		}
-
 		
 		function processObjects( objects ) {
 

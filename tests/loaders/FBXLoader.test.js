@@ -5400,7 +5400,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -7442,7 +7441,6 @@ var Three = (function (exports) {
 			return this;
 
 		},
-
 		
 		setFocalLength: function ( focalLength ) {
 
@@ -7453,7 +7451,6 @@ var Three = (function (exports) {
 			this.updateProjectionMatrix();
 
 		},
-
 		
 		getFocalLength: function () {
 
@@ -7483,7 +7480,6 @@ var Three = (function (exports) {
 			return this.filmGauge / Math.max( this.aspect, 1 );
 
 		},
-
 		
 		setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 
@@ -10747,7 +10743,6 @@ var Three = (function (exports) {
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -10756,7 +10751,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -10767,7 +10761,6 @@ var Three = (function (exports) {
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -10776,7 +10769,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -10787,7 +10779,6 @@ var Three = (function (exports) {
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -10796,7 +10787,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -10807,7 +10797,6 @@ var Three = (function (exports) {
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -10816,7 +10805,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -12081,8 +12069,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new BufferGeometry().copy( this );
 
@@ -13583,7 +13569,6 @@ var Three = (function (exports) {
 			normals[ 0 ].crossVectors( tangents[ 0 ], vec );
 			binormals[ 0 ].crossVectors( tangents[ 0 ], normals[ 0 ] );
 
-
 			// compute the slowly-varying normal and binormal vectors for each segment on the curve
 
 			for ( i = 1; i <= segments; i ++ ) {
@@ -13681,7 +13666,6 @@ var Three = (function (exports) {
 	} );
 
 	var NURBSUtils = {
-
 		
 		findSpan: function( p,  u,  U ) {
 
@@ -13722,8 +13706,6 @@ var Three = (function (exports) {
 			return mid;
 
 		},
-
-
 		
 		calcBasisFunctions: function( span, u, p, U ) {
 
@@ -13756,8 +13738,6 @@ var Three = (function (exports) {
 			 return N;
 
 		},
-
-
 		
 		calcBSplinePoint: function( p, U, P, u ) {
 
@@ -13780,8 +13760,6 @@ var Three = (function (exports) {
 			return C;
 
 		},
-
-
 		
 		calcBasisFunctionDerivatives: function( span,  u,  p,  n,  U ) {
 
@@ -13900,8 +13878,6 @@ var Three = (function (exports) {
 			return ders;
 
 		},
-
-
 		
 		calcBSplineDerivatives: function( p,  U,  P,  u,  nd ) {
 
@@ -13946,8 +13922,6 @@ var Three = (function (exports) {
 			return CK;
 
 		},
-
-
 		
 		calcKoverI: function( k, i ) {
 
@@ -13976,8 +13950,6 @@ var Three = (function (exports) {
 			return nom / denom;
 
 		},
-
-
 		
 		calcRationalCurveDerivatives: function ( Pders ) {
 
@@ -14012,8 +13984,6 @@ var Three = (function (exports) {
 			return CK;
 
 		},
-
-
 		
 		calcNURBSDerivatives: function( p,  U,  P,  u,  nd ) {
 
@@ -14021,8 +13991,6 @@ var Three = (function (exports) {
 			return this.calcRationalCurveDerivatives( Pders );
 
 		},
-
-
 		
 		calcSurfacePoint: function ( p, q, U, V, P, u, v, target ) {
 
@@ -14082,10 +14050,8 @@ var Three = (function (exports) {
 
 	};
 
-
 	NURBSCurve.prototype = Object.create( Curve.prototype );
 	NURBSCurve.prototype.constructor = NURBSCurve;
-
 
 	NURBSCurve.prototype.getPoint = function ( t ) {
 
@@ -14104,7 +14070,6 @@ var Three = (function (exports) {
 		return new Vector3( hpoint.x, hpoint.y, hpoint.z );
 
 	};
-
 
 	NURBSCurve.prototype.getTangent = function ( t ) {
 
@@ -15836,7 +15801,6 @@ var Three = (function (exports) {
 
 	} );
 
-
 	function PropertyBinding( rootNode, path, parsedPath ) {
 
 		this.path = path;
@@ -15865,7 +15829,6 @@ var Three = (function (exports) {
 			}
 
 		},
-
 		
 		sanitizeNodeName: ( function () {
 
@@ -16317,7 +16280,6 @@ var Three = (function (exports) {
 
 				}
 
-
 				if ( objectIndex !== undefined ) {
 
 					if ( targetObject[ objectIndex ] === undefined ) {
@@ -16399,7 +16361,6 @@ var Three = (function (exports) {
 							}
 
 						}
-
 
 					} else {
 
@@ -17041,7 +17002,6 @@ var Three = (function (exports) {
 							parameters.displacementMap = self.getTexture( textureMap, child.ID );
 							break;
 
-
 						case 'EmissiveColor':
 							parameters.emissiveMap = self.getTexture( textureMap, child.ID );
 							break;
@@ -17271,7 +17231,6 @@ var Three = (function (exports) {
 
 					}
 
-
 				} );
 
 				this.bindSkeleton( deformers.skeletons, geometryMap, modelMap );
@@ -17434,7 +17393,6 @@ var Three = (function (exports) {
 						farClippingPlane = cameraAttribute.FarPlane.value / 1000;
 
 					}
-
 
 					var width = window.innerWidth;
 					var height = window.innerHeight;
@@ -18224,7 +18182,6 @@ var Three = (function (exports) {
 
 							} );
 
-
 						}
 
 						if ( weights.length > 4 ) {
@@ -18722,7 +18679,6 @@ var Three = (function (exports) {
 			parse: function () {
 
 				var animationClips = [];
-
 
 				var rawClips = this.parseClips();
 

@@ -7,17 +7,6 @@ import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
-
-
-
-
-
-
-
-
-
-
-
 function Line( geometry, material, mode ) {
 
 	if ( mode === 1 ) {
@@ -258,7 +247,6 @@ Line.prototype = Object.assign( Object.create( Object3D.prototype ), {
 	}
 
 } );
-
 
 ;
 

@@ -9,11 +9,6 @@ import {
 } from '../../constants.js'
 import { WebGLProgram } from './WebGLProgram.js'
 
-
-
-
-
-
 function WebGLPrograms( renderer, extensions, capabilities ) {
 
 	var programs = [];
@@ -47,7 +42,6 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 		"shadowMapEnabled", "shadowMapType", "toneMapping", 'physicallyCorrectLights',
 		"alphaTest", "doubleSided", "flipSided", "numClippingPlanes", "numClipIntersection", "depthPacking", "dithering"
 	];
-
 
 	function allocateBones( object ) {
 
@@ -311,7 +305,6 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 	this.programs = programs;
 
 }
-
 
 ;
 

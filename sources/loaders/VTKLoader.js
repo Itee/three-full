@@ -8,8 +8,6 @@ import {
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
 
-
-
 var VTKLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -405,7 +403,6 @@ Object.assign( VTKLoader.prototype, EventDispatcher.prototype, {
 
 							} else {
 
-
 								indices[ indicesIndex ++ ] = strip[ j ];
 								indices[ indicesIndex ++ ] = strip[ j + 1 ];
 								indices[ indicesIndex ++ ] = strip[ j + 2 ];
@@ -680,7 +677,6 @@ Object.assign( VTKLoader.prototype, EventDispatcher.prototype, {
 					numBytes = 4;
 
 				}
-
 
 				// Check the format
 				if ( ele.attributes.format === 'binary' && compressed ) {

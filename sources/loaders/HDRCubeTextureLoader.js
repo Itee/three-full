@@ -15,8 +15,6 @@ import {
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
 var HDRCubeTextureLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -44,7 +42,6 @@ HDRCubeTextureLoader.prototype.load = function ( type, urls, onLoad, onProgress,
 
 		var floatView = new Float32Array( 1 );
 		var int32View = new Int32Array( floatView.buffer );
-
 		
 		function toHalf( val ) {
 
@@ -54,10 +51,8 @@ HDRCubeTextureLoader.prototype.load = function ( type, urls, onLoad, onProgress,
 			var bits = ( x >> 16 ) & 0x8000; 
 			var m = ( x >> 12 ) & 0x07ff; 
 			var e = ( x >> 23 ) & 0xff; 
-
 			
 			if ( e < 103 ) return bits;
-
 			
 			if ( e > 142 ) {
 
@@ -67,7 +62,6 @@ HDRCubeTextureLoader.prototype.load = function ( type, urls, onLoad, onProgress,
 				return bits;
 
 			}
-
 			
 			if ( e < 113 ) {
 

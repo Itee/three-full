@@ -3051,7 +3051,6 @@ var Three = (function (exports) {
 		var startEvent = { type: 'start' };
 		var endEvent = { type: 'end' };
 
-
 		// methods
 
 		this.handleResize = function () {
@@ -3155,7 +3154,6 @@ var Three = (function (exports) {
 
 			var axis = new Vector3(),
 				quaternion = new Quaternion();
-
 
 			return function rotateCamera() {
 

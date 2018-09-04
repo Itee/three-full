@@ -1,11 +1,6 @@
 import { Vector4 } from '../math/Vector4.js'
 import { NURBSUtils } from './NURBSUtils.js'
 
-
-
-
-
-
 var NURBSSurface = function ( degree1, degree2, knots1, knots2 , controlPoints  ) {
 
 	this.degree1 = degree1;
@@ -31,7 +26,6 @@ var NURBSSurface = function ( degree1, degree2, knots1, knots2 , controlPoints  
 	}
 
 };
-
 
 NURBSSurface.prototype = {
 

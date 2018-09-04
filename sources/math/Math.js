@@ -1,7 +1,4 @@
 
-
-
-
 var _Math = {
 
 	DEG2RAD: Math.PI / 180,
@@ -147,7 +144,6 @@ var _Math = {
 	}
 
 };
-
 
 ;
 

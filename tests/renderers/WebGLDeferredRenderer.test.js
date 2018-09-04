@@ -6139,7 +6139,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -6940,8 +6939,6 @@ var Three = (function (exports) {
 			fragmentShader: ShaderChunk.sprite_frag
 
 		},
-
-		
 
 		cube: {
 
@@ -10142,8 +10139,6 @@ var Three = (function (exports) {
 
 		},
 
-		
-
 		mergeVertices: function () {
 
 			var verticesMap = {}; // Hashmap for looking up vertices by position coordinates (and making sure they are unique)
@@ -10174,7 +10169,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 
 			// if faces are completely degenerate after merging vertices, we
 			// have to remove them from the geometry.
@@ -10483,8 +10477,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new Geometry().copy( this );
 
@@ -11059,7 +11051,6 @@ var Three = (function (exports) {
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -11068,7 +11059,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -11079,7 +11069,6 @@ var Three = (function (exports) {
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -11088,7 +11077,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -11099,7 +11087,6 @@ var Three = (function (exports) {
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -11108,7 +11095,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -11119,7 +11105,6 @@ var Three = (function (exports) {
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -11128,7 +11113,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -12393,8 +12377,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new BufferGeometry().copy( this );
 
@@ -14593,7 +14575,6 @@ var Three = (function (exports) {
 
 			}
 
-
 		};
 
 		function resetGlobalState() {
@@ -15974,7 +15955,6 @@ var Three = (function (exports) {
 
 	};
 
-
 	// Static interface
 
 	WebGLUniforms.upload = function ( gl, seq, values, renderer ) {
@@ -16753,7 +16733,6 @@ var Three = (function (exports) {
 
 		} );
 
-
 		//
 
 		this.name = shader.name;
@@ -16801,7 +16780,6 @@ var Three = (function (exports) {
 			"shadowMapEnabled", "shadowMapType", "toneMapping", 'physicallyCorrectLights',
 			"alphaTest", "doubleSided", "flipSided", "numClippingPlanes", "numClipIntersection", "depthPacking", "dithering"
 		];
-
 
 		function allocateBones( object ) {
 
@@ -17156,7 +17134,6 @@ var Three = (function (exports) {
 
 	}
 
-
 	function WebGLRenderList() {
 
 		var renderItems = [];
@@ -17205,7 +17182,6 @@ var Three = (function (exports) {
 				renderItem.group = group;
 
 			}
-
 
 			( material.transparent === true ? transparent : opaque ).push( renderItem );
 
@@ -19489,8 +19465,6 @@ var Three = (function (exports) {
 
 		//
 
-
-
 		function setTexture2D( texture, slot ) {
 
 			var textureProperties = properties.get( texture );
@@ -20371,7 +20345,6 @@ var Three = (function (exports) {
 			return this;
 
 		},
-
 		
 		setFocalLength: function ( focalLength ) {
 
@@ -20382,7 +20355,6 @@ var Three = (function (exports) {
 			this.updateProjectionMatrix();
 
 		},
-
 		
 		getFocalLength: function () {
 
@@ -20412,7 +20384,6 @@ var Three = (function (exports) {
 			return this.filmGauge / Math.max( this.aspect, 1 );
 
 		},
-
 		
 		setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 
@@ -20768,7 +20739,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 
 			var pose = frameData.pose;
 			var poseObject = poseTarget !== null ? poseTarget : camera;
@@ -21711,7 +21681,6 @@ var Three = (function (exports) {
 
 		}
 
-
 		function releaseMaterialProgramReference( material ) {
 
 			var programInfo = properties.get( material ).program;
@@ -21920,7 +21889,6 @@ var Three = (function (exports) {
 					}
 
 				}
-
 
 			} else if ( object.isLine ) {
 
@@ -22314,8 +22282,6 @@ var Three = (function (exports) {
 			currentRenderState = null;
 
 		};
-
-		
 
 		function projectObject( object, camera, sortObjects ) {
 
@@ -22871,7 +22837,6 @@ var Three = (function (exports) {
 							//       16x16 pixel texture max   64 bones * 4 pixels = (16 * 16)
 							//       32x32 pixel texture max  256 bones * 4 pixels = (32 * 32)
 							//       64x64 pixel texture max 1024 bones * 4 pixels = (64 * 64)
-
 
 							var size = Math.sqrt( bones.length * 4 ); // 4 pixels needed for 1 matrix
 							size = _Math.ceilPowerOfTwo( size );
@@ -24025,7 +23990,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
 
 	var ClearMaskPass = function () {
 
@@ -26255,7 +26219,6 @@ var Three = (function (exports) {
 			return mesh;
 
 		}
-
 		
 		function createDeferredPointLightMaterial() {
 
@@ -26677,8 +26640,6 @@ var Three = (function (exports) {
 
 		}
 
-		
-
 		function renderNormalDepth( scene, camera ) {
 
 			scene.traverse( setMaterialNormalDepth );
@@ -26699,8 +26660,6 @@ var Three = (function (exports) {
 
 		}
 
-		
-
 		function renderColor( scene, camera ) {
 
 			scene.traverse( setMaterialColor );
@@ -26719,8 +26678,6 @@ var Three = (function (exports) {
 			scene.traverse( restoreOriginalMaterial );
 
 		}
-
-		
 
 		function renderLight( scene, camera ) {
 
@@ -26742,8 +26699,6 @@ var Three = (function (exports) {
 			_gl.disable( _gl.STENCIL_TEST );
 
 		}
-
-		
 
 		function renderLightPre( scene, camera ) {
 
@@ -26767,8 +26722,6 @@ var Three = (function (exports) {
 
 		}
 
-		
-
 		function renderReconstruction( scene, camera ) {
 
 			scene.traverse( setMaterialReconstruction );
@@ -26786,8 +26739,6 @@ var Three = (function (exports) {
 			scene.traverse( restoreOriginalMaterial );
 
 		}
-
-		
 
 		function renderFinal( scene, camera ) {
 
@@ -27568,7 +27519,6 @@ var Three = (function (exports) {
 				ShaderDeferredCommon[ 'commonUniforms' ]
 
 			),
-
 
 			vertexShader: [
 

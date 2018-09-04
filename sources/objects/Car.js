@@ -5,8 +5,6 @@ import { BinaryLoader } from '../loaders/BinaryLoader.js'
 import { Mesh } from './Mesh.js'
 import { _Math } from '../math/Math.js'
 
-
-
 var Car = function () {
 
 	var scope = this;
@@ -155,7 +153,6 @@ var Car = function () {
 
 		if ( controls.moveBackward ) {
 
-
 			this.speed = _Math.clamp( this.speed - delta * this.BACK_ACCELERATION, this.MAX_REVERSE_SPEED, this.MAX_SPEED );
 			this.acceleration = _Math.clamp( this.acceleration - delta, - 1, 1 );
 
@@ -192,7 +189,6 @@ var Car = function () {
 				this.acceleration = _Math.clamp( this.acceleration + k * delta, - 1, 0 );
 
 			}
-
 
 		}
 

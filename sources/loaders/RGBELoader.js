@@ -6,8 +6,6 @@ import {
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
 // https://github.com/mrdoob/three.js/issues/5552
 // http://en.wikipedia.org/wiki/RGBE_image_format
 
@@ -27,7 +25,6 @@ RGBELoader.prototype._parser = function ( buffer ) {
 		
 		RGBE_RETURN_SUCCESS = 0,
 		RGBE_RETURN_FAILURE = - 1,
-
 		
 		rgbe_read_error = 1,
 		rgbe_write_error = 2,
@@ -50,15 +47,12 @@ RGBELoader.prototype._parser = function ( buffer ) {
 			return RGBE_RETURN_FAILURE;
 
 		},
-
 		
 		RGBE_DATA_RED = 0,
 		RGBE_DATA_GREEN = 1,
 		RGBE_DATA_BLUE = 2,
-
 		
 		RGBE_DATA_SIZE = 4,
-
 		
 		RGBE_VALID_PROGRAMTYPE = 1,
 		RGBE_VALID_FORMAT = 2,
@@ -82,7 +76,6 @@ RGBELoader.prototype._parser = function ( buffer ) {
 			}
 
 			if ( - 1 < i ) {
-
 				
 				if ( false !== consume ) buffer.pos += len + i + 1;
 				return s + chunk.slice( 0, i );
@@ -91,7 +84,6 @@ RGBELoader.prototype._parser = function ( buffer ) {
 			return false;
 
 		},
-
 		
 		RGBE_ReadHeader = function ( buffer ) {
 
@@ -289,7 +281,6 @@ RGBELoader.prototype._parser = function ( buffer ) {
 
 				}
 
-
 				// now convert data from buffer into rgba
 				// first red, then green, then blue, then exponent (alpha)
 				l = scanline_width; //scanline_buffer.byteLength;
@@ -346,8 +337,6 @@ RGBELoader.prototype._parser = function ( buffer ) {
 
 };
 var HDRLoader = RGBELoader;
-
-
 
 export {
 	HDRLoader,

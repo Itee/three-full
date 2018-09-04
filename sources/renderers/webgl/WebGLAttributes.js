@@ -1,7 +1,4 @@
 
-
-
-
 function WebGLAttributes( gl ) {
 
 	var buffers = new WeakMap();
@@ -150,7 +147,6 @@ function WebGLAttributes( gl ) {
 	};
 
 }
-
 
 ;
 

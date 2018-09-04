@@ -16,11 +16,6 @@ import {
 } from '../../constants.js'
 import { _Math } from '../../math/Math.js'
 
-
-
-
-
-
 function WebGLTextures( _gl, extensions, state, properties, capabilities, utils, info ) {
 
 	var _videoTextures = {};
@@ -254,8 +249,6 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 	}
 
 	//
-
-
 
 	function setTexture2D( texture, slot ) {
 
@@ -912,7 +905,6 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 	this.updateRenderTargetMipmap = updateRenderTargetMipmap;
 
 }
-
 
 ;
 

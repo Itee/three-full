@@ -1,7 +1,4 @@
 
-
-
-
 var NodeUtils = {
 
 	elements: [ 'x', 'y', 'z', 'w' ],

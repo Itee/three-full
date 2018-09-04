@@ -6,15 +6,12 @@ import { Points } from '../objects/Points.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
 
-
-
 var PCDLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 	this.littleEndian = true;
 
 };
-
 
 PCDLoader.prototype = {
 

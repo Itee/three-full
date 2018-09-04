@@ -4,8 +4,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { Mesh } from '../objects/Mesh.js'
 import { ConvexBufferGeometry } from '../geometries/ConvexGeometry.js'
 
-
-
 var ConvexObjectBreaker = function ( minSizeForBreak, smallDelta ) {
 
 	this.minSizeForBreak = minSizeForBreak || 1.4;
@@ -58,7 +56,6 @@ ConvexObjectBreaker.prototype = {
 		userData.breakable = breakable;
 
 	},
-
 	
 	subdivideByImpact: function ( object, pointOfImpact, normal, maxRadialIterations, maxRandomIterations ) {
 
@@ -487,7 +484,6 @@ ConvexObjectBreaker.transformPlaneToLocalSpace = function () {
 
 		// recalculate constant (like in setFromNormalAndCoplanarPoint)
 		resultPlane.constant = - referencePoint.dot( resultPlane.normal );
-
 
 	};
 

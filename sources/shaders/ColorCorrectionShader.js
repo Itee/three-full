@@ -1,7 +1,5 @@
 import { Vector3 } from '../math/Vector3.js'
 
-
-
 var ColorCorrectionShader = {
 
 	uniforms: {

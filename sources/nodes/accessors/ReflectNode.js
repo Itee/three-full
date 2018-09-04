@@ -1,9 +1,5 @@
 import { TempNode } from '../core/TempNode.js'
 
-
-
-
-
 function ReflectNode( scope ) {
 
 	TempNode.call( this, 'v3', { unique: true } );

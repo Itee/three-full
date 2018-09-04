@@ -1,7 +1,4 @@
 
-
-
-
 var VerticalTiltShiftShader = {
 
 	uniforms: {

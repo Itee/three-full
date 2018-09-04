@@ -1,7 +1,4 @@
 
-
-
-
 var ToneMapShader = {
 
 	uniforms: {

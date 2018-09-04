@@ -2,8 +2,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Matrix4 } from '../math/Matrix4.js'
 
-
-
 var MMDExporter = function () {
 
 	// Unicode to Shift_JIS table
@@ -69,11 +67,6 @@ var MMDExporter = function () {
 		return poseSkin.skeleton.bones;
 
 	}
-
-	
-
-	
-
 	
 	this.parseVpd = function ( skin, outputShiftJis, useOriginalBones ) {
 
@@ -142,7 +135,6 @@ var MMDExporter = function () {
 
 			var bone = bones[ i ];
 			var bone2 = bones2[ i ];
-
 			
 			if ( useOriginalBones === true &&
 				bone.userData.ik !== undefined &&
@@ -182,8 +174,6 @@ var MMDExporter = function () {
 		return ( outputShiftJis === true ) ? unicodeToShiftjis( lines ) : lines;
 
 	};
-
-	
 
 };
 

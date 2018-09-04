@@ -6,14 +6,6 @@ import { NormalMapNode } from '../../misc/NormalMapNode.js'
 import { Color } from '../../../math/Color.js'
 import { Vector2 } from '../../../math/Vector2.js'
 
-
-
-
-
-
-
-
-
 function MeshStandardNode() {
 
 	StandardNode.call( this );

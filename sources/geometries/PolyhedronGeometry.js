@@ -4,14 +4,6 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 
-
-
-
-
-
-
-
-
 // PolyhedronGeometry
 
 function PolyhedronGeometry( vertices, indices, radius, detail ) {
@@ -324,7 +316,6 @@ function PolyhedronBufferGeometry( vertices, indices, radius, detail ) {
 
 	}
 
-
 	// Angle above the XZ plane.
 
 	function inclination( vector ) {
@@ -337,7 +328,6 @@ function PolyhedronBufferGeometry( vertices, indices, radius, detail ) {
 
 PolyhedronBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 PolyhedronBufferGeometry.prototype.constructor = PolyhedronBufferGeometry;
-
 
 ;
 

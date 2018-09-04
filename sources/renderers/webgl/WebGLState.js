@@ -22,11 +22,6 @@ import {
 } from '../../constants.js'
 import { Vector4 } from '../../math/Vector4.js'
 
-
-
-
-
-
 function WebGLState( gl, extensions, utils, capabilities ) {
 
 	function ColorBuffer() {
@@ -980,7 +975,6 @@ function WebGLState( gl, extensions, utils, capabilities ) {
 	};
 
 }
-
 
 ;
 

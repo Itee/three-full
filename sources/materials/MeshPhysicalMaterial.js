@@ -1,9 +1,5 @@
 import { MeshStandardMaterial } from './MeshStandardMaterial.js'
 
-
-
-
-
 function MeshPhysicalMaterial( parameters ) {
 
 	MeshStandardMaterial.call( this );
@@ -40,7 +36,6 @@ MeshPhysicalMaterial.prototype.copy = function ( source ) {
 	return this;
 
 };
-
 
 ;
 

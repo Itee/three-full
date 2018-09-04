@@ -3,10 +3,6 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { QuickHull } from '../utils/QuickHull.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
-
-
-
-
 	// ConvexGeometry
 
 	function ConvexGeometry( points ) {
@@ -77,11 +73,6 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 	ConvexBufferGeometry.prototype.constructor = ConvexBufferGeometry;
 
 	// export
-
-	
-	
-
-
 
 export {
 	ConvexGeometry,

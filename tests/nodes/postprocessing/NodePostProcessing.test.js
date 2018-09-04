@@ -1332,7 +1332,6 @@ var Three = (function (exports) {
 
 	// Fix circular dependency, see #2
 
-
 	FunctionNode.prototype.isShared = function( builder, output ) {
 
 		return ! this.isMethod;
@@ -1447,8 +1446,6 @@ var Three = (function (exports) {
 	};
 
 	// Fix circular dependency, see #2
-
-
 
 	//
 	//	Keywords
@@ -5350,7 +5347,6 @@ var Three = (function (exports) {
 			"}"
 		].join( "\n" ) );
 
-
 		var LinearToRGBD = new FunctionNode( [
 			"vec3 LinearToRGBD( in vec4 value, in float maxRange ) {",
 
@@ -6425,7 +6421,6 @@ var Three = (function (exports) {
 
 		},
 
-
 		addVertexCode: function ( code ) {
 
 			this.addCode( code, 'vertex' );
@@ -6443,7 +6438,6 @@ var Three = (function (exports) {
 			this.code[ shader || this.shader ] += code + '\n';
 
 		},
-
 
 		addVertexNodeCode: function ( code ) {
 
@@ -6505,7 +6499,6 @@ var Three = (function (exports) {
 
 		},
 
-
 		addVertexParsCode: function ( code ) {
 
 			this.addParsCode( code, 'vertex' );
@@ -6524,14 +6517,12 @@ var Three = (function (exports) {
 
 		},
 
-
 		addVaryCode: function ( code ) {
 
 			this.addVertexParsCode( code );
 			this.addFragmentParsCode( code );
 
 		},
-
 
 		isCache: function ( name ) {
 
@@ -6711,7 +6702,6 @@ var Three = (function (exports) {
 				return node.name;
 
 			}
-
 
 			if ( node instanceof FunctionNode ) {
 
@@ -7220,7 +7210,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 
 			var m;
 
@@ -13058,7 +13047,6 @@ var Three = (function (exports) {
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -13067,7 +13055,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -13078,7 +13065,6 @@ var Three = (function (exports) {
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -13087,7 +13073,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -13098,7 +13083,6 @@ var Three = (function (exports) {
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -13107,7 +13091,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -13118,7 +13101,6 @@ var Three = (function (exports) {
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -13127,7 +13109,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -14392,8 +14373,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new BufferGeometry().copy( this );
 
@@ -15751,8 +15730,6 @@ var Three = (function (exports) {
 
 		},
 
-		
-
 		mergeVertices: function () {
 
 			var verticesMap = {}; // Hashmap for looking up vertices by position coordinates (and making sure they are unique)
@@ -15783,7 +15760,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 
 			// if faces are completely degenerate after merging vertices, we
 			// have to remove them from the geometry.
@@ -16092,8 +16068,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new Geometry().copy( this );
 

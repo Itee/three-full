@@ -228,7 +228,6 @@ var Three = (function (exports) {
 
 		}
 
-
 	};
 
 	exports.ColorConverter = ColorConverter;

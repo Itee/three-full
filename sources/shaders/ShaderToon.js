@@ -1,8 +1,6 @@
 import { Vector3 } from '../math/Vector3.js'
 import { Color } from '../math/Color.js'
 
-
-
 var ShaderToon = {
 
 	'toon1' : {

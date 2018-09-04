@@ -6,8 +6,6 @@ import {
 import { ColladaLoader } from './ColladaLoader.js'
 import { Group } from '../objects/Group.js'
 
-
-
 var KMZLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

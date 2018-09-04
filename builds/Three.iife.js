@@ -4391,7 +4391,6 @@ var Three = (function (exports) {
 
   		}
 
-
   		var m;
 
   		if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -6973,8 +6972,6 @@ var Three = (function (exports) {
 
   	},
 
-  	
-
   	mergeVertices: function () {
   		var this$1 = this;
 
@@ -7007,7 +7004,6 @@ var Three = (function (exports) {
   			}
 
   		}
-
 
   		// if faces are completely degenerate after merging vertices, we
   		// have to remove them from the geometry.
@@ -7320,8 +7316,6 @@ var Three = (function (exports) {
   	},
 
   	clone: function () {
-
-  		
 
   		return new Geometry().copy( this );
 
@@ -8519,7 +8513,6 @@ var Three = (function (exports) {
   Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
   function Uint8BufferAttribute( array, itemSize, normalized ) {
 
   	BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -8528,7 +8521,6 @@ var Three = (function (exports) {
 
   Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
   function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -8539,7 +8531,6 @@ var Three = (function (exports) {
   Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
   function Int16BufferAttribute( array, itemSize, normalized ) {
 
   	BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -8548,7 +8539,6 @@ var Three = (function (exports) {
 
   Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
   function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -8559,7 +8549,6 @@ var Three = (function (exports) {
   Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
   function Int32BufferAttribute( array, itemSize, normalized ) {
 
   	BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -8568,7 +8557,6 @@ var Three = (function (exports) {
 
   Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
   function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -8579,7 +8567,6 @@ var Three = (function (exports) {
   Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
   function Float32BufferAttribute( array, itemSize, normalized ) {
 
   	BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -8588,7 +8575,6 @@ var Three = (function (exports) {
 
   Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
   Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
   function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -9873,8 +9859,6 @@ var Three = (function (exports) {
   	},
 
   	clone: function () {
-
-  		
 
   		return new BufferGeometry().copy( this );
 
@@ -12333,7 +12317,6 @@ var Three = (function (exports) {
   } );
 
   var CCDIKSolver = ( function () {
-
   	
   	function CCDIKSolver( mesh, iks ) {
 
@@ -12347,7 +12330,6 @@ var Three = (function (exports) {
   	CCDIKSolver.prototype = {
 
   		constructor: CCDIKSolver,
-
   		
   		update: function () {
 
@@ -12500,7 +12482,6 @@ var Three = (function (exports) {
   			};
 
   		}(),
-
   		
   		createHelper: function () {
 
@@ -12543,7 +12524,6 @@ var Three = (function (exports) {
   		}
 
   	};
-
   	
   	function CCDIKHelper( mesh, iks ) {
 
@@ -12592,7 +12572,6 @@ var Three = (function (exports) {
   	CCDIKHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
   		constructor: CCDIKHelper,
-
   		
   		updateMatrixWorld: function () {
 
@@ -13749,7 +13728,6 @@ var Three = (function (exports) {
 
   } );
 
-
   function PropertyBinding( rootNode, path, parsedPath ) {
 
   	this.path = path;
@@ -13778,7 +13756,6 @@ var Three = (function (exports) {
   		}
 
   	},
-
   	
   	sanitizeNodeName: ( function () {
 
@@ -14230,7 +14207,6 @@ var Three = (function (exports) {
 
   			}
 
-
   			if ( objectIndex !== undefined ) {
 
   				if ( targetObject[ objectIndex ] === undefined ) {
@@ -14312,7 +14288,6 @@ var Three = (function (exports) {
   						}
 
   					}
-
 
   				} else {
 
@@ -14546,7 +14521,6 @@ var Three = (function (exports) {
   		this.binding.setValue( this.buffer, originalValueOffset );
 
   	},
-
 
   	// mix functions
 
@@ -16109,12 +16083,10 @@ var Three = (function (exports) {
   		// 		actionByRoot: AnimationAction			- lookup
   		// }
 
-
   		this._bindings = []; // 'nActiveBindings' followed by inactive ones
   		this._nActiveBindings = 0;
 
   		this._bindingsByRootAndName = {}; // inside: Map< name, PropertyMixer >
-
 
   		this._controlInterpolants = []; // same game as above
   		this._nActiveControlInterpolants = 0;
@@ -16220,7 +16192,6 @@ var Three = (function (exports) {
 
   		action._cacheIndex = null;
 
-
   		var clipUuid = action._clip.uuid,
   			actionsByClip = this._actionsByClip,
   			actionsForClip = actionsByClip[ clipUuid ],
@@ -16236,7 +16207,6 @@ var Three = (function (exports) {
   		knownActionsForClip.pop();
 
   		action._byClipCacheIndex = null;
-
 
   		var actionByRoot = actionsForClip.actionByRoot,
   			rootUuid = ( action._localRoot || this._root ).uuid;
@@ -16402,7 +16372,6 @@ var Three = (function (exports) {
   		bindings[ prevIndex ] = lastActiveBinding;
 
   	},
-
 
   	// Memory management of Interpolants for weight and time scale
 
@@ -17203,7 +17172,6 @@ var Three = (function (exports) {
   CylinderBufferGeometry.prototype.constructor = CylinderBufferGeometry;
 
   var MMDPhysics = ( function () {
-
   	
   	function MMDPhysics( mesh, rigidBodyParams, constraintParams, params ) {
 
@@ -17219,7 +17187,6 @@ var Three = (function (exports) {
   		this.manager = new ResourceManager();
 
   		this.mesh = mesh;
-
   		
   		this.unitStep = ( params.unitStep !== undefined ) ? params.unitStep : 1 / 65;
   		this.maxStepNum = ( params.maxStepNum !== undefined ) ? params.maxStepNum : 3;
@@ -17239,7 +17206,6 @@ var Three = (function (exports) {
   	MMDPhysics.prototype = {
 
   		constructor: MMDPhysics,
-
   		
   		update: function ( delta ) {
 
@@ -17302,7 +17268,6 @@ var Three = (function (exports) {
   			return this;
 
   		},
-
   		
   		reset: function () {
   			var this$1 = this;
@@ -17317,7 +17282,6 @@ var Three = (function (exports) {
   			return this;
 
   		},
-
   		
   		warmup: function ( cycles ) {
   			var this$1 = this;
@@ -17332,7 +17296,6 @@ var Three = (function (exports) {
   			return this;
 
   		},
-
   		
   		setGravity: function ( gravity ) {
 
@@ -17342,7 +17305,6 @@ var Three = (function (exports) {
   			return this;
 
   		},
-
   		
   		createHelper: function () {
 
@@ -17442,7 +17404,6 @@ var Three = (function (exports) {
 
   			}
 
-
   		},
 
   		_stepSimulation: function ( delta ) {
@@ -17493,7 +17454,6 @@ var Three = (function (exports) {
   		}
 
   	};
-
   	
   	function ResourceManager() {
 
@@ -17944,7 +17904,6 @@ var Three = (function (exports) {
   		}
 
   	};
-
   	
   	function RigidBody( mesh, world, params, manager ) {
 
@@ -17965,7 +17924,6 @@ var Three = (function (exports) {
   	RigidBody.prototype = {
 
   		constructor: MMDPhysics.RigidBody,
-
   		
   		reset: function () {
 
@@ -17973,7 +17931,6 @@ var Three = (function (exports) {
   			return this;
 
   		},
-
   		
   		updateFromBone: function () {
 
@@ -17987,7 +17944,6 @@ var Three = (function (exports) {
   			return this;
 
   		},
-
   		
   		updateBone: function () {
 
@@ -18082,7 +18038,6 @@ var Three = (function (exports) {
   			if ( params.type === 0 ) {
 
   				body.setCollisionFlags( body.getCollisionFlags() | 2 );
-
   				
   				body.setActivationState( 4 );
 
@@ -18227,7 +18182,6 @@ var Three = (function (exports) {
   		}
 
   	};
-
   	
   	function Constraint( mesh, world, bodyA, bodyB, params, manager ) {
 
@@ -18320,7 +18274,6 @@ var Three = (function (exports) {
   				}
 
   			}
-
   			
   			if ( constraint.setParam !== undefined ) {
 
@@ -18351,7 +18304,6 @@ var Three = (function (exports) {
   		}
 
   	};
-
   	
   	function MMDPhysicsHelper( mesh, physics ) {
 
@@ -18405,7 +18357,6 @@ var Three = (function (exports) {
   	MMDPhysicsHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
   		constructor: MMDPhysicsHelper,
-
   		
   		updateMatrixWorld: function () {
 
@@ -18529,7 +18480,6 @@ var Three = (function (exports) {
   } )();
 
   var MMDAnimationHelper = ( function () {
-
   	
   	function MMDAnimationHelper( params ) {
 
@@ -18574,7 +18524,6 @@ var Three = (function (exports) {
   	MMDAnimationHelper.prototype = {
 
   		constructor: MMDAnimationHelper,
-
   		
   		add: function ( object, params ) {
 
@@ -18607,7 +18556,6 @@ var Three = (function (exports) {
   			return this;
 
   		},
-
   		
   		remove: function ( object ) {
 
@@ -18638,7 +18586,6 @@ var Three = (function (exports) {
   			return this;
 
   		},
-
   		
   		update: function ( delta ) {
   			var this$1 = this;
@@ -18659,7 +18606,6 @@ var Three = (function (exports) {
   			return this;
 
   		},
-
   		
   		pose: function ( mesh, vpd, params ) {
 
@@ -18711,7 +18657,6 @@ var Three = (function (exports) {
   			return this;
 
   		},
-
   		
   		enable: function ( key, enabled ) {
   			var this$1 = this;
@@ -18739,7 +18684,6 @@ var Three = (function (exports) {
   			return this;
 
   		},
-
   		
   		createGrantSolver: function ( mesh ) {
 
@@ -19108,7 +19052,6 @@ var Three = (function (exports) {
   				params );
 
   		},
-
   		
   		_syncDuration: function () {
   			var this$1 = this;
@@ -19242,7 +19185,6 @@ var Three = (function (exports) {
   			}
 
   		},
-
   		
   		_saveBones: function ( mesh ) {
 
@@ -19355,7 +19297,6 @@ var Three = (function (exports) {
   	};
 
   	//
-
   	
   	function AudioManager( audio, params ) {
 
@@ -19376,7 +19317,6 @@ var Three = (function (exports) {
   	AudioManager.prototype = {
 
   		constructor: AudioManager,
-
   		
   		control: function ( delta ) {
 
@@ -19420,7 +19360,6 @@ var Three = (function (exports) {
   		}
 
   	};
-
   	
   	function GrantSolver( mesh, grants ) {
 
@@ -19432,7 +19371,6 @@ var Three = (function (exports) {
   	GrantSolver.prototype = {
 
   		constructor: GrantSolver,
-
   		
   		update: function () {
 
@@ -19536,7 +19474,6 @@ var Three = (function (exports) {
 
   };
 
-
   AnimationClipCreator.CreatePulsationAnimation = function ( duration, pulseScale ) {
 
   	var times = [], values = [], tmp = new Vector3();
@@ -19559,7 +19496,6 @@ var Three = (function (exports) {
 
   };
 
-
   AnimationClipCreator.CreateVisibilityAnimation = function ( duration ) {
 
   	var times = [ 0, duration / 2, duration ], values = [ true, false, true ];
@@ -19571,7 +19507,6 @@ var Three = (function (exports) {
   	return new AnimationClip( null, duration, [ track ] );
 
   };
-
 
   AnimationClipCreator.CreateMaterialColorAnimation = function ( duration, colors ) {
 
@@ -19707,7 +19642,6 @@ var Three = (function (exports) {
   		return this;
 
   	},
-
   	
   	setFocalLength: function ( focalLength ) {
 
@@ -19718,7 +19652,6 @@ var Three = (function (exports) {
   		this.updateProjectionMatrix();
 
   	},
-
   	
   	getFocalLength: function () {
 
@@ -19748,7 +19681,6 @@ var Three = (function (exports) {
   		return this.filmGauge / Math.max( this.aspect, 1 );
 
   	},
-
   	
   	setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 
@@ -20862,7 +20794,6 @@ var Three = (function (exports) {
   		"	return orthographicDepthToViewZ( depth, nearClip, farClip );",
   		"	#endif",
   		"}",
-  		
 
   		"void main() {",
 
@@ -20969,7 +20900,6 @@ var Three = (function (exports) {
 
   		"shaderFocus":  { value: 1 },
   		"focusCoords":  { value: new Vector2() }
-
 
   	},
 
@@ -21118,7 +21048,6 @@ var Three = (function (exports) {
   			"kernel[3] = 2.0/16.0;   kernel[4] = 4.0/16.0;   kernel[5] = 2.0/16.0;",
   			"kernel[6] = 1.0/16.0;   kernel[7] = 2.0/16.0;   kernel[8] = 1.0/16.0;",
 
-
   			"for( int i=0; i<9; i++ ) {",
   				"float tmp = texture2D(tDepth, coords + offset[i]).r;",
   				"d += tmp * kernel[i];",
@@ -21126,7 +21055,6 @@ var Three = (function (exports) {
 
   			"return d;",
   		"}",
-
 
   		"vec3 color(vec2 coords,float blur) {",
   			"//processing the sample",
@@ -21158,7 +21086,6 @@ var Three = (function (exports) {
   		"float linearize(float depth) {",
   			"return -zfar * znear / (depth * (zfar - znear) - zfar);",
   		"}",
-
 
   		"float vignette() {",
   			"float dist = distance(vUv.xy, vec2(0.5,0.5));",
@@ -21348,7 +21275,6 @@ var Three = (function (exports) {
   CinematicCamera.prototype = Object.create( PerspectiveCamera.prototype );
   CinematicCamera.prototype.constructor = CinematicCamera;
 
-
   // providing fnumber and coc(Circle of Confusion) as extra arguments
   CinematicCamera.prototype.setLens = function ( focalLength, filmGauge, fNumber, coc ) {
 
@@ -21458,7 +21384,6 @@ var Three = (function (exports) {
 
   		this.postprocessing.bokeh_uniforms[ "znear" ].value = this.near;
   		this.postprocessing.bokeh_uniforms[ "zfar" ].value = this.near;
-
 
   		this.postprocessing.bokeh_uniforms[ "textureWidth" ].value = window.innerWidth;
 
@@ -23512,7 +23437,6 @@ var Three = (function (exports) {
 
   				nUvLayers = 0;
 
-
   			if ( json.uvs !== undefined ) {
 
   				// disregard empty arrays
@@ -23642,14 +23566,12 @@ var Three = (function (exports) {
   								normals[ normalIndex ]
   							);
 
-
   							if ( i !== 2 ) { faceA.vertexNormals.push( normal ); }
   							if ( i !== 0 ) { faceB.vertexNormals.push( normal ); }
 
   						}
 
   					}
-
 
   					if ( hasFaceColor ) {
 
@@ -23660,7 +23582,6 @@ var Three = (function (exports) {
   						faceB.color.setHex( hex );
 
   					}
-
 
   					if ( hasFaceVertexColor ) {
 
@@ -23752,14 +23673,12 @@ var Three = (function (exports) {
 
   					}
 
-
   					if ( hasFaceColor ) {
 
   						colorIndex = faces[ offset ++ ];
   						face.color.setHex( colors[ colorIndex ] );
 
   					}
-
 
   					if ( hasFaceVertexColor ) {
 
@@ -24063,7 +23982,6 @@ var Three = (function (exports) {
   				len_tri_flat, len_tri_smooth, len_tri_flat_uv, len_tri_smooth_uv,
   				len_quad_flat, len_quad_smooth, len_quad_flat_uv;
 
-
   			Geometry.call( this );
 
   			md = parseMetaData( data, currentOffset );
@@ -24159,7 +24077,6 @@ var Three = (function (exports) {
   					'nquad_smooth_uv': parseUInt32( data, offset + 20 + 4 * 10 )
 
   				};
-  				
 
   				return metaData;
 
@@ -24762,7 +24679,6 @@ var Three = (function (exports) {
 
   		if ( controls.moveBackward ) {
 
-
   			this.speed = _Math.clamp( this.speed - delta * this.BACK_ACCELERATION, this.MAX_REVERSE_SPEED, this.MAX_SPEED );
   			this.acceleration = _Math.clamp( this.acceleration - delta, - 1, 1 );
 
@@ -24799,7 +24715,6 @@ var Three = (function (exports) {
   				this.acceleration = _Math.clamp( this.acceleration + k * delta, - 1, 0 );
 
   			}
-
 
   		}
 
@@ -25088,7 +25003,6 @@ var Three = (function (exports) {
   			setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
 
   		}
-
 
   	};
 
@@ -25599,7 +25513,6 @@ var Three = (function (exports) {
 
   		}
 
-
   	}
 
   	function onDocumentMouseCancel( event ) {
@@ -25677,7 +25590,6 @@ var Three = (function (exports) {
   			scope.dispatchEvent( { type: 'dragstart', object: _selected } );
 
   		}
-
 
   	}
 
@@ -26063,7 +25975,6 @@ var Three = (function (exports) {
 
   	}
 
-
   	function touchMove( event ) {
 
   		if ( scope.enabled === false ) { return; }
@@ -26099,7 +26010,6 @@ var Three = (function (exports) {
   				var distance = touches[ 0 ].distanceTo( touches[ 1 ] );
   				scope.zoom( delta.set( 0, 0, prevDistance - distance ) );
   				prevDistance = distance;
-
 
   				var offset0 = touches[ 0 ].clone().sub( getClosest( touches[ 0 ], prevTouches ) );
   				var offset1 = touches[ 1 ].clone().sub( getClosest( touches[ 1 ], prevTouches ) );
@@ -26607,7 +26517,6 @@ var Three = (function (exports) {
   		// expose the rotation vector for convenience
   		this.object.rotation.setFromQuaternion( this.object.quaternion, this.object.rotation.order );
 
-
   	};
 
   	this.updateMovementVector = function () {
@@ -26856,7 +26765,6 @@ var Three = (function (exports) {
   			spherical.phi = Math.max( scope.minPolarAngle, Math.min( scope.maxPolarAngle, spherical.phi ) );
 
   			spherical.makeSafe();
-
 
   			spherical.radius *= scale;
 
@@ -27987,7 +27895,6 @@ var Three = (function (exports) {
 
   			spherical.makeSafe();
 
-
   			spherical.radius *= scale;
 
   			// restrict radius to be between desired limits
@@ -28930,7 +28837,6 @@ var Three = (function (exports) {
   	var startEvent = { type: 'start' };
   	var endEvent = { type: 'end' };
 
-
   	// methods
 
   	this.handleResize = function () {
@@ -29034,7 +28940,6 @@ var Three = (function (exports) {
 
   		var axis = new Vector3(),
   			quaternion = new Quaternion();
-
 
   		return function rotateCamera() {
 
@@ -29615,7 +29520,6 @@ var Three = (function (exports) {
   	var startEvent = { type: 'start' };
   	var endEvent = { type: 'end' };
 
-
   	// methods
 
   	this.handleResize = function () {
@@ -29729,7 +29633,6 @@ var Three = (function (exports) {
   		};
 
   	}() );
-
 
   	this.zoomCamera = function () {
 
@@ -30469,7 +30372,6 @@ var Three = (function (exports) {
   		return Math.atan2( vector.z, - vector.x );
 
   	}
-
 
   	// Angle above the XZ plane.
 
@@ -31277,7 +31179,6 @@ var Three = (function (exports) {
 
   } );
 
-
   var TransformControlsGizmo = function () {
 
   	Object3D.call( this );
@@ -31702,7 +31603,6 @@ var Three = (function (exports) {
   		this.helper[ "rotate" ].visible = this.mode === "rotate";
   		this.helper[ "scale" ].visible = this.mode === "scale";
 
-
   		var handles = [];
   		handles = handles.concat( this.picker[ this.mode ].children );
   		handles = handles.concat( this.gizmo[ this.mode ].children );
@@ -31781,7 +31681,6 @@ var Three = (function (exports) {
 
   					}
 
-
   				} else if ( handle.name === 'START' ) {
 
   					handle.position.copy( this$1.worldPositionStart );
@@ -31839,7 +31738,6 @@ var Three = (function (exports) {
   				var AXIS_HIDE_TRESHOLD = 0.99;
   				var PLANE_HIDE_TRESHOLD = 0.2;
   				var AXIS_FLIP_TRESHOLD = -0.4;
-
 
   				if ( handle.name === 'X' || handle.name === 'XYZX' ) {
   					if ( Math.abs( alignVector.copy( unitX ).applyQuaternion( quaternion ).dot( this$1.eye ) ) > AXIS_HIDE_TRESHOLD ) {
@@ -32010,7 +31908,6 @@ var Three = (function (exports) {
   	isTransformControlsGizmo: true
 
   } );
-
 
   var TransformControlsPlane = function () {
 
@@ -32475,7 +32372,6 @@ var Three = (function (exports) {
   					// mark the vertices to be reassigned to some other face
 
   					this.unassigned.appendChain( faceVertices );
-
 
   				} else {
 
@@ -32995,7 +32891,6 @@ var Three = (function (exports) {
   			face.getEdge( - 1 ).setTwin( horizonEdge.twin );
 
   			return face.getEdge( 0 ); // the half edge whose vertex is the eyeVertex
-
 
   		},
 
@@ -33598,7 +33493,6 @@ var Three = (function (exports) {
   		userData.breakable = breakable;
 
   	},
-
   	
   	subdivideByImpact: function ( object, pointOfImpact, normal, maxRadialIterations, maxRandomIterations ) {
 
@@ -34030,7 +33924,6 @@ var Three = (function (exports) {
   		// recalculate constant (like in setFromNormalAndCoplanarPoint)
   		resultPlane.constant = - referencePoint.dot( resultPlane.normal );
 
-
   	};
 
   }();
@@ -34329,7 +34222,6 @@ var Three = (function (exports) {
 
   		normals[ 0 ].crossVectors( tangents[ 0 ], vec );
   		binormals[ 0 ].crossVectors( tangents[ 0 ], normals[ 0 ] );
-
 
   		// compute the slowly-varying normal and binormal vectors for each segment on the curve
 
@@ -34820,7 +34712,6 @@ var Three = (function (exports) {
   	};
 
   var NURBSUtils = {
-
   	
   	findSpan: function( p,  u,  U ) {
 
@@ -34861,8 +34752,6 @@ var Three = (function (exports) {
   		return mid;
 
   	},
-
-
   	
   	calcBasisFunctions: function( span, u, p, U ) {
 
@@ -34895,8 +34784,6 @@ var Three = (function (exports) {
   		 return N;
 
   	},
-
-
   	
   	calcBSplinePoint: function( p, U, P, u ) {
 
@@ -34919,8 +34806,6 @@ var Three = (function (exports) {
   		return C;
 
   	},
-
-
   	
   	calcBasisFunctionDerivatives: function( span,  u,  p,  n,  U ) {
 
@@ -35039,8 +34924,6 @@ var Three = (function (exports) {
   		return ders;
 
   	},
-
-
   	
   	calcBSplineDerivatives: function( p,  U,  P,  u,  nd ) {
 
@@ -35085,8 +34968,6 @@ var Three = (function (exports) {
   		return CK;
 
   	},
-
-
   	
   	calcKoverI: function( k, i ) {
 
@@ -35115,8 +34996,6 @@ var Three = (function (exports) {
   		return nom / denom;
 
   	},
-
-
   	
   	calcRationalCurveDerivatives: function ( Pders ) {
   		var this$1 = this;
@@ -35153,8 +35032,6 @@ var Three = (function (exports) {
   		return CK;
 
   	},
-
-
   	
   	calcNURBSDerivatives: function( p,  U,  P,  u,  nd ) {
 
@@ -35162,8 +35039,6 @@ var Three = (function (exports) {
   		return this.calcRationalCurveDerivatives( Pders );
 
   	},
-
-
   	
   	calcSurfacePoint: function ( p, q, U, V, P, u, v, target ) {
 
@@ -35225,10 +35100,8 @@ var Three = (function (exports) {
 
   };
 
-
   NURBSCurve.prototype = Object.create( Curve.prototype );
   NURBSCurve.prototype.constructor = NURBSCurve;
-
 
   NURBSCurve.prototype.getPoint = function ( t ) {
 
@@ -35247,7 +35120,6 @@ var Three = (function (exports) {
   	return new Vector3( hpoint.x, hpoint.y, hpoint.z );
 
   };
-
 
   NURBSCurve.prototype.getTangent = function ( t ) {
 
@@ -35287,7 +35159,6 @@ var Three = (function (exports) {
   	}
 
   };
-
 
   NURBSSurface.prototype = {
 
@@ -35558,7 +35429,6 @@ var Three = (function (exports) {
   			"			: pow( c, 0.41666 ) * 1.055 - 0.055;",
   			"}",
 
-
   			"void main() {",
 
   			"	vec2 uv = vUv;",
@@ -35664,7 +35534,6 @@ var Three = (function (exports) {
 
   	};
 
-
   	this.render = function ( scene, camera ) {
 
   		renderer.render( scene, camera );
@@ -35674,10 +35543,7 @@ var Three = (function (exports) {
 
   	this.domElement = domElement;
 
-
   	// Throw in ascii library from http://www.nihilogic.dk/labs/jsascii/jsascii.js
-
-  	
 
   	function initAsciiSize() {
 
@@ -35717,7 +35583,6 @@ var Three = (function (exports) {
   		oStyle.textDecoration = "none";
 
   	}
-
 
   	var aDefaultCharList = ( " .,:;i1tfLCG08@" ).split( "" );
   	var aDefaultColorCharList = ( " CGO08@" ).split( "" );
@@ -35776,9 +35641,7 @@ var Three = (function (exports) {
 
   	}
 
-
   	// can't get a span or div to flow like an img element, but a table works?
-
 
   	// convert img element to ascii
 
@@ -36570,8 +36433,6 @@ var Three = (function (exports) {
 
   	},
 
-  	
-
   	cube: {
 
   		uniforms: {
@@ -37062,7 +36923,6 @@ var Three = (function (exports) {
   		renderer.shadowMap.enabled = currentShadowMapEnabled;
 
   	};
-
   	
   	this.autoClear = renderer.autoClear;
   	this.domElement = renderer.domElement;
@@ -37290,7 +37150,6 @@ var Three = (function (exports) {
   		_cameraR.lookAt( scene.position );
   		_cameraR.rotation.x += 90 * ( Math.PI / 180 );
 
-
   		renderer.clear();
   		renderer.setScissorTest( true );
 
@@ -37349,7 +37208,6 @@ var Three = (function (exports) {
   		renderer.setScissorTest( false );
 
   	};
-
 
   };
 
@@ -37900,7 +37758,6 @@ var Three = (function (exports) {
   					.fill()
   					.map( function ( v, i ) { return processMaterial( materials[ i % materials.length ] ); } );
 
-
   				node +=
   					"<instance_geometry url=\"#" + meshid + "\">" +
 
@@ -38039,7 +37896,6 @@ var Three = (function (exports) {
   GLTFExporter.prototype = {
 
   	constructor: GLTFExporter,
-
   	
   	parse: function ( input, onDone, options ) {
 
@@ -38090,8 +37946,6 @@ var Three = (function (exports) {
   		};
 
   		var cachedCanvas;
-
-  		
   		
   		function equalArray( array1, array2 ) {
 
@@ -38102,7 +37956,6 @@ var Three = (function (exports) {
   			} );
 
   		}
-
   		
   		function stringToArrayBuffer( text ) {
 
@@ -38126,7 +37979,6 @@ var Three = (function (exports) {
   			return array.buffer;
 
   		}
-
   		
   		function getMinMax( attribute, start, count ) {
 
@@ -38152,14 +38004,12 @@ var Three = (function (exports) {
   			return output;
 
   		}
-
   		
   		function isPowerOfTwo( image ) {
 
   			return _Math.isPowerOfTwo( image.width ) && _Math.isPowerOfTwo( image.height );
 
   		}
-
   		
   		function isNormalizedNormalAttribute( normal ) {
 
@@ -38181,7 +38031,6 @@ var Three = (function (exports) {
   			return true;
 
   		}
-
   		
   		function createNormalizedNormalAttribute( normal ) {
 
@@ -38219,14 +38068,12 @@ var Three = (function (exports) {
   			return attribute;
 
   		}
-
   		
   		function getPaddedBufferSize( bufferSize ) {
 
   			return Math.ceil( bufferSize / 4 ) * 4;
 
   		}
-
   		
   		function getPaddedArrayBuffer( arrayBuffer, paddingByte ) {
 
@@ -38256,7 +38103,6 @@ var Three = (function (exports) {
   			return arrayBuffer;
 
   		}
-
   		
   		function serializeUserData( object ) {
 
@@ -38274,7 +38120,6 @@ var Three = (function (exports) {
   			}
 
   		}
-
   		
   		function processBuffer( buffer ) {
 
@@ -38290,7 +38135,6 @@ var Three = (function (exports) {
   			return 0;
 
   		}
-
   		
   		function processBufferView( attribute, componentType, start, count, target ) {
 
@@ -38386,7 +38230,6 @@ var Three = (function (exports) {
   			return output;
 
   		}
-
   		
   		function processBufferViewImage( blob ) {
 
@@ -38421,7 +38264,6 @@ var Three = (function (exports) {
   			} );
 
   		}
-
   		
   		function processAccessor( attribute, geometry, start, count ) {
 
@@ -38522,7 +38364,6 @@ var Three = (function (exports) {
   			return outputJSON.accessors.length - 1;
 
   		}
-
   		
   		function processImage( image, format, flipY ) {
 
@@ -38615,7 +38456,6 @@ var Three = (function (exports) {
   			return index;
 
   		}
-
   		
   		function processSampler( map ) {
 
@@ -38639,7 +38479,6 @@ var Three = (function (exports) {
   			return outputJSON.samplers.length - 1;
 
   		}
-
   		
   		function processTexture( map ) {
 
@@ -38670,7 +38509,6 @@ var Three = (function (exports) {
   			return index;
 
   		}
-
   		
   		function processMaterial( material ) {
 
@@ -38875,7 +38713,6 @@ var Three = (function (exports) {
   			return index;
 
   		}
-
   		
   		function processMesh( mesh ) {
 
@@ -39163,7 +39000,6 @@ var Three = (function (exports) {
   			return outputJSON.meshes.length - 1;
 
   		}
-
   		
   		function processCamera( camera ) {
 
@@ -39216,7 +39052,6 @@ var Three = (function (exports) {
   			return outputJSON.cameras.length - 1;
 
   		}
-
   		
   		function processAnimation( clip, root ) {
 
@@ -39373,7 +39208,6 @@ var Three = (function (exports) {
   			return skinIndex;
 
   		}
-
   		
   		function processNode( object ) {
 
@@ -39490,7 +39324,6 @@ var Three = (function (exports) {
 
   				}
 
-
   			}
 
   			outputJSON.nodes.push( gltfNode );
@@ -39501,7 +39334,6 @@ var Three = (function (exports) {
   			return nodeIndex;
 
   		}
-
   		
   		function processScene( scene ) {
 
@@ -39553,7 +39385,6 @@ var Three = (function (exports) {
   			}
 
   		}
-
   		
   		function processObjects( objects ) {
 
@@ -39775,11 +39606,6 @@ var Three = (function (exports) {
   		return poseSkin.skeleton.bones;
 
   	}
-
-  	
-
-  	
-
   	
   	this.parseVpd = function ( skin, outputShiftJis, useOriginalBones ) {
 
@@ -39848,7 +39674,6 @@ var Three = (function (exports) {
 
   			var bone = bones[ i ];
   			var bone2 = bones2[ i ];
-
   			
   			if ( useOriginalBones === true &&
   				bone.userData.ik !== undefined &&
@@ -39888,8 +39713,6 @@ var Three = (function (exports) {
   		return ( outputShiftJis === true ) ? unicodeToShiftjis( lines ) : lines;
 
   	};
-
-  	
 
   };
 
@@ -40267,7 +40090,6 @@ var Three = (function (exports) {
   		includeColors = includeColors && excludeAttributes.indexOf( 'color' ) === - 1;
   		includeUVs = includeUVs && excludeAttributes.indexOf( 'uv' ) === - 1;
 
-
   		if ( includeIndices && faceCount !== Math.floor( faceCount ) ) {
 
   			// point cloud meshes will not have an index array and may not have a
@@ -40299,7 +40121,6 @@ var Three = (function (exports) {
   			indexByteCount = 4;
 
   		}
-
 
   		var header =
   			'ply\n' +
@@ -40351,7 +40172,6 @@ var Three = (function (exports) {
 
   		header += 'end_header\n';
 
-
   		// Generate attribute data
   		var vertex = new Vector3();
   		var normalMatrixWorld = new Matrix3();
@@ -40374,7 +40194,6 @@ var Three = (function (exports) {
   			var output = new DataView( new ArrayBuffer( headerBin.length + vertexListLength + faceListLength ) );
   			new Uint8Array( output.buffer ).set( headerBin, 0 );
 
-
   			var vOffset = headerBin.length;
   			var fOffset = headerBin.length + vertexListLength;
   			var writtenVertices = 0;
@@ -40395,7 +40214,6 @@ var Three = (function (exports) {
   					vertex.z = vertices.getZ( i );
 
   					vertex.applyMatrix4( mesh.matrixWorld );
-
 
   					// Position information
   					output.setFloat32( vOffset, vertex.x );
@@ -40540,7 +40358,6 @@ var Three = (function (exports) {
 
   				}
 
-
   				// Save the amount of verts we've already written so we can offset
   				// the face index on the next mesh
   				writtenVertices += vertices.count;
@@ -40575,7 +40392,6 @@ var Three = (function (exports) {
   					vertex.z = vertices.getZ( i );
 
   					vertex.applyMatrix4( mesh.matrixWorld );
-
 
   					// Position information
   					var line =
@@ -41789,7 +41605,6 @@ var Three = (function (exports) {
 
   	};
 
-
   	for ( i = 0; i < 3; i ++ ) {
 
   		mgm[ i ] = new Matrix4();
@@ -41996,7 +41811,6 @@ var Three = (function (exports) {
 
   };
 
-
   TeapotBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
   TeapotBufferGeometry.prototype.constructor = TeapotBufferGeometry;
 
@@ -42039,7 +41853,6 @@ var Three = (function (exports) {
 
   	var mesh = new Mesh( new PlaneBufferGeometry( 2, 2 ), passThruShader );
   	scene.add( mesh );
-
 
   	this.addVariable = function( variableName, computeFragmentShader, initialValueTexture ) {
 
@@ -42188,7 +42001,6 @@ var Three = (function (exports) {
   	}
   	this.addResolutionDefine = addResolutionDefine;
 
-
   	// The following functions can be used to compute things manually
 
   	function createShaderMaterial( computeFragmentShader, uniforms ) {
@@ -42242,7 +42054,6 @@ var Three = (function (exports) {
   		return texture;
 
   	};
-
 
   	this.renderTexture = function( input, output ) {
 
@@ -42685,7 +42496,6 @@ var Three = (function (exports) {
   GPUParticleSystem.prototype = Object.create( Object3D.prototype );
   GPUParticleSystem.prototype.constructor = GPUParticleSystem;
 
-
   // Subclass for particle containers, allows for very large arrays to be spread out
 
   var GPUParticleContainer = function ( maxParticles, particleSystem ) {
@@ -42959,13 +42769,11 @@ var Three = (function (exports) {
 
   				this.matrixWorld.compose( translationWorld, quaternionObject, scaleWorld );
 
-
   			} else {
 
   				this.matrixWorld.copy( this.matrix );
 
   			}
-
 
   			this.matrixWorldNeedsUpdate = false;
 
@@ -46895,7 +46703,6 @@ var Three = (function (exports) {
 
   		}
 
-
   		function veclerp( v1, v2, l ) {
 
   			var v = new Vector3();
@@ -47643,8 +47450,6 @@ var Three = (function (exports) {
 
   						}
 
-
-
   					}
 
   					if ( f.mNumIndices === 3 ) {
@@ -47667,8 +47472,6 @@ var Three = (function (exports) {
   						throw ( new Error( "Sorry, can't currently triangulate polys. Use the triangulate preprocessor in Assimp." ) );
 
   					}
-
-
 
   				}
 
@@ -48264,7 +48067,6 @@ var Three = (function (exports) {
   				flags = this.readU8(),
   				len = this.readU32();
 
-
   			switch ( type ) {
 
   				case 1:
@@ -48326,12 +48128,10 @@ var Three = (function (exports) {
 
   			}
 
-
   			// Store block reference for later use
   			this._blocks[ blockId ] = block = new Block();
   			block.data = assetData;
   			block.id = blockId;
-
 
   		},
 
@@ -48452,16 +48252,13 @@ var Three = (function (exports) {
   			mesh.applyMatrix( mtx );
   			mesh.name = name;
 
-
   			parent = this.getBlock( par_id ) || this.trunk;
   			parent.add( mesh );
-
 
   			var matLen = materials.length;
   			var maxLen = Math.max( meshLen, matLen );
   			for ( i = 0; i < maxLen; i ++ )
   				{ meshes[ i % meshLen ].material = materials[ i % matLen ]; }
-
 
   			// Ignore for now
   			this.parseProperties( null );
@@ -48536,7 +48333,6 @@ var Three = (function (exports) {
   			mat.extra = attributes;
   			mat.alphaThreshold = props.get( 12, 0.0 );
   			mat.repeat = props.get( 13, false );
-
 
   			return mat;
 
@@ -48621,7 +48417,6 @@ var Three = (function (exports) {
 
   			// Discard attributes for now
   			this.parseUserAttributes();
-
 
   			return skeleton;
 
@@ -48738,7 +48533,6 @@ var Three = (function (exports) {
 
   			this.parseUserAttributes();
 
-
   			return skeletonFrames;
 
   		},
@@ -48781,14 +48575,12 @@ var Three = (function (exports) {
 
   			if ( type == 1 ) {
 
-
   				thisAnimator = {
   					animationSet: targetAnimationSet,
   					skeleton: this._blocks[ props.get( 1, 0 ) ].data
   				};
 
   			}
-
 
   			for ( i = 0; i < targetMeshes.length; i ++ ) {
 
@@ -48824,10 +48616,8 @@ var Three = (function (exports) {
   				geom.name = name;
   				geometries.push( geom );
 
-
   				sm_len = this$1.readU32();
   				sm_end = this$1._ptr + sm_len;
-
 
   				// Ignore for now
   				this$1.parseProperties( { 1: this$1._geoNrType, 2: this$1._geoNrType } );
@@ -49030,7 +48820,6 @@ var Three = (function (exports) {
 
   							}
 
-
   							subMeshParsed ++;
 
   						} else
@@ -49040,7 +48829,6 @@ var Three = (function (exports) {
   					}
 
   				}
-
 
   				frames_parsed ++;
 
@@ -49277,7 +49065,6 @@ var Three = (function (exports) {
   			return a;
 
   		},
-
   		
   		readUTF: function () {
 
@@ -49285,7 +49072,6 @@ var Three = (function (exports) {
   			return this.readUTFBytes( len );
 
   		},
-
   		
   		readUTFBytes: function ( len ) {
   			var this$1 = this;
@@ -49921,7 +49707,6 @@ var Three = (function (exports) {
   	},
 
   	parse: function ( text ) {
-
   		
   		function readBvh( lines ) {
 
@@ -49978,7 +49763,6 @@ var Three = (function (exports) {
   			return list;
 
   		}
-
   		
   		function readFrameData( data, frameTime, bone ) {
 
@@ -50045,7 +49829,6 @@ var Three = (function (exports) {
   			}
 
   		}
-
   		
   		function readNode( lines, firstline, list ) {
 
@@ -50141,7 +49924,6 @@ var Three = (function (exports) {
   			}
 
   		}
-
   		
   		function toTHREEBone( source, list ) {
 
@@ -50164,7 +49946,6 @@ var Three = (function (exports) {
   			return bone;
 
   		}
-
   		
   		function toTHREEAnimation( bones ) {
 
@@ -50222,7 +50003,6 @@ var Three = (function (exports) {
   			return new AnimationClip( 'animation', - 1, tracks );
 
   		}
-
   		
   		function nextLine( lines ) {
 
@@ -55285,8 +55065,6 @@ var Three = (function (exports) {
 
   	};
 
-  	
-
   	function GLTFRegistry() {
 
   		var objects = {};
@@ -55337,8 +55115,6 @@ var Three = (function (exports) {
 
   	}
 
-  	
-
   	LegacyGLTFLoader.Shaders = {
 
   		update: function () {
@@ -55348,8 +55124,6 @@ var Three = (function (exports) {
   		}
 
   	};
-
-  	
 
   	function GLTFShader( targetNode, allNodes ) {
 
@@ -55454,9 +55228,6 @@ var Three = (function (exports) {
 
   	};
 
-
-  	
-
   	LegacyGLTFLoader.Animations = {
 
   		update: function () {
@@ -55467,16 +55238,10 @@ var Three = (function (exports) {
 
   	};
 
-  	
-  	
-  	
-
   	var EXTENSIONS = {
   		KHR_BINARY_GLTF: 'KHR_binary_glTF',
   		KHR_MATERIALS_COMMON: 'KHR_materials_common'
   	};
-
-  	
 
   	function GLTFMaterialsCommonExtension( json ) {
   		var this$1 = this;
@@ -55529,8 +55294,6 @@ var Three = (function (exports) {
 
   	}
 
-  	
-
   	var BINARY_EXTENSION_BUFFER_NAME = 'binary_glTF';
 
   	var BINARY_EXTENSION_HEADER_DEFAULTS = { magic: 'glTF', version: 1, contentFormat: 0 };
@@ -55579,12 +55342,6 @@ var Three = (function (exports) {
   		return LoaderUtils.decodeText( array );
 
   	};
-
-  	
-  	
-  	
-
-  	
 
   	var WEBGL_CONSTANTS = {
   		FLOAT: 5126,
@@ -55727,8 +55484,6 @@ var Three = (function (exports) {
   		32823: 'POLYGON_OFFSET_FILL',
   		32926: 'SAMPLE_ALPHA_TO_COVERAGE'
   	};
-
-  	
 
   	function _each( object, callback, thisObj ) {
   		var this$1 = this;
@@ -55996,8 +55751,6 @@ var Three = (function (exports) {
   		return new RawShaderMaterial( this.params );
 
   	};
-
-  	
 
   	function GLTFParser( json, extensions, options ) {
 
@@ -57448,13 +57201,11 @@ var Three = (function (exports) {
           this.verbosity = level;
           return this;
       },
-
       
       setDrawMode: function(drawMode) {
           this.drawMode = drawMode;
           return this;
       },
-
       
       setSkipDequantization: function(attributeName, skip) {
           var skipDequantization = true;
@@ -57464,7 +57215,6 @@ var Three = (function (exports) {
               skipDequantization;
           return this;
       },
-
       
       decodeDracoFile: function(rawBuffer, callback, attributeUniqueIdMap,
                                 attributeTypeMap) {
@@ -57482,7 +57232,6 @@ var Three = (function (exports) {
         var buffer = new dracoDecoder.DecoderBuffer();
         buffer.Init(new Int8Array(rawBuffer), rawBuffer.byteLength);
         var decoder = new dracoDecoder.Decoder();
-
         
         var geometryType = decoder.GetEncodedGeometryType(buffer);
         if (geometryType == dracoDecoder.TRIANGULAR_MESH) {
@@ -57765,11 +57514,9 @@ var Three = (function (exports) {
   DRACOLoader.decoderConfig = {};
   DRACOLoader.decoderModulePromise = null;
 
-
   DRACOLoader.setDecoderPath = function ( path ) {
     DRACOLoader.decoderPath = path;
   };
-
 
   DRACOLoader.setDecoderConfig = function ( config ) {
     var wasmBinary = DRACOLoader.decoderConfig.wasmBinary;
@@ -57780,11 +57527,9 @@ var Three = (function (exports) {
     if ( wasmBinary ) { DRACOLoader.decoderConfig.wasmBinary = wasmBinary; }
   };
 
-
   DRACOLoader.releaseDecoderModule = function () {
     DRACOLoader.decoderModulePromise = null;
   };
-
 
   DRACOLoader.getDecoderModule = function () {
     var scope = this;
@@ -57829,7 +57574,6 @@ var Three = (function (exports) {
     return promise;
   };
 
-
   DRACOLoader._loadScript = function ( src ) {
     var prevScript = document.getElementById( 'decoder_script' );
     if ( prevScript !== null ) {
@@ -57845,7 +57589,6 @@ var Three = (function (exports) {
       head.appendChild( script );
     });
   };
-
 
   DRACOLoader._loadArrayBuffer = function ( src ) {
     var loader = new FileLoader();
@@ -58057,7 +57800,6 @@ var Three = (function (exports) {
   			if ( onLoad ) { onLoad( texture, texData ); }
 
   		}, onProgress, onError );
-
 
   		return texture;
 
@@ -59771,7 +59513,6 @@ var Three = (function (exports) {
   						parameters.displacementMap = self.getTexture( textureMap, child.ID );
   						break;
 
-
   					case 'EmissiveColor':
   						parameters.emissiveMap = self.getTexture( textureMap, child.ID );
   						break;
@@ -60003,7 +59744,6 @@ var Three = (function (exports) {
 
   				}
 
-
   			} );
 
   			this.bindSkeleton( deformers.skeletons, geometryMap, modelMap );
@@ -60168,7 +59908,6 @@ var Three = (function (exports) {
   					farClippingPlane = cameraAttribute.FarPlane.value / 1000;
 
   				}
-
 
   				var width = window.innerWidth;
   				var height = window.innerHeight;
@@ -60962,7 +60701,6 @@ var Three = (function (exports) {
 
   						} );
 
-
   					}
 
   					if ( weights.length > 4 ) {
@@ -61462,7 +61200,6 @@ var Three = (function (exports) {
 
 
   			var animationClips = [];
-
 
   			var rawClips = this.parseClips();
 
@@ -63616,7 +63353,6 @@ var Three = (function (exports) {
   		}
 
   	},
-
   	
   	mergeBufferGeometries: function ( geometries, useGroups ) {
   		var this$1 = this;
@@ -63768,7 +63504,6 @@ var Three = (function (exports) {
   		return mergedGeometry;
 
   	},
-
   	
   	mergeBufferAttributes: function ( attributes ) {
 
@@ -64023,8 +63758,6 @@ var Three = (function (exports) {
 
   	};
 
-  	
-
   	function GLTFRegistry() {
 
   		var objects = {};
@@ -64059,10 +63792,6 @@ var Three = (function (exports) {
 
   	}
 
-  	
-  	
-  	
-
   	var EXTENSIONS = {
   		KHR_BINARY_GLTF: 'KHR_binary_glTF',
   		KHR_DRACO_MESH_COMPRESSION: 'KHR_draco_mesh_compression',
@@ -64071,7 +63800,6 @@ var Three = (function (exports) {
   		KHR_MATERIALS_UNLIT: 'KHR_materials_unlit',
   		MSFT_TEXTURE_DDS: 'MSFT_texture_dds'
   	};
-
   	
   	function GLTFTextureDDSExtension() {
 
@@ -64085,7 +63813,6 @@ var Three = (function (exports) {
   		this.ddsLoader = new DDSLoader();
 
   	}
-
   	
   	function GLTFLightsExtension( json ) {
   		var this$1 = this;
@@ -64150,7 +63877,6 @@ var Three = (function (exports) {
   		}
 
   	}
-
   	
   	function GLTFMaterialsUnlitExtension( json ) {
 
@@ -64261,7 +63987,6 @@ var Three = (function (exports) {
   		}
 
   	}
-
   	
   	function GLTFDracoMeshCompressionExtension( json, dracoLoader ) {
 
@@ -64333,7 +64058,6 @@ var Three = (function (exports) {
   		} );
 
   	};
-
   	
   	function GLTFMaterialsPbrSpecularGlossinessExtension() {
 
@@ -64542,7 +64266,6 @@ var Three = (function (exports) {
   				return material;
 
   			},
-
   			
   			cloneMaterial: function ( source ) {
 
@@ -64692,10 +64415,6 @@ var Three = (function (exports) {
 
   	}
 
-  	
-  	
-  	
-
   	// Spline Interpolation
   	// Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#appendix-c-spline-interpolation
   	function GLTFCubicSplineInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
@@ -64770,12 +64489,6 @@ var Three = (function (exports) {
   		return result;
 
   	};
-
-  	
-  	
-  	
-
-  	
 
   	var WEBGL_CONSTANTS = {
   		FLOAT: 5126,
@@ -64876,8 +64589,6 @@ var Three = (function (exports) {
   		'image/jpeg': RGBFormat
   	};
 
-  	
-
   	function resolveURL( url, path ) {
 
   		// Invalid URL
@@ -64896,7 +64607,6 @@ var Three = (function (exports) {
   		return path + url;
 
   	}
-
   	
   	function createDefaultMaterial() {
 
@@ -64928,7 +64638,6 @@ var Three = (function (exports) {
   		}
 
   	}
-
   	
   	function assignExtrasToUserData( object, gltfDef ) {
 
@@ -64947,7 +64656,6 @@ var Three = (function (exports) {
   		}
 
   	}
-
   	
   	function addMorphTargets( geometry, targets, accessors ) {
 
@@ -65058,7 +64766,6 @@ var Three = (function (exports) {
   		if ( hasMorphNormal ) { geometry.morphAttributes.normal = morphNormals; }
 
   	}
-
   	
   	function updateMorphTargets( mesh, meshDef ) {
 
@@ -65205,7 +64912,6 @@ var Three = (function (exports) {
   		return attribute.clone();
 
   	}
-
   	
   	function isMultiPassGeometry( primitives ) {
 
@@ -65239,8 +64945,6 @@ var Three = (function (exports) {
   		return true;
 
   	}
-
-  	
 
   	function GLTFParser( json, extensions, options ) {
 
@@ -65293,7 +64997,6 @@ var Three = (function (exports) {
   		} ).catch( onError );
 
   	};
-
   	
   	GLTFParser.prototype.markDefs = function () {
 
@@ -65354,7 +65057,6 @@ var Three = (function (exports) {
   		this.json.meshUses = meshUses;
 
   	};
-
   	
   	GLTFParser.prototype.getDependency = function ( type, index ) {
 
@@ -65421,7 +65123,6 @@ var Three = (function (exports) {
   		return dependency;
 
   	};
-
   	
   	GLTFParser.prototype.getDependencies = function ( type ) {
 
@@ -65445,7 +65146,6 @@ var Three = (function (exports) {
   		return dependencies;
 
   	};
-
   	
   	GLTFParser.prototype.getMultiDependencies = function ( types ) {
   		var this$1 = this;
@@ -65476,7 +65176,6 @@ var Three = (function (exports) {
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadBuffer = function ( bufferIndex ) {
 
@@ -65509,7 +65208,6 @@ var Three = (function (exports) {
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadBufferView = function ( bufferViewIndex ) {
 
@@ -65524,7 +65222,6 @@ var Three = (function (exports) {
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadAccessor = function ( accessorIndex ) {
 
@@ -65650,7 +65347,6 @@ var Three = (function (exports) {
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadTexture = function ( textureIndex ) {
 
@@ -65749,7 +65445,6 @@ var Three = (function (exports) {
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.assignTexture = function ( materialParams, textureName, textureIndex ) {
 
@@ -65760,7 +65455,6 @@ var Three = (function (exports) {
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadMaterial = function ( materialIndex ) {
 
@@ -65927,7 +65621,6 @@ var Three = (function (exports) {
   		} );
 
   	};
-
   	
   	function addPrimitiveAttributes( geometry, primitiveDef, accessors ) {
 
@@ -65961,7 +65654,6 @@ var Three = (function (exports) {
   		assignExtrasToUserData( geometry, primitiveDef );
 
   	}
-
   	
   	GLTFParser.prototype.loadGeometries = function ( primitives ) {
 
@@ -66117,7 +65809,6 @@ var Three = (function (exports) {
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadMesh = function ( meshIndex ) {
 
@@ -66352,7 +66043,6 @@ var Three = (function (exports) {
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadCamera = function ( cameraIndex ) {
 
@@ -66384,7 +66074,6 @@ var Three = (function (exports) {
   		return Promise.resolve( camera );
 
   	};
-
   	
   	GLTFParser.prototype.loadSkin = function ( skinIndex ) {
 
@@ -66407,7 +66096,6 @@ var Three = (function (exports) {
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadAnimation = function ( animationIndex ) {
 
@@ -66546,7 +66234,6 @@ var Three = (function (exports) {
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadNode = function ( nodeIndex ) {
 
@@ -66661,7 +66348,6 @@ var Three = (function (exports) {
   		} );
 
   	};
-
   	
   	GLTFParser.prototype.loadScene = function () {
 
@@ -66796,7 +66482,6 @@ var Three = (function (exports) {
   	var 
   		
   		RGBE_RETURN_FAILURE = - 1,
-
   		
   		rgbe_read_error = 1,
   		rgbe_write_error = 2,
@@ -66819,7 +66504,6 @@ var Three = (function (exports) {
   			return RGBE_RETURN_FAILURE;
 
   		},
-
   		
   		RGBE_VALID_PROGRAMTYPE = 1,
   		RGBE_VALID_FORMAT = 2,
@@ -66843,7 +66527,6 @@ var Three = (function (exports) {
   			}
 
   			if ( - 1 < i ) {
-
   				
   				if ( false !== consume ) { buffer.pos += len + i + 1; }
   				return s + chunk.slice( 0, i );
@@ -66852,7 +66535,6 @@ var Three = (function (exports) {
   			return false;
 
   		},
-
   		
   		RGBE_ReadHeader = function ( buffer ) {
 
@@ -67050,7 +66732,6 @@ var Three = (function (exports) {
 
   				}
 
-
   				// now convert data from buffer into rgba
   				// first red, then green, then blue, then exponent (alpha)
   				l = scanline_width; //scanline_buffer.byteLength;
@@ -67166,7 +66847,6 @@ var Three = (function (exports) {
 
   		var floatView = new Float32Array( 1 );
   		var int32View = new Int32Array( floatView.buffer );
-
   		
   		function toHalf( val ) {
 
@@ -67176,10 +66856,8 @@ var Three = (function (exports) {
   			var bits = ( x >> 16 ) & 0x8000; 
   			var m = ( x >> 12 ) & 0x07ff; 
   			var e = ( x >> 23 ) & 0xff; 
-
   			
   			if ( e < 103 ) { return bits; }
-
   			
   			if ( e > 142 ) {
 
@@ -67189,7 +66867,6 @@ var Three = (function (exports) {
   				return bits;
 
   			}
-
   			
   			if ( e < 113 ) {
 
@@ -67443,7 +67120,6 @@ var Three = (function (exports) {
   };
 
   var KhronosTextureContainer = ( function () {
-
   	
   	function KhronosTextureContainer( arrayBuffer, facesExpected, threeDExpected, textureArrayExpected ) {
 
@@ -67585,7 +67261,6 @@ var Three = (function (exports) {
 
   }
 
-
   */
   var LoaderSupport = {};
   LoaderSupport.Validator = {
@@ -67599,8 +67274,6 @@ var Three = (function (exports) {
   	}
   };
 
-
-
   LoaderSupport.Callbacks = (function () {
 
   	var Validator = LoaderSupport.Validator;
@@ -67612,27 +67285,22 @@ var Three = (function (exports) {
   		this.onLoad = null;
   		this.onLoadMaterials = null;
   	}
-
   	
   	Callbacks.prototype.setCallbackOnProgress = function ( callbackOnProgress ) {
   		this.onProgress = Validator.verifyInput( callbackOnProgress, this.onProgress );
   	};
-
   	
   	Callbacks.prototype.setCallbackOnReportError = function ( callbackOnReportError ) {
   		this.onReportError = Validator.verifyInput( callbackOnReportError, this.onReportError );
   	};
-
   	
   	Callbacks.prototype.setCallbackOnMeshAlter = function ( callbackOnMeshAlter ) {
   		this.onMeshAlter = Validator.verifyInput( callbackOnMeshAlter, this.onMeshAlter );
   	};
-
   	
   	Callbacks.prototype.setCallbackOnLoad = function ( callbackOnLoad ) {
   		this.onLoad = Validator.verifyInput( callbackOnLoad, this.onLoad );
   	};
-
   	
   	Callbacks.prototype.setCallbackOnLoadMaterials = function ( callbackOnLoadMaterials ) {
   		this.onLoadMaterials = Validator.verifyInput( callbackOnLoadMaterials, this.onLoadMaterials );
@@ -67641,8 +67309,6 @@ var Three = (function (exports) {
   	return Callbacks;
   })();
 
-
-
   LoaderSupport.LoadedMeshUserOverride = (function () {
 
   	function LoadedMeshUserOverride( disregardMesh, alteredMesh ) {
@@ -67650,18 +67316,15 @@ var Three = (function (exports) {
   		this.alteredMesh = alteredMesh === true;
   		this.meshes = [];
   	}
-
   	
   	LoadedMeshUserOverride.prototype.addMesh = function ( mesh ) {
   		this.meshes.push( mesh );
   		this.alteredMesh = true;
   	};
-
   	
   	LoadedMeshUserOverride.prototype.isDisregardMesh = function () {
   		return this.disregardMesh;
   	};
-
   	
   	LoadedMeshUserOverride.prototype.providesAlteredMeshes = function () {
   		return this.alteredMesh;
@@ -67669,8 +67332,6 @@ var Three = (function (exports) {
 
   	return LoadedMeshUserOverride;
   })();
-
-
 
   LoaderSupport.ResourceDescriptor = (function () {
 
@@ -67697,7 +67358,6 @@ var Three = (function (exports) {
   		this.extension = this.extension.trim();
   		this.content = null;
   	}
-
   	
   	ResourceDescriptor.prototype.setContent = function ( content ) {
   		this.content = Validator.verifyInput( content, null );
@@ -67705,8 +67365,6 @@ var Three = (function (exports) {
 
   	return ResourceDescriptor;
   })();
-
-
 
   LoaderSupport.PrepData = (function () {
 
@@ -67721,23 +67379,19 @@ var Three = (function (exports) {
   		this.resources = [];
   		this.callbacks = new LoaderSupport.Callbacks();
   	}
-
   	
   	PrepData.prototype.setLogging = function ( enabled, debug ) {
   		this.logging.enabled = enabled === true;
   		this.logging.debug = debug === true;
   	};
-
   	
   	PrepData.prototype.getCallbacks = function () {
   		return this.callbacks;
   	};
-
   	
   	PrepData.prototype.addResource = function ( resource ) {
   		this.resources.push( resource );
   	};
-
   	
   	PrepData.prototype.clone = function () {
   		var this$1 = this;
@@ -67761,8 +67415,6 @@ var Three = (function (exports) {
 
   		return clone;
   	};
-
-
   	
   	PrepData.prototype.checkResourceDescriptorFiles = function ( resources, fileDesc ) {
   		var resource, triple, i, found;
@@ -67830,7 +67482,6 @@ var Three = (function (exports) {
   	return PrepData;
   })();
 
-
   LoaderSupport.MeshBuilder = (function () {
 
   	var LOADER_MESH_BUILDER_VERSION = '1.2.2';
@@ -67847,13 +67498,11 @@ var Three = (function (exports) {
   		this.callbacks = new LoaderSupport.Callbacks();
   		this.materials = [];
   	}
-
   	
   	MeshBuilder.prototype.setLogging = function ( enabled, debug ) {
   		this.logging.enabled = enabled === true;
   		this.logging.debug = debug === true;
   	};
-
   	
   	MeshBuilder.prototype.init = function () {
   		var defaultMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
@@ -67886,7 +67535,6 @@ var Three = (function (exports) {
   			}
   		);
   	};
-
   	
   	MeshBuilder.prototype.setMaterials = function ( materials ) {
   		var payload = {
@@ -67907,7 +67555,6 @@ var Three = (function (exports) {
   		if ( Validator.isValid( callbacks.onLoad ) ) { this.callbacks.setCallbackOnLoad( callbacks.onLoad ); }
   		if ( Validator.isValid( callbacks.onLoadMaterials ) ) { this.callbacks.setCallbackOnLoadMaterials( callbacks.onLoadMaterials ); }
   	};
-
   	
   	MeshBuilder.prototype.processPayload = function ( payload ) {
   		if ( payload.cmd === 'meshData' ) {
@@ -67921,7 +67568,6 @@ var Three = (function (exports) {
 
   		}
   	};
-
   	
   	MeshBuilder.prototype.buildMeshes = function ( meshPayload ) {
   		var this$1 = this;
@@ -68076,7 +67722,6 @@ var Three = (function (exports) {
 
   		return meshes;
   	};
-
   	
   	MeshBuilder.prototype.updateMaterials = function ( materialPayload ) {
   		var this$1 = this;
@@ -68142,7 +67787,6 @@ var Three = (function (exports) {
 
   		}
   	};
-
   	
   	MeshBuilder.prototype.getMaterialsJSON = function () {
   		var this$1 = this;
@@ -68157,7 +67801,6 @@ var Three = (function (exports) {
 
   		return materialsJSON;
   	};
-
   	
   	MeshBuilder.prototype.getMaterials = function () {
   		return this.materials;
@@ -68165,7 +67808,6 @@ var Three = (function (exports) {
 
   	return MeshBuilder;
   })();
-
 
   LoaderSupport.WorkerRunnerRefImpl = (function () {
 
@@ -68176,7 +67818,6 @@ var Three = (function (exports) {
   		};
   		self.addEventListener( 'message', scopedRunner, false );
   	}
-
   	
   	WorkerRunnerRefImpl.prototype.applyProperties = function ( parser, params ) {
   		var property, funcName, values;
@@ -68195,7 +67836,6 @@ var Three = (function (exports) {
   			}
   		}
   	};
-
   	
   	WorkerRunnerRefImpl.prototype.processMessage = function ( payload ) {
   		if ( payload.cmd === 'run' ) {
@@ -68234,7 +67874,6 @@ var Three = (function (exports) {
 
   	return WorkerRunnerRefImpl;
   })();
-
 
   LoaderSupport.WorkerSupport = (function () {
 
@@ -68286,7 +67925,6 @@ var Three = (function (exports) {
   			// process stored queuedMessage
   			this._postMessage();
   		};
-
   		
   		LoaderWorker.prototype._receiveWorkerMessage = function ( e ) {
   			var payload = e.data;
@@ -68426,19 +68064,16 @@ var Three = (function (exports) {
 
   		this.loaderWorker = new LoaderWorker();
   	}
-
   	
   	WorkerSupport.prototype.setLogging = function ( enabled, debug ) {
   		this.logging.enabled = enabled === true;
   		this.logging.debug = debug === true;
   		this.loaderWorker.setLogging( this.logging.enabled, this.logging.debug );
   	};
-
   	
   	WorkerSupport.prototype.setForceWorkerDataCopy = function ( forceWorkerDataCopy ) {
   		this.loaderWorker.setForceCopy( forceWorkerDataCopy );
   	};
-
   	
   	WorkerSupport.prototype.validate = function ( functionCodeBuilder, parserName, libLocations, libPath, runnerImpl ) {
   		if ( Validator.isValid( this.loaderWorker.worker ) ) { return; }
@@ -68499,17 +68134,14 @@ var Three = (function (exports) {
 
   		}
   	};
-
   	
   	WorkerSupport.prototype.setCallbacks = function ( meshBuilder, onLoad ) {
   		this.loaderWorker.setCallbacks( meshBuilder, onLoad );
   	};
-
   	
   	WorkerSupport.prototype.run = function ( payload ) {
   		this.loaderWorker.run( payload );
   	};
-
   	
   	WorkerSupport.prototype.setTerminateRequested = function ( terminateRequested ) {
   		this.loaderWorker.setTerminateRequested( terminateRequested );
@@ -68604,7 +68236,6 @@ var Three = (function (exports) {
 
   })();
 
-
   LoaderSupport.WorkerDirector = (function () {
 
   	var LOADER_WORKER_DIRECTOR_VERSION = '2.2.2';
@@ -68639,33 +68270,27 @@ var Three = (function (exports) {
 
   		this.callbackOnFinishedProcessing = null;
   	}
-
   	
   	WorkerDirector.prototype.setLogging = function ( enabled, debug ) {
   		this.logging.enabled = enabled === true;
   		this.logging.debug = debug === true;
   	};
-
   	
   	WorkerDirector.prototype.getMaxQueueSize = function () {
   		return this.maxQueueSize;
   	};
-
   	
   	WorkerDirector.prototype.getMaxWebWorkers = function () {
   		return this.maxWebWorkers;
   	};
-
   	
   	WorkerDirector.prototype.setCrossOrigin = function ( crossOrigin ) {
   		this.crossOrigin = crossOrigin;
   	};
-
   	
   	WorkerDirector.prototype.setForceWorkerDataCopy = function ( forceWorkerDataCopy ) {
   		this.workerDescription.forceWorkerDataCopy = forceWorkerDataCopy === true;
   	};
-
   	
   	WorkerDirector.prototype.prepareWorkers = function ( globalCallbacks, maxQueueSize, maxWebWorkers ) {
   		var this$1 = this;
@@ -68693,20 +68318,17 @@ var Three = (function (exports) {
 
   		}
   	};
-
   	
   	WorkerDirector.prototype.enqueueForRun = function ( prepData ) {
   		if ( this.instructionQueue.length < this.maxQueueSize ) {
   			this.instructionQueue.push( prepData );
   		}
   	};
-
   	
   	WorkerDirector.prototype.isRunning = function () {
   		var wsKeys = Object.keys( this.workerDescription.workerSupports );
   		return ( ( this.instructionQueue.length > 0 && this.instructionQueuePointer < this.instructionQueue.length ) || wsKeys.length > 0 );
   	};
-
   	
   	WorkerDirector.prototype.processQueue = function () {
   		var this$1 = this;
@@ -68845,7 +68467,6 @@ var Three = (function (exports) {
 
   		}
   	};
-
   	
   	WorkerDirector.prototype.tearDown = function ( callbackOnFinishedProcessing ) {
   		var this$1 = this;
@@ -69243,7 +68864,6 @@ var Three = (function (exports) {
   };
 
   var MMDLoader = ( function () {
-
   	
   	function MMDLoader( manager ) {
 
@@ -69262,7 +68882,6 @@ var Three = (function (exports) {
   		constructor: MMDLoader,
 
   		crossOrigin: 'anonymous',
-
   		
   		setCrossOrigin: function ( crossOrigin ) {
 
@@ -69272,7 +68891,6 @@ var Three = (function (exports) {
   		},
 
   		// Load MMD assets as Three.js Object
-
   		
   		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -69297,7 +68915,6 @@ var Three = (function (exports) {
   			}, onProgress, onError );
 
   		},
-
   		
   		loadAnimation: function ( url, object, onLoad, onProgress, onError ) {
 
@@ -69312,7 +68929,6 @@ var Three = (function (exports) {
   			}, onProgress, onError );
 
   		},
-
   		
   		loadWithAnimation: function ( modelUrl, vmdUrl, onLoad, onProgress, onError ) {
 
@@ -69334,7 +68950,6 @@ var Three = (function (exports) {
   		},
 
   		// Load MMD assets as Object data parsed by MMDParser
-
   		
   		loadPMD: function ( url, onLoad, onProgress, onError ) {
 
@@ -69350,7 +68965,6 @@ var Three = (function (exports) {
   				}, onProgress, onError );
 
   		},
-
   		
   		loadPMX: function ( url, onLoad, onProgress, onError ) {
 
@@ -69366,7 +68980,6 @@ var Three = (function (exports) {
   				}, onProgress, onError );
 
   		},
-
   		
   		loadVMD: function ( url, onLoad, onProgress, onError ) {
   			var this$1 = this;
@@ -69396,7 +69009,6 @@ var Three = (function (exports) {
   			}
 
   		},
-
   		
   		loadVPD: function ( url, isUnicode, onLoad, onProgress, onError ) {
 
@@ -69443,7 +69055,6 @@ var Three = (function (exports) {
   	};
 
   	// Utilities
-
   	
   	var DEFAULT_TOON_TEXTURES = [
   		'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAL0lEQVRYR+3QQREAAAzCsOFfNJPBJ1XQS9r2hsUAAQIECBAgQIAAAQIECBAgsBZ4MUx/ofm2I/kAAAAASUVORK5CYII=',
@@ -69460,7 +69071,6 @@ var Three = (function (exports) {
   	];
 
   	// Builders. They build Three.js object from Object data parsed by MMDParser.
-
   	
   	function MeshBuilder( manager ) {
 
@@ -69474,7 +69084,6 @@ var Three = (function (exports) {
   		constructor: MeshBuilder,
 
   		crossOrigin: 'anonymous',
-
   		
   		setCrossOrigin: function ( crossOrigin ) {
 
@@ -69482,7 +69091,6 @@ var Three = (function (exports) {
   			return this;
 
   		},
-
   		
   		build: function ( data, texturePath, onProgress, onError ) {
 
@@ -69511,7 +69119,6 @@ var Three = (function (exports) {
   	GeometryBuilder.prototype = {
 
   		constructor: GeometryBuilder,
-
   		
   		build: function ( data ) {
 
@@ -69864,7 +69471,6 @@ var Three = (function (exports) {
   					params[ key ] = rigidBody[ key ];
 
   				}
-
   				
   				if ( data.metadata.format === 'pmx' ) {
 
@@ -69955,7 +69561,6 @@ var Three = (function (exports) {
   	};
 
   	//
-
   	
   	function MaterialBuilder( manager ) {
 
@@ -69973,7 +69578,6 @@ var Three = (function (exports) {
   		crossOrigin: 'anonymous',
 
   		texturePath: undefined,
-
   		
   		setCrossOrigin: function ( crossOrigin ) {
 
@@ -69981,7 +69585,6 @@ var Three = (function (exports) {
   			return this;
 
   		},
-
   		
   		setTexturePath: function ( texturePath ) {
 
@@ -69989,7 +69592,6 @@ var Three = (function (exports) {
   			return this;
 
   		},
-
   		
   		build: function ( data, geometry, onProgress, onError ) {
   			var this$1 = this;
@@ -70010,7 +69612,6 @@ var Three = (function (exports) {
   				var params = { userData: {} };
 
   				if ( material.name !== undefined ) { params.name = material.name; }
-
   				
   				params.color = new Color().fromArray( material.diffuse );
   				params.opacity = material.diffuse[ 3 ];
@@ -70420,7 +70021,6 @@ var Three = (function (exports) {
   					return false;
 
   				}
-
   				
   				function getAlphaByUv( image, uv ) {
 
@@ -70469,7 +70069,6 @@ var Three = (function (exports) {
   	AnimationBuilder.prototype = {
 
   		constructor: AnimationBuilder,
-
   		
   		build: function ( vmd, mesh ) {
 
@@ -70487,7 +70086,6 @@ var Three = (function (exports) {
   			return new AnimationClip( '', - 1, tracks );
 
   		},
-
   		
   		buildSkeletalAnimation: function ( vmd, mesh ) {
   			var this$1 = this;
@@ -70571,7 +70169,6 @@ var Three = (function (exports) {
   			return new AnimationClip( '', - 1, tracks );
 
   		},
-
   		
   		buildMorphAnimation: function ( vmd, mesh ) {
 
@@ -70619,7 +70216,6 @@ var Three = (function (exports) {
   			return new AnimationClip( '', - 1, tracks );
 
   		},
-
   		
   		buildCameraAnimation: function ( vmd ) {
 
@@ -70738,7 +70334,6 @@ var Three = (function (exports) {
   		// private method
 
   		_createTrack: function ( node, typedKeyframeTrack, times, values, interpolations ) {
-
   			
   			if ( times.length > 2 ) {
 
@@ -70881,8 +70476,6 @@ var Three = (function (exports) {
 
   		_calculate: function ( x1, x2, y1, y2, x ) {
 
-  			
-
   			var c = 0.5;
   			var t = c;
   			var s = 1.0 - t;
@@ -70928,7 +70521,6 @@ var Three = (function (exports) {
   MTLLoader.prototype = {
 
   	constructor: MTLLoader,
-
   	
   	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -70943,7 +70535,6 @@ var Three = (function (exports) {
   		}, onProgress, onError );
 
   	},
-
   	
   	setPath: function ( path ) {
 
@@ -70951,7 +70542,6 @@ var Three = (function (exports) {
   		return this;
 
   	},
-
   	
   	setTexturePath: function ( path ) {
 
@@ -70981,7 +70571,6 @@ var Three = (function (exports) {
   		return this;
 
   	},
-
   	
   	parse: function ( text ) {
 
@@ -71043,8 +70632,6 @@ var Three = (function (exports) {
   	}
 
   };
-
-
 
   MTLLoader.MaterialCreator = function ( baseUrl, options ) {
 
@@ -72509,8 +72096,6 @@ var Three = (function (exports) {
 
   // Fix circular dependency, see #2
 
-
-
   //
   //	Keywords
   //
@@ -72660,7 +72245,6 @@ var Three = (function (exports) {
   ].join( "\n" ) ) );
 
   // Fix circular dependency, see #2
-
 
   FunctionNode.prototype.isShared = function( builder, output ) {
 
@@ -73811,7 +73395,6 @@ var Three = (function (exports) {
   					// This requires some care to not create extra material on each smooth value for "normal" obj files.
   					// where explicit usemtl defines geometry groups.
   					// Example asset: examples/models/obj/cerberus/Cerberus.obj
-
   					
   					if ( result.length > 1 ) {
 
@@ -74005,7 +73588,6 @@ var Three = (function (exports) {
 
   if ( LoaderSupport === undefined ) { console.error( '"LoaderSupport" is not available. "OBJLoader2" requires it. Please include "LoaderSupport.js" in your HTML.' ); }
 
-
   var OBJLoader2 = (function () {
 
   	var OBJLOADER2_VERSION = '2.4.2';
@@ -74034,49 +73616,40 @@ var Three = (function (exports) {
   		this.workerSupport = new LoaderSupport.WorkerSupport();
   		this.terminateWorkerOnLoad = true;
   	}
-
   	
   	OBJLoader2.prototype.setLogging = function ( enabled, debug ) {
   		this.logging.enabled = enabled === true;
   		this.logging.debug = debug === true;
   		this.meshBuilder.setLogging( this.logging.enabled, this.logging.debug );
   	};
-
   	
   	OBJLoader2.prototype.setModelName = function ( modelName ) {
   		this.modelName = Validator.verifyInput( modelName, this.modelName );
   	};
-
   	
   	OBJLoader2.prototype.setPath = function ( path ) {
   		this.path = Validator.verifyInput( path, this.path );
   	};
-
   	
   	OBJLoader2.prototype.setStreamMeshesTo = function ( streamMeshesTo ) {
   		this.loaderRootNode = Validator.verifyInput( streamMeshesTo, this.loaderRootNode );
   	};
-
   	
   	OBJLoader2.prototype.setMaterials = function ( materials ) {
   		this.meshBuilder.setMaterials( materials );
   	};
-
   	
   	OBJLoader2.prototype.setUseIndices = function ( useIndices ) {
   		this.useIndices = useIndices === true;
   	};
-
   	
   	OBJLoader2.prototype.setDisregardNormals = function ( disregardNormals ) {
   		this.disregardNormals = disregardNormals === true;
   	};
-
   	
   	OBJLoader2.prototype.setMaterialPerSmoothingGroup = function ( materialPerSmoothingGroup ) {
   		this.materialPerSmoothingGroup = materialPerSmoothingGroup === true;
   	};
-
   	
   	OBJLoader2.prototype.setUseOAsMesh = function ( useOAsMesh ) {
   		this.useOAsMesh = useOAsMesh === true;
@@ -74091,7 +73664,6 @@ var Three = (function (exports) {
 
   		this.meshBuilder._setCallbacks( this.callbacks );
   	};
-
   	
   	OBJLoader2.prototype.onProgress = function ( type, text, numericalValue ) {
   		var content = Validator.isValid( text ) ? text: '';
@@ -74133,7 +73705,6 @@ var Three = (function (exports) {
 
   		}
   	};
-
   	
   	OBJLoader2.prototype.load = function ( url, onLoad, onProgress, onError, onMeshAlter, useAsync ) {
   		var resource = new LoaderSupport.ResourceDescriptor( url, 'OBJ' );
@@ -74199,7 +73770,6 @@ var Three = (function (exports) {
   				};
   			}
 
-
   			var fileLoader = new FileLoader( this.manager );
   			fileLoader.setPath( this.path );
   			fileLoader.setResponseType( 'arraybuffer' );
@@ -74207,8 +73777,6 @@ var Three = (function (exports) {
 
   		}
   	};
-
-
   	
   	OBJLoader2.prototype.run = function ( prepData, workerSupportExternal ) {
   		this._applyPrepData( prepData );
@@ -74252,7 +73820,6 @@ var Three = (function (exports) {
 
   		}
   	};
-
   	
   	OBJLoader2.prototype.parse = function ( content ) {
   		// fast-fail in case of illegal data
@@ -74308,7 +73875,6 @@ var Three = (function (exports) {
 
   		return this.loaderRootNode;
   	};
-
   	
   	OBJLoader2.prototype.parseAsync = function ( content, onLoad ) {
   		var scope = this;
@@ -74391,8 +73957,6 @@ var Three = (function (exports) {
   			}
   		);
   	};
-
-
   	
   	var Parser = (function () {
 
@@ -74532,7 +74096,6 @@ var Three = (function (exports) {
   				console.info( printedConfig );
   			}
   		};
-
   		
   		Parser.prototype.parse = function ( arrayBuffer ) {
   			var this$1 = this;
@@ -74585,7 +74148,6 @@ var Three = (function (exports) {
   			this.finalizeParsing();
   			if ( this.logging.enabled ) { console.timeEnd(  'OBJLoader2.Parser.parse' ); }
   		};
-
   		
   		Parser.prototype.parseText = function ( text ) {
   			var this$1 = this;
@@ -74649,7 +74211,6 @@ var Three = (function (exports) {
   						for ( i = start; i < stop; i++ ) { line += content[ i ]; }
 
   					} else {
-
 
   						for ( i = start; i < stop; i++ ) { line += String.fromCharCode( content[ i ] ); }
 
@@ -74810,7 +74371,6 @@ var Three = (function (exports) {
 
   			}
   		};
-
   		
   		Parser.prototype.checkFaceType = function ( faceType ) {
   			if ( this.rawMesh.faceType !== faceType ) {
@@ -74928,7 +74488,6 @@ var Three = (function (exports) {
   				'\n\tMaterial count: ' + this.rawMesh.counts.mtlCount +
   				'\n\tReal MeshOutputGroup count: ' + this.rawMesh.subGroups.length;
   		};
-
   		
   		Parser.prototype.finalizeRawMesh = function () {
   			var this$1 = this;
@@ -75007,7 +74566,6 @@ var Three = (function (exports) {
   				return false;
   			}
   		};
-
   		
   		Parser.prototype.buildMesh = function ( result ) {
   			var this$1 = this;
@@ -75053,7 +74611,6 @@ var Three = (function (exports) {
   				if ( this$1.rawMesh.faceType < 4 ) {
 
   					materialName = materialNameOrg + ( haveVertexColors ? '_vertexColor' : '' ) + ( meshOutputGroup.smoothingGroup === 0 ? '_flat' : '' );
-
 
   				} else {
 
@@ -75230,14 +74787,12 @@ var Three = (function (exports) {
 
   		return Parser;
   	})();
-
   	
   	OBJLoader2.prototype.loadMtl = function ( url, content, onLoad, onProgress, onError, crossOrigin, materialOptions ) {
   		var resource = new LoaderSupport.ResourceDescriptor( url, 'MTL' );
   		resource.setContent( content );
   		this._loadMtl( resource, onLoad, onProgress, onError, crossOrigin, materialOptions );
   	};
-
 
   	OBJLoader2.prototype._loadMtl = function ( resource, onLoad, onProgress, onError, crossOrigin, materialOptions ) {
   		if ( MTLLoader === undefined ) { console.error( '"MTLLoader" is not available. "OBJLoader2" requires it for loading MTL files.' ); }
@@ -75339,7 +74894,6 @@ var Three = (function (exports) {
   	this.littleEndian = true;
 
   };
-
 
   PCDLoader.prototype = {
 
@@ -75995,7 +75549,6 @@ var Three = (function (exports) {
 
   			model.nodes[ parent ]._object.add( model.nodes[ i ]._object );
 
-
   		}
 
   		return model.nodes[ 0 ]._object;
@@ -76134,7 +75687,6 @@ var Three = (function (exports) {
   						currentElement.properties.push( make_ply_element_property( lineValues, scope.propertyNameMapping ) );
 
   						break;
-
 
   					default:
 
@@ -76456,7 +76008,6 @@ var Three = (function (exports) {
   };
 
   var bigEndianPlatform = null;
-
   	
   	function isBigEndianPlatform() {
 
@@ -76501,7 +76052,6 @@ var Three = (function (exports) {
   		Float64Array: 'getFloat64'
   	};
 
-
   	function copyFromBuffer( sourceArrayBuffer, viewType, position, length, fromBigEndian ) {
 
   		var bytesPerElement = viewType.BYTES_PER_ELEMENT,
@@ -76532,7 +76082,6 @@ var Three = (function (exports) {
 
   	}
 
-
   	function decodePrwm( buffer ) {
 
   		var array = new Uint8Array( buffer ),
@@ -76557,8 +76106,6 @@ var Three = (function (exports) {
 
   		}
 
-  		
-
   		if ( version === 0 ) {
 
   			throw new Error( 'PRWM decoder: Invalid format version: 0' );
@@ -76582,8 +76129,6 @@ var Three = (function (exports) {
   			}
 
   		}
-
-  		
 
   		var pos = 8;
 
@@ -76744,7 +76289,6 @@ var Three = (function (exports) {
   PVRLoader.prototype = Object.create( CompressedTextureLoader.prototype );
   PVRLoader.prototype.constructor = PVRLoader;
 
-
   PVRLoader.parse = function ( buffer, loadMipmaps ) {
 
   	var headerLengthInt = 13;
@@ -76780,7 +76324,6 @@ var Three = (function (exports) {
 
   	var header = pvrDatas.header;
   	var bpp, format;
-
 
   	var metaLen = header[ 12 ],
   		pixelFormat = header[ 2 ],
@@ -76848,7 +76391,6 @@ var Three = (function (exports) {
   		// pvrTag = header[ 11 ],
   		numSurfs = header[ 12 ];
 
-
   	var TYPE_MASK = 0xff;
   	var PVRTC_2 = 24,
   		PVRTC_4 = 25;
@@ -76889,7 +76431,6 @@ var Three = (function (exports) {
   	return PVRLoader._extract( pvrDatas );
 
   };
-
 
   PVRLoader._extract = function ( pvrDatas ) {
 
@@ -77382,7 +76923,6 @@ var Three = (function (exports) {
 
   };
 
-
   EllipseCurve.prototype.toJSON = function () {
 
   	var data = Curve.prototype.toJSON.call( this );
@@ -77441,7 +76981,6 @@ var Three = (function (exports) {
   function CubicPoly() {
 
   	var c0 = 0, c1 = 0, c2 = 0, c3 = 0;
-
   	
   	function init( x0, x1, t0, t1 ) {
 
@@ -79855,7 +79394,6 @@ var Three = (function (exports) {
 
   		if ( noHoles === true )	{ return	toShapesNoHoles( subPaths ); }
 
-
   		var solid, tmpPath, tmpShape, shapes = [];
 
   		if ( subPaths.length === 1 ) {
@@ -79913,7 +79451,6 @@ var Three = (function (exports) {
 
   		// only Holes? -> probably all Shapes with wrong orientation
   		if ( ! newShapes[ 0 ] )	{ return	toShapesNoHoles( subPaths ); }
-
 
   		if ( newShapes.length > 1 ) {
 
@@ -80430,8 +79967,6 @@ var Three = (function (exports) {
 
   		}
 
-  		
-
   		function parseArcCommand( path, rx, ry, x_axis_rotation, large_arc_flag, sweep_flag, start, end ) {
 
   			x_axis_rotation = x_axis_rotation * Math.PI / 180;
@@ -80494,7 +80029,6 @@ var Three = (function (exports) {
   			return ang;
 
   		}
-
   		
   		function parseRectNode( node, style ) {
 
@@ -80702,7 +80236,6 @@ var Three = (function (exports) {
   			}
 
   			return array;
-
 
   		}
 
@@ -80977,7 +80510,6 @@ var Three = (function (exports) {
 
   		// console.log( paths );
 
-
   		console.timeEnd( 'SVGLoader: Parse' );
 
   		return paths;
@@ -81002,7 +80534,6 @@ var Three = (function (exports) {
   TDSLoader.prototype = {
 
   	constructor: TDSLoader,
-
   	
   	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -81021,7 +80552,6 @@ var Three = (function (exports) {
   		}, onProgress, onError );
 
   	},
-
   	
   	parse: function ( arraybuffer, path ) {
   		var this$1 = this;
@@ -81043,7 +80573,6 @@ var Three = (function (exports) {
   		return this.group;
 
   	},
-
   	
   	readFile: function ( arraybuffer, path ) {
   		var this$1 = this;
@@ -81083,7 +80612,6 @@ var Three = (function (exports) {
   		this.debugMessage( 'Parsed ' + this.meshes.length + ' meshes' );
 
   	},
-
   	
   	readMeshData: function ( data, path ) {
   		var this$1 = this;
@@ -81128,7 +80656,6 @@ var Three = (function (exports) {
   		}
 
   	},
-
   	
   	readNamedObject: function ( data ) {
   		var this$1 = this;
@@ -81161,7 +80688,6 @@ var Three = (function (exports) {
   		this.endChunk( chunk );
 
   	},
-
   	
   	readMaterialEntry: function ( data, path ) {
   		var this$1 = this;
@@ -81259,7 +80785,6 @@ var Three = (function (exports) {
   		this.materials[ material.name ] = material;
 
   	},
-
   	
   	readMesh: function ( data ) {
   		var this$1 = this;
@@ -81320,7 +80845,6 @@ var Three = (function (exports) {
   				}
 
   				geometry.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
-
 
   			} else if ( next === MESH_MATRIX ) {
 
@@ -81384,7 +80908,6 @@ var Three = (function (exports) {
   		return mesh;
 
   	},
-
   	
   	readFaceArray: function ( data, mesh ) {
   		var this$1 = this;
@@ -81448,7 +80971,6 @@ var Three = (function (exports) {
   		this.endChunk( chunk );
 
   	},
-
   	
   	readMap: function ( data, path ) {
   		var this$1 = this;
@@ -81505,7 +81027,6 @@ var Three = (function (exports) {
   		return texture;
 
   	},
-
   	
   	readMaterialGroup: function ( data ) {
   		var this$1 = this;
@@ -81528,7 +81049,6 @@ var Three = (function (exports) {
   		return { name: name, index: index };
 
   	},
-
   	
   	readColor: function ( data ) {
 
@@ -81565,7 +81085,6 @@ var Three = (function (exports) {
   		return color;
 
   	},
-
   	
   	readChunk: function ( data ) {
 
@@ -81580,14 +81099,12 @@ var Three = (function (exports) {
   		return chunk;
 
   	},
-
   	
   	endChunk: function ( chunk ) {
 
   		this.position = chunk.end;
 
   	},
-
   	
   	nextChunk: function ( data, chunk ) {
 
@@ -81613,14 +81130,12 @@ var Three = (function (exports) {
   		}
 
   	},
-
   	
   	resetPosition: function () {
 
   		this.position -= 6;
 
   	},
-
   	
   	readByte: function ( data ) {
 
@@ -81629,7 +81144,6 @@ var Three = (function (exports) {
   		return v;
 
   	},
-
   	
   	readFloat: function ( data ) {
 
@@ -81646,7 +81160,6 @@ var Three = (function (exports) {
   		}
 
   	},
-
   	
   	readInt: function ( data ) {
 
@@ -81655,7 +81168,6 @@ var Three = (function (exports) {
   		return v;
 
   	},
-
   	
   	readShort: function ( data ) {
 
@@ -81664,7 +81176,6 @@ var Three = (function (exports) {
   		return v;
 
   	},
-
   	
   	readDWord: function ( data ) {
 
@@ -81673,7 +81184,6 @@ var Three = (function (exports) {
   		return v;
 
   	},
-
   	
   	readWord: function ( data ) {
 
@@ -81682,7 +81192,6 @@ var Three = (function (exports) {
   		return v;
 
   	},
-
   	
   	readString: function ( data, maxLength ) {
   		var this$1 = this;
@@ -81706,7 +81215,6 @@ var Three = (function (exports) {
   		return s;
 
   	},
-
   	
   	setPath: function ( path ) {
 
@@ -81715,7 +81223,6 @@ var Three = (function (exports) {
   		return this;
 
   	},
-
   	
   	debugMessage: function ( message ) {
 
@@ -82009,7 +81516,6 @@ var Three = (function (exports) {
   			var float_pattern = /(\b|\-|\+)([\d\.e]+)/;
   			var float2_pattern = /([\d\.\+\-e]+)\s+([\d\.\+\-e]+)/g;
   			var float3_pattern = /([\d\.\+\-e]+)\s+([\d\.\+\-e]+)\s+([\d\.\+\-e]+)/g;
-
   			
   			function paintFaces( geometry, radius, angles, colors, topDown ) {
 
@@ -82108,7 +81614,6 @@ var Three = (function (exports) {
   			function parseProperty( node, line ) {
 
   				var parts = [], part, property = {}, fieldName;
-
   				
   				var regex = /[^\s,\[\]]+/g;
 
@@ -82121,7 +81626,6 @@ var Three = (function (exports) {
   				}
 
   				fieldName = parts[ 0 ];
-
 
   				// trigger several recorders
   				switch ( fieldName ) {
@@ -83503,7 +83007,6 @@ var Three = (function (exports) {
 
   							} else {
 
-
   								indices[ indicesIndex ++ ] = strip[ j ];
   								indices[ indicesIndex ++ ] = strip[ j + 1 ];
   								indices[ indicesIndex ++ ] = strip[ j + 2 ];
@@ -83778,7 +83281,6 @@ var Three = (function (exports) {
   					numBytes = 4;
 
   				}
-
 
   				// Check the format
   				if ( ele.attributes.format === 'binary' && compressed ) {
@@ -84645,7 +84147,6 @@ var Three = (function (exports) {
   			scope.normalArray[ c + 7 ] = ny;
   			scope.normalArray[ c + 8 ] = nz;
 
-
   		} else {
 
   			scope.normalArray[ c + 0 ] = norm[ o1 + 0 ];
@@ -84796,7 +84297,6 @@ var Three = (function (exports) {
   		var max_y = Math.floor( ys + radius ); if ( max_y > this.size - 1 ) { max_y = this.size - 1; }
   		var min_x = Math.floor( xs - radius ); if ( min_x < 1 ) { min_x = 1; }
   		var max_x = Math.floor( xs + radius ); if ( max_x > this.size - 1 ) { max_x = this.size - 1; }
-
 
   		// Don't polygonize in the outer layer because normals aren't
   		// well-defined there.
@@ -85057,7 +84557,6 @@ var Three = (function (exports) {
 
   MarchingCubes.prototype = Object.create( ImmediateRenderObject.prototype );
   MarchingCubes.prototype.constructor = MarchingCubes;
-
 
   /////////////////////////////////////
   // Marching cubes lookup tables
@@ -85440,7 +84939,6 @@ var Three = (function (exports) {
 
   	}
 
-
   };
 
   function CanvasTexture( canvas, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy ) {
@@ -85530,7 +85028,6 @@ var Three = (function (exports) {
 
   			}
 
-
   			vertexPosition.copy( mvPosition );
   			vertexPosition.x += rotatedPosition.x;
   			vertexPosition.y += rotatedPosition.y;
@@ -85616,7 +85113,6 @@ var Three = (function (exports) {
   		return this;
 
   	}
-
 
   } );
 
@@ -86071,7 +85567,6 @@ var Three = (function (exports) {
 
   				var points = [];
 
-
   				if ( this$1.legend.layout == 'vertical' ) {
 
   					var linePosition = ( this$1.legend.position.y - ( this$1.legend.dimensions.height * 0.5 ) + 0.01 ) + ( this$1.legend.dimensions.height ) * ( ( value - this$1.minV ) / ( this$1.maxV - this$1.minV ) * 0.99 );
@@ -86108,7 +85603,6 @@ var Three = (function (exports) {
   	}
 
   };
-
 
   var ColorMapKeywords = {
 
@@ -86790,7 +86284,6 @@ var Three = (function (exports) {
 
   	};
 
-
   	this.shareParts = function ( original ) {
   		var this$1 = this;
 
@@ -86985,7 +86478,6 @@ var Three = (function (exports) {
 
   		}
 
-
   	};
 
   	this.update = function ( delta ) {
@@ -87089,7 +86581,6 @@ var Three = (function (exports) {
   			}
 
   		}
-
 
   		if ( Math.abs( this.speed ) < 0.2 * this.maxSpeed && ! ( controls.moveLeft || controls.moveRight || controls.moveForward || controls.moveBackward ) ) {
 
@@ -87495,7 +86986,6 @@ var Three = (function (exports) {
 
   		}
 
-
   		// delete triangles on edge uv:
   		for ( i = u.faces.length - 1; i >= 0; i -- ) {
 
@@ -87514,7 +87004,6 @@ var Three = (function (exports) {
 
   		}
 
-
   		removeVertex( u, vertices );
 
   		// recompute the edge collapse costs in neighborhood
@@ -87525,8 +87014,6 @@ var Three = (function (exports) {
   		}
 
   	}
-
-
 
   	function minimumCostEdge( vertices ) {
 
@@ -87572,7 +87059,6 @@ var Three = (function (exports) {
   		v2.addUniqueNeighbor( v1 );
   		v2.addUniqueNeighbor( v3 );
 
-
   		v3.faces.push( this );
   		v3.addUniqueNeighbor( v1 );
   		v3.addUniqueNeighbor( v2 );
@@ -87607,7 +87093,6 @@ var Three = (function (exports) {
 
   		removeFromArray( oldv.faces, this );
   		newv.faces.push( this );
-
 
   		oldv.removeIfNonNeighbor( this.v1 );
   		this.v1.removeIfNonNeighbor( oldv );
@@ -87824,7 +87309,6 @@ var Three = (function (exports) {
   ( function () {
   	var ABC = [ 'a', 'b', 'c' ];
 
-
   	function getEdge( a, b, map ) {
 
   		var vertexIndexA = Math.min( a, b );
@@ -87835,7 +87319,6 @@ var Three = (function (exports) {
   		return map[ key ];
 
   	}
-
 
   	function processEdge( a, b, vertices, map, face, metaVertices ) {
 
@@ -87874,7 +87357,6 @@ var Three = (function (exports) {
 
   		metaVertices[ a ].edges.push( edge );
   		metaVertices[ b ].edges.push( edge );
-
 
   	}
 
@@ -87940,15 +87422,10 @@ var Three = (function (exports) {
 
   		var hasUvs = oldUvs !== undefined && oldUvs.length > 0;
 
-  		
-
   		metaVertices = new Array( oldVertices.length );
   		sourceEdges = {}; // Edge => { oldVertex1, oldVertex2, faces[]  }
 
   		generateLookups( oldVertices, oldFaces, metaVertices, sourceEdges );
-
-
-  		
 
   		newEdgeVertices = [];
   		var other, currentEdge, newEdge, face;
@@ -88001,8 +87478,6 @@ var Three = (function (exports) {
   			// console.log(currentEdge, newEdge);
 
   		}
-
-  		
 
   		var beta, sourceVertexWeight, connectingVertexWeight;
   		var connectingEdge, connectingEdges, oldVertex, newSourceVertex;
@@ -88066,9 +87541,6 @@ var Three = (function (exports) {
   			newSourceVertices.push( newSourceVertex );
 
   		}
-
-
-  		
 
   		newVertices = newSourceVertices.concat( newEdgeVertices );
   		var sl = newSourceVertices.length, edge1, edge2, edge3;
@@ -89030,7 +88502,6 @@ var Three = (function (exports) {
 
   		"}"
   	].join( "\n" ) );
-
 
   	var LinearToRGBD = new FunctionNode( [
   		"vec3 LinearToRGBD( in vec4 value, in float maxRange ) {",
@@ -90010,7 +89481,6 @@ var Three = (function (exports) {
 
   	},
 
-
   	addVertexCode: function ( code ) {
 
   		this.addCode( code, 'vertex' );
@@ -90028,7 +89498,6 @@ var Three = (function (exports) {
   		this.code[ shader || this.shader ] += code + '\n';
 
   	},
-
 
   	addVertexNodeCode: function ( code ) {
 
@@ -90090,7 +89559,6 @@ var Three = (function (exports) {
 
   	},
 
-
   	addVertexParsCode: function ( code ) {
 
   		this.addParsCode( code, 'vertex' );
@@ -90109,14 +89577,12 @@ var Three = (function (exports) {
 
   	},
 
-
   	addVaryCode: function ( code ) {
 
   		this.addVertexParsCode( code );
   		this.addFragmentParsCode( code );
 
   	},
-
 
   	isCache: function ( name ) {
 
@@ -90300,7 +89766,6 @@ var Three = (function (exports) {
   			return node.name;
 
   		}
-
 
   		if ( node instanceof FunctionNode ) {
 
@@ -91591,7 +91056,6 @@ var Three = (function (exports) {
 
   } )();
 
-
   BlurNode.prototype = Object.create( TempNode.prototype );
   BlurNode.prototype.constructor = BlurNode;
   BlurNode.prototype.nodeType = "Blur";
@@ -91961,7 +91425,6 @@ var Three = (function (exports) {
   	return builder.format( "mat3( " + this.value.elements.join( ", " ) + " )", type, output );
 
   };
-
 
   Matrix3Node.prototype.copy = function ( source ) {
 
@@ -95062,7 +94525,6 @@ var Three = (function (exports) {
 
   		}
 
-
   	}
 
   	return data;
@@ -96722,7 +96184,6 @@ var Three = (function (exports) {
   		'	return ( ( x * ( A * x + C * B ) + D * E ) / ( x * ( A * x + B ) + D * F ) ) - E / F;',
   		'}',
 
-
   		'void main() {',
   		// optical length
   		// cutoff angle at 90 to avoid singularity in next formula.
@@ -97878,8 +97339,6 @@ var Three = (function (exports) {
   		var min = box.min;
   		var max = box.max;
 
-  		
-
   		var position = this.geometry.attributes.position;
   		var array = position.array;
 
@@ -97958,8 +97417,6 @@ var Three = (function (exports) {
   		return - 1;
 
   	}
-
-  	
 
   	var Octree = function ( parameters ) {
 
@@ -98511,8 +97968,6 @@ var Three = (function (exports) {
 
   	};
 
-  	
-
   	var OctreeObjectData = function ( object, part ) {
 
   		// properties
@@ -98607,8 +98062,6 @@ var Three = (function (exports) {
   		}
 
   	};
-
-  	
 
   	var OctreeNode = function ( parameters ) {
 
@@ -99687,7 +99140,6 @@ var Three = (function (exports) {
 
   			}
 
-
   			if ( deltaZ - radiusObj > - overlap ) {
 
   				// z right
@@ -99985,8 +99437,6 @@ var Three = (function (exports) {
   		}
 
   	};
-
-  	
 
   	Raycaster.prototype.intersectOctreeObject = function ( object, recursive ) {
 
@@ -100301,7 +99751,6 @@ var Three = (function (exports) {
   PMREMGenerator.prototype = {
 
   	constructor: PMREMGenerator,
-
   	
   	update: function ( renderer ) {
   		var this$1 = this;
@@ -101200,7 +100649,6 @@ var Three = (function (exports) {
 
   		"}"
 
-
   	].join( "\n" ),
 
   	buildKernel: function ( sigma ) {
@@ -101327,7 +100775,6 @@ var Three = (function (exports) {
   		this.convolutionUniforms[ "uImageIncrement" ].value = BloomPass.blurX;
 
   		renderer.render( this.scene, this.camera, this.renderTargetX, true );
-
 
   		// Render quad with blured scene into texture (convolution pass 2)
 
@@ -101760,7 +101207,6 @@ var Three = (function (exports) {
 
   } );
 
-
   var ClearMaskPass = function () {
 
   	Pass.call( this );
@@ -102126,7 +101572,6 @@ var Three = (function (exports) {
   			
   		"varying vec2 vUv;",
   		
-  		
   		"float rand(vec2 co){",
   			"return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);",
   		"}",
@@ -102186,9 +101631,7 @@ var Three = (function (exports) {
 
   	if ( dt_size == undefined ) { dt_size = 64; }
 
-
   	this.uniforms[ "tDisp" ].value = this.generateHeightmap( dt_size );
-
 
   	this.material = new ShaderMaterial( {
   		uniforms: this.uniforms,
@@ -103016,7 +102459,6 @@ var Three = (function (exports) {
   			this.overlayMaterial.uniforms[ "edgeGlow" ].value = this.edgeGlow;
   			this.overlayMaterial.uniforms[ "usePatternTexture" ].value = this.usePatternTexture;
 
-
   			if ( maskActive ) { renderer.context.enable( renderer.context.STENCIL_TEST ); }
 
   			renderer.render( this.scene, this.camera, readBuffer, false );
@@ -103484,7 +102926,6 @@ var Three = (function (exports) {
 
   		"	return occlusionSum * ( intensity / weightSum );",
   		"}",
-
 
   		"void main() {",
   		"	float centerDepth = getDepth( vUv );",
@@ -104895,7 +104336,6 @@ var Three = (function (exports) {
 
   } );
 
-
   // These jitter vectors are specified in integers because it is easier.
   // I am assuming a [-8,8) integer grid, but it needs to be mapped onto [-0.5,0.5)
   // before being used, thus these integers need to be scaled by 1/16.
@@ -104998,7 +104438,6 @@ var Three = (function (exports) {
   		"const float diffArea = 0.4;",   // self-shadowing reduction
   		"const float gDisplace = 0.4;",  // gauss bell center
 
-
   		// RGBA depth
 
   		"#include <packing>",
@@ -105048,7 +104487,6 @@ var Three = (function (exports) {
   			"#endif",
 
   			"return cameraCoef / ( cameraFarPlusNear - z * cameraFarMinusNear );",
-
 
   		"}",
 
@@ -105255,7 +104693,6 @@ var Three = (function (exports) {
 
   SSAOPass.prototype = Object.create( ShaderPass.prototype );
 
-
   SSAOPass.prototype.render = function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
 
   	//Render depth into depthRenderTarget
@@ -105265,19 +104702,16 @@ var Three = (function (exports) {
 
   	this.scene2.overrideMaterial = null;
 
-
   	//SSAO shaderPass
   	ShaderPass.prototype.render.call( this, renderer, writeBuffer, readBuffer, delta, maskActive );
 
   };
-
 
   SSAOPass.prototype.setScene = function ( scene ) {
 
   	this.scene2 = scene;
 
   };
-
 
   SSAOPass.prototype.setCamera = function ( camera ) {
 
@@ -105287,7 +104721,6 @@ var Three = (function (exports) {
   	this.uniforms[ 'cameraFar' ].value = this.camera2.far;
 
   };
-
 
   SSAOPass.prototype.setSize = function ( width, height ) {
 
@@ -105788,7 +105221,6 @@ var Three = (function (exports) {
   		this.copyUniforms[ "tDiffuse" ].value = this.renderTargetsHorizontal[ 0 ].texture;
 
   		if ( maskActive ) { renderer.context.enable( renderer.context.STENCIL_TEST ); }
-
 
   		if ( this.renderToScreen ) {
 
@@ -107099,7 +106531,6 @@ var Three = (function (exports) {
 
   		return _facePool[ _faceCount ++ ];
 
-
   	}
 
   	function getNextLineInPool() {
@@ -107333,8 +106764,6 @@ var Three = (function (exports) {
   		_normal = new Vector3(),
   		_normalViewMatrix = new Matrix3();
 
-  	
-
   	// dash+gap fallbacks for Firefox and everything else
 
   	if ( _context.setLineDash === undefined ) {
@@ -107558,8 +106987,6 @@ var Three = (function (exports) {
 
   		_normalViewMatrix.getNormalMatrix( camera.matrixWorldInverse );
 
-  		
-
   		calculateLights();
 
   		for ( var e = 0, el = _elements.length; e < el; e ++ ) {
@@ -107631,13 +107058,9 @@ var Three = (function (exports) {
 
   			}
 
-  			
-
   			_clearBox.union( _elemBox );
 
   		}
-
-  		
 
   		_context.setTransform( 1, 0, 0, 1, 0, 0 );
 
@@ -107814,8 +107237,6 @@ var Three = (function (exports) {
   			_context.restore();
 
   		}
-
-  		
 
   	}
 
@@ -108185,8 +107606,6 @@ var Three = (function (exports) {
   		_context.restore();
 
   	}
-
-  	
 
   	// Hide anti-alias gaps
 
@@ -109030,7 +108449,6 @@ var Three = (function (exports) {
 
   		if ( camera.parent === null ) { camera.updateMatrixWorld(); }
 
-
   		sceneJSON = scene.toJSON();
   		cameraJSON = camera.toJSON();
   		++ sceneId;
@@ -109063,7 +108481,6 @@ var Three = (function (exports) {
 
   		}
 
-
   		// Randomize painting :)
 
   		if ( scope.randomize ) {
@@ -109078,7 +108495,6 @@ var Three = (function (exports) {
   			}
 
   		}
-
 
   		pool.forEach( renderNext );
 
@@ -109231,7 +108647,6 @@ var Three = (function (exports) {
 
   	};
 
-
   	this.render = function ( scene, camera ) {
 
   		// TODO: Check why autoClear can't be false.
@@ -109279,7 +108694,6 @@ var Three = (function (exports) {
   					);
 
   				}
-
 
   			} else if ( element instanceof RenderableSprite ) {
 
@@ -109377,8 +108791,6 @@ var Three = (function (exports) {
   		var y = Math.min( recty1, prevrecty1 );
   		var width = Math.max( rectx2, prevrectx2 ) - x;
   		var height = Math.max( recty2, prevrecty2 ) - y;
-
-  		
 
   		if ( x !== Infinity ) {
 
@@ -109608,7 +109020,6 @@ var Three = (function (exports) {
 
   					}
 
-
   				} else {
 
   					if ( material.vertexColors === FaceColors ) {
@@ -109676,8 +109087,6 @@ var Three = (function (exports) {
   		return shader;
 
   	}
-
-  	
 
   	function drawTriangle( v1, v2, v3, uv1, uv2, uv3, shader, face, material ) {
 
@@ -110186,7 +109595,6 @@ var Three = (function (exports) {
   						cynz = cbnz;
 
   					}
-
 
   					for ( var iy = 0; iy < q; iy ++ ) {
 
@@ -111684,7 +111092,6 @@ var Three = (function (exports) {
 
   		}
 
-
   	};
 
   	function resetGlobalState() {
@@ -113035,7 +112442,6 @@ var Three = (function (exports) {
 
   };
 
-
   // Static interface
 
   WebGLUniforms.upload = function ( gl, seq, values, renderer ) {
@@ -113814,7 +113220,6 @@ var Three = (function (exports) {
 
   	} );
 
-
   	//
 
   	this.name = shader.name;
@@ -113862,7 +113267,6 @@ var Three = (function (exports) {
   		"shadowMapEnabled", "shadowMapType", "toneMapping", 'physicallyCorrectLights',
   		"alphaTest", "doubleSided", "flipSided", "numClippingPlanes", "numClipIntersection", "depthPacking", "dithering"
   	];
-
 
   	function allocateBones( object ) {
 
@@ -114217,7 +113621,6 @@ var Three = (function (exports) {
 
   }
 
-
   function WebGLRenderList() {
 
   	var renderItems = [];
@@ -114266,7 +113669,6 @@ var Three = (function (exports) {
   			renderItem.group = group;
 
   		}
-
 
   		( material.transparent === true ? transparent : opaque ).push( renderItem );
 
@@ -116359,8 +115761,6 @@ var Three = (function (exports) {
 
   	//
 
-
-
   	function setTexture2D( texture, slot ) {
 
   		var textureProperties = properties.get( texture );
@@ -117435,7 +116835,6 @@ var Three = (function (exports) {
 
   		}
 
-
   		var pose = frameData.pose;
   		var poseObject = poseTarget !== null ? poseTarget : camera;
 
@@ -118377,7 +117776,6 @@ var Three = (function (exports) {
 
   	}
 
-
   	function releaseMaterialProgramReference( material ) {
 
   		var programInfo = properties.get( material ).program;
@@ -118586,7 +117984,6 @@ var Three = (function (exports) {
   				}
 
   			}
-
 
   		} else if ( object.isLine ) {
 
@@ -118980,8 +118377,6 @@ var Three = (function (exports) {
   		currentRenderState = null;
 
   	};
-
-  	
 
   	function projectObject( object, camera, sortObjects ) {
 
@@ -119537,7 +118932,6 @@ var Three = (function (exports) {
   						//       16x16 pixel texture max   64 bones * 4 pixels = (16 * 16)
   						//       32x32 pixel texture max  256 bones * 4 pixels = (32 * 32)
   						//       64x64 pixel texture max 1024 bones * 4 pixels = (64 * 64)
-
 
   						var size = Math.sqrt( bones.length * 4 ); // 4 pixels needed for 1 matrix
   						size = _Math.ceilPowerOfTwo( size );
@@ -122277,7 +121671,6 @@ var Three = (function (exports) {
   		return mesh;
 
   	}
-
   	
   	function createDeferredPointLightMaterial() {
 
@@ -122699,8 +122092,6 @@ var Three = (function (exports) {
 
   	}
 
-  	
-
   	function renderNormalDepth( scene, camera ) {
 
   		scene.traverse( setMaterialNormalDepth );
@@ -122721,8 +122112,6 @@ var Three = (function (exports) {
 
   	}
 
-  	
-
   	function renderColor( scene, camera ) {
 
   		scene.traverse( setMaterialColor );
@@ -122741,8 +122130,6 @@ var Three = (function (exports) {
   		scene.traverse( restoreOriginalMaterial );
 
   	}
-
-  	
 
   	function renderLight( scene, camera ) {
 
@@ -122764,8 +122151,6 @@ var Three = (function (exports) {
   		_gl.disable( _gl.STENCIL_TEST );
 
   	}
-
-  	
 
   	function renderLightPre( scene, camera ) {
 
@@ -122789,8 +122174,6 @@ var Three = (function (exports) {
 
   	}
 
-  	
-
   	function renderReconstruction( scene, camera ) {
 
   		scene.traverse( setMaterialReconstruction );
@@ -122808,8 +122191,6 @@ var Three = (function (exports) {
   		scene.traverse( restoreOriginalMaterial );
 
   	}
-
-  	
 
   	function renderFinal( scene, camera ) {
 
@@ -123590,7 +122971,6 @@ var Three = (function (exports) {
   			ShaderDeferredCommon[ 'commonUniforms' ]
 
   		),
-
 
   		vertexShader: [
 
@@ -124412,7 +123792,6 @@ var Three = (function (exports) {
 
   	}
 
-
   	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
 
   }
@@ -124508,15 +123887,11 @@ var Three = (function (exports) {
 
   			"	gl_FragColor = vec4( 1.0 ) - texture2D( tInput, vUv );",
 
-
   			"}"
 
   		].join( "\n" )
 
   	},
-
-
-  	
 
   	'godrays_generate': {
 
@@ -124579,8 +123954,6 @@ var Three = (function (exports) {
   				// This breaks ANGLE in Chrome 22
   				//	- see http://code.google.com/p/chromium/issues/detail?id=153105
 
-  				
-
   				// Unrolling loop manually makes it work in ANGLE
 
   				"if ( 0.0 <= iters && uv.y < 1.0 ) col += texture2D( tInput, uv ).r;",
@@ -124616,8 +123989,6 @@ var Three = (function (exports) {
   		].join( "\n" )
 
   	},
-
-  	
 
   	'godrays_combine': {
 
@@ -124678,9 +124049,6 @@ var Three = (function (exports) {
   		].join( "\n" )
 
   	},
-
-
-  	
 
   	'godrays_fake_sun': {
 
@@ -125148,7 +124516,6 @@ var Three = (function (exports) {
 
   		"}"
 
-
   	].join( "\n" )
   };
 
@@ -125182,7 +124549,6 @@ var Three = (function (exports) {
 
   		"vec2 texel = vec2(1.0 / aspect.x, 1.0 / aspect.y);",
 
-
   		"mat3 G[9];",
 
   		// hard coded matrix values!!!! as suggested in https://github.com/neilmendoza/ofxPostProcessing/blob/master/src/EdgePass.cpp#L45
@@ -125213,7 +124579,6 @@ var Three = (function (exports) {
   			"mat3 I;",
   			"float cnv[9];",
   			"vec3 sample;",
-
   			
   			"for (float i=0.0; i<3.0; i++) {",
   				"for (float j=0.0; j<3.0; j++) {",
@@ -125221,7 +124586,6 @@ var Three = (function (exports) {
   					"I[int(i)][int(j)] = length(sample);",
   				"}",
   			"}",
-
   			
   			"for (int i=0; i<9; i++) {",
   				"float dp3 = dot(G[i][0], I[0]) + dot(G[i][1], I[1]) + dot(G[i][2], I[2]);",
@@ -126305,8 +125669,6 @@ var Three = (function (exports) {
   			"vec2 uv = ( vUv - vec2( 0.5 ) ) * vec2( offset );",
   			"gl_FragColor = vec4( mix( texel.rgb, vec3( 1.0 - darkness ), dot( uv, uv ) ), texel.a );",
 
-  			
-
   		"}"
 
   	].join( "\n" )
@@ -126411,8 +125773,6 @@ var Three = (function (exports) {
   };
 
   var ShaderSkin = {
-
-  	
 
   	'skinSimple' : {
 
@@ -126684,8 +126044,6 @@ var Three = (function (exports) {
 
   	},
 
-  	
-
   	'skin' : {
 
   		uniforms: UniformsUtils.merge( [
@@ -126861,7 +126219,6 @@ var Three = (function (exports) {
 
   						"float dirDiffuseWeight = max( dot( normal, dirVector ), 0.0 );",
 
-
   						"totalDiffuseLight += directionalLights[ i ].color * dirDiffuseWeight;",
 
   						"if ( passID == 1 ) {",
@@ -126875,7 +126232,6 @@ var Three = (function (exports) {
   					"}",
 
   				"#endif",
-
 
   				"outgoingLight += diffuseColor.rgb * ( totalDiffuseLight + totalSpecularLight );",
 
@@ -126902,13 +126258,11 @@ var Three = (function (exports) {
   					"vec3 blur3Color = texture2D( tBlur3, vUv ).xyz;",
   					"vec3 blur4Color = texture2D( tBlur4, vUv ).xyz;",
 
-
   					//"gl_FragColor = vec4( blur1Color, gl_FragColor.w );",
 
   					//"gl_FragColor = vec4( vec3( 0.22, 0.5, 0.7 ) * nonblurColor + vec3( 0.2, 0.5, 0.3 ) * blur1Color + vec3( 0.58, 0.0, 0.0 ) * blur2Color, gl_FragColor.w );",
 
   					//"gl_FragColor = vec4( vec3( 0.25, 0.6, 0.8 ) * nonblurColor + vec3( 0.15, 0.25, 0.2 ) * blur1Color + vec3( 0.15, 0.15, 0.0 ) * blur2Color + vec3( 0.45, 0.0, 0.0 ) * blur3Color, gl_FragColor.w );",
-
 
   					"outgoingLight = vec3( vec3( 0.22,  0.437, 0.635 ) * nonblurColor + ",
   										 "vec3( 0.101, 0.355, 0.365 ) * blur1Color + ",
@@ -127014,8 +126368,6 @@ var Three = (function (exports) {
 
   	},
 
-  	
-
   	"beckmann" : {
 
   		uniforms: {},
@@ -127070,8 +126422,6 @@ var Three = (function (exports) {
   };
 
   var ShaderTerrain = {
-
-  	
 
   	'terrain' : {
 
@@ -127705,8 +127055,6 @@ var Three = (function (exports) {
 
   var TranslucentShader = function TranslucentShader() {
 
-  	
-
   	this.uniforms = UniformsUtils.merge( [
 
   		UniformsLib[ "common" ],
@@ -127906,7 +127254,6 @@ var Three = (function (exports) {
   //
   // Added 4D noise
   // Joshua Koo zz85nus@gmail.com 
-
 
   var SimplexNoise = function(r) {
   	var this$1 = this;
@@ -128493,8 +127840,6 @@ var Three = (function (exports) {
 
   var TypedArrayUtils = {};
 
-
-
   TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 
   	var stack = [];
@@ -128631,10 +127976,6 @@ var Three = (function (exports) {
 
   };
 
-
-
-
-
    TypedArrayUtils.Kdtree = function ( points, metric, eleSize ) {
 
   	var self = this;
@@ -128684,8 +128025,6 @@ var Three = (function (exports) {
   	};
   	
   	this.nearest = function ( point, maxNodes, maxDistance ) {
-  	
-  		 
 
   		var i,
   			result,
@@ -128839,7 +128178,6 @@ var Three = (function (exports) {
   	
   };
 
-
   TypedArrayUtils.Kdtree.prototype.Node = function ( obj, depth, parent, pos ) {
 
   	this.obj = obj;
@@ -128850,8 +128188,6 @@ var Three = (function (exports) {
   	this.pos = pos;
 
   }; 
-
-
 
   TypedArrayUtils.Kdtree.BinaryHeap = function ( scoreFunction ) {
 
@@ -129592,7 +128928,6 @@ var Three = (function (exports) {
 
   	scene.add( mesh );
 
-
   	//Label for light's name
   	var labelCanvas, labelMesh;
 
@@ -129625,7 +128960,6 @@ var Three = (function (exports) {
   		scene.add( labelMesh );
 
   	}
-
 
   	function resetPosition () {
 
@@ -130567,15 +129901,11 @@ var Three = (function (exports) {
   	} );
   	
   	this.axis = axis || 'z';
-
-  	
   	
   	this.canvas = document.createElement( 'canvas' );
   	
-  	
   	this.canvasBuffer = document.createElement( 'canvas' );
   	this.updateGeometry();
-
 
   	var canvasMap = new Texture( this.canvas );
   	canvasMap.minFilter = LinearFilter;
@@ -130587,19 +129917,11 @@ var Three = (function (exports) {
   	this.geometryNeedsUpdate = true;
   	this.repaint();
 
-  	
-
-  	
-
-  	
-
-
   };
 
   VolumeSlice.prototype = {
 
   	constructor: VolumeSlice,
-
   	
   	repaint: function () {
   		var this$1 = this;
@@ -130617,7 +129939,6 @@ var Three = (function (exports) {
   			volume = this.volume,
   			canvas = this.canvasBuffer,
   			ctx = this.ctxBuffer;
-
 
   		// get the imageData and pixel array from the canvas
   		var imgData = ctx.getImageData( 0, 0, iLength, jLength );
@@ -130679,11 +130000,9 @@ var Three = (function (exports) {
   		ctx.putImageData( imgData, 0, 0 );
   		this.ctx.drawImage( canvas, 0, 0, iLength, jLength, 0, 0, this.canvas.width, this.canvas.height );
 
-
   		this.mesh.material.map.needsUpdate = true;
 
   	},
-
   	
   	updateGeometry: function () {
 
@@ -130920,7 +130239,6 @@ var Three = (function (exports) {
   				scope.dispatchEvent( { type: touchpadIsPressed ? 'touchpaddown' : 'touchpadup', axes: axes } );
 
   			}
-
 
   			// trigger
 
@@ -131342,7 +130660,6 @@ var Three = (function (exports) {
   	this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
   	this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
 
-
   	// helper functions
 
   	function addShape( shape ) {
@@ -131519,7 +130836,6 @@ var Three = (function (exports) {
   	var ball = new Mesh( geometry, material );
   	colorUI.add( ball );
 
-
   	// SIZE UI
   	var sizeUI = new Group();
   	sizeUI.position.set( 0, 0.005, 0.0495 );
@@ -131548,8 +130864,6 @@ var Three = (function (exports) {
   	sizeUI.add( sizeUIFill );
 
   	sizeUI.visible = false;
-
-
 
   	function onAxisChanged( event ) {
 
@@ -132834,7 +132148,6 @@ var Three = (function (exports) {
 
   	} )()
 
-
   } );
 
   function CubeCamera( near, far, cubeResolution ) {
@@ -133495,10 +132808,7 @@ var Three = (function (exports) {
 
   		}
 
-
   		var faces = ShapeUtils.triangulateShape( vertices, holes );
-
-  		
 
   		var contour = vertices; // vertices has all points but contour has only points of circumference
 
@@ -133509,7 +132819,6 @@ var Three = (function (exports) {
   			vertices = vertices.concat( ahole );
 
   		}
-
 
   		function scalePt2( pt, vec, size ) {
 
@@ -133523,9 +132832,7 @@ var Three = (function (exports) {
   			vert, vlen = vertices.length,
   			face, flen = faces.length;
 
-
   		// Find directions for point movement
-
 
   		function getBevelVec( inPt, inPrev, inNext ) {
 
@@ -133649,7 +132956,6 @@ var Three = (function (exports) {
 
   		}
 
-
   		var contourMovements = [];
 
   		for ( var i = 0, il = contour.length, j = il - 1, k = i + 1; i < il; i ++, j ++, k ++ ) {
@@ -133687,7 +132993,6 @@ var Three = (function (exports) {
   			verticesMovements = verticesMovements.concat( oneHoleMovements );
 
   		}
-
 
   		// Loop bevelSegments, 1 for the front, 1 for the back
 
@@ -133787,7 +133092,6 @@ var Three = (function (exports) {
 
   		}
 
-
   		// Add bevel segments planes
 
   		//for ( b = 1; b <= bevelSegments; b ++ ) {
@@ -133833,8 +133137,6 @@ var Three = (function (exports) {
 
   		}
 
-  		
-
   		// Top and bottom faces
 
   		buildLidFaces();
@@ -133842,7 +133144,6 @@ var Three = (function (exports) {
   		// Sides faces
 
   		buildSideFaces();
-
 
   		/////  Internal functions
 
@@ -133921,9 +133222,7 @@ var Three = (function (exports) {
 
   			}
 
-
   			scope.addGroup( start, verticesArray.length / 3 - start, 1 );
-
 
   		}
 
@@ -133969,7 +133268,6 @@ var Three = (function (exports) {
 
   		}
 
-
   		function f3( a, b, c ) {
 
   			addVertex( a );
@@ -133995,7 +133293,6 @@ var Three = (function (exports) {
   			addVertex( c );
   			addVertex( d );
 
-
   			var nextIndex = verticesArray.length / 3;
   			var uvs = uvgen.generateSideWallUV( scope, verticesArray, nextIndex - 6, nextIndex - 3, nextIndex - 2, nextIndex - 1 );
 
@@ -134016,7 +133313,6 @@ var Three = (function (exports) {
   			verticesArray.push( placeholder[ index * 3 + 2 ] );
 
   		}
-
 
   		function addUV( vector2 ) {
 
@@ -134178,7 +133474,6 @@ var Three = (function (exports) {
 
   	phiLength = _Math.clamp( phiLength, 0, Math.PI * 2 );
 
-
   	// buffers
 
   	var indices = [];
@@ -134218,7 +133513,6 @@ var Three = (function (exports) {
   			uv.y = j / ( points.length - 1 );
 
   			uvs.push( uv.x, uv.y );
-
 
   		}
 
@@ -135807,9 +135101,6 @@ var Three = (function (exports) {
 
   	this.update();
 
-
-  	
-
   }
 
   PointLightHelper.prototype = Object.create( Mesh.prototype );
@@ -135833,8 +135124,6 @@ var Three = (function (exports) {
   		this.material.color.copy( this.light.color );
 
   	}
-
-  	
 
   };
 
@@ -135939,7 +135228,6 @@ var Three = (function (exports) {
 
   	this.line = new Line( geometry, material );
   	this.add( this.line );
-
 
   	this.update();
 
@@ -137229,7 +136517,6 @@ var Three = (function (exports) {
   						);
 
   						break;
-
 
   					case 'ExtrudeGeometry':
   					case 'ExtrudeBufferGeometry':

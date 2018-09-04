@@ -1,9 +1,5 @@
 import { TempNode } from '../core/TempNode.js'
 
-
-
-
-
 function CondNode( a, b, ifNode, elseNode, op ) {
 
 	TempNode.call( this );

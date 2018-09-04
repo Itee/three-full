@@ -2,12 +2,6 @@ import { TangentSpaceNormalMap } from '../constants.js'
 import { Material } from './Material.js'
 import { Vector2 } from '../math/Vector2.js'
 
-
-
-
-
-
-
 function MeshNormalMaterial( parameters ) {
 
 	Material.call( this );
@@ -69,7 +63,6 @@ MeshNormalMaterial.prototype.copy = function ( source ) {
 	return this;
 
 };
-
 
 ;
 

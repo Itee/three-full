@@ -1331,8 +1331,6 @@ var Three = (function (exports) {
 
 	// Fix circular dependency, see #2
 
-
-
 	//
 	//	Keywords
 	//
@@ -1482,7 +1480,6 @@ var Three = (function (exports) {
 	].join( "\n" ) ) );
 
 	// Fix circular dependency, see #2
-
 
 	FunctionNode.prototype.isShared = function( builder, output ) {
 

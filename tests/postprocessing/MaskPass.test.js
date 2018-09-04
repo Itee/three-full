@@ -88,7 +88,6 @@ var Three = (function (exports) {
 
 	} );
 
-
 	var ClearMaskPass = function () {
 
 		Pass.call( this );

@@ -1,9 +1,5 @@
 import { BufferGeometry } from './BufferGeometry.js'
 
-
-
-
-
 function InstancedBufferGeometry() {
 
 	BufferGeometry.call( this );

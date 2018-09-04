@@ -1,11 +1,6 @@
 import { CubeTexture } from '../../textures/CubeTexture.js'
 import { Texture } from '../../textures/Texture.js'
 
-
-
-
-
-
 var emptyTexture = new Texture();
 var emptyCubeTexture = new CubeTexture();
 
@@ -771,7 +766,6 @@ WebGLUniforms.prototype.setOptional = function ( gl, object, name ) {
 	if ( v !== undefined ) this.setValue( gl, name, v );
 
 };
-
 
 // Static interface
 

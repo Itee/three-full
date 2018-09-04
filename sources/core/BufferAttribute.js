@@ -3,13 +3,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Color } from '../math/Color.js'
 
-
-
-
-
-
-
-
 function BufferAttribute( array, itemSize, normalized ) {
 
 	if ( Array.isArray( array ) ) {
@@ -337,7 +330,6 @@ function Int8BufferAttribute( array, itemSize, normalized ) {
 Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 	BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -346,7 +338,6 @@ function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -357,7 +348,6 @@ function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 function Int16BufferAttribute( array, itemSize, normalized ) {
 
 	BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -366,7 +356,6 @@ function Int16BufferAttribute( array, itemSize, normalized ) {
 
 Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -377,7 +366,6 @@ function Uint16BufferAttribute( array, itemSize, normalized ) {
 Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 function Int32BufferAttribute( array, itemSize, normalized ) {
 
 	BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -386,7 +374,6 @@ function Int32BufferAttribute( array, itemSize, normalized ) {
 
 Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -397,7 +384,6 @@ function Uint32BufferAttribute( array, itemSize, normalized ) {
 Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 function Float32BufferAttribute( array, itemSize, normalized ) {
 
 	BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -406,7 +392,6 @@ function Float32BufferAttribute( array, itemSize, normalized ) {
 
 Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 function Float64BufferAttribute( array, itemSize, normalized ) {
 

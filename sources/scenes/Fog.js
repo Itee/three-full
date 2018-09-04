@@ -1,9 +1,5 @@
 import { Color } from '../math/Color.js'
 
-
-
-
-
 function Fog( color, near, far ) {
 
 	this.name = '';

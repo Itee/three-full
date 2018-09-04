@@ -1,8 +1,4 @@
 
-
-
-
-
 function InterleavedBuffer( array, stride ) {
 
 	this.array = array;
@@ -106,7 +102,6 @@ Object.assign( InterleavedBuffer.prototype, {
 	}
 
 } );
-
 
 ;
 

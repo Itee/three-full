@@ -10,7 +10,6 @@ import { SSAOShader } from '../shaders/SSAOShader.js'
 
 'use strict';
 
-
 var SSAOPass = function ( scene, camera, width, height ) {
 
 	if ( SSAOShader === undefined ) {
@@ -112,7 +111,6 @@ var SSAOPass = function ( scene, camera, width, height ) {
 
 SSAOPass.prototype = Object.create( ShaderPass.prototype );
 
-
 SSAOPass.prototype.render = function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
 
 	//Render depth into depthRenderTarget
@@ -122,19 +120,16 @@ SSAOPass.prototype.render = function ( renderer, writeBuffer, readBuffer, delta,
 
 	this.scene2.overrideMaterial = null;
 
-
 	//SSAO shaderPass
 	ShaderPass.prototype.render.call( this, renderer, writeBuffer, readBuffer, delta, maskActive );
 
 };
-
 
 SSAOPass.prototype.setScene = function ( scene ) {
 
 	this.scene2 = scene;
 
 };
-
 
 SSAOPass.prototype.setCamera = function ( camera ) {
 
@@ -144,7 +139,6 @@ SSAOPass.prototype.setCamera = function ( camera ) {
 	this.uniforms[ 'cameraFar' ].value = this.camera2.far;
 
 };
-
 
 SSAOPass.prototype.setSize = function ( width, height ) {
 

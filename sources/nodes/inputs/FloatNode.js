@@ -1,9 +1,5 @@
 import { InputNode } from '../core/InputNode.js'
 
-
-
-
-
 function FloatNode( value ) {
 
 	InputNode.call( this, 'f' );

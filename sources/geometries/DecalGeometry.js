@@ -3,10 +3,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
-
-
-
-
 	function DecalGeometry( mesh, position, orientation, size ) {
 
 		BufferGeometry.call( this );
@@ -340,9 +336,5 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 	};
 
 	// export
-
-	
-
-
 
 export { DecalGeometry }

@@ -41,8 +41,6 @@ var Three = (function (exports) {
 				"vec2 uv = ( vUv - vec2( 0.5 ) ) * vec2( offset );",
 				"gl_FragColor = vec4( mix( texel.rgb, vec3( 1.0 - darkness ), dot( uv, uv ) ), texel.a );",
 
-				
-
 			"}"
 
 		].join( "\n" )

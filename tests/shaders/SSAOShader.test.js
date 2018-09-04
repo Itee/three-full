@@ -556,7 +556,6 @@ var Three = (function (exports) {
 			"const float diffArea = 0.4;",   // self-shadowing reduction
 			"const float gDisplace = 0.4;",  // gauss bell center
 
-
 			// RGBA depth
 
 			"#include <packing>",
@@ -606,7 +605,6 @@ var Three = (function (exports) {
 				"#endif",
 
 				"return cameraCoef / ( cameraFarPlusNear - z * cameraFarMinusNear );",
-
 
 			"}",
 

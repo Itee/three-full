@@ -1,7 +1,4 @@
 
-
-
-
 var Detector = {
 
 	canvas: !! window.CanvasRenderingContext2D,
@@ -83,8 +80,5 @@ var Detector = {
 };
 
 // browserify support
-
-
-	
 
 export { Detector }

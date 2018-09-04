@@ -1,9 +1,5 @@
 import { Node } from '../core/Node.js'
 
-
-
-
-
 function BypassNode( code, value ) {
 
 	Node.call( this );

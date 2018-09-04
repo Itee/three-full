@@ -1,7 +1,4 @@
 
-
-
-
 function WebGLInfo( gl ) {
 
 	var memory = {
@@ -78,7 +75,6 @@ function WebGLInfo( gl ) {
 	};
 
 }
-
 
 ;
 

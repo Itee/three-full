@@ -1,9 +1,5 @@
 import { MeshPhongMaterial } from './MeshPhongMaterial.js'
 
-
-
-
-
 function MeshToonMaterial( parameters ) {
 
 	MeshPhongMaterial.call( this );
@@ -32,7 +28,6 @@ MeshToonMaterial.prototype.copy = function ( source ) {
 	return this;
 
 };
-
 
 ;
 

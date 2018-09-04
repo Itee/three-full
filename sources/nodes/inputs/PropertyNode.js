@@ -1,9 +1,5 @@
 import { InputNode } from '../core/InputNode.js'
 
-
-
-
-
 function PropertyNode( object, property, type ) {
 
 	InputNode.call( this, type );

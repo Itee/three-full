@@ -11,8 +11,6 @@ import {
 	RGBAFormat
 } from '../constants.js'
 
-
-
 var ParallaxBarrierEffect = function ( renderer ) {
 
 	var _camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );

@@ -2475,11 +2475,6 @@ var Three = (function (exports) {
 			return poseSkin.skeleton.bones;
 
 		}
-
-		
-
-		
-
 		
 		this.parseVpd = function ( skin, outputShiftJis, useOriginalBones ) {
 
@@ -2548,7 +2543,6 @@ var Three = (function (exports) {
 
 				var bone = bones[ i ];
 				var bone2 = bones2[ i ];
-
 				
 				if ( useOriginalBones === true &&
 					bone.userData.ik !== undefined &&
@@ -2588,8 +2582,6 @@ var Three = (function (exports) {
 			return ( outputShiftJis === true ) ? unicodeToShiftjis( lines ) : lines;
 
 		};
-
-		
 
 	};
 

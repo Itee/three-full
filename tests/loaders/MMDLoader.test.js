@@ -7088,7 +7088,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -9023,7 +9022,6 @@ var Three = (function (exports) {
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -9032,7 +9030,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -9043,7 +9040,6 @@ var Three = (function (exports) {
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -9052,7 +9048,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -9063,7 +9058,6 @@ var Three = (function (exports) {
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -9072,7 +9066,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -9083,7 +9076,6 @@ var Three = (function (exports) {
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -9092,7 +9084,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -10357,8 +10348,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new BufferGeometry().copy( this );
 
@@ -13894,7 +13883,6 @@ var Three = (function (exports) {
 	};
 
 	var MMDLoader = ( function () {
-
 		
 		function MMDLoader( manager ) {
 
@@ -13913,7 +13901,6 @@ var Three = (function (exports) {
 			constructor: MMDLoader,
 
 			crossOrigin: 'anonymous',
-
 			
 			setCrossOrigin: function ( crossOrigin ) {
 
@@ -13923,7 +13910,6 @@ var Three = (function (exports) {
 			},
 
 			// Load MMD assets as Three.js Object
-
 			
 			load: function ( url, onLoad, onProgress, onError ) {
 
@@ -13948,7 +13934,6 @@ var Three = (function (exports) {
 				}, onProgress, onError );
 
 			},
-
 			
 			loadAnimation: function ( url, object, onLoad, onProgress, onError ) {
 
@@ -13963,7 +13948,6 @@ var Three = (function (exports) {
 				}, onProgress, onError );
 
 			},
-
 			
 			loadWithAnimation: function ( modelUrl, vmdUrl, onLoad, onProgress, onError ) {
 
@@ -13985,7 +13969,6 @@ var Three = (function (exports) {
 			},
 
 			// Load MMD assets as Object data parsed by MMDParser
-
 			
 			loadPMD: function ( url, onLoad, onProgress, onError ) {
 
@@ -14001,7 +13984,6 @@ var Three = (function (exports) {
 					}, onProgress, onError );
 
 			},
-
 			
 			loadPMX: function ( url, onLoad, onProgress, onError ) {
 
@@ -14017,7 +13999,6 @@ var Three = (function (exports) {
 					}, onProgress, onError );
 
 			},
-
 			
 			loadVMD: function ( url, onLoad, onProgress, onError ) {
 
@@ -14045,7 +14026,6 @@ var Three = (function (exports) {
 				}
 
 			},
-
 			
 			loadVPD: function ( url, isUnicode, onLoad, onProgress, onError ) {
 
@@ -14092,7 +14072,6 @@ var Three = (function (exports) {
 		};
 
 		// Utilities
-
 		
 		var DEFAULT_TOON_TEXTURES = [
 			'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAL0lEQVRYR+3QQREAAAzCsOFfNJPBJ1XQS9r2hsUAAQIECBAgQIAAAQIECBAgsBZ4MUx/ofm2I/kAAAAASUVORK5CYII=',
@@ -14109,7 +14088,6 @@ var Three = (function (exports) {
 		];
 
 		// Builders. They build Three.js object from Object data parsed by MMDParser.
-
 		
 		function MeshBuilder( manager ) {
 
@@ -14123,7 +14101,6 @@ var Three = (function (exports) {
 			constructor: MeshBuilder,
 
 			crossOrigin: 'anonymous',
-
 			
 			setCrossOrigin: function ( crossOrigin ) {
 
@@ -14131,7 +14108,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			build: function ( data, texturePath, onProgress, onError ) {
 
@@ -14160,7 +14136,6 @@ var Three = (function (exports) {
 		GeometryBuilder.prototype = {
 
 			constructor: GeometryBuilder,
-
 			
 			build: function ( data ) {
 
@@ -14513,7 +14488,6 @@ var Three = (function (exports) {
 						params[ key ] = rigidBody[ key ];
 
 					}
-
 					
 					if ( data.metadata.format === 'pmx' ) {
 
@@ -14604,7 +14578,6 @@ var Three = (function (exports) {
 		};
 
 		//
-
 		
 		function MaterialBuilder( manager ) {
 
@@ -14622,7 +14595,6 @@ var Three = (function (exports) {
 			crossOrigin: 'anonymous',
 
 			texturePath: undefined,
-
 			
 			setCrossOrigin: function ( crossOrigin ) {
 
@@ -14630,7 +14602,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			setTexturePath: function ( texturePath ) {
 
@@ -14638,7 +14609,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			build: function ( data, geometry, onProgress, onError ) {
 
@@ -14657,7 +14627,6 @@ var Three = (function (exports) {
 					var params = { userData: {} };
 
 					if ( material.name !== undefined ) params.name = material.name;
-
 					
 					params.color = new Color().fromArray( material.diffuse );
 					params.opacity = material.diffuse[ 3 ];
@@ -15067,7 +15036,6 @@ var Three = (function (exports) {
 						return false;
 
 					}
-
 					
 					function getAlphaByUv( image, uv ) {
 
@@ -15116,7 +15084,6 @@ var Three = (function (exports) {
 		AnimationBuilder.prototype = {
 
 			constructor: AnimationBuilder,
-
 			
 			build: function ( vmd, mesh ) {
 
@@ -15134,7 +15101,6 @@ var Three = (function (exports) {
 				return new AnimationClip( '', - 1, tracks );
 
 			},
-
 			
 			buildSkeletalAnimation: function ( vmd, mesh ) {
 
@@ -15216,7 +15182,6 @@ var Three = (function (exports) {
 				return new AnimationClip( '', - 1, tracks );
 
 			},
-
 			
 			buildMorphAnimation: function ( vmd, mesh ) {
 
@@ -15264,7 +15229,6 @@ var Three = (function (exports) {
 				return new AnimationClip( '', - 1, tracks );
 
 			},
-
 			
 			buildCameraAnimation: function ( vmd ) {
 
@@ -15383,7 +15347,6 @@ var Three = (function (exports) {
 			// private method
 
 			_createTrack: function ( node, typedKeyframeTrack, times, values, interpolations ) {
-
 				
 				if ( times.length > 2 ) {
 
@@ -15523,8 +15486,6 @@ var Three = (function (exports) {
 			},
 
 			_calculate: function ( x1, x2, y1, y2, x ) {
-
-				
 
 				var c = 0.5;
 				var t = c;

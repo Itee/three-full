@@ -1086,7 +1086,6 @@ var Three = (function (exports) {
 
 	} );
 
-
 	function PropertyBinding( rootNode, path, parsedPath ) {
 
 		this.path = path;
@@ -1115,7 +1114,6 @@ var Three = (function (exports) {
 			}
 
 		},
-
 		
 		sanitizeNodeName: ( function () {
 
@@ -1567,7 +1565,6 @@ var Three = (function (exports) {
 
 				}
 
-
 				if ( objectIndex !== undefined ) {
 
 					if ( targetObject[ objectIndex ] === undefined ) {
@@ -1649,7 +1646,6 @@ var Three = (function (exports) {
 							}
 
 						}
-
 
 					} else {
 
@@ -4293,7 +4289,6 @@ var Three = (function (exports) {
 
 		},
 
-
 		// mix functions
 
 		_select: function ( buffer, dstOffset, srcOffset, t, stride ) {
@@ -5839,12 +5834,10 @@ var Three = (function (exports) {
 			// 		actionByRoot: AnimationAction			- lookup
 			// }
 
-
 			this._bindings = []; // 'nActiveBindings' followed by inactive ones
 			this._nActiveBindings = 0;
 
 			this._bindingsByRootAndName = {}; // inside: Map< name, PropertyMixer >
-
 
 			this._controlInterpolants = []; // same game as above
 			this._nActiveControlInterpolants = 0;
@@ -5950,7 +5943,6 @@ var Three = (function (exports) {
 
 			action._cacheIndex = null;
 
-
 			var clipUuid = action._clip.uuid,
 				actionsByClip = this._actionsByClip,
 				actionsForClip = actionsByClip[ clipUuid ],
@@ -5966,7 +5958,6 @@ var Three = (function (exports) {
 			knownActionsForClip.pop();
 
 			action._byClipCacheIndex = null;
-
 
 			var actionByRoot = actionsForClip.actionByRoot,
 				rootUuid = ( action._localRoot || this._root ).uuid;
@@ -6130,7 +6121,6 @@ var Three = (function (exports) {
 			bindings[ prevIndex ] = lastActiveBinding;
 
 		},
-
 
 		// Memory management of Interpolants for weight and time scale
 

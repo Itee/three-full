@@ -3,13 +3,6 @@ import { FunctionNode } from '../core/FunctionNode.js'
 import { MaxMIPLevelNode } from '../utils/MaxMIPLevelNode.js'
 import { BlinnShininessExponentNode } from './BlinnShininessExponentNode.js'
 
-
-
-
-
-
-
-
 function RoughnessToBlinnExponentNode( texture ) {
 
 	TempNode.call( this, 'f' );

@@ -347,7 +347,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -7331,7 +7330,6 @@ var Three = (function (exports) {
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -7340,7 +7338,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -7351,7 +7348,6 @@ var Three = (function (exports) {
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -7360,7 +7356,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -7371,7 +7366,6 @@ var Three = (function (exports) {
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -7380,7 +7374,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -7391,7 +7384,6 @@ var Three = (function (exports) {
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -7400,7 +7392,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -8666,8 +8657,6 @@ var Three = (function (exports) {
 
 		clone: function () {
 
-			
-
 			return new BufferGeometry().copy( this );
 
 		},
@@ -9507,7 +9496,6 @@ var Three = (function (exports) {
 
 				}
 
-
 				vertexPosition.copy( mvPosition );
 				vertexPosition.x += rotatedPosition.x;
 				vertexPosition.y += rotatedPosition.y;
@@ -9593,7 +9581,6 @@ var Three = (function (exports) {
 			return this;
 
 		}
-
 
 	} );
 
@@ -12084,7 +12071,6 @@ var Three = (function (exports) {
 			normals[ 0 ].crossVectors( tangents[ 0 ], vec );
 			binormals[ 0 ].crossVectors( tangents[ 0 ], normals[ 0 ] );
 
-
 			// compute the slowly-varying normal and binormal vectors for each segment on the curve
 
 			for ( i = 1; i <= segments; i ++ ) {
@@ -12290,7 +12276,6 @@ var Three = (function (exports) {
 
 	};
 
-
 	EllipseCurve.prototype.toJSON = function () {
 
 		var data = Curve.prototype.toJSON.call( this );
@@ -12349,7 +12334,6 @@ var Three = (function (exports) {
 	function CubicPoly() {
 
 		var c0 = 0, c1 = 0, c2 = 0, c3 = 0;
-
 		
 		function init( x0, x1, t0, t1 ) {
 
@@ -14012,7 +13996,6 @@ var Three = (function (exports) {
 			return this;
 
 		},
-
 		
 		setFocalLength: function ( focalLength ) {
 
@@ -14023,7 +14006,6 @@ var Three = (function (exports) {
 			this.updateProjectionMatrix();
 
 		},
-
 		
 		getFocalLength: function () {
 
@@ -14053,7 +14035,6 @@ var Three = (function (exports) {
 			return this.filmGauge / Math.max( this.aspect, 1 );
 
 		},
-
 		
 		setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 
@@ -19510,8 +19491,6 @@ var Three = (function (exports) {
 
 		},
 
-		
-
 		mergeVertices: function () {
 
 			var verticesMap = {}; // Hashmap for looking up vertices by position coordinates (and making sure they are unique)
@@ -19542,7 +19521,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 
 			// if faces are completely degenerate after merging vertices, we
 			// have to remove them from the geometry.
@@ -19851,8 +19829,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new Geometry().copy( this );
 
@@ -20206,7 +20182,6 @@ var Three = (function (exports) {
 
 					nUvLayers = 0;
 
-
 				if ( json.uvs !== undefined ) {
 
 					// disregard empty arrays
@@ -20336,14 +20311,12 @@ var Three = (function (exports) {
 									normals[ normalIndex ]
 								);
 
-
 								if ( i !== 2 ) faceA.vertexNormals.push( normal );
 								if ( i !== 0 ) faceB.vertexNormals.push( normal );
 
 							}
 
 						}
-
 
 						if ( hasFaceColor ) {
 
@@ -20354,7 +20327,6 @@ var Three = (function (exports) {
 							faceB.color.setHex( hex );
 
 						}
-
 
 						if ( hasFaceVertexColor ) {
 
@@ -20446,14 +20418,12 @@ var Three = (function (exports) {
 
 						}
 
-
 						if ( hasFaceColor ) {
 
 							colorIndex = faces[ offset ++ ];
 							face.color.setHex( colors[ colorIndex ] );
 
 						}
-
 
 						if ( hasFaceVertexColor ) {
 
@@ -21139,7 +21109,6 @@ var Three = (function (exports) {
 			return Math.atan2( vector.z, - vector.x );
 
 		}
-
 
 		// Angle above the XZ plane.
 
@@ -22953,10 +22922,7 @@ var Three = (function (exports) {
 
 			}
 
-
 			var faces = ShapeUtils.triangulateShape( vertices, holes );
-
-			
 
 			var contour = vertices; // vertices has all points but contour has only points of circumference
 
@@ -22967,7 +22933,6 @@ var Three = (function (exports) {
 				vertices = vertices.concat( ahole );
 
 			}
-
 
 			function scalePt2( pt, vec, size ) {
 
@@ -22981,9 +22946,7 @@ var Three = (function (exports) {
 				vert, vlen = vertices.length,
 				face, flen = faces.length;
 
-
 			// Find directions for point movement
-
 
 			function getBevelVec( inPt, inPrev, inNext ) {
 
@@ -23107,7 +23070,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var contourMovements = [];
 
 			for ( var i = 0, il = contour.length, j = il - 1, k = i + 1; i < il; i ++, j ++, k ++ ) {
@@ -23145,7 +23107,6 @@ var Three = (function (exports) {
 				verticesMovements = verticesMovements.concat( oneHoleMovements );
 
 			}
-
 
 			// Loop bevelSegments, 1 for the front, 1 for the back
 
@@ -23245,7 +23206,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			// Add bevel segments planes
 
 			//for ( b = 1; b <= bevelSegments; b ++ ) {
@@ -23291,8 +23251,6 @@ var Three = (function (exports) {
 
 			}
 
-			
-
 			// Top and bottom faces
 
 			buildLidFaces();
@@ -23300,7 +23258,6 @@ var Three = (function (exports) {
 			// Sides faces
 
 			buildSideFaces();
-
 
 			/////  Internal functions
 
@@ -23379,9 +23336,7 @@ var Three = (function (exports) {
 
 				}
 
-
 				scope.addGroup( start, verticesArray.length / 3 - start, 1 );
-
 
 			}
 
@@ -23427,7 +23382,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			function f3( a, b, c ) {
 
 				addVertex( a );
@@ -23453,7 +23407,6 @@ var Three = (function (exports) {
 				addVertex( c );
 				addVertex( d );
 
-
 				var nextIndex = verticesArray.length / 3;
 				var uvs = uvgen.generateSideWallUV( scope, verticesArray, nextIndex - 6, nextIndex - 3, nextIndex - 2, nextIndex - 1 );
 
@@ -23474,7 +23427,6 @@ var Three = (function (exports) {
 				verticesArray.push( placeholder[ index * 3 + 2 ] );
 
 			}
-
 
 			function addUV( vector2 ) {
 
@@ -24086,7 +24038,6 @@ var Three = (function (exports) {
 
 		phiLength = _Math.clamp( phiLength, 0, Math.PI * 2 );
 
-
 		// buffers
 
 		var indices = [];
@@ -24126,7 +24077,6 @@ var Three = (function (exports) {
 				uv.y = j / ( points.length - 1 );
 
 				uvs.push( uv.x, uv.y );
-
 
 			}
 
@@ -24304,7 +24254,6 @@ var Three = (function (exports) {
 		this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 		this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
 		this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
-
 
 		// helper functions
 
@@ -25532,7 +25481,6 @@ var Three = (function (exports) {
 							);
 
 							break;
-
 
 						case 'ExtrudeGeometry':
 						case 'ExtrudeBufferGeometry':

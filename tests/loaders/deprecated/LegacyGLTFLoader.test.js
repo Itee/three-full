@@ -3003,7 +3003,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -6048,7 +6047,6 @@ var Three = (function (exports) {
 			return this;
 
 		},
-
 		
 		setFocalLength: function ( focalLength ) {
 
@@ -6059,7 +6057,6 @@ var Three = (function (exports) {
 			this.updateProjectionMatrix();
 
 		},
-
 		
 		getFocalLength: function () {
 
@@ -6089,7 +6086,6 @@ var Three = (function (exports) {
 			return this.filmGauge / Math.max( this.aspect, 1 );
 
 		},
-
 		
 		setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 
@@ -8325,7 +8321,6 @@ var Three = (function (exports) {
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -8334,7 +8329,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -8345,7 +8339,6 @@ var Three = (function (exports) {
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -8354,7 +8347,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -8365,7 +8357,6 @@ var Three = (function (exports) {
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -8374,7 +8365,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -8385,7 +8375,6 @@ var Three = (function (exports) {
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -8394,7 +8383,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -10950,8 +10938,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new BufferGeometry().copy( this );
 
@@ -16192,8 +16178,6 @@ var Three = (function (exports) {
 
 		};
 
-		
-
 		function GLTFRegistry() {
 
 			var objects = {};
@@ -16244,8 +16228,6 @@ var Three = (function (exports) {
 
 		}
 
-		
-
 		LegacyGLTFLoader.Shaders = {
 
 			update: function () {
@@ -16255,8 +16237,6 @@ var Three = (function (exports) {
 			}
 
 		};
-
-		
 
 		function GLTFShader( targetNode, allNodes ) {
 
@@ -16359,9 +16339,6 @@ var Three = (function (exports) {
 
 		};
 
-
-		
-
 		LegacyGLTFLoader.Animations = {
 
 			update: function () {
@@ -16372,16 +16349,10 @@ var Three = (function (exports) {
 
 		};
 
-		
-		
-		
-
 		var EXTENSIONS = {
 			KHR_BINARY_GLTF: 'KHR_binary_glTF',
 			KHR_MATERIALS_COMMON: 'KHR_materials_common'
 		};
-
-		
 
 		function GLTFMaterialsCommonExtension( json ) {
 
@@ -16432,8 +16403,6 @@ var Three = (function (exports) {
 
 		}
 
-		
-
 		var BINARY_EXTENSION_BUFFER_NAME = 'binary_glTF';
 
 		var BINARY_EXTENSION_HEADER_DEFAULTS = { magic: 'glTF', version: 1, contentFormat: 0 };
@@ -16482,12 +16451,6 @@ var Three = (function (exports) {
 			return LoaderUtils.decodeText( array );
 
 		};
-
-		
-		
-		
-
-		
 
 		var WEBGL_CONSTANTS = {
 			FLOAT: 5126,
@@ -16630,8 +16593,6 @@ var Three = (function (exports) {
 			32823: 'POLYGON_OFFSET_FILL',
 			32926: 'SAMPLE_ALPHA_TO_COVERAGE'
 		};
-
-		
 
 		function _each( object, callback, thisObj ) {
 
@@ -16895,8 +16856,6 @@ var Three = (function (exports) {
 			return new RawShaderMaterial( this.params );
 
 		};
-
-		
 
 		function GLTFParser( json, extensions, options ) {
 

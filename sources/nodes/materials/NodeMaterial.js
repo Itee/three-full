@@ -11,13 +11,6 @@ import {
 } from '../../constants.js'
 import { NodeLib } from '../core/NodeLib.js'
 
-
-
-
-
-
-
-
 function NodeMaterial( vertex, fragment ) {
 
 	ShaderMaterial.call( this );

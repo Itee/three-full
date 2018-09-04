@@ -5,14 +5,6 @@ import { Vector2Node } from '../inputs/Vector2Node.js'
 import { UVNode } from '../accessors/UVNode.js'
 import { Vector2 } from '../../math/Vector2.js'
 
-
-
-
-
-
-
-
-
 function BlurNode( value, uv, radius, size ) {
 
 	TempNode.call( this, 'v4' );
@@ -71,7 +63,6 @@ BlurNode.Nodes = ( function () {
 	};
 
 } )();
-
 
 BlurNode.prototype = Object.create( TempNode.prototype );
 BlurNode.prototype.constructor = BlurNode;

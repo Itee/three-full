@@ -4672,7 +4672,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -7319,8 +7318,6 @@ var Three = (function (exports) {
 
 		},
 
-		
-
 		mergeVertices: function () {
 
 			var verticesMap = {}; // Hashmap for looking up vertices by position coordinates (and making sure they are unique)
@@ -7351,7 +7348,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 
 			// if faces are completely degenerate after merging vertices, we
 			// have to remove them from the geometry.
@@ -7660,8 +7656,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new Geometry().copy( this );
 
@@ -8855,7 +8849,6 @@ var Three = (function (exports) {
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -8864,7 +8857,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -8875,7 +8867,6 @@ var Three = (function (exports) {
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -8884,7 +8875,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -8895,7 +8885,6 @@ var Three = (function (exports) {
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -8904,7 +8893,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -8915,7 +8903,6 @@ var Three = (function (exports) {
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -8924,7 +8911,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -10189,8 +10175,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new BufferGeometry().copy( this );
 
@@ -12258,7 +12242,6 @@ var Three = (function (exports) {
 	} );
 
 	var MMDPhysics = ( function () {
-
 		
 		function MMDPhysics( mesh, rigidBodyParams, constraintParams, params ) {
 
@@ -12274,7 +12257,6 @@ var Three = (function (exports) {
 			this.manager = new ResourceManager();
 
 			this.mesh = mesh;
-
 			
 			this.unitStep = ( params.unitStep !== undefined ) ? params.unitStep : 1 / 65;
 			this.maxStepNum = ( params.maxStepNum !== undefined ) ? params.maxStepNum : 3;
@@ -12294,7 +12276,6 @@ var Three = (function (exports) {
 		MMDPhysics.prototype = {
 
 			constructor: MMDPhysics,
-
 			
 			update: function ( delta ) {
 
@@ -12357,7 +12338,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			reset: function () {
 
@@ -12370,7 +12350,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			warmup: function ( cycles ) {
 
@@ -12383,7 +12362,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			setGravity: function ( gravity ) {
 
@@ -12393,7 +12371,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			createHelper: function () {
 
@@ -12489,7 +12466,6 @@ var Three = (function (exports) {
 
 				}
 
-
 			},
 
 			_stepSimulation: function ( delta ) {
@@ -12536,7 +12512,6 @@ var Three = (function (exports) {
 			}
 
 		};
-
 		
 		function ResourceManager() {
 
@@ -12987,7 +12962,6 @@ var Three = (function (exports) {
 			}
 
 		};
-
 		
 		function RigidBody( mesh, world, params, manager ) {
 
@@ -13008,7 +12982,6 @@ var Three = (function (exports) {
 		RigidBody.prototype = {
 
 			constructor: MMDPhysics.RigidBody,
-
 			
 			reset: function () {
 
@@ -13016,7 +12989,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			updateFromBone: function () {
 
@@ -13030,7 +13002,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			updateBone: function () {
 
@@ -13125,7 +13096,6 @@ var Three = (function (exports) {
 				if ( params.type === 0 ) {
 
 					body.setCollisionFlags( body.getCollisionFlags() | 2 );
-
 					
 					body.setActivationState( 4 );
 
@@ -13270,7 +13240,6 @@ var Three = (function (exports) {
 			}
 
 		};
-
 		
 		function Constraint( mesh, world, bodyA, bodyB, params, manager ) {
 
@@ -13363,7 +13332,6 @@ var Three = (function (exports) {
 					}
 
 				}
-
 				
 				if ( constraint.setParam !== undefined ) {
 
@@ -13394,7 +13362,6 @@ var Three = (function (exports) {
 			}
 
 		};
-
 		
 		function MMDPhysicsHelper( mesh, physics ) {
 
@@ -13448,7 +13415,6 @@ var Three = (function (exports) {
 		MMDPhysicsHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 			constructor: MMDPhysicsHelper,
-
 			
 			updateMatrixWorld: function () {
 

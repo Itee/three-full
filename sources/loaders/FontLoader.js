@@ -2,12 +2,6 @@ import { Font } from '../core/Font.js'
 import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-
-
-
-
-
-
 function FontLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -59,7 +53,6 @@ Object.assign( FontLoader.prototype, {
 	}
 
 } );
-
 
 ;
 

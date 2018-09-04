@@ -7,15 +7,6 @@ import {
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Object3D } from '../core/Object3D.js'
 
-
-
-
-
-
-
-
-
-
 function Box3Helper( box, hex ) {
 
 	this.type = 'Box3Helper';

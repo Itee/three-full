@@ -4536,7 +4536,6 @@ var Three = (function (exports) {
 
 		} )()
 
-
 	} );
 
 	exports.PositionalAudio = PositionalAudio;

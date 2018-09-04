@@ -32,8 +32,6 @@ import { CopyShader } from '../shaders/CopyShader.js'
 import { UnpackDepthRGBAShader } from '../shaders/UnpackDepthRGBAShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
-
-
 var SAOPass = function ( scene, camera, depthTexture, useNormals, resolution ) {
 
 	Pass.call( this );

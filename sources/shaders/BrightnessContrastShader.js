@@ -1,7 +1,4 @@
 
-
-
-
 var BrightnessContrastShader = {
 
 	uniforms: {

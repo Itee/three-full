@@ -15,8 +15,6 @@ import {
 	LinearFilter
 } from '../constants.js'
 
-
-
 var Lut = function ( colormap, numberofcolors ) {
 
 	this.lut = [];
@@ -462,7 +460,6 @@ Lut.prototype = {
 
 				var points = [];
 
-
 				if ( this.legend.layout == 'vertical' ) {
 
 					var linePosition = ( this.legend.position.y - ( this.legend.dimensions.height * 0.5 ) + 0.01 ) + ( this.legend.dimensions.height ) * ( ( value - this.minV ) / ( this.maxV - this.minV ) * 0.99 );
@@ -499,7 +496,6 @@ Lut.prototype = {
 	}
 
 };
-
 
 var ColorMapKeywords = {
 

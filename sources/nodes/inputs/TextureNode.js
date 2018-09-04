@@ -2,12 +2,6 @@ import { InputNode } from '../core/InputNode.js'
 import { UVNode } from '../accessors/UVNode.js'
 import { ColorSpaceNode } from '../utils/ColorSpaceNode.js'
 
-
-
-
-
-
-
 function TextureNode( value, uv, bias, project ) {
 
 	InputNode.call( this, 'v4', { shared: true } );

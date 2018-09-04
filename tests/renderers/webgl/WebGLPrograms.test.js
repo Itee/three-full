@@ -4536,7 +4536,6 @@ var Three = (function (exports) {
 
 	};
 
-
 	// Static interface
 
 	WebGLUniforms.upload = function ( gl, seq, values, renderer ) {
@@ -5664,7 +5663,6 @@ var Three = (function (exports) {
 
 		} );
 
-
 		//
 
 		this.name = shader.name;
@@ -5712,7 +5710,6 @@ var Three = (function (exports) {
 			"shadowMapEnabled", "shadowMapType", "toneMapping", 'physicallyCorrectLights',
 			"alphaTest", "doubleSided", "flipSided", "numClippingPlanes", "numClipIntersection", "depthPacking", "dithering"
 		];
-
 
 		function allocateBones( object ) {
 

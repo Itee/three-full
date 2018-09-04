@@ -9,7 +9,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 'use strict';
 
-
 var GCodeLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

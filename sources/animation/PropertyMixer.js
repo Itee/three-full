@@ -1,9 +1,5 @@
 import { Quaternion } from '../math/Quaternion.js'
 
-
-
-
-
 function PropertyMixer( binding, typeName, valueSize ) {
 
 	this.binding = binding;
@@ -160,7 +156,6 @@ Object.assign( PropertyMixer.prototype, {
 
 	},
 
-
 	// mix functions
 
 	_select: function ( buffer, dstOffset, srcOffset, t, stride ) {
@@ -198,7 +193,6 @@ Object.assign( PropertyMixer.prototype, {
 	}
 
 } );
-
 
 ;
 

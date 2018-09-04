@@ -1,9 +1,5 @@
 import { TempNode } from './TempNode.js'
 
-
-
-
-
 function InputNode( type, params ) {
 
 	params = params || {};

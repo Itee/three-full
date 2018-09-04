@@ -4,8 +4,6 @@ import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
 
-
-
 UniformsLib.line = {
 
 	linewidth: { value: 1 },
@@ -382,6 +380,5 @@ LineMaterial.prototype.copy = function ( source ) {
 	return this;
 
 };
-
 
 export { LineMaterial }

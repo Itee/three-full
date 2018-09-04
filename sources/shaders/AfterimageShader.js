@@ -1,7 +1,4 @@
 
-
-
-
 var AfterimageShader = {
 
 	uniforms: {

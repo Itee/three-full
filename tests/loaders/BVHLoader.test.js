@@ -6388,7 +6388,6 @@ var Three = (function (exports) {
 		},
 
 		parse: function ( text ) {
-
 			
 			function readBvh( lines ) {
 
@@ -6445,7 +6444,6 @@ var Three = (function (exports) {
 				return list;
 
 			}
-
 			
 			function readFrameData( data, frameTime, bone ) {
 
@@ -6512,7 +6510,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 			
 			function readNode( lines, firstline, list ) {
 
@@ -6608,7 +6605,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 			
 			function toTHREEBone( source, list ) {
 
@@ -6631,7 +6627,6 @@ var Three = (function (exports) {
 				return bone;
 
 			}
-
 			
 			function toTHREEAnimation( bones ) {
 
@@ -6689,7 +6684,6 @@ var Three = (function (exports) {
 				return new AnimationClip( 'animation', - 1, tracks );
 
 			}
-
 			
 			function nextLine( lines ) {
 

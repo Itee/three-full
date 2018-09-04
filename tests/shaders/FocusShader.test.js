@@ -81,7 +81,6 @@ var Three = (function (exports) {
 
 			"}"
 
-
 		].join( "\n" )
 	};
 

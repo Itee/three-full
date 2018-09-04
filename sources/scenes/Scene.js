@@ -1,9 +1,5 @@
 import { Object3D } from '../core/Object3D.js'
 
-
-
-
-
 function Scene() {
 
 	Object3D.call( this );
@@ -49,8 +45,6 @@ Scene.prototype = Object.assign( Object.create( Object3D.prototype ), {
 	}
 
 } );
-
-
 
 ;
 

@@ -1,7 +1,4 @@
 
-
-
-
 function WebGLCapabilities( gl, extensions, parameters ) {
 
 	var maxAnisotropy;
@@ -111,7 +108,6 @@ function WebGLCapabilities( gl, extensions, parameters ) {
 	};
 
 }
-
 
 ;
 

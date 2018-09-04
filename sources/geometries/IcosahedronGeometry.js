@@ -1,11 +1,6 @@
 import { Geometry } from '../core/Geometry.js'
 import { PolyhedronBufferGeometry } from './PolyhedronGeometry.js'
 
-
-
-
-
-
 // IcosahedronGeometry
 
 function IcosahedronGeometry( radius, detail ) {
@@ -59,7 +54,6 @@ function IcosahedronBufferGeometry( radius, detail ) {
 
 IcosahedronBufferGeometry.prototype = Object.create( PolyhedronBufferGeometry.prototype );
 IcosahedronBufferGeometry.prototype.constructor = IcosahedronBufferGeometry;
-
 
 ;
 

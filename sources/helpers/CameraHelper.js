@@ -7,17 +7,6 @@ import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
-
-
-
-
-
-
-
-
-
-
-
 function CameraHelper( camera ) {
 
 	var geometry = new BufferGeometry();
@@ -206,7 +195,6 @@ CameraHelper.prototype.update = function () {
 	};
 
 }();
-
 
 ;
 

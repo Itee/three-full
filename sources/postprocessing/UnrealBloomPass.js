@@ -18,7 +18,6 @@ import { LuminosityHighPassShader } from '../shaders/LuminosityHighPassShader.js
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { CopyShader } from '../shaders/CopyShader.js'
 
-
 var UnrealBloomPass = function ( resolution, strength, radius, threshold ) {
 
 	Pass.call( this );
@@ -265,7 +264,6 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		this.copyUniforms[ "tDiffuse" ].value = this.renderTargetsHorizontal[ 0 ].texture;
 
 		if ( maskActive ) renderer.context.enable( renderer.context.STENCIL_TEST );
-
 
 		if ( this.renderToScreen ) {
 

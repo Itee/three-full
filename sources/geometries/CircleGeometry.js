@@ -4,14 +4,6 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 
-
-
-
-
-
-
-
-
 // CircleGeometry
 
 function CircleGeometry( radius, segments, thetaStart, thetaLength ) {
@@ -118,7 +110,6 @@ function CircleBufferGeometry( radius, segments, thetaStart, thetaLength ) {
 
 CircleBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 CircleBufferGeometry.prototype.constructor = CircleBufferGeometry;
-
 
 ;
 

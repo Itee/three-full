@@ -23,17 +23,6 @@ import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { ShadowMaterial } from '../materials/ShadowMaterial.js'
 import { SpriteMaterial } from '../materials/SpriteMaterial.js'
 
-
-
-
-
-
-
-
-
-
-
-
 function MaterialLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -261,7 +250,6 @@ Object.assign( MaterialLoader.prototype, {
 	}
 
 } );
-
 
 ;
 

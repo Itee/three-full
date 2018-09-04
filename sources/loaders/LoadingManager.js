@@ -1,7 +1,4 @@
 
-
-
-
 function LoadingManager( onLoad, onProgress, onError ) {
 
 	var scope = this;
@@ -93,7 +90,6 @@ function LoadingManager( onLoad, onProgress, onError ) {
 }
 
 var DefaultLoadingManager = new LoadingManager();
-
 
 ;
 

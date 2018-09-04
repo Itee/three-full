@@ -4526,7 +4526,6 @@ var Three = (function (exports) {
 
 			}
 
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -5300,7 +5299,6 @@ var Three = (function (exports) {
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -5309,7 +5307,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -5320,7 +5317,6 @@ var Three = (function (exports) {
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -5329,7 +5325,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -5340,7 +5335,6 @@ var Three = (function (exports) {
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -5349,7 +5343,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -5360,7 +5353,6 @@ var Three = (function (exports) {
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -5369,7 +5361,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -8261,8 +8252,6 @@ var Three = (function (exports) {
 
 		clone: function () {
 
-			
-
 			return new BufferGeometry().copy( this );
 
 		},
@@ -8491,7 +8480,6 @@ var Three = (function (exports) {
 			includeColors = includeColors && excludeAttributes.indexOf( 'color' ) === - 1;
 			includeUVs = includeUVs && excludeAttributes.indexOf( 'uv' ) === - 1;
 
-
 			if ( includeIndices && faceCount !== Math.floor( faceCount ) ) {
 
 				// point cloud meshes will not have an index array and may not have a
@@ -8523,7 +8511,6 @@ var Three = (function (exports) {
 				indexByteCount = 4;
 
 			}
-
 
 			var header =
 				'ply\n' +
@@ -8575,7 +8562,6 @@ var Three = (function (exports) {
 
 			header += 'end_header\n';
 
-
 			// Generate attribute data
 			var vertex = new Vector3();
 			var normalMatrixWorld = new Matrix3();
@@ -8598,7 +8584,6 @@ var Three = (function (exports) {
 				var output = new DataView( new ArrayBuffer( headerBin.length + vertexListLength + faceListLength ) );
 				new Uint8Array( output.buffer ).set( headerBin, 0 );
 
-
 				var vOffset = headerBin.length;
 				var fOffset = headerBin.length + vertexListLength;
 				var writtenVertices = 0;
@@ -8619,7 +8604,6 @@ var Three = (function (exports) {
 						vertex.z = vertices.getZ( i );
 
 						vertex.applyMatrix4( mesh.matrixWorld );
-
 
 						// Position information
 						output.setFloat32( vOffset, vertex.x );
@@ -8764,7 +8748,6 @@ var Three = (function (exports) {
 
 					}
 
-
 					// Save the amount of verts we've already written so we can offset
 					// the face index on the next mesh
 					writtenVertices += vertices.count;
@@ -8799,7 +8782,6 @@ var Three = (function (exports) {
 						vertex.z = vertices.getZ( i );
 
 						vertex.applyMatrix4( mesh.matrixWorld );
-
 
 						// Position information
 						var line =

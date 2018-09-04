@@ -2,14 +2,6 @@ import { _Math } from '../math/Math.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix4 } from '../math/Matrix4.js'
 
-
-
-
-
-
-
-
-
 function Curve() {
 
 	this.type = 'Curve';
@@ -297,7 +289,6 @@ Object.assign( Curve.prototype, {
 		normals[ 0 ].crossVectors( tangents[ 0 ], vec );
 		binormals[ 0 ].crossVectors( tangents[ 0 ], normals[ 0 ] );
 
-
 		// compute the slowly-varying normal and binormal vectors for each segment on the curve
 
 		for ( i = 1; i <= segments; i ++ ) {
@@ -393,7 +384,6 @@ Object.assign( Curve.prototype, {
 	}
 
 } );
-
 
 ;
 

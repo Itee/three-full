@@ -8,18 +8,6 @@ import { StringKeyframeTrack } from './tracks/StringKeyframeTrack.js'
 import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js'
 import { _Math } from '../math/Math.js'
 
-
-
-
-
-
-
-
-
-
-
-
-
 function AnimationClip( name, duration, tracks ) {
 
 	this.name = name;
@@ -452,7 +440,6 @@ Object.assign( AnimationClip.prototype, {
 	}
 
 } );
-
 
 ;
 

@@ -6,8 +6,6 @@ import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
 import { Mesh } from './Mesh.js'
 import { UVMapping } from '../constants.js'
 
-
-
 var MD2Character = function () {
 
 	var scope = this;

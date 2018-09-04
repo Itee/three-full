@@ -1,7 +1,5 @@
 import { Vector2 } from '../math/Vector2.js'
 
-
-
 var SSAOShader = {
 
 	uniforms: {
@@ -67,7 +65,6 @@ var SSAOShader = {
 		"const float diffArea = 0.4;",   // self-shadowing reduction
 		"const float gDisplace = 0.4;",  // gauss bell center
 
-
 		// RGBA depth
 
 		"#include <packing>",
@@ -117,7 +114,6 @@ var SSAOShader = {
 			"#endif",
 
 			"return cameraCoef / ( cameraFarPlusNear - z * cameraFarMinusNear );",
-
 
 		"}",
 

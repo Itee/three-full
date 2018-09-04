@@ -1,11 +1,6 @@
 import { Matrix3 } from './Matrix3.js'
 import { Vector3 } from './Vector3.js'
 
-
-
-
-
-
 function Plane( normal, constant ) {
 
 	// normal is assumed to be normalized
@@ -241,7 +236,6 @@ Object.assign( Plane.prototype, {
 	}
 
 } );
-
 
 ;
 

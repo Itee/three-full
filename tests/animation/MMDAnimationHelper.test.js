@@ -5133,7 +5133,6 @@ var Three = (function (exports) {
 
 	} );
 
-
 	function PropertyBinding( rootNode, path, parsedPath ) {
 
 		this.path = path;
@@ -5162,7 +5161,6 @@ var Three = (function (exports) {
 			}
 
 		},
-
 		
 		sanitizeNodeName: ( function () {
 
@@ -5614,7 +5612,6 @@ var Three = (function (exports) {
 
 				}
 
-
 				if ( objectIndex !== undefined ) {
 
 					if ( targetObject[ objectIndex ] === undefined ) {
@@ -5696,7 +5693,6 @@ var Three = (function (exports) {
 							}
 
 						}
-
 
 					} else {
 
@@ -5930,7 +5926,6 @@ var Three = (function (exports) {
 			this.binding.setValue( this.buffer, originalValueOffset );
 
 		},
-
 
 		// mix functions
 
@@ -7477,12 +7472,10 @@ var Three = (function (exports) {
 			// 		actionByRoot: AnimationAction			- lookup
 			// }
 
-
 			this._bindings = []; // 'nActiveBindings' followed by inactive ones
 			this._nActiveBindings = 0;
 
 			this._bindingsByRootAndName = {}; // inside: Map< name, PropertyMixer >
-
 
 			this._controlInterpolants = []; // same game as above
 			this._nActiveControlInterpolants = 0;
@@ -7588,7 +7581,6 @@ var Three = (function (exports) {
 
 			action._cacheIndex = null;
 
-
 			var clipUuid = action._clip.uuid,
 				actionsByClip = this._actionsByClip,
 				actionsForClip = actionsByClip[ clipUuid ],
@@ -7604,7 +7596,6 @@ var Three = (function (exports) {
 			knownActionsForClip.pop();
 
 			action._byClipCacheIndex = null;
-
 
 			var actionByRoot = actionsForClip.actionByRoot,
 				rootUuid = ( action._localRoot || this._root ).uuid;
@@ -7768,7 +7759,6 @@ var Three = (function (exports) {
 			bindings[ prevIndex ] = lastActiveBinding;
 
 		},
-
 
 		// Memory management of Interpolants for weight and time scale
 
@@ -8204,7 +8194,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 
 			var m;
 
@@ -10773,8 +10762,6 @@ var Three = (function (exports) {
 
 		},
 
-		
-
 		mergeVertices: function () {
 
 			var verticesMap = {}; // Hashmap for looking up vertices by position coordinates (and making sure they are unique)
@@ -10805,7 +10792,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 
 			// if faces are completely degenerate after merging vertices, we
 			// have to remove them from the geometry.
@@ -11114,8 +11100,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new Geometry().copy( this );
 
@@ -12309,7 +12293,6 @@ var Three = (function (exports) {
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
 
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -12318,7 +12301,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
@@ -12329,7 +12311,6 @@ var Three = (function (exports) {
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
 
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -12338,7 +12319,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
@@ -12349,7 +12329,6 @@ var Three = (function (exports) {
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
 
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -12358,7 +12337,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
@@ -12369,7 +12347,6 @@ var Three = (function (exports) {
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
 
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -12378,7 +12355,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
@@ -13643,8 +13619,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
-			
 
 			return new BufferGeometry().copy( this );
 
@@ -15951,7 +15925,6 @@ var Three = (function (exports) {
 	} );
 
 	var CCDIKSolver = ( function () {
-
 		
 		function CCDIKSolver( mesh, iks ) {
 
@@ -15965,7 +15938,6 @@ var Three = (function (exports) {
 		CCDIKSolver.prototype = {
 
 			constructor: CCDIKSolver,
-
 			
 			update: function () {
 
@@ -16118,7 +16090,6 @@ var Three = (function (exports) {
 				};
 
 			}(),
-
 			
 			createHelper: function () {
 
@@ -16161,7 +16132,6 @@ var Three = (function (exports) {
 			}
 
 		};
-
 		
 		function CCDIKHelper( mesh, iks ) {
 
@@ -16210,7 +16180,6 @@ var Three = (function (exports) {
 		CCDIKHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 			constructor: CCDIKHelper,
-
 			
 			updateMatrixWorld: function () {
 
@@ -16877,7 +16846,6 @@ var Three = (function (exports) {
 	CylinderBufferGeometry.prototype.constructor = CylinderBufferGeometry;
 
 	var MMDPhysics = ( function () {
-
 		
 		function MMDPhysics( mesh, rigidBodyParams, constraintParams, params ) {
 
@@ -16893,7 +16861,6 @@ var Three = (function (exports) {
 			this.manager = new ResourceManager();
 
 			this.mesh = mesh;
-
 			
 			this.unitStep = ( params.unitStep !== undefined ) ? params.unitStep : 1 / 65;
 			this.maxStepNum = ( params.maxStepNum !== undefined ) ? params.maxStepNum : 3;
@@ -16913,7 +16880,6 @@ var Three = (function (exports) {
 		MMDPhysics.prototype = {
 
 			constructor: MMDPhysics,
-
 			
 			update: function ( delta ) {
 
@@ -16976,7 +16942,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			reset: function () {
 
@@ -16989,7 +16954,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			warmup: function ( cycles ) {
 
@@ -17002,7 +16966,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			setGravity: function ( gravity ) {
 
@@ -17012,7 +16975,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			createHelper: function () {
 
@@ -17108,7 +17070,6 @@ var Three = (function (exports) {
 
 				}
 
-
 			},
 
 			_stepSimulation: function ( delta ) {
@@ -17155,7 +17116,6 @@ var Three = (function (exports) {
 			}
 
 		};
-
 		
 		function ResourceManager() {
 
@@ -17606,7 +17566,6 @@ var Three = (function (exports) {
 			}
 
 		};
-
 		
 		function RigidBody( mesh, world, params, manager ) {
 
@@ -17627,7 +17586,6 @@ var Three = (function (exports) {
 		RigidBody.prototype = {
 
 			constructor: MMDPhysics.RigidBody,
-
 			
 			reset: function () {
 
@@ -17635,7 +17593,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			updateFromBone: function () {
 
@@ -17649,7 +17606,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			updateBone: function () {
 
@@ -17744,7 +17700,6 @@ var Three = (function (exports) {
 				if ( params.type === 0 ) {
 
 					body.setCollisionFlags( body.getCollisionFlags() | 2 );
-
 					
 					body.setActivationState( 4 );
 
@@ -17889,7 +17844,6 @@ var Three = (function (exports) {
 			}
 
 		};
-
 		
 		function Constraint( mesh, world, bodyA, bodyB, params, manager ) {
 
@@ -17982,7 +17936,6 @@ var Three = (function (exports) {
 					}
 
 				}
-
 				
 				if ( constraint.setParam !== undefined ) {
 
@@ -18013,7 +17966,6 @@ var Three = (function (exports) {
 			}
 
 		};
-
 		
 		function MMDPhysicsHelper( mesh, physics ) {
 
@@ -18067,7 +18019,6 @@ var Three = (function (exports) {
 		MMDPhysicsHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 			constructor: MMDPhysicsHelper,
-
 			
 			updateMatrixWorld: function () {
 
@@ -18187,7 +18138,6 @@ var Three = (function (exports) {
 	} )();
 
 	var MMDAnimationHelper = ( function () {
-
 		
 		function MMDAnimationHelper( params ) {
 
@@ -18232,7 +18182,6 @@ var Three = (function (exports) {
 		MMDAnimationHelper.prototype = {
 
 			constructor: MMDAnimationHelper,
-
 			
 			add: function ( object, params ) {
 
@@ -18265,7 +18214,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			remove: function ( object ) {
 
@@ -18296,7 +18244,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			update: function ( delta ) {
 
@@ -18315,7 +18262,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			pose: function ( mesh, vpd, params ) {
 
@@ -18367,7 +18313,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			enable: function ( key, enabled ) {
 
@@ -18393,7 +18338,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-
 			
 			createGrantSolver: function ( mesh ) {
 
@@ -18760,7 +18704,6 @@ var Three = (function (exports) {
 					params );
 
 			},
-
 			
 			_syncDuration: function () {
 
@@ -18892,7 +18835,6 @@ var Three = (function (exports) {
 				}
 
 			},
-
 			
 			_saveBones: function ( mesh ) {
 
@@ -19001,7 +18943,6 @@ var Three = (function (exports) {
 		};
 
 		//
-
 		
 		function AudioManager( audio, params ) {
 
@@ -19022,7 +18963,6 @@ var Three = (function (exports) {
 		AudioManager.prototype = {
 
 			constructor: AudioManager,
-
 			
 			control: function ( delta ) {
 
@@ -19064,7 +19004,6 @@ var Three = (function (exports) {
 			}
 
 		};
-
 		
 		function GrantSolver( mesh, grants ) {
 
@@ -19076,7 +19015,6 @@ var Three = (function (exports) {
 		GrantSolver.prototype = {
 
 			constructor: GrantSolver,
-
 			
 			update: function () {
 

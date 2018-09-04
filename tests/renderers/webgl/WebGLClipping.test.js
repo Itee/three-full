@@ -3115,7 +3115,6 @@ var Three = (function (exports) {
 
 			}
 
-
 		};
 
 		function resetGlobalState() {

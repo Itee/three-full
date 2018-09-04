@@ -1,9 +1,5 @@
 import { Node } from './Node.js'
 
-
-
-
-
 function VarNode( type, value ) {
 
 	Node.call( this, type );

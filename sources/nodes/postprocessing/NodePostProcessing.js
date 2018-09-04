@@ -10,11 +10,6 @@ import {
 	RGBAFormat
 } from '../../constants.js'
 
-
-
-
-
-
 function NodePostProcessing( renderer, renderTarget ) {
 
 	if ( renderTarget === undefined ) {

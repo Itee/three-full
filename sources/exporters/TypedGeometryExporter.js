@@ -1,7 +1,4 @@
 
-
-
-
 var TypedGeometryExporter = function () {};
 
 TypedGeometryExporter.prototype = {

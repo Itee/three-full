@@ -1,9 +1,5 @@
 import { TempNode } from '../core/TempNode.js'
 
-
-
-
-
 var vertexDict = [ 'color', 'color2' ],
 	fragmentDict = [ 'vColor', 'vColor2' ];
 

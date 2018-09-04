@@ -1,9 +1,5 @@
 import { TempNode } from './TempNode.js'
 
-
-
-
-
 var declarationRegexp = /^struct\s*([a-z_0-9]+)\s*{\s*((.|\n)*?)}/img,
 	propertiesRegexp = /\s*(\w*?)\s*(\w*?)(\=|\;)/img;
 
