@@ -739,6 +739,7 @@ gulp.task( 'convert-three', ( done ) => {
        .setExcludes( config.excludes )
        .setOutput( config.output )
        .setEdgeCases( config.edgeCases )
+       .setBanner( config.banner )
        .convert( () => {
 
            copyPolyfills()

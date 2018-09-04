@@ -173,7 +173,7 @@ function _excludesFilesPaths ( filePaths, excludes ) {
         filePath = filePaths[ filePathIndex ]
 
         if ( isExclude( filePath ) ) {
-            console.log( 'Exclude: ' + filePath )
+            //            console.log( 'Exclude: ' + filePath )
             continue
         }
 
@@ -278,7 +278,7 @@ function _filterJavascriptFiles ( filePaths ) {
         // Not a js file like fonts or shaders
         const fileExtension = path.extname( filePath )
         if ( fileExtension !== '.js' ) {
-            console.log( 'Not Js:  ' + filePath )
+            //            console.log( 'Not Js:  ' + filePath )
             continue
         }
 
@@ -311,14 +311,14 @@ function _createFoldersTree ( folderPath ) {
 
 }
 
-function _convertFile ( fileDatas ) {
+function _convertFile ( banner, fileDatas ) {
 
     const outputPath = fileDatas.output
 
     const formatedImports = _formatImportStatements( outputPath, fileDatas.imports )
     const formatedFile    = _formatReplacementStatements( fileDatas.file, fileDatas.replacements )
     const formatedExports = _formatExportStatements( outputPath, fileDatas.exports )
-    const outputFile      = formatedImports + formatedFile + formatedExports
+    const outputFile      = banner + formatedImports + formatedFile + formatedExports
 
     _createFoldersTree( path.dirname( outputPath ) )
 
@@ -326,13 +326,14 @@ function _convertFile ( fileDatas ) {
 
 }
 
-function _copyFile ( fileDatas ) {
+function _copyFile ( banner, fileDatas ) {
 
     const outputPath = fileDatas.output
+    const file       = banner + fileDatas.file
 
     _createFoldersTree( path.dirname( outputPath ) )
 
-    fs.writeFileSync( outputPath, fileDatas.file )
+    fs.writeFileSync( outputPath, file )
 
 }
 
@@ -790,7 +791,6 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
             const relativeFilePath           = (notStartWithDot) ? './' + path.join( relativePath, exporterBaseName ) : path.join( relativePath, exporterBaseName )
             const relativeFilePathNormalized = relativeFilePath.replace( /\\/g, '/' )
 
-
             if ( !importsMap[ relativeFilePathNormalized ] ) {
                 importsMap[ relativeFilePathNormalized ] = []
             }
@@ -1116,7 +1116,7 @@ function _getExportsStatementInLibFile ( file ) {
 
 function _getExportsFor ( file, exportsOverride = undefined ) {
 
-    if( exportsOverride ) {
+    if ( exportsOverride ) {
         return exportsOverride
     }
 
@@ -1328,6 +1328,7 @@ function Es6 () {
     this.excludes  = []
     this.output    = ''
     this.edgeCases = []
+    this.banner    = ''
 
 }
 
@@ -1398,12 +1399,23 @@ Object.assign( Es6.prototype, {
 
     },
 
+    setBanner: function setBanner ( banner ) {
+
+        if ( isNotString( banner ) ) { throw new TypeError( 'Invalid banner, expect a string.' )}
+
+        this.banner = banner
+
+        return this
+
+    },
+
     convert: function convert ( callback ) {
 
         const inputs   = this.inputs
         const excludes = this.excludes
         const output   = _output = this.output
         const edgeCases = this.edgeCases
+        const banner    = this.banner
 
         const allFilesPaths       = _getFilesPathsUnder( inputs )
         const availableFilesPaths = _excludesFilesPaths( allFilesPaths, excludes )
@@ -1426,12 +1438,12 @@ Object.assign( Es6.prototype, {
             if ( fileDatas.isJavascript ) {
 
                 //                console.log('Convert: ' + fileDatas.path)
-                _convertFile( fileDatas )
+                _convertFile( banner, fileDatas )
 
             } else {
 
                 //                console.log('Copy:    ' + fileDatas.path)
-                _copyFile( fileDatas )
+                _copyFile( banner, fileDatas )
 
             }
 
