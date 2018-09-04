@@ -791,7 +791,6 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
             const relativeFilePath           = (notStartWithDot) ? './' + path.join( relativePath, exporterBaseName ) : path.join( relativePath, exporterBaseName )
             const relativeFilePathNormalized = relativeFilePath.replace( /\\/g, '/' )
 
-
             if ( !importsMap[ relativeFilePathNormalized ] ) {
                 importsMap[ relativeFilePathNormalized ] = []
             }
@@ -1117,7 +1116,7 @@ function _getExportsStatementInLibFile ( file ) {
 
 function _getExportsFor ( file, exportsOverride = undefined ) {
 
-    if( exportsOverride ) {
+    if ( exportsOverride ) {
         return exportsOverride
     }
 
