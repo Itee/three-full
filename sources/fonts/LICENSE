@@ -1,3 +1,6 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Copyright � 2004 by MAGENTA Ltd. All Rights Reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of the fonts accompanying this license ("Fonts") and associated documentation files (the "Font Software"), to reproduce and distribute the Font Software, including without limitation the rights to use, copy, merge, publish, distribute, and/or sell copies of the Font Software, and to permit persons to whom the Font Software is furnished to do so, subject to the following conditions:
