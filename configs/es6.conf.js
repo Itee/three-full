@@ -866,6 +866,12 @@ module.exports = {
 			outputOverride: 'misc/SimplexNoise.js',
             exportsOverride: [ 'SimplexNoise' ]
 		},
+		SkeletonUtils: {
+			replacements: [
+                [ 'new Vector2( targetParentPos.x, targetParentPos.y ),', 'new Vector2( targetParentPos.x, targetParentPos.y )' ],
+                [ 'new Vector2( sourceParentPos.x, sourceParentPos.y ),', 'new Vector2( sourceParentPos.x, sourceParentPos.y )' ]
+			]
+		},
 		Sky: {
 			imports: [ 'UniformsUtils' ]
 		},
