@@ -173,7 +173,7 @@ function _excludesFilesPaths ( filePaths, excludes ) {
         filePath = filePaths[ filePathIndex ]
 
         if ( isExclude( filePath ) ) {
-            console.log( 'Exclude: ' + filePath )
+            //            console.log( 'Exclude: ' + filePath )
             continue
         }
 
@@ -278,7 +278,7 @@ function _filterJavascriptFiles ( filePaths ) {
         // Not a js file like fonts or shaders
         const fileExtension = path.extname( filePath )
         if ( fileExtension !== '.js' ) {
-            console.log( 'Not Js:  ' + filePath )
+            //            console.log( 'Not Js:  ' + filePath )
             continue
         }
 
