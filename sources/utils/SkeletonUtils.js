@@ -9,8 +9,6 @@ import { SkeletonHelper } from '../helpers/SkeletonHelper.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Euler } from '../math/Euler.js'
 
-
-
 'use strict';
 
 var SkeletonUtils = {
@@ -399,12 +397,12 @@ var SkeletonUtils = {
 					
 					targetDir.subVectors( 
 						new Vector2( targetPos.x, targetPos.y ),
-						new Vector2( targetParentPos.x, targetParentPos.y ), 
+						new Vector2( targetParentPos.x, targetParentPos.y ) 
 					).normalize();
 					
 					sourceDir.subVectors( 
 						new Vector2( sourcePos.x, sourcePos.y ),
-						new Vector2( sourceParentPos.x, sourceParentPos.y ),
+						new Vector2( sourceParentPos.x, sourceParentPos.y )
 					).normalize();
 					
 					var laterialAngle = targetDir.angle() - sourceDir.angle();

@@ -14051,12 +14051,12 @@ var Three = (function (exports) {
 						
 						targetDir.subVectors( 
 							new Vector2( targetPos.x, targetPos.y ),
-							new Vector2( targetParentPos.x, targetParentPos.y ), 
+							new Vector2( targetParentPos.x, targetParentPos.y ) 
 						).normalize();
 						
 						sourceDir.subVectors( 
 							new Vector2( sourcePos.x, sourcePos.y ),
-							new Vector2( sourceParentPos.x, sourceParentPos.y ),
+							new Vector2( sourceParentPos.x, sourceParentPos.y )
 						).normalize();
 						
 						var laterialAngle = targetDir.angle() - sourceDir.angle();
