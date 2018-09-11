@@ -15366,8 +15366,8 @@ var Three = (function (exports) {
 			var buildCode = function ( funcBuildObject, funcBuildSingleton ) {
 				var workerCode = '';
 				workerCode += '\n\n';
-				workerCode += 'var LoaderSupport = {};\n\n';
-				workerCode += funcBuildObject( 'LoaderSupport.Validator', Validator );
+				workerCode += 'THREE = { ' + LoaderSupport.constructor.name + ': {} };\n\n';
+				workerCode += funcBuildObject( '' + LoaderSupport.constructor.name + '.' + LoaderSupport.Validator.constructor.name, Validator );
 				workerCode += funcBuildSingleton( 'Parser', Parser );
 
 				return workerCode;
