@@ -105,6 +105,7 @@ export { NodeMaterialLoader } from './loaders/NodeMaterialLoader.js'
 export { OBJLoader } from './loaders/OBJLoader.js'
 export { OBJLoader2 } from './loaders/OBJLoader2.js'
 export { PCDLoader } from './loaders/PCDLoader.js'
+export { PCDLoader2 } from './loaders/PCDLoader2.js'
 export { PDBLoader } from './loaders/PDBLoader.js'
 export { PlayCanvasLoader } from './loaders/PlayCanvasLoader.js'
 export { PLYLoader } from './loaders/PLYLoader.js'
@@ -814,4 +815,3 @@ export {
 	arrayMin,
 	arrayMax
 } from './utils.js'
-
