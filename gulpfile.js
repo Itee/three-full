@@ -660,6 +660,18 @@ gulp.task( 'create-function-node-implementation-file', ( done ) => {
 
 } )
 
+gulp.task( 'fix-objloader2', ( done ) => {
+
+    const firstReplacement  = 'workerCode += \'THREE = { \' + LoaderSupport.constructor.name + \': {} };\\n\\n\';'
+    const secondReplacement = 'workerCode += funcBuildObject( \'THREE.\' + LoaderSupport.constructor.name + \'.\' + LoaderSupport.Validator.constructor.name, Validator );'
+
+    return gulp.src( './node_modules/three/examples/js/loaders/OBJLoader2.js' )
+               .pipe( replace( [ [ /workerCode\s*\+=\s*'THREE\s*=\s*{\s*LoaderSupport:\s*{}\s*};\\n\\n';/, firstReplacement ] ] ) )
+               .pipe( replace( [ [ /workerCode \+= funcBuildObject\( 'THREE\.LoaderSupport\.Validator', Validator \);/, secondReplacement ] ] ) )
+               .pipe( gulp.dest( './node_modules/three/examples/js/loaders' ) )
+
+} )
+
 /**
  * Fix circular dependency between Line and LineSegments
  */
@@ -683,7 +695,8 @@ gulp.task( 'patch-three',
         'fix-function-node-export',
         'create-function-node-declaration-file',
         'create-function-node-implementation-file',
-        'fix-line'
+        'fix-line',
+        'fix-objloader2'
     )
 )
 
