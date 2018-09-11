@@ -13,6 +13,15 @@ const replace = require( 'gulp-batch-replace' )
 const del     = require( 'del' )
 const rollup  = require( 'rollup' )
 
+const log     = util.log
+const colors  = util.colors
+const red     = colors.red
+const green   = colors.green
+const blue    = colors.blue
+const cyan    = colors.cyan
+const yellow  = colors.yellow
+const magenta = colors.magenta
+
 gulp.task( 'help', ( done ) => {
 
     const log    = util.log
