@@ -11,7 +11,7 @@
     "lint": "gulp lint",
     "convert": "gulp convert-three",
     "build": "gulp build-three",
-    "build-test": "rollup -c configs/rollup.tests.conf.js",
+    "build-test": "gulp build-test",
     "release": "gulp release"
   },
   "repository": {
@@ -38,7 +38,7 @@
     "gulp-batch-replace": "^0.0.0",
     "gulp-eslint": "^5.0.0",
     "gulp-util": "^3.0.8",
-    "rollup": "^0.65.0",
+    "rollup": "^0.65.2",
     "rollup-plugin-buble": "^0.19.2",
     "rollup-plugin-uglify-es": "0.0.1",
     "three": "^0.96.0"

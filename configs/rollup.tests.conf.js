@@ -50,7 +50,7 @@ function _getFilesPathsUnder ( filePaths ) {
     function checkStateOf ( filePath ) {
 
         if ( !_fileExistForPath( filePath ) ) {
-            console.error( 'ES6Converter: Invalid file path "' + filePath + '"' )
+            console.error( 'Invalid file path "' + filePath + '"' )
             return
         }
 
@@ -90,7 +90,6 @@ function _excludesFilesPaths ( filePaths, excludes ) {
         filePath = filePaths[ filePathIndex ]
 
         if ( isExclude( filePath ) ) {
-            console.log( 'Exclude: ' + filePath )
             continue
         }
 
@@ -147,7 +146,6 @@ function _filterJavascriptFiles ( filePaths ) {
         // Not a js file like fonts or shaders
         const fileExtension = path.extname( filePath )
         if ( fileExtension !== '.js' ) {
-            console.log( 'Not Js:  ' + filePath )
             continue
         }
 
@@ -234,4 +232,4 @@ function RollupTestConfigurationBuilder () {
 
 }
 
-export default RollupTestConfigurationBuilder()
+module.exports = RollupTestConfigurationBuilder()

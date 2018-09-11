@@ -13,6 +13,15 @@ const replace = require( 'gulp-batch-replace' )
 const del     = require( 'del' )
 const rollup  = require( 'rollup' )
 
+const log     = util.log
+const colors  = util.colors
+const red     = colors.red
+const green   = colors.green
+const blue    = colors.blue
+const cyan    = colors.cyan
+const yellow  = colors.yellow
+const magenta = colors.magenta
+
 gulp.task( 'help', ( done ) => {
 
     const log    = util.log
@@ -660,6 +669,18 @@ gulp.task( 'create-function-node-implementation-file', ( done ) => {
 
 } )
 
+gulp.task( 'fix-objloader2', ( done ) => {
+
+    const firstReplacement  = 'workerCode += \'THREE = { \' + LoaderSupport.constructor.name + \': {} };\\n\\n\';'
+    const secondReplacement = 'workerCode += funcBuildObject( \'THREE.\' + LoaderSupport.constructor.name + \'.\' + LoaderSupport.Validator.constructor.name, Validator );'
+
+    return gulp.src( './node_modules/three/examples/js/loaders/OBJLoader2.js' )
+               .pipe( replace( [ [ /workerCode\s*\+=\s*'THREE\s*=\s*{\s*LoaderSupport:\s*{}\s*};\\n\\n';/, firstReplacement ] ] ) )
+               .pipe( replace( [ [ /workerCode \+= funcBuildObject\( 'THREE\.LoaderSupport\.Validator', Validator \);/, secondReplacement ] ] ) )
+               .pipe( gulp.dest( './node_modules/three/examples/js/loaders' ) )
+
+} )
+
 /**
  * Fix circular dependency between Line and LineSegments
  */
@@ -683,7 +704,8 @@ gulp.task( 'patch-three',
         'fix-function-node-export',
         'create-function-node-declaration-file',
         'create-function-node-implementation-file',
-        'fix-line'
+        'fix-line',
+        'fix-objloader2'
     )
 )
 
@@ -705,7 +727,7 @@ gulp.task( 'clean', () => {
  * @method npm run lint
  * @description Will lint the sources files and try to fix the style when possible
  */
-gulp.task( 'lint', () => {
+gulp.task( 'lint-sources', () => {
 
     const eslintConfig = require( './configs/eslint.conf.js' )
     const filesToLint  = [ './sources/**/*.js' ]
@@ -717,6 +739,21 @@ gulp.task( 'lint', () => {
                .pipe( eslint.failAfterError() )
 
 } )
+
+gulp.task( 'lint-tests', () => {
+
+    const eslintConfig = require( './configs/eslint.conf.js' )
+    const filesToLint  = [ './tests/**/*.js' ]
+
+    return gulp.src( filesToLint )
+               .pipe( eslint( eslintConfig ) )
+               .pipe( eslint.format( 'stylish' ) )
+               .pipe( gulp.dest( './tests' ) )
+               .pipe( eslint.failAfterError() )
+
+} )
+
+gulp.task( 'lint', gulp.parallel('lint-sources', 'lint-tests') )
 
 /////////////////////
 ///// CONVERT ///////
@@ -779,6 +816,50 @@ gulp.task( 'convert-three', ( done ) => {
 /////////////////////
 ////// BUILDS ///////
 /////////////////////
+
+gulp.task( 'build-test', ( done ) => {
+
+    const configs = require( './configs/rollup.tests.conf' )
+
+    nextBuild()
+
+    function nextBuild () {
+        'use strict'
+
+        if ( configs.length === 0 ) {
+            done()
+            return
+        }
+
+        build( configs.pop(), nextBuild )
+
+    }
+
+    function build ( config, done ) {
+
+        log( `Building ${config.input}` )
+
+        rollup.rollup( config )
+              .then( ( bundle ) => {
+
+                  bundle.write( config.output )
+                        .then( ( r ) => {
+                            done()
+                        } )
+                        .catch( ( error ) => {
+                            log( red( error ) )
+                            done()
+                        } )
+
+              } )
+              .catch( ( error ) => {
+                  log( red( error ) )
+                  done()
+              } )
+
+    }
+
+} )
 
 gulp.task( 'build-amd-dev', ( done ) => {
 
@@ -1059,6 +1140,7 @@ gulp.task( 'release',
     gulp.series(
         'clean',
         'convert-three',
+        'build-test',
         'lint',
         'build-three'
     )
