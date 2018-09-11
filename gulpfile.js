@@ -793,6 +793,50 @@ gulp.task( 'convert-three', ( done ) => {
 ////// BUILDS ///////
 /////////////////////
 
+gulp.task( 'build-test', ( done ) => {
+
+    const configs = require( './configs/rollup.tests.conf' )
+
+    nextBuild()
+
+    function nextBuild () {
+        'use strict'
+
+        if ( configs.length === 0 ) {
+            done()
+            return
+        }
+
+        build( configs.pop(), nextBuild )
+
+    }
+
+    function build ( config, done ) {
+
+        log( `Building ${config.input}` )
+
+        rollup.rollup( config )
+              .then( ( bundle ) => {
+
+                  bundle.write( config.output )
+                        .then( ( r ) => {
+                            done()
+                        } )
+                        .catch( ( error ) => {
+                            log( red( error ) )
+                            done()
+                        } )
+
+              } )
+              .catch( ( error ) => {
+                  log( red( error ) )
+                  done()
+              } )
+
+    }
+
+} )
+
 gulp.task( 'build-amd-dev', ( done ) => {
 
     const onProduction  = false

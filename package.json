@@ -11,7 +11,7 @@
     "lint": "gulp lint",
     "convert": "gulp convert-three",
     "build": "gulp build-three",
-    "build-test": "rollup -c configs/rollup.tests.conf.js",
+    "build-test": "gulp build-test",
     "release": "gulp release"
   },
   "repository": {
