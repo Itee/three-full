@@ -727,7 +727,7 @@ gulp.task( 'clean', () => {
  * @method npm run lint
  * @description Will lint the sources files and try to fix the style when possible
  */
-gulp.task( 'lint', () => {
+gulp.task( 'lint-sources', () => {
 
     const eslintConfig = require( './configs/eslint.conf.js' )
     const filesToLint  = [ './sources/**/*.js' ]
@@ -739,6 +739,21 @@ gulp.task( 'lint', () => {
                .pipe( eslint.failAfterError() )
 
 } )
+
+gulp.task( 'lint-tests', () => {
+
+    const eslintConfig = require( './configs/eslint.conf.js' )
+    const filesToLint  = [ './tests/**/*.js' ]
+
+    return gulp.src( filesToLint )
+               .pipe( eslint( eslintConfig ) )
+               .pipe( eslint.format( 'stylish' ) )
+               .pipe( gulp.dest( './tests' ) )
+               .pipe( eslint.failAfterError() )
+
+} )
+
+gulp.task( 'lint', gulp.parallel('lint-sources', 'lint-tests') )
 
 /////////////////////
 ///// CONVERT ///////
