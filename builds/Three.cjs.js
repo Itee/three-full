@@ -1,6 +1,15 @@
 // Made by Itee (https://github.com/Itee) with ES6 Convertor script
 
-var window = window || (function(){ console.warn("It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly."); return {} })()
+var window = {};
+if(window && window instanceof Window) {
+    window = window;
+} else if ( global && global instanceof Window ) {
+    window = global;
+} else if ( GLOBAL && GLOBAL instanceof Window ) {
+    window = GLOBAL;
+} else {
+    console.error("It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly.");
+}
 
 
 'use strict';
@@ -55137,7 +55146,7 @@ DDSLoader.parse = function ( buffer, loadMipmaps ) {
 
 	var DDS_MAGIC = 0x20534444;
 
-	var DDSD_MIPMAPCOUNT = 0x20000;
+	var DDSD_MIPMAPCOUNT = 0x20000;
 
 	var DDSCAPS2_CUBEMAP = 0x200,
 		DDSCAPS2_CUBEMAP_POSITIVEX = 0x400,
@@ -55145,9 +55154,9 @@ DDSLoader.parse = function ( buffer, loadMipmaps ) {
 		DDSCAPS2_CUBEMAP_POSITIVEY = 0x1000,
 		DDSCAPS2_CUBEMAP_NEGATIVEY = 0x2000,
 		DDSCAPS2_CUBEMAP_POSITIVEZ = 0x4000,
-		DDSCAPS2_CUBEMAP_NEGATIVEZ = 0x8000;
+		DDSCAPS2_CUBEMAP_NEGATIVEZ = 0x8000;
 
-	var DDPF_FOURCC = 0x4;
+	var DDPF_FOURCC = 0x4;
 
 	function fourCCToInt32( value ) {
 
@@ -67191,7 +67200,7 @@ RGBELoader.prototype._parser = function ( buffer ) {
 		}
 	;
 
-	var byteArray = new Uint8Array( buffer );
+	var byteArray = new Uint8Array( buffer );
 	byteArray.pos = 0;
 	var rgbe_header_info = RGBE_ReadHeader( byteArray );
 
@@ -98288,7 +98297,7 @@ BoxHelper.prototype.setFromObject = function ( object ) {
 				faces,
 				useFaces,
 				vertices,
-				useVertices;
+				useVertices;
 
 			// ensure object is not object data
 
