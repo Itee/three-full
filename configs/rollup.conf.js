@@ -18,7 +18,16 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
 
     let banner = '// Made by Itee (https://github.com/Itee) with ES6 Convertor script\n\n'
     if( _format === 'cjs' ) {
-        banner += 'var window = window || (function(){ console.warn("It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly."); return {} })()\n\n'
+        banner += 'var window = {};\n' +
+            'if(window && window instanceof Window) {\n' +
+            '    window = window;\n' +
+            '} else if ( global && global instanceof Window ) {\n' +
+            '    window = global;\n' +
+            '} else if ( GLOBAL && GLOBAL instanceof Window ) {\n' +
+            '    window = GLOBAL;\n' +
+            '} else {\n' +
+            '    console.error("It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly.");\n' +
+            '}\n\n'
     }
 
     function glsl () {
