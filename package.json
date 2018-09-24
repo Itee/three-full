@@ -1,6 +1,6 @@
 {
   "name": "three-full",
-  "version": "11.3.0",
+  "version": "11.3.1",
   "description": "The famous ThreeJs library with integrated examples as es6 modules",
   "main": "builds/Three.cjs.js",
   "module": "builds/Three.es.js",

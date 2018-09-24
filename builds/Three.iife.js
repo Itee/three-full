@@ -55134,7 +55134,7 @@ var Three = (function (exports) {
 
   	var DDS_MAGIC = 0x20534444;
 
-  	var DDSD_MIPMAPCOUNT = 0x20000;
+  	var DDSD_MIPMAPCOUNT = 0x20000;
 
   	var DDSCAPS2_CUBEMAP = 0x200,
   		DDSCAPS2_CUBEMAP_POSITIVEX = 0x400,
@@ -55142,9 +55142,9 @@ var Three = (function (exports) {
   		DDSCAPS2_CUBEMAP_POSITIVEY = 0x1000,
   		DDSCAPS2_CUBEMAP_NEGATIVEY = 0x2000,
   		DDSCAPS2_CUBEMAP_POSITIVEZ = 0x4000,
-  		DDSCAPS2_CUBEMAP_NEGATIVEZ = 0x8000;
+  		DDSCAPS2_CUBEMAP_NEGATIVEZ = 0x8000;
 
-  	var DDPF_FOURCC = 0x4;
+  	var DDPF_FOURCC = 0x4;
 
   	function fourCCToInt32( value ) {
 
@@ -67188,7 +67188,7 @@ var Three = (function (exports) {
   		}
   	;
 
-  	var byteArray = new Uint8Array( buffer );
+  	var byteArray = new Uint8Array( buffer );
   	byteArray.pos = 0;
   	var rgbe_header_info = RGBE_ReadHeader( byteArray );
 
@@ -98285,7 +98285,7 @@ var Three = (function (exports) {
   				faces,
   				useFaces,
   				vertices,
-  				useVertices;
+  				useVertices;
 
   			// ensure object is not object data
 

@@ -204,6 +204,10 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+##### 11.3.1:
+
+* Fix global window declaration for cjs build usage
+
 ##### 11.3.0:
 
 * Fix ObjLoader2 worker code
