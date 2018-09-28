@@ -1,17 +1,21 @@
 // Made by Itee (https://github.com/Itee) with ES6 Convertor script
 
 var window = {};
-if(window && window instanceof Window) {
-    window = window;
-} else if ( global && global instanceof Window ) {
-    window = global;
-} else if ( GLOBAL && GLOBAL instanceof Window ) {
-    window = GLOBAL;
+if( typeof Window !== 'undefined' ) {
+
+    if(window && window instanceof Window ) {
+        window = window;
+    } else if ( global && global instanceof Window ) {
+        window = global;
+    } else if ( GLOBAL && GLOBAL instanceof Window ) {
+        window = GLOBAL;
+    } else {
+        console.warn("Unable to find classic window global variable declaration. Some dependencies that depending on global window variable could not work properly.");
+    }
+
 } else {
-    console.error("It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly.");
+    console.warn("It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly.");
 }
-
-
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
