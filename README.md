@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 11.3.0 is now available under Three r0.96.0 !!!**
+**The version 11.3.2 is now available under Three r0.96.0 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -203,6 +203,10 @@ All others folders under example file tree will be mapped to their counter-part 
 
 
 #### Change log ####
+
+##### 11.3.2:
+
+* Fix global window declaration for cjs build usage (again)
 
 ##### 11.3.1:
 
