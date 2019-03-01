@@ -518,6 +518,7 @@ module.exports = {
 		MTLLoader: {
 			imports: [
 				'DefaultLoadingManager',
+				'LoaderUtils',
 				'Loader'
 			]
 		},
