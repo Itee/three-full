@@ -154,7 +154,6 @@ module.exports = {
 			imports: [
 				'DefaultLoadingManager',
 				'LoaderUtils',
-				'Loader',
 				'_Math'
 			]
 		},
