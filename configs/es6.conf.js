@@ -962,6 +962,12 @@ module.exports = {
 		UCSCharacter: {
 			outputOverride: 'objects/UCSCharacter.js'
 		},
+		UniformsUtils: {
+			exports: [
+				'cloneUniforms',
+                'mergeUniforms'
+			]
+		},
 		UnrealBloomPass: {
 			imports: [
 				'LuminosityHighPassShader',
