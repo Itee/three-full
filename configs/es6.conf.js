@@ -527,20 +527,6 @@ module.exports = {
         NodeBuilder: {
             imports: [ 'TextureCubeNode' ]
         },
-        NodeLib_Implementation: {
-            importsOverride: [
-                [ 'NodeLib', 'from', './NodeLib_Declaration' ],
-                'UVNode',
-                'PositionNode',
-                'NormalNode',
-                'TimerNode',
-                'ConstNode',
-                'FunctionNode'
-            ]
-        },
-		NodeMaterial: {
-			imports: [ 'NodeLib' ]
-		},
         NodeMaterialLoader: {
 			imports: [
 				'DefaultLoadingManager',
