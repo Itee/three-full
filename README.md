@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 11.3.2 is now available under Three r0.96.0 !!!**
+**The version 12.0.0 is now available under Three r0.97.0 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -206,6 +206,14 @@ All others folders under example file tree will be mapped to their counter-part 
 
 
 #### Change log ####
+
+
+##### 12.0.0:
+
+* Support of Three r97
+* Add cleaning step before right source files ( Remove extra blank lines and semi-colons)
+* Remove some useless patch about Nodes
+* Use new WebGL lib instead of Detector
 
 ##### 11.3.3:
 
