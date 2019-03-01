@@ -961,15 +961,6 @@ module.exports = {
 				'CopyShader'
 			]
 		},
-		Vector2Node: {
-			imports: [ 'NodeMaterial' ]
-		},
-		Vector3Node: {
-			imports: [ 'NodeMaterial' ]
-		},
-		Vector4Node: {
-			imports: [ 'NodeMaterial' ]
-		},
 		VolumeSlice: {
 			outputOverride: 'audio/VolumeSlice.js'
 		},
