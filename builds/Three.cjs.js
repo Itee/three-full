@@ -1,21 +1,54 @@
 // Made by Itee (https://github.com/Itee) with ES6 Convertor script
 
-var window = {};
-if( typeof Window !== 'undefined' ) {
+var DEBUG = (process && process.env && process.env.Debug);
+var window = getGlobalWindowObject();
 
-    if(window && window instanceof Window ) {
-        window = window;
-    } else if ( global && global instanceof Window ) {
-        window = global;
-    } else if ( GLOBAL && GLOBAL instanceof Window ) {
-        window = GLOBAL;
-    } else {
-        console.warn("Unable to find classic window global variable declaration. Some dependencies that depending on global window variable could not work properly.");
-    }
-
-} else {
-    console.warn("It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly.");
+function getGlobalWindowObject() {
+   
+   if( typeof Window !== 'undefined' ) {
+   
+       if(window && window instanceof Window ) {
+           return window;
+       } else if ( global ) {
+           
+           if( global instanceof Window ) {
+               return global;
+           } else if ( global.hasOwnProperty('window') && global.window instanceof Window ) {
+               return global.window;
+           } else if( DEBUG ) {
+               console.warn("Three-Full: Unable to assign global variable as window object. Some dependencies that depending on global window variable could not work properly.");
+           }
+           
+       } else if ( GLOBAL ) {
+           
+           if( GLOBAL instanceof Window ) {
+               return GLOBAL;
+           } else if ( GLOBAL.hasOwnProperty('window') && GLOBAL.window instanceof Window ) {
+               return GLOBAL.window;
+           } else if( DEBUG ) {
+               console.warn("Three-Full: Unable to assign GLOBAL variable as window object. Some dependencies that depending on global window variable could not work properly.");
+           }
+           
+       } else if ( self ) {
+           
+           if( self instanceof Window ) {
+               return self;
+           } else if ( self.hasOwnProperty('window') && self.window instanceof Window ) {
+               return self.window;
+           } else if( DEBUG ) {
+               console.warn("Three-Full: Unable to assign self variable as window object. Some dependencies that depending on global window variable could not work properly.");
+           }
+           
+       } else if( DEBUG ) {
+           console.warn("Three-Full: Unable to find classic window global variable declaration in [window, global, GLOBAL or self]. Some dependencies that depending on global window variable could not work properly.");
+       }
+   
+   } else if( DEBUG ) {
+       console.warn("Three-Full: It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly.");
+   }
 }
+
+
 'use strict';
 
 Object.defineProperty(exports, '__esModule', { value: true });
