@@ -754,6 +754,11 @@ module.exports = {
 				'_Math'
 			]
 		},
+		ReflectorNode: {
+            imports: [
+                'InputNode'
+            ]
+        },
 		RGBELoader: {
 			imports: [ 'DefaultLoadingManager' ],
 			replacements: [
