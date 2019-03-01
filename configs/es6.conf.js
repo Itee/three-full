@@ -991,6 +991,13 @@ module.exports = {
 				[ 'var WEBVR', 'var WebVR' ]
 			],
             exportsOverride: [ 'WebVR' ]
+		},
+		WebGL: {
+            replacements:    [
+                [ 'WEBGL', 'WebGL' ]
+            ],
+            exportsOverride: [ 'WebGL' ],
+			outputOverride: 'helpers/WebGL.js'
 		}
 	},
 	banner: '//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n' +
