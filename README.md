@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 12.0.0 is now available under Three r0.97.0 !!!**
+**The version 13.0.0 is now available under Three r0.98.0 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -207,6 +207,11 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+
+##### 13.0.0:
+
+* Support of Three r98
+* Some trouble could come from LoaderSupport using eval (/!\)
 
 ##### 12.0.0:
 
