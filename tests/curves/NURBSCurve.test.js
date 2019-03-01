@@ -4,7 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -152,7 +151,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix4() {
 
 		this.elements = [
@@ -1075,7 +1073,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Quaternion( x, y, z, w ) {
 
 		this._x = x || 0;
@@ -1230,6 +1227,8 @@ var Three = (function (exports) {
 	} );
 
 	Object.assign( Quaternion.prototype, {
+
+		isQuaternion: true,
 
 		set: function ( x, y, z, w ) {
 
@@ -1700,7 +1699,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -2421,7 +2419,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Curve() {
 
 		this.type = 'Curve';
@@ -2708,7 +2705,6 @@ var Three = (function (exports) {
 
 			normals[ 0 ].crossVectors( tangents[ 0 ], vec );
 			binormals[ 0 ].crossVectors( tangents[ 0 ], normals[ 0 ] );
-
 			// compute the slowly-varying normal and binormal vectors for each segment on the curve
 
 			for ( i = 1; i <= segments; i ++ ) {
@@ -2808,7 +2804,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector4( x, y, z, w ) {
 
 		this.x = x || 0;
@@ -3429,9 +3424,7 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var NURBSUtils = {
-		
 		findSpan: function( p,  u,  U ) {
 
 			var n = U.length - p - 1;
@@ -3471,7 +3464,6 @@ var Three = (function (exports) {
 			return mid;
 
 		},
-		
 		calcBasisFunctions: function( span, u, p, U ) {
 
 			var N = [];
@@ -3503,7 +3495,6 @@ var Three = (function (exports) {
 			 return N;
 
 		},
-		
 		calcBSplinePoint: function( p, U, P, u ) {
 
 			var span = this.findSpan( p, u, U );
@@ -3525,7 +3516,6 @@ var Three = (function (exports) {
 			return C;
 
 		},
-		
 		calcBasisFunctionDerivatives: function( span,  u,  p,  n,  U ) {
 
 			var zeroArr = [];
@@ -3643,7 +3633,6 @@ var Three = (function (exports) {
 			return ders;
 
 		},
-		
 		calcBSplineDerivatives: function( p,  U,  P,  u,  nd ) {
 
 			var du = nd < p ? nd : p;
@@ -3687,7 +3676,6 @@ var Three = (function (exports) {
 			return CK;
 
 		},
-		
 		calcKoverI: function( k, i ) {
 
 			var nom = 1;
@@ -3715,7 +3703,6 @@ var Three = (function (exports) {
 			return nom / denom;
 
 		},
-		
 		calcRationalCurveDerivatives: function ( Pders ) {
 
 			var nd = Pders.length;
@@ -3749,14 +3736,12 @@ var Three = (function (exports) {
 			return CK;
 
 		},
-		
 		calcNURBSDerivatives: function( p,  U,  P,  u,  nd ) {
 
 			var Pders = this.calcBSplineDerivatives( p, U, P, u, nd );
 			return this.calcRationalCurveDerivatives( Pders );
 
 		},
-		
 		calcSurfacePoint: function ( p, q, U, V, P, u, v, target ) {
 
 			var uspan = this.findSpan( p, u, U );
@@ -3796,7 +3781,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var NURBSCurve = function ( degree, knots , controlPoints , startKnot , endKnot  ) {
 
 		Curve.call( this );
@@ -3816,10 +3800,8 @@ var Three = (function (exports) {
 		}
 
 	};
-
 	NURBSCurve.prototype = Object.create( Curve.prototype );
 	NURBSCurve.prototype.constructor = NURBSCurve;
-
 	NURBSCurve.prototype.getPoint = function ( t ) {
 
 		var u = this.knots[ this.startKnot ] + t * ( this.knots[ this.endKnot ] - this.knots[ this.startKnot ] ); // linear mapping t->u
@@ -3837,7 +3819,6 @@ var Three = (function (exports) {
 		return new Vector3( hpoint.x, hpoint.y, hpoint.z );
 
 	};
-
 	NURBSCurve.prototype.getTangent = function ( t ) {
 
 		var u = this.knots[ 0 ] + t * ( this.knots[ this.knots.length - 1 ] - this.knots[ 0 ] );

@@ -4,7 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -152,7 +151,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix4() {
 
 		this.elements = [
@@ -1075,7 +1073,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Quaternion( x, y, z, w ) {
 
 		this._x = x || 0;
@@ -1230,6 +1227,8 @@ var Three = (function (exports) {
 	} );
 
 	Object.assign( Quaternion.prototype, {
+
+		isQuaternion: true,
 
 		set: function ( x, y, z, w ) {
 
@@ -1700,7 +1699,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -2421,7 +2419,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var MMDExporter = function () {
 
 		// Unicode to Shift_JIS table
@@ -2487,7 +2484,6 @@ var Three = (function (exports) {
 			return poseSkin.skeleton.bones;
 
 		}
-		
 		this.parseVpd = function ( skin, outputShiftJis, useOriginalBones ) {
 
 			if ( skin.isSkinnedMesh !== true ) {
@@ -2555,7 +2551,6 @@ var Three = (function (exports) {
 
 				var bone = bones[ i ];
 				var bone2 = bones2[ i ];
-				
 				if ( useOriginalBones === true &&
 					bone.userData.ik !== undefined &&
 					bone.userData.ik.originalMatrix !== undefined ) {
@@ -2594,7 +2589,6 @@ var Three = (function (exports) {
 			return ( outputShiftJis === true ) ? unicodeToShiftjis( lines ) : lines;
 
 		};
-
 	};
 
 	exports.MMDExporter = MMDExporter;

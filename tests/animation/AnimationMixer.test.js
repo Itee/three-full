@@ -13,7 +13,6 @@ var Three = (function (exports) {
 	var WrapAroundEnding = 2402;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function AnimationAction( mixer, clip, localRoot ) {
 
 		this._mixer = mixer;
@@ -674,7 +673,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function EventDispatcher() {}
 
 	Object.assign( EventDispatcher.prototype, {
@@ -758,7 +756,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Interpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		this.parameterPositions = parameterPositions;
@@ -995,7 +992,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -1035,7 +1031,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	// Characters [].:/ are reserved for track binding syntax.
 	var RESERVED_CHARS_RE = '\\[\\]\\.:\\/';
 
@@ -1102,7 +1097,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
 	function PropertyBinding( rootNode, path, parsedPath ) {
 
 		this.path = path;
@@ -1131,7 +1125,6 @@ var Three = (function (exports) {
 			}
 
 		},
-		
 		sanitizeNodeName: ( function () {
 
 			var reservedRe = new RegExp( '[' + RESERVED_CHARS_RE + ']', 'g' );
@@ -1581,7 +1574,6 @@ var Three = (function (exports) {
 						targetObject = targetObject[ objectName ];
 
 				}
-
 				if ( objectIndex !== undefined ) {
 
 					if ( targetObject[ objectIndex ] === undefined ) {
@@ -1663,7 +1655,6 @@ var Three = (function (exports) {
 							}
 
 						}
-
 					} else {
 
 						if ( ! targetObject.geometry.morphTargets ) {
@@ -1744,7 +1735,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -1892,7 +1882,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix4() {
 
 		this.elements = [
@@ -2815,7 +2804,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -3536,7 +3524,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Quaternion( x, y, z, w ) {
 
 		this._x = x || 0;
@@ -3691,6 +3678,8 @@ var Three = (function (exports) {
 	} );
 
 	Object.assign( Quaternion.prototype, {
+
+		isQuaternion: true,
 
 		set: function ( x, y, z, w ) {
 
@@ -4161,7 +4150,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function PropertyMixer( binding, typeName, valueSize ) {
 
 		this.binding = binding;
@@ -4317,7 +4305,6 @@ var Three = (function (exports) {
 			this.binding.setValue( this.buffer, originalValueOffset );
 
 		},
-
 		// mix functions
 
 		_select: function ( buffer, dstOffset, srcOffset, t, stride ) {
@@ -4359,7 +4346,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var AnimationUtils = {
 
 		// same as Array.prototype.slice, but also works on typed arrays
@@ -4519,7 +4505,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function CubicInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -4661,7 +4646,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DiscreteInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -4681,7 +4665,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function KeyframeTrack( name, times, values, interpolation ) {
 
 		if ( name === undefined ) throw new Error( 'KeyframeTrack: track name is undefined' );
@@ -5116,7 +5099,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function BooleanKeyframeTrack( name, times, values ) {
 
 		KeyframeTrack.call( this, name, times, values );
@@ -5142,7 +5124,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function ColorKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -5165,7 +5146,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function NumberKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -5185,7 +5165,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function QuaternionLinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -5219,7 +5198,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function QuaternionKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -5247,7 +5225,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function StringKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -5270,7 +5247,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function VectorKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -5290,7 +5266,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function AnimationClip( name, duration, tracks ) {
 
 		this.name = name;
@@ -5725,7 +5700,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function AnimationMixer( root ) {
 
 		this._root = root;
@@ -5890,12 +5864,10 @@ var Three = (function (exports) {
 			// 		knownActions: Array< AnimationAction >	- used as prototypes
 			// 		actionByRoot: AnimationAction			- lookup
 			// }
-
 			this._bindings = []; // 'nActiveBindings' followed by inactive ones
 			this._nActiveBindings = 0;
 
 			this._bindingsByRootAndName = {}; // inside: Map< name, PropertyMixer >
-
 			this._controlInterpolants = []; // same game as above
 			this._nActiveControlInterpolants = 0;
 
@@ -5999,7 +5971,6 @@ var Three = (function (exports) {
 			actions.pop();
 
 			action._cacheIndex = null;
-
 			var clipUuid = action._clip.uuid,
 				actionsByClip = this._actionsByClip,
 				actionsForClip = actionsByClip[ clipUuid ],
@@ -6015,7 +5986,6 @@ var Three = (function (exports) {
 			knownActionsForClip.pop();
 
 			action._byClipCacheIndex = null;
-
 			var actionByRoot = actionsForClip.actionByRoot,
 				rootUuid = ( action._localRoot || this._root ).uuid;
 
@@ -6178,7 +6148,6 @@ var Three = (function (exports) {
 			bindings[ prevIndex ] = lastActiveBinding;
 
 		},
-
 		// Memory management of Interpolants for weight and time scale
 
 		_lendControlInterpolant: function () {

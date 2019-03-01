@@ -4,7 +4,89 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function EventDispatcher() {}
 
+	Object.assign( EventDispatcher.prototype, {
+
+		addEventListener: function ( type, listener ) {
+
+			if ( this._listeners === undefined ) this._listeners = {};
+
+			var listeners = this._listeners;
+
+			if ( listeners[ type ] === undefined ) {
+
+				listeners[ type ] = [];
+
+			}
+
+			if ( listeners[ type ].indexOf( listener ) === - 1 ) {
+
+				listeners[ type ].push( listener );
+
+			}
+
+		},
+
+		hasEventListener: function ( type, listener ) {
+
+			if ( this._listeners === undefined ) return false;
+
+			var listeners = this._listeners;
+
+			return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
+
+		},
+
+		removeEventListener: function ( type, listener ) {
+
+			if ( this._listeners === undefined ) return;
+
+			var listeners = this._listeners;
+			var listenerArray = listeners[ type ];
+
+			if ( listenerArray !== undefined ) {
+
+				var index = listenerArray.indexOf( listener );
+
+				if ( index !== - 1 ) {
+
+					listenerArray.splice( index, 1 );
+
+				}
+
+			}
+
+		},
+
+		dispatchEvent: function ( event ) {
+
+			if ( this._listeners === undefined ) return;
+
+			var listeners = this._listeners;
+			var listenerArray = listeners[ event.type ];
+
+			if ( listenerArray !== undefined ) {
+
+				event.target = this;
+
+				var array = listenerArray.slice( 0 );
+
+				for ( var i = 0, l = array.length; i < l; i ++ ) {
+
+					array[ i ].call( this, event );
+
+				}
+
+			}
+
+		}
+
+	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -152,7 +234,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix4() {
 
 		this.elements = [
@@ -1075,7 +1156,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -1796,7 +1876,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Quaternion( x, y, z, w ) {
 
 		this._x = x || 0;
@@ -1951,6 +2030,8 @@ var Three = (function (exports) {
 	} );
 
 	Object.assign( Quaternion.prototype, {
+
+		isQuaternion: true,
 
 		set: function ( x, y, z, w ) {
 
@@ -2421,91 +2502,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function EventDispatcher() {}
-
-	Object.assign( EventDispatcher.prototype, {
-
-		addEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) this._listeners = {};
-
-			var listeners = this._listeners;
-
-			if ( listeners[ type ] === undefined ) {
-
-				listeners[ type ] = [];
-
-			}
-
-			if ( listeners[ type ].indexOf( listener ) === - 1 ) {
-
-				listeners[ type ].push( listener );
-
-			}
-
-		},
-
-		hasEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) return false;
-
-			var listeners = this._listeners;
-
-			return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
-
-		},
-
-		removeEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) return;
-
-			var listeners = this._listeners;
-			var listenerArray = listeners[ type ];
-
-			if ( listenerArray !== undefined ) {
-
-				var index = listenerArray.indexOf( listener );
-
-				if ( index !== - 1 ) {
-
-					listenerArray.splice( index, 1 );
-
-				}
-
-			}
-
-		},
-
-		dispatchEvent: function ( event ) {
-
-			if ( this._listeners === undefined ) return;
-
-			var listeners = this._listeners;
-			var listenerArray = listeners[ event.type ];
-
-			if ( listenerArray !== undefined ) {
-
-				event.target = this;
-
-				var array = listenerArray.slice( 0 );
-
-				for ( var i = 0, l = array.length; i < l; i ++ ) {
-
-					array[ i ].call( this, event );
-
-				}
-
-			}
-
-		}
-
-	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Euler( x, y, z, order ) {
 
 		this._x = x || 0;
@@ -2848,7 +2844,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Layers() {
 
 		this.mask = 1 | 0;
@@ -2890,7 +2885,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix3() {
 
 		this.elements = [
@@ -3269,7 +3263,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var object3DId = 0;
 
 	function Object3D() {
@@ -4141,10 +4134,12 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	var PointerLockControls = function ( camera ) {
+	var PointerLockControls = function ( camera, domElement ) {
 
 		var scope = this;
+
+		this.domElement = domElement || document.body;
+		this.isLocked = false;
 
 		camera.rotation.set( 0, 0, 0 );
 
@@ -4157,9 +4152,9 @@ var Three = (function (exports) {
 
 		var PI_2 = Math.PI / 2;
 
-		var onMouseMove = function ( event ) {
+		function onMouseMove( event ) {
 
-			if ( scope.enabled === false ) return;
+			if ( scope.isLocked === false ) return;
 
 			var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 			var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
@@ -4169,17 +4164,53 @@ var Three = (function (exports) {
 
 			pitchObject.rotation.x = Math.max( - PI_2, Math.min( PI_2, pitchObject.rotation.x ) );
 
+		}
+
+		function onPointerlockChange() {
+
+			if ( document.pointerLockElement === scope.domElement ) {
+
+				scope.dispatchEvent( { type: 'lock' } );
+
+				scope.isLocked = true;
+
+			} else {
+
+				scope.dispatchEvent( { type: 'unlock' } );
+
+				scope.isLocked = false;
+
+			}
+
+		}
+
+		function onPointerlockError() {
+
+			console.error( 'PointerLockControls: Unable to use Pointer Lock API' );
+
+		}
+
+		this.connect = function () {
+
+			document.addEventListener( 'mousemove', onMouseMove, false );
+			document.addEventListener( 'pointerlockchange', onPointerlockChange, false );
+			document.addEventListener( 'pointerlockerror', onPointerlockError, false );
+
+		};
+
+		this.disconnect = function () {
+
+			document.removeEventListener( 'mousemove', onMouseMove, false );
+			document.removeEventListener( 'pointerlockchange', onPointerlockChange, false );
+			document.removeEventListener( 'pointerlockerror', onPointerlockError, false );
+
 		};
 
 		this.dispose = function () {
 
-			document.removeEventListener( 'mousemove', onMouseMove, false );
+			this.disconnect();
 
 		};
-
-		document.addEventListener( 'mousemove', onMouseMove, false );
-
-		this.enabled = false;
 
 		this.getObject = function () {
 
@@ -4206,7 +4237,24 @@ var Three = (function (exports) {
 
 		}();
 
+		this.lock = function () {
+
+			this.domElement.requestPointerLock();
+
+		};
+
+		this.unlock = function () {
+
+			document.exitPointerLock();
+
+		};
+
+		this.connect();
+
 	};
+
+	PointerLockControls.prototype = Object.create( EventDispatcher.prototype );
+	PointerLockControls.prototype.constructor = PointerLockControls;
 
 	exports.PointerLockControls = PointerLockControls;
 

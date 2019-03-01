@@ -4,7 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	// Ported from Stefan Gustavson's java implementation
 	// http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
 	// Read Stefan's excellent paper for details on how this code works.
@@ -13,7 +12,6 @@ var Three = (function (exports) {
 	//
 	// Added 4D noise
 	// Joshua Koo zz85nus@gmail.com 
-
 	var SimplexNoise = function(r) {
 		if (r == undefined) r = Math;
 		this.grad3 = [[ 1,1,0 ],[ -1,1,0 ],[ 1,-1,0 ],[ -1,-1,0 ], 

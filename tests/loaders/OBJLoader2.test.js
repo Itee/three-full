@@ -4,7 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -152,7 +151,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix4() {
 
 		this.elements = [
@@ -1075,7 +1073,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -1796,7 +1793,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Quaternion( x, y, z, w ) {
 
 		this._x = x || 0;
@@ -1951,6 +1947,8 @@ var Three = (function (exports) {
 	} );
 
 	Object.assign( Quaternion.prototype, {
+
+		isQuaternion: true,
 
 		set: function ( x, y, z, w ) {
 
@@ -2423,7 +2421,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function EventDispatcher() {}
 
 	Object.assign( EventDispatcher.prototype, {
@@ -2505,7 +2502,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Euler( x, y, z, order ) {
 
 		this._x = x || 0;
@@ -2848,7 +2844,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Layers() {
 
 		this.mask = 1 | 0;
@@ -2890,7 +2885,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix3() {
 
 		this.elements = [
@@ -3269,7 +3263,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var object3DId = 0;
 
 	function Object3D() {
@@ -4141,7 +4134,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Group() {
 
 		Object3D.call( this );
@@ -4192,7 +4184,6 @@ var Three = (function (exports) {
 	var TangentSpaceNormalMap = 0;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var materialId = 0;
 
 	function Material() {
@@ -4404,6 +4395,9 @@ var Three = (function (exports) {
 				data.envMap = this.envMap.toJSON( meta ).uuid;
 				data.reflectivity = this.reflectivity; // Scale behind envMap
 
+				if ( this.combine !== undefined ) data.combine = this.combine;
+				if ( this.envMapIntensity !== undefined ) data.envMapIntensity = this.envMapIntensity;
+
 			}
 
 			if ( this.gradientMap && this.gradientMap.isTexture ) {
@@ -4572,7 +4566,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector2( x, y ) {
 
 		this.x = x || 0;
@@ -5064,7 +5057,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
 		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
 		'brown': 0xA52A2A, 'burlywood': 0xDEB887, 'cadetblue': 0x5F9EA0, 'chartreuse': 0x7FFF00, 'chocolate': 0xD2691E, 'coral': 0xFF7F50,
@@ -5215,7 +5207,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -5663,7 +5654,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshStandardMaterial( parameters ) {
 
 		Material.call( this );
@@ -5786,7 +5776,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LineBasicMaterial( parameters ) {
 
 		Material.call( this );
@@ -5825,7 +5814,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function PointsMaterial( parameters ) {
 
 		Material.call( this );
@@ -5870,7 +5858,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Sphere( center, radius ) {
 
 		this.center = ( center !== undefined ) ? center : new Vector3();
@@ -6042,7 +6029,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Box3( min, max ) {
 
 		this.min = ( min !== undefined ) ? min : new Vector3( + Infinity, + Infinity, + Infinity );
@@ -6421,7 +6407,7 @@ var Three = (function (exports) {
 
 			}
 
-			return ( min <= plane.constant && max >= plane.constant );
+			return ( min <= - plane.constant && max >= - plane.constant );
 
 		},
 
@@ -6652,7 +6638,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector4( x, y, z, w ) {
 
 		this.x = x || 0;
@@ -7273,7 +7258,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function BufferAttribute( array, itemSize, normalized ) {
 
 		if ( Array.isArray( array ) ) {
@@ -7600,7 +7584,6 @@ var Three = (function (exports) {
 
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -7609,7 +7592,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8ClampedArray( array ), itemSize, normalized );
@@ -7618,7 +7600,6 @@ var Three = (function (exports) {
 
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -7627,7 +7608,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint16Array( array ), itemSize, normalized );
@@ -7636,7 +7616,6 @@ var Three = (function (exports) {
 
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -7645,7 +7624,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint32Array( array ), itemSize, normalized );
@@ -7654,7 +7632,6 @@ var Three = (function (exports) {
 
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -7663,7 +7640,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float64Array( array ), itemSize, normalized );
@@ -7674,7 +7650,6 @@ var Three = (function (exports) {
 	Float64BufferAttribute.prototype.constructor = Float64BufferAttribute;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DirectGeometry() {
 
 		this.vertices = [];
@@ -7960,7 +7935,6 @@ var Three = (function (exports) {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var bufferGeometryId = 1; // BufferGeometry uses odd numbers as Id
 
 	function BufferGeometry() {
@@ -8933,7 +8907,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
 			return new BufferGeometry().copy( this );
 
 		},
@@ -9048,7 +9021,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Ray( origin, direction ) {
 
 		this.origin = ( origin !== undefined ) ? origin : new Vector3();
@@ -9588,7 +9560,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Triangle( a, b, c ) {
 
 		this.a = ( a !== undefined ) ? a : new Vector3();
@@ -9930,7 +9901,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Face3( a, b, c, normal, color, materialIndex ) {
 
 		this.a = a;
@@ -9985,7 +9955,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshBasicMaterial( parameters ) {
 
 		Material.call( this );
@@ -10066,7 +10035,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Mesh( geometry, material ) {
 
 		Object3D.call( this );
@@ -10509,7 +10477,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Line( geometry, material, mode ) {
 
 		if ( mode === 1 ) {
@@ -10565,7 +10532,7 @@ var Three = (function (exports) {
 
 					} else {
 
-						console.error( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+						console.warn( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
 
 					}
 
@@ -10752,7 +10719,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LineSegments( geometry, material ) {
 
 		Line.call( this, geometry, material );
@@ -10829,7 +10795,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Points( geometry, material ) {
 
 		Object3D.call( this );
@@ -10967,7 +10932,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var Cache = {
 
 		enabled: false,
@@ -11011,7 +10975,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LoadingManager( onLoad, onProgress, onError ) {
 
 		var scope = this;
@@ -11105,7 +11068,6 @@ var Three = (function (exports) {
 	var DefaultLoadingManager = new LoadingManager();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var loading = {};
 
 	function FileLoader( manager ) {
@@ -11417,7 +11379,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LineDashedMaterial( parameters ) {
 
 		LineBasicMaterial.call( this );
@@ -11450,7 +11411,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshDepthMaterial( parameters ) {
 
 		Material.call( this );
@@ -11510,7 +11470,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshDistanceMaterial( parameters ) {
 
 		Material.call( this );
@@ -11568,7 +11527,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshLambertMaterial( parameters ) {
 
 		Material.call( this );
@@ -11657,7 +11615,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshNormalMaterial( parameters ) {
 
 		Material.call( this );
@@ -11721,7 +11678,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshPhongMaterial( parameters ) {
 
 		Material.call( this );
@@ -11836,7 +11792,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshPhysicalMaterial( parameters ) {
 
 		MeshStandardMaterial.call( this );
@@ -11875,7 +11830,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshToonMaterial( parameters ) {
 
 		MeshPhongMaterial.call( this );
@@ -11908,7 +11862,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var UniformsUtils = {
 
 		merge: function ( uniforms ) {
@@ -11971,7 +11924,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function ShaderMaterial( parameters ) {
 
 		Material.call( this );
@@ -12137,7 +12089,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function RawShaderMaterial( parameters ) {
 
 		ShaderMaterial.call( this, parameters );
@@ -12152,7 +12103,6 @@ var Three = (function (exports) {
 	RawShaderMaterial.prototype.isRawShaderMaterial = true;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function ShadowMaterial( parameters ) {
 
 		Material.call( this );
@@ -12182,7 +12132,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function SpriteMaterial( parameters ) {
 
 		Material.call( this );
@@ -12223,7 +12172,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MaterialLoader( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -12302,6 +12250,7 @@ var Three = (function (exports) {
 			if ( json.fog !== undefined ) material.fog = json.fog;
 			if ( json.flatShading !== undefined ) material.flatShading = json.flatShading;
 			if ( json.blending !== undefined ) material.blending = json.blending;
+			if ( json.combine !== undefined ) material.combine = json.combine;
 			if ( json.side !== undefined ) material.side = json.side;
 			if ( json.opacity !== undefined ) material.opacity = json.opacity;
 			if ( json.transparent !== undefined ) material.transparent = json.transparent;
@@ -12435,6 +12384,7 @@ var Three = (function (exports) {
 			if ( json.specularMap !== undefined ) material.specularMap = getTexture( json.specularMap );
 
 			if ( json.envMap !== undefined ) material.envMap = getTexture( json.envMap );
+			if ( json.envMapIntensity !== undefined ) material.envMapIntensity = json.envMapIntensity;
 
 			if ( json.reflectivity !== undefined ) material.reflectivity = json.reflectivity;
 
@@ -12460,7 +12410,6 @@ var Three = (function (exports) {
 		var LoaderSupport = {};
 
 	}
-
 	*/
 	var LoaderSupport = {};
 	LoaderSupport.Validator = {
@@ -12473,7 +12422,6 @@ var Three = (function (exports) {
 			return ( input === null || input === undefined ) ? defaultValue : input;
 		}
 	};
-
 	LoaderSupport.Callbacks = (function () {
 
 		var Validator = LoaderSupport.Validator;
@@ -12485,30 +12433,24 @@ var Three = (function (exports) {
 			this.onLoad = null;
 			this.onLoadMaterials = null;
 		}
-		
 		Callbacks.prototype.setCallbackOnProgress = function ( callbackOnProgress ) {
 			this.onProgress = Validator.verifyInput( callbackOnProgress, this.onProgress );
 		};
-		
 		Callbacks.prototype.setCallbackOnReportError = function ( callbackOnReportError ) {
 			this.onReportError = Validator.verifyInput( callbackOnReportError, this.onReportError );
 		};
-		
 		Callbacks.prototype.setCallbackOnMeshAlter = function ( callbackOnMeshAlter ) {
 			this.onMeshAlter = Validator.verifyInput( callbackOnMeshAlter, this.onMeshAlter );
 		};
-		
 		Callbacks.prototype.setCallbackOnLoad = function ( callbackOnLoad ) {
 			this.onLoad = Validator.verifyInput( callbackOnLoad, this.onLoad );
 		};
-		
 		Callbacks.prototype.setCallbackOnLoadMaterials = function ( callbackOnLoadMaterials ) {
 			this.onLoadMaterials = Validator.verifyInput( callbackOnLoadMaterials, this.onLoadMaterials );
 		};
 
 		return Callbacks;
 	})();
-
 	LoaderSupport.LoadedMeshUserOverride = (function () {
 
 		function LoadedMeshUserOverride( disregardMesh, alteredMesh ) {
@@ -12516,23 +12458,19 @@ var Three = (function (exports) {
 			this.alteredMesh = alteredMesh === true;
 			this.meshes = [];
 		}
-		
 		LoadedMeshUserOverride.prototype.addMesh = function ( mesh ) {
 			this.meshes.push( mesh );
 			this.alteredMesh = true;
 		};
-		
 		LoadedMeshUserOverride.prototype.isDisregardMesh = function () {
 			return this.disregardMesh;
 		};
-		
 		LoadedMeshUserOverride.prototype.providesAlteredMeshes = function () {
 			return this.alteredMesh;
 		};
 
 		return LoadedMeshUserOverride;
 	})();
-
 	LoaderSupport.ResourceDescriptor = (function () {
 
 		var Validator = LoaderSupport.Validator;
@@ -12558,14 +12496,12 @@ var Three = (function (exports) {
 			this.extension = this.extension.trim();
 			this.content = null;
 		}
-		
 		ResourceDescriptor.prototype.setContent = function ( content ) {
 			this.content = Validator.verifyInput( content, null );
 		};
 
 		return ResourceDescriptor;
 	})();
-
 	LoaderSupport.PrepData = (function () {
 
 		var Validator = LoaderSupport.Validator;
@@ -12579,20 +12515,16 @@ var Three = (function (exports) {
 			this.resources = [];
 			this.callbacks = new LoaderSupport.Callbacks();
 		}
-		
 		PrepData.prototype.setLogging = function ( enabled, debug ) {
 			this.logging.enabled = enabled === true;
 			this.logging.debug = debug === true;
 		};
-		
 		PrepData.prototype.getCallbacks = function () {
 			return this.callbacks;
 		};
-		
 		PrepData.prototype.addResource = function ( resource ) {
 			this.resources.push( resource );
 		};
-		
 		PrepData.prototype.clone = function () {
 			var clone = new LoaderSupport.PrepData( this.modelName );
 			clone.logging.enabled = this.logging.enabled;
@@ -12613,7 +12545,6 @@ var Three = (function (exports) {
 
 			return clone;
 		};
-		
 		PrepData.prototype.checkResourceDescriptorFiles = function ( resources, fileDesc ) {
 			var resource, triple, i, found;
 			var result = {};
@@ -12679,7 +12610,6 @@ var Three = (function (exports) {
 
 		return PrepData;
 	})();
-
 	LoaderSupport.MeshBuilder = (function () {
 
 		var LOADER_MESH_BUILDER_VERSION = '1.2.2';
@@ -12696,12 +12626,10 @@ var Three = (function (exports) {
 			this.callbacks = new LoaderSupport.Callbacks();
 			this.materials = [];
 		}
-		
 		MeshBuilder.prototype.setLogging = function ( enabled, debug ) {
 			this.logging.enabled = enabled === true;
 			this.logging.debug = debug === true;
 		};
-		
 		MeshBuilder.prototype.init = function () {
 			var defaultMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
 			defaultMaterial.name = 'defaultMaterial';
@@ -12733,7 +12661,6 @@ var Three = (function (exports) {
 				}
 			);
 		};
-		
 		MeshBuilder.prototype.setMaterials = function ( materials ) {
 			var payload = {
 				cmd: 'materialData',
@@ -12753,7 +12680,6 @@ var Three = (function (exports) {
 			if ( Validator.isValid( callbacks.onLoad ) ) this.callbacks.setCallbackOnLoad( callbacks.onLoad );
 			if ( Validator.isValid( callbacks.onLoadMaterials ) ) this.callbacks.setCallbackOnLoadMaterials( callbacks.onLoadMaterials );
 		};
-		
 		MeshBuilder.prototype.processPayload = function ( payload ) {
 			if ( payload.cmd === 'meshData' ) {
 
@@ -12766,7 +12692,6 @@ var Three = (function (exports) {
 
 			}
 		};
-		
 		MeshBuilder.prototype.buildMeshes = function ( meshPayload ) {
 			var meshName = meshPayload.params.meshName;
 
@@ -12918,7 +12843,6 @@ var Three = (function (exports) {
 
 			return meshes;
 		};
-		
 		MeshBuilder.prototype.updateMaterials = function ( materialPayload ) {
 			var material, materialName;
 			var materialCloneInstructions = materialPayload.materials.materialCloneInstructions;
@@ -12981,7 +12905,6 @@ var Three = (function (exports) {
 
 			}
 		};
-		
 		MeshBuilder.prototype.getMaterialsJSON = function () {
 			var materialsJSON = {};
 			var material;
@@ -12993,14 +12916,12 @@ var Three = (function (exports) {
 
 			return materialsJSON;
 		};
-		
 		MeshBuilder.prototype.getMaterials = function () {
 			return this.materials;
 		};
 
 		return MeshBuilder;
 	})();
-
 	LoaderSupport.WorkerRunnerRefImpl = (function () {
 
 		function WorkerRunnerRefImpl() {
@@ -13010,7 +12931,6 @@ var Three = (function (exports) {
 			};
 			self.addEventListener( 'message', scopedRunner, false );
 		}
-		
 		WorkerRunnerRefImpl.prototype.applyProperties = function ( parser, params ) {
 			var property, funcName, values;
 			for ( property in params ) {
@@ -13028,7 +12948,6 @@ var Three = (function (exports) {
 				}
 			}
 		};
-		
 		WorkerRunnerRefImpl.prototype.processMessage = function ( payload ) {
 			if ( payload.cmd === 'run' ) {
 
@@ -13066,7 +12985,6 @@ var Three = (function (exports) {
 
 		return WorkerRunnerRefImpl;
 	})();
-
 	LoaderSupport.WorkerSupport = (function () {
 
 		var WORKER_SUPPORT_VERSION = '2.2.1';
@@ -13117,7 +13035,6 @@ var Three = (function (exports) {
 				// process stored queuedMessage
 				this._postMessage();
 			};
-			
 			LoaderWorker.prototype._receiveWorkerMessage = function ( e ) {
 				var payload = e.data;
 				switch ( payload.cmd ) {
@@ -13256,17 +13173,14 @@ var Three = (function (exports) {
 
 			this.loaderWorker = new LoaderWorker();
 		}
-		
 		WorkerSupport.prototype.setLogging = function ( enabled, debug ) {
 			this.logging.enabled = enabled === true;
 			this.logging.debug = debug === true;
 			this.loaderWorker.setLogging( this.logging.enabled, this.logging.debug );
 		};
-		
 		WorkerSupport.prototype.setForceWorkerDataCopy = function ( forceWorkerDataCopy ) {
 			this.loaderWorker.setForceCopy( forceWorkerDataCopy );
 		};
-		
 		WorkerSupport.prototype.validate = function ( functionCodeBuilder, parserName, libLocations, libPath, runnerImpl ) {
 			if ( Validator.isValid( this.loaderWorker.worker ) ) return;
 
@@ -13326,15 +13240,12 @@ var Three = (function (exports) {
 
 			}
 		};
-		
 		WorkerSupport.prototype.setCallbacks = function ( meshBuilder, onLoad ) {
 			this.loaderWorker.setCallbacks( meshBuilder, onLoad );
 		};
-		
 		WorkerSupport.prototype.run = function ( payload ) {
 			this.loaderWorker.run( payload );
 		};
-		
 		WorkerSupport.prototype.setTerminateRequested = function ( terminateRequested ) {
 			this.loaderWorker.setTerminateRequested( terminateRequested );
 		};
@@ -13427,7 +13338,6 @@ var Three = (function (exports) {
 		return WorkerSupport;
 
 	})();
-
 	LoaderSupport.WorkerDirector = (function () {
 
 		var LOADER_WORKER_DIRECTOR_VERSION = '2.2.2';
@@ -13462,28 +13372,22 @@ var Three = (function (exports) {
 
 			this.callbackOnFinishedProcessing = null;
 		}
-		
 		WorkerDirector.prototype.setLogging = function ( enabled, debug ) {
 			this.logging.enabled = enabled === true;
 			this.logging.debug = debug === true;
 		};
-		
 		WorkerDirector.prototype.getMaxQueueSize = function () {
 			return this.maxQueueSize;
 		};
-		
 		WorkerDirector.prototype.getMaxWebWorkers = function () {
 			return this.maxWebWorkers;
 		};
-		
 		WorkerDirector.prototype.setCrossOrigin = function ( crossOrigin ) {
 			this.crossOrigin = crossOrigin;
 		};
-		
 		WorkerDirector.prototype.setForceWorkerDataCopy = function ( forceWorkerDataCopy ) {
 			this.workerDescription.forceWorkerDataCopy = forceWorkerDataCopy === true;
 		};
-		
 		WorkerDirector.prototype.prepareWorkers = function ( globalCallbacks, maxQueueSize, maxWebWorkers ) {
 			if ( Validator.isValid( globalCallbacks ) ) this.workerDescription.globalCallbacks = globalCallbacks;
 			this.maxQueueSize = Math.min( maxQueueSize, MAX_QUEUE_SIZE );
@@ -13508,18 +13412,15 @@ var Three = (function (exports) {
 
 			}
 		};
-		
 		WorkerDirector.prototype.enqueueForRun = function ( prepData ) {
 			if ( this.instructionQueue.length < this.maxQueueSize ) {
 				this.instructionQueue.push( prepData );
 			}
 		};
-		
 		WorkerDirector.prototype.isRunning = function () {
 			var wsKeys = Object.keys( this.workerDescription.workerSupports );
 			return ( ( this.instructionQueue.length > 0 && this.instructionQueuePointer < this.instructionQueue.length ) || wsKeys.length > 0 );
 		};
-		
 		WorkerDirector.prototype.processQueue = function () {
 			var prepData, supportDesc;
 			for ( var instanceNo in this.workerDescription.workerSupports ) {
@@ -13655,7 +13556,6 @@ var Three = (function (exports) {
 
 			}
 		};
-		
 		WorkerDirector.prototype.tearDown = function ( callbackOnFinishedProcessing ) {
 			if ( this.logging.enabled ) console.info( 'WorkerDirector received the deregister call. Terminating all workers!' );
 
@@ -13674,7 +13574,6 @@ var Three = (function (exports) {
 	})();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function ImageLoader( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -13776,7 +13675,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var ImageUtils = {
 
 		getDataURL: function ( image ) {
@@ -13822,7 +13720,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var textureId = 0;
 
 	function Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
@@ -14125,7 +14022,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function TextureLoader( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -14183,7 +14079,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Loader() {}
 
 	Loader.Handlers = {
@@ -14500,7 +14395,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var MTLLoader = function ( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -14510,40 +14404,38 @@ var Three = (function (exports) {
 	MTLLoader.prototype = {
 
 		constructor: MTLLoader,
-		
 		load: function ( url, onLoad, onProgress, onError ) {
 
 			var scope = this;
+
+			var path = ( this.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : this.path;
 
 			var loader = new FileLoader( this.manager );
 			loader.setPath( this.path );
 			loader.load( url, function ( text ) {
 
-				onLoad( scope.parse( text ) );
+				onLoad( scope.parse( text, path ) );
 
 			}, onProgress, onError );
 
 		},
-		
 		setPath: function ( path ) {
 
 			this.path = path;
 			return this;
 
 		},
-		
-		setTexturePath: function ( path ) {
+		setResourcePath: function ( path ) {
 
-			this.texturePath = path;
+			this.resourcePath = path;
 			return this;
 
 		},
 
-		setBaseUrl: function ( path ) {
+		setTexturePath: function ( path ) {
 
-			console.warn( 'MTLLoader: .setBaseUrl() is deprecated. Use .setTexturePath( path ) for texture path or .setPath( path ) for general base path instead.' );
-
-			return this.setTexturePath( path );
+			console.warn( 'MTLLoader: .setTexturePath() has been renamed to .setResourcePath().' );
+			return this.setResourcePath( path );
 
 		},
 
@@ -14560,8 +14452,7 @@ var Three = (function (exports) {
 			return this;
 
 		},
-		
-		parse: function ( text ) {
+		parse: function ( text, path ) {
 
 			var lines = text.split( '\n' );
 			var info = {};
@@ -14595,7 +14486,7 @@ var Three = (function (exports) {
 					info = { name: value };
 					materialsInfo[ value ] = info;
 
-				} else if ( info ) {
+				} else {
 
 					if ( key === 'ka' || key === 'kd' || key === 'ks' ) {
 
@@ -14612,7 +14503,7 @@ var Three = (function (exports) {
 
 			}
 
-			var materialCreator = new MTLLoader.MaterialCreator( this.texturePath || this.path, this.materialOptions );
+			var materialCreator = new MTLLoader.MaterialCreator( this.resourcePath || path, this.materialOptions );
 			materialCreator.setCrossOrigin( this.crossOrigin );
 			materialCreator.setManager( this.manager );
 			materialCreator.setMaterials( materialsInfo );
@@ -14621,7 +14512,6 @@ var Three = (function (exports) {
 		}
 
 	};
-
 	MTLLoader.MaterialCreator = function ( baseUrl, options ) {
 
 		this.baseUrl = baseUrl || '';
@@ -14877,6 +14767,15 @@ var Three = (function (exports) {
 
 						break;
 
+					case 'map_d':
+
+						// Alpha map
+
+						setMapForType( "alphaMap", value );
+						params.transparent = true;
+
+						break;
+
 					case 'ns':
 
 						// The specular exponent (defines the focus of the specular highlight)
@@ -14994,8 +14893,7 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	var LoaderUtils = {
+	var LoaderUtils$1 = {
 
 		decodeText: function ( array ) {
 
@@ -15035,9 +14933,7 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	if ( LoaderSupport === undefined ) console.error( '"LoaderSupport" is not available. "OBJLoader2" requires it. Please include "LoaderSupport.js" in your HTML.' );
-
 	var OBJLoader2 = (function () {
 
 		var OBJLOADER2_VERSION = '2.4.2';
@@ -15066,41 +14962,32 @@ var Three = (function (exports) {
 			this.workerSupport = new LoaderSupport.WorkerSupport();
 			this.terminateWorkerOnLoad = true;
 		}
-		
 		OBJLoader2.prototype.setLogging = function ( enabled, debug ) {
 			this.logging.enabled = enabled === true;
 			this.logging.debug = debug === true;
 			this.meshBuilder.setLogging( this.logging.enabled, this.logging.debug );
 		};
-		
 		OBJLoader2.prototype.setModelName = function ( modelName ) {
 			this.modelName = Validator.verifyInput( modelName, this.modelName );
 		};
-		
 		OBJLoader2.prototype.setPath = function ( path ) {
 			this.path = Validator.verifyInput( path, this.path );
 		};
-		
 		OBJLoader2.prototype.setStreamMeshesTo = function ( streamMeshesTo ) {
 			this.loaderRootNode = Validator.verifyInput( streamMeshesTo, this.loaderRootNode );
 		};
-		
 		OBJLoader2.prototype.setMaterials = function ( materials ) {
 			this.meshBuilder.setMaterials( materials );
 		};
-		
 		OBJLoader2.prototype.setUseIndices = function ( useIndices ) {
 			this.useIndices = useIndices === true;
 		};
-		
 		OBJLoader2.prototype.setDisregardNormals = function ( disregardNormals ) {
 			this.disregardNormals = disregardNormals === true;
 		};
-		
 		OBJLoader2.prototype.setMaterialPerSmoothingGroup = function ( materialPerSmoothingGroup ) {
 			this.materialPerSmoothingGroup = materialPerSmoothingGroup === true;
 		};
-		
 		OBJLoader2.prototype.setUseOAsMesh = function ( useOAsMesh ) {
 			this.useOAsMesh = useOAsMesh === true;
 		};
@@ -15114,7 +15001,6 @@ var Three = (function (exports) {
 
 			this.meshBuilder._setCallbacks( this.callbacks );
 		};
-		
 		OBJLoader2.prototype.onProgress = function ( type, text, numericalValue ) {
 			var content = Validator.isValid( text ) ? text: '';
 			var event = {
@@ -15155,7 +15041,6 @@ var Three = (function (exports) {
 
 			}
 		};
-		
 		OBJLoader2.prototype.load = function ( url, onLoad, onProgress, onError, onMeshAlter, useAsync ) {
 			var resource = new LoaderSupport.ResourceDescriptor( url, 'OBJ' );
 			this._loadObj( resource, onLoad, onProgress, onError, onMeshAlter, useAsync );
@@ -15219,7 +15104,6 @@ var Three = (function (exports) {
 						}
 					};
 				}
-
 				var fileLoader = new FileLoader( this.manager );
 				fileLoader.setPath( this.path );
 				fileLoader.setResponseType( 'arraybuffer' );
@@ -15227,7 +15111,6 @@ var Three = (function (exports) {
 
 			}
 		};
-		
 		OBJLoader2.prototype.run = function ( prepData, workerSupportExternal ) {
 			this._applyPrepData( prepData );
 			var available = prepData.checkResourceDescriptorFiles( prepData.resources,
@@ -15270,7 +15153,6 @@ var Three = (function (exports) {
 
 			}
 		};
-		
 		OBJLoader2.prototype.parse = function ( content ) {
 			// fast-fail in case of illegal data
 			if ( ! Validator.isValid( content ) ) {
@@ -15325,7 +15207,6 @@ var Three = (function (exports) {
 
 			return this.loaderRootNode;
 		};
-		
 		OBJLoader2.prototype.parseAsync = function ( content, onLoad ) {
 			var scope = this;
 			var measureTime = false;
@@ -15407,7 +15288,6 @@ var Three = (function (exports) {
 				}
 			);
 		};
-		
 		var Parser = (function () {
 
 			function Parser() {
@@ -15546,7 +15426,6 @@ var Three = (function (exports) {
 					console.info( printedConfig );
 				}
 			};
-			
 			Parser.prototype.parse = function ( arrayBuffer ) {
 				if ( this.logging.enabled ) console.time( 'OBJLoader2.Parser.parse' );
 				this.configure();
@@ -15596,7 +15475,6 @@ var Three = (function (exports) {
 				this.finalizeParsing();
 				if ( this.logging.enabled ) console.timeEnd(  'OBJLoader2.Parser.parse' );
 			};
-			
 			Parser.prototype.parseText = function ( text ) {
 				if ( this.logging.enabled ) console.time(  'OBJLoader2.Parser.parseText' );
 				this.configure();
@@ -15655,7 +15533,6 @@ var Three = (function (exports) {
 							for ( i = start; i < stop; i++ ) line += content[ i ];
 
 						} else {
-
 							for ( i = start; i < stop; i++ ) line += String.fromCharCode( content[ i ] );
 
 						}
@@ -15815,7 +15692,6 @@ var Three = (function (exports) {
 
 				}
 			};
-			
 			Parser.prototype.checkFaceType = function ( faceType ) {
 				if ( this.rawMesh.faceType !== faceType ) {
 
@@ -15932,7 +15808,6 @@ var Three = (function (exports) {
 					'\n\tMaterial count: ' + this.rawMesh.counts.mtlCount +
 					'\n\tReal MeshOutputGroup count: ' + this.rawMesh.subGroups.length;
 			};
-			
 			Parser.prototype.finalizeRawMesh = function () {
 				var meshOutputGroupTemp = [];
 				var meshOutputGroup;
@@ -16008,7 +15883,6 @@ var Three = (function (exports) {
 					return false;
 				}
 			};
-			
 			Parser.prototype.buildMesh = function ( result ) {
 				var meshOutputGroups = result.subGroups;
 
@@ -16051,7 +15925,6 @@ var Three = (function (exports) {
 					if ( this.rawMesh.faceType < 4 ) {
 
 						materialName = materialNameOrg + ( haveVertexColors ? '_vertexColor' : '' ) + ( meshOutputGroup.smoothingGroup === 0 ? '_flat' : '' );
-
 					} else {
 
 						materialName = this.rawMesh.faceType === 6 ? 'defaultPointMaterial' : 'defaultLineMaterial';
@@ -16227,13 +16100,11 @@ var Three = (function (exports) {
 
 			return Parser;
 		})();
-		
 		OBJLoader2.prototype.loadMtl = function ( url, content, onLoad, onProgress, onError, crossOrigin, materialOptions ) {
 			var resource = new LoaderSupport.ResourceDescriptor( url, 'MTL' );
 			resource.setContent( content );
 			this._loadMtl( resource, onLoad, onProgress, onError, crossOrigin, materialOptions );
 		};
-
 		OBJLoader2.prototype._loadMtl = function ( resource, onLoad, onProgress, onError, crossOrigin, materialOptions ) {
 			if ( MTLLoader === undefined ) console.error( '"MTLLoader" is not available. "OBJLoader2" requires it for loading MTL files.' );
 			if ( Validator.isValid( resource ) && this.logging.enabled ) console.time( 'Loading MTL: ' + resource.name );
@@ -16270,7 +16141,7 @@ var Three = (function (exports) {
 				var mtlLoader = new MTLLoader( this.manager );
 				crossOrigin = Validator.verifyInput( crossOrigin, 'anonymous' );
 				mtlLoader.setCrossOrigin( crossOrigin );
-				mtlLoader.setPath( resource.path );
+				mtlLoader.setResourcePath( resource.path );
 				if ( Validator.isValid( materialOptions ) ) mtlLoader.setMaterialOptions( materialOptions );
 
 				var parseTextWithMtlLoader = function ( content ) {
@@ -16279,7 +16150,7 @@ var Three = (function (exports) {
 
 						if ( content.length > 0 || content.byteLength > 0 ) {
 
-							contentAsText = LoaderUtils.decodeText( content );
+							contentAsText = LoaderUtils$1.decodeText( content );
 
 						} else {
 

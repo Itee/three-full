@@ -4,7 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function EventDispatcher() {}
 
 	Object.assign( EventDispatcher.prototype, {
@@ -88,7 +87,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -236,7 +234,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
 		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
 		'brown': 0xA52A2A, 'burlywood': 0xDEB887, 'cadetblue': 0x5F9EA0, 'chartreuse': 0x7FFF00, 'chocolate': 0xD2691E, 'coral': 0xFF7F50,
@@ -387,7 +384,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -837,11 +833,9 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	var REVISION = '96';
+	var REVISION = '97';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var RaytracingRenderer = function ( parameters ) {
 
 		console.log( 'RaytracingRenderer', REVISION );
@@ -1063,7 +1057,6 @@ var Three = (function (exports) {
 			// update camera matrices
 
 			if ( camera.parent === null ) camera.updateMatrixWorld();
-
 			sceneJSON = scene.toJSON();
 			cameraJSON = camera.toJSON();
 			++ sceneId;
@@ -1095,7 +1088,6 @@ var Three = (function (exports) {
 				toRender.push( i );
 
 			}
-
 			// Randomize painting :)
 
 			if ( scope.randomize ) {
@@ -1110,7 +1102,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 			pool.forEach( renderNext );
 
 		};

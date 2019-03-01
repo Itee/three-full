@@ -12,7 +12,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Interpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		this.parameterPositions = parameterPositions;
@@ -249,7 +248,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function CubicInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -391,7 +389,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -429,7 +426,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DiscreteInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -451,7 +447,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var AnimationUtils = {
 
 		// same as Array.prototype.slice, but also works on typed arrays
@@ -611,7 +606,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function KeyframeTrack( name, times, values, interpolation ) {
 
 		if ( name === undefined ) throw new Error( 'KeyframeTrack: track name is undefined' );
@@ -1046,7 +1040,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function NumberKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -1066,7 +1059,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function BooleanKeyframeTrack( name, times, values ) {
 
 		KeyframeTrack.call( this, name, times, values );
@@ -1092,7 +1084,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function ColorKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -1117,7 +1108,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -1265,7 +1255,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix4() {
 
 		this.elements = [
@@ -2188,7 +2177,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -2909,7 +2897,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Quaternion( x, y, z, w ) {
 
 		this._x = x || 0;
@@ -3064,6 +3051,8 @@ var Three = (function (exports) {
 	} );
 
 	Object.assign( Quaternion.prototype, {
+
+		isQuaternion: true,
 
 		set: function ( x, y, z, w ) {
 
@@ -3534,7 +3523,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function QuaternionLinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -3568,7 +3556,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function QuaternionKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -3596,7 +3583,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function StringKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -3619,7 +3605,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function VectorKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -3639,7 +3624,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function AnimationClip( name, duration, tracks ) {
 
 		this.name = name;
@@ -4074,7 +4058,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var AnimationClipCreator = function () {};
 
 	AnimationClipCreator.CreateRotationAnimation = function ( period, axis ) {
@@ -4124,7 +4107,6 @@ var Three = (function (exports) {
 		return new AnimationClip( null, duration, [ track ] );
 
 	};
-
 	AnimationClipCreator.CreatePulsationAnimation = function ( duration, pulseScale ) {
 
 		var times = [], values = [], tmp = new Vector3();
@@ -4146,7 +4128,6 @@ var Three = (function (exports) {
 		return new AnimationClip( null, duration, [ track ] );
 
 	};
-
 	AnimationClipCreator.CreateVisibilityAnimation = function ( duration ) {
 
 		var times = [ 0, duration / 2, duration ], values = [ true, false, true ];
@@ -4158,7 +4139,6 @@ var Three = (function (exports) {
 		return new AnimationClip( null, duration, [ track ] );
 
 	};
-
 	AnimationClipCreator.CreateMaterialColorAnimation = function ( duration, colors ) {
 
 		var times = [], values = [],

@@ -22,7 +22,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var Cache = {
 
 		enabled: false,
@@ -66,7 +65,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LoadingManager( onLoad, onProgress, onError ) {
 
 		var scope = this;
@@ -160,7 +158,6 @@ var Three = (function (exports) {
 	var DefaultLoadingManager = new LoadingManager();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var loading = {};
 
 	function FileLoader( manager ) {
@@ -474,7 +471,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function EventDispatcher() {}
 
 	Object.assign( EventDispatcher.prototype, {
@@ -558,7 +554,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -708,7 +703,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector2( x, y ) {
 
 		this.x = x || 0;
@@ -1200,7 +1194,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix4() {
 
 		this.elements = [
@@ -2123,7 +2116,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Quaternion( x, y, z, w ) {
 
 		this._x = x || 0;
@@ -2278,6 +2270,8 @@ var Three = (function (exports) {
 	} );
 
 	Object.assign( Quaternion.prototype, {
+
+		isQuaternion: true,
 
 		set: function ( x, y, z, w ) {
 
@@ -2748,7 +2742,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -3469,7 +3462,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix3() {
 
 		this.elements = [
@@ -3850,7 +3842,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var ImageUtils = {
 
 		getDataURL: function ( image ) {
@@ -3896,7 +3887,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var textureId = 0;
 
 	function Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
@@ -4199,7 +4189,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DataTexture( data, width, height, format, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, encoding ) {
 
 		Texture.call( this, null, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding );
@@ -4221,7 +4210,6 @@ var Three = (function (exports) {
 	DataTexture.prototype.isDataTexture = true;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DataTextureLoader( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -4296,7 +4284,6 @@ var Three = (function (exports) {
 				if ( onLoad ) onLoad( texture, texData );
 
 			}, onProgress, onError );
-
 			return texture;
 
 		}
@@ -4304,7 +4291,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	// https://github.com/mrdoob/three.js/issues/5552
 	// http://en.wikipedia.org/wiki/RGBE_image_format
 
@@ -4323,7 +4309,6 @@ var Three = (function (exports) {
 		var 
 			
 			RGBE_RETURN_FAILURE = - 1,
-			
 			rgbe_read_error = 1,
 			rgbe_write_error = 2,
 			rgbe_format_error = 3,
@@ -4345,7 +4330,6 @@ var Three = (function (exports) {
 				return RGBE_RETURN_FAILURE;
 
 			},
-			
 			RGBE_VALID_PROGRAMTYPE = 1,
 			RGBE_VALID_FORMAT = 2,
 			RGBE_VALID_DIMENSIONS = 4,
@@ -4368,7 +4352,6 @@ var Three = (function (exports) {
 				}
 
 				if ( - 1 < i ) {
-					
 					if ( false !== consume ) buffer.pos += len + i + 1;
 					return s + chunk.slice( 0, i );
 
@@ -4376,7 +4359,6 @@ var Three = (function (exports) {
 				return false;
 
 			},
-			
 			RGBE_ReadHeader = function ( buffer ) {
 
 				var line, match,
@@ -4572,7 +4554,6 @@ var Three = (function (exports) {
 						}
 
 					}
-
 					// now convert data from buffer into rgba
 					// first red, then green, then blue, then exponent (alpha)
 					l = scanline_width; //scanline_buffer.byteLength;
@@ -4629,7 +4610,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function CubeTexture( images, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
 
 		images = images !== undefined ? images : [];
@@ -4663,7 +4643,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var HDRCubeTextureLoader = function ( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -4691,7 +4670,6 @@ var Three = (function (exports) {
 
 			var floatView = new Float32Array( 1 );
 			var int32View = new Int32Array( floatView.buffer );
-			
 			function toHalf( val ) {
 
 				floatView[ 0 ] = val;
@@ -4700,9 +4678,7 @@ var Three = (function (exports) {
 				var bits = ( x >> 16 ) & 0x8000; 
 				var m = ( x >> 12 ) & 0x07ff; 
 				var e = ( x >> 23 ) & 0xff; 
-				
 				if ( e < 103 ) return bits;
-				
 				if ( e > 142 ) {
 
 					bits |= 0x7c00;
@@ -4711,7 +4687,6 @@ var Three = (function (exports) {
 					return bits;
 
 				}
-				
 				if ( e < 113 ) {
 
 					m |= 0x0800;
@@ -4760,6 +4735,7 @@ var Three = (function (exports) {
 		function loadHDRData( i, onLoad, onProgress, onError ) {
 
 			var loader = new FileLoader( scope.manager );
+			loader.setPath( scope.path );
 			loader.setResponseType( 'arraybuffer' );
 			loader.load( urls[ i ], function ( buffer ) {
 
@@ -4833,6 +4809,13 @@ var Three = (function (exports) {
 		}
 
 		return texture;
+
+	};
+
+	HDRCubeTextureLoader.prototype.setPath = function ( value ) {
+
+		this.path = value;
+		return this;
 
 	};
 

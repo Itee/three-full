@@ -4,7 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector2( x, y ) {
 
 		this.x = x || 0;
@@ -496,7 +495,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var SSAOShader = {
 
 		uniforms: {
@@ -561,7 +559,6 @@ var Three = (function (exports) {
 
 			"const float diffArea = 0.4;",   // self-shadowing reduction
 			"const float gDisplace = 0.4;",  // gauss bell center
-
 			// RGBA depth
 
 			"#include <packing>",
@@ -611,7 +608,6 @@ var Three = (function (exports) {
 				"#endif",
 
 				"return cameraCoef / ( cameraFarPlusNear - z * cameraFarMinusNear );",
-
 			"}",
 
 			"float compareDepths( const in float depth1, const in float depth2, inout int far ) {",

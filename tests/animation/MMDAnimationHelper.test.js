@@ -4,7 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -152,7 +151,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix4() {
 
 		this.elements = [
@@ -1075,7 +1073,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -1796,7 +1793,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Quaternion( x, y, z, w ) {
 
 		this._x = x || 0;
@@ -1951,6 +1947,8 @@ var Three = (function (exports) {
 	} );
 
 	Object.assign( Quaternion.prototype, {
+
+		isQuaternion: true,
 
 		set: function ( x, y, z, w ) {
 
@@ -2423,7 +2421,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function EventDispatcher() {}
 
 	Object.assign( EventDispatcher.prototype, {
@@ -2505,7 +2502,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Euler( x, y, z, order ) {
 
 		this._x = x || 0;
@@ -2848,7 +2844,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Layers() {
 
 		this.mask = 1 | 0;
@@ -2890,7 +2885,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix3() {
 
 		this.elements = [
@@ -3269,7 +3263,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var object3DId = 0;
 
 	function Object3D() {
@@ -4164,7 +4157,6 @@ var Three = (function (exports) {
 	var TrianglesDrawMode = 0;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function AnimationAction( mixer, clip, localRoot ) {
 
 		this._mixer = mixer;
@@ -4825,7 +4817,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Interpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		this.parameterPositions = parameterPositions;
@@ -5062,7 +5053,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -5102,7 +5092,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	// Characters [].:/ are reserved for track binding syntax.
 	var RESERVED_CHARS_RE = '\\[\\]\\.:\\/';
 
@@ -5169,7 +5158,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
 	function PropertyBinding( rootNode, path, parsedPath ) {
 
 		this.path = path;
@@ -5198,7 +5186,6 @@ var Three = (function (exports) {
 			}
 
 		},
-		
 		sanitizeNodeName: ( function () {
 
 			var reservedRe = new RegExp( '[' + RESERVED_CHARS_RE + ']', 'g' );
@@ -5648,7 +5635,6 @@ var Three = (function (exports) {
 						targetObject = targetObject[ objectName ];
 
 				}
-
 				if ( objectIndex !== undefined ) {
 
 					if ( targetObject[ objectIndex ] === undefined ) {
@@ -5730,7 +5716,6 @@ var Three = (function (exports) {
 							}
 
 						}
-
 					} else {
 
 						if ( ! targetObject.geometry.morphTargets ) {
@@ -5809,7 +5794,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function PropertyMixer( binding, typeName, valueSize ) {
 
 		this.binding = binding;
@@ -5965,7 +5949,6 @@ var Three = (function (exports) {
 			this.binding.setValue( this.buffer, originalValueOffset );
 
 		},
-
 		// mix functions
 
 		_select: function ( buffer, dstOffset, srcOffset, t, stride ) {
@@ -6007,7 +5990,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var AnimationUtils = {
 
 		// same as Array.prototype.slice, but also works on typed arrays
@@ -6167,7 +6149,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function CubicInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -6309,7 +6290,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DiscreteInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -6329,7 +6309,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function KeyframeTrack( name, times, values, interpolation ) {
 
 		if ( name === undefined ) throw new Error( 'KeyframeTrack: track name is undefined' );
@@ -6764,7 +6743,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function BooleanKeyframeTrack( name, times, values ) {
 
 		KeyframeTrack.call( this, name, times, values );
@@ -6790,7 +6768,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function ColorKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -6813,7 +6790,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function NumberKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -6833,7 +6809,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function QuaternionLinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -6867,7 +6842,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function QuaternionKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -6895,7 +6869,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function StringKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -6918,7 +6891,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function VectorKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -6938,7 +6910,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function AnimationClip( name, duration, tracks ) {
 
 		this.name = name;
@@ -7373,7 +7344,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function AnimationMixer( root ) {
 
 		this._root = root;
@@ -7538,12 +7508,10 @@ var Three = (function (exports) {
 			// 		knownActions: Array< AnimationAction >	- used as prototypes
 			// 		actionByRoot: AnimationAction			- lookup
 			// }
-
 			this._bindings = []; // 'nActiveBindings' followed by inactive ones
 			this._nActiveBindings = 0;
 
 			this._bindingsByRootAndName = {}; // inside: Map< name, PropertyMixer >
-
 			this._controlInterpolants = []; // same game as above
 			this._nActiveControlInterpolants = 0;
 
@@ -7647,7 +7615,6 @@ var Three = (function (exports) {
 			actions.pop();
 
 			action._cacheIndex = null;
-
 			var clipUuid = action._clip.uuid,
 				actionsByClip = this._actionsByClip,
 				actionsForClip = actionsByClip[ clipUuid ],
@@ -7663,7 +7630,6 @@ var Three = (function (exports) {
 			knownActionsForClip.pop();
 
 			action._byClipCacheIndex = null;
-
 			var actionByRoot = actionsForClip.actionByRoot,
 				rootUuid = ( action._localRoot || this._root ).uuid;
 
@@ -7826,7 +7792,6 @@ var Three = (function (exports) {
 			bindings[ prevIndex ] = lastActiveBinding;
 
 		},
-
 		// Memory management of Interpolants for weight and time scale
 
 		_lendControlInterpolant: function () {
@@ -8112,7 +8077,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
 		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
 		'brown': 0xA52A2A, 'burlywood': 0xDEB887, 'cadetblue': 0x5F9EA0, 'chartreuse': 0x7FFF00, 'chocolate': 0xD2691E, 'coral': 0xFF7F50,
@@ -8263,7 +8227,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -8711,7 +8674,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Face3( a, b, c, normal, color, materialIndex ) {
 
 		this.a = a;
@@ -8766,7 +8728,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Box3( min, max ) {
 
 		this.min = ( min !== undefined ) ? min : new Vector3( + Infinity, + Infinity, + Infinity );
@@ -9145,7 +9106,7 @@ var Three = (function (exports) {
 
 			}
 
-			return ( min <= plane.constant && max >= plane.constant );
+			return ( min <= - plane.constant && max >= - plane.constant );
 
 		},
 
@@ -9374,7 +9335,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Sphere( center, radius ) {
 
 		this.center = ( center !== undefined ) ? center : new Vector3();
@@ -9548,7 +9508,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector2( x, y ) {
 
 		this.x = x || 0;
@@ -10040,7 +9999,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var geometryId = 0; // Geometry uses even numbers as Id
 
 	function Geometry() {
@@ -10842,7 +10800,6 @@ var Three = (function (exports) {
 			this.merge( mesh.geometry, mesh.matrix );
 
 		},
-
 		mergeVertices: function () {
 
 			var verticesMap = {}; // Hashmap for looking up vertices by position coordinates (and making sure they are unique)
@@ -10873,7 +10830,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 			// if faces are completely degenerate after merging vertices, we
 			// have to remove them from the geometry.
 			var faceIndicesToRemove = [];
@@ -11181,7 +11137,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
 			return new Geometry().copy( this );
 
 		},
@@ -11431,7 +11386,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector4( x, y, z, w ) {
 
 		this.x = x || 0;
@@ -12052,7 +12006,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function BufferAttribute( array, itemSize, normalized ) {
 
 		if ( Array.isArray( array ) ) {
@@ -12379,7 +12332,6 @@ var Three = (function (exports) {
 
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -12388,7 +12340,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8ClampedArray( array ), itemSize, normalized );
@@ -12397,7 +12348,6 @@ var Three = (function (exports) {
 
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -12406,7 +12356,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint16Array( array ), itemSize, normalized );
@@ -12415,7 +12364,6 @@ var Three = (function (exports) {
 
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -12424,7 +12372,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint32Array( array ), itemSize, normalized );
@@ -12433,7 +12380,6 @@ var Three = (function (exports) {
 
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -12442,7 +12388,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float64Array( array ), itemSize, normalized );
@@ -12453,7 +12398,6 @@ var Three = (function (exports) {
 	Float64BufferAttribute.prototype.constructor = Float64BufferAttribute;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DirectGeometry() {
 
 		this.vertices = [];
@@ -12739,7 +12683,6 @@ var Three = (function (exports) {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var bufferGeometryId = 1; // BufferGeometry uses odd numbers as Id
 
 	function BufferGeometry() {
@@ -13712,7 +13655,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
 			return new BufferGeometry().copy( this );
 
 		},
@@ -13827,7 +13769,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	// SphereGeometry
 
 	function SphereGeometry( radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength ) {
@@ -13968,7 +13909,6 @@ var Three = (function (exports) {
 	SphereBufferGeometry.prototype.constructor = SphereBufferGeometry;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var materialId = 0;
 
 	function Material() {
@@ -14180,6 +14120,9 @@ var Three = (function (exports) {
 				data.envMap = this.envMap.toJSON( meta ).uuid;
 				data.reflectivity = this.reflectivity; // Scale behind envMap
 
+				if ( this.combine !== undefined ) data.combine = this.combine;
+				if ( this.envMapIntensity !== undefined ) data.envMapIntensity = this.envMapIntensity;
+
 			}
 
 			if ( this.gradientMap && this.gradientMap.isTexture ) {
@@ -14346,7 +14289,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshBasicMaterial( parameters ) {
 
 		Material.call( this );
@@ -14427,7 +14369,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LineBasicMaterial( parameters ) {
 
 		Material.call( this );
@@ -14466,7 +14407,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Ray( origin, direction ) {
 
 		this.origin = ( origin !== undefined ) ? origin : new Vector3();
@@ -15006,7 +14946,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Triangle( a, b, c ) {
 
 		this.a = ( a !== undefined ) ? a : new Vector3();
@@ -15348,7 +15287,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Mesh( geometry, material ) {
 
 		Object3D.call( this );
@@ -15791,7 +15729,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Line( geometry, material, mode ) {
 
 		if ( mode === 1 ) {
@@ -15847,7 +15784,7 @@ var Three = (function (exports) {
 
 					} else {
 
-						console.error( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+						console.warn( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
 
 					}
 
@@ -16034,9 +15971,7 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var CCDIKSolver = ( function () {
-		
 		function CCDIKSolver( mesh, iks ) {
 
 			this.mesh = mesh;
@@ -16049,7 +15984,6 @@ var Three = (function (exports) {
 		CCDIKSolver.prototype = {
 
 			constructor: CCDIKSolver,
-			
 			update: function () {
 
 				var q = new Quaternion();
@@ -16201,7 +16135,6 @@ var Three = (function (exports) {
 				};
 
 			}(),
-			
 			createHelper: function () {
 
 				return new CCDIKHelper( this.mesh, this.mesh.geometry.userData.MMD.iks );
@@ -16243,7 +16176,6 @@ var Three = (function (exports) {
 			}
 
 		};
-		
 		function CCDIKHelper( mesh, iks ) {
 
 			Object3D.call( this );
@@ -16291,7 +16223,6 @@ var Three = (function (exports) {
 		CCDIKHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 			constructor: CCDIKHelper,
-			
 			updateMatrixWorld: function () {
 
 				var matrix = new Matrix4();
@@ -16447,7 +16378,6 @@ var Three = (function (exports) {
 	} )();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Bone() {
 
 		Object3D.call( this );
@@ -16465,7 +16395,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	// BoxGeometry
 
 	function BoxGeometry( width, height, depth, widthSegments, heightSegments, depthSegments ) {
@@ -16658,7 +16587,6 @@ var Three = (function (exports) {
 	BoxBufferGeometry.prototype.constructor = BoxBufferGeometry;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	// CylinderGeometry
 
 	function CylinderGeometry( radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded, thetaStart, thetaLength ) {
@@ -16963,9 +16891,7 @@ var Three = (function (exports) {
 	CylinderBufferGeometry.prototype.constructor = CylinderBufferGeometry;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var MMDPhysics = ( function () {
-		
 		function MMDPhysics( mesh, rigidBodyParams, constraintParams, params ) {
 
 			if ( typeof Ammo === 'undefined' ) {
@@ -16980,12 +16906,11 @@ var Three = (function (exports) {
 			this.manager = new ResourceManager();
 
 			this.mesh = mesh;
-			
 			this.unitStep = ( params.unitStep !== undefined ) ? params.unitStep : 1 / 65;
 			this.maxStepNum = ( params.maxStepNum !== undefined ) ? params.maxStepNum : 3;
 			this.gravity = new Vector3( 0, - 9.8 * 10, 0 );
 
-			if ( params.gravity !== undefined ) this.gravity.copy( gravity );
+			if ( params.gravity !== undefined ) this.gravity.copy( params.gravity );
 
 			this.world = params.world !== undefined ? params.world : null; // experimental
 
@@ -16999,7 +16924,6 @@ var Three = (function (exports) {
 		MMDPhysics.prototype = {
 
 			constructor: MMDPhysics,
-			
 			update: function ( delta ) {
 
 				var manager = this.manager;
@@ -17048,7 +16972,7 @@ var Three = (function (exports) {
 
 				if ( isNonDefaultScale ) {
 
-					if ( parent !== null ) parent.parent = parent;
+					if ( parent !== null ) mesh.parent = parent;
 
 					mesh.scale.copy( scale );
 
@@ -17061,7 +16985,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-			
 			reset: function () {
 
 				for ( var i = 0, il = this.bodies.length; i < il; i++ ) {
@@ -17073,7 +16996,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-			
 			warmup: function ( cycles ) {
 
 				for ( var i = 0; i < cycles; i++ ) {
@@ -17085,7 +17007,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-			
 			setGravity: function ( gravity ) {
 
 				this.world.setGravity( new Ammo.btVector3( gravity.x, gravity.y, gravity.z ) );
@@ -17094,7 +17015,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-			
 			createHelper: function () {
 
 				return new MMDPhysicsHelper( this.mesh, this );
@@ -17188,7 +17108,6 @@ var Three = (function (exports) {
 						this.mesh, this.world, bodyA, bodyB, params, this.manager ) );
 
 				}
-
 			},
 
 			_stepSimulation: function ( delta ) {
@@ -17235,7 +17154,6 @@ var Three = (function (exports) {
 			}
 
 		};
-		
 		function ResourceManager() {
 
 			// for Three.js
@@ -17685,7 +17603,6 @@ var Three = (function (exports) {
 			}
 
 		};
-		
 		function RigidBody( mesh, world, params, manager ) {
 
 			this.mesh  = mesh;
@@ -17705,14 +17622,12 @@ var Three = (function (exports) {
 		RigidBody.prototype = {
 
 			constructor: MMDPhysics.RigidBody,
-			
 			reset: function () {
 
 				this._setTransformFromBone();
 				return this;
 
 			},
-			
 			updateFromBone: function () {
 
 				if ( this.params.boneIndex !== - 1 &&
@@ -17725,7 +17640,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-			
 			updateBone: function () {
 
 				if ( this.params.type === 0 ||
@@ -17819,7 +17733,6 @@ var Three = (function (exports) {
 				if ( params.type === 0 ) {
 
 					body.setCollisionFlags( body.getCollisionFlags() | 2 );
-					
 					body.setActivationState( 4 );
 
 				}
@@ -17963,7 +17876,6 @@ var Three = (function (exports) {
 			}
 
 		};
-		
 		function Constraint( mesh, world, bodyA, bodyB, params, manager ) {
 
 			this.mesh  = mesh;
@@ -18055,7 +17967,6 @@ var Three = (function (exports) {
 					}
 
 				}
-				
 				if ( constraint.setParam !== undefined ) {
 
 					for ( var i = 0; i < 6; i ++ ) {
@@ -18085,7 +17996,6 @@ var Three = (function (exports) {
 			}
 
 		};
-		
 		function MMDPhysicsHelper( mesh, physics ) {
 
 			Object3D.call( this );
@@ -18138,7 +18048,6 @@ var Three = (function (exports) {
 		MMDPhysicsHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 			constructor: MMDPhysicsHelper,
-			
 			updateMatrixWorld: function () {
 
 				var position = new Vector3();
@@ -18257,9 +18166,7 @@ var Three = (function (exports) {
 	} )();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var MMDAnimationHelper = ( function () {
-		
 		function MMDAnimationHelper( params ) {
 
 			params = params || {};
@@ -18303,7 +18210,6 @@ var Three = (function (exports) {
 		MMDAnimationHelper.prototype = {
 
 			constructor: MMDAnimationHelper,
-			
 			add: function ( object, params ) {
 
 				params = params || {};
@@ -18335,7 +18241,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-			
 			remove: function ( object ) {
 
 				if ( object.isSkinnedMesh ) {
@@ -18365,7 +18270,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-			
 			update: function ( delta ) {
 
 				if ( this.audioManager !== null ) this.audioManager.control( delta );
@@ -18383,7 +18287,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-			
 			pose: function ( mesh, vpd, params ) {
 
 				params = params || {};
@@ -18434,7 +18337,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-			
 			enable: function ( key, enabled ) {
 
 				if ( this.enabled[ key ] === undefined ) {
@@ -18459,7 +18361,6 @@ var Three = (function (exports) {
 				return this;
 
 			},
-			
 			createGrantSolver: function ( mesh ) {
 
 				return new GrantSolver( mesh, mesh.geometry.userData.MMD.grants );
@@ -18825,7 +18726,6 @@ var Three = (function (exports) {
 					params );
 
 			},
-			
 			_syncDuration: function () {
 
 				var max = 0.0;
@@ -18956,7 +18856,6 @@ var Three = (function (exports) {
 				}
 
 			},
-			
 			_saveBones: function ( mesh ) {
 
 				var objects = this.objects.get( mesh );
@@ -19064,7 +18963,6 @@ var Three = (function (exports) {
 		};
 
 		//
-		
 		function AudioManager( audio, params ) {
 
 			params = params || {};
@@ -19084,7 +18982,6 @@ var Three = (function (exports) {
 		AudioManager.prototype = {
 
 			constructor: AudioManager,
-			
 			control: function ( delta ) {
 
 				this.elapsed += delta;
@@ -19110,6 +19007,9 @@ var Three = (function (exports) {
 				}
 
 				if ( this.currentTime < this.delayTime ) return false;
+				
+				// 'duration' can be bigger than 'audioDuration + delayTime' because of sync configuration
+				if ( ( this.currentTime - this.delayTime ) > this.audioDuration ) return false;
 
 				this.audio.startTime = this.currentTime - this.delayTime;
 
@@ -19125,7 +19025,6 @@ var Three = (function (exports) {
 			}
 
 		};
-		
 		function GrantSolver( mesh, grants ) {
 
 			this.mesh = mesh;
@@ -19136,7 +19035,6 @@ var Three = (function (exports) {
 		GrantSolver.prototype = {
 
 			constructor: GrantSolver,
-			
 			update: function () {
 
 				var quaternion = new Quaternion();

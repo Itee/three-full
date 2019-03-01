@@ -2,11 +2,9 @@ var Three = (function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var TypedArrayUtils = {};
-
 	TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 
 		var stack = [];
@@ -142,7 +140,6 @@ var Three = (function (exports) {
 		return arr;
 
 	};
-
 	 TypedArrayUtils.Kdtree = function ( points, metric, eleSize ) {
 
 		var self = this;
@@ -192,7 +189,6 @@ var Three = (function (exports) {
 		};
 		
 		this.nearest = function ( point, maxNodes, maxDistance ) {
-
 			var i,
 				result,
 				bestNodes;
@@ -344,7 +340,6 @@ var Three = (function (exports) {
 		};
 		
 	};
-
 	TypedArrayUtils.Kdtree.prototype.Node = function ( obj, depth, parent, pos ) {
 
 		this.obj = obj;
@@ -355,7 +350,6 @@ var Three = (function (exports) {
 		this.pos = pos;
 
 	}; 
-
 	TypedArrayUtils.Kdtree.BinaryHeap = function ( scoreFunction ) {
 
 		this.content = [];
