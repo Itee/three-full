@@ -323,8 +323,6 @@ module.exports = {
 		GLTFLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'MeshPhongMaterial',
-				'MeshLambertMaterial',
 				'MeshBasicMaterial',
 				'ShaderLib',
 				'UniformsUtils',
