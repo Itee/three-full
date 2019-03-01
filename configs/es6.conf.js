@@ -92,8 +92,7 @@ module.exports = {
 		AssimpLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils',
-				'Loader'
+				'LoaderUtils'
 			]
 		},
 		AWDLoader: {
