@@ -319,10 +319,11 @@ function _convertFile ( banner, fileDatas ) {
     const formatedFile    = _formatReplacementStatements( fileDatas.file, fileDatas.replacements )
     const formatedExports = _formatExportStatements( outputPath, fileDatas.exports )
     const outputFile      = banner + formatedImports + formatedFile + formatedExports
+    const cleanFile       = _cleanFile( outputFile )
 
     _createFoldersTree( path.dirname( outputPath ) )
 
-    fs.writeFileSync( outputPath, outputFile )
+    fs.writeFileSync( outputPath, cleanFile )
 
 }
 
@@ -330,10 +331,19 @@ function _copyFile ( banner, fileDatas ) {
 
     const outputPath = fileDatas.output
     const file       = banner + fileDatas.file
+    const cleanFile  = _cleanFile( file )
 
     _createFoldersTree( path.dirname( outputPath ) )
 
-    fs.writeFileSync( outputPath, file )
+    fs.writeFileSync( outputPath, cleanFile )
+
+}
+
+function _cleanFile( file ) {
+
+    // Remove extra blank lines then extra semi-colon
+    return file.replace( /(^[\s\t]*[\r\n]){2,}/gm, '' )
+               .replace( /;([\r\n]*;)/gm, ';' )
 
 }
 
