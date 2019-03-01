@@ -816,6 +816,11 @@ module.exports = {
 		ShaderGodRays: {
 			outputOverride: 'shaders/ShaderGodRays.js'
 		},
+		ShaderLib: {
+			imports: [
+                ['mergeUniforms', 'from', './UniformsUtils']
+			]
+		},
 		ShaderPass: {
 			imports: [ 'UniformsUtils' ]
 		},
@@ -848,6 +853,11 @@ module.exports = {
         },
 		ShadowMapViewer: {
 			imports: [ 'UnpackDepthRGBAShader' ]
+		},
+		ShaderMaterial: {
+			imports: [
+                ['cloneUniforms', 'from', '../renderers/shaders/UniformsUtils']
+			]
 		},
         Shape: {
             outputOverride: 'core/Shape.js'
@@ -998,6 +1008,11 @@ module.exports = {
             ],
             exportsOverride: [ 'Water2' ]
         },
+		WebGLBackground: {
+            imports: [
+                ['cloneUniforms', 'from', '../shaders/UniformsUtils']
+            ]
+		},
 		WebGLDeferredRenderer: {
 			imports: [
 				'CopyShader',
@@ -1008,6 +1023,11 @@ module.exports = {
 				[ 'ShaderDeferredCommon = ', 'var ShaderDeferredCommon = ' ],
 				[ 'ShaderDeferred = ', 'var ShaderDeferred = ' ],
 			]
+		},
+		WebGLRenderer: {
+            imports: [
+                ['cloneUniforms', 'from', './shaders/UniformsUtils']
+            ]
 		},
 		WebVR: {
 			replacements: [
