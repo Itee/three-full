@@ -421,7 +421,8 @@ module.exports = {
 			replacements: [
 				[ 'if ( var LoaderSupport === undefined )', '/*\nif ( var LoaderSupport === undefined )' ],
 				[ 'LoaderSupport.Validator = {', '*/\nvar LoaderSupport = {}\nLoaderSupport.Validator = {' ]
-			]
+			],
+            exportsOverride: [ 'LoaderSupport' ]
 		},
 		Lut: {
 			replacements: [
