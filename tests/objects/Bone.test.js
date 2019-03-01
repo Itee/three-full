@@ -3301,18 +3301,22 @@ var Three = (function (exports) {
 
 		Object.defineProperties( this, {
 			position: {
+				configurable: true,
 				enumerable: true,
 				value: position
 			},
 			rotation: {
+				configurable: true,
 				enumerable: true,
 				value: rotation
 			},
 			quaternion: {
+				configurable: true,
 				enumerable: true,
 				value: quaternion
 			},
 			scale: {
+				configurable: true,
 				enumerable: true,
 				value: scale
 			},

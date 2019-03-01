@@ -205,9 +205,9 @@ var Three = (function (exports) {
 				var isBase64 = !! dataUriRegexResult[ 2 ];
 				var data = dataUriRegexResult[ 3 ];
 
-				data = window.decodeURIComponent( data );
+				data = decodeURIComponent( data );
 
-				if ( isBase64 ) data = window.atob( data );
+				if ( isBase64 ) data = atob( data );
 
 				try {
 
@@ -261,7 +261,7 @@ var Three = (function (exports) {
 					}
 
 					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
+					setTimeout( function () {
 
 						if ( onLoad ) onLoad( response );
 
@@ -272,12 +272,12 @@ var Three = (function (exports) {
 				} catch ( error ) {
 
 					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
+					setTimeout( function () {
 
 						if ( onError ) onError( error );
 
-						scope.manager.itemEnd( url );
 						scope.manager.itemError( url );
+						scope.manager.itemEnd( url );
 
 					}, 0 );
 
@@ -336,8 +336,8 @@ var Three = (function (exports) {
 
 						}
 
-						scope.manager.itemEnd( url );
 						scope.manager.itemError( url );
+						scope.manager.itemEnd( url );
 
 					}
 
@@ -369,8 +369,8 @@ var Three = (function (exports) {
 
 					}
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				}, false );
 
@@ -387,8 +387,8 @@ var Three = (function (exports) {
 
 					}
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				}, false );
 
@@ -544,8 +544,8 @@ var Three = (function (exports) {
 
 				if ( onError ) onError( event );
 
-				scope.manager.itemEnd( url );
 				scope.manager.itemError( url );
+				scope.manager.itemEnd( url );
 
 			}
 
@@ -3962,7 +3962,11 @@ var Three = (function (exports) {
 
 			var canvas;
 
-			if ( image instanceof HTMLCanvasElement ) {
+			if ( typeof HTMLCanvasElement == 'undefined' ) {
+
+				return image.src;
+
+			} else if ( image instanceof HTMLCanvasElement ) {
 
 				canvas = image;
 
@@ -4956,8 +4960,6 @@ var Three = (function (exports) {
 		this.alphaTest = 0;
 		this.premultipliedAlpha = false;
 
-		this.overdraw = 0; // Overdrawn pixels (typically between 0 and 1) for fixing antialiasing gaps in CanvasRenderer
-
 		this.visible = true;
 
 		this.userData = {};
@@ -5014,11 +5016,6 @@ var Three = (function (exports) {
 				} else if ( ( currentValue && currentValue.isVector3 ) && ( newValue && newValue.isVector3 ) ) {
 
 					currentValue.copy( newValue );
-
-				} else if ( key === 'overdraw' ) {
-
-					// ensure overdraw is backwards-compatible with legacy boolean type
-					this[ key ] = Number( newValue );
 
 				} else {
 
@@ -5245,8 +5242,6 @@ var Three = (function (exports) {
 
 			this.alphaTest = source.alphaTest;
 			this.premultipliedAlpha = source.premultipliedAlpha;
-
-			this.overdraw = source.overdraw;
 
 			this.visible = source.visible;
 			this.userData = JSON.parse( JSON.stringify( source.userData ) );
@@ -6504,18 +6499,22 @@ var Three = (function (exports) {
 
 		Object.defineProperties( this, {
 			position: {
+				configurable: true,
 				enumerable: true,
 				value: position
 			},
 			rotation: {
+				configurable: true,
 				enumerable: true,
 				value: rotation
 			},
 			quaternion: {
+				configurable: true,
 				enumerable: true,
 				value: quaternion
 			},
 			scale: {
+				configurable: true,
 				enumerable: true,
 				value: scale
 			},
@@ -7629,10 +7628,10 @@ var Three = (function (exports) {
 		this.zoom = 1;
 		this.view = null;
 
-		this.left = left;
-		this.right = right;
-		this.top = top;
-		this.bottom = bottom;
+		this.left = ( left !== undefined ) ? left : - 1;
+		this.right = ( right !== undefined ) ? right : 1;
+		this.top = ( top !== undefined ) ? top : 1;
+		this.bottom = ( bottom !== undefined ) ? bottom : - 1;
 
 		this.near = ( near !== undefined ) ? near : 0.1;
 		this.far = ( far !== undefined ) ? far : 2000;
@@ -13316,9 +13315,20 @@ var Three = (function (exports) {
 
 		}() ),
 
+		copy: function ( source ) {
+
+			Object3D.prototype.copy.call( this, source );
+
+			this.geometry.copy( source.geometry );
+			this.material.copy( source.material );
+
+			return this;
+
+		},
+
 		clone: function () {
 
-			return new this.constructor( this.geometry, this.material ).copy( this );
+			return new this.constructor().copy( this );
 
 		}
 
@@ -17267,13 +17277,11 @@ var Three = (function (exports) {
 
 					if ( morphTargetNode.attrType !== 'BlendShapeChannel' ) return;
 
-					var targetRelationships = connections.get( parseInt( child.ID ) );
+					rawMorphTarget.geoID = connections.get( parseInt( child.ID ) ).children.filter( function ( child ) {
 
-					targetRelationships.children.forEach( function ( child ) {
+						return child.relationship === undefined;
 
-						if ( child.relationship === undefined ) rawMorphTarget.geoID = child.ID;
-
-					} );
+					} )[ 0 ].ID;
 
 					rawMorphTargets.push( rawMorphTarget );
 
@@ -18972,62 +18980,62 @@ var Three = (function (exports) {
 
 									if ( layerCurveNodes[ i ] === undefined ) {
 
-										var modelID;
+										var modelID = connections.get( child.ID ).parents.filter( function ( parent ) {
 
-										connections.get( child.ID ).parents.forEach( function ( parent ) {
+											return parent.relationship !== undefined;
 
-											if ( parent.relationship !== undefined ) modelID = parent.ID;
+										} )[ 0 ].ID;
 
-										} );
+										if ( modelID !== undefined ) {
 
-										var rawModel = fbxTree.Objects.Model[ modelID.toString() ];
+											var rawModel = fbxTree.Objects.Model[ modelID.toString() ];
 
-										var node = {
+											var node = {
 
-											modelName: PropertyBinding.sanitizeNodeName( rawModel.attrName ),
-											ID: rawModel.id,
-											initialPosition: [ 0, 0, 0 ],
-											initialRotation: [ 0, 0, 0 ],
-											initialScale: [ 1, 1, 1 ],
+												modelName: PropertyBinding.sanitizeNodeName( rawModel.attrName ),
+												ID: rawModel.id,
+												initialPosition: [ 0, 0, 0 ],
+												initialRotation: [ 0, 0, 0 ],
+												initialScale: [ 1, 1, 1 ],
 
-										};
+											};
 
-										sceneGraph.traverse( function ( child ) {
+											sceneGraph.traverse( function ( child ) {
 
-											if ( child.ID = rawModel.id ) {
+												if ( child.ID = rawModel.id ) {
 
-												node.transform = child.matrix;
+													node.transform = child.matrix;
 
-												if ( child.userData.transformData ) node.eulerOrder = child.userData.transformData.eulerOrder;
+													if ( child.userData.transformData ) node.eulerOrder = child.userData.transformData.eulerOrder;
 
-											}
+												}
 
-										} );
+											} );
 
-										if ( ! node.transform ) node.transform = new Matrix4();
+											if ( ! node.transform ) node.transform = new Matrix4();
 
-										// if the animated model is pre rotated, we'll have to apply the pre rotations to every
-										// animation value as well
-										if ( 'PreRotation' in rawModel ) node.preRotation = rawModel.PreRotation.value;
-										if ( 'PostRotation' in rawModel ) node.postRotation = rawModel.PostRotation.value;
+											// if the animated model is pre rotated, we'll have to apply the pre rotations to every
+											// animation value as well
+											if ( 'PreRotation' in rawModel ) node.preRotation = rawModel.PreRotation.value;
+											if ( 'PostRotation' in rawModel ) node.postRotation = rawModel.PostRotation.value;
 
-										layerCurveNodes[ i ] = node;
+											layerCurveNodes[ i ] = node;
+
+										}
 
 									}
 
-									layerCurveNodes[ i ][ curveNode.attr ] = curveNode;
+									if ( layerCurveNodes[ i ] ) layerCurveNodes[ i ][ curveNode.attr ] = curveNode;
 
 								} else if ( curveNode.curves.morph !== undefined ) {
 
 									if ( layerCurveNodes[ i ] === undefined ) {
 
-										var deformerID;
+										var deformerID = connections.get( child.ID ).parents.filter( function ( parent ) {
 
-										connections.get( child.ID ).parents.forEach( function ( parent ) {
+											return parent.relationship !== undefined;
 
-											if ( parent.relationship !== undefined ) deformerID = parent.ID;
-
-										} );
+										} )[ 0 ].ID;
 
 										var morpherID = connections.get( deformerID ).parents[ 0 ].ID;
 										var geoID = connections.get( morpherID ).parents[ 0 ].ID;
@@ -20423,7 +20431,6 @@ var Three = (function (exports) {
 			var lPreRotationM = new Matrix4();
 			var lRotationM = new Matrix4();
 			var lPostRotationM = new Matrix4();
-			var lTransform = new Matrix4();
 
 			var lScalingM = new Matrix4();
 			var lScalingPivotM = new Matrix4();
@@ -20433,7 +20440,6 @@ var Three = (function (exports) {
 
 			var lParentGX = new Matrix4();
 			var lGlobalT = new Matrix4();
-			var lGlobalRS = new Matrix4();
 
 			var inheritType = ( transformData.inheritType ) ? transformData.inheritType : 0;
 
@@ -20480,16 +20486,17 @@ var Three = (function (exports) {
 			lParentGX.extractRotation( lParentGRM );
 
 			// Global Shear*Scaling
-			var lLSM = new Matrix4();
-			var lParentGSM = new Matrix4();
-			var lParentGRSM = new Matrix4();
 			var lParentTM = new Matrix4();
+			var lLSM;
+			var lParentGSM;
+			var lParentGRSM;
 
 			lParentTM.copyPosition( lParentGX );
 			lParentGRSM = lParentTM.getInverse( lParentTM ).multiply( lParentGX );
 			lParentGSM = lParentGRM.getInverse( lParentGRM ).multiply( lParentGRSM );
 			lLSM = lScalingM;
 
+			var lGlobalRS;
 			if ( inheritType === 0 ) {
 
 				lGlobalRS = lParentGRM.multiply( lLRM ).multiply( lParentGSM ).multiply( lLSM );
@@ -20509,7 +20516,7 @@ var Three = (function (exports) {
 			}
 
 			// Calculate the local transform matrix
-			lTransform = lTranslationM.multiply( lRotationOffsetM ).multiply( lRotationPivotM ).multiply( lPreRotationM ).multiply( lRotationM ).multiply( lPostRotationM ).multiply( lRotationPivotM.getInverse( lRotationPivotM ) ).multiply( lScalingOffsetM ).multiply( lScalingPivotM ).multiply( lScalingM ).multiply( lScalingPivotM.getInverse( lScalingPivotM ) );
+			var lTransform = lTranslationM.multiply( lRotationOffsetM ).multiply( lRotationPivotM ).multiply( lPreRotationM ).multiply( lRotationM ).multiply( lPostRotationM ).multiply( lRotationPivotM.getInverse( lRotationPivotM ) ).multiply( lScalingOffsetM ).multiply( lScalingPivotM ).multiply( lScalingM ).multiply( lScalingPivotM.getInverse( lScalingPivotM ) );
 
 			var lLocalTWithAllPivotAndOffsetInfo = new Matrix4().copyPosition( lTransform );
 

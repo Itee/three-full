@@ -219,9 +219,9 @@ var Three = (function (exports) {
 				var isBase64 = !! dataUriRegexResult[ 2 ];
 				var data = dataUriRegexResult[ 3 ];
 
-				data = window.decodeURIComponent( data );
+				data = decodeURIComponent( data );
 
-				if ( isBase64 ) data = window.atob( data );
+				if ( isBase64 ) data = atob( data );
 
 				try {
 
@@ -275,7 +275,7 @@ var Three = (function (exports) {
 					}
 
 					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
+					setTimeout( function () {
 
 						if ( onLoad ) onLoad( response );
 
@@ -286,12 +286,12 @@ var Three = (function (exports) {
 				} catch ( error ) {
 
 					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
+					setTimeout( function () {
 
 						if ( onError ) onError( error );
 
-						scope.manager.itemEnd( url );
 						scope.manager.itemError( url );
+						scope.manager.itemEnd( url );
 
 					}, 0 );
 
@@ -350,8 +350,8 @@ var Three = (function (exports) {
 
 						}
 
-						scope.manager.itemEnd( url );
 						scope.manager.itemError( url );
+						scope.manager.itemEnd( url );
 
 					}
 
@@ -383,8 +383,8 @@ var Three = (function (exports) {
 
 					}
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				}, false );
 
@@ -401,8 +401,8 @@ var Three = (function (exports) {
 
 					}
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				}, false );
 
@@ -3844,7 +3844,11 @@ var Three = (function (exports) {
 
 			var canvas;
 
-			if ( image instanceof HTMLCanvasElement ) {
+			if ( typeof HTMLCanvasElement == 'undefined' ) {
+
+				return image.src;
+
+			} else if ( image instanceof HTMLCanvasElement ) {
 
 				canvas = image;
 
@@ -4225,18 +4229,18 @@ var Three = (function (exports) {
 
 			var loader = new FileLoader( this.manager );
 			loader.setResponseType( 'arraybuffer' );
-
+			loader.setPath( this.path );
 			loader.load( url, function ( buffer ) {
 
 				var texData = scope._parser( buffer );
 
 				if ( ! texData ) return;
 
-				if ( undefined !== texData.image ) {
+				if ( texData.image !== undefined ) {
 
 					texture.image = texData.image;
 
-				} else if ( undefined !== texData.data ) {
+				} else if ( texData.data !== undefined ) {
 
 					texture.image.width = texData.width;
 					texture.image.height = texData.height;
@@ -4244,32 +4248,32 @@ var Three = (function (exports) {
 
 				}
 
-				texture.wrapS = undefined !== texData.wrapS ? texData.wrapS : ClampToEdgeWrapping;
-				texture.wrapT = undefined !== texData.wrapT ? texData.wrapT : ClampToEdgeWrapping;
+				texture.wrapS = texData.wrapS !== undefined ? texData.wrapS : ClampToEdgeWrapping;
+				texture.wrapT = texData.wrapT !== undefined ? texData.wrapT : ClampToEdgeWrapping;
 
-				texture.magFilter = undefined !== texData.magFilter ? texData.magFilter : LinearFilter;
-				texture.minFilter = undefined !== texData.minFilter ? texData.minFilter : LinearMipMapLinearFilter;
+				texture.magFilter = texData.magFilter !== undefined ? texData.magFilter : LinearFilter;
+				texture.minFilter = texData.minFilter !== undefined ? texData.minFilter : LinearMipMapLinearFilter;
 
-				texture.anisotropy = undefined !== texData.anisotropy ? texData.anisotropy : 1;
+				texture.anisotropy = texData.anisotropy !== undefined ? texData.anisotropy : 1;
 
-				if ( undefined !== texData.format ) {
+				if ( texData.format !== undefined ) {
 
 					texture.format = texData.format;
 
 				}
-				if ( undefined !== texData.type ) {
+				if ( texData.type !== undefined ) {
 
 					texture.type = texData.type;
 
 				}
 
-				if ( undefined !== texData.mipmaps ) {
+				if ( texData.mipmaps !== undefined ) {
 
 					texture.mipmaps = texData.mipmaps;
 
 				}
 
-				if ( 1 === texData.mipmapCount ) {
+				if ( texData.mipmapCount === 1 ) {
 
 					texture.minFilter = LinearFilter;
 
@@ -4281,6 +4285,13 @@ var Three = (function (exports) {
 
 			}, onProgress, onError );
 			return texture;
+
+		},
+
+		setPath: function ( value ) {
+
+			this.path = value;
+			return this;
 
 		}
 
@@ -5175,7 +5186,12 @@ var Three = (function (exports) {
 				'RLE_COMPRESSION',
 				'ZIPS_COMPRESSION',
 				'ZIP_COMPRESSION',
-				'PIZ_COMPRESSION'
+				'PIZ_COMPRESSION',
+				'PXR24_COMPRESSION',
+				'B44_COMPRESSION',
+				'B44A_COMPRESSION',
+				'DWAA_COMPRESSION',
+				'DWAB_COMPRESSION'
 			];
 
 			var compression = parseUint8( dataView, offset );
@@ -5355,7 +5371,7 @@ var Three = (function (exports) {
 
 					} else {
 
-						throw 'Only supported pixel format is HALF';
+						throw 'EXRLoader._parser: unsupported pixelType ' + EXRHeader.channels[ channelID ].pixelType + '. Only pixelType is 1 (HALF) is supported.';
 
 					}
 
@@ -5397,7 +5413,7 @@ var Three = (function (exports) {
 
 						} else {
 
-							throw 'Only supported pixel format is HALF';
+							throw 'EXRLoader._parser: unsupported pixelType ' + EXRHeader.channels[ channelID ].pixelType + '. Only pixelType is 1 (HALF) is supported.';
 
 						}
 
@@ -5409,7 +5425,7 @@ var Three = (function (exports) {
 
 		} else {
 
-			throw 'Cannot decompress unsupported compression';
+			throw 'EXRLoader._parser: ' + EXRHeader.compression + ' is unsupported';
 
 		}
 

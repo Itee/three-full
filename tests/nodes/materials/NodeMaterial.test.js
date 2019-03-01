@@ -1048,7 +1048,7 @@ var Three = (function (exports) {
 
 		} else {
 
-			return builder.format( '( ' + src + ' )', this.getType( builder ), output );
+			return builder.format( '( ' + this.src + ' )', this.getType( builder ), output );
 
 		}
 
@@ -7626,8 +7626,6 @@ var Three = (function (exports) {
 		this.alphaTest = 0;
 		this.premultipliedAlpha = false;
 
-		this.overdraw = 0; // Overdrawn pixels (typically between 0 and 1) for fixing antialiasing gaps in CanvasRenderer
-
 		this.visible = true;
 
 		this.userData = {};
@@ -7684,11 +7682,6 @@ var Three = (function (exports) {
 				} else if ( ( currentValue && currentValue.isVector3 ) && ( newValue && newValue.isVector3 ) ) {
 
 					currentValue.copy( newValue );
-
-				} else if ( key === 'overdraw' ) {
-
-					// ensure overdraw is backwards-compatible with legacy boolean type
-					this[ key ] = Number( newValue );
 
 				} else {
 
@@ -7915,8 +7908,6 @@ var Three = (function (exports) {
 
 			this.alphaTest = source.alphaTest;
 			this.premultipliedAlpha = source.premultipliedAlpha;
-
-			this.overdraw = source.overdraw;
 
 			this.visible = source.visible;
 			this.userData = JSON.parse( JSON.stringify( source.userData ) );

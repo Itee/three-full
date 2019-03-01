@@ -729,7 +729,7 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function InputNode$1( type, params ) {
+	function InputNode( type, params ) {
 
 		params = params || {};
 		params.shared = params.shared !== undefined ? params.shared : false;
@@ -740,16 +740,16 @@ var Three = (function (exports) {
 
 	}
 
-	InputNode$1.prototype = Object.create( TempNode.prototype );
-	InputNode$1.prototype.constructor = InputNode$1;
+	InputNode.prototype = Object.create( TempNode.prototype );
+	InputNode.prototype.constructor = InputNode;
 
-	InputNode$1.prototype.isReadonly = function ( builder ) {
+	InputNode.prototype.isReadonly = function ( builder ) {
 
 		return this.readonly;
 
 	};
 
-	InputNode$1.prototype.copy = function ( source ) {
+	InputNode.prototype.copy = function ( source ) {
 
 		TempNode.prototype.copy.call( this, source );
 
@@ -757,7 +757,7 @@ var Three = (function (exports) {
 
 	};
 
-	InputNode$1.prototype.createJSONNode = function ( meta ) {
+	InputNode.prototype.createJSONNode = function ( meta ) {
 
 		var data = TempNode.prototype.createJSONNode.call( this, meta );
 
@@ -767,7 +767,7 @@ var Three = (function (exports) {
 
 	};
 
-	InputNode$1.prototype.generate = function ( builder, output, uuid, type, ns, needsUpdate ) {
+	InputNode.prototype.generate = function ( builder, output, uuid, type, ns, needsUpdate ) {
 
 		uuid = builder.getUuid( uuid || this.getUuid() );
 		type = type || this.getType( builder );
@@ -1545,7 +1545,7 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function TextureNode( value, uv, bias, project ) {
 
-		InputNode$1.call( this, 'v4', { shared: true } );
+		InputNode.call( this, 'v4', { shared: true } );
 
 		this.value = value;
 		this.uv = uv || new UVNode();
@@ -1554,13 +1554,13 @@ var Three = (function (exports) {
 
 	}
 
-	TextureNode.prototype = Object.create( InputNode$1.prototype );
+	TextureNode.prototype = Object.create( InputNode.prototype );
 	TextureNode.prototype.constructor = TextureNode;
 	TextureNode.prototype.nodeType = "Texture";
 
 	TextureNode.prototype.getTexture = function ( builder, output ) {
 
-		return InputNode$1.prototype.generate.call( this, builder, output, this.value.uuid, 't' );
+		return InputNode.prototype.generate.call( this, builder, output, this.value.uuid, 't' );
 
 	};
 
@@ -1605,7 +1605,7 @@ var Three = (function (exports) {
 
 	TextureNode.prototype.copy = function ( source ) {
 
-		InputNode$1.prototype.copy.call( this, source );
+		InputNode.prototype.copy.call( this, source );
 
 		if ( source.value ) this.value = source.value;
 
@@ -3908,13 +3908,13 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function Matrix4Node( matrix ) {
 
-		InputNode$1.call( this, 'm4' );
+		InputNode.call( this, 'm4' );
 
 		this.value = matrix || new Matrix4();
 
 	}
 
-	Matrix4Node.prototype = Object.create( InputNode$1.prototype );
+	Matrix4Node.prototype = Object.create( InputNode.prototype );
 	Matrix4Node.prototype.constructor = Matrix4Node;
 	Matrix4Node.prototype.nodeType = "Matrix4";
 
@@ -3946,7 +3946,7 @@ var Three = (function (exports) {
 
 	Matrix4Node.prototype.copy = function ( source ) {
 
-		InputNode$1.prototype.copy.call( this, source );
+		InputNode.prototype.copy.call( this, source );
 
 		this.scope.value.fromArray( source.elements );
 

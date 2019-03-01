@@ -205,9 +205,9 @@ var Three = (function (exports) {
 				var isBase64 = !! dataUriRegexResult[ 2 ];
 				var data = dataUriRegexResult[ 3 ];
 
-				data = window.decodeURIComponent( data );
+				data = decodeURIComponent( data );
 
-				if ( isBase64 ) data = window.atob( data );
+				if ( isBase64 ) data = atob( data );
 
 				try {
 
@@ -261,7 +261,7 @@ var Three = (function (exports) {
 					}
 
 					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
+					setTimeout( function () {
 
 						if ( onLoad ) onLoad( response );
 
@@ -272,12 +272,12 @@ var Three = (function (exports) {
 				} catch ( error ) {
 
 					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
+					setTimeout( function () {
 
 						if ( onError ) onError( error );
 
-						scope.manager.itemEnd( url );
 						scope.manager.itemError( url );
+						scope.manager.itemEnd( url );
 
 					}, 0 );
 
@@ -336,8 +336,8 @@ var Three = (function (exports) {
 
 						}
 
-						scope.manager.itemEnd( url );
 						scope.manager.itemError( url );
+						scope.manager.itemEnd( url );
 
 					}
 
@@ -369,8 +369,8 @@ var Three = (function (exports) {
 
 					}
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				}, false );
 
@@ -387,8 +387,8 @@ var Three = (function (exports) {
 
 					}
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				}, false );
 
@@ -6899,18 +6899,22 @@ var Three = (function (exports) {
 
 		Object.defineProperties( this, {
 			position: {
+				configurable: true,
 				enumerable: true,
 				value: position
 			},
 			rotation: {
+				configurable: true,
 				enumerable: true,
 				value: rotation
 			},
 			quaternion: {
+				configurable: true,
 				enumerable: true,
 				value: quaternion
 			},
 			scale: {
+				configurable: true,
 				enumerable: true,
 				value: scale
 			},
@@ -8839,6 +8843,7 @@ var Three = (function (exports) {
 	var FrontSide = 0;
 	var FlatShading = 1;
 	var NoColors = 0;
+	var VertexColors = 2;
 	var NormalBlending = 1;
 	var AddEquation = 100;
 	var SrcAlphaFactor = 204;
@@ -8898,8 +8903,6 @@ var Three = (function (exports) {
 		this.alphaTest = 0;
 		this.premultipliedAlpha = false;
 
-		this.overdraw = 0; // Overdrawn pixels (typically between 0 and 1) for fixing antialiasing gaps in CanvasRenderer
-
 		this.visible = true;
 
 		this.userData = {};
@@ -8956,11 +8959,6 @@ var Three = (function (exports) {
 				} else if ( ( currentValue && currentValue.isVector3 ) && ( newValue && newValue.isVector3 ) ) {
 
 					currentValue.copy( newValue );
-
-				} else if ( key === 'overdraw' ) {
-
-					// ensure overdraw is backwards-compatible with legacy boolean type
-					this[ key ] = Number( newValue );
 
 				} else {
 
@@ -9187,8 +9185,6 @@ var Three = (function (exports) {
 
 			this.alphaTest = source.alphaTest;
 			this.premultipliedAlpha = source.premultipliedAlpha;
-
-			this.overdraw = source.overdraw;
 
 			this.visible = source.visible;
 			this.userData = JSON.parse( JSON.stringify( source.userData ) );
@@ -10181,11 +10177,11 @@ var Three = (function (exports) {
 
 					if ( offset.rgb !== undefined ) {
 
-						var c = new Float32Array( [ parseFloat( line[ offset.rgb ] ) ] );
-						var dataview = new DataView( c.buffer, 0 );
-						color.push( dataview.getUint8( 0 ) / 255.0 );
-						color.push( dataview.getUint8( 1 ) / 255.0 );
-						color.push( dataview.getUint8( 2 ) / 255.0 );
+						var rgb = parseFloat( line[ offset.rgb ] );
+						var r = ( rgb >> 16 ) & 0x0000ff;
+						var g = ( rgb >> 8 ) & 0x0000ff;
+						var b = ( rgb >> 0 ) & 0x0000ff;
+						color.push( r / 255, g / 255, b / 255 );
 
 					}
 
@@ -10227,9 +10223,9 @@ var Three = (function (exports) {
 
 					if ( offset.rgb !== undefined ) {
 
-						color.push( dataview.getUint8( row + offset.rgb + 0 ) / 255.0 );
-						color.push( dataview.getUint8( row + offset.rgb + 1 ) / 255.0 );
 						color.push( dataview.getUint8( row + offset.rgb + 2 ) / 255.0 );
+						color.push( dataview.getUint8( row + offset.rgb + 1 ) / 255.0 );
+						color.push( dataview.getUint8( row + offset.rgb + 0 ) / 255.0 );
 
 					}
 
@@ -10261,7 +10257,7 @@ var Three = (function (exports) {
 
 			if ( color.length > 0 ) {
 
-				material.vertexColors = true;
+				material.vertexColors = VertexColors;
 
 			} else {
 

@@ -3301,18 +3301,22 @@ var Three = (function (exports) {
 
 		Object.defineProperties( this, {
 			position: {
+				configurable: true,
 				enumerable: true,
 				value: position
 			},
 			rotation: {
+				configurable: true,
 				enumerable: true,
 				value: rotation
 			},
 			quaternion: {
+				configurable: true,
 				enumerable: true,
 				value: quaternion
 			},
 			scale: {
+				configurable: true,
 				enumerable: true,
 				value: scale
 			},
@@ -5093,12 +5097,66 @@ var Three = (function (exports) {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var cameraLPos = new Vector3();
+	var cameraRPos = new Vector3();
+	function setProjectionFromUnion( camera, cameraL, cameraR ) {
+
+		cameraLPos.setFromMatrixPosition( cameraL.matrixWorld );
+		cameraRPos.setFromMatrixPosition( cameraR.matrixWorld );
+
+		var ipd = cameraLPos.distanceTo( cameraRPos );
+
+		var projL = cameraL.projectionMatrix.elements;
+		var projR = cameraR.projectionMatrix.elements;
+
+		// VR systems will have identical far and near planes, and
+		// most likely identical top and bottom frustum extents.
+		// Use the left camera for these values.
+		var near = projL[ 14 ] / ( projL[ 10 ] - 1 );
+		var far = projL[ 14 ] / ( projL[ 10 ] + 1 );
+		var topFov = ( projL[ 9 ] + 1 ) / projL[ 5 ];
+		var bottomFov = ( projL[ 9 ] - 1 ) / projL[ 5 ];
+
+		var leftFov = ( projL[ 8 ] - 1 ) / projL[ 0 ];
+		var rightFov = ( projR[ 8 ] + 1 ) / projR[ 0 ];
+		var left = near * leftFov;
+		var right = near * rightFov;
+
+		// Calculate the new camera's position offset from the
+		// left camera. xOffset should be roughly half `ipd`.
+		var zOffset = ipd / ( - leftFov + rightFov );
+		var xOffset = zOffset * - leftFov;
+
+		// TODO: Better way to apply this offset?
+		cameraL.matrixWorld.decompose( camera.position, camera.quaternion, camera.scale );
+		camera.translateX( xOffset );
+		camera.translateZ( zOffset );
+		camera.matrixWorld.compose( camera.position, camera.quaternion, camera.scale );
+		camera.matrixWorldInverse.getInverse( camera.matrixWorld );
+
+		// Find the union of the frustum values of the cameras and scale
+		// the values so that the near plane's position does not change in world space,
+		// although must now be relative to the new union camera.
+		var near2 = near + zOffset;
+		var far2 = far + zOffset;
+		var left2 = left - xOffset;
+		var right2 = right + ( ipd - xOffset );
+		var top2 = topFov * far / far2 * near2;
+		var bottom2 = bottomFov * far / far2 * near2;
+
+		camera.projectionMatrix.makePerspective( left2, right2, top2, bottom2, near2, far2 );
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function WebXRManager( renderer ) {
 
 		var gl = renderer.context;
 
 		var device = null;
 		var session = null;
+
+		var framebufferScaleFactor = 1.0;
 
 		var frameOfReference = null;
 		var frameOfReferenceType = 'stage';
@@ -5179,6 +5237,12 @@ var Three = (function (exports) {
 
 		}
 
+		this.setFramebufferScaleFactor = function ( value ) {
+
+			framebufferScaleFactor = value;
+
+		};
+
 		this.setFrameOfReferenceType = function ( value ) {
 
 			frameOfReferenceType = value;
@@ -5196,7 +5260,7 @@ var Three = (function (exports) {
 				session.addEventListener( 'selectend', onSessionEvent );
 				session.addEventListener( 'end', onSessionEnd );
 
-				session.baseLayer = new XRWebGLLayer( session, gl );
+				session.baseLayer = new XRWebGLLayer( session, gl, { framebufferScaleFactor: framebufferScaleFactor } );
 				session.requestFrameOfReference( frameOfReferenceType ).then( function ( value ) {
 
 					frameOfReference = value;
@@ -5216,6 +5280,13 @@ var Three = (function (exports) {
 
 					inputSources = session.getInputSources();
 					console.log( inputSources );
+
+					for ( var i = 0; i < controllers.length; i ++ ) {
+
+						var controller = controllers[ i ];
+						controller.userData.inputSource = inputSources[ i ];
+
+					}
 
 				} );
 
@@ -5246,8 +5317,6 @@ var Three = (function (exports) {
 				var parent = camera.parent;
 				var cameras = cameraVR.cameras;
 
-				// apply camera.parent to cameraVR
-
 				updateCamera( cameraVR, parent );
 
 				for ( var i = 0; i < cameras.length; i ++ ) {
@@ -5267,6 +5336,8 @@ var Three = (function (exports) {
 					children[ i ].updateMatrixWorld( true );
 
 				}
+
+				setProjectionFromUnion( cameraVR, cameraL, cameraR );
 
 				return cameraVR;
 
@@ -5305,11 +5376,6 @@ var Three = (function (exports) {
 					if ( i === 0 ) {
 
 						cameraVR.matrix.copy( camera.matrix );
-
-						// HACK (mrdoob)
-						// https://github.com/w3c/webvr/issues/203
-
-						cameraVR.projectionMatrix.copy( camera.projectionMatrix );
 
 					}
 

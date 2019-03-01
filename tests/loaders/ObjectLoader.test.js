@@ -3948,18 +3948,22 @@ var Three = (function (exports) {
 
 		Object.defineProperties( this, {
 			position: {
+				configurable: true,
 				enumerable: true,
 				value: position
 			},
 			rotation: {
+				configurable: true,
 				enumerable: true,
 				value: rotation
 			},
 			quaternion: {
+				configurable: true,
 				enumerable: true,
 				value: quaternion
 			},
 			scale: {
+				configurable: true,
 				enumerable: true,
 				value: scale
 			},
@@ -9089,8 +9093,6 @@ var Three = (function (exports) {
 		this.alphaTest = 0;
 		this.premultipliedAlpha = false;
 
-		this.overdraw = 0; // Overdrawn pixels (typically between 0 and 1) for fixing antialiasing gaps in CanvasRenderer
-
 		this.visible = true;
 
 		this.userData = {};
@@ -9147,11 +9149,6 @@ var Three = (function (exports) {
 				} else if ( ( currentValue && currentValue.isVector3 ) && ( newValue && newValue.isVector3 ) ) {
 
 					currentValue.copy( newValue );
-
-				} else if ( key === 'overdraw' ) {
-
-					// ensure overdraw is backwards-compatible with legacy boolean type
-					this[ key ] = Number( newValue );
 
 				} else {
 
@@ -9378,8 +9375,6 @@ var Three = (function (exports) {
 
 			this.alphaTest = source.alphaTest;
 			this.premultipliedAlpha = source.premultipliedAlpha;
-
-			this.overdraw = source.overdraw;
 
 			this.visible = source.visible;
 			this.userData = JSON.parse( JSON.stringify( source.userData ) );
@@ -10608,9 +10603,20 @@ var Three = (function (exports) {
 
 		}() ),
 
+		copy: function ( source ) {
+
+			Object3D.prototype.copy.call( this, source );
+
+			this.geometry.copy( source.geometry );
+			this.material.copy( source.material );
+
+			return this;
+
+		},
+
 		clone: function () {
 
-			return new this.constructor( this.geometry, this.material ).copy( this );
+			return new this.constructor().copy( this );
 
 		}
 
@@ -14357,10 +14363,10 @@ var Three = (function (exports) {
 		this.zoom = 1;
 		this.view = null;
 
-		this.left = left;
-		this.right = right;
-		this.top = top;
-		this.bottom = bottom;
+		this.left = ( left !== undefined ) ? left : - 1;
+		this.right = ( right !== undefined ) ? right : 1;
+		this.top = ( top !== undefined ) ? top : 1;
+		this.bottom = ( bottom !== undefined ) ? bottom : - 1;
 
 		this.near = ( near !== undefined ) ? near : 0.1;
 		this.far = ( far !== undefined ) ? far : 2000;
@@ -14651,7 +14657,11 @@ var Three = (function (exports) {
 
 			var canvas;
 
-			if ( image instanceof HTMLCanvasElement ) {
+			if ( typeof HTMLCanvasElement == 'undefined' ) {
+
+				return image.src;
+
+			} else if ( image instanceof HTMLCanvasElement ) {
 
 				canvas = image;
 
@@ -15223,8 +15233,8 @@ var Three = (function (exports) {
 
 				if ( onError ) onError( event );
 
-				scope.manager.itemEnd( url );
 				scope.manager.itemError( url );
+				scope.manager.itemEnd( url );
 
 			}
 
@@ -16958,9 +16968,9 @@ var Three = (function (exports) {
 				var isBase64 = !! dataUriRegexResult[ 2 ];
 				var data = dataUriRegexResult[ 3 ];
 
-				data = window.decodeURIComponent( data );
+				data = decodeURIComponent( data );
 
-				if ( isBase64 ) data = window.atob( data );
+				if ( isBase64 ) data = atob( data );
 
 				try {
 
@@ -17014,7 +17024,7 @@ var Three = (function (exports) {
 					}
 
 					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
+					setTimeout( function () {
 
 						if ( onLoad ) onLoad( response );
 
@@ -17025,12 +17035,12 @@ var Three = (function (exports) {
 				} catch ( error ) {
 
 					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
+					setTimeout( function () {
 
 						if ( onError ) onError( error );
 
-						scope.manager.itemEnd( url );
 						scope.manager.itemError( url );
+						scope.manager.itemEnd( url );
 
 					}, 0 );
 
@@ -17089,8 +17099,8 @@ var Three = (function (exports) {
 
 						}
 
-						scope.manager.itemEnd( url );
 						scope.manager.itemError( url );
+						scope.manager.itemEnd( url );
 
 					}
 
@@ -17122,8 +17132,8 @@ var Three = (function (exports) {
 
 					}
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				}, false );
 
@@ -17140,8 +17150,8 @@ var Three = (function (exports) {
 
 					}
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				}, false );
 
@@ -18093,17 +18103,12 @@ var Three = (function (exports) {
 			var scope = this;
 
 			var loader = new FileLoader( scope.manager );
+			loader.setPath( scope.path );
 			loader.load( url, function ( text ) {
 
 				onLoad( scope.parse( JSON.parse( text ) ) );
 
 			}, onProgress, onError );
-
-		},
-
-		setTextures: function ( value ) {
-
-			this.textures = value;
 
 		},
 
@@ -18305,9 +18310,65 @@ var Three = (function (exports) {
 
 			return material;
 
+		},
+
+		setPath: function ( value ) {
+
+			this.path = value;
+			return this;
+
+		},
+
+		setTextures: function ( value ) {
+
+			this.textures = value;
+			return this;
+
 		}
 
 	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var LoaderUtils = {
+
+		decodeText: function ( array ) {
+
+			if ( typeof TextDecoder !== 'undefined' ) {
+
+				return new TextDecoder().decode( array );
+
+			}
+
+			// Avoid the String.fromCharCode.apply(null, array) shortcut, which
+			// throws a "maximum call stack size exceeded" error for large arrays.
+
+			var s = '';
+
+			for ( var i = 0, il = array.length; i < il; i ++ ) {
+
+				// Implicitly assumes little-endian.
+				s += String.fromCharCode( array[ i ] );
+
+			}
+
+			// Merges multi-byte utf-8 characters.
+			return decodeURIComponent( escape( s ) );
+
+		},
+
+		extractUrlBase: function ( url ) {
+
+			var index = url.lastIndexOf( '/' );
+
+			if ( index === - 1 ) return './';
+
+			return url.substr( 0, index + 1 );
+
+		}
+
+	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function BufferGeometryLoader( manager ) {
@@ -18323,6 +18384,7 @@ var Three = (function (exports) {
 			var scope = this;
 
 			var loader = new FileLoader( scope.manager );
+			loader.setPath( scope.path );
 			loader.load( url, function ( text ) {
 
 				onLoad( scope.parse( JSON.parse( text ) ) );
@@ -18386,6 +18448,13 @@ var Three = (function (exports) {
 			}
 
 			return geometry;
+
+		},
+
+		setPath: function ( value ) {
+
+			this.path = value;
+			return this;
 
 		}
 
@@ -18778,48 +18847,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var LoaderUtils = {
-
-		decodeText: function ( array ) {
-
-			if ( typeof TextDecoder !== 'undefined' ) {
-
-				return new TextDecoder().decode( array );
-
-			}
-
-			// Avoid the String.fromCharCode.apply(null, array) shortcut, which
-			// throws a "maximum call stack size exceeded" error for large arrays.
-
-			var s = '';
-
-			for ( var i = 0, il = array.length; i < il; i ++ ) {
-
-				// Implicitly assumes little-endian.
-				s += String.fromCharCode( array[ i ] );
-
-			}
-
-			// Merges multi-byte utf-8 characters.
-			return decodeURIComponent( escape( s ) );
-
-		},
-
-		extractUrlBase: function ( url ) {
-
-			var index = url.lastIndexOf( '/' );
-
-			if ( index === - 1 ) return './';
-
-			return url.substr( 0, index + 1 );
-
-		}
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var geometryId = 0; // Geometry uses even numbers as Id
 
 	function Geometry() {
@@ -19029,35 +19056,13 @@ var Three = (function (exports) {
 
 			if ( uvs2 !== undefined ) this.faceVertexUvs[ 1 ] = [];
 
-			var tempNormals = [];
-			var tempUVs = [];
-			var tempUVs2 = [];
-
 			for ( var i = 0, j = 0; i < positions.length; i += 3, j += 2 ) {
 
-				scope.vertices.push( new Vector3( positions[ i ], positions[ i + 1 ], positions[ i + 2 ] ) );
-
-				if ( normals !== undefined ) {
-
-					tempNormals.push( new Vector3( normals[ i ], normals[ i + 1 ], normals[ i + 2 ] ) );
-
-				}
+				scope.vertices.push( new Vector3().fromArray( positions, i ) );
 
 				if ( colors !== undefined ) {
 
-					scope.colors.push( new Color( colors[ i ], colors[ i + 1 ], colors[ i + 2 ] ) );
-
-				}
-
-				if ( uvs !== undefined ) {
-
-					tempUVs.push( new Vector2( uvs[ j ], uvs[ j + 1 ] ) );
-
-				}
-
-				if ( uvs2 !== undefined ) {
-
-					tempUVs2.push( new Vector2( uvs2[ j ], uvs2[ j + 1 ] ) );
+					scope.colors.push( new Color().fromArray( colors, i ) );
 
 				}
 
@@ -19065,8 +19070,16 @@ var Three = (function (exports) {
 
 			function addFace( a, b, c, materialIndex ) {
 
-				var vertexNormals = normals !== undefined ? [ tempNormals[ a ].clone(), tempNormals[ b ].clone(), tempNormals[ c ].clone() ] : [];
-				var vertexColors = colors !== undefined ? [ scope.colors[ a ].clone(), scope.colors[ b ].clone(), scope.colors[ c ].clone() ] : [];
+				var vertexColors = ( colors === undefined ) ? [] : [
+					scope.colors[ a ].clone(),
+					scope.colors[ b ].clone(),
+					scope.colors[ c ].clone() ];
+
+				var vertexNormals = ( normals === undefined ) ? [] : [
+					new Vector3().fromArray( normals, a * 3 ),
+					new Vector3().fromArray( normals, b * 3 ),
+					new Vector3().fromArray( normals, c * 3 )
+				];
 
 				var face = new Face3( a, b, c, vertexNormals, vertexColors, materialIndex );
 
@@ -19074,13 +19087,21 @@ var Three = (function (exports) {
 
 				if ( uvs !== undefined ) {
 
-					scope.faceVertexUvs[ 0 ].push( [ tempUVs[ a ].clone(), tempUVs[ b ].clone(), tempUVs[ c ].clone() ] );
+					scope.faceVertexUvs[ 0 ].push( [
+						new Vector2().fromArray( uvs, a * 2 ),
+						new Vector2().fromArray( uvs, b * 2 ),
+						new Vector2().fromArray( uvs, c * 2 )
+					] );
 
 				}
 
 				if ( uvs2 !== undefined ) {
 
-					scope.faceVertexUvs[ 1 ].push( [ tempUVs2[ a ].clone(), tempUVs2[ b ].clone(), tempUVs2[ c ].clone() ] );
+					scope.faceVertexUvs[ 1 ].push( [
+						new Vector2().fromArray( uvs2, a * 2 ),
+						new Vector2().fromArray( uvs2, b * 2 ),
+						new Vector2().fromArray( uvs2, c * 2 )
+					] );
 
 				}
 
@@ -25300,7 +25321,7 @@ var Three = (function (exports) {
 	function ObjectLoader( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
-		this.texturePath = '';
+		this.resourcePath = '';
 
 	}
 
@@ -25310,15 +25331,13 @@ var Three = (function (exports) {
 
 		load: function ( url, onLoad, onProgress, onError ) {
 
-			if ( this.texturePath === '' ) {
-
-				this.texturePath = url.substring( 0, url.lastIndexOf( '/' ) + 1 );
-
-			}
-
 			var scope = this;
 
+			var path = ( this.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : this.path;
+			this.resourcePath = this.resourcePath || path;
+
 			var loader = new FileLoader( scope.manager );
+			loader.setPath( this.path );
 			loader.load( url, function ( text ) {
 
 				var json = null;
@@ -25352,9 +25371,16 @@ var Three = (function (exports) {
 
 		},
 
-		setTexturePath: function ( value ) {
+		setPath: function ( value ) {
 
-			this.texturePath = value;
+			this.path = value;
+			return this;
+
+		},
+
+		setResourcePath: function ( value ) {
+
+			this.resourcePath = value;
 			return this;
 
 		},
@@ -25655,7 +25681,7 @@ var Three = (function (exports) {
 
 						case 'Geometry':
 
-							geometry = geometryLoader.parse( data, this.texturePath ).geometry;
+							geometry = geometryLoader.parse( data, this.resourcePath ).geometry;
 
 							break;
 
@@ -25684,6 +25710,7 @@ var Three = (function (exports) {
 
 		parseMaterials: function ( json, textures ) {
 
+			var cache = {}; // MultiMaterial
 			var materials = {};
 
 			if ( json !== undefined ) {
@@ -25703,7 +25730,15 @@ var Three = (function (exports) {
 
 						for ( var j = 0; j < data.materials.length; j ++ ) {
 
-							array.push( loader.parse( data.materials[ j ] ) );
+							var material = data.materials[ j ];
+
+							if ( cache[ material.uuid ] === undefined ) {
+
+								cache[ material.uuid ] = loader.parse( material );
+
+							}
+
+							array.push( cache[ material.uuid ] );
 
 						}
 
@@ -25712,6 +25747,7 @@ var Three = (function (exports) {
 					} else {
 
 						materials[ data.uuid ] = loader.parse( data );
+						cache[ data.uuid ] = materials[ data.uuid ];
 
 					}
 
@@ -25758,8 +25794,8 @@ var Three = (function (exports) {
 
 				}, undefined, function () {
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				} );
 
@@ -25787,7 +25823,7 @@ var Three = (function (exports) {
 
 							var currentUrl = url[ j ];
 
-							var path = /^(\/\/)|([a-z]+:(\/\/)?)/i.test( currentUrl ) ? currentUrl : scope.texturePath + currentUrl;
+							var path = /^(\/\/)|([a-z]+:(\/\/)?)/i.test( currentUrl ) ? currentUrl : scope.resourcePath + currentUrl;
 
 							images[ image.uuid ].push( loadImage( path ) );
 
@@ -25797,7 +25833,7 @@ var Three = (function (exports) {
 
 						// load single image
 
-						var path = /^(\/\/)|([a-z]+:(\/\/)?)/i.test( image.url ) ? image.url : scope.texturePath + image.url;
+						var path = /^(\/\/)|([a-z]+:(\/\/)?)/i.test( image.url ) ? image.url : scope.resourcePath + image.url;
 
 						images[ image.uuid ] = loadImage( path );
 

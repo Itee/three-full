@@ -219,8 +219,8 @@ var Three = (function (exports) {
 
 				if ( onError ) onError( e );
 
-				scope.manager.itemEnd( url );
 				scope.manager.itemError( url );
+				scope.manager.itemEnd( url );
 
 			} );
 
