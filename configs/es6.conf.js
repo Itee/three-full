@@ -47,7 +47,9 @@ module.exports = {
 		'RectAreaLightUniformsLib.js',      // Todo: check how to extends imported lib properly
 		'Volume.js',                        // damned eval
 		'NRRDLoader.js',                    // Import Volume.js
-		'XLoader.js'                     	// amd module
+		'XLoader.js',                     	// amd module
+		'jank.js',							// Useless file ???
+		'offscreen.js'						// Seriously... Guys !
 	],
 	output: path.join( __dirname, '..', 'sources' ),
 	edgeCases: {
