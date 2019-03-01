@@ -86,8 +86,7 @@ module.exports = {
 		AssimpJSONLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils',
-				'Loader'
+				'LoaderUtils'
 			]
 		},
 		AssimpLoader: {
