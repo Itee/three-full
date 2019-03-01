@@ -1025,6 +1025,13 @@ module.exports = {
             ],
             exportsOverride: [ 'Water2' ]
         },
+        WebGL: {
+            replacements:    [
+                [ 'WEBGL', 'WebGL' ]
+            ],
+            exportsOverride: [ 'WebGL' ],
+            outputOverride: 'helpers/WebGL.js'
+        },
 		WebGLBackground: {
             imports: [
                 ['cloneUniforms', 'from', '../shaders/UniformsUtils']
@@ -1051,13 +1058,6 @@ module.exports = {
 				[ 'var WEBVR', 'var WebVR' ]
 			],
             exportsOverride: [ 'WebVR' ]
-		},
-		WebGL: {
-            replacements:    [
-                [ 'WEBGL', 'WebGL' ]
-            ],
-            exportsOverride: [ 'WebGL' ],
-			outputOverride: 'helpers/WebGL.js'
 		}
 	},
 	banner: '//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n' +
