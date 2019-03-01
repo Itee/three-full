@@ -39,6 +39,7 @@ module.exports = {
 		'draco',                            // draco_decoder use Eval !
 		'sea3d',                            // Duplicate export 'SEA3D'
 		'crossfade',                        // Scene has already been declared
+		'offscreen',
 
 		// Specific file
 		'Cloth.js',							// Use global variable from example html ! Need to be refactored
@@ -48,8 +49,6 @@ module.exports = {
 		'Volume.js',                        // damned eval
 		'NRRDLoader.js',                    // Import Volume.js
 		'XLoader.js',                     	// amd module
-		'jank.js',							// Useless file ???
-		'offscreen.js'						// Seriously... Guys !
 	],
 	output: path.join( __dirname, '..', 'sources' ),
 	edgeCases: {
