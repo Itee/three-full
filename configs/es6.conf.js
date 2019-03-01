@@ -924,7 +924,6 @@ module.exports = {
 		},
 		TypedArrayUtils: {
 			imports: [
-				'AnimationUtils',
 				'Timeliner'
 			],
 			outputOverride: 'utils/TypedArrayUtils.js'
