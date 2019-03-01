@@ -731,9 +731,6 @@ module.exports = {
 				'LoaderUtils'
 			]
 		},
-		PVRLoader: {
-			imports: [ 'DefaultLoadingManager' ]
-		},
         QuadraticBezierCurve: {
             outputOverride: 'curves/QuadraticBezierCurve.js'
         },
