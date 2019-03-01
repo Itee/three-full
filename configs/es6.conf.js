@@ -653,8 +653,7 @@ module.exports = {
 				'LoaderUtils'
 			],
             replacements: [
-				[ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ],
-				[ 'THREE = { LoaderSupport: {} };', 'var LoaderSupport = {};' ]
+				[ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ]
 			]
 		},
 		Ocean: {
