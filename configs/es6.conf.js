@@ -160,9 +160,6 @@ module.exports = {
 		ColorConverter: {
 			imports: [ '_Math' ]
 		},
-		ColorNode: {
-			imports: [ 'NodeMaterial' ]
-		},
 		ConvexObjectBreaker: {
 			outputOverride: 'modifiers/ConvexObjectBreaker.js'
 		},
