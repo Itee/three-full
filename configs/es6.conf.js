@@ -948,7 +948,10 @@ module.exports = {
 			outputOverride: 'audio/VolumeSlice.js'
 		},
 		VRMLLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
         VRMLoader: {
             imports: [
