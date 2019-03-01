@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { EventDispatcher } from '../core/EventDispatcher.js'
 import {
-	UVMapping,
 	MirroredRepeatWrapping,
 	ClampToEdgeWrapping,
 	RepeatWrapping,
@@ -11,7 +10,8 @@ import {
 	UnsignedByteType,
 	RGBAFormat,
 	LinearMipMapLinearFilter,
-	LinearFilter
+	LinearFilter,
+	UVMapping
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
 import { Vector2 } from '../math/Vector2.js'

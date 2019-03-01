@@ -342,7 +342,7 @@ var Projector = function () {
 
 				_face.material = material;
 
-				if ( material.vertexColors === FaceColors ) {
+				if ( material.vertexColors === FaceColors ||  material.vertexColors === VertexColors ) {
 
 					_face.color.fromArray( colors, a * 3 );
 

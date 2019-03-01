@@ -70,6 +70,8 @@ export {
 } from './objects/GPUParticleSystem.js'
 export { Gyroscope } from './objects/Gyroscope.js'
 export { ImprovedNoise } from './misc/ImprovedNoise.js'
+export { SelectionBox } from './interactive/SelectionBox.js'
+export { SelectionHelper } from './interactive/SelectionHelper.js'
 export { Line2 } from './lines/Line2.js'
 export { LineGeometry } from './lines/LineGeometry.js'
 export { LineMaterial } from './lines/LineMaterial.js'
@@ -256,10 +258,6 @@ export { UnrealBloomPass } from './postprocessing/UnrealBloomPass.js'
 export { PRNG } from './utils/PRNG.js'
 export { QuickHull } from './utils/QuickHull.js'
 export {
-	SpriteCanvasMaterial,
-	CanvasRenderer
-} from './renderers/CanvasRenderer.js'
-export {
 	CSS2DObject,
 	CSS2DRenderer
 } from './renderers/CSS2DRenderer.js'
@@ -351,7 +349,6 @@ export { TranslucentShader } from './shaders/ShaderTranslucent.js'
 export { SimplexNoise } from './misc/SimplexNoise.js'
 export { TimelinerController } from './animation/TimelinerController.js'
 export { TypedArrayUtils } from './utils/TypedArrayUtils.js'
-export { UCSCharacter } from './objects/UCSCharacter.js'
 export { BufferGeometryUtils } from './utils/BufferGeometryUtils.js'
 export { GeometryUtils } from './utils/GeometryUtils.js'
 export { MathUtils } from './utils/MathUtils.js'
@@ -802,6 +799,7 @@ export { WebGLRenderer } from './renderers/WebGLRenderer.js'
 export { WebGLRenderTarget } from './renderers/WebGLRenderTarget.js'
 export { WebGLRenderTargetCube } from './renderers/WebGLRenderTargetCube.js'
 export { WebVRManager } from './renderers/webvr/WebVRManager.js'
+export { setProjectionFromUnion } from './renderers/webvr/WebVRUtils.js'
 export { WebXRManager } from './renderers/webvr/WebXRManager.js'
 export { Fog } from './scenes/Fog.js'
 export { FogExp2 } from './scenes/FogExp2.js'

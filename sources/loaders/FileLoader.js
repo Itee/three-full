@@ -68,9 +68,9 @@ Object.assign( FileLoader.prototype, {
 			var isBase64 = !! dataUriRegexResult[ 2 ];
 			var data = dataUriRegexResult[ 3 ];
 
-			data = window.decodeURIComponent( data );
+			data = decodeURIComponent( data );
 
-			if ( isBase64 ) data = window.atob( data );
+			if ( isBase64 ) data = atob( data );
 
 			try {
 
@@ -124,7 +124,7 @@ Object.assign( FileLoader.prototype, {
 				}
 
 				// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-				window.setTimeout( function () {
+				setTimeout( function () {
 
 					if ( onLoad ) onLoad( response );
 
@@ -135,12 +135,12 @@ Object.assign( FileLoader.prototype, {
 			} catch ( error ) {
 
 				// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-				window.setTimeout( function () {
+				setTimeout( function () {
 
 					if ( onError ) onError( error );
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				}, 0 );
 
@@ -199,8 +199,8 @@ Object.assign( FileLoader.prototype, {
 
 					}
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				}
 
@@ -232,8 +232,8 @@ Object.assign( FileLoader.prototype, {
 
 				}
 
-				scope.manager.itemEnd( url );
 				scope.manager.itemError( url );
+				scope.manager.itemEnd( url );
 
 			}, false );
 
@@ -250,8 +250,8 @@ Object.assign( FileLoader.prototype, {
 
 				}
 
-				scope.manager.itemEnd( url );
 				scope.manager.itemError( url );
+				scope.manager.itemEnd( url );
 
 			}, false );
 

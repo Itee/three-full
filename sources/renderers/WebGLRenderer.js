@@ -1153,6 +1153,7 @@ function WebGLRenderer( parameters ) {
 		currentRenderState = null;
 
 	};
+
 	function projectObject( object, camera, sortObjects ) {
 
 		if ( object.visible === false ) return;

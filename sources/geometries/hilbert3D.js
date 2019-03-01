@@ -5,18 +5,18 @@ import { Vector3 } from '../math/Vector3.js'
 function hilbert3D( center, size, iterations, v0, v1, v2, v3, v4, v5, v6, v7 ) {
 
 	// Default Vars
-	var center = undefined !== center ? center : new Vector3( 0, 0, 0 ),
-		size = undefined !== size ? size : 10,
+	var center = center !== undefined ? center : new Vector3( 0, 0, 0 ),
+		size = size !== undefined ? size : 10,
 		half = size / 2,
-		iterations = undefined !== iterations ? iterations : 1,
-		v0 = undefined !== v0 ? v0 : 0,
-		v1 = undefined !== v1 ? v1 : 1,
-		v2 = undefined !== v2 ? v2 : 2,
-		v3 = undefined !== v3 ? v3 : 3,
-		v4 = undefined !== v4 ? v4 : 4,
-		v5 = undefined !== v5 ? v5 : 5,
-		v6 = undefined !== v6 ? v6 : 6,
-		v7 = undefined !== v7 ? v7 : 7
+		iterations = iterations !== undefined ? iterations : 1,
+		v0 = v0 !== undefined ? v0 : 0,
+		v1 = v1 !== undefined ? v1 : 1,
+		v2 = v2 !== undefined ? v2 : 2,
+		v3 = v3 !== undefined ? v3 : 3,
+		v4 = v4 !== undefined ? v4 : 4,
+		v5 = v5 !== undefined ? v5 : 5,
+		v6 = v6 !== undefined ? v6 : 6,
+		v7 = v7 !== undefined ? v7 : 7
 	;
 
 	var vec_s = [
