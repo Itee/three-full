@@ -19,22 +19,53 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
     let banner = '// Made by Itee (https://github.com/Itee) with ES6 Convertor script\n\n'
     if( _format === 'cjs' ) {
         banner += '' +
-            'var window = {};\n' +
-            'if( typeof Window !== \'undefined\' ) {\n' +
+            'var DEBUG = (process && process.env && process.env.Debug);\n' +
+            'var window = getGlobalWindowObject();\n' +
             '\n' +
-            '    if(window && window instanceof Window ) {\n' +
-            '        window = window;\n' +
-            '    } else if ( global && global instanceof Window ) {\n' +
-            '        window = global;\n' +
-            '    } else if ( GLOBAL && GLOBAL instanceof Window ) {\n' +
-            '        window = GLOBAL;\n' +
-            '    } else {\n' +
-            '        console.warn("Unable to find classic window global variable declaration. Some dependencies that depending on global window variable could not work properly.");\n' +
-            '    }\n' +
-            '\n' +
-            '} else {\n' +
-            '    console.warn("It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly.");\n' +
-            '}'
+            'function getGlobalWindowObject() {\n' +
+            '   \n' +
+            '   if( typeof Window !== \'undefined\' ) {\n' +
+            '   \n' +
+            '       if(window && window instanceof Window ) {\n' +
+            '           return window;\n' +
+            '       } else if ( global ) {\n' +
+            '           \n' +
+            '           if( global instanceof Window ) {\n' +
+            '               return global;\n' +
+            '           } else if ( global.hasOwnProperty(\'window\') && global.window instanceof Window ) {\n' +
+            '               return global.window;\n' +
+            '           } else if( DEBUG ) {\n' +
+            '               console.warn("Three-Full: Unable to assign global variable as window object. Some dependencies that depending on global window variable could not work properly.");\n' +
+            '           }\n' +
+            '           \n' +
+            '       } else if ( GLOBAL ) {\n' +
+            '           \n' +
+            '           if( GLOBAL instanceof Window ) {\n' +
+            '               return GLOBAL;\n' +
+            '           } else if ( GLOBAL.hasOwnProperty(\'window\') && GLOBAL.window instanceof Window ) {\n' +
+            '               return GLOBAL.window;\n' +
+            '           } else if( DEBUG ) {\n' +
+            '               console.warn("Three-Full: Unable to assign GLOBAL variable as window object. Some dependencies that depending on global window variable could not work properly.");\n' +
+            '           }\n' +
+            '           \n' +
+            '       } else if ( self ) {\n' +
+            '           \n' +
+            '           if( self instanceof Window ) {\n' +
+            '               return self;\n' +
+            '           } else if ( self.hasOwnProperty(\'window\') && self.window instanceof Window ) {\n' +
+            '               return self.window;\n' +
+            '           } else if( DEBUG ) {\n' +
+            '               console.warn("Three-Full: Unable to assign self variable as window object. Some dependencies that depending on global window variable could not work properly.");\n' +
+            '           }\n' +
+            '           \n' +
+            '       } else if( DEBUG ) {\n' +
+            '           console.warn("Three-Full: Unable to find classic window global variable declaration in [window, global, GLOBAL or self]. Some dependencies that depending on global window variable could not work properly.");\n' +
+            '       }\n' +
+            '   \n' +
+            '   } else if( DEBUG ) {\n' +
+            '       console.warn("Three-Full: It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly.");\n' +
+            '   }\n' +
+            '}\n\n'
     }
 
     function glsl () {
