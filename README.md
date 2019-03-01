@@ -206,6 +206,10 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+##### 11.3.3:
+
+* Fix warning for cjs build onky in debug mode and improve window global check
+
 ##### 11.3.2:
 
 * Fix global window declaration for cjs build usage (again)
