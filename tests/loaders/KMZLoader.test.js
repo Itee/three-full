@@ -4,7 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var Cache = {
 
 		enabled: false,
@@ -48,7 +47,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LoadingManager( onLoad, onProgress, onError ) {
 
 		var scope = this;
@@ -142,7 +140,6 @@ var Three = (function (exports) {
 	var DefaultLoadingManager = new LoadingManager();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var loading = {};
 
 	function FileLoader( manager ) {
@@ -456,7 +453,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -604,7 +600,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix4() {
 
 		this.elements = [
@@ -1527,7 +1522,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Quaternion( x, y, z, w ) {
 
 		this._x = x || 0;
@@ -1682,6 +1676,8 @@ var Three = (function (exports) {
 	} );
 
 	Object.assign( Quaternion.prototype, {
+
+		isQuaternion: true,
 
 		set: function ( x, y, z, w ) {
 
@@ -2152,7 +2148,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -2878,14 +2873,7 @@ var Three = (function (exports) {
 	var DoubleSide = 2;
 	var FlatShading = 1;
 	var NoColors = 0;
-	var FaceColors = 1;
-	var VertexColors = 2;
-	var NoBlending = 0;
 	var NormalBlending = 1;
-	var AdditiveBlending = 2;
-	var SubtractiveBlending = 3;
-	var MultiplyBlending = 4;
-	var CustomBlending = 5;
 	var AddEquation = 100;
 	var SrcAlphaFactor = 204;
 	var OneMinusSrcAlphaFactor = 205;
@@ -2908,13 +2896,11 @@ var Three = (function (exports) {
 	var WrapAroundEnding = 2402;
 	var TrianglesDrawMode = 0;
 	var LinearEncoding = 3000;
-	var BasicDepthPacking = 3200;
 	var TangentSpaceNormalMap = 0;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Interpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		this.parameterPositions = parameterPositions;
@@ -3151,7 +3137,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function CubicInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -3293,7 +3278,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -3331,7 +3315,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DiscreteInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -3353,7 +3336,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var AnimationUtils = {
 
 		// same as Array.prototype.slice, but also works on typed arrays
@@ -3513,7 +3495,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function KeyframeTrack( name, times, values, interpolation ) {
 
 		if ( name === undefined ) throw new Error( 'KeyframeTrack: track name is undefined' );
@@ -3948,7 +3929,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function VectorKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -3968,7 +3948,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function QuaternionLinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -4002,7 +3981,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function QuaternionKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -4030,7 +4008,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function BooleanKeyframeTrack( name, times, values ) {
 
 		KeyframeTrack.call( this, name, times, values );
@@ -4056,7 +4033,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function ColorKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -4079,7 +4055,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function NumberKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -4099,7 +4074,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function StringKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -4122,7 +4096,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function AnimationClip( name, duration, tracks ) {
 
 		this.name = name;
@@ -4559,7 +4532,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function EventDispatcher() {}
 
 	Object.assign( EventDispatcher.prototype, {
@@ -4641,7 +4613,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var materialId = 0;
 
 	function Material() {
@@ -4853,6 +4824,9 @@ var Three = (function (exports) {
 				data.envMap = this.envMap.toJSON( meta ).uuid;
 				data.reflectivity = this.reflectivity; // Scale behind envMap
 
+				if ( this.combine !== undefined ) data.combine = this.combine;
+				if ( this.envMapIntensity !== undefined ) data.envMapIntensity = this.envMapIntensity;
+
 			}
 
 			if ( this.gradientMap && this.gradientMap.isTexture ) {
@@ -5021,7 +4995,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector2( x, y ) {
 
 		this.x = x || 0;
@@ -5513,7 +5486,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
 		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
 		'brown': 0xA52A2A, 'burlywood': 0xDEB887, 'cadetblue': 0x5F9EA0, 'chartreuse': 0x7FFF00, 'chocolate': 0xD2691E, 'coral': 0xFF7F50,
@@ -5664,7 +5636,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -6112,7 +6083,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshPhongMaterial( parameters ) {
 
 		Material.call( this );
@@ -6227,7 +6197,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshLambertMaterial( parameters ) {
 
 		Material.call( this );
@@ -6316,7 +6285,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshBasicMaterial( parameters ) {
 
 		Material.call( this );
@@ -6397,7 +6365,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Euler( x, y, z, order ) {
 
 		this._x = x || 0;
@@ -6740,7 +6707,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Layers() {
 
 		this.mask = 1 | 0;
@@ -6782,7 +6748,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix3() {
 
 		this.elements = [
@@ -7161,7 +7126,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var object3DId = 0;
 
 	function Object3D() {
@@ -8033,7 +7997,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Camera() {
 
 		Object3D.call( this );
@@ -8100,7 +8063,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function PerspectiveCamera( fov, aspect, near, far ) {
 
 		Camera.call( this );
@@ -8150,7 +8112,6 @@ var Three = (function (exports) {
 			return this;
 
 		},
-		
 		setFocalLength: function ( focalLength ) {
 
 			// see http://www.bobatkins.com/photography/technical/field_of_view.html
@@ -8160,7 +8121,6 @@ var Three = (function (exports) {
 			this.updateProjectionMatrix();
 
 		},
-		
 		getFocalLength: function () {
 
 			var vExtentSlope = Math.tan( _Math.DEG2RAD * 0.5 * this.fov );
@@ -8189,7 +8149,6 @@ var Three = (function (exports) {
 			return this.filmGauge / Math.max( this.aspect, 1 );
 
 		},
-		
 		setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 
 			this.aspect = fullWidth / fullHeight;
@@ -8287,7 +8246,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function OrthographicCamera( left, right, top, bottom, near, far ) {
 
 		Camera.call( this );
@@ -8426,7 +8384,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Light( color, intensity ) {
 
 		Object3D.call( this );
@@ -8480,7 +8437,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LightShadow( camera ) {
 
 		this.camera = camera;
@@ -8534,7 +8490,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DirectionalLightShadow( ) {
 
 		LightShadow.call( this, new OrthographicCamera( - 5, 5, 5, - 5, 0.5, 500 ) );
@@ -8548,7 +8503,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DirectionalLight( color, intensity ) {
 
 		Light.call( this, color, intensity );
@@ -8585,7 +8539,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function PointLight( color, intensity, distance, decay ) {
 
 		Light.call( this, color, intensity );
@@ -8638,7 +8591,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function SpotLightShadow() {
 
 		LightShadow.call( this, new PerspectiveCamera( 50, 1, 0.5, 500 ) );
@@ -8673,7 +8625,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function SpotLight( color, intensity, distance, angle, penumbra, decay ) {
 
 		Light.call( this, color, intensity );
@@ -8737,7 +8688,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function AmbientLight( color, intensity ) {
 
 		Light.call( this, color, intensity );
@@ -8757,7 +8707,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Sphere( center, radius ) {
 
 		this.center = ( center !== undefined ) ? center : new Vector3();
@@ -8929,7 +8878,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Box3( min, max ) {
 
 		this.min = ( min !== undefined ) ? min : new Vector3( + Infinity, + Infinity, + Infinity );
@@ -9308,7 +9256,7 @@ var Three = (function (exports) {
 
 			}
 
-			return ( min <= plane.constant && max >= plane.constant );
+			return ( min <= - plane.constant && max >= - plane.constant );
 
 		},
 
@@ -9539,7 +9487,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector4( x, y, z, w ) {
 
 		this.x = x || 0;
@@ -10160,7 +10107,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function BufferAttribute( array, itemSize, normalized ) {
 
 		if ( Array.isArray( array ) ) {
@@ -10487,7 +10433,6 @@ var Three = (function (exports) {
 
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -10496,7 +10441,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8ClampedArray( array ), itemSize, normalized );
@@ -10505,7 +10449,6 @@ var Three = (function (exports) {
 
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -10514,7 +10457,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint16Array( array ), itemSize, normalized );
@@ -10523,7 +10465,6 @@ var Three = (function (exports) {
 
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -10532,7 +10473,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint32Array( array ), itemSize, normalized );
@@ -10541,7 +10481,6 @@ var Three = (function (exports) {
 
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -10550,7 +10489,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float64Array( array ), itemSize, normalized );
@@ -10561,7 +10499,6 @@ var Three = (function (exports) {
 	Float64BufferAttribute.prototype.constructor = Float64BufferAttribute;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DirectGeometry() {
 
 		this.vertices = [];
@@ -10847,7 +10784,6 @@ var Three = (function (exports) {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var bufferGeometryId = 1; // BufferGeometry uses odd numbers as Id
 
 	function BufferGeometry() {
@@ -11820,7 +11756,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
 			return new BufferGeometry().copy( this );
 
 		},
@@ -11935,7 +11870,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Skeleton( bones, boneInverses ) {
 
 		// copy the bone array
@@ -12104,7 +12038,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Bone() {
 
 		Object3D.call( this );
@@ -12122,7 +12055,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Group() {
 
 		Object3D.call( this );
@@ -12140,7 +12072,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LineBasicMaterial( parameters ) {
 
 		Material.call( this );
@@ -12179,7 +12110,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Ray( origin, direction ) {
 
 		this.origin = ( origin !== undefined ) ? origin : new Vector3();
@@ -12719,7 +12649,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Line( geometry, material, mode ) {
 
 		if ( mode === 1 ) {
@@ -12775,7 +12704,7 @@ var Three = (function (exports) {
 
 					} else {
 
-						console.error( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+						console.warn( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
 
 					}
 
@@ -12962,7 +12891,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LineSegments( geometry, material ) {
 
 		Line.call( this, geometry, material );
@@ -13039,7 +12967,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Triangle( a, b, c ) {
 
 		this.a = ( a !== undefined ) ? a : new Vector3();
@@ -13381,7 +13308,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Face3( a, b, c, normal, color, materialIndex ) {
 
 		this.a = a;
@@ -13436,7 +13362,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Mesh( geometry, material ) {
 
 		Object3D.call( this );
@@ -13879,7 +13804,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function SkinnedMesh( geometry, material ) {
 
 		Mesh.call( this, geometry, material );
@@ -14076,7 +14000,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Scene() {
 
 		Object3D.call( this );
@@ -14124,7 +14047,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function ImageLoader( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -14226,7 +14148,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var ImageUtils = {
 
 		getDataURL: function ( image ) {
@@ -14272,7 +14193,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var textureId = 0;
 
 	function Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
@@ -14575,7 +14495,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function TextureLoader( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -14633,7 +14552,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var TGALoader = function ( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -15180,7 +15098,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var LoaderUtils = {
 
 		decodeText: function ( array ) {
@@ -15221,1324 +15138,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function LineDashedMaterial( parameters ) {
-
-		LineBasicMaterial.call( this );
-
-		this.type = 'LineDashedMaterial';
-
-		this.scale = 1;
-		this.dashSize = 3;
-		this.gapSize = 1;
-
-		this.setValues( parameters );
-
-	}
-
-	LineDashedMaterial.prototype = Object.create( LineBasicMaterial.prototype );
-	LineDashedMaterial.prototype.constructor = LineDashedMaterial;
-
-	LineDashedMaterial.prototype.isLineDashedMaterial = true;
-
-	LineDashedMaterial.prototype.copy = function ( source ) {
-
-		LineBasicMaterial.prototype.copy.call( this, source );
-
-		this.scale = source.scale;
-		this.dashSize = source.dashSize;
-		this.gapSize = source.gapSize;
-
-		return this;
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function MeshDepthMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshDepthMaterial';
-
-		this.depthPacking = BasicDepthPacking;
-
-		this.skinning = false;
-		this.morphTargets = false;
-
-		this.map = null;
-
-		this.alphaMap = null;
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshDepthMaterial.prototype = Object.create( Material.prototype );
-	MeshDepthMaterial.prototype.constructor = MeshDepthMaterial;
-
-	MeshDepthMaterial.prototype.isMeshDepthMaterial = true;
-
-	MeshDepthMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.depthPacking = source.depthPacking;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-
-		this.map = source.map;
-
-		this.alphaMap = source.alphaMap;
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		return this;
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function MeshDistanceMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshDistanceMaterial';
-
-		this.referencePosition = new Vector3();
-		this.nearDistance = 1;
-		this.farDistance = 1000;
-
-		this.skinning = false;
-		this.morphTargets = false;
-
-		this.map = null;
-
-		this.alphaMap = null;
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshDistanceMaterial.prototype = Object.create( Material.prototype );
-	MeshDistanceMaterial.prototype.constructor = MeshDistanceMaterial;
-
-	MeshDistanceMaterial.prototype.isMeshDistanceMaterial = true;
-
-	MeshDistanceMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.referencePosition.copy( source.referencePosition );
-		this.nearDistance = source.nearDistance;
-		this.farDistance = source.farDistance;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-
-		this.map = source.map;
-
-		this.alphaMap = source.alphaMap;
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		return this;
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function MeshNormalMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'MeshNormalMaterial';
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalMapType = TangentSpaceNormalMap;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-
-		this.fog = false;
-		this.lights = false;
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshNormalMaterial.prototype = Object.create( Material.prototype );
-	MeshNormalMaterial.prototype.constructor = MeshNormalMaterial;
-
-	MeshNormalMaterial.prototype.isMeshNormalMaterial = true;
-
-	MeshNormalMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
-
-		this.normalMap = source.normalMap;
-		this.normalMapType = source.normalMapType;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function MeshStandardMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.defines = { 'STANDARD': '' };
-
-		this.type = 'MeshStandardMaterial';
-
-		this.color = new Color( 0xffffff ); // diffuse
-		this.roughness = 0.5;
-		this.metalness = 0.5;
-
-		this.map = null;
-
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.emissive = new Color( 0x000000 );
-		this.emissiveIntensity = 1.0;
-		this.emissiveMap = null;
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalMapType = TangentSpaceNormalMap;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.roughnessMap = null;
-
-		this.metalnessMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.envMapIntensity = 1.0;
-
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
-
-		this.skinning = false;
-		this.morphTargets = false;
-		this.morphNormals = false;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshStandardMaterial.prototype = Object.create( Material.prototype );
-	MeshStandardMaterial.prototype.constructor = MeshStandardMaterial;
-
-	MeshStandardMaterial.prototype.isMeshStandardMaterial = true;
-
-	MeshStandardMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.defines = { 'STANDARD': '' };
-
-		this.color.copy( source.color );
-		this.roughness = source.roughness;
-		this.metalness = source.metalness;
-
-		this.map = source.map;
-
-		this.lightMap = source.lightMap;
-		this.lightMapIntensity = source.lightMapIntensity;
-
-		this.aoMap = source.aoMap;
-		this.aoMapIntensity = source.aoMapIntensity;
-
-		this.emissive.copy( source.emissive );
-		this.emissiveMap = source.emissiveMap;
-		this.emissiveIntensity = source.emissiveIntensity;
-
-		this.bumpMap = source.bumpMap;
-		this.bumpScale = source.bumpScale;
-
-		this.normalMap = source.normalMap;
-		this.normalMapType = source.normalMapType;
-		this.normalScale.copy( source.normalScale );
-
-		this.displacementMap = source.displacementMap;
-		this.displacementScale = source.displacementScale;
-		this.displacementBias = source.displacementBias;
-
-		this.roughnessMap = source.roughnessMap;
-
-		this.metalnessMap = source.metalnessMap;
-
-		this.alphaMap = source.alphaMap;
-
-		this.envMap = source.envMap;
-		this.envMapIntensity = source.envMapIntensity;
-
-		this.refractionRatio = source.refractionRatio;
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-		this.wireframeLinecap = source.wireframeLinecap;
-		this.wireframeLinejoin = source.wireframeLinejoin;
-
-		this.skinning = source.skinning;
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		return this;
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function MeshPhysicalMaterial( parameters ) {
-
-		MeshStandardMaterial.call( this );
-
-		this.defines = { 'PHYSICAL': '' };
-
-		this.type = 'MeshPhysicalMaterial';
-
-		this.reflectivity = 0.5; // maps to F0 = 0.04
-
-		this.clearCoat = 0.0;
-		this.clearCoatRoughness = 0.0;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshPhysicalMaterial.prototype = Object.create( MeshStandardMaterial.prototype );
-	MeshPhysicalMaterial.prototype.constructor = MeshPhysicalMaterial;
-
-	MeshPhysicalMaterial.prototype.isMeshPhysicalMaterial = true;
-
-	MeshPhysicalMaterial.prototype.copy = function ( source ) {
-
-		MeshStandardMaterial.prototype.copy.call( this, source );
-
-		this.defines = { 'PHYSICAL': '' };
-
-		this.reflectivity = source.reflectivity;
-
-		this.clearCoat = source.clearCoat;
-		this.clearCoatRoughness = source.clearCoatRoughness;
-
-		return this;
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function MeshToonMaterial( parameters ) {
-
-		MeshPhongMaterial.call( this );
-
-		this.defines = { 'TOON': '' };
-
-		this.type = 'MeshToonMaterial';
-
-		this.gradientMap = null;
-
-		this.setValues( parameters );
-
-	}
-
-	MeshToonMaterial.prototype = Object.create( MeshPhongMaterial.prototype );
-	MeshToonMaterial.prototype.constructor = MeshToonMaterial;
-
-	MeshToonMaterial.prototype.isMeshToonMaterial = true;
-
-	MeshToonMaterial.prototype.copy = function ( source ) {
-
-		MeshPhongMaterial.prototype.copy.call( this, source );
-
-		this.gradientMap = source.gradientMap;
-
-		return this;
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function PointsMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'PointsMaterial';
-
-		this.color = new Color( 0xffffff );
-
-		this.map = null;
-
-		this.size = 1;
-		this.sizeAttenuation = true;
-
-		this.morphTargets = false;
-
-		this.lights = false;
-
-		this.setValues( parameters );
-
-	}
-
-	PointsMaterial.prototype = Object.create( Material.prototype );
-	PointsMaterial.prototype.constructor = PointsMaterial;
-
-	PointsMaterial.prototype.isPointsMaterial = true;
-
-	PointsMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-
-		this.map = source.map;
-
-		this.size = source.size;
-		this.sizeAttenuation = source.sizeAttenuation;
-
-		this.morphTargets = source.morphTargets;
-
-		return this;
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	var UniformsUtils = {
-
-		merge: function ( uniforms ) {
-
-			var merged = {};
-
-			for ( var u = 0; u < uniforms.length; u ++ ) {
-
-				var tmp = this.clone( uniforms[ u ] );
-
-				for ( var p in tmp ) {
-
-					merged[ p ] = tmp[ p ];
-
-				}
-
-			}
-
-			return merged;
-
-		},
-
-		clone: function ( uniforms_src ) {
-
-			var uniforms_dst = {};
-
-			for ( var u in uniforms_src ) {
-
-				uniforms_dst[ u ] = {};
-
-				for ( var p in uniforms_src[ u ] ) {
-
-					var parameter_src = uniforms_src[ u ][ p ];
-
-					if ( parameter_src && ( parameter_src.isColor ||
-						parameter_src.isMatrix3 || parameter_src.isMatrix4 ||
-						parameter_src.isVector2 || parameter_src.isVector3 || parameter_src.isVector4 ||
-						parameter_src.isTexture ) ) {
-
-						uniforms_dst[ u ][ p ] = parameter_src.clone();
-
-					} else if ( Array.isArray( parameter_src ) ) {
-
-						uniforms_dst[ u ][ p ] = parameter_src.slice();
-
-					} else {
-
-						uniforms_dst[ u ][ p ] = parameter_src;
-
-					}
-
-				}
-
-			}
-
-			return uniforms_dst;
-
-		}
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function ShaderMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'ShaderMaterial';
-
-		this.defines = {};
-		this.uniforms = {};
-
-		this.vertexShader = 'void main() {\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}';
-		this.fragmentShader = 'void main() {\n\tgl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}';
-
-		this.linewidth = 1;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-
-		this.fog = false; // set to use scene fog
-		this.lights = false; // set to use scene lights
-		this.clipping = false; // set to use user-defined clipping planes
-
-		this.skinning = false; // set to use skinning attribute streams
-		this.morphTargets = false; // set to use morph targets
-		this.morphNormals = false; // set to use morph normals
-
-		this.extensions = {
-			derivatives: false, // set to use derivatives
-			fragDepth: false, // set to use fragment depth values
-			drawBuffers: false, // set to use draw buffers
-			shaderTextureLOD: false // set to use shader texture LOD
-		};
-
-		// When rendered geometry doesn't include these attributes but the material does,
-		// use these default values in WebGL. This avoids errors when buffer data is missing.
-		this.defaultAttributeValues = {
-			'color': [ 1, 1, 1 ],
-			'uv': [ 0, 0 ],
-			'uv2': [ 0, 0 ]
-		};
-
-		this.index0AttributeName = undefined;
-		this.uniformsNeedUpdate = false;
-
-		if ( parameters !== undefined ) {
-
-			if ( parameters.attributes !== undefined ) {
-
-				console.error( 'ShaderMaterial: attributes should now be defined in BufferGeometry instead.' );
-
-			}
-
-			this.setValues( parameters );
-
-		}
-
-	}
-
-	ShaderMaterial.prototype = Object.create( Material.prototype );
-	ShaderMaterial.prototype.constructor = ShaderMaterial;
-
-	ShaderMaterial.prototype.isShaderMaterial = true;
-
-	ShaderMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.fragmentShader = source.fragmentShader;
-		this.vertexShader = source.vertexShader;
-
-		this.uniforms = UniformsUtils.clone( source.uniforms );
-
-		this.defines = Object.assign( {}, source.defines );
-
-		this.wireframe = source.wireframe;
-		this.wireframeLinewidth = source.wireframeLinewidth;
-
-		this.lights = source.lights;
-		this.clipping = source.clipping;
-
-		this.skinning = source.skinning;
-
-		this.morphTargets = source.morphTargets;
-		this.morphNormals = source.morphNormals;
-
-		this.extensions = source.extensions;
-
-		return this;
-
-	};
-
-	ShaderMaterial.prototype.toJSON = function ( meta ) {
-
-		var data = Material.prototype.toJSON.call( this, meta );
-
-		data.uniforms = {};
-
-		for ( var name in this.uniforms ) {
-
-			var uniform = this.uniforms[ name ];
-			var value = uniform.value;
-
-			if ( value.isTexture ) {
-
-				data.uniforms[ name ] = {
-					type: 't',
-					value: value.toJSON( meta ).uuid
-				};
-
-			} else if ( value.isColor ) {
-
-				data.uniforms[ name ] = {
-					type: 'c',
-					value: value.getHex()
-				};
-
-			} else if ( value.isVector2 ) {
-
-				data.uniforms[ name ] = {
-					type: 'v2',
-					value: value.toArray()
-				};
-
-			} else if ( value.isVector3 ) {
-
-				data.uniforms[ name ] = {
-					type: 'v3',
-					value: value.toArray()
-				};
-
-			} else if ( value.isVector4 ) {
-
-				data.uniforms[ name ] = {
-					type: 'v4',
-					value: value.toArray()
-				};
-
-			} else if ( value.isMatrix4 ) {
-
-				data.uniforms[ name ] = {
-					type: 'm4',
-					value: value.toArray()
-				};
-
-			} else {
-
-				data.uniforms[ name ] = {
-					value: value
-				};
-
-				// note: the array variants v2v, v3v, v4v, m4v and tv are not supported so far
-
-			}
-
-		}
-
-		if ( Object.keys( this.defines ).length > 0 ) data.defines = this.defines;
-
-		data.vertexShader = this.vertexShader;
-		data.fragmentShader = this.fragmentShader;
-
-		return data;
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function RawShaderMaterial( parameters ) {
-
-		ShaderMaterial.call( this, parameters );
-
-		this.type = 'RawShaderMaterial';
-
-	}
-
-	RawShaderMaterial.prototype = Object.create( ShaderMaterial.prototype );
-	RawShaderMaterial.prototype.constructor = RawShaderMaterial;
-
-	RawShaderMaterial.prototype.isRawShaderMaterial = true;
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function ShadowMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'ShadowMaterial';
-
-		this.color = new Color( 0x000000 );
-		this.transparent = true;
-
-		this.setValues( parameters );
-
-	}
-
-	ShadowMaterial.prototype = Object.create( Material.prototype );
-	ShadowMaterial.prototype.constructor = ShadowMaterial;
-
-	ShadowMaterial.prototype.isShadowMaterial = true;
-
-	ShadowMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-
-		return this;
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function SpriteMaterial( parameters ) {
-
-		Material.call( this );
-
-		this.type = 'SpriteMaterial';
-
-		this.color = new Color( 0xffffff );
-		this.map = null;
-
-		this.rotation = 0;
-
-		this.sizeAttenuation = true;
-
-		this.lights = false;
-		this.transparent = true;
-
-		this.setValues( parameters );
-
-	}
-
-	SpriteMaterial.prototype = Object.create( Material.prototype );
-	SpriteMaterial.prototype.constructor = SpriteMaterial;
-	SpriteMaterial.prototype.isSpriteMaterial = true;
-
-	SpriteMaterial.prototype.copy = function ( source ) {
-
-		Material.prototype.copy.call( this, source );
-
-		this.color.copy( source.color );
-		this.map = source.map;
-
-		this.rotation = source.rotation;
-
-		this.sizeAttenuation = source.sizeAttenuation;
-
-		return this;
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function MaterialLoader( manager ) {
-
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
-		this.textures = {};
-
-	}
-
-	Object.assign( MaterialLoader.prototype, {
-
-		load: function ( url, onLoad, onProgress, onError ) {
-
-			var scope = this;
-
-			var loader = new FileLoader( scope.manager );
-			loader.load( url, function ( text ) {
-
-				onLoad( scope.parse( JSON.parse( text ) ) );
-
-			}, onProgress, onError );
-
-		},
-
-		setTextures: function ( value ) {
-
-			this.textures = value;
-
-		},
-
-		parse: function ( json ) {
-
-			var textures = this.textures;
-
-			function getTexture( name ) {
-
-				if ( textures[ name ] === undefined ) {
-
-					console.warn( 'MaterialLoader: Undefined texture', name );
-
-				}
-
-				return textures[ name ];
-
-			}
-
-			var Materials = {
-	            LineBasicMaterial: LineBasicMaterial,
-	            LineDashedMaterial: LineDashedMaterial,
-	            MeshBasicMaterial: MeshBasicMaterial,
-	            MeshDepthMaterial: MeshDepthMaterial,
-	            MeshDistanceMaterial: MeshDistanceMaterial,
-	            MeshLambertMaterial: MeshLambertMaterial,
-	            MeshNormalMaterial: MeshNormalMaterial,
-	            MeshPhongMaterial: MeshPhongMaterial,
-	            MeshPhysicalMaterial: MeshPhysicalMaterial,
-	            MeshStandardMaterial: MeshStandardMaterial,
-	            MeshToonMaterial: MeshToonMaterial,
-	            PointsMaterial: PointsMaterial,
-	            RawShaderMaterial: RawShaderMaterial,
-	            ShaderMaterial: ShaderMaterial,
-	            ShadowMaterial: ShadowMaterial,
-	            SpriteMaterial: SpriteMaterial
-			};
-			var material = new Materials[ json.type ]();
-
-			if ( json.uuid !== undefined ) material.uuid = json.uuid;
-			if ( json.name !== undefined ) material.name = json.name;
-			if ( json.color !== undefined ) material.color.setHex( json.color );
-			if ( json.roughness !== undefined ) material.roughness = json.roughness;
-			if ( json.metalness !== undefined ) material.metalness = json.metalness;
-			if ( json.emissive !== undefined ) material.emissive.setHex( json.emissive );
-			if ( json.specular !== undefined ) material.specular.setHex( json.specular );
-			if ( json.shininess !== undefined ) material.shininess = json.shininess;
-			if ( json.clearCoat !== undefined ) material.clearCoat = json.clearCoat;
-			if ( json.clearCoatRoughness !== undefined ) material.clearCoatRoughness = json.clearCoatRoughness;
-			if ( json.vertexColors !== undefined ) material.vertexColors = json.vertexColors;
-			if ( json.fog !== undefined ) material.fog = json.fog;
-			if ( json.flatShading !== undefined ) material.flatShading = json.flatShading;
-			if ( json.blending !== undefined ) material.blending = json.blending;
-			if ( json.side !== undefined ) material.side = json.side;
-			if ( json.opacity !== undefined ) material.opacity = json.opacity;
-			if ( json.transparent !== undefined ) material.transparent = json.transparent;
-			if ( json.alphaTest !== undefined ) material.alphaTest = json.alphaTest;
-			if ( json.depthTest !== undefined ) material.depthTest = json.depthTest;
-			if ( json.depthWrite !== undefined ) material.depthWrite = json.depthWrite;
-			if ( json.colorWrite !== undefined ) material.colorWrite = json.colorWrite;
-			if ( json.wireframe !== undefined ) material.wireframe = json.wireframe;
-			if ( json.wireframeLinewidth !== undefined ) material.wireframeLinewidth = json.wireframeLinewidth;
-			if ( json.wireframeLinecap !== undefined ) material.wireframeLinecap = json.wireframeLinecap;
-			if ( json.wireframeLinejoin !== undefined ) material.wireframeLinejoin = json.wireframeLinejoin;
-
-			if ( json.rotation !== undefined ) material.rotation = json.rotation;
-
-			if ( json.linewidth !== 1 ) material.linewidth = json.linewidth;
-			if ( json.dashSize !== undefined ) material.dashSize = json.dashSize;
-			if ( json.gapSize !== undefined ) material.gapSize = json.gapSize;
-			if ( json.scale !== undefined ) material.scale = json.scale;
-
-			if ( json.polygonOffset !== undefined ) material.polygonOffset = json.polygonOffset;
-			if ( json.polygonOffsetFactor !== undefined ) material.polygonOffsetFactor = json.polygonOffsetFactor;
-			if ( json.polygonOffsetUnits !== undefined ) material.polygonOffsetUnits = json.polygonOffsetUnits;
-
-			if ( json.skinning !== undefined ) material.skinning = json.skinning;
-			if ( json.morphTargets !== undefined ) material.morphTargets = json.morphTargets;
-			if ( json.dithering !== undefined ) material.dithering = json.dithering;
-
-			if ( json.visible !== undefined ) material.visible = json.visible;
-			if ( json.userData !== undefined ) material.userData = json.userData;
-
-			// Shader Material
-
-			if ( json.uniforms !== undefined ) {
-
-				for ( var name in json.uniforms ) {
-
-					var uniform = json.uniforms[ name ];
-
-					material.uniforms[ name ] = {};
-
-					switch ( uniform.type ) {
-
-						case 't':
-							material.uniforms[ name ].value = getTexture( uniform.value );
-							break;
-
-						case 'c':
-							material.uniforms[ name ].value = new Color().setHex( uniform.value );
-							break;
-
-						case 'v2':
-							material.uniforms[ name ].value = new Vector2().fromArray( uniform.value );
-							break;
-
-						case 'v3':
-							material.uniforms[ name ].value = new Vector3().fromArray( uniform.value );
-							break;
-
-						case 'v4':
-							material.uniforms[ name ].value = new Vector4().fromArray( uniform.value );
-							break;
-
-						case 'm4':
-							material.uniforms[ name ].value = new Matrix4().fromArray( uniform.value );
-							break;
-
-						default:
-							material.uniforms[ name ].value = uniform.value;
-
-					}
-
-				}
-
-			}
-
-			if ( json.defines !== undefined ) material.defines = json.defines;
-			if ( json.vertexShader !== undefined ) material.vertexShader = json.vertexShader;
-			if ( json.fragmentShader !== undefined ) material.fragmentShader = json.fragmentShader;
-
-			// Deprecated
-
-			if ( json.shading !== undefined ) material.flatShading = json.shading === 1; // FlatShading
-
-			// for PointsMaterial
-
-			if ( json.size !== undefined ) material.size = json.size;
-			if ( json.sizeAttenuation !== undefined ) material.sizeAttenuation = json.sizeAttenuation;
-
-			// maps
-
-			if ( json.map !== undefined ) material.map = getTexture( json.map );
-
-			if ( json.alphaMap !== undefined ) {
-
-				material.alphaMap = getTexture( json.alphaMap );
-				material.transparent = true;
-
-			}
-
-			if ( json.bumpMap !== undefined ) material.bumpMap = getTexture( json.bumpMap );
-			if ( json.bumpScale !== undefined ) material.bumpScale = json.bumpScale;
-
-			if ( json.normalMap !== undefined ) material.normalMap = getTexture( json.normalMap );
-			if ( json.normalMapType !== undefined ) material.normalMapType = json.normalMapType;
-			if ( json.normalScale !== undefined ) {
-
-				var normalScale = json.normalScale;
-
-				if ( Array.isArray( normalScale ) === false ) {
-
-					// Blender exporter used to export a scalar. See #7459
-
-					normalScale = [ normalScale, normalScale ];
-
-				}
-
-				material.normalScale = new Vector2().fromArray( normalScale );
-
-			}
-
-			if ( json.displacementMap !== undefined ) material.displacementMap = getTexture( json.displacementMap );
-			if ( json.displacementScale !== undefined ) material.displacementScale = json.displacementScale;
-			if ( json.displacementBias !== undefined ) material.displacementBias = json.displacementBias;
-
-			if ( json.roughnessMap !== undefined ) material.roughnessMap = getTexture( json.roughnessMap );
-			if ( json.metalnessMap !== undefined ) material.metalnessMap = getTexture( json.metalnessMap );
-
-			if ( json.emissiveMap !== undefined ) material.emissiveMap = getTexture( json.emissiveMap );
-			if ( json.emissiveIntensity !== undefined ) material.emissiveIntensity = json.emissiveIntensity;
-
-			if ( json.specularMap !== undefined ) material.specularMap = getTexture( json.specularMap );
-
-			if ( json.envMap !== undefined ) material.envMap = getTexture( json.envMap );
-
-			if ( json.reflectivity !== undefined ) material.reflectivity = json.reflectivity;
-
-			if ( json.lightMap !== undefined ) material.lightMap = getTexture( json.lightMap );
-			if ( json.lightMapIntensity !== undefined ) material.lightMapIntensity = json.lightMapIntensity;
-
-			if ( json.aoMap !== undefined ) material.aoMap = getTexture( json.aoMap );
-			if ( json.aoMapIntensity !== undefined ) material.aoMapIntensity = json.aoMapIntensity;
-
-			if ( json.gradientMap !== undefined ) material.gradientMap = getTexture( json.gradientMap );
-
-			return material;
-
-		}
-
-	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	function Loader() {}
-
-	Loader.Handlers = {
-
-		handlers: [],
-
-		add: function ( regex, loader ) {
-
-			this.handlers.push( regex, loader );
-
-		},
-
-		get: function ( file ) {
-
-			var handlers = this.handlers;
-
-			for ( var i = 0, l = handlers.length; i < l; i += 2 ) {
-
-				var regex = handlers[ i ];
-				var loader = handlers[ i + 1 ];
-
-				if ( regex.test( file ) ) {
-
-					return loader;
-
-				}
-
-			}
-
-			return null;
-
-		}
-
-	};
-
-	Object.assign( Loader.prototype, {
-
-		crossOrigin: 'anonymous',
-
-		onLoadStart: function () {},
-
-		onLoadProgress: function () {},
-
-		onLoadComplete: function () {},
-
-		initMaterials: function ( materials, texturePath, crossOrigin ) {
-
-			var array = [];
-
-			for ( var i = 0; i < materials.length; ++ i ) {
-
-				array[ i ] = this.createMaterial( materials[ i ], texturePath, crossOrigin );
-
-			}
-
-			return array;
-
-		},
-
-		createMaterial: ( function () {
-
-			var BlendingMode = {
-				NoBlending: NoBlending,
-				NormalBlending: NormalBlending,
-				AdditiveBlending: AdditiveBlending,
-				SubtractiveBlending: SubtractiveBlending,
-				MultiplyBlending: MultiplyBlending,
-				CustomBlending: CustomBlending
-			};
-
-			var color = new Color();
-			var textureLoader = new TextureLoader();
-			var materialLoader = new MaterialLoader();
-
-			return function createMaterial( m, texturePath, crossOrigin ) {
-
-				// convert from old material format
-
-				var textures = {};
-
-				function loadTexture( path, repeat, offset, wrap, anisotropy ) {
-
-					var fullPath = texturePath + path;
-					var loader = Loader.Handlers.get( fullPath );
-
-					var texture;
-
-					if ( loader !== null ) {
-
-						texture = loader.load( fullPath );
-
-					} else {
-
-						textureLoader.setCrossOrigin( crossOrigin );
-						texture = textureLoader.load( fullPath );
-
-					}
-
-					if ( repeat !== undefined ) {
-
-						texture.repeat.fromArray( repeat );
-
-						if ( repeat[ 0 ] !== 1 ) texture.wrapS = RepeatWrapping;
-						if ( repeat[ 1 ] !== 1 ) texture.wrapT = RepeatWrapping;
-
-					}
-
-					if ( offset !== undefined ) {
-
-						texture.offset.fromArray( offset );
-
-					}
-
-					if ( wrap !== undefined ) {
-
-						if ( wrap[ 0 ] === 'repeat' ) texture.wrapS = RepeatWrapping;
-						if ( wrap[ 0 ] === 'mirror' ) texture.wrapS = MirroredRepeatWrapping;
-
-						if ( wrap[ 1 ] === 'repeat' ) texture.wrapT = RepeatWrapping;
-						if ( wrap[ 1 ] === 'mirror' ) texture.wrapT = MirroredRepeatWrapping;
-
-					}
-
-					if ( anisotropy !== undefined ) {
-
-						texture.anisotropy = anisotropy;
-
-					}
-
-					var uuid = _Math.generateUUID();
-
-					textures[ uuid ] = texture;
-
-					return uuid;
-
-				}
-
-				//
-
-				var json = {
-					uuid: _Math.generateUUID(),
-					type: 'MeshLambertMaterial'
-				};
-
-				for ( var name in m ) {
-
-					var value = m[ name ];
-
-					switch ( name ) {
-
-						case 'DbgColor':
-						case 'DbgIndex':
-						case 'opticalDensity':
-						case 'illumination':
-							break;
-						case 'DbgName':
-							json.name = value;
-							break;
-						case 'blending':
-							json.blending = BlendingMode[ value ];
-							break;
-						case 'colorAmbient':
-						case 'mapAmbient':
-							console.warn( 'Loader.createMaterial:', name, 'is no longer supported.' );
-							break;
-						case 'colorDiffuse':
-							json.color = color.fromArray( value ).getHex();
-							break;
-						case 'colorSpecular':
-							json.specular = color.fromArray( value ).getHex();
-							break;
-						case 'colorEmissive':
-							json.emissive = color.fromArray( value ).getHex();
-							break;
-						case 'specularCoef':
-							json.shininess = value;
-							break;
-						case 'shading':
-							if ( value.toLowerCase() === 'basic' ) json.type = 'MeshBasicMaterial';
-							if ( value.toLowerCase() === 'phong' ) json.type = 'MeshPhongMaterial';
-							if ( value.toLowerCase() === 'standard' ) json.type = 'MeshStandardMaterial';
-							break;
-						case 'mapDiffuse':
-							json.map = loadTexture( value, m.mapDiffuseRepeat, m.mapDiffuseOffset, m.mapDiffuseWrap, m.mapDiffuseAnisotropy );
-							break;
-						case 'mapDiffuseRepeat':
-						case 'mapDiffuseOffset':
-						case 'mapDiffuseWrap':
-						case 'mapDiffuseAnisotropy':
-							break;
-						case 'mapEmissive':
-							json.emissiveMap = loadTexture( value, m.mapEmissiveRepeat, m.mapEmissiveOffset, m.mapEmissiveWrap, m.mapEmissiveAnisotropy );
-							break;
-						case 'mapEmissiveRepeat':
-						case 'mapEmissiveOffset':
-						case 'mapEmissiveWrap':
-						case 'mapEmissiveAnisotropy':
-							break;
-						case 'mapLight':
-							json.lightMap = loadTexture( value, m.mapLightRepeat, m.mapLightOffset, m.mapLightWrap, m.mapLightAnisotropy );
-							break;
-						case 'mapLightRepeat':
-						case 'mapLightOffset':
-						case 'mapLightWrap':
-						case 'mapLightAnisotropy':
-							break;
-						case 'mapAO':
-							json.aoMap = loadTexture( value, m.mapAORepeat, m.mapAOOffset, m.mapAOWrap, m.mapAOAnisotropy );
-							break;
-						case 'mapAORepeat':
-						case 'mapAOOffset':
-						case 'mapAOWrap':
-						case 'mapAOAnisotropy':
-							break;
-						case 'mapBump':
-							json.bumpMap = loadTexture( value, m.mapBumpRepeat, m.mapBumpOffset, m.mapBumpWrap, m.mapBumpAnisotropy );
-							break;
-						case 'mapBumpScale':
-							json.bumpScale = value;
-							break;
-						case 'mapBumpRepeat':
-						case 'mapBumpOffset':
-						case 'mapBumpWrap':
-						case 'mapBumpAnisotropy':
-							break;
-						case 'mapNormal':
-							json.normalMap = loadTexture( value, m.mapNormalRepeat, m.mapNormalOffset, m.mapNormalWrap, m.mapNormalAnisotropy );
-							break;
-						case 'mapNormalFactor':
-							json.normalScale = value;
-							break;
-						case 'mapNormalRepeat':
-						case 'mapNormalOffset':
-						case 'mapNormalWrap':
-						case 'mapNormalAnisotropy':
-							break;
-						case 'mapSpecular':
-							json.specularMap = loadTexture( value, m.mapSpecularRepeat, m.mapSpecularOffset, m.mapSpecularWrap, m.mapSpecularAnisotropy );
-							break;
-						case 'mapSpecularRepeat':
-						case 'mapSpecularOffset':
-						case 'mapSpecularWrap':
-						case 'mapSpecularAnisotropy':
-							break;
-						case 'mapMetalness':
-							json.metalnessMap = loadTexture( value, m.mapMetalnessRepeat, m.mapMetalnessOffset, m.mapMetalnessWrap, m.mapMetalnessAnisotropy );
-							break;
-						case 'mapMetalnessRepeat':
-						case 'mapMetalnessOffset':
-						case 'mapMetalnessWrap':
-						case 'mapMetalnessAnisotropy':
-							break;
-						case 'mapRoughness':
-							json.roughnessMap = loadTexture( value, m.mapRoughnessRepeat, m.mapRoughnessOffset, m.mapRoughnessWrap, m.mapRoughnessAnisotropy );
-							break;
-						case 'mapRoughnessRepeat':
-						case 'mapRoughnessOffset':
-						case 'mapRoughnessWrap':
-						case 'mapRoughnessAnisotropy':
-							break;
-						case 'mapAlpha':
-							json.alphaMap = loadTexture( value, m.mapAlphaRepeat, m.mapAlphaOffset, m.mapAlphaWrap, m.mapAlphaAnisotropy );
-							break;
-						case 'mapAlphaRepeat':
-						case 'mapAlphaOffset':
-						case 'mapAlphaWrap':
-						case 'mapAlphaAnisotropy':
-							break;
-						case 'flipSided':
-							json.side = BackSide;
-							break;
-						case 'doubleSided':
-							json.side = DoubleSide;
-							break;
-						case 'transparency':
-							console.warn( 'Loader.createMaterial: transparency has been renamed to opacity' );
-							json.opacity = value;
-							break;
-						case 'depthTest':
-						case 'depthWrite':
-						case 'colorWrite':
-						case 'opacity':
-						case 'reflectivity':
-						case 'transparent':
-						case 'visible':
-						case 'wireframe':
-							json[ name ] = value;
-							break;
-						case 'vertexColors':
-							if ( value === true ) json.vertexColors = VertexColors;
-							if ( value === 'face' ) json.vertexColors = FaceColors;
-							break;
-						default:
-							console.error( 'Loader.createMaterial: Unsupported', name, value );
-							break;
-
-					}
-
-				}
-
-				if ( json.type === 'MeshBasicMaterial' ) delete json.emissive;
-				if ( json.type !== 'MeshPhongMaterial' ) delete json.specular;
-
-				if ( json.opacity < 1 ) json.transparent = true;
-
-				materialLoader.setTextures( textures );
-
-				return materialLoader.parse( json );
-
-			};
-
-		} )()
-
-	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var ColladaLoader = function ( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -16555,9 +15154,10 @@ var Three = (function (exports) {
 
 			var scope = this;
 
-			var path = scope.path === undefined ? LoaderUtils.extractUrlBase( url ) : scope.path;
+			var path = ( scope.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : scope.path;
 
 			var loader = new FileLoader( scope.manager );
+			loader.setPath( scope.path );
 			loader.load( url, function ( text ) {
 
 				onLoad( scope.parse( text, path ) );
@@ -16569,6 +15169,13 @@ var Three = (function (exports) {
 		setPath: function ( value ) {
 
 			this.path = value;
+			return this;
+
+		},
+
+		setResourcePath: function ( value ) {
+
+			this.resourcePath = value;
 			return this;
 
 		},
@@ -20337,14 +18944,14 @@ var Three = (function (exports) {
 
 			var asset = parseAsset( getElementsByTagName( collada, 'asset' )[ 0 ] );
 			var textureLoader = new TextureLoader( this.manager );
-			textureLoader.setPath( path ).setCrossOrigin( this.crossOrigin );
+			textureLoader.setPath( this.resourcePath || path ).setCrossOrigin( this.crossOrigin );
 
 			var tgaLoader;
 
 			if ( TGALoader ) {
 
 				tgaLoader = new TGALoader( this.manager );
-				tgaLoader.setPath( path );
+				tgaLoader.setPath( this.resourcePath || path );
 
 			}
 
@@ -20424,7 +19031,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var KMZLoader = function ( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -20440,12 +19046,20 @@ var Three = (function (exports) {
 			var scope = this;
 
 			var loader = new FileLoader( scope.manager );
+			loader.setPath( scope.path );
 			loader.setResponseType( 'arraybuffer' );
 			loader.load( url, function ( text ) {
 
 				onLoad( scope.parse( text ) );
 
 			}, onProgress, onError );
+
+		},
+
+		setPath: function ( value ) {
+
+			this.path = value;
+			return this;
 
 		},
 

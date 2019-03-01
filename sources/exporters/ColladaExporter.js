@@ -9,7 +9,6 @@ import { Geometry } from '../core/Geometry.js'
 import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
 import { DoubleSide } from '../constants.js'
-
 var ColladaExporter = function () {};
 
 ColladaExporter.prototype = {
@@ -510,7 +509,6 @@ ColladaExporter.prototype = {
 				matids = new Array( geometry.groups.length )
 					.fill()
 					.map( ( v, i ) => processMaterial( materials[ i % materials.length ] ) );
-
 				node +=
 					`<instance_geometry url="#${ meshid }">` +
 

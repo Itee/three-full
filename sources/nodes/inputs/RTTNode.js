@@ -9,7 +9,6 @@ import { Scene } from '../../scenes/Scene.js'
 import { Mesh } from '../../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../../geometries/PlaneGeometry.js'
 import { NodeBuilder } from '../core/NodeBuilder.js'
-
 function RTTNode( width, height, input, options ) {
 
 	options = options || {};
@@ -144,7 +143,5 @@ RTTNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { RTTNode }

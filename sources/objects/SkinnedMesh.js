@@ -6,7 +6,6 @@ import { Vector4 } from '../math/Vector4.js'
 import { Skeleton } from './Skeleton.js'
 import { Bone } from './Bone.js'
 import { Matrix4 } from '../math/Matrix4.js'
-
 function SkinnedMesh( geometry, material ) {
 
 	Mesh.call( this, geometry, material );
@@ -201,7 +200,5 @@ SkinnedMesh.prototype = Object.assign( Object.create( Mesh.prototype ), {
 	}
 
 } );
-
-;
 
 export { SkinnedMesh }

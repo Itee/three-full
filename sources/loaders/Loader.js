@@ -19,7 +19,6 @@ import { _Math } from '../math/Math.js'
 import { MaterialLoader } from './MaterialLoader.js'
 import { TextureLoader } from './TextureLoader.js'
 import { Color } from '../math/Color.js'
-
 function Loader() {}
 
 Loader.Handlers = {
@@ -334,7 +333,5 @@ Object.assign( Loader.prototype, {
 	} )()
 
 } );
-
-;
 
 export { Loader }

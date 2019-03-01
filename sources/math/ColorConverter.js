@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { _Math } from './Math.js'
-
 var ColorConverter = {
 
 	setHSV: function ( color, h, s, v ) {
@@ -83,7 +82,6 @@ var ColorConverter = {
 		return target;
 
 	}
-
 };
 
 export { ColorConverter }

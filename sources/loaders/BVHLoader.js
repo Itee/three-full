@@ -10,7 +10,6 @@ import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeT
 import { AnimationClip } from '../animation/AnimationClip.js'
 import { Skeleton } from '../objects/Skeleton.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-
 var BVHLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -29,6 +28,7 @@ BVHLoader.prototype = {
 		var scope = this;
 
 		var loader = new FileLoader( scope.manager );
+		loader.setPath( scope.path );
 		loader.load( url, function ( text ) {
 
 			onLoad( scope.parse( text ) );
@@ -37,8 +37,14 @@ BVHLoader.prototype = {
 
 	},
 
+	setPath: function ( value ) {
+
+		this.path = value;
+		return this;
+
+	},
+
 	parse: function ( text ) {
-		
 		function readBvh( lines ) {
 
 			// read model structure
@@ -94,7 +100,6 @@ BVHLoader.prototype = {
 			return list;
 
 		}
-		
 		function readFrameData( data, frameTime, bone ) {
 
 			// end sites have no motion data
@@ -160,7 +165,6 @@ BVHLoader.prototype = {
 			}
 
 		}
-		
 		function readNode( lines, firstline, list ) {
 
 			var node = { name: '', type: '', frames: [] };
@@ -255,7 +259,6 @@ BVHLoader.prototype = {
 			}
 
 		}
-		
 		function toTHREEBone( source, list ) {
 
 			var bone = new Bone();
@@ -277,7 +280,6 @@ BVHLoader.prototype = {
 			return bone;
 
 		}
-		
 		function toTHREEAnimation( bones ) {
 
 			var tracks = [];
@@ -334,7 +336,6 @@ BVHLoader.prototype = {
 			return new AnimationClip( 'animation', - 1, tracks );
 
 		}
-		
 		function nextLine( lines ) {
 
 			var line;

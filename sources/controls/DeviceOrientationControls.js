@@ -5,7 +5,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { Euler } from '../math/Euler.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { _Math } from '../math/Math.js'
-
 var DeviceOrientationControls = function ( object ) {
 
 	var scope = this;
@@ -97,7 +96,6 @@ var DeviceOrientationControls = function ( object ) {
 			setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
 
 		}
-
 	};
 
 	this.dispose = function () {

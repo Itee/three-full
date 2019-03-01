@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from '../core/TempNode.js'
 import { ResolutionNode } from './ResolutionNode.js'
-
 function ScreenUVNode( resolution ) {
 
 	TempNode.call( this, 'v2' );
@@ -59,7 +58,4 @@ ScreenUVNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
-
 export { ScreenUVNode }

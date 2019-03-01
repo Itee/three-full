@@ -39,9 +39,7 @@ import {
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { Loader } from './Loader.js'
 import { _Math } from '../math/Math.js'
-
 var ColladaLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -58,9 +56,10 @@ ColladaLoader.prototype = {
 
 		var scope = this;
 
-		var path = scope.path === undefined ? LoaderUtils.extractUrlBase( url ) : scope.path;
+		var path = ( scope.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : scope.path;
 
 		var loader = new FileLoader( scope.manager );
+		loader.setPath( scope.path );
 		loader.load( url, function ( text ) {
 
 			onLoad( scope.parse( text, path ) );
@@ -72,6 +71,13 @@ ColladaLoader.prototype = {
 	setPath: function ( value ) {
 
 		this.path = value;
+		return this;
+
+	},
+
+	setResourcePath: function ( value ) {
+
+		this.resourcePath = value;
 		return this;
 
 	},
@@ -3840,14 +3846,14 @@ ColladaLoader.prototype = {
 
 		var asset = parseAsset( getElementsByTagName( collada, 'asset' )[ 0 ] );
 		var textureLoader = new TextureLoader( this.manager );
-		textureLoader.setPath( path ).setCrossOrigin( this.crossOrigin );
+		textureLoader.setPath( this.resourcePath || path ).setCrossOrigin( this.crossOrigin );
 
 		var tgaLoader;
 
 		if ( TGALoader ) {
 
 			tgaLoader = new TGALoader( this.manager );
-			tgaLoader.setPath( path );
+			tgaLoader.setPath( this.resourcePath || path );
 
 		}
 

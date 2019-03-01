@@ -4,7 +4,6 @@
 import { _Math } from './Math.js'
 import { Matrix4 } from './Matrix4.js'
 import { Quaternion } from './Quaternion.js'
-
 function Vector3( x, y, z ) {
 
 	this.x = x || 0;
@@ -723,7 +722,5 @@ Object.assign( Vector3.prototype, {
 	}
 
 } );
-
-;
 
 export { Vector3 }

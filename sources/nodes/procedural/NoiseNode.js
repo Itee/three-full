@@ -4,7 +4,6 @@
 import { TempNode } from '../core/TempNode.js'
 import { FunctionNode } from '../core/FunctionNode.js'
 import { UVNode } from '../accessors/UVNode.js'
-
 function NoiseNode( uv ) {
 
 	TempNode.call( this, 'f' );
@@ -64,7 +63,5 @@ NoiseNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { NoiseNode }

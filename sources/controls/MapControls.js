@@ -7,7 +7,6 @@ import { Quaternion } from '../math/Quaternion.js'
 import { Spherical } from '../math/Spherical.js'
 import { Vector2 } from '../math/Vector2.js'
 import { MOUSE } from '../constants.js'
-
 // This set of controls performs orbiting, dollying (zooming), and panning.
 // Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
 // This is very similar to OrbitControls, another set of touch behavior
@@ -164,7 +163,6 @@ var MapControls = function ( object, domElement ) {
 			spherical.phi = Math.max( scope.minPolarAngle, Math.min( scope.maxPolarAngle, spherical.phi ) );
 
 			spherical.makeSafe();
-
 			spherical.radius *= scale;
 
 			// restrict radius to be between desired limits

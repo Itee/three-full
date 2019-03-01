@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from '../core/TempNode.js'
 import { BlinnShininessExponentNode } from './BlinnShininessExponentNode.js'
-
 function BlinnExponentToRoughnessNode( blinnExponent ) {
 
 	TempNode.call( this, 'f' );
@@ -45,7 +44,5 @@ BlinnExponentToRoughnessNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { BlinnExponentToRoughnessNode }

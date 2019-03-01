@@ -12,8 +12,6 @@ import { TextureLoader } from './TextureLoader.js'
 import { RepeatWrapping } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { Loader } from './Loader.js'
-
 var AssimpJSONLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -30,9 +28,10 @@ AssimpJSONLoader.prototype = {
 
 		var scope = this;
 
-		var path = LoaderUtils.extractUrlBase( url );
+		var path = ( scope.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : scope.path;
 
 		var loader = new FileLoader( this.manager );
+		loader.setPath( scope.path );
 		loader.load( url, function ( text ) {
 
 			var json = JSON.parse( text );
@@ -50,7 +49,7 @@ AssimpJSONLoader.prototype = {
 					onError( 'AssimpJSONLoader: Not an assimp2json scene.' );
 					return;
 
-				// check major format version
+					// check major format version
 
 				} else if ( metadata.version < 100 && metadata.version >= 200 ) {
 
@@ -64,6 +63,20 @@ AssimpJSONLoader.prototype = {
 			onLoad( scope.parse( json, path ) );
 
 		}, onProgress, onError );
+
+	},
+
+	setPath: function ( value ) {
+
+		this.path = value;
+		return this;
+
+	},
+
+	setResourcePath: function ( value ) {
+
+		this.resourcePath = value;
+		return this;
 
 	},
 
@@ -266,7 +279,7 @@ AssimpJSONLoader.prototype = {
 		}
 
 		var textureLoader = new TextureLoader( this.manager );
-		textureLoader.setPath( path ).setCrossOrigin( this.crossOrigin );
+		textureLoader.setPath( this.resourcePath || path ).setCrossOrigin( this.crossOrigin );
 
 		var meshes = parseList( json.meshes, parseMesh );
 		var materials = parseList( json.materials, parseMaterial );

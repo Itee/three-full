@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Light } from './Light.js'
-
 function RectAreaLight( color, intensity, width, height ) {
 
 	Light.call( this, color, intensity );
@@ -43,7 +42,5 @@ RectAreaLight.prototype = Object.assign( Object.create( Light.prototype ), {
 	}
 
 } );
-
-;
 
 export { RectAreaLight }

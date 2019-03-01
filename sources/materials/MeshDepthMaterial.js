@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Material } from './Material.js'
 import { BasicDepthPacking } from '../constants.js'
-
 function MeshDepthMaterial( parameters ) {
 
 	Material.call( this );
@@ -61,7 +60,5 @@ MeshDepthMaterial.prototype.copy = function ( source ) {
 	return this;
 
 };
-
-;
 
 export { MeshDepthMaterial }

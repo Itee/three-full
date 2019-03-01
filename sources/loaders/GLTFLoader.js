@@ -78,8 +78,6 @@ import {
 	sRGBEncoding
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
-import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
@@ -97,7 +95,6 @@ import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeT
 import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
 import { PropertyBinding } from '../animation/PropertyBinding.js'
 import { BufferGeometryUtils } from '../utils/BufferGeometryUtils.js'
-
 var GLTFLoader = ( function () {
 
 	function GLTFLoader( manager ) {
@@ -117,7 +114,21 @@ var GLTFLoader = ( function () {
 
 			var scope = this;
 
-			var path = this.path !== undefined ? this.path : LoaderUtils.extractUrlBase( url );
+			var resourcePath;
+
+			if ( this.resourcePath !== undefined ) {
+
+				resourcePath = this.resourcePath;
+
+			} else if ( this.path !== undefined ) {
+
+				resourcePath = this.path;
+
+			} else {
+
+				resourcePath = LoaderUtils.extractUrlBase( url );
+
+			}
 
 			// Tells the LoadingManager to track an extra item, which resolves after
 			// the model is fully loaded. This means the count of items loaded will
@@ -143,13 +154,14 @@ var GLTFLoader = ( function () {
 
 			var loader = new FileLoader( scope.manager );
 
+			loader.setPath( this.path );
 			loader.setResponseType( 'arraybuffer' );
 
 			loader.load( url, function ( data ) {
 
 				try {
 
-					scope.parse( data, path, function ( gltf ) {
+					scope.parse( data, resourcePath, function ( gltf ) {
 
 						onLoad( gltf );
 
@@ -177,6 +189,13 @@ var GLTFLoader = ( function () {
 		setPath: function ( value ) {
 
 			this.path = value;
+			return this;
+
+		},
+
+		setResourcePath: function ( value ) {
+
+			this.resourcePath = value;
 			return this;
 
 		},
@@ -278,7 +297,7 @@ var GLTFLoader = ( function () {
 
 			var parser = new GLTFParser( json, extensions, {
 
-				path: path || this.path || '',
+				path: path || this.resourcePath || '',
 				crossOrigin: this.crossOrigin,
 				manager: this.manager
 
@@ -305,7 +324,6 @@ var GLTFLoader = ( function () {
 		}
 
 	};
-
 	function GLTFRegistry() {
 
 		var objects = {};
@@ -339,7 +357,6 @@ var GLTFLoader = ( function () {
 		};
 
 	}
-
 	var EXTENSIONS = {
 		KHR_BINARY_GLTF: 'KHR_binary_glTF',
 		KHR_DRACO_MESH_COMPRESSION: 'KHR_draco_mesh_compression',
@@ -348,7 +365,6 @@ var GLTFLoader = ( function () {
 		KHR_MATERIALS_UNLIT: 'KHR_materials_unlit',
 		MSFT_TEXTURE_DDS: 'MSFT_texture_dds'
 	};
-	
 	function GLTFTextureDDSExtension() {
 
 		if ( ! DDSLoader ) {
@@ -361,7 +377,6 @@ var GLTFLoader = ( function () {
 		this.ddsLoader = new DDSLoader();
 
 	}
-	
 	function GLTFLightsExtension( json ) {
 
 		this.name = EXTENSIONS.KHR_LIGHTS_PUNCTUAL;
@@ -385,7 +400,7 @@ var GLTFLoader = ( function () {
 
 				case 'directional':
 					lightNode = new DirectionalLight( color );
-					lightNode.target.position.set( 0, 0, 1 );
+					lightNode.target.position.set( 0, 0, -1 );
 					lightNode.add( lightNode.target );
 					break;
 
@@ -403,7 +418,7 @@ var GLTFLoader = ( function () {
 					lightDef.spot.outerConeAngle = lightDef.spot.outerConeAngle !== undefined ? lightDef.spot.outerConeAngle : Math.PI / 4.0;
 					lightNode.angle = lightDef.spot.outerConeAngle;
 					lightNode.penumbra = 1.0 - lightDef.spot.innerConeAngle / lightDef.spot.outerConeAngle;
-					lightNode.target.position.set( 0, 0, 1 );
+					lightNode.target.position.set( 0, 0, -1 );
 					lightNode.add( lightNode.target );
 					break;
 
@@ -423,7 +438,6 @@ var GLTFLoader = ( function () {
 		}
 
 	}
-	
 	function GLTFMaterialsUnlitExtension( json ) {
 
 		this.name = EXTENSIONS.KHR_MATERIALS_UNLIT;
@@ -467,7 +481,6 @@ var GLTFLoader = ( function () {
 		return Promise.all( pending );
 
 	};
-
 	var BINARY_EXTENSION_BUFFER_NAME = 'binary_glTF';
 	var BINARY_EXTENSION_HEADER_MAGIC = 'glTF';
 	var BINARY_EXTENSION_HEADER_LENGTH = 12;
@@ -533,7 +546,6 @@ var GLTFLoader = ( function () {
 		}
 
 	}
-	
 	function GLTFDracoMeshCompressionExtension( json, dracoLoader ) {
 
 		if ( ! dracoLoader ) {
@@ -604,7 +616,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-	
 	function GLTFMaterialsPbrSpecularGlossinessExtension() {
 
 		return {
@@ -814,7 +825,6 @@ var GLTFLoader = ( function () {
 				return material;
 
 			},
-			
 			cloneMaterial: function ( source ) {
 
 				var target = source.clone();
@@ -962,7 +972,6 @@ var GLTFLoader = ( function () {
 		};
 
 	}
-
 	// Spline Interpolation
 	// Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#appendix-c-spline-interpolation
 	function GLTFCubicSplineInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
@@ -1037,7 +1046,6 @@ var GLTFLoader = ( function () {
 		return result;
 
 	};
-
 	var WEBGL_CONSTANTS = {
 		FLOAT: 5126,
 		//FLOAT_MAT2: 35674,
@@ -1198,7 +1206,6 @@ var GLTFLoader = ( function () {
 		'image/png': RGBAFormat,
 		'image/jpeg': RGBFormat
 	};
-
 	function resolveURL( url, path ) {
 
 		// Invalid URL
@@ -1217,7 +1224,6 @@ var GLTFLoader = ( function () {
 		return path + url;
 
 	}
-	
 	function createDefaultMaterial() {
 
 		return new MeshStandardMaterial( {
@@ -1248,7 +1254,6 @@ var GLTFLoader = ( function () {
 		}
 
 	}
-	
 	function assignExtrasToUserData( object, gltfDef ) {
 
 		if ( gltfDef.extras !== undefined ) {
@@ -1266,7 +1271,6 @@ var GLTFLoader = ( function () {
 		}
 
 	}
-	
 	function addMorphTargets( geometry, targets, accessors ) {
 
 		var hasMorphPosition = false;
@@ -1376,7 +1380,6 @@ var GLTFLoader = ( function () {
 		if ( hasMorphNormal ) geometry.morphAttributes.normal = morphNormals;
 
 	}
-	
 	function updateMorphTargets( mesh, meshDef ) {
 
 		mesh.updateMorphTargets();
@@ -1522,7 +1525,6 @@ var GLTFLoader = ( function () {
 		return attribute.clone();
 
 	}
-	
 	function isMultiPassGeometry( primitives ) {
 
 		if ( primitives.length < 2 ) return false;
@@ -1555,7 +1557,6 @@ var GLTFLoader = ( function () {
 		return true;
 
 	}
-
 	function GLTFParser( json, extensions, options ) {
 
 		this.json = json || {};
@@ -1607,7 +1608,6 @@ var GLTFLoader = ( function () {
 		} ).catch( onError );
 
 	};
-	
 	GLTFParser.prototype.markDefs = function () {
 
 		var nodeDefs = this.json.nodes || [];
@@ -1667,7 +1667,6 @@ var GLTFLoader = ( function () {
 		this.json.meshUses = meshUses;
 
 	};
-	
 	GLTFParser.prototype.getDependency = function ( type, index ) {
 
 		var cacheKey = type + ':' + index;
@@ -1733,7 +1732,6 @@ var GLTFLoader = ( function () {
 		return dependency;
 
 	};
-	
 	GLTFParser.prototype.getDependencies = function ( type ) {
 
 		var dependencies = this.cache.get( type );
@@ -1756,7 +1754,6 @@ var GLTFLoader = ( function () {
 		return dependencies;
 
 	};
-	
 	GLTFParser.prototype.getMultiDependencies = function ( types ) {
 
 		var results = {};
@@ -1784,7 +1781,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-	
 	GLTFParser.prototype.loadBuffer = function ( bufferIndex ) {
 
 		var bufferDef = this.json.buffers[ bufferIndex ];
@@ -1816,7 +1812,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-	
 	GLTFParser.prototype.loadBufferView = function ( bufferViewIndex ) {
 
 		var bufferViewDef = this.json.bufferViews[ bufferViewIndex ];
@@ -1830,7 +1825,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-	
 	GLTFParser.prototype.loadAccessor = function ( accessorIndex ) {
 
 		var parser = this;
@@ -1955,7 +1949,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-	
 	GLTFParser.prototype.loadTexture = function ( textureIndex ) {
 
 		var parser = this;
@@ -2053,7 +2046,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-	
 	GLTFParser.prototype.assignTexture = function ( materialParams, textureName, textureIndex ) {
 
 		return this.getDependency( 'texture', textureIndex ).then( function ( texture ) {
@@ -2063,7 +2055,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-	
 	GLTFParser.prototype.loadMaterial = function ( materialIndex ) {
 
 		var parser = this;
@@ -2229,7 +2220,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-	
 	function addPrimitiveAttributes( geometry, primitiveDef, accessors ) {
 
 		var attributes = primitiveDef.attributes;
@@ -2262,7 +2252,6 @@ var GLTFLoader = ( function () {
 		assignExtrasToUserData( geometry, primitiveDef );
 
 	}
-	
 	GLTFParser.prototype.loadGeometries = function ( primitives ) {
 
 		var parser = this;
@@ -2417,7 +2406,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-	
 	GLTFParser.prototype.loadMesh = function ( meshIndex ) {
 
 		var scope = this;
@@ -2651,7 +2639,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-	
 	GLTFParser.prototype.loadCamera = function ( cameraIndex ) {
 
 		var camera;
@@ -2682,7 +2669,6 @@ var GLTFLoader = ( function () {
 		return Promise.resolve( camera );
 
 	};
-	
 	GLTFParser.prototype.loadSkin = function ( skinIndex ) {
 
 		var skinDef = this.json.skins[ skinIndex ];
@@ -2704,7 +2690,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-	
 	GLTFParser.prototype.loadAnimation = function ( animationIndex ) {
 
 		var json = this.json;
@@ -2842,7 +2827,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-	
 	GLTFParser.prototype.loadNode = function ( nodeIndex ) {
 
 		var json = this.json;
@@ -2956,7 +2940,6 @@ var GLTFLoader = ( function () {
 		} );
 
 	};
-	
 	GLTFParser.prototype.loadScene = function () {
 
 		// scene node hierachy builder

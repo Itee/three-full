@@ -23,7 +23,4 @@
 		varying vec4 vPointShadowCoord[ NUM_POINT_LIGHTS ];
 
 	#endif
-
-	
-
 #endif

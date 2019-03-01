@@ -45,7 +45,6 @@ import { WebGLUniforms } from './webgl/WebGLUniforms.js'
 import { WebGLUtils } from './webgl/WebGLUtils.js'
 import { WebVRManager } from './webvr/WebVRManager.js'
 import { WebXRManager } from './webvr/WebXRManager.js'
-
 function WebGLRenderer( parameters ) {
 
 	console.log( 'WebGLRenderer', REVISION );
@@ -295,7 +294,13 @@ function WebGLRenderer( parameters ) {
 
 	// vr
 
-	var vr = ( 'xr' in navigator ) ? new WebXRManager( _this ) : new WebVRManager( _this );
+	var vr = null;
+
+	if ( typeof navigator !== 'undefined' ) {
+
+		vr = ( 'xr' in navigator ) ? new WebXRManager( _this ) : new WebVRManager( _this );
+
+	}
 
 	this.vr = vr;
 
@@ -489,13 +494,6 @@ function WebGLRenderer( parameters ) {
 
 	};
 
-	this.clearTarget = function ( renderTarget, color, depth, stencil ) {
-
-		this.setRenderTarget( renderTarget );
-		this.clear( color, depth, stencil );
-
-	};
-
 	//
 
 	this.dispose = function () {
@@ -555,7 +553,6 @@ function WebGLRenderer( parameters ) {
 		properties.remove( material );
 
 	}
-
 	function releaseMaterialProgramReference( material ) {
 
 		var programInfo = properties.get( material ).program;
@@ -764,7 +761,6 @@ function WebGLRenderer( parameters ) {
 				}
 
 			}
-
 		} else if ( object.isLine ) {
 
 			var lineWidth = material.linewidth;
@@ -1157,7 +1153,6 @@ function WebGLRenderer( parameters ) {
 		currentRenderState = null;
 
 	};
-
 	function projectObject( object, camera, sortObjects ) {
 
 		if ( object.visible === false ) return;
@@ -1712,7 +1707,6 @@ function WebGLRenderer( parameters ) {
 						//       16x16 pixel texture max   64 bones * 4 pixels = (16 * 16)
 						//       32x32 pixel texture max  256 bones * 4 pixels = (32 * 32)
 						//       64x64 pixel texture max 1024 bones * 4 pixels = (64 * 64)
-
 						var size = Math.sqrt( bones.length * 4 ); // 4 pixels needed for 1 matrix
 						size = _Math.ceilPowerOfTwo( size );
 						size = Math.max( size, 4 );
@@ -1806,6 +1800,12 @@ function WebGLRenderer( parameters ) {
 					refreshUniformsStandard( m_uniforms, material );
 
 				}
+
+			} else if ( material.isMeshMatcapMaterial ) {
+
+				refreshUniformsCommon( m_uniforms, material );
+
+				refreshUniformsMatcap( m_uniforms, material );
 
 			} else if ( material.isMeshDepthMaterial ) {
 
@@ -2218,6 +2218,40 @@ function WebGLRenderer( parameters ) {
 
 	}
 
+	function refreshUniformsMatcap( uniforms, material ) {
+
+		if ( material.matcap ) {
+
+			uniforms.matcap.value = material.matcap;
+
+		}
+
+		if ( material.bumpMap ) {
+
+			uniforms.bumpMap.value = material.bumpMap;
+			uniforms.bumpScale.value = material.bumpScale;
+			if ( material.side === BackSide ) uniforms.bumpScale.value *= - 1;
+
+		}
+
+		if ( material.normalMap ) {
+
+			uniforms.normalMap.value = material.normalMap;
+			uniforms.normalScale.value.copy( material.normalScale );
+			if ( material.side === BackSide ) uniforms.normalScale.value.negate();
+
+		}
+
+		if ( material.displacementMap ) {
+
+			uniforms.displacementMap.value = material.displacementMap;
+			uniforms.displacementScale.value = material.displacementScale;
+			uniforms.displacementBias.value = material.displacementBias;
+
+		}
+
+	}
+
 	function refreshUniformsDepth( uniforms, material ) {
 
 		if ( material.displacementMap ) {
@@ -2330,6 +2364,17 @@ function WebGLRenderer( parameters ) {
 			}
 
 			textures.setTexture2D( texture, slot );
+
+		};
+
+	}() );
+
+	this.setTexture3D = ( function () {
+
+		// backwards compatibility: peel texture.texture
+		return function setTexture3D( texture, slot ) {
+
+			textures.setTexture3D( texture, slot );
 
 		};
 
@@ -2579,7 +2624,6 @@ function WebGLRenderer( parameters ) {
 	};
 
 }
-
 ;
 
 export { WebGLRenderer }

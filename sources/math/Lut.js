@@ -17,7 +17,6 @@ import {
 	DoubleSide,
 	LinearFilter
 } from '../constants.js'
-
 var Lut = function ( colormap, numberofcolors ) {
 
 	this.lut = [];
@@ -462,7 +461,6 @@ Lut.prototype = {
 				var material = new LineBasicMaterial( { color: 0x000000, linewidth: 2 } );
 
 				var points = [];
-
 				if ( this.legend.layout == 'vertical' ) {
 
 					var linePosition = ( this.legend.position.y - ( this.legend.dimensions.height * 0.5 ) + 0.01 ) + ( this.legend.dimensions.height ) * ( ( value - this.minV ) / ( this.maxV - this.minV ) * 0.99 );
@@ -499,7 +497,6 @@ Lut.prototype = {
 	}
 
 };
-
 var ColorMapKeywords = {
 
 	"rainbow": [[ 0.0, '0x0000FF' ], [ 0.2, '0x00FFFF' ], [ 0.5, '0x00FF00' ], [ 0.8, '0xFFFF00' ], [ 1.0, '0xFF0000' ]],

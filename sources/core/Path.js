@@ -8,7 +8,6 @@ import { SplineCurve } from '../curves/SplineCurve.js'
 import { CubicBezierCurve } from '../curves/CubicBezierCurve.js'
 import { QuadraticBezierCurve } from '../curves/QuadraticBezierCurve.js'
 import { LineCurve } from '../curves/LineCurve.js'
-
 function Path( points ) {
 
 	CurvePath.call( this );
@@ -176,7 +175,5 @@ Path.prototype = Object.assign( Object.create( CurvePath.prototype ), {
 	}
 
 } );
-
-;
 
 export { Path }

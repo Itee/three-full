@@ -4,7 +4,6 @@
 import { StandardNode } from './nodes/StandardNode.js'
 import { NodeMaterial } from './NodeMaterial.js'
 import { NodeUtils } from '../core/NodeUtils.js'
-
 function StandardNodeMaterial() {
 
 	var node = new StandardNode();
@@ -35,7 +34,5 @@ NodeUtils.addShortcuts( StandardNodeMaterial.prototype, 'fragment', [
 	'environment',
 	'position'
 ] );
-
-;
 
 export { StandardNodeMaterial }

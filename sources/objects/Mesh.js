@@ -16,7 +16,6 @@ import {
 } from '../constants.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
-
 function Mesh( geometry, material ) {
 
 	Object3D.call( this );
@@ -457,7 +456,5 @@ Mesh.prototype = Object.assign( Object.create( Object3D.prototype ), {
 	}
 
 } );
-
-;
 
 export { Mesh }

@@ -12,7 +12,6 @@ import {
 	LinearFilter,
 	RGBAFormat
 } from '../../constants.js'
-
 function NodePostProcessing( renderer, renderTarget ) {
 
 	if ( renderTarget === undefined ) {
@@ -132,7 +131,5 @@ NodePostProcessing.prototype = {
 	}
 
 };
-
-;
 
 export { NodePostProcessing }

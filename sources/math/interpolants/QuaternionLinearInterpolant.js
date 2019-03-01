@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Interpolant } from '../Interpolant.js'
 import { Quaternion } from '../Quaternion.js'
-
 function QuaternionLinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 	Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -35,7 +34,5 @@ QuaternionLinearInterpolant.prototype = Object.assign( Object.create( Interpolan
 	}
 
 } );
-
-;
 
 export { QuaternionLinearInterpolant }

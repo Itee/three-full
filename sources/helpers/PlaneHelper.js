@@ -12,7 +12,6 @@ import {
 	FrontSide,
 	BackSide
 } from '../constants.js'
-
 function PlaneHelper( plane, size, hex ) {
 
 	this.type = 'PlaneHelper';
@@ -61,7 +60,5 @@ PlaneHelper.prototype.updateMatrixWorld = function ( force ) {
 	Object3D.prototype.updateMatrixWorld.call( this, force );
 
 };
-
-;
 
 export { PlaneHelper }

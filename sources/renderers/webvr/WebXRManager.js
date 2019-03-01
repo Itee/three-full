@@ -7,7 +7,6 @@ import { ArrayCamera } from '../../cameras/ArrayCamera.js'
 import { PerspectiveCamera } from '../../cameras/PerspectiveCamera.js'
 import { WebGLAnimation } from '../webgl/WebGLAnimation.js'
 import { Matrix4 } from '../../math/Matrix4.js'
-
 function WebXRManager( renderer ) {
 
 	var gl = renderer.context;

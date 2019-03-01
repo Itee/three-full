@@ -4,7 +4,6 @@
 import { Object3D } from '../core/Object3D.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
-
 var Gyroscope = function () {
 
 	Object3D.call( this );
@@ -40,13 +39,11 @@ Gyroscope.prototype.updateMatrixWorld = ( function () {
 				this.matrix.decompose( translationObject, quaternionObject, scaleObject );
 
 				this.matrixWorld.compose( translationWorld, quaternionObject, scaleWorld );
-
 			} else {
 
 				this.matrixWorld.copy( this.matrix );
 
 			}
-
 			this.matrixWorldNeedsUpdate = false;
 
 			force = true;

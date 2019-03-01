@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Node } from '../core/Node.js'
-
 function SwitchNode( node, components ) {
 
 	Node.call( this );
@@ -97,7 +96,5 @@ SwitchNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { SwitchNode }

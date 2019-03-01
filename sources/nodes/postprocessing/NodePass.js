@@ -5,7 +5,6 @@ import { NodeMaterial } from '../materials/NodeMaterial.js'
 import { ScreenNode } from '../inputs/ScreenNode.js'
 import { ShaderPass } from '../../postprocessing/ShaderPass.js'
 import { _Math } from '../../math/Math.js'
-
 function NodePass() {
 
 	ShaderPass.call( this );
@@ -88,7 +87,5 @@ NodePass.prototype.toJSON = function ( meta ) {
 	return meta;
 
 };
-
-;
 
 export { NodePass }

@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { InputNode } from '../core/InputNode.js'
 import { Matrix3 } from '../../math/Matrix3.js'
-
 function Matrix3Node( matrix ) {
 
 	InputNode.call( this, 'm3' );
@@ -41,7 +40,6 @@ Matrix3Node.prototype.generateReadonly = function ( builder, output, uuid, type,
 	return builder.format( "mat3( " + this.value.elements.join( ", " ) + " )", type, output );
 
 };
-
 Matrix3Node.prototype.copy = function ( source ) {
 
 	InputNode.prototype.copy.call( this, source );
@@ -65,7 +63,5 @@ Matrix3Node.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { Matrix3Node }

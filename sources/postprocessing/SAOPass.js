@@ -34,7 +34,6 @@ import {
 import { CopyShader } from '../shaders/CopyShader.js'
 import { UnpackDepthRGBAShader } from '../shaders/UnpackDepthRGBAShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
-
 var SAOPass = function ( scene, camera, depthTexture, useNormals, resolution ) {
 
 	Pass.call( this );
@@ -232,7 +231,8 @@ SAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		var oldAutoClear = renderer.autoClear;
 		renderer.autoClear = false;
 
-		renderer.clearTarget( this.depthRenderTarget );
+		renderer.setRenderTarget( this.depthRenderTarget );
+		renderer.clear();
 
 		this.saoMaterial.uniforms[ 'bias' ].value = this.params.saoBias;
 		this.saoMaterial.uniforms[ 'intensity' ].value = this.params.saoIntensity;

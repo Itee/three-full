@@ -7,7 +7,6 @@ import { LineSegments } from '../objects/LineSegments.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
-
 function SpotLightHelper( light, color ) {
 
 	Object3D.call( this );
@@ -95,7 +94,5 @@ SpotLightHelper.prototype.update = function () {
 	};
 
 }();
-
-;
 
 export { SpotLightHelper }

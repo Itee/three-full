@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { InputNode } from '../core/InputNode.js'
-
 function FloatNode( value ) {
 
 	InputNode.call( this, 'f' );
@@ -46,7 +45,5 @@ FloatNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { FloatNode }

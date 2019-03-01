@@ -27,13 +27,12 @@ import {
 	RepeatWrapping,
 	MirroredRepeatWrapping
 } from '../constants.js'
-
 var SpriteCanvasMaterial = function ( parameters ) {
 
 	Material.call( this );
 
 	this.type = 'SpriteCanvasMaterial';
-
+	this.rotation = 0;
 	this.color = new Color( 0xffffff );
 	this.program = function () {};
 
@@ -129,7 +128,6 @@ var CanvasRenderer = function ( parameters ) {
 		_centroid = new Vector3(),
 		_normal = new Vector3(),
 		_normalViewMatrix = new Matrix3();
-
 	// dash+gap fallbacks for Firefox and everything else
 
 	if ( _context.setLineDash === undefined ) {
@@ -352,7 +350,6 @@ var CanvasRenderer = function ( parameters ) {
 		_lights = _renderData.lights;
 
 		_normalViewMatrix.getNormalMatrix( camera.matrixWorldInverse );
-
 		calculateLights();
 
 		for ( var e = 0, el = _elements.length; e < el; e ++ ) {
@@ -423,11 +420,9 @@ var CanvasRenderer = function ( parameters ) {
 				}
 
 			}
-
 			_clearBox.union( _elemBox );
 
 		}
-
 		_context.setTransform( 1, 0, 0, 1, 0, 0 );
 
 	};
@@ -603,7 +598,6 @@ var CanvasRenderer = function ( parameters ) {
 			_context.restore();
 
 		}
-
 	}
 
 	function renderLine( v1, v2, element, material ) {
@@ -972,7 +966,6 @@ var CanvasRenderer = function ( parameters ) {
 		_context.restore();
 
 	}
-
 	// Hide anti-alias gaps
 
 	function expand( v1, v2, pixels ) {

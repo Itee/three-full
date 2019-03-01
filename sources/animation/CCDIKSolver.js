@@ -13,9 +13,7 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Line } from '../objects/Line.js'
-
 var CCDIKSolver = ( function () {
-	
 	function CCDIKSolver( mesh, iks ) {
 
 		this.mesh = mesh;
@@ -28,7 +26,6 @@ var CCDIKSolver = ( function () {
 	CCDIKSolver.prototype = {
 
 		constructor: CCDIKSolver,
-		
 		update: function () {
 
 			var q = new Quaternion();
@@ -180,7 +177,6 @@ var CCDIKSolver = ( function () {
 			};
 
 		}(),
-		
 		createHelper: function () {
 
 			return new CCDIKHelper( this.mesh, this.mesh.geometry.userData.MMD.iks );
@@ -222,7 +218,6 @@ var CCDIKSolver = ( function () {
 		}
 
 	};
-	
 	function CCDIKHelper( mesh, iks ) {
 
 		Object3D.call( this );
@@ -270,7 +265,6 @@ var CCDIKSolver = ( function () {
 	CCDIKHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		constructor: CCDIKHelper,
-		
 		updateMatrixWorld: function () {
 
 			var matrix = new Matrix4();

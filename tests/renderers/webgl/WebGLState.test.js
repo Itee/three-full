@@ -26,7 +26,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector4( x, y, z, w ) {
 
 		this.x = x || 0;
@@ -647,7 +646,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function WebGLState( gl, extensions, utils, capabilities ) {
 
 		function ColorBuffer() {
@@ -1500,6 +1498,20 @@ var Three = (function (exports) {
 
 		}
 
+		function texImage3D() {
+
+			try {
+
+				gl.texImage3D.apply( gl, arguments );
+
+			} catch ( error ) {
+
+				console.error( 'WebGLState:', error );
+
+			}
+
+		}
+
 		//
 
 		function scissor( scissor ) {
@@ -1592,6 +1604,7 @@ var Three = (function (exports) {
 			bindTexture: bindTexture,
 			compressedTexImage2D: compressedTexImage2D,
 			texImage2D: texImage2D,
+			texImage3D: texImage3D,
 
 			scissor: scissor,
 			viewport: viewport,

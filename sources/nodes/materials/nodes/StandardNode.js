@@ -7,7 +7,6 @@ import { FloatNode } from '../../inputs/FloatNode.js'
 import { RoughnessToBlinnExponentNode } from '../../bsdfs/RoughnessToBlinnExponentNode.js'
 import { UniformsUtils } from '../../../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../../../renderers/shaders/UniformsLib.js'
-
 function StandardNode() {
 
 	Node.call( this );
@@ -468,7 +467,5 @@ StandardNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { StandardNode }

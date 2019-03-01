@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Geometry } from '../core/Geometry.js'
 import { PolyhedronBufferGeometry } from './PolyhedronGeometry.js'
-
 // DodecahedronGeometry
 
 function DodecahedronGeometry( radius, detail ) {
@@ -81,8 +80,6 @@ function DodecahedronBufferGeometry( radius, detail ) {
 
 DodecahedronBufferGeometry.prototype = Object.create( PolyhedronBufferGeometry.prototype );
 DodecahedronBufferGeometry.prototype.constructor = DodecahedronBufferGeometry;
-
-;
 
 export {
 	DodecahedronGeometry,

@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Geometry } from '../core/Geometry.js'
 import { ExtrudeBufferGeometry } from './ExtrudeGeometry.js'
-
 // TextGeometry
 
 function TextGeometry( text, parameters ) {
@@ -60,8 +59,6 @@ function TextBufferGeometry( text, parameters ) {
 
 TextBufferGeometry.prototype = Object.create( ExtrudeBufferGeometry.prototype );
 TextBufferGeometry.prototype.constructor = TextBufferGeometry;
-
-;
 
 export {
 	TextGeometry,

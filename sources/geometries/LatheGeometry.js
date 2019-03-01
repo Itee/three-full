@@ -7,7 +7,6 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { _Math } from '../math/Math.js'
-
 // LatheGeometry
 
 function LatheGeometry( points, segments, phiStart, phiLength ) {
@@ -53,7 +52,6 @@ function LatheBufferGeometry( points, segments, phiStart, phiLength ) {
 	// clamp phiLength so it's in range of [ 0, 2PI ]
 
 	phiLength = _Math.clamp( phiLength, 0, Math.PI * 2 );
-
 	// buffers
 
 	var indices = [];
@@ -93,7 +91,6 @@ function LatheBufferGeometry( points, segments, phiStart, phiLength ) {
 			uv.y = j / ( points.length - 1 );
 
 			uvs.push( uv.x, uv.y );
-
 		}
 
 	}
@@ -176,8 +173,6 @@ function LatheBufferGeometry( points, segments, phiStart, phiLength ) {
 
 LatheBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 LatheBufferGeometry.prototype.constructor = LatheBufferGeometry;
-
-;
 
 export {
 	LatheGeometry,

@@ -4,7 +4,6 @@
 import { Light } from './Light.js'
 import { DirectionalLightShadow } from './DirectionalLightShadow.js'
 import { Object3D } from '../core/Object3D.js'
-
 function DirectionalLight( color, intensity ) {
 
 	Light.call( this, color, intensity );
@@ -39,7 +38,5 @@ DirectionalLight.prototype = Object.assign( Object.create( Light.prototype ), {
 	}
 
 } );
-
-;
 
 export { DirectionalLight }

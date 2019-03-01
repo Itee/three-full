@@ -24,7 +24,6 @@ import {
 	BackSide
 } from '../../constants.js'
 import { Vector4 } from '../../math/Vector4.js'
-
 function WebGLState( gl, extensions, utils, capabilities ) {
 
 	function ColorBuffer() {
@@ -877,6 +876,20 @@ function WebGLState( gl, extensions, utils, capabilities ) {
 
 	}
 
+	function texImage3D() {
+
+		try {
+
+			gl.texImage3D.apply( gl, arguments );
+
+		} catch ( error ) {
+
+			console.error( 'WebGLState:', error );
+
+		}
+
+	}
+
 	//
 
 	function scissor( scissor ) {
@@ -969,6 +982,7 @@ function WebGLState( gl, extensions, utils, capabilities ) {
 		bindTexture: bindTexture,
 		compressedTexImage2D: compressedTexImage2D,
 		texImage2D: texImage2D,
+		texImage3D: texImage3D,
 
 		scissor: scissor,
 		viewport: viewport,
@@ -978,7 +992,6 @@ function WebGLState( gl, extensions, utils, capabilities ) {
 	};
 
 }
-
 ;
 
 export { WebGLState }

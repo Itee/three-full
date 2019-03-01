@@ -17,7 +17,6 @@ import {
 import { CopyShader } from '../shaders/CopyShader.js'
 import { ConvolutionShader } from '../shaders/ConvolutionShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
-
 var BloomPass = function ( strength, kernelSize, sigma, resolution ) {
 
 	Pass.call( this );
@@ -108,7 +107,6 @@ BloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		this.convolutionUniforms[ "uImageIncrement" ].value = BloomPass.blurX;
 
 		renderer.render( this.scene, this.camera, this.renderTargetX, true );
-
 		// Render quad with blured scene into texture (convolution pass 2)
 
 		this.convolutionUniforms[ "tDiffuse" ].value = this.renderTargetX.texture;

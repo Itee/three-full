@@ -12,7 +12,6 @@ import {
 	RGBAFormat
 } from '../constants.js'
 import { CopyShader } from '../shaders/CopyShader.js'
-
 var EffectComposer = function ( renderer, renderTarget ) {
 
 	this.renderer = renderer;
@@ -169,5 +168,4 @@ Object.assign( EffectComposer.prototype, {
 	}
 
 } );
-
 export { EffectComposer }

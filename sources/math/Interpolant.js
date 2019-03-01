@@ -1,7 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 function Interpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 	this.parameterPositions = parameterPositions;
@@ -236,7 +235,5 @@ Object.assign( Interpolant.prototype, {
 	afterEnd_: Interpolant.prototype.copySampleValue_,
 
 } );
-
-;
 
 export { Interpolant }

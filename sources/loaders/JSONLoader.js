@@ -12,7 +12,6 @@ import { Face3 } from '../core/Face3.js'
 import { Geometry } from '../core/Geometry.js'
 import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-
 function JSONLoader( manager ) {
 
 	if ( typeof manager === 'boolean' ) {
@@ -36,9 +35,10 @@ Object.assign( JSONLoader.prototype, {
 
 		var scope = this;
 
-		var texturePath = this.texturePath && ( typeof this.texturePath === 'string' ) ? this.texturePath : LoaderUtils.extractUrlBase( url );
+		var path = ( this.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : this.path;
 
 		var loader = new FileLoader( this.manager );
+		loader.setPath( this.path );
 		loader.setWithCredentials( this.withCredentials );
 		loader.load( url, function ( text ) {
 
@@ -62,23 +62,30 @@ Object.assign( JSONLoader.prototype, {
 
 			}
 
-			var object = scope.parse( json, texturePath );
+			var object = scope.parse( json, path );
 			onLoad( object.geometry, object.materials );
 
 		}, onProgress, onError );
 
 	},
 
-	setCrossOrigin: function ( value ) {
+	setPath: function ( value ) {
 
-		this.crossOrigin = value;
+		this.path = value;
 		return this;
 
 	},
 
-	setTexturePath: function ( value ) {
+	setResourcePath: function ( value ) {
 
-		this.texturePath = value;
+		this.resourcePath = value;
+		return this;
+
+	},
+
+	setCrossOrigin: function ( value ) {
+
+		this.crossOrigin = value;
 		return this;
 
 	},
@@ -118,7 +125,6 @@ Object.assign( JSONLoader.prototype, {
 				scale = json.scale,
 
 				nUvLayers = 0;
-
 			if ( json.uvs !== undefined ) {
 
 				// disregard empty arrays
@@ -247,14 +253,12 @@ Object.assign( JSONLoader.prototype, {
 								normals[ normalIndex ++ ],
 								normals[ normalIndex ]
 							);
-
 							if ( i !== 2 ) faceA.vertexNormals.push( normal );
 							if ( i !== 0 ) faceB.vertexNormals.push( normal );
 
 						}
 
 					}
-
 					if ( hasFaceColor ) {
 
 						colorIndex = faces[ offset ++ ];
@@ -264,7 +268,6 @@ Object.assign( JSONLoader.prototype, {
 						faceB.color.setHex( hex );
 
 					}
-
 					if ( hasFaceVertexColor ) {
 
 						for ( i = 0; i < 4; i ++ ) {
@@ -354,14 +357,12 @@ Object.assign( JSONLoader.prototype, {
 						}
 
 					}
-
 					if ( hasFaceColor ) {
 
 						colorIndex = faces[ offset ++ ];
 						face.color.setHex( colors[ colorIndex ] );
 
 					}
-
 					if ( hasFaceVertexColor ) {
 
 						for ( i = 0; i < 3; i ++ ) {
@@ -520,7 +521,7 @@ Object.assign( JSONLoader.prototype, {
 
 		}
 
-		return function parse( json, texturePath ) {
+		return function parse( json, path ) {
 
 			if ( json.data !== undefined ) {
 
@@ -555,7 +556,7 @@ Object.assign( JSONLoader.prototype, {
 
 			} else {
 
-				var materials = Loader.prototype.initMaterials( json.materials, texturePath, this.crossOrigin );
+				var materials = Loader.prototype.initMaterials( json.materials, this.resourcePath || path, this.crossOrigin );
 
 				return { geometry: geometry, materials: materials };
 
@@ -566,7 +567,5 @@ Object.assign( JSONLoader.prototype, {
 	} )()
 
 } );
-
-;
 
 export { JSONLoader }

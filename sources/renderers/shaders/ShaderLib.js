@@ -6,7 +6,6 @@ import { UniformsUtils } from './UniformsUtils.js'
 import { Vector3 } from '../../math/Vector3.js'
 import { UniformsLib } from './UniformsLib.js'
 import { Color } from '../../math/Color.js'
-
 var ShaderLib = {
 
 	basic: {
@@ -101,6 +100,24 @@ var ShaderLib = {
 
 	},
 
+	matcap: {
+
+		uniforms: UniformsUtils.merge( [
+			UniformsLib.common,
+			UniformsLib.bumpmap,
+			UniformsLib.normalmap,
+			UniformsLib.displacementmap,
+			UniformsLib.fog,
+			{
+				matcap: { value: null }
+			}
+		] ),
+
+		vertexShader: ShaderChunk.meshmatcap_vert,
+		fragmentShader: ShaderChunk.meshmatcap_frag
+
+	},
+
 	points: {
 
 		uniforms: UniformsUtils.merge( [
@@ -171,6 +188,16 @@ var ShaderLib = {
 
 	},
 
+	background: {
+
+		uniforms: {
+			t2D: { value: null },
+		},
+
+		vertexShader: ShaderChunk.background_vert,
+		fragmentShader: ShaderChunk.background_frag
+
+	},
 	cube: {
 
 		uniforms: {
@@ -244,7 +271,5 @@ ShaderLib.physical = {
 	fragmentShader: ShaderChunk.meshphysical_frag
 
 };
-
-;
 
 export { ShaderLib }

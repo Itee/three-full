@@ -11,7 +11,6 @@ import {
 	ObjectSpaceNormalMap
 } from '../../constants.js'
 import { WebGLProgram } from './WebGLProgram.js'
-
 function WebGLPrograms( renderer, extensions, capabilities ) {
 
 	var programs = [];
@@ -26,6 +25,7 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 		MeshToonMaterial: 'phong',
 		MeshStandardMaterial: 'physical',
 		MeshPhysicalMaterial: 'physical',
+		MeshMatcapMaterial: 'matcap',
 		LineBasicMaterial: 'basic',
 		LineDashedMaterial: 'dashed',
 		PointsMaterial: 'points',
@@ -34,7 +34,7 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 	};
 
 	var parameterNames = [
-		"precision", "supportsVertexTextures", "map", "mapEncoding", "envMap", "envMapMode", "envMapEncoding",
+		"precision", "supportsVertexTextures", "map", "mapEncoding", "matcapEncoding", "envMap", "envMapMode", "envMapEncoding",
 		"lightMap", "aoMap", "emissiveMap", "emissiveMapEncoding", "bumpMap", "normalMap", "objectSpaceNormalMap", "displacementMap", "specularMap",
 		"roughnessMap", "metalnessMap", "gradientMap",
 		"alphaMap", "combine", "vertexColors", "fog", "useFog", "fogExp",
@@ -45,7 +45,6 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 		"shadowMapEnabled", "shadowMapType", "toneMapping", 'physicallyCorrectLights',
 		"alphaTest", "doubleSided", "flipSided", "numClippingPlanes", "numClipIntersection", "depthPacking", "dithering"
 	];
-
 	function allocateBones( object ) {
 
 		var skeleton = object.skeleton;
@@ -145,6 +144,8 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 			outputEncoding: getTextureEncodingFromMap( ( ! currentRenderTarget ) ? null : currentRenderTarget.texture, renderer.gammaOutput ),
 			map: !! material.map,
 			mapEncoding: getTextureEncodingFromMap( material.map, renderer.gammaInput ),
+			matcap: !! material.matcap,
+			matcapEncoding: getTextureEncodingFromMap( material.matcap, renderer.gammaInput ),
 			envMap: !! material.envMap,
 			envMapMode: material.envMap && material.envMap.mapping,
 			envMapEncoding: getTextureEncodingFromMap( material.envMap, renderer.gammaInput ),
@@ -308,7 +309,6 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 	this.programs = programs;
 
 }
-
 ;
 
 export { WebGLPrograms }

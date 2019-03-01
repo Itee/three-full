@@ -7,7 +7,6 @@ import { Raycaster } from '../core/Raycaster.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Camera } from '../cameras/Camera.js'
-
 var DragControls = function ( _objects, _camera, _domElement ) {
 
 	if ( _objects instanceof Camera ) {
@@ -142,7 +141,6 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 			scope.dispatchEvent( { type: 'dragstart', object: _selected } );
 
 		}
-
 	}
 
 	function onDocumentMouseCancel( event ) {
@@ -220,7 +218,6 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 			scope.dispatchEvent( { type: 'dragstart', object: _selected } );
 
 		}
-
 	}
 
 	function onDocumentTouchEnd( event ) {

@@ -4,7 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function painterSortStable( a, b ) {
 
 		if ( a.renderOrder !== b.renderOrder ) {
@@ -48,7 +47,6 @@ var Three = (function (exports) {
 		}
 
 	}
-
 	function WebGLRenderList() {
 
 		var renderItems = [];
@@ -97,7 +95,6 @@ var Three = (function (exports) {
 				renderItem.group = group;
 
 			}
-
 			( material.transparent === true ? transparent : opaque ).push( renderItem );
 
 			renderItemsIndex ++;

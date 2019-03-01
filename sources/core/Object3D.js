@@ -9,7 +9,6 @@ import { Euler } from '../math/Euler.js'
 import { Layers } from './Layers.js'
 import { Matrix3 } from '../math/Matrix3.js'
 import { _Math } from '../math/Math.js'
-
 var object3DId = 0;
 
 function Object3D() {
@@ -879,7 +878,5 @@ Object3D.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 	}
 
 } );
-
-;
 
 export { Object3D }

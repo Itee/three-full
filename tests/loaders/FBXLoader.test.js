@@ -4,7 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var Cache = {
 
 		enabled: false,
@@ -48,7 +47,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LoadingManager( onLoad, onProgress, onError ) {
 
 		var scope = this;
@@ -142,7 +140,6 @@ var Three = (function (exports) {
 	var DefaultLoadingManager = new LoadingManager();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var loading = {};
 
 	function FileLoader( manager ) {
@@ -487,7 +484,6 @@ var Three = (function (exports) {
 	var TangentSpaceNormalMap = 0;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function ImageLoader( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -589,7 +585,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function EventDispatcher() {}
 
 	Object.assign( EventDispatcher.prototype, {
@@ -673,7 +668,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -823,7 +817,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector2( x, y ) {
 
 		this.x = x || 0;
@@ -1315,7 +1308,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix4() {
 
 		this.elements = [
@@ -2238,7 +2230,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Quaternion( x, y, z, w ) {
 
 		this._x = x || 0;
@@ -2393,6 +2384,8 @@ var Three = (function (exports) {
 	} );
 
 	Object.assign( Quaternion.prototype, {
+
+		isQuaternion: true,
 
 		set: function ( x, y, z, w ) {
 
@@ -2863,7 +2856,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector3( x, y, z ) {
 
 		this.x = x || 0;
@@ -3584,7 +3576,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Matrix3() {
 
 		this.elements = [
@@ -3965,7 +3956,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var ImageUtils = {
 
 		getDataURL: function ( image ) {
@@ -4011,7 +4001,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var textureId = 0;
 
 	function Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
@@ -4314,7 +4303,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function TextureLoader( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -4372,7 +4360,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var TGALoader = function ( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -4917,7 +4904,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var materialId = 0;
 
 	function Material() {
@@ -5129,6 +5115,9 @@ var Three = (function (exports) {
 				data.envMap = this.envMap.toJSON( meta ).uuid;
 				data.reflectivity = this.reflectivity; // Scale behind envMap
 
+				if ( this.combine !== undefined ) data.combine = this.combine;
+				if ( this.envMapIntensity !== undefined ) data.envMapIntensity = this.envMapIntensity;
+
 			}
 
 			if ( this.gradientMap && this.gradientMap.isTexture ) {
@@ -5295,7 +5284,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
 		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
 		'brown': 0xA52A2A, 'burlywood': 0xDEB887, 'cadetblue': 0x5F9EA0, 'chartreuse': 0x7FFF00, 'chocolate': 0xD2691E, 'coral': 0xFF7F50,
@@ -5446,7 +5434,6 @@ var Three = (function (exports) {
 				}
 
 			}
-
 			var m;
 
 			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
@@ -5894,7 +5881,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshPhongMaterial( parameters ) {
 
 		Material.call( this );
@@ -6009,7 +5995,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshLambertMaterial( parameters ) {
 
 		Material.call( this );
@@ -6098,7 +6083,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Euler( x, y, z, order ) {
 
 		this._x = x || 0;
@@ -6441,7 +6425,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Layers() {
 
 		this.mask = 1 | 0;
@@ -6483,7 +6466,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var object3DId = 0;
 
 	function Object3D() {
@@ -7355,7 +7337,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Group() {
 
 		Object3D.call( this );
@@ -7373,7 +7354,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Bone() {
 
 		Object3D.call( this );
@@ -7391,7 +7371,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Camera() {
 
 		Object3D.call( this );
@@ -7458,7 +7437,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function PerspectiveCamera( fov, aspect, near, far ) {
 
 		Camera.call( this );
@@ -7508,7 +7486,6 @@ var Three = (function (exports) {
 			return this;
 
 		},
-		
 		setFocalLength: function ( focalLength ) {
 
 			// see http://www.bobatkins.com/photography/technical/field_of_view.html
@@ -7518,7 +7495,6 @@ var Three = (function (exports) {
 			this.updateProjectionMatrix();
 
 		},
-		
 		getFocalLength: function () {
 
 			var vExtentSlope = Math.tan( _Math.DEG2RAD * 0.5 * this.fov );
@@ -7547,7 +7523,6 @@ var Three = (function (exports) {
 			return this.filmGauge / Math.max( this.aspect, 1 );
 
 		},
-		
 		setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 
 			this.aspect = fullWidth / fullHeight;
@@ -7645,7 +7620,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function OrthographicCamera( left, right, top, bottom, near, far ) {
 
 		Camera.call( this );
@@ -7784,7 +7758,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Light( color, intensity ) {
 
 		Object3D.call( this );
@@ -7838,7 +7811,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LightShadow( camera ) {
 
 		this.camera = camera;
@@ -7892,7 +7864,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function PointLight( color, intensity, distance, decay ) {
 
 		Light.call( this, color, intensity );
@@ -7945,7 +7916,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DirectionalLightShadow( ) {
 
 		LightShadow.call( this, new OrthographicCamera( - 5, 5, 5, - 5, 0.5, 500 ) );
@@ -7959,7 +7929,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DirectionalLight( color, intensity ) {
 
 		Light.call( this, color, intensity );
@@ -7996,7 +7965,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function SpotLightShadow() {
 
 		LightShadow.call( this, new PerspectiveCamera( 50, 1, 0.5, 500 ) );
@@ -8031,7 +7999,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function SpotLight( color, intensity, distance, angle, penumbra, decay ) {
 
 		Light.call( this, color, intensity );
@@ -8095,7 +8062,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Box3( min, max ) {
 
 		this.min = ( min !== undefined ) ? min : new Vector3( + Infinity, + Infinity, + Infinity );
@@ -8474,7 +8440,7 @@ var Three = (function (exports) {
 
 			}
 
-			return ( min <= plane.constant && max >= plane.constant );
+			return ( min <= - plane.constant && max >= - plane.constant );
 
 		},
 
@@ -8703,7 +8669,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Sphere( center, radius ) {
 
 		this.center = ( center !== undefined ) ? center : new Vector3();
@@ -8875,7 +8840,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Ray( origin, direction ) {
 
 		this.origin = ( origin !== undefined ) ? origin : new Vector3();
@@ -9415,7 +9379,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Triangle( a, b, c ) {
 
 		this.a = ( a !== undefined ) ? a : new Vector3();
@@ -9757,7 +9720,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Face3( a, b, c, normal, color, materialIndex ) {
 
 		this.a = a;
@@ -9812,7 +9774,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function MeshBasicMaterial( parameters ) {
 
 		Material.call( this );
@@ -9895,7 +9856,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector4( x, y, z, w ) {
 
 		this.x = x || 0;
@@ -10516,7 +10476,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function BufferAttribute( array, itemSize, normalized ) {
 
 		if ( Array.isArray( array ) ) {
@@ -10843,7 +10802,6 @@ var Three = (function (exports) {
 
 	Int8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int8BufferAttribute.prototype.constructor = Int8BufferAttribute;
-
 	function Uint8BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8Array( array ), itemSize, normalized );
@@ -10852,7 +10810,6 @@ var Three = (function (exports) {
 
 	Uint8BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8BufferAttribute.prototype.constructor = Uint8BufferAttribute;
-
 	function Uint8ClampedBufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint8ClampedArray( array ), itemSize, normalized );
@@ -10861,7 +10818,6 @@ var Three = (function (exports) {
 
 	Uint8ClampedBufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint8ClampedBufferAttribute.prototype.constructor = Uint8ClampedBufferAttribute;
-
 	function Int16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int16Array( array ), itemSize, normalized );
@@ -10870,7 +10826,6 @@ var Three = (function (exports) {
 
 	Int16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int16BufferAttribute.prototype.constructor = Int16BufferAttribute;
-
 	function Uint16BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint16Array( array ), itemSize, normalized );
@@ -10879,7 +10834,6 @@ var Three = (function (exports) {
 
 	Uint16BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint16BufferAttribute.prototype.constructor = Uint16BufferAttribute;
-
 	function Int32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Int32Array( array ), itemSize, normalized );
@@ -10888,7 +10842,6 @@ var Three = (function (exports) {
 
 	Int32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Int32BufferAttribute.prototype.constructor = Int32BufferAttribute;
-
 	function Uint32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Uint32Array( array ), itemSize, normalized );
@@ -10897,7 +10850,6 @@ var Three = (function (exports) {
 
 	Uint32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Uint32BufferAttribute.prototype.constructor = Uint32BufferAttribute;
-
 	function Float32BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float32Array( array ), itemSize, normalized );
@@ -10906,7 +10858,6 @@ var Three = (function (exports) {
 
 	Float32BufferAttribute.prototype = Object.create( BufferAttribute.prototype );
 	Float32BufferAttribute.prototype.constructor = Float32BufferAttribute;
-
 	function Float64BufferAttribute( array, itemSize, normalized ) {
 
 		BufferAttribute.call( this, new Float64Array( array ), itemSize, normalized );
@@ -10917,7 +10868,6 @@ var Three = (function (exports) {
 	Float64BufferAttribute.prototype.constructor = Float64BufferAttribute;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DirectGeometry() {
 
 		this.vertices = [];
@@ -11203,7 +11153,6 @@ var Three = (function (exports) {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var bufferGeometryId = 1; // BufferGeometry uses odd numbers as Id
 
 	function BufferGeometry() {
@@ -12176,7 +12125,6 @@ var Three = (function (exports) {
 		},
 
 		clone: function () {
-
 			return new BufferGeometry().copy( this );
 
 		},
@@ -12291,7 +12239,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Mesh( geometry, material ) {
 
 		Object3D.call( this );
@@ -12734,7 +12681,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Skeleton( bones, boneInverses ) {
 
 		// copy the bone array
@@ -12903,7 +12849,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function SkinnedMesh( geometry, material ) {
 
 		Mesh.call( this, geometry, material );
@@ -13100,7 +13045,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LineBasicMaterial( parameters ) {
 
 		Material.call( this );
@@ -13139,7 +13083,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Line( geometry, material, mode ) {
 
 		if ( mode === 1 ) {
@@ -13195,7 +13138,7 @@ var Three = (function (exports) {
 
 					} else {
 
-						console.error( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+						console.warn( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
 
 					}
 
@@ -13382,7 +13325,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function AmbientLight( color, intensity ) {
 
 		Light.call( this, color, intensity );
@@ -13402,7 +13344,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Curve() {
 
 		this.type = 'Curve';
@@ -13689,7 +13630,6 @@ var Three = (function (exports) {
 
 			normals[ 0 ].crossVectors( tangents[ 0 ], vec );
 			binormals[ 0 ].crossVectors( tangents[ 0 ], normals[ 0 ] );
-
 			// compute the slowly-varying normal and binormal vectors for each segment on the curve
 
 			for ( i = 1; i <= segments; i ++ ) {
@@ -13787,9 +13727,7 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var NURBSUtils = {
-		
 		findSpan: function( p,  u,  U ) {
 
 			var n = U.length - p - 1;
@@ -13829,7 +13767,6 @@ var Three = (function (exports) {
 			return mid;
 
 		},
-		
 		calcBasisFunctions: function( span, u, p, U ) {
 
 			var N = [];
@@ -13861,7 +13798,6 @@ var Three = (function (exports) {
 			 return N;
 
 		},
-		
 		calcBSplinePoint: function( p, U, P, u ) {
 
 			var span = this.findSpan( p, u, U );
@@ -13883,7 +13819,6 @@ var Three = (function (exports) {
 			return C;
 
 		},
-		
 		calcBasisFunctionDerivatives: function( span,  u,  p,  n,  U ) {
 
 			var zeroArr = [];
@@ -14001,7 +13936,6 @@ var Three = (function (exports) {
 			return ders;
 
 		},
-		
 		calcBSplineDerivatives: function( p,  U,  P,  u,  nd ) {
 
 			var du = nd < p ? nd : p;
@@ -14045,7 +13979,6 @@ var Three = (function (exports) {
 			return CK;
 
 		},
-		
 		calcKoverI: function( k, i ) {
 
 			var nom = 1;
@@ -14073,7 +14006,6 @@ var Three = (function (exports) {
 			return nom / denom;
 
 		},
-		
 		calcRationalCurveDerivatives: function ( Pders ) {
 
 			var nd = Pders.length;
@@ -14107,14 +14039,12 @@ var Three = (function (exports) {
 			return CK;
 
 		},
-		
 		calcNURBSDerivatives: function( p,  U,  P,  u,  nd ) {
 
 			var Pders = this.calcBSplineDerivatives( p, U, P, u, nd );
 			return this.calcRationalCurveDerivatives( Pders );
 
 		},
-		
 		calcSurfacePoint: function ( p, q, U, V, P, u, v, target ) {
 
 			var uspan = this.findSpan( p, u, U );
@@ -14154,7 +14084,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var NURBSCurve = function ( degree, knots , controlPoints , startKnot , endKnot  ) {
 
 		Curve.call( this );
@@ -14174,10 +14103,8 @@ var Three = (function (exports) {
 		}
 
 	};
-
 	NURBSCurve.prototype = Object.create( Curve.prototype );
 	NURBSCurve.prototype.constructor = NURBSCurve;
-
 	NURBSCurve.prototype.getPoint = function ( t ) {
 
 		var u = this.knots[ this.startKnot ] + t * ( this.knots[ this.endKnot ] - this.knots[ this.startKnot ] ); // linear mapping t->u
@@ -14195,7 +14122,6 @@ var Three = (function (exports) {
 		return new Vector3( hpoint.x, hpoint.y, hpoint.z );
 
 	};
-
 	NURBSCurve.prototype.getTangent = function ( t ) {
 
 		var u = this.knots[ 0 ] + t * ( this.knots[ this.knots.length - 1 ] - this.knots[ 0 ] );
@@ -14210,7 +14136,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var AnimationUtils = {
 
 		// same as Array.prototype.slice, but also works on typed arrays
@@ -14372,7 +14297,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Interpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		this.parameterPositions = parameterPositions;
@@ -14609,7 +14533,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function CubicInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -14751,7 +14674,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function LinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -14789,7 +14711,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function DiscreteInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -14809,7 +14730,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function KeyframeTrack( name, times, values, interpolation ) {
 
 		if ( name === undefined ) throw new Error( 'KeyframeTrack: track name is undefined' );
@@ -15244,7 +15164,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function BooleanKeyframeTrack( name, times, values ) {
 
 		KeyframeTrack.call( this, name, times, values );
@@ -15270,7 +15189,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function ColorKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -15293,7 +15211,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function NumberKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -15313,7 +15230,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function QuaternionLinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 		Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -15347,7 +15263,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function QuaternionKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -15375,7 +15290,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function StringKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -15398,7 +15312,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function VectorKeyframeTrack( name, times, values, interpolation ) {
 
 		KeyframeTrack.call( this, name, times, values, interpolation );
@@ -15418,7 +15331,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function AnimationClip( name, duration, tracks ) {
 
 		this.name = name;
@@ -15855,7 +15767,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var LoaderUtils = {
 
 		decodeText: function ( array ) {
@@ -15898,7 +15809,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	// Characters [].:/ are reserved for track binding syntax.
 	var RESERVED_CHARS_RE = '\\[\\]\\.:\\/';
 
@@ -15965,7 +15875,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
 	function PropertyBinding( rootNode, path, parsedPath ) {
 
 		this.path = path;
@@ -15994,7 +15903,6 @@ var Three = (function (exports) {
 			}
 
 		},
-		
 		sanitizeNodeName: ( function () {
 
 			var reservedRe = new RegExp( '[' + RESERVED_CHARS_RE + ']', 'g' );
@@ -16444,7 +16352,6 @@ var Three = (function (exports) {
 						targetObject = targetObject[ objectName ];
 
 				}
-
 				if ( objectIndex !== undefined ) {
 
 					if ( targetObject[ objectIndex ] === undefined ) {
@@ -16526,7 +16433,6 @@ var Three = (function (exports) {
 							}
 
 						}
-
 					} else {
 
 						if ( ! targetObject.geometry.morphTargets ) {
@@ -16605,7 +16511,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var FBXLoader = ( function () {
 
 		var fbxTree;
@@ -16625,18 +16530,19 @@ var Three = (function (exports) {
 			crossOrigin: 'anonymous',
 
 			load: function ( url, onLoad, onProgress, onError ) {
+
 				var self = this;
 
-				var resourceDirectory = LoaderUtils.extractUrlBase( url );
+				var path = ( self.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : self.path;
 
 				var loader = new FileLoader( this.manager );
 				loader.setResponseType( 'arraybuffer' );
+
 				loader.load( url, function ( buffer ) {
 
 					try {
 
-						var scene = self.parse( buffer, resourceDirectory );
-						onLoad( scene );
+						onLoad( self.parse( buffer, path ) );
 
 					} catch ( error ) {
 
@@ -16651,6 +16557,21 @@ var Three = (function (exports) {
 					}
 
 				}, onProgress, onError );
+
+			},
+
+			setPath: function ( value ) {
+
+				this.path = value;
+				return this;
+
+			},
+
+			setResourcePath: function ( value ) {
+
+				this.resourcePath = value;
+				return this;
+
 			},
 
 			setCrossOrigin: function ( value ) {
@@ -16660,7 +16581,7 @@ var Three = (function (exports) {
 
 			},
 
-			parse: function ( FBXBuffer, resourceDirectory ) {
+			parse: function ( FBXBuffer, path ) {
 
 				if ( isFbxFormatBinary( FBXBuffer ) ) {
 
@@ -16686,9 +16607,9 @@ var Three = (function (exports) {
 
 				}
 
-				//console.log( FBXTree );
+				// console.log( fbxTree );
 
-				var textureLoader = new TextureLoader( this.manager ).setPath( resourceDirectory ).setCrossOrigin( this.crossOrigin );
+				var textureLoader = new TextureLoader( this.manager ).setPath( this.resourcePath || path ).setCrossOrigin( this.crossOrigin );
 
 				return new FBXTreeParser( textureLoader ).parse( fbxTree );
 
@@ -16867,7 +16788,10 @@ var Three = (function (exports) {
 
 							if ( Loader.Handlers.get( '.tga' ) === null ) {
 
-								Loader.Handlers.add( /\.tga$/i, new TGALoader() );
+								var tgaLoader = new TGALoader();
+								tgaLoader.setPath( this.textureLoader.path );
+
+								Loader.Handlers.add( /\.tga$/i, tgaLoader );
 
 							}
 
@@ -17168,7 +17092,6 @@ var Three = (function (exports) {
 						case 'DisplacementColor':
 							parameters.displacementMap = self.getTexture( textureMap, child.ID );
 							break;
-
 						case 'EmissiveColor':
 							parameters.emissiveMap = self.getTexture( textureMap, child.ID );
 							break;
@@ -17296,9 +17219,9 @@ var Three = (function (exports) {
 						ID: child.ID,
 						indices: [],
 						weights: [],
-						transform: new Matrix4().fromArray( boneNode.Transform.a ),
 						transformLink: new Matrix4().fromArray( boneNode.TransformLink.a ),
-						linkMode: boneNode.Mode,
+						// transform: new Matrix4().fromArray( boneNode.Transform.a ),
+						// linkMode: boneNode.Mode,
 
 					};
 
@@ -17328,14 +17251,6 @@ var Three = (function (exports) {
 				var rawMorphTargets = [];
 
 				for ( var i = 0; i < relationships.children.length; i ++ ) {
-
-					if ( i === 8 ) {
-
-						console.warn( 'FBXLoader: maximum of 8 morph targets supported. Ignoring additional targets.' );
-
-						break;
-
-					}
 
 					var child = relationships.children[ i ];
 
@@ -17397,7 +17312,6 @@ var Three = (function (exports) {
 						sceneGraph.add( model );
 
 					}
-
 				} );
 
 				this.bindSkeleton( deformers.skeletons, geometryMap, modelMap );
@@ -17405,6 +17319,20 @@ var Three = (function (exports) {
 				this.createAmbientLight();
 
 				this.setupMorphMaterials();
+
+				sceneGraph.traverse( function ( node ) {
+
+					if ( node.userData.transformData ) {
+
+						if ( node.parent ) node.userData.transformData.parentMatrixWorld = node.parent.matrix;
+
+						var transform = generateTransform( node.userData.transformData );
+
+						node.applyMatrix( transform );
+
+					}
+
+				} );
 
 				var animations = new AnimationParser().parse();
 
@@ -17450,7 +17378,10 @@ var Three = (function (exports) {
 							case 'NurbsCurve':
 								model = this.createCurve( relationships, geometryMap );
 								break;
-							case 'LimbNode': // usually associated with a Bone, however if a Bone was not created we'll make a Group instead
+							case 'LimbNode':
+							case 'Root':
+								model = new Bone();
+								break;
 							case 'Null':
 							default:
 								model = new Group();
@@ -17463,7 +17394,7 @@ var Three = (function (exports) {
 
 					}
 
-					this.setModelTransforms( model, node );
+					this.getTransformData( model, node );
 					modelMap.set( id, model );
 
 				}
@@ -17488,6 +17419,7 @@ var Three = (function (exports) {
 
 								var subBone = bone;
 								bone = new Bone();
+
 								bone.matrixWorld.copy( rawBone.transformLink );
 
 								// set name and id here - otherwise in cases where "subBone" is created it will not have a name / id
@@ -17560,7 +17492,6 @@ var Three = (function (exports) {
 						farClippingPlane = cameraAttribute.FarPlane.value / 1000;
 
 					}
-
 					var width = window.innerWidth;
 					var height = window.innerHeight;
 
@@ -17700,9 +17631,9 @@ var Three = (function (exports) {
 							var penumbra = 0;
 							if ( lightAttribute.OuterAngle !== undefined ) {
 
-							// TODO: this is not correct - FBX calculates outer and inner angle in degrees
-							// with OuterAngle > InnerAngle && OuterAngle <= Math.PI
-							// while three.js uses a penumbra between (0, 1) to attenuate the inner angle
+								// TODO: this is not correct - FBX calculates outer and inner angle in degrees
+								// with OuterAngle > InnerAngle && OuterAngle <= Math.PI
+								// while three.js uses a penumbra between (0, 1) to attenuate the inner angle
 								penumbra = _Math.degToRad( lightAttribute.OuterAngle.value );
 								penumbra = Math.max( penumbra, 1 );
 
@@ -17815,22 +17746,31 @@ var Three = (function (exports) {
 
 			},
 
-			// parse the model node for transform details and apply them to the model
-			setModelTransforms: function ( model, modelNode ) {
+			// parse the model node for transform data
+			getTransformData: function ( model, modelNode ) {
 
 				var transformData = {};
 
-				if ( 'RotationOrder' in modelNode ) transformData.eulerOrder = parseInt( modelNode.RotationOrder.value );
+				if ( 'InheritType' in modelNode ) transformData.inheritType = parseInt( modelNode.InheritType.value );
+
+				if ( 'RotationOrder' in modelNode ) transformData.eulerOrder = getEulerOrder( modelNode.RotationOrder.value );
+				else transformData.eulerOrder = 'ZYX';
+
 				if ( 'Lcl_Translation' in modelNode ) transformData.translation = modelNode.Lcl_Translation.value;
-				if ( 'RotationOffset' in modelNode ) transformData.rotationOffset = modelNode.RotationOffset.value;
-				if ( 'Lcl_Rotation' in modelNode ) transformData.rotation = modelNode.Lcl_Rotation.value;
+
 				if ( 'PreRotation' in modelNode ) transformData.preRotation = modelNode.PreRotation.value;
+				if ( 'Lcl_Rotation' in modelNode ) transformData.rotation = modelNode.Lcl_Rotation.value;
 				if ( 'PostRotation' in modelNode ) transformData.postRotation = modelNode.PostRotation.value;
+
 				if ( 'Lcl_Scaling' in modelNode ) transformData.scale = modelNode.Lcl_Scaling.value;
 
-				var transform = generateTransform( transformData );
+				if ( 'ScalingOffset' in modelNode ) transformData.scalingOffset = modelNode.ScalingOffset.value;
+				if ( 'ScalingPivot' in modelNode ) transformData.scalingPivot = modelNode.ScalingPivot.value;
 
-				model.applyMatrix( transform );
+				if ( 'RotationOffset' in modelNode ) transformData.rotationOffset = modelNode.RotationOffset.value;
+				if ( 'RotationPivot' in modelNode ) transformData.rotationPivot = modelNode.RotationPivot.value;
+
+				model.userData.transformData = transformData;
 
 			},
 
@@ -17970,31 +17910,26 @@ var Three = (function (exports) {
 
 			setupMorphMaterials: function () {
 
+				var self = this;
 				sceneGraph.traverse( function ( child ) {
 
 					if ( child.isMesh ) {
 
-						if ( child.geometry.morphAttributes.position || child.geometry.morphAttributes.normal ) {
+						if ( child.geometry.morphAttributes.position && child.geometry.morphAttributes.position.length ) {
 
-							var uuid = child.uuid;
-							var matUuid = child.material.uuid;
+							if ( Array.isArray( child.material ) ) {
 
-							// if a geometry has morph targets, it cannot share the material with other geometries
-							var sharedMat = false;
+								child.material.forEach( function ( material, i ) {
 
-							sceneGraph.traverse( function ( child ) {
+									self.setupMorphMaterial( child, material, i );
 
-								if ( child.isMesh ) {
+								} );
 
-									if ( child.material.uuid === matUuid && child.uuid !== uuid ) sharedMat = true;
+							} else {
 
-								}
+								self.setupMorphMaterial( child, child.material );
 
-							} );
-
-							if ( sharedMat === true ) child.material = child.material.clone();
-
-							child.material.morphTargets = true;
+							}
 
 						}
 
@@ -18003,6 +17938,44 @@ var Three = (function (exports) {
 				} );
 
 			},
+
+			setupMorphMaterial: function ( child, material, index ) {
+
+				var uuid = child.uuid;
+				var matUuid = material.uuid;
+
+				// if a geometry has morph targets, it cannot share the material with other geometries
+				var sharedMat = false;
+
+				sceneGraph.traverse( function ( node ) {
+
+					if ( node.isMesh ) {
+
+						if ( Array.isArray( node.material ) ) {
+
+							node.material.forEach( function ( mat ) {
+
+								if ( mat.uuid === matUuid && node.uuid !== uuid ) sharedMat = true;
+
+							} );
+
+						} else if ( node.material.uuid === matUuid && node.uuid !== uuid ) sharedMat = true;
+
+					}
+
+				} );
+
+				if ( sharedMat === true ) {
+
+					var clonedMat = material.clone();
+					clonedMat.morphTargets = true;
+
+					if ( index === undefined ) child.material = clonedMat;
+					else child.material[ index ] = clonedMat;
+
+				} else material.morphTargets = true;
+
+			}
 
 		};
 
@@ -18085,16 +18058,15 @@ var Three = (function (exports) {
 
 				}, null );
 
-				// TODO: if there is more than one model associated with the geometry, AND the models have
-				// different geometric transforms, then this will cause problems
-				// if ( modelNodes.length > 1 ) { }
-
-				// For now just assume one model and get the preRotations from that
+				// Assume one model and get the preRotation from that
+				// if there is more than one model associated with the geometry this may cause problems
 				var modelNode = modelNodes[ 0 ];
 
 				var transformData = {};
 
-				if ( 'RotationOrder' in modelNode ) transformData.eulerOrder = modelNode.RotationOrder.value;
+				if ( 'RotationOrder' in modelNode ) transformData.eulerOrder = getEulerOrder( modelNode.RotationOrder.value );
+				if ( 'InheritType' in modelNode ) transformData.inheritType = parseInt( modelNode.InheritType.value );
+
 				if ( 'GeometricTranslation' in modelNode ) transformData.translation = modelNode.GeometricTranslation.value;
 				if ( 'GeometricRotation' in modelNode ) transformData.rotation = modelNode.GeometricRotation.value;
 				if ( 'GeometricScaling' in modelNode ) transformData.scale = modelNode.GeometricScaling.value;
@@ -18348,7 +18320,6 @@ var Three = (function (exports) {
 								weightIndices.push( wt.id );
 
 							} );
-
 						}
 
 						if ( weights.length > 4 ) {
@@ -18584,7 +18555,7 @@ var Three = (function (exports) {
 				if ( morphTarget === null ) return;
 
 				parentGeo.morphAttributes.position = [];
-				parentGeo.morphAttributes.normal = [];
+				// parentGeo.morphAttributes.normal = []; // not implemented
 
 				var self = this;
 				morphTarget.rawTargets.forEach( function ( rawTarget ) {
@@ -18593,7 +18564,7 @@ var Three = (function (exports) {
 
 					if ( morphGeoNode !== undefined ) {
 
-						self.genMorphGeometry( parentGeo, parentGeoNode, morphGeoNode, preTransform );
+						self.genMorphGeometry( parentGeo, parentGeoNode, morphGeoNode, preTransform, rawTarget.name );
 
 					}
 
@@ -18605,7 +18576,7 @@ var Three = (function (exports) {
 			// in FBXTree.Objects.Geometry, however it can only have attributes for position, normal
 			// and a special attribute Index defining which vertices of the original geometry are affected
 			// Normal and position attributes only have data for the vertices that are affected by the morph
-			genMorphGeometry: function ( parentGeo, parentGeoNode, morphGeoNode, preTransform ) {
+			genMorphGeometry: function ( parentGeo, parentGeoNode, morphGeoNode, preTransform, name ) {
 
 				var morphGeo = new BufferGeometry();
 				if ( morphGeoNode.attrName ) morphGeo.name = morphGeoNode.attrName;
@@ -18639,7 +18610,7 @@ var Three = (function (exports) {
 				var morphBuffers = this.genBuffers( morphGeoInfo );
 
 				var positionAttribute = new Float32BufferAttribute( morphBuffers.vertex, 3 );
-				positionAttribute.name = morphGeoNode.attrName;
+				positionAttribute.name = name || morphGeoNode.attrName;
 
 				preTransform.applyToBufferAttribute( positionAttribute );
 
@@ -18990,7 +18961,6 @@ var Three = (function (exports) {
 						// all the animationCurveNodes used in the layer
 						var children = connection.children;
 
-						var self = this;
 						children.forEach( function ( child, i ) {
 
 							if ( curveNodesMap.has( child.ID ) ) {
@@ -19015,17 +18985,31 @@ var Three = (function (exports) {
 										var node = {
 
 											modelName: PropertyBinding.sanitizeNodeName( rawModel.attrName ),
+											ID: rawModel.id,
 											initialPosition: [ 0, 0, 0 ],
 											initialRotation: [ 0, 0, 0 ],
 											initialScale: [ 1, 1, 1 ],
-											transform: self.getModelAnimTransform( rawModel ),
 
 										};
 
+										sceneGraph.traverse( function ( child ) {
+
+											if ( child.ID = rawModel.id ) {
+
+												node.transform = child.matrix;
+
+												if ( child.userData.transformData ) node.eulerOrder = child.userData.transformData.eulerOrder;
+
+											}
+
+										} );
+
+										if ( ! node.transform ) node.transform = new Matrix4();
+
 										// if the animated model is pre rotated, we'll have to apply the pre rotations to every
 										// animation value as well
-										if ( 'PreRotation' in rawModel ) node.preRotations = rawModel.PreRotation.value;
-										if ( 'PostRotation' in rawModel ) node.postRotations = rawModel.PostRotation.value;
+										if ( 'PreRotation' in rawModel ) node.preRotation = rawModel.PreRotation.value;
+										if ( 'PostRotation' in rawModel ) node.postRotation = rawModel.PostRotation.value;
 
 										layerCurveNodes[ i ] = node;
 
@@ -19079,26 +19063,6 @@ var Three = (function (exports) {
 				}
 
 				return layersMap;
-
-			},
-
-			getModelAnimTransform: function ( modelNode ) {
-
-				var transformData = {};
-
-				if ( 'RotationOrder' in modelNode ) transformData.eulerOrder = parseInt( modelNode.RotationOrder.value );
-
-				if ( 'Lcl_Translation' in modelNode ) transformData.translation = modelNode.Lcl_Translation.value;
-				if ( 'RotationOffset' in modelNode ) transformData.rotationOffset = modelNode.RotationOffset.value;
-
-				if ( 'Lcl_Rotation' in modelNode ) transformData.rotation = modelNode.Lcl_Rotation.value;
-				if ( 'PreRotation' in modelNode ) transformData.preRotation = modelNode.PreRotation.value;
-
-				if ( 'PostRotation' in modelNode ) transformData.postRotation = modelNode.PostRotation.value;
-
-				if ( 'Lcl_Scaling' in modelNode ) transformData.scale = modelNode.Lcl_Scaling.value;
-
-				return generateTransform( transformData );
 
 			},
 
@@ -19164,7 +19128,7 @@ var Three = (function (exports) {
 				if ( rawTracks.transform ) rawTracks.transform.decompose( initialPosition, initialRotation, initialScale );
 
 				initialPosition = initialPosition.toArray();
-				initialRotation = new Euler().setFromQuaternion( initialRotation ).toArray(); // todo: euler order
+				initialRotation = new Euler().setFromQuaternion( initialRotation, rawTracks.eulerOrder ).toArray();
 				initialScale = initialScale.toArray();
 
 				if ( rawTracks.T !== undefined && Object.keys( rawTracks.T.curves ).length > 0 ) {
@@ -19176,7 +19140,7 @@ var Three = (function (exports) {
 
 				if ( rawTracks.R !== undefined && Object.keys( rawTracks.R.curves ).length > 0 ) {
 
-					var rotationTrack = this.generateRotationTrack( rawTracks.modelName, rawTracks.R.curves, initialRotation, rawTracks.preRotations, rawTracks.postRotations );
+					var rotationTrack = this.generateRotationTrack( rawTracks.modelName, rawTracks.R.curves, initialRotation, rawTracks.preRotation, rawTracks.postRotation, rawTracks.eulerOrder );
 					if ( rotationTrack !== undefined ) tracks.push( rotationTrack );
 
 				}
@@ -19208,7 +19172,7 @@ var Three = (function (exports) {
 
 			},
 
-			generateRotationTrack: function ( modelName, curves, initialValue, preRotations, postRotations ) {
+			generateRotationTrack: function ( modelName, curves, initialValue, preRotation, postRotation, eulerOrder ) {
 
 				if ( curves.x !== undefined ) {
 
@@ -19232,23 +19196,23 @@ var Three = (function (exports) {
 				var times = this.getTimesForAllAxes( curves );
 				var values = this.getKeyframeTrackValues( times, curves, initialValue );
 
-				if ( preRotations !== undefined ) {
+				if ( preRotation !== undefined ) {
 
-					preRotations = preRotations.map( _Math.degToRad );
-					preRotations.push( 'ZYX' );
+					preRotation = preRotation.map( _Math.degToRad );
+					preRotation.push( eulerOrder );
 
-					preRotations = new Euler().fromArray( preRotations );
-					preRotations = new Quaternion().setFromEuler( preRotations );
+					preRotation = new Euler().fromArray( preRotation );
+					preRotation = new Quaternion().setFromEuler( preRotation );
 
 				}
 
-				if ( postRotations !== undefined ) {
+				if ( postRotation !== undefined ) {
 
-					postRotations = postRotations.map( _Math.degToRad );
-					postRotations.push( 'ZYX' );
+					postRotation = postRotation.map( _Math.degToRad );
+					postRotation.push( eulerOrder );
 
-					postRotations = new Euler().fromArray( postRotations );
-					postRotations = new Quaternion().setFromEuler( postRotations ).inverse();
+					postRotation = new Euler().fromArray( postRotation );
+					postRotation = new Quaternion().setFromEuler( postRotation ).inverse();
 
 				}
 
@@ -19259,12 +19223,12 @@ var Three = (function (exports) {
 
 				for ( var i = 0; i < values.length; i += 3 ) {
 
-					euler.set( values[ i ], values[ i + 1 ], values[ i + 2 ], 'ZYX' );
+					euler.set( values[ i ], values[ i + 1 ], values[ i + 2 ], eulerOrder );
 
 					quaternion.setFromEuler( euler );
 
-					if ( preRotations !== undefined ) quaternion.premultiply( preRotations );
-					if ( postRotations !== undefined ) quaternion.multiply( postRotations );
+					if ( preRotation !== undefined ) quaternion.premultiply( preRotation );
+					if ( postRotation !== undefined ) quaternion.multiply( postRotation );
 
 					quaternion.toArray( quaternionValues, ( i / 3 ) * 4 );
 
@@ -19472,7 +19436,7 @@ var Three = (function (exports) {
 			parse: function ( text ) {
 
 				this.currentIndent = 0;
-				console.log("FBXTree: ", FBXTree);
+
 				this.allNodes = new FBXTree();
 				this.nodeStack = [];
 				this.currentProp = [];
@@ -19544,7 +19508,7 @@ var Three = (function (exports) {
 					// if the subnode already exists, append it
 					if ( nodeName in currentNode ) {
 
-					// special case Pose needs PoseNodes as an array
+						// special case Pose needs PoseNodes as an array
 						if ( nodeName === 'PoseNode' ) {
 
 							currentNode.PoseNode.push( node );
@@ -20447,77 +20411,122 @@ var Three = (function (exports) {
 
 		}
 
-		var tempMat = new Matrix4();
 		var tempEuler = new Euler();
 		var tempVec = new Vector3();
-		var translation = new Vector3();
-		var rotation = new Matrix4();
 
 		// generate transformation from FBX transform data
 		// ref: https://help.autodesk.com/view/FBX/2017/ENU/?guid=__files_GUID_10CDD63C_79C1_4F2D_BB28_AD2BE65A02ED_htm
-		// transformData = {
-		//	 eulerOrder: int,
-		//	 translation: [],
-		//   rotationOffset: [],
-		//	 preRotation
-		//	 rotation
-		//	 postRotation
-		//   scale
-		// }
-		// all entries are optional
+		// ref: http://docs.autodesk.com/FBX/2014/ENU/FBX-SDK-Documentation/index.html?url=cpp_ref/_transformations_2main_8cxx-example.html,topicNumber=cpp_ref__transformations_2main_8cxx_example_htmlfc10a1e1-b18d-4e72-9dc0-70d0f1959f5e
 		function generateTransform( transformData ) {
 
-			var transform = new Matrix4();
-			translation.set( 0, 0, 0 );
-			rotation.identity();
+			var lTranslationM = new Matrix4();
+			var lPreRotationM = new Matrix4();
+			var lRotationM = new Matrix4();
+			var lPostRotationM = new Matrix4();
+			var lTransform = new Matrix4();
 
-			var order = ( transformData.eulerOrder ) ? getEulerOrder( transformData.eulerOrder ) : getEulerOrder( 0 );
+			var lScalingM = new Matrix4();
+			var lScalingPivotM = new Matrix4();
+			var lScalingOffsetM = new Matrix4();
+			var lRotationOffsetM = new Matrix4();
+			var lRotationPivotM = new Matrix4();
 
-			if ( transformData.translation ) translation.fromArray( transformData.translation );
-			if ( transformData.rotationOffset ) translation.add( tempVec.fromArray( transformData.rotationOffset ) );
+			var lParentGX = new Matrix4();
+			var lGlobalT = new Matrix4();
+			var lGlobalRS = new Matrix4();
 
-			if ( transformData.rotation ) {
+			var inheritType = ( transformData.inheritType ) ? transformData.inheritType : 0;
 
-				var array = transformData.rotation.map( _Math.degToRad );
-				array.push( order );
-				rotation.makeRotationFromEuler( tempEuler.fromArray( array ) );
-
-			}
+			if ( transformData.translation ) lTranslationM.setPosition( tempVec.fromArray( transformData.translation ) );
 
 			if ( transformData.preRotation ) {
 
 				var array = transformData.preRotation.map( _Math.degToRad );
-				array.push( order );
-				tempMat.makeRotationFromEuler( tempEuler.fromArray( array ) );
+				array.push( transformData.eulerOrder );
+				lPreRotationM.makeRotationFromEuler( tempEuler.fromArray( array ) );
 
-				rotation.premultiply( tempMat );
+			}
+
+			if ( transformData.rotation ) {
+
+				var array = transformData.rotation.map( _Math.degToRad );
+				array.push( transformData.eulerOrder );
+				lRotationM.makeRotationFromEuler( tempEuler.fromArray( array ) );
 
 			}
 
 			if ( transformData.postRotation ) {
 
 				var array = transformData.postRotation.map( _Math.degToRad );
-				array.push( order );
-				tempMat.makeRotationFromEuler( tempEuler.fromArray( array ) );
-
-				tempMat.getInverse( tempMat );
-
-				rotation.multiply( tempMat );
+				array.push( transformData.eulerOrder );
+				lPostRotationM.makeRotationFromEuler( tempEuler.fromArray( array ) );
 
 			}
 
-			if ( transformData.scale ) transform.scale( tempVec.fromArray( transformData.scale ) );
+			if ( transformData.scale ) lScalingM.scale( tempVec.fromArray( transformData.scale ) );
 
-			transform.setPosition( translation );
-			transform.multiply( rotation );
+			// Pivots and offsets
+			if ( transformData.scalingOffset ) lScalingOffsetM.setPosition( tempVec.fromArray( transformData.scalingOffset ) );
+			if ( transformData.scalingPivot ) lScalingPivotM.setPosition( tempVec.fromArray( transformData.scalingPivot ) );
+			if ( transformData.rotationOffset ) lRotationOffsetM.setPosition( tempVec.fromArray( transformData.rotationOffset ) );
+			if ( transformData.rotationPivot ) lRotationPivotM.setPosition( tempVec.fromArray( transformData.rotationPivot ) );
 
-			return transform;
+			// parent transform
+			if ( transformData.parentMatrixWorld ) lParentGX = transformData.parentMatrixWorld;
+
+			// Global Rotation
+			var lLRM = lPreRotationM.multiply( lRotationM ).multiply( lPostRotationM );
+			var lParentGRM = new Matrix4();
+			lParentGX.extractRotation( lParentGRM );
+
+			// Global Shear*Scaling
+			var lLSM = new Matrix4();
+			var lParentGSM = new Matrix4();
+			var lParentGRSM = new Matrix4();
+			var lParentTM = new Matrix4();
+
+			lParentTM.copyPosition( lParentGX );
+			lParentGRSM = lParentTM.getInverse( lParentTM ).multiply( lParentGX );
+			lParentGSM = lParentGRM.getInverse( lParentGRM ).multiply( lParentGRSM );
+			lLSM = lScalingM;
+
+			if ( inheritType === 0 ) {
+
+				lGlobalRS = lParentGRM.multiply( lLRM ).multiply( lParentGSM ).multiply( lLSM );
+
+			} else if ( inheritType === 1 ) {
+
+				lGlobalRS = lParentGRM.multiply( lParentGSM ).multiply( lLRM ).multiply( lLSM );
+
+			} else {
+
+				var lParentLSM = new Matrix4().copy( lScalingM );
+
+				var lParentGSM_noLocal = lParentGSM.multiply( lParentLSM.getInverse( lParentLSM ) );
+
+				lGlobalRS = lParentGRM.multiply( lLRM ).multiply( lParentGSM_noLocal ).multiply( lLSM );
+
+			}
+
+			// Calculate the local transform matrix
+			lTransform = lTranslationM.multiply( lRotationOffsetM ).multiply( lRotationPivotM ).multiply( lPreRotationM ).multiply( lRotationM ).multiply( lPostRotationM ).multiply( lRotationPivotM.getInverse( lRotationPivotM ) ).multiply( lScalingOffsetM ).multiply( lScalingPivotM ).multiply( lScalingM ).multiply( lScalingPivotM.getInverse( lScalingPivotM ) );
+
+			var lLocalTWithAllPivotAndOffsetInfo = new Matrix4().copyPosition( lTransform );
+
+			var lGlobalTranslation = lParentGX.multiply( lLocalTWithAllPivotAndOffsetInfo );
+			lGlobalT.copyPosition( lGlobalTranslation );
+
+			lTransform = lGlobalT.multiply( lGlobalRS );
+
+			return lTransform;
 
 		}
 
 		// Returns the three.js intrinsic Euler order corresponding to FBX extrinsic Euler order
 		// ref: http://help.autodesk.com/view/FBX/2017/ENU/?guid=__cpp_ref_class_fbx_euler_html
 		function getEulerOrder( order ) {
+
+			order = order || 0;
 
 			var enums = [
 				'ZYX', // -> XYZ extrinsic
@@ -20526,7 +20535,7 @@ var Three = (function (exports) {
 				'ZXY', // -> YXZ extrinsic
 				'YXZ', // -> ZXY extrinsic
 				'XYZ', // -> ZYX extrinsic
-			//'SphericXYZ', // not possible to support
+				//'SphericXYZ', // not possible to support
 			];
 
 			if ( order === 6 ) {

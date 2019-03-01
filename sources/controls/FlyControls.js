@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Quaternion } from '../math/Quaternion.js'
 import { Vector3 } from '../math/Vector3.js'
-
 var FlyControls = function ( object, domElement ) {
 
 	this.object = object;
@@ -190,7 +189,6 @@ var FlyControls = function ( object, domElement ) {
 
 		// expose the rotation vector for convenience
 		this.object.rotation.setFromQuaternion( this.object.quaternion, this.object.rotation.order );
-
 	};
 
 	this.updateMovementVector = function () {

@@ -17,7 +17,6 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { Matrix3 } from '../math/Matrix3.js'
 import { _Math } from '../math/Math.js'
 import { arrayMax } from '../utils.js'
-
 var bufferGeometryId = 1; // BufferGeometry uses odd numbers as Id
 
 function BufferGeometry() {
@@ -990,7 +989,6 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 	},
 
 	clone: function () {
-
 		return new BufferGeometry().copy( this );
 
 	},
@@ -1103,7 +1101,5 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 	}
 
 } );
-
-;
 
 export { BufferGeometry }

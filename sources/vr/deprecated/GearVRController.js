@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Object3D } from '../../core/Object3D.js'
 import { Vector3 } from '../../math/Vector3.js'
-
 var GearVRController = function () {
 
 	Object3D.call( this );
@@ -92,7 +91,6 @@ var GearVRController = function () {
 				scope.dispatchEvent( { type: touchpadIsPressed ? 'touchpaddown' : 'touchpadup', axes: axes } );
 
 			}
-
 			// trigger
 
 			if ( triggerIsPressed !== gamepad.buttons[ 1 ].pressed ) {

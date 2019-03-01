@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Line } from './Line.js'
-
 function LineLoop( geometry, material ) {
 
 	Line.call( this, geometry, material );
@@ -18,7 +17,5 @@ LineLoop.prototype = Object.assign( Object.create( Line.prototype ), {
 	isLineLoop: true,
 
 } );
-
-;
 
 export { LineLoop }

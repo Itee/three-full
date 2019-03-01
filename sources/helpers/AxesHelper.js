@@ -6,7 +6,6 @@ import { VertexColors } from '../constants.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
-
 function AxesHelper( size ) {
 
 	size = size || 1;
@@ -35,7 +34,5 @@ function AxesHelper( size ) {
 
 AxesHelper.prototype = Object.create( LineSegments.prototype );
 AxesHelper.prototype.constructor = AxesHelper;
-
-;
 
 export { AxesHelper }

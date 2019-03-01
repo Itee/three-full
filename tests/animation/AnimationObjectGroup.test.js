@@ -4,7 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	// Characters [].:/ are reserved for track binding syntax.
 	var RESERVED_CHARS_RE = '\\[\\]\\.:\\/';
 
@@ -71,7 +70,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
 	function PropertyBinding( rootNode, path, parsedPath ) {
 
 		this.path = path;
@@ -100,7 +98,6 @@ var Three = (function (exports) {
 			}
 
 		},
-		
 		sanitizeNodeName: ( function () {
 
 			var reservedRe = new RegExp( '[' + RESERVED_CHARS_RE + ']', 'g' );
@@ -550,7 +547,6 @@ var Three = (function (exports) {
 						targetObject = targetObject[ objectName ];
 
 				}
-
 				if ( objectIndex !== undefined ) {
 
 					if ( targetObject[ objectIndex ] === undefined ) {
@@ -632,7 +628,6 @@ var Three = (function (exports) {
 							}
 
 						}
-
 					} else {
 
 						if ( ! targetObject.geometry.morphTargets ) {
@@ -713,7 +708,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -861,7 +855,6 @@ var Three = (function (exports) {
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function AnimationObjectGroup() {
 
 		this.uuid = _Math.generateUUID();

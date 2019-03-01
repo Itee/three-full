@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Object3D } from '../core/Object3D.js'
-
 function Audio( listener ) {
 
 	Object3D.call( this );
@@ -313,7 +312,5 @@ Audio.prototype = Object.assign( Object.create( Object3D.prototype ), {
 	}
 
 } );
-
-;
 
 export { Audio }

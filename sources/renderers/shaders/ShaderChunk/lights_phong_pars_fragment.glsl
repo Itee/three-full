@@ -8,8 +8,6 @@ varying vec3 vViewPosition;
 	varying vec3 vNormal;
 
 #endif
-
-
 struct BlinnPhongMaterial {
 
 	vec3	diffuseColor;

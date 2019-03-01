@@ -4,7 +4,6 @@
 import { AnimationClip } from '../animation/AnimationClip.js'
 import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-
 function AnimationLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -43,7 +42,5 @@ Object.assign( AnimationLoader.prototype, {
 	}
 
 } );
-
-;
 
 export { AnimationLoader }

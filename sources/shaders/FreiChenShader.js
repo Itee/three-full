@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector2 } from '../math/Vector2.js'
-
 var FreiChenShader = {
 
 	uniforms: {
@@ -32,7 +31,6 @@ var FreiChenShader = {
 		"uniform vec2 aspect;",
 
 		"vec2 texel = vec2(1.0 / aspect.x, 1.0 / aspect.y);",
-
 		"mat3 G[9];",
 
 		// hard coded matrix values!!!! as suggested in https://github.com/neilmendoza/ofxPostProcessing/blob/master/src/EdgePass.cpp#L45
@@ -63,14 +61,12 @@ var FreiChenShader = {
 			"mat3 I;",
 			"float cnv[9];",
 			"vec3 sample;",
-			
 			"for (float i=0.0; i<3.0; i++) {",
 				"for (float j=0.0; j<3.0; j++) {",
 					"sample = texture2D(tDiffuse, vUv + texel * vec2(i-1.0,j-1.0) ).rgb;",
 					"I[int(i)][int(j)] = length(sample);",
 				"}",
 			"}",
-			
 			"for (int i=0; i<9; i++) {",
 				"float dp3 = dot(G[i][0], I[0]) + dot(G[i][1], I[1]) + dot(G[i][2], I[2]);",
 				"cnv[i] = dp3 * dp3;",

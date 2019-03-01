@@ -9,7 +9,6 @@ import {
 } from '../constants.js'
 import { Vector3 } from '../math/Vector3.js'
 import { PerspectiveCamera } from './PerspectiveCamera.js'
-
 function CubeCamera( near, far, cubeResolution ) {
 
 	Object3D.call( this );
@@ -107,7 +106,5 @@ function CubeCamera( near, far, cubeResolution ) {
 
 CubeCamera.prototype = Object.create( Object3D.prototype );
 CubeCamera.prototype.constructor = CubeCamera;
-
-;
 
 export { CubeCamera }

@@ -5,7 +5,6 @@ import { Geometry } from '../core/Geometry.js'
 import { Face3 } from '../core/Face3.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
-
 var SubdivisionModifier = function ( subdivisions ) {
 
 	this.subdivisions = ( subdivisions === undefined ) ? 1 : subdivisions;
@@ -47,7 +46,6 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 	// Some constants
 	var WARNINGS = ! true; // Set to true for development
 	var ABC = [ 'a', 'b', 'c' ];
-
 	function getEdge( a, b, map ) {
 
 		var vertexIndexA = Math.min( a, b );
@@ -58,7 +56,6 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 		return map[ key ];
 
 	}
-
 	function processEdge( a, b, vertices, map, face, metaVertices ) {
 
 		var vertexIndexA = Math.min( a, b );
@@ -96,7 +93,6 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 
 		metaVertices[ a ].edges.push( edge );
 		metaVertices[ b ].edges.push( edge );
-
 	}
 
 	function generateLookups( vertices, faces, metaVertices, edges ) {
@@ -160,12 +156,10 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 		oldUvs = geometry.faceVertexUvs[ 0 ];
 
 		var hasUvs = oldUvs !== undefined && oldUvs.length > 0;
-
 		metaVertices = new Array( oldVertices.length );
 		sourceEdges = {}; // Edge => { oldVertex1, oldVertex2, faces[]  }
 
 		generateLookups( oldVertices, oldFaces, metaVertices, sourceEdges );
-
 		newEdgeVertices = [];
 		var other, currentEdge, newEdge, face;
 		var edgeVertexWeight, adjacentVertexWeight, connectedFaces;
@@ -223,7 +217,6 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 			// console.log(currentEdge, newEdge);
 
 		}
-
 		var beta, sourceVertexWeight, connectingVertexWeight;
 		var connectingEdge, connectingEdges, oldVertex, newSourceVertex;
 		newSourceVertices = [];
@@ -296,7 +289,6 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 			newSourceVertices.push( newSourceVertex );
 
 		}
-
 		newVertices = newSourceVertices.concat( newEdgeVertices );
 		var sl = newSourceVertices.length, edge1, edge2, edge3;
 		newFaces = [];

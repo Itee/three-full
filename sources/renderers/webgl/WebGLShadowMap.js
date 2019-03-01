@@ -18,7 +18,6 @@ import { Vector3 } from '../../math/Vector3.js'
 import { Vector2 } from '../../math/Vector2.js'
 import { Matrix4 } from '../../math/Matrix4.js'
 import { Frustum } from '../../math/Frustum.js'
-
 function WebGLShadowMap( _renderer, _objects, maxTextureSize ) {
 
 	var _frustum = new Frustum(),
@@ -431,7 +430,6 @@ function WebGLShadowMap( _renderer, _objects, maxTextureSize ) {
 	}
 
 }
-
 ;
 
 export { WebGLShadowMap }

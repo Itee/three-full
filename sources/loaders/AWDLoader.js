@@ -12,7 +12,6 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-
 	var UNCOMPRESSED = 0,
 		DEFLATE = 1,
 		LZMA = 2,
@@ -124,12 +123,20 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			this._baseDir = url.substr( 0, url.lastIndexOf( '/' ) + 1 );
 
 			var loader = new FileLoader( this.manager );
+			loader.setPath( this.path );
 			loader.setResponseType( 'arraybuffer' );
 			loader.load( url, function ( text ) {
 
 				onLoad( scope.parse( text ) );
 
 			}, onProgress, onError );
+
+		},
+
+		setPath: function ( value ) {
+
+			this.path = value;
+			return this;
 
 		},
 
@@ -173,7 +180,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 				type = this.readU8(),
 				flags = this.readU8(),
 				len = this.readU32();
-
 			switch ( type ) {
 
 				case 1:
@@ -234,12 +240,10 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 					break;
 
 			}
-
 			// Store block reference for later use
 			this._blocks[ blockId ] = block = new Block();
 			block.data = assetData;
 			block.id = blockId;
-
 		},
 
 		_parseHeader: function () {
@@ -356,15 +360,12 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 			mesh.applyMatrix( mtx );
 			mesh.name = name;
-
 			parent = this.getBlock( par_id ) || this.trunk;
 			parent.add( mesh );
-
 			var matLen = materials.length;
 			var maxLen = Math.max( meshLen, matLen );
 			for ( i = 0; i < maxLen; i ++ )
 				meshes[ i % meshLen ].material = materials[ i % matLen ];
-
 			// Ignore for now
 			this.parseProperties( null );
 			mesh.extra = this.parseUserAttributes();
@@ -437,7 +438,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			mat.extra = attributes;
 			mat.alphaThreshold = props.get( 12, 0.0 );
 			mat.repeat = props.get( 13, false );
-
 			return mat;
 
 		},
@@ -521,7 +521,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 			// Discard attributes for now
 			this.parseUserAttributes();
-
 			return skeleton;
 
 		},
@@ -633,7 +632,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			}
 
 			this.parseUserAttributes();
-
 			return skeletonFrames;
 
 		},
@@ -679,7 +677,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			var thisAnimator;
 
 			if ( type == 1 ) {
-
 				thisAnimator = {
 					animationSet: targetAnimationSet,
 					skeleton: this._blocks[ props.get( 1, 0 ) ].data
@@ -688,7 +685,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			} else if ( type == 2 ) {
 				// debug( "vertex Anim???");
 			}
-
 			for ( i = 0; i < targetMeshes.length; i ++ ) {
 
 				targetMeshes[ i ].animator = thisAnimator;
@@ -721,10 +717,8 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 				geom = new BufferGeometry();
 				geom.name = name;
 				geometries.push( geom );
-
 				sm_len = this.readU32();
 				sm_end = this._ptr + sm_len;
-
 				// Ignore for now
 				this.parseProperties( { 1: this._geoNrType, 2: this._geoNrType } );
 
@@ -929,7 +923,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 								idx += 3;
 
 							}
-
 							subMeshParsed ++;
 
 						} else
@@ -939,7 +932,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 					}
 
 				}
-
 				frames_parsed ++;
 
 			}
@@ -1171,14 +1163,12 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			return a;
 
 		},
-		
 		readUTF: function () {
 
 			var len = this.readU16();
 			return this.readUTFBytes( len );
 
 		},
-		
 		readUTFBytes: function ( len ) {
 
 			// TODO(user): Use native implementations if/when available
@@ -1210,5 +1200,4 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 		}
 
 	};
-
 export { AWDLoader }

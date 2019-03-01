@@ -5,11 +5,9 @@ import { FileLoader } from './FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-
 	'use strict';
 
 	var bigEndianPlatform = null;
-	
 	function isBigEndianPlatform() {
 
 		if ( bigEndianPlatform === null ) {
@@ -52,7 +50,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 		Float32Array: 'getFloat32',
 		Float64Array: 'getFloat64'
 	};
-
 	function copyFromBuffer( sourceArrayBuffer, viewType, position, length, fromBigEndian ) {
 
 		var bytesPerElement = viewType.BYTES_PER_ELEMENT,
@@ -82,7 +79,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 		return result;
 
 	}
-
 	function decodePrwm( buffer ) {
 
 		var array = new Uint8Array( buffer ),
@@ -106,7 +102,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			indicesNumber = array[ 5 ] + ( array[ 6 ] << 8 ) + ( array[ 7 ] << 16 );
 
 		}
-
 		if ( version === 0 ) {
 
 			throw new Error( 'PRWM decoder: Invalid format version: 0' );
@@ -130,7 +125,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			}
 
 		}
-
 		var pos = 8;
 
 		var attributes = {},
@@ -230,6 +224,7 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			var scope = this;
 
 			var loader = new FileLoader( scope.manager );
+			loader.setPath( scope.path );
 			loader.setResponseType( 'arraybuffer' );
 
 			url = url.replace( /\*/g, isBigEndianPlatform() ? 'be' : 'le' );
@@ -239,6 +234,13 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 				onLoad( scope.parse( arrayBuffer ) );
 
 			}, onProgress, onError );
+
+		},
+
+		setPath: function ( value ) {
+
+			this.path = value;
+			return this;
 
 		},
 
@@ -278,5 +280,4 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 		return isBigEndianPlatform();
 
 	};
-
 export { PRWMLoader }

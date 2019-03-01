@@ -17,7 +17,6 @@ import {
 } from '../constants.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { _Math } from '../math/Math.js'
-
 var Refractor = function ( geometry, options ) {
 
 	Mesh.call( this, geometry );

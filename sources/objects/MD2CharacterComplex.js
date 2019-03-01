@@ -8,7 +8,6 @@ import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
 import { MorphBlendMesh } from './MorphBlendMesh.js'
 import { UVMapping } from '../constants.js'
 import { _Math } from '../math/Math.js'
-
 var MD2CharacterComplex = function () {
 
 	var scope = this;
@@ -97,7 +96,6 @@ var MD2CharacterComplex = function () {
 		}
 
 	};
-
 	this.shareParts = function ( original ) {
 
 		this.animations = original.animations;
@@ -287,7 +285,6 @@ var MD2CharacterComplex = function () {
 			this.meshWeapon.playAnimation( animationName );
 
 		}
-
 	};
 
 	this.update = function ( delta ) {
@@ -391,7 +388,6 @@ var MD2CharacterComplex = function () {
 			}
 
 		}
-
 		if ( Math.abs( this.speed ) < 0.2 * this.maxSpeed && ! ( controls.moveLeft || controls.moveRight || controls.moveForward || controls.moveBackward ) ) {
 
 			if ( this.activeAnimation !== idleAnimation ) {

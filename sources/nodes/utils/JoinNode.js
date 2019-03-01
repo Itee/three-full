@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from '../core/TempNode.js'
 import { NodeUtils } from '../core/NodeUtils.js'
-
 var inputs = NodeUtils.elements;
 
 function JoinNode( x, y, z, w ) {
@@ -102,13 +101,10 @@ JoinNode.prototype.toJSON = function ( meta ) {
 			}
 
 		}
-
 	}
 
 	return data;
 
 };
-
-;
 
 export { JoinNode }

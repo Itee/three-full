@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Node } from '../core/Node.js'
-
 function BypassNode( code, value ) {
 
 	Node.call( this );
@@ -80,7 +79,5 @@ BypassNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { BypassNode }

@@ -13,7 +13,6 @@ import { MaterialLoader } from './MaterialLoader.js'
 import { FileLoader } from './FileLoader.js'
 import { VertexColors } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-
 'use strict';
 
 /*
@@ -22,7 +21,6 @@ if ( var LoaderSupport === undefined ) {
 	var LoaderSupport = {};
 
 }
-
 */
 var LoaderSupport = {}
 LoaderSupport.Validator = {
@@ -35,7 +33,6 @@ LoaderSupport.Validator = {
 		return ( input === null || input === undefined ) ? defaultValue : input;
 	}
 };
-
 LoaderSupport.Callbacks = (function () {
 
 	var Validator = LoaderSupport.Validator;
@@ -47,30 +44,24 @@ LoaderSupport.Callbacks = (function () {
 		this.onLoad = null;
 		this.onLoadMaterials = null;
 	}
-	
 	Callbacks.prototype.setCallbackOnProgress = function ( callbackOnProgress ) {
 		this.onProgress = Validator.verifyInput( callbackOnProgress, this.onProgress );
 	};
-	
 	Callbacks.prototype.setCallbackOnReportError = function ( callbackOnReportError ) {
 		this.onReportError = Validator.verifyInput( callbackOnReportError, this.onReportError );
 	};
-	
 	Callbacks.prototype.setCallbackOnMeshAlter = function ( callbackOnMeshAlter ) {
 		this.onMeshAlter = Validator.verifyInput( callbackOnMeshAlter, this.onMeshAlter );
 	};
-	
 	Callbacks.prototype.setCallbackOnLoad = function ( callbackOnLoad ) {
 		this.onLoad = Validator.verifyInput( callbackOnLoad, this.onLoad );
 	};
-	
 	Callbacks.prototype.setCallbackOnLoadMaterials = function ( callbackOnLoadMaterials ) {
 		this.onLoadMaterials = Validator.verifyInput( callbackOnLoadMaterials, this.onLoadMaterials );
 	};
 
 	return Callbacks;
 })();
-
 LoaderSupport.LoadedMeshUserOverride = (function () {
 
 	function LoadedMeshUserOverride( disregardMesh, alteredMesh ) {
@@ -78,23 +69,19 @@ LoaderSupport.LoadedMeshUserOverride = (function () {
 		this.alteredMesh = alteredMesh === true;
 		this.meshes = [];
 	}
-	
 	LoadedMeshUserOverride.prototype.addMesh = function ( mesh ) {
 		this.meshes.push( mesh );
 		this.alteredMesh = true;
 	};
-	
 	LoadedMeshUserOverride.prototype.isDisregardMesh = function () {
 		return this.disregardMesh;
 	};
-	
 	LoadedMeshUserOverride.prototype.providesAlteredMeshes = function () {
 		return this.alteredMesh;
 	};
 
 	return LoadedMeshUserOverride;
 })();
-
 LoaderSupport.ResourceDescriptor = (function () {
 
 	var Validator = LoaderSupport.Validator;
@@ -120,14 +107,12 @@ LoaderSupport.ResourceDescriptor = (function () {
 		this.extension = this.extension.trim();
 		this.content = null;
 	}
-	
 	ResourceDescriptor.prototype.setContent = function ( content ) {
 		this.content = Validator.verifyInput( content, null );
 	};
 
 	return ResourceDescriptor;
 })();
-
 LoaderSupport.PrepData = (function () {
 
 	var Validator = LoaderSupport.Validator;
@@ -141,20 +126,16 @@ LoaderSupport.PrepData = (function () {
 		this.resources = [];
 		this.callbacks = new LoaderSupport.Callbacks();
 	}
-	
 	PrepData.prototype.setLogging = function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 	};
-	
 	PrepData.prototype.getCallbacks = function () {
 		return this.callbacks;
 	};
-	
 	PrepData.prototype.addResource = function ( resource ) {
 		this.resources.push( resource );
 	};
-	
 	PrepData.prototype.clone = function () {
 		var clone = new LoaderSupport.PrepData( this.modelName );
 		clone.logging.enabled = this.logging.enabled;
@@ -175,7 +156,6 @@ LoaderSupport.PrepData = (function () {
 
 		return clone;
 	};
-	
 	PrepData.prototype.checkResourceDescriptorFiles = function ( resources, fileDesc ) {
 		var resource, triple, i, found;
 		var result = {};
@@ -241,7 +221,6 @@ LoaderSupport.PrepData = (function () {
 
 	return PrepData;
 })();
-
 LoaderSupport.MeshBuilder = (function () {
 
 	var LOADER_MESH_BUILDER_VERSION = '1.2.2';
@@ -258,12 +237,10 @@ LoaderSupport.MeshBuilder = (function () {
 		this.callbacks = new LoaderSupport.Callbacks();
 		this.materials = [];
 	}
-	
 	MeshBuilder.prototype.setLogging = function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 	};
-	
 	MeshBuilder.prototype.init = function () {
 		var defaultMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
 		defaultMaterial.name = 'defaultMaterial';
@@ -295,7 +272,6 @@ LoaderSupport.MeshBuilder = (function () {
 			}
 		);
 	};
-	
 	MeshBuilder.prototype.setMaterials = function ( materials ) {
 		var payload = {
 			cmd: 'materialData',
@@ -315,7 +291,6 @@ LoaderSupport.MeshBuilder = (function () {
 		if ( Validator.isValid( callbacks.onLoad ) ) this.callbacks.setCallbackOnLoad( callbacks.onLoad );
 		if ( Validator.isValid( callbacks.onLoadMaterials ) ) this.callbacks.setCallbackOnLoadMaterials( callbacks.onLoadMaterials );
 	};
-	
 	MeshBuilder.prototype.processPayload = function ( payload ) {
 		if ( payload.cmd === 'meshData' ) {
 
@@ -328,7 +303,6 @@ LoaderSupport.MeshBuilder = (function () {
 
 		}
 	};
-	
 	MeshBuilder.prototype.buildMeshes = function ( meshPayload ) {
 		var meshName = meshPayload.params.meshName;
 
@@ -480,7 +454,6 @@ LoaderSupport.MeshBuilder = (function () {
 
 		return meshes;
 	};
-	
 	MeshBuilder.prototype.updateMaterials = function ( materialPayload ) {
 		var material, materialName;
 		var materialCloneInstructions = materialPayload.materials.materialCloneInstructions;
@@ -543,7 +516,6 @@ LoaderSupport.MeshBuilder = (function () {
 
 		}
 	};
-	
 	MeshBuilder.prototype.getMaterialsJSON = function () {
 		var materialsJSON = {};
 		var material;
@@ -555,14 +527,12 @@ LoaderSupport.MeshBuilder = (function () {
 
 		return materialsJSON;
 	};
-	
 	MeshBuilder.prototype.getMaterials = function () {
 		return this.materials;
 	};
 
 	return MeshBuilder;
 })();
-
 LoaderSupport.WorkerRunnerRefImpl = (function () {
 
 	function WorkerRunnerRefImpl() {
@@ -572,7 +542,6 @@ LoaderSupport.WorkerRunnerRefImpl = (function () {
 		};
 		self.addEventListener( 'message', scopedRunner, false );
 	}
-	
 	WorkerRunnerRefImpl.prototype.applyProperties = function ( parser, params ) {
 		var property, funcName, values;
 		for ( property in params ) {
@@ -590,7 +559,6 @@ LoaderSupport.WorkerRunnerRefImpl = (function () {
 			}
 		}
 	};
-	
 	WorkerRunnerRefImpl.prototype.processMessage = function ( payload ) {
 		if ( payload.cmd === 'run' ) {
 
@@ -628,7 +596,6 @@ LoaderSupport.WorkerRunnerRefImpl = (function () {
 
 	return WorkerRunnerRefImpl;
 })();
-
 LoaderSupport.WorkerSupport = (function () {
 
 	var WORKER_SUPPORT_VERSION = '2.2.1';
@@ -679,7 +646,6 @@ LoaderSupport.WorkerSupport = (function () {
 			// process stored queuedMessage
 			this._postMessage();
 		};
-		
 		LoaderWorker.prototype._receiveWorkerMessage = function ( e ) {
 			var payload = e.data;
 			switch ( payload.cmd ) {
@@ -818,17 +784,14 @@ LoaderSupport.WorkerSupport = (function () {
 
 		this.loaderWorker = new LoaderWorker();
 	}
-	
 	WorkerSupport.prototype.setLogging = function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 		this.loaderWorker.setLogging( this.logging.enabled, this.logging.debug );
 	};
-	
 	WorkerSupport.prototype.setForceWorkerDataCopy = function ( forceWorkerDataCopy ) {
 		this.loaderWorker.setForceCopy( forceWorkerDataCopy );
 	};
-	
 	WorkerSupport.prototype.validate = function ( functionCodeBuilder, parserName, libLocations, libPath, runnerImpl ) {
 		if ( Validator.isValid( this.loaderWorker.worker ) ) return;
 
@@ -888,15 +851,12 @@ LoaderSupport.WorkerSupport = (function () {
 
 		}
 	};
-	
 	WorkerSupport.prototype.setCallbacks = function ( meshBuilder, onLoad ) {
 		this.loaderWorker.setCallbacks( meshBuilder, onLoad );
 	};
-	
 	WorkerSupport.prototype.run = function ( payload ) {
 		this.loaderWorker.run( payload );
 	};
-	
 	WorkerSupport.prototype.setTerminateRequested = function ( terminateRequested ) {
 		this.loaderWorker.setTerminateRequested( terminateRequested );
 	};
@@ -989,7 +949,6 @@ LoaderSupport.WorkerSupport = (function () {
 	return WorkerSupport;
 
 })();
-
 LoaderSupport.WorkerDirector = (function () {
 
 	var LOADER_WORKER_DIRECTOR_VERSION = '2.2.2';
@@ -1024,28 +983,22 @@ LoaderSupport.WorkerDirector = (function () {
 
 		this.callbackOnFinishedProcessing = null;
 	}
-	
 	WorkerDirector.prototype.setLogging = function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 	};
-	
 	WorkerDirector.prototype.getMaxQueueSize = function () {
 		return this.maxQueueSize;
 	};
-	
 	WorkerDirector.prototype.getMaxWebWorkers = function () {
 		return this.maxWebWorkers;
 	};
-	
 	WorkerDirector.prototype.setCrossOrigin = function ( crossOrigin ) {
 		this.crossOrigin = crossOrigin;
 	};
-	
 	WorkerDirector.prototype.setForceWorkerDataCopy = function ( forceWorkerDataCopy ) {
 		this.workerDescription.forceWorkerDataCopy = forceWorkerDataCopy === true;
 	};
-	
 	WorkerDirector.prototype.prepareWorkers = function ( globalCallbacks, maxQueueSize, maxWebWorkers ) {
 		if ( Validator.isValid( globalCallbacks ) ) this.workerDescription.globalCallbacks = globalCallbacks;
 		this.maxQueueSize = Math.min( maxQueueSize, MAX_QUEUE_SIZE );
@@ -1070,18 +1023,15 @@ LoaderSupport.WorkerDirector = (function () {
 
 		}
 	};
-	
 	WorkerDirector.prototype.enqueueForRun = function ( prepData ) {
 		if ( this.instructionQueue.length < this.maxQueueSize ) {
 			this.instructionQueue.push( prepData );
 		}
 	};
-	
 	WorkerDirector.prototype.isRunning = function () {
 		var wsKeys = Object.keys( this.workerDescription.workerSupports );
 		return ( ( this.instructionQueue.length > 0 && this.instructionQueuePointer < this.instructionQueue.length ) || wsKeys.length > 0 );
 	};
-	
 	WorkerDirector.prototype.processQueue = function () {
 		var prepData, supportDesc;
 		for ( var instanceNo in this.workerDescription.workerSupports ) {
@@ -1217,7 +1167,6 @@ LoaderSupport.WorkerDirector = (function () {
 
 		}
 	};
-	
 	WorkerDirector.prototype.tearDown = function ( callbackOnFinishedProcessing ) {
 		if ( this.logging.enabled ) console.info( 'WorkerDirector received the deregister call. Terminating all workers!' );
 

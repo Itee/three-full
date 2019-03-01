@@ -8,14 +8,12 @@ import { PointsMaterial } from '../materials/PointsMaterial.js'
 import { Points } from '../objects/Points.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
-
 var PCDLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 	this.littleEndian = true;
 
 };
-
 PCDLoader.prototype = {
 
 	constructor: PCDLoader,
@@ -25,6 +23,7 @@ PCDLoader.prototype = {
 		var scope = this;
 
 		var loader = new FileLoader( scope.manager );
+		loader.setPath( scope.path );
 		loader.setResponseType( 'arraybuffer' );
 		loader.load( url, function ( data ) {
 
@@ -47,6 +46,13 @@ PCDLoader.prototype = {
 			}
 
 		}, onProgress, onError );
+
+	},
+
+	setPath: function ( value ) {
+
+		this.path = value;
+		return this;
 
 	},
 

@@ -4,7 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function Vector2( x, y ) {
 
 		this.x = x || 0;
@@ -496,7 +495,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var BokehShader2 = {
 
 		uniforms: {
@@ -532,7 +530,6 @@ var Three = (function (exports) {
 
 			"shaderFocus":  { value: 1 },
 			"focusCoords":  { value: new Vector2() }
-
 		},
 
 		vertexShader: [
@@ -679,7 +676,6 @@ var Three = (function (exports) {
 				"kernel[0] = 1.0/16.0;   kernel[1] = 2.0/16.0;   kernel[2] = 1.0/16.0;",
 				"kernel[3] = 2.0/16.0;   kernel[4] = 4.0/16.0;   kernel[5] = 2.0/16.0;",
 				"kernel[6] = 1.0/16.0;   kernel[7] = 2.0/16.0;   kernel[8] = 1.0/16.0;",
-
 				"for( int i=0; i<9; i++ ) {",
 					"float tmp = texture2D(tDepth, coords + offset[i]).r;",
 					"d += tmp * kernel[i];",
@@ -687,7 +683,6 @@ var Three = (function (exports) {
 
 				"return d;",
 			"}",
-
 			"vec3 color(vec2 coords,float blur) {",
 				"//processing the sample",
 
@@ -718,7 +713,6 @@ var Three = (function (exports) {
 			"float linearize(float depth) {",
 				"return -zfar * znear / (depth * (zfar - znear) - zfar);",
 			"}",
-
 			"float vignette() {",
 				"float dist = distance(vUv.xy, vec2(0.5,0.5));",
 				"dist = smoothstep(vignout+(fstop/vignfade), vignin+(fstop/vignfade), dist);",

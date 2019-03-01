@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Node } from './Node.js'
-
 function VarNode( type, value ) {
 
 	Node.call( this, type );
@@ -61,7 +60,5 @@ VarNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { VarNode }

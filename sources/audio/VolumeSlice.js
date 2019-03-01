@@ -11,7 +11,6 @@ import {
 	ClampToEdgeWrapping,
 	LinearFilter
 } from '../constants.js'
-
 var VolumeSlice = function ( volume, index, axis ) {
 
 	var slice = this;
@@ -35,12 +34,9 @@ var VolumeSlice = function ( volume, index, axis ) {
 	} );
 	
 	this.axis = axis || 'z';
-	
 	this.canvas = document.createElement( 'canvas' );
-	
 	this.canvasBuffer = document.createElement( 'canvas' );
 	this.updateGeometry();
-
 	var canvasMap = new Texture( this.canvas );
 	canvasMap.minFilter = LinearFilter;
 	canvasMap.wrapS = canvasMap.wrapT = ClampToEdgeWrapping;
@@ -50,13 +46,11 @@ var VolumeSlice = function ( volume, index, axis ) {
 	
 	this.geometryNeedsUpdate = true;
 	this.repaint();
-
 };
 
 VolumeSlice.prototype = {
 
 	constructor: VolumeSlice,
-	
 	repaint: function () {
 
 		if ( this.geometryNeedsUpdate ) {
@@ -71,7 +65,6 @@ VolumeSlice.prototype = {
 			volume = this.volume,
 			canvas = this.canvasBuffer,
 			ctx = this.ctxBuffer;
-
 		// get the imageData and pixel array from the canvas
 		var imgData = ctx.getImageData( 0, 0, iLength, jLength );
 		var data = imgData.data;
@@ -131,11 +124,9 @@ VolumeSlice.prototype = {
 		}
 		ctx.putImageData( imgData, 0, 0 );
 		this.ctx.drawImage( canvas, 0, 0, iLength, jLength, 0, 0, this.canvas.width, this.canvas.height );
-
 		this.mesh.material.map.needsUpdate = true;
 
 	},
-	
 	updateGeometry: function () {
 
 		var extracted = this.volume.extractPerpendicularPlane( this.axis, this.index );

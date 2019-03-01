@@ -15,7 +15,6 @@ import {
 } from '../constants.js'
 import { CopyShader } from '../shaders/CopyShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
-
 var SSAARenderPass = function ( scene, camera, clearColor, clearAlpha ) {
 
 	Pass.call( this );
@@ -146,7 +145,6 @@ SSAARenderPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 	}
 
 } );
-
 // These jitter vectors are specified in integers because it is easier.
 // I am assuming a [-8,8) integer grid, but it needs to be mapped onto [-0.5,0.5)
 // before being used, thus these integers need to be scaled by 1/16.

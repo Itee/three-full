@@ -4,7 +4,6 @@
 import { TempNode } from '../core/TempNode.js'
 import { FunctionNode } from '../core/FunctionNode.js'
 import { UVNode } from '../accessors/UVNode.js'
-
 function CheckerNode( uv ) {
 
 	TempNode.call( this, 'f' );
@@ -70,7 +69,5 @@ CheckerNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { CheckerNode }

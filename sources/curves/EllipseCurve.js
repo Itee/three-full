@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Curve } from './Curve.js'
 import { Vector2 } from '../math/Vector2.js'
-
 function EllipseCurve( aX, aY, xRadius, yRadius, aStartAngle, aEndAngle, aClockwise, aRotation ) {
 
 	Curve.call( this );
@@ -112,7 +111,6 @@ EllipseCurve.prototype.copy = function ( source ) {
 	return this;
 
 };
-
 EllipseCurve.prototype.toJSON = function () {
 
 	var data = Curve.prototype.toJSON.call( this );
@@ -154,7 +152,5 @@ EllipseCurve.prototype.fromJSON = function ( json ) {
 	return this;
 
 };
-
-;
 
 export { EllipseCurve }

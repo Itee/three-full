@@ -5,7 +5,6 @@ import { TempNode } from '../core/TempNode.js'
 import { FunctionNode } from '../core/FunctionNode.js'
 import { MaxMIPLevelNode } from '../utils/MaxMIPLevelNode.js'
 import { BlinnShininessExponentNode } from './BlinnShininessExponentNode.js'
-
 function RoughnessToBlinnExponentNode( texture ) {
 
 	TempNode.call( this, 'f' );
@@ -87,7 +86,5 @@ RoughnessToBlinnExponentNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { RoughnessToBlinnExponentNode }

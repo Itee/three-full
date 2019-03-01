@@ -15,7 +15,6 @@ import {
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
 import { PropertyBinding } from '../animation/PropertyBinding.js'
-
 //------------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------------
@@ -68,7 +67,6 @@ var GLTFExporter = function () {};
 GLTFExporter.prototype = {
 
 	constructor: GLTFExporter,
-	
 	parse: function ( input, onDone, options ) {
 
 		var DEFAULT_OPTIONS = {
@@ -118,7 +116,6 @@ GLTFExporter.prototype = {
 		};
 
 		var cachedCanvas;
-		
 		function equalArray( array1, array2 ) {
 
 			return ( array1.length === array2.length ) && array1.every( function ( element, index ) {
@@ -128,7 +125,6 @@ GLTFExporter.prototype = {
 			} );
 
 		}
-		
 		function stringToArrayBuffer( text ) {
 
 			if ( window.TextEncoder !== undefined ) {
@@ -151,7 +147,6 @@ GLTFExporter.prototype = {
 			return array.buffer;
 
 		}
-		
 		function getMinMax( attribute, start, count ) {
 
 			var output = {
@@ -176,13 +171,11 @@ GLTFExporter.prototype = {
 			return output;
 
 		}
-		
 		function isPowerOfTwo( image ) {
 
 			return _Math.isPowerOfTwo( image.width ) && _Math.isPowerOfTwo( image.height );
 
 		}
-		
 		function isNormalizedNormalAttribute( normal ) {
 
 			if ( cachedData.attributes.has( normal ) ) {
@@ -203,7 +196,6 @@ GLTFExporter.prototype = {
 			return true;
 
 		}
-		
 		function createNormalizedNormalAttribute( normal ) {
 
 			if ( cachedData.attributes.has( normal ) ) {
@@ -240,13 +232,11 @@ GLTFExporter.prototype = {
 			return attribute;
 
 		}
-		
 		function getPaddedBufferSize( bufferSize ) {
 
 			return Math.ceil( bufferSize / 4 ) * 4;
 
 		}
-		
 		function getPaddedArrayBuffer( arrayBuffer, paddingByte ) {
 
 			paddingByte = paddingByte || 0;
@@ -275,7 +265,6 @@ GLTFExporter.prototype = {
 			return arrayBuffer;
 
 		}
-		
 		function serializeUserData( object ) {
 
 			try {
@@ -292,7 +281,6 @@ GLTFExporter.prototype = {
 			}
 
 		}
-		
 		function processBuffer( buffer ) {
 
 			if ( ! outputJSON.buffers ) {
@@ -307,7 +295,6 @@ GLTFExporter.prototype = {
 			return 0;
 
 		}
-		
 		function processBufferView( attribute, componentType, start, count, target ) {
 
 			if ( ! outputJSON.bufferViews ) {
@@ -402,7 +389,6 @@ GLTFExporter.prototype = {
 			return output;
 
 		}
-		
 		function processBufferViewImage( blob ) {
 
 			if ( ! outputJSON.bufferViews ) {
@@ -436,7 +422,6 @@ GLTFExporter.prototype = {
 			} );
 
 		}
-		
 		function processAccessor( attribute, geometry, start, count ) {
 
 			var types = {
@@ -536,7 +521,6 @@ GLTFExporter.prototype = {
 			return outputJSON.accessors.length - 1;
 
 		}
-		
 		function processImage( image, format, flipY ) {
 
 			if ( ! cachedData.images.has( image ) ) {
@@ -628,7 +612,6 @@ GLTFExporter.prototype = {
 			return index;
 
 		}
-		
 		function processSampler( map ) {
 
 			if ( ! outputJSON.samplers ) {
@@ -651,7 +634,6 @@ GLTFExporter.prototype = {
 			return outputJSON.samplers.length - 1;
 
 		}
-		
 		function processTexture( map ) {
 
 			if ( cachedData.textures.has( map ) ) {
@@ -681,7 +663,6 @@ GLTFExporter.prototype = {
 			return index;
 
 		}
-		
 		function processMaterial( material ) {
 
 			if ( cachedData.materials.has( material ) ) {
@@ -887,7 +868,6 @@ GLTFExporter.prototype = {
 			return index;
 
 		}
-		
 		function processMesh( mesh ) {
 
 			var geometry = mesh.geometry;
@@ -1174,7 +1154,6 @@ GLTFExporter.prototype = {
 			return outputJSON.meshes.length - 1;
 
 		}
-		
 		function processCamera( camera ) {
 
 			if ( ! outputJSON.cameras ) {
@@ -1226,7 +1205,6 @@ GLTFExporter.prototype = {
 			return outputJSON.cameras.length - 1;
 
 		}
-		
 		function processAnimation( clip, root ) {
 
 			if ( ! outputJSON.animations ) {
@@ -1382,7 +1360,6 @@ GLTFExporter.prototype = {
 			return skinIndex;
 
 		}
-		
 		function processNode( object ) {
 
 			if ( object.isLight ) {
@@ -1497,7 +1474,6 @@ GLTFExporter.prototype = {
 					gltfNode.children = children;
 
 				}
-
 			}
 
 			outputJSON.nodes.push( gltfNode );
@@ -1508,7 +1484,6 @@ GLTFExporter.prototype = {
 			return nodeIndex;
 
 		}
-		
 		function processScene( scene ) {
 
 			if ( ! outputJSON.scenes ) {
@@ -1559,7 +1534,6 @@ GLTFExporter.prototype = {
 			}
 
 		}
-		
 		function processObjects( objects ) {
 
 			var scene = new Scene();

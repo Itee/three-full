@@ -11,7 +11,6 @@ import { Group } from '../objects/Group.js'
 import { VertexColors } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
-
 var ThreeMFLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -27,12 +26,20 @@ ThreeMFLoader.prototype = {
 
 		var scope = this;
 		var loader = new FileLoader( scope.manager );
+		loader.setPath( scope.path );
 		loader.setResponseType( 'arraybuffer' );
 		loader.load( url, function ( buffer ) {
 
 			onLoad( scope.parse( buffer ) );
 
 		}, onProgress, onError );
+
+	},
+
+	setPath: function ( value ) {
+
+		this.path = value;
+		return this;
 
 	},
 

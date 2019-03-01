@@ -4,7 +4,6 @@
 import { AudioContext } from '../audio/AudioContext.js'
 import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-
 function AudioLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -35,7 +34,5 @@ Object.assign( AudioLoader.prototype, {
 	}
 
 } );
-
-;
 
 export { AudioLoader }

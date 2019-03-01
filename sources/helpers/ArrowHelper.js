@@ -10,7 +10,6 @@ import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Line } from '../objects/Line.js'
 import { Vector3 } from '../math/Vector3.js'
-
 var lineGeometry, coneGeometry;
 
 function ArrowHelper( dir, origin, length, color, headLength, headWidth ) {
@@ -103,7 +102,5 @@ ArrowHelper.prototype.setColor = function ( color ) {
 	this.cone.material.color.copy( color );
 
 };
-
-;
 
 export { ArrowHelper }

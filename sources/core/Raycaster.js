@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Ray } from '../math/Ray.js'
-
 function Raycaster( origin, direction, near, far ) {
 
 	this.ray = new Ray( origin, direction );
@@ -126,7 +125,5 @@ Object.assign( Raycaster.prototype, {
 	}
 
 } );
-
-;
 
 export { Raycaster }

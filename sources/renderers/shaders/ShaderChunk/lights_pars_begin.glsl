@@ -40,8 +40,6 @@ vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
 	}
 
 #endif
-
-
 #if NUM_POINT_LIGHTS > 0
 
 	struct PointLight {
@@ -75,8 +73,6 @@ vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
 	}
 
 #endif
-
-
 #if NUM_SPOT_LIGHTS > 0
 
 	struct SpotLight {
@@ -122,8 +118,6 @@ vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
 	}
 
 #endif
-
-
 #if NUM_RECT_AREA_LIGHTS > 0
 
 	struct RectAreaLight {
@@ -141,8 +135,6 @@ vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
 	uniform RectAreaLight rectAreaLights[ NUM_RECT_AREA_LIGHTS ];
 
 #endif
-
-
 #if NUM_HEMI_LIGHTS > 0
 
 	struct HemisphereLight {

@@ -5,7 +5,6 @@ import { Object3D } from '../core/Object3D.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { REVISION } from '../constants.js'
-
 var CSS2DObject = function ( element ) {
 
 	Object3D.call( this );

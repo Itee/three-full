@@ -46,6 +46,7 @@ var Three = (function (exports) {
 	var LuminanceAlphaFormat = 1025;
 	var DepthFormat = 1026;
 	var DepthStencilFormat = 1027;
+	var RedFormat = 1028;
 	var RGB_S3TC_DXT1_Format = 33776;
 	var RGBA_S3TC_DXT1_Format = 33777;
 	var RGBA_S3TC_DXT3_Format = 33778;
@@ -71,7 +72,6 @@ var Three = (function (exports) {
 	var RGBA_ASTC_12x12_Format = 37821;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	function WebGLUtils( gl, extensions, capabilities ) {
 
 		function convert( p ) {
@@ -119,6 +119,7 @@ var Three = (function (exports) {
 			if ( p === LuminanceAlphaFormat ) return gl.LUMINANCE_ALPHA;
 			if ( p === DepthFormat ) return gl.DEPTH_COMPONENT;
 			if ( p === DepthStencilFormat ) return gl.DEPTH_STENCIL;
+			if ( p === RedFormat ) return gl.RED;
 
 			if ( p === AddEquation ) return gl.FUNC_ADD;
 			if ( p === SubtractEquation ) return gl.FUNC_SUBTRACT;

@@ -21,7 +21,6 @@ import {
 	GammaEncoding
 } from '../../constants.js'
 import { TextureCubeNode } from '../misc/TextureCubeNode.js'
-
 var elements = NodeUtils.elements,
 	constructors = [ 'float', 'vec2', 'vec3', 'vec4' ],
 	convertFormatToType = {
@@ -317,7 +316,6 @@ NodeBuilder.prototype = {
 		return this;
 
 	},
-
 	addVertexCode: function ( code ) {
 
 		this.addCode( code, 'vertex' );
@@ -335,7 +333,6 @@ NodeBuilder.prototype = {
 		this.code[ shader || this.shader ] += code + '\n';
 
 	},
-
 	addVertexNodeCode: function ( code ) {
 
 		this.addNodeCode( code, 'vertex' );
@@ -395,7 +392,6 @@ NodeBuilder.prototype = {
 		this.finalCode[ shader || this.shader ] += code + '\n';
 
 	},
-
 	addVertexParsCode: function ( code ) {
 
 		this.addParsCode( code, 'vertex' );
@@ -413,14 +409,12 @@ NodeBuilder.prototype = {
 		this.parsCode[ shader || this.shader ] += code + '\n';
 
 	},
-
 	addVaryCode: function ( code ) {
 
 		this.addVertexParsCode( code );
 		this.addFragmentParsCode( code );
 
 	},
-
 	isCache: function ( name ) {
 
 		return this.caches.indexOf( name ) !== - 1;
@@ -599,7 +593,6 @@ NodeBuilder.prototype = {
 			return node.name;
 
 		}
-
 		if ( node instanceof FunctionNode ) {
 
 			includesStruct = this.includes.functions;
@@ -956,7 +949,5 @@ NodeBuilder.prototype = {
 	}
 
 };
-
-;
 
 export { NodeBuilder }

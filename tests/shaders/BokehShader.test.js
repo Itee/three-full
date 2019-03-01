@@ -4,7 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var BokehShader = {
 
 		defines: {
@@ -72,7 +71,6 @@ var Three = (function (exports) {
 			"	return orthographicDepthToViewZ( depth, nearClip, farClip );",
 			"	#endif",
 			"}",
-
 			"void main() {",
 
 				"vec2 aspectcorrect = vec2( 1.0, aspect );",

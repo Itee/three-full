@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Matrix3 } from '../../math/Matrix3.js'
 import { Plane } from '../../math/Plane.js'
-
 function WebGLClipping() {
 
 	var scope = this,
@@ -95,7 +94,6 @@ function WebGLClipping() {
 			this.numPlanes += nGlobal;
 
 		}
-
 	};
 
 	function resetGlobalState() {
@@ -157,7 +155,6 @@ function WebGLClipping() {
 	}
 
 }
-
 ;
 
 export { WebGLClipping }

@@ -17,7 +17,6 @@ import { _Math } from '../math/Math.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Matrix3 } from '../math/Matrix3.js'
 import { ImageUtils } from '../extras/ImageUtils.js'
-
 var textureId = 0;
 
 function Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
@@ -318,7 +317,5 @@ Object.defineProperty( Texture.prototype, "needsUpdate", {
 	}
 
 } );
-
-;
 
 export { Texture }

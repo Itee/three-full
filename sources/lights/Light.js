@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Object3D } from '../core/Object3D.js'
 import { Color } from '../math/Color.js'
-
 function Light( color, intensity ) {
 
 	Object3D.call( this );
@@ -55,7 +54,5 @@ Light.prototype = Object.assign( Object.create( Object3D.prototype ), {
 	}
 
 } );
-
-;
 
 export { Light }

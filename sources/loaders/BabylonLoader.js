@@ -14,7 +14,6 @@ import { HemisphereLight } from '../lights/HemisphereLight.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Group } from '../objects/Group.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-
 var BabylonLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -30,11 +29,19 @@ BabylonLoader.prototype = {
 		var scope = this;
 
 		var loader = new FileLoader( scope.manager );
+		loader.setPath( scope.path );
 		loader.load( url, function ( text ) {
 
 			onLoad( scope.parse( JSON.parse( text ) ) );
 
 		}, onProgress, onError );
+
+	},
+
+	setPath: function ( value ) {
+
+		this.path = value;
+		return this;
 
 	},
 

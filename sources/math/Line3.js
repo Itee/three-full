@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from './Vector3.js'
 import { _Math } from './Math.js'
-
 function Line3( start, end ) {
 
 	this.start = ( start !== undefined ) ? start : new Vector3();
@@ -146,7 +145,5 @@ Object.assign( Line3.prototype, {
 	}
 
 } );
-
-;
 
 export { Line3 }

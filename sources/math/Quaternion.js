@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { _Math } from './Math.js'
 import { Vector3 } from './Vector3.js'
-
 function Quaternion( x, y, z, w ) {
 
 	this._x = x || 0;
@@ -158,6 +157,8 @@ Object.defineProperties( Quaternion.prototype, {
 } );
 
 Object.assign( Quaternion.prototype, {
+
+	isQuaternion: true,
 
 	set: function ( x, y, z, w ) {
 
@@ -626,7 +627,5 @@ Object.assign( Quaternion.prototype, {
 	onChangeCallback: function () {}
 
 } );
-
-;
 
 export { Quaternion }

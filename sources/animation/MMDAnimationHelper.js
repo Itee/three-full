@@ -7,9 +7,7 @@ import { Quaternion } from '../math/Quaternion.js'
 import { AnimationMixer } from './AnimationMixer.js'
 import { CCDIKSolver } from './CCDIKSolver.js'
 import { MMDPhysics } from './MMDPhysics.js'
-
 var MMDAnimationHelper = ( function () {
-	
 	function MMDAnimationHelper( params ) {
 
 		params = params || {};
@@ -53,7 +51,6 @@ var MMDAnimationHelper = ( function () {
 	MMDAnimationHelper.prototype = {
 
 		constructor: MMDAnimationHelper,
-		
 		add: function ( object, params ) {
 
 			params = params || {};
@@ -85,7 +82,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-		
 		remove: function ( object ) {
 
 			if ( object.isSkinnedMesh ) {
@@ -115,7 +111,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-		
 		update: function ( delta ) {
 
 			if ( this.audioManager !== null ) this.audioManager.control( delta );
@@ -133,7 +128,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-		
 		pose: function ( mesh, vpd, params ) {
 
 			params = params || {};
@@ -184,7 +178,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-		
 		enable: function ( key, enabled ) {
 
 			if ( this.enabled[ key ] === undefined ) {
@@ -209,7 +202,6 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
-		
 		createGrantSolver: function ( mesh ) {
 
 			return new GrantSolver( mesh, mesh.geometry.userData.MMD.grants );
@@ -575,7 +567,6 @@ var MMDAnimationHelper = ( function () {
 				params );
 
 		},
-		
 		_syncDuration: function () {
 
 			var max = 0.0;
@@ -706,7 +697,6 @@ var MMDAnimationHelper = ( function () {
 			}
 
 		},
-		
 		_saveBones: function ( mesh ) {
 
 			var objects = this.objects.get( mesh );
@@ -814,7 +804,6 @@ var MMDAnimationHelper = ( function () {
 	};
 
 	//
-	
 	function AudioManager( audio, params ) {
 
 		params = params || {};
@@ -834,7 +823,6 @@ var MMDAnimationHelper = ( function () {
 	AudioManager.prototype = {
 
 		constructor: AudioManager,
-		
 		control: function ( delta ) {
 
 			this.elapsed += delta;
@@ -860,6 +848,9 @@ var MMDAnimationHelper = ( function () {
 			}
 
 			if ( this.currentTime < this.delayTime ) return false;
+			
+			// 'duration' can be bigger than 'audioDuration + delayTime' because of sync configuration
+			if ( ( this.currentTime - this.delayTime ) > this.audioDuration ) return false;
 
 			this.audio.startTime = this.currentTime - this.delayTime;
 
@@ -875,7 +866,6 @@ var MMDAnimationHelper = ( function () {
 		}
 
 	};
-	
 	function GrantSolver( mesh, grants ) {
 
 		this.mesh = mesh;
@@ -886,7 +876,6 @@ var MMDAnimationHelper = ( function () {
 	GrantSolver.prototype = {
 
 		constructor: GrantSolver,
-		
 		update: function () {
 
 			var quaternion = new Quaternion();

@@ -13,7 +13,6 @@ import {
 	RGBM16Encoding,
 	RGBDEncoding
 } from '../../constants.js'
-
 function ColorSpaceNode( input, method ) {
 
 	TempNode.call( this, 'v4' );
@@ -117,7 +116,6 @@ ColorSpaceNode.Nodes = ( function () {
 
 		"}"
 	].join( "\n" ) );
-
 	var LinearToRGBD = new FunctionNode( [
 		"vec3 LinearToRGBD( in vec4 value, in float maxRange ) {",
 
@@ -300,7 +298,5 @@ ColorSpaceNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { ColorSpaceNode }

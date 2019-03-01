@@ -4,7 +4,6 @@
 import { LightShadow } from './LightShadow.js'
 import { _Math } from '../math/Math.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
-
 function SpotLightShadow() {
 
 	LightShadow.call( this, new PerspectiveCamera( 50, 1, 0.5, 500 ) );
@@ -37,7 +36,5 @@ SpotLightShadow.prototype = Object.assign( Object.create( LightShadow.prototype 
 	}
 
 } );
-
-;
 
 export { SpotLightShadow }

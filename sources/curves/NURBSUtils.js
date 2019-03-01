@@ -3,9 +3,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector4 } from '../math/Vector4.js'
 import { Vector3 } from '../math/Vector3.js'
-
 var NURBSUtils = {
-	
 	findSpan: function( p,  u,  U ) {
 
 		var n = U.length - p - 1;
@@ -45,7 +43,6 @@ var NURBSUtils = {
 		return mid;
 
 	},
-	
 	calcBasisFunctions: function( span, u, p, U ) {
 
 		var N = [];
@@ -77,7 +74,6 @@ var NURBSUtils = {
 		 return N;
 
 	},
-	
 	calcBSplinePoint: function( p, U, P, u ) {
 
 		var span = this.findSpan( p, u, U );
@@ -99,7 +95,6 @@ var NURBSUtils = {
 		return C;
 
 	},
-	
 	calcBasisFunctionDerivatives: function( span,  u,  p,  n,  U ) {
 
 		var zeroArr = [];
@@ -217,7 +212,6 @@ var NURBSUtils = {
 		return ders;
 
 	},
-	
 	calcBSplineDerivatives: function( p,  U,  P,  u,  nd ) {
 
 		var du = nd < p ? nd : p;
@@ -261,7 +255,6 @@ var NURBSUtils = {
 		return CK;
 
 	},
-	
 	calcKoverI: function( k, i ) {
 
 		var nom = 1;
@@ -289,7 +282,6 @@ var NURBSUtils = {
 		return nom / denom;
 
 	},
-	
 	calcRationalCurveDerivatives: function ( Pders ) {
 
 		var nd = Pders.length;
@@ -323,14 +315,12 @@ var NURBSUtils = {
 		return CK;
 
 	},
-	
 	calcNURBSDerivatives: function( p,  U,  P,  u,  nd ) {
 
 		var Pders = this.calcBSplineDerivatives( p, U, P, u, nd );
 		return this.calcRationalCurveDerivatives( Pders );
 
 	},
-	
 	calcSurfacePoint: function ( p, q, U, V, P, u, v, target ) {
 
 		var uspan = this.findSpan( p, u, U );

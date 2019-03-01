@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Node } from './Node.js'
 import { _Math } from '../../math/Math.js'
-
 function TempNode( type, params ) {
 
 	Node.call( this, type );
@@ -128,7 +127,5 @@ TempNode.prototype.generate = function ( builder, output, uuid, type, ns ) {
 	return builder.getTempVar( uuid, type || this.getType( builder ), ns ).name;
 
 };
-
-;
 
 export { TempNode }

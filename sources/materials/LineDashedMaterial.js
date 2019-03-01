@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { LineBasicMaterial } from './LineBasicMaterial.js'
-
 function LineDashedMaterial( parameters ) {
 
 	LineBasicMaterial.call( this );
@@ -33,7 +32,5 @@ LineDashedMaterial.prototype.copy = function ( source ) {
 	return this;
 
 };
-
-;
 
 export { LineDashedMaterial }

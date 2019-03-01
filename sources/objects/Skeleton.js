@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Matrix4 } from '../math/Matrix4.js'
-
 function Skeleton( bones, boneInverses ) {
 
 	// copy the bone array
@@ -169,7 +168,5 @@ Object.assign( Skeleton.prototype, {
 	}
 
 } );
-
-;
 
 export { Skeleton }

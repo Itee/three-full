@@ -1,7 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 var VignetteShader = {
 
 	uniforms: {
@@ -41,7 +40,6 @@ var VignetteShader = {
 			"vec4 texel = texture2D( tDiffuse, vUv );",
 			"vec2 uv = ( vUv - vec2( 0.5 ) ) * vec2( offset );",
 			"gl_FragColor = vec4( mix( texel.rgb, vec3( 1.0 - darkness ), dot( uv, uv ) ), texel.a );",
-
 		"}"
 
 	].join( "\n" )

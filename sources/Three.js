@@ -41,7 +41,6 @@ export {
 export { NURBSCurve } from './curves/NURBSCurve.js'
 export { NURBSSurface } from './curves/NURBSSurface.js'
 export { NURBSUtils } from './curves/NURBSUtils.js'
-export { Detector } from './helpers/Detector.js'
 export { AnaglyphEffect } from './effects/AnaglyphEffect.js'
 export { AsciiEffect } from './effects/AsciiEffect.js'
 export { OutlineEffect } from './effects/OutlineEffect.js'
@@ -55,6 +54,7 @@ export { OBJExporter } from './exporters/OBJExporter.js'
 export { PLYExporter } from './exporters/PLYExporter.js'
 export { STLExporter } from './exporters/STLExporter.js'
 export { TypedGeometryExporter } from './exporters/TypedGeometryExporter.js'
+export { BoxLineGeometry } from './geometries/BoxLineGeometry.js'
 export {
 	ConvexGeometry,
 	ConvexBufferGeometry
@@ -83,7 +83,6 @@ export { AssimpJSONLoader } from './loaders/AssimpJSONLoader.js'
 export { AssimpLoader } from './loaders/AssimpLoader.js'
 export { AWDLoader } from './loaders/AWDLoader.js'
 export { BabylonLoader } from './loaders/BabylonLoader.js'
-export { BinaryLoader } from './loaders/BinaryLoader.js'
 export { BVHLoader } from './loaders/BVHLoader.js'
 export { ColladaLoader } from './loaders/ColladaLoader.js'
 export { DDSLoader } from './loaders/DDSLoader.js'
@@ -343,6 +342,7 @@ export { UnpackDepthRGBAShader } from './shaders/UnpackDepthRGBAShader.js'
 export { VerticalBlurShader } from './shaders/VerticalBlurShader.js'
 export { VerticalTiltShiftShader } from './shaders/VerticalTiltShiftShader.js'
 export { VignetteShader } from './shaders/VignetteShader.js'
+export { VolumeRenderShader1 } from './shaders/VolumeShader.js'
 export { WaterRefractionShader } from './shaders/WaterRefractionShader.js'
 export { ShaderSkin } from './shaders/ShaderSkin.js'
 export { ShaderTerrain } from './shaders/ShaderTerrain.js'
@@ -365,6 +365,7 @@ export { GearVRController } from './vr/deprecated/GearVRController.js'
 export { PaintViveController } from './vr/PaintViveController.js'
 export { ViveController } from './vr/ViveController.js'
 export { WebVR } from './vr/WebVR.js'
+export { WebGL } from './helpers/WebGL.js'
 export { AnimationAction } from './animation/AnimationAction.js'
 export { AnimationClip } from './animation/AnimationClip.js'
 export { AnimationMixer } from './animation/AnimationMixer.js'
@@ -485,6 +486,7 @@ export {
 	RGBEFormat,
 	DepthFormat,
 	DepthStencilFormat,
+	RedFormat,
 	RGB_S3TC_DXT1_Format,
 	RGBA_S3TC_DXT1_Format,
 	RGBA_S3TC_DXT3_Format,
@@ -721,6 +723,7 @@ export { MeshBasicMaterial } from './materials/MeshBasicMaterial.js'
 export { MeshDepthMaterial } from './materials/MeshDepthMaterial.js'
 export { MeshDistanceMaterial } from './materials/MeshDistanceMaterial.js'
 export { MeshLambertMaterial } from './materials/MeshLambertMaterial.js'
+export { MeshMatcapMaterial } from './materials/MeshMatcapMaterial.js'
 export { MeshNormalMaterial } from './materials/MeshNormalMaterial.js'
 export { MeshPhongMaterial } from './materials/MeshPhongMaterial.js'
 export { MeshPhysicalMaterial } from './materials/MeshPhysicalMaterial.js'
@@ -807,6 +810,7 @@ export { CanvasTexture } from './textures/CanvasTexture.js'
 export { CompressedTexture } from './textures/CompressedTexture.js'
 export { CubeTexture } from './textures/CubeTexture.js'
 export { DataTexture } from './textures/DataTexture.js'
+export { DataTexture3D } from './textures/DataTexture3D.js'
 export { DepthTexture } from './textures/DepthTexture.js'
 export { Texture } from './textures/Texture.js'
 export { VideoTexture } from './textures/VideoTexture.js'

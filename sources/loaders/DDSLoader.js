@@ -9,7 +9,6 @@ import {
 	RGBA_S3TC_DXT5_Format,
 	RGB_ETC1_Format
 } from '../constants.js'
-
 var DDSLoader = function ( manager ) {
 
 	CompressedTextureLoader.call( this, manager );

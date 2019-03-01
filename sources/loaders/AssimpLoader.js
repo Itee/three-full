@@ -20,8 +20,6 @@ import { Object3D } from '../core/Object3D.js'
 import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { Loader } from './Loader.js'
-
 var AssimpLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -38,9 +36,10 @@ AssimpLoader.prototype = {
 
 		var scope = this;
 
-		var path = LoaderUtils.extractUrlBase( url );
+		var path = ( scope.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : scope.path;
 
 		var loader = new FileLoader( this.manager );
+		loader.setPath( scope.path );
 		loader.setResponseType( 'arraybuffer' );
 
 		loader.load( url, function ( buffer ) {
@@ -48,6 +47,20 @@ AssimpLoader.prototype = {
 			onLoad( scope.parse( buffer, path ) );
 
 		}, onProgress, onError );
+
+	},
+
+	setPath: function ( value ) {
+
+		this.path = value;
+		return this;
+
+	},
+
+	setResourcePath: function ( value ) {
+
+		this.resourcePath = value;
+		return this;
 
 	},
 
@@ -61,7 +74,7 @@ AssimpLoader.prototype = {
 	parse: function ( buffer, path ) {
 
 		var textureLoader = new TextureLoader( this.manager );
-		textureLoader.setPath( path ).setCrossOrigin( this.crossOrigin );
+		textureLoader.setPath( this.resourcePath || path ).setCrossOrigin( this.crossOrigin );
 
 		var Virtulous = {};
 
@@ -1041,7 +1054,6 @@ AssimpLoader.prototype = {
 			};
 
 		}
-
 		function veclerp( v1, v2, l ) {
 
 			var v = new Vector3();
@@ -1841,7 +1853,6 @@ AssimpLoader.prototype = {
 							f.mIndices[ a ] = Read_unsigned_int( stream );
 
 						}
-
 					}
 
 					if ( f.mNumIndices === 3 ) {
@@ -1864,7 +1875,6 @@ AssimpLoader.prototype = {
 						throw ( new Error( "Sorry, can't currently triangulate polys. Use the triangulate preprocessor in Assimp." ) );
 
 					}
-
 				}
 
 			}

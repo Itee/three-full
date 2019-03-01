@@ -13,9 +13,7 @@ import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
 import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
 import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js'
 import { Mesh } from '../objects/Mesh.js'
-
 var MMDPhysics = ( function () {
-	
 	function MMDPhysics( mesh, rigidBodyParams, constraintParams, params ) {
 
 		if ( typeof Ammo === 'undefined' ) {
@@ -30,12 +28,11 @@ var MMDPhysics = ( function () {
 		this.manager = new ResourceManager();
 
 		this.mesh = mesh;
-		
 		this.unitStep = ( params.unitStep !== undefined ) ? params.unitStep : 1 / 65;
 		this.maxStepNum = ( params.maxStepNum !== undefined ) ? params.maxStepNum : 3;
 		this.gravity = new Vector3( 0, - 9.8 * 10, 0 );
 
-		if ( params.gravity !== undefined ) this.gravity.copy( gravity );
+		if ( params.gravity !== undefined ) this.gravity.copy( params.gravity );
 
 		this.world = params.world !== undefined ? params.world : null; // experimental
 
@@ -49,7 +46,6 @@ var MMDPhysics = ( function () {
 	MMDPhysics.prototype = {
 
 		constructor: MMDPhysics,
-		
 		update: function ( delta ) {
 
 			var manager = this.manager;
@@ -98,7 +94,7 @@ var MMDPhysics = ( function () {
 
 			if ( isNonDefaultScale ) {
 
-				if ( parent !== null ) parent.parent = parent;
+				if ( parent !== null ) mesh.parent = parent;
 
 				mesh.scale.copy( scale );
 
@@ -111,7 +107,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-		
 		reset: function () {
 
 			for ( var i = 0, il = this.bodies.length; i < il; i++ ) {
@@ -123,7 +118,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-		
 		warmup: function ( cycles ) {
 
 			for ( var i = 0; i < cycles; i++ ) {
@@ -135,7 +129,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-		
 		setGravity: function ( gravity ) {
 
 			this.world.setGravity( new Ammo.btVector3( gravity.x, gravity.y, gravity.z ) );
@@ -144,7 +137,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-		
 		createHelper: function () {
 
 			return new MMDPhysicsHelper( this.mesh, this );
@@ -238,7 +230,6 @@ var MMDPhysics = ( function () {
 					this.mesh, this.world, bodyA, bodyB, params, this.manager ) );
 
 			}
-
 		},
 
 		_stepSimulation: function ( delta ) {
@@ -285,7 +276,6 @@ var MMDPhysics = ( function () {
 		}
 
 	};
-	
 	function ResourceManager() {
 
 		// for Three.js
@@ -735,7 +725,6 @@ var MMDPhysics = ( function () {
 		}
 
 	};
-	
 	function RigidBody( mesh, world, params, manager ) {
 
 		this.mesh  = mesh;
@@ -755,14 +744,12 @@ var MMDPhysics = ( function () {
 	RigidBody.prototype = {
 
 		constructor: MMDPhysics.RigidBody,
-		
 		reset: function () {
 
 			this._setTransformFromBone();
 			return this;
 
 		},
-		
 		updateFromBone: function () {
 
 			if ( this.params.boneIndex !== - 1 &&
@@ -775,7 +762,6 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
-		
 		updateBone: function () {
 
 			if ( this.params.type === 0 ||
@@ -869,7 +855,6 @@ var MMDPhysics = ( function () {
 			if ( params.type === 0 ) {
 
 				body.setCollisionFlags( body.getCollisionFlags() | 2 );
-				
 				body.setActivationState( 4 );
 
 			}
@@ -1013,7 +998,6 @@ var MMDPhysics = ( function () {
 		}
 
 	};
-	
 	function Constraint( mesh, world, bodyA, bodyB, params, manager ) {
 
 		this.mesh  = mesh;
@@ -1105,7 +1089,6 @@ var MMDPhysics = ( function () {
 				}
 
 			}
-			
 			if ( constraint.setParam !== undefined ) {
 
 				for ( var i = 0; i < 6; i ++ ) {
@@ -1135,7 +1118,6 @@ var MMDPhysics = ( function () {
 		}
 
 	};
-	
 	function MMDPhysicsHelper( mesh, physics ) {
 
 		Object3D.call( this );
@@ -1188,7 +1170,6 @@ var MMDPhysics = ( function () {
 	MMDPhysicsHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		constructor: MMDPhysicsHelper,
-		
 		updateMatrixWorld: function () {
 
 			var position = new Vector3();

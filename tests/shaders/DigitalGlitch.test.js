@@ -4,7 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	var DigitalGlitch = {
 
 		uniforms: {
@@ -47,7 +46,6 @@ var Three = (function (exports) {
 			"uniform float col_s;",
 				
 			"varying vec2 vUv;",
-			
 			"float rand(vec2 co){",
 				"return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);",
 			"}",
