@@ -39,6 +39,8 @@ import { Ocean } from 'node_modules/three-full/sources/Ocean'
 ###### Using Node/CommonJS: ######
 ````javascript
 const Three = require('node_modules/three-full/builds/Three.cjs.js')
+// equivalent to 
+const Three = require('three-full')
 ````
 
 ###### Using UMD: ######
