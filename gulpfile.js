@@ -77,19 +77,32 @@ gulp.task( 'fix-effect-composer', () => {
  */
 gulp.task( 'create-pass-file', ( done ) => {
 
-    const stringFile = '' +
-        'var Pass = function () {\n' +
+    const stringFile = 'THREE.Pass = function () {\n' +
+        '\n' +
+        '\t// if set to true, the pass is processed by the composer\n' +
         '\tthis.enabled = true;\n' +
+        '\n' +
+        '\t// if set to true, the pass indicates to swap read and write buffer after rendering\n' +
         '\tthis.needsSwap = true;\n' +
+        '\n' +
+        '\t// if set to true, the pass clears its buffer before rendering\n' +
         '\tthis.clear = false;\n' +
+        '\n' +
+        '\t// if set to true, the result of the pass is rendered to screen\n' +
         '\tthis.renderToScreen = false;\n' +
+        '\n' +
         '};\n' +
         '\n' +
-        'Object.assign( Pass.prototype, {\n' +
-        '\tsetSize: function( width, height ) {},\n' +
+        'Object.assign( THREE.Pass.prototype, {\n' +
+        '\n' +
+        '\tsetSize: function ( width, height ) {},\n' +
+        '\n' +
         '\trender: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {\n' +
+        '\n' +
         '\t\tconsole.error( \'THREE.Pass: .render() must be implemented in derived pass.\' );\n' +
+        '\n' +
         '\t}\n' +
+        '\n' +
         '} );'
 
     fs.writeFile( "./node_modules/three/examples/js/postprocessing/Pass.js", stringFile, ( error ) => {
@@ -105,15 +118,14 @@ gulp.task( 'create-pass-file', ( done ) => {
 
 } )
 
-gulp.task( 'fix-objloader2', ( done ) => {
+/**
+ * Add missing this statement in generate method of StructNode
+ */
+gulp.task( 'fix-struct-node', () => {
 
-    const firstReplacement  = 'workerCode += \'THREE = { \' + LoaderSupport.constructor.name + \': {} };\\n\\n\';'
-    const secondReplacement = 'workerCode += funcBuildObject( \'THREE.\' + LoaderSupport.constructor.name + \'.\' + LoaderSupport.Validator.constructor.name, Validator );'
-
-    return gulp.src( './node_modules/three/examples/js/loaders/OBJLoader2.js' )
-               .pipe( replace( [ [ /workerCode\s*\+=\s*'THREE\s*=\s*{\s*LoaderSupport:\s*{}\s*};\\n\\n';/, firstReplacement ] ] ) )
-               .pipe( replace( [ [ /workerCode \+= funcBuildObject\( 'THREE\.LoaderSupport\.Validator', Validator \);/, secondReplacement ] ] ) )
-               .pipe( gulp.dest( './node_modules/three/examples/js/loaders' ) )
+    return gulp.src( './node_modules/three/examples/js/nodes/core/StructNode.js' )
+               .pipe( replace( [ [ '+ src +', '+ this.src +' ] ] ) )
+               .pipe( gulp.dest( './node_modules/three/examples/js/nodes/core' ) )
 
 } )
 
@@ -121,7 +133,7 @@ gulp.task( 'patch-three',
     gulp.parallel(
         'fix-effect-composer',
         'create-pass-file',
-        'fix-objloader2'
+        'fix-struct-node'
     )
 )
 
