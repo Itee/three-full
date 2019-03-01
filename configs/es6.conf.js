@@ -909,6 +909,17 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
+		SSAOPass: {
+			imports: [
+                '_Math',
+                'CopyShader',
+                'SimplexNoise',
+                'SSAOBlurShader',
+                'SSAODepthShader',
+                'SSAOShader',
+                'UniformsUtils'
+			]
+		},
 		StandardNode: {
 			imports: [
 				'UniformsUtils',
