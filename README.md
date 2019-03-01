@@ -197,6 +197,7 @@ This is the list of unsupported part of example, which cannot/won't be converted
 * TypedArrayUtils ---> 'utils/TypedArrayUtils.js'
 * UCSCharacter ---> 'objects/UCSCharacter.js'
 * VolumeSlice ---> 'audio/VolumeSlice.js'
+* WebGL ---> 'helpers/WebGL.js'
 
 All others folders under example file tree will be mapped to their counter-part under sources folders
 

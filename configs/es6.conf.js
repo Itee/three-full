@@ -86,15 +86,13 @@ module.exports = {
 		AssimpJSONLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils',
-				'Loader'
+				'LoaderUtils'
 			]
 		},
 		AssimpLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'LoaderUtils',
-				'Loader'
+				'LoaderUtils'
 			]
 		},
 		AWDLoader: {
@@ -156,15 +154,11 @@ module.exports = {
 			imports: [
 				'DefaultLoadingManager',
 				'LoaderUtils',
-				'Loader',
 				'_Math'
 			]
 		},
 		ColorConverter: {
 			imports: [ '_Math' ]
-		},
-		ColorNode: {
-			imports: [ 'NodeMaterial' ]
 		},
 		ConvexObjectBreaker: {
 			outputOverride: 'modifiers/ConvexObjectBreaker.js'
@@ -329,8 +323,6 @@ module.exports = {
 		GLTFLoader: {
 			imports: [
 				'DefaultLoadingManager',
-				'MeshPhongMaterial',
-				'MeshLambertMaterial',
 				'MeshBasicMaterial',
 				'ShaderLib',
 				'UniformsUtils',
@@ -507,7 +499,8 @@ module.exports = {
 			imports: [
 				'DefaultLoadingManager',
 				'LoaderUtils',
-				'_Math'
+				'VectorKeyframeTrack',
+				'QuaternionKeyframeTrack'
 			]
 		},
 		MorphAnimMesh: {
@@ -534,24 +527,9 @@ module.exports = {
         NodeBuilder: {
             imports: [ 'TextureCubeNode' ]
         },
-        NodeLib_Implementation: {
-            importsOverride: [
-                [ 'NodeLib', 'from', './NodeLib_Declaration' ],
-                'UVNode',
-                'PositionNode',
-                'NormalNode',
-                'TimerNode',
-                'ConstNode',
-                'FunctionNode'
-            ]
-        },
-		NodeMaterial: {
-			imports: [ 'NodeLib' ]
-		},
         NodeMaterialLoader: {
 			imports: [
-				'DefaultLoadingManager',
-				'CameraNode'
+				'DefaultLoadingManager'
 			],
 			replacements: [
 				['NodeMaterialLoaderUtils = {', 'var NodeMaterialLoaderUtils = {']
@@ -753,9 +731,6 @@ module.exports = {
 				'LoaderUtils'
 			]
 		},
-		PVRLoader: {
-			imports: [ 'DefaultLoadingManager' ]
-		},
         QuadraticBezierCurve: {
             outputOverride: 'curves/QuadraticBezierCurve.js'
         },
@@ -949,7 +924,6 @@ module.exports = {
 		},
 		TypedArrayUtils: {
 			imports: [
-				'AnimationUtils',
 				'Timeliner'
 			],
 			outputOverride: 'utils/TypedArrayUtils.js'
@@ -964,15 +938,6 @@ module.exports = {
 				'CopyShader'
 			]
 		},
-		Vector2Node: {
-			imports: [ 'NodeMaterial' ]
-		},
-		Vector3Node: {
-			imports: [ 'NodeMaterial' ]
-		},
-		Vector4Node: {
-			imports: [ 'NodeMaterial' ]
-		},
 		VolumeSlice: {
 			outputOverride: 'audio/VolumeSlice.js'
 		},
@@ -981,7 +946,8 @@ module.exports = {
 		},
         VRMLoader: {
             imports: [
-                'DefaultLoadingManager'
+                'DefaultLoadingManager',
+                'LoaderUtils'
             ]
 		},
 		VTKLoader: {
@@ -1025,6 +991,13 @@ module.exports = {
 				[ 'var WEBVR', 'var WebVR' ]
 			],
             exportsOverride: [ 'WebVR' ]
+		},
+		WebGL: {
+            replacements:    [
+                [ 'WEBGL', 'WebGL' ]
+            ],
+            exportsOverride: [ 'WebGL' ],
+			outputOverride: 'helpers/WebGL.js'
 		}
 	},
 	banner: '//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n' +
