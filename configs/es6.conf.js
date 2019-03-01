@@ -267,6 +267,9 @@ module.exports = {
         EllipseCurve: {
             outputOverride: 'curves/EllipseCurve.js'
         },
+        EquirectangularToCubeGenerator: {
+            imports: [ 'UniformsUtils' ]
+		},
         EXRLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
