@@ -118,10 +118,22 @@ gulp.task( 'create-pass-file', ( done ) => {
 
 } )
 
+/**
+ * Add missing this statement in generate method of StructNode
+ */
+gulp.task( 'fix-struct-node', () => {
+
+    return gulp.src( './node_modules/three/examples/js/nodes/core/StructNode.js' )
+               .pipe( replace( [ [ '+ src +', '+ this.src +' ] ] ) )
+               .pipe( gulp.dest( './node_modules/three/examples/js/nodes/core' ) )
+
+} )
+
 gulp.task( 'patch-three',
     gulp.parallel(
         'fix-effect-composer',
-        'create-pass-file'
+        'create-pass-file',
+        'fix-struct-node'
     )
 )
 
