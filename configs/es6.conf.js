@@ -499,7 +499,8 @@ module.exports = {
 			imports: [
 				'DefaultLoadingManager',
 				'LoaderUtils',
-				'_Math'
+				'VectorKeyframeTrack',
+				'QuaternionKeyframeTrack'
 			]
 		},
 		MorphAnimMesh: {
