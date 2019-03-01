@@ -270,7 +270,10 @@ module.exports = {
             outputOverride: 'curves/EllipseCurve.js'
         },
         EquirectangularToCubeGenerator: {
-            imports: [ 'UniformsUtils' ]
+            imports: [ 'UniformsUtils' ],
+			replacements: [
+				['EquirectangularToCubeGenerator = (', 'var EquirectangularToCubeGenerator = (']
+			]
 		},
         EXRLoader: {
 			imports: [ 'DefaultLoadingManager' ]
