@@ -421,7 +421,8 @@ module.exports = {
 			replacements: [
 				[ 'if ( var LoaderSupport === undefined )', '/*\nif ( var LoaderSupport === undefined )' ],
 				[ 'LoaderSupport.Validator = {', '*/\nvar LoaderSupport = {}\nLoaderSupport.Validator = {' ]
-			]
+			],
+            exportsOverride: [ 'LoaderSupport' ]
 		},
 		Lut: {
 			replacements: [
@@ -518,6 +519,7 @@ module.exports = {
 		MTLLoader: {
 			imports: [
 				'DefaultLoadingManager',
+				'LoaderUtils',
 				'Loader'
 			]
 		},
@@ -652,8 +654,7 @@ module.exports = {
 				'LoaderUtils'
 			],
             replacements: [
-				[ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ],
-				[ 'THREE = { LoaderSupport: {} };', 'var LoaderSupport = {};' ]
+				[ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ]
 			]
 		},
 		Ocean: {
@@ -753,6 +754,11 @@ module.exports = {
 				'_Math'
 			]
 		},
+		ReflectorNode: {
+            imports: [
+                'InputNode'
+            ]
+        },
 		RGBELoader: {
 			imports: [ 'DefaultLoadingManager' ],
 			replacements: [
@@ -942,12 +948,14 @@ module.exports = {
 			outputOverride: 'audio/VolumeSlice.js'
 		},
 		VRMLLoader: {
-			imports: [ 'DefaultLoadingManager' ]
+			imports: [
+				'DefaultLoadingManager',
+				'LoaderUtils'
+			]
 		},
         VRMLoader: {
             imports: [
-                'DefaultLoadingManager',
-                'LoaderUtils'
+                'DefaultLoadingManager'
             ]
 		},
 		VTKLoader: {
