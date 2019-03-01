@@ -6,6 +6,7 @@ import { PositionNode } from '../accessors/PositionNode.js'
 import { OperatorNode } from '../math/OperatorNode.js'
 import { TextureNode } from './TextureNode.js'
 import { Matrix4Node } from './Matrix4Node.js'
+import { InputNode } from '../core/InputNode.js'
 function ReflectorNode( mirror ) {
 
 	TempNode.call( this, 'v4' );

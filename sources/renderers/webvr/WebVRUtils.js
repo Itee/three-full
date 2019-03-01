@@ -1,0 +1,58 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Vector3 } from '../../math/Vector3.js'
+var cameraLPos = new Vector3();
+var cameraRPos = new Vector3();
+function setProjectionFromUnion( camera, cameraL, cameraR ) {
+
+	cameraLPos.setFromMatrixPosition( cameraL.matrixWorld );
+	cameraRPos.setFromMatrixPosition( cameraR.matrixWorld );
+
+	var ipd = cameraLPos.distanceTo( cameraRPos );
+
+	var projL = cameraL.projectionMatrix.elements;
+	var projR = cameraR.projectionMatrix.elements;
+
+	// VR systems will have identical far and near planes, and
+	// most likely identical top and bottom frustum extents.
+	// Use the left camera for these values.
+	var near = projL[ 14 ] / ( projL[ 10 ] - 1 );
+	var far = projL[ 14 ] / ( projL[ 10 ] + 1 );
+	var topFov = ( projL[ 9 ] + 1 ) / projL[ 5 ];
+	var bottomFov = ( projL[ 9 ] - 1 ) / projL[ 5 ];
+
+	var leftFov = ( projL[ 8 ] - 1 ) / projL[ 0 ];
+	var rightFov = ( projR[ 8 ] + 1 ) / projR[ 0 ];
+	var left = near * leftFov;
+	var right = near * rightFov;
+
+	// Calculate the new camera's position offset from the
+	// left camera. xOffset should be roughly half `ipd`.
+	var zOffset = ipd / ( - leftFov + rightFov );
+	var xOffset = zOffset * - leftFov;
+
+	// TODO: Better way to apply this offset?
+	cameraL.matrixWorld.decompose( camera.position, camera.quaternion, camera.scale );
+	camera.translateX( xOffset );
+	camera.translateZ( zOffset );
+	camera.matrixWorld.compose( camera.position, camera.quaternion, camera.scale );
+	camera.matrixWorldInverse.getInverse( camera.matrixWorld );
+
+	// Find the union of the frustum values of the cameras and scale
+	// the values so that the near plane's position does not change in world space,
+	// although must now be relative to the new union camera.
+	var near2 = near + zOffset;
+	var far2 = far + zOffset;
+	var left2 = left - xOffset;
+	var right2 = right + ( ipd - xOffset );
+	var top2 = topFov * far / far2 * near2;
+	var bottom2 = bottomFov * far / far2 * near2;
+
+	camera.projectionMatrix.makePerspective( left2, right2, top2, bottom2, near2, far2 );
+
+}
+
+;
+
+export { setProjectionFromUnion }

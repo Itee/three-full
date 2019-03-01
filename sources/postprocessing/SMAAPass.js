@@ -42,9 +42,14 @@ var SMAAPass = function ( width, height ) {
 	this.weightsRT.texture.name = "SMAAPass.weights";
 
 	// textures
+	var scope = this;
 
 	var areaTextureImage = new Image();
 	areaTextureImage.src = this.getAreaTexture();
+	areaTextureImage.onload = function() {
+		// assigning data to HTMLImageElement.src is asynchronous (see #15162)
+		scope.areaTexture.needsUpdate = true;
+	};
 
 	this.areaTexture = new Texture();
 	this.areaTexture.name = "SMAAPass.area";
@@ -52,11 +57,14 @@ var SMAAPass = function ( width, height ) {
 	this.areaTexture.format = RGBFormat;
 	this.areaTexture.minFilter = LinearFilter;
 	this.areaTexture.generateMipmaps = false;
-	this.areaTexture.needsUpdate = true;
 	this.areaTexture.flipY = false;
 
 	var searchTextureImage = new Image();
 	searchTextureImage.src = this.getSearchTexture();
+	searchTextureImage.onload = function() {
+		// assigning data to HTMLImageElement.src is asynchronous (see #15162)
+		scope.searchTexture.needsUpdate = true;
+	};
 
 	this.searchTexture = new Texture();
 	this.searchTexture.name = "SMAAPass.search";
@@ -64,7 +72,6 @@ var SMAAPass = function ( width, height ) {
 	this.searchTexture.magFilter = NearestFilter;
 	this.searchTexture.minFilter = NearestFilter;
 	this.searchTexture.generateMipmaps = false;
-	this.searchTexture.needsUpdate = true;
 	this.searchTexture.flipY = false;
 
 	// materials - pass 1

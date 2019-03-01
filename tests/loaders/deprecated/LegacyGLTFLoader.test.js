@@ -205,9 +205,9 @@ var Three = (function (exports) {
 				var isBase64 = !! dataUriRegexResult[ 2 ];
 				var data = dataUriRegexResult[ 3 ];
 
-				data = window.decodeURIComponent( data );
+				data = decodeURIComponent( data );
 
-				if ( isBase64 ) data = window.atob( data );
+				if ( isBase64 ) data = atob( data );
 
 				try {
 
@@ -261,7 +261,7 @@ var Three = (function (exports) {
 					}
 
 					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
+					setTimeout( function () {
 
 						if ( onLoad ) onLoad( response );
 
@@ -272,12 +272,12 @@ var Three = (function (exports) {
 				} catch ( error ) {
 
 					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
+					setTimeout( function () {
 
 						if ( onError ) onError( error );
 
-						scope.manager.itemEnd( url );
 						scope.manager.itemError( url );
+						scope.manager.itemEnd( url );
 
 					}, 0 );
 
@@ -336,8 +336,8 @@ var Three = (function (exports) {
 
 						}
 
-						scope.manager.itemEnd( url );
 						scope.manager.itemError( url );
+						scope.manager.itemEnd( url );
 
 					}
 
@@ -369,8 +369,8 @@ var Three = (function (exports) {
 
 					}
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				}, false );
 
@@ -387,8 +387,8 @@ var Three = (function (exports) {
 
 					}
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				}, false );
 
@@ -4347,18 +4347,22 @@ var Three = (function (exports) {
 
 		Object.defineProperties( this, {
 			position: {
+				configurable: true,
 				enumerable: true,
 				value: position
 			},
 			rotation: {
+				configurable: true,
 				enumerable: true,
 				value: rotation
 			},
 			quaternion: {
+				configurable: true,
 				enumerable: true,
 				value: quaternion
 			},
 			scale: {
+				configurable: true,
 				enumerable: true,
 				value: scale
 			},
@@ -5854,10 +5858,10 @@ var Three = (function (exports) {
 		this.zoom = 1;
 		this.view = null;
 
-		this.left = left;
-		this.right = right;
-		this.top = top;
-		this.bottom = bottom;
+		this.left = ( left !== undefined ) ? left : - 1;
+		this.right = ( right !== undefined ) ? right : 1;
+		this.top = ( top !== undefined ) ? top : 1;
+		this.bottom = ( bottom !== undefined ) ? bottom : - 1;
 
 		this.near = ( near !== undefined ) ? near : 0.1;
 		this.far = ( far !== undefined ) ? far : 2000;
@@ -6501,8 +6505,6 @@ var Three = (function (exports) {
 		this.alphaTest = 0;
 		this.premultipliedAlpha = false;
 
-		this.overdraw = 0; // Overdrawn pixels (typically between 0 and 1) for fixing antialiasing gaps in CanvasRenderer
-
 		this.visible = true;
 
 		this.userData = {};
@@ -6559,11 +6561,6 @@ var Three = (function (exports) {
 				} else if ( ( currentValue && currentValue.isVector3 ) && ( newValue && newValue.isVector3 ) ) {
 
 					currentValue.copy( newValue );
-
-				} else if ( key === 'overdraw' ) {
-
-					// ensure overdraw is backwards-compatible with legacy boolean type
-					this[ key ] = Number( newValue );
 
 				} else {
 
@@ -6790,8 +6787,6 @@ var Three = (function (exports) {
 
 			this.alphaTest = source.alphaTest;
 			this.premultipliedAlpha = source.premultipliedAlpha;
-
-			this.overdraw = source.overdraw;
 
 			this.visible = source.visible;
 			this.userData = JSON.parse( JSON.stringify( source.userData ) );
@@ -8502,8 +8497,8 @@ var Three = (function (exports) {
 
 				if ( onError ) onError( event );
 
-				scope.manager.itemEnd( url );
 				scope.manager.itemError( url );
+				scope.manager.itemEnd( url );
 
 			}
 
@@ -8549,7 +8544,11 @@ var Three = (function (exports) {
 
 			var canvas;
 
-			if ( image instanceof HTMLCanvasElement ) {
+			if ( typeof HTMLCanvasElement == 'undefined' ) {
+
+				return image.src;
+
+			} else if ( image instanceof HTMLCanvasElement ) {
 
 				canvas = image;
 
@@ -12840,9 +12839,20 @@ var Three = (function (exports) {
 
 		}() ),
 
+		copy: function ( source ) {
+
+			Object3D.prototype.copy.call( this, source );
+
+			this.geometry.copy( source.geometry );
+			this.material.copy( source.material );
+
+			return this;
+
+		},
+
 		clone: function () {
 
-			return new this.constructor( this.geometry, this.material ).copy( this );
+			return new this.constructor().copy( this );
 
 		}
 
@@ -15617,17 +15627,12 @@ var Three = (function (exports) {
 			var scope = this;
 
 			var loader = new FileLoader( scope.manager );
+			loader.setPath( scope.path );
 			loader.load( url, function ( text ) {
 
 				onLoad( scope.parse( JSON.parse( text ) ) );
 
 			}, onProgress, onError );
-
-		},
-
-		setTextures: function ( value ) {
-
-			this.textures = value;
 
 		},
 
@@ -15828,6 +15833,20 @@ var Three = (function (exports) {
 			if ( json.gradientMap !== undefined ) material.gradientMap = getTexture( json.gradientMap );
 
 			return material;
+
+		},
+
+		setPath: function ( value ) {
+
+			this.path = value;
+			return this;
+
+		},
+
+		setTextures: function ( value ) {
+
+			this.textures = value;
+			return this;
 
 		}
 
@@ -16210,15 +16229,30 @@ var Three = (function (exports) {
 
 				var scope = this;
 
-				var path = this.path && ( typeof this.path === "string" ) ? this.path : LoaderUtils.extractUrlBase( url );
+				var resourcePath;
+
+				if ( this.resourcePath !== undefined ) {
+
+					resourcePath = this.resourcePath;
+
+				} else if ( this.path !== undefined ) {
+
+					resourcePath = this.path;
+
+				} else {
+
+					resourcePath = LoaderUtils.extractUrlBase( url );
+
+				}
 
 				var loader = new FileLoader( scope.manager );
 
+				loader.setPath( this.path );
 				loader.setResponseType( 'arraybuffer' );
 
 				loader.load( url, function ( data ) {
 
-					scope.parse( data, path, onLoad );
+					scope.parse( data, resourcePath, onLoad );
 
 				}, onProgress, onError );
 
@@ -16234,6 +16268,13 @@ var Three = (function (exports) {
 			setPath: function ( value ) {
 
 				this.path = value;
+
+			},
+
+			setResourcePath: function ( value ) {
+
+				this.resourcePath = value;
+				return this;
 
 			},
 
@@ -16267,7 +16308,7 @@ var Three = (function (exports) {
 
 					crossOrigin: this.crossOrigin,
 					manager: this.manager,
-					path: path || this.path
+					path: path || this.resourcePath || ''
 
 				} );
 

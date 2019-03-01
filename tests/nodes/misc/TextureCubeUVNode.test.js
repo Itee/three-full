@@ -617,7 +617,7 @@ var Three = (function (exports) {
 
 		} else {
 
-			return builder.format( '( ' + src + ' )', this.getType( builder ), output );
+			return builder.format( '( ' + this.src + ' )', this.getType( builder ), output );
 
 		}
 

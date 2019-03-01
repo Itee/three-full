@@ -3301,18 +3301,22 @@ var Three = (function (exports) {
 
 		Object.defineProperties( this, {
 			position: {
+				configurable: true,
 				enumerable: true,
 				value: position
 			},
 			rotation: {
+				configurable: true,
 				enumerable: true,
 				value: rotation
 			},
 			quaternion: {
+				configurable: true,
 				enumerable: true,
 				value: quaternion
 			},
 			scale: {
+				configurable: true,
 				enumerable: true,
 				value: scale
 			},
@@ -4140,6 +4144,7 @@ var Three = (function (exports) {
 
 		this.type = 'Audio';
 
+		this.listener = listener;
 		this.context = listener.context;
 
 		this.gain = this.context.createGain();
@@ -4548,8 +4553,25 @@ var Three = (function (exports) {
 
 				orientation.set( 0, 0, 1 ).applyQuaternion( quaternion );
 
-				panner.setPosition( position.x, position.y, position.z );
-				panner.setOrientation( orientation.x, orientation.y, orientation.z );
+				if ( panner.positionX ) {
+
+					// code path for Chrome and Firefox (see #14393)
+
+					var endTime = this.context.currentTime + this.listener.timeDelta;
+
+					panner.positionX.linearRampToValueAtTime( position.x, endTime );
+					panner.positionY.linearRampToValueAtTime( position.y, endTime );
+					panner.positionZ.linearRampToValueAtTime( position.z, endTime );
+					panner.orientationX.linearRampToValueAtTime( orientation.x, endTime );
+					panner.orientationY.linearRampToValueAtTime( orientation.y, endTime );
+					panner.orientationZ.linearRampToValueAtTime( orientation.z, endTime );
+
+				} else {
+
+					panner.setPosition( position.x, position.y, position.z );
+					panner.setOrientation( orientation.x, orientation.y, orientation.z );
+
+				}
 
 			};
 

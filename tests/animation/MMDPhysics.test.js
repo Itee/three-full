@@ -3301,18 +3301,22 @@ var Three = (function (exports) {
 
 		Object.defineProperties( this, {
 			position: {
+				configurable: true,
 				enumerable: true,
 				value: position
 			},
 			rotation: {
+				configurable: true,
 				enumerable: true,
 				value: rotation
 			},
 			quaternion: {
+				configurable: true,
 				enumerable: true,
 				value: quaternion
 			},
 			scale: {
+				configurable: true,
 				enumerable: true,
 				value: scale
 			},
@@ -4217,8 +4221,6 @@ var Three = (function (exports) {
 		this.alphaTest = 0;
 		this.premultipliedAlpha = false;
 
-		this.overdraw = 0; // Overdrawn pixels (typically between 0 and 1) for fixing antialiasing gaps in CanvasRenderer
-
 		this.visible = true;
 
 		this.userData = {};
@@ -4275,11 +4277,6 @@ var Three = (function (exports) {
 				} else if ( ( currentValue && currentValue.isVector3 ) && ( newValue && newValue.isVector3 ) ) {
 
 					currentValue.copy( newValue );
-
-				} else if ( key === 'overdraw' ) {
-
-					// ensure overdraw is backwards-compatible with legacy boolean type
-					this[ key ] = Number( newValue );
 
 				} else {
 
@@ -4506,8 +4503,6 @@ var Three = (function (exports) {
 
 			this.alphaTest = source.alphaTest;
 			this.premultipliedAlpha = source.premultipliedAlpha;
-
-			this.overdraw = source.overdraw;
 
 			this.visible = source.visible;
 			this.userData = JSON.parse( JSON.stringify( source.userData ) );
@@ -6756,35 +6751,13 @@ var Three = (function (exports) {
 
 			if ( uvs2 !== undefined ) this.faceVertexUvs[ 1 ] = [];
 
-			var tempNormals = [];
-			var tempUVs = [];
-			var tempUVs2 = [];
-
 			for ( var i = 0, j = 0; i < positions.length; i += 3, j += 2 ) {
 
-				scope.vertices.push( new Vector3( positions[ i ], positions[ i + 1 ], positions[ i + 2 ] ) );
-
-				if ( normals !== undefined ) {
-
-					tempNormals.push( new Vector3( normals[ i ], normals[ i + 1 ], normals[ i + 2 ] ) );
-
-				}
+				scope.vertices.push( new Vector3().fromArray( positions, i ) );
 
 				if ( colors !== undefined ) {
 
-					scope.colors.push( new Color( colors[ i ], colors[ i + 1 ], colors[ i + 2 ] ) );
-
-				}
-
-				if ( uvs !== undefined ) {
-
-					tempUVs.push( new Vector2( uvs[ j ], uvs[ j + 1 ] ) );
-
-				}
-
-				if ( uvs2 !== undefined ) {
-
-					tempUVs2.push( new Vector2( uvs2[ j ], uvs2[ j + 1 ] ) );
+					scope.colors.push( new Color().fromArray( colors, i ) );
 
 				}
 
@@ -6792,8 +6765,16 @@ var Three = (function (exports) {
 
 			function addFace( a, b, c, materialIndex ) {
 
-				var vertexNormals = normals !== undefined ? [ tempNormals[ a ].clone(), tempNormals[ b ].clone(), tempNormals[ c ].clone() ] : [];
-				var vertexColors = colors !== undefined ? [ scope.colors[ a ].clone(), scope.colors[ b ].clone(), scope.colors[ c ].clone() ] : [];
+				var vertexColors = ( colors === undefined ) ? [] : [
+					scope.colors[ a ].clone(),
+					scope.colors[ b ].clone(),
+					scope.colors[ c ].clone() ];
+
+				var vertexNormals = ( normals === undefined ) ? [] : [
+					new Vector3().fromArray( normals, a * 3 ),
+					new Vector3().fromArray( normals, b * 3 ),
+					new Vector3().fromArray( normals, c * 3 )
+				];
 
 				var face = new Face3( a, b, c, vertexNormals, vertexColors, materialIndex );
 
@@ -6801,13 +6782,21 @@ var Three = (function (exports) {
 
 				if ( uvs !== undefined ) {
 
-					scope.faceVertexUvs[ 0 ].push( [ tempUVs[ a ].clone(), tempUVs[ b ].clone(), tempUVs[ c ].clone() ] );
+					scope.faceVertexUvs[ 0 ].push( [
+						new Vector2().fromArray( uvs, a * 2 ),
+						new Vector2().fromArray( uvs, b * 2 ),
+						new Vector2().fromArray( uvs, c * 2 )
+					] );
 
 				}
 
 				if ( uvs2 !== undefined ) {
 
-					scope.faceVertexUvs[ 1 ].push( [ tempUVs2[ a ].clone(), tempUVs2[ b ].clone(), tempUVs2[ c ].clone() ] );
+					scope.faceVertexUvs[ 1 ].push( [
+						new Vector2().fromArray( uvs2, a * 2 ),
+						new Vector2().fromArray( uvs2, b * 2 ),
+						new Vector2().fromArray( uvs2, c * 2 )
+					] );
 
 				}
 

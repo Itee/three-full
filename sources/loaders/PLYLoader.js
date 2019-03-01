@@ -50,7 +50,7 @@ PLYLoader.prototype = {
 
 		function parseHeader( data ) {
 
-			var patternHeader = /ply([\s\S]*)end_header\s/;
+			var patternHeader = /ply([\s\S]*)end_header\r?\n/;
 			var headerText = '';
 			var headerLength = 0;
 			var result = patternHeader.exec( data );

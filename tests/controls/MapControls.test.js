@@ -3079,7 +3079,7 @@ var Three = (function (exports) {
 	// Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
 	// This is very similar to OrbitControls, another set of touch behavior
 	//
-	//    Orbit - right mouse, or left mouse + ctrl/metaKey / touch: two-finger rotate
+	//    Orbit - right mouse, or left mouse + ctrl/meta/shiftKey / touch: two-finger rotate
 	//    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
 	//    Pan - left mouse, or arrow keys / touch: one-finger move
 
@@ -3831,7 +3831,7 @@ var Three = (function (exports) {
 
 				case scope.mouseButtons.LEFT:
 
-					if ( event.ctrlKey || event.metaKey ) {
+					if ( event.ctrlKey || event.metaKey || event.shiftKey ) {
 
 						if ( scope.enableRotate === false ) return;
 

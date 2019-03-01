@@ -774,36 +774,9 @@ Object.assign( VTKLoader.prototype, EventDispatcher.prototype, {
 
 					delete ele[ '#text' ];
 
-					// Get the content and optimize it
-					if ( ele.attributes.type === 'Float32' ) {
+					if ( ele.attributes.type === 'Int64' ) {
 
 						if ( ele.attributes.format === 'binary' ) {
-
-							if ( ! compressed ) {
-
-								txt = txt.filter( function ( el, idx ) {
-
-									if ( idx !== 0 ) return true;
-
-								} );
-
-							}
-
-						}
-
-					} else if ( ele.attributes.type === 'Int64' ) {
-
-						if ( ele.attributes.format === 'binary' ) {
-
-							if ( ! compressed ) {
-
-								txt = txt.filter( function ( el, idx ) {
-
-									if ( idx !== 0 ) return true;
-
-								} );
-
-							}
 
 							txt = txt.filter( function ( el, idx ) {
 

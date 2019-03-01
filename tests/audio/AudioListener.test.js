@@ -2421,6 +2421,76 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function Clock( autoStart ) {
+
+		this.autoStart = ( autoStart !== undefined ) ? autoStart : true;
+
+		this.startTime = 0;
+		this.oldTime = 0;
+		this.elapsedTime = 0;
+
+		this.running = false;
+
+	}
+
+	Object.assign( Clock.prototype, {
+
+		start: function () {
+
+			this.startTime = ( typeof performance === 'undefined' ? Date : performance ).now(); // see #10732
+
+			this.oldTime = this.startTime;
+			this.elapsedTime = 0;
+			this.running = true;
+
+		},
+
+		stop: function () {
+
+			this.getElapsedTime();
+			this.running = false;
+			this.autoStart = false;
+
+		},
+
+		getElapsedTime: function () {
+
+			this.getDelta();
+			return this.elapsedTime;
+
+		},
+
+		getDelta: function () {
+
+			var diff = 0;
+
+			if ( this.autoStart && ! this.running ) {
+
+				this.start();
+				return 0;
+
+			}
+
+			if ( this.running ) {
+
+				var newTime = ( typeof performance === 'undefined' ? Date : performance ).now();
+
+				diff = ( newTime - this.oldTime ) / 1000;
+				this.oldTime = newTime;
+
+				this.elapsedTime += diff;
+
+			}
+
+			return diff;
+
+		}
+
+	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function EventDispatcher() {}
 
 	Object.assign( EventDispatcher.prototype, {
@@ -3301,18 +3371,22 @@ var Three = (function (exports) {
 
 		Object.defineProperties( this, {
 			position: {
+				configurable: true,
 				enumerable: true,
 				value: position
 			},
 			rotation: {
+				configurable: true,
 				enumerable: true,
 				value: rotation
 			},
 			quaternion: {
+				configurable: true,
 				enumerable: true,
 				value: quaternion
 			},
 			scale: {
+				configurable: true,
 				enumerable: true,
 				value: scale
 			},
@@ -4174,6 +4248,8 @@ var Three = (function (exports) {
 
 		this.filter = null;
 
+		this.timeDelta = 0;
+
 	}
 
 	AudioListener.prototype = Object.assign( Object.create( Object3D.prototype ), {
@@ -4249,6 +4325,7 @@ var Three = (function (exports) {
 			var scale = new Vector3();
 
 			var orientation = new Vector3();
+			var clock = new Clock();
 
 			return function updateMatrixWorld( force ) {
 
@@ -4257,21 +4334,27 @@ var Three = (function (exports) {
 				var listener = this.context.listener;
 				var up = this.up;
 
+				this.timeDelta = clock.getDelta();
+
 				this.matrixWorld.decompose( position, quaternion, scale );
 
 				orientation.set( 0, 0, - 1 ).applyQuaternion( quaternion );
 
 				if ( listener.positionX ) {
 
-					listener.positionX.setValueAtTime( position.x, this.context.currentTime );
-					listener.positionY.setValueAtTime( position.y, this.context.currentTime );
-					listener.positionZ.setValueAtTime( position.z, this.context.currentTime );
-					listener.forwardX.setValueAtTime( orientation.x, this.context.currentTime );
-					listener.forwardY.setValueAtTime( orientation.y, this.context.currentTime );
-					listener.forwardZ.setValueAtTime( orientation.z, this.context.currentTime );
-					listener.upX.setValueAtTime( up.x, this.context.currentTime );
-					listener.upY.setValueAtTime( up.y, this.context.currentTime );
-					listener.upZ.setValueAtTime( up.z, this.context.currentTime );
+					// code path for Chrome (see #14393)
+
+					var endTime = this.context.currentTime + this.timeDelta;
+
+					listener.positionX.linearRampToValueAtTime( position.x, endTime );
+					listener.positionY.linearRampToValueAtTime( position.y, endTime );
+					listener.positionZ.linearRampToValueAtTime( position.z, endTime );
+					listener.forwardX.linearRampToValueAtTime( orientation.x, endTime );
+					listener.forwardY.linearRampToValueAtTime( orientation.y, endTime );
+					listener.forwardZ.linearRampToValueAtTime( orientation.z, endTime );
+					listener.upX.linearRampToValueAtTime( up.x, endTime );
+					listener.upY.linearRampToValueAtTime( up.y, endTime );
+					listener.upZ.linearRampToValueAtTime( up.z, endTime );
 
 				} else {
 

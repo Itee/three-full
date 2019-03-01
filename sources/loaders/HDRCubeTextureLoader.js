@@ -147,11 +147,11 @@ HDRCubeTextureLoader.prototype.load = function ( type, urls, onLoad, onProgress,
 
 			}
 
-			if ( undefined !== texData.image ) {
+			if ( texData.image !== undefined ) {
 
 				texture[ i ].images = texData.image;
 
-			} else if ( undefined !== texData.data ) {
+			} else if ( texData.data !== undefined ) {
 
 				var dataTexture = new DataTexture( texData.data, texData.width, texData.height );
 				dataTexture.format = texture.format;

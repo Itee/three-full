@@ -205,9 +205,9 @@ var Three = (function (exports) {
 				var isBase64 = !! dataUriRegexResult[ 2 ];
 				var data = dataUriRegexResult[ 3 ];
 
-				data = window.decodeURIComponent( data );
+				data = decodeURIComponent( data );
 
-				if ( isBase64 ) data = window.atob( data );
+				if ( isBase64 ) data = atob( data );
 
 				try {
 
@@ -261,7 +261,7 @@ var Three = (function (exports) {
 					}
 
 					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
+					setTimeout( function () {
 
 						if ( onLoad ) onLoad( response );
 
@@ -272,12 +272,12 @@ var Three = (function (exports) {
 				} catch ( error ) {
 
 					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					window.setTimeout( function () {
+					setTimeout( function () {
 
 						if ( onError ) onError( error );
 
-						scope.manager.itemEnd( url );
 						scope.manager.itemError( url );
+						scope.manager.itemEnd( url );
 
 					}, 0 );
 
@@ -336,8 +336,8 @@ var Three = (function (exports) {
 
 						}
 
-						scope.manager.itemEnd( url );
 						scope.manager.itemError( url );
+						scope.manager.itemEnd( url );
 
 					}
 
@@ -369,8 +369,8 @@ var Three = (function (exports) {
 
 					}
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				}, false );
 
@@ -387,8 +387,8 @@ var Three = (function (exports) {
 
 					}
 
-					scope.manager.itemEnd( url );
 					scope.manager.itemError( url );
+					scope.manager.itemEnd( url );
 
 				}, false );
 
@@ -6899,18 +6899,22 @@ var Three = (function (exports) {
 
 		Object.defineProperties( this, {
 			position: {
+				configurable: true,
 				enumerable: true,
 				value: position
 			},
 			rotation: {
+				configurable: true,
 				enumerable: true,
 				value: rotation
 			},
 			quaternion: {
+				configurable: true,
 				enumerable: true,
 				value: quaternion
 			},
 			scale: {
+				configurable: true,
 				enumerable: true,
 				value: scale
 			},
@@ -8897,7 +8901,7 @@ var Three = (function (exports) {
 	      DRACOLoader.getDecoderModule()
 	          .then( function ( module ) {
 	            scope.decodeDracoFileInternal( rawBuffer, module.decoder, callback,
-	              attributeUniqueIdMap || {}, attributeTypeMap || {});
+	              attributeUniqueIdMap, attributeTypeMap);
 	          });
 	    },
 
@@ -9019,12 +9023,13 @@ var Three = (function (exports) {
 	    convertDracoGeometryTo3JS: function(dracoDecoder, decoder, geometryType,
 	                                        buffer, attributeUniqueIdMap,
 	                                        attributeTypeMap) {
+	        // TODO: Should not assume native Draco attribute IDs apply.
 	        if (this.getAttributeOptions('position').skipDequantization === true) {
 	          decoder.SkipAttributeTransform(dracoDecoder.POSITION);
 	        }
 	        var dracoGeometry;
 	        var decodingStatus;
-	        const start_time = performance.now();
+	        var start_time = performance.now();
 	        if (geometryType === dracoDecoder.TRIANGULAR_MESH) {
 	          dracoGeometry = new dracoDecoder.Mesh();
 	          decodingStatus = decoder.DecodeBufferToMesh(buffer, dracoGeometry);
@@ -9064,6 +9069,7 @@ var Three = (function (exports) {
 	        }
 
 	        // Verify if there is position attribute.
+	        // TODO: Should not assume native Draco attribute IDs apply.
 	        var posAttId = decoder.GetAttributeId(dracoGeometry,
 	                                              dracoDecoder.POSITION);
 	        if (posAttId == -1) {
@@ -9080,11 +9086,23 @@ var Three = (function (exports) {
 	        // Import data to Three JS geometry.
 	        var geometry = new BufferGeometry();
 
-	        // Add native Draco attribute type to geometry.
-	        for (var attributeName in this.nativeAttributeMap) {
-	          // The native attribute type is only used when no unique Id is
-	          // provided. For example, loading .drc files.
-	          if (attributeUniqueIdMap[attributeName] === undefined) {
+	        // Do not use both the native attribute map and a provided (e.g. glTF) map.
+	        if ( attributeUniqueIdMap ) {
+
+	          // Add attributes of user specified unique id. E.g. GLTF models.
+	          for (var attributeName in attributeUniqueIdMap) {
+	            var attributeType = attributeTypeMap[attributeName];
+	            var attributeId = attributeUniqueIdMap[attributeName];
+	            var attribute = decoder.GetAttributeByUniqueId(dracoGeometry,
+	                                                           attributeId);
+	            this.addAttributeToGeometry(dracoDecoder, decoder, dracoGeometry,
+	                attributeName, attributeType, attribute, geometry, geometryBuffer);
+	          }
+
+	        } else {
+
+	          // Add native Draco attribute type to geometry.
+	          for (var attributeName in this.nativeAttributeMap) {
 	            var attId = decoder.GetAttributeId(dracoGeometry,
 	                dracoDecoder[this.nativeAttributeMap[attributeName]]);
 	            if (attId !== -1) {
@@ -9096,16 +9114,7 @@ var Three = (function (exports) {
 	                  attributeName, Float32Array, attribute, geometry, geometryBuffer);
 	            }
 	          }
-	        }
 
-	        // Add attributes of user specified unique id. E.g. GLTF models.
-	        for (var attributeName in attributeUniqueIdMap) {
-	          var attributeType = attributeTypeMap[attributeName] || Float32Array;
-	          var attributeId = attributeUniqueIdMap[attributeName];
-	          var attribute = decoder.GetAttributeByUniqueId(dracoGeometry,
-	                                                         attributeId);
-	          this.addAttributeToGeometry(dracoDecoder, decoder, dracoGeometry,
-	              attributeName, attributeType, attribute, geometry, geometryBuffer);
 	        }
 
 	        // For mesh, we need to generate the faces.
@@ -9140,6 +9149,9 @@ var Three = (function (exports) {
 	                Uint32BufferAttribute : Uint16BufferAttribute)
 	              (geometryBuffer.indices, 1));
 	        }
+
+	        // TODO: Should not assume native Draco attribute IDs apply.
+	        // TODO: Can other attribute types be quantized?
 	        var posTransform = new dracoDecoder.AttributeQuantizationTransform();
 	        if (posTransform.InitFromAttribute(posAttribute)) {
 	          // Quantized attribute. Store the quantization parameters into the

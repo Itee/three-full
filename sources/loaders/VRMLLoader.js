@@ -27,6 +27,7 @@ import {
 	VertexColors
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+import { LoaderUtils } from './LoaderUtils.js'
 var VRMLLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -621,7 +622,7 @@ VRMLLoader.prototype = {
 								parent.geometry = defines[ defineKey ].clone();
 
 								// the solid property is not cloned with clone(), is only needed for VRML loading, so we need to transfer it
-								if ( undefined !== defines[ defineKey ].solid && defines[ defineKey ].solid === false ) {
+								if ( defines[ defineKey ].solid !== undefined && defines[ defineKey ].solid === false ) {
 
 									parent.geometry.solid = false;
 									parent.material.side = DoubleSide;
@@ -1062,7 +1063,7 @@ VRMLLoader.prototype = {
 
 							positions = newPositions;
 							normals = newNormals;
-							color = newColors;
+							colors = newColors;
 							uvs = newUvs;
 
 							geometry.setIndex( newIndexes );

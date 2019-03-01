@@ -16,7 +16,8 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { Camera } from '../cameras/Camera.js'
 import {
 	REVISION,
-	FaceColors
+	FaceColors,
+	VertexColors
 } from '../constants.js'
 var SVGObject = function ( node ) {
 
@@ -419,7 +420,7 @@ var SVGRenderer = function () {
 
 			_color.copy( material.color );
 
-			if ( material.vertexColors === FaceColors ) {
+			if ( material.vertexColors === FaceColors || material.vertexColors === VertexColors ) {
 
 				_color.multiply( element.color );
 
@@ -429,7 +430,7 @@ var SVGRenderer = function () {
 
 			_diffuseColor.copy( material.color );
 
-			if ( material.vertexColors === FaceColors ) {
+			if ( material.vertexColors === FaceColors || material.vertexColors === VertexColors ) {
 
 				_diffuseColor.multiply( element.color );
 

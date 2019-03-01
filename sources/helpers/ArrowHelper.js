@@ -18,8 +18,10 @@ function ArrowHelper( dir, origin, length, color, headLength, headWidth ) {
 
 	Object3D.call( this );
 
-	if ( color === undefined ) color = 0xffff00;
+	if ( dir === undefined ) dir = new Vector3( 0, 0, 1 );
+	if ( origin === undefined ) origin = new Vector3( 0, 0, 0 );
 	if ( length === undefined ) length = 1;
+	if ( color === undefined ) color = 0xffff00;
 	if ( headLength === undefined ) headLength = 0.2 * length;
 	if ( headWidth === undefined ) headWidth = 0.2 * headLength;
 
@@ -100,6 +102,23 @@ ArrowHelper.prototype.setColor = function ( color ) {
 
 	this.line.material.color.copy( color );
 	this.cone.material.color.copy( color );
+
+};
+
+ArrowHelper.prototype.copy = function ( source ) {
+
+	Object3D.prototype.copy.call( this, source, false );
+
+	this.line.copy( source.line );
+	this.cone.copy( source.cone );
+
+	return this;
+
+};
+
+ArrowHelper.prototype.clone = function () {
+
+	return new this.constructor().copy( this );
 
 };
 

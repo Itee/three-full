@@ -12,7 +12,7 @@ import { MOUSE } from '../constants.js'
 //
 //    Orbit - left mouse / touch: one-finger move
 //    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
-//    Pan - right mouse, or left mouse + ctrl/metaKey, or arrow keys / touch: two-finger move
+//    Pan - right mouse, or left mouse + ctrl/meta/shiftKey, or arrow keys / touch: two-finger move
 
 var OrbitControls = function ( object, domElement ) {
 
@@ -678,7 +678,7 @@ var OrbitControls = function ( object, domElement ) {
 
 			case scope.mouseButtons.LEFT:
 
-				if ( event.ctrlKey || event.metaKey ) {
+				if ( event.ctrlKey || event.metaKey || event.shiftKey ) {
 
 					if ( scope.enablePan === false ) return;
 

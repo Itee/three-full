@@ -4,6 +4,8 @@
 import { DataTextureLoader } from './DataTextureLoader.js'
 import {
 	UnsignedByteType,
+	FloatType,
+	RGBFormat,
 	RGBAFormat,
 	RGBEFormat
 } from '../constants.js'
@@ -14,6 +16,7 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 var RGBELoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	this.type = UnsignedByteType;
 
 };
 
@@ -315,23 +318,67 @@ RGBELoader.prototype._parser = function ( buffer ) {
 		;
 		if ( RGBE_RETURN_FAILURE !== image_rgba_data ) {
 
+			if ( this.type === UnsignedByteType ) {
+
+				var data = image_rgba_data;
+				var format = RGBEFormat; // handled as RGBAFormat in shaders
+				var type = UnsignedByteType;
+
+			} else if ( this.type === FloatType ) {
+
+				var RGBEByteToRGBFloat = function ( sourceArray, sourceOffset, destArray, destOffset ) {
+
+					var e = sourceArray[ sourceOffset + 3 ];
+					var scale = Math.pow( 2.0, e - 128.0 ) / 255.0;
+
+					destArray[ destOffset + 0 ] = sourceArray[ sourceOffset + 0 ] * scale;
+					destArray[ destOffset + 1 ] = sourceArray[ sourceOffset + 1 ] * scale;
+					destArray[ destOffset + 2 ] = sourceArray[ sourceOffset + 2 ] * scale;
+
+				};
+
+				var numElements = ( image_rgba_data.length / 4 ) * 3;
+				var floatArray = new Float32Array( numElements );
+
+				for ( var j = 0; j < numElements; j ++ ) {
+
+					RGBEByteToRGBFloat( image_rgba_data, j * 4, floatArray, j * 3 );
+
+				}
+
+				var data = floatArray;
+				var format = RGBFormat;
+				var type = FloatType;
+			} else {
+
+				console.error( 'RGBELoader: unsupported type: ', this.type );
+
+			}
+
 			return {
 				width: w, height: h,
-				data: image_rgba_data,
+				data: data,
 				header: rgbe_header_info.string,
 				gamma: rgbe_header_info.gamma,
 				exposure: rgbe_header_info.exposure,
-				format: RGBEFormat, // handled as RGBAFormat in shaders
-				type: UnsignedByteType
+				format: format,
+				type: type
 			};
 
 		}
 
 	}
+
 	return null;
 
 };
 var HDRLoader = RGBELoader;
+RGBELoader.prototype.setType = function ( value ) {
+
+	this.type = value;
+	return this;
+
+};
 export {
 	HDRLoader,
 	RGBELoader

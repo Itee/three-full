@@ -11,6 +11,7 @@ import {
 	RepeatWrapping
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+import { LoaderUtils } from './LoaderUtils.js'
 import { Loader } from './Loader.js'
 var MTLLoader = function ( manager ) {
 

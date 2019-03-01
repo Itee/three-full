@@ -6,6 +6,7 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { PointsMaterial } from '../materials/PointsMaterial.js'
 import { Points } from '../objects/Points.js'
+import { VertexColors } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
 var PCDLoader = function ( manager ) {
@@ -203,11 +204,11 @@ PCDLoader.prototype = {
 
 				if ( offset.rgb !== undefined ) {
 
-					var c = new Float32Array( [ parseFloat( line[ offset.rgb ] ) ] );
-					var dataview = new DataView( c.buffer, 0 );
-					color.push( dataview.getUint8( 0 ) / 255.0 );
-					color.push( dataview.getUint8( 1 ) / 255.0 );
-					color.push( dataview.getUint8( 2 ) / 255.0 );
+					var rgb = parseFloat( line[ offset.rgb ] );
+					var r = ( rgb >> 16 ) & 0x0000ff;
+					var g = ( rgb >> 8 ) & 0x0000ff;
+					var b = ( rgb >> 0 ) & 0x0000ff;
+					color.push( r / 255, g / 255, b / 255 );
 
 				}
 
@@ -249,9 +250,9 @@ PCDLoader.prototype = {
 
 				if ( offset.rgb !== undefined ) {
 
-					color.push( dataview.getUint8( row + offset.rgb + 0 ) / 255.0 );
-					color.push( dataview.getUint8( row + offset.rgb + 1 ) / 255.0 );
 					color.push( dataview.getUint8( row + offset.rgb + 2 ) / 255.0 );
+					color.push( dataview.getUint8( row + offset.rgb + 1 ) / 255.0 );
+					color.push( dataview.getUint8( row + offset.rgb + 0 ) / 255.0 );
 
 				}
 
@@ -283,7 +284,7 @@ PCDLoader.prototype = {
 
 		if ( color.length > 0 ) {
 
-			material.vertexColors = true;
+			material.vertexColors = VertexColors;
 
 		} else {
 
