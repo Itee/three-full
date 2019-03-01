@@ -406,6 +406,13 @@ module.exports = {
 			],
             exportsOverride: [ 'LegacyGLTFLoader' ]
 		},
+		LegacyJSONLoader: {
+            imports: [
+                'DefaultLoadingManager',
+                'Loader',
+                'LoaderUtils'
+            ]
+		},
         LineCurve: {
             outputOverride: 'curves/LineCurve.js'
         },
