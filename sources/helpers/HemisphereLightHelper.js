@@ -9,7 +9,6 @@ import { VertexColors } from '../constants.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { OctahedronBufferGeometry } from '../geometries/OctahedronGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
-
 function HemisphereLightHelper( light, size, color ) {
 
 	Object3D.call( this );
@@ -88,7 +87,5 @@ HemisphereLightHelper.prototype.update = function () {
 	};
 
 }();
-
-;
 
 export { HemisphereLightHelper }

@@ -4,7 +4,6 @@
 import { Curve } from './Curve.js'
 import { CatmullRom } from '../core/Interpolations.js'
 import { Vector2 } from '../math/Vector2.js'
-
 function SplineCurve( points  ) {
 
 	Curve.call( this );
@@ -95,7 +94,5 @@ SplineCurve.prototype.fromJSON = function ( json ) {
 	return this;
 
 };
-
-;
 
 export { SplineCurve }

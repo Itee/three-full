@@ -65,9 +65,6 @@ vec3 directLightColor_Diffuse;
 	}
 
 #endif
-
-
-
 #if NUM_DIR_LIGHTS > 0
 
 	#pragma unroll_loop

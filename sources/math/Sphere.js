@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Box3 } from './Box3.js'
 import { Vector3 } from './Vector3.js'
-
 function Sphere( center, radius ) {
 
 	this.center = ( center !== undefined ) ? center : new Vector3();
@@ -173,7 +172,5 @@ Object.assign( Sphere.prototype, {
 	}
 
 } );
-
-;
 
 export { Sphere }

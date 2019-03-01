@@ -1,7 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 function painterSortStable( a, b ) {
 
 	if ( a.renderOrder !== b.renderOrder ) {
@@ -45,7 +44,6 @@ function reversePainterSortStable( a, b ) {
 	}
 
 }
-
 function WebGLRenderList() {
 
 	var renderItems = [];
@@ -94,7 +92,6 @@ function WebGLRenderList() {
 			renderItem.group = group;
 
 		}
-
 		( material.transparent === true ? transparent : opaque ).push( renderItem );
 
 		renderItemsIndex ++;
@@ -154,7 +151,6 @@ function WebGLRenderLists() {
 	};
 
 }
-
 ;
 
 export { WebGLRenderLists }

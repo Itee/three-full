@@ -6,7 +6,6 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
-
 var PLYLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -24,12 +23,20 @@ PLYLoader.prototype = {
 		var scope = this;
 
 		var loader = new FileLoader( this.manager );
+		loader.setPath( this.path );
 		loader.setResponseType( 'arraybuffer' );
 		loader.load( url, function ( text ) {
 
 			onLoad( scope.parse( text ) );
 
 		}, onProgress, onError );
+
+	},
+
+	setPath: function ( value ) {
+
+		this.path = value;
+		return this;
 
 	},
 
@@ -137,7 +144,6 @@ PLYLoader.prototype = {
 						currentElement.properties.push( make_ply_element_property( lineValues, scope.propertyNameMapping ) );
 
 						break;
-
 					default:
 
 						console.log( 'unhandled', lineType, lineValues );
@@ -215,6 +221,7 @@ PLYLoader.prototype = {
 				vertices: [],
 				normals: [],
 				uvs: [],
+				faceVertexUvs: [],
 				colors: []
 			};
 
@@ -295,6 +302,13 @@ PLYLoader.prototype = {
 
 			}
 
+			if ( buffer.faceVertexUvs.length > 0 ) {
+
+				geometry = geometry.toNonIndexed();
+				geometry.addAttribute( 'uv', new Float32BufferAttribute( buffer.faceVertexUvs, 2 ) );
+
+			}
+
 			geometry.computeBoundingSphere();
 
 			return geometry;
@@ -328,10 +342,19 @@ PLYLoader.prototype = {
 			} else if ( elementName === 'face' ) {
 
 				var vertex_indices = element.vertex_indices || element.vertex_index; // issue #9338
+				var texcoord = element.texcoord;
 
 				if ( vertex_indices.length === 3 ) {
 
 					buffer.indices.push( vertex_indices[ 0 ], vertex_indices[ 1 ], vertex_indices[ 2 ] );
+
+					if ( texcoord && texcoord.length === 6 ) {
+
+						buffer.faceVertexUvs.push( texcoord[ 0 ], texcoord[ 1 ] );
+						buffer.faceVertexUvs.push( texcoord[ 2 ], texcoord[ 3 ] );
+						buffer.faceVertexUvs.push( texcoord[ 4 ], texcoord[ 5 ] );
+
+					}
 
 				} else if ( vertex_indices.length === 4 ) {
 
@@ -408,6 +431,7 @@ PLYLoader.prototype = {
 				vertices: [],
 				normals: [],
 				uvs: [],
+				faceVertexUvs: [],
 				colors: []
 			};
 

@@ -5,7 +5,6 @@ import { Geometry } from '../core/Geometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Vector3 } from '../math/Vector3.js'
-
 // ParametricGeometry
 
 function ParametricGeometry( func, slices, stacks ) {
@@ -153,8 +152,6 @@ function ParametricBufferGeometry( func, slices, stacks ) {
 
 ParametricBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 ParametricBufferGeometry.prototype.constructor = ParametricBufferGeometry;
-
-;
 
 export {
 	ParametricGeometry,

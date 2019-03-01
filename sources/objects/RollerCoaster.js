@@ -6,7 +6,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Raycaster } from '../core/Raycaster.js'
-
 function RollerCoasterGeometry( curve, divisions ) {
 
 	BufferGeometry.call( this );
@@ -486,7 +485,6 @@ function SkyGeometry() {
 		vertices.push( x - size, y, z + size );
 
 	}
-
 	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
 
 }

@@ -23,9 +23,6 @@
 		varying vec4 vPointShadowCoord[ NUM_POINT_LIGHTS ];
 
 	#endif
-
-	
-
 	float texture2DCompare( sampler2D depths, vec2 uv, float compare ) {
 
 		return step( compare, unpackRGBAToDepth( texture2D( depths, uv ) ) );

@@ -7,7 +7,6 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Vector3 } from '../math/Vector3.js'
 import { ShapeUtils } from '../utils/ShapeUtils.js'
-
 // ExtrudeGeometry
 
 function ExtrudeGeometry( shapes, options ) {
@@ -170,9 +169,7 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			}
 
 		}
-
 		var faces = ShapeUtils.triangulateShape( vertices, holes );
-
 		var contour = vertices; // vertices has all points but contour has only points of circumference
 
 		for ( h = 0, hl = holes.length; h < hl; h ++ ) {
@@ -182,7 +179,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			vertices = vertices.concat( ahole );
 
 		}
-
 		function scalePt2( pt, vec, size ) {
 
 			if ( ! vec ) console.error( "ExtrudeGeometry: vec does not exist" );
@@ -194,9 +190,7 @@ function ExtrudeBufferGeometry( shapes, options ) {
 		var b, bs, t, z,
 			vert, vlen = vertices.length,
 			face, flen = faces.length;
-
 		// Find directions for point movement
-
 		function getBevelVec( inPt, inPrev, inNext ) {
 
 			// computes for inPt the corresponding point inPt' on a new contour
@@ -318,7 +312,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			return new Vector2( v_trans_x / shrink_by, v_trans_y / shrink_by );
 
 		}
-
 		var contourMovements = [];
 
 		for ( var i = 0, il = contour.length, j = il - 1, k = i + 1; i < il; i ++, j ++, k ++ ) {
@@ -356,7 +349,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			verticesMovements = verticesMovements.concat( oneHoleMovements );
 
 		}
-
 		// Loop bevelSegments, 1 for the front, 1 for the back
 
 		for ( b = 0; b < bevelSegments; b ++ ) {
@@ -454,7 +446,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			}
 
 		}
-
 		// Add bevel segments planes
 
 		//for ( b = 1; b <= bevelSegments; b ++ ) {
@@ -499,7 +490,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			}
 
 		}
-
 		// Top and bottom faces
 
 		buildLidFaces();
@@ -507,7 +497,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 		// Sides faces
 
 		buildSideFaces();
-
 		/////  Internal functions
 
 		function buildLidFaces() {
@@ -584,9 +573,7 @@ function ExtrudeBufferGeometry( shapes, options ) {
 				layeroffset += ahole.length;
 
 			}
-
 			scope.addGroup( start, verticesArray.length / 3 - start, 1 );
-
 		}
 
 		function sidewalls( contour, layeroffset ) {
@@ -630,7 +617,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			placeholder.push( z );
 
 		}
-
 		function f3( a, b, c ) {
 
 			addVertex( a );
@@ -655,7 +641,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			addVertex( b );
 			addVertex( c );
 			addVertex( d );
-
 			var nextIndex = verticesArray.length / 3;
 			var uvs = uvgen.generateSideWallUV( scope, verticesArray, nextIndex - 6, nextIndex - 3, nextIndex - 2, nextIndex - 1 );
 
@@ -676,7 +661,6 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			verticesArray.push( placeholder[ index * 3 + 2 ] );
 
 		}
-
 		function addUV( vector2 ) {
 
 			uvArray.push( vector2.x );
@@ -790,7 +774,6 @@ function toJSON( shapes, options, data ) {
 	return data;
 
 }
-
 ;
 
 export {

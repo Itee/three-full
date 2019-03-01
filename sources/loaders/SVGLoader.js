@@ -8,7 +8,6 @@ import { Path } from '../core/Path.js'
 import { Matrix3 } from '../math/Matrix3.js'
 import { Vector3 } from '../math/Vector3.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-
 var SVGLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -24,11 +23,19 @@ SVGLoader.prototype = {
 		var scope = this;
 
 		var loader = new FileLoader( scope.manager );
+		loader.setPath( scope.path );
 		loader.load( url, function ( text ) {
 
 			onLoad( scope.parse( text ) );
 
 		}, onProgress, onError );
+
+	},
+
+	setPath: function ( value ) {
+
+		this.path = value;
+		return this;
 
 	},
 
@@ -441,7 +448,6 @@ SVGLoader.prototype = {
 			return path;
 
 		}
-
 		function parseArcCommand( path, rx, ry, x_axis_rotation, large_arc_flag, sweep_flag, start, end ) {
 
 			x_axis_rotation = x_axis_rotation * Math.PI / 180;
@@ -504,7 +510,6 @@ SVGLoader.prototype = {
 			return ang;
 
 		}
-		
 		function parseRectNode( node, style ) {
 
 			var x = parseFloat( node.getAttribute( 'x' ) || 0 );
@@ -711,7 +716,6 @@ SVGLoader.prototype = {
 			}
 
 			return array;
-
 		}
 
 		function getNodeTransform( node ) {
@@ -984,7 +988,6 @@ SVGLoader.prototype = {
 		parseNode( xml.documentElement, { fill: '#000' } );
 
 		// console.log( paths );
-
 		console.timeEnd( 'SVGLoader: Parse' );
 
 		return paths;

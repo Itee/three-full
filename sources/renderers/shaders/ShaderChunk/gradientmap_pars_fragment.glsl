@@ -20,8 +20,6 @@
 			return ( coord.x < 0.7 ) ? vec3( 0.7 ) : vec3( 1.0 );
 
 		#endif
-
-
 	}
 
 #endif

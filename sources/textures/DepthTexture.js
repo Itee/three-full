@@ -9,7 +9,6 @@ import {
 	DepthFormat,
 	DepthStencilFormat
 } from '../constants.js'
-
 function DepthTexture( width, height, type, mapping, wrapS, wrapT, magFilter, minFilter, anisotropy, format ) {
 
 	format = format !== undefined ? format : DepthFormat;
@@ -38,7 +37,5 @@ function DepthTexture( width, height, type, mapping, wrapS, wrapT, magFilter, mi
 DepthTexture.prototype = Object.create( Texture.prototype );
 DepthTexture.prototype.constructor = DepthTexture;
 DepthTexture.prototype.isDepthTexture = true;
-
-;
 
 export { DepthTexture }

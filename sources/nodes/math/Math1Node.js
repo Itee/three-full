@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from '../core/TempNode.js'
-
 function Math1Node( a, method ) {
 
 	TempNode.call( this );
@@ -112,7 +111,5 @@ Math1Node.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { Math1Node }

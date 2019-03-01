@@ -11,7 +11,6 @@ import { Euler } from '../math/Euler.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
 'use strict';
-
 var GCodeLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -25,11 +24,19 @@ GCodeLoader.prototype.load = function ( url, onLoad, onProgress, onError ) {
 	var self = this;
 
 	var loader = new FileLoader( self.manager );
+	loader.setPath( self.path );
 	loader.load( url, function ( text ) {
 
 		onLoad( self.parse( text ) );
 
 	}, onProgress, onError );
+
+};
+
+GCodeLoader.prototype.setPath = function ( value ) {
+
+	this.path = value;
+	return this;
 
 };
 

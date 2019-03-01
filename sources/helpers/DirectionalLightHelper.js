@@ -7,7 +7,6 @@ import { Line } from '../objects/Line.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
-
 function DirectionalLightHelper( light, size, color ) {
 
 	Object3D.call( this );
@@ -90,7 +89,5 @@ DirectionalLightHelper.prototype.update = function () {
 	};
 
 }();
-
-;
 
 export { DirectionalLightHelper }

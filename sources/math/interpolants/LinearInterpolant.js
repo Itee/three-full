@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Interpolant } from '../Interpolant.js'
-
 function LinearInterpolant( parameterPositions, sampleValues, sampleSize, resultBuffer ) {
 
 	Interpolant.call( this, parameterPositions, sampleValues, sampleSize, resultBuffer );
@@ -38,7 +37,5 @@ LinearInterpolant.prototype = Object.assign( Object.create( Interpolant.prototyp
 	}
 
 } );
-
-;
 
 export { LinearInterpolant }

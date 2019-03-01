@@ -91,7 +91,6 @@ import { VectorKeyframeTrack } from '../../animation/tracks/VectorKeyframeTrack.
 import { AnimationUtils } from '../../animation/AnimationUtils.js'
 import { LoaderUtils } from '../LoaderUtils.js'
 import { _Math } from '../../math/Math.js'
-
 var LegacyGLTFLoader = ( function () {
 
 	function LegacyGLTFLoader( manager ) {
@@ -187,7 +186,6 @@ var LegacyGLTFLoader = ( function () {
 		}
 
 	};
-
 	function GLTFRegistry() {
 
 		var objects = {};
@@ -237,7 +235,6 @@ var LegacyGLTFLoader = ( function () {
 		};
 
 	}
-
 	LegacyGLTFLoader.Shaders = {
 
 		update: function () {
@@ -247,7 +244,6 @@ var LegacyGLTFLoader = ( function () {
 		}
 
 	};
-
 	function GLTFShader( targetNode, allNodes ) {
 
 		var boundUniforms = {};
@@ -348,7 +344,6 @@ var LegacyGLTFLoader = ( function () {
 		}
 
 	};
-
 	LegacyGLTFLoader.Animations = {
 
 		update: function () {
@@ -358,12 +353,10 @@ var LegacyGLTFLoader = ( function () {
 		}
 
 	};
-
 	var EXTENSIONS = {
 		KHR_BINARY_GLTF: 'KHR_binary_glTF',
 		KHR_MATERIALS_COMMON: 'KHR_materials_common'
 	};
-
 	function GLTFMaterialsCommonExtension( json ) {
 
 		this.name = EXTENSIONS.KHR_MATERIALS_COMMON;
@@ -412,7 +405,6 @@ var LegacyGLTFLoader = ( function () {
 		}
 
 	}
-
 	var BINARY_EXTENSION_BUFFER_NAME = 'binary_glTF';
 
 	var BINARY_EXTENSION_HEADER_DEFAULTS = { magic: 'glTF', version: 1, contentFormat: 0 };
@@ -461,7 +453,6 @@ var LegacyGLTFLoader = ( function () {
 		return LoaderUtils.decodeText( array );
 
 	};
-
 	var WEBGL_CONSTANTS = {
 		FLOAT: 5126,
 		//FLOAT_MAT2: 35674,
@@ -603,7 +594,6 @@ var LegacyGLTFLoader = ( function () {
 		32823: 'POLYGON_OFFSET_FILL',
 		32926: 'SAMPLE_ALPHA_TO_COVERAGE'
 	};
-
 	function _each( object, callback, thisObj ) {
 
 		if ( !object ) {
@@ -866,7 +856,6 @@ var LegacyGLTFLoader = ( function () {
 		return new RawShaderMaterial( this.params );
 
 	};
-
 	function GLTFParser( json, extensions, options ) {
 
 		this.json = json || {};

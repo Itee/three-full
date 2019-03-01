@@ -6,7 +6,6 @@ import { WebGLExtensions } from './webgl/WebGLExtensions.js'
 import { WebGLState } from './webgl/WebGLState.js'
 import { Color } from '../math/Color.js'
 import { Vector4 } from '../math/Vector4.js'
-
 function WebGL2Renderer( parameters ) {
 
 	console.log( 'WebGL2Renderer', REVISION );
@@ -183,7 +182,6 @@ function WebGL2Renderer( parameters ) {
 	};
 
 }
-
 ;
 
 export { WebGL2Renderer }

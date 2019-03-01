@@ -24,7 +24,6 @@ import {
 	FaceColors,
 	VertexColors
 } from '../constants.js'
-
 var RenderableObject = function () {
 
 	this.id = 0;
@@ -899,6 +898,7 @@ var Projector = function () {
 
 			} else if ( object instanceof Sprite ) {
 
+				object.modelViewMatrix.multiplyMatrices( camera.matrixWorldInverse, object.matrixWorld );
 				_vector4.set( _modelMatrix.elements[ 12 ], _modelMatrix.elements[ 13 ], _modelMatrix.elements[ 14 ], 1 );
 				_vector4.applyMatrix4( _viewProjectionMatrix );
 
@@ -994,7 +994,6 @@ var Projector = function () {
 		}
 
 		return _facePool[ _faceCount ++ ];
-
 	}
 
 	function getNextLineInPool() {

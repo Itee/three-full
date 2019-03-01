@@ -17,7 +17,6 @@ import {
 } from '../constants.js'
 import { SMAAShader } from '../shaders/SMAAShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
-
 var SMAAPass = function ( width, height ) {
 
 	Pass.call( this );

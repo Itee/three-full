@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Cache } from './Cache.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-
 var loading = {};
 
 function FileLoader( manager ) {
@@ -313,7 +312,5 @@ Object.assign( FileLoader.prototype, {
 	}
 
 } );
-
-;
 
 export { FileLoader }

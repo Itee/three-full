@@ -4,7 +4,6 @@
 import { Curve } from './Curve.js'
 import { QuadraticBezier } from '../core/Interpolations.js'
 import { Vector3 } from '../math/Vector3.js'
-
 function QuadraticBezierCurve3( v0, v1, v2 ) {
 
 	Curve.call( this );
@@ -73,7 +72,5 @@ QuadraticBezierCurve3.prototype.fromJSON = function ( json ) {
 	return this;
 
 };
-
-;
 
 export { QuadraticBezierCurve3 }

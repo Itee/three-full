@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { CompressedTextureLoader } from './CompressedTextureLoader.js'
-
 var KTXLoader = function ( manager ) {
 
 	CompressedTextureLoader.call( this, manager );
@@ -30,7 +29,6 @@ KTXLoader.parse = function ( buffer, loadMipmaps ) {
 };
 
 var KhronosTextureContainer = ( function () {
-	
 	function KhronosTextureContainer( arrayBuffer, facesExpected, threeDExpected, textureArrayExpected ) {
 
 		this.arrayBuffer = arrayBuffer;

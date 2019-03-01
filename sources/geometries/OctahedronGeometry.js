@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Geometry } from '../core/Geometry.js'
 import { PolyhedronBufferGeometry } from './PolyhedronGeometry.js'
-
 // OctahedronGeometry
 
 function OctahedronGeometry( radius, detail ) {
@@ -53,8 +52,6 @@ function OctahedronBufferGeometry( radius, detail ) {
 
 OctahedronBufferGeometry.prototype = Object.create( PolyhedronBufferGeometry.prototype );
 OctahedronBufferGeometry.prototype.constructor = OctahedronBufferGeometry;
-
-;
 
 export {
 	OctahedronGeometry,

@@ -18,7 +18,6 @@ import {
 	sRGBEncoding,
 	GammaEncoding
 } from '../constants.js'
-
 var PMREMGenerator = function ( sourceTexture, samplesPerLevel, resolution ) {
 
 	this.sourceTexture = sourceTexture;
@@ -75,7 +74,6 @@ var PMREMGenerator = function ( sourceTexture, samplesPerLevel, resolution ) {
 PMREMGenerator.prototype = {
 
 	constructor: PMREMGenerator,
-	
 	update: function ( renderer ) {
 
 		this.shader.uniforms[ 'envMap' ].value = this.sourceTexture;

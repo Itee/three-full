@@ -6,7 +6,6 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector4 } from '../math/Vector4.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
-
 var TeapotBufferGeometry = function ( size, segments, bottom, lid, body, fitLid, blinn ) {
 
 	// 32 * 4 * 4 Bezier spline patches
@@ -460,7 +459,6 @@ var TeapotBufferGeometry = function ( size, segments, bottom, lid, body, fitLid,
 					 ( vertices[ vtx2 * 3 + 2 ] === vertices[ vtx3 * 3 + 2 ] ) ) );
 
 	};
-
 	for ( i = 0; i < 3; i ++ ) {
 
 		mgm[ i ] = new Matrix4();
@@ -666,7 +664,6 @@ var TeapotBufferGeometry = function ( size, segments, bottom, lid, body, fitLid,
 	this.computeBoundingSphere();
 
 };
-
 TeapotBufferGeometry.prototype = Object.create( BufferGeometry.prototype );
 TeapotBufferGeometry.prototype.constructor = TeapotBufferGeometry;
 

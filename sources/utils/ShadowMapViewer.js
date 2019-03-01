@@ -14,7 +14,6 @@ import {
 	LinearFilter
 } from '../constants.js'
 import { UnpackDepthRGBAShader } from '../shaders/UnpackDepthRGBAShader.js'
-
 var ShadowMapViewer = function ( light ) {
 
 	//- Internals
@@ -47,7 +46,6 @@ var ShadowMapViewer = function ( light ) {
 	var mesh = new Mesh( plane, material );
 
 	scene.add( mesh );
-
 	//Label for light's name
 	var labelCanvas, labelMesh;
 
@@ -80,7 +78,6 @@ var ShadowMapViewer = function ( light ) {
 		scene.add( labelMesh );
 
 	}
-
 	function resetPosition () {
 
 		scope.position.set( scope.position.x, scope.position.y );

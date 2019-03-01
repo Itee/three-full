@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Material } from './Material.js'
 import { Color } from '../math/Color.js'
-
 function PointsMaterial( parameters ) {
 
 	Material.call( this );
@@ -46,7 +45,5 @@ PointsMaterial.prototype.copy = function ( source ) {
 	return this;
 
 };
-
-;
 
 export { PointsMaterial }

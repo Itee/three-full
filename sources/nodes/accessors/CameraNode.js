@@ -5,7 +5,6 @@ import { TempNode } from '../core/TempNode.js'
 import { FunctionNode } from '../core/FunctionNode.js'
 import { FloatNode } from '../inputs/FloatNode.js'
 import { PositionNode } from './PositionNode.js'
-
 function CameraNode( scope, camera ) {
 
 	TempNode.call( this, 'v3' );
@@ -231,7 +230,5 @@ CameraNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { CameraNode }

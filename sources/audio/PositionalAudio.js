@@ -5,7 +5,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Audio } from './Audio.js'
 import { Object3D } from '../core/Object3D.js'
-
 function PositionalAudio( listener ) {
 
 	Audio.call( this, listener );
@@ -114,9 +113,6 @@ PositionalAudio.prototype = Object.assign( Object.create( Audio.prototype ), {
 		};
 
 	} )()
-
 } );
-
-;
 
 export { PositionalAudio }

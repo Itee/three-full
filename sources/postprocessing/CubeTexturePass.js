@@ -9,7 +9,6 @@ import { Scene } from '../scenes/Scene.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { BackSide } from '../constants.js'
 import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
-
 var CubeTexturePass = function ( camera, envMap, opacity ) {
 
 	Pass.call( this );

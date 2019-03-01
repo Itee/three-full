@@ -4,8 +4,6 @@
 import { InputNode } from '../core/InputNode.js'
 import { NodeUtils } from '../core/NodeUtils.js'
 import { Vector2 } from '../../math/Vector2.js'
-import { NodeMaterial } from '../materials/NodeMaterial.js'
-
 function Vector2Node( x, y ) {
 
 	InputNode.call( this, 'v2' );
@@ -52,7 +50,5 @@ Vector2Node.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { Vector2Node }

@@ -14,7 +14,6 @@ import {
 	LinearFilter,
 	RGBAFormat
 } from '../constants.js'
-
 var AnaglyphEffect = function ( renderer, width, height ) {
 
 	// Matrices generated with angler.js https://github.com/tschw/angler.js/
@@ -101,7 +100,6 @@ var AnaglyphEffect = function ( renderer, width, height ) {
 			"	return c <= 0.0031308 ? c * 12.92",
 			"			: pow( c, 0.41666 ) * 1.055 - 0.055;",
 			"}",
-
 			"void main() {",
 
 			"	vec2 uv = vUv;",

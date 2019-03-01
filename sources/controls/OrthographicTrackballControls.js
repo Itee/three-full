@@ -5,7 +5,6 @@ import { EventDispatcher } from '../core/EventDispatcher.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Quaternion } from '../math/Quaternion.js'
-
 var OrthographicTrackballControls = function ( object, domElement ) {
 
 	var _this = this;
@@ -76,7 +75,6 @@ var OrthographicTrackballControls = function ( object, domElement ) {
 	var changeEvent = { type: 'change' };
 	var startEvent = { type: 'start' };
 	var endEvent = { type: 'end' };
-
 	// methods
 
 	this.handleResize = function () {
@@ -180,7 +178,6 @@ var OrthographicTrackballControls = function ( object, domElement ) {
 
 		var axis = new Vector3(),
 			quaternion = new Quaternion();
-
 		return function rotateCamera() {
 
 			var angle = Math.acos( _rotateStart.dot( _rotateEnd ) / _rotateStart.length() / _rotateEnd.length() );

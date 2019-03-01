@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Light } from './Light.js'
-
 function AmbientLight( color, intensity ) {
 
 	Light.call( this, color, intensity );
@@ -20,7 +19,5 @@ AmbientLight.prototype = Object.assign( Object.create( Light.prototype ), {
 	isAmbientLight: true
 
 } );
-
-;
 
 export { AmbientLight }

@@ -4,7 +4,6 @@
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Vector3 } from '../math/Vector3.js'
-
 function WireframeGeometry( geometry ) {
 
 	BufferGeometry.call( this );
@@ -172,7 +171,5 @@ function WireframeGeometry( geometry ) {
 
 WireframeGeometry.prototype = Object.create( BufferGeometry.prototype );
 WireframeGeometry.prototype.constructor = WireframeGeometry;
-
-;
 
 export { WireframeGeometry }

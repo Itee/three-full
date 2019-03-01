@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Camera } from './Camera.js'
 import { Object3D } from '../core/Object3D.js'
-
 function OrthographicCamera( left, right, top, bottom, near, far ) {
 
 	Camera.call( this );
@@ -140,7 +139,5 @@ OrthographicCamera.prototype = Object.assign( Object.create( Camera.prototype ),
 	}
 
 } );
-
-;
 
 export { OrthographicCamera }

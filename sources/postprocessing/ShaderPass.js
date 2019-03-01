@@ -8,7 +8,6 @@ import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
-
 var ShaderPass = function ( shader, textureID ) {
 
 	Pass.call( this );

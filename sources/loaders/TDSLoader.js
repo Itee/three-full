@@ -16,7 +16,6 @@ import {
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
-
 'use strict';
 
 var TDSLoader = function ( manager ) {
@@ -35,7 +34,8 @@ var TDSLoader = function ( manager ) {
 TDSLoader.prototype = {
 
 	constructor: TDSLoader,
-	
+
+	crossOrigin: 'anonymous',
 	load: function ( url, onLoad, onProgress, onError ) {
 
 		var scope = this;
@@ -43,7 +43,7 @@ TDSLoader.prototype = {
 		var path = this.path !== undefined ? this.path : LoaderUtils.extractUrlBase( url );
 
 		var loader = new FileLoader( this.manager );
-
+		loader.setPath( this.path );
 		loader.setResponseType( 'arraybuffer' );
 
 		loader.load( url, function ( data ) {
@@ -53,7 +53,6 @@ TDSLoader.prototype = {
 		}, onProgress, onError );
 
 	},
-	
 	parse: function ( arraybuffer, path ) {
 
 		this.group = new Group();
@@ -72,7 +71,6 @@ TDSLoader.prototype = {
 		return this.group;
 
 	},
-	
 	readFile: function ( arraybuffer, path ) {
 
 		var data = new DataView( arraybuffer );
@@ -109,7 +107,6 @@ TDSLoader.prototype = {
 		this.debugMessage( 'Parsed ' + this.meshes.length + ' meshes' );
 
 	},
-	
 	readMeshData: function ( data, path ) {
 
 		var chunk = this.readChunk( data );
@@ -151,7 +148,6 @@ TDSLoader.prototype = {
 		}
 
 	},
-	
 	readNamedObject: function ( data ) {
 
 		var chunk = this.readChunk( data );
@@ -181,7 +177,6 @@ TDSLoader.prototype = {
 		this.endChunk( chunk );
 
 	},
-	
 	readMaterialEntry: function ( data, path ) {
 
 		var chunk = this.readChunk( data );
@@ -276,7 +271,6 @@ TDSLoader.prototype = {
 		this.materials[ material.name ] = material;
 
 	},
-	
 	readMesh: function ( data ) {
 
 		var chunk = this.readChunk( data );
@@ -334,7 +328,6 @@ TDSLoader.prototype = {
 				}
 
 				geometry.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
-
 			} else if ( next === MESH_MATRIX ) {
 
 				this.debugMessage( '   Tranformation Matrix (TODO)' );
@@ -397,7 +390,6 @@ TDSLoader.prototype = {
 		return mesh;
 
 	},
-	
 	readFaceArray: function ( data, mesh ) {
 
 		var chunk = this.readChunk( data );
@@ -458,7 +450,6 @@ TDSLoader.prototype = {
 		this.endChunk( chunk );
 
 	},
-	
 	readMap: function ( data, path ) {
 
 		var chunk = this.readChunk( data );
@@ -466,7 +457,7 @@ TDSLoader.prototype = {
 		var texture = {};
 
 		var loader = new TextureLoader( this.manager );
-		loader.setPath( path );
+		loader.setPath( this.resourcePath || path ).setCrossOrigin( this.crossOrigin );
 
 		while ( next !== 0 ) {
 
@@ -512,7 +503,6 @@ TDSLoader.prototype = {
 		return texture;
 
 	},
-	
 	readMaterialGroup: function ( data ) {
 
 		var chunk = this.readChunk( data );
@@ -532,7 +522,6 @@ TDSLoader.prototype = {
 		return { name: name, index: index };
 
 	},
-	
 	readColor: function ( data ) {
 
 		var chunk = this.readChunk( data );
@@ -568,7 +557,6 @@ TDSLoader.prototype = {
 		return color;
 
 	},
-	
 	readChunk: function ( data ) {
 
 		var chunk = {};
@@ -582,13 +570,11 @@ TDSLoader.prototype = {
 		return chunk;
 
 	},
-	
 	endChunk: function ( chunk ) {
 
 		this.position = chunk.end;
 
 	},
-	
 	nextChunk: function ( data, chunk ) {
 
 		if ( chunk.cur >= chunk.end ) {
@@ -613,13 +599,11 @@ TDSLoader.prototype = {
 		}
 
 	},
-	
 	resetPosition: function () {
 
 		this.position -= 6;
 
 	},
-	
 	readByte: function ( data ) {
 
 		var v = data.getUint8( this.position, true );
@@ -627,7 +611,6 @@ TDSLoader.prototype = {
 		return v;
 
 	},
-	
 	readFloat: function ( data ) {
 
 		try {
@@ -643,7 +626,6 @@ TDSLoader.prototype = {
 		}
 
 	},
-	
 	readInt: function ( data ) {
 
 		var v = data.getInt32( this.position, true );
@@ -651,7 +633,6 @@ TDSLoader.prototype = {
 		return v;
 
 	},
-	
 	readShort: function ( data ) {
 
 		var v = data.getInt16( this.position, true );
@@ -659,7 +640,6 @@ TDSLoader.prototype = {
 		return v;
 
 	},
-	
 	readDWord: function ( data ) {
 
 		var v = data.getUint32( this.position, true );
@@ -667,7 +647,6 @@ TDSLoader.prototype = {
 		return v;
 
 	},
-	
 	readWord: function ( data ) {
 
 		var v = data.getUint16( this.position, true );
@@ -675,7 +654,6 @@ TDSLoader.prototype = {
 		return v;
 
 	},
-	
 	readString: function ( data, maxLength ) {
 
 		var s = '';
@@ -696,7 +674,6 @@ TDSLoader.prototype = {
 		return s;
 
 	},
-	
 	setPath: function ( path ) {
 
 		this.path = path;
@@ -704,7 +681,20 @@ TDSLoader.prototype = {
 		return this;
 
 	},
-	
+	setResourcePath: function ( resourcePath ) {
+
+		this.resourcePath = resourcePath;
+
+		return this;
+
+	},
+	setCrossOrigin: function ( crossOrigin ) {
+
+		this.crossOrigin = crossOrigin;
+
+		return this;
+
+	},
 	debugMessage: function ( message ) {
 
 		if ( this.debug ) {

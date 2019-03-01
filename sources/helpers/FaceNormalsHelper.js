@@ -7,7 +7,6 @@ import { LineSegments } from '../objects/LineSegments.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
-
 function FaceNormalsHelper( object, size, hex, linewidth ) {
 
 	// FaceNormalsHelper only supports Geometry
@@ -111,7 +110,5 @@ FaceNormalsHelper.prototype.update = ( function () {
 	};
 
 }() );
-
-;
 
 export { FaceNormalsHelper }

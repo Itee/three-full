@@ -4,7 +4,6 @@
 import { TempNode } from '../core/TempNode.js'
 import { FunctionNode } from '../core/FunctionNode.js'
 import { LuminanceNode } from './LuminanceNode.js'
-
 function ColorAdjustmentNode( rgb, adjustment, method ) {
 
 	TempNode.call( this, 'v3' );
@@ -131,7 +130,5 @@ ColorAdjustmentNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { ColorAdjustmentNode }

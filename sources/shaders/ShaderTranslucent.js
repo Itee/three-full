@@ -5,9 +5,7 @@ import { Color } from '../math/Color.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 import { ShaderChunk } from '../renderers/shaders/ShaderChunk.js'
-
 var TranslucentShader = function TranslucentShader() {
-
 	this.uniforms = UniformsUtils.merge( [
 
 		UniformsLib[ "common" ],

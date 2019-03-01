@@ -5,7 +5,6 @@ import { EventDispatcher } from '../core/EventDispatcher.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Quaternion } from '../math/Quaternion.js'
-
 var TrackballControls = function ( object, domElement ) {
 
 	var _this = this;
@@ -75,7 +74,6 @@ var TrackballControls = function ( object, domElement ) {
 	var changeEvent = { type: 'change' };
 	var startEvent = { type: 'start' };
 	var endEvent = { type: 'end' };
-
 	// methods
 
 	this.handleResize = function () {
@@ -189,7 +187,6 @@ var TrackballControls = function ( object, domElement ) {
 		};
 
 	}() );
-
 	this.zoomCamera = function () {
 
 		var factor;

@@ -4,7 +4,6 @@
 import { InputNode } from '../core/InputNode.js'
 import { ReflectNode } from '../accessors/ReflectNode.js'
 import { ColorSpaceNode } from '../utils/ColorSpaceNode.js'
-
 function CubeTextureNode( value, uv, bias ) {
 
 	InputNode.call( this, 'v4', { shared: true } );
@@ -91,7 +90,5 @@ CubeTextureNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { CubeTextureNode }

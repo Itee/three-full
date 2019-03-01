@@ -6,7 +6,6 @@ import { Line } from '../objects/Line.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
-
 function RectAreaLightHelper( light, color ) {
 
 	Object3D.call( this );
@@ -27,7 +26,6 @@ function RectAreaLightHelper( light, color ) {
 
 	this.line = new Line( geometry, material );
 	this.add( this.line );
-
 	this.update();
 
 }
@@ -73,7 +71,5 @@ RectAreaLightHelper.prototype.update = function () {
 	}
 
 };
-
-;
 
 export { RectAreaLightHelper }

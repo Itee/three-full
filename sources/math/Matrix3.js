@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from './Vector3.js'
-
 function Matrix3() {
 
 	this.elements = [
@@ -379,7 +378,5 @@ Object.assign( Matrix3.prototype, {
 	}
 
 } );
-
-;
 
 export { Matrix3 }

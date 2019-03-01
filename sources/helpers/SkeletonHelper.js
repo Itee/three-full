@@ -10,7 +10,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Object3D } from '../core/Object3D.js'
-
 function getBoneList( object ) {
 
 	var boneList = [];
@@ -119,7 +118,5 @@ SkeletonHelper.prototype.updateMatrixWorld = function () {
 	};
 
 }();
-
-;
 
 export { SkeletonHelper }

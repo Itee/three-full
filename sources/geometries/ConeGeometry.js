@@ -5,7 +5,6 @@ import {
 	CylinderGeometry,
 	CylinderBufferGeometry
 } from './CylinderGeometry.js'
-
 // ConeGeometry
 
 function ConeGeometry( radius, height, radialSegments, heightSegments, openEnded, thetaStart, thetaLength ) {
@@ -51,8 +50,6 @@ function ConeBufferGeometry( radius, height, radialSegments, heightSegments, ope
 
 ConeBufferGeometry.prototype = Object.create( CylinderBufferGeometry.prototype );
 ConeBufferGeometry.prototype.constructor = ConeBufferGeometry;
-
-;
 
 export {
 	ConeGeometry,

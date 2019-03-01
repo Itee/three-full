@@ -5,7 +5,6 @@ import { AnimationMixer } from './AnimationMixer.js'
 import { AnimationClip } from './AnimationClip.js'
 import { PropertyBinding } from './PropertyBinding.js'
 import { AnimationUtils } from './AnimationUtils.js'
-
 var TimelinerController = function TimelinerController( scene, trackInfo, onUpdate ) {
 
 	this._scene = scene;

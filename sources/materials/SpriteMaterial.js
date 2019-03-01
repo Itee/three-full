@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Material } from './Material.js'
 import { Color } from '../math/Color.js'
-
 function SpriteMaterial( parameters ) {
 
 	Material.call( this );
@@ -42,7 +41,5 @@ SpriteMaterial.prototype.copy = function ( source ) {
 	return this;
 
 };
-
-;
 
 export { SpriteMaterial }

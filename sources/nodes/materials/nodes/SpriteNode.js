@@ -5,7 +5,6 @@ import { Node } from '../../core/Node.js'
 import { ColorNode } from '../../inputs/ColorNode.js'
 import { UniformsUtils } from '../../../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../../../renderers/shaders/UniformsLib.js'
-
 function SpriteNode() {
 
 	Node.call( this );
@@ -210,7 +209,5 @@ SpriteNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { SpriteNode }

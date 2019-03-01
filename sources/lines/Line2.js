@@ -4,7 +4,6 @@
 import { LineSegments2 } from './LineSegments2.js'
 import { LineGeometry } from './LineGeometry.js'
 import { LineMaterial } from './LineMaterial.js'
-
 var Line2 = function ( geometry, material ) {
 
 	LineSegments2.call( this );

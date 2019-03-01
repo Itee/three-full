@@ -12,7 +12,6 @@ import { Vector2 } from '../math/Vector2.js'
 import { Color } from '../math/Color.js'
 import { Object3D } from './Object3D.js'
 import { _Math } from '../math/Math.js'
-
 var geometryId = 0; // Geometry uses even numbers as Id
 
 function Geometry() {
@@ -814,7 +813,6 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 		this.merge( mesh.geometry, mesh.matrix );
 
 	},
-
 	mergeVertices: function () {
 
 		var verticesMap = {}; // Hashmap for looking up vertices by position coordinates (and making sure they are unique)
@@ -845,7 +843,6 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 			}
 
 		}
-
 		// if faces are completely degenerate after merging vertices, we
 		// have to remove them from the geometry.
 		var faceIndicesToRemove = [];
@@ -1153,7 +1150,6 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 	},
 
 	clone: function () {
-
 		return new Geometry().copy( this );
 
 	},
@@ -1399,7 +1395,5 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 	}
 
 } );
-
-;
 
 export { Geometry }

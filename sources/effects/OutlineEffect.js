@@ -5,7 +5,6 @@ import { Color } from '../math/Color.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { BackSide } from '../constants.js'
 import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
-
 var OutlineEffect = function ( renderer, parameters ) {
 
 	parameters = parameters || {};
@@ -423,7 +422,6 @@ var OutlineEffect = function ( renderer, parameters ) {
 		renderer.shadowMap.enabled = currentShadowMapEnabled;
 
 	};
-	
 	this.autoClear = renderer.autoClear;
 	this.domElement = renderer.domElement;
 	this.shadowMap = renderer.shadowMap;

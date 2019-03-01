@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from '../math/Vector3.js'
 import { Curve } from './Curve.js'
-
 function LineCurve3( v1, v2 ) {
 
 	Curve.call( this );
@@ -79,7 +78,5 @@ LineCurve3.prototype.fromJSON = function ( json ) {
 	return this;
 
 };
-
-;
 
 export { LineCurve3 }

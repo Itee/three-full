@@ -4,7 +4,6 @@
 import { Camera } from './Camera.js'
 import { Object3D } from '../core/Object3D.js'
 import { _Math } from '../math/Math.js'
-
 function PerspectiveCamera( fov, aspect, near, far ) {
 
 	Camera.call( this );
@@ -54,7 +53,6 @@ PerspectiveCamera.prototype = Object.assign( Object.create( Camera.prototype ), 
 		return this;
 
 	},
-	
 	setFocalLength: function ( focalLength ) {
 
 		// see http://www.bobatkins.com/photography/technical/field_of_view.html
@@ -64,7 +62,6 @@ PerspectiveCamera.prototype = Object.assign( Object.create( Camera.prototype ), 
 		this.updateProjectionMatrix();
 
 	},
-	
 	getFocalLength: function () {
 
 		var vExtentSlope = Math.tan( _Math.DEG2RAD * 0.5 * this.fov );
@@ -93,7 +90,6 @@ PerspectiveCamera.prototype = Object.assign( Object.create( Camera.prototype ), 
 		return this.filmGauge / Math.max( this.aspect, 1 );
 
 	},
-	
 	setViewOffset: function ( fullWidth, fullHeight, x, y, width, height ) {
 
 		this.aspect = fullWidth / fullHeight;
@@ -189,7 +185,5 @@ PerspectiveCamera.prototype = Object.assign( Object.create( Camera.prototype ), 
 	}
 
 } );
-
-;
 
 export { PerspectiveCamera }

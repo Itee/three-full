@@ -9,7 +9,6 @@ import { Vector3 } from '../math/Vector3.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-
 function Line( geometry, material, mode ) {
 
 	if ( mode === 1 ) {
@@ -65,7 +64,7 @@ Line.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 				} else {
 
-					console.error( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+					console.warn( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
 
 				}
 
@@ -250,7 +249,5 @@ Line.prototype = Object.assign( Object.create( Object3D.prototype ), {
 	}
 
 } );
-
-;
 
 export { Line }

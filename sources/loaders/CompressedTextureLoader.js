@@ -5,7 +5,6 @@ import { LinearFilter } from '../constants.js'
 import { FileLoader } from './FileLoader.js'
 import { CompressedTexture } from '../textures/CompressedTexture.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-
 function CompressedTextureLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -133,7 +132,5 @@ Object.assign( CompressedTextureLoader.prototype, {
 	}
 
 } );
-
-;
 
 export { CompressedTextureLoader }

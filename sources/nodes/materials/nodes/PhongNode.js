@@ -6,7 +6,6 @@ import { ColorNode } from '../../inputs/ColorNode.js'
 import { FloatNode } from '../../inputs/FloatNode.js'
 import { UniformsUtils } from '../../../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../../../renderers/shaders/UniformsLib.js'
-
 function PhongNode() {
 
 	Node.call( this );
@@ -378,7 +377,5 @@ PhongNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { PhongNode }

@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Path } from './Path.js'
 import { _Math } from '../math/Math.js'
-
 // STEP 1 Create a path.
 // STEP 2 Turn path into shape.
 // STEP 3 ExtrudeGeometry takes in Shape/Shapes
@@ -108,7 +107,5 @@ Shape.prototype = Object.assign( Object.create( Path.prototype ), {
 	}
 
 } );
-
-;
 
 export { Shape }

@@ -5,7 +5,6 @@ import { Color } from '../math/Color.js'
 import { Path } from './Path.js'
 import { Shape } from './Shape.js'
 import { ShapeUtils } from '../utils/ShapeUtils.js'
-
 function ShapePath() {
 
 	this.type = 'ShapePath';
@@ -137,7 +136,6 @@ Object.assign( ShapePath.prototype, {
 		if ( subPaths.length === 0 ) return [];
 
 		if ( noHoles === true )	return	toShapesNoHoles( subPaths );
-
 		var solid, tmpPath, tmpShape, shapes = [];
 
 		if ( subPaths.length === 1 ) {
@@ -195,7 +193,6 @@ Object.assign( ShapePath.prototype, {
 
 		// only Holes? -> probably all Shapes with wrong orientation
 		if ( ! newShapes[ 0 ] )	return	toShapesNoHoles( subPaths );
-
 		if ( newShapes.length > 1 ) {
 
 			var ambiguous = false;
@@ -277,7 +274,5 @@ Object.assign( ShapePath.prototype, {
 	}
 
 } );
-
-;
 
 export { ShapePath }

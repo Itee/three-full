@@ -25,7 +25,6 @@ import { RawShaderMaterial } from '../materials/RawShaderMaterial.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { ShadowMaterial } from '../materials/ShadowMaterial.js'
 import { SpriteMaterial } from '../materials/SpriteMaterial.js'
-
 function MaterialLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -104,6 +103,7 @@ Object.assign( MaterialLoader.prototype, {
 		if ( json.fog !== undefined ) material.fog = json.fog;
 		if ( json.flatShading !== undefined ) material.flatShading = json.flatShading;
 		if ( json.blending !== undefined ) material.blending = json.blending;
+		if ( json.combine !== undefined ) material.combine = json.combine;
 		if ( json.side !== undefined ) material.side = json.side;
 		if ( json.opacity !== undefined ) material.opacity = json.opacity;
 		if ( json.transparent !== undefined ) material.transparent = json.transparent;
@@ -237,6 +237,7 @@ Object.assign( MaterialLoader.prototype, {
 		if ( json.specularMap !== undefined ) material.specularMap = getTexture( json.specularMap );
 
 		if ( json.envMap !== undefined ) material.envMap = getTexture( json.envMap );
+		if ( json.envMapIntensity !== undefined ) material.envMapIntensity = json.envMapIntensity;
 
 		if ( json.reflectivity !== undefined ) material.reflectivity = json.reflectivity;
 
@@ -253,7 +254,5 @@ Object.assign( MaterialLoader.prototype, {
 	}
 
 } );
-
-;
 
 export { MaterialLoader }

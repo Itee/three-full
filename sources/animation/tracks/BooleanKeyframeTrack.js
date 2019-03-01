@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { InterpolateDiscrete } from '../../constants.js'
 import { KeyframeTrack } from '../KeyframeTrack.js'
-
 function BooleanKeyframeTrack( name, times, values ) {
 
 	KeyframeTrack.call( this, name, times, values );
@@ -27,7 +26,5 @@ BooleanKeyframeTrack.prototype = Object.assign( Object.create( KeyframeTrack.pro
 	// computes "firstValue ^ isOdd( index )".
 
 } );
-
-;
 
 export { BooleanKeyframeTrack }

@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Material } from './Material.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
-
 function ShaderMaterial( parameters ) {
 
 	Material.call( this );
@@ -167,7 +166,5 @@ ShaderMaterial.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { ShaderMaterial }

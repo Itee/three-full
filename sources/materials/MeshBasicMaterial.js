@@ -4,7 +4,6 @@
 import { Material } from './Material.js'
 import { MultiplyOperation } from '../constants.js'
 import { Color } from '../math/Color.js'
-
 function MeshBasicMaterial( parameters ) {
 
 	Material.call( this );
@@ -83,7 +82,5 @@ MeshBasicMaterial.prototype.copy = function ( source ) {
 	return this;
 
 };
-
-;
 
 export { MeshBasicMaterial }

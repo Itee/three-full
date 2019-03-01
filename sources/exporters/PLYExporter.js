@@ -4,7 +4,6 @@
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix3 } from '../math/Matrix3.js'
-
 var PLYExporter = function () {};
 
 PLYExporter.prototype = {
@@ -119,7 +118,6 @@ PLYExporter.prototype = {
 		includeNormals = includeNormals && excludeAttributes.indexOf( 'normal' ) === - 1;
 		includeColors = includeColors && excludeAttributes.indexOf( 'color' ) === - 1;
 		includeUVs = includeUVs && excludeAttributes.indexOf( 'uv' ) === - 1;
-
 		if ( includeIndices && faceCount !== Math.floor( faceCount ) ) {
 
 			// point cloud meshes will not have an index array and may not have a
@@ -151,7 +149,6 @@ PLYExporter.prototype = {
 			indexByteCount = 4;
 
 		}
-
 		var header =
 			'ply\n' +
 			`format ${ options.binary ? 'binary_big_endian' : 'ascii' } 1.0\n` +
@@ -201,7 +198,6 @@ PLYExporter.prototype = {
 		}
 
 		header += 'end_header\n';
-
 		// Generate attribute data
 		var vertex = new Vector3();
 		var normalMatrixWorld = new Matrix3();
@@ -223,7 +219,6 @@ PLYExporter.prototype = {
 			var faceListLength = includeIndices ? faceCount * ( indexByteCount * 3 + 1 ) : 0;
 			var output = new DataView( new ArrayBuffer( headerBin.length + vertexListLength + faceListLength ) );
 			new Uint8Array( output.buffer ).set( headerBin, 0 );
-
 			var vOffset = headerBin.length;
 			var fOffset = headerBin.length + vertexListLength;
 			var writtenVertices = 0;
@@ -244,7 +239,6 @@ PLYExporter.prototype = {
 					vertex.z = vertices.getZ( i );
 
 					vertex.applyMatrix4( mesh.matrixWorld );
-
 					// Position information
 					output.setFloat32( vOffset, vertex.x );
 					vOffset += 4;
@@ -387,7 +381,6 @@ PLYExporter.prototype = {
 					}
 
 				}
-
 				// Save the amount of verts we've already written so we can offset
 				// the face index on the next mesh
 				writtenVertices += vertices.count;
@@ -422,7 +415,6 @@ PLYExporter.prototype = {
 					vertex.z = vertices.getZ( i );
 
 					vertex.applyMatrix4( mesh.matrixWorld );
-
 					// Position information
 					var line =
 						vertex.x + ' ' +

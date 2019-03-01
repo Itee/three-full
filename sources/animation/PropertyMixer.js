@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Quaternion } from '../math/Quaternion.js'
-
 function PropertyMixer( binding, typeName, valueSize ) {
 
 	this.binding = binding;
@@ -158,7 +157,6 @@ Object.assign( PropertyMixer.prototype, {
 		this.binding.setValue( this.buffer, originalValueOffset );
 
 	},
-
 	// mix functions
 
 	_select: function ( buffer, dstOffset, srcOffset, t, stride ) {
@@ -196,7 +194,5 @@ Object.assign( PropertyMixer.prototype, {
 	}
 
 } );
-
-;
 
 export { PropertyMixer }

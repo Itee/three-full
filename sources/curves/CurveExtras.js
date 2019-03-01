@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Curve } from './Curve.js'
 import { Vector3 } from '../math/Vector3.js'
-
 	// GrannyKnot
 
 	function GrannyKnot() {
@@ -397,7 +396,6 @@ import { Vector3 } from '../math/Vector3.js'
 	};
 
 	// export
-
 export {
 	GrannyKnot,
 	HeartCurve,

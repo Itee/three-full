@@ -7,7 +7,6 @@ import { LinearInterpolant } from '../math/interpolants/LinearInterpolant.js'
 import { PropertyBinding } from './PropertyBinding.js'
 import { PropertyMixer } from './PropertyMixer.js'
 import { AnimationClip } from './AnimationClip.js'
-
 function AnimationMixer( root ) {
 
 	this._root = root;
@@ -172,12 +171,10 @@ AnimationMixer.prototype = Object.assign( Object.create( EventDispatcher.prototy
 		// 		knownActions: Array< AnimationAction >	- used as prototypes
 		// 		actionByRoot: AnimationAction			- lookup
 		// }
-
 		this._bindings = []; // 'nActiveBindings' followed by inactive ones
 		this._nActiveBindings = 0;
 
 		this._bindingsByRootAndName = {}; // inside: Map< name, PropertyMixer >
-
 		this._controlInterpolants = []; // same game as above
 		this._nActiveControlInterpolants = 0;
 
@@ -281,7 +278,6 @@ AnimationMixer.prototype = Object.assign( Object.create( EventDispatcher.prototy
 		actions.pop();
 
 		action._cacheIndex = null;
-
 		var clipUuid = action._clip.uuid,
 			actionsByClip = this._actionsByClip,
 			actionsForClip = actionsByClip[ clipUuid ],
@@ -297,7 +293,6 @@ AnimationMixer.prototype = Object.assign( Object.create( EventDispatcher.prototy
 		knownActionsForClip.pop();
 
 		action._byClipCacheIndex = null;
-
 		var actionByRoot = actionsForClip.actionByRoot,
 			rootUuid = ( action._localRoot || this._root ).uuid;
 
@@ -460,7 +455,6 @@ AnimationMixer.prototype = Object.assign( Object.create( EventDispatcher.prototy
 		bindings[ prevIndex ] = lastActiveBinding;
 
 	},
-
 	// Memory management of Interpolants for weight and time scale
 
 	_lendControlInterpolant: function () {
@@ -744,7 +738,5 @@ AnimationMixer.prototype = Object.assign( Object.create( EventDispatcher.prototy
 	}
 
 } );
-
-;
 
 export { AnimationMixer }

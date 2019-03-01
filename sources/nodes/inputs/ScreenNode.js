@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { InputNode } from '../core/InputNode.js'
 import { TextureNode } from './TextureNode.js'
-
 function ScreenNode( uv ) {
 
 	TextureNode.call( this, undefined, uv );
@@ -25,7 +24,5 @@ ScreenNode.prototype.getTexture = function ( builder, output ) {
 	return InputNode.prototype.generate.call( this, builder, output, this.getUuid(), 't', 'renderTexture' );
 
 };
-
-;
 
 export { ScreenNode }

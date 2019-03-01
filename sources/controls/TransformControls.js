@@ -23,7 +23,6 @@ import { Color } from '../math/Color.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { DoubleSide } from '../constants.js'
-
 var TransformControls = function ( camera, domElement ) {
 
 	Object3D.call( this );
@@ -533,7 +532,7 @@ var TransformControls = function ( camera, domElement ) {
 			x: ( pointer.clientX - rect.left ) / rect.width * 2 - 1,
 			y: - ( pointer.clientY - rect.top ) / rect.height * 2 + 1,
 			button: event.button
-		}
+		};
 
 	}
 
@@ -626,7 +625,7 @@ var TransformControls = function ( camera, domElement ) {
 
 		console.warn( 'TransformControls: update function has been depricated.' );
 
-	}
+	};
 
 };
 
@@ -637,7 +636,6 @@ TransformControls.prototype = Object.assign( Object.create( Object3D.prototype )
   isTransformControls: true
 
 } );
-
 var TransformControlsGizmo = function () {
 
 	'use strict';
@@ -1077,7 +1075,6 @@ var TransformControlsGizmo = function () {
 		this.helper[ "translate" ].visible = this.mode === "translate";
 		this.helper[ "rotate" ].visible = this.mode === "rotate";
 		this.helper[ "scale" ].visible = this.mode === "scale";
-
 		var handles = [];
 		handles = handles.concat( this.picker[ this.mode ].children );
 		handles = handles.concat( this.gizmo[ this.mode ].children );
@@ -1155,7 +1152,6 @@ var TransformControlsGizmo = function () {
 						handle.visible = false;
 
 					}
-
 				} else if ( handle.name === 'START' ) {
 
 					handle.position.copy( this.worldPositionStart );
@@ -1213,7 +1209,6 @@ var TransformControlsGizmo = function () {
 				var AXIS_HIDE_TRESHOLD = 0.99;
 				var PLANE_HIDE_TRESHOLD = 0.2;
 				var AXIS_FLIP_TRESHOLD = -0.4;
-
 				if ( handle.name === 'X' || handle.name === 'XYZX' ) {
 					if ( Math.abs( alignVector.copy( unitX ).applyQuaternion( quaternion ).dot( this.eye ) ) > AXIS_HIDE_TRESHOLD ) {
 						handle.scale.set( 1e-10, 1e-10, 1e-10 );
@@ -1383,7 +1378,6 @@ TransformControlsGizmo.prototype = Object.assign( Object.create( Object3D.protot
 	isTransformControlsGizmo: true
 
 } );
-
 var TransformControlsPlane = function () {
 
 	'use strict';

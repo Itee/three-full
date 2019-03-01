@@ -45,6 +45,7 @@ import {
 	DepthStencilFormat,
 	LuminanceAlphaFormat,
 	LuminanceFormat,
+	RedFormat,
 	RGBAFormat,
 	RGBFormat,
 	AlphaFormat,
@@ -70,7 +71,6 @@ import {
 	ClampToEdgeWrapping,
 	RepeatWrapping
 } from '../../constants.js'
-
 function WebGLUtils( gl, extensions, capabilities ) {
 
 	function convert( p ) {
@@ -118,6 +118,7 @@ function WebGLUtils( gl, extensions, capabilities ) {
 		if ( p === LuminanceAlphaFormat ) return gl.LUMINANCE_ALPHA;
 		if ( p === DepthFormat ) return gl.DEPTH_COMPONENT;
 		if ( p === DepthStencilFormat ) return gl.DEPTH_STENCIL;
+		if ( p === RedFormat ) return gl.RED;
 
 		if ( p === AddEquation ) return gl.FUNC_ADD;
 		if ( p === SubtractEquation ) return gl.FUNC_SUBTRACT;
@@ -229,7 +230,6 @@ function WebGLUtils( gl, extensions, capabilities ) {
 	return { convert: convert };
 
 }
-
 ;
 
 export { WebGLUtils }

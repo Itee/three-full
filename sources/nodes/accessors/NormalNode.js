@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from '../core/TempNode.js'
 import { NodeLib } from '../core/NodeLib.js'
-
 function NormalNode( scope ) {
 
 	TempNode.call( this, 'v3' );
@@ -109,7 +108,5 @@ NodeLib.addKeyword( 'viewNormal', function () {
 	return new NormalNode( NormalNode.VIEW );
 
 } );
-
-;
 
 export { NormalNode }

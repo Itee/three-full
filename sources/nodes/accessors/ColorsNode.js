@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from '../core/TempNode.js'
-
 var vertexDict = [ 'color', 'color2' ],
 	fragmentDict = [ 'vColor', 'vColor2' ];
 
@@ -50,7 +49,5 @@ ColorsNode.prototype.toJSON = function ( meta ) {
 	return data;
 
 };
-
-;
 
 export { ColorsNode }

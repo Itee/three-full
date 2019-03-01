@@ -12,8 +12,6 @@ import {
 	NormalBlending,
 	LessEqualDepth
 } from '../../constants.js'
-import { NodeLib } from '../core/NodeLib.js'
-
 function NodeMaterial( vertex, fragment ) {
 
 	ShaderMaterial.call( this );
@@ -188,7 +186,5 @@ NodeMaterial.prototype.toJSON = function ( meta ) {
 	return meta;
 
 };
-
-;
 
 export { NodeMaterial }

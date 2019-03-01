@@ -3,8 +3,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { CubeTexture } from '../../textures/CubeTexture.js'
 import { Texture } from '../../textures/Texture.js'
-
+import { DataTexture3D } from '../../textures/DataTexture3D.js'
 var emptyTexture = new Texture();
+var emptyTexture3d = new DataTexture3D();
 var emptyCubeTexture = new CubeTexture();
 
 // --- Base for inner nodes (including the root) ---
@@ -340,6 +341,22 @@ function setValueT1( gl, v, renderer ) {
 
 }
 
+function setValueT3D1( gl, v, renderer ) {
+
+	var cache = this.cache;
+	var unit = renderer.allocTextureUnit();
+
+	if ( cache[ 0 ] !== unit ) {
+
+		gl.uniform1i( this.addr, unit );
+		cache[ 0 ] = unit;
+
+	}
+
+	renderer.setTexture3D( v || emptyTexture3d, unit );
+
+}
+
 function setValueT6( gl, v, renderer ) {
 
 	var cache = this.cache;
@@ -410,6 +427,7 @@ function getSingularSetter( type ) {
 		case 0x8b5c: return setValue4fm; // _MAT4
 
 		case 0x8b5e: case 0x8d66: return setValueT1; // SAMPLER_2D, SAMPLER_EXTERNAL_OES
+		case 0x8B5F: return setValueT3D1; // SAMPLER_3D
 		case 0x8b60: return setValueT6; // SAMPLER_CUBE
 
 		case 0x1404: case 0x8b56: return setValue1i; // INT, BOOL
@@ -769,7 +787,6 @@ WebGLUniforms.prototype.setOptional = function ( gl, object, name ) {
 	if ( v !== undefined ) this.setValue( gl, name, v );
 
 };
-
 // Static interface
 
 WebGLUniforms.upload = function ( gl, seq, values, renderer ) {
@@ -804,7 +821,5 @@ WebGLUniforms.seqWithValue = function ( seq, values ) {
 	return r;
 
 };
-
-;
 
 export { WebGLUniforms }

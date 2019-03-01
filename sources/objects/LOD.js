@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from '../math/Vector3.js'
 import { Object3D } from '../core/Object3D.js'
-
 function LOD() {
 
 	Object3D.call( this );
@@ -168,7 +167,5 @@ LOD.prototype = Object.assign( Object.create( Object3D.prototype ), {
 	}
 
 } );
-
-;
 
 export { LOD }

@@ -11,7 +11,6 @@ import {
 	BackSide,
 	NoBlending
 } from '../constants.js'
-
 var EquirectangularToCubeGenerator = function ( sourceTexture, options ) {
 
 	this.sourceTexture = sourceTexture;

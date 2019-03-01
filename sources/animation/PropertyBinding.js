@@ -1,7 +1,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 // Characters [].:/ are reserved for track binding syntax.
 var RESERVED_CHARS_RE = '\\[\\]\\.:\\/';
 
@@ -68,7 +67,6 @@ Object.assign( Composite.prototype, {
 	}
 
 } );
-
 function PropertyBinding( rootNode, path, parsedPath ) {
 
 	this.path = path;
@@ -97,7 +95,6 @@ Object.assign( PropertyBinding, {
 		}
 
 	},
-	
 	sanitizeNodeName: ( function () {
 
 		var reservedRe = new RegExp( '[' + RESERVED_CHARS_RE + ']', 'g' );
@@ -547,7 +544,6 @@ Object.assign( PropertyBinding.prototype, { // prototype, continued
 					targetObject = targetObject[ objectName ];
 
 			}
-
 			if ( objectIndex !== undefined ) {
 
 				if ( targetObject[ objectIndex ] === undefined ) {
@@ -629,7 +625,6 @@ Object.assign( PropertyBinding.prototype, { // prototype, continued
 						}
 
 					}
-
 				} else {
 
 					if ( ! targetObject.geometry.morphTargets ) {
@@ -706,7 +701,5 @@ Object.assign( PropertyBinding.prototype, {
 	_setValue_unbound: PropertyBinding.prototype.setValue,
 
 } );
-
-;
 
 export { PropertyBinding }

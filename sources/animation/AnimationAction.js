@@ -9,7 +9,6 @@ import {
 	LoopOnce,
 	LoopRepeat
 } from '../constants.js'
-
 function AnimationAction( mixer, clip, localRoot ) {
 
 	this._mixer = mixer;
@@ -666,7 +665,5 @@ Object.assign( AnimationAction.prototype, {
 	}
 
 } );
-
-;
 
 export { AnimationAction }

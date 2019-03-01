@@ -19,7 +19,6 @@ import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 import { ShaderChunk } from '../renderers/shaders/ShaderChunk.js'
 import { _Math } from '../math/Math.js'
-
 var Water = function ( geometry, options ) {
 
 	Mesh.call( this, geometry );

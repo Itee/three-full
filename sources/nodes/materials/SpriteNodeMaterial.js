@@ -4,7 +4,6 @@
 import { SpriteNode } from './nodes/SpriteNode.js'
 import { NodeMaterial } from './NodeMaterial.js'
 import { NodeUtils } from '../core/NodeUtils.js'
-
 function SpriteNodeMaterial() {
 
 	var node = new SpriteNode();
@@ -24,7 +23,5 @@ NodeUtils.addShortcuts( SpriteNodeMaterial.prototype, 'fragment', [
 	'position',
 	'spherical'
 ] );
-
-;
 
 export { SpriteNodeMaterial }
