@@ -47,6 +47,7 @@ var SAOPass = function ( scene, camera, depthTexture, useNormals, resolution ) {
 	this.supportsDepthTextureExtension = ( depthTexture !== undefined ) ? depthTexture : false;
 	this.supportsNormalTexture = ( useNormals !== undefined ) ? useNormals : false;
 
+	this.originalClearColor = new Color();
 	this.oldClearColor = new Color();
 	this.oldClearAlpha = 1;
 
@@ -343,7 +344,7 @@ SAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 	renderPass: function ( renderer, passMaterial, renderTarget, clearColor, clearAlpha ) {
 
 		// save original state
-		var originalClearColor = renderer.getClearColor();
+		this.originalClearColor.copy( renderer.getClearColor() );
 		var originalClearAlpha = renderer.getClearAlpha();
 		var originalAutoClear = renderer.autoClear;
 
@@ -362,14 +363,14 @@ SAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		// restore original state
 		renderer.autoClear = originalAutoClear;
-		renderer.setClearColor( originalClearColor );
+		renderer.setClearColor( this.originalClearColor );
 		renderer.setClearAlpha( originalClearAlpha );
 
 	},
 
 	renderOverride: function ( renderer, overrideMaterial, renderTarget, clearColor, clearAlpha ) {
 
-		var originalClearColor = renderer.getClearColor();
+		this.originalClearColor.copy( renderer.getClearColor() );
 		var originalClearAlpha = renderer.getClearAlpha();
 		var originalAutoClear = renderer.autoClear;
 
@@ -391,7 +392,7 @@ SAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		// restore original state
 		renderer.autoClear = originalAutoClear;
-		renderer.setClearColor( originalClearColor );
+		renderer.setClearColor( this.originalClearColor );
 		renderer.setClearAlpha( originalClearAlpha );
 
 	},

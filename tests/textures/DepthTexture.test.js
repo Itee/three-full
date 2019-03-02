@@ -85,6 +85,7 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	var UVMapping = 300;
 	var RepeatWrapping = 1000;
 	var ClampToEdgeWrapping = 1001;
@@ -3391,6 +3392,8 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var _canvas;
+
 	var ImageUtils = {
 
 		getDataURL: function ( image ) {
@@ -3407,11 +3410,12 @@ var Three = (function (exports) {
 
 			} else {
 
-				canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
-				canvas.width = image.width;
-				canvas.height = image.height;
+				if ( _canvas === undefined ) _canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
 
-				var context = canvas.getContext( '2d' );
+				_canvas.width = image.width;
+				_canvas.height = image.height;
+
+				var context = _canvas.getContext( '2d' );
 
 				if ( image instanceof ImageData ) {
 
@@ -3422,6 +3426,8 @@ var Three = (function (exports) {
 					context.drawImage( image, 0, 0, image.width, image.height );
 
 				}
+
+				canvas = _canvas;
 
 			}
 

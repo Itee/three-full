@@ -4,6 +4,8 @@
 import { Interpolant } from '../math/Interpolant.js'
 import { FileLoader } from './FileLoader.js'
 import { SkinnedMesh } from '../objects/SkinnedMesh.js'
+import { Skeleton } from '../objects/Skeleton.js'
+import { Bone } from '../objects/Bone.js'
 import { Vector3 } from '../math/Vector3.js'
 import {
 	Float32BufferAttribute,
@@ -58,13 +60,48 @@ var MMDLoader = ( function () {
 			return this;
 
 		},
+		setAnimationPath: function ( animationPath ) {
+
+			this.animationPath = animationPath;
+			return this;
+
+		},
+		setPath: function ( path ) {
+
+			this.path = path;
+			return this;
+
+		},
+		setResoucePath: function ( resourcePath ) {
+
+			this.resourcePath = resourcePath;
+			return this;
+
+		},
 
 		// Load MMD assets as Three.js Object
 		load: function ( url, onLoad, onProgress, onError ) {
 
 			var builder = this.meshBuilder.setCrossOrigin( this.crossOrigin );
 
-			var texturePath = LoaderUtils.extractUrlBase( url );
+			// resource path
+
+			var resourcePath;
+
+			if ( this.resourcePath !== undefined ) {
+
+				resourcePath = this.resourcePath;
+
+			} else if ( this.path !== undefined ) {
+
+				resourcePath = this.path;
+
+			} else {
+
+				resourcePath = LoaderUtils.extractUrlBase( url );
+
+			}
+
 			var modelExtension = this._extractExtension( url ).toLowerCase();
 
 			// Should I detect by seeing header?
@@ -78,7 +115,7 @@ var MMDLoader = ( function () {
 
 			this[ modelExtension === 'pmd' ? 'loadPMD' : 'loadPMX' ]( url, function ( data ) {
 
-				onLoad(	builder.build( data, texturePath, onProgress, onError )	);
+				onLoad(	builder.build( data, resourcePath, onProgress, onError )	);
 
 			}, onProgress, onError );
 
@@ -122,6 +159,7 @@ var MMDLoader = ( function () {
 
 			this.loader
 				.setMimeType( undefined )
+				.setPath( this.path )
 				.setResponseType( 'arraybuffer' )
 				.load( url, function ( buffer ) {
 
@@ -136,6 +174,7 @@ var MMDLoader = ( function () {
 
 			this.loader
 				.setMimeType( undefined )
+				.setPath( this.path )
 				.setResponseType( 'arraybuffer' )
 				.load( url, function ( buffer ) {
 
@@ -155,6 +194,7 @@ var MMDLoader = ( function () {
 
 			this.loader
 				.setMimeType( undefined )
+				.setPath( this.animationPath )
 				.setResponseType( 'arraybuffer' );
 
 			for ( var i = 0, il = urls.length; i < il; i ++ ) {
@@ -176,6 +216,7 @@ var MMDLoader = ( function () {
 
 			this.loader
 				.setMimeType( isUnicode ? undefined : 'text/plain; charset=shift_jis' )
+				.setPath( this.animationPath )
 				.setResponseType( 'text' )
 				.load( url, function ( text ) {
 
@@ -248,15 +289,18 @@ var MMDLoader = ( function () {
 			return this;
 
 		},
-		build: function ( data, texturePath, onProgress, onError ) {
+		build: function ( data, resourcePath, onProgress, onError ) {
 
 			var geometry = this.geometryBuilder.build( data );
 			var material = this.materialBuilder
 				.setCrossOrigin( this.crossOrigin )
-				.setTexturePath( texturePath )
+				.setResourcePath( resourcePath )
 				.build( data, geometry, onProgress, onError );
 
 			var mesh = new SkinnedMesh( geometry, material );
+
+			var skeleton = new Skeleton( initBones( mesh ) );
+			mesh.bind( skeleton );
 
 			// console.log( mesh ); // for console debug
 
@@ -265,6 +309,70 @@ var MMDLoader = ( function () {
 		}
 
 	};
+
+	// TODO: Try to remove this function
+
+	function initBones( mesh ) {
+
+		var geometry = mesh.geometry;
+
+		var bones = [], bone, gbone;
+		var i, il;
+
+		if ( geometry && geometry.bones !== undefined ) {
+
+			// first, create array of 'Bone' objects from geometry data
+
+			for ( i = 0, il = geometry.bones.length; i < il; i ++ ) {
+
+				gbone = geometry.bones[ i ];
+
+				// create new 'Bone' object
+
+				bone = new Bone();
+				bones.push( bone );
+
+				// apply values
+
+				bone.name = gbone.name;
+				bone.position.fromArray( gbone.pos );
+				bone.quaternion.fromArray( gbone.rotq );
+				if ( gbone.scl !== undefined ) bone.scale.fromArray( gbone.scl );
+
+			}
+
+			// second, create bone hierarchy
+
+			for ( i = 0, il = geometry.bones.length; i < il; i ++ ) {
+
+				gbone = geometry.bones[ i ];
+
+				if ( ( gbone.parent !== - 1 ) && ( gbone.parent !== null ) && ( bones[ gbone.parent ] !== undefined ) ) {
+
+					// subsequent bones in the hierarchy
+
+					bones[ gbone.parent ].add( bones[ i ] );
+
+				} else {
+
+					// topmost bone, immediate child of the skinned mesh
+
+					mesh.add( bones[ i ] );
+
+				}
+
+			}
+
+		}
+
+		// now the bones are part of the scene graph and children of the skinned mesh.
+		// let's update the corresponding matrices
+
+		mesh.updateMatrixWorld( true );
+
+		return bones;
+
+	}
 
 	//
 
@@ -762,16 +870,16 @@ var MMDLoader = ( function () {
 
 		crossOrigin: 'anonymous',
 
-		texturePath: undefined,
+		resourcePath: undefined,
 		setCrossOrigin: function ( crossOrigin ) {
 
 			this.crossOrigin = crossOrigin;
 			return this;
 
 		},
-		setTexturePath: function ( texturePath ) {
+		setResourcePath: function ( resourcePath ) {
 
-			this.texturePath = texturePath;
+			this.resourcePath = resourcePath;
 			return this;
 
 		},
@@ -1070,7 +1178,7 @@ var MMDLoader = ( function () {
 
 			} else {
 
-				fullPath = this.texturePath + filePath;
+				fullPath = this.resourcePath + filePath;
 
 			}
 

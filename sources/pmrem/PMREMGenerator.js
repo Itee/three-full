@@ -1,13 +1,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { WebGLRenderTargetCube } from '../renderers/WebGLRenderTargetCube.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
+import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
-import { Scene } from '../scenes/Scene.js'
+import { WebGLRenderTargetCube } from '../renderers/WebGLRenderTargetCube.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { Vector3 } from '../math/Vector3.js'
 import {
 	DoubleSide,
 	NoBlending,
@@ -18,118 +17,135 @@ import {
 	sRGBEncoding,
 	GammaEncoding
 } from '../constants.js'
-var PMREMGenerator = function ( sourceTexture, samplesPerLevel, resolution ) {
+var PMREMGenerator = ( function () {
 
-	this.sourceTexture = sourceTexture;
-	this.resolution = ( resolution !== undefined ) ? resolution : 256; // NODE: 256 is currently hard coded in the glsl code for performance reasons
-	this.samplesPerLevel = ( samplesPerLevel !== undefined ) ? samplesPerLevel : 16;
+	var shader = getShader();
+	var camera = new OrthographicCamera( - 1, 1, 1, - 1, 0.0, 1000 );
+	var scene = new Scene();
+	var planeMesh = new Mesh( new PlaneBufferGeometry( 2, 2, 0 ), shader );
+	planeMesh.material.side = DoubleSide;
+	scene.add( planeMesh );
+	scene.add( camera );
 
-	var monotonicEncoding = ( sourceTexture.encoding === LinearEncoding ) ||
-		( sourceTexture.encoding === GammaEncoding ) || ( sourceTexture.encoding === sRGBEncoding );
+	var PMREMGenerator = function ( sourceTexture, samplesPerLevel, resolution ) {
 
-	this.sourceTexture.minFilter = ( monotonicEncoding ) ? LinearFilter : NearestFilter;
-	this.sourceTexture.magFilter = ( monotonicEncoding ) ? LinearFilter : NearestFilter;
-	this.sourceTexture.generateMipmaps = this.sourceTexture.generateMipmaps && monotonicEncoding;
+		this.sourceTexture = sourceTexture;
+		this.resolution = ( resolution !== undefined ) ? resolution : 256; // NODE: 256 is currently hard coded in the glsl code for performance reasons
+		this.samplesPerLevel = ( samplesPerLevel !== undefined ) ? samplesPerLevel : 32;
 
-	this.cubeLods = [];
+		var monotonicEncoding = ( this.sourceTexture.encoding === LinearEncoding ) ||
+			( this.sourceTexture.encoding === GammaEncoding ) || ( this.sourceTexture.encoding === sRGBEncoding );
 
-	var size = this.resolution;
-	var params = {
-		format: this.sourceTexture.format,
-		magFilter: this.sourceTexture.magFilter,
-		minFilter: this.sourceTexture.minFilter,
-		type: this.sourceTexture.type,
-		generateMipmaps: this.sourceTexture.generateMipmaps,
-		anisotropy: this.sourceTexture.anisotropy,
-		encoding: this.sourceTexture.encoding
-	 };
+		this.sourceTexture.minFilter = ( monotonicEncoding ) ? LinearFilter : NearestFilter;
+		this.sourceTexture.magFilter = ( monotonicEncoding ) ? LinearFilter : NearestFilter;
+		this.sourceTexture.generateMipmaps = this.sourceTexture.generateMipmaps && monotonicEncoding;
 
-	// how many LODs fit in the given CubeUV Texture.
-	this.numLods = Math.log( size ) / Math.log( 2 ) - 2; // IE11 doesn't support Math.log2
+		this.cubeLods = [];
 
-	for ( var i = 0; i < this.numLods; i ++ ) {
+		var size = this.resolution;
+		var params = {
+			format: this.sourceTexture.format,
+			magFilter: this.sourceTexture.magFilter,
+			minFilter: this.sourceTexture.minFilter,
+			type: this.sourceTexture.type,
+			generateMipmaps: this.sourceTexture.generateMipmaps,
+			anisotropy: this.sourceTexture.anisotropy,
+			encoding: this.sourceTexture.encoding
+		};
 
-		var renderTarget = new WebGLRenderTargetCube( size, size, params );
-		renderTarget.texture.name = "PMREMGenerator.cube" + i;
-		this.cubeLods.push( renderTarget );
-		size = Math.max( 16, size / 2 );
-
-	}
-
-	this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0.0, 1000 );
-
-	this.shader = this.getShader();
-	this.shader.defines[ 'SAMPLES_PER_LEVEL' ] = this.samplesPerLevel;
-	this.planeMesh = new Mesh( new PlaneBufferGeometry( 2, 2, 0 ), this.shader );
-	this.planeMesh.material.side = DoubleSide;
-	this.scene = new Scene();
-	this.scene.add( this.planeMesh );
-	this.scene.add( this.camera );
-
-	this.shader.uniforms[ 'envMap' ].value = this.sourceTexture;
-	this.shader.envMap = this.sourceTexture;
-
-};
-
-PMREMGenerator.prototype = {
-
-	constructor: PMREMGenerator,
-	update: function ( renderer ) {
-
-		this.shader.uniforms[ 'envMap' ].value = this.sourceTexture;
-		this.shader.envMap = this.sourceTexture;
-
-		var gammaInput = renderer.gammaInput;
-		var gammaOutput = renderer.gammaOutput;
-		var toneMapping = renderer.toneMapping;
-		var toneMappingExposure = renderer.toneMappingExposure;
-		var currentRenderTarget = renderer.getRenderTarget();
-
-		renderer.toneMapping = LinearToneMapping;
-		renderer.toneMappingExposure = 1.0;
-		renderer.gammaInput = false;
-		renderer.gammaOutput = false;
+		// how many LODs fit in the given CubeUV Texture.
+		this.numLods = Math.log( size ) / Math.log( 2 ) - 2; // IE11 doesn't support Math.log2
 
 		for ( var i = 0; i < this.numLods; i ++ ) {
 
-			var r = i / ( this.numLods - 1 );
-			this.shader.uniforms[ 'roughness' ].value = r * 0.9; // see comment above, pragmatic choice
-			this.shader.uniforms[ 'queryScale' ].value.x = ( i == 0 ) ? - 1 : 1;
-			var size = this.cubeLods[ i ].width;
-			this.shader.uniforms[ 'mapSize' ].value = size;
-			this.renderToCubeMapTarget( renderer, this.cubeLods[ i ] );
-
-			if ( i < 5 ) this.shader.uniforms[ 'envMap' ].value = this.cubeLods[ i ].texture;
+			var renderTarget = new WebGLRenderTargetCube( size, size, params );
+			renderTarget.texture.name = "PMREMGenerator.cube" + i;
+			this.cubeLods.push( renderTarget );
+			size = Math.max( 16, size / 2 );
 
 		}
 
-		renderer.setRenderTarget( currentRenderTarget );
-		renderer.toneMapping = toneMapping;
-		renderer.toneMappingExposure = toneMappingExposure;
-		renderer.gammaInput = gammaInput;
-		renderer.gammaOutput = gammaOutput;
+	};
 
-	},
+	PMREMGenerator.prototype = {
 
-	renderToCubeMapTarget: function ( renderer, renderTarget ) {
+		constructor: PMREMGenerator,
+		update: function ( renderer ) {
 
-		for ( var i = 0; i < 6; i ++ ) {
+			// Texture should only be flipped for CubeTexture, not for
+			// a Texture created via WebGLRenderTargetCube.
+			var tFlip = ( this.sourceTexture.isCubeTexture ) ? - 1 : 1;
 
-			this.renderToCubeMapTargetFace( renderer, renderTarget, i );
+			shader.defines[ 'SAMPLES_PER_LEVEL' ] = this.samplesPerLevel;
+			shader.uniforms[ 'faceIndex' ].value = 0;
+			shader.uniforms[ 'envMap' ].value = this.sourceTexture;
+			shader.envMap = this.sourceTexture;
+			shader.needsUpdate = true;
 
-		}
+			var gammaInput = renderer.gammaInput;
+			var gammaOutput = renderer.gammaOutput;
+			var toneMapping = renderer.toneMapping;
+			var toneMappingExposure = renderer.toneMappingExposure;
+			var currentRenderTarget = renderer.getRenderTarget();
 
-	},
+			renderer.toneMapping = LinearToneMapping;
+			renderer.toneMappingExposure = 1.0;
+			renderer.gammaInput = false;
+			renderer.gammaOutput = false;
 
-	renderToCubeMapTargetFace: function ( renderer, renderTarget, faceIndex ) {
+			for ( var i = 0; i < this.numLods; i ++ ) {
 
-		renderTarget.activeCubeFace = faceIndex;
-		this.shader.uniforms[ 'faceIndex' ].value = faceIndex;
-		renderer.render( this.scene, this.camera, renderTarget, true );
+				var r = i / ( this.numLods - 1 );
+				shader.uniforms[ 'roughness' ].value = r * 0.9; // see comment above, pragmatic choice
+				// Only apply the tFlip for the first LOD
+				shader.uniforms[ 'tFlip' ].value = ( i == 0 ) ? tFlip : 1;
+				var size = this.cubeLods[ i ].width;
+				shader.uniforms[ 'mapSize' ].value = size;
+				this.renderToCubeMapTarget( renderer, this.cubeLods[ i ] );
 
-	},
+				if ( i < 5 ) shader.uniforms[ 'envMap' ].value = this.cubeLods[ i ].texture;
 
-	getShader: function () {
+			}
+
+			renderer.setRenderTarget( currentRenderTarget );
+			renderer.toneMapping = toneMapping;
+			renderer.toneMappingExposure = toneMappingExposure;
+			renderer.gammaInput = gammaInput;
+			renderer.gammaOutput = gammaOutput;
+
+		},
+
+		renderToCubeMapTarget: function ( renderer, renderTarget ) {
+
+			for ( var i = 0; i < 6; i ++ ) {
+
+				this.renderToCubeMapTargetFace( renderer, renderTarget, i );
+
+			}
+
+		},
+
+		renderToCubeMapTargetFace: function ( renderer, renderTarget, faceIndex ) {
+
+			renderTarget.activeCubeFace = faceIndex;
+			shader.uniforms[ 'faceIndex' ].value = faceIndex;
+			renderer.render( scene, camera, renderTarget, true );
+
+		},
+
+		dispose: function () {
+
+			for ( var i = 0, l = this.cubeLods.length; i < l; i ++ ) {
+
+				this.cubeLods[ i ].dispose();
+
+			}
+
+		},
+
+	};
+
+	function getShader() {
 
 		var shaderMaterial = new ShaderMaterial( {
 
@@ -142,8 +158,7 @@ PMREMGenerator.prototype = {
 				"roughness": { value: 0.5 },
 				"mapSize": { value: 0.5 },
 				"envMap": { value: null },
-				"queryScale": { value: new Vector3( 1, 1, 1 ) },
-				"testColor": { value: new Vector3( 1, 1, 1 ) },
+				"tFlip": { value: - 1 },
 			},
 
 			vertexShader:
@@ -160,8 +175,7 @@ PMREMGenerator.prototype = {
 				uniform float roughness;\n\
 				uniform samplerCube envMap;\n\
 				uniform float mapSize;\n\
-				uniform vec3 testColor;\n\
-				uniform vec3 queryScale;\n\
+				uniform float tFlip;\n\
 				\n\
 				float GGXRoughnessToBlinnExponent( const in float ggxRoughness ) {\n\
 					float a = ggxRoughness + 0.0001;\n\
@@ -232,7 +246,8 @@ PMREMGenerator.prototype = {
 					} else {\n\
 						sampleDirection = vec3(-uv.x, -uv.y, -1.0);\n\
 					}\n\
-					mat3 vecSpace = matrixFromVector(normalize(sampleDirection * queryScale));\n\
+					vec3 correctedDirection = vec3( tFlip * sampleDirection.x, sampleDirection.yz );\n\
+					mat3 vecSpace = matrixFromVector( normalize( correctedDirection ) );\n\
 					vec3 rgbColor = vec3(0.0);\n\
 					const int NumSamples = SAMPLES_PER_LEVEL;\n\
 					vec3 vect;\n\
@@ -244,7 +259,7 @@ PMREMGenerator.prototype = {
 						vect = ImportanceSampleGGX(vec2(float(i) / float(NumSamples), r), vecSpace, roughness);\n\
 						float dotProd = dot(vect, normalize(sampleDirection));\n\
 						weight += dotProd;\n\
-						vec3 color = envMapTexelToLinear(textureCube(envMap,vect)).rgb;\n\
+						vec3 color = envMapTexelToLinear(textureCube(envMap, vect)).rgb;\n\
 						rgbColor.rgb += color;\n\
 					}\n\
 					rgbColor /= float(NumSamples);\n\
@@ -260,21 +275,10 @@ PMREMGenerator.prototype = {
 
 		return shaderMaterial;
 
-	},
-
-	dispose: function () {
-
-		for ( var i = 0, l = this.cubeLods.length; i < l; i ++ ) {
-
-			this.cubeLods[ i ].dispose();
-
-		}
-
-		this.planeMesh.geometry.dispose();
-		this.planeMesh.material.dispose();
-
 	}
 
-};
+	return PMREMGenerator;
+
+} )();
 
 export { PMREMGenerator }

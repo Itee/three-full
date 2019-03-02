@@ -34,8 +34,7 @@ var Three = (function (exports) {
 
 			var bindings = this._bindings;
 
-			for ( var i = this._targetGroup.nCachedObjects_,
-					  n = bindings.length; i !== n; ++ i ) {
+			for ( var i = this._targetGroup.nCachedObjects_, n = bindings.length; i !== n; ++ i ) {
 
 				bindings[ i ].setValue( array, offset );
 
@@ -47,8 +46,7 @@ var Three = (function (exports) {
 
 			var bindings = this._bindings;
 
-			for ( var i = this._targetGroup.nCachedObjects_,
-					  n = bindings.length; i !== n; ++ i ) {
+			for ( var i = this._targetGroup.nCachedObjects_, n = bindings.length; i !== n; ++ i ) {
 
 				bindings[ i ].bind();
 
@@ -60,8 +58,7 @@ var Three = (function (exports) {
 
 			var bindings = this._bindings;
 
-			for ( var i = this._targetGroup.nCachedObjects_,
-					  n = bindings.length; i !== n; ++ i ) {
+			for ( var i = this._targetGroup.nCachedObjects_, n = bindings.length; i !== n; ++ i ) {
 
 				bindings[ i ].unbind();
 

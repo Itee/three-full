@@ -10,11 +10,11 @@ function AnimationObjectGroup() {
 	// cached objects followed by the active ones
 	this._objects = Array.prototype.slice.call( arguments );
 
-	this.nCachedObjects_ = 0;			// threshold
+	this.nCachedObjects_ = 0; // threshold
 	// note: read by PropertyBinding.Composite
 
 	var indices = {};
-	this._indicesByUUID = indices;		// for bookkeeping
+	this._indicesByUUID = indices; // for bookkeeping
 
 	for ( var i = 0, n = arguments.length; i !== n; ++ i ) {
 
@@ -22,10 +22,10 @@ function AnimationObjectGroup() {
 
 	}
 
-	this._paths = [];					// inside: string
-	this._parsedPaths = [];				// inside: { we don't care, here }
-	this._bindings = []; 				// inside: Array< PropertyBinding >
-	this._bindingsIndicesByPath = {}; 	// inside: indices in these arrays
+	this._paths = []; // inside: string
+	this._parsedPaths = []; // inside: { we don't care, here }
+	this._bindings = []; // inside: Array< PropertyBinding >
+	this._bindingsIndicesByPath = {}; // inside: indices in these arrays
 
 	var scope = this;
 
@@ -133,7 +133,7 @@ Object.assign( AnimationObjectGroup.prototype, {
 			} else if ( objects[ index ] !== knownObject ) {
 
 				console.error( 'AnimationObjectGroup: Different objects with the same UUID ' +
-						'detected. Clean the caches or recreate your infrastructure when reloading scenes.' );
+					'detected. Clean the caches or recreate your infrastructure when reloading scenes.' );
 
 			} // else the object is already where we want it to be
 

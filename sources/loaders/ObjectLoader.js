@@ -54,8 +54,8 @@ import { AnimationClip } from '../animation/AnimationClip.js'
 import { MaterialLoader } from './MaterialLoader.js'
 import { LoaderUtils } from './LoaderUtils.js'
 import { BufferGeometryLoader } from './BufferGeometryLoader.js'
-import { JSONLoader } from './JSONLoader.js'
 import { FileLoader } from './FileLoader.js'
+import { LegacyJSONLoader } from './deprecated/LegacyJSONLoader.js'
 import { WireframeGeometry } from '../geometries/WireframeGeometry.js'
 import {
 	TetrahedronGeometry,
@@ -188,7 +188,7 @@ Object.assign( ObjectLoader.prototype, {
 		var scope = this;
 
 		var path = ( this.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : this.path;
-		this.resourcePath = this.resourcePath || path;
+		this.resourcePath = this.resourcePath || path;
 
 		var loader = new FileLoader( scope.manager );
 		loader.setPath( this.path );
@@ -214,7 +214,7 @@ Object.assign( ObjectLoader.prototype, {
 
 			if ( metadata === undefined || metadata.type === undefined || metadata.type.toLowerCase() === 'geometry' ) {
 
-				console.error( 'ObjectLoader: Can\'t load ' + url + '. Use JSONLoader instead.' );
+				console.error( 'ObjectLoader: Can\'t load ' + url );
 				return;
 
 			}
@@ -304,7 +304,6 @@ Object.assign( ObjectLoader.prototype, {
 
 		if ( json !== undefined ) {
 
-			var geometryLoader = new JSONLoader();
 			var bufferGeometryLoader = new BufferGeometryLoader();
 
 			for ( var i = 0, l = json.length; i < l; i ++ ) {
@@ -535,7 +534,15 @@ Object.assign( ObjectLoader.prototype, {
 
 					case 'Geometry':
 
-						geometry = geometryLoader.parse( data, this.resourcePath ).geometry;
+						if ( 'THREE' in window && 'LegacyJSONLoader' in THREE ) {
+
+							var geometryLoader = new LegacyJSONLoader();
+							geometry = geometryLoader.parse( data, this.resourcePath ).geometry;
+						} else {
+
+							console.error( 'ObjectLoader: You have to import LegacyJSONLoader in order load geometry data of type "Geometry".' );
+
+						}
 
 						break;
 

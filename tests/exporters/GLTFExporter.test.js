@@ -8477,8 +8477,7 @@ var Three = (function (exports) {
 
 			var bindings = this._bindings;
 
-			for ( var i = this._targetGroup.nCachedObjects_,
-					  n = bindings.length; i !== n; ++ i ) {
+			for ( var i = this._targetGroup.nCachedObjects_, n = bindings.length; i !== n; ++ i ) {
 
 				bindings[ i ].setValue( array, offset );
 
@@ -8490,8 +8489,7 @@ var Three = (function (exports) {
 
 			var bindings = this._bindings;
 
-			for ( var i = this._targetGroup.nCachedObjects_,
-					  n = bindings.length; i !== n; ++ i ) {
+			for ( var i = this._targetGroup.nCachedObjects_, n = bindings.length; i !== n; ++ i ) {
 
 				bindings[ i ].bind();
 
@@ -8503,8 +8501,7 @@ var Three = (function (exports) {
 
 			var bindings = this._bindings;
 
-			for ( var i = this._targetGroup.nCachedObjects_,
-					  n = bindings.length; i !== n; ++ i ) {
+			for ( var i = this._targetGroup.nCachedObjects_, n = bindings.length; i !== n; ++ i ) {
 
 				bindings[ i ].unbind();
 
@@ -10634,6 +10631,12 @@ var Three = (function (exports) {
 				if ( scene.name !== '' ) {
 
 					gltfScene.name = scene.name;
+
+				}
+
+				if ( scene.userData && Object.keys( scene.userData ).length > 0 ) {
+
+					gltfScene.extras = serializeUserData( scene );
 
 				}
 

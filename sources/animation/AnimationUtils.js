@@ -22,7 +22,7 @@ var AnimationUtils = {
 	convertArray: function ( array, type, forceClone ) {
 
 		if ( ! array || // let 'undefined' and 'null' pass
-				! forceClone && array.constructor === type ) return array;
+			! forceClone && array.constructor === type ) return array;
 
 		if ( typeof type.BYTES_PER_ELEMENT === 'number' ) {
 
@@ -37,7 +37,7 @@ var AnimationUtils = {
 	isTypedArray: function ( object ) {
 
 		return ArrayBuffer.isView( object ) &&
-				! ( object instanceof DataView );
+			! ( object instanceof DataView );
 
 	},
 

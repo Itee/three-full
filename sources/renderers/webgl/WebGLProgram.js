@@ -18,6 +18,7 @@ import {
 	CubeReflectionMapping,
 	PCFSoftShadowMap,
 	PCFShadowMap,
+	ACESFilmicToneMapping,
 	CineonToneMapping,
 	Uncharted2ToneMapping,
 	ReinhardToneMapping,
@@ -91,6 +92,10 @@ function getToneMappingFunction( functionName, toneMapping ) {
 
 		case CineonToneMapping:
 			toneMappingName = 'OptimizedCineon';
+			break;
+
+		case ACESFilmicToneMapping:
+			toneMappingName = 'ACESFilmic';
 			break;
 
 		default:
@@ -470,6 +475,7 @@ function WebGLProgram( renderer, extensions, code, material, shader, parameters,
 			( parameters.useFog && parameters.fogExp ) ? '#define FOG_EXP2' : '',
 
 			parameters.map ? '#define USE_MAP' : '',
+			parameters.matcap ? '#define USE_MATCAP' : '',
 			parameters.envMap ? '#define USE_ENVMAP' : '',
 			parameters.envMap ? '#define ' + envMapTypeDefine : '',
 			parameters.envMap ? '#define ' + envMapModeDefine : '',

@@ -463,6 +463,7 @@ var Three = (function (exports) {
 	var OneMinusSrcAlphaFactor = 205;
 	var LessEqualDepth = 3;
 	var MultiplyOperation = 0;
+
 	var UVMapping = 300;
 	var EquirectangularReflectionMapping = 303;
 	var RepeatWrapping = 1000;
@@ -3956,6 +3957,8 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var _canvas;
+
 	var ImageUtils = {
 
 		getDataURL: function ( image ) {
@@ -3972,11 +3975,12 @@ var Three = (function (exports) {
 
 			} else {
 
-				canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
-				canvas.width = image.width;
-				canvas.height = image.height;
+				if ( _canvas === undefined ) _canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
 
-				var context = canvas.getContext( '2d' );
+				_canvas.width = image.width;
+				_canvas.height = image.height;
+
+				var context = _canvas.getContext( '2d' );
 
 				if ( image instanceof ImageData ) {
 
@@ -3987,6 +3991,8 @@ var Three = (function (exports) {
 					context.drawImage( image, 0, 0, image.width, image.height );
 
 				}
+
+				canvas = _canvas;
 
 			}
 
@@ -4330,7 +4336,7 @@ var Three = (function (exports) {
 				texture.image = image;
 
 				// JPEGs can't have an alpha channel, so memory can be saved by storing them as RGB.
-				var isJPEG = url.search( /\.jpe?g$/i ) > 0 || url.search( /^data\:image\/jpeg/ ) === 0;
+				var isJPEG = url.search( /\.jpe?g($|\?)/i ) > 0 || url.search( /^data\:image\/jpeg/ ) === 0;
 
 				texture.format = isJPEG ? RGBFormat : RGBAFormat;
 				texture.needsUpdate = true;
@@ -12680,175 +12686,13 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function Skeleton( bones, boneInverses ) {
-
-		// copy the bone array
-
-		bones = bones || [];
-
-		this.bones = bones.slice( 0 );
-		this.boneMatrices = new Float32Array( this.bones.length * 16 );
-
-		// use the supplied bone inverses or calculate the inverses
-
-		if ( boneInverses === undefined ) {
-
-			this.calculateInverses();
-
-		} else {
-
-			if ( this.bones.length === boneInverses.length ) {
-
-				this.boneInverses = boneInverses.slice( 0 );
-
-			} else {
-
-				console.warn( 'Skeleton boneInverses is the wrong length.' );
-
-				this.boneInverses = [];
-
-				for ( var i = 0, il = this.bones.length; i < il; i ++ ) {
-
-					this.boneInverses.push( new Matrix4() );
-
-				}
-
-			}
-
-		}
-
-	}
-
-	Object.assign( Skeleton.prototype, {
-
-		calculateInverses: function () {
-
-			this.boneInverses = [];
-
-			for ( var i = 0, il = this.bones.length; i < il; i ++ ) {
-
-				var inverse = new Matrix4();
-
-				if ( this.bones[ i ] ) {
-
-					inverse.getInverse( this.bones[ i ].matrixWorld );
-
-				}
-
-				this.boneInverses.push( inverse );
-
-			}
-
-		},
-
-		pose: function () {
-
-			var bone, i, il;
-
-			// recover the bind-time world matrices
-
-			for ( i = 0, il = this.bones.length; i < il; i ++ ) {
-
-				bone = this.bones[ i ];
-
-				if ( bone ) {
-
-					bone.matrixWorld.getInverse( this.boneInverses[ i ] );
-
-				}
-
-			}
-
-			// compute the local matrices, positions, rotations and scales
-
-			for ( i = 0, il = this.bones.length; i < il; i ++ ) {
-
-				bone = this.bones[ i ];
-
-				if ( bone ) {
-
-					if ( bone.parent && bone.parent.isBone ) {
-
-						bone.matrix.getInverse( bone.parent.matrixWorld );
-						bone.matrix.multiply( bone.matrixWorld );
-
-					} else {
-
-						bone.matrix.copy( bone.matrixWorld );
-
-					}
-
-					bone.matrix.decompose( bone.position, bone.quaternion, bone.scale );
-
-				}
-
-			}
-
-		},
-
-		update: ( function () {
-
-			var offsetMatrix = new Matrix4();
-			var identityMatrix = new Matrix4();
-
-			return function update() {
-
-				var bones = this.bones;
-				var boneInverses = this.boneInverses;
-				var boneMatrices = this.boneMatrices;
-				var boneTexture = this.boneTexture;
-
-				// flatten bone matrices to array
-
-				for ( var i = 0, il = bones.length; i < il; i ++ ) {
-
-					// compute the offset between the current and the original transform
-
-					var matrix = bones[ i ] ? bones[ i ].matrixWorld : identityMatrix;
-
-					offsetMatrix.multiplyMatrices( matrix, boneInverses[ i ] );
-					offsetMatrix.toArray( boneMatrices, i * 16 );
-
-				}
-
-				if ( boneTexture !== undefined ) {
-
-					boneTexture.needsUpdate = true;
-
-				}
-
-			};
-
-		} )(),
-
-		clone: function () {
-
-			return new Skeleton( this.bones, this.boneInverses );
-
-		},
-
-		getBoneByName: function ( name ) {
-
-			for ( var i = 0, il = this.bones.length; i < il; i ++ ) {
-
-				var bone = this.bones[ i ];
-
-				if ( bone.name === name ) {
-
-					return bone;
-
-				}
-
-			}
-
-			return undefined;
-
-		}
-
-	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function SkinnedMesh( geometry, material ) {
+
+		if ( geometry && geometry.isGeometry ) {
+
+			console.error( 'SkinnedMesh no longer supports Geometry. Use BufferGeometry instead.' );
+
+		}
 
 		Mesh.call( this, geometry, material );
 
@@ -12858,13 +12702,6 @@ var Three = (function (exports) {
 		this.bindMatrix = new Matrix4();
 		this.bindMatrixInverse = new Matrix4();
 
-		var bones = this.initBones();
-		var skeleton = new Skeleton( bones );
-
-		this.bind( skeleton, this.matrixWorld );
-
-		this.normalizeSkinWeights();
-
 	}
 
 	SkinnedMesh.prototype = Object.assign( Object.create( Mesh.prototype ), {
@@ -12872,66 +12709,6 @@ var Three = (function (exports) {
 		constructor: SkinnedMesh,
 
 		isSkinnedMesh: true,
-
-		initBones: function () {
-
-			var bones = [], bone, gbone;
-			var i, il;
-
-			if ( this.geometry && this.geometry.bones !== undefined ) {
-
-				// first, create array of 'Bone' objects from geometry data
-
-				for ( i = 0, il = this.geometry.bones.length; i < il; i ++ ) {
-
-					gbone = this.geometry.bones[ i ];
-
-					// create new 'Bone' object
-
-					bone = new Bone();
-					bones.push( bone );
-
-					// apply values
-
-					bone.name = gbone.name;
-					bone.position.fromArray( gbone.pos );
-					bone.quaternion.fromArray( gbone.rotq );
-					if ( gbone.scl !== undefined ) bone.scale.fromArray( gbone.scl );
-
-				}
-
-				// second, create bone hierarchy
-
-				for ( i = 0, il = this.geometry.bones.length; i < il; i ++ ) {
-
-					gbone = this.geometry.bones[ i ];
-
-					if ( ( gbone.parent !== - 1 ) && ( gbone.parent !== null ) && ( bones[ gbone.parent ] !== undefined ) ) {
-
-						// subsequent bones in the hierarchy
-
-						bones[ gbone.parent ].add( bones[ i ] );
-
-					} else {
-
-						// topmost bone, immediate child of the skinned mesh
-
-						this.add( bones[ i ] );
-
-					}
-
-				}
-
-			}
-
-			// now the bones are part of the scene graph and children of the skinned mesh.
-			// let's update the corresponding matrices
-
-			this.updateMatrixWorld( true );
-
-			return bones;
-
-		},
 
 		bind: function ( skeleton, bindMatrix ) {
 
@@ -12960,56 +12737,30 @@ var Three = (function (exports) {
 
 		normalizeSkinWeights: function () {
 
-			var scale, i;
+			var vector = new Vector4();
 
-			if ( this.geometry && this.geometry.isGeometry ) {
+			var skinWeight = this.geometry.attributes.skinWeight;
 
-				for ( i = 0; i < this.geometry.skinWeights.length; i ++ ) {
+			for ( var i = 0, l = skinWeight.count; i < l; i ++ ) {
 
-					var sw = this.geometry.skinWeights[ i ];
+				vector.x = skinWeight.getX( i );
+				vector.y = skinWeight.getY( i );
+				vector.z = skinWeight.getZ( i );
+				vector.w = skinWeight.getW( i );
 
-					scale = 1.0 / sw.manhattanLength();
+				var scale = 1.0 / vector.manhattanLength();
 
-					if ( scale !== Infinity ) {
+				if ( scale !== Infinity ) {
 
-						sw.multiplyScalar( scale );
+					vector.multiplyScalar( scale );
 
-					} else {
+				} else {
 
-						sw.set( 1, 0, 0, 0 ); // do something reasonable
-
-					}
-
-				}
-
-			} else if ( this.geometry && this.geometry.isBufferGeometry ) {
-
-				var vec = new Vector4();
-
-				var skinWeight = this.geometry.attributes.skinWeight;
-
-				for ( i = 0; i < skinWeight.count; i ++ ) {
-
-					vec.x = skinWeight.getX( i );
-					vec.y = skinWeight.getY( i );
-					vec.z = skinWeight.getZ( i );
-					vec.w = skinWeight.getW( i );
-
-					scale = 1.0 / vec.manhattanLength();
-
-					if ( scale !== Infinity ) {
-
-						vec.multiplyScalar( scale );
-
-					} else {
-
-						vec.set( 1, 0, 0, 0 ); // do something reasonable
-
-					}
-
-					skinWeight.setXYZW( i, vec.x, vec.y, vec.z, vec.w );
+					vector.set( 1, 0, 0, 0 ); // do something reasonable
 
 				}
+
+				skinWeight.setXYZW( i, vector.x, vector.y, vector.z, vector.w );
 
 			}
 
@@ -13329,6 +13080,174 @@ var Three = (function (exports) {
 		clone: function () {
 
 			return new this.constructor().copy( this );
+
+		}
+
+	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function Skeleton( bones, boneInverses ) {
+
+		// copy the bone array
+
+		bones = bones || [];
+
+		this.bones = bones.slice( 0 );
+		this.boneMatrices = new Float32Array( this.bones.length * 16 );
+
+		// use the supplied bone inverses or calculate the inverses
+
+		if ( boneInverses === undefined ) {
+
+			this.calculateInverses();
+
+		} else {
+
+			if ( this.bones.length === boneInverses.length ) {
+
+				this.boneInverses = boneInverses.slice( 0 );
+
+			} else {
+
+				console.warn( 'Skeleton boneInverses is the wrong length.' );
+
+				this.boneInverses = [];
+
+				for ( var i = 0, il = this.bones.length; i < il; i ++ ) {
+
+					this.boneInverses.push( new Matrix4() );
+
+				}
+
+			}
+
+		}
+
+	}
+
+	Object.assign( Skeleton.prototype, {
+
+		calculateInverses: function () {
+
+			this.boneInverses = [];
+
+			for ( var i = 0, il = this.bones.length; i < il; i ++ ) {
+
+				var inverse = new Matrix4();
+
+				if ( this.bones[ i ] ) {
+
+					inverse.getInverse( this.bones[ i ].matrixWorld );
+
+				}
+
+				this.boneInverses.push( inverse );
+
+			}
+
+		},
+
+		pose: function () {
+
+			var bone, i, il;
+
+			// recover the bind-time world matrices
+
+			for ( i = 0, il = this.bones.length; i < il; i ++ ) {
+
+				bone = this.bones[ i ];
+
+				if ( bone ) {
+
+					bone.matrixWorld.getInverse( this.boneInverses[ i ] );
+
+				}
+
+			}
+
+			// compute the local matrices, positions, rotations and scales
+
+			for ( i = 0, il = this.bones.length; i < il; i ++ ) {
+
+				bone = this.bones[ i ];
+
+				if ( bone ) {
+
+					if ( bone.parent && bone.parent.isBone ) {
+
+						bone.matrix.getInverse( bone.parent.matrixWorld );
+						bone.matrix.multiply( bone.matrixWorld );
+
+					} else {
+
+						bone.matrix.copy( bone.matrixWorld );
+
+					}
+
+					bone.matrix.decompose( bone.position, bone.quaternion, bone.scale );
+
+				}
+
+			}
+
+		},
+
+		update: ( function () {
+
+			var offsetMatrix = new Matrix4();
+			var identityMatrix = new Matrix4();
+
+			return function update() {
+
+				var bones = this.bones;
+				var boneInverses = this.boneInverses;
+				var boneMatrices = this.boneMatrices;
+				var boneTexture = this.boneTexture;
+
+				// flatten bone matrices to array
+
+				for ( var i = 0, il = bones.length; i < il; i ++ ) {
+
+					// compute the offset between the current and the original transform
+
+					var matrix = bones[ i ] ? bones[ i ].matrixWorld : identityMatrix;
+
+					offsetMatrix.multiplyMatrices( matrix, boneInverses[ i ] );
+					offsetMatrix.toArray( boneMatrices, i * 16 );
+
+				}
+
+				if ( boneTexture !== undefined ) {
+
+					boneTexture.needsUpdate = true;
+
+				}
+
+			};
+
+		} )(),
+
+		clone: function () {
+
+			return new Skeleton( this.bones, this.boneInverses );
+
+		},
+
+		getBoneByName: function ( name ) {
+
+			for ( var i = 0, il = this.bones.length; i < il; i ++ ) {
+
+				var bone = this.bones[ i ];
+
+				if ( bone.name === name ) {
+
+					return bone;
+
+				}
+
+			}
+
+			return undefined;
 
 		}
 
@@ -14167,7 +14086,7 @@ var Three = (function (exports) {
 		convertArray: function ( array, type, forceClone ) {
 
 			if ( ! array || // let 'undefined' and 'null' pass
-					! forceClone && array.constructor === type ) return array;
+				! forceClone && array.constructor === type ) return array;
 
 			if ( typeof type.BYTES_PER_ELEMENT === 'number' ) {
 
@@ -14182,7 +14101,7 @@ var Three = (function (exports) {
 		isTypedArray: function ( object ) {
 
 			return ArrayBuffer.isView( object ) &&
-					! ( object instanceof DataView );
+				! ( object instanceof DataView );
 
 		},
 
@@ -15849,8 +15768,7 @@ var Three = (function (exports) {
 
 			var bindings = this._bindings;
 
-			for ( var i = this._targetGroup.nCachedObjects_,
-					  n = bindings.length; i !== n; ++ i ) {
+			for ( var i = this._targetGroup.nCachedObjects_, n = bindings.length; i !== n; ++ i ) {
 
 				bindings[ i ].setValue( array, offset );
 
@@ -15862,8 +15780,7 @@ var Three = (function (exports) {
 
 			var bindings = this._bindings;
 
-			for ( var i = this._targetGroup.nCachedObjects_,
-					  n = bindings.length; i !== n; ++ i ) {
+			for ( var i = this._targetGroup.nCachedObjects_, n = bindings.length; i !== n; ++ i ) {
 
 				bindings[ i ].bind();
 
@@ -15875,8 +15792,7 @@ var Three = (function (exports) {
 
 			var bindings = this._bindings;
 
-			for ( var i = this._targetGroup.nCachedObjects_,
-					  n = bindings.length; i !== n; ++ i ) {
+			for ( var i = this._targetGroup.nCachedObjects_, n = bindings.length; i !== n; ++ i ) {
 
 				bindings[ i ].unbind();
 

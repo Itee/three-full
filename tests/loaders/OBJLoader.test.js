@@ -8875,7 +8875,7 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var materialId = 0;
 
-	function Material() {
+	function Material$1() {
 
 		Object.defineProperty( this, 'id', { value: materialId ++ } );
 
@@ -8933,9 +8933,9 @@ var Three = (function (exports) {
 
 	}
 
-	Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+	Material$1.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
 
-		constructor: Material,
+		constructor: Material$1,
 
 		isMaterial: true,
 
@@ -9246,7 +9246,7 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function LineBasicMaterial( parameters ) {
 
-		Material.call( this );
+		Material$1.call( this );
 
 		this.type = 'LineBasicMaterial';
 
@@ -9262,14 +9262,14 @@ var Three = (function (exports) {
 
 	}
 
-	LineBasicMaterial.prototype = Object.create( Material.prototype );
+	LineBasicMaterial.prototype = Object.create( Material$1.prototype );
 	LineBasicMaterial.prototype.constructor = LineBasicMaterial;
 
 	LineBasicMaterial.prototype.isLineBasicMaterial = true;
 
 	LineBasicMaterial.prototype.copy = function ( source ) {
 
-		Material.prototype.copy.call( this, source );
+		Material$1.prototype.copy.call( this, source );
 
 		this.color.copy( source.color );
 
@@ -9284,7 +9284,7 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function PointsMaterial( parameters ) {
 
-		Material.call( this );
+		Material$1.call( this );
 
 		this.type = 'PointsMaterial';
 
@@ -9303,14 +9303,14 @@ var Three = (function (exports) {
 
 	}
 
-	PointsMaterial.prototype = Object.create( Material.prototype );
+	PointsMaterial.prototype = Object.create( Material$1.prototype );
 	PointsMaterial.prototype.constructor = PointsMaterial;
 
 	PointsMaterial.prototype.isPointsMaterial = true;
 
 	PointsMaterial.prototype.copy = function ( source ) {
 
-		Material.prototype.copy.call( this, source );
+		Material$1.prototype.copy.call( this, source );
 
 		this.color.copy( source.color );
 
@@ -9328,7 +9328,7 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function MeshPhongMaterial( parameters ) {
 
-		Material.call( this );
+		Material$1.call( this );
 
 		this.type = 'MeshPhongMaterial';
 
@@ -9381,14 +9381,14 @@ var Three = (function (exports) {
 
 	}
 
-	MeshPhongMaterial.prototype = Object.create( Material.prototype );
+	MeshPhongMaterial.prototype = Object.create( Material$1.prototype );
 	MeshPhongMaterial.prototype.constructor = MeshPhongMaterial;
 
 	MeshPhongMaterial.prototype.isMeshPhongMaterial = true;
 
 	MeshPhongMaterial.prototype.copy = function ( source ) {
 
-		Material.prototype.copy.call( this, source );
+		Material$1.prototype.copy.call( this, source );
 
 		this.color.copy( source.color );
 		this.specular.copy( source.specular );
@@ -10840,7 +10840,7 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function MeshBasicMaterial( parameters ) {
 
-		Material.call( this );
+		Material$1.call( this );
 
 		this.type = 'MeshBasicMaterial';
 
@@ -10877,14 +10877,14 @@ var Three = (function (exports) {
 
 	}
 
-	MeshBasicMaterial.prototype = Object.create( Material.prototype );
+	MeshBasicMaterial.prototype = Object.create( Material$1.prototype );
 	MeshBasicMaterial.prototype.constructor = MeshBasicMaterial;
 
 	MeshBasicMaterial.prototype.isMeshBasicMaterial = true;
 
 	MeshBasicMaterial.prototype.copy = function ( source ) {
 
-		Material.prototype.copy.call( this, source );
+		Material$1.prototype.copy.call( this, source );
 
 		this.color.copy( source.color );
 
@@ -12034,14 +12034,18 @@ var Three = (function (exports) {
 							if ( isLine && material && ! ( material instanceof LineBasicMaterial ) ) {
 
 								var materialLine = new LineBasicMaterial();
-								materialLine.copy( material );
-								materialLine.lights = false; // TOFIX
+								Material.prototype.copy.call( materialLine, material );
+								materialLine.color.copy( material.color );
+								materialLine.lights = false;
 								material = materialLine;
 
 							} else if ( isPoints && material && ! ( material instanceof PointsMaterial ) ) {
 
 								var materialPoints = new PointsMaterial( { size: 10, sizeAttenuation: false } );
-								materialLine.copy( material );
+								Material.prototype.copy.call( materialPoints, material );
+								materialPoints.color.copy( material.color );
+								materialPoints.map = material.map;
+								materialPoints.lights = false;
 								material = materialPoints;
 
 							}

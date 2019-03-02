@@ -723,8 +723,10 @@ AssimpLoader.prototype = {
 				if ( this.mBones.length == 0 )
 					mesh = new Mesh( geometry, mat );
 
-				if ( this.mBones.length > 0 )
+				if ( this.mBones.length > 0 ) {
 					mesh = new SkinnedMesh( geometry, mat );
+					mesh.normalizeSkinWeights();
+				}
 
 				this.threeNode = mesh;
 				//mesh.matrixAutoUpdate = false;

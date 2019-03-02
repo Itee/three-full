@@ -4140,7 +4140,7 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var REVISION = '98';
+	var REVISION = '99';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var CSS3DObject = function ( element ) {
@@ -4430,8 +4430,15 @@ var Three = (function (exports) {
 
 			if ( camera.parent === null ) camera.updateMatrixWorld();
 
+			if ( camera.isOrthographicCamera ) {
+
+				var tx = - ( camera.right + camera.left ) / 2;
+				var ty = ( camera.top + camera.bottom ) / 2;
+
+			}
+
 			var cameraCSSMatrix = camera.isOrthographicCamera ?
-				'scale(' + fov + ')' + getCameraCSSMatrix( camera.matrixWorldInverse ) :
+				'scale(' + fov + ')' + 'translate(' + epsilon( tx ) + 'px,' + epsilon( ty ) + 'px)' + getCameraCSSMatrix( camera.matrixWorldInverse ) :
 				'translateZ(' + fov + 'px)' + getCameraCSSMatrix( camera.matrixWorldInverse );
 
 			var style = cameraCSSMatrix +

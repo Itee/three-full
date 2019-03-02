@@ -20,6 +20,7 @@ var Three = (function (exports) {
 	var OneMinusSrcAlphaFactor = 205;
 	var LessEqualDepth = 3;
 	var MultiplyOperation = 0;
+
 	var UVMapping = 300;
 	var CubeReflectionMapping = 301;
 	var CubeRefractionMapping = 302;
@@ -11458,192 +11459,13 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function Skeleton( bones, boneInverses ) {
-
-		// copy the bone array
-
-		bones = bones || [];
-
-		this.bones = bones.slice( 0 );
-		this.boneMatrices = new Float32Array( this.bones.length * 16 );
-
-		// use the supplied bone inverses or calculate the inverses
-
-		if ( boneInverses === undefined ) {
-
-			this.calculateInverses();
-
-		} else {
-
-			if ( this.bones.length === boneInverses.length ) {
-
-				this.boneInverses = boneInverses.slice( 0 );
-
-			} else {
-
-				console.warn( 'Skeleton boneInverses is the wrong length.' );
-
-				this.boneInverses = [];
-
-				for ( var i = 0, il = this.bones.length; i < il; i ++ ) {
-
-					this.boneInverses.push( new Matrix4() );
-
-				}
-
-			}
-
-		}
-
-	}
-
-	Object.assign( Skeleton.prototype, {
-
-		calculateInverses: function () {
-
-			this.boneInverses = [];
-
-			for ( var i = 0, il = this.bones.length; i < il; i ++ ) {
-
-				var inverse = new Matrix4();
-
-				if ( this.bones[ i ] ) {
-
-					inverse.getInverse( this.bones[ i ].matrixWorld );
-
-				}
-
-				this.boneInverses.push( inverse );
-
-			}
-
-		},
-
-		pose: function () {
-
-			var bone, i, il;
-
-			// recover the bind-time world matrices
-
-			for ( i = 0, il = this.bones.length; i < il; i ++ ) {
-
-				bone = this.bones[ i ];
-
-				if ( bone ) {
-
-					bone.matrixWorld.getInverse( this.boneInverses[ i ] );
-
-				}
-
-			}
-
-			// compute the local matrices, positions, rotations and scales
-
-			for ( i = 0, il = this.bones.length; i < il; i ++ ) {
-
-				bone = this.bones[ i ];
-
-				if ( bone ) {
-
-					if ( bone.parent && bone.parent.isBone ) {
-
-						bone.matrix.getInverse( bone.parent.matrixWorld );
-						bone.matrix.multiply( bone.matrixWorld );
-
-					} else {
-
-						bone.matrix.copy( bone.matrixWorld );
-
-					}
-
-					bone.matrix.decompose( bone.position, bone.quaternion, bone.scale );
-
-				}
-
-			}
-
-		},
-
-		update: ( function () {
-
-			var offsetMatrix = new Matrix4();
-			var identityMatrix = new Matrix4();
-
-			return function update() {
-
-				var bones = this.bones;
-				var boneInverses = this.boneInverses;
-				var boneMatrices = this.boneMatrices;
-				var boneTexture = this.boneTexture;
-
-				// flatten bone matrices to array
-
-				for ( var i = 0, il = bones.length; i < il; i ++ ) {
-
-					// compute the offset between the current and the original transform
-
-					var matrix = bones[ i ] ? bones[ i ].matrixWorld : identityMatrix;
-
-					offsetMatrix.multiplyMatrices( matrix, boneInverses[ i ] );
-					offsetMatrix.toArray( boneMatrices, i * 16 );
-
-				}
-
-				if ( boneTexture !== undefined ) {
-
-					boneTexture.needsUpdate = true;
-
-				}
-
-			};
-
-		} )(),
-
-		clone: function () {
-
-			return new Skeleton( this.bones, this.boneInverses );
-
-		},
-
-		getBoneByName: function ( name ) {
-
-			for ( var i = 0, il = this.bones.length; i < il; i ++ ) {
-
-				var bone = this.bones[ i ];
-
-				if ( bone.name === name ) {
-
-					return bone;
-
-				}
-
-			}
-
-			return undefined;
-
-		}
-
-	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function Bone() {
-
-		Object3D.call( this );
-
-		this.type = 'Bone';
-
-	}
-
-	Bone.prototype = Object.assign( Object.create( Object3D.prototype ), {
-
-		constructor: Bone,
-
-		isBone: true
-
-	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function SkinnedMesh( geometry, material ) {
+
+		if ( geometry && geometry.isGeometry ) {
+
+			console.error( 'SkinnedMesh no longer supports Geometry. Use BufferGeometry instead.' );
+
+		}
 
 		Mesh.call( this, geometry, material );
 
@@ -11653,13 +11475,6 @@ var Three = (function (exports) {
 		this.bindMatrix = new Matrix4();
 		this.bindMatrixInverse = new Matrix4();
 
-		var bones = this.initBones();
-		var skeleton = new Skeleton( bones );
-
-		this.bind( skeleton, this.matrixWorld );
-
-		this.normalizeSkinWeights();
-
 	}
 
 	SkinnedMesh.prototype = Object.assign( Object.create( Mesh.prototype ), {
@@ -11667,66 +11482,6 @@ var Three = (function (exports) {
 		constructor: SkinnedMesh,
 
 		isSkinnedMesh: true,
-
-		initBones: function () {
-
-			var bones = [], bone, gbone;
-			var i, il;
-
-			if ( this.geometry && this.geometry.bones !== undefined ) {
-
-				// first, create array of 'Bone' objects from geometry data
-
-				for ( i = 0, il = this.geometry.bones.length; i < il; i ++ ) {
-
-					gbone = this.geometry.bones[ i ];
-
-					// create new 'Bone' object
-
-					bone = new Bone();
-					bones.push( bone );
-
-					// apply values
-
-					bone.name = gbone.name;
-					bone.position.fromArray( gbone.pos );
-					bone.quaternion.fromArray( gbone.rotq );
-					if ( gbone.scl !== undefined ) bone.scale.fromArray( gbone.scl );
-
-				}
-
-				// second, create bone hierarchy
-
-				for ( i = 0, il = this.geometry.bones.length; i < il; i ++ ) {
-
-					gbone = this.geometry.bones[ i ];
-
-					if ( ( gbone.parent !== - 1 ) && ( gbone.parent !== null ) && ( bones[ gbone.parent ] !== undefined ) ) {
-
-						// subsequent bones in the hierarchy
-
-						bones[ gbone.parent ].add( bones[ i ] );
-
-					} else {
-
-						// topmost bone, immediate child of the skinned mesh
-
-						this.add( bones[ i ] );
-
-					}
-
-				}
-
-			}
-
-			// now the bones are part of the scene graph and children of the skinned mesh.
-			// let's update the corresponding matrices
-
-			this.updateMatrixWorld( true );
-
-			return bones;
-
-		},
 
 		bind: function ( skeleton, bindMatrix ) {
 
@@ -11755,56 +11510,30 @@ var Three = (function (exports) {
 
 		normalizeSkinWeights: function () {
 
-			var scale, i;
+			var vector = new Vector4();
 
-			if ( this.geometry && this.geometry.isGeometry ) {
+			var skinWeight = this.geometry.attributes.skinWeight;
 
-				for ( i = 0; i < this.geometry.skinWeights.length; i ++ ) {
+			for ( var i = 0, l = skinWeight.count; i < l; i ++ ) {
 
-					var sw = this.geometry.skinWeights[ i ];
+				vector.x = skinWeight.getX( i );
+				vector.y = skinWeight.getY( i );
+				vector.z = skinWeight.getZ( i );
+				vector.w = skinWeight.getW( i );
 
-					scale = 1.0 / sw.manhattanLength();
+				var scale = 1.0 / vector.manhattanLength();
 
-					if ( scale !== Infinity ) {
+				if ( scale !== Infinity ) {
 
-						sw.multiplyScalar( scale );
+					vector.multiplyScalar( scale );
 
-					} else {
+				} else {
 
-						sw.set( 1, 0, 0, 0 ); // do something reasonable
-
-					}
-
-				}
-
-			} else if ( this.geometry && this.geometry.isBufferGeometry ) {
-
-				var vec = new Vector4();
-
-				var skinWeight = this.geometry.attributes.skinWeight;
-
-				for ( i = 0; i < skinWeight.count; i ++ ) {
-
-					vec.x = skinWeight.getX( i );
-					vec.y = skinWeight.getY( i );
-					vec.z = skinWeight.getZ( i );
-					vec.w = skinWeight.getW( i );
-
-					scale = 1.0 / vec.manhattanLength();
-
-					if ( scale !== Infinity ) {
-
-						vec.multiplyScalar( scale );
-
-					} else {
-
-						vec.set( 1, 0, 0, 0 ); // do something reasonable
-
-					}
-
-					skinWeight.setXYZW( i, vec.x, vec.y, vec.z, vec.w );
+					vector.set( 1, 0, 0, 0 ); // do something reasonable
 
 				}
+
+				skinWeight.setXYZW( i, vector.x, vector.y, vector.z, vector.w );
 
 			}
 
@@ -14651,6 +14380,8 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var _canvas;
+
 	var ImageUtils = {
 
 		getDataURL: function ( image ) {
@@ -14667,11 +14398,12 @@ var Three = (function (exports) {
 
 			} else {
 
-				canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
-				canvas.width = image.width;
-				canvas.height = image.height;
+				if ( _canvas === undefined ) _canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
 
-				var context = canvas.getContext( '2d' );
+				_canvas.width = image.width;
+				_canvas.height = image.height;
+
+				var context = _canvas.getContext( '2d' );
 
 				if ( image instanceof ImageData ) {
 
@@ -14682,6 +14414,8 @@ var Three = (function (exports) {
 					context.drawImage( image, 0, 0, image.width, image.height );
 
 				}
+
+				canvas = _canvas;
 
 			}
 
@@ -15295,7 +15029,7 @@ var Three = (function (exports) {
 		convertArray: function ( array, type, forceClone ) {
 
 			if ( ! array || // let 'undefined' and 'null' pass
-					! forceClone && array.constructor === type ) return array;
+				! forceClone && array.constructor === type ) return array;
 
 			if ( typeof type.BYTES_PER_ELEMENT === 'number' ) {
 
@@ -15310,7 +15044,7 @@ var Three = (function (exports) {
 		isTypedArray: function ( object ) {
 
 			return ArrayBuffer.isView( object ) &&
-					! ( object instanceof DataView );
+				! ( object instanceof DataView );
 
 		},
 
@@ -16469,7 +16203,7 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function AnimationClip( name, duration, tracks ) {
+	function AnimationClip$1( name, duration, tracks ) {
 
 		this.name = name;
 		this.tracks = tracks;
@@ -16563,7 +16297,7 @@ var Three = (function (exports) {
 
 	}
 
-	Object.assign( AnimationClip, {
+	Object.assign( AnimationClip$1, {
 
 		parse: function ( json ) {
 
@@ -16577,7 +16311,7 @@ var Three = (function (exports) {
 
 			}
 
-			return new AnimationClip( json.name, json.duration, tracks );
+			return new AnimationClip$1( json.name, json.duration, tracks );
 
 		},
 
@@ -16643,7 +16377,7 @@ var Three = (function (exports) {
 
 			}
 
-			return new AnimationClip( name, - 1, tracks );
+			return new AnimationClip$1( name, - 1, tracks );
 
 		},
 
@@ -16708,7 +16442,7 @@ var Three = (function (exports) {
 
 			for ( var name in animationToMorphTargets ) {
 
-				clips.push( AnimationClip.CreateFromMorphTargetSequence( name, animationToMorphTargets[ name ], fps, noLoop ) );
+				clips.push( AnimationClip$1.CreateFromMorphTargetSequence( name, animationToMorphTargets[ name ], fps, noLoop ) );
 
 			}
 
@@ -16834,7 +16568,7 @@ var Three = (function (exports) {
 
 			}
 
-			var clip = new AnimationClip( clipName, duration, tracks );
+			var clip = new AnimationClip$1( clipName, duration, tracks );
 
 			return clip;
 
@@ -16842,7 +16576,7 @@ var Three = (function (exports) {
 
 	} );
 
-	Object.assign( AnimationClip.prototype, {
+	Object.assign( AnimationClip$1.prototype, {
 
 		resetDuration: function () {
 
@@ -17819,66 +17553,42 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var UniformsUtils = {
+	function cloneUniforms( src ) {
 
-		merge: function ( uniforms ) {
+		var dst = {};
 
-			var merged = {};
+		for ( var u in src ) {
 
-			for ( var u = 0; u < uniforms.length; u ++ ) {
+			dst[ u ] = {};
 
-				var tmp = this.clone( uniforms[ u ] );
+			for ( var p in src[ u ] ) {
 
-				for ( var p in tmp ) {
+				var property = src[ u ][ p ];
 
-					merged[ p ] = tmp[ p ];
+				if ( property && ( property.isColor ||
+					property.isMatrix3 || property.isMatrix4 ||
+					property.isVector2 || property.isVector3 || property.isVector4 ||
+					property.isTexture ) ) {
 
-				}
+					dst[ u ][ p ] = property.clone();
 
-			}
+				} else if ( Array.isArray( property ) ) {
 
-			return merged;
+					dst[ u ][ p ] = property.slice();
 
-		},
+				} else {
 
-		clone: function ( uniforms_src ) {
-
-			var uniforms_dst = {};
-
-			for ( var u in uniforms_src ) {
-
-				uniforms_dst[ u ] = {};
-
-				for ( var p in uniforms_src[ u ] ) {
-
-					var parameter_src = uniforms_src[ u ][ p ];
-
-					if ( parameter_src && ( parameter_src.isColor ||
-						parameter_src.isMatrix3 || parameter_src.isMatrix4 ||
-						parameter_src.isVector2 || parameter_src.isVector3 || parameter_src.isVector4 ||
-						parameter_src.isTexture ) ) {
-
-						uniforms_dst[ u ][ p ] = parameter_src.clone();
-
-					} else if ( Array.isArray( parameter_src ) ) {
-
-						uniforms_dst[ u ][ p ] = parameter_src.slice();
-
-					} else {
-
-						uniforms_dst[ u ][ p ] = parameter_src;
-
-					}
+					dst[ u ][ p ] = property;
 
 				}
 
 			}
-
-			return uniforms_dst;
 
 		}
 
-	};
+		return dst;
+
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function ShaderMaterial( parameters ) {
@@ -17950,7 +17660,7 @@ var Three = (function (exports) {
 		this.fragmentShader = source.fragmentShader;
 		this.vertexShader = source.vertexShader;
 
-		this.uniforms = UniformsUtils.clone( source.uniforms );
+		this.uniforms = cloneUniforms( source.uniforms );
 
 		this.defines = Object.assign( {}, source.defines );
 
@@ -18447,6 +18157,9 @@ var Three = (function (exports) {
 
 			}
 
+			if ( json.name ) geometry.name = json.name;
+			if ( json.userData ) geometry.userData = json.userData;
+
 			return geometry;
 
 		},
@@ -18472,379 +18185,6 @@ var Three = (function (exports) {
 		Float32Array: Float32Array,
 		Float64Array: Float64Array
 	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function TextureLoader( manager ) {
-
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
-
-	}
-
-	Object.assign( TextureLoader.prototype, {
-
-		crossOrigin: 'anonymous',
-
-		load: function ( url, onLoad, onProgress, onError ) {
-
-			var texture = new Texture();
-
-			var loader = new ImageLoader( this.manager );
-			loader.setCrossOrigin( this.crossOrigin );
-			loader.setPath( this.path );
-
-			loader.load( url, function ( image ) {
-
-				texture.image = image;
-
-				// JPEGs can't have an alpha channel, so memory can be saved by storing them as RGB.
-				var isJPEG = url.search( /\.jpe?g$/i ) > 0 || url.search( /^data\:image\/jpeg/ ) === 0;
-
-				texture.format = isJPEG ? RGBFormat : RGBAFormat;
-				texture.needsUpdate = true;
-
-				if ( onLoad !== undefined ) {
-
-					onLoad( texture );
-
-				}
-
-			}, onProgress, onError );
-
-			return texture;
-
-		},
-
-		setCrossOrigin: function ( value ) {
-
-			this.crossOrigin = value;
-			return this;
-
-		},
-
-		setPath: function ( value ) {
-
-			this.path = value;
-			return this;
-
-		}
-
-	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function Loader() {}
-
-	Loader.Handlers = {
-
-		handlers: [],
-
-		add: function ( regex, loader ) {
-
-			this.handlers.push( regex, loader );
-
-		},
-
-		get: function ( file ) {
-
-			var handlers = this.handlers;
-
-			for ( var i = 0, l = handlers.length; i < l; i += 2 ) {
-
-				var regex = handlers[ i ];
-				var loader = handlers[ i + 1 ];
-
-				if ( regex.test( file ) ) {
-
-					return loader;
-
-				}
-
-			}
-
-			return null;
-
-		}
-
-	};
-
-	Object.assign( Loader.prototype, {
-
-		crossOrigin: 'anonymous',
-
-		onLoadStart: function () {},
-
-		onLoadProgress: function () {},
-
-		onLoadComplete: function () {},
-
-		initMaterials: function ( materials, texturePath, crossOrigin ) {
-
-			var array = [];
-
-			for ( var i = 0; i < materials.length; ++ i ) {
-
-				array[ i ] = this.createMaterial( materials[ i ], texturePath, crossOrigin );
-
-			}
-
-			return array;
-
-		},
-
-		createMaterial: ( function () {
-
-			var BlendingMode = {
-				NoBlending: NoBlending,
-				NormalBlending: NormalBlending,
-				AdditiveBlending: AdditiveBlending,
-				SubtractiveBlending: SubtractiveBlending,
-				MultiplyBlending: MultiplyBlending,
-				CustomBlending: CustomBlending
-			};
-
-			var color = new Color();
-			var textureLoader = new TextureLoader();
-			var materialLoader = new MaterialLoader();
-
-			return function createMaterial( m, texturePath, crossOrigin ) {
-
-				// convert from old material format
-
-				var textures = {};
-
-				function loadTexture( path, repeat, offset, wrap, anisotropy ) {
-
-					var fullPath = texturePath + path;
-					var loader = Loader.Handlers.get( fullPath );
-
-					var texture;
-
-					if ( loader !== null ) {
-
-						texture = loader.load( fullPath );
-
-					} else {
-
-						textureLoader.setCrossOrigin( crossOrigin );
-						texture = textureLoader.load( fullPath );
-
-					}
-
-					if ( repeat !== undefined ) {
-
-						texture.repeat.fromArray( repeat );
-
-						if ( repeat[ 0 ] !== 1 ) texture.wrapS = RepeatWrapping;
-						if ( repeat[ 1 ] !== 1 ) texture.wrapT = RepeatWrapping;
-
-					}
-
-					if ( offset !== undefined ) {
-
-						texture.offset.fromArray( offset );
-
-					}
-
-					if ( wrap !== undefined ) {
-
-						if ( wrap[ 0 ] === 'repeat' ) texture.wrapS = RepeatWrapping;
-						if ( wrap[ 0 ] === 'mirror' ) texture.wrapS = MirroredRepeatWrapping;
-
-						if ( wrap[ 1 ] === 'repeat' ) texture.wrapT = RepeatWrapping;
-						if ( wrap[ 1 ] === 'mirror' ) texture.wrapT = MirroredRepeatWrapping;
-
-					}
-
-					if ( anisotropy !== undefined ) {
-
-						texture.anisotropy = anisotropy;
-
-					}
-
-					var uuid = _Math.generateUUID();
-
-					textures[ uuid ] = texture;
-
-					return uuid;
-
-				}
-
-				//
-
-				var json = {
-					uuid: _Math.generateUUID(),
-					type: 'MeshLambertMaterial'
-				};
-
-				for ( var name in m ) {
-
-					var value = m[ name ];
-
-					switch ( name ) {
-
-						case 'DbgColor':
-						case 'DbgIndex':
-						case 'opticalDensity':
-						case 'illumination':
-							break;
-						case 'DbgName':
-							json.name = value;
-							break;
-						case 'blending':
-							json.blending = BlendingMode[ value ];
-							break;
-						case 'colorAmbient':
-						case 'mapAmbient':
-							console.warn( 'Loader.createMaterial:', name, 'is no longer supported.' );
-							break;
-						case 'colorDiffuse':
-							json.color = color.fromArray( value ).getHex();
-							break;
-						case 'colorSpecular':
-							json.specular = color.fromArray( value ).getHex();
-							break;
-						case 'colorEmissive':
-							json.emissive = color.fromArray( value ).getHex();
-							break;
-						case 'specularCoef':
-							json.shininess = value;
-							break;
-						case 'shading':
-							if ( value.toLowerCase() === 'basic' ) json.type = 'MeshBasicMaterial';
-							if ( value.toLowerCase() === 'phong' ) json.type = 'MeshPhongMaterial';
-							if ( value.toLowerCase() === 'standard' ) json.type = 'MeshStandardMaterial';
-							break;
-						case 'mapDiffuse':
-							json.map = loadTexture( value, m.mapDiffuseRepeat, m.mapDiffuseOffset, m.mapDiffuseWrap, m.mapDiffuseAnisotropy );
-							break;
-						case 'mapDiffuseRepeat':
-						case 'mapDiffuseOffset':
-						case 'mapDiffuseWrap':
-						case 'mapDiffuseAnisotropy':
-							break;
-						case 'mapEmissive':
-							json.emissiveMap = loadTexture( value, m.mapEmissiveRepeat, m.mapEmissiveOffset, m.mapEmissiveWrap, m.mapEmissiveAnisotropy );
-							break;
-						case 'mapEmissiveRepeat':
-						case 'mapEmissiveOffset':
-						case 'mapEmissiveWrap':
-						case 'mapEmissiveAnisotropy':
-							break;
-						case 'mapLight':
-							json.lightMap = loadTexture( value, m.mapLightRepeat, m.mapLightOffset, m.mapLightWrap, m.mapLightAnisotropy );
-							break;
-						case 'mapLightRepeat':
-						case 'mapLightOffset':
-						case 'mapLightWrap':
-						case 'mapLightAnisotropy':
-							break;
-						case 'mapAO':
-							json.aoMap = loadTexture( value, m.mapAORepeat, m.mapAOOffset, m.mapAOWrap, m.mapAOAnisotropy );
-							break;
-						case 'mapAORepeat':
-						case 'mapAOOffset':
-						case 'mapAOWrap':
-						case 'mapAOAnisotropy':
-							break;
-						case 'mapBump':
-							json.bumpMap = loadTexture( value, m.mapBumpRepeat, m.mapBumpOffset, m.mapBumpWrap, m.mapBumpAnisotropy );
-							break;
-						case 'mapBumpScale':
-							json.bumpScale = value;
-							break;
-						case 'mapBumpRepeat':
-						case 'mapBumpOffset':
-						case 'mapBumpWrap':
-						case 'mapBumpAnisotropy':
-							break;
-						case 'mapNormal':
-							json.normalMap = loadTexture( value, m.mapNormalRepeat, m.mapNormalOffset, m.mapNormalWrap, m.mapNormalAnisotropy );
-							break;
-						case 'mapNormalFactor':
-							json.normalScale = value;
-							break;
-						case 'mapNormalRepeat':
-						case 'mapNormalOffset':
-						case 'mapNormalWrap':
-						case 'mapNormalAnisotropy':
-							break;
-						case 'mapSpecular':
-							json.specularMap = loadTexture( value, m.mapSpecularRepeat, m.mapSpecularOffset, m.mapSpecularWrap, m.mapSpecularAnisotropy );
-							break;
-						case 'mapSpecularRepeat':
-						case 'mapSpecularOffset':
-						case 'mapSpecularWrap':
-						case 'mapSpecularAnisotropy':
-							break;
-						case 'mapMetalness':
-							json.metalnessMap = loadTexture( value, m.mapMetalnessRepeat, m.mapMetalnessOffset, m.mapMetalnessWrap, m.mapMetalnessAnisotropy );
-							break;
-						case 'mapMetalnessRepeat':
-						case 'mapMetalnessOffset':
-						case 'mapMetalnessWrap':
-						case 'mapMetalnessAnisotropy':
-							break;
-						case 'mapRoughness':
-							json.roughnessMap = loadTexture( value, m.mapRoughnessRepeat, m.mapRoughnessOffset, m.mapRoughnessWrap, m.mapRoughnessAnisotropy );
-							break;
-						case 'mapRoughnessRepeat':
-						case 'mapRoughnessOffset':
-						case 'mapRoughnessWrap':
-						case 'mapRoughnessAnisotropy':
-							break;
-						case 'mapAlpha':
-							json.alphaMap = loadTexture( value, m.mapAlphaRepeat, m.mapAlphaOffset, m.mapAlphaWrap, m.mapAlphaAnisotropy );
-							break;
-						case 'mapAlphaRepeat':
-						case 'mapAlphaOffset':
-						case 'mapAlphaWrap':
-						case 'mapAlphaAnisotropy':
-							break;
-						case 'flipSided':
-							json.side = BackSide;
-							break;
-						case 'doubleSided':
-							json.side = DoubleSide;
-							break;
-						case 'transparency':
-							console.warn( 'Loader.createMaterial: transparency has been renamed to opacity' );
-							json.opacity = value;
-							break;
-						case 'depthTest':
-						case 'depthWrite':
-						case 'colorWrite':
-						case 'opacity':
-						case 'reflectivity':
-						case 'transparent':
-						case 'visible':
-						case 'wireframe':
-							json[ name ] = value;
-							break;
-						case 'vertexColors':
-							if ( value === true ) json.vertexColors = VertexColors;
-							if ( value === 'face' ) json.vertexColors = FaceColors;
-							break;
-						default:
-							console.error( 'Loader.createMaterial: Unsupported', name, value );
-							break;
-
-					}
-
-				}
-
-				if ( json.type === 'MeshBasicMaterial' ) delete json.emissive;
-				if ( json.type !== 'MeshPhongMaterial' ) delete json.specular;
-
-				if ( json.opacity < 1 ) json.transparent = true;
-
-				materialLoader.setTextures( textures );
-
-				return materialLoader.parse( json );
-
-			};
-
-		} )()
-
-	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var geometryId = 0; // Geometry uses even numbers as Id
@@ -20226,74 +19566,43 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function JSONLoader( manager ) {
-
-		if ( typeof manager === 'boolean' ) {
-
-			console.warn( 'JSONLoader: showStatus parameter has been removed from constructor.' );
-			manager = undefined;
-
-		}
+	function TextureLoader( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
-		this.withCredentials = false;
-
 	}
 
-	Object.assign( JSONLoader.prototype, {
+	Object.assign( TextureLoader.prototype, {
 
 		crossOrigin: 'anonymous',
 
 		load: function ( url, onLoad, onProgress, onError ) {
 
-			var scope = this;
+			var texture = new Texture();
 
-			var path = ( this.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : this.path;
-
-			var loader = new FileLoader( this.manager );
+			var loader = new ImageLoader( this.manager );
+			loader.setCrossOrigin( this.crossOrigin );
 			loader.setPath( this.path );
-			loader.setWithCredentials( this.withCredentials );
-			loader.load( url, function ( text ) {
 
-				var json = JSON.parse( text );
-				var metadata = json.metadata;
+			loader.load( url, function ( image ) {
 
-				if ( metadata !== undefined ) {
+				texture.image = image;
 
-					var type = metadata.type;
+				// JPEGs can't have an alpha channel, so memory can be saved by storing them as RGB.
+				var isJPEG = url.search( /\.jpe?g($|\?)/i ) > 0 || url.search( /^data\:image\/jpeg/ ) === 0;
 
-					if ( type !== undefined ) {
+				texture.format = isJPEG ? RGBFormat : RGBAFormat;
+				texture.needsUpdate = true;
 
-						if ( type.toLowerCase() === 'object' ) {
+				if ( onLoad !== undefined ) {
 
-							console.error( 'JSONLoader: ' + url + ' should be loaded with ObjectLoader instead.' );
-							return;
-
-						}
-
-					}
+					onLoad( texture );
 
 				}
 
-				var object = scope.parse( json, path );
-				onLoad( object.geometry, object.materials );
-
 			}, onProgress, onError );
 
-		},
-
-		setPath: function ( value ) {
-
-			this.path = value;
-			return this;
-
-		},
-
-		setResourcePath: function ( value ) {
-
-			this.resourcePath = value;
-			return this;
+			return texture;
 
 		},
 
@@ -20304,483 +19613,893 @@ var Three = (function (exports) {
 
 		},
 
-		parse: ( function () {
+		setPath: function ( value ) {
 
-			function parseModel( json, geometry ) {
+			this.path = value;
+			return this;
 
-				function isBitSet( value, position ) {
+		}
 
-					return value & ( 1 << position );
+	} );
 
-				}
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function Loader() {}
 
-				var i, j, fi,
+	Loader.Handlers = {
 
-					offset, zLength,
+		handlers: [],
 
-					colorIndex, normalIndex, uvIndex, materialIndex,
+		add: function ( regex, loader ) {
 
-					type,
-					isQuad,
-					hasMaterial,
-					hasFaceVertexUv,
-					hasFaceNormal, hasFaceVertexNormal,
-					hasFaceColor, hasFaceVertexColor,
+			this.handlers.push( regex, loader );
 
-					vertex, face, faceA, faceB, hex, normal,
+		},
 
-					uvLayer, uv, u, v,
+		get: function ( file ) {
 
-					faces = json.faces,
-					vertices = json.vertices,
-					normals = json.normals,
-					colors = json.colors,
+			var handlers = this.handlers;
 
-					scale = json.scale,
+			for ( var i = 0, l = handlers.length; i < l; i += 2 ) {
 
-					nUvLayers = 0;
-				if ( json.uvs !== undefined ) {
+				var regex = handlers[ i ];
+				var loader = handlers[ i + 1 ];
 
-					// disregard empty arrays
+				if ( regex.test( file ) ) {
 
-					for ( i = 0; i < json.uvs.length; i ++ ) {
-
-						if ( json.uvs[ i ].length ) nUvLayers ++;
-
-					}
-
-					for ( i = 0; i < nUvLayers; i ++ ) {
-
-						geometry.faceVertexUvs[ i ] = [];
-
-					}
+					return loader;
 
 				}
 
-				offset = 0;
-				zLength = vertices.length;
+			}
 
-				while ( offset < zLength ) {
+			return null;
 
-					vertex = new Vector3();
+		}
 
-					vertex.x = vertices[ offset ++ ] * scale;
-					vertex.y = vertices[ offset ++ ] * scale;
-					vertex.z = vertices[ offset ++ ] * scale;
+	};
 
-					geometry.vertices.push( vertex );
+	Object.assign( Loader.prototype, {
 
-				}
+		crossOrigin: 'anonymous',
 
-				offset = 0;
-				zLength = faces.length;
+		onLoadStart: function () {},
 
-				while ( offset < zLength ) {
+		onLoadProgress: function () {},
 
-					type = faces[ offset ++ ];
+		onLoadComplete: function () {},
 
-					isQuad = isBitSet( type, 0 );
-					hasMaterial = isBitSet( type, 1 );
-					hasFaceVertexUv = isBitSet( type, 3 );
-					hasFaceNormal = isBitSet( type, 4 );
-					hasFaceVertexNormal = isBitSet( type, 5 );
-					hasFaceColor = isBitSet( type, 6 );
-					hasFaceVertexColor = isBitSet( type, 7 );
+		initMaterials: function ( materials, texturePath, crossOrigin ) {
 
-					// console.log("type", type, "bits", isQuad, hasMaterial, hasFaceVertexUv, hasFaceNormal, hasFaceVertexNormal, hasFaceColor, hasFaceVertexColor);
+			var array = [];
 
-					if ( isQuad ) {
+			for ( var i = 0; i < materials.length; ++ i ) {
 
-						faceA = new Face3();
-						faceA.a = faces[ offset ];
-						faceA.b = faces[ offset + 1 ];
-						faceA.c = faces[ offset + 3 ];
+				array[ i ] = this.createMaterial( materials[ i ], texturePath, crossOrigin );
 
-						faceB = new Face3();
-						faceB.a = faces[ offset + 1 ];
-						faceB.b = faces[ offset + 2 ];
-						faceB.c = faces[ offset + 3 ];
+			}
 
-						offset += 4;
+			return array;
 
-						if ( hasMaterial ) {
+		},
 
-							materialIndex = faces[ offset ++ ];
-							faceA.materialIndex = materialIndex;
-							faceB.materialIndex = materialIndex;
+		createMaterial: ( function () {
 
-						}
+			var BlendingMode = {
+				NoBlending: NoBlending,
+				NormalBlending: NormalBlending,
+				AdditiveBlending: AdditiveBlending,
+				SubtractiveBlending: SubtractiveBlending,
+				MultiplyBlending: MultiplyBlending,
+				CustomBlending: CustomBlending
+			};
 
-						// to get face <=> uv index correspondence
+			var color = new Color();
+			var textureLoader = new TextureLoader();
+			var materialLoader = new MaterialLoader();
 
-						fi = geometry.faces.length;
+			return function createMaterial( m, texturePath, crossOrigin ) {
 
-						if ( hasFaceVertexUv ) {
+				// convert from old material format
 
-							for ( i = 0; i < nUvLayers; i ++ ) {
+				var textures = {};
 
-								uvLayer = json.uvs[ i ];
+				function loadTexture( path, repeat, offset, wrap, anisotropy ) {
 
-								geometry.faceVertexUvs[ i ][ fi ] = [];
-								geometry.faceVertexUvs[ i ][ fi + 1 ] = [];
+					var fullPath = texturePath + path;
+					var loader = Loader.Handlers.get( fullPath );
 
-								for ( j = 0; j < 4; j ++ ) {
+					var texture;
 
-									uvIndex = faces[ offset ++ ];
+					if ( loader !== null ) {
 
-									u = uvLayer[ uvIndex * 2 ];
-									v = uvLayer[ uvIndex * 2 + 1 ];
-
-									uv = new Vector2( u, v );
-
-									if ( j !== 2 ) geometry.faceVertexUvs[ i ][ fi ].push( uv );
-									if ( j !== 0 ) geometry.faceVertexUvs[ i ][ fi + 1 ].push( uv );
-
-								}
-
-							}
-
-						}
-
-						if ( hasFaceNormal ) {
-
-							normalIndex = faces[ offset ++ ] * 3;
-
-							faceA.normal.set(
-								normals[ normalIndex ++ ],
-								normals[ normalIndex ++ ],
-								normals[ normalIndex ]
-							);
-
-							faceB.normal.copy( faceA.normal );
-
-						}
-
-						if ( hasFaceVertexNormal ) {
-
-							for ( i = 0; i < 4; i ++ ) {
-
-								normalIndex = faces[ offset ++ ] * 3;
-
-								normal = new Vector3(
-									normals[ normalIndex ++ ],
-									normals[ normalIndex ++ ],
-									normals[ normalIndex ]
-								);
-								if ( i !== 2 ) faceA.vertexNormals.push( normal );
-								if ( i !== 0 ) faceB.vertexNormals.push( normal );
-
-							}
-
-						}
-						if ( hasFaceColor ) {
-
-							colorIndex = faces[ offset ++ ];
-							hex = colors[ colorIndex ];
-
-							faceA.color.setHex( hex );
-							faceB.color.setHex( hex );
-
-						}
-						if ( hasFaceVertexColor ) {
-
-							for ( i = 0; i < 4; i ++ ) {
-
-								colorIndex = faces[ offset ++ ];
-								hex = colors[ colorIndex ];
-
-								if ( i !== 2 ) faceA.vertexColors.push( new Color( hex ) );
-								if ( i !== 0 ) faceB.vertexColors.push( new Color( hex ) );
-
-							}
-
-						}
-
-						geometry.faces.push( faceA );
-						geometry.faces.push( faceB );
+						texture = loader.load( fullPath );
 
 					} else {
 
-						face = new Face3();
-						face.a = faces[ offset ++ ];
-						face.b = faces[ offset ++ ];
-						face.c = faces[ offset ++ ];
+						textureLoader.setCrossOrigin( crossOrigin );
+						texture = textureLoader.load( fullPath );
 
-						if ( hasMaterial ) {
+					}
 
-							materialIndex = faces[ offset ++ ];
-							face.materialIndex = materialIndex;
+					if ( repeat !== undefined ) {
 
-						}
+						texture.repeat.fromArray( repeat );
 
-						// to get face <=> uv index correspondence
+						if ( repeat[ 0 ] !== 1 ) texture.wrapS = RepeatWrapping;
+						if ( repeat[ 1 ] !== 1 ) texture.wrapT = RepeatWrapping;
 
-						fi = geometry.faces.length;
+					}
 
-						if ( hasFaceVertexUv ) {
+					if ( offset !== undefined ) {
 
-							for ( i = 0; i < nUvLayers; i ++ ) {
+						texture.offset.fromArray( offset );
 
-								uvLayer = json.uvs[ i ];
+					}
 
-								geometry.faceVertexUvs[ i ][ fi ] = [];
+					if ( wrap !== undefined ) {
 
-								for ( j = 0; j < 3; j ++ ) {
+						if ( wrap[ 0 ] === 'repeat' ) texture.wrapS = RepeatWrapping;
+						if ( wrap[ 0 ] === 'mirror' ) texture.wrapS = MirroredRepeatWrapping;
 
-									uvIndex = faces[ offset ++ ];
+						if ( wrap[ 1 ] === 'repeat' ) texture.wrapT = RepeatWrapping;
+						if ( wrap[ 1 ] === 'mirror' ) texture.wrapT = MirroredRepeatWrapping;
 
-									u = uvLayer[ uvIndex * 2 ];
-									v = uvLayer[ uvIndex * 2 + 1 ];
+					}
 
-									uv = new Vector2( u, v );
+					if ( anisotropy !== undefined ) {
 
-									geometry.faceVertexUvs[ i ][ fi ].push( uv );
+						texture.anisotropy = anisotropy;
 
-								}
+					}
 
-							}
+					var uuid = _Math.generateUUID();
 
-						}
+					textures[ uuid ] = texture;
 
-						if ( hasFaceNormal ) {
+					return uuid;
 
-							normalIndex = faces[ offset ++ ] * 3;
+				}
 
-							face.normal.set(
-								normals[ normalIndex ++ ],
-								normals[ normalIndex ++ ],
-								normals[ normalIndex ]
-							);
+				//
 
-						}
+				var json = {
+					uuid: _Math.generateUUID(),
+					type: 'MeshLambertMaterial'
+				};
 
-						if ( hasFaceVertexNormal ) {
+				for ( var name in m ) {
 
-							for ( i = 0; i < 3; i ++ ) {
+					var value = m[ name ];
 
-								normalIndex = faces[ offset ++ ] * 3;
+					switch ( name ) {
 
-								normal = new Vector3(
-									normals[ normalIndex ++ ],
-									normals[ normalIndex ++ ],
-									normals[ normalIndex ]
-								);
-
-								face.vertexNormals.push( normal );
-
-							}
-
-						}
-						if ( hasFaceColor ) {
-
-							colorIndex = faces[ offset ++ ];
-							face.color.setHex( colors[ colorIndex ] );
-
-						}
-						if ( hasFaceVertexColor ) {
-
-							for ( i = 0; i < 3; i ++ ) {
-
-								colorIndex = faces[ offset ++ ];
-								face.vertexColors.push( new Color( colors[ colorIndex ] ) );
-
-							}
-
-						}
-
-						geometry.faces.push( face );
+						case 'DbgColor':
+						case 'DbgIndex':
+						case 'opticalDensity':
+						case 'illumination':
+							break;
+						case 'DbgName':
+							json.name = value;
+							break;
+						case 'blending':
+							json.blending = BlendingMode[ value ];
+							break;
+						case 'colorAmbient':
+						case 'mapAmbient':
+							console.warn( 'Loader.createMaterial:', name, 'is no longer supported.' );
+							break;
+						case 'colorDiffuse':
+							json.color = color.fromArray( value ).getHex();
+							break;
+						case 'colorSpecular':
+							json.specular = color.fromArray( value ).getHex();
+							break;
+						case 'colorEmissive':
+							json.emissive = color.fromArray( value ).getHex();
+							break;
+						case 'specularCoef':
+							json.shininess = value;
+							break;
+						case 'shading':
+							if ( value.toLowerCase() === 'basic' ) json.type = 'MeshBasicMaterial';
+							if ( value.toLowerCase() === 'phong' ) json.type = 'MeshPhongMaterial';
+							if ( value.toLowerCase() === 'standard' ) json.type = 'MeshStandardMaterial';
+							break;
+						case 'mapDiffuse':
+							json.map = loadTexture( value, m.mapDiffuseRepeat, m.mapDiffuseOffset, m.mapDiffuseWrap, m.mapDiffuseAnisotropy );
+							break;
+						case 'mapDiffuseRepeat':
+						case 'mapDiffuseOffset':
+						case 'mapDiffuseWrap':
+						case 'mapDiffuseAnisotropy':
+							break;
+						case 'mapEmissive':
+							json.emissiveMap = loadTexture( value, m.mapEmissiveRepeat, m.mapEmissiveOffset, m.mapEmissiveWrap, m.mapEmissiveAnisotropy );
+							break;
+						case 'mapEmissiveRepeat':
+						case 'mapEmissiveOffset':
+						case 'mapEmissiveWrap':
+						case 'mapEmissiveAnisotropy':
+							break;
+						case 'mapLight':
+							json.lightMap = loadTexture( value, m.mapLightRepeat, m.mapLightOffset, m.mapLightWrap, m.mapLightAnisotropy );
+							break;
+						case 'mapLightRepeat':
+						case 'mapLightOffset':
+						case 'mapLightWrap':
+						case 'mapLightAnisotropy':
+							break;
+						case 'mapAO':
+							json.aoMap = loadTexture( value, m.mapAORepeat, m.mapAOOffset, m.mapAOWrap, m.mapAOAnisotropy );
+							break;
+						case 'mapAORepeat':
+						case 'mapAOOffset':
+						case 'mapAOWrap':
+						case 'mapAOAnisotropy':
+							break;
+						case 'mapBump':
+							json.bumpMap = loadTexture( value, m.mapBumpRepeat, m.mapBumpOffset, m.mapBumpWrap, m.mapBumpAnisotropy );
+							break;
+						case 'mapBumpScale':
+							json.bumpScale = value;
+							break;
+						case 'mapBumpRepeat':
+						case 'mapBumpOffset':
+						case 'mapBumpWrap':
+						case 'mapBumpAnisotropy':
+							break;
+						case 'mapNormal':
+							json.normalMap = loadTexture( value, m.mapNormalRepeat, m.mapNormalOffset, m.mapNormalWrap, m.mapNormalAnisotropy );
+							break;
+						case 'mapNormalFactor':
+							json.normalScale = value;
+							break;
+						case 'mapNormalRepeat':
+						case 'mapNormalOffset':
+						case 'mapNormalWrap':
+						case 'mapNormalAnisotropy':
+							break;
+						case 'mapSpecular':
+							json.specularMap = loadTexture( value, m.mapSpecularRepeat, m.mapSpecularOffset, m.mapSpecularWrap, m.mapSpecularAnisotropy );
+							break;
+						case 'mapSpecularRepeat':
+						case 'mapSpecularOffset':
+						case 'mapSpecularWrap':
+						case 'mapSpecularAnisotropy':
+							break;
+						case 'mapMetalness':
+							json.metalnessMap = loadTexture( value, m.mapMetalnessRepeat, m.mapMetalnessOffset, m.mapMetalnessWrap, m.mapMetalnessAnisotropy );
+							break;
+						case 'mapMetalnessRepeat':
+						case 'mapMetalnessOffset':
+						case 'mapMetalnessWrap':
+						case 'mapMetalnessAnisotropy':
+							break;
+						case 'mapRoughness':
+							json.roughnessMap = loadTexture( value, m.mapRoughnessRepeat, m.mapRoughnessOffset, m.mapRoughnessWrap, m.mapRoughnessAnisotropy );
+							break;
+						case 'mapRoughnessRepeat':
+						case 'mapRoughnessOffset':
+						case 'mapRoughnessWrap':
+						case 'mapRoughnessAnisotropy':
+							break;
+						case 'mapAlpha':
+							json.alphaMap = loadTexture( value, m.mapAlphaRepeat, m.mapAlphaOffset, m.mapAlphaWrap, m.mapAlphaAnisotropy );
+							break;
+						case 'mapAlphaRepeat':
+						case 'mapAlphaOffset':
+						case 'mapAlphaWrap':
+						case 'mapAlphaAnisotropy':
+							break;
+						case 'flipSided':
+							json.side = BackSide;
+							break;
+						case 'doubleSided':
+							json.side = DoubleSide;
+							break;
+						case 'transparency':
+							console.warn( 'Loader.createMaterial: transparency has been renamed to opacity' );
+							json.opacity = value;
+							break;
+						case 'depthTest':
+						case 'depthWrite':
+						case 'colorWrite':
+						case 'opacity':
+						case 'reflectivity':
+						case 'transparent':
+						case 'visible':
+						case 'wireframe':
+							json[ name ] = value;
+							break;
+						case 'vertexColors':
+							if ( value === true ) json.vertexColors = VertexColors;
+							if ( value === 'face' ) json.vertexColors = FaceColors;
+							break;
+						default:
+							console.error( 'Loader.createMaterial: Unsupported', name, value );
+							break;
 
 					}
 
 				}
 
-			}
+				if ( json.type === 'MeshBasicMaterial' ) delete json.emissive;
+				if ( json.type !== 'MeshPhongMaterial' ) delete json.specular;
 
-			function parseSkin( json, geometry ) {
+				if ( json.opacity < 1 ) json.transparent = true;
 
-				var influencesPerVertex = ( json.influencesPerVertex !== undefined ) ? json.influencesPerVertex : 2;
+				materialLoader.setTextures( textures );
 
-				if ( json.skinWeights ) {
-
-					for ( var i = 0, l = json.skinWeights.length; i < l; i += influencesPerVertex ) {
-
-						var x = json.skinWeights[ i ];
-						var y = ( influencesPerVertex > 1 ) ? json.skinWeights[ i + 1 ] : 0;
-						var z = ( influencesPerVertex > 2 ) ? json.skinWeights[ i + 2 ] : 0;
-						var w = ( influencesPerVertex > 3 ) ? json.skinWeights[ i + 3 ] : 0;
-
-						geometry.skinWeights.push( new Vector4( x, y, z, w ) );
-
-					}
-
-				}
-
-				if ( json.skinIndices ) {
-
-					for ( var i = 0, l = json.skinIndices.length; i < l; i += influencesPerVertex ) {
-
-						var a = json.skinIndices[ i ];
-						var b = ( influencesPerVertex > 1 ) ? json.skinIndices[ i + 1 ] : 0;
-						var c = ( influencesPerVertex > 2 ) ? json.skinIndices[ i + 2 ] : 0;
-						var d = ( influencesPerVertex > 3 ) ? json.skinIndices[ i + 3 ] : 0;
-
-						geometry.skinIndices.push( new Vector4( a, b, c, d ) );
-
-					}
-
-				}
-
-				geometry.bones = json.bones;
-
-				if ( geometry.bones && geometry.bones.length > 0 && ( geometry.skinWeights.length !== geometry.skinIndices.length || geometry.skinIndices.length !== geometry.vertices.length ) ) {
-
-					console.warn( 'When skinning, number of vertices (' + geometry.vertices.length + '), skinIndices (' +
-						geometry.skinIndices.length + '), and skinWeights (' + geometry.skinWeights.length + ') should match.' );
-
-				}
-
-			}
-
-			function parseMorphing( json, geometry ) {
-
-				var scale = json.scale;
-
-				if ( json.morphTargets !== undefined ) {
-
-					for ( var i = 0, l = json.morphTargets.length; i < l; i ++ ) {
-
-						geometry.morphTargets[ i ] = {};
-						geometry.morphTargets[ i ].name = json.morphTargets[ i ].name;
-						geometry.morphTargets[ i ].vertices = [];
-
-						var dstVertices = geometry.morphTargets[ i ].vertices;
-						var srcVertices = json.morphTargets[ i ].vertices;
-
-						for ( var v = 0, vl = srcVertices.length; v < vl; v += 3 ) {
-
-							var vertex = new Vector3();
-							vertex.x = srcVertices[ v ] * scale;
-							vertex.y = srcVertices[ v + 1 ] * scale;
-							vertex.z = srcVertices[ v + 2 ] * scale;
-
-							dstVertices.push( vertex );
-
-						}
-
-					}
-
-				}
-
-				if ( json.morphColors !== undefined && json.morphColors.length > 0 ) {
-
-					console.warn( 'JSONLoader: "morphColors" no longer supported. Using them as face colors.' );
-
-					var faces = geometry.faces;
-					var morphColors = json.morphColors[ 0 ].colors;
-
-					for ( var i = 0, l = faces.length; i < l; i ++ ) {
-
-						faces[ i ].color.fromArray( morphColors, i * 3 );
-
-					}
-
-				}
-
-			}
-
-			function parseAnimations( json, geometry ) {
-
-				var outputAnimations = [];
-
-				// parse old style Bone/Hierarchy animations
-				var animations = [];
-
-				if ( json.animation !== undefined ) {
-
-					animations.push( json.animation );
-
-				}
-
-				if ( json.animations !== undefined ) {
-
-					if ( json.animations.length ) {
-
-						animations = animations.concat( json.animations );
-
-					} else {
-
-						animations.push( json.animations );
-
-					}
-
-				}
-
-				for ( var i = 0; i < animations.length; i ++ ) {
-
-					var clip = AnimationClip.parseAnimation( animations[ i ], geometry.bones );
-					if ( clip ) outputAnimations.push( clip );
-
-				}
-
-				// parse implicit morph animations
-				if ( geometry.morphTargets ) {
-
-					// TODO: Figure out what an appropraite FPS is for morph target animations -- defaulting to 10, but really it is completely arbitrary.
-					var morphAnimationClips = AnimationClip.CreateClipsFromMorphTargetSequences( geometry.morphTargets, 10 );
-					outputAnimations = outputAnimations.concat( morphAnimationClips );
-
-				}
-
-				if ( outputAnimations.length > 0 ) geometry.animations = outputAnimations;
-
-			}
-
-			return function parse( json, path ) {
-
-				if ( json.data !== undefined ) {
-
-					// Geometry 4.0 spec
-					json = json.data;
-
-				}
-
-				if ( json.scale !== undefined ) {
-
-					json.scale = 1.0 / json.scale;
-
-				} else {
-
-					json.scale = 1.0;
-
-				}
-
-				var geometry = new Geometry();
-
-				parseModel( json, geometry );
-				parseSkin( json, geometry );
-				parseMorphing( json, geometry );
-				parseAnimations( json, geometry );
-
-				geometry.computeFaceNormals();
-				geometry.computeBoundingSphere();
-
-				if ( json.materials === undefined || json.materials.length === 0 ) {
-
-					return { geometry: geometry };
-
-				} else {
-
-					var materials = Loader.prototype.initMaterials( json.materials, this.resourcePath || path, this.crossOrigin );
-
-					return { geometry: geometry, materials: materials };
-
-				}
+				return materialLoader.parse( json );
 
 			};
 
 		} )()
 
 	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var LegacyJSONLoader = ( function () {
+
+		function LegacyJSONLoader( manager ) {
+
+			if ( typeof manager === 'boolean' ) {
+
+				console.warn( 'JSONLoader: showStatus parameter has been removed from constructor.' );
+				manager = undefined;
+
+			}
+
+			this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+
+			this.withCredentials = false;
+
+		}
+
+		Object.assign( LegacyJSONLoader.prototype, {
+
+			crossOrigin: 'anonymous',
+
+			load: function ( url, onLoad, onProgress, onError ) {
+
+				var scope = this;
+
+				var path = ( this.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : this.path;
+
+				var loader = new FileLoader( this.manager );
+				loader.setPath( this.path );
+				loader.setWithCredentials( this.withCredentials );
+				loader.load( url, function ( text ) {
+
+					var json = JSON.parse( text );
+					var metadata = json.metadata;
+
+					if ( metadata !== undefined ) {
+
+						var type = metadata.type;
+
+						if ( type !== undefined ) {
+
+							if ( type.toLowerCase() === 'object' ) {
+
+								console.error( 'JSONLoader: ' + url + ' should be loaded with ObjectLoader instead.' );
+								return;
+
+							}
+
+						}
+
+					}
+
+					var object = scope.parse( json, path );
+					onLoad( object.geometry, object.materials );
+
+				}, onProgress, onError );
+
+			},
+
+			setPath: function ( value ) {
+
+				this.path = value;
+				return this;
+
+			},
+
+			setResourcePath: function ( value ) {
+
+				this.resourcePath = value;
+				return this;
+
+			},
+
+			setCrossOrigin: function ( value ) {
+
+				this.crossOrigin = value;
+				return this;
+
+			},
+
+			parse: ( function () {
+
+				function parseModel( json, geometry ) {
+
+					function isBitSet( value, position ) {
+
+						return value & ( 1 << position );
+
+					}
+
+					var i, j, fi,
+
+						offset, zLength,
+
+						colorIndex, normalIndex, uvIndex, materialIndex,
+
+						type,
+						isQuad,
+						hasMaterial,
+						hasFaceVertexUv,
+						hasFaceNormal, hasFaceVertexNormal,
+						hasFaceColor, hasFaceVertexColor,
+
+						vertex, face, faceA, faceB, hex, normal,
+
+						uvLayer, uv, u, v,
+
+						faces = json.faces,
+						vertices = json.vertices,
+						normals = json.normals,
+						colors = json.colors,
+
+						scale = json.scale,
+
+						nUvLayers = 0;
+					if ( json.uvs !== undefined ) {
+
+						// disregard empty arrays
+
+						for ( i = 0; i < json.uvs.length; i ++ ) {
+
+							if ( json.uvs[ i ].length ) nUvLayers ++;
+
+						}
+
+						for ( i = 0; i < nUvLayers; i ++ ) {
+
+							geometry.faceVertexUvs[ i ] = [];
+
+						}
+
+					}
+
+					offset = 0;
+					zLength = vertices.length;
+
+					while ( offset < zLength ) {
+
+						vertex = new Vector3();
+
+						vertex.x = vertices[ offset ++ ] * scale;
+						vertex.y = vertices[ offset ++ ] * scale;
+						vertex.z = vertices[ offset ++ ] * scale;
+
+						geometry.vertices.push( vertex );
+
+					}
+
+					offset = 0;
+					zLength = faces.length;
+
+					while ( offset < zLength ) {
+
+						type = faces[ offset ++ ];
+
+						isQuad = isBitSet( type, 0 );
+						hasMaterial = isBitSet( type, 1 );
+						hasFaceVertexUv = isBitSet( type, 3 );
+						hasFaceNormal = isBitSet( type, 4 );
+						hasFaceVertexNormal = isBitSet( type, 5 );
+						hasFaceColor = isBitSet( type, 6 );
+						hasFaceVertexColor = isBitSet( type, 7 );
+
+						// console.log("type", type, "bits", isQuad, hasMaterial, hasFaceVertexUv, hasFaceNormal, hasFaceVertexNormal, hasFaceColor, hasFaceVertexColor);
+
+						if ( isQuad ) {
+
+							faceA = new Face3();
+							faceA.a = faces[ offset ];
+							faceA.b = faces[ offset + 1 ];
+							faceA.c = faces[ offset + 3 ];
+
+							faceB = new Face3();
+							faceB.a = faces[ offset + 1 ];
+							faceB.b = faces[ offset + 2 ];
+							faceB.c = faces[ offset + 3 ];
+
+							offset += 4;
+
+							if ( hasMaterial ) {
+
+								materialIndex = faces[ offset ++ ];
+								faceA.materialIndex = materialIndex;
+								faceB.materialIndex = materialIndex;
+
+							}
+
+							// to get face <=> uv index correspondence
+
+							fi = geometry.faces.length;
+
+							if ( hasFaceVertexUv ) {
+
+								for ( i = 0; i < nUvLayers; i ++ ) {
+
+									uvLayer = json.uvs[ i ];
+
+									geometry.faceVertexUvs[ i ][ fi ] = [];
+									geometry.faceVertexUvs[ i ][ fi + 1 ] = [];
+
+									for ( j = 0; j < 4; j ++ ) {
+
+										uvIndex = faces[ offset ++ ];
+
+										u = uvLayer[ uvIndex * 2 ];
+										v = uvLayer[ uvIndex * 2 + 1 ];
+
+										uv = new Vector2( u, v );
+
+										if ( j !== 2 ) geometry.faceVertexUvs[ i ][ fi ].push( uv );
+										if ( j !== 0 ) geometry.faceVertexUvs[ i ][ fi + 1 ].push( uv );
+
+									}
+
+								}
+
+							}
+
+							if ( hasFaceNormal ) {
+
+								normalIndex = faces[ offset ++ ] * 3;
+
+								faceA.normal.set(
+									normals[ normalIndex ++ ],
+									normals[ normalIndex ++ ],
+									normals[ normalIndex ]
+								);
+
+								faceB.normal.copy( faceA.normal );
+
+							}
+
+							if ( hasFaceVertexNormal ) {
+
+								for ( i = 0; i < 4; i ++ ) {
+
+									normalIndex = faces[ offset ++ ] * 3;
+
+									normal = new Vector3(
+										normals[ normalIndex ++ ],
+										normals[ normalIndex ++ ],
+										normals[ normalIndex ]
+									);
+									if ( i !== 2 ) faceA.vertexNormals.push( normal );
+									if ( i !== 0 ) faceB.vertexNormals.push( normal );
+
+								}
+
+							}
+							if ( hasFaceColor ) {
+
+								colorIndex = faces[ offset ++ ];
+								hex = colors[ colorIndex ];
+
+								faceA.color.setHex( hex );
+								faceB.color.setHex( hex );
+
+							}
+							if ( hasFaceVertexColor ) {
+
+								for ( i = 0; i < 4; i ++ ) {
+
+									colorIndex = faces[ offset ++ ];
+									hex = colors[ colorIndex ];
+
+									if ( i !== 2 ) faceA.vertexColors.push( new Color( hex ) );
+									if ( i !== 0 ) faceB.vertexColors.push( new Color( hex ) );
+
+								}
+
+							}
+
+							geometry.faces.push( faceA );
+							geometry.faces.push( faceB );
+
+						} else {
+
+							face = new Face3();
+							face.a = faces[ offset ++ ];
+							face.b = faces[ offset ++ ];
+							face.c = faces[ offset ++ ];
+
+							if ( hasMaterial ) {
+
+								materialIndex = faces[ offset ++ ];
+								face.materialIndex = materialIndex;
+
+							}
+
+							// to get face <=> uv index correspondence
+
+							fi = geometry.faces.length;
+
+							if ( hasFaceVertexUv ) {
+
+								for ( i = 0; i < nUvLayers; i ++ ) {
+
+									uvLayer = json.uvs[ i ];
+
+									geometry.faceVertexUvs[ i ][ fi ] = [];
+
+									for ( j = 0; j < 3; j ++ ) {
+
+										uvIndex = faces[ offset ++ ];
+
+										u = uvLayer[ uvIndex * 2 ];
+										v = uvLayer[ uvIndex * 2 + 1 ];
+
+										uv = new Vector2( u, v );
+
+										geometry.faceVertexUvs[ i ][ fi ].push( uv );
+
+									}
+
+								}
+
+							}
+
+							if ( hasFaceNormal ) {
+
+								normalIndex = faces[ offset ++ ] * 3;
+
+								face.normal.set(
+									normals[ normalIndex ++ ],
+									normals[ normalIndex ++ ],
+									normals[ normalIndex ]
+								);
+
+							}
+
+							if ( hasFaceVertexNormal ) {
+
+								for ( i = 0; i < 3; i ++ ) {
+
+									normalIndex = faces[ offset ++ ] * 3;
+
+									normal = new Vector3(
+										normals[ normalIndex ++ ],
+										normals[ normalIndex ++ ],
+										normals[ normalIndex ]
+									);
+
+									face.vertexNormals.push( normal );
+
+								}
+
+							}
+							if ( hasFaceColor ) {
+
+								colorIndex = faces[ offset ++ ];
+								face.color.setHex( colors[ colorIndex ] );
+
+							}
+							if ( hasFaceVertexColor ) {
+
+								for ( i = 0; i < 3; i ++ ) {
+
+									colorIndex = faces[ offset ++ ];
+									face.vertexColors.push( new Color( colors[ colorIndex ] ) );
+
+								}
+
+							}
+
+							geometry.faces.push( face );
+
+						}
+
+					}
+
+				}
+
+				function parseSkin( json, geometry ) {
+
+					var influencesPerVertex = ( json.influencesPerVertex !== undefined ) ? json.influencesPerVertex : 2;
+
+					if ( json.skinWeights ) {
+
+						for ( var i = 0, l = json.skinWeights.length; i < l; i += influencesPerVertex ) {
+
+							var x = json.skinWeights[ i ];
+							var y = ( influencesPerVertex > 1 ) ? json.skinWeights[ i + 1 ] : 0;
+							var z = ( influencesPerVertex > 2 ) ? json.skinWeights[ i + 2 ] : 0;
+							var w = ( influencesPerVertex > 3 ) ? json.skinWeights[ i + 3 ] : 0;
+
+							geometry.skinWeights.push( new Vector4( x, y, z, w ) );
+
+						}
+
+					}
+
+					if ( json.skinIndices ) {
+
+						for ( var i = 0, l = json.skinIndices.length; i < l; i += influencesPerVertex ) {
+
+							var a = json.skinIndices[ i ];
+							var b = ( influencesPerVertex > 1 ) ? json.skinIndices[ i + 1 ] : 0;
+							var c = ( influencesPerVertex > 2 ) ? json.skinIndices[ i + 2 ] : 0;
+							var d = ( influencesPerVertex > 3 ) ? json.skinIndices[ i + 3 ] : 0;
+
+							geometry.skinIndices.push( new Vector4( a, b, c, d ) );
+
+						}
+
+					}
+
+					geometry.bones = json.bones;
+
+					if ( geometry.bones && geometry.bones.length > 0 && ( geometry.skinWeights.length !== geometry.skinIndices.length || geometry.skinIndices.length !== geometry.vertices.length ) ) {
+
+						console.warn( 'When skinning, number of vertices (' + geometry.vertices.length + '), skinIndices (' +
+							geometry.skinIndices.length + '), and skinWeights (' + geometry.skinWeights.length + ') should match.' );
+
+					}
+
+				}
+
+				function parseMorphing( json, geometry ) {
+
+					var scale = json.scale;
+
+					if ( json.morphTargets !== undefined ) {
+
+						for ( var i = 0, l = json.morphTargets.length; i < l; i ++ ) {
+
+							geometry.morphTargets[ i ] = {};
+							geometry.morphTargets[ i ].name = json.morphTargets[ i ].name;
+							geometry.morphTargets[ i ].vertices = [];
+
+							var dstVertices = geometry.morphTargets[ i ].vertices;
+							var srcVertices = json.morphTargets[ i ].vertices;
+
+							for ( var v = 0, vl = srcVertices.length; v < vl; v += 3 ) {
+
+								var vertex = new Vector3();
+								vertex.x = srcVertices[ v ] * scale;
+								vertex.y = srcVertices[ v + 1 ] * scale;
+								vertex.z = srcVertices[ v + 2 ] * scale;
+
+								dstVertices.push( vertex );
+
+							}
+
+						}
+
+					}
+
+					if ( json.morphColors !== undefined && json.morphColors.length > 0 ) {
+
+						console.warn( 'JSONLoader: "morphColors" no longer supported. Using them as face colors.' );
+
+						var faces = geometry.faces;
+						var morphColors = json.morphColors[ 0 ].colors;
+
+						for ( var i = 0, l = faces.length; i < l; i ++ ) {
+
+							faces[ i ].color.fromArray( morphColors, i * 3 );
+
+						}
+
+					}
+
+				}
+
+				function parseAnimations( json, geometry ) {
+
+					var outputAnimations = [];
+
+					// parse old style Bone/Hierarchy animations
+					var animations = [];
+
+					if ( json.animation !== undefined ) {
+
+						animations.push( json.animation );
+
+					}
+
+					if ( json.animations !== undefined ) {
+
+						if ( json.animations.length ) {
+
+							animations = animations.concat( json.animations );
+
+						} else {
+
+							animations.push( json.animations );
+
+						}
+
+					}
+
+					for ( var i = 0; i < animations.length; i ++ ) {
+
+						var clip = AnimationClip.parseAnimation( animations[ i ], geometry.bones );
+						if ( clip ) outputAnimations.push( clip );
+
+					}
+
+					// parse implicit morph animations
+					if ( geometry.morphTargets ) {
+
+						// TODO: Figure out what an appropraite FPS is for morph target animations -- defaulting to 10, but really it is completely arbitrary.
+						var morphAnimationClips = AnimationClip.CreateClipsFromMorphTargetSequences( geometry.morphTargets, 10 );
+						outputAnimations = outputAnimations.concat( morphAnimationClips );
+
+					}
+
+					if ( outputAnimations.length > 0 ) geometry.animations = outputAnimations;
+
+				}
+
+				return function parse( json, path ) {
+
+					if ( json.data !== undefined ) {
+
+						// Geometry 4.0 spec
+						json = json.data;
+
+					}
+
+					if ( json.scale !== undefined ) {
+
+						json.scale = 1.0 / json.scale;
+
+					} else {
+
+						json.scale = 1.0;
+
+					}
+
+					var geometry = new Geometry();
+
+					parseModel( json, geometry );
+					parseSkin( json, geometry );
+					parseMorphing( json, geometry );
+					parseAnimations( json, geometry );
+
+					geometry.computeFaceNormals();
+					geometry.computeBoundingSphere();
+
+					if ( json.materials === undefined || json.materials.length === 0 ) {
+
+						return { geometry: geometry };
+
+					} else {
+
+						var materials = Loader.prototype.initMaterials( json.materials, this.resourcePath || path, this.crossOrigin );
+
+						return { geometry: geometry, materials: materials };
+
+					}
+
+				};
+
+			} )()
+
+		} );
+
+		return LegacyJSONLoader;
+
+	} )();
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function WireframeGeometry( geometry ) {
@@ -25334,7 +25053,7 @@ var Three = (function (exports) {
 			var scope = this;
 
 			var path = ( this.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : this.path;
-			this.resourcePath = this.resourcePath || path;
+			this.resourcePath = this.resourcePath || path;
 
 			var loader = new FileLoader( scope.manager );
 			loader.setPath( this.path );
@@ -25360,7 +25079,7 @@ var Three = (function (exports) {
 
 				if ( metadata === undefined || metadata.type === undefined || metadata.type.toLowerCase() === 'geometry' ) {
 
-					console.error( 'ObjectLoader: Can\'t load ' + url + '. Use JSONLoader instead.' );
+					console.error( 'ObjectLoader: Can\'t load ' + url );
 					return;
 
 				}
@@ -25450,7 +25169,6 @@ var Three = (function (exports) {
 
 			if ( json !== undefined ) {
 
-				var geometryLoader = new JSONLoader();
 				var bufferGeometryLoader = new BufferGeometryLoader();
 
 				for ( var i = 0, l = json.length; i < l; i ++ ) {
@@ -25681,7 +25399,15 @@ var Three = (function (exports) {
 
 						case 'Geometry':
 
-							geometry = geometryLoader.parse( data, this.resourcePath ).geometry;
+							if ( 'THREE' in window && 'LegacyJSONLoader' in THREE ) {
+
+								var geometryLoader = new LegacyJSONLoader();
+								geometry = geometryLoader.parse( data, this.resourcePath ).geometry;
+							} else {
+
+								console.error( 'ObjectLoader: You have to import LegacyJSONLoader in order load geometry data of type "Geometry".' );
+
+							}
 
 							break;
 
@@ -25767,7 +25493,7 @@ var Three = (function (exports) {
 
 				var data = json[ i ];
 
-				var clip = AnimationClip.parse( data );
+				var clip = AnimationClip$1.parse( data );
 
 				if ( data.uuid !== undefined ) clip.uuid = data.uuid;
 

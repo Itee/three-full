@@ -89,8 +89,9 @@ export { BVHLoader } from './loaders/BVHLoader.js'
 export { ColladaLoader } from './loaders/ColladaLoader.js'
 export { DDSLoader } from './loaders/DDSLoader.js'
 export { LegacyGLTFLoader } from './loaders/deprecated/LegacyGLTFLoader.js'
+export { LegacyJSONLoader } from './loaders/deprecated/LegacyJSONLoader.js'
 export { DRACOLoader } from './loaders/DRACOLoader.js'
-export { EquirectangularToCubeGenerator } from './loaders/EquirectangularToCubeGenerator.js'
+export { CubemapGenerator } from './loaders/EquirectangularToCubeGenerator.js'
 export { EXRLoader } from './loaders/EXRLoader.js'
 export { FBXLoader } from './loaders/FBXLoader.js'
 export { GCodeLoader } from './loaders/GCodeLoader.js'
@@ -332,7 +333,11 @@ export { SAOShader } from './shaders/SAOShader.js'
 export { SepiaShader } from './shaders/SepiaShader.js'
 export { SMAAShader } from './shaders/SMAAShader.js'
 export { SobelOperatorShader } from './shaders/SobelOperatorShader.js'
-export { SSAOShader } from './shaders/SSAOShader.js'
+export {
+	SSAOShader,
+	SSAODepthShader,
+	SSAOBlurShader
+} from './shaders/SSAOShader.js'
 export { TechnicolorShader } from './shaders/TechnicolorShader.js'
 export { ToneMapShader } from './shaders/ToneMapShader.js'
 export { TriangleBlurShader } from './shaders/TriangleBlurShader.js'
@@ -446,6 +451,7 @@ export {
 	ReinhardToneMapping,
 	Uncharted2ToneMapping,
 	CineonToneMapping,
+	ACESFilmicToneMapping,
 	UVMapping,
 	CubeReflectionMapping,
 	CubeRefractionMapping,
@@ -703,7 +709,6 @@ export { FileLoader } from './loaders/FileLoader.js'
 export { FontLoader } from './loaders/FontLoader.js'
 export { ImageBitmapLoader } from './loaders/ImageBitmapLoader.js'
 export { ImageLoader } from './loaders/ImageLoader.js'
-export { JSONLoader } from './loaders/JSONLoader.js'
 export { Loader } from './loaders/Loader.js'
 export { LoaderUtils } from './loaders/LoaderUtils.js'
 export {

@@ -8863,7 +8863,7 @@ var Three = (function (exports) {
 		convertArray: function ( array, type, forceClone ) {
 
 			if ( ! array || // let 'undefined' and 'null' pass
-					! forceClone && array.constructor === type ) return array;
+				! forceClone && array.constructor === type ) return array;
 
 			if ( typeof type.BYTES_PER_ELEMENT === 'number' ) {
 
@@ -8878,7 +8878,7 @@ var Three = (function (exports) {
 		isTypedArray: function ( object ) {
 
 			return ArrayBuffer.isView( object ) &&
-					! ( object instanceof DataView );
+				! ( object instanceof DataView );
 
 		},
 
