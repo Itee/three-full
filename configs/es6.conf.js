@@ -39,7 +39,8 @@ module.exports = {
 		'draco',                            // draco_decoder use Eval !
 		'sea3d',                            // Duplicate export 'SEA3D'
 		'crossfade',                        // Scene has already been declared
-		'offscreen',
+		'offscreen',						// Should be in HTML File
+		'ldraw',							// target NodeJs and use require
 
 		// Specific file
 		'Cloth.js',							// Use global variable from example html ! Need to be refactored
