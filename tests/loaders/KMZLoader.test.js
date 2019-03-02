@@ -7435,7 +7435,7 @@ var Three = (function (exports) {
 
 				position.setFromMatrixPosition( this.matrixWorld );
 
-				if ( this.isCamera ) {
+				if ( this.isCamera || this.isLight ) {
 
 					m1.lookAt( position, target, this.up );
 
@@ -13456,17 +13456,7 @@ var Three = (function (exports) {
 
 				if ( morphTargets !== undefined && morphTargets.length > 0 ) {
 
-					this.morphTargetInfluences = [];
-					this.morphTargetDictionary = {};
-
-					for ( m = 0, ml = morphTargets.length; m < ml; m ++ ) {
-
-						name = morphTargets[ m ].name || String( m );
-
-						this.morphTargetInfluences.push( 0 );
-						this.morphTargetDictionary[ name ] = m;
-
-					}
+					console.error( 'Mesh.updateMorphTargets() no longer supports Geometry. Use BufferGeometry instead.' );
 
 				}
 
@@ -14262,11 +14252,17 @@ var Three = (function (exports) {
 				wrap: [ this.wrapS, this.wrapT ],
 
 				format: this.format,
+				type: this.type,
+				encoding: this.encoding,
+
 				minFilter: this.minFilter,
 				magFilter: this.magFilter,
 				anisotropy: this.anisotropy,
 
-				flipY: this.flipY
+				flipY: this.flipY,
+
+				premultiplyAlpha: this.premultiplyAlpha,
+				unpackAlignment: this.unpackAlignment
 
 			};
 
@@ -16292,6 +16288,8 @@ var Three = (function (exports) {
 						case 'emission':
 						case 'diffuse':
 						case 'specular':
+						case 'bump':
+						case 'ambient':
 						case 'shininess':
 						case 'transparency':
 							data[ child.nodeName ] = parseEffectParameter( child );
@@ -16653,6 +16651,12 @@ var Three = (function (exports) {
 						case 'specular':
 							if ( parameter.color && material.specular ) material.specular.fromArray( parameter.color );
 							if ( parameter.texture ) material.specularMap = getTexture( parameter.texture );
+							break;
+						case 'bump':
+							if ( parameter.texture ) material.normalMap = getTexture( parameter.texture );
+							break;
+						case 'ambient':
+							if ( parameter.texture ) material.lightMap = getTexture( parameter.texture );
 							break;
 						case 'shininess':
 							if ( parameter.float && material.shininess ) material.shininess = parameter.float;
@@ -17186,7 +17190,9 @@ var Three = (function (exports) {
 							var id = parseId( child.getAttribute( 'source' ) );
 							var semantic = child.getAttribute( 'semantic' );
 							var offset = parseInt( child.getAttribute( 'offset' ) );
-							primitive.inputs[ semantic ] = { id: id, offset: offset };
+							var set = parseInt( child.getAttribute( 'set' ) );
+							var inputname = ( set > 0 ? semantic + set : semantic );
+							primitive.inputs[ inputname ] = { id: id, offset: offset };
 							primitive.stride = Math.max( primitive.stride, offset + 1 );
 							if ( semantic === 'TEXCOORD' ) primitive.hasUV = true;
 							break;
@@ -17289,6 +17295,7 @@ var Three = (function (exports) {
 				var position = { array: [], stride: 0 };
 				var normal = { array: [], stride: 0 };
 				var uv = { array: [], stride: 0 };
+				var uv2 = { array: [], stride: 0 };
 				var color = { array: [], stride: 0 };
 
 				var skinIndex = { array: [], stride: 4 };
@@ -17421,6 +17428,11 @@ var Three = (function (exports) {
 											uv.stride = sources[ id ].stride;
 											break;
 
+										case 'TEXCOORD1':
+											buildGeometryData( primitive, sources[ id ], input.offset, uv2.array );
+											uv.stride = sources[ id ].stride;
+											break;
+
 										default:
 											console.warn( 'ColladaLoader: Semantic "%s" not handled in geometry build process.', key );
 
@@ -17444,6 +17456,11 @@ var Three = (function (exports) {
 								uv.stride = sources[ input.id ].stride;
 								break;
 
+							case 'TEXCOORD1':
+								buildGeometryData( primitive, sources[ input.id ], input.offset, uv2.array );
+								uv2.stride = sources[ input.id ].stride;
+								break;
+
 						}
 
 					}
@@ -17456,6 +17473,7 @@ var Three = (function (exports) {
 				if ( normal.array.length > 0 ) geometry.addAttribute( 'normal', new Float32BufferAttribute( normal.array, normal.stride ) );
 				if ( color.array.length > 0 ) geometry.addAttribute( 'color', new Float32BufferAttribute( color.array, color.stride ) );
 				if ( uv.array.length > 0 ) geometry.addAttribute( 'uv', new Float32BufferAttribute( uv.array, uv.stride ) );
+				if ( uv2.array.length > 0 ) geometry.addAttribute( 'uv2', new Float32BufferAttribute( uv2.array, uv2.stride ) );
 
 				if ( skinIndex.array.length > 0 ) geometry.addAttribute( 'skinIndex', new Float32BufferAttribute( skinIndex.array, skinIndex.stride ) );
 				if ( skinWeight.array.length > 0 ) geometry.addAttribute( 'skinWeight', new Float32BufferAttribute( skinWeight.array, skinWeight.stride ) );

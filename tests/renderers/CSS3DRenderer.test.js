@@ -3580,7 +3580,7 @@ var Three = (function (exports) {
 
 				position.setFromMatrixPosition( this.matrixWorld );
 
-				if ( this.isCamera ) {
+				if ( this.isCamera || this.isLight ) {
 
 					m1.lookAt( position, target, this.up );
 
@@ -4140,7 +4140,7 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var REVISION = '99';
+	var REVISION = '100';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var CSS3DObject = function ( element ) {
@@ -4323,9 +4323,9 @@ var Three = (function (exports) {
 				}
 
 				var element = object.element;
-				var cachedStyle = cache.objects.get( object );
+				var cachedObject = cache.objects.get( object );
 
-				if ( cachedStyle === undefined || cachedStyle !== style ) {
+				if ( cachedObject === undefined || cachedObject.style !== style ) {
 
 					element.style.WebkitTransform = style;
 					element.style.transform = style;

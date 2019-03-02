@@ -6077,7 +6077,7 @@ var Three = (function (exports) {
 
 				position.setFromMatrixPosition( this.matrixWorld );
 
-				if ( this.isCamera ) {
+				if ( this.isCamera || this.isLight ) {
 
 					m1.lookAt( position, target, this.up );
 
@@ -10586,17 +10586,7 @@ var Three = (function (exports) {
 
 				if ( morphTargets !== undefined && morphTargets.length > 0 ) {
 
-					this.morphTargetInfluences = [];
-					this.morphTargetDictionary = {};
-
-					for ( m = 0, ml = morphTargets.length; m < ml; m ++ ) {
-
-						name = morphTargets[ m ].name || String( m );
-
-						this.morphTargetInfluences.push( 0 );
-						this.morphTargetDictionary[ name ] = m;
-
-					}
+					console.error( 'Mesh.updateMorphTargets() no longer supports Geometry. Use BufferGeometry instead.' );
 
 				}
 
@@ -11530,11 +11520,17 @@ var Three = (function (exports) {
 				wrap: [ this.wrapS, this.wrapT ],
 
 				format: this.format,
+				type: this.type,
+				encoding: this.encoding,
+
 				minFilter: this.minFilter,
 				magFilter: this.magFilter,
 				anisotropy: this.anisotropy,
 
-				flipY: this.flipY
+				flipY: this.flipY,
+
+				premultiplyAlpha: this.premultiplyAlpha,
+				unpackAlignment: this.unpackAlignment
 
 			};
 

@@ -3606,11 +3606,17 @@ var Three = (function (exports) {
 				wrap: [ this.wrapS, this.wrapT ],
 
 				format: this.format,
+				type: this.type,
+				encoding: this.encoding,
+
 				minFilter: this.minFilter,
 				magFilter: this.magFilter,
 				anisotropy: this.anisotropy,
 
-				flipY: this.flipY
+				flipY: this.flipY,
+
+				premultiplyAlpha: this.premultiplyAlpha,
+				unpackAlignment: this.unpackAlignment
 
 			};
 
@@ -6422,10 +6428,10 @@ float clearCoatDHRApprox( const in float roughness, const in float dotNL ) {
 		float roughness = material.specularRoughness;
 
 		vec3 rectCoords[ 4 ];
-		rectCoords[ 0 ] = lightPos - halfWidth - halfHeight; // counterclockwise
-		rectCoords[ 1 ] = lightPos + halfWidth - halfHeight;
-		rectCoords[ 2 ] = lightPos + halfWidth + halfHeight;
-		rectCoords[ 3 ] = lightPos - halfWidth + halfHeight;
+		rectCoords[ 0 ] = lightPos + halfWidth - halfHeight; // counterclockwise; light shines in local neg z direction
+		rectCoords[ 1 ] = lightPos - halfWidth - halfHeight;
+		rectCoords[ 2 ] = lightPos - halfWidth + halfHeight;
+		rectCoords[ 3 ] = lightPos + halfWidth + halfHeight;
 
 		vec2 uv = LTC_Uv( normal, viewDir, roughness );
 

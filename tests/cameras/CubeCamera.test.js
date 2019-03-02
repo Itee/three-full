@@ -3580,7 +3580,7 @@ var Three = (function (exports) {
 
 				position.setFromMatrixPosition( this.matrixWorld );
 
-				if ( this.isCamera ) {
+				if ( this.isCamera || this.isLight ) {
 
 					m1.lookAt( position, target, this.up );
 
@@ -4840,11 +4840,17 @@ var Three = (function (exports) {
 				wrap: [ this.wrapS, this.wrapT ],
 
 				format: this.format,
+				type: this.type,
+				encoding: this.encoding,
+
 				minFilter: this.minFilter,
 				magFilter: this.magFilter,
 				anisotropy: this.anisotropy,
 
-				flipY: this.flipY
+				flipY: this.flipY,
+
+				premultiplyAlpha: this.premultiplyAlpha,
+				unpackAlignment: this.unpackAlignment
 
 			};
 

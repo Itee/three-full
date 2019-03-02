@@ -5502,7 +5502,7 @@ var Three = (function (exports) {
 
 				position.setFromMatrixPosition( this.matrixWorld );
 
-				if ( this.isCamera ) {
+				if ( this.isCamera || this.isLight ) {
 
 					m1.lookAt( position, target, this.up );
 
@@ -10832,17 +10832,15 @@ var Three = (function (exports) {
 
 				shapeVertices = shapeVertices.reverse();
 
-				// also check if holes are in the opposite direction
+			}
 
-				for ( i = 0, l = shapeHoles.length; i < l; i ++ ) {
+			for ( i = 0, l = shapeHoles.length; i < l; i ++ ) {
 
-					shapeHole = shapeHoles[ i ];
+				shapeHole = shapeHoles[ i ];
 
-					if ( ShapeUtils.isClockWise( shapeHole ) === true ) {
+				if ( ShapeUtils.isClockWise( shapeHole ) === true ) {
 
-						shapeHoles[ i ] = shapeHole.reverse();
-
-					}
+					shapeHoles[ i ] = shapeHole.reverse();
 
 				}
 

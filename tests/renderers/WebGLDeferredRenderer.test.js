@@ -87,7 +87,7 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var REVISION = '99';
+	var REVISION = '100';
 	var CullFaceNone = 0;
 	var CullFaceBack = 1;
 	var CullFaceFront = 2;
@@ -898,42 +898,42 @@ var Three = (function (exports) {
 			var uniform = this.uniforms[ name ];
 			var value = uniform.value;
 
-			if ( value.isTexture ) {
+			if ( value && value.isTexture ) {
 
 				data.uniforms[ name ] = {
 					type: 't',
 					value: value.toJSON( meta ).uuid
 				};
 
-			} else if ( value.isColor ) {
+			} else if ( value && value.isColor ) {
 
 				data.uniforms[ name ] = {
 					type: 'c',
 					value: value.getHex()
 				};
 
-			} else if ( value.isVector2 ) {
+			} else if ( value && value.isVector2 ) {
 
 				data.uniforms[ name ] = {
 					type: 'v2',
 					value: value.toArray()
 				};
 
-			} else if ( value.isVector3 ) {
+			} else if ( value && value.isVector3 ) {
 
 				data.uniforms[ name ] = {
 					type: 'v3',
 					value: value.toArray()
 				};
 
-			} else if ( value.isVector4 ) {
+			} else if ( value && value.isVector4 ) {
 
 				data.uniforms[ name ] = {
 					type: 'v4',
 					value: value.toArray()
 				};
 
-			} else if ( value.isMatrix4 ) {
+			} else if ( value && value.isMatrix4 ) {
 
 				data.uniforms[ name ] = {
 					type: 'm4',
@@ -956,6 +956,16 @@ var Three = (function (exports) {
 
 		data.vertexShader = this.vertexShader;
 		data.fragmentShader = this.fragmentShader;
+
+		var extensions = {};
+
+		for ( var key in this.extensions ) {
+
+			if ( this.extensions[ key ] === true ) extensions[ key ] = true;
+
+		}
+
+		if ( Object.keys( extensions ).length > 0 ) data.extensions = extensions;
 
 		return data;
 
@@ -4297,11 +4307,17 @@ var Three = (function (exports) {
 				wrap: [ this.wrapS, this.wrapT ],
 
 				format: this.format,
+				type: this.type,
+				encoding: this.encoding,
+
 				minFilter: this.minFilter,
 				magFilter: this.magFilter,
 				anisotropy: this.anisotropy,
 
-				flipY: this.flipY
+				flipY: this.flipY,
+
+				premultiplyAlpha: this.premultiplyAlpha,
+				unpackAlignment: this.unpackAlignment
 
 			};
 
@@ -7410,10 +7426,10 @@ float clearCoatDHRApprox( const in float roughness, const in float dotNL ) {
 		float roughness = material.specularRoughness;
 
 		vec3 rectCoords[ 4 ];
-		rectCoords[ 0 ] = lightPos - halfWidth - halfHeight; // counterclockwise
-		rectCoords[ 1 ] = lightPos + halfWidth - halfHeight;
-		rectCoords[ 2 ] = lightPos + halfWidth + halfHeight;
-		rectCoords[ 3 ] = lightPos - halfWidth + halfHeight;
+		rectCoords[ 0 ] = lightPos + halfWidth - halfHeight; // counterclockwise; light shines in local neg z direction
+		rectCoords[ 1 ] = lightPos - halfWidth - halfHeight;
+		rectCoords[ 2 ] = lightPos - halfWidth + halfHeight;
+		rectCoords[ 3 ] = lightPos + halfWidth + halfHeight;
 
 		vec2 uv = LTC_Uv( normal, viewDir, roughness );
 
@@ -12871,7 +12887,7 @@ void main() {
 
 				position.setFromMatrixPosition( this.matrixWorld );
 
-				if ( this.isCamera ) {
+				if ( this.isCamera || this.isLight ) {
 
 					m1.lookAt( position, target, this.up );
 
@@ -17926,17 +17942,7 @@ void main() {
 
 				if ( morphTargets !== undefined && morphTargets.length > 0 ) {
 
-					this.morphTargetInfluences = [];
-					this.morphTargetDictionary = {};
-
-					for ( m = 0, ml = morphTargets.length; m < ml; m ++ ) {
-
-						name = morphTargets[ m ].name || String( m );
-
-						this.morphTargetInfluences.push( 0 );
-						this.morphTargetDictionary[ name ] = m;
-
-					}
+					console.error( 'Mesh.updateMorphTargets() no longer supports Geometry. Use BufferGeometry instead.' );
 
 				}
 

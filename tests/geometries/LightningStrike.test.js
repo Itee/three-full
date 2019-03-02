@@ -8391,339 +8391,1232 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		function DecalGeometry( mesh, position, orientation, size ) {
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Ported from Stefan Gustavson's java implementation
+	// http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
+	// Read Stefan's excellent paper for details on how this code works.
+	//
+	// Sean McCullough banksean@gmail.com
+	//
+	// Added 4D noise
+	// Joshua Koo zz85nus@gmail.com 
+	var SimplexNoise = function(r) {
+		if (r == undefined) r = Math;
+		this.grad3 = [[ 1,1,0 ],[ -1,1,0 ],[ 1,-1,0 ],[ -1,-1,0 ], 
+	                                 [ 1,0,1 ],[ -1,0,1 ],[ 1,0,-1 ],[ -1,0,-1 ], 
+	                                 [ 0,1,1 ],[ 0,-1,1 ],[ 0,1,-1 ],[ 0,-1,-1 ]]; 
 
-			BufferGeometry.call( this );
+		this.grad4 = [[ 0,1,1,1 ], [ 0,1,1,-1 ], [ 0,1,-1,1 ], [ 0,1,-1,-1 ],
+		     [ 0,-1,1,1 ], [ 0,-1,1,-1 ], [ 0,-1,-1,1 ], [ 0,-1,-1,-1 ],
+		     [ 1,0,1,1 ], [ 1,0,1,-1 ], [ 1,0,-1,1 ], [ 1,0,-1,-1 ],
+		     [ -1,0,1,1 ], [ -1,0,1,-1 ], [ -1,0,-1,1 ], [ -1,0,-1,-1 ],
+		     [ 1,1,0,1 ], [ 1,1,0,-1 ], [ 1,-1,0,1 ], [ 1,-1,0,-1 ],
+		     [ -1,1,0,1 ], [ -1,1,0,-1 ], [ -1,-1,0,1 ], [ -1,-1,0,-1 ],
+		     [ 1,1,1,0 ], [ 1,1,-1,0 ], [ 1,-1,1,0 ], [ 1,-1,-1,0 ],
+		     [ -1,1,1,0 ], [ -1,1,-1,0 ], [ -1,-1,1,0 ], [ -1,-1,-1,0 ]];
 
-			// buffers
+		this.p = [];
+		for (var i = 0; i < 256; i ++) {
+			this.p[i] = Math.floor(r.random() * 256);
+		}
+	  // To remove the need for index wrapping, double the permutation table length 
+		this.perm = []; 
+		for (var i = 0; i < 512; i ++) {
+			this.perm[i] = this.p[i & 255];
+		} 
 
-			var vertices = [];
-			var normals = [];
-			var uvs = [];
+	  // A lookup table to traverse the simplex around a given point in 4D. 
+	  // Details can be found where this table is used, in the 4D noise method. 
+		this.simplex = [ 
+	    [ 0,1,2,3 ],[ 0,1,3,2 ],[ 0,0,0,0 ],[ 0,2,3,1 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 1,2,3,0 ], 
+	    [ 0,2,1,3 ],[ 0,0,0,0 ],[ 0,3,1,2 ],[ 0,3,2,1 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 1,3,2,0 ], 
+	    [ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ], 
+	    [ 1,2,0,3 ],[ 0,0,0,0 ],[ 1,3,0,2 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 2,3,0,1 ],[ 2,3,1,0 ], 
+	    [ 1,0,2,3 ],[ 1,0,3,2 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 2,0,3,1 ],[ 0,0,0,0 ],[ 2,1,3,0 ], 
+	    [ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ], 
+	    [ 2,0,1,3 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 3,0,1,2 ],[ 3,0,2,1 ],[ 0,0,0,0 ],[ 3,1,2,0 ], 
+	    [ 2,1,0,3 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 3,1,0,2 ],[ 0,0,0,0 ],[ 3,2,0,1 ],[ 3,2,1,0 ]]; 
+	};
 
-			// helpers
+	SimplexNoise.prototype.dot = function(g, x, y) { 
+		return g[0] * x + g[1] * y;
+	};
 
-			var plane = new Vector3();
+	SimplexNoise.prototype.dot3 = function(g, x, y, z) {
+		return g[0] * x + g[1] * y + g[2] * z; 
+	};
 
-			// this matrix represents the transformation of the decal projector
+	SimplexNoise.prototype.dot4 = function(g, x, y, z, w) {
+		return g[0] * x + g[1] * y + g[2] * z + g[3] * w;
+	};
 
-			var projectorMatrix = new Matrix4();
-			projectorMatrix.makeRotationFromEuler( orientation );
-			projectorMatrix.setPosition( position );
+	SimplexNoise.prototype.noise = function(xin, yin) { 
+		var n0, n1, n2; // Noise contributions from the three corners 
+	  // Skew the input space to determine which simplex cell we're in 
+		var F2 = 0.5 * (Math.sqrt(3.0) - 1.0); 
+		var s = (xin + yin) * F2; // Hairy factor for 2D 
+		var i = Math.floor(xin + s); 
+		var j = Math.floor(yin + s); 
+		var G2 = (3.0 - Math.sqrt(3.0)) / 6.0; 
+		var t = (i + j) * G2; 
+		var X0 = i - t; // Unskew the cell origin back to (x,y) space 
+		var Y0 = j - t; 
+		var x0 = xin - X0; // The x,y distances from the cell origin 
+		var y0 = yin - Y0; 
+	  // For the 2D case, the simplex shape is an equilateral triangle. 
+	  // Determine which simplex we are in. 
+		var i1, j1; // Offsets for second (middle) corner of simplex in (i,j) coords 
+		if (x0 > y0) {i1 = 1; j1 = 0;} // lower triangle, XY order: (0,0)->(1,0)->(1,1) 
+		else {i1 = 0; j1 = 1;}      // upper triangle, YX order: (0,0)->(0,1)->(1,1) 
+	  // A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and 
+	  // a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where 
+	  // c = (3-sqrt(3))/6 
+		var x1 = x0 - i1 + G2; // Offsets for middle corner in (x,y) unskewed coords 
+		var y1 = y0 - j1 + G2; 
+		var x2 = x0 - 1.0 + 2.0 * G2; // Offsets for last corner in (x,y) unskewed coords 
+		var y2 = y0 - 1.0 + 2.0 * G2; 
+	  // Work out the hashed gradient indices of the three simplex corners 
+		var ii = i & 255; 
+		var jj = j & 255; 
+		var gi0 = this.perm[ii + this.perm[jj]] % 12; 
+		var gi1 = this.perm[ii + i1 + this.perm[jj + j1]] % 12; 
+		var gi2 = this.perm[ii + 1 + this.perm[jj + 1]] % 12; 
+	  // Calculate the contribution from the three corners 
+		var t0 = 0.5 - x0 * x0 - y0 * y0; 
+		if (t0 < 0) n0 = 0.0; 
+		else { 
+			t0 *= t0; 
+			n0 = t0 * t0 * this.dot(this.grad3[gi0], x0, y0);  // (x,y) of grad3 used for 2D gradient 
+		} 
+		var t1 = 0.5 - x1 * x1 - y1 * y1; 
+		if (t1 < 0) n1 = 0.0; 
+		else { 
+			t1 *= t1; 
+			n1 = t1 * t1 * this.dot(this.grad3[gi1], x1, y1); 
+		}
+		var t2 = 0.5 - x2 * x2 - y2 * y2; 
+		if (t2 < 0) n2 = 0.0; 
+		else { 
+			t2 *= t2; 
+			n2 = t2 * t2 * this.dot(this.grad3[gi2], x2, y2); 
+		} 
+	  // Add contributions from each corner to get the final noise value. 
+	  // The result is scaled to return values in the interval [-1,1]. 
+		return 70.0 * (n0 + n1 + n2); 
+	};
 
-			var projectorMatrixInverse = new Matrix4().getInverse( projectorMatrix );
+	// 3D simplex noise 
+	SimplexNoise.prototype.noise3d = function(xin, yin, zin) { 
+		var n0, n1, n2, n3; // Noise contributions from the four corners 
+	  // Skew the input space to determine which simplex cell we're in 
+		var F3 = 1.0 / 3.0; 
+		var s = (xin + yin + zin) * F3; // Very nice and simple skew factor for 3D 
+		var i = Math.floor(xin + s); 
+		var j = Math.floor(yin + s); 
+		var k = Math.floor(zin + s); 
+		var G3 = 1.0 / 6.0; // Very nice and simple unskew factor, too 
+		var t = (i + j + k) * G3; 
+		var X0 = i - t; // Unskew the cell origin back to (x,y,z) space 
+		var Y0 = j - t; 
+		var Z0 = k - t; 
+		var x0 = xin - X0; // The x,y,z distances from the cell origin 
+		var y0 = yin - Y0; 
+		var z0 = zin - Z0; 
+	  // For the 3D case, the simplex shape is a slightly irregular tetrahedron. 
+	  // Determine which simplex we are in. 
+		var i1, j1, k1; // Offsets for second corner of simplex in (i,j,k) coords 
+		var i2, j2, k2; // Offsets for third corner of simplex in (i,j,k) coords 
+		if (x0 >= y0) { 
+			if (y0 >= z0) 
+	      { i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 1; k2 = 0; } // X Y Z order 
+	      else if (x0 >= z0) { i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 0; k2 = 1; } // X Z Y order 
+			else { i1 = 0; j1 = 0; k1 = 1; i2 = 1; j2 = 0; k2 = 1; } // Z X Y order 
+		} 
+		else { // x0<y0 
+			if (y0 < z0) { i1 = 0; j1 = 0; k1 = 1; i2 = 0; j2 = 1; k2 = 1; } // Z Y X order 
+	    else if (x0 < z0) { i1 = 0; j1 = 1; k1 = 0; i2 = 0; j2 = 1; k2 = 1; } // Y Z X order 
+			else { i1 = 0; j1 = 1; k1 = 0; i2 = 1; j2 = 1; k2 = 0; } // Y X Z order 
+		} 
+	  // A step of (1,0,0) in (i,j,k) means a step of (1-c,-c,-c) in (x,y,z), 
+	  // a step of (0,1,0) in (i,j,k) means a step of (-c,1-c,-c) in (x,y,z), and 
+	  // a step of (0,0,1) in (i,j,k) means a step of (-c,-c,1-c) in (x,y,z), where 
+	  // c = 1/6.
+		var x1 = x0 - i1 + G3; // Offsets for second corner in (x,y,z) coords 
+		var y1 = y0 - j1 + G3; 
+		var z1 = z0 - k1 + G3; 
+		var x2 = x0 - i2 + 2.0 * G3; // Offsets for third corner in (x,y,z) coords 
+		var y2 = y0 - j2 + 2.0 * G3; 
+		var z2 = z0 - k2 + 2.0 * G3; 
+		var x3 = x0 - 1.0 + 3.0 * G3; // Offsets for last corner in (x,y,z) coords 
+		var y3 = y0 - 1.0 + 3.0 * G3; 
+		var z3 = z0 - 1.0 + 3.0 * G3; 
+	  // Work out the hashed gradient indices of the four simplex corners 
+		var ii = i & 255; 
+		var jj = j & 255; 
+		var kk = k & 255; 
+		var gi0 = this.perm[ii + this.perm[jj + this.perm[kk]]] % 12; 
+		var gi1 = this.perm[ii + i1 + this.perm[jj + j1 + this.perm[kk + k1]]] % 12; 
+		var gi2 = this.perm[ii + i2 + this.perm[jj + j2 + this.perm[kk + k2]]] % 12; 
+		var gi3 = this.perm[ii + 1 + this.perm[jj + 1 + this.perm[kk + 1]]] % 12; 
+	  // Calculate the contribution from the four corners 
+		var t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0; 
+		if (t0 < 0) n0 = 0.0; 
+		else { 
+			t0 *= t0; 
+			n0 = t0 * t0 * this.dot3(this.grad3[gi0], x0, y0, z0); 
+		}
+		var t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1; 
+		if (t1 < 0) n1 = 0.0; 
+		else { 
+			t1 *= t1; 
+			n1 = t1 * t1 * this.dot3(this.grad3[gi1], x1, y1, z1); 
+		} 
+		var t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2; 
+		if (t2 < 0) n2 = 0.0; 
+		else { 
+			t2 *= t2; 
+			n2 = t2 * t2 * this.dot3(this.grad3[gi2], x2, y2, z2); 
+		} 
+		var t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3; 
+		if (t3 < 0) n3 = 0.0; 
+		else { 
+			t3 *= t3; 
+			n3 = t3 * t3 * this.dot3(this.grad3[gi3], x3, y3, z3); 
+		} 
+	  // Add contributions from each corner to get the final noise value. 
+	  // The result is scaled to stay just inside [-1,1] 
+		return 32.0 * (n0 + n1 + n2 + n3); 
+	};
 
-			// generate buffers
+	// 4D simplex noise
+	SimplexNoise.prototype.noise4d = function( x, y, z, w ) {
+		// For faster and easier lookups
+		var grad4 = this.grad4;
+		var simplex = this.simplex;
+		var perm = this.perm;
+		
+	   // The skewing and unskewing factors are hairy again for the 4D case
+		var F4 = (Math.sqrt(5.0) - 1.0) / 4.0;
+		var G4 = (5.0 - Math.sqrt(5.0)) / 20.0;
+		var n0, n1, n2, n3, n4; // Noise contributions from the five corners
+	   // Skew the (x,y,z,w) space to determine which cell of 24 simplices we're in
+		var s = (x + y + z + w) * F4; // Factor for 4D skewing
+		var i = Math.floor(x + s);
+		var j = Math.floor(y + s);
+		var k = Math.floor(z + s);
+		var l = Math.floor(w + s);
+		var t = (i + j + k + l) * G4; // Factor for 4D unskewing
+		var X0 = i - t; // Unskew the cell origin back to (x,y,z,w) space
+		var Y0 = j - t;
+		var Z0 = k - t;
+		var W0 = l - t;
+		var x0 = x - X0;  // The x,y,z,w distances from the cell origin
+		var y0 = y - Y0;
+		var z0 = z - Z0;
+		var w0 = w - W0;
 
-			generate();
+	   // For the 4D case, the simplex is a 4D shape I won't even try to describe.
+	   // To find out which of the 24 possible simplices we're in, we need to
+	   // determine the magnitude ordering of x0, y0, z0 and w0.
+	   // The method below is a good way of finding the ordering of x,y,z,w and
+	   // then find the correct traversal order for the simplex we’re in.
+	   // First, six pair-wise comparisons are performed between each possible pair
+	   // of the four coordinates, and the results are used to add up binary bits
+	   // for an integer index.
+		var c1 = (x0 > y0) ? 32 : 0;
+		var c2 = (x0 > z0) ? 16 : 0;
+		var c3 = (y0 > z0) ? 8 : 0;
+		var c4 = (x0 > w0) ? 4 : 0;
+		var c5 = (y0 > w0) ? 2 : 0;
+		var c6 = (z0 > w0) ? 1 : 0;
+		var c = c1 + c2 + c3 + c4 + c5 + c6;
+		var i1, j1, k1, l1; // The integer offsets for the second simplex corner
+		var i2, j2, k2, l2; // The integer offsets for the third simplex corner
+		var i3, j3, k3, l3; // The integer offsets for the fourth simplex corner
+	   // simplex[c] is a 4-vector with the numbers 0, 1, 2 and 3 in some order.
+	   // Many values of c will never occur, since e.g. x>y>z>w makes x<z, y<w and x<w
+	   // impossible. Only the 24 indices which have non-zero entries make any sense.
+	   // We use a thresholding to set the coordinates in turn from the largest magnitude.
+	   // The number 3 in the "simplex" array is at the position of the largest coordinate.
+		i1 = simplex[c][0] >= 3 ? 1 : 0;
+		j1 = simplex[c][1] >= 3 ? 1 : 0;
+		k1 = simplex[c][2] >= 3 ? 1 : 0;
+		l1 = simplex[c][3] >= 3 ? 1 : 0;
+	   // The number 2 in the "simplex" array is at the second largest coordinate.
+		i2 = simplex[c][0] >= 2 ? 1 : 0;
+		j2 = simplex[c][1] >= 2 ? 1 : 0;    k2 = simplex[c][2] >= 2 ? 1 : 0;
+		l2 = simplex[c][3] >= 2 ? 1 : 0;
+	   // The number 1 in the "simplex" array is at the second smallest coordinate.
+		i3 = simplex[c][0] >= 1 ? 1 : 0;
+		j3 = simplex[c][1] >= 1 ? 1 : 0;
+		k3 = simplex[c][2] >= 1 ? 1 : 0;
+		l3 = simplex[c][3] >= 1 ? 1 : 0;
+	   // The fifth corner has all coordinate offsets = 1, so no need to look that up.
+		var x1 = x0 - i1 + G4; // Offsets for second corner in (x,y,z,w) coords
+		var y1 = y0 - j1 + G4;
+		var z1 = z0 - k1 + G4;
+		var w1 = w0 - l1 + G4;
+		var x2 = x0 - i2 + 2.0 * G4; // Offsets for third corner in (x,y,z,w) coords
+		var y2 = y0 - j2 + 2.0 * G4;
+		var z2 = z0 - k2 + 2.0 * G4;
+		var w2 = w0 - l2 + 2.0 * G4;
+		var x3 = x0 - i3 + 3.0 * G4; // Offsets for fourth corner in (x,y,z,w) coords
+		var y3 = y0 - j3 + 3.0 * G4;
+		var z3 = z0 - k3 + 3.0 * G4;
+		var w3 = w0 - l3 + 3.0 * G4;
+		var x4 = x0 - 1.0 + 4.0 * G4; // Offsets for last corner in (x,y,z,w) coords
+		var y4 = y0 - 1.0 + 4.0 * G4;
+		var z4 = z0 - 1.0 + 4.0 * G4;
+		var w4 = w0 - 1.0 + 4.0 * G4;
+	   // Work out the hashed gradient indices of the five simplex corners
+		var ii = i & 255;
+		var jj = j & 255;
+		var kk = k & 255;
+		var ll = l & 255;
+		var gi0 = perm[ii + perm[jj + perm[kk + perm[ll]]]] % 32;
+		var gi1 = perm[ii + i1 + perm[jj + j1 + perm[kk + k1 + perm[ll + l1]]]] % 32;
+		var gi2 = perm[ii + i2 + perm[jj + j2 + perm[kk + k2 + perm[ll + l2]]]] % 32;
+		var gi3 = perm[ii + i3 + perm[jj + j3 + perm[kk + k3 + perm[ll + l3]]]] % 32;
+		var gi4 = perm[ii + 1 + perm[jj + 1 + perm[kk + 1 + perm[ll + 1]]]] % 32;
+	   // Calculate the contribution from the five corners
+		var t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
+		if (t0 < 0) n0 = 0.0;
+		else {
+			t0 *= t0;
+			n0 = t0 * t0 * this.dot4(grad4[gi0], x0, y0, z0, w0);
+		}
+		var t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
+		if (t1 < 0) n1 = 0.0;
+		else {
+			t1 *= t1;
+			n1 = t1 * t1 * this.dot4(grad4[gi1], x1, y1, z1, w1);
+		}
+		var t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
+		if (t2 < 0) n2 = 0.0;
+		else {
+			t2 *= t2;
+			n2 = t2 * t2 * this.dot4(grad4[gi2], x2, y2, z2, w2);
+		}   var t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
+		if (t3 < 0) n3 = 0.0;
+		else {
+			t3 *= t3;
+			n3 = t3 * t3 * this.dot4(grad4[gi3], x3, y3, z3, w3);
+		}
+		var t4 = 0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
+		if (t4 < 0) n4 = 0.0;
+		else {
+			t4 *= t4;
+			n4 = t4 * t4 * this.dot4(grad4[gi4], x4, y4, z4, w4);
+		}
+	   // Sum up and scale the result to cover the range [-1,1]
+		return 27.0 * (n0 + n1 + n2 + n3 + n4);
+	};
 
-			// build geometry
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var LightningStrike = function ( rayParameters ) {
 
-			this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
-			this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
-			this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
+		BufferGeometry.call( this );
 
-			function generate() {
+		this.type = 'LightningStrike';
 
-				var i;
-				var geometry = new BufferGeometry();
-				var decalVertices = [];
+		// Set parameters, and set undefined parameters to default values
+		rayParameters = rayParameters || {};
+		this.init( LightningStrike.copyParameters( rayParameters, rayParameters ) );
 
-				var vertex = new Vector3();
-				var normal = new Vector3();
+		// Creates and populates the mesh
+		this.createMesh();
 
-				// handle different geometry types
+	};
 
-				if ( mesh.geometry.isGeometry ) {
+	LightningStrike.prototype = Object.create( BufferGeometry.prototype );
 
-					geometry.fromGeometry( mesh.geometry );
+	LightningStrike.prototype.constructor = LightningStrike;
 
-				} else {
+	LightningStrike.prototype.isLightningStrike = true;
 
-					geometry.copy( mesh.geometry );
+	// Ray states
+	LightningStrike.RAY_INITIALIZED = 0;
+	LightningStrike.RAY_UNBORN = 1;
+	LightningStrike.RAY_PROPAGATING = 2;
+	LightningStrike.RAY_STEADY = 3;
+	LightningStrike.RAY_VANISHING = 4;
+	LightningStrike.RAY_EXTINGUISHED = 5;
 
-				}
+	LightningStrike.COS30DEG = Math.cos( 30 * Math.PI / 180 );
+	LightningStrike.SIN30DEG = Math.sin( 30 * Math.PI / 180 );
 
-				var positionAttribute = geometry.attributes.position;
-				var normalAttribute = geometry.attributes.normal;
+	LightningStrike.createRandomGenerator = function () {
 
-				// first, create an array of 'DecalVertex' objects
-				// three consecutive 'DecalVertex' objects represent a single face
-				//
-				// this data structure will be later used to perform the clipping
+		var numSeeds = 2053;
+		var seeds = [];
 
-				if ( geometry.index !== null ) {
+		for ( var i = 0; i < numSeeds; i++ ) {
 
-					// indexed BufferGeometry
+			seeds.push( Math.random() );
 
-					var index = geometry.index;
+		}
 
-					for ( i = 0; i < index.count; i ++ ) {
+		var generator = {
 
-						vertex.fromBufferAttribute( positionAttribute, index.getX( i ) );
-						normal.fromBufferAttribute( normalAttribute, index.getX( i ) );
+			currentSeed: 0,
 
-						pushDecalVertex( decalVertices, vertex, normal );
+			random: function () {
 
-					}
+				var value = seeds[ generator.currentSeed ];
 
-				} else {
+				generator.currentSeed = ( generator.currentSeed + 1 ) % numSeeds;
 
-					// non-indexed BufferGeometry
+				return value;
 
-					for ( i = 0; i < positionAttribute.count; i ++ ) {
+			},
 
-						vertex.fromBufferAttribute( positionAttribute, i );
-						normal.fromBufferAttribute( normalAttribute, i );
+			getSeed: function () {
 
-						pushDecalVertex( decalVertices, vertex, normal );
+				return generator.currentSeed / numSeeds;
 
-					}
+			},
 
-				}
+			setSeed: function ( seed ) {
 
-				// second, clip the geometry so that it doesn't extend out from the projector
-
-				decalVertices = clipGeometry( decalVertices, plane.set( 1, 0, 0 ) );
-				decalVertices = clipGeometry( decalVertices, plane.set( - 1, 0, 0 ) );
-				decalVertices = clipGeometry( decalVertices, plane.set( 0, 1, 0 ) );
-				decalVertices = clipGeometry( decalVertices, plane.set( 0, - 1, 0 ) );
-				decalVertices = clipGeometry( decalVertices, plane.set( 0, 0, 1 ) );
-				decalVertices = clipGeometry( decalVertices, plane.set( 0, 0, - 1 ) );
-
-				// third, generate final vertices, normals and uvs
-
-				for ( i = 0; i < decalVertices.length; i ++ ) {
-
-					var decalVertex = decalVertices[ i ];
-
-					// create texture coordinates (we are still in projector space)
-
-					uvs.push(
-						0.5 + ( decalVertex.position.x / size.x ),
-						0.5 + ( decalVertex.position.y / size.y )
-					);
-
-					// transform the vertex back to world space
-
-					decalVertex.position.applyMatrix4( projectorMatrix );
-
-					// now create vertex and normal buffer data
-
-					vertices.push( decalVertex.position.x, decalVertex.position.y, decalVertex.position.z );
-					normals.push( decalVertex.normal.x, decalVertex.normal.y, decalVertex.normal.z );
-
-				}
+				generator.currentSeed = Math.floor( seed * numSeeds ) % numSeeds;
 
 			}
 
-			function pushDecalVertex( decalVertices, vertex, normal ) {
+		};
 
-				// transform the vertex to world space, then to projector space
+		return generator;
 
-				vertex.applyMatrix4( mesh.matrixWorld );
-				vertex.applyMatrix4( projectorMatrixInverse );
+	};
 
-				decalVertices.push( new DecalVertex( vertex.clone(), normal.clone() ) );
+	LightningStrike.copyParameters = function ( dest, source) {
 
-			}
+		source = source || {};
+		dest = dest || {};
 
-			function clipGeometry( inVertices, plane ) {
+		var vecCopy = function( v ) {
 
-				var outVertices = [];
-
-				var s = 0.5 * Math.abs( size.dot( plane ) );
-
-				// a single iteration clips one face,
-				// which consists of three consecutive 'DecalVertex' objects
-
-				for ( var i = 0; i < inVertices.length; i += 3 ) {
-
-					var v1Out, v2Out, v3Out, total = 0;
-					var nV1, nV2, nV3, nV4;
-
-					var d1 = inVertices[ i + 0 ].position.dot( plane ) - s;
-					var d2 = inVertices[ i + 1 ].position.dot( plane ) - s;
-					var d3 = inVertices[ i + 2 ].position.dot( plane ) - s;
-
-					v1Out = d1 > 0;
-					v2Out = d2 > 0;
-					v3Out = d3 > 0;
-
-					// calculate, how many vertices of the face lie outside of the clipping plane
-
-					total = ( v1Out ? 1 : 0 ) + ( v2Out ? 1 : 0 ) + ( v3Out ? 1 : 0 );
-
-					switch ( total ) {
-
-						case 0: {
-
-							// the entire face lies inside of the plane, no clipping needed
-
-							outVertices.push( inVertices[ i ] );
-							outVertices.push( inVertices[ i + 1 ] );
-							outVertices.push( inVertices[ i + 2 ] );
-							break;
-
-						}
-
-						case 1: {
-
-							// one vertex lies outside of the plane, perform clipping
-
-							if ( v1Out ) {
-
-								nV1 = inVertices[ i + 1 ];
-								nV2 = inVertices[ i + 2 ];
-								nV3 = clip( inVertices[ i ], nV1, plane, s );
-								nV4 = clip( inVertices[ i ], nV2, plane, s );
-
-							}
-
-							if ( v2Out ) {
-
-								nV1 = inVertices[ i ];
-								nV2 = inVertices[ i + 2 ];
-								nV3 = clip( inVertices[ i + 1 ], nV1, plane, s );
-								nV4 = clip( inVertices[ i + 1 ], nV2, plane, s );
-
-								outVertices.push( nV3 );
-								outVertices.push( nV2.clone() );
-								outVertices.push( nV1.clone() );
-
-								outVertices.push( nV2.clone() );
-								outVertices.push( nV3.clone() );
-								outVertices.push( nV4 );
-								break;
-
-							}
-
-							if ( v3Out ) {
-
-								nV1 = inVertices[ i ];
-								nV2 = inVertices[ i + 1 ];
-								nV3 = clip( inVertices[ i + 2 ], nV1, plane, s );
-								nV4 = clip( inVertices[ i + 2 ], nV2, plane, s );
-
-							}
-
-							outVertices.push( nV1.clone() );
-							outVertices.push( nV2.clone() );
-							outVertices.push( nV3 );
-
-							outVertices.push( nV4 );
-							outVertices.push( nV3.clone() );
-							outVertices.push( nV2.clone() );
-
-							break;
-
-						}
-
-						case 2: {
-
-							// two vertices lies outside of the plane, perform clipping
-
-							if ( ! v1Out ) {
-
-								nV1 = inVertices[ i ].clone();
-								nV2 = clip( nV1, inVertices[ i + 1 ], plane, s );
-								nV3 = clip( nV1, inVertices[ i + 2 ], plane, s );
-								outVertices.push( nV1 );
-								outVertices.push( nV2 );
-								outVertices.push( nV3 );
-
-							}
-
-							if ( ! v2Out ) {
-
-								nV1 = inVertices[ i + 1 ].clone();
-								nV2 = clip( nV1, inVertices[ i + 2 ], plane, s );
-								nV3 = clip( nV1, inVertices[ i ], plane, s );
-								outVertices.push( nV1 );
-								outVertices.push( nV2 );
-								outVertices.push( nV3 );
-
-							}
-
-							if ( ! v3Out ) {
-
-								nV1 = inVertices[ i + 2 ].clone();
-								nV2 = clip( nV1, inVertices[ i ], plane, s );
-								nV3 = clip( nV1, inVertices[ i + 1 ], plane, s );
-								outVertices.push( nV1 );
-								outVertices.push( nV2 );
-								outVertices.push( nV3 );
-
-							}
-
-							break;
-
-						}
-
-						case 3: {
-
-							// the entire face lies outside of the plane, so let's discard the corresponding vertices
-
-							break;
-
-						}
-
-					}
-
-				}
-
-				return outVertices;
-
-			}
-
-			function clip( v0, v1, p, s ) {
-
-				var d0 = v0.position.dot( p ) - s;
-				var d1 = v1.position.dot( p ) - s;
-
-				var s0 = d0 / ( d0 - d1 );
-
-				var v = new DecalVertex(
-					new Vector3(
-						v0.position.x + s0 * ( v1.position.x - v0.position.x ),
-						v0.position.y + s0 * ( v1.position.y - v0.position.y ),
-						v0.position.z + s0 * ( v1.position.z - v0.position.z )
-					),
-					new Vector3(
-						v0.normal.x + s0 * ( v1.normal.x - v0.normal.x ),
-						v0.normal.y + s0 * ( v1.normal.y - v0.normal.y ),
-						v0.normal.z + s0 * ( v1.normal.z - v0.normal.z )
-					)
-				);
-
-				// need to clip more values (texture coordinates)? do it this way:
-				// intersectpoint.value = a.value + s * ( b.value - a.value );
+			if ( source === dest ) {
 
 				return v;
 
 			}
+			else {
 
-		}
+				return v.clone();
 
-		DecalGeometry.prototype = Object.create( BufferGeometry.prototype );
-		DecalGeometry.prototype.constructor = DecalGeometry;
-
-		// helper
-
-		function DecalVertex( position, normal ) {
-
-			this.position = position;
-			this.normal = normal;
-
-		}
-
-		DecalVertex.prototype.clone = function () {
-
-			return new DecalVertex( this.position.clone(), this.normal.clone() );
+			}
 
 		};
 
-	exports.DecalGeometry = DecalGeometry;
+		dest.sourceOffset = source.sourceOffset !== undefined ? vecCopy( source.sourceOffset ) : new Vector3( 0, 100, 0 ),
+		dest.destOffset = source.destOffset !== undefined ? vecCopy( source.destOffset ) : new Vector3( 0, 0, 0 ),
+
+		dest.timeScale = source.timeScale !== undefined ? source.timeScale : 1,
+		dest.roughness = source.roughness !== undefined ? source.roughness : 0.9,
+		dest.straightness = source.straightness !== undefined ? source.straightness : 0.7,
+
+		dest.up0 = source.up0 !== undefined ? vecCopy( source.up0 ) : new Vector3( 0, 0, 1 );
+		dest.up1 = source.up1 !== undefined ? vecCopy( source.up1 ) : new Vector3( 0, 0, 1 ),
+		dest.radius0 = source.radius0 !== undefined ? source.radius0 : 1,
+		dest.radius1 = source.radius1 !== undefined ? source.radius1 : 1,
+		dest.radius0Factor = source.radius0Factor !== undefined ? source.radius0Factor : 0.5,
+		dest.radius1Factor = source.radius1Factor !== undefined ? source.radius1Factor : 0.2,
+		dest.minRadius = source.minRadius !== undefined ? source.minRadius : 0.2,
+
+		// These parameters should not be changed after lightning creation. They can be changed but the ray will change its form abruptly:
+
+		dest.isEternal = source.isEternal !== undefined ? source.isEternal : ( source.birthTime === undefined || source.deathTime === undefined ),
+		dest.birthTime = source.birthTime,
+		dest.deathTime = source.deathTime,
+		dest.propagationTimeFactor = source.propagationTimeFactor !== undefined ? source.propagationTimeFactor : 0.1,
+		dest.vanishingTimeFactor = source.vanishingTimeFactor !== undefined ? source.vanishingTimeFactor : 0.9,
+		dest.subrayPeriod = source.subrayPeriod !== undefined ? source.subrayPeriod : 4,
+		dest.subrayDutyCycle = source.subrayDutyCycle !== undefined ? source.subrayDutyCycle : 0.6;
+
+		// These parameters cannot change after lightning creation:
+
+		dest.maxIterations =  source.maxIterations !== undefined ? source.maxIterations : 9;
+		dest.isStatic = source.isStatic !== undefined ? source.isStatic : false;
+		dest.ramification = source.ramification !== undefined ? source.ramification : 5;
+		dest.maxSubrayRecursion = source.maxSubrayRecursion !== undefined ? source.maxSubrayRecursion : 3;
+		dest.recursionProbability = source.recursionProbability !== undefined ? source.recursionProbability : 0.6;
+		dest.generateUVs = source.generateUVs !== undefined ? source.generateUVs : false;
+		dest.randomGenerator = source.randomGenerator,
+		dest.noiseSeed = source.noiseSeed,
+		dest.onDecideSubrayCreation = source.onDecideSubrayCreation,
+		dest.onSubrayCreation = source.onSubrayCreation;
+
+		return dest;
+
+	};
+
+	LightningStrike.prototype.update = function ( time ) {
+
+		if ( this.isStatic ) {
+			return;
+		}
+		
+		if ( this.rayParameters.isEternal || ( this.rayParameters.birthTime <= time && time <= this.rayParameters.deathTime ) ) {
+
+			this.updateMesh( time );
+
+			if ( time < this.subrays[ 0 ].endPropagationTime ) {
+			
+				this.state = LightningStrike.RAY_PROPAGATING;
+
+			}	
+			else if ( time > this.subrays[ 0 ].beginVanishingTime ) {
+
+				this.state = LightningStrike.RAY_VANISHING;
+
+			}
+			else {
+
+				this.state = LightningStrike.RAY_STEADY;
+
+			}
+
+			this.visible = true;
+
+		}
+		else {
+
+			this.visible = false;
+
+			if ( time < this.rayParameters.birthTime ) {
+
+				this.state = LightningStrike.RAY_UNBORN;
+
+			}
+			else {
+
+				this.state = LightningStrike.RAY_EXTINGUISHED;
+
+			}
+
+		}
+
+	};
+
+	LightningStrike.prototype.init = function ( rayParameters ) {
+
+		// Init all the state from the parameters
+
+		this.rayParameters = rayParameters;
+
+		// These parameters cannot change after lightning creation:
+
+		this.maxIterations =  rayParameters.maxIterations !== undefined ? Math.floor( rayParameters.maxIterations ) : 9;
+		rayParameters.maxIterations = this.maxIterations;
+		this.isStatic = rayParameters.isStatic !== undefined ? rayParameters.isStatic : false;
+		rayParameters.isStatic = this.isStatic;
+		this.ramification = rayParameters.ramification !== undefined ? Math.floor( rayParameters.ramification ) : 5;
+		rayParameters.ramification = this.ramification;
+		this.maxSubrayRecursion = rayParameters.maxSubrayRecursion !== undefined ? Math.floor( rayParameters.maxSubrayRecursion ) : 3;
+		rayParameters.maxSubrayRecursion = this.maxSubrayRecursion;
+		this.recursionProbability = rayParameters.recursionProbability !== undefined ? rayParameters.recursionProbability : 0.6;
+		rayParameters.recursionProbability = this.recursionProbability;
+		this.generateUVs = rayParameters.generateUVs !== undefined ? rayParameters.generateUVs : false;
+		rayParameters.generateUVs = this.generateUVs;
+
+		// Random generator
+		if ( rayParameters.randomGenerator !== undefined ) {
+
+			this.randomGenerator = rayParameters.randomGenerator;
+			this.seedGenerator = rayParameters.randomGenerator;
+
+			if ( rayParameters.noiseSeed !== undefined ) {
+			
+				this.seedGenerator.setSeed( rayParameters.noiseSeed );
+
+			}
+
+		}
+		else {
+
+			this.randomGenerator = LightningStrike.createRandomGenerator();
+			this.seedGenerator = Math;
+
+		}
+
+		// Ray creation callbacks
+		if ( rayParameters.onDecideSubrayCreation !== undefined ) {
+
+			this.onDecideSubrayCreation = rayParameters.onDecideSubrayCreation;
+
+		}
+		else {
+
+			this.createDefaultSubrayCreationCallbacks();
+
+			if ( rayParameters.onSubrayCreation !== undefined ) {
+
+				this.onSubrayCreation = rayParameters.onSubrayCreation;
+
+			}
+
+		}
+
+		// Internal state
+
+		this.state = LightningStrike.RAY_INITIALIZED;
+
+		this.maxSubrays = Math.ceil( 1 + Math.pow( this.ramification, Math.max( 0, this.maxSubrayRecursion - 1 ) ) );
+		rayParameters.maxSubrays = this.maxSubrays;
+		
+		this.maxRaySegments = 2 * ( 1 << this.maxIterations );
+
+		this.subrays = [];
+
+		for ( var i = 0; i < this.maxSubrays; i++ ) {
+
+			this.subrays.push( this.createSubray() );
+
+		}
+
+		this.raySegments = [];
+
+		for ( var i = 0; i < this.maxRaySegments; i++ ) {
+
+			this.raySegments.push( this.createSegment() );
+
+		}
+
+		this.time = 0;
+		this.timeFraction = 0;
+		this.currentSegmentCallback = null;
+		this.currentCreateTriangleVertices = this.generateUVs ? this.createTriangleVerticesWithUVs : this.createTriangleVerticesWithoutUVs;
+		this.numSubrays = 0;
+		this.currentSubray = null;
+		this.currentSegmentIndex = 0;
+		this.isInitialSegment = false;
+		this.subrayProbability = 0;
+
+		this.currentVertex = 0;
+		this.currentIndex = 0;
+		this.currentCoordinate = 0;
+		this.currentUVCoordinate = 0;
+		this.vertices = null;
+		this.uvs = null;
+		this.indices = null;
+		this.positionAttribute = null;
+		this.uvsAttribute = null;
+		
+		this.simplexX = new SimplexNoise( this.seedGenerator );
+		this.simplexY = new SimplexNoise( this.seedGenerator );
+		this.simplexZ = new SimplexNoise( this.seedGenerator );
+
+		// Temp vectors
+		this.forwards = new Vector3();
+		this.forwardsFill = new Vector3();
+		this.side = new Vector3();
+		this.down = new Vector3();
+		this.middlePos = new Vector3();
+		this.middleLinPos = new Vector3();
+		this.newPos = new Vector3();
+		this.vPos = new Vector3();
+		this.cross1 = new Vector3();
+
+	};
+
+	LightningStrike.prototype.createMesh = function () {
+
+		var maxDrawableSegmentsPerSubRay = 1 << this.maxIterations;
+		
+		var maxVerts = 3 * ( maxDrawableSegmentsPerSubRay + 1 ) * this.maxSubrays;
+		var maxIndices = 18 * maxDrawableSegmentsPerSubRay * this.maxSubrays;
+
+		this.vertices = new Float32Array( maxVerts * 3 );
+		this.indices = new Uint32Array( maxIndices );
+		if ( this.generateUVs ) {
+			this.uvs = new Float32Array( maxVerts * 2 );
+		}
+
+		// Populate the mesh
+		this.fillMesh( 0 );
+		
+		this.setIndex( new Uint32BufferAttribute( this.indices, 1 ) );
+
+		this.positionAttribute = new Float32BufferAttribute( this.vertices, 3 );
+		this.addAttribute( 'position', this.positionAttribute );
+
+		if ( this.generateUVs ) {		this.uvsAttribute = new Float32BufferAttribute( new Float32Array( this.uvs ), 2 );
+			this.addAttribute( 'uv', this.uvsAttribute );
+		}
+
+		if ( ! this.isStatic ) {
+			this.index.dynamic = true;
+			this.positionAttribute.dynamic = true;
+			if ( this.generateUVs ) {
+				this.uvsAttribute.dynamic = true;
+			}
+		}
+
+		// Store buffers for later modification
+		this.vertices = this.positionAttribute.array;
+		this.indices = this.index.array;
+		if ( this.generateUVs ) {
+			this.uvs = this.uvsAttribute.array;
+		}
+
+	};
+		
+	LightningStrike.prototype.updateMesh = function ( time ) {
+
+		this.fillMesh( time );
+
+		this.drawRange.count = this.currentIndex;
+
+		this.index.needsUpdate = true;
+
+		this.positionAttribute.needsUpdate = true;
+
+		if ( this.generateUVs ) {
+			this.uvsAttribute.needsUpdate = true;
+		}
+
+	};
+
+	LightningStrike.prototype.fillMesh = function ( time ) {
+
+		var scope = this;
+
+		this.currentVertex = 0;
+		this.currentIndex = 0;
+		this.currentCoordinate = 0;
+		this.currentUVCoordinate = 0;
+
+		this.fractalRay( time, function fillVertices ( segment ) {
+
+			var subray = scope.currentSubray;
+
+			if ( time < subray.birthTime ) {//&& ( ! this.rayParameters.isEternal || scope.currentSubray.recursion > 0 ) ) {
+
+				return;
+
+			}
+			else if ( this.rayParameters.isEternal && scope.currentSubray.recursion == 0 ) {
+
+				// Eternal rays don't propagate nor vanish, but its subrays do
+
+				scope.createPrism( segment );
+
+				scope.onDecideSubrayCreation( segment, scope );
+
+			}
+			else if ( time < subray.endPropagationTime ) {
+
+				if ( scope.timeFraction >= segment.fraction0 * subray.propagationTimeFactor ) {
+
+					// Ray propagation has arrived to this segment
+
+					scope.createPrism( segment );
+
+					scope.onDecideSubrayCreation( segment, scope );
+
+				}
+
+			}
+			else if ( time < subray.beginVanishingTime ) {
+
+				// Ray is steady (nor propagating nor vanishing)
+
+				scope.createPrism( segment );
+
+				scope.onDecideSubrayCreation( segment, scope );
+
+			}
+			else {
+
+				if ( scope.timeFraction <= subray.vanishingTimeFactor + segment.fraction1  * ( 1 - subray.vanishingTimeFactor ) ) {
+
+					// Segment has not yet vanished
+
+					scope.createPrism( segment );
+
+				}
+
+				scope.onDecideSubrayCreation( segment, scope );
+
+			}
+
+		} );
+
+	};
+
+	LightningStrike.prototype.addNewSubray = function ( rayParameters ) {
+
+		return this.subrays[ this.numSubrays++ ];
+
+	};
+
+	LightningStrike.prototype.initSubray = function ( subray, rayParameters ) {
+
+		subray.pos0.copy( rayParameters.sourceOffset );
+		subray.pos1.copy( rayParameters.destOffset );
+		subray.up0.copy( rayParameters.up0 );
+		subray.up1.copy( rayParameters.up1 );
+		subray.radius0 = rayParameters.radius0;
+		subray.radius1 = rayParameters.radius1;
+		subray.birthTime = rayParameters.birthTime;
+		subray.deathTime = rayParameters.deathTime;
+		subray.timeScale = rayParameters.timeScale;
+		subray.roughness = rayParameters.roughness;
+		subray.straightness = rayParameters.straightness;
+		subray.propagationTimeFactor = rayParameters.propagationTimeFactor;
+		subray.vanishingTimeFactor = rayParameters.vanishingTimeFactor;
+
+		subray.maxIterations = this.maxIterations;
+		subray.seed = rayParameters.noiseSeed !== undefined ? rayParameters.noiseSeed : 0;
+		subray.recursion = 0;
+
+	};
+
+	LightningStrike.prototype.fractalRay = function ( time, segmentCallback ) {
+
+		this.time = time;
+		this.currentSegmentCallback = segmentCallback;
+		this.numSubrays = 0;
+
+		// Add the top level subray
+		this.initSubray( this.addNewSubray(), this.rayParameters );
+
+		// Process all subrays that are being generated until consuming all of them
+		for ( var subrayIndex = 0; subrayIndex < this.numSubrays; subrayIndex++ ) {
+
+			var subray = this.subrays[ subrayIndex ];
+			this.currentSubray = subray;
+
+			this.randomGenerator.setSeed( subray.seed );
+
+			subray.endPropagationTime = _Math.lerp( subray.birthTime, subray.deathTime, subray.propagationTimeFactor );
+			subray.beginVanishingTime = _Math.lerp( subray.deathTime, subray.birthTime, 1 - subray.vanishingTimeFactor );
+
+			var random1 = this.randomGenerator.random;
+			subray.linPos0.set( random1(), random1(), random1() ).multiplyScalar( 1000 );
+			subray.linPos1.set( random1(), random1(), random1() ).multiplyScalar( 1000 );
+
+			this.timeFraction = ( time - subray.birthTime ) / ( subray.deathTime - subray.birthTime );
+
+			this.currentSegmentIndex  = 0;
+			this.isInitialSegment = true;
+
+			var segment = this.getNewSegment();
+			segment.iteration = 0;
+			segment.pos0.copy( subray.pos0 );
+			segment.pos1.copy( subray.pos1 );
+			segment.linPos0.copy( subray.linPos0 );
+			segment.linPos1.copy( subray.linPos1 );
+			segment.up0.copy( subray.up0 );
+			segment.up1.copy( subray.up1 );
+			segment.radius0 = subray.radius0;
+			segment.radius1 = subray.radius1;
+			segment.fraction0 = 0;
+			segment.fraction1 = 1;
+			segment.positionVariationFactor = 1 - subray.straightness;
+
+			this.subrayProbability = this.ramification * Math.pow( this.recursionProbability, subray.recursion ) / ( 1 << subray.maxIterations );
+
+			this.fractalRayRecursive( segment );
+
+		}
+
+		this.currentSegmentCallback = null;
+		this.currentSubray = null;
+
+	};
+
+	LightningStrike.prototype.fractalRayRecursive = function ( segment ) {
+
+		// Leave recursion condition
+		if ( segment.iteration >= this.currentSubray.maxIterations ) {
+
+			this.currentSegmentCallback( segment );
+
+			return;
+
+		}
+
+		// Interpolation
+		this.forwards.subVectors( segment.pos1, segment.pos0 );
+		var lForwards = this.forwards.length();
+
+		if ( lForwards < 0.000001) {
+			this.forwards.set( 0, 0, 0.01 );
+			lForwards = this.forwards.length();
+		}
+
+		var middleRadius = ( segment.radius0 + segment.radius1 ) * 0.5;
+		var middleFraction = ( segment.fraction0 + segment.fraction1 ) * 0.5;
+
+		var timeDimension = this.time * this.currentSubray.timeScale * Math.pow( 2, segment.iteration );
+
+		this.middlePos.lerpVectors( segment.pos0, segment.pos1, 0.5 );
+		this.middleLinPos.lerpVectors( segment.linPos0, segment.linPos1, 0.5 );
+		var p = this.middleLinPos;
+
+		// Noise	
+		this.newPos.set( this.simplexX.noise4d( p.x, p.y, p.z, timeDimension ),
+							this.simplexY.noise4d( p.x, p.y, p.z, timeDimension ),
+							this.simplexZ.noise4d( p.x, p.y, p.z, timeDimension ) );
+
+		this.newPos.multiplyScalar( segment.positionVariationFactor * lForwards );
+		this.newPos.add( this.middlePos );
+
+		// Recursion
+
+		var newSegment1 = this.getNewSegment();
+		newSegment1.pos0.copy( segment.pos0 );
+		newSegment1.pos1.copy( this.newPos );
+		newSegment1.linPos0.copy( segment.linPos0 );
+		newSegment1.linPos1.copy( this.middleLinPos );
+		newSegment1.up0.copy( segment.up0 );
+		newSegment1.up1.copy( segment.up1 );
+		newSegment1.radius0 = segment.radius0;
+		newSegment1.radius1 = middleRadius;
+		newSegment1.fraction0 = segment.fraction0;
+		newSegment1.fraction1 = middleFraction;
+		newSegment1.positionVariationFactor = segment.positionVariationFactor * this.currentSubray.roughness;
+		newSegment1.iteration = segment.iteration + 1;
+
+		var newSegment2 = this.getNewSegment();
+		newSegment2.pos0.copy( this.newPos );
+		newSegment2.pos1.copy( segment.pos1 );
+		newSegment2.linPos0.copy( this.middleLinPos );
+		newSegment2.linPos1.copy( segment.linPos1 );
+		this.cross1.crossVectors( segment.up0, this.forwards.normalize() );
+		newSegment2.up0.crossVectors( this.forwards, this.cross1 ).normalize();
+		newSegment2.up1.copy( segment.up1 );
+		newSegment2.radius0 = middleRadius;
+		newSegment2.radius1 = segment.radius1;
+		newSegment2.fraction0 = middleFraction;
+		newSegment2.fraction1 = segment.fraction1;
+		newSegment2.positionVariationFactor = segment.positionVariationFactor * this.currentSubray.roughness;
+		newSegment2.iteration = segment.iteration + 1;
+
+		this.fractalRayRecursive( newSegment1 );
+
+		this.fractalRayRecursive( newSegment2 );
+
+	};
+
+	LightningStrike.prototype.createPrism = function ( segment ) {
+
+		// Creates one triangular prism and its vertices at the segment
+
+		this.forwardsFill.subVectors( segment.pos1, segment.pos0 ).normalize();
+
+		if ( this.isInitialSegment ) {
+
+			this.currentCreateTriangleVertices( segment.pos0, segment.up0, this.forwardsFill, segment.radius0, 0 );
+			
+			this.isInitialSegment = false;
+
+		}
+
+		this.currentCreateTriangleVertices( segment.pos1, segment.up0, this.forwardsFill, segment.radius1, segment.fraction1 );
+
+		this.createPrismFaces();
+
+	};
+
+	LightningStrike.prototype.createTriangleVerticesWithoutUVs = function ( pos, up, forwards, radius ) {
+
+		// Create an equilateral triangle (only vertices)
+		
+		this.side.crossVectors( up, forwards ).multiplyScalar( radius * LightningStrike.COS30DEG );
+		this.down.copy( up ).multiplyScalar( - radius * LightningStrike.SIN30DEG );
+
+		var p = this.vPos;
+		var v = this.vertices;
+
+		p.copy( pos ).sub( this.side ).add( this.down );
+
+		v[ this.currentCoordinate++ ] = p.x;
+		v[ this.currentCoordinate++ ] = p.y;
+		v[ this.currentCoordinate++ ] = p.z;
+
+		p.copy( pos ).add( this.side ).add( this.down );
+
+		v[ this.currentCoordinate++ ] = p.x;
+		v[ this.currentCoordinate++ ] = p.y;
+		v[ this.currentCoordinate++ ] = p.z;
+
+		p.copy( up ).multiplyScalar( radius ).add( pos );
+		
+		v[ this.currentCoordinate++ ] = p.x;
+		v[ this.currentCoordinate++ ] = p.y;
+		v[ this.currentCoordinate++ ] = p.z;
+
+		this.currentVertex += 3;
+
+	};
+
+	LightningStrike.prototype.createTriangleVerticesWithUVs = function ( pos, up, forwards, radius, u ) {
+
+		// Create an equilateral triangle (only vertices)
+		
+		this.side.crossVectors( up, forwards ).multiplyScalar( radius * LightningStrike.COS30DEG );
+		this.down.copy( up ).multiplyScalar( - radius * LightningStrike.SIN30DEG );
+
+		var p = this.vPos;
+		var v = this.vertices;
+		var uv = this.uvs;
+
+		p.copy( pos ).sub( this.side ).add( this.down );
+
+		v[ this.currentCoordinate++ ] = p.x;
+		v[ this.currentCoordinate++ ] = p.y;
+		v[ this.currentCoordinate++ ] = p.z;
+
+		uv[ this.currentUVCoordinate++ ] = u;
+		uv[ this.currentUVCoordinate++ ] = 0;
+
+		p.copy( pos ).add( this.side ).add( this.down );
+
+		v[ this.currentCoordinate++ ] = p.x;
+		v[ this.currentCoordinate++ ] = p.y;
+		v[ this.currentCoordinate++ ] = p.z;
+
+		uv[ this.currentUVCoordinate++ ] = u;
+		uv[ this.currentUVCoordinate++ ] = 0.5;
+
+		p.copy( up ).multiplyScalar( radius ).add( pos );
+		
+		v[ this.currentCoordinate++ ] = p.x;
+		v[ this.currentCoordinate++ ] = p.y;
+		v[ this.currentCoordinate++ ] = p.z;
+
+		uv[ this.currentUVCoordinate++ ] = u;
+		uv[ this.currentUVCoordinate++ ] = 1;
+
+		this.currentVertex += 3;
+
+	};
+
+	LightningStrike.prototype.createPrismFaces = function ( vertex, index ) {
+
+		var indices = this.indices;
+		var vertex = this.currentVertex - 6;
+
+		indices[ this.currentIndex++ ] = vertex + 1;
+		indices[ this.currentIndex++ ] = vertex + 2;
+		indices[ this.currentIndex++ ] = vertex + 5;
+		indices[ this.currentIndex++ ] = vertex + 1;
+		indices[ this.currentIndex++ ] = vertex + 5;
+		indices[ this.currentIndex++ ] = vertex + 4;
+		indices[ this.currentIndex++ ] = vertex + 0;
+		indices[ this.currentIndex++ ] = vertex + 1;
+		indices[ this.currentIndex++ ] = vertex + 4;
+		indices[ this.currentIndex++ ] = vertex + 0;
+		indices[ this.currentIndex++ ] = vertex + 4;
+		indices[ this.currentIndex++ ] = vertex + 3;
+		indices[ this.currentIndex++ ] = vertex + 2;
+		indices[ this.currentIndex++ ] = vertex + 0;
+		indices[ this.currentIndex++ ] = vertex + 3;
+		indices[ this.currentIndex++ ] = vertex + 2;
+		indices[ this.currentIndex++ ] = vertex + 3;
+		indices[ this.currentIndex++ ] = vertex + 5;
+
+	};
+
+	LightningStrike.prototype.createDefaultSubrayCreationCallbacks = function () {
+
+		var random1 = this.randomGenerator.random;
+
+		this.onDecideSubrayCreation = function ( segment, lightningStrike ) {
+
+			// Decide subrays creation at parent (sub)ray segment
+
+			var subray = lightningStrike.currentSubray;
+
+			var period = lightningStrike.rayParameters.subrayPeriod;
+			var dutyCycle = lightningStrike.rayParameters.subrayDutyCycle;
+			
+			var phase0 = ( lightningStrike.rayParameters.isEternal && subray.recursion == 0 ) ? - random1() * period : _Math.lerp( subray.birthTime, subray.endPropagationTime, segment.fraction0 ) - random1() * period;
+			
+			var phase = lightningStrike.time - phase0;
+			var currentCycle = Math.floor( phase / period );
+
+			var childSubraySeed = random1() * ( currentCycle + 1 );
+
+			var isActive = phase % period <= dutyCycle * period;
+
+			probability = lightningStrike.subrayProbability;
+			var probability = 0;
+			if ( isActive ) {
+				probability = lightningStrike.subrayProbability;
+				// Distribution test: probability *= segment.fraction0 > 0.5 && segment.fraction0 < 0.9 ? 1 / 0.4 : 0;
+			}
+
+			if ( subray.recursion < lightningStrike.maxSubrayRecursion && lightningStrike.numSubrays < lightningStrike.maxSubrays && random1() < probability ) {
+
+				var childSubray = lightningStrike.addNewSubray();
+
+				var parentSeed = lightningStrike.randomGenerator.getSeed();
+				childSubray.seed = childSubraySeed;
+				lightningStrike.randomGenerator.setSeed( childSubraySeed );
+
+				childSubray.recursion = subray.recursion + 1;
+				childSubray.maxIterations = Math.max( 1, subray.maxIterations - 1 );
+
+				childSubray.linPos0.set( random1(), random1(), random1() ).multiplyScalar( 1000 );
+				childSubray.linPos1.set( random1(), random1(), random1() ).multiplyScalar( 1000 );
+				childSubray.up0.copy( subray.up0 );
+				childSubray.up1.copy( subray.up1 );
+				childSubray.radius0 = segment.radius0 * lightningStrike.rayParameters.radius0Factor;
+				childSubray.radius1 = Math.min( lightningStrike.rayParameters.minRadius, segment.radius1 * lightningStrike.rayParameters.radius1Factor );
+				
+				childSubray.birthTime = phase0 + ( currentCycle ) * period;
+				childSubray.deathTime = childSubray.birthTime + period * dutyCycle;
+
+				if ( ! lightningStrike.rayParameters.isEternal && subray.recursion == 0 ) {
+
+					childSubray.birthTime = Math.max( childSubray.birthTime, subray.birthTime );
+					childSubray.deathTime = Math.min( childSubray.deathTime, subray.deathTime );
+
+				}
+
+				childSubray.timeScale = subray.timeScale * 2;
+				childSubray.roughness = subray.roughness;
+				childSubray.straightness = subray.straightness;
+				childSubray.propagationTimeFactor = subray.propagationTimeFactor;
+				childSubray.vanishingTimeFactor = subray.vanishingTimeFactor;
+
+				lightningStrike.onSubrayCreation( segment, subray, childSubray, lightningStrike );
+
+				lightningStrike.randomGenerator.setSeed( parentSeed );
+
+			}
+
+		};
+
+		var vec1Pos = new Vector3();
+		var vec2Forward = new Vector3();
+		var vec3Side = new Vector3();
+		var vec4Up = new Vector3();
+		
+		this.onSubrayCreation = function ( segment, parentSubray, childSubray, lightningStrike ) {
+
+			// Decide childSubray origin and destination positions (pos0 and pos1) and possibly other properties of childSubray
+
+			// Just use the default cone position generator
+			lightningStrike.subrayCylinderPosition( segment, parentSubray, childSubray, 0.5, 0.6, 0.2 );
+
+		};
+
+		this.subrayConePosition = function ( segment, parentSubray, childSubray, heightFactor, sideWidthFactor, minSideWidthFactor ) {
+			
+			// Sets childSubray pos0 and pos1 in a cone
+			
+			childSubray.pos0.copy( segment.pos0 );
+
+			vec1Pos.subVectors( parentSubray.pos1, parentSubray.pos0 );
+			vec2Forward.copy( vec1Pos ).normalize();
+			vec1Pos.multiplyScalar( segment.fraction0 + ( 1 - segment.fraction0 ) * ( random1() * heightFactor ) );
+			var length = vec1Pos.length();
+			vec3Side.crossVectors( parentSubray.up0, vec2Forward );
+			var angle = 2 * Math.PI * random1();
+			vec3Side.multiplyScalar( Math.cos ( angle ) );
+			vec4Up.copy( parentSubray.up0 ).multiplyScalar( Math.sin ( angle ) );
+
+			childSubray.pos1.copy( vec3Side ).add( vec4Up ).multiplyScalar( length * sideWidthFactor * ( minSideWidthFactor + random1() * ( 1 - minSideWidthFactor ) ) ).add( vec1Pos ).add( parentSubray.pos0 );
+
+		};
+
+		this.subrayCylinderPosition = function ( segment, parentSubray, childSubray, heightFactor, sideWidthFactor, minSideWidthFactor ) {
+			
+			// Sets childSubray pos0 and pos1 in a cylinder
+
+			childSubray.pos0.copy( segment.pos0 );
+
+			vec1Pos.subVectors( parentSubray.pos1, parentSubray.pos0 );
+			vec2Forward.copy( vec1Pos ).normalize();
+			vec1Pos.multiplyScalar( segment.fraction0 + ( 1 - segment.fraction0 ) * ( ( 2 * random1() - 1 ) * heightFactor ) );
+			var length = vec1Pos.length();
+			vec3Side.crossVectors( parentSubray.up0, vec2Forward );
+			var angle = 2 * Math.PI * random1();
+			vec3Side.multiplyScalar( Math.cos ( angle ) );
+			vec4Up.copy( parentSubray.up0 ).multiplyScalar( Math.sin ( angle ) );
+
+			childSubray.pos1.copy( vec3Side ).add( vec4Up ).multiplyScalar( length * sideWidthFactor * ( minSideWidthFactor + random1() * ( 1 - minSideWidthFactor ) ) ).add( vec1Pos ).add( parentSubray.pos0 );
+
+		};
+
+	};
+
+	LightningStrike.prototype.createSubray = function () {
+
+		return {
+
+			seed: 0,
+			maxIterations: 0,
+			recursion: 0,
+			pos0: new Vector3(),
+			pos1: new Vector3(),
+			linPos0: new Vector3(),
+			linPos1: new Vector3(),
+			up0: new Vector3(),
+			up1: new Vector3(),
+			radius0: 0,
+			radius1: 0,
+			birthTime: 0,
+			deathTime: 0,
+			timeScale: 0,
+			roughness: 0,
+			straightness: 0,
+			propagationTimeFactor: 0,
+			vanishingTimeFactor: 0,
+			endPropagationTime: 0,
+			beginVanishingTime: 0
+
+		};
+
+	};
+
+	LightningStrike.prototype.createSegment = function () {
+
+		return {
+			iteration: 0,
+			pos0: new Vector3(),
+			pos1: new Vector3(),
+			linPos0: new Vector3(),
+			linPos1: new Vector3(),
+			up0: new Vector3(),
+			up1: new Vector3(),
+			radius0: 0,
+			radius1: 0,
+			fraction0: 0,
+			fraction1: 0,
+			positionVariationFactor: 0
+		}
+
+	};
+
+	LightningStrike.prototype.getNewSegment = function () {
+
+		return this.raySegments[ this.currentSegmentIndex++ ];
+
+	};
+
+	LightningStrike.prototype.copy = function ( source ) {
+		
+		BufferGeometry.prototype.copy.call( this, source );
+
+		this.init( LightningStrike.copyParameters( {}, source.rayParameters ) );
+
+		return this;
+
+	};
+
+	LightningStrike.prototype.clone = function () {
+
+		return new this.constructor( LightningStrike.copyParameters( {}, this.rayParameters ) );
+
+	};
+
+	exports.LightningStrike = LightningStrike;
 
 	return exports;
 
