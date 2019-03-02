@@ -7,13 +7,12 @@ uniform vec3 emissive;
 uniform float opacity;
 
 varying vec3 vLightFront;
+varying vec3 vIndirectFront;
 
 #ifdef DOUBLE_SIDED
-
 	varying vec3 vLightBack;
-
+	varying vec3 vIndirectBack;
 #endif
-
 #include <common>
 #include <packing>
 #include <dithering_pars_fragment>
@@ -54,6 +53,16 @@ void main() {
 	// accumulation
 	reflectedLight.indirectDiffuse = getAmbientLightIrradiance( ambientLightColor );
 
+	#ifdef DOUBLE_SIDED
+
+		reflectedLight.indirectDiffuse += ( gl_FrontFacing ) ? vIndirectFront : vIndirectBack;
+
+	#else
+
+		reflectedLight.indirectDiffuse += vIndirectFront;
+
+	#endif
+
 	#include <lightmap_fragment>
 
 	reflectedLight.indirectDiffuse *= BRDF_Diffuse_Lambert( diffuseColor.rgb );
@@ -84,6 +93,5 @@ void main() {
 	#include <fog_fragment>
 	#include <premultiplied_alpha_fragment>
 	#include <dithering_fragment>
-
 }
 `;

@@ -1,0 +1,38 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Plane } from './Plane';
+import { Matrix4 } from './Matrix4';
+import { Object3D } from './../core/Object3D';
+import { Sprite } from './../objects/Sprite';
+import { Sphere } from './Sphere';
+import { Box3 } from './Box3';
+import { Vector3 } from './Vector3';
+export class Frustum {
+  constructor(
+    p0?: Plane,
+    p1?: Plane,
+    p2?: Plane,
+    p3?: Plane,
+    p4?: Plane,
+    p5?: Plane
+  );
+  planes: Plane[];
+
+  set(
+    p0?: number,
+    p1?: number,
+    p2?: number,
+    p3?: number,
+    p4?: number,
+    p5?: number
+  ): Frustum;
+  clone(): this;
+  copy(frustum: Frustum): this;
+  setFromMatrix(m: Matrix4): Frustum;
+  intersectsObject(object: Object3D): boolean;
+  intersectsObject(sprite: Sprite): boolean;
+  intersectsSphere(sphere: Sphere): boolean;
+  intersectsBox(box: Box3): boolean;
+  containsPoint(point: Vector3): boolean;
+}

@@ -277,7 +277,7 @@ OutlinePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 	},
 
-	render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 		if ( this.selectedObjects.length > 0 ) {
 

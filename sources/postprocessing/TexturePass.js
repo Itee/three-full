@@ -48,7 +48,7 @@ TexturePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 	constructor: TexturePass,
 
-	render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 		var oldAutoClear = renderer.autoClear;
 		renderer.autoClear = false;

@@ -1,0 +1,15 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Texture } from './Texture';
+import { NearestFilter } from '../constants';
+import { TypedArray } from '../polyfills';
+
+export class DataTexture3D extends Texture {
+  constructor(
+    data: ArrayBuffer | TypedArray,
+    width: number,
+    heighht: number,
+    depth?: number
+  );
+}

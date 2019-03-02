@@ -1,0 +1,18 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export abstract class Interpolant {
+  constructor(
+    parameterPositions: any,
+    samplesValues: any,
+    sampleSize: number,
+    resultBuffer?: any
+  );
+
+  parameterPositions: any;
+  samplesValues: any;
+  valueSize: number;
+  resultBuffer: any;
+
+  evaluate(time: number): any;
+}

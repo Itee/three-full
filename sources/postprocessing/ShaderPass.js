@@ -48,7 +48,7 @@ ShaderPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 	constructor: ShaderPass,
 
-	render: function( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+	render: function( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 		if ( this.uniforms[ this.textureID ] ) {
 

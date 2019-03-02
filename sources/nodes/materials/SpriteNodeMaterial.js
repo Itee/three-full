@@ -20,6 +20,7 @@ SpriteNodeMaterial.prototype.constructor = SpriteNodeMaterial;
 NodeUtils.addShortcuts( SpriteNodeMaterial.prototype, 'fragment', [
 	'color',
 	'alpha',
+	'mask',
 	'position',
 	'spherical'
 ] );

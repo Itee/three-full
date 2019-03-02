@@ -1,0 +1,12 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { BufferGeometry } from './BufferGeometry';
+export class InstancedBufferGeometry extends BufferGeometry {
+  constructor();
+
+  groups: { start: number; count: number; instances: number }[];
+  maxInstancedCount: number;
+
+  addGroup(start: number, count: number, instances: number): void;
+}
