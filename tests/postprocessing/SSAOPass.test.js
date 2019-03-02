@@ -145,7 +145,6 @@ var Three = (function (exports) {
 	var FloatType = 1015;
 	var UnsignedInt248Type = 1020;
 	var RGBAFormat = 1023;
-	var LuminanceFormat = 1024;
 	var DepthFormat = 1026;
 	var DepthStencilFormat = 1027;
 	var TrianglesDrawMode = 0;
@@ -5105,6 +5104,13 @@ var Three = (function (exports) {
 					value: value.toArray()
 				};
 
+			} else if ( value && value.isMatrix3 ) {
+
+				data.uniforms[ name ] = {
+					type: 'm3',
+					value: value.toArray()
+				};
+
 			} else if ( value && value.isMatrix4 ) {
 
 				data.uniforms[ name ] = {
@@ -6293,6 +6299,10 @@ var Three = (function (exports) {
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
 
+			// object specific properties
+
+			if ( this.isMesh && this.drawMode !== TrianglesDrawMode ) object.drawMode = this.drawMode;
+
 			//
 
 			function serialize( library, element ) {
@@ -6687,6 +6697,8 @@ var Three = (function (exports) {
 
 		constructor: Scene,
 
+		isScene: true,
+
 		copy: function ( source, recursive ) {
 
 			Object3D.prototype.copy.call( this, source, recursive );
@@ -6710,6 +6722,12 @@ var Three = (function (exports) {
 			if ( this.fog !== null ) data.object.fog = this.fog.toJSON();
 
 			return data;
+
+		},
+
+		dispose: function () {
+
+			this.dispatchEvent( { type: 'dispose' } );
 
 		}
 
@@ -10615,21 +10633,7 @@ var Three = (function (exports) {
 
 		toNonIndexed: function () {
 
-			if ( this.index === null ) {
-
-				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
-				return this;
-
-			}
-
-			var geometry2 = new BufferGeometry();
-
-			var indices = this.index.array;
-			var attributes = this.attributes;
-
-			for ( var name in attributes ) {
-
-				var attribute = attributes[ name ];
+			function convertBufferAttribute( attribute, indices ) {
 
 				var array = attribute.array;
 				var itemSize = attribute.itemSize;
@@ -10650,9 +10654,60 @@ var Three = (function (exports) {
 
 				}
 
-				geometry2.addAttribute( name, new BufferAttribute( array2, itemSize ) );
+				return new BufferAttribute( array2, itemSize );
 
 			}
+
+			//
+
+			if ( this.index === null ) {
+
+				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+				return this;
+
+			}
+
+			var geometry2 = new BufferGeometry();
+
+			var indices = this.index.array;
+			var attributes = this.attributes;
+
+			// attributes
+
+			for ( var name in attributes ) {
+
+				var attribute = attributes[ name ];
+
+				var newAttribute = convertBufferAttribute( attribute, indices );
+
+				geometry2.addAttribute( name, newAttribute );
+
+			}
+
+			// morph attributes
+
+			var morphAttributes = this.morphAttributes;
+
+			for ( name in morphAttributes ) {
+
+				var morphArray = [];
+				var morphAttribute = morphAttributes[ name ]; // morphAttribute: array of Float32BufferAttributes
+
+				for ( var i = 0, il = morphAttribute.length; i < il; i ++ ) {
+
+					var attribute = morphAttribute[ i ];
+
+					var newAttribute = convertBufferAttribute( attribute, indices );
+
+					morphArray.push( newAttribute );
+
+				}
+
+				geometry2.morphAttributes[ name ] = morphArray;
+
+			}
+
+			// groups
 
 			var groups = this.groups;
 
@@ -11115,6 +11170,7 @@ var Three = (function (exports) {
 									if ( intersection ) {
 
 										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in indexed buffer semantics
+										intersection.face.materialIndex = group.materialIndex;
 										intersects.push( intersection );
 
 									}
@@ -11172,6 +11228,7 @@ var Three = (function (exports) {
 									if ( intersection ) {
 
 										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in non-indexed buffer semantics
+										intersection.face.materialIndex = group.materialIndex;
 										intersects.push( intersection );
 
 									}
@@ -13187,7 +13244,7 @@ var Three = (function (exports) {
 
 		defines: {
 			"PERSPECTIVE_CAMERA": 1,
-			"KERNEL_SIZE": 64
+			"KERNEL_SIZE": 32
 		},
 
 		uniforms: {
@@ -13484,7 +13541,7 @@ var Three = (function (exports) {
 		this.scene = scene;
 
 		this.kernelRadius = 8;
-		this.kernelSize = 64;
+		this.kernelSize = 32;
 		this.kernel = [];
 		this.noiseTexture = null;
 		this.output = 0;
@@ -13838,19 +13895,26 @@ var Three = (function (exports) {
 			var simplex = new SimplexNoise();
 
 			var size = width * height;
-			var data = new Float32Array( size );
+			var data = new Float32Array( size * 4 );
 
 			for ( var i = 0; i < size; i ++ ) {
+
+				var stride = i * 4;
 
 				var x = ( Math.random() * 2 ) - 1;
 				var y = ( Math.random() * 2 ) - 1;
 				var z = 0;
 
-				data[ i ] = simplex.noise3d( x, y, z );
+				var noise = simplex.noise3d( x, y, z );
+
+				data[ stride ] = noise;
+				data[ stride + 1 ] = noise;
+				data[ stride + 2 ] = noise;
+				data[ stride + 3 ] = 1;
 
 			}
 
-			this.noiseTexture = new DataTexture( data, width, height, LuminanceFormat, FloatType );
+			this.noiseTexture = new DataTexture( data, width, height, RGBA, FloatType );
 			this.noiseTexture.wrapS = RepeatWrapping;
 			this.noiseTexture.wrapT = RepeatWrapping;
 			this.noiseTexture.needsUpdate = true;

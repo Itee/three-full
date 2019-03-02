@@ -24,11 +24,11 @@ TAARenderPass.prototype = Object.assign( Object.create( SSAARenderPass.prototype
 
 	constructor: TAARenderPass,
 
-	render: function ( renderer, writeBuffer, readBuffer, delta ) {
+	render: function ( renderer, writeBuffer, readBuffer, deltaTime ) {
 
 		if ( ! this.accumulate ) {
 
-			SSAARenderPass.prototype.render.call( this, renderer, writeBuffer, readBuffer, delta );
+			SSAARenderPass.prototype.render.call( this, renderer, writeBuffer, readBuffer, deltaTime );
 
 			this.accumulateIndex = - 1;
 			return;
@@ -53,7 +53,7 @@ TAARenderPass.prototype = Object.assign( Object.create( SSAARenderPass.prototype
 
 		if ( this.accumulate && this.accumulateIndex === - 1 ) {
 
-			SSAARenderPass.prototype.render.call( this, renderer, this.holdRenderTarget, readBuffer, delta );
+			SSAARenderPass.prototype.render.call( this, renderer, this.holdRenderTarget, readBuffer, deltaTime );
 
 			this.accumulateIndex = 0;
 

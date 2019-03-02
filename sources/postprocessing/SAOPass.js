@@ -209,7 +209,7 @@ SAOPass.OUTPUT = {
 SAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 	constructor: SAOPass,
 
-	render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 		// Rendering readBuffer first when rendering to screen
 		if ( this.renderToScreen ) {

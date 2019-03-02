@@ -2419,10 +2419,86 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function Spherical( radius, phi, theta ) {
+
+		this.radius = ( radius !== undefined ) ? radius : 1.0;
+		this.phi = ( phi !== undefined ) ? phi : 0; // polar angle
+		this.theta = ( theta !== undefined ) ? theta : 0; // azimuthal angle
+
+		return this;
+
+	}
+
+	Object.assign( Spherical.prototype, {
+
+		set: function ( radius, phi, theta ) {
+
+			this.radius = radius;
+			this.phi = phi;
+			this.theta = theta;
+
+			return this;
+
+		},
+
+		clone: function () {
+
+			return new this.constructor().copy( this );
+
+		},
+
+		copy: function ( other ) {
+
+			this.radius = other.radius;
+			this.phi = other.phi;
+			this.theta = other.theta;
+
+			return this;
+
+		},
+
+		// restrict phi to be betwee EPS and PI-EPS
+		makeSafe: function () {
+
+			var EPS = 0.000001;
+			this.phi = Math.max( EPS, Math.min( Math.PI - EPS, this.phi ) );
+
+			return this;
+
+		},
+
+		setFromVector3: function ( v ) {
+
+			return this.setFromCartesianCoords( v.x, v.y, v.z );
+
+		},
+
+		setFromCartesianCoords: function ( x, y, z ) {
+
+			this.radius = Math.sqrt( x * x + y * y + z * z );
+
+			if ( this.radius === 0 ) {
+
+				this.theta = 0;
+				this.phi = 0;
+
+			} else {
+
+				this.theta = Math.atan2( x, z );
+				this.phi = Math.acos( _Math.clamp( y / this.radius, - 1, 1 ) );
+
+			}
+
+			return this;
+
+		}
+
+	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var FirstPersonControls = function ( object, domElement ) {
 
 		this.object = object;
-		this.target = new Vector3( 0, 0, 0 );
 
 		this.domElement = ( domElement !== undefined ) ? domElement : document;
 
@@ -2450,11 +2526,6 @@ var Three = (function (exports) {
 		this.mouseX = 0;
 		this.mouseY = 0;
 
-		this.lat = 0;
-		this.lon = 0;
-		this.phi = 0;
-		this.theta = 0;
-
 		this.moveForward = false;
 		this.moveBackward = false;
 		this.moveLeft = false;
@@ -2464,6 +2535,17 @@ var Three = (function (exports) {
 
 		this.viewHalfX = 0;
 		this.viewHalfY = 0;
+
+		// private variables
+
+		var lat = 0;
+		var lon = 0;
+
+		var lookDirection = new Vector3();
+		var spherical = new Spherical();
+		var target = new Vector3();
+
+		//
 
 		if ( this.domElement !== document ) {
 
@@ -2599,74 +2681,97 @@ var Three = (function (exports) {
 
 		};
 
-		this.update = function ( delta ) {
+		this.lookAt = function ( x, y, z ) {
 
-			if ( this.enabled === false ) return;
+			if ( x.isVector3 ) {
 
-			if ( this.heightSpeed ) {
-
-				var y = _Math.clamp( this.object.position.y, this.heightMin, this.heightMax );
-				var heightDelta = y - this.heightMin;
-
-				this.autoSpeedFactor = delta * ( heightDelta * this.heightCoef );
+				target.copy( x );
 
 			} else {
 
-				this.autoSpeedFactor = 0.0;
+				target.set( x, y, z );
 
 			}
 
-			var actualMoveSpeed = delta * this.movementSpeed;
+			this.object.lookAt( target );
 
-			if ( this.moveForward || ( this.autoForward && ! this.moveBackward ) ) this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
-			if ( this.moveBackward ) this.object.translateZ( actualMoveSpeed );
+			setOrientation( this );
 
-			if ( this.moveLeft ) this.object.translateX( - actualMoveSpeed );
-			if ( this.moveRight ) this.object.translateX( actualMoveSpeed );
-
-			if ( this.moveUp ) this.object.translateY( actualMoveSpeed );
-			if ( this.moveDown ) this.object.translateY( - actualMoveSpeed );
-
-			var actualLookSpeed = delta * this.lookSpeed;
-
-			if ( ! this.activeLook ) {
-
-				actualLookSpeed = 0;
-
-			}
-
-			var verticalLookRatio = 1;
-
-			if ( this.constrainVertical ) {
-
-				verticalLookRatio = Math.PI / ( this.verticalMax - this.verticalMin );
-
-			}
-
-			this.lon += this.mouseX * actualLookSpeed;
-			if ( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
-
-			this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
-			this.phi = _Math.degToRad( 90 - this.lat );
-
-			this.theta = _Math.degToRad( this.lon );
-
-			if ( this.constrainVertical ) {
-
-				this.phi = _Math.mapLinear( this.phi, 0, Math.PI, this.verticalMin, this.verticalMax );
-
-			}
-
-			var targetPosition = this.target,
-				position = this.object.position;
-
-			targetPosition.x = position.x + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
-			targetPosition.y = position.y + 100 * Math.cos( this.phi );
-			targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
-
-			this.object.lookAt( targetPosition );
+			return this;
 
 		};
+
+		this.update = function () {
+
+			var targetPosition = new Vector3();
+
+			return function update( delta ) {
+
+				if ( this.enabled === false ) return;
+
+				if ( this.heightSpeed ) {
+
+					var y = _Math.clamp( this.object.position.y, this.heightMin, this.heightMax );
+					var heightDelta = y - this.heightMin;
+
+					this.autoSpeedFactor = delta * ( heightDelta * this.heightCoef );
+
+				} else {
+
+					this.autoSpeedFactor = 0.0;
+
+				}
+
+				var actualMoveSpeed = delta * this.movementSpeed;
+
+				if ( this.moveForward || ( this.autoForward && ! this.moveBackward ) ) this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
+				if ( this.moveBackward ) this.object.translateZ( actualMoveSpeed );
+
+				if ( this.moveLeft ) this.object.translateX( - actualMoveSpeed );
+				if ( this.moveRight ) this.object.translateX( actualMoveSpeed );
+
+				if ( this.moveUp ) this.object.translateY( actualMoveSpeed );
+				if ( this.moveDown ) this.object.translateY( - actualMoveSpeed );
+
+				var actualLookSpeed = delta * this.lookSpeed;
+
+				if ( ! this.activeLook ) {
+
+					actualLookSpeed = 0;
+
+				}
+
+				var verticalLookRatio = 1;
+
+				if ( this.constrainVertical ) {
+
+					verticalLookRatio = Math.PI / ( this.verticalMax - this.verticalMin );
+
+				}
+
+				lon -= this.mouseX * actualLookSpeed;
+				if ( this.lookVertical ) lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
+
+				lat = Math.max( - 85, Math.min( 85, lat ) );
+
+				var phi = _Math.degToRad( 90 - lat );
+				var theta = _Math.degToRad( lon );
+
+				if ( this.constrainVertical ) {
+
+					phi = _Math.mapLinear( phi, 0, Math.PI, this.verticalMin, this.verticalMax );
+
+				}
+
+				var position = this.object.position;
+
+				targetPosition.setFromSphericalCoords( 1, phi, theta ).add( position );
+
+				this.object.lookAt( targetPosition );
+
+			};
+
+		}();
 
 		function contextmenu( event ) {
 
@@ -2710,7 +2815,21 @@ var Three = (function (exports) {
 
 		}
 
+		function setOrientation( controls ) {
+
+			var quaternion = controls.object.quaternion;
+
+			lookDirection.set( 0, 0, - 1 ).applyQuaternion( quaternion );
+			spherical.setFromVector3( lookDirection );
+
+			lat = 90 - _Math.radToDeg( spherical.phi );
+			lon = _Math.radToDeg( spherical.theta );
+
+		}
+
 		this.handleResize();
+
+		setOrientation( this );
 
 	};
 

@@ -25,8 +25,7 @@ import {
 	LinearFilter,
 	UnsignedShortType,
 	FloatType,
-	RGBAFormat,
-	LuminanceFormat
+	RGBAFormat
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
 import { CopyShader } from '../shaders/CopyShader.js'
@@ -50,7 +49,7 @@ var SSAOPass = function ( scene, camera, width, height ) {
 	this.scene = scene;
 
 	this.kernelRadius = 8;
-	this.kernelSize = 64;
+	this.kernelSize = 32;
 	this.kernel = [];
 	this.noiseTexture = null;
 	this.output = 0;
@@ -404,19 +403,26 @@ SSAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		var simplex = new SimplexNoise();
 
 		var size = width * height;
-		var data = new Float32Array( size );
+		var data = new Float32Array( size * 4 );
 
 		for ( var i = 0; i < size; i ++ ) {
+
+			var stride = i * 4;
 
 			var x = ( Math.random() * 2 ) - 1;
 			var y = ( Math.random() * 2 ) - 1;
 			var z = 0;
 
-			data[ i ] = simplex.noise3d( x, y, z );
+			var noise = simplex.noise3d( x, y, z );
+
+			data[ stride ] = noise;
+			data[ stride + 1 ] = noise;
+			data[ stride + 2 ] = noise;
+			data[ stride + 3 ] = 1;
 
 		}
 
-		this.noiseTexture = new DataTexture( data, width, height, LuminanceFormat, FloatType );
+		this.noiseTexture = new DataTexture( data, width, height, RGBA, FloatType );
 		this.noiseTexture.wrapS = RepeatWrapping;
 		this.noiseTexture.wrapT = RepeatWrapping;
 		this.noiseTexture.needsUpdate = true;

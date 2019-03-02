@@ -34,7 +34,7 @@ PositionNode.prototype.getType = function ( ) {
 
 };
 
-PositionNode.prototype.isShared = function ( builder ) {
+PositionNode.prototype.getShared = function ( builder ) {
 
 	switch ( this.scope ) {
 

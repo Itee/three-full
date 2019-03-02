@@ -97,7 +97,7 @@ BokehPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 	constructor: BokehPass,
 
-	render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 		this.quad2.material = this.materialBokeh;
 

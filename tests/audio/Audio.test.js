@@ -3263,6 +3263,9 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var TrianglesDrawMode = 0;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var object3DId = 0;
 
 	function Object3D() {
@@ -3966,6 +3969,10 @@ var Three = (function (exports) {
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
 
+			// object specific properties
+
+			if ( this.isMesh && this.drawMode !== TrianglesDrawMode ) object.drawMode = this.drawMode;
+
 			//
 
 			function serialize( library, element ) {
@@ -4228,16 +4235,17 @@ var Three = (function (exports) {
 			var source = this.context.createBufferSource();
 
 			source.buffer = this.buffer;
-			source.detune.value = this.detune;
 			source.loop = this.loop;
 			source.onended = this.onEnded.bind( this );
-			source.playbackRate.setValueAtTime( this.playbackRate, this.startTime );
 			this.startTime = this.context.currentTime;
 			source.start( this.startTime, this.offset );
 
 			this.isPlaying = true;
 
 			this.source = source;
+
+			this.setDetune( this.detune );
+			this.setPlaybackRate( this.playbackRate );
 
 			return this.connect();
 
@@ -4360,6 +4368,8 @@ var Three = (function (exports) {
 		setDetune: function ( value ) {
 
 			this.detune = value;
+
+			if ( this.source.detune === undefined ) return; // only set detune when available
 
 			if ( this.isPlaying === true ) {
 

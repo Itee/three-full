@@ -345,9 +345,9 @@ var Three = (function (exports) {
 
 		output = output || this.getType( builder );
 
-		if ( this.isShared( builder, output ) ) {
+		if ( this.getShared( builder, output ) ) {
 
-			var isUnique = this.isUnique( builder, output );
+			var isUnique = this.getUnique( builder, output );
 
 			if ( isUnique && this.constructor.uuid === undefined ) {
 
@@ -362,7 +362,7 @@ var Three = (function (exports) {
 
 			if ( builder.parsing ) {
 
-				if ( ( data.deps || 0 ) > 0 ) {
+				if ( ( data.deps || 0 ) > 0 || this.getLabel() ) {
 
 					this.appendDepsNode( builder, data, output );
 
@@ -378,7 +378,7 @@ var Three = (function (exports) {
 
 				return data.name;
 
-			} else if ( ! this.isShared( builder, type ) || ( ! builder.optimize || data.deps == 1 ) ) {
+			} else if ( ! this.getLabel() && ( ! this.getShared( builder, type ) || ( ! builder.optimize || data.deps === 1 ) ) ) {
 
 				return Node.prototype.build.call( this, builder, output, uuid );
 
@@ -410,15 +410,29 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.isShared = function ( builder, output ) {
+	TempNode.prototype.getShared = function ( builder, output ) {
 
 		return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
 
 	};
 
-	TempNode.prototype.isUnique = function ( builder, output ) {
+	TempNode.prototype.getUnique = function ( builder, output ) {
 
 		return this.unique;
+
+	};
+
+	TempNode.prototype.setLabel = function ( name ) {
+
+		this.label = name;
+
+		return this;
+
+	};
+
+	TempNode.prototype.getLabel = function ( builder ) {
+
+		return this.label;
 
 	};
 
@@ -426,7 +440,7 @@ var Three = (function (exports) {
 
 		var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
 
-		if ( typeof this.scope == "string" ) uuid = this.scope + '-' + uuid;
+		if ( typeof this.scope === "string" ) uuid = this.scope + '-' + uuid;
 
 		return uuid;
 
@@ -444,11 +458,11 @@ var Three = (function (exports) {
 
 	TempNode.prototype.generate = function ( builder, output, uuid, type, ns ) {
 
-		if ( ! this.isShared( builder, output ) ) console.error( "TempNode is not shared!" );
+		if ( ! this.getShared( builder, output ) ) console.error( "TempNode is not shared!" );
 
 		uuid = uuid || this.uuid;
 
-		return builder.getTempVar( uuid, type || this.getType( builder ), ns ).name;
+		return builder.getTempVar( uuid, type || this.getType( builder ), ns, this.getLabel() ).name;
 
 	};
 
@@ -467,7 +481,15 @@ var Three = (function (exports) {
 	InputNode.prototype = Object.create( TempNode.prototype );
 	InputNode.prototype.constructor = InputNode;
 
-	InputNode.prototype.isReadonly = function ( builder ) {
+	InputNode.prototype.setReadonly = function ( value ) {
+
+		this.readonly = value;
+
+		return this;
+
+	};
+
+	InputNode.prototype.getReadonly = function ( builder ) {
 
 		return this.readonly;
 
@@ -497,7 +519,7 @@ var Three = (function (exports) {
 		type = type || this.getType( builder );
 
 		var data = builder.getNodeData( uuid ),
-			readonly = this.isReadonly( builder ) && this.generateReadonly !== undefined;
+			readonly = this.getReadonly( builder ) && this.generateReadonly !== undefined;
 
 		if ( readonly ) {
 
@@ -509,7 +531,7 @@ var Three = (function (exports) {
 
 				if ( ! data.vertex ) {
 
-					data.vertex = builder.createVertexUniform( type, this, ns, needsUpdate );
+					data.vertex = builder.createVertexUniform( type, this, ns, needsUpdate, this.getLabel() );
 
 				}
 
@@ -519,7 +541,7 @@ var Three = (function (exports) {
 
 				if ( ! data.fragment ) {
 
-					data.fragment = builder.createFragmentUniform( type, this, ns, needsUpdate );
+					data.fragment = builder.createFragmentUniform( type, this, ns, needsUpdate, this.getLabel() );
 
 				}
 
@@ -4764,18 +4786,31 @@ var Three = (function (exports) {
 
 			// parse all nodes to reuse generate codes
 
+			if ( this.mask ) this.mask.parse( builder );
+
 			if ( this.alpha ) this.alpha.parse( builder );
 
 			this.color.parse( builder, { slot: 'color' } );
 
 			// build code
 
-			var alpha = this.alpha ? this.alpha.buildCode( builder, 'f' ) : undefined,
-				color = this.color.buildCode( builder, 'c', { slot: 'color' } );
+			var mask = this.mask ? this.mask.buildCode( builder, 'b' ) : undefined,
+				alpha = this.alpha ? this.alpha.buildCode( builder, 'f' ) : undefined,
+				color = this.color.buildCode( builder, 'c', { slot: 'color' } ),
+				output = [];
+
+			if ( mask ) {
+
+				output.push(
+					mask.code,
+					'if ( ! ' + mask.result + ' ) discard;'
+				);
+
+			}
 
 			if ( alpha ) {
 
-				output = [
+				output.push(
 					alpha.code,
 					'#ifdef ALPHATEST',
 
@@ -4784,14 +4819,14 @@ var Three = (function (exports) {
 					'#endif',
 					color.code,
 					"gl_FragColor = vec4( " + color.result + ", " + alpha.result + " );"
-				];
+				);
 
 			} else {
 
-				output = [
+				output.push(
 					color.code,
 					"gl_FragColor = vec4( " + color.result + ", 1.0 );"
-				];
+				);
 
 			}
 
@@ -4821,6 +4856,8 @@ var Three = (function (exports) {
 
 		if ( source.spherical !== undefined ) this.spherical = source.spherical;
 
+		if ( source.mask ) this.mask = source.mask;
+
 		if ( source.alpha ) this.alpha = source.alpha;
 
 	};
@@ -4842,6 +4879,8 @@ var Three = (function (exports) {
 			data.color = this.color.toJSON( meta ).uuid;
 
 			if ( this.spherical === false ) data.spherical = false;
+
+			if ( this.mask ) data.mask = this.mask.toJSON( meta ).uuid;
 
 			if ( this.alpha ) data.alpha = this.alpha.toJSON( meta ).uuid;
 

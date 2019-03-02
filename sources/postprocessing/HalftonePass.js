@@ -52,7 +52,7 @@ var HalftonePass = function ( width, height, params ) {
 
 	constructor: HalftonePass,
 
-	render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
  		this.material.uniforms[ "tDiffuse" ].value = readBuffer.texture;
  		this.quad.material = this.material;

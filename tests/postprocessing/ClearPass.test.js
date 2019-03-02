@@ -48,7 +48,7 @@ var Three = (function (exports) {
 
 		constructor: ClearPass,
 
-		render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+		render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 			var oldClearColor, oldClearAlpha;
 

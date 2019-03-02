@@ -79,7 +79,10 @@ var TransformControls = function ( camera, domElement ) {
 
 	var pointStart = new Vector3();
 	var pointEnd = new Vector3();
+	var offset = new Vector3();
 	var rotationAxis = new Vector3();
+	var startNorm = new Vector3();
+	var endNorm = new Vector3();
 	var rotationAngle = 0;
 
 	var cameraPosition = new Vector3();
@@ -88,6 +91,7 @@ var TransformControls = function ( camera, domElement ) {
 
 	var parentPosition = new Vector3();
 	var parentQuaternion = new Quaternion();
+	var parentQuaternionInv = new Quaternion();
 	var parentScale = new Vector3();
 
 	var worldPositionStart = new Vector3();
@@ -96,17 +100,17 @@ var TransformControls = function ( camera, domElement ) {
 
 	var worldPosition = new Vector3();
 	var worldQuaternion = new Quaternion();
+	var worldQuaternionInv = new Quaternion();
 	var worldScale = new Vector3();
 
 	var eye = new Vector3();
 
-	var _positionStart = new Vector3();
-	var _quaternionStart = new Quaternion();
-	var _scaleStart = new Vector3();
+	var positionStart = new Vector3();
+	var quaternionStart = new Quaternion();
+	var scaleStart = new Vector3();
 
 	// TODO: remove properties unused in plane and gizmo
 
-	defineProperty( "parentQuaternion", parentQuaternion );
 	defineProperty( "worldPosition", worldPosition );
 	defineProperty( "worldPositionStart", worldPositionStart );
 	defineProperty( "worldQuaternion", worldQuaternion );
@@ -211,6 +215,9 @@ var TransformControls = function ( camera, domElement ) {
 			this.object.parent.matrixWorld.decompose( parentPosition, parentQuaternion, parentScale );
 			this.object.matrixWorld.decompose( worldPosition, worldQuaternion, worldScale );
 
+			parentQuaternionInv.copy( parentQuaternion ).inverse();
+			worldQuaternionInv.copy( worldQuaternion ).inverse();
+
 		}
 
 		this.camera.updateMatrixWorld();
@@ -287,15 +294,13 @@ var TransformControls = function ( camera, domElement ) {
 				this.object.updateMatrixWorld();
 				this.object.parent.updateMatrixWorld();
 
-				_positionStart.copy( this.object.position );
-				_quaternionStart.copy( this.object.quaternion );
-				_scaleStart.copy( this.object.scale );
+				positionStart.copy( this.object.position );
+				quaternionStart.copy( this.object.quaternion );
+				scaleStart.copy( this.object.scale );
 
 				this.object.matrixWorld.decompose( worldPositionStart, worldQuaternionStart, worldScaleStart );
 
 				pointStart.copy( planeIntersect.point ).sub( worldPositionStart );
-
-				if ( space === 'local' ) pointStart.applyQuaternion( worldQuaternionStart.clone().inverse() );
 
 			}
 
@@ -334,29 +339,27 @@ var TransformControls = function ( camera, domElement ) {
 
 		pointEnd.copy( planeIntersect.point ).sub( worldPositionStart );
 
-		if ( space === 'local' ) pointEnd.applyQuaternion( worldQuaternionStart.clone().inverse() );
-
 		if ( mode === 'translate' ) {
-
-			if ( axis.search( 'X' ) === -1 ) {
-				pointEnd.x = pointStart.x;
-			}
-			if ( axis.search( 'Y' ) === -1 ) {
-				pointEnd.y = pointStart.y;
-			}
-			if ( axis.search( 'Z' ) === -1 ) {
-				pointEnd.z = pointStart.z;
-			}
 
 			// Apply translate
 
-			if ( space === 'local' ) {
-				object.position.copy( pointEnd ).sub( pointStart ).applyQuaternion( _quaternionStart );
-			} else {
-				object.position.copy( pointEnd ).sub( pointStart );
+			offset.copy( pointEnd ).sub( pointStart );
+
+			if ( space === 'local' && axis !== 'XYZ' ) {
+				offset.applyQuaternion( worldQuaternionInv );
 			}
 
-			object.position.add( _positionStart );
+			if ( axis.indexOf( 'X' ) === -1 ) offset.x = 0;
+			if ( axis.indexOf( 'Y' ) === -1 ) offset.y = 0;
+			if ( axis.indexOf( 'Z' ) === -1 ) offset.z = 0;
+
+			if ( space === 'local' && axis !== 'XYZ') {
+				offset.applyQuaternion( quaternionStart ).divide( parentScale );
+			} else {
+				offset.applyQuaternion( parentQuaternionInv ).divide( parentScale );
+			}
+
+			object.position.copy( offset ).add( positionStart );
 
 			// Apply translation snap
 
@@ -364,7 +367,7 @@ var TransformControls = function ( camera, domElement ) {
 
 				if ( space === 'local' ) {
 
-					object.position.applyQuaternion(_tempQuaternion.copy( _quaternionStart ).inverse() );
+					object.position.applyQuaternion(_tempQuaternion.copy( quaternionStart ).inverse() );
 
 					if ( axis.search( 'X' ) !== -1 ) {
 						object.position.x = Math.round( object.position.x / this.translationSnap ) * this.translationSnap;
@@ -378,7 +381,7 @@ var TransformControls = function ( camera, domElement ) {
 						object.position.z = Math.round( object.position.z / this.translationSnap ) * this.translationSnap;
 					}
 
-					object.position.applyQuaternion( _quaternionStart );
+					object.position.applyQuaternion( quaternionStart );
 
 				}
 
@@ -436,41 +439,40 @@ var TransformControls = function ( camera, domElement ) {
 
 			// Apply scale
 
-			object.scale.copy( _scaleStart ).multiply( _tempVector );
+			object.scale.copy( scaleStart ).multiply( _tempVector );
 
 		} else if ( mode === 'rotate' ) {
 
+			offset.copy( pointEnd ).sub( pointStart );
+
 			var ROTATION_SPEED = 20 / worldPosition.distanceTo( _tempVector.setFromMatrixPosition( this.camera.matrixWorld ) );
-
-			var quaternion = this.space === "local" ? worldQuaternion : _identityQuaternion;
-
-			var unit = _unit[ axis ];
 
 			if ( axis === 'E' ) {
 
-				_tempVector.copy( pointEnd ).cross( pointStart );
 				rotationAxis.copy( eye );
-				rotationAngle = pointEnd.angleTo( pointStart ) * ( _tempVector.dot( eye ) < 0 ? 1 : -1 );
+				rotationAngle = pointEnd.angleTo( pointStart );
+
+				startNorm.copy( pointStart ).normalize();
+				endNorm.copy( pointEnd ).normalize();
+
+				rotationAngle *= ( endNorm.cross( startNorm ).dot( eye ) < 0 ? 1 : -1);
 
 			} else if ( axis === 'XYZE' ) {
 
-				_tempVector.copy( pointEnd ).sub( pointStart ).cross( eye ).normalize();
-				rotationAxis.copy( _tempVector );
-				rotationAngle = pointEnd.sub( pointStart ).dot( _tempVector.cross( eye ) ) * ROTATION_SPEED;
+				rotationAxis.copy( offset ).cross( eye ).normalize(  );
+				rotationAngle = offset.dot( _tempVector.copy( rotationAxis ).cross( this.eye ) ) * ROTATION_SPEED;
 
 			} else if ( axis === 'X' || axis === 'Y' || axis === 'Z' ) {
 
-				_alignVector.copy( unit ).applyQuaternion( quaternion );
+				rotationAxis.copy( _unit[ axis ] );
 
-				rotationAxis.copy( unit );
+				_tempVector.copy( _unit[ axis ] );
 
-				_tempVector = unit.clone();
-				_tempVector2 = pointEnd.clone().sub( pointStart );
 				if ( space === 'local' ) {
-					_tempVector.applyQuaternion( quaternion );
-					_tempVector2.applyQuaternion( worldQuaternionStart );
+					_tempVector.applyQuaternion( worldQuaternion );
 				}
-				rotationAngle = _tempVector2.dot( _tempVector.cross( eye ).normalize() ) * ROTATION_SPEED;
+
+				rotationAngle = offset.dot( _tempVector.cross( eye ).normalize() ) * ROTATION_SPEED;
 
 			}
 
@@ -481,16 +483,16 @@ var TransformControls = function ( camera, domElement ) {
 			this.rotationAngle = rotationAngle;
 
 			// Apply rotate
+			if ( space === 'local' && axis !== 'E' && axis !== 'XYZE' ) {
 
-			if ( space === 'local' ) {
-
-				object.quaternion.copy( _quaternionStart );
-				object.quaternion.multiply( _tempQuaternion.setFromAxisAngle( rotationAxis, rotationAngle ) );
+				object.quaternion.copy( quaternionStart );
+				object.quaternion.multiply( _tempQuaternion.setFromAxisAngle( rotationAxis, rotationAngle ) ).normalize();
 
 			} else {
 
+				rotationAxis.applyQuaternion( parentQuaternionInv );
 				object.quaternion.copy( _tempQuaternion.setFromAxisAngle( rotationAxis, rotationAngle ) );
-				object.quaternion.multiply( _quaternionStart );
+				object.quaternion.multiply( quaternionStart ).normalize();
 
 			}
 
@@ -555,7 +557,7 @@ var TransformControls = function ( camera, domElement ) {
 		if ( !scope.enabled ) return;
 
 		event.preventDefault();
-		
+
 		document.addEventListener( "mousemove", onPointerMove, false );
 
 		scope.pointerHover( getPointer( event ) );

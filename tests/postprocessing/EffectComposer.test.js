@@ -5062,6 +5062,13 @@ var Three = (function (exports) {
 					value: value.toArray()
 				};
 
+			} else if ( value && value.isMatrix3 ) {
+
+				data.uniforms[ name ] = {
+					type: 'm3',
+					value: value.toArray()
+				};
+
 			} else if ( value && value.isMatrix4 ) {
 
 				data.uniforms[ name ] = {
@@ -6187,6 +6194,10 @@ var Three = (function (exports) {
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
 
+			// object specific properties
+
+			if ( this.isMesh && this.drawMode !== TrianglesDrawMode ) object.drawMode = this.drawMode;
+
 			//
 
 			function serialize( library, element ) {
@@ -6581,6 +6592,8 @@ var Three = (function (exports) {
 
 		constructor: Scene,
 
+		isScene: true,
+
 		copy: function ( source, recursive ) {
 
 			Object3D.prototype.copy.call( this, source, recursive );
@@ -6604,6 +6617,12 @@ var Three = (function (exports) {
 			if ( this.fog !== null ) data.object.fog = this.fog.toJSON();
 
 			return data;
+
+		},
+
+		dispose: function () {
+
+			this.dispatchEvent( { type: 'dispose' } );
 
 		}
 
@@ -10509,21 +10528,7 @@ var Three = (function (exports) {
 
 		toNonIndexed: function () {
 
-			if ( this.index === null ) {
-
-				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
-				return this;
-
-			}
-
-			var geometry2 = new BufferGeometry();
-
-			var indices = this.index.array;
-			var attributes = this.attributes;
-
-			for ( var name in attributes ) {
-
-				var attribute = attributes[ name ];
+			function convertBufferAttribute( attribute, indices ) {
 
 				var array = attribute.array;
 				var itemSize = attribute.itemSize;
@@ -10544,9 +10549,60 @@ var Three = (function (exports) {
 
 				}
 
-				geometry2.addAttribute( name, new BufferAttribute( array2, itemSize ) );
+				return new BufferAttribute( array2, itemSize );
 
 			}
+
+			//
+
+			if ( this.index === null ) {
+
+				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+				return this;
+
+			}
+
+			var geometry2 = new BufferGeometry();
+
+			var indices = this.index.array;
+			var attributes = this.attributes;
+
+			// attributes
+
+			for ( var name in attributes ) {
+
+				var attribute = attributes[ name ];
+
+				var newAttribute = convertBufferAttribute( attribute, indices );
+
+				geometry2.addAttribute( name, newAttribute );
+
+			}
+
+			// morph attributes
+
+			var morphAttributes = this.morphAttributes;
+
+			for ( name in morphAttributes ) {
+
+				var morphArray = [];
+				var morphAttribute = morphAttributes[ name ]; // morphAttribute: array of Float32BufferAttributes
+
+				for ( var i = 0, il = morphAttribute.length; i < il; i ++ ) {
+
+					var attribute = morphAttribute[ i ];
+
+					var newAttribute = convertBufferAttribute( attribute, indices );
+
+					morphArray.push( newAttribute );
+
+				}
+
+				geometry2.morphAttributes[ name ] = morphArray;
+
+			}
+
+			// groups
 
 			var groups = this.groups;
 
@@ -11009,6 +11065,7 @@ var Three = (function (exports) {
 									if ( intersection ) {
 
 										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in indexed buffer semantics
+										intersection.face.materialIndex = group.materialIndex;
 										intersects.push( intersection );
 
 									}
@@ -11066,6 +11123,7 @@ var Three = (function (exports) {
 									if ( intersection ) {
 
 										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in non-indexed buffer semantics
+										intersection.face.materialIndex = group.materialIndex;
 										intersects.push( intersection );
 
 									}
@@ -12729,7 +12787,7 @@ var Three = (function (exports) {
 
 		constructor: ShaderPass,
 
-		render: function( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+		render: function( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 			if ( this.uniforms[ this.textureID ] ) {
 
@@ -12772,7 +12830,7 @@ var Three = (function (exports) {
 
 		constructor: MaskPass,
 
-		render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+		render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 			var context = renderer.context;
 			var state = renderer.state;
@@ -12838,7 +12896,7 @@ var Three = (function (exports) {
 
 	Object.assign( ClearMaskPass.prototype, {
 
-		render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+		render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 			renderer.state.buffers.stencil.setTest( false );
 
@@ -12935,6 +12993,8 @@ var Three = (function (exports) {
 
 		this.copyPass = new ShaderPass( CopyShader );
 
+		this._previousFrameTime = Date.now();
+
 	};
 
 	Object.assign( EffectComposer.prototype, {
@@ -12962,7 +13022,17 @@ var Three = (function (exports) {
 
 		},
 
-		render: function ( delta ) {
+		render: function ( deltaTime ) {
+
+			// deltaTime value is in seconds
+
+			if ( deltaTime === undefined ) {
+
+				deltaTime = ( Date.now() - this._previousFrameTime ) * 0.001;
+
+			}
+
+			this._previousFrameTime = Date.now();
 
 			var maskActive = false;
 
@@ -12974,7 +13044,7 @@ var Three = (function (exports) {
 
 				if ( pass.enabled === false ) continue;
 
-				pass.render( this.renderer, this.writeBuffer, this.readBuffer, delta, maskActive );
+				pass.render( this.renderer, this.writeBuffer, this.readBuffer, deltaTime, maskActive );
 
 				if ( pass.needsSwap ) {
 
@@ -12984,7 +13054,7 @@ var Three = (function (exports) {
 
 						context.stencilFunc( context.NOTEQUAL, 1, 0xffffffff );
 
-						this.copyPass.render( this.renderer, this.writeBuffer, this.readBuffer, delta );
+						this.copyPass.render( this.renderer, this.writeBuffer, this.readBuffer, deltaTime );
 
 						context.stencilFunc( context.EQUAL, 1, 0xffffffff );
 

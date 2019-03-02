@@ -135,7 +135,7 @@ SMAAPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 	constructor: SMAAPass,
 
-	render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 		// pass 1
 

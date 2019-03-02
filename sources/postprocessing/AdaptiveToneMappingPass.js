@@ -142,7 +142,7 @@ AdaptiveToneMappingPass.prototype = Object.assign( Object.create( Pass.prototype
 
 	constructor: AdaptiveToneMappingPass,
 
-	render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 		if ( this.needsInit ) {
 
@@ -165,7 +165,7 @@ AdaptiveToneMappingPass.prototype = Object.assign( Object.create( Pass.prototype
 			//Use the new luminance values, the previous luminance and the frame delta to
 			//adapt the luminance over time.
 			this.quad.material = this.materialAdaptiveLum;
-			this.materialAdaptiveLum.uniforms.delta.value = delta;
+			this.materialAdaptiveLum.uniforms.delta.value = deltaTime;
 			this.materialAdaptiveLum.uniforms.lastLum.value = this.previousLuminanceRT.texture;
 			this.materialAdaptiveLum.uniforms.currentLum.value = this.currentLuminanceRT.texture;
 			renderer.render( this.scene, this.camera, this.luminanceRT );

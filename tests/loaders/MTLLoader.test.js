@@ -6948,6 +6948,13 @@ var Three = (function (exports) {
 					value: value.toArray()
 				};
 
+			} else if ( value && value.isMatrix3 ) {
+
+				data.uniforms[ name ] = {
+					type: 'm3',
+					value: value.toArray()
+				};
+
 			} else if ( value && value.isMatrix4 ) {
 
 				data.uniforms[ name ] = {
@@ -7205,6 +7212,9 @@ var Three = (function (exports) {
 						case 'v4':
 							material.uniforms[ name ].value = new Vector4().fromArray( uniform.value );
 							break;
+
+						case 'm3':
+							material.uniforms[ name ].value = new Matrix3().fromArray( uniform.value );
 
 						case 'm4':
 							material.uniforms[ name ].value = new Matrix4().fromArray( uniform.value );

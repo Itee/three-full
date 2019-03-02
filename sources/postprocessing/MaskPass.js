@@ -20,7 +20,7 @@ MaskPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 	constructor: MaskPass,
 
-	render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 		var context = renderer.context;
 		var state = renderer.state;
@@ -86,7 +86,7 @@ ClearMaskPass.prototype = Object.create( Pass.prototype );
 
 Object.assign( ClearMaskPass.prototype, {
 
-	render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 		renderer.state.buffers.stencil.setTest( false );
 

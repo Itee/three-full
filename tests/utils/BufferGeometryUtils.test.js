@@ -6412,6 +6412,9 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var TrianglesDrawMode = 0;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var object3DId = 0;
 
 	function Object3D() {
@@ -7114,6 +7117,10 @@ var Three = (function (exports) {
 			object.matrix = this.matrix.toArray();
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
+
+			// object specific properties
+
+			if ( this.isMesh && this.drawMode !== TrianglesDrawMode ) object.drawMode = this.drawMode;
 
 			//
 
@@ -8138,21 +8145,7 @@ var Three = (function (exports) {
 
 		toNonIndexed: function () {
 
-			if ( this.index === null ) {
-
-				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
-				return this;
-
-			}
-
-			var geometry2 = new BufferGeometry();
-
-			var indices = this.index.array;
-			var attributes = this.attributes;
-
-			for ( var name in attributes ) {
-
-				var attribute = attributes[ name ];
+			function convertBufferAttribute( attribute, indices ) {
 
 				var array = attribute.array;
 				var itemSize = attribute.itemSize;
@@ -8173,9 +8166,60 @@ var Three = (function (exports) {
 
 				}
 
-				geometry2.addAttribute( name, new BufferAttribute( array2, itemSize ) );
+				return new BufferAttribute( array2, itemSize );
 
 			}
+
+			//
+
+			if ( this.index === null ) {
+
+				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+				return this;
+
+			}
+
+			var geometry2 = new BufferGeometry();
+
+			var indices = this.index.array;
+			var attributes = this.attributes;
+
+			// attributes
+
+			for ( var name in attributes ) {
+
+				var attribute = attributes[ name ];
+
+				var newAttribute = convertBufferAttribute( attribute, indices );
+
+				geometry2.addAttribute( name, newAttribute );
+
+			}
+
+			// morph attributes
+
+			var morphAttributes = this.morphAttributes;
+
+			for ( name in morphAttributes ) {
+
+				var morphArray = [];
+				var morphAttribute = morphAttributes[ name ]; // morphAttribute: array of Float32BufferAttributes
+
+				for ( var i = 0, il = morphAttribute.length; i < il; i ++ ) {
+
+					var attribute = morphAttribute[ i ];
+
+					var newAttribute = convertBufferAttribute( attribute, indices );
+
+					morphArray.push( newAttribute );
+
+				}
+
+				geometry2.morphAttributes[ name ] = morphArray;
+
+			}
+
+			// groups
 
 			var groups = this.groups;
 
@@ -8385,6 +8429,248 @@ var Three = (function (exports) {
 		dispose: function () {
 
 			this.dispatchEvent( { type: 'dispose' } );
+
+		}
+
+	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function InterleavedBuffer( array, stride ) {
+
+		this.array = array;
+		this.stride = stride;
+		this.count = array !== undefined ? array.length / stride : 0;
+
+		this.dynamic = false;
+		this.updateRange = { offset: 0, count: - 1 };
+
+		this.version = 0;
+
+	}
+
+	Object.defineProperty( InterleavedBuffer.prototype, 'needsUpdate', {
+
+		set: function ( value ) {
+
+			if ( value === true ) this.version ++;
+
+		}
+
+	} );
+
+	Object.assign( InterleavedBuffer.prototype, {
+
+		isInterleavedBuffer: true,
+
+		onUploadCallback: function () {},
+
+		setArray: function ( array ) {
+
+			if ( Array.isArray( array ) ) {
+
+				throw new TypeError( 'BufferAttribute: array should be a Typed Array.' );
+
+			}
+
+			this.count = array !== undefined ? array.length / this.stride : 0;
+			this.array = array;
+
+			return this;
+
+		},
+
+		setDynamic: function ( value ) {
+
+			this.dynamic = value;
+
+			return this;
+
+		},
+
+		copy: function ( source ) {
+
+			this.array = new source.array.constructor( source.array );
+			this.count = source.count;
+			this.stride = source.stride;
+			this.dynamic = source.dynamic;
+
+			return this;
+
+		},
+
+		copyAt: function ( index1, attribute, index2 ) {
+
+			index1 *= this.stride;
+			index2 *= attribute.stride;
+
+			for ( var i = 0, l = this.stride; i < l; i ++ ) {
+
+				this.array[ index1 + i ] = attribute.array[ index2 + i ];
+
+			}
+
+			return this;
+
+		},
+
+		set: function ( value, offset ) {
+
+			if ( offset === undefined ) offset = 0;
+
+			this.array.set( value, offset );
+
+			return this;
+
+		},
+
+		clone: function () {
+
+			return new this.constructor().copy( this );
+
+		},
+
+		onUpload: function ( callback ) {
+
+			this.onUploadCallback = callback;
+
+			return this;
+
+		}
+
+	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function InterleavedBufferAttribute( interleavedBuffer, itemSize, offset, normalized ) {
+
+		this.data = interleavedBuffer;
+		this.itemSize = itemSize;
+		this.offset = offset;
+
+		this.normalized = normalized === true;
+
+	}
+
+	Object.defineProperties( InterleavedBufferAttribute.prototype, {
+
+		count: {
+
+			get: function () {
+
+				return this.data.count;
+
+			}
+
+		},
+
+		array: {
+
+			get: function () {
+
+				return this.data.array;
+
+			}
+
+		}
+
+	} );
+
+	Object.assign( InterleavedBufferAttribute.prototype, {
+
+		isInterleavedBufferAttribute: true,
+
+		setX: function ( index, x ) {
+
+			this.data.array[ index * this.data.stride + this.offset ] = x;
+
+			return this;
+
+		},
+
+		setY: function ( index, y ) {
+
+			this.data.array[ index * this.data.stride + this.offset + 1 ] = y;
+
+			return this;
+
+		},
+
+		setZ: function ( index, z ) {
+
+			this.data.array[ index * this.data.stride + this.offset + 2 ] = z;
+
+			return this;
+
+		},
+
+		setW: function ( index, w ) {
+
+			this.data.array[ index * this.data.stride + this.offset + 3 ] = w;
+
+			return this;
+
+		},
+
+		getX: function ( index ) {
+
+			return this.data.array[ index * this.data.stride + this.offset ];
+
+		},
+
+		getY: function ( index ) {
+
+			return this.data.array[ index * this.data.stride + this.offset + 1 ];
+
+		},
+
+		getZ: function ( index ) {
+
+			return this.data.array[ index * this.data.stride + this.offset + 2 ];
+
+		},
+
+		getW: function ( index ) {
+
+			return this.data.array[ index * this.data.stride + this.offset + 3 ];
+
+		},
+
+		setXY: function ( index, x, y ) {
+
+			index = index * this.data.stride + this.offset;
+
+			this.data.array[ index + 0 ] = x;
+			this.data.array[ index + 1 ] = y;
+
+			return this;
+
+		},
+
+		setXYZ: function ( index, x, y, z ) {
+
+			index = index * this.data.stride + this.offset;
+
+			this.data.array[ index + 0 ] = x;
+			this.data.array[ index + 1 ] = y;
+			this.data.array[ index + 2 ] = z;
+
+			return this;
+
+		},
+
+		setXYZW: function ( index, x, y, z, w ) {
+
+			index = index * this.data.stride + this.offset;
+
+			this.data.array[ index + 0 ] = x;
+			this.data.array[ index + 1 ] = y;
+			this.data.array[ index + 2 ] = z;
+			this.data.array[ index + 3 ] = w;
+
+			return this;
 
 		}
 
@@ -8758,6 +9044,250 @@ var Three = (function (exports) {
 			}
 
 			return new BufferAttribute( array, itemSize, normalized );
+
+		},
+		interleaveAttributes: function ( attributes ) {
+
+			// Interleaves the provided attributes into an InterleavedBuffer and returns
+			// a set of InterleavedBufferAttributes for each attribute
+			var TypedArray;
+			var arrayLength = 0;
+			var stride = 0;
+
+			// calculate the the length and type of the interleavedBuffer
+			for ( var i = 0, l = attributes.length; i < l; ++ i ) {
+
+				var attribute = attributes[ i ];
+
+				if ( TypedArray === undefined ) TypedArray = attribute.array.constructor;
+				if ( TypedArray !== attribute.array.constructor ) {
+
+					console.warn( 'AttributeBuffers of different types cannot be interleaved' );
+					return null;
+
+				}
+
+				arrayLength += attribute.array.length;
+				stride += attribute.itemSize;
+
+			}
+
+			// Create the set of buffer attributes
+			var interleavedBuffer = new InterleavedBuffer( new TypedArray( arrayLength ), stride );
+			var offset = 0;
+			var res = [];
+			var getters = [ 'getX', 'getY', 'getZ', 'getW' ];
+			var setters = [ 'setX', 'setY', 'setZ', 'setW' ];
+
+			for ( var j = 0, l = attributes.length; j < l; j ++ ) {
+
+				var attribute = attributes[ j ];
+				var itemSize = attribute.itemSize;
+				var count = attribute.count;
+				var iba = new InterleavedBufferAttribute( interleavedBuffer, itemSize, offset, attribute.normalized );
+				res.push( iba );
+
+				offset += itemSize;
+
+				// Move the data for each attribute into the new interleavedBuffer
+				// at the appropriate offset
+				for ( var c = 0; c < count; c ++ ) {
+
+					for ( var k = 0; k < itemSize; k ++ ) {
+
+						iba[ setters[ k ] ]( c, attribute[ getters[ k ] ]( c ) );
+
+					}
+
+				}
+
+			}
+
+			return res;
+
+		},
+		estimateBytesUsed: function ( geometry ) {
+
+			// Return the estimated memory used by this geometry in bytes
+			// Calculate using itemSize, count, and BYTES_PER_ELEMENT to account
+			// for InterleavedBufferAttributes.
+			var mem = 0;
+			for ( var name in geometry.attributes ) {
+
+				var attr = geometry.getAttribute( name );
+				mem += attr.count * attr.itemSize * attr.array.BYTES_PER_ELEMENT;
+
+			}
+
+			var indices = geometry.getIndex();
+			mem += indices ? indices.count * indices.itemSize * indices.array.BYTES_PER_ELEMENT : 0;
+			return mem;
+
+		},
+		mergeVertices: function ( geometry, tolerance = 1e-4 ) {
+
+			tolerance = Math.max( tolerance, Number.EPSILON );
+
+			// Generate an index buffer if the geometry doesn't have one, or optimize it
+			// if it's already available.
+			var hashToIndex = {};
+			var indices = geometry.getIndex();
+			var positions = geometry.getAttribute( 'position' );
+			var vertexCount = indices ? indices.count : positions.count;
+
+			// next value for triangle indices
+			var nextIndex = 0;
+
+			// attributes and new attribute arrays
+			var attributeNames = Object.keys( geometry.attributes );
+			var attrArrays = {};
+			var morphAttrsArrays = {};
+			var newIndices = [];
+			var getters = [ 'getX', 'getY', 'getZ', 'getW' ];
+
+			// initialize the arrays
+			for ( var attributeNameIndex = 0, numberOfAttributes = attributeNames.length ; attributeNameIndex < numberOfAttributes ; attributeNameIndex++  ) {
+				var name = attributeNames[ attributeNameIndex ];
+
+				attrArrays[ name ] = [];
+
+				var morphAttr = geometry.morphAttributes[ name ];
+				if ( morphAttr ) {
+
+					morphAttrsArrays[ name ] = new Array( morphAttr.length ).fill().map( () => [] );
+
+				}
+
+			}
+
+			// convert the error tolerance to an amount of decimal places to truncate to
+			var decimalShift = Math.log10( 1 / tolerance );
+			var shiftMultiplier = Math.pow( 10, decimalShift );
+			for ( var i = 0; i < vertexCount; i ++ ) {
+
+				var index = indices ? indices.getX( i ) : i;
+
+				// Generate a hash for the vertex attributes at the current index 'i'
+				var hash = '';
+				for ( var j = 0, l = attributeNames.length; j < l; j ++ ) {
+
+					var name = attributeNames[ j ];
+					var attribute = geometry.getAttribute( name );
+					var itemSize = attribute.itemSize;
+
+					for ( var k = 0; k < itemSize; k ++ ) {
+
+						// double tilde truncates the decimal value
+						hash += `${ ~ ~ ( attribute[ getters[ k ] ]( index ) * shiftMultiplier ) },`;
+
+					}
+
+				}
+
+				// Add another reference to the vertex if it's already
+				// used by another index
+				if ( hash in hashToIndex ) {
+
+					newIndices.push( hashToIndex[ hash ] );
+
+				} else {
+
+					// copy data to the new index in the attribute arrays
+					for ( var j = 0, l = attributeNames.length; j < l; j ++ ) {
+
+						var name = attributeNames[ j ];
+						var attribute = geometry.getAttribute( name );
+						var morphAttr = geometry.morphAttributes[ name ];
+						var itemSize = attribute.itemSize;
+						var newarray = attrArrays[ name ];
+						var newMorphArrays = morphAttrsArrays[ name ];
+
+						for ( var k = 0; k < itemSize; k ++ ) {
+
+							var getterFunc = getters[ k ];
+							newarray.push( attribute[ getterFunc ]( index ) );
+
+							if ( morphAttr ) {
+
+								for ( var m = 0, ml = morphAttr.length; m < ml; m ++ ) {
+
+									newMorphArrays[ m ].push( morphAttr[ m ][ getterFunc ]( index ) );
+
+								}
+
+							}
+
+						}
+
+					}
+
+					hashToIndex[ hash ] = nextIndex;
+					newIndices.push( nextIndex );
+					nextIndex ++;
+
+				}
+
+			}
+
+			// Generate typed arrays from new attribute arrays and update
+			// the attributeBuffers
+			const result = geometry.clone();
+			for ( var i = 0, l = attributeNames.length; i < l; i ++ ) {
+
+				var name = attributeNames[ i ];
+				var oldAttribute = geometry.getAttribute( name );
+				var attribute;
+
+				var buffer = new oldAttribute.array.constructor( attrArrays[ name ] );
+				if ( oldAttribute.isInterleavedBufferAttribute ) {
+
+					attribute = new BufferAttribute( buffer, oldAttribute.itemSize, oldAttribute.itemSize );
+
+				} else {
+
+					attribute = geometry.getAttribute( name ).clone();
+					attribute.setArray( buffer );
+
+				}
+
+				result.addAttribute( name, attribute );
+
+				// Update the attribute arrays
+				if ( name in morphAttrsArrays ) {
+
+					for ( var j = 0; j < morphAttrsArrays[ name ].length; j ++ ) {
+
+						var morphAttribute = geometry.morphAttributes[ name ][ j ].clone();
+						morphAttribute.setArray( new morphAttribute.array.constructor( morphAttrsArrays[ name ][ j ] ) );
+						result.morphAttributes[ name ][ j ] = morphAttribute;
+
+					}
+
+				}
+
+			}
+
+			// Generate an index buffer typed array
+			var cons = Uint8Array;
+			if ( newIndices.length >= Math.pow( 2, 8 ) ) cons = Uint16Array;
+			if ( newIndices.length >= Math.pow( 2, 16 ) ) cons = Uint32Array;
+
+			var newIndexBuffer = new cons( newIndices );
+			var newIndices = null;
+			if ( indices === null ) {
+
+				newIndices = new BufferAttribute( newIndexBuffer, 1 );
+
+			} else {
+
+				newIndices = geometry.getIndex().clone();
+				newIndices.setArray( newIndexBuffer );
+
+			}
+
+			result.setIndex( newIndices );
+
+			return result;
 
 		}
 

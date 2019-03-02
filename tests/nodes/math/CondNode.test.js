@@ -345,9 +345,9 @@ var Three = (function (exports) {
 
 		output = output || this.getType( builder );
 
-		if ( this.isShared( builder, output ) ) {
+		if ( this.getShared( builder, output ) ) {
 
-			var isUnique = this.isUnique( builder, output );
+			var isUnique = this.getUnique( builder, output );
 
 			if ( isUnique && this.constructor.uuid === undefined ) {
 
@@ -362,7 +362,7 @@ var Three = (function (exports) {
 
 			if ( builder.parsing ) {
 
-				if ( ( data.deps || 0 ) > 0 ) {
+				if ( ( data.deps || 0 ) > 0 || this.getLabel() ) {
 
 					this.appendDepsNode( builder, data, output );
 
@@ -378,7 +378,7 @@ var Three = (function (exports) {
 
 				return data.name;
 
-			} else if ( ! this.isShared( builder, type ) || ( ! builder.optimize || data.deps == 1 ) ) {
+			} else if ( ! this.getLabel() && ( ! this.getShared( builder, type ) || ( ! builder.optimize || data.deps === 1 ) ) ) {
 
 				return Node.prototype.build.call( this, builder, output, uuid );
 
@@ -410,15 +410,29 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.isShared = function ( builder, output ) {
+	TempNode.prototype.getShared = function ( builder, output ) {
 
 		return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
 
 	};
 
-	TempNode.prototype.isUnique = function ( builder, output ) {
+	TempNode.prototype.getUnique = function ( builder, output ) {
 
 		return this.unique;
+
+	};
+
+	TempNode.prototype.setLabel = function ( name ) {
+
+		this.label = name;
+
+		return this;
+
+	};
+
+	TempNode.prototype.getLabel = function ( builder ) {
+
+		return this.label;
 
 	};
 
@@ -426,7 +440,7 @@ var Three = (function (exports) {
 
 		var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
 
-		if ( typeof this.scope == "string" ) uuid = this.scope + '-' + uuid;
+		if ( typeof this.scope === "string" ) uuid = this.scope + '-' + uuid;
 
 		return uuid;
 
@@ -444,26 +458,26 @@ var Three = (function (exports) {
 
 	TempNode.prototype.generate = function ( builder, output, uuid, type, ns ) {
 
-		if ( ! this.isShared( builder, output ) ) console.error( "TempNode is not shared!" );
+		if ( ! this.getShared( builder, output ) ) console.error( "TempNode is not shared!" );
 
 		uuid = uuid || this.uuid;
 
-		return builder.getTempVar( uuid, type || this.getType( builder ), ns ).name;
+		return builder.getTempVar( uuid, type || this.getType( builder ), ns, this.getLabel() ).name;
 
 	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function CondNode( a, b, ifNode, elseNode, op ) {
+	function CondNode( a, b, op, ifNode, elseNode ) {
 
 		TempNode.call( this );
 
 		this.a = a;
 		this.b = b;
 
+		this.op = op;
+		
 		this.ifNode = ifNode;
 		this.elseNode = elseNode;
-
-		this.op = op;
 
 	}
 
@@ -480,13 +494,22 @@ var Three = (function (exports) {
 
 	CondNode.prototype.getType = function ( builder ) {
 
-		if ( builder.getTypeLength( this.elseNode.getType( builder ) ) > builder.getTypeLength( this.ifNode.getType( builder ) ) ) {
+		if (this.ifNode) {
+			
+			var ifType = this.ifNode.getType( builder );
+			var elseType = this.elseNode.getType( builder );
+			
+			if ( builder.getTypeLength( elseType ) > builder.getTypeLength( ifType ) ) {
 
-			return this.elseNode.getType( builder );
+				return elseType;
 
+			}
+
+			return ifType;
+			
 		}
-
-		return this.ifNode.getType( builder );
+		
+		return 'b';
 
 	};
 
@@ -508,10 +531,20 @@ var Three = (function (exports) {
 			condType = this.getCondType( builder ),
 			a = this.a.build( builder, condType ),
 			b = this.b.build( builder, condType ),
-			ifNode = this.ifNode.build( builder, type ),
-			elseNode = this.elseNode.build( builder, type );
+			code;
+			
+		if (this.ifNode) {
+			
+			var ifCode = this.ifNode.build( builder, type ),
+				elseCode = this.elseNode.build( builder, type );
+			
+			code = '( ' + [ a, this.op, b, '?', ifCode, ':', elseCode ].join( ' ' ) + ' )';
+			
+		} else {
 
-		var code = '( ' + [ a, this.op, b, '?', ifNode, ':', elseNode ].join( ' ' ) + ' )';
+			code = '( ' + a + ' ' + this.op + ' ' +  b  + ' )';
+			
+		}
 
 		return builder.format( code, this.getType( builder ), output );
 
@@ -524,10 +557,10 @@ var Three = (function (exports) {
 		this.a = source.a;
 		this.b = source.b;
 
+		this.op = source.op;
+
 		this.ifNode = source.ifNode;
 		this.elseNode = source.elseNode;
-
-		this.op = source.op;
 
 	};
 
@@ -542,10 +575,10 @@ var Three = (function (exports) {
 			data.a = this.a.toJSON( meta ).uuid;
 			data.b = this.b.toJSON( meta ).uuid;
 
-			data.ifNode = this.ifNode.toJSON( meta ).uuid;
-			data.elseNode = this.elseNode.toJSON( meta ).uuid;
-
 			data.op = this.op;
+
+			if ( data.ifNode ) data.ifNode = this.ifNode.toJSON( meta ).uuid;
+			if ( data.elseNode ) data.elseNode = this.elseNode.toJSON( meta ).uuid;
 
 		}
 

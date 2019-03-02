@@ -5073,6 +5073,32 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var FrontSide = 0;
+	var BackSide = 1;
+	var DoubleSide = 2;
+	var FlatShading = 1;
+	var NoColors = 0;
+	var NormalBlending = 1;
+	var AddEquation = 100;
+	var SrcAlphaFactor = 204;
+	var OneMinusSrcAlphaFactor = 205;
+	var LessEqualDepth = 3;
+	var MultiplyOperation = 0;
+	var NoToneMapping = 0;
+
+	var UVMapping = 300;
+	var RepeatWrapping = 1000;
+	var ClampToEdgeWrapping = 1001;
+	var MirroredRepeatWrapping = 1002;
+	var NearestFilter = 1003;
+	var LinearFilter = 1006;
+	var LinearMipMapLinearFilter = 1008;
+	var UnsignedByteType = 1009;
+	var RGBAFormat = 1023;
+	var TrianglesDrawMode = 0;
+	var LinearEncoding = 3000;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var object3DId = 0;
 
 	function Object3D() {
@@ -5775,6 +5801,10 @@ var Three = (function (exports) {
 			object.matrix = this.matrix.toArray();
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
+
+			// object specific properties
+
+			if ( this.isMesh && this.drawMode !== TrianglesDrawMode ) object.drawMode = this.drawMode;
 
 			//
 
@@ -6938,32 +6968,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var FrontSide = 0;
-	var BackSide = 1;
-	var DoubleSide = 2;
-	var FlatShading = 1;
-	var NoColors = 0;
-	var NormalBlending = 1;
-	var AddEquation = 100;
-	var SrcAlphaFactor = 204;
-	var OneMinusSrcAlphaFactor = 205;
-	var LessEqualDepth = 3;
-	var MultiplyOperation = 0;
-	var NoToneMapping = 0;
-
-	var UVMapping = 300;
-	var RepeatWrapping = 1000;
-	var ClampToEdgeWrapping = 1001;
-	var MirroredRepeatWrapping = 1002;
-	var NearestFilter = 1003;
-	var LinearFilter = 1006;
-	var LinearMipMapLinearFilter = 1008;
-	var UnsignedByteType = 1009;
-	var RGBAFormat = 1023;
-	var TrianglesDrawMode = 0;
-	var LinearEncoding = 3000;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var materialId = 0;
@@ -9549,21 +9553,7 @@ var Three = (function (exports) {
 
 		toNonIndexed: function () {
 
-			if ( this.index === null ) {
-
-				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
-				return this;
-
-			}
-
-			var geometry2 = new BufferGeometry();
-
-			var indices = this.index.array;
-			var attributes = this.attributes;
-
-			for ( var name in attributes ) {
-
-				var attribute = attributes[ name ];
+			function convertBufferAttribute( attribute, indices ) {
 
 				var array = attribute.array;
 				var itemSize = attribute.itemSize;
@@ -9584,9 +9574,60 @@ var Three = (function (exports) {
 
 				}
 
-				geometry2.addAttribute( name, new BufferAttribute( array2, itemSize ) );
+				return new BufferAttribute( array2, itemSize );
 
 			}
+
+			//
+
+			if ( this.index === null ) {
+
+				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+				return this;
+
+			}
+
+			var geometry2 = new BufferGeometry();
+
+			var indices = this.index.array;
+			var attributes = this.attributes;
+
+			// attributes
+
+			for ( var name in attributes ) {
+
+				var attribute = attributes[ name ];
+
+				var newAttribute = convertBufferAttribute( attribute, indices );
+
+				geometry2.addAttribute( name, newAttribute );
+
+			}
+
+			// morph attributes
+
+			var morphAttributes = this.morphAttributes;
+
+			for ( name in morphAttributes ) {
+
+				var morphArray = [];
+				var morphAttribute = morphAttributes[ name ]; // morphAttribute: array of Float32BufferAttributes
+
+				for ( var i = 0, il = morphAttribute.length; i < il; i ++ ) {
+
+					var attribute = morphAttribute[ i ];
+
+					var newAttribute = convertBufferAttribute( attribute, indices );
+
+					morphArray.push( newAttribute );
+
+				}
+
+				geometry2.morphAttributes[ name ] = morphArray;
+
+			}
+
+			// groups
 
 			var groups = this.groups;
 
@@ -10049,6 +10090,7 @@ var Three = (function (exports) {
 									if ( intersection ) {
 
 										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in indexed buffer semantics
+										intersection.face.materialIndex = group.materialIndex;
 										intersects.push( intersection );
 
 									}
@@ -10106,6 +10148,7 @@ var Three = (function (exports) {
 									if ( intersection ) {
 
 										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in non-indexed buffer semantics
+										intersection.face.materialIndex = group.materialIndex;
 										intersects.push( intersection );
 
 									}
@@ -10763,6 +10806,8 @@ var Three = (function (exports) {
 
 		constructor: Scene,
 
+		isScene: true,
+
 		copy: function ( source, recursive ) {
 
 			Object3D.prototype.copy.call( this, source, recursive );
@@ -10786,6 +10831,12 @@ var Three = (function (exports) {
 			if ( this.fog !== null ) data.object.fog = this.fog.toJSON();
 
 			return data;
+
+		},
+
+		dispose: function () {
+
+			this.dispatchEvent( { type: 'dispose' } );
 
 		}
 
@@ -12688,6 +12739,13 @@ var Three = (function (exports) {
 					value: value.toArray()
 				};
 
+			} else if ( value && value.isMatrix3 ) {
+
+				data.uniforms[ name ] = {
+					type: 'm3',
+					value: value.toArray()
+				};
+
 			} else if ( value && value.isMatrix4 ) {
 
 				data.uniforms[ name ] = {
@@ -12779,7 +12837,7 @@ var Three = (function (exports) {
 
 			}
 
-			this.sourceMaterial.uniforms.sourceMap.value = this.internalSource;
+			this.sourceMaterial.uniforms[ "sourceMap" ].value = this.internalSource;
 			this.sourceMaterial.needsUpdate = true;
 
 			return this.sourceData;
@@ -12842,7 +12900,7 @@ var Three = (function (exports) {
 		// (0 -> 127 = 0.0 -> 1.0, 128 -> 255 = -1.0 -> 0.0 )
 		this.setSourceMap = function ( texture ) {
 
-			this.sourceMaterial.uniforms.sourceMap.value = texture;
+			this.sourceMaterial.uniforms[ "sourceMap" ].value = texture;
 
 		};
 
@@ -12907,8 +12965,8 @@ var Three = (function (exports) {
 			transparent: false
 		} );
 
-		this.diffuseMaterial.uniforms.oneOverWidth.value = oneOverWidth;
-		this.diffuseMaterial.uniforms.oneOverHeight.value = oneOverHeight;
+		this.diffuseMaterial.uniforms[ "oneOverWidth" ].value = oneOverWidth;
+		this.diffuseMaterial.uniforms[ "oneOverHeight" ].value = oneOverHeight;
 
 		this.diffuseMesh = new Mesh( this.fieldGeometry, this.diffuseMaterial );
 		this.fieldScene.add( this.diffuseMesh );
@@ -12923,8 +12981,8 @@ var Three = (function (exports) {
 			transparent: false
 		} );
 
-		this.driftMaterial.uniforms.oneOverWidth.value = oneOverWidth;
-		this.driftMaterial.uniforms.oneOverHeight.value = oneOverHeight;
+		this.driftMaterial.uniforms[ "oneOverWidth" ].value = oneOverWidth;
+		this.driftMaterial.uniforms[ "oneOverHeight" ].value = oneOverHeight;
 
 		this.driftMesh = new Mesh( this.fieldGeometry, this.driftMaterial );
 		this.fieldScene.add( this.driftMesh );
@@ -12939,8 +12997,8 @@ var Three = (function (exports) {
 			transparent: false
 		} );
 
-		this.projMaterial1.uniforms.oneOverWidth.value = oneOverWidth;
-		this.projMaterial1.uniforms.oneOverHeight.value = oneOverHeight;
+		this.projMaterial1.uniforms[ "oneOverWidth" ].value = oneOverWidth;
+		this.projMaterial1.uniforms[ "oneOverHeight" ].value = oneOverHeight;
 
 		this.projMesh1 = new Mesh( this.fieldGeometry, this.projMaterial1 );
 		this.fieldScene.add( this.projMesh1 );
@@ -12954,8 +13012,8 @@ var Three = (function (exports) {
 			fragmentShader: shader.fragmentShader,
 			transparent: false
 		} );
-		this.projMaterial2.uniforms.oneOverWidth.value = oneOverWidth;
-		this.projMaterial2.uniforms.oneOverHeight.value = oneOverHeight;
+		this.projMaterial2.uniforms[ "oneOverWidth" ].value = oneOverWidth;
+		this.projMaterial2.uniforms[ "oneOverHeight" ].value = oneOverHeight;
 
 		this.projMesh2 = new Mesh( this.fieldGeometry, this.projMaterial2 );
 		this.fieldScene.add( this.projMesh2 );
@@ -12969,8 +13027,8 @@ var Three = (function (exports) {
 			fragmentShader: shader.fragmentShader,
 			transparent: false
 		} );
-		this.projMaterial3.uniforms.oneOverWidth.value = oneOverWidth;
-		this.projMaterial3.uniforms.oneOverHeight.value = oneOverHeight;
+		this.projMaterial3.uniforms[ "oneOverWidth" ].value = oneOverWidth;
+		this.projMaterial3.uniforms[ "oneOverHeight" ].value = oneOverHeight;
 
 		this.projMesh3 = new Mesh( this.fieldGeometry, this.projMaterial3 );
 		this.fieldScene.add( this.projMesh3 );
@@ -12993,31 +13051,31 @@ var Three = (function (exports) {
 			transparent: true
 		} );
 
-		this.material.uniforms.densityMap.value = this.field1.texture;
+		this.material.uniforms[ "densityMap" ].value = this.field1.texture;
 
 		this.configShaders = function ( dt ) {
 
-			this.diffuseMaterial.uniforms.diffuse.value = dt * 0.05 * this.diffuse;
-			this.diffuseMaterial.uniforms.viscosity.value = dt * 0.05 * this.viscosity;
-			this.diffuseMaterial.uniforms.expansion.value = Math.exp( this.expansion * - 1.0 );
-			this.diffuseMaterial.uniforms.swirl.value = Math.exp( this.swirl * - 0.1 );
-			this.diffuseMaterial.uniforms.drag.value = Math.exp( this.drag * - 0.1 );
-			this.diffuseMaterial.uniforms.burnRate.value = this.burnRate * dt * 0.01;
-			this.driftMaterial.uniforms.windVector.value = this.windVector;
-			this.driftMaterial.uniforms.airSpeed.value = dt * this.airSpeed * 0.001 * textureHeight;
-			this.material.uniforms.color1.value = this.color1;
-			this.material.uniforms.color2.value = this.color2;
-			this.material.uniforms.color3.value = this.color3;
-			this.material.uniforms.colorBias.value = this.colorBias;
+			this.diffuseMaterial.uniforms[ "diffuse" ].value = dt * 0.05 * this.diffuse;
+			this.diffuseMaterial.uniforms[ "viscosity" ].value = dt * 0.05 * this.viscosity;
+			this.diffuseMaterial.uniforms[ "expansion" ].value = Math.exp( this.expansion * - 1.0 );
+			this.diffuseMaterial.uniforms[ "swirl" ].value = Math.exp( this.swirl * - 0.1 );
+			this.diffuseMaterial.uniforms[ "drag" ].value = Math.exp( this.drag * - 0.1 );
+			this.diffuseMaterial.uniforms[ "burnRate" ].value = this.burnRate * dt * 0.01;
+			this.driftMaterial.uniforms[ "windVector" ].value = this.windVector;
+			this.driftMaterial.uniforms[ "airSpeed" ].value = dt * this.airSpeed * 0.001 * textureHeight;
+			this.material.uniforms[ "color1" ].value = this.color1;
+			this.material.uniforms[ "color2" ].value = this.color2;
+			this.material.uniforms[ "color3" ].value = this.color3;
+			this.material.uniforms[ "colorBias" ].value = this.colorBias;
 
 		};
 
 		this.clearDiffuse = function () {
 
-			this.diffuseMaterial.uniforms.expansion.value = 1.0;
-			this.diffuseMaterial.uniforms.swirl.value = 1.0;
-			this.diffuseMaterial.uniforms.drag.value = 1.0;
-			this.diffuseMaterial.uniforms.burnRate.value = 0.0;
+			this.diffuseMaterial.uniforms[ "expansion" ].value = 1.0;
+			this.diffuseMaterial.uniforms[ "swirl" ].value = 1.0;
+			this.diffuseMaterial.uniforms[ "drag" ].value = 1.0;
+			this.diffuseMaterial.uniforms[ "burnRate" ].value = 0.0;
 
 		};
 
@@ -13053,7 +13111,7 @@ var Three = (function (exports) {
 
 			this.sourceMesh.visible = true;
 
-			this.sourceMaterial.uniforms.densityMap.value = this.field0.texture;
+			this.sourceMaterial.uniforms[ "densityMap" ].value = this.field0.texture;
 
 			renderer.render( this.fieldScene, this.orthoCamera, this.field1 );
 
@@ -13067,7 +13125,7 @@ var Three = (function (exports) {
 
 			this.diffuseMesh.visible = true;
 
-			this.diffuseMaterial.uniforms.densityMap.value = this.field0.texture;
+			this.diffuseMaterial.uniforms[ "densityMap" ].value = this.field0.texture;
 
 			renderer.render( this.fieldScene, this.orthoCamera, this.field1 );
 
@@ -13081,7 +13139,7 @@ var Three = (function (exports) {
 
 			this.driftMesh.visible = true;
 
-			this.driftMaterial.uniforms.densityMap.value = this.field0.texture;
+			this.driftMaterial.uniforms[ "densityMap" ].value = this.field0.texture;
 
 			renderer.render( this.fieldScene, this.orthoCamera, this.field1 );
 
@@ -13097,13 +13155,13 @@ var Three = (function (exports) {
 
 			this.projMesh1.visible = true;
 
-			this.projMaterial1.uniforms.densityMap.value = this.field0.texture;
+			this.projMaterial1.uniforms[ "densityMap" ].value = this.field0.texture;
 
 			renderer.render( this.fieldScene, this.orthoCamera, this.fieldProj );
 
 			this.projMesh1.visible = false;
 
-			this.projMaterial2.uniforms.densityMap.value = this.fieldProj.texture;
+			this.projMaterial2.uniforms[ "densityMap" ].value = this.fieldProj.texture;
 
 			// Projection pass 2
 
@@ -13117,14 +13175,14 @@ var Three = (function (exports) {
 				this.field1 = this.fieldProj;
 				this.fieldProj = temp;
 
-				this.projMaterial2.uniforms.densityMap.value = this.fieldProj.texture;
+				this.projMaterial2.uniforms[ "densityMap" ].value = this.fieldProj.texture;
 
 			}
 
 			this.projMesh2.visible = false;
 
-			this.projMaterial3.uniforms.densityMap.value = this.field0.texture;
-			this.projMaterial3.uniforms.projMap.value = this.fieldProj.texture;
+			this.projMaterial3.uniforms[ "densityMap" ].value = this.field0.texture;
+			this.projMaterial3.uniforms[ "projMap" ].value = this.fieldProj.texture;
 
 			// Projection pass 3
 

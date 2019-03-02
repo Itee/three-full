@@ -1,0 +1,15 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Interpolant } from '../Interpolant';
+
+export class QuaternionLinearInterpolant extends Interpolant {
+  constructor(
+    parameterPositions: any,
+    samplesValues: any,
+    sampleSize: number,
+    resultBuffer?: any
+  );
+
+  interpolate_(i1: number, t0: number, t: number, t1: number): any;
+}

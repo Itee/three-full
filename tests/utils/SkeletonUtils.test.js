@@ -2437,6 +2437,7 @@ var Three = (function (exports) {
 	var ZeroCurvatureEnding = 2400;
 	var ZeroSlopeEnding = 2401;
 	var WrapAroundEnding = 2402;
+	var TrianglesDrawMode = 0;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function AnimationAction( mixer, clip, localRoot ) {
@@ -5102,6 +5103,21 @@ var Three = (function (exports) {
 
 			return this;
 
+		},
+
+		clone: function () {
+
+			var times = AnimationUtils.arraySlice( this.times, 0 );
+			var values = AnimationUtils.arraySlice( this.values, 0 );
+
+			var TypedKeyframeTrack = this.constructor;
+			var track = new TypedKeyframeTrack( this.name, times, values );
+
+			// Interpolant argument to constructor is not saved, so copy the factory method directly.
+			track.createInterpolant = this.createInterpolant;
+
+			return track;
+
 		}
 
 	} );
@@ -5702,6 +5718,19 @@ var Three = (function (exports) {
 			}
 
 			return this;
+
+		},
+		clone: function () {
+
+			var tracks = [];
+
+			for ( var i = 0; i < this.tracks.length; i ++ ) {
+
+				tracks.push( this.tracks[ i ].clone() );
+
+			}
+
+			return new AnimationClip( this.name, this.duration, tracks );
 
 		}
 
@@ -9221,6 +9250,10 @@ var Three = (function (exports) {
 			object.matrix = this.matrix.toArray();
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
+
+			// object specific properties
+
+			if ( this.isMesh && this.drawMode !== TrianglesDrawMode ) object.drawMode = this.drawMode;
 
 			//
 
@@ -13025,21 +13058,7 @@ var Three = (function (exports) {
 
 		toNonIndexed: function () {
 
-			if ( this.index === null ) {
-
-				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
-				return this;
-
-			}
-
-			var geometry2 = new BufferGeometry();
-
-			var indices = this.index.array;
-			var attributes = this.attributes;
-
-			for ( var name in attributes ) {
-
-				var attribute = attributes[ name ];
+			function convertBufferAttribute( attribute, indices ) {
 
 				var array = attribute.array;
 				var itemSize = attribute.itemSize;
@@ -13060,9 +13079,60 @@ var Three = (function (exports) {
 
 				}
 
-				geometry2.addAttribute( name, new BufferAttribute( array2, itemSize ) );
+				return new BufferAttribute( array2, itemSize );
 
 			}
+
+			//
+
+			if ( this.index === null ) {
+
+				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+				return this;
+
+			}
+
+			var geometry2 = new BufferGeometry();
+
+			var indices = this.index.array;
+			var attributes = this.attributes;
+
+			// attributes
+
+			for ( var name in attributes ) {
+
+				var attribute = attributes[ name ];
+
+				var newAttribute = convertBufferAttribute( attribute, indices );
+
+				geometry2.addAttribute( name, newAttribute );
+
+			}
+
+			// morph attributes
+
+			var morphAttributes = this.morphAttributes;
+
+			for ( name in morphAttributes ) {
+
+				var morphArray = [];
+				var morphAttribute = morphAttributes[ name ]; // morphAttribute: array of Float32BufferAttributes
+
+				for ( var i = 0, il = morphAttribute.length; i < il; i ++ ) {
+
+					var attribute = morphAttribute[ i ];
+
+					var newAttribute = convertBufferAttribute( attribute, indices );
+
+					morphArray.push( newAttribute );
+
+				}
+
+				geometry2.morphAttributes[ name ] = morphArray;
+
+			}
+
+			// groups
 
 			var groups = this.groups;
 

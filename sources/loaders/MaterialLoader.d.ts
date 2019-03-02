@@ -1,0 +1,23 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { LoadingManager } from './LoadingManager';
+import { Texture } from './../textures/Texture';
+import { Material } from './../materials/Material';
+
+export class MaterialLoader {
+  constructor(manager?: LoadingManager);
+
+  manager: LoadingManager;
+  textures: { [key: string]: Texture };
+
+  load(
+    url: string,
+    onLoad: (material: Material) => void,
+    onProgress?: (event: ProgressEvent) => void,
+    onError?: (event: Error | ErrorEvent) => void
+  ): void;
+  setTextures(textures: { [key: string]: Texture }): void;
+  getTexture(name: string): Texture;
+  parse(json: any): Material;
+}

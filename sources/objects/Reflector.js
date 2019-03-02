@@ -72,12 +72,11 @@ var Reflector = function ( geometry, options ) {
 		vertexShader: shader.vertexShader
 	} );
 
-	material.uniforms.tDiffuse.value = renderTarget.texture;
-	material.uniforms.color.value = color;
-	material.uniforms.textureMatrix.value = textureMatrix;
+	material.uniforms[ "tDiffuse" ].value = renderTarget.texture;
+	material.uniforms[ "color" ].value = color;
+	material.uniforms[ "textureMatrix" ].value = textureMatrix;
 
 	this.material = material;
-	this.renderOrder = - Infinity; // render first
 
 	this.onBeforeRender = function ( renderer, scene, camera ) {
 

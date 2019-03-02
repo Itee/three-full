@@ -144,7 +144,7 @@ var Ocean = function ( renderer, camera, scene, options ) {
 	var initialSpectrumUniforms = UniformsUtils.clone( initialSpectrumShader.uniforms );
 	this.materialInitialSpectrum = new ShaderMaterial( {
 		uniforms: initialSpectrumUniforms,
-		vertexShader: fullscreeenVertexShader.vertexShader,
+		vertexShader: initialSpectrumShader.vertexShader,
 		fragmentShader: initialSpectrumShader.fragmentShader
 	} );
 	this.materialInitialSpectrum.uniforms.u_wind = { value: new Vector2() };

@@ -46,10 +46,10 @@ FilmPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 	constructor: FilmPass,
 
-	render: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 		this.uniforms[ "tDiffuse" ].value = readBuffer.texture;
-		this.uniforms[ "time" ].value += delta;
+		this.uniforms[ "time" ].value += deltaTime;
 
 		this.quad.material = this.material;
 

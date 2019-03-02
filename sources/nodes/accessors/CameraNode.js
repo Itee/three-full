@@ -99,7 +99,7 @@ CameraNode.prototype.getType = function ( builder ) {
 
 };
 
-CameraNode.prototype.isUnique = function ( builder ) {
+CameraNode.prototype.getUnique = function ( builder ) {
 
 	switch ( this.scope ) {
 
@@ -114,7 +114,7 @@ CameraNode.prototype.isUnique = function ( builder ) {
 
 };
 
-CameraNode.prototype.isShared = function ( builder ) {
+CameraNode.prototype.getShared = function ( builder ) {
 
 	switch ( this.scope ) {
 

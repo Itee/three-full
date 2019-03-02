@@ -19,7 +19,7 @@ NormalNode.prototype = Object.create( TempNode.prototype );
 NormalNode.prototype.constructor = NormalNode;
 NormalNode.prototype.nodeType = "Normal";
 
-NormalNode.prototype.isShared = function ( builder ) {
+NormalNode.prototype.getShared = function ( builder ) {
 
 	switch ( this.scope ) {
 
