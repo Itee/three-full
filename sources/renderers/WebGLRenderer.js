@@ -19,7 +19,6 @@ import { Frustum } from '../math/Frustum.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { ShaderLib } from './shaders/ShaderLib.js'
 import { UniformsLib } from './shaders/UniformsLib.js'
-import { UniformsUtils } from './shaders/UniformsUtils.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector4 } from '../math/Vector4.js'
 import { WebGLAnimation } from './webgl/WebGLAnimation.js'
@@ -45,6 +44,7 @@ import { WebGLUniforms } from './webgl/WebGLUniforms.js'
 import { WebGLUtils } from './webgl/WebGLUtils.js'
 import { WebVRManager } from './webvr/WebVRManager.js'
 import { WebXRManager } from './webvr/WebXRManager.js'
+import { cloneUniforms } from './shaders/UniformsUtils'
 function WebGLRenderer( parameters ) {
 
 	console.log( 'WebGLRenderer', REVISION );
@@ -1417,7 +1417,7 @@ function WebGLRenderer( parameters ) {
 
 				materialProperties.shader = {
 					name: material.type,
-					uniforms: UniformsUtils.clone( shader.uniforms ),
+					uniforms: cloneUniforms( shader.uniforms ),
 					vertexShader: shader.vertexShader,
 					fragmentShader: shader.fragmentShader
 				};
@@ -1925,7 +1925,7 @@ function WebGLRenderer( parameters ) {
 			//  WebGLRenderTargetCube will be flipped for backwards compatibility
 			//  WebGLRenderTargetCube.texture will be flipped because it's a Texture and NOT a CubeTexture
 			// this check must be handled differently, or removed entirely, if WebGLRenderTargetCube uses a CubeTexture in the future
-			uniforms.flipEnvMap.value = ( ! ( material.envMap && material.envMap.isCubeTexture ) ) ? 1 : - 1;
+			uniforms.flipEnvMap.value = material.envMap.isCubeTexture ? - 1 : 1;
 
 			uniforms.reflectivity.value = material.reflectivity;
 			uniforms.refractionRatio.value = material.refractionRatio;

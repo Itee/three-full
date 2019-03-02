@@ -168,8 +168,8 @@ AnimationMixer.prototype = Object.assign( Object.create( EventDispatcher.prototy
 		this._actionsByClip = {};
 		// inside:
 		// {
-		// 		knownActions: Array< AnimationAction >	- used as prototypes
-		// 		actionByRoot: AnimationAction			- lookup
+		// 	knownActions: Array< AnimationAction > - used as prototypes
+		// 	actionByRoot: AnimationAction - lookup
 		// }
 		this._bindings = []; // 'nActiveBindings' followed by inactive ones
 		this._nActiveBindings = 0;

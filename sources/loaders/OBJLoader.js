@@ -690,14 +690,18 @@ var OBJLoader = ( function () {
 						if ( isLine && material && ! ( material instanceof LineBasicMaterial ) ) {
 
 							var materialLine = new LineBasicMaterial();
-							materialLine.copy( material );
-							materialLine.lights = false; // TOFIX
+							Material.prototype.copy.call( materialLine, material );
+							materialLine.color.copy( material.color );
+							materialLine.lights = false;
 							material = materialLine;
 
 						} else if ( isPoints && material && ! ( material instanceof PointsMaterial ) ) {
 
 							var materialPoints = new PointsMaterial( { size: 10, sizeAttenuation: false } );
-							materialLine.copy( material );
+							Material.prototype.copy.call( materialPoints, material );
+							materialPoints.color.copy( material.color );
+							materialPoints.map = material.map;
+							materialPoints.lights = false;
 							material = materialPoints;
 
 						}

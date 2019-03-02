@@ -5,7 +5,6 @@ import { TangentSpaceNormalMap } from '../constants.js'
 import { Material } from './Material.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Color } from '../math/Color.js'
-import { CanvasTexture } from '../textures/CanvasTexture.js'
 function MeshMatcapMaterial( parameters ) {
 
 	Material.call( this );
@@ -40,23 +39,6 @@ function MeshMatcapMaterial( parameters ) {
 	this.lights = false;
 
 	this.setValues( parameters );
-
-	// a matcap is required
-
-	if ( this.matcap === null ) {
-
-		var canvas = document.createElement( 'canvas' );
-		canvas.width = 1;
-		canvas.height = 1;
-
-		var context = canvas.getContext( '2d' );
-
-		context.fillStyle = '#fff';
-		context.fillRect( 0, 0, 1, 1 );
-
-		this.matcap = new CanvasTexture( canvas );
-
-	}
 
 }
 

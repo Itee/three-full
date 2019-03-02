@@ -102,7 +102,7 @@ HDRCubeTextureLoader.prototype.load = function ( type, urls, onLoad, onProgress,
 	texture.generateMipmaps = ( texture.encoding !== RGBEEncoding );
 	texture.anisotropy = 0;
 
-	var scope = this.hdrLoader;
+	var scope = this;
 
 	var loaded = 0;
 
@@ -115,7 +115,7 @@ HDRCubeTextureLoader.prototype.load = function ( type, urls, onLoad, onProgress,
 
 			loaded ++;
 
-			var texData = scope._parser( buffer );
+			var texData = scope.hdrLoader._parser( buffer );
 
 			if ( ! texData ) return;
 

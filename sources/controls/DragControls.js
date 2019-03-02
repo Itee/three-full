@@ -6,6 +6,7 @@ import { Plane } from '../math/Plane.js'
 import { Raycaster } from '../core/Raycaster.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Vector3 } from '../math/Vector3.js'
+import { Matrix4 } from '../math/Matrix4.js'
 import { Camera } from '../cameras/Camera.js'
 var DragControls = function ( _objects, _camera, _domElement ) {
 
@@ -22,7 +23,9 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 	var _mouse = new Vector2();
 	var _offset = new Vector3();
 	var _intersection = new Vector3();
-
+	var _worldPosition = new Vector3();
+	var _inverseMatrix = new Matrix4();
+	
 	var _selected = null, _hovered = null;
 
 	//
@@ -74,7 +77,7 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 
 			if ( _raycaster.ray.intersectPlane( _plane, _intersection ) ) {
 
-				_selected.position.copy( _intersection.sub( _offset ) );
+				_selected.position.copy( _intersection.sub( _offset ).applyMatrix4( _inverseMatrix ) );
 
 			}
 
@@ -92,7 +95,7 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 
 			var object = intersects[ 0 ].object;
 
-			_plane.setFromNormalAndCoplanarPoint( _camera.getWorldDirection( _plane.normal ), object.position );
+			_plane.setFromNormalAndCoplanarPoint( _camera.getWorldDirection( _plane.normal ), _worldPosition.setFromMatrixPosition( object.matrixWorld ) );
 
 			if ( _hovered !== object ) {
 
@@ -132,7 +135,8 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 
 			if ( _raycaster.ray.intersectPlane( _plane, _intersection ) ) {
 
-				_offset.copy( _intersection ).sub( _selected.position );
+				_inverseMatrix.getInverse( _selected.parent.matrixWorld );
+				_offset.copy( _intersection ).sub( _worldPosition.setFromMatrixPosition( _selected.matrixWorld ) );
 
 			}
 
@@ -175,7 +179,7 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 
 			if ( _raycaster.ray.intersectPlane( _plane, _intersection ) ) {
 
-				_selected.position.copy( _intersection.sub( _offset ) );
+				_selected.position.copy( _intersection.sub( _offset ).applyMatrix4( _inverseMatrix ) );
 
 			}
 
@@ -205,11 +209,12 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 
 			_selected = intersects[ 0 ].object;
 
-			_plane.setFromNormalAndCoplanarPoint( _camera.getWorldDirection( _plane.normal ), _selected.position );
+			_plane.setFromNormalAndCoplanarPoint( _camera.getWorldDirection( _plane.normal ), _worldPosition.setFromMatrixPosition( _selected.matrixWorld ) );
 
 			if ( _raycaster.ray.intersectPlane( _plane, _intersection ) ) {
 
-				_offset.copy( _intersection ).sub( _selected.position );
+				_inverseMatrix.getInverse( _selected.parent.matrixWorld );
+				_offset.copy( _intersection ).sub( _worldPosition.setFromMatrixPosition( _selected.matrixWorld ) );
 
 			}
 

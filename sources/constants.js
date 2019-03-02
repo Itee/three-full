@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var REVISION = '98';
+var REVISION = '99';
 var MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2 };
 var CullFaceNone = 0;
 var CullFaceBack = 1;
@@ -58,6 +58,8 @@ var LinearToneMapping = 1;
 var ReinhardToneMapping = 2;
 var Uncharted2ToneMapping = 3;
 var CineonToneMapping = 4;
+var ACESFilmicToneMapping = 5;
+
 var UVMapping = 300;
 var CubeReflectionMapping = 301;
 var CubeRefractionMapping = 302;
@@ -202,6 +204,7 @@ export {
 	ReinhardToneMapping,
 	Uncharted2ToneMapping,
 	CineonToneMapping,
+	ACESFilmicToneMapping,
 	UVMapping,
 	CubeReflectionMapping,
 	CubeRefractionMapping,
