@@ -62,6 +62,7 @@ export {
 export { DecalGeometry } from './geometries/DecalGeometry.js'
 export { hilbert2D } from './geometries/hilbert2D.js'
 export { hilbert3D } from './geometries/hilbert3D.js'
+export { LightningStrike } from './geometries/LightningStrike.js'
 export { TeapotBufferGeometry } from './geometries/TeapotBufferGeometry.js'
 export { GPUComputationRenderer } from './renderers/GPUComputationRenderer.js'
 export {
@@ -99,6 +100,7 @@ export { GLTFLoader } from './loaders/GLTFLoader.js'
 export { HDRCubeTextureLoader } from './loaders/HDRCubeTextureLoader.js'
 export { KMZLoader } from './loaders/KMZLoader.js'
 export { KTXLoader } from './loaders/KTXLoader.js'
+export { LDrawLoader } from './loaders/LDrawLoader.js'
 export { LoaderSupport } from './loaders/LoaderSupport.js'
 export { MD2Loader } from './loaders/MD2Loader.js'
 export { MMDLoader } from './loaders/MMDLoader.js'
@@ -210,10 +212,12 @@ export { SwitchNode } from './nodes/utils/SwitchNode.js'
 export { TimerNode } from './nodes/utils/TimerNode.js'
 export { UVTransformNode } from './nodes/utils/UVTransformNode.js'
 export { VelocityNode } from './nodes/utils/VelocityNode.js'
+export { Fire } from './objects/Fire.js'
 export {
 	Lensflare,
 	LensflareElement
 } from './objects/Lensflare.js'
+export { LightningStorm } from './objects/LightningStorm.js'
 export { Reflector } from './objects/Reflector.js'
 export { ReflectorRTT } from './objects/ReflectorRTT.js'
 export { Refractor } from './objects/Refractor.js'
@@ -222,11 +226,6 @@ export { Sky } from './objects/Sky.js'
 export { Water } from './objects/Water.js'
 export { Water2 } from './objects/Water2.js'
 export { Ocean } from './objects/Ocean.js'
-export {
-	Octree,
-	OctreeObjectData,
-	OctreeNode
-} from './utils/Octree.js'
 export { PMREMCubeUVPacker } from './pmrem/PMREMCubeUVPacker.js'
 export { PMREMGenerator } from './pmrem/PMREMGenerator.js'
 export { AdaptiveToneMappingPass } from './postprocessing/AdaptiveToneMappingPass.js'

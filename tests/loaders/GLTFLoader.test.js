@@ -4307,11 +4307,17 @@ var Three = (function (exports) {
 				wrap: [ this.wrapS, this.wrapT ],
 
 				format: this.format,
+				type: this.type,
+				encoding: this.encoding,
+
 				minFilter: this.minFilter,
 				magFilter: this.magFilter,
 				anisotropy: this.anisotropy,
 
-				flipY: this.flipY
+				flipY: this.flipY,
+
+				premultiplyAlpha: this.premultiplyAlpha,
+				unpackAlignment: this.unpackAlignment
 
 			};
 
@@ -6169,7 +6175,7 @@ var Three = (function (exports) {
 
 				position.setFromMatrixPosition( this.matrixWorld );
 
-				if ( this.isCamera ) {
+				if ( this.isCamera || this.isLight ) {
 
 					m1.lookAt( position, target, this.up );
 
@@ -7954,42 +7960,42 @@ var Three = (function (exports) {
 			var uniform = this.uniforms[ name ];
 			var value = uniform.value;
 
-			if ( value.isTexture ) {
+			if ( value && value.isTexture ) {
 
 				data.uniforms[ name ] = {
 					type: 't',
 					value: value.toJSON( meta ).uuid
 				};
 
-			} else if ( value.isColor ) {
+			} else if ( value && value.isColor ) {
 
 				data.uniforms[ name ] = {
 					type: 'c',
 					value: value.getHex()
 				};
 
-			} else if ( value.isVector2 ) {
+			} else if ( value && value.isVector2 ) {
 
 				data.uniforms[ name ] = {
 					type: 'v2',
 					value: value.toArray()
 				};
 
-			} else if ( value.isVector3 ) {
+			} else if ( value && value.isVector3 ) {
 
 				data.uniforms[ name ] = {
 					type: 'v3',
 					value: value.toArray()
 				};
 
-			} else if ( value.isVector4 ) {
+			} else if ( value && value.isVector4 ) {
 
 				data.uniforms[ name ] = {
 					type: 'v4',
 					value: value.toArray()
 				};
 
-			} else if ( value.isMatrix4 ) {
+			} else if ( value && value.isMatrix4 ) {
 
 				data.uniforms[ name ] = {
 					type: 'm4',
@@ -8012,6 +8018,16 @@ var Three = (function (exports) {
 
 		data.vertexShader = this.vertexShader;
 		data.fragmentShader = this.fragmentShader;
+
+		var extensions = {};
+
+		for ( var key in this.extensions ) {
+
+			if ( this.extensions[ key ] === true ) extensions[ key ] = true;
+
+		}
+
+		if ( Object.keys( extensions ).length > 0 ) data.extensions = extensions;
 
 		return data;
 
@@ -12802,17 +12818,7 @@ var Three = (function (exports) {
 
 				if ( morphTargets !== undefined && morphTargets.length > 0 ) {
 
-					this.morphTargetInfluences = [];
-					this.morphTargetDictionary = {};
-
-					for ( m = 0, ml = morphTargets.length; m < ml; m ++ ) {
-
-						name = morphTargets[ m ].name || String( m );
-
-						this.morphTargetInfluences.push( 0 );
-						this.morphTargetDictionary[ name ] = m;
-
-					}
+					console.error( 'Mesh.updateMorphTargets() no longer supports Geometry. Use BufferGeometry instead.' );
 
 				}
 
@@ -17203,10 +17209,10 @@ float clearCoatDHRApprox( const in float roughness, const in float dotNL ) {
 		float roughness = material.specularRoughness;
 
 		vec3 rectCoords[ 4 ];
-		rectCoords[ 0 ] = lightPos - halfWidth - halfHeight; // counterclockwise
-		rectCoords[ 1 ] = lightPos + halfWidth - halfHeight;
-		rectCoords[ 2 ] = lightPos + halfWidth + halfHeight;
-		rectCoords[ 3 ] = lightPos - halfWidth + halfHeight;
+		rectCoords[ 0 ] = lightPos + halfWidth - halfHeight; // counterclockwise; light shines in local neg z direction
+		rectCoords[ 1 ] = lightPos - halfWidth - halfHeight;
+		rectCoords[ 2 ] = lightPos - halfWidth + halfHeight;
+		rectCoords[ 3 ] = lightPos + halfWidth + halfHeight;
 
 		vec2 uv = LTC_Uv( normal, viewDir, roughness );
 
@@ -21202,6 +21208,16 @@ void main() {
 			if ( json.vertexShader !== undefined ) material.vertexShader = json.vertexShader;
 			if ( json.fragmentShader !== undefined ) material.fragmentShader = json.fragmentShader;
 
+			if ( json.extensions !== undefined ) {
+
+				for ( var key in json.extensions ) {
+
+					material.extensions[ key ] = json.extensions[ key ];
+
+				}
+
+			}
+
 			// Deprecated
 
 			if ( json.shading !== undefined ) material.flatShading = json.shading === 1; // FlatShading
@@ -24163,12 +24179,12 @@ void main() {
 				var itemSize = attribute.itemSize;
 				var array = attribute.array.slice( 0, count * itemSize );
 
-				for ( var i = 0; i < count; ++ i ) {
+				for ( var i = 0, j = 0; i < count; ++ i ) {
 
-					array[ i ] = attribute.getX( i );
-					if ( itemSize >= 2 ) array[ i + 1 ] = attribute.getY( i );
-					if ( itemSize >= 3 ) array[ i + 2 ] = attribute.getZ( i );
-					if ( itemSize >= 4 ) array[ i + 3 ] = attribute.getW( i );
+					array[ j ++ ] = attribute.getX( i );
+					if ( itemSize >= 2 ) array[ j ++ ] = attribute.getY( i );
+					if ( itemSize >= 3 ) array[ j ++ ] = attribute.getZ( i );
+					if ( itemSize >= 4 ) array[ j ++ ] = attribute.getW( i );
 
 				}
 
@@ -25560,16 +25576,16 @@ void main() {
 
 			var nodeDef = json.nodes[ nodeIndex ];
 
-			return new Promise( function ( resolve ) {
+			return ( function() {
 
 				// .isBone isn't in glTF spec. See .markDefs
 				if ( nodeDef.isBone === true ) {
 
-					resolve( new Bone() );
+					return Promise.resolve( new Bone() );
 
 				} else if ( nodeDef.mesh !== undefined ) {
 
-					parser.getDependency( 'mesh', nodeDef.mesh ).then( function ( mesh ) {
+					return parser.getDependency( 'mesh', nodeDef.mesh ).then( function ( mesh ) {
 
 						var node;
 
@@ -25596,27 +25612,44 @@ void main() {
 
 						}
 
-						resolve( node );
+						// if weights are provided on the node, override weights on the mesh.
+						if ( nodeDef.weights !== undefined ) {
+
+							node.traverse( function ( o ) {
+
+								if ( ! o.isMesh ) return;
+
+								for ( var i = 0, il = nodeDef.weights.length; i < il; i ++ ) {
+
+									o.morphTargetInfluences[ i ] = nodeDef.weights[ i ];
+
+								}
+
+							} );
+
+						}
+
+						return node;
 
 					} );
 
 				} else if ( nodeDef.camera !== undefined ) {
 
-					parser.getDependency( 'camera', nodeDef.camera ).then( resolve );
+					return parser.getDependency( 'camera', nodeDef.camera );
 
 				} else if ( nodeDef.extensions
 					&& nodeDef.extensions[ EXTENSIONS.KHR_LIGHTS_PUNCTUAL ]
 					&& nodeDef.extensions[ EXTENSIONS.KHR_LIGHTS_PUNCTUAL ].light !== undefined ) {
 
-					parser.getDependency( 'light', nodeDef.extensions[ EXTENSIONS.KHR_LIGHTS_PUNCTUAL ].light ).then( resolve );
+					return parser.getDependency( 'light', nodeDef.extensions[ EXTENSIONS.KHR_LIGHTS_PUNCTUAL ].light );
 
 				} else {
 
-					resolve( new Object3D() );
+					return Promise.resolve( new Object3D() );
 
 				}
 
-			} ).then( function ( node ) {
+			}() ).then( function ( node ) {
 
 				if ( nodeDef.name !== undefined ) {
 

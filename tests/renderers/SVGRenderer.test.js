@@ -3580,7 +3580,7 @@ var Three = (function (exports) {
 
 				position.setFromMatrixPosition( this.matrixWorld );
 
-				if ( this.isCamera ) {
+				if ( this.isCamera || this.isLight ) {
 
 					m1.lookAt( position, target, this.up );
 
@@ -8037,7 +8037,7 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var REVISION = '99';
+	var REVISION = '100';
 	var FrontSide = 0;
 	var BackSide = 1;
 	var DoubleSide = 2;
@@ -10355,17 +10355,7 @@ var Three = (function (exports) {
 
 				if ( morphTargets !== undefined && morphTargets.length > 0 ) {
 
-					this.morphTargetInfluences = [];
-					this.morphTargetDictionary = {};
-
-					for ( m = 0, ml = morphTargets.length; m < ml; m ++ ) {
-
-						name = morphTargets[ m ].name || String( m );
-
-						this.morphTargetInfluences.push( 0 );
-						this.morphTargetDictionary[ name ] = m;
-
-					}
+					console.error( 'Mesh.updateMorphTargets() no longer supports Geometry. Use BufferGeometry instead.' );
 
 				}
 

@@ -4255,6 +4255,7 @@ var Three = (function (exports) {
 		var pointer = new Vector2();
 		var pointerOld = new Vector2();
 		var spherical = new Spherical();
+		var sphere = new Sphere();
 
 		// events
 
@@ -4268,8 +4269,8 @@ var Three = (function (exports) {
 
 			if ( box.isEmpty() === false ) {
 
-				center.copy( box.getCenter() );
-				distance = box.getBoundingSphere().radius;
+				box.getCenter( center );
+				distance = box.getBoundingSphere( sphere ).radius;
 
 			} else {
 

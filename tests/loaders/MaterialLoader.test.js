@@ -5953,42 +5953,42 @@ var Three = (function (exports) {
 			var uniform = this.uniforms[ name ];
 			var value = uniform.value;
 
-			if ( value.isTexture ) {
+			if ( value && value.isTexture ) {
 
 				data.uniforms[ name ] = {
 					type: 't',
 					value: value.toJSON( meta ).uuid
 				};
 
-			} else if ( value.isColor ) {
+			} else if ( value && value.isColor ) {
 
 				data.uniforms[ name ] = {
 					type: 'c',
 					value: value.getHex()
 				};
 
-			} else if ( value.isVector2 ) {
+			} else if ( value && value.isVector2 ) {
 
 				data.uniforms[ name ] = {
 					type: 'v2',
 					value: value.toArray()
 				};
 
-			} else if ( value.isVector3 ) {
+			} else if ( value && value.isVector3 ) {
 
 				data.uniforms[ name ] = {
 					type: 'v3',
 					value: value.toArray()
 				};
 
-			} else if ( value.isVector4 ) {
+			} else if ( value && value.isVector4 ) {
 
 				data.uniforms[ name ] = {
 					type: 'v4',
 					value: value.toArray()
 				};
 
-			} else if ( value.isMatrix4 ) {
+			} else if ( value && value.isMatrix4 ) {
 
 				data.uniforms[ name ] = {
 					type: 'm4',
@@ -6011,6 +6011,16 @@ var Three = (function (exports) {
 
 		data.vertexShader = this.vertexShader;
 		data.fragmentShader = this.fragmentShader;
+
+		var extensions = {};
+
+		for ( var key in this.extensions ) {
+
+			if ( this.extensions[ key ] === true ) extensions[ key ] = true;
+
+		}
+
+		if ( Object.keys( extensions ).length > 0 ) data.extensions = extensions;
 
 		return data;
 
@@ -6252,6 +6262,16 @@ var Three = (function (exports) {
 			if ( json.defines !== undefined ) material.defines = json.defines;
 			if ( json.vertexShader !== undefined ) material.vertexShader = json.vertexShader;
 			if ( json.fragmentShader !== undefined ) material.fragmentShader = json.fragmentShader;
+
+			if ( json.extensions !== undefined ) {
+
+				for ( var key in json.extensions ) {
+
+					material.extensions[ key ] = json.extensions[ key ];
+
+				}
+
+			}
 
 			// Deprecated
 

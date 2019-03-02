@@ -5,7 +5,6 @@ import { Texture } from '../textures/Texture.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
-import { Matrix4 } from '../math/Matrix4.js'
 import {
 	DoubleSide,
 	ClampToEdgeWrapping,
@@ -142,13 +141,15 @@ VolumeSlice.prototype = {
 		this.ctx = this.canvas.getContext( '2d' );
 		this.ctxBuffer = this.canvasBuffer.getContext( '2d' );
 
+		if ( this.geometry ) this.geometry.dispose(); // dispose existing geometry
+
 		this.geometry = new PlaneBufferGeometry( extracted.planeWidth, extracted.planeHeight );
 
 		if ( this.mesh ) {
 
 			this.mesh.geometry = this.geometry;
 			//reset mesh matrix
-			this.mesh.matrix = ( new Matrix4() ).identity();
+			this.mesh.matrix.identity();
 			this.mesh.applyMatrix( this.matrix );
 
 		}

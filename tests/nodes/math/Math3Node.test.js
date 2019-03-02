@@ -466,6 +466,7 @@ var Three = (function (exports) {
 	}
 
 	Math3Node.MIX = 'mix';
+	Math3Node.CLAMP = 'clamp';
 	Math3Node.REFRACT = 'refract';
 	Math3Node.SMOOTHSTEP = 'smoothstep';
 	Math3Node.FACEFORWARD = 'faceforward';
