@@ -292,6 +292,11 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
+		Fire: {
+			imports: [
+				'_Math'
+			]
+		},
         FirstPersonControls: {
 			imports: [
 				'_Math'
