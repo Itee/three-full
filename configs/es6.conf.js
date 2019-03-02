@@ -39,7 +39,8 @@ module.exports = {
 		'draco',                            // draco_decoder use Eval !
 		'sea3d',                            // Duplicate export 'SEA3D'
 		'crossfade',                        // Scene has already been declared
-		'offscreen',
+		'offscreen',						// Should be in HTML File
+		'ldraw',							// target NodeJs and use require
 
 		// Specific file
 		'Cloth.js',							// Use global variable from example html ! Need to be refactored
@@ -291,6 +292,11 @@ module.exports = {
 				'UniformsUtils'
 			]
 		},
+		Fire: {
+			imports: [
+				'_Math'
+			]
+		},
         FirstPersonControls: {
 			imports: [
 				'_Math'
@@ -391,6 +397,15 @@ module.exports = {
         KMZLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
+        LDrawLoader: {
+			imports: [
+				'DefaultLoadingManager'
+			],
+			replacements: [
+				['console.warn( \'LDrawLoader: Error parsing material\' + lineParser.getLineNumberString() );', ''], // Bug fix !!!
+				['LineParser.getLineNumberString()', 'lineParser.getLineNumberString()'], 							 // Bug fix !!!
+			]
+		},
 		LegacyGLTFLoader: {
 			imports: [
 				'DefaultLoadingManager',
@@ -416,6 +431,17 @@ module.exports = {
                 'Loader',
                 'LoaderUtils'
             ]
+		},
+        LightningStorm: {
+            imports: [
+                '_Math'
+            ]
+        },
+		LightningStrike: {
+			imports: [
+				'_Math',
+				'SimplexNoise',
+			]
 		},
         LineCurve: {
             outputOverride: 'curves/LineCurve.js'
