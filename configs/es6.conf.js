@@ -423,6 +423,17 @@ module.exports = {
                 'LoaderUtils'
             ]
 		},
+        LightningStorm: {
+            imports: [
+                '_Math'
+            ]
+        },
+		LightningStrike: {
+			imports: [
+				'_Math',
+				'SimplexNoise',
+			]
+		},
         LineCurve: {
             outputOverride: 'curves/LineCurve.js'
         },
