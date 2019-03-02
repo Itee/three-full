@@ -397,6 +397,15 @@ module.exports = {
         KMZLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
+        LDrawLoader: {
+			imports: [
+				'DefaultLoadingManager'
+			],
+			replacements: [
+				['console.warn( \'LDrawLoader: Error parsing material\' + lineParser.getLineNumberString() );', ''], // Bug fix !!!
+				['LineParser.getLineNumberString()', 'lineParser.getLineNumberString()'], 							 // Bug fix !!!
+			]
+		},
 		LegacyGLTFLoader: {
 			imports: [
 				'DefaultLoadingManager',
