@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 14.0.0 is now available under Three r0.99.0 !!!**
+**The version 15.0.0 is now available under Three r0.100.0 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -127,6 +127,7 @@ This is the list of unsupported part of example, which cannot/won't be converted
     * **sea3d** //*Duplicate export 'SEA3D', namespace not managed yet*
     * **crossfade** //*Scene has already been declared*
     * **offscreen** //*Code that should be in HTML file example*
+    * **ldraw**     //*Code that should run under nodejs*
         
 * **Specific Files**   
     * **Cloth.js** //*Use global variable from html example file !*
@@ -208,6 +209,11 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+
+##### 15.0.0:
+
+* Support of Three r100
+* Ignore ldraw folder
 
 ##### 14.0.0:
 
