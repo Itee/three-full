@@ -39,6 +39,7 @@ module.exports = {
 		'draco',                            // draco_decoder use Eval !
 		'sea3d',                            // Duplicate export 'SEA3D'
 		'crossfade',                        // Scene has already been declared
+		'offscreen',
 
 		// Specific file
 		'Cloth.js',							// Use global variable from example html ! Need to be refactored
@@ -47,7 +48,7 @@ module.exports = {
 		'RectAreaLightUniformsLib.js',      // Todo: check how to extends imported lib properly
 		'Volume.js',                        // damned eval
 		'NRRDLoader.js',                    // Import Volume.js
-		'XLoader.js'                     	// amd module
+		'XLoader.js',                     	// amd module
 	],
 	output: path.join( __dirname, '..', 'sources' ),
 	edgeCases: {
@@ -267,6 +268,12 @@ module.exports = {
         EllipseCurve: {
             outputOverride: 'curves/EllipseCurve.js'
         },
+        EquirectangularToCubeGenerator: {
+            imports: [ 'UniformsUtils' ],
+			replacements: [
+				['EquirectangularToCubeGenerator = (', 'var EquirectangularToCubeGenerator = (']
+			]
+		},
         EXRLoader: {
 			imports: [ 'DefaultLoadingManager' ]
 		},
@@ -402,6 +409,13 @@ module.exports = {
 				'_Math'
 			],
             exportsOverride: [ 'LegacyGLTFLoader' ]
+		},
+		LegacyJSONLoader: {
+            imports: [
+                'DefaultLoadingManager',
+                'Loader',
+                'LoaderUtils'
+            ]
 		},
         LineCurve: {
             outputOverride: 'curves/LineCurve.js'
@@ -801,6 +815,11 @@ module.exports = {
 		ShaderGodRays: {
 			outputOverride: 'shaders/ShaderGodRays.js'
 		},
+		ShaderLib: {
+			imports: [
+                ['mergeUniforms', 'from', './UniformsUtils']
+			]
+		},
 		ShaderPass: {
 			imports: [ 'UniformsUtils' ]
 		},
@@ -833,6 +852,11 @@ module.exports = {
         },
 		ShadowMapViewer: {
 			imports: [ 'UnpackDepthRGBAShader' ]
+		},
+		ShaderMaterial: {
+			imports: [
+                ['cloneUniforms', 'from', '../renderers/shaders/UniformsUtils']
+			]
 		},
         Shape: {
             outputOverride: 'core/Shape.js'
@@ -882,6 +906,17 @@ module.exports = {
 			imports: [
 				'CopyShader',
 				'UniformsUtils'
+			]
+		},
+		SSAOPass: {
+			imports: [
+                '_Math',
+                'CopyShader',
+                'SimplexNoise',
+                'SSAOBlurShader',
+                'SSAODepthShader',
+                'SSAOShader',
+                'UniformsUtils'
 			]
 		},
 		StandardNode: {
@@ -937,6 +972,12 @@ module.exports = {
 		UCSCharacter: {
 			outputOverride: 'objects/UCSCharacter.js'
 		},
+		UniformsUtils: {
+			exports: [
+				'cloneUniforms',
+                'mergeUniforms'
+			]
+		},
 		UnrealBloomPass: {
 			imports: [
 				'LuminosityHighPassShader',
@@ -983,6 +1024,18 @@ module.exports = {
             ],
             exportsOverride: [ 'Water2' ]
         },
+        WebGL: {
+            replacements:    [
+                [ 'WEBGL', 'WebGL' ]
+            ],
+            exportsOverride: [ 'WebGL' ],
+            outputOverride: 'helpers/WebGL.js'
+        },
+		WebGLBackground: {
+            imports: [
+                ['cloneUniforms', 'from', '../shaders/UniformsUtils']
+            ]
+		},
 		WebGLDeferredRenderer: {
 			imports: [
 				'CopyShader',
@@ -994,18 +1047,16 @@ module.exports = {
 				[ 'ShaderDeferred = ', 'var ShaderDeferred = ' ],
 			]
 		},
+		WebGLRenderer: {
+            imports: [
+                ['cloneUniforms', 'from', './shaders/UniformsUtils']
+            ]
+		},
 		WebVR: {
 			replacements: [
 				[ 'var WEBVR', 'var WebVR' ]
 			],
             exportsOverride: [ 'WebVR' ]
-		},
-		WebGL: {
-            replacements:    [
-                [ 'WEBGL', 'WebGL' ]
-            ],
-            exportsOverride: [ 'WebGL' ],
-			outputOverride: 'helpers/WebGL.js'
 		}
 	},
 	banner: '//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n' +

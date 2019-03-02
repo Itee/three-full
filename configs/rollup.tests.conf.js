@@ -145,7 +145,7 @@ function _filterJavascriptFiles ( filePaths ) {
 
         // Not a js file like fonts or shaders
         const fileExtension = path.extname( filePath )
-        if ( fileExtension !== '.js' ) {
+        if ( filePath.indexOf("glsl") > -1 || fileExtension !== '.js' ) {
             continue
         }
 
@@ -191,6 +191,9 @@ function RollupTestConfigurationBuilder () {
         'polyfills.js',
         'utils.js',
         'constants.js',
+        'scene.js',
+        'offscreen.js',
+        'jank.js'
     ]
 
     const basePath            = path.join( __dirname, '..' )
