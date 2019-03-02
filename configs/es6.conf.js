@@ -330,7 +330,8 @@ module.exports = {
 		GLTFExporter: {
             imports: [
                 '_Math',
-                'PropertyBinding'
+                'PropertyBinding',
+                'InterpolateLinear'
             ]
 		},
 		GLTFLoader: {
