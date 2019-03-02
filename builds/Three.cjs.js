@@ -3741,7 +3741,7 @@ Object3D.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 
 			position.setFromMatrixPosition( this.matrixWorld );
 
-			if ( this.isCamera ) {
+			if ( this.isCamera || this.isLight ) {
 
 				m1.lookAt( position, target, this.up );
 
@@ -10186,7 +10186,7 @@ SphereBufferGeometry.prototype.constructor = SphereBufferGeometry;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var REVISION = '99';
+var REVISION = '100';
 var MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2 };
 var CullFaceNone = 0;
 var CullFaceBack = 1;
@@ -11792,17 +11792,7 @@ Mesh.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 			if ( morphTargets !== undefined && morphTargets.length > 0 ) {
 
-				this.morphTargetInfluences = [];
-				this.morphTargetDictionary = {};
-
-				for ( m = 0, ml = morphTargets.length; m < ml; m ++ ) {
-
-					name = morphTargets[ m ].name || String( m );
-
-					this$1.morphTargetInfluences.push( 0 );
-					this$1.morphTargetDictionary[ name ] = m;
-
-				}
+				console.error( 'Mesh.updateMorphTargets() no longer supports Geometry. Use BufferGeometry instead.' );
 
 			}
 
@@ -18251,19 +18241,19 @@ var MMDPhysics = ( function () {
 
 			var manager = this.manager;
 
-			var tr = this._getWorldTransformForBone();
+			var tr = this.body.getCenterOfMassTransform();
+			var origin = tr.getOrigin();
+			
+			var matrixInv = manager.allocThreeMatrix4();
+			matrixInv.copy( this.bone.parent.matrixWorld ).getInverse( matrixInv );
+			
+			var pos = manager.allocThreeVector3();
+			pos.set( origin.x(), origin.y(), origin.z() ).applyMatrix4( matrixInv );
 
-			var thV = manager.allocThreeVector3();
+			this.bone.position.copy( pos );
 
-			var o = manager.getOrigin( tr );
-			thV.set( o.x(), o.y(), o.z() );
-
-			var v = this.bone.worldToLocal( thV );
-			this.bone.position.add( v );
-
-			manager.freeThreeVector3( thV );
-
-			manager.freeTransform( tr );
+			manager.freeThreeVector3( pos );
+			manager.freeThreeMatrix4( matrixInv );
 
 		}
 
@@ -20016,42 +20006,42 @@ ShaderMaterial.prototype.toJSON = function ( meta ) {
 		var uniform = this$1.uniforms[ name ];
 		var value = uniform.value;
 
-		if ( value.isTexture ) {
+		if ( value && value.isTexture ) {
 
 			data.uniforms[ name ] = {
 				type: 't',
 				value: value.toJSON( meta ).uuid
 			};
 
-		} else if ( value.isColor ) {
+		} else if ( value && value.isColor ) {
 
 			data.uniforms[ name ] = {
 				type: 'c',
 				value: value.getHex()
 			};
 
-		} else if ( value.isVector2 ) {
+		} else if ( value && value.isVector2 ) {
 
 			data.uniforms[ name ] = {
 				type: 'v2',
 				value: value.toArray()
 			};
 
-		} else if ( value.isVector3 ) {
+		} else if ( value && value.isVector3 ) {
 
 			data.uniforms[ name ] = {
 				type: 'v3',
 				value: value.toArray()
 			};
 
-		} else if ( value.isVector4 ) {
+		} else if ( value && value.isVector4 ) {
 
 			data.uniforms[ name ] = {
 				type: 'v4',
 				value: value.toArray()
 			};
 
-		} else if ( value.isMatrix4 ) {
+		} else if ( value && value.isMatrix4 ) {
 
 			data.uniforms[ name ] = {
 				type: 'm4',
@@ -20074,6 +20064,16 @@ ShaderMaterial.prototype.toJSON = function ( meta ) {
 
 	data.vertexShader = this.vertexShader;
 	data.fragmentShader = this.fragmentShader;
+
+	var extensions = {};
+
+	for ( var key in this$1.extensions ) {
+
+		if ( this$1.extensions[ key ] === true ) { extensions[ key ] = true; }
+
+	}
+
+	if ( Object.keys( extensions ).length > 0 ) { data.extensions = extensions; }
 
 	return data;
 
@@ -20461,11 +20461,17 @@ Texture.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
 			wrap: [ this.wrapS, this.wrapT ],
 
 			format: this.format,
+			type: this.type,
+			encoding: this.encoding,
+
 			minFilter: this.minFilter,
 			magFilter: this.magFilter,
 			anisotropy: this.anisotropy,
 
-			flipY: this.flipY
+			flipY: this.flipY,
+
+			premultiplyAlpha: this.premultiplyAlpha,
+			unpackAlignment: this.unpackAlignment
 
 		};
 
@@ -22682,6 +22688,7 @@ var EditorControls = function ( object, domElement ) {
 	var pointer = new Vector2();
 	var pointerOld = new Vector2();
 	var spherical = new Spherical();
+	var sphere = new Sphere();
 
 	// events
 
@@ -22695,8 +22702,8 @@ var EditorControls = function ( object, domElement ) {
 
 		if ( box.isEmpty() === false ) {
 
-			center.copy( box.getCenter() );
-			distance = box.getBoundingSphere().radius;
+			box.getCenter( center );
+			distance = box.getBoundingSphere( sphere ).radius;
 
 		} else {
 
@@ -32836,7 +32843,7 @@ var lights_physical_fragment = "\nPhysicalMaterial material;\nmaterial.diffuseCo
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var lights_physical_pars_fragment = "\nstruct PhysicalMaterial {\n\n\tvec3\tdiffuseColor;\n\tfloat\tspecularRoughness;\n\tvec3\tspecularColor;\n\n\t#ifndef STANDARD\n\t\tfloat clearCoat;\n\t\tfloat clearCoatRoughness;\n\t#endif\n\n};\n\n#define MAXIMUM_SPECULAR_COEFFICIENT 0.16\n#define DEFAULT_SPECULAR_COEFFICIENT 0.04\n\n// Clear coat directional hemishperical reflectance (this approximation should be improved)\nfloat clearCoatDHRApprox( const in float roughness, const in float dotNL ) {\n\n\treturn DEFAULT_SPECULAR_COEFFICIENT + ( 1.0 - DEFAULT_SPECULAR_COEFFICIENT ) * ( pow( 1.0 - dotNL, 5.0 ) * pow( 1.0 - roughness, 2.0 ) );\n\n}\n\n#if NUM_RECT_AREA_LIGHTS > 0\n\n\tvoid RE_Direct_RectArea_Physical( const in RectAreaLight rectAreaLight, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {\n\n\t\tvec3 normal = geometry.normal;\n\t\tvec3 viewDir = geometry.viewDir;\n\t\tvec3 position = geometry.position;\n\t\tvec3 lightPos = rectAreaLight.position;\n\t\tvec3 halfWidth = rectAreaLight.halfWidth;\n\t\tvec3 halfHeight = rectAreaLight.halfHeight;\n\t\tvec3 lightColor = rectAreaLight.color;\n\t\tfloat roughness = material.specularRoughness;\n\n\t\tvec3 rectCoords[ 4 ];\n\t\trectCoords[ 0 ] = lightPos - halfWidth - halfHeight; // counterclockwise\n\t\trectCoords[ 1 ] = lightPos + halfWidth - halfHeight;\n\t\trectCoords[ 2 ] = lightPos + halfWidth + halfHeight;\n\t\trectCoords[ 3 ] = lightPos - halfWidth + halfHeight;\n\n\t\tvec2 uv = LTC_Uv( normal, viewDir, roughness );\n\n\t\tvec4 t1 = texture2D( ltc_1, uv );\n\t\tvec4 t2 = texture2D( ltc_2, uv );\n\n\t\tmat3 mInv = mat3(\n\t\t\tvec3( t1.x, 0, t1.y ),\n\t\t\tvec3(    0, 1,    0 ),\n\t\t\tvec3( t1.z, 0, t1.w )\n\t\t);\n\n\t\t// LTC Fresnel Approximation by Stephen Hill\n\t\t// http://blog.selfshadow.com/publications/s2016-advances/s2016_ltc_fresnel.pdf\n\t\tvec3 fresnel = ( material.specularColor * t2.x + ( vec3( 1.0 ) - material.specularColor ) * t2.y );\n\n\t\treflectedLight.directSpecular += lightColor * fresnel * LTC_Evaluate( normal, viewDir, position, mInv, rectCoords );\n\n\t\treflectedLight.directDiffuse += lightColor * material.diffuseColor * LTC_Evaluate( normal, viewDir, position, mat3( 1.0 ), rectCoords );\n\n\t}\n\n#endif\n\nvoid RE_Direct_Physical( const in IncidentLight directLight, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {\n\n\tfloat dotNL = saturate( dot( geometry.normal, directLight.direction ) );\n\n\tvec3 irradiance = dotNL * directLight.color;\n\n\t#ifndef PHYSICALLY_CORRECT_LIGHTS\n\n\t\tirradiance *= PI; // punctual light\n\n\t#endif\n\n\t#ifndef STANDARD\n\t\tfloat clearCoatDHR = material.clearCoat * clearCoatDHRApprox( material.clearCoatRoughness, dotNL );\n\t#else\n\t\tfloat clearCoatDHR = 0.0;\n\t#endif\n\n\treflectedLight.directSpecular += ( 1.0 - clearCoatDHR ) * irradiance * BRDF_Specular_GGX( directLight, geometry, material.specularColor, material.specularRoughness );\n\n\treflectedLight.directDiffuse += ( 1.0 - clearCoatDHR ) * irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );\n\n\t#ifndef STANDARD\n\n\t\treflectedLight.directSpecular += irradiance * material.clearCoat * BRDF_Specular_GGX( directLight, geometry, vec3( DEFAULT_SPECULAR_COEFFICIENT ), material.clearCoatRoughness );\n\n\t#endif\n\n}\n\nvoid RE_IndirectDiffuse_Physical( const in vec3 irradiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {\n\n\treflectedLight.indirectDiffuse += irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );\n\n}\n\nvoid RE_IndirectSpecular_Physical( const in vec3 radiance, const in vec3 clearCoatRadiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {\n\n\t#ifndef STANDARD\n\t\tfloat dotNV = saturate( dot( geometry.normal, geometry.viewDir ) );\n\t\tfloat dotNL = dotNV;\n\t\tfloat clearCoatDHR = material.clearCoat * clearCoatDHRApprox( material.clearCoatRoughness, dotNL );\n\t#else\n\t\tfloat clearCoatDHR = 0.0;\n\t#endif\n\n\treflectedLight.indirectSpecular += ( 1.0 - clearCoatDHR ) * radiance * BRDF_Specular_GGX_Environment( geometry, material.specularColor, material.specularRoughness );\n\n\t#ifndef STANDARD\n\n\t\treflectedLight.indirectSpecular += clearCoatRadiance * material.clearCoat * BRDF_Specular_GGX_Environment( geometry, vec3( DEFAULT_SPECULAR_COEFFICIENT ), material.clearCoatRoughness );\n\n\t#endif\n\n}\n\n#define RE_Direct\t\t\t\tRE_Direct_Physical\n#define RE_Direct_RectArea\t\tRE_Direct_RectArea_Physical\n#define RE_IndirectDiffuse\t\tRE_IndirectDiffuse_Physical\n#define RE_IndirectSpecular\t\tRE_IndirectSpecular_Physical\n\n#define Material_BlinnShininessExponent( material )   GGXRoughnessToBlinnExponent( material.specularRoughness )\n#define Material_ClearCoat_BlinnShininessExponent( material )   GGXRoughnessToBlinnExponent( material.clearCoatRoughness )\n\n// ref: https://seblagarde.files.wordpress.com/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf\nfloat computeSpecularOcclusion( const in float dotNV, const in float ambientOcclusion, const in float roughness ) {\n\n\treturn saturate( pow( dotNV + ambientOcclusion, exp2( - 16.0 * roughness - 1.0 ) ) - 1.0 + ambientOcclusion );\n\n}\n";
+var lights_physical_pars_fragment = "\nstruct PhysicalMaterial {\n\n\tvec3\tdiffuseColor;\n\tfloat\tspecularRoughness;\n\tvec3\tspecularColor;\n\n\t#ifndef STANDARD\n\t\tfloat clearCoat;\n\t\tfloat clearCoatRoughness;\n\t#endif\n\n};\n\n#define MAXIMUM_SPECULAR_COEFFICIENT 0.16\n#define DEFAULT_SPECULAR_COEFFICIENT 0.04\n\n// Clear coat directional hemishperical reflectance (this approximation should be improved)\nfloat clearCoatDHRApprox( const in float roughness, const in float dotNL ) {\n\n\treturn DEFAULT_SPECULAR_COEFFICIENT + ( 1.0 - DEFAULT_SPECULAR_COEFFICIENT ) * ( pow( 1.0 - dotNL, 5.0 ) * pow( 1.0 - roughness, 2.0 ) );\n\n}\n\n#if NUM_RECT_AREA_LIGHTS > 0\n\n\tvoid RE_Direct_RectArea_Physical( const in RectAreaLight rectAreaLight, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {\n\n\t\tvec3 normal = geometry.normal;\n\t\tvec3 viewDir = geometry.viewDir;\n\t\tvec3 position = geometry.position;\n\t\tvec3 lightPos = rectAreaLight.position;\n\t\tvec3 halfWidth = rectAreaLight.halfWidth;\n\t\tvec3 halfHeight = rectAreaLight.halfHeight;\n\t\tvec3 lightColor = rectAreaLight.color;\n\t\tfloat roughness = material.specularRoughness;\n\n\t\tvec3 rectCoords[ 4 ];\n\t\trectCoords[ 0 ] = lightPos + halfWidth - halfHeight; // counterclockwise; light shines in local neg z direction\n\t\trectCoords[ 1 ] = lightPos - halfWidth - halfHeight;\n\t\trectCoords[ 2 ] = lightPos - halfWidth + halfHeight;\n\t\trectCoords[ 3 ] = lightPos + halfWidth + halfHeight;\n\n\t\tvec2 uv = LTC_Uv( normal, viewDir, roughness );\n\n\t\tvec4 t1 = texture2D( ltc_1, uv );\n\t\tvec4 t2 = texture2D( ltc_2, uv );\n\n\t\tmat3 mInv = mat3(\n\t\t\tvec3( t1.x, 0, t1.y ),\n\t\t\tvec3(    0, 1,    0 ),\n\t\t\tvec3( t1.z, 0, t1.w )\n\t\t);\n\n\t\t// LTC Fresnel Approximation by Stephen Hill\n\t\t// http://blog.selfshadow.com/publications/s2016-advances/s2016_ltc_fresnel.pdf\n\t\tvec3 fresnel = ( material.specularColor * t2.x + ( vec3( 1.0 ) - material.specularColor ) * t2.y );\n\n\t\treflectedLight.directSpecular += lightColor * fresnel * LTC_Evaluate( normal, viewDir, position, mInv, rectCoords );\n\n\t\treflectedLight.directDiffuse += lightColor * material.diffuseColor * LTC_Evaluate( normal, viewDir, position, mat3( 1.0 ), rectCoords );\n\n\t}\n\n#endif\n\nvoid RE_Direct_Physical( const in IncidentLight directLight, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {\n\n\tfloat dotNL = saturate( dot( geometry.normal, directLight.direction ) );\n\n\tvec3 irradiance = dotNL * directLight.color;\n\n\t#ifndef PHYSICALLY_CORRECT_LIGHTS\n\n\t\tirradiance *= PI; // punctual light\n\n\t#endif\n\n\t#ifndef STANDARD\n\t\tfloat clearCoatDHR = material.clearCoat * clearCoatDHRApprox( material.clearCoatRoughness, dotNL );\n\t#else\n\t\tfloat clearCoatDHR = 0.0;\n\t#endif\n\n\treflectedLight.directSpecular += ( 1.0 - clearCoatDHR ) * irradiance * BRDF_Specular_GGX( directLight, geometry, material.specularColor, material.specularRoughness );\n\n\treflectedLight.directDiffuse += ( 1.0 - clearCoatDHR ) * irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );\n\n\t#ifndef STANDARD\n\n\t\treflectedLight.directSpecular += irradiance * material.clearCoat * BRDF_Specular_GGX( directLight, geometry, vec3( DEFAULT_SPECULAR_COEFFICIENT ), material.clearCoatRoughness );\n\n\t#endif\n\n}\n\nvoid RE_IndirectDiffuse_Physical( const in vec3 irradiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {\n\n\treflectedLight.indirectDiffuse += irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );\n\n}\n\nvoid RE_IndirectSpecular_Physical( const in vec3 radiance, const in vec3 clearCoatRadiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {\n\n\t#ifndef STANDARD\n\t\tfloat dotNV = saturate( dot( geometry.normal, geometry.viewDir ) );\n\t\tfloat dotNL = dotNV;\n\t\tfloat clearCoatDHR = material.clearCoat * clearCoatDHRApprox( material.clearCoatRoughness, dotNL );\n\t#else\n\t\tfloat clearCoatDHR = 0.0;\n\t#endif\n\n\treflectedLight.indirectSpecular += ( 1.0 - clearCoatDHR ) * radiance * BRDF_Specular_GGX_Environment( geometry, material.specularColor, material.specularRoughness );\n\n\t#ifndef STANDARD\n\n\t\treflectedLight.indirectSpecular += clearCoatRadiance * material.clearCoat * BRDF_Specular_GGX_Environment( geometry, vec3( DEFAULT_SPECULAR_COEFFICIENT ), material.clearCoatRoughness );\n\n\t#endif\n\n}\n\n#define RE_Direct\t\t\t\tRE_Direct_Physical\n#define RE_Direct_RectArea\t\tRE_Direct_RectArea_Physical\n#define RE_IndirectDiffuse\t\tRE_IndirectDiffuse_Physical\n#define RE_IndirectSpecular\t\tRE_IndirectSpecular_Physical\n\n#define Material_BlinnShininessExponent( material )   GGXRoughnessToBlinnExponent( material.specularRoughness )\n#define Material_ClearCoat_BlinnShininessExponent( material )   GGXRoughnessToBlinnExponent( material.clearCoatRoughness )\n\n// ref: https://seblagarde.files.wordpress.com/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf\nfloat computeSpecularOcclusion( const in float dotNV, const in float ambientOcclusion, const in float roughness ) {\n\n\treturn saturate( pow( dotNV + ambientOcclusion, exp2( - 16.0 * roughness - 1.0 ) ) - 1.0 + ambientOcclusion );\n\n}\n";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
@@ -35027,27 +35034,34 @@ ColladaExporter.prototype = {
 
 					'</emission>' +
 
-					'<diffuse>' +
-
 					(
-						m.map ?
-							'<texture texture="diffuse-sampler" texcoord="TEXCOORD" />' :
-							("<color sid=\"diffuse\">" + (diffuse.r) + " " + (diffuse.g) + " " + (diffuse.b) + " 1</color>")
+						type !== 'constant' ?
+						'<diffuse>' +
+
+						(
+							m.map ?
+								'<texture texture="diffuse-sampler" texcoord="TEXCOORD" />' :
+								("<color sid=\"diffuse\">" + (diffuse.r) + " " + (diffuse.g) + " " + (diffuse.b) + " 1</color>")
+						) +
+						'</diffuse>'
+						: ''
 					) +
 
-					'</diffuse>' +
-
-					"<specular><color sid=\"specular\">" + (specular.r) + " " + (specular.g) + " " + (specular.b) + " 1</color></specular>" +
-
-					'<shininess>' +
-
 					(
-						m.specularMap ?
-							'<texture texture="specular-sampler" texcoord="TEXCOORD" />' :
-							("<float sid=\"shininess\">" + shininess + "</float>")
-					) +
+						type === 'phong' ?
+						"<specular><color sid=\"specular\">" + (specular.r) + " " + (specular.g) + " " + (specular.b) + " 1</color></specular>" +
 
-					'</shininess>' +
+						'<shininess>' +
+
+						(
+							m.specularMap ?
+								'<texture texture="specular-sampler" texcoord="TEXCOORD" />' :
+								("<float sid=\"shininess\">" + shininess + "</float>")
+						) +
+
+						'</shininess>' 
+						: ''
+					) +
 
 					"<reflective><color>" + (diffuse.r) + " " + (diffuse.g) + " " + (diffuse.b) + " 1</color></reflective>" +
 
@@ -35127,15 +35141,21 @@ ColladaExporter.prototype = {
 
 				// ids of the materials to bind to the geometry
 				var matids = null;
+				var matidsArray = [];
 
 				// get a list of materials to bind to the sub groups of the geometry.
 				// If the amount of subgroups is greater than the materials, than reuse
 				// the materials.
 				var mat = o.material || new MeshBasicMaterial();
 				var materials = Array.isArray( mat ) ? mat : [ mat ];
-				matids = new Array( geometry.groups.length )
-					.fill()
+				if ( geometry.groups.length > materials.length ) {
+					matidsArray = new Array( geometry.groups.length );
+				} else {
+					matidsArray = new Array( materials.length );
+				}
+				matids = matidsArray.fill()
 					.map( function ( v, i ) { return processMaterial( materials[ i % materials.length ] ); } );
+
 				node +=
 					"<instance_geometry url=\"#" + meshid + "\">" +
 
@@ -35247,18 +35267,25 @@ var WEBGL_CONSTANTS = {
 	NEAREST_MIPMAP_NEAREST: 0x2700,
 	LINEAR_MIPMAP_NEAREST: 0x2701,
 	NEAREST_MIPMAP_LINEAR: 0x2702,
-	LINEAR_MIPMAP_LINEAR: 0x2703
+	LINEAR_MIPMAP_LINEAR: 0x2703,
+
+	CLAMP_TO_EDGE: 33071,
+	MIRRORED_REPEAT: 33648,
+	REPEAT: 10497
 };
 
-var THREE_TO_WEBGL = {
-	// @TODO Replace with computed property name [*] when available on es6
-	1003: WEBGL_CONSTANTS.NEAREST,
-	1004: WEBGL_CONSTANTS.NEAREST_MIPMAP_NEAREST,
-	1005: WEBGL_CONSTANTS.NEAREST_MIPMAP_LINEAR,
-	1006: WEBGL_CONSTANTS.LINEAR,
-	1007: WEBGL_CONSTANTS.LINEAR_MIPMAP_NEAREST,
-	1008: WEBGL_CONSTANTS.LINEAR_MIPMAP_LINEAR
-};
+var THREE_TO_WEBGL = {};
+
+THREE_TO_WEBGL[ NearestFilter ] = WEBGL_CONSTANTS.NEAREST;
+THREE_TO_WEBGL[ NearestMipMapNearestFilter ] = WEBGL_CONSTANTS.NEAREST_MIPMAP_NEAREST;
+THREE_TO_WEBGL[ NearestMipMapLinearFilter ] = WEBGL_CONSTANTS.NEAREST_MIPMAP_LINEAR;
+THREE_TO_WEBGL[ LinearFilter ] = WEBGL_CONSTANTS.LINEAR;
+THREE_TO_WEBGL[ LinearMipMapNearestFilter ] = WEBGL_CONSTANTS.LINEAR_MIPMAP_NEAREST;
+THREE_TO_WEBGL[ LinearMipMapLinearFilter ] = WEBGL_CONSTANTS.LINEAR_MIPMAP_LINEAR;
+
+THREE_TO_WEBGL[ ClampToEdgeWrapping ] = WEBGL_CONSTANTS.CLAMP_TO_EDGE;
+THREE_TO_WEBGL[ RepeatWrapping ] = WEBGL_CONSTANTS.REPEAT;
+THREE_TO_WEBGL[ MirroredRepeatWrapping ] = WEBGL_CONSTANTS.MIRRORED_REPEAT;
 
 var PATH_PROPERTIES = {
 	scale: 'scale',
@@ -35316,7 +35343,9 @@ GLTFExporter.prototype = {
 		var extensionsUsed = {};
 		var cachedData = {
 
+			meshes: new Map(),
 			attributes: new Map(),
+			attributesNormalized: new Map(),
 			materials: new Map(),
 			textures: new Map(),
 			images: new Map()
@@ -35386,7 +35415,7 @@ GLTFExporter.prototype = {
 		}
 		function isNormalizedNormalAttribute( normal ) {
 
-			if ( cachedData.attributes.has( normal ) ) {
+			if ( cachedData.attributesNormalized.has( normal ) ) {
 
 				return false;
 
@@ -35406,9 +35435,9 @@ GLTFExporter.prototype = {
 		}
 		function createNormalizedNormalAttribute( normal ) {
 
-			if ( cachedData.attributes.has( normal ) ) {
+			if ( cachedData.attributesNormalized.has( normal ) ) {
 
-				return cachedData.attributes.get( normal );
+				return cachedData.attributesNormalized.get( normal );
 
 			}
 
@@ -35435,7 +35464,7 @@ GLTFExporter.prototype = {
 
 			}
 
-			cachedData.attributes.set( normal, attribute );
+			cachedData.attributesNormalized.set( normal, attribute );
 
 			return attribute;
 
@@ -36076,6 +36105,13 @@ GLTFExporter.prototype = {
 		}
 		function processMesh( mesh ) {
 
+			var cacheKey = mesh.geometry.uuid + ':' + mesh.material.uuid;
+			if ( cachedData.meshes.has( cacheKey ) ) {
+
+				return cachedData.meshes.get( cacheKey );
+
+			}
+
 			var geometry = mesh.geometry;
 
 			var mode;
@@ -36158,23 +36194,32 @@ GLTFExporter.prototype = {
 				var attribute = geometry.attributes[ attributeName ];
 				attributeName = nameConversion[ attributeName ] || attributeName.toUpperCase();
 
+				if ( cachedData.attributes.has( attribute ) ) {
+
+					attributes[ attributeName ] = cachedData.attributes.get( attribute );
+					continue;
+
+				}
+
 				// JOINTS_0 must be UNSIGNED_BYTE or UNSIGNED_SHORT.
+				var modifiedAttribute;
 				var array = attribute.array;
 				if ( attributeName === 'JOINTS_0' &&
 					! ( array instanceof Uint16Array ) &&
 					! ( array instanceof Uint8Array ) ) {
 
 					console.warn( 'GLTFExporter: Attribute "skinIndex" converted to type UNSIGNED_SHORT.' );
-					attribute = new BufferAttribute( new Uint16Array( array ), attribute.itemSize, attribute.normalized );
+					modifiedAttribute = new BufferAttribute( new Uint16Array( array ), attribute.itemSize, attribute.normalized );
 
 				}
 
 				if ( attributeName.substr( 0, 5 ) !== 'MORPH' ) {
 
-					var accessor = processAccessor( attribute, geometry );
+					var accessor = processAccessor( modifiedAttribute || attribute, geometry );
 					if ( accessor !== null ) {
 
 						attributes[ attributeName ] = accessor;
+						cachedData.attributes.set( attribute, accessor );
 
 					}
 
@@ -36233,6 +36278,7 @@ GLTFExporter.prototype = {
 						}
 
 						var attribute = geometry.morphAttributes[ attributeName ][ i ];
+						var gltfAttributeName = attributeName.toUpperCase();
 
 						// Three.js morph attribute has absolute values while the one of glTF has relative values.
 						//
@@ -36240,6 +36286,14 @@ GLTFExporter.prototype = {
 						// https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#morph-targets
 
 						var baseAttribute = geometry.attributes[ attributeName ];
+
+						if ( cachedData.attributes.has( baseAttribute ) ) {
+
+							target[ gltfAttributeName ] = cachedData.attributes.get( baseAttribute );
+							continue;
+
+						}
+
 						// Clones attribute not to override
 						var relativeAttribute = attribute.clone();
 
@@ -36254,7 +36308,8 @@ GLTFExporter.prototype = {
 
 						}
 
-						target[ attributeName.toUpperCase() ] = processAccessor( relativeAttribute, geometry );
+						target[ gltfAttributeName ] = processAccessor( relativeAttribute, geometry );
+						cachedData.attributes.set( baseAttribute, target[ gltfAttributeName ] );
 
 					}
 
@@ -36325,7 +36380,16 @@ GLTFExporter.prototype = {
 
 				if ( geometry.index !== null ) {
 
-					primitive.indices = processAccessor( geometry.index, geometry, groups[ i ].start, groups[ i ].count );
+					if ( cachedData.attributes.has( geometry.index ) ) {
+
+						primitive.indices = cachedData.attributes.get( geometry.index );
+
+					} else {
+
+						primitive.indices = processAccessor( geometry.index, geometry, groups[ i ].start, groups[ i ].count );
+						cachedData.attributes.set( geometry.index, primitive.indices );
+
+					}
 
 				}
 
@@ -36357,7 +36421,10 @@ GLTFExporter.prototype = {
 
 			outputJSON.meshes.push( gltfMesh );
 
-			return outputJSON.meshes.length - 1;
+			var index = outputJSON.meshes.length - 1;
+			cachedData.meshes.set( cacheKey, index );
+
+			return index;
 
 		}
 		function processCamera( camera ) {
@@ -38575,6 +38642,1238 @@ function hilbert3D( center, size, iterations, v0, v1, v2, v3, v4, v5, v6, v7 ) {
 	return vec;
 
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Ported from Stefan Gustavson's java implementation
+// http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
+// Read Stefan's excellent paper for details on how this code works.
+//
+// Sean McCullough banksean@gmail.com
+//
+// Added 4D noise
+// Joshua Koo zz85nus@gmail.com 
+var SimplexNoise = function(r) {
+	var this$1 = this;
+
+	if (r == undefined) { r = Math; }
+	this.grad3 = [[ 1,1,0 ],[ -1,1,0 ],[ 1,-1,0 ],[ -1,-1,0 ], 
+                                 [ 1,0,1 ],[ -1,0,1 ],[ 1,0,-1 ],[ -1,0,-1 ], 
+                                 [ 0,1,1 ],[ 0,-1,1 ],[ 0,1,-1 ],[ 0,-1,-1 ]]; 
+
+	this.grad4 = [[ 0,1,1,1 ], [ 0,1,1,-1 ], [ 0,1,-1,1 ], [ 0,1,-1,-1 ],
+	     [ 0,-1,1,1 ], [ 0,-1,1,-1 ], [ 0,-1,-1,1 ], [ 0,-1,-1,-1 ],
+	     [ 1,0,1,1 ], [ 1,0,1,-1 ], [ 1,0,-1,1 ], [ 1,0,-1,-1 ],
+	     [ -1,0,1,1 ], [ -1,0,1,-1 ], [ -1,0,-1,1 ], [ -1,0,-1,-1 ],
+	     [ 1,1,0,1 ], [ 1,1,0,-1 ], [ 1,-1,0,1 ], [ 1,-1,0,-1 ],
+	     [ -1,1,0,1 ], [ -1,1,0,-1 ], [ -1,-1,0,1 ], [ -1,-1,0,-1 ],
+	     [ 1,1,1,0 ], [ 1,1,-1,0 ], [ 1,-1,1,0 ], [ 1,-1,-1,0 ],
+	     [ -1,1,1,0 ], [ -1,1,-1,0 ], [ -1,-1,1,0 ], [ -1,-1,-1,0 ]];
+
+	this.p = [];
+	for (var i = 0; i < 256; i ++) {
+		this$1.p[i] = Math.floor(r.random() * 256);
+	}
+  // To remove the need for index wrapping, double the permutation table length 
+	this.perm = []; 
+	for (var i = 0; i < 512; i ++) {
+		this$1.perm[i] = this$1.p[i & 255];
+	} 
+
+  // A lookup table to traverse the simplex around a given point in 4D. 
+  // Details can be found where this table is used, in the 4D noise method. 
+	this.simplex = [ 
+    [ 0,1,2,3 ],[ 0,1,3,2 ],[ 0,0,0,0 ],[ 0,2,3,1 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 1,2,3,0 ], 
+    [ 0,2,1,3 ],[ 0,0,0,0 ],[ 0,3,1,2 ],[ 0,3,2,1 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 1,3,2,0 ], 
+    [ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ], 
+    [ 1,2,0,3 ],[ 0,0,0,0 ],[ 1,3,0,2 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 2,3,0,1 ],[ 2,3,1,0 ], 
+    [ 1,0,2,3 ],[ 1,0,3,2 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 2,0,3,1 ],[ 0,0,0,0 ],[ 2,1,3,0 ], 
+    [ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ], 
+    [ 2,0,1,3 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 3,0,1,2 ],[ 3,0,2,1 ],[ 0,0,0,0 ],[ 3,1,2,0 ], 
+    [ 2,1,0,3 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 3,1,0,2 ],[ 0,0,0,0 ],[ 3,2,0,1 ],[ 3,2,1,0 ]]; 
+};
+
+SimplexNoise.prototype.dot = function(g, x, y) { 
+	return g[0] * x + g[1] * y;
+};
+
+SimplexNoise.prototype.dot3 = function(g, x, y, z) {
+	return g[0] * x + g[1] * y + g[2] * z; 
+};
+
+SimplexNoise.prototype.dot4 = function(g, x, y, z, w) {
+	return g[0] * x + g[1] * y + g[2] * z + g[3] * w;
+};
+
+SimplexNoise.prototype.noise = function(xin, yin) { 
+	var n0, n1, n2; // Noise contributions from the three corners 
+  // Skew the input space to determine which simplex cell we're in 
+	var F2 = 0.5 * (Math.sqrt(3.0) - 1.0); 
+	var s = (xin + yin) * F2; // Hairy factor for 2D 
+	var i = Math.floor(xin + s); 
+	var j = Math.floor(yin + s); 
+	var G2 = (3.0 - Math.sqrt(3.0)) / 6.0; 
+	var t = (i + j) * G2; 
+	var X0 = i - t; // Unskew the cell origin back to (x,y) space 
+	var Y0 = j - t; 
+	var x0 = xin - X0; // The x,y distances from the cell origin 
+	var y0 = yin - Y0; 
+  // For the 2D case, the simplex shape is an equilateral triangle. 
+  // Determine which simplex we are in. 
+	var i1, j1; // Offsets for second (middle) corner of simplex in (i,j) coords 
+	if (x0 > y0) {i1 = 1; j1 = 0;} // lower triangle, XY order: (0,0)->(1,0)->(1,1) 
+	else {i1 = 0; j1 = 1;}      // upper triangle, YX order: (0,0)->(0,1)->(1,1) 
+  // A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and 
+  // a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where 
+  // c = (3-sqrt(3))/6 
+	var x1 = x0 - i1 + G2; // Offsets for middle corner in (x,y) unskewed coords 
+	var y1 = y0 - j1 + G2; 
+	var x2 = x0 - 1.0 + 2.0 * G2; // Offsets for last corner in (x,y) unskewed coords 
+	var y2 = y0 - 1.0 + 2.0 * G2; 
+  // Work out the hashed gradient indices of the three simplex corners 
+	var ii = i & 255; 
+	var jj = j & 255; 
+	var gi0 = this.perm[ii + this.perm[jj]] % 12; 
+	var gi1 = this.perm[ii + i1 + this.perm[jj + j1]] % 12; 
+	var gi2 = this.perm[ii + 1 + this.perm[jj + 1]] % 12; 
+  // Calculate the contribution from the three corners 
+	var t0 = 0.5 - x0 * x0 - y0 * y0; 
+	if (t0 < 0) { n0 = 0.0; } 
+	else { 
+		t0 *= t0; 
+		n0 = t0 * t0 * this.dot(this.grad3[gi0], x0, y0);  // (x,y) of grad3 used for 2D gradient 
+	} 
+	var t1 = 0.5 - x1 * x1 - y1 * y1; 
+	if (t1 < 0) { n1 = 0.0; } 
+	else { 
+		t1 *= t1; 
+		n1 = t1 * t1 * this.dot(this.grad3[gi1], x1, y1); 
+	}
+	var t2 = 0.5 - x2 * x2 - y2 * y2; 
+	if (t2 < 0) { n2 = 0.0; } 
+	else { 
+		t2 *= t2; 
+		n2 = t2 * t2 * this.dot(this.grad3[gi2], x2, y2); 
+	} 
+  // Add contributions from each corner to get the final noise value. 
+  // The result is scaled to return values in the interval [-1,1]. 
+	return 70.0 * (n0 + n1 + n2); 
+};
+
+// 3D simplex noise 
+SimplexNoise.prototype.noise3d = function(xin, yin, zin) { 
+	var n0, n1, n2, n3; // Noise contributions from the four corners 
+  // Skew the input space to determine which simplex cell we're in 
+	var F3 = 1.0 / 3.0; 
+	var s = (xin + yin + zin) * F3; // Very nice and simple skew factor for 3D 
+	var i = Math.floor(xin + s); 
+	var j = Math.floor(yin + s); 
+	var k = Math.floor(zin + s); 
+	var G3 = 1.0 / 6.0; // Very nice and simple unskew factor, too 
+	var t = (i + j + k) * G3; 
+	var X0 = i - t; // Unskew the cell origin back to (x,y,z) space 
+	var Y0 = j - t; 
+	var Z0 = k - t; 
+	var x0 = xin - X0; // The x,y,z distances from the cell origin 
+	var y0 = yin - Y0; 
+	var z0 = zin - Z0; 
+  // For the 3D case, the simplex shape is a slightly irregular tetrahedron. 
+  // Determine which simplex we are in. 
+	var i1, j1, k1; // Offsets for second corner of simplex in (i,j,k) coords 
+	var i2, j2, k2; // Offsets for third corner of simplex in (i,j,k) coords 
+	if (x0 >= y0) { 
+		if (y0 >= z0) 
+      { i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 1; k2 = 0; } // X Y Z order 
+      else if (x0 >= z0) { i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 0; k2 = 1; } // X Z Y order 
+		else { i1 = 0; j1 = 0; k1 = 1; i2 = 1; j2 = 0; k2 = 1; } // Z X Y order 
+	} 
+	else { // x0<y0 
+		if (y0 < z0) { i1 = 0; j1 = 0; k1 = 1; i2 = 0; j2 = 1; k2 = 1; } // Z Y X order 
+    else if (x0 < z0) { i1 = 0; j1 = 1; k1 = 0; i2 = 0; j2 = 1; k2 = 1; } // Y Z X order 
+		else { i1 = 0; j1 = 1; k1 = 0; i2 = 1; j2 = 1; k2 = 0; } // Y X Z order 
+	} 
+  // A step of (1,0,0) in (i,j,k) means a step of (1-c,-c,-c) in (x,y,z), 
+  // a step of (0,1,0) in (i,j,k) means a step of (-c,1-c,-c) in (x,y,z), and 
+  // a step of (0,0,1) in (i,j,k) means a step of (-c,-c,1-c) in (x,y,z), where 
+  // c = 1/6.
+	var x1 = x0 - i1 + G3; // Offsets for second corner in (x,y,z) coords 
+	var y1 = y0 - j1 + G3; 
+	var z1 = z0 - k1 + G3; 
+	var x2 = x0 - i2 + 2.0 * G3; // Offsets for third corner in (x,y,z) coords 
+	var y2 = y0 - j2 + 2.0 * G3; 
+	var z2 = z0 - k2 + 2.0 * G3; 
+	var x3 = x0 - 1.0 + 3.0 * G3; // Offsets for last corner in (x,y,z) coords 
+	var y3 = y0 - 1.0 + 3.0 * G3; 
+	var z3 = z0 - 1.0 + 3.0 * G3; 
+  // Work out the hashed gradient indices of the four simplex corners 
+	var ii = i & 255; 
+	var jj = j & 255; 
+	var kk = k & 255; 
+	var gi0 = this.perm[ii + this.perm[jj + this.perm[kk]]] % 12; 
+	var gi1 = this.perm[ii + i1 + this.perm[jj + j1 + this.perm[kk + k1]]] % 12; 
+	var gi2 = this.perm[ii + i2 + this.perm[jj + j2 + this.perm[kk + k2]]] % 12; 
+	var gi3 = this.perm[ii + 1 + this.perm[jj + 1 + this.perm[kk + 1]]] % 12; 
+  // Calculate the contribution from the four corners 
+	var t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0; 
+	if (t0 < 0) { n0 = 0.0; } 
+	else { 
+		t0 *= t0; 
+		n0 = t0 * t0 * this.dot3(this.grad3[gi0], x0, y0, z0); 
+	}
+	var t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1; 
+	if (t1 < 0) { n1 = 0.0; } 
+	else { 
+		t1 *= t1; 
+		n1 = t1 * t1 * this.dot3(this.grad3[gi1], x1, y1, z1); 
+	} 
+	var t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2; 
+	if (t2 < 0) { n2 = 0.0; } 
+	else { 
+		t2 *= t2; 
+		n2 = t2 * t2 * this.dot3(this.grad3[gi2], x2, y2, z2); 
+	} 
+	var t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3; 
+	if (t3 < 0) { n3 = 0.0; } 
+	else { 
+		t3 *= t3; 
+		n3 = t3 * t3 * this.dot3(this.grad3[gi3], x3, y3, z3); 
+	} 
+  // Add contributions from each corner to get the final noise value. 
+  // The result is scaled to stay just inside [-1,1] 
+	return 32.0 * (n0 + n1 + n2 + n3); 
+};
+
+// 4D simplex noise
+SimplexNoise.prototype.noise4d = function( x, y, z, w ) {
+	// For faster and easier lookups
+	var grad4 = this.grad4;
+	var simplex = this.simplex;
+	var perm = this.perm;
+	
+   // The skewing and unskewing factors are hairy again for the 4D case
+	var F4 = (Math.sqrt(5.0) - 1.0) / 4.0;
+	var G4 = (5.0 - Math.sqrt(5.0)) / 20.0;
+	var n0, n1, n2, n3, n4; // Noise contributions from the five corners
+   // Skew the (x,y,z,w) space to determine which cell of 24 simplices we're in
+	var s = (x + y + z + w) * F4; // Factor for 4D skewing
+	var i = Math.floor(x + s);
+	var j = Math.floor(y + s);
+	var k = Math.floor(z + s);
+	var l = Math.floor(w + s);
+	var t = (i + j + k + l) * G4; // Factor for 4D unskewing
+	var X0 = i - t; // Unskew the cell origin back to (x,y,z,w) space
+	var Y0 = j - t;
+	var Z0 = k - t;
+	var W0 = l - t;
+	var x0 = x - X0;  // The x,y,z,w distances from the cell origin
+	var y0 = y - Y0;
+	var z0 = z - Z0;
+	var w0 = w - W0;
+
+   // For the 4D case, the simplex is a 4D shape I won't even try to describe.
+   // To find out which of the 24 possible simplices we're in, we need to
+   // determine the magnitude ordering of x0, y0, z0 and w0.
+   // The method below is a good way of finding the ordering of x,y,z,w and
+   // then find the correct traversal order for the simplex we’re in.
+   // First, six pair-wise comparisons are performed between each possible pair
+   // of the four coordinates, and the results are used to add up binary bits
+   // for an integer index.
+	var c1 = (x0 > y0) ? 32 : 0;
+	var c2 = (x0 > z0) ? 16 : 0;
+	var c3 = (y0 > z0) ? 8 : 0;
+	var c4 = (x0 > w0) ? 4 : 0;
+	var c5 = (y0 > w0) ? 2 : 0;
+	var c6 = (z0 > w0) ? 1 : 0;
+	var c = c1 + c2 + c3 + c4 + c5 + c6;
+	var i1, j1, k1, l1; // The integer offsets for the second simplex corner
+	var i2, j2, k2, l2; // The integer offsets for the third simplex corner
+	var i3, j3, k3, l3; // The integer offsets for the fourth simplex corner
+   // simplex[c] is a 4-vector with the numbers 0, 1, 2 and 3 in some order.
+   // Many values of c will never occur, since e.g. x>y>z>w makes x<z, y<w and x<w
+   // impossible. Only the 24 indices which have non-zero entries make any sense.
+   // We use a thresholding to set the coordinates in turn from the largest magnitude.
+   // The number 3 in the "simplex" array is at the position of the largest coordinate.
+	i1 = simplex[c][0] >= 3 ? 1 : 0;
+	j1 = simplex[c][1] >= 3 ? 1 : 0;
+	k1 = simplex[c][2] >= 3 ? 1 : 0;
+	l1 = simplex[c][3] >= 3 ? 1 : 0;
+   // The number 2 in the "simplex" array is at the second largest coordinate.
+	i2 = simplex[c][0] >= 2 ? 1 : 0;
+	j2 = simplex[c][1] >= 2 ? 1 : 0;    k2 = simplex[c][2] >= 2 ? 1 : 0;
+	l2 = simplex[c][3] >= 2 ? 1 : 0;
+   // The number 1 in the "simplex" array is at the second smallest coordinate.
+	i3 = simplex[c][0] >= 1 ? 1 : 0;
+	j3 = simplex[c][1] >= 1 ? 1 : 0;
+	k3 = simplex[c][2] >= 1 ? 1 : 0;
+	l3 = simplex[c][3] >= 1 ? 1 : 0;
+   // The fifth corner has all coordinate offsets = 1, so no need to look that up.
+	var x1 = x0 - i1 + G4; // Offsets for second corner in (x,y,z,w) coords
+	var y1 = y0 - j1 + G4;
+	var z1 = z0 - k1 + G4;
+	var w1 = w0 - l1 + G4;
+	var x2 = x0 - i2 + 2.0 * G4; // Offsets for third corner in (x,y,z,w) coords
+	var y2 = y0 - j2 + 2.0 * G4;
+	var z2 = z0 - k2 + 2.0 * G4;
+	var w2 = w0 - l2 + 2.0 * G4;
+	var x3 = x0 - i3 + 3.0 * G4; // Offsets for fourth corner in (x,y,z,w) coords
+	var y3 = y0 - j3 + 3.0 * G4;
+	var z3 = z0 - k3 + 3.0 * G4;
+	var w3 = w0 - l3 + 3.0 * G4;
+	var x4 = x0 - 1.0 + 4.0 * G4; // Offsets for last corner in (x,y,z,w) coords
+	var y4 = y0 - 1.0 + 4.0 * G4;
+	var z4 = z0 - 1.0 + 4.0 * G4;
+	var w4 = w0 - 1.0 + 4.0 * G4;
+   // Work out the hashed gradient indices of the five simplex corners
+	var ii = i & 255;
+	var jj = j & 255;
+	var kk = k & 255;
+	var ll = l & 255;
+	var gi0 = perm[ii + perm[jj + perm[kk + perm[ll]]]] % 32;
+	var gi1 = perm[ii + i1 + perm[jj + j1 + perm[kk + k1 + perm[ll + l1]]]] % 32;
+	var gi2 = perm[ii + i2 + perm[jj + j2 + perm[kk + k2 + perm[ll + l2]]]] % 32;
+	var gi3 = perm[ii + i3 + perm[jj + j3 + perm[kk + k3 + perm[ll + l3]]]] % 32;
+	var gi4 = perm[ii + 1 + perm[jj + 1 + perm[kk + 1 + perm[ll + 1]]]] % 32;
+   // Calculate the contribution from the five corners
+	var t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
+	if (t0 < 0) { n0 = 0.0; }
+	else {
+		t0 *= t0;
+		n0 = t0 * t0 * this.dot4(grad4[gi0], x0, y0, z0, w0);
+	}
+	var t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
+	if (t1 < 0) { n1 = 0.0; }
+	else {
+		t1 *= t1;
+		n1 = t1 * t1 * this.dot4(grad4[gi1], x1, y1, z1, w1);
+	}
+	var t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
+	if (t2 < 0) { n2 = 0.0; }
+	else {
+		t2 *= t2;
+		n2 = t2 * t2 * this.dot4(grad4[gi2], x2, y2, z2, w2);
+	}   var t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
+	if (t3 < 0) { n3 = 0.0; }
+	else {
+		t3 *= t3;
+		n3 = t3 * t3 * this.dot4(grad4[gi3], x3, y3, z3, w3);
+	}
+	var t4 = 0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
+	if (t4 < 0) { n4 = 0.0; }
+	else {
+		t4 *= t4;
+		n4 = t4 * t4 * this.dot4(grad4[gi4], x4, y4, z4, w4);
+	}
+   // Sum up and scale the result to cover the range [-1,1]
+	return 27.0 * (n0 + n1 + n2 + n3 + n4);
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var LightningStrike = function ( rayParameters ) {
+
+	BufferGeometry.call( this );
+
+	this.type = 'LightningStrike';
+
+	// Set parameters, and set undefined parameters to default values
+	rayParameters = rayParameters || {};
+	this.init( LightningStrike.copyParameters( rayParameters, rayParameters ) );
+
+	// Creates and populates the mesh
+	this.createMesh();
+
+};
+
+LightningStrike.prototype = Object.create( BufferGeometry.prototype );
+
+LightningStrike.prototype.constructor = LightningStrike;
+
+LightningStrike.prototype.isLightningStrike = true;
+
+// Ray states
+LightningStrike.RAY_INITIALIZED = 0;
+LightningStrike.RAY_UNBORN = 1;
+LightningStrike.RAY_PROPAGATING = 2;
+LightningStrike.RAY_STEADY = 3;
+LightningStrike.RAY_VANISHING = 4;
+LightningStrike.RAY_EXTINGUISHED = 5;
+
+LightningStrike.COS30DEG = Math.cos( 30 * Math.PI / 180 );
+LightningStrike.SIN30DEG = Math.sin( 30 * Math.PI / 180 );
+
+LightningStrike.createRandomGenerator = function () {
+
+	var numSeeds = 2053;
+	var seeds = [];
+
+	for ( var i = 0; i < numSeeds; i++ ) {
+
+		seeds.push( Math.random() );
+
+	}
+
+	var generator = {
+
+		currentSeed: 0,
+
+		random: function () {
+
+			var value = seeds[ generator.currentSeed ];
+
+			generator.currentSeed = ( generator.currentSeed + 1 ) % numSeeds;
+
+			return value;
+
+		},
+
+		getSeed: function () {
+
+			return generator.currentSeed / numSeeds;
+
+		},
+
+		setSeed: function ( seed ) {
+
+			generator.currentSeed = Math.floor( seed * numSeeds ) % numSeeds;
+
+		}
+
+	};
+
+	return generator;
+
+};
+
+LightningStrike.copyParameters = function ( dest, source) {
+
+	source = source || {};
+	dest = dest || {};
+
+	var vecCopy = function( v ) {
+
+		if ( source === dest ) {
+
+			return v;
+
+		}
+		else {
+
+			return v.clone();
+
+		}
+
+	};
+
+	dest.sourceOffset = source.sourceOffset !== undefined ? vecCopy( source.sourceOffset ) : new Vector3( 0, 100, 0 ),
+	dest.destOffset = source.destOffset !== undefined ? vecCopy( source.destOffset ) : new Vector3( 0, 0, 0 ),
+
+	dest.timeScale = source.timeScale !== undefined ? source.timeScale : 1,
+	dest.roughness = source.roughness !== undefined ? source.roughness : 0.9,
+	dest.straightness = source.straightness !== undefined ? source.straightness : 0.7,
+
+	dest.up0 = source.up0 !== undefined ? vecCopy( source.up0 ) : new Vector3( 0, 0, 1 );
+	dest.up1 = source.up1 !== undefined ? vecCopy( source.up1 ) : new Vector3( 0, 0, 1 ),
+	dest.radius0 = source.radius0 !== undefined ? source.radius0 : 1,
+	dest.radius1 = source.radius1 !== undefined ? source.radius1 : 1,
+	dest.radius0Factor = source.radius0Factor !== undefined ? source.radius0Factor : 0.5,
+	dest.radius1Factor = source.radius1Factor !== undefined ? source.radius1Factor : 0.2,
+	dest.minRadius = source.minRadius !== undefined ? source.minRadius : 0.2,
+
+	// These parameters should not be changed after lightning creation. They can be changed but the ray will change its form abruptly:
+
+	dest.isEternal = source.isEternal !== undefined ? source.isEternal : ( source.birthTime === undefined || source.deathTime === undefined ),
+	dest.birthTime = source.birthTime,
+	dest.deathTime = source.deathTime,
+	dest.propagationTimeFactor = source.propagationTimeFactor !== undefined ? source.propagationTimeFactor : 0.1,
+	dest.vanishingTimeFactor = source.vanishingTimeFactor !== undefined ? source.vanishingTimeFactor : 0.9,
+	dest.subrayPeriod = source.subrayPeriod !== undefined ? source.subrayPeriod : 4,
+	dest.subrayDutyCycle = source.subrayDutyCycle !== undefined ? source.subrayDutyCycle : 0.6;
+
+	// These parameters cannot change after lightning creation:
+
+	dest.maxIterations =  source.maxIterations !== undefined ? source.maxIterations : 9;
+	dest.isStatic = source.isStatic !== undefined ? source.isStatic : false;
+	dest.ramification = source.ramification !== undefined ? source.ramification : 5;
+	dest.maxSubrayRecursion = source.maxSubrayRecursion !== undefined ? source.maxSubrayRecursion : 3;
+	dest.recursionProbability = source.recursionProbability !== undefined ? source.recursionProbability : 0.6;
+	dest.generateUVs = source.generateUVs !== undefined ? source.generateUVs : false;
+	dest.randomGenerator = source.randomGenerator,
+	dest.noiseSeed = source.noiseSeed,
+	dest.onDecideSubrayCreation = source.onDecideSubrayCreation,
+	dest.onSubrayCreation = source.onSubrayCreation;
+
+	return dest;
+
+};
+
+LightningStrike.prototype.update = function ( time ) {
+
+	if ( this.isStatic ) {
+		return;
+	}
+	
+	if ( this.rayParameters.isEternal || ( this.rayParameters.birthTime <= time && time <= this.rayParameters.deathTime ) ) {
+
+		this.updateMesh( time );
+
+		if ( time < this.subrays[ 0 ].endPropagationTime ) {
+		
+			this.state = LightningStrike.RAY_PROPAGATING;
+
+		}	
+		else if ( time > this.subrays[ 0 ].beginVanishingTime ) {
+
+			this.state = LightningStrike.RAY_VANISHING;
+
+		}
+		else {
+
+			this.state = LightningStrike.RAY_STEADY;
+
+		}
+
+		this.visible = true;
+
+	}
+	else {
+
+		this.visible = false;
+
+		if ( time < this.rayParameters.birthTime ) {
+
+			this.state = LightningStrike.RAY_UNBORN;
+
+		}
+		else {
+
+			this.state = LightningStrike.RAY_EXTINGUISHED;
+
+		}
+
+	}
+
+};
+
+LightningStrike.prototype.init = function ( rayParameters ) {
+	var this$1 = this;
+
+
+	// Init all the state from the parameters
+
+	this.rayParameters = rayParameters;
+
+	// These parameters cannot change after lightning creation:
+
+	this.maxIterations =  rayParameters.maxIterations !== undefined ? Math.floor( rayParameters.maxIterations ) : 9;
+	rayParameters.maxIterations = this.maxIterations;
+	this.isStatic = rayParameters.isStatic !== undefined ? rayParameters.isStatic : false;
+	rayParameters.isStatic = this.isStatic;
+	this.ramification = rayParameters.ramification !== undefined ? Math.floor( rayParameters.ramification ) : 5;
+	rayParameters.ramification = this.ramification;
+	this.maxSubrayRecursion = rayParameters.maxSubrayRecursion !== undefined ? Math.floor( rayParameters.maxSubrayRecursion ) : 3;
+	rayParameters.maxSubrayRecursion = this.maxSubrayRecursion;
+	this.recursionProbability = rayParameters.recursionProbability !== undefined ? rayParameters.recursionProbability : 0.6;
+	rayParameters.recursionProbability = this.recursionProbability;
+	this.generateUVs = rayParameters.generateUVs !== undefined ? rayParameters.generateUVs : false;
+	rayParameters.generateUVs = this.generateUVs;
+
+	// Random generator
+	if ( rayParameters.randomGenerator !== undefined ) {
+
+		this.randomGenerator = rayParameters.randomGenerator;
+		this.seedGenerator = rayParameters.randomGenerator;
+
+		if ( rayParameters.noiseSeed !== undefined ) {
+		
+			this.seedGenerator.setSeed( rayParameters.noiseSeed );
+
+		}
+
+	}
+	else {
+
+		this.randomGenerator = LightningStrike.createRandomGenerator();
+		this.seedGenerator = Math;
+
+	}
+
+	// Ray creation callbacks
+	if ( rayParameters.onDecideSubrayCreation !== undefined ) {
+
+		this.onDecideSubrayCreation = rayParameters.onDecideSubrayCreation;
+
+	}
+	else {
+
+		this.createDefaultSubrayCreationCallbacks();
+
+		if ( rayParameters.onSubrayCreation !== undefined ) {
+
+			this.onSubrayCreation = rayParameters.onSubrayCreation;
+
+		}
+
+	}
+
+	// Internal state
+
+	this.state = LightningStrike.RAY_INITIALIZED;
+
+	this.maxSubrays = Math.ceil( 1 + Math.pow( this.ramification, Math.max( 0, this.maxSubrayRecursion - 1 ) ) );
+	rayParameters.maxSubrays = this.maxSubrays;
+	
+	this.maxRaySegments = 2 * ( 1 << this.maxIterations );
+
+	this.subrays = [];
+
+	for ( var i = 0; i < this.maxSubrays; i++ ) {
+
+		this$1.subrays.push( this$1.createSubray() );
+
+	}
+
+	this.raySegments = [];
+
+	for ( var i = 0; i < this.maxRaySegments; i++ ) {
+
+		this$1.raySegments.push( this$1.createSegment() );
+
+	}
+
+	this.time = 0;
+	this.timeFraction = 0;
+	this.currentSegmentCallback = null;
+	this.currentCreateTriangleVertices = this.generateUVs ? this.createTriangleVerticesWithUVs : this.createTriangleVerticesWithoutUVs;
+	this.numSubrays = 0;
+	this.currentSubray = null;
+	this.currentSegmentIndex = 0;
+	this.isInitialSegment = false;
+	this.subrayProbability = 0;
+
+	this.currentVertex = 0;
+	this.currentIndex = 0;
+	this.currentCoordinate = 0;
+	this.currentUVCoordinate = 0;
+	this.vertices = null;
+	this.uvs = null;
+	this.indices = null;
+	this.positionAttribute = null;
+	this.uvsAttribute = null;
+	
+	this.simplexX = new SimplexNoise( this.seedGenerator );
+	this.simplexY = new SimplexNoise( this.seedGenerator );
+	this.simplexZ = new SimplexNoise( this.seedGenerator );
+
+	// Temp vectors
+	this.forwards = new Vector3();
+	this.forwardsFill = new Vector3();
+	this.side = new Vector3();
+	this.down = new Vector3();
+	this.middlePos = new Vector3();
+	this.middleLinPos = new Vector3();
+	this.newPos = new Vector3();
+	this.vPos = new Vector3();
+	this.cross1 = new Vector3();
+
+};
+
+LightningStrike.prototype.createMesh = function () {
+
+	var maxDrawableSegmentsPerSubRay = 1 << this.maxIterations;
+	
+	var maxVerts = 3 * ( maxDrawableSegmentsPerSubRay + 1 ) * this.maxSubrays;
+	var maxIndices = 18 * maxDrawableSegmentsPerSubRay * this.maxSubrays;
+
+	this.vertices = new Float32Array( maxVerts * 3 );
+	this.indices = new Uint32Array( maxIndices );
+	if ( this.generateUVs ) {
+		this.uvs = new Float32Array( maxVerts * 2 );
+	}
+
+	// Populate the mesh
+	this.fillMesh( 0 );
+	
+	this.setIndex( new Uint32BufferAttribute( this.indices, 1 ) );
+
+	this.positionAttribute = new Float32BufferAttribute( this.vertices, 3 );
+	this.addAttribute( 'position', this.positionAttribute );
+
+	if ( this.generateUVs ) {		this.uvsAttribute = new Float32BufferAttribute( new Float32Array( this.uvs ), 2 );
+		this.addAttribute( 'uv', this.uvsAttribute );
+	}
+
+	if ( ! this.isStatic ) {
+		this.index.dynamic = true;
+		this.positionAttribute.dynamic = true;
+		if ( this.generateUVs ) {
+			this.uvsAttribute.dynamic = true;
+		}
+	}
+
+	// Store buffers for later modification
+	this.vertices = this.positionAttribute.array;
+	this.indices = this.index.array;
+	if ( this.generateUVs ) {
+		this.uvs = this.uvsAttribute.array;
+	}
+
+};
+	
+LightningStrike.prototype.updateMesh = function ( time ) {
+
+	this.fillMesh( time );
+
+	this.drawRange.count = this.currentIndex;
+
+	this.index.needsUpdate = true;
+
+	this.positionAttribute.needsUpdate = true;
+
+	if ( this.generateUVs ) {
+		this.uvsAttribute.needsUpdate = true;
+	}
+
+};
+
+LightningStrike.prototype.fillMesh = function ( time ) {
+
+	var scope = this;
+
+	this.currentVertex = 0;
+	this.currentIndex = 0;
+	this.currentCoordinate = 0;
+	this.currentUVCoordinate = 0;
+
+	this.fractalRay( time, function fillVertices ( segment ) {
+
+		var subray = scope.currentSubray;
+
+		if ( time < subray.birthTime ) {//&& ( ! this.rayParameters.isEternal || scope.currentSubray.recursion > 0 ) ) {
+
+			return;
+
+		}
+		else if ( this.rayParameters.isEternal && scope.currentSubray.recursion == 0 ) {
+
+			// Eternal rays don't propagate nor vanish, but its subrays do
+
+			scope.createPrism( segment );
+
+			scope.onDecideSubrayCreation( segment, scope );
+
+		}
+		else if ( time < subray.endPropagationTime ) {
+
+			if ( scope.timeFraction >= segment.fraction0 * subray.propagationTimeFactor ) {
+
+				// Ray propagation has arrived to this segment
+
+				scope.createPrism( segment );
+
+				scope.onDecideSubrayCreation( segment, scope );
+
+			}
+
+		}
+		else if ( time < subray.beginVanishingTime ) {
+
+			// Ray is steady (nor propagating nor vanishing)
+
+			scope.createPrism( segment );
+
+			scope.onDecideSubrayCreation( segment, scope );
+
+		}
+		else {
+
+			if ( scope.timeFraction <= subray.vanishingTimeFactor + segment.fraction1  * ( 1 - subray.vanishingTimeFactor ) ) {
+
+				// Segment has not yet vanished
+
+				scope.createPrism( segment );
+
+			}
+
+			scope.onDecideSubrayCreation( segment, scope );
+
+		}
+
+	} );
+
+};
+
+LightningStrike.prototype.addNewSubray = function ( rayParameters ) {
+
+	return this.subrays[ this.numSubrays++ ];
+
+};
+
+LightningStrike.prototype.initSubray = function ( subray, rayParameters ) {
+
+	subray.pos0.copy( rayParameters.sourceOffset );
+	subray.pos1.copy( rayParameters.destOffset );
+	subray.up0.copy( rayParameters.up0 );
+	subray.up1.copy( rayParameters.up1 );
+	subray.radius0 = rayParameters.radius0;
+	subray.radius1 = rayParameters.radius1;
+	subray.birthTime = rayParameters.birthTime;
+	subray.deathTime = rayParameters.deathTime;
+	subray.timeScale = rayParameters.timeScale;
+	subray.roughness = rayParameters.roughness;
+	subray.straightness = rayParameters.straightness;
+	subray.propagationTimeFactor = rayParameters.propagationTimeFactor;
+	subray.vanishingTimeFactor = rayParameters.vanishingTimeFactor;
+
+	subray.maxIterations = this.maxIterations;
+	subray.seed = rayParameters.noiseSeed !== undefined ? rayParameters.noiseSeed : 0;
+	subray.recursion = 0;
+
+};
+
+LightningStrike.prototype.fractalRay = function ( time, segmentCallback ) {
+	var this$1 = this;
+
+
+	this.time = time;
+	this.currentSegmentCallback = segmentCallback;
+	this.numSubrays = 0;
+
+	// Add the top level subray
+	this.initSubray( this.addNewSubray(), this.rayParameters );
+
+	// Process all subrays that are being generated until consuming all of them
+	for ( var subrayIndex = 0; subrayIndex < this.numSubrays; subrayIndex++ ) {
+
+		var subray = this$1.subrays[ subrayIndex ];
+		this$1.currentSubray = subray;
+
+		this$1.randomGenerator.setSeed( subray.seed );
+
+		subray.endPropagationTime = _Math.lerp( subray.birthTime, subray.deathTime, subray.propagationTimeFactor );
+		subray.beginVanishingTime = _Math.lerp( subray.deathTime, subray.birthTime, 1 - subray.vanishingTimeFactor );
+
+		var random1 = this$1.randomGenerator.random;
+		subray.linPos0.set( random1(), random1(), random1() ).multiplyScalar( 1000 );
+		subray.linPos1.set( random1(), random1(), random1() ).multiplyScalar( 1000 );
+
+		this$1.timeFraction = ( time - subray.birthTime ) / ( subray.deathTime - subray.birthTime );
+
+		this$1.currentSegmentIndex  = 0;
+		this$1.isInitialSegment = true;
+
+		var segment = this$1.getNewSegment();
+		segment.iteration = 0;
+		segment.pos0.copy( subray.pos0 );
+		segment.pos1.copy( subray.pos1 );
+		segment.linPos0.copy( subray.linPos0 );
+		segment.linPos1.copy( subray.linPos1 );
+		segment.up0.copy( subray.up0 );
+		segment.up1.copy( subray.up1 );
+		segment.radius0 = subray.radius0;
+		segment.radius1 = subray.radius1;
+		segment.fraction0 = 0;
+		segment.fraction1 = 1;
+		segment.positionVariationFactor = 1 - subray.straightness;
+
+		this$1.subrayProbability = this$1.ramification * Math.pow( this$1.recursionProbability, subray.recursion ) / ( 1 << subray.maxIterations );
+
+		this$1.fractalRayRecursive( segment );
+
+	}
+
+	this.currentSegmentCallback = null;
+	this.currentSubray = null;
+
+};
+
+LightningStrike.prototype.fractalRayRecursive = function ( segment ) {
+
+	// Leave recursion condition
+	if ( segment.iteration >= this.currentSubray.maxIterations ) {
+
+		this.currentSegmentCallback( segment );
+
+		return;
+
+	}
+
+	// Interpolation
+	this.forwards.subVectors( segment.pos1, segment.pos0 );
+	var lForwards = this.forwards.length();
+
+	if ( lForwards < 0.000001) {
+		this.forwards.set( 0, 0, 0.01 );
+		lForwards = this.forwards.length();
+	}
+
+	var middleRadius = ( segment.radius0 + segment.radius1 ) * 0.5;
+	var middleFraction = ( segment.fraction0 + segment.fraction1 ) * 0.5;
+
+	var timeDimension = this.time * this.currentSubray.timeScale * Math.pow( 2, segment.iteration );
+
+	this.middlePos.lerpVectors( segment.pos0, segment.pos1, 0.5 );
+	this.middleLinPos.lerpVectors( segment.linPos0, segment.linPos1, 0.5 );
+	var p = this.middleLinPos;
+
+	// Noise	
+	this.newPos.set( this.simplexX.noise4d( p.x, p.y, p.z, timeDimension ),
+						this.simplexY.noise4d( p.x, p.y, p.z, timeDimension ),
+						this.simplexZ.noise4d( p.x, p.y, p.z, timeDimension ) );
+
+	this.newPos.multiplyScalar( segment.positionVariationFactor * lForwards );
+	this.newPos.add( this.middlePos );
+
+	// Recursion
+
+	var newSegment1 = this.getNewSegment();
+	newSegment1.pos0.copy( segment.pos0 );
+	newSegment1.pos1.copy( this.newPos );
+	newSegment1.linPos0.copy( segment.linPos0 );
+	newSegment1.linPos1.copy( this.middleLinPos );
+	newSegment1.up0.copy( segment.up0 );
+	newSegment1.up1.copy( segment.up1 );
+	newSegment1.radius0 = segment.radius0;
+	newSegment1.radius1 = middleRadius;
+	newSegment1.fraction0 = segment.fraction0;
+	newSegment1.fraction1 = middleFraction;
+	newSegment1.positionVariationFactor = segment.positionVariationFactor * this.currentSubray.roughness;
+	newSegment1.iteration = segment.iteration + 1;
+
+	var newSegment2 = this.getNewSegment();
+	newSegment2.pos0.copy( this.newPos );
+	newSegment2.pos1.copy( segment.pos1 );
+	newSegment2.linPos0.copy( this.middleLinPos );
+	newSegment2.linPos1.copy( segment.linPos1 );
+	this.cross1.crossVectors( segment.up0, this.forwards.normalize() );
+	newSegment2.up0.crossVectors( this.forwards, this.cross1 ).normalize();
+	newSegment2.up1.copy( segment.up1 );
+	newSegment2.radius0 = middleRadius;
+	newSegment2.radius1 = segment.radius1;
+	newSegment2.fraction0 = middleFraction;
+	newSegment2.fraction1 = segment.fraction1;
+	newSegment2.positionVariationFactor = segment.positionVariationFactor * this.currentSubray.roughness;
+	newSegment2.iteration = segment.iteration + 1;
+
+	this.fractalRayRecursive( newSegment1 );
+
+	this.fractalRayRecursive( newSegment2 );
+
+};
+
+LightningStrike.prototype.createPrism = function ( segment ) {
+
+	// Creates one triangular prism and its vertices at the segment
+
+	this.forwardsFill.subVectors( segment.pos1, segment.pos0 ).normalize();
+
+	if ( this.isInitialSegment ) {
+
+		this.currentCreateTriangleVertices( segment.pos0, segment.up0, this.forwardsFill, segment.radius0, 0 );
+		
+		this.isInitialSegment = false;
+
+	}
+
+	this.currentCreateTriangleVertices( segment.pos1, segment.up0, this.forwardsFill, segment.radius1, segment.fraction1 );
+
+	this.createPrismFaces();
+
+};
+
+LightningStrike.prototype.createTriangleVerticesWithoutUVs = function ( pos, up, forwards, radius ) {
+
+	// Create an equilateral triangle (only vertices)
+	
+	this.side.crossVectors( up, forwards ).multiplyScalar( radius * LightningStrike.COS30DEG );
+	this.down.copy( up ).multiplyScalar( - radius * LightningStrike.SIN30DEG );
+
+	var p = this.vPos;
+	var v = this.vertices;
+
+	p.copy( pos ).sub( this.side ).add( this.down );
+
+	v[ this.currentCoordinate++ ] = p.x;
+	v[ this.currentCoordinate++ ] = p.y;
+	v[ this.currentCoordinate++ ] = p.z;
+
+	p.copy( pos ).add( this.side ).add( this.down );
+
+	v[ this.currentCoordinate++ ] = p.x;
+	v[ this.currentCoordinate++ ] = p.y;
+	v[ this.currentCoordinate++ ] = p.z;
+
+	p.copy( up ).multiplyScalar( radius ).add( pos );
+	
+	v[ this.currentCoordinate++ ] = p.x;
+	v[ this.currentCoordinate++ ] = p.y;
+	v[ this.currentCoordinate++ ] = p.z;
+
+	this.currentVertex += 3;
+
+};
+
+LightningStrike.prototype.createTriangleVerticesWithUVs = function ( pos, up, forwards, radius, u ) {
+
+	// Create an equilateral triangle (only vertices)
+	
+	this.side.crossVectors( up, forwards ).multiplyScalar( radius * LightningStrike.COS30DEG );
+	this.down.copy( up ).multiplyScalar( - radius * LightningStrike.SIN30DEG );
+
+	var p = this.vPos;
+	var v = this.vertices;
+	var uv = this.uvs;
+
+	p.copy( pos ).sub( this.side ).add( this.down );
+
+	v[ this.currentCoordinate++ ] = p.x;
+	v[ this.currentCoordinate++ ] = p.y;
+	v[ this.currentCoordinate++ ] = p.z;
+
+	uv[ this.currentUVCoordinate++ ] = u;
+	uv[ this.currentUVCoordinate++ ] = 0;
+
+	p.copy( pos ).add( this.side ).add( this.down );
+
+	v[ this.currentCoordinate++ ] = p.x;
+	v[ this.currentCoordinate++ ] = p.y;
+	v[ this.currentCoordinate++ ] = p.z;
+
+	uv[ this.currentUVCoordinate++ ] = u;
+	uv[ this.currentUVCoordinate++ ] = 0.5;
+
+	p.copy( up ).multiplyScalar( radius ).add( pos );
+	
+	v[ this.currentCoordinate++ ] = p.x;
+	v[ this.currentCoordinate++ ] = p.y;
+	v[ this.currentCoordinate++ ] = p.z;
+
+	uv[ this.currentUVCoordinate++ ] = u;
+	uv[ this.currentUVCoordinate++ ] = 1;
+
+	this.currentVertex += 3;
+
+};
+
+LightningStrike.prototype.createPrismFaces = function ( vertex, index ) {
+
+	var indices = this.indices;
+	var vertex = this.currentVertex - 6;
+
+	indices[ this.currentIndex++ ] = vertex + 1;
+	indices[ this.currentIndex++ ] = vertex + 2;
+	indices[ this.currentIndex++ ] = vertex + 5;
+	indices[ this.currentIndex++ ] = vertex + 1;
+	indices[ this.currentIndex++ ] = vertex + 5;
+	indices[ this.currentIndex++ ] = vertex + 4;
+	indices[ this.currentIndex++ ] = vertex + 0;
+	indices[ this.currentIndex++ ] = vertex + 1;
+	indices[ this.currentIndex++ ] = vertex + 4;
+	indices[ this.currentIndex++ ] = vertex + 0;
+	indices[ this.currentIndex++ ] = vertex + 4;
+	indices[ this.currentIndex++ ] = vertex + 3;
+	indices[ this.currentIndex++ ] = vertex + 2;
+	indices[ this.currentIndex++ ] = vertex + 0;
+	indices[ this.currentIndex++ ] = vertex + 3;
+	indices[ this.currentIndex++ ] = vertex + 2;
+	indices[ this.currentIndex++ ] = vertex + 3;
+	indices[ this.currentIndex++ ] = vertex + 5;
+
+};
+
+LightningStrike.prototype.createDefaultSubrayCreationCallbacks = function () {
+
+	var random1 = this.randomGenerator.random;
+
+	this.onDecideSubrayCreation = function ( segment, lightningStrike ) {
+
+		// Decide subrays creation at parent (sub)ray segment
+
+		var subray = lightningStrike.currentSubray;
+
+		var period = lightningStrike.rayParameters.subrayPeriod;
+		var dutyCycle = lightningStrike.rayParameters.subrayDutyCycle;
+		
+		var phase0 = ( lightningStrike.rayParameters.isEternal && subray.recursion == 0 ) ? - random1() * period : _Math.lerp( subray.birthTime, subray.endPropagationTime, segment.fraction0 ) - random1() * period;
+		
+		var phase = lightningStrike.time - phase0;
+		var currentCycle = Math.floor( phase / period );
+
+		var childSubraySeed = random1() * ( currentCycle + 1 );
+
+		var isActive = phase % period <= dutyCycle * period;
+
+		probability = lightningStrike.subrayProbability;
+		var probability = 0;
+		if ( isActive ) {
+			probability = lightningStrike.subrayProbability;
+			// Distribution test: probability *= segment.fraction0 > 0.5 && segment.fraction0 < 0.9 ? 1 / 0.4 : 0;
+		}
+
+		if ( subray.recursion < lightningStrike.maxSubrayRecursion && lightningStrike.numSubrays < lightningStrike.maxSubrays && random1() < probability ) {
+
+			var childSubray = lightningStrike.addNewSubray();
+
+			var parentSeed = lightningStrike.randomGenerator.getSeed();
+			childSubray.seed = childSubraySeed;
+			lightningStrike.randomGenerator.setSeed( childSubraySeed );
+
+			childSubray.recursion = subray.recursion + 1;
+			childSubray.maxIterations = Math.max( 1, subray.maxIterations - 1 );
+
+			childSubray.linPos0.set( random1(), random1(), random1() ).multiplyScalar( 1000 );
+			childSubray.linPos1.set( random1(), random1(), random1() ).multiplyScalar( 1000 );
+			childSubray.up0.copy( subray.up0 );
+			childSubray.up1.copy( subray.up1 );
+			childSubray.radius0 = segment.radius0 * lightningStrike.rayParameters.radius0Factor;
+			childSubray.radius1 = Math.min( lightningStrike.rayParameters.minRadius, segment.radius1 * lightningStrike.rayParameters.radius1Factor );
+			
+			childSubray.birthTime = phase0 + ( currentCycle ) * period;
+			childSubray.deathTime = childSubray.birthTime + period * dutyCycle;
+
+			if ( ! lightningStrike.rayParameters.isEternal && subray.recursion == 0 ) {
+
+				childSubray.birthTime = Math.max( childSubray.birthTime, subray.birthTime );
+				childSubray.deathTime = Math.min( childSubray.deathTime, subray.deathTime );
+
+			}
+
+			childSubray.timeScale = subray.timeScale * 2;
+			childSubray.roughness = subray.roughness;
+			childSubray.straightness = subray.straightness;
+			childSubray.propagationTimeFactor = subray.propagationTimeFactor;
+			childSubray.vanishingTimeFactor = subray.vanishingTimeFactor;
+
+			lightningStrike.onSubrayCreation( segment, subray, childSubray, lightningStrike );
+
+			lightningStrike.randomGenerator.setSeed( parentSeed );
+
+		}
+
+	};
+
+	var vec1Pos = new Vector3();
+	var vec2Forward = new Vector3();
+	var vec3Side = new Vector3();
+	var vec4Up = new Vector3();
+	
+	this.onSubrayCreation = function ( segment, parentSubray, childSubray, lightningStrike ) {
+
+		// Decide childSubray origin and destination positions (pos0 and pos1) and possibly other properties of childSubray
+
+		// Just use the default cone position generator
+		lightningStrike.subrayCylinderPosition( segment, parentSubray, childSubray, 0.5, 0.6, 0.2 );
+
+	};
+
+	this.subrayConePosition = function ( segment, parentSubray, childSubray, heightFactor, sideWidthFactor, minSideWidthFactor ) {
+		
+		// Sets childSubray pos0 and pos1 in a cone
+		
+		childSubray.pos0.copy( segment.pos0 );
+
+		vec1Pos.subVectors( parentSubray.pos1, parentSubray.pos0 );
+		vec2Forward.copy( vec1Pos ).normalize();
+		vec1Pos.multiplyScalar( segment.fraction0 + ( 1 - segment.fraction0 ) * ( random1() * heightFactor ) );
+		var length = vec1Pos.length();
+		vec3Side.crossVectors( parentSubray.up0, vec2Forward );
+		var angle = 2 * Math.PI * random1();
+		vec3Side.multiplyScalar( Math.cos ( angle ) );
+		vec4Up.copy( parentSubray.up0 ).multiplyScalar( Math.sin ( angle ) );
+
+		childSubray.pos1.copy( vec3Side ).add( vec4Up ).multiplyScalar( length * sideWidthFactor * ( minSideWidthFactor + random1() * ( 1 - minSideWidthFactor ) ) ).add( vec1Pos ).add( parentSubray.pos0 );
+
+	};
+
+	this.subrayCylinderPosition = function ( segment, parentSubray, childSubray, heightFactor, sideWidthFactor, minSideWidthFactor ) {
+		
+		// Sets childSubray pos0 and pos1 in a cylinder
+
+		childSubray.pos0.copy( segment.pos0 );
+
+		vec1Pos.subVectors( parentSubray.pos1, parentSubray.pos0 );
+		vec2Forward.copy( vec1Pos ).normalize();
+		vec1Pos.multiplyScalar( segment.fraction0 + ( 1 - segment.fraction0 ) * ( ( 2 * random1() - 1 ) * heightFactor ) );
+		var length = vec1Pos.length();
+		vec3Side.crossVectors( parentSubray.up0, vec2Forward );
+		var angle = 2 * Math.PI * random1();
+		vec3Side.multiplyScalar( Math.cos ( angle ) );
+		vec4Up.copy( parentSubray.up0 ).multiplyScalar( Math.sin ( angle ) );
+
+		childSubray.pos1.copy( vec3Side ).add( vec4Up ).multiplyScalar( length * sideWidthFactor * ( minSideWidthFactor + random1() * ( 1 - minSideWidthFactor ) ) ).add( vec1Pos ).add( parentSubray.pos0 );
+
+	};
+
+};
+
+LightningStrike.prototype.createSubray = function () {
+
+	return {
+
+		seed: 0,
+		maxIterations: 0,
+		recursion: 0,
+		pos0: new Vector3(),
+		pos1: new Vector3(),
+		linPos0: new Vector3(),
+		linPos1: new Vector3(),
+		up0: new Vector3(),
+		up1: new Vector3(),
+		radius0: 0,
+		radius1: 0,
+		birthTime: 0,
+		deathTime: 0,
+		timeScale: 0,
+		roughness: 0,
+		straightness: 0,
+		propagationTimeFactor: 0,
+		vanishingTimeFactor: 0,
+		endPropagationTime: 0,
+		beginVanishingTime: 0
+
+	};
+
+};
+
+LightningStrike.prototype.createSegment = function () {
+
+	return {
+		iteration: 0,
+		pos0: new Vector3(),
+		pos1: new Vector3(),
+		linPos0: new Vector3(),
+		linPos1: new Vector3(),
+		up0: new Vector3(),
+		up1: new Vector3(),
+		radius0: 0,
+		radius1: 0,
+		fraction0: 0,
+		fraction1: 0,
+		positionVariationFactor: 0
+	}
+
+};
+
+LightningStrike.prototype.getNewSegment = function () {
+
+	return this.raySegments[ this.currentSegmentIndex++ ];
+
+};
+
+LightningStrike.prototype.copy = function ( source ) {
+	
+	BufferGeometry.prototype.copy.call( this, source );
+
+	this.init( LightningStrike.copyParameters( {}, source.rayParameters ) );
+
+	return this;
+
+};
+
+LightningStrike.prototype.clone = function () {
+
+	return new this.constructor( LightningStrike.copyParameters( {}, this.rayParameters ) );
+
+};
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var TeapotBufferGeometry = function ( size, segments, bottom, lid, body, fitLid, blinn ) {
@@ -50478,6 +51777,8 @@ ColladaLoader.prototype = {
 					case 'emission':
 					case 'diffuse':
 					case 'specular':
+					case 'bump':
+					case 'ambient':
 					case 'shininess':
 					case 'transparency':
 						data[ child.nodeName ] = parseEffectParameter( child );
@@ -50839,6 +52140,12 @@ ColladaLoader.prototype = {
 					case 'specular':
 						if ( parameter.color && material.specular ) { material.specular.fromArray( parameter.color ); }
 						if ( parameter.texture ) { material.specularMap = getTexture( parameter.texture ); }
+						break;
+					case 'bump':
+						if ( parameter.texture ) { material.normalMap = getTexture( parameter.texture ); }
+						break;
+					case 'ambient':
+						if ( parameter.texture ) { material.lightMap = getTexture( parameter.texture ); }
 						break;
 					case 'shininess':
 						if ( parameter.float && material.shininess ) { material.shininess = parameter.float; }
@@ -51372,7 +52679,9 @@ ColladaLoader.prototype = {
 						var id = parseId( child.getAttribute( 'source' ) );
 						var semantic = child.getAttribute( 'semantic' );
 						var offset = parseInt( child.getAttribute( 'offset' ) );
-						primitive.inputs[ semantic ] = { id: id, offset: offset };
+						var set = parseInt( child.getAttribute( 'set' ) );
+						var inputname = ( set > 0 ? semantic + set : semantic );
+						primitive.inputs[ inputname ] = { id: id, offset: offset };
 						primitive.stride = Math.max( primitive.stride, offset + 1 );
 						if ( semantic === 'TEXCOORD' ) { primitive.hasUV = true; }
 						break;
@@ -51475,6 +52784,7 @@ ColladaLoader.prototype = {
 			var position = { array: [], stride: 0 };
 			var normal = { array: [], stride: 0 };
 			var uv = { array: [], stride: 0 };
+			var uv2 = { array: [], stride: 0 };
 			var color = { array: [], stride: 0 };
 
 			var skinIndex = { array: [], stride: 4 };
@@ -51607,6 +52917,11 @@ ColladaLoader.prototype = {
 										uv.stride = sources[ id ].stride;
 										break;
 
+									case 'TEXCOORD1':
+										buildGeometryData( primitive, sources[ id ], input.offset, uv2.array );
+										uv.stride = sources[ id ].stride;
+										break;
+
 									default:
 										console.warn( 'ColladaLoader: Semantic "%s" not handled in geometry build process.', key );
 
@@ -51630,6 +52945,11 @@ ColladaLoader.prototype = {
 							uv.stride = sources[ input.id ].stride;
 							break;
 
+						case 'TEXCOORD1':
+							buildGeometryData( primitive, sources[ input.id ], input.offset, uv2.array );
+							uv2.stride = sources[ input.id ].stride;
+							break;
+
 					}
 
 				}
@@ -51642,6 +52962,7 @@ ColladaLoader.prototype = {
 			if ( normal.array.length > 0 ) { geometry.addAttribute( 'normal', new Float32BufferAttribute( normal.array, normal.stride ) ); }
 			if ( color.array.length > 0 ) { geometry.addAttribute( 'color', new Float32BufferAttribute( color.array, color.stride ) ); }
 			if ( uv.array.length > 0 ) { geometry.addAttribute( 'uv', new Float32BufferAttribute( uv.array, uv.stride ) ); }
+			if ( uv2.array.length > 0 ) { geometry.addAttribute( 'uv2', new Float32BufferAttribute( uv2.array, uv2.stride ) ); }
 
 			if ( skinIndex.array.length > 0 ) { geometry.addAttribute( 'skinIndex', new Float32BufferAttribute( skinIndex.array, skinIndex.stride ) ); }
 			if ( skinWeight.array.length > 0 ) { geometry.addAttribute( 'skinWeight', new Float32BufferAttribute( skinWeight.array, skinWeight.stride ) ); }
@@ -54202,6 +55523,16 @@ Object.assign( MaterialLoader.prototype, {
 		if ( json.defines !== undefined ) { material.defines = json.defines; }
 		if ( json.vertexShader !== undefined ) { material.vertexShader = json.vertexShader; }
 		if ( json.fragmentShader !== undefined ) { material.fragmentShader = json.fragmentShader; }
+
+		if ( json.extensions !== undefined ) {
+
+			for ( var key in json.extensions ) {
+
+				material.extensions[ key ] = json.extensions[ key ];
+
+			}
+
+		}
 
 		// Deprecated
 
@@ -60559,6 +61890,7 @@ var FBXLoader = ( function () {
 				} );
 
 				model = new SkinnedMesh( geometry, material );
+				model.normalizeSkinWeights();
 
 			} else {
 
@@ -65499,12 +66831,12 @@ var GLTFLoader = ( function () {
 			var itemSize = attribute.itemSize;
 			var array = attribute.array.slice( 0, count * itemSize );
 
-			for ( var i = 0; i < count; ++ i ) {
+			for ( var i = 0, j = 0; i < count; ++ i ) {
 
-				array[ i ] = attribute.getX( i );
-				if ( itemSize >= 2 ) { array[ i + 1 ] = attribute.getY( i ); }
-				if ( itemSize >= 3 ) { array[ i + 2 ] = attribute.getZ( i ); }
-				if ( itemSize >= 4 ) { array[ i + 3 ] = attribute.getW( i ); }
+				array[ j ++ ] = attribute.getX( i );
+				if ( itemSize >= 2 ) { array[ j ++ ] = attribute.getY( i ); }
+				if ( itemSize >= 3 ) { array[ j ++ ] = attribute.getZ( i ); }
+				if ( itemSize >= 4 ) { array[ j ++ ] = attribute.getW( i ); }
 
 			}
 
@@ -66902,16 +68234,16 @@ var GLTFLoader = ( function () {
 
 		var nodeDef = json.nodes[ nodeIndex ];
 
-		return new Promise( function ( resolve ) {
+		return ( function() {
 
 			// .isBone isn't in glTF spec. See .markDefs
 			if ( nodeDef.isBone === true ) {
 
-				resolve( new Bone() );
+				return Promise.resolve( new Bone() );
 
 			} else if ( nodeDef.mesh !== undefined ) {
 
-				parser.getDependency( 'mesh', nodeDef.mesh ).then( function ( mesh ) {
+				return parser.getDependency( 'mesh', nodeDef.mesh ).then( function ( mesh ) {
 
 					var node;
 
@@ -66938,27 +68270,44 @@ var GLTFLoader = ( function () {
 
 					}
 
-					resolve( node );
+					// if weights are provided on the node, override weights on the mesh.
+					if ( nodeDef.weights !== undefined ) {
+
+						node.traverse( function ( o ) {
+
+							if ( ! o.isMesh ) { return; }
+
+							for ( var i = 0, il = nodeDef.weights.length; i < il; i ++ ) {
+
+								o.morphTargetInfluences[ i ] = nodeDef.weights[ i ];
+
+							}
+
+						} );
+
+					}
+
+					return node;
 
 				} );
 
 			} else if ( nodeDef.camera !== undefined ) {
 
-				parser.getDependency( 'camera', nodeDef.camera ).then( resolve );
+				return parser.getDependency( 'camera', nodeDef.camera );
 
 			} else if ( nodeDef.extensions
 				&& nodeDef.extensions[ EXTENSIONS.KHR_LIGHTS_PUNCTUAL ]
 				&& nodeDef.extensions[ EXTENSIONS.KHR_LIGHTS_PUNCTUAL ].light !== undefined ) {
 
-				parser.getDependency( 'light', nodeDef.extensions[ EXTENSIONS.KHR_LIGHTS_PUNCTUAL ].light ).then( resolve );
+				return parser.getDependency( 'light', nodeDef.extensions[ EXTENSIONS.KHR_LIGHTS_PUNCTUAL ].light );
 
 			} else {
 
-				resolve( new Object3D() );
+				return Promise.resolve( new Object3D() );
 
 			}
 
-		} ).then( function ( node ) {
+		}() ).then( function ( node ) {
 
 			if ( nodeDef.name !== undefined ) {
 
@@ -67881,23 +69230,24 @@ var KhronosTextureContainer = ( function () {
 
 		}
 
-		// load the reset of the header in native 32 bit int
-		var header = new Int32Array( this.arrayBuffer, 12, 13 );
-		// determine of the remaining header values are recorded in the opposite endianness & require conversion
-		var oppositeEndianess = header[ 0 ] === 0x01020304;
-		// read all the header elements in order they exist in the file, without modification (sans endainness)
-		this.glType = oppositeEndianess ? this.switchEndainness( header[ 1 ] ) : header[ 1 ]; // must be 0 for compressed textures
-		this.glTypeSize = oppositeEndianess ? this.switchEndainness( header[ 2 ] ) : header[ 2 ]; // must be 1 for compressed textures
-		this.glFormat = oppositeEndianess ? this.switchEndainness( header[ 3 ] ) : header[ 3 ]; // must be 0 for compressed textures
-		this.glInternalFormat = oppositeEndianess ? this.switchEndainness( header[ 4 ] ) : header[ 4 ]; // the value of arg passed to gl.compressedTexImage2D(,,x,,,,)
-		this.glBaseInternalFormat = oppositeEndianess ? this.switchEndainness( header[ 5 ] ) : header[ 5 ]; // specify GL_RGB, GL_RGBA, GL_ALPHA, etc (un-compressed only)
-		this.pixelWidth = oppositeEndianess ? this.switchEndainness( header[ 6 ] ) : header[ 6 ]; // level 0 value of arg passed to gl.compressedTexImage2D(,,,x,,,)
-		this.pixelHeight = oppositeEndianess ? this.switchEndainness( header[ 7 ] ) : header[ 7 ]; // level 0 value of arg passed to gl.compressedTexImage2D(,,,,x,,)
-		this.pixelDepth = oppositeEndianess ? this.switchEndainness( header[ 8 ] ) : header[ 8 ]; // level 0 value of arg passed to gl.compressedTexImage3D(,,,,,x,,)
-		this.numberOfArrayElements = oppositeEndianess ? this.switchEndainness( header[ 9 ] ) : header[ 9 ]; // used for texture arrays
-		this.numberOfFaces = oppositeEndianess ? this.switchEndainness( header[ 10 ] ) : header[ 10 ]; // used for cubemap textures, should either be 1 or 6
-		this.numberOfMipmapLevels = oppositeEndianess ? this.switchEndainness( header[ 11 ] ) : header[ 11 ]; // number of levels; disregard possibility of 0 for compressed textures
-		this.bytesOfKeyValueData = oppositeEndianess ? this.switchEndainness( header[ 12 ] ) : header[ 12 ]; // the amount of space after the header for meta-data
+		// load the reset of the header in native 32 bit uint
+		var dataSize = Uint32Array.BYTES_PER_ELEMENT;
+		var headerDataView = new DataView( this.arrayBuffer, 12, 13 * dataSize );
+		var endianness = headerDataView.getUint32( 0, true );
+		var littleEndian = endianness === 0x04030201;
+
+		this.glType = headerDataView.getUint32( 1 * dataSize, littleEndian ); // must be 0 for compressed textures
+		this.glTypeSize = headerDataView.getUint32( 2 * dataSize, littleEndian ); // must be 1 for compressed textures
+		this.glFormat = headerDataView.getUint32( 3 * dataSize, littleEndian ); // must be 0 for compressed textures
+		this.glInternalFormat = headerDataView.getUint32( 4 * dataSize, littleEndian ); // the value of arg passed to gl.compressedTexImage2D(,,x,,,,)
+		this.glBaseInternalFormat = headerDataView.getUint32( 5 * dataSize, littleEndian ); // specify GL_RGB, GL_RGBA, GL_ALPHA, etc (un-compressed only)
+		this.pixelWidth = headerDataView.getUint32( 6 * dataSize, littleEndian ); // level 0 value of arg passed to gl.compressedTexImage2D(,,,x,,,)
+		this.pixelHeight = headerDataView.getUint32( 7 * dataSize, littleEndian ); // level 0 value of arg passed to gl.compressedTexImage2D(,,,,x,,)
+		this.pixelDepth = headerDataView.getUint32( 8 * dataSize, littleEndian ); // level 0 value of arg passed to gl.compressedTexImage3D(,,,,,x,,)
+		this.numberOfArrayElements = headerDataView.getUint32( 9 * dataSize, littleEndian ); // used for texture arrays
+		this.numberOfFaces = headerDataView.getUint32( 10 * dataSize, littleEndian ); // used for cubemap textures, should either be 1 or 6
+		this.numberOfMipmapLevels = headerDataView.getUint32( 11 * dataSize, littleEndian ); // number of levels; disregard possibility of 0 for compressed textures
+		this.bytesOfKeyValueData = headerDataView.getUint32( 12 * dataSize, littleEndian ); // the amount of space after the header for meta-data
 
 		// Make sure we have a compressed type.  Not only reduces work, but probably better to let dev know they are not compressing.
 		if ( this.glType !== 0 ) {
@@ -67934,13 +69284,6 @@ var KhronosTextureContainer = ( function () {
 		this.loadType = KhronosTextureContainer.COMPRESSED_2D;
 
 	}
-
-	// not as fast hardware based, but will probably never need to use
-	KhronosTextureContainer.prototype.switchEndainness = function ( val ) {
-
-		return ( ( val & 0xFF ) << 24 ) | ( ( val & 0xFF00 ) << 8 ) | ( ( val >> 8 ) & 0xFF00 ) | ( ( val >> 24 ) & 0xFF );
-
-	};
 
 	// return mipmaps for js
 	KhronosTextureContainer.prototype.mipmaps = function ( loadMipmaps ) {
@@ -67987,6 +69330,1326 @@ var KhronosTextureContainer = ( function () {
 	return KhronosTextureContainer;
 
 }() );
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var LDrawLoader = ( function () {
+
+	function LineParser( line, lineNumber ) {
+
+		this.line = line;
+		this.lineLength = line.length;
+		this.currentCharIndex = 0;
+		this.currentChar = ' ';
+		this.lineNumber = lineNumber;
+
+	}
+
+	LineParser.prototype = {
+
+		constructor: LineParser,
+
+		seekNonSpace: function () {
+			var this$1 = this;
+
+
+			while ( this.currentCharIndex < this.lineLength ) {
+
+				this$1.currentChar = this$1.line.charAt( this$1.currentCharIndex );
+
+				if ( this$1.currentChar !== ' ' && this$1.currentChar !== '\t' ) {
+
+					return;
+
+				}
+
+				this$1.currentCharIndex ++;
+
+			}
+
+		},
+
+		getToken: function () {
+			var this$1 = this;
+
+
+			var pos0 = this.currentCharIndex ++;
+
+			// Seek space
+			while ( this.currentCharIndex < this.lineLength ) {
+
+				this$1.currentChar = this$1.line.charAt( this$1.currentCharIndex );
+
+				if ( this$1.currentChar === ' ' || this$1.currentChar === '\t' ) {
+
+					break;
+
+				}
+
+				this$1.currentCharIndex ++;
+
+			}
+
+			var pos1 = this.currentCharIndex;
+
+			this.seekNonSpace();
+
+			return this.line.substring( pos0, pos1 );
+
+		},
+
+		getRemainingString: function() {
+
+			return this.line.substring( this.currentCharIndex, this.lineLength );
+
+		},
+
+		isAtTheEnd: function() {
+
+			return this.currentCharIndex >= this.lineLength;
+
+		},
+
+		setToEnd: function () {
+
+			this.currentCharIndex = this.lineLength;
+
+		},
+
+		getLineNumberString: function () {
+
+			return this.lineNumber >= 0? " at line " + this.lineNumber: "";
+
+		}
+	};
+
+	function sortByMaterial ( a, b ) {
+
+		if ( a.colourCode === b.colourCode ) {
+			return 0;
+		}
+		if ( a.colourCode < b.colourCode ) {
+			return -1;
+		}
+		return 1;
+
+	}
+
+	function createObject( elements, elementSize ) {
+
+		// Creates a LineSegments (elementSize = 2) or a Mesh (elementSize = 3 )
+		// With per face / segment material, implemented with mesh groups and materials array
+
+		// Sort the triangles or line segments by colour code to make later the mesh groups
+		elements.sort( sortByMaterial );
+
+		var vertices = [];
+		var materials = [];
+
+		var bufferGeometry = new BufferGeometry();
+		bufferGeometry.clearGroups();
+		var prevMaterial = null;
+		var index0 = 0;
+		var numGroupVerts = 0;
+
+		for ( var iElem = 0, nElem = elements.length; iElem < nElem; iElem ++ ) {
+
+			var elem = elements[ iElem ];
+			var v0 = elem.v0;
+			var v1 = elem.v1;
+			// Note that LDraw coordinate system is rotated 180 deg. in the X axis w.r.t. Three.js's one
+			vertices.push( v0.x, v0.y, v0.z, v1.x, v1.y, v1.z );
+			if ( elementSize === 3 ) {
+
+				vertices.push( elem.v2.x, elem.v2.y, elem.v2.z );
+
+			}
+
+			if ( prevMaterial !== elem.material ) {
+
+				if ( prevMaterial !== null ) {
+
+					bufferGeometry.addGroup( index0, numGroupVerts, materials.length - 1 );
+
+				}
+
+				materials.push( elem.material );
+
+				prevMaterial = elem.material;
+				index0 = iElem * elementSize;
+				numGroupVerts = elementSize;
+
+			}
+			else {
+
+				numGroupVerts += elementSize;
+
+			}
+
+		}
+		if ( numGroupVerts > 0 ) {
+
+			bufferGeometry.addGroup( index0, Infinity, materials.length - 1 );
+
+		}
+
+		bufferGeometry.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+
+		var object3d = null;
+		if ( elementSize === 2 ) {
+
+			object3d = new LineSegments( bufferGeometry, materials );
+
+		}
+		else if ( elementSize === 3 ) {
+
+			bufferGeometry.computeVertexNormals();
+
+			object3d = new Mesh( bufferGeometry, materials );
+
+		}
+
+		return object3d;
+
+	}
+
+	//
+
+	function LDrawLoader( manager ) {
+
+		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+
+		// This is a stack of 'parse scopes' with one level per subobject loaded file.
+		// Each level contains a material lib and also other runtime variables passed between parent and child subobjects
+		// When searching for a material code, the stack is read from top of the stack to bottom
+		// Each material library is an object map keyed by colour codes.
+		this.parseScopesStack = null;
+
+		this.path = '';
+
+		// Array of Material
+		this.materials = [];
+
+		// Not using Cache here because it returns the previous HTML error response instead of calling onError()
+		// This also allows to handle the embedded text files ("0 FILE" lines)
+		this.subobjectCache = {};
+
+		// This object is a map from file names to paths. It agilizes the paths search. If it is not set then files will be searched by trial and error.
+		this.fileMap = null;
+
+		// Add default main triangle and line edge materials (used in piecess that can be coloured with a main color)
+		this.setMaterials( [
+			this.parseColourMetaDirective( new LineParser( "Main_Colour CODE 16 VALUE #FF8080 EDGE #333333" ) ),
+			this.parseColourMetaDirective( new LineParser( "Edge_Colour CODE 24 VALUE #A0A0A0 EDGE #333333" ) )
+		] );
+
+		// If this flag is set to true, each subobject will be a Object.
+		// If not (the default), only one object which contains all the merged primitives will be created.
+		this.separateObjects = false;
+
+		// Current merged object and primitives
+		this.currentGroupObject = null;
+		this.currentTriangles = null;
+		this.currentLineSegments = null;
+
+	}
+
+	// Special surface finish tag types.
+	// Note: "MATERIAL" tag (e.g. GLITTER, SPECKLE) is not implemented
+	LDrawLoader.FINISH_TYPE_DEFAULT = 0;
+	LDrawLoader.FINISH_TYPE_CHROME = 1;
+	LDrawLoader.FINISH_TYPE_PEARLESCENT = 2;
+	LDrawLoader.FINISH_TYPE_RUBBER = 3;
+	LDrawLoader.FINISH_TYPE_MATTE_METALLIC = 4;
+	LDrawLoader.FINISH_TYPE_METAL = 5;
+
+	// State machine to search a subobject path.
+	// The LDraw standard establishes these various possible subfolders.
+	LDrawLoader.FILE_LOCATION_AS_IS = 0;
+	LDrawLoader.FILE_LOCATION_TRY_PARTS = 1;
+	LDrawLoader.FILE_LOCATION_TRY_P = 2;
+	LDrawLoader.FILE_LOCATION_TRY_MODELS = 3;
+	LDrawLoader.FILE_LOCATION_TRY_RELATIVE = 4;
+	LDrawLoader.FILE_LOCATION_TRY_ABSOLUTE = 5;
+	LDrawLoader.FILE_LOCATION_NOT_FOUND = 6;
+
+	LDrawLoader.prototype = {
+
+		constructor: LDrawLoader,
+
+		load: function ( url, onLoad, onProgress, onError ) {
+
+			if ( ! this.fileMap ) {
+
+				this.fileMap = {};
+
+			}
+
+			var scope = this;
+
+			var fileLoader = new FileLoader( this.manager );
+			fileLoader.setPath( this.path );
+			fileLoader.load( url, function( text ) {
+
+				processObject( text, onLoad );
+
+			}, onProgress, onError );
+
+			function processObject( text, onProcessed ) {
+
+				var parseScope = scope.newParseScopeLevel();
+				parseScope.url = url;
+
+				var parentParseScope = scope.getParentParseScope();
+
+				// Add to cache
+				var currentFileName = parentParseScope.currentFileName;
+				if ( scope.subobjectCache[ currentFileName ] === undefined ) {
+
+					scope.subobjectCache[ currentFileName ] = text;
+				}
+
+				// Parse the object (returns a Group)
+				var objGroup = scope.parse( text );
+
+				// Load subobjects
+				parseScope.subobjects = objGroup.userData.subobjects;
+				parseScope.numSubobjects = parseScope.subobjects.length;
+				parseScope.subobjectIndex = 0;
+
+				if ( parseScope.numSubobjects > 0 ) {
+
+					// Load the first subobject
+					var subobjectGroup = loadSubobject( parseScope.subobjects[ 0 ], true );
+
+					// Optimization for loading pack: If subobjects are obtained from cache, keep loading them iteratively rather than recursively
+					if ( subobjectGroup ) {
+
+						while ( subobjectGroup && parseScope.subobjectIndex < parseScope.numSubobjects - 1 ) {
+
+							subobjectGroup = loadSubobject( parseScope.subobjects[ ++ parseScope.subobjectIndex ], true );
+
+						}
+
+						if ( subobjectGroup ) {
+
+							finalizeObject();
+
+						}
+					}
+
+				}
+				else {
+
+					// No subobjects, finish object
+					finalizeObject();
+
+				}
+
+				return objGroup;
+
+				function finalizeObject() {
+
+					if ( ! scope.separateObjects && ! parentParseScope.isFromParse ) {
+
+						// We are finalizing the root object and merging primitives is activated, so create the entire Mesh and LineSegments objects now
+						if ( scope.currentLineSegments.length > 0 ) {
+
+							objGroup.add( createObject( scope.currentLineSegments, 2 ) );
+
+						}
+
+						if ( scope.currentTriangles.length > 0 ) {
+
+							objGroup.add( createObject( scope.currentTriangles, 3 ) );
+
+						}
+
+					}
+
+					scope.removeScopeLevel();
+
+					if ( onProcessed ) {
+
+						onProcessed( objGroup );
+
+					}
+
+				}
+
+				function loadSubobject ( subobject, sync ) {
+
+					parseScope.mainColourCode = subobject.material.userData.code;
+					parseScope.mainEdgeColourCode = subobject.material.userData.edgeMaterial.userData.code;
+					parseScope.currentFileName = subobject.originalFileName;
+
+					if ( ! scope.separateObjects ) {
+
+						// Set current matrix
+						parseScope.currentMatrix.multiplyMatrices( parentParseScope.currentMatrix, subobject.matrix );
+
+					}
+
+					// If subobject was cached previously, use the cached one
+					var cached = scope.subobjectCache[ subobject.originalFileName ];
+					if ( cached ) {
+
+						var subobjectGroup = processObject( cached, sync ? undefined : onSubobjectLoaded );
+						if ( sync ) {
+
+							addSubobject( subobject, subobjectGroup );
+							return subobjectGroup;
+
+						}
+
+						return;
+
+					}
+
+					// Adjust file name to locate the subobject file path in standard locations (always under directory scope.path)
+					// Update also subobject.locationState for the next try if this load fails.
+					var subobjectURL = subobject.fileName;
+					var newLocationState = LDrawLoader.FILE_LOCATION_NOT_FOUND;
+
+					switch ( subobject.locationState ) {
+
+						case LDrawLoader.FILE_LOCATION_AS_IS:
+							newLocationState = subobject.locationState + 1;
+							break;
+
+						case LDrawLoader.FILE_LOCATION_TRY_PARTS:
+							subobjectURL = 'parts/' + subobjectURL;
+							newLocationState = subobject.locationState + 1;
+							break;
+
+						case LDrawLoader.FILE_LOCATION_TRY_P:
+							subobjectURL = 'p/' + subobjectURL;
+							newLocationState = subobject.locationState + 1;
+							break;
+
+						case LDrawLoader.FILE_LOCATION_TRY_MODELS:
+							subobjectURL = 'models/' + subobjectURL;
+							newLocationState = subobject.locationState + 1;
+							break;
+
+						case LDrawLoader.FILE_LOCATION_TRY_RELATIVE:
+							subobjectURL = url.substring( 0, url.lastIndexOf( "/" ) + 1 ) + subobjectURL;
+							newLocationState = subobject.locationState + 1;
+							break;
+
+						case LDrawLoader.FILE_LOCATION_TRY_ABSOLUTE:
+
+							if ( subobject.triedLowerCase ) {
+
+								// Try absolute path
+								newLocationState = LDrawLoader.FILE_LOCATION_NOT_FOUND;
+
+							}
+							else {
+
+								// Next attempt is lower case
+								subobject.fileName = subobject.fileName.toLowerCase();
+								subobjectURL = subobject.fileName;
+								subobject.triedLowerCase = true;
+								newLocationState = LDrawLoader.FILE_LOCATION_AS_IS;
+
+							}
+							break;
+
+						case LDrawLoader.FILE_LOCATION_NOT_FOUND:
+
+							// All location possibilities have been tried, give up loading this object
+							console.warn( 'LDrawLoader: Subobject "' + subobject.originalFileName + '" could not be found.' );
+
+							// Try to read the next subobject
+							parseScope.subobjectIndex ++;
+
+							if ( parseScope.subobjectIndex >= parseScope.numSubobjects ) {
+
+								// All subojects have been loaded. Finish parent object
+								scope.removeScopeLevel();
+								onProcessed( objGroup );
+
+							}
+							else {
+
+								// Load next subobject
+								loadSubobject( parseScope.subobjects[ parseScope.subobjectIndex ] );
+
+							}
+
+							return;
+
+					}
+
+					subobject.locationState = newLocationState;
+					subobject.url = subobjectURL;
+
+					// Load the subobject
+					scope.load( subobjectURL, onSubobjectLoaded, undefined, onSubobjectError );
+
+				}
+
+				function onSubobjectLoaded( subobjectGroup ) {
+
+					var subobject = parseScope.subobjects[ parseScope.subobjectIndex ];
+
+					if ( subobjectGroup === null ) {
+
+						// Try to reload
+						loadSubobject( subobject );
+						return;
+
+					}
+
+					// Add the subobject just loaded
+					addSubobject( subobject, subobjectGroup );
+
+					// Proceed to load the next subobject, or finish the parent object
+
+					parseScope.subobjectIndex ++;
+
+					if ( parseScope.subobjectIndex < parseScope.numSubobjects ) {
+
+						loadSubobject( parseScope.subobjects[ parseScope.subobjectIndex ] );
+
+					}
+					else {
+
+						finalizeObject();
+
+					}
+
+				}
+
+				function addSubobject ( subobject, subobjectGroup ) {
+
+					if ( scope.separateObjects ) {
+
+						subobjectGroup.name = subobject.fileName;
+						objGroup.add( subobjectGroup );
+						subobjectGroup.matrix.copy( subobject.matrix );
+						subobjectGroup.matrixAutoUpdate = false;
+
+					}
+
+					scope.fileMap[ subobject.originalFileName ] = subobject.url;
+
+				}
+
+				function onSubobjectError( err ) {
+
+					// Retry download from a different default possible location
+					loadSubobject( parseScope.subobjects[ parseScope.subobjectIndex ] );
+
+				}
+
+			}
+
+		},
+
+		setPath: function ( value ) {
+
+			this.path = value;
+
+			return this;
+
+		},
+
+		setMaterials: function ( materials ) {
+
+			// Clears parse scopes stack, adds new scope with material library
+
+			this.parseScopesStack = [];
+
+			this.newParseScopeLevel( materials );
+
+			this.getCurrentParseScope().isFromParse = false;
+
+			this.materials = materials;
+
+			this.currentGroupObject = null;
+
+			return this;
+
+		},
+
+		setFileMap: function( fileMap ) {
+
+			this.fileMap = fileMap;
+
+			return this;
+
+		},
+
+		newParseScopeLevel: function ( materials ) {
+
+			// Adds a new scope level, assign materials to it and returns it
+
+			var matLib = {};
+
+			if ( materials ) {
+
+				for ( var i = 0, n = materials.length; i < n; i ++ ) {
+
+					var material = materials[ i ];
+					matLib[ material.userData.code ] = material;
+
+				}
+
+			}
+
+			var topParseScope = this.getCurrentParseScope();
+
+			var parentParseScope = this.getParentParseScope();
+
+			var newParseScope = {
+
+				lib: matLib,
+				url: null,
+
+				// Subobjects
+				subobjects: null,
+				numSubobjects: 0,
+				subobjectIndex: 0,
+
+				// Current subobject
+				currentFileName: null,
+				mainColourCode: topParseScope ? topParseScope.mainColourCode : '16',
+				mainEdgeColourCode: topParseScope ? topParseScope.mainEdgeColourCode : '24',
+				currentMatrix: new Matrix4(),
+
+				// If false, it is a root material scope previous to parse
+				isFromParse: true
+			};
+
+			this.parseScopesStack.push( newParseScope );
+
+			return newParseScope;
+
+		},
+
+		removeScopeLevel: function() {
+
+			this.parseScopesStack.pop();
+
+			return this;
+
+		},
+
+		addMaterial: function ( material ) {
+
+			// Adds a material to the material library which is on top of the parse scopes stack. And also to the materials array
+
+			var matLib = this.getCurrentParseScope().lib;
+
+			if ( ! matLib[ material.userData.code ] ) {
+
+				this.materials.push( material );
+
+			}
+
+			matLib[ material.userData.code ] = material;
+
+			return this;
+
+		},
+
+		getMaterial: function ( colourCode ) {
+			var this$1 = this;
+
+
+			// Given a colour code search its material in the parse scopes stack
+
+			if ( colourCode.startsWith( "0x2" ) ) {
+
+				// Special 'direct' material value (RGB colour)
+
+				var colour = colourCode.substring( 3 );
+
+				return this.parseColourMetaDirective( new LineParser( "Direct_Color_" + colour + " CODE -1 VALUE #" + colour + " EDGE #" + colour + "" ) );
+
+			}
+
+			for ( var i = this.parseScopesStack.length - 1; i >= 0; i-- ) {
+
+				var material = this$1.parseScopesStack[ i ].lib[ colourCode ];
+
+				if ( material ) {
+
+					return material;
+
+				}
+
+			}
+
+			// Material was not found
+			return null;
+
+		},
+
+		getParentParseScope: function () {
+
+			if ( this.parseScopesStack.length > 1 ) {
+
+				return this.parseScopesStack[ this.parseScopesStack.length - 2 ];
+
+			}
+
+			return null;
+
+		},
+
+		getCurrentParseScope: function () {
+
+			if ( this.parseScopesStack.length > 0 ) {
+
+				return this.parseScopesStack[ this.parseScopesStack.length - 1 ];
+
+			}
+
+			return null;
+
+		},
+
+		parseColourMetaDirective: function ( lineParser ) {
+			var this$1 = this;
+
+
+			// Parses a colour definition and returns a Material or null if error
+
+			var code = null;
+
+			// Triangle and line colours
+			var colour = 0xFF00FF;
+			var edgeColour = 0xFF00FF;
+
+			// Transparency
+			var alpha = 1;
+			var isTransparent = false;
+			// Self-illumination:
+			var luminance = 0;
+
+			var finishType = LDrawLoader.FINISH_TYPE_DEFAULT;
+			var canHaveEnvMap = true;
+
+			var edgeMaterial = null;
+
+			var name = lineParser.getToken();
+			if ( ! name ) {
+
+				throw 'LDrawLoader: Material name was expected after "!COLOUR tag' + lineParser.getLineNumberString() + ".";
+
+			}
+
+			// Parse tag tokens and their parameters
+			var token = null;
+			while ( true ) {
+
+				token = lineParser.getToken();
+
+				if ( ! token ) {
+
+					break;
+
+				}
+
+				switch ( token.toUpperCase() ) {
+
+					case "CODE":
+
+						code = lineParser.getToken();
+						break;
+
+					case "VALUE":
+
+						colour = lineParser.getToken();
+						if ( colour.startsWith( '0x' ) ) {
+
+							colour = '#' + colour.substring( 2 );
+
+						}
+						else if ( ! colour.startsWith( '#' ) ) {
+							throw 'LDrawLoader: Invalid colour while parsing material' + lineParser.getLineNumberString() + ".";
+						}
+						break;
+
+					case "EDGE":
+
+						edgeColour = lineParser.getToken();
+						if ( edgeColour.startsWith( '0x' ) ) {
+
+							edgeColour = '#' + edgeColour.substring( 2 );
+
+						}
+						else if ( ! edgeColour.startsWith( '#' ) ) {
+
+							// Try to see if edge colour is a colour code
+							edgeMaterial = this$1.getMaterial( edgeColour );
+							if ( ! edgeMaterial ) {
+
+								throw 'LDrawLoader: Invalid edge colour while parsing material' + lineParser.getLineNumberString() + ".";
+
+							}
+
+							// Get the edge material for this triangle material
+							edgeMaterial = edgeMaterial.userData.edgeMaterial;
+
+						}
+						break;
+
+					case 'ALPHA':
+
+						alpha = parseInt( lineParser.getToken() );
+
+						if ( isNaN( alpha ) ) {
+
+							throw 'LDrawLoader: Invalid alpha value in material definition' + lineParser.getLineNumberString() + ".";
+
+						}
+
+						alpha = Math.max( 0, Math.min( 1, alpha / 255 ) );
+
+						if ( alpha < 1 ) {
+
+							isTransparent = true;
+
+						}
+
+						break;
+
+					case 'LUMINANCE':
+
+						luminance = parseInt( lineParser.getToken() );
+
+						if ( isNaN( luminance ) ) {
+
+							throw 'LDrawLoader: Invalid luminance value in material definition' + lineParser.getLineNumberString() + ".";
+
+						}
+
+						luminance = Math.max( 0, Math.min( 1, luminance / 255 ) );
+
+						break;
+
+					case 'CHROME':
+						finishType = LDrawLoader.FINISH_TYPE_CHROME;
+						break;
+
+					case 'PEARLESCENT':
+						finishType = LDrawLoader.FINISH_TYPE_PEARLESCENT;
+						break;
+
+					case 'RUBBER':
+						finishType = LDrawLoader.FINISH_TYPE_RUBBER;
+						break;
+
+					case 'MATTE_METALLIC':
+						finishType = LDrawLoader.FINISH_TYPE_MATTE_METALLIC;
+						break;
+
+					case 'METAL':
+						finishType = LDrawLoader.FINISH_TYPE_METAL;
+						break;
+
+					case 'MATERIAL':
+						// Not implemented
+						lineParser.setToEnd();
+						break;
+
+					default:
+						throw 'LDrawLoader: Unknown token "' + token + '" while parsing material' + lineParser.getLineNumberString() + ".";
+						break;
+
+				}
+
+			}
+
+			var material = null;
+
+			switch ( finishType ) {
+
+				case LDrawLoader.FINISH_TYPE_DEFAULT:
+				case LDrawLoader.FINISH_TYPE_PEARLESCENT:
+
+					var specular = new Color( colour );
+					var shininess = 35;
+					var hsl = specular.getHSL( { h: 0, s: 0, l: 0 } );
+
+					if ( finishType === LDrawLoader.FINISH_TYPE_DEFAULT ) {
+
+						// Default plastic material with shiny specular
+						hsl.l = Math.min( 1, hsl.l + ( 1 - hsl.l ) * 0.12 );
+
+					}
+					else {
+
+						// Try to imitate pearlescency by setting the specular to the complementary of the color, and low shininess
+						hsl.h = ( hsl.h + 0.5 ) % 1;
+						hsl.l = Math.min( 1, hsl.l + ( 1 - hsl.l ) * 0.7 );
+						shininess = 10;
+					}
+
+					specular.setHSL( hsl.h, hsl.s, hsl.l );
+
+					material = new MeshPhongMaterial( { color: colour, specular: specular, shininess: shininess, reflectivity: 0.3 } );
+					break;
+
+				case LDrawLoader.FINISH_TYPE_CHROME:
+
+					// Mirror finish surface
+					material = new MeshStandardMaterial( { color: colour, roughness: 0, metalness: 1 } );
+					break;
+
+				case LDrawLoader.FINISH_TYPE_RUBBER:
+
+					// Rubber is best simulated with Lambert
+					material = new MeshLambertMaterial( { color: colour } );
+					canHaveEnvMap = false;
+					break;
+
+				case LDrawLoader.FINISH_TYPE_MATTE_METALLIC:
+
+					// Brushed metal finish
+					material = new MeshStandardMaterial( { color: colour, roughness: 0.8, metalness: 0.4 } );
+					break;
+
+				case LDrawLoader.FINISH_TYPE_METAL:
+
+					// Average metal finish
+					material = new MeshStandardMaterial( { color: colour, roughness: 0.2, metalness: 0.85 } );
+					break;
+
+				default:
+					// Should not happen
+					break;
+			}
+
+			// BFC (Back Face Culling) LDraw language meta extension is not implemented, so set all materials double-sided:
+			material.side = DoubleSide;
+
+			material.transparent = isTransparent;
+			material.opacity = alpha;
+
+			material.userData.canHaveEnvMap = canHaveEnvMap;
+
+			if ( luminance !== 0 ) {
+				material.emissive.set( material.color ).multiplyScalar( luminance );
+			}
+
+			if ( ! edgeMaterial ) {
+				// This is the material used for edges
+				edgeMaterial = new LineBasicMaterial( { color: edgeColour } );
+				edgeMaterial.userData.code = code;
+				edgeMaterial.name = name + " - Edge";
+				edgeMaterial.userData.canHaveEnvMap = false;
+			}
+
+			material.userData.code = code;
+			material.name = name;
+
+			material.userData.edgeMaterial = edgeMaterial;
+
+			return material;
+
+		},
+
+		//
+
+		parse: function ( text ) {
+			var this$1 = this;
+
+
+			//console.time( 'LDrawLoader' );
+
+			// Retrieve data from the parent parse scope
+			var parentParseScope = this.getParentParseScope();
+
+			// Main colour codes passed to this subobject (or default codes 16 and 24 if it is the root object)
+			var mainColourCode = parentParseScope.mainColourCode;
+			var mainEdgeColourCode = parentParseScope.mainEdgeColourCode;
+
+			var url = parentParseScope.url;
+
+			var currentParseScope = this.getCurrentParseScope();
+
+			// Parse result variables
+			var triangles;
+			var lineSegments;
+
+			if ( this.separateObjects ) {
+
+				triangles = [];
+				lineSegments = [];
+
+			}
+			else {
+
+				if ( this.currentGroupObject === null ) {
+
+					this.currentGroupObject = new Group();
+					this.currentTriangles = [];
+					this.currentLineSegments = [];
+
+				}
+
+				triangles = this.currentTriangles;
+				lineSegments = this.currentLineSegments;
+
+			}
+
+			var subobjects = [];
+
+			var category = null;
+			var keywords = null;
+
+			if ( text.indexOf( '\r\n' ) !== - 1 ) {
+
+				// This is faster than String.split with regex that splits on both
+				text = text.replace( /\r\n/g, '\n' );
+
+			}
+
+			var lines = text.split( '\n' );
+			var numLines = lines.length;
+			var lineIndex = 0;
+
+			var parsingEmbeddedFiles = false;
+			var currentEmbeddedFileName = null;
+			var currentEmbeddedText = null;
+
+			var scope = this;
+			function parseColourCode( lineParser, forEdge ) {
+
+				// Parses next colour code and returns a Material
+
+				var colourCode = lineParser.getToken();
+
+				if ( ! forEdge && colourCode === '16' ) {
+
+					colourCode = mainColourCode;
+
+				}
+				if ( forEdge && colourCode === '24' ) {
+
+					colourCode = mainEdgeColourCode;
+
+				}
+
+				var material = scope.getMaterial( colourCode );
+
+				if ( ! material ) {
+
+					throw 'LDrawLoader: Unknown colour code "' + colourCode + '" is used' + lineParser.getLineNumberString() + ' but it was not defined previously.';
+
+				}
+
+				return material;
+
+			}
+
+			function parseVector ( lp ) {
+
+				var v = new Vector3( parseFloat( lp.getToken() ), parseFloat( lp.getToken() ), parseFloat( lp.getToken() ) );
+
+				if ( ! scope.separateObjects ) {
+
+					v.applyMatrix4( parentParseScope.currentMatrix );
+
+				}
+
+				return v;
+
+			}
+
+			// Parse all line commands
+			for ( lineIndex = 0; lineIndex < numLines; lineIndex ++ ) {
+
+				line = lines[ lineIndex ];
+
+				if ( line.length === 0 ) { continue; }
+
+				if ( parsingEmbeddedFiles ) {
+
+					if ( line.startsWith( '0 FILE ' ) ) {
+
+						// Save previous embedded file in the cache
+						this$1.subobjectCache[ currentEmbeddedFileName ] = currentEmbeddedText;
+
+						// New embedded text file
+						currentEmbeddedFileName = line.substring( 7 );
+						currentEmbeddedText = '';
+
+					}
+					else {
+
+						currentEmbeddedText += line + '\n';
+
+					}
+
+					continue;
+
+				}
+
+				var lp = new LineParser( line, lineIndex + 1 );
+
+				lp.seekNonSpace();
+
+				if ( lp.isAtTheEnd() ) {
+					// Empty line
+					continue;
+				}
+
+				// Parse the line type
+				var lineType = lp.getToken();
+
+				switch ( lineType ) {
+
+					// Line type 0: Comment or META
+					case '0':
+
+						// Parse meta directive
+						var meta = lp.getToken();
+
+						if ( meta ) {
+
+							switch ( meta ) {
+
+								case '!COLOUR':
+
+									var material = this$1.parseColourMetaDirective( lp );
+									if ( material ) {
+
+										this$1.addMaterial( material );
+
+									}
+									break;
+
+								case '!CATEGORY':
+
+									category = lp.getToken();
+									break;
+
+								case '!KEYWORDS':
+
+										var newKeywords = lp.getRemainingString().split( ',' );
+										if ( newKeywords.length > 0 ) {
+
+											if ( ! keywords ) {
+
+												keywords = [];
+
+											}
+
+											newKeywords.forEach( function( keyword ) {
+
+												keywords.push( keyword.trim() );
+
+											} );
+
+										}
+									break;
+
+								case 'FILE':
+
+									if ( lineIndex > 0 ) {
+
+										// Start embedded text files parsing
+										parsingEmbeddedFiles = true;
+										currentEmbeddedFileName = lp.getRemainingString();
+										currentEmbeddedText = '';
+
+									}
+
+									break;
+
+								default:
+									// Other meta directives are not implemented
+									break;
+
+							}
+
+						}
+
+						break;
+
+					// Line type 1: Sub-object file
+					case '1':
+
+						var material = parseColourCode( lp );
+
+						var posX = parseFloat( lp.getToken() );
+						var posY = parseFloat( lp.getToken() );
+						var posZ = parseFloat( lp.getToken() );
+						var m0 = parseFloat( lp.getToken() );
+						var m1 = parseFloat( lp.getToken() );
+						var m2 = parseFloat( lp.getToken() );
+						var m3 = parseFloat( lp.getToken() );
+						var m4 = parseFloat( lp.getToken() );
+						var m5 = parseFloat( lp.getToken() );
+						var m6 = parseFloat( lp.getToken() );
+						var m7 = parseFloat( lp.getToken() );
+						var m8 = parseFloat( lp.getToken() );
+
+						var matrix = new Matrix4().set(
+							m0, m1, m2, posX,
+							m3, m4, m5, posY,
+							m6, m7, m8, posZ,
+							0, 0, 0, 1
+						);
+
+						var fileName = lp.getRemainingString().trim().replace( "\\", "/" );
+
+						if ( scope.fileMap[ fileName ] ) {
+
+							// Found the subobject path in the preloaded file path map
+							fileName = scope.fileMap[ fileName ];
+
+						}
+						else {
+
+							// Standardized subfolders
+							if ( fileName.startsWith( 's/' ) ) {
+
+								fileName = 'parts/' + fileName;
+
+							}
+							else if ( fileName.startsWith( '48/' ) ) {
+
+								fileName = 'p/' + fileName;
+
+							}
+
+						}
+
+						subobjects.push( {
+							material: material,
+							matrix: matrix,
+							fileName: fileName,
+							originalFileName: fileName,
+							locationState: LDrawLoader.FILE_LOCATION_AS_IS,
+							url: null,
+							triedLowerCase: false
+						} );
+
+						break;
+
+					// Line type 2: Line segment
+					case '2':
+
+						var material = parseColourCode( lp, true );
+
+						lineSegments.push( {
+							material: material.userData.edgeMaterial,
+							colourCode: material.userData.code,
+							v0: parseVector( lp ),
+							v1: parseVector( lp )
+						} );
+
+						break;
+
+					// Line type 3: Triangle
+					case '3':
+
+						var material = parseColourCode( lp );
+
+						triangles.push( {
+							material: material,
+							colourCode: material.userData.code,
+							v0: parseVector( lp ),
+							v1: parseVector( lp ),
+							v2: parseVector( lp )
+						} );
+
+						break;
+
+					// Line type 4: Quadrilateral
+					case '4':
+
+						var material = parseColourCode( lp );
+
+						var v0 = parseVector( lp );
+						var v1 = parseVector( lp );
+						var v2 = parseVector( lp );
+						var v3 = parseVector( lp );
+
+						triangles.push( {
+							material: material,
+							colourCode: material.userData.code,
+							v0: v0,
+							v1: v1,
+							v2: v2
+						} );
+
+						triangles.push( {
+							material: material,
+							colourCode: material.userData.code,
+							v0: v0,
+							v1: v2,
+							v2: v3
+						} );
+
+						break;
+
+					// Line type 5: Optional line
+					case '5':
+						// Line type 5 is not implemented
+						break;
+
+					default:
+						throw 'LDrawLoader: Unknown line type "' + lineType + '"' + lp.getLineNumberString() + '.';
+						break;
+
+				}
+
+			}
+
+			if ( parsingEmbeddedFiles ) {
+
+				this.subobjectCache[ currentEmbeddedFileName ] = currentEmbeddedText;
+
+			}
+
+			//
+
+			var groupObject = null;
+
+			if ( this.separateObjects ) {
+
+				groupObject = new Group();
+
+				if ( lineSegments.length > 0 ) {
+
+					groupObject.add( createObject( lineSegments, 2 ) );
+				}
+
+				if ( triangles.length > 0 ) {
+
+					groupObject.add( createObject( triangles, 3 ) );
+
+				}
+
+			}
+			else {
+
+				groupObject = this.currentGroupObject;
+
+			}
+
+			groupObject.userData.category = category;
+			groupObject.userData.keywords = keywords;
+			groupObject.userData.subobjects = subobjects;
+
+			//console.timeEnd( 'LDrawLoader' );
+
+			return groupObject;
+
+		}
+
+	};
+
+	return LDrawLoader;
+
+} )();
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -71520,7 +74183,7 @@ MTLLoader.prototype = {
 
 			} else {
 
-				if ( key === 'ka' || key === 'kd' || key === 'ks' ) {
+				if ( key === 'ka' || key === 'kd' || key === 'ks' || key ==='ke' ) {
 
 					var ss = value.split( delimiter_pattern, 3 );
 					info[ key ] = [ parseFloat( ss[ 0 ] ), parseFloat( ss[ 1 ] ), parseFloat( ss[ 2 ] ) ];
@@ -71776,6 +74439,13 @@ MTLLoader.MaterialCreator.prototype = {
 
 					break;
 
+				case 'ke':
+
+					// Emissive using RGB values
+					params.emissive = new Color().fromArray( value );
+
+					break;
+
 				case 'map_kd':
 
 					// Diffuse texture map
@@ -71789,6 +74459,14 @@ MTLLoader.MaterialCreator.prototype = {
 					// Specular map
 
 					setMapForType( "specularMap", value );
+
+					break;
+
+				case 'map_ke':
+
+					// Emissive map
+
+					setMapForType( "emissiveMap", value );
 
 					break;
 
@@ -79085,10 +81763,10 @@ SVGLoader.prototype = {
 				var type = command.charAt( 0 );
 				var data = command.substr( 1 ).trim();
 
-				if ( isFirstPoint ) {
+				if ( isFirstPoint === true ) {
 					doSetFirstPoint = true;
+					isFirstPoint = false;
 				}
-				isFirstPoint = false;
 
 				switch ( type ) {
 
@@ -79374,13 +82052,11 @@ SVGLoader.prototype = {
 
 				// console.log( type, parseFloats( data ), parseFloats( data ).length  )
 
-				if ( doSetFirstPoint ) {
-
+				if ( doSetFirstPoint === true ) {
 					firstPoint.copy( point );
-
 					doSetFirstPoint = false;
-
 				}
+
 			}
 
 			return path;
@@ -79684,7 +82360,7 @@ SVGLoader.prototype = {
 			var transform = new Matrix3();
 			var currentTransform = tempTransform0;
 			var transformsTexts = node.getAttribute( 'transform' ).split( ' ' );
-			
+
 			for ( var tIndex = transformsTexts.length - 1; tIndex >= 0; tIndex-- ) {
 
 				var transformText = transformsTexts[ tIndex ];
@@ -79696,7 +82372,7 @@ SVGLoader.prototype = {
 					var transformType = transformText.substr( 0, openParPos );
 
 					var array = parseFloats( transformText.substr( openParPos + 1, closeParPos - openParPos - 1 ) );
-					
+
 					currentTransform.identity();
 
 					switch ( transformType ) {
@@ -94477,7 +97153,7 @@ Math1Node.FLOOR = 'floor';
 Math1Node.CEIL = 'ceil';
 Math1Node.NORMALIZE = 'normalize';
 Math1Node.FRACT = 'fract';
-Math1Node.SAT = 'saturate';
+Math1Node.SATURATE = 'saturate';
 Math1Node.SIN = 'sin';
 Math1Node.COS = 'cos';
 Math1Node.TAN = 'tan';
@@ -94713,6 +97389,7 @@ function Math3Node( a, b, c, method ) {
 }
 
 Math3Node.MIX = 'mix';
+Math3Node.CLAMP = 'clamp';
 Math3Node.REFRACT = 'refract';
 Math3Node.SMOOTHSTEP = 'smoothstep';
 Math3Node.FACEFORWARD = 'faceforward';
@@ -95915,6 +98592,1128 @@ VelocityNode.prototype.toJSON = function ( meta ) {
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function Clock( autoStart ) {
+
+	this.autoStart = ( autoStart !== undefined ) ? autoStart : true;
+
+	this.startTime = 0;
+	this.oldTime = 0;
+	this.elapsedTime = 0;
+
+	this.running = false;
+
+}
+
+Object.assign( Clock.prototype, {
+
+	start: function () {
+
+		this.startTime = ( typeof performance === 'undefined' ? Date : performance ).now(); // see #10732
+
+		this.oldTime = this.startTime;
+		this.elapsedTime = 0;
+		this.running = true;
+
+	},
+
+	stop: function () {
+
+		this.getElapsedTime();
+		this.running = false;
+		this.autoStart = false;
+
+	},
+
+	getElapsedTime: function () {
+
+		this.getDelta();
+		return this.elapsedTime;
+
+	},
+
+	getDelta: function () {
+
+		var diff = 0;
+
+		if ( this.autoStart && ! this.running ) {
+
+			this.start();
+			return 0;
+
+		}
+
+		if ( this.running ) {
+
+			var newTime = ( typeof performance === 'undefined' ? Date : performance ).now();
+
+			diff = ( newTime - this.oldTime ) / 1000;
+			this.oldTime = newTime;
+
+			this.elapsedTime += diff;
+
+		}
+
+		return diff;
+
+	}
+
+} );
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var Fire = function ( geometry, options ) {
+
+	Mesh.call( this, geometry );
+
+	this.type = 'Fire';
+
+	this.clock = new Clock();
+
+	options = options || {};
+
+	var textureWidth = options.textureWidth || 512;
+	var textureHeight = options.textureHeight || 512;
+	var oneOverWidth = 1.0 / textureWidth;
+	var oneOverHeight = 1.0 / textureHeight;
+
+	var debug = ( options.debug === undefined ) ? false : options.debug;
+	this.color1 = options.color1 || new Color( 0xffffff );
+	this.color2 = options.color2 || new Color( 0xffa000 );
+	this.color3 = options.color3 || new Color( 0x000000 );
+	this.colorBias = ( options.colorBias === undefined ) ? 0.8 : options.colorBias;
+	this.diffuse = ( options.diffuse === undefined ) ? 1.33 : options.diffuse;
+	this.viscosity = ( options.viscosity === undefined ) ? 0.25 : options.viscosity;
+	this.expansion = ( options.expansion === undefined ) ? - 0.25 : options.expansion;
+	this.swirl = ( options.swirl === undefined ) ? 50.0 : options.swirl;
+	this.burnRate = ( options.burnRate === undefined ) ? 0.3 : options.burnRate;
+	this.drag = ( options.drag === undefined ) ? 0.35 : options.drag;
+	this.airSpeed = ( options.airSpeed === undefined ) ? 6.0 : options.airSpeed;
+	this.windVector = options.windVector || new Vector2( 0.0, 0.75 );
+	this.speed = ( options.speed === undefined ) ? 500.0 : options.speed;
+	this.massConservation = ( options.massConservation === undefined ) ? false : options.massConservation;
+
+	var size = textureWidth * textureHeight;
+	this.sourceData = new Uint8Array( 4 * size );
+
+	this.clearSources = function () {
+		var this$1 = this;
+
+
+		for ( var y = 0; y < textureHeight; y ++ ) {
+
+			for ( var x = 0; x < textureWidth; x ++ ) {
+
+				var i = y * textureWidth + x;
+				var stride = i * 4;
+
+				this$1.sourceData[ stride ] = 0;
+				this$1.sourceData[ stride + 1 ] = 0;
+				this$1.sourceData[ stride + 2 ] = 0;
+				this$1.sourceData[ stride + 3 ] = 0;
+
+			}
+
+		}
+
+		this.sourceMaterial.uniforms.sourceMap.value = this.internalSource;
+		this.sourceMaterial.needsUpdate = true;
+
+		return this.sourceData;
+
+	};
+
+	this.addSource = function ( u, v, radius, density, windX, windY ) {
+		var this$1 = this;
+		if ( density === void 0 ) density = null;
+		if ( windX === void 0 ) windX = null;
+		if ( windY === void 0 ) windY = null;
+
+
+		var startX = Math.max( Math.floor( ( u - radius ) * textureWidth ), 0 );
+		var startY = Math.max( Math.floor( ( v - radius ) * textureHeight ), 0 );
+		var endX = Math.min( Math.floor( ( u + radius ) * textureWidth ), textureWidth );
+		var endY = Math.min( Math.floor( ( v + radius ) * textureHeight ), textureHeight );
+
+		for ( var y = startY; y < endY; y ++ ) {
+
+			for ( var x = startX; x < endX; x ++ ) {
+
+				var diffX = x * oneOverWidth - u;
+				var diffY = y * oneOverHeight - v;
+
+				if ( diffX * diffX + diffY * diffY < radius * radius ) {
+
+					var i = y * textureWidth + x;
+					var stride = i * 4;
+
+					if ( density != null ) {
+
+						this$1.sourceData[ stride ] = Math.min( Math.max( density, 0.0 ), 1.0 ) * 255;
+
+					}
+					if ( windX != null ) {
+
+						var wind = Math.min( Math.max( windX, - 1.0 ), 1.0 );
+						wind = ( wind < 0.0 ) ? Math.floor( wind * 127 ) + 255 : Math.floor( wind * 127 );
+						this$1.sourceData[ stride + 1 ] = wind;
+
+					}
+					if ( windY != null ) {
+
+						var wind = Math.min( Math.max( windY, - 1.0 ), 1.0 );
+						wind = ( wind < 0.0 ) ? Math.floor( wind * 127 ) + 255 : Math.floor( wind * 127 );
+						this$1.sourceData[ stride + 2 ] = wind;
+
+					}
+
+				}
+
+			}
+
+		}
+
+		this.internalSource.needsUpdate = true;
+
+		return this.sourceData;
+
+	};
+
+	// When setting source map, red channel is density. Green and blue channels
+	// encode x and y velocity respectively as signed chars:
+	// (0 -> 127 = 0.0 -> 1.0, 128 -> 255 = -1.0 -> 0.0 )
+	this.setSourceMap = function ( texture ) {
+
+		this.sourceMaterial.uniforms.sourceMap.value = texture;
+
+	};
+
+	var parameters = {
+		minFilter: NearestFilter,
+		magFilter: NearestFilter,
+		depthBuffer: false,
+		stencilBuffer: false
+	};
+	this.field0 = new WebGLRenderTarget( textureWidth, textureHeight, parameters );
+
+	this.field0.background = new Color( 0x000000 );
+
+	this.field1 = new WebGLRenderTarget( textureWidth, textureHeight, parameters );
+
+	this.field0.background = new Color( 0x000000 );
+
+	this.fieldProj = new WebGLRenderTarget( textureWidth, textureHeight, parameters );
+
+	this.field0.background = new Color( 0x000000 );
+
+	if ( ! _Math.isPowerOfTwo( textureWidth ) ||
+		 ! _Math.isPowerOfTwo( textureHeight ) ) {
+
+		this.field0.texture.generateMipmaps = false;
+		this.field1.texture.generateMipmaps = false;
+		this.fieldProj.texture.generateMipmaps = false;
+
+	}
+	this.fieldScene = new Scene();
+	this.fieldScene.background = new Color( 0x000000 );
+
+	this.orthoCamera = new OrthographicCamera( textureWidth / - 2, textureWidth / 2, textureHeight / 2, textureHeight / - 2, 1, 2 );
+	this.orthoCamera.position.z = 1;
+
+	this.fieldGeometry = new PlaneBufferGeometry( textureWidth, textureHeight );
+
+	this.internalSource = new DataTexture( this.sourceData, textureWidth, textureHeight, RGBAFormat );
+
+	// Source Shader
+
+	var shader = Fire.SourceShader;
+	this.sourceMaterial = new ShaderMaterial( {
+		uniforms: shader.uniforms,
+		vertexShader: shader.vertexShader,
+		fragmentShader: shader.fragmentShader,
+		transparent: false
+	} );
+
+	this.clearSources();
+
+	this.sourceMesh = new Mesh( this.fieldGeometry, this.sourceMaterial );
+	this.fieldScene.add( this.sourceMesh );
+
+	// Diffuse Shader
+
+	var shader = Fire.DiffuseShader;
+	this.diffuseMaterial = new ShaderMaterial( {
+		uniforms: shader.uniforms,
+		vertexShader: shader.vertexShader,
+		fragmentShader: shader.fragmentShader,
+		transparent: false
+	} );
+
+	this.diffuseMaterial.uniforms.oneOverWidth.value = oneOverWidth;
+	this.diffuseMaterial.uniforms.oneOverHeight.value = oneOverHeight;
+
+	this.diffuseMesh = new Mesh( this.fieldGeometry, this.diffuseMaterial );
+	this.fieldScene.add( this.diffuseMesh );
+
+	// Drift Shader
+
+	shader = Fire.DriftShader;
+	this.driftMaterial = new ShaderMaterial( {
+		uniforms: shader.uniforms,
+		vertexShader: shader.vertexShader,
+		fragmentShader: shader.fragmentShader,
+		transparent: false
+	} );
+
+	this.driftMaterial.uniforms.oneOverWidth.value = oneOverWidth;
+	this.driftMaterial.uniforms.oneOverHeight.value = oneOverHeight;
+
+	this.driftMesh = new Mesh( this.fieldGeometry, this.driftMaterial );
+	this.fieldScene.add( this.driftMesh );
+
+	// Projection Shader 1
+
+	shader = Fire.ProjectionShader1;
+	this.projMaterial1 = new ShaderMaterial( {
+		uniforms: shader.uniforms,
+		vertexShader: shader.vertexShader,
+		fragmentShader: shader.fragmentShader,
+		transparent: false
+	} );
+
+	this.projMaterial1.uniforms.oneOverWidth.value = oneOverWidth;
+	this.projMaterial1.uniforms.oneOverHeight.value = oneOverHeight;
+
+	this.projMesh1 = new Mesh( this.fieldGeometry, this.projMaterial1 );
+	this.fieldScene.add( this.projMesh1 );
+
+	// Projection Shader 2
+
+	shader = Fire.ProjectionShader2;
+	this.projMaterial2 = new ShaderMaterial( {
+		uniforms: shader.uniforms,
+		vertexShader: shader.vertexShader,
+		fragmentShader: shader.fragmentShader,
+		transparent: false
+	} );
+	this.projMaterial2.uniforms.oneOverWidth.value = oneOverWidth;
+	this.projMaterial2.uniforms.oneOverHeight.value = oneOverHeight;
+
+	this.projMesh2 = new Mesh( this.fieldGeometry, this.projMaterial2 );
+	this.fieldScene.add( this.projMesh2 );
+
+	// Projection Shader 3
+
+	shader = Fire.ProjectionShader3;
+	this.projMaterial3 = new ShaderMaterial( {
+		uniforms: shader.uniforms,
+		vertexShader: shader.vertexShader,
+		fragmentShader: shader.fragmentShader,
+		transparent: false
+	} );
+	this.projMaterial3.uniforms.oneOverWidth.value = oneOverWidth;
+	this.projMaterial3.uniforms.oneOverHeight.value = oneOverHeight;
+
+	this.projMesh3 = new Mesh( this.fieldGeometry, this.projMaterial3 );
+	this.fieldScene.add( this.projMesh3 );
+
+	// Color Shader
+
+	if ( debug ) {
+
+		shader = Fire.DebugShader;
+
+	} else {
+
+		shader = Fire.ColorShader;
+
+	}
+	this.material = new ShaderMaterial( {
+		uniforms: shader.uniforms,
+		vertexShader: shader.vertexShader,
+		fragmentShader: shader.fragmentShader,
+		transparent: true
+	} );
+
+	this.material.uniforms.densityMap.value = this.field1.texture;
+
+	this.configShaders = function ( dt ) {
+
+		this.diffuseMaterial.uniforms.diffuse.value = dt * 0.05 * this.diffuse;
+		this.diffuseMaterial.uniforms.viscosity.value = dt * 0.05 * this.viscosity;
+		this.diffuseMaterial.uniforms.expansion.value = Math.exp( this.expansion * - 1.0 );
+		this.diffuseMaterial.uniforms.swirl.value = Math.exp( this.swirl * - 0.1 );
+		this.diffuseMaterial.uniforms.drag.value = Math.exp( this.drag * - 0.1 );
+		this.diffuseMaterial.uniforms.burnRate.value = this.burnRate * dt * 0.01;
+		this.driftMaterial.uniforms.windVector.value = this.windVector;
+		this.driftMaterial.uniforms.airSpeed.value = dt * this.airSpeed * 0.001 * textureHeight;
+		this.material.uniforms.color1.value = this.color1;
+		this.material.uniforms.color2.value = this.color2;
+		this.material.uniforms.color3.value = this.color3;
+		this.material.uniforms.colorBias.value = this.colorBias;
+
+	};
+
+	this.clearDiffuse = function () {
+
+		this.diffuseMaterial.uniforms.expansion.value = 1.0;
+		this.diffuseMaterial.uniforms.swirl.value = 1.0;
+		this.diffuseMaterial.uniforms.drag.value = 1.0;
+		this.diffuseMaterial.uniforms.burnRate.value = 0.0;
+
+	};
+
+	this.swapTextures = function () {
+
+		var swap = this.field0;
+		this.field0 = this.field1;
+		this.field1 = swap;
+
+	};
+
+	this.saveRenderState = function ( renderer ) {
+
+		this.savedRenderTarget = renderer.getRenderTarget();
+		this.savedVrEnabled = renderer.vr.enabled;
+		this.savedShadowAutoUpdate = renderer.shadowMap.autoUpdate;
+		this.savedAntialias = renderer.antialias;
+		this.savedToneMapping = renderer.toneMapping;
+
+	};
+
+	this.restoreRenderState = function ( renderer ) {
+
+		renderer.vr.enabled = this.savedVrEnabled;
+		renderer.shadowMap.autoUpdate = this.savedShadowAutoUpdate;
+		renderer.setRenderTarget( this.savedRenderTarget );
+		renderer.antialias = this.savedAntialias;
+		renderer.toneMapping = this.savedToneMapping;
+
+	};
+
+	this.renderSource = function ( renderer ) {
+
+		this.sourceMesh.visible = true;
+
+		this.sourceMaterial.uniforms.densityMap.value = this.field0.texture;
+
+		renderer.render( this.fieldScene, this.orthoCamera, this.field1 );
+
+		this.sourceMesh.visible = false;
+
+		this.swapTextures();
+
+	};
+
+	this.renderDiffuse = function ( renderer ) {
+
+		this.diffuseMesh.visible = true;
+
+		this.diffuseMaterial.uniforms.densityMap.value = this.field0.texture;
+
+		renderer.render( this.fieldScene, this.orthoCamera, this.field1 );
+
+		this.diffuseMesh.visible = false;
+
+		this.swapTextures();
+
+	};
+
+	this.renderDrift = function ( renderer ) {
+
+		this.driftMesh.visible = true;
+
+		this.driftMaterial.uniforms.densityMap.value = this.field0.texture;
+
+		renderer.render( this.fieldScene, this.orthoCamera, this.field1 );
+
+		this.driftMesh.visible = false;
+
+		this.swapTextures();
+
+	};
+
+	this.renderProject = function ( renderer ) {
+		var this$1 = this;
+
+
+		// Projection pass 1
+
+		this.projMesh1.visible = true;
+
+		this.projMaterial1.uniforms.densityMap.value = this.field0.texture;
+
+		renderer.render( this.fieldScene, this.orthoCamera, this.fieldProj );
+
+		this.projMesh1.visible = false;
+
+		this.projMaterial2.uniforms.densityMap.value = this.fieldProj.texture;
+
+		// Projection pass 2
+
+		this.projMesh2.visible = true;
+
+		for ( var i = 0; i < 20; i ++ ) {
+
+			renderer.render( this$1.fieldScene, this$1.orthoCamera, this$1.field1 );
+
+			var temp = this$1.field1;
+			this$1.field1 = this$1.fieldProj;
+			this$1.fieldProj = temp;
+
+			this$1.projMaterial2.uniforms.densityMap.value = this$1.fieldProj.texture;
+
+		}
+
+		this.projMesh2.visible = false;
+
+		this.projMaterial3.uniforms.densityMap.value = this.field0.texture;
+		this.projMaterial3.uniforms.projMap.value = this.fieldProj.texture;
+
+		// Projection pass 3
+
+		this.projMesh3.visible = true;
+
+		renderer.render( this.fieldScene, this.orthoCamera, this.field1 );
+
+		this.projMesh3.visible = false;
+
+		this.swapTextures();
+
+	};
+
+	this.onBeforeRender = function ( renderer, scene, camera ) {
+		var this$1 = this;
+
+
+		var delta = this.clock.getDelta();
+		if ( delta > 0.1 ) {
+
+			delta = 0.1;
+
+		}
+		var dt = delta * ( this.speed * 0.1 );
+
+		this.configShaders( dt );
+
+		this.saveRenderState( renderer );
+
+		renderer.vr.enabled = false; // Avoid camera modification and recursion
+		renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
+		renderer.antialias = false;
+		renderer.toneMapping = NoToneMapping;
+
+		this.sourceMesh.visible = false;
+		this.diffuseMesh.visible = false;
+		this.driftMesh.visible = false;
+		this.projMesh1.visible = false;
+		this.projMesh2.visible = false;
+		this.projMesh3.visible = false;
+
+		this.renderSource( renderer );
+
+		this.clearDiffuse();
+		for ( var i = 0; i < 21; i ++ ) {
+
+			this$1.renderDiffuse( renderer );
+
+		}
+		this.configShaders( dt );
+		this.renderDiffuse( renderer );
+
+		this.renderDrift( renderer );
+
+		if ( this.massConservation ) {
+
+			this.renderProject( renderer );
+			this.renderProject( renderer );
+
+		}
+
+		// Final result out for coloring
+
+		this.material.map = this.field1.texture;
+		this.material.transparent = true;
+		this.material.minFilter = LinearFilter,
+		this.material.magFilter = LinearFilter,
+
+		this.restoreRenderState( renderer );
+
+	};
+
+};
+Fire.prototype = Object.create( Mesh.prototype );
+Fire.prototype.constructor = Fire;
+
+Fire.SourceShader = {
+
+	uniforms: {
+		'sourceMap': {
+			type: 't',
+			value: null
+		},
+		'densityMap': {
+			type: 't',
+			value: null
+		}
+	},
+
+	vertexShader: [
+		'varying vec2 vUv;',
+
+		'void main() {',
+
+		' 	  vUv = uv;',
+
+		'     vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
+		'     gl_Position = projectionMatrix * mvPosition;',
+
+		'}'
+
+	].join( "\n" ),
+
+	fragmentShader: [
+		'uniform sampler2D sourceMap;',
+		'uniform sampler2D densityMap;',
+
+		'varying vec2 vUv;',
+
+		'void main() {',
+		'    vec4 source = texture2D( sourceMap, vUv );',
+		'    vec4 current = texture2D( densityMap, vUv );',
+
+		'    vec2 v0 = (current.gb - step(0.5, current.gb)) * 2.0;',
+		'    vec2 v1 = (source.gb - step(0.5, source.gb)) * 2.0;',
+
+		'    vec2 newVel = v0 + v1;',
+
+		'    newVel = clamp(newVel, -0.99, 0.99);',
+		'    newVel = newVel * 0.5 + step(0.0, -newVel);',
+
+		'    float newDensity = source.r + current.a;',
+		'    float newTemp = source.r + current.r;',
+
+		'    newDensity = clamp(newDensity, 0.0, 1.0);',
+		'    newTemp = clamp(newTemp, 0.0, 1.0);',
+
+		'    gl_FragColor = vec4(newTemp, newVel.xy, newDensity);',
+
+		'}'
+
+	].join( "\n" )
+};
+Fire.DiffuseShader = {
+
+	uniforms: {
+		'oneOverWidth': {
+			type: 'f',
+			value: null
+		},
+		'oneOverHeight': {
+			type: 'f',
+			value: null
+		},
+		'diffuse': {
+			type: 'f',
+			value: null
+		},
+		'viscosity': {
+			type: 'f',
+			value: null
+		},
+		'expansion': {
+			type: 'f',
+			value: null
+		},
+		'swirl': {
+			type: 'f',
+			value: null
+		},
+		'drag': {
+			type: 'f',
+			value: null
+		},
+		'burnRate': {
+			type: 'f',
+			value: null
+		},
+		'densityMap': {
+			type: 't',
+			value: null
+		}
+	},
+
+	vertexShader: [
+		'varying vec2 vUv;',
+
+		'void main() {',
+
+		' 	  vUv = uv;',
+
+		'     vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
+		'     gl_Position = projectionMatrix * mvPosition;',
+
+		'}'
+
+	].join( "\n" ),
+
+	fragmentShader: [
+		'uniform float oneOverWidth;',
+		'uniform float oneOverHeight;',
+		'uniform float diffuse;',
+		'uniform float viscosity;',
+		'uniform float expansion;',
+		'uniform float swirl;',
+		'uniform float burnRate;',
+		'uniform float drag;',
+		'uniform sampler2D densityMap;',
+
+		'varying vec2 vUv;',
+
+		'void main() {',
+
+		'    vec4 dC = texture2D( densityMap, vUv );',
+		'    vec4 dL = texture2D( densityMap, vec2(vUv.x - oneOverWidth, vUv.y) );',
+		'    vec4 dR = texture2D( densityMap, vec2(vUv.x + oneOverWidth, vUv.y) );',
+		'    vec4 dU = texture2D( densityMap, vec2(vUv.x, vUv.y - oneOverHeight) );',
+		'    vec4 dD = texture2D( densityMap, vec2(vUv.x, vUv.y + oneOverHeight) );',
+		'    vec4 dUL = texture2D( densityMap, vec2(vUv.x - oneOverWidth, vUv.y - oneOverHeight) );',
+		'    vec4 dUR = texture2D( densityMap, vec2(vUv.x + oneOverWidth, vUv.y - oneOverHeight) );',
+		'    vec4 dDL = texture2D( densityMap, vec2(vUv.x - oneOverWidth, vUv.y + oneOverHeight) );',
+		'    vec4 dDR = texture2D( densityMap, vec2(vUv.x + oneOverWidth, vUv.y + oneOverHeight) );',
+
+		'    dC.yz = (dC.yz - step(0.5, dC.yz)) * 2.0;',
+		'    dL.yz = (dL.yz - step(0.5, dL.yz)) * 2.0;',
+		'    dR.yz = (dR.yz - step(0.5, dR.yz)) * 2.0;',
+		'    dU.yz = (dU.yz - step(0.5, dU.yz)) * 2.0;',
+		'    dD.yz = (dD.yz - step(0.5, dD.yz)) * 2.0;',
+		'    dUL.yz = (dUL.yz - step(0.5, dUL.yz)) * 2.0;',
+		'    dUR.yz = (dUR.yz - step(0.5, dUR.yz)) * 2.0;',
+		'    dDL.yz = (dDL.yz - step(0.5, dDL.yz)) * 2.0;',
+		'    dDR.yz = (dDR.yz - step(0.5, dDR.yz)) * 2.0;',
+
+		'    vec4 result = (dC + vec4(diffuse, viscosity, viscosity, diffuse) * ( dL + dR + dU + dD + dUL + dUR + dDL + dDR )) / (1.0 + 8.0 * vec4(diffuse, viscosity, viscosity, diffuse)) - vec4(0.0, 0.0, 0.0, 0.001);',
+
+		'    float temperature = result.r;',
+		'    temperature = clamp(temperature - burnRate, 0.0, 1.0);',
+
+		'    vec2 velocity = result.yz;',
+
+		'    vec2 expansionVec = vec2(dL.w - dR.w, dU.w - dD.w);',
+
+		'    vec2 swirlVec = vec2((dL.z - dR.z) * 0.5, (dU.y - dD.y) * 0.5);',
+
+		'    velocity = velocity + (1.0 - expansion) * expansionVec + (1.0 - swirl) * swirlVec;',
+
+		'    velocity = velocity - (1.0 - drag) * velocity;',
+
+		'    gl_FragColor = vec4(temperature, velocity * 0.5 + step(0.0, -velocity), result.w);',
+
+		'    gl_FragColor = gl_FragColor * step(oneOverWidth, vUv.x);',
+		'    gl_FragColor = gl_FragColor * step(oneOverHeight, vUv.y);',
+		'    gl_FragColor = gl_FragColor * step(vUv.x, 1.0 - oneOverWidth);',
+		'    gl_FragColor = gl_FragColor * step(vUv.y, 1.0 - oneOverHeight);',
+
+		'}'
+
+	].join( "\n" )
+};
+
+Fire.DriftShader = {
+
+	uniforms: {
+		'oneOverWidth': {
+			type: 'f',
+			value: null
+		},
+		'oneOverHeight': {
+			type: 'f',
+			value: null
+		},
+		'windVector': {
+			type: 'v2',
+			value: new Vector2( 0.0, 0.0 )
+		},
+		'airSpeed': {
+			type: 'f',
+			value: null
+		},
+		'densityMap': {
+			type: 't',
+			value: null
+		}
+	},
+
+	vertexShader: [
+		'varying vec2 vUv;',
+
+		'void main() {',
+
+		' 	  vUv = uv;',
+
+		'     vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
+		'     gl_Position = projectionMatrix * mvPosition;',
+
+		'}'
+
+	].join( "\n" ),
+
+	fragmentShader: [
+		'uniform float oneOverWidth;',
+		'uniform float oneOverHeight;',
+		'uniform vec2 windVector;',
+		'uniform float airSpeed;',
+		'uniform sampler2D densityMap;',
+
+		'varying vec2 vUv;',
+
+		'void main() {',
+		'    vec2 velocity = texture2D( densityMap, vUv ).gb;',
+		'    velocity = (velocity - step(0.5, velocity)) * 2.0;',
+
+		'    velocity = velocity + windVector;',
+
+		'    vec2 sourcePos = vUv - airSpeed * vec2(oneOverWidth, oneOverHeight) * velocity;',
+
+		'    vec2 units = sourcePos / vec2(oneOverWidth, oneOverHeight);',
+
+		'    vec2 intPos = floor(units);',
+		'    vec2 frac = units - intPos;',
+		'    intPos = intPos * vec2(oneOverWidth, oneOverHeight);',
+
+		'    vec4 dX0Y0 = texture2D( densityMap, intPos + vec2(0.0, -oneOverHeight) );',
+		'    vec4 dX1Y0 = texture2D( densityMap, intPos + vec2(oneOverWidth, 0.0) );',
+		'    vec4 dX0Y1 = texture2D( densityMap, intPos + vec2(0.0, oneOverHeight) );',
+		'    vec4 dX1Y1 = texture2D( densityMap, intPos + vec2(oneOverWidth, oneOverHeight) );',
+		'    dX0Y0.gb = (dX0Y0.gb - step(0.5, dX0Y0.gb)) * 2.0;',
+		'    dX1Y0.gb = (dX1Y0.gb - step(0.5, dX1Y0.gb)) * 2.0;',
+		'    dX0Y1.gb = (dX0Y1.gb - step(0.5, dX0Y1.gb)) * 2.0;',
+		'    dX1Y1.gb = (dX1Y1.gb - step(0.5, dX1Y1.gb)) * 2.0;',
+
+		'    vec4 source = mix(mix(dX0Y0, dX1Y0, frac.x), mix(dX0Y1, dX1Y1, frac.x), frac.y);',
+
+		'    source.gb = source.gb * 0.5 + step(0.0, -source.gb);',
+
+		'    gl_FragColor = source;',
+
+		'}'
+
+	].join( "\n" )
+};
+Fire.ProjectionShader1 = {
+
+	uniforms: {
+		'oneOverWidth': {
+			type: 'f',
+			value: null
+		},
+		'oneOverHeight': {
+			type: 'f',
+			value: null
+		},
+		'densityMap': {
+			type: 't',
+			value: null
+		}
+	},
+
+	vertexShader: [
+		'varying vec2 vUv;',
+
+		'void main() {',
+
+		' 	  vUv = uv;',
+
+		'     vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
+		'     gl_Position = projectionMatrix * mvPosition;',
+
+		'}'
+
+	].join( "\n" ),
+
+	fragmentShader: [
+		'uniform float oneOverWidth;',
+		'uniform float oneOverHeight;',
+		'uniform sampler2D densityMap;',
+
+		'varying vec2 vUv;',
+
+		'void main() {',
+		'    float dL = texture2D( densityMap, vec2(vUv.x - oneOverWidth, vUv.y) ).g;',
+		'    float dR = texture2D( densityMap, vec2(vUv.x + oneOverWidth, vUv.y) ).g;',
+		'    float dU = texture2D( densityMap, vec2(vUv.x, vUv.y - oneOverHeight) ).b;',
+		'    float dD = texture2D( densityMap, vec2(vUv.x, vUv.y + oneOverHeight) ).b;',
+
+		'    dL = (dL - step(0.5, dL)) * 2.0;',
+		'    dR = (dR - step(0.5, dR)) * 2.0;',
+		'    dU = (dU - step(0.5, dU)) * 2.0;',
+		'    dD = (dD - step(0.5, dD)) * 2.0;',
+
+		'    float h = (oneOverWidth + oneOverHeight) * 0.5;',
+		'    float div = -0.5 * h * (dR - dL + dD - dU);',
+
+		'    gl_FragColor = vec4( 0.0, 0.0, div * 0.5 + step(0.0, -div), 0.0);',
+
+		'}'
+
+	].join( "\n" )
+};
+Fire.ProjectionShader2 = {
+
+	uniforms: {
+		'oneOverWidth': {
+			type: 'f',
+			value: null
+		},
+		'oneOverHeight': {
+			type: 'f',
+			value: null
+		},
+		'densityMap': {
+			type: 't',
+			value: null
+		}
+	},
+
+	vertexShader: [
+		'varying vec2 vUv;',
+
+		'void main() {',
+
+		' 	  vUv = uv;',
+
+		'     vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
+		'     gl_Position = projectionMatrix * mvPosition;',
+
+		'}'
+
+	].join( "\n" ),
+
+	fragmentShader: [
+		'uniform float oneOverWidth;',
+		'uniform float oneOverHeight;',
+		'uniform sampler2D densityMap;',
+
+		'varying vec2 vUv;',
+
+		'void main() {',
+		'    float div = texture2D( densityMap, vUv ).b;',
+		'    float pL = texture2D( densityMap, vec2(vUv.x - oneOverWidth, vUv.y) ).g;',
+		'    float pR = texture2D( densityMap, vec2(vUv.x + oneOverWidth, vUv.y) ).g;',
+		'    float pU = texture2D( densityMap, vec2(vUv.x, vUv.y - oneOverHeight) ).g;',
+		'    float pD = texture2D( densityMap, vec2(vUv.x, vUv.y + oneOverHeight) ).g;',
+
+		'    float divNorm = (div - step(0.5, div)) * 2.0;',
+		'    pL = (pL - step(0.5, pL)) * 2.0;',
+		'    pR = (pR - step(0.5, pR)) * 2.0;',
+		'    pU = (pU - step(0.5, pU)) * 2.0;',
+		'    pD = (pD - step(0.5, pD)) * 2.0;',
+
+		'    float p = (divNorm + pR + pL + pD + pU) * 0.25;',
+
+		'    gl_FragColor = vec4( 0.0, p * 0.5 + step(0.0, -p), div, 0.0);',
+
+		'}'
+
+	].join( "\n" )
+};
+Fire.ProjectionShader3 = {
+
+	uniforms: {
+		'oneOverWidth': {
+			type: 'f',
+			value: null
+		},
+		'oneOverHeight': {
+			type: 'f',
+			value: null
+		},
+		'densityMap': {
+			type: 't',
+			value: null
+		},
+		'projMap': {
+			type: 't',
+			value: null
+		}
+	},
+
+	vertexShader: [
+		'varying vec2 vUv;',
+
+		'void main() {',
+
+		' 	  vUv = uv;',
+
+		'     vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
+		'     gl_Position = projectionMatrix * mvPosition;',
+
+		'}'
+
+	].join( "\n" ),
+
+	fragmentShader: [
+		'uniform float oneOverWidth;',
+		'uniform float oneOverHeight;',
+		'uniform sampler2D densityMap;',
+		'uniform sampler2D projMap;',
+
+		'varying vec2 vUv;',
+
+		'void main() {',
+		'    vec4 orig = texture2D(densityMap, vUv);',
+
+		'    float pL = texture2D( projMap, vec2(vUv.x - oneOverWidth, vUv.y) ).g;',
+		'    float pR = texture2D( projMap, vec2(vUv.x + oneOverWidth, vUv.y) ).g;',
+		'    float pU = texture2D( projMap, vec2(vUv.x, vUv.y - oneOverHeight) ).g;',
+		'    float pD = texture2D( projMap, vec2(vUv.x, vUv.y + oneOverHeight) ).g;',
+
+		'    float uNorm = (orig.g - step(0.5, orig.g)) * 2.0;',
+		'    float vNorm = (orig.b - step(0.5, orig.b)) * 2.0;',
+
+		'    pL = (pL - step(0.5, pL)) * 2.0;',
+		'    pR = (pR - step(0.5, pR)) * 2.0;',
+		'    pU = (pU - step(0.5, pU)) * 2.0;',
+		'    pD = (pD - step(0.5, pD)) * 2.0;',
+
+		'    float h = (oneOverWidth + oneOverHeight) * 0.5;',
+		'    float u = uNorm - (0.5 * (pR - pL) / h);',
+		'    float v = vNorm - (0.5 * (pD - pU) / h);',
+
+		'    gl_FragColor = vec4( orig.r, u * 0.5 + step(0.0, -u), v * 0.5 + step(0.0, -v), orig.a);',
+
+		'}'
+
+	].join( "\n" )
+};
+
+Fire.ColorShader = {
+
+	uniforms: {
+		'color1': {
+			type: 'c',
+			value: null
+		},
+		'color2': {
+			type: 'c',
+			value: null
+		},
+		'color3': {
+			type: 'c',
+			value: null
+		},
+		'colorBias': {
+			type: 'f',
+			value: null
+		},
+		'densityMap': {
+			type: 't',
+			value: null
+		}
+	},
+
+	vertexShader: [
+		'varying vec2 vUv;',
+
+		'void main() {',
+
+		' 	  vUv = uv;',
+
+		'     vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
+		'     gl_Position = projectionMatrix * mvPosition;',
+
+		'}'
+
+	].join( "\n" ),
+
+	fragmentShader: [
+		'uniform vec3 color1;',
+		'uniform vec3 color2;',
+		'uniform vec3 color3;',
+		'uniform float colorBias;',
+		'uniform sampler2D densityMap;',
+
+		'varying vec2 vUv;',
+
+		'void main() {',
+		'    float density = texture2D( densityMap, vUv ).a;',
+		'    float temperature = texture2D( densityMap, vUv ).r;',
+
+		'    float bias = clamp(colorBias, 0.0001, 0.9999);',
+
+		'    vec3 blend1 = mix(color3, color2, temperature / bias) * (1.0 - step(bias, temperature));',
+		'    vec3 blend2 = mix(color2, color1, (temperature - bias) / (1.0 - bias) ) * step(bias, temperature);',
+
+		'    gl_FragColor = vec4(blend1 + blend2, density);',
+		'}'
+
+	].join( "\n" )
+};
+Fire.DebugShader = {
+
+	uniforms: {
+		'color1': {
+			type: 'c',
+			value: null
+		},
+		'color2': {
+			type: 'c',
+			value: null
+		},
+		'color3': {
+			type: 'c',
+			value: null
+		},
+		'colorBias': {
+			type: 'f',
+			value: null
+		},
+		'densityMap': {
+			type: 't',
+			value: null
+		}
+	},
+
+	vertexShader: [
+		'varying vec2 vUv;',
+
+		'void main() {',
+
+		' 	  vUv = uv;',
+
+		'     vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
+		'     gl_Position = projectionMatrix * mvPosition;',
+
+		'}'
+
+	].join( "\n" ),
+
+	fragmentShader: [
+		'uniform sampler2D densityMap;',
+
+		'varying vec2 vUv;',
+
+		'void main() {',
+		'    float density;',
+		'    density = texture2D( densityMap, vUv ).a;',
+
+		'    vec2 vel = texture2D( densityMap, vUv ).gb;',
+
+		'    vel = (vel - step(0.5, vel)) * 2.0;',
+
+		'    float r = density;',
+		'    float g = max(abs(vel.x), density * 0.5);',
+		'    float b = max(abs(vel.y), density * 0.5);',
+		'    float a = max(density * 0.5, max(abs(vel.x), abs(vel.y)));',
+
+		'    gl_FragColor = vec4(r, g, b, a);',
+
+		'}'
+
+	].join( "\n" )
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function Box2( min, max ) {
 
 	this.min = ( min !== undefined ) ? min : new Vector2( + Infinity, + Infinity );
@@ -96165,6 +99964,7 @@ var Lensflare = function () {
 	//
 
 	var positionScreen = new Vector3();
+	var positionView = new Vector3();
 
 	// textures
 
@@ -96326,10 +100126,12 @@ var Lensflare = function () {
 
 		// calculate position in screen space
 
-		positionScreen.setFromMatrixPosition( this.matrixWorld );
+		positionView.setFromMatrixPosition( this.matrixWorld );
+		positionView.applyMatrix4( camera.matrixWorldInverse );
 
-		positionScreen.applyMatrix4( camera.matrixWorldInverse );
-		positionScreen.applyMatrix4( camera.projectionMatrix );
+		if ( positionView.z > 0 ) { return; } // lensflare is behind the camera
+
+		positionScreen.copy( positionView ).applyMatrix4( camera.projectionMatrix );
 
 		// horizontal and vertical coordinate of the lower left corner of the pixels to copy
 
@@ -96525,6 +100327,204 @@ Lensflare.Geometry = ( function () {
 	return geometry;
 
 } )();
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+var LightningStorm = function ( stormParams ) {
+	var this$1 = this;
+
+
+	Object3D.call( this );
+	
+	// Parameters
+
+	stormParams = stormParams || {};
+	this.stormParams = stormParams;
+
+	stormParams.size = stormParams.size !== undefined ? stormParams.size : 1000.0;
+	stormParams.minHeight = stormParams.minHeight !== undefined ? stormParams.minHeight : 80.0;
+	stormParams.maxHeight = stormParams.maxHeight !== undefined ? stormParams.maxHeight : 100.0;
+	stormParams.maxSlope = stormParams.maxSlope !== undefined ? stormParams.maxSlope : 1.1;
+
+	stormParams.maxLightnings = stormParams.maxLightnings !== undefined ? stormParams.maxLightnings : 3;
+
+	stormParams.lightningMinPeriod = stormParams.lightningMinPeriod !== undefined ? stormParams.lightningMinPeriod : 3.0;
+	stormParams.lightningMaxPeriod = stormParams.lightningMaxPeriod !== undefined ? stormParams.lightningMaxPeriod : 7.0;
+
+	stormParams.lightningMinDuration = stormParams.lightningMinDuration !== undefined ? stormParams.lightningMinDuration : 1.0;
+	stormParams.lightningMaxDuration = stormParams.lightningMaxDuration !== undefined ? stormParams.lightningMaxDuration : 2.5;
+
+	this.lightningParameters = LightningStrike.copyParameters( stormParams.lightningParameters, stormParams.lightningParameters );
+
+	this.lightningParameters.isEternal = false;
+	
+	this.lightningMaterial = stormParams.lightningMaterial !== undefined ? stormParams.lightningMaterial : new MeshBasicMaterial( { color: 0xB0FFFF } );
+
+	if ( stormParams.onRayPosition !== undefined ) {
+
+		this.onRayPosition = stormParams.onRayPosition;
+
+	}
+	else {
+
+		this.onRayPosition = function( source, dest ) {
+
+			dest.set( ( Math.random() - 0.5 ) * stormParams.size, 0, ( Math.random() - 0.5 ) * stormParams.size );
+			
+			var height = _Math.lerp( stormParams.minHeight, stormParams.maxHeight, Math.random() );
+
+			source.set( stormParams.maxSlope * ( 2 * Math.random() - 1 ), 1, stormParams.maxSlope * ( 2 * Math.random() - 1 ) ).multiplyScalar( height ).add( dest );
+
+		};
+
+	}
+
+	this.onLightningDown = stormParams.onLightningDown;
+
+	// Internal state
+
+	this.inited = false;
+	this.nextLightningTime = 0;
+	this.lightningsMeshes = [];
+	this.deadLightningsMeshes = [];
+
+	for ( var i = 0; i < this.stormParams.maxLightnings; i++ ) {
+
+		var lightning = new LightningStrike( LightningStrike.copyParameters( {}, this$1.lightningParameters ) );
+		var mesh = new Mesh( lightning, this$1.lightningMaterial );
+		this$1.deadLightningsMeshes.push( mesh );
+
+	}
+
+};
+
+LightningStorm.prototype = Object.create( Object3D.prototype );
+
+LightningStorm.prototype.constructor = LightningStorm;
+
+LightningStorm.prototype.isLightningStorm = true;
+
+LightningStorm.prototype.update = function ( time ) {
+	var this$1 = this;
+
+
+	if ( ! this.inited ) {
+
+		this.nextLightningTime = this.getNextLightningTime( time ) * Math.random();
+		this.inited = true;
+
+	}
+
+	if ( time >= this.nextLightningTime ) {
+
+		// Lightning creation
+
+		var lightningMesh = this.deadLightningsMeshes.pop();
+
+		if ( lightningMesh ) {
+
+			var lightningParams1 = LightningStrike.copyParameters( lightningMesh.geometry.rayParameters, this.lightningParameters );
+
+			lightningParams1.birthTime = time;
+			lightningParams1.deathTime = time + _Math.lerp( this.stormParams.lightningMinDuration, this.stormParams.lightningMaxDuration, Math.random() );
+
+			this.onRayPosition( lightningParams1.sourceOffset, lightningParams1.destOffset );
+
+			lightningParams1.noiseSeed = Math.random();
+
+			this.add( lightningMesh );
+
+			this.lightningsMeshes.push( lightningMesh );
+
+		}
+
+		// Schedule next lightning
+		this.nextLightningTime = this.getNextLightningTime( time );
+
+	}
+
+	var i = 0; il = this.lightningsMeshes.length;
+
+	while ( i < il ){
+
+		var mesh = this$1.lightningsMeshes[ i ];
+
+		var lightning = mesh.geometry;
+
+		var prevState = lightning.state;
+
+		lightning.update( time );
+
+		if ( prevState === LightningStrike.RAY_PROPAGATING && lightning.state > prevState ) {
+
+			if ( this$1.onLightningDown ) {
+
+				this$1.onLightningDown( lightning );
+
+			}
+
+		}
+
+		if ( lightning.state === LightningStrike.RAY_EXTINGUISHED ) {
+
+			// Lightning is to be destroyed
+
+			this$1.lightningsMeshes.splice( this$1.lightningsMeshes.indexOf( mesh ), 1 ); 
+
+			this$1.deadLightningsMeshes.push( mesh );
+
+			this$1.remove( mesh );
+
+			il--;
+
+		}
+		else {
+
+			i++;
+
+		}
+
+	}
+
+};
+
+LightningStorm.prototype.getNextLightningTime = function ( currentTime ) {
+
+	return currentTime + _Math.lerp( this.stormParams.lightningMinPeriod, this.stormParams.lightningMaxPeriod, Math.random() ) / ( this.stormParams.maxLightnings + 1 );
+
+};
+
+LightningStorm.prototype.copy = function ( source ) {
+	
+	Object3D.prototype.copy.call( this, source );
+
+	this.stormParams.size = source.stormParams.size;
+	this.stormParams.minHeight = source.stormParams.minHeight;
+	this.stormParams.maxHeight = source.stormParams.maxHeight;
+	this.stormParams.maxSlope = source.stormParams.maxSlope;
+
+	this.stormParams.maxLightnings = source.stormParams.maxLightnings;
+
+	this.stormParams.lightningMinPeriod = source.stormParams.lightningMinPeriod;
+	this.stormParams.lightningMaxPeriod = source.stormParams.lightningMaxPeriod;
+
+	this.stormParams.lightningMinDuration = source.stormParams.lightningMinDuration;
+	this.stormParams.lightningMaxDuration = source.stormParams.lightningMaxDuration;
+
+	this.lightningParameters = LightningStrike.copyParameters( {}, source.lightningParameters );
+
+	this.lightningMaterial = source.stormParams.lightningMaterial;
+
+	this.onLightningDown = source.onLightningDown;
+
+	return this;
+
+};
+
+LightningStrike.prototype.clone = function () {
+
+	return new this.constructor( this.stormParams ).copy( this );
+
+};
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var Reflector = function ( geometry, options ) {
@@ -97700,76 +101700,6 @@ Water.prototype = Object.create( Mesh.prototype );
 Water.prototype.constructor = Water;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function Clock( autoStart ) {
-
-	this.autoStart = ( autoStart !== undefined ) ? autoStart : true;
-
-	this.startTime = 0;
-	this.oldTime = 0;
-	this.elapsedTime = 0;
-
-	this.running = false;
-
-}
-
-Object.assign( Clock.prototype, {
-
-	start: function () {
-
-		this.startTime = ( typeof performance === 'undefined' ? Date : performance ).now(); // see #10732
-
-		this.oldTime = this.startTime;
-		this.elapsedTime = 0;
-		this.running = true;
-
-	},
-
-	stop: function () {
-
-		this.getElapsedTime();
-		this.running = false;
-		this.autoStart = false;
-
-	},
-
-	getElapsedTime: function () {
-
-		this.getDelta();
-		return this.elapsedTime;
-
-	},
-
-	getDelta: function () {
-
-		var diff = 0;
-
-		if ( this.autoStart && ! this.running ) {
-
-			this.start();
-			return 0;
-
-		}
-
-		if ( this.running ) {
-
-			var newTime = ( typeof performance === 'undefined' ? Date : performance ).now();
-
-			diff = ( newTime - this.oldTime ) / 1000;
-			this.oldTime = newTime;
-
-			this.elapsedTime += diff;
-
-		}
-
-		return diff;
-
-	}
-
-} );
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function Water2( geometry, options ) {
 
 	Mesh.call( this, geometry );
@@ -98464,2226 +102394,6 @@ Ocean.prototype.renderNormalMap = function () {
 	this.renderer.render( this.scene, this.oceanCamera, this.normalMapFramebuffer, true );
 
 };
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function BoxHelper( object, color ) {
-
-	this.object = object;
-
-	if ( color === undefined ) { color = 0xffff00; }
-
-	var indices = new Uint16Array( [ 0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7 ] );
-	var positions = new Float32Array( 8 * 3 );
-
-	var geometry = new BufferGeometry();
-	geometry.setIndex( new BufferAttribute( indices, 1 ) );
-	geometry.addAttribute( 'position', new BufferAttribute( positions, 3 ) );
-
-	LineSegments.call( this, geometry, new LineBasicMaterial( { color: color } ) );
-
-	this.matrixAutoUpdate = false;
-
-	this.update();
-
-}
-
-BoxHelper.prototype = Object.create( LineSegments.prototype );
-BoxHelper.prototype.constructor = BoxHelper;
-
-BoxHelper.prototype.update = ( function () {
-
-	var box = new Box3();
-
-	return function update( object ) {
-
-		if ( object !== undefined ) {
-
-			console.warn( 'BoxHelper: .update() has no longer arguments.' );
-
-		}
-
-		if ( this.object !== undefined ) {
-
-			box.setFromObject( this.object );
-
-		}
-
-		if ( box.isEmpty() ) { return; }
-
-		var min = box.min;
-		var max = box.max;
-		var position = this.geometry.attributes.position;
-		var array = position.array;
-
-		array[ 0 ] = max.x; array[ 1 ] = max.y; array[ 2 ] = max.z;
-		array[ 3 ] = min.x; array[ 4 ] = max.y; array[ 5 ] = max.z;
-		array[ 6 ] = min.x; array[ 7 ] = min.y; array[ 8 ] = max.z;
-		array[ 9 ] = max.x; array[ 10 ] = min.y; array[ 11 ] = max.z;
-		array[ 12 ] = max.x; array[ 13 ] = max.y; array[ 14 ] = min.z;
-		array[ 15 ] = min.x; array[ 16 ] = max.y; array[ 17 ] = min.z;
-		array[ 18 ] = min.x; array[ 19 ] = min.y; array[ 20 ] = min.z;
-		array[ 21 ] = max.x; array[ 22 ] = min.y; array[ 23 ] = min.z;
-
-		position.needsUpdate = true;
-
-		this.geometry.computeBoundingSphere();
-
-	};
-
-} )();
-
-BoxHelper.prototype.setFromObject = function ( object ) {
-
-	this.object = object;
-	this.update();
-
-	return this;
-
-};
-
-BoxHelper.prototype.copy = function ( source ) {
-
-	LineSegments.prototype.copy.call( this, source );
-
-	this.object = source.object;
-
-	return this;
-
-};
-
-BoxHelper.prototype.clone = function () {
-
-	return new this.constructor().copy( this );
-
-};
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function isNumber( n ) {
-
-		return ! isNaN( n ) && isFinite( n );
-
-	}
-
-	function isArray( target ) {
-
-		return Object.prototype.toString.call( target ) === '[object Array]';
-
-	}
-
-	function toArray( target ) {
-
-		return target ? ( isArray( target ) !== true ? [ target ] : target ) : [];
-
-	}
-
-	function indexOfValue( array, value ) {
-
-		for ( var i = 0, il = array.length; i < il; i ++ ) {
-
-			if ( array[ i ] === value ) {
-
-				return i;
-
-			}
-
-		}
-
-		return - 1;
-
-	}
-
-	function indexOfPropertyWithValue( array, property, value ) {
-
-		for ( var i = 0, il = array.length; i < il; i ++ ) {
-
-			if ( array[ i ][ property ] === value ) {
-
-				return i;
-
-			}
-
-		}
-
-		return - 1;
-
-	}
-	var Octree = function ( parameters ) {
-
-		// handle parameters
-
-		parameters = parameters || {};
-
-		parameters.tree = this;
-
-		// static properties ( modification is not recommended )
-
-		this.nodeCount = 0;
-
-		this.INDEX_INSIDE_CROSS = - 1;
-		this.INDEX_OUTSIDE_OFFSET = 2;
-
-		this.INDEX_OUTSIDE_POS_X = isNumber( parameters.INDEX_OUTSIDE_POS_X ) ? parameters.INDEX_OUTSIDE_POS_X : 0;
-		this.INDEX_OUTSIDE_NEG_X = isNumber( parameters.INDEX_OUTSIDE_NEG_X ) ? parameters.INDEX_OUTSIDE_NEG_X : 1;
-		this.INDEX_OUTSIDE_POS_Y = isNumber( parameters.INDEX_OUTSIDE_POS_Y ) ? parameters.INDEX_OUTSIDE_POS_Y : 2;
-		this.INDEX_OUTSIDE_NEG_Y = isNumber( parameters.INDEX_OUTSIDE_NEG_Y ) ? parameters.INDEX_OUTSIDE_NEG_Y : 3;
-		this.INDEX_OUTSIDE_POS_Z = isNumber( parameters.INDEX_OUTSIDE_POS_Z ) ? parameters.INDEX_OUTSIDE_POS_Z : 4;
-		this.INDEX_OUTSIDE_NEG_Z = isNumber( parameters.INDEX_OUTSIDE_NEG_Z ) ? parameters.INDEX_OUTSIDE_NEG_Z : 5;
-
-		this.INDEX_OUTSIDE_MAP = [];
-		this.INDEX_OUTSIDE_MAP[ this.INDEX_OUTSIDE_POS_X ] = { index: this.INDEX_OUTSIDE_POS_X, count: 0, x: 1, y: 0, z: 0 };
-		this.INDEX_OUTSIDE_MAP[ this.INDEX_OUTSIDE_NEG_X ] = { index: this.INDEX_OUTSIDE_NEG_X, count: 0, x: - 1, y: 0, z: 0 };
-		this.INDEX_OUTSIDE_MAP[ this.INDEX_OUTSIDE_POS_Y ] = { index: this.INDEX_OUTSIDE_POS_Y, count: 0, x: 0, y: 1, z: 0 };
-		this.INDEX_OUTSIDE_MAP[ this.INDEX_OUTSIDE_NEG_Y ] = { index: this.INDEX_OUTSIDE_NEG_Y, count: 0, x: 0, y: - 1, z: 0 };
-		this.INDEX_OUTSIDE_MAP[ this.INDEX_OUTSIDE_POS_Z ] = { index: this.INDEX_OUTSIDE_POS_Z, count: 0, x: 0, y: 0, z: 1 };
-		this.INDEX_OUTSIDE_MAP[ this.INDEX_OUTSIDE_NEG_Z ] = { index: this.INDEX_OUTSIDE_NEG_Z, count: 0, x: 0, y: 0, z: - 1 };
-
-		this.FLAG_POS_X = 1 << ( this.INDEX_OUTSIDE_POS_X + 1 );
-		this.FLAG_NEG_X = 1 << ( this.INDEX_OUTSIDE_NEG_X + 1 );
-		this.FLAG_POS_Y = 1 << ( this.INDEX_OUTSIDE_POS_Y + 1 );
-		this.FLAG_NEG_Y = 1 << ( this.INDEX_OUTSIDE_NEG_Y + 1 );
-		this.FLAG_POS_Z = 1 << ( this.INDEX_OUTSIDE_POS_Z + 1 );
-		this.FLAG_NEG_Z = 1 << ( this.INDEX_OUTSIDE_NEG_Z + 1 );
-
-		this.utilVec31Search = new Vector3();
-		this.utilVec32Search = new Vector3();
-
-		// pass scene to see octree structure
-
-		this.scene = parameters.scene;
-
-		if ( this.scene ) {
-
-			var helper = new BoxHelper( new Mesh( new BoxBufferGeometry( 1, 1, 1 ) ), 0xff0066 );
-			this.visualGeometry = helper.geometry;
-			this.visualMaterial = helper.material;
-
-		}
-
-		// properties
-
-		this.objects = [];
-		this.objectsMap = {};
-		this.objectsData = [];
-		this.objectsDeferred = [];
-
-		this.depthMax = isNumber( parameters.depthMax ) ? parameters.depthMax : Infinity;
-		this.objectsThreshold = isNumber( parameters.objectsThreshold ) ? parameters.objectsThreshold : 8;
-		this.overlapPct = isNumber( parameters.overlapPct ) ? parameters.overlapPct : 0.15;
-		this.undeferred = parameters.undeferred || false;
-
-		this.root = parameters.root instanceof OctreeNode ? parameters.root : new OctreeNode( parameters );
-
-	};
-
-	Octree.prototype = {
-
-		update: function () {
-			var this$1 = this;
-
-
-			// add any deferred objects that were waiting for render cycle
-
-			if ( this.objectsDeferred.length > 0 ) {
-
-				for ( var i = 0, il = this.objectsDeferred.length; i < il; i ++ ) {
-
-					var deferred = this$1.objectsDeferred[ i ];
-
-					this$1.addDeferred( deferred.object, deferred.options );
-
-				}
-
-				this.objectsDeferred.length = 0;
-
-			}
-
-		},
-
-		add: function ( object, options ) {
-
-			// add immediately
-
-			if ( this.undeferred ) {
-
-				this.updateObject( object );
-
-				this.addDeferred( object, options );
-
-			} else {
-
-				// defer add until update called
-
-				this.objectsDeferred.push( { object: object, options: options } );
-
-			}
-
-		},
-
-		addDeferred: function ( object, options ) {
-			var this$1 = this;
-
-
-			var i, l,
-				geometry,
-				faces,
-				useFaces,
-				vertices,
-				useVertices;
-
-			// ensure object is not object data
-
-			if ( object instanceof OctreeObjectData ) {
-
-				object = object.object;
-
-			}
-
-			// check uuid to avoid duplicates
-
-			if ( ! object.uuid ) {
-
-				object.uuid = _Math.generateUUID();
-
-			}
-
-			if ( ! this.objectsMap[ object.uuid ] ) {
-
-				// store
-
-				this.objects.push( object );
-				this.objectsMap[ object.uuid ] = object;
-
-				// check options
-
-				if ( options ) {
-
-					useFaces = options.useFaces;
-					useVertices = options.useVertices;
-
-				}
-
-				if ( useVertices === true ) {
-
-					geometry = object.geometry;
-					vertices = geometry.vertices;
-
-					for ( i = 0, l = vertices.length; i < l; i ++ ) {
-
-						this$1.addObjectData( object, vertices[ i ] );
-
-					}
-
-				} else if ( useFaces === true ) {
-
-					geometry = object.geometry;
-					faces = geometry.faces;
-
-					for ( i = 0, l = faces.length; i < l; i ++ ) {
-
-						this$1.addObjectData( object, faces[ i ] );
-
-					}
-
-				} else {
-
-					this.addObjectData( object );
-
-				}
-
-			}
-
-		},
-
-		addObjectData: function ( object, part ) {
-
-			var objectData = new OctreeObjectData( object, part );
-
-			// add to tree objects data list
-
-			this.objectsData.push( objectData );
-
-			// add to nodes
-
-			this.root.addObject( objectData );
-
-		},
-
-		remove: function ( object ) {
-			var this$1 = this;
-
-
-			var i, l,
-				objectData = object,
-				index,
-				objectsDataRemoved;
-
-			// ensure object is not object data for index search
-
-			if ( object instanceof OctreeObjectData ) {
-
-				object = object.object;
-
-			}
-
-			// check uuid
-
-			if ( this.objectsMap[ object.uuid ] ) {
-
-				this.objectsMap[ object.uuid ] = undefined;
-
-				// check and remove from objects, nodes, and data lists
-
-				index = indexOfValue( this.objects, object );
-
-				if ( index !== - 1 ) {
-
-					this.objects.splice( index, 1 );
-
-					// remove from nodes
-
-					objectsDataRemoved = this.root.removeObject( objectData );
-
-					// remove from objects data list
-
-					for ( i = 0, l = objectsDataRemoved.length; i < l; i ++ ) {
-
-						objectData = objectsDataRemoved[ i ];
-
-						index = indexOfValue( this$1.objectsData, objectData );
-
-						if ( index !== - 1 ) {
-
-							this$1.objectsData.splice( index, 1 );
-
-						}
-
-					}
-
-				}
-
-			} else if ( this.objectsDeferred.length > 0 ) {
-
-				// check and remove from deferred
-
-				index = indexOfPropertyWithValue( this.objectsDeferred, 'object', object );
-
-				if ( index !== - 1 ) {
-
-					this.objectsDeferred.splice( index, 1 );
-
-				}
-
-			}
-
-		},
-
-		extend: function ( octree ) {
-			var this$1 = this;
-
-
-			var i, l,
-				objectsData,
-				objectData;
-
-			if ( octree instanceof Octree ) {
-
-				// for each object data
-
-				objectsData = octree.objectsData;
-
-				for ( i = 0, l = objectsData.length; i < l; i ++ ) {
-
-					objectData = objectsData[ i ];
-
-					this$1.add( objectData, { useFaces: objectData.faces, useVertices: objectData.vertices } );
-
-				}
-
-			}
-
-		},
-
-		rebuild: function () {
-			var this$1 = this;
-
-
-			var i, l,
-				node,
-				objectData,
-				indexOctant,
-				indexOctantLast,
-				objectsUpdate = [];
-
-			// check all object data for changes in position
-			// assumes all object matrices are up to date
-
-			for ( i = 0, l = this.objectsData.length; i < l; i ++ ) {
-
-				objectData = this$1.objectsData[ i ];
-
-				node = objectData.node;
-
-				// update object
-
-				objectData.update();
-
-				// if position has changed since last organization of object in tree
-
-				if ( node instanceof OctreeNode && ! objectData.positionLast.equals( objectData.position ) ) {
-
-					// get octant index of object within current node
-
-					indexOctantLast = objectData.indexOctant;
-
-					indexOctant = node.getOctantIndex( objectData );
-
-					// if object octant index has changed
-
-					if ( indexOctant !== indexOctantLast ) {
-
-						// add to update list
-
-						objectsUpdate.push( objectData );
-
-					}
-
-				}
-
-			}
-
-			// update changed objects
-
-			for ( i = 0, l = objectsUpdate.length; i < l; i ++ ) {
-
-				objectData = objectsUpdate[ i ];
-
-				// remove object from current node
-
-				objectData.node.removeObject( objectData );
-
-				// add object to tree root
-
-				this$1.root.addObject( objectData );
-
-			}
-
-		},
-
-		updateObject: function ( object ) {
-
-			var i, l,
-				parentCascade = [ object ],
-				parent,
-				parentUpdate;
-
-			// search all parents between object and root for world matrix update
-
-			parent = object.parent;
-
-			while ( parent ) {
-
-				parentCascade.push( parent );
-				parent = parent.parent;
-
-			}
-
-			for ( i = 0, l = parentCascade.length; i < l; i ++ ) {
-
-				parent = parentCascade[ i ];
-
-				if ( parent.matrixWorldNeedsUpdate === true ) {
-
-					parentUpdate = parent;
-
-				}
-
-			}
-
-			// update world matrix starting at uppermost parent that needs update
-
-			if ( typeof parentUpdate !== 'undefined' ) {
-
-				parentUpdate.updateMatrixWorld();
-
-			}
-
-		},
-
-		search: function ( position, radius, organizeByObject, direction ) {
-			var this$1 = this;
-
-
-			var i, l,
-				node,
-				objects,
-				objectData,
-				object,
-				results,
-				resultData,
-				resultsObjectsIndices,
-				resultObjectIndex,
-				directionPct;
-
-			// add root objects
-
-			objects = [].concat( this.root.objects );
-
-			// ensure radius (i.e. distance of ray) is a number
-
-			if ( ! ( radius > 0 ) ) {
-
-				radius = Number.MAX_VALUE;
-
-			}
-
-			// if direction passed, normalize and find pct
-
-			if ( direction instanceof Vector3 ) {
-
-				direction = this.utilVec31Search.copy( direction ).normalize();
-				directionPct = this.utilVec32Search.set( 1, 1, 1 ).divide( direction );
-
-			}
-
-			// search each node of root
-
-			for ( i = 0, l = this.root.nodesIndices.length; i < l; i ++ ) {
-
-				node = this$1.root.nodesByIndex[ this$1.root.nodesIndices[ i ] ];
-
-				objects = node.search( position, radius, objects, direction, directionPct );
-
-			}
-
-			// if should organize results by object
-
-			if ( organizeByObject === true ) {
-
-				results = [];
-				resultsObjectsIndices = [];
-
-				// for each object data found
-
-				for ( i = 0, l = objects.length; i < l; i ++ ) {
-
-					objectData = objects[ i ];
-					object = objectData.object;
-
-					resultObjectIndex = indexOfValue( resultsObjectsIndices, object );
-
-					// if needed, create new result data
-
-					if ( resultObjectIndex === - 1 ) {
-
-						resultData = {
-							object: object,
-							faces: [],
-							vertices: []
-						};
-
-						results.push( resultData );
-
-						resultsObjectsIndices.push( object );
-
-					} else {
-
-						resultData = results[ resultObjectIndex ];
-
-					}
-
-					// object data has faces or vertices, add to list
-
-					if ( objectData.faces ) {
-
-						resultData.faces.push( objectData.faces );
-
-					} else if ( objectData.vertices ) {
-
-						resultData.vertices.push( objectData.vertices );
-
-					}
-
-				}
-
-			} else {
-
-				results = objects;
-
-			}
-
-			return results;
-
-		},
-
-		setRoot: function ( root ) {
-
-			if ( root instanceof OctreeNode ) {
-
-				// store new root
-
-				this.root = root;
-
-				// update properties
-
-				this.root.updateProperties();
-
-			}
-
-		},
-
-		getDepthEnd: function () {
-
-			return this.root.getDepthEnd();
-
-		},
-
-		getNodeCountEnd: function () {
-
-			return this.root.getNodeCountEnd();
-
-		},
-
-		getObjectCountEnd: function () {
-
-			return this.root.getObjectCountEnd();
-
-		},
-
-		toConsole: function () {
-
-			this.root.toConsole();
-
-		}
-
-	};
-	var OctreeObjectData = function ( object, part ) {
-
-		// properties
-
-		this.object = object;
-
-		// handle part by type
-
-		if ( part instanceof Face3 ) {
-
-			this.faces = part;
-			this.face3 = true;
-			this.utilVec31FaceBounds = new Vector3();
-
-		} else if ( part instanceof Vector3 ) {
-
-			this.vertices = part;
-
-		}
-
-		this.radius = 0;
-		this.position = new Vector3();
-
-		// initial update
-
-		if ( this.object instanceof Object3D ) {
-
-			this.update();
-
-		}
-
-		this.positionLast = this.position.clone();
-
-	};
-
-	OctreeObjectData.prototype = {
-
-		update: function () {
-
-			if ( this.face3 ) {
-
-				this.radius = this.getFace3BoundingRadius( this.object, this.faces );
-				this.position.copy( this.faces.centroid ).applyMatrix4( this.object.matrixWorld );
-
-			} else if ( this.vertices ) {
-
-				this.radius = this.object.material.size || 1;
-				this.position.copy( this.vertices ).applyMatrix4( this.object.matrixWorld );
-
-			} else {
-
-				if ( this.object.geometry ) {
-
-					if ( this.object.geometry.boundingSphere === null ) {
-
-						this.object.geometry.computeBoundingSphere();
-
-					}
-
-					this.radius = this.object.geometry.boundingSphere.radius;
-					this.position.copy( this.object.geometry.boundingSphere.center ).applyMatrix4( this.object.matrixWorld );
-
-				} else {
-
-					this.radius = this.object.boundRadius;
-					this.position.setFromMatrixPosition( this.object.matrixWorld );
-
-				}
-
-			}
-
-			this.radius = this.radius * Math.max( this.object.scale.x, this.object.scale.y, this.object.scale.z );
-
-		},
-
-		getFace3BoundingRadius: function ( object, face ) {
-
-			if ( face.centroid === undefined ) { face.centroid = new Vector3(); }
-
-			var geometry = object.geometry || object,
-				vertices = geometry.vertices,
-				centroid = face.centroid,
-				va = vertices[ face.a ], vb = vertices[ face.b ], vc = vertices[ face.c ],
-				centroidToVert = this.utilVec31FaceBounds,
-				radius;
-
-			centroid.addVectors( va, vb ).add( vc ).divideScalar( 3 );
-			radius = Math.max( centroidToVert.subVectors( centroid, va ).length(), centroidToVert.subVectors( centroid, vb ).length(), centroidToVert.subVectors( centroid, vc ).length() );
-
-			return radius;
-
-		}
-
-	};
-	var OctreeNode = function ( parameters ) {
-
-		// utility
-
-		this.utilVec31Branch = new Vector3();
-		this.utilVec31Expand = new Vector3();
-		this.utilVec31Ray = new Vector3();
-
-		// handle parameters
-
-		parameters = parameters || {};
-
-		// store or create tree
-
-		if ( parameters.tree instanceof Octree ) {
-
-			this.tree = parameters.tree;
-
-		} else if ( parameters.parent instanceof OctreeNode !== true ) {
-
-			parameters.root = this;
-
-			this.tree = new Octree( parameters );
-
-		}
-
-		// basic properties
-
-		this.id = this.tree.nodeCount ++;
-		this.position = parameters.position instanceof Vector3 ? parameters.position : new Vector3();
-		this.radius = parameters.radius > 0 ? parameters.radius : 1;
-		this.indexOctant = parameters.indexOctant;
-		this.depth = 0;
-
-		// reset and assign parent
-
-		this.reset();
-		this.setParent( parameters.parent );
-
-		// additional properties
-
-		this.overlap = this.radius * this.tree.overlapPct;
-		this.radiusOverlap = this.radius + this.overlap;
-		this.left = this.position.x - this.radiusOverlap;
-		this.right = this.position.x + this.radiusOverlap;
-		this.bottom = this.position.y - this.radiusOverlap;
-		this.top = this.position.y + this.radiusOverlap;
-		this.back = this.position.z - this.radiusOverlap;
-		this.front = this.position.z + this.radiusOverlap;
-
-		// visual
-
-		if ( this.tree.scene ) {
-
-			this.visual = new LineSegments( this.tree.visualGeometry, this.tree.visualMaterial );
-			this.visual.scale.set( this.radiusOverlap * 2, this.radiusOverlap * 2, this.radiusOverlap * 2 );
-			this.visual.position.copy( this.position );
-			this.tree.scene.add( this.visual );
-
-		}
-
-	};
-
-	OctreeNode.prototype = {
-
-		setParent: function ( parent ) {
-
-			// store new parent
-
-			if ( parent !== this && this.parent !== parent ) {
-
-				this.parent = parent;
-
-				// update properties
-
-				this.updateProperties();
-
-			}
-
-		},
-
-		updateProperties: function () {
-			var this$1 = this;
-
-
-			var i, l;
-
-			// properties
-
-			if ( this.parent instanceof OctreeNode ) {
-
-				this.tree = this.parent.tree;
-				this.depth = this.parent.depth + 1;
-
-			} else {
-
-				this.depth = 0;
-
-			}
-
-			// cascade
-
-			for ( i = 0, l = this.nodesIndices.length; i < l; i ++ ) {
-
-				this$1.nodesByIndex[ this$1.nodesIndices[ i ] ].updateProperties();
-
-			}
-
-		},
-
-		reset: function ( cascade, removeVisual ) {
-
-			var i, l,
-				node,
-				nodesIndices = this.nodesIndices || [],
-				nodesByIndex = this.nodesByIndex;
-
-			this.objects = [];
-			this.nodesIndices = [];
-			this.nodesByIndex = {};
-
-			// unset parent in nodes
-
-			for ( i = 0, l = nodesIndices.length; i < l; i ++ ) {
-
-				node = nodesByIndex[ nodesIndices[ i ] ];
-
-				node.setParent( undefined );
-
-				if ( cascade === true ) {
-
-					node.reset( cascade, removeVisual );
-
-				}
-
-			}
-
-			// visual
-
-			if ( removeVisual === true && this.visual && this.visual.parent ) {
-
-				this.visual.parent.remove( this.visual );
-
-			}
-
-		},
-
-		addNode: function ( node, indexOctant ) {
-
-			node.indexOctant = indexOctant;
-
-			if ( indexOfValue( this.nodesIndices, indexOctant ) === - 1 ) {
-
-				this.nodesIndices.push( indexOctant );
-
-			}
-
-			this.nodesByIndex[ indexOctant ] = node;
-
-			if ( node.parent !== this ) {
-
-				node.setParent( this );
-
-			}
-
-		},
-
-		removeNode: function ( indexOctant ) {
-
-			var index,
-				node;
-
-			index = indexOfValue( this.nodesIndices, indexOctant );
-
-			this.nodesIndices.splice( index, 1 );
-
-			node = node || this.nodesByIndex[ indexOctant ];
-
-			delete this.nodesByIndex[ indexOctant ];
-
-			if ( node.parent === this ) {
-
-				node.setParent( undefined );
-
-			}
-
-		},
-
-		addObject: function ( object ) {
-
-			var index,
-				indexOctant,
-				node;
-
-			// get object octant index
-
-			indexOctant = this.getOctantIndex( object );
-
-			// if object fully contained by an octant, add to subtree
-			if ( indexOctant > - 1 && this.nodesIndices.length > 0 ) {
-
-				node = this.branch( indexOctant );
-
-				node.addObject( object );
-
-			} else if ( indexOctant < - 1 && this.parent instanceof OctreeNode ) {
-
-				// if object lies outside bounds, add to parent node
-
-				this.parent.addObject( object );
-
-			} else {
-
-				// add to this objects list
-
-				index = indexOfValue( this.objects, object );
-
-				if ( index === - 1 ) {
-
-					this.objects.push( object );
-
-				}
-
-				// node reference
-
-				object.node = this;
-
-				// check if need to expand, split, or both
-
-				this.checkGrow();
-
-			}
-
-		},
-
-		addObjectWithoutCheck: function ( objects ) {
-			var this$1 = this;
-
-
-			var i, l,
-				object;
-
-			for ( i = 0, l = objects.length; i < l; i ++ ) {
-
-				object = objects[ i ];
-
-				this$1.objects.push( object );
-
-				object.node = this$1;
-
-			}
-
-		},
-
-		removeObject: function ( object ) {
-
-			var i, l,
-				nodesRemovedFrom,
-				removeData;
-
-			// cascade through tree to find and remove object
-
-			removeData = this.removeObjectRecursive( object, { searchComplete: false, nodesRemovedFrom: [], objectsDataRemoved: [] } );
-
-			// if object removed, try to shrink the nodes it was removed from
-
-			nodesRemovedFrom = removeData.nodesRemovedFrom;
-
-			if ( nodesRemovedFrom.length > 0 ) {
-
-				for ( i = 0, l = nodesRemovedFrom.length; i < l; i ++ ) {
-
-					nodesRemovedFrom[ i ].shrink();
-
-				}
-
-			}
-
-			return removeData.objectsDataRemoved;
-
-		},
-
-		removeObjectRecursive: function ( object, removeData ) {
-			var this$1 = this;
-
-
-			var i, l,
-				index = - 1,
-				objectData,
-				node,
-				objectRemoved;
-
-			// find index of object in objects list
-
-			// search and remove object data (fast)
-			if ( object instanceof OctreeObjectData ) {
-
-				// remove from this objects list
-
-				index = indexOfValue( this.objects, object );
-
-				if ( index !== - 1 ) {
-
-					this.objects.splice( index, 1 );
-					object.node = undefined;
-
-					removeData.objectsDataRemoved.push( object );
-
-					removeData.searchComplete = objectRemoved = true;
-
-				}
-
-			} else {
-
-				// search each object data for object and remove (slow)
-
-				for ( i = this.objects.length - 1; i >= 0; i -- ) {
-
-					objectData = this$1.objects[ i ];
-
-					if ( objectData.object === object ) {
-
-						this$1.objects.splice( i, 1 );
-						objectData.node = undefined;
-
-						removeData.objectsDataRemoved.push( objectData );
-
-						objectRemoved = true;
-
-						if ( ! objectData.faces && ! objectData.vertices ) {
-
-							removeData.searchComplete = true;
-							break;
-
-						}
-
-					}
-
-				}
-
-			}
-
-			// if object data removed and this is not on nodes removed from
-
-			if ( objectRemoved === true ) {
-
-				removeData.nodesRemovedFrom.push( this );
-
-			}
-
-			// if search not complete, search nodes
-
-			if ( removeData.searchComplete !== true ) {
-
-				for ( i = 0, l = this.nodesIndices.length; i < l; i ++ ) {
-
-					node = this$1.nodesByIndex[ this$1.nodesIndices[ i ] ];
-
-					// try removing object from node
-
-					removeData = node.removeObjectRecursive( object, removeData );
-
-					if ( removeData.searchComplete === true ) {
-
-						break;
-
-					}
-
-				}
-
-			}
-
-			return removeData;
-
-		},
-
-		checkGrow: function () {
-
-			// if object count above max
-
-			if ( this.objects.length > this.tree.objectsThreshold && this.tree.objectsThreshold > 0 ) {
-
-				this.grow();
-
-			}
-
-		},
-
-		grow: function () {
-			var this$1 = this;
-
-
-			var indexOctant,
-				object,
-				objectsExpand = [],
-				objectsExpandOctants = [],
-				objectsSplit = [],
-				objectsSplitOctants = [],
-				objectsRemaining = [],
-				i, l;
-
-			// for each object
-
-			for ( i = 0, l = this.objects.length; i < l; i ++ ) {
-
-				object = this$1.objects[ i ];
-
-				// get object octant index
-
-				indexOctant = this$1.getOctantIndex( object );
-
-				// if lies within octant
-				if ( indexOctant > - 1 ) {
-
-					objectsSplit.push( object );
-					objectsSplitOctants.push( indexOctant );
-
-				} else if ( indexOctant < - 1 ) {
-
-					// lies outside radius
-
-					objectsExpand.push( object );
-					objectsExpandOctants.push( indexOctant );
-
-				} else {
-
-					// lies across bounds between octants
-
-					objectsRemaining.push( object );
-
-				}
-
-			}
-
-			// if has objects to split
-
-			if ( objectsSplit.length > 0 ) {
-
-				objectsRemaining = objectsRemaining.concat( this.split( objectsSplit, objectsSplitOctants ) );
-
-			}
-
-			// if has objects to expand
-
-			if ( objectsExpand.length > 0 ) {
-
-				objectsRemaining = objectsRemaining.concat( this.expand( objectsExpand, objectsExpandOctants ) );
-
-			}
-
-			// store remaining
-
-			this.objects = objectsRemaining;
-
-			// merge check
-
-			this.checkMerge();
-
-		},
-
-		split: function ( objects, octants ) {
-			var this$1 = this;
-
-
-			var i, l,
-				indexOctant,
-				object,
-				node,
-				objectsRemaining;
-
-			// if not at max depth
-
-			if ( this.depth < this.tree.depthMax ) {
-
-				objects = objects || this.objects;
-
-				octants = octants || [];
-
-				objectsRemaining = [];
-
-				// for each object
-
-				for ( i = 0, l = objects.length; i < l; i ++ ) {
-
-					object = objects[ i ];
-
-					// get object octant index
-
-					indexOctant = octants[ i ];
-
-					// if object contained by octant, branch this tree
-
-					if ( indexOctant > - 1 ) {
-
-						node = this$1.branch( indexOctant );
-
-						node.addObject( object );
-
-					} else {
-
-						objectsRemaining.push( object );
-
-					}
-
-				}
-
-				// if all objects, set remaining as new objects
-
-				if ( objects === this.objects ) {
-
-					this.objects = objectsRemaining;
-
-				}
-
-			} else {
-
-				objectsRemaining = this.objects;
-
-			}
-
-			return objectsRemaining;
-
-		},
-
-		branch: function ( indexOctant ) {
-
-			var node,
-				overlap,
-				radius,
-				radiusOffset,
-				offset,
-				position;
-
-			// node exists
-
-			if ( this.nodesByIndex[ indexOctant ] instanceof OctreeNode ) {
-
-				node = this.nodesByIndex[ indexOctant ];
-
-			} else {
-
-				// properties
-
-				radius = ( this.radiusOverlap ) * 0.5;
-				overlap = radius * this.tree.overlapPct;
-				radiusOffset = radius - overlap;
-				offset = this.utilVec31Branch.set( indexOctant & 1 ? radiusOffset : - radiusOffset, indexOctant & 2 ? radiusOffset : - radiusOffset, indexOctant & 4 ? radiusOffset : - radiusOffset );
-				position = new Vector3().addVectors( this.position, offset );
-
-				// node
-
-				node = new OctreeNode( {
-					tree: this.tree,
-					parent: this,
-					position: position,
-					radius: radius,
-					indexOctant: indexOctant
-				} );
-
-				// store
-
-				this.addNode( node, indexOctant );
-
-			}
-
-			return node;
-
-		},
-
-		expand: function ( objects, octants ) {
-			var this$1 = this;
-
-
-			var i, l,
-				object,
-				objectsRemaining,
-				objectsExpand,
-				indexOctant,
-				flagsOutside,
-				indexOctantInverse,
-				iom = this.tree.INDEX_OUTSIDE_MAP,
-				indexOutsideCounts,
-				infoIndexOutside1,
-				infoIndexOutside2,
-				infoIndexOutside3,
-				indexOutsideBitwise1,
-				indexOutsideBitwise2,
-				infoPotential1,
-				infoPotential2,
-				infoPotential3,
-				indexPotentialBitwise1,
-				indexPotentialBitwise2,
-				octantX, octantY, octantZ,
-				overlap,
-				radius,
-				radiusOffset,
-				radiusParent,
-				overlapParent,
-				offset = this.utilVec31Expand,
-				position,
-				parent;
-
-			// handle max depth down tree
-
-			if ( this.tree.root.getDepthEnd() < this.tree.depthMax ) {
-
-				objects = objects || this.objects;
-				octants = octants || [];
-
-				objectsRemaining = [];
-				objectsExpand = [];
-
-				// reset counts
-
-				for ( i = 0, l = iom.length; i < l; i ++ ) {
-
-					iom[ i ].count = 0;
-
-				}
-
-				// for all outside objects, find outside octants containing most objects
-
-				for ( i = 0, l = objects.length; i < l; i ++ ) {
-
-					object = objects[ i ];
-
-					// get object octant index
-
-					indexOctant = octants[ i ];
-
-					// if object outside this, include in calculations
-
-					if ( indexOctant < - 1 ) {
-
-						// convert octant index to outside flags
-
-						flagsOutside = - indexOctant - this$1.tree.INDEX_OUTSIDE_OFFSET;
-
-						// check against bitwise flags
-
-						// x
-
-						if ( flagsOutside & this$1.tree.FLAG_POS_X ) {
-
-							iom[ this$1.tree.INDEX_OUTSIDE_POS_X ].count ++;
-
-						} else if ( flagsOutside & this$1.tree.FLAG_NEG_X ) {
-
-							iom[ this$1.tree.INDEX_OUTSIDE_NEG_X ].count ++;
-
-						}
-
-						// y
-
-						if ( flagsOutside & this$1.tree.FLAG_POS_Y ) {
-
-							iom[ this$1.tree.INDEX_OUTSIDE_POS_Y ].count ++;
-
-						} else if ( flagsOutside & this$1.tree.FLAG_NEG_Y ) {
-
-							iom[ this$1.tree.INDEX_OUTSIDE_NEG_Y ].count ++;
-
-						}
-
-						// z
-
-						if ( flagsOutside & this$1.tree.FLAG_POS_Z ) {
-
-							iom[ this$1.tree.INDEX_OUTSIDE_POS_Z ].count ++;
-
-						} else if ( flagsOutside & this$1.tree.FLAG_NEG_Z ) {
-
-							iom[ this$1.tree.INDEX_OUTSIDE_NEG_Z ].count ++;
-
-						}
-
-						// store in expand list
-
-						objectsExpand.push( object );
-
-					} else {
-
-						objectsRemaining.push( object );
-
-					}
-
-				}
-
-				// if objects to expand
-
-				if ( objectsExpand.length > 0 ) {
-
-					// shallow copy index outside map
-
-					indexOutsideCounts = iom.slice( 0 );
-
-					// sort outside index count so highest is first
-
-					indexOutsideCounts.sort( function ( a, b ) {
-
-						return b.count - a.count;
-
-					} );
-
-					// get highest outside indices
-
-					// first is first
-					infoIndexOutside1 = indexOutsideCounts[ 0 ];
-					indexOutsideBitwise1 = infoIndexOutside1.index | 1;
-
-					// second is ( one of next two bitwise OR 1 ) that is not opposite of ( first bitwise OR 1 )
-
-					infoPotential1 = indexOutsideCounts[ 1 ];
-					infoPotential2 = indexOutsideCounts[ 2 ];
-
-					infoIndexOutside2 = ( infoPotential1.index | 1 ) !== indexOutsideBitwise1 ? infoPotential1 : infoPotential2;
-					indexOutsideBitwise2 = infoIndexOutside2.index | 1;
-
-					// third is ( one of next three bitwise OR 1 ) that is not opposite of ( first or second bitwise OR 1 )
-
-					infoPotential1 = indexOutsideCounts[ 2 ];
-					infoPotential2 = indexOutsideCounts[ 3 ];
-					infoPotential3 = indexOutsideCounts[ 4 ];
-
-					indexPotentialBitwise1 = infoPotential1.index | 1;
-					indexPotentialBitwise2 = infoPotential2.index | 1;
-
-					infoIndexOutside3 = indexPotentialBitwise1 !== indexOutsideBitwise1 && indexPotentialBitwise1 !== indexOutsideBitwise2 ? infoPotential1 : indexPotentialBitwise2 !== indexOutsideBitwise1 && indexPotentialBitwise2 !== indexOutsideBitwise2 ? infoPotential2 : infoPotential3;
-
-					// get this octant normal based on outside octant indices
-
-					octantX = infoIndexOutside1.x + infoIndexOutside2.x + infoIndexOutside3.x;
-					octantY = infoIndexOutside1.y + infoIndexOutside2.y + infoIndexOutside3.y;
-					octantZ = infoIndexOutside1.z + infoIndexOutside2.z + infoIndexOutside3.z;
-
-					// get this octant indices based on octant normal
-
-					indexOctant = this.getOctantIndexFromPosition( octantX, octantY, octantZ );
-					indexOctantInverse = this.getOctantIndexFromPosition( - octantX, - octantY, - octantZ );
-
-					// properties
-
-					overlap = this.overlap;
-					radius = this.radius;
-
-					// radius of parent comes from reversing overlap of this, unless overlap percent is 0
-
-					radiusParent = this.tree.overlapPct > 0 ? overlap / ( ( 0.5 * this.tree.overlapPct ) * ( 1 + this.tree.overlapPct ) ) : radius * 2;
-					overlapParent = radiusParent * this.tree.overlapPct;
-
-					// parent offset is difference between radius + overlap of parent and child
-
-					radiusOffset = ( radiusParent + overlapParent ) - ( radius + overlap );
-					offset.set( indexOctant & 1 ? radiusOffset : - radiusOffset, indexOctant & 2 ? radiusOffset : - radiusOffset, indexOctant & 4 ? radiusOffset : - radiusOffset );
-					position = new Vector3().addVectors( this.position, offset );
-
-					// parent
-
-					parent = new OctreeNode( {
-						tree: this.tree,
-						position: position,
-						radius: radiusParent
-					} );
-
-					// set self as node of parent
-
-					parent.addNode( this, indexOctantInverse );
-
-					// set parent as root
-
-					this.tree.setRoot( parent );
-
-					// add all expand objects to parent
-
-					for ( i = 0, l = objectsExpand.length; i < l; i ++ ) {
-
-						this$1.tree.root.addObject( objectsExpand[ i ] );
-
-					}
-
-				}
-
-				// if all objects, set remaining as new objects
-
-				if ( objects === this.objects ) {
-
-					this.objects = objectsRemaining;
-
-				}
-
-			} else {
-
-				objectsRemaining = objects;
-
-			}
-
-			return objectsRemaining;
-
-		},
-
-		shrink: function () {
-
-			// merge check
-
-			this.checkMerge();
-
-			// contract check
-
-			this.tree.root.checkContract();
-
-		},
-
-		checkMerge: function () {
-
-			var nodeParent = this,
-				nodeMerge;
-
-			// traverse up tree as long as node + entire subtree's object count is under minimum
-
-			while ( nodeParent.parent instanceof OctreeNode && nodeParent.getObjectCountEnd() < this.tree.objectsThreshold ) {
-
-				nodeMerge = nodeParent;
-				nodeParent = nodeParent.parent;
-
-			}
-
-			// if parent node is not this, merge entire subtree into merge node
-
-			if ( nodeParent !== this ) {
-
-				nodeParent.merge( nodeMerge );
-
-			}
-
-		},
-
-		merge: function ( nodes ) {
-			var this$1 = this;
-
-
-			var i, l,
-				node;
-
-			// handle nodes
-
-			nodes = toArray( nodes );
-
-			for ( i = 0, l = nodes.length; i < l; i ++ ) {
-
-				node = nodes[ i ];
-
-				// gather node + all subtree objects
-
-				this$1.addObjectWithoutCheck( node.getObjectsEnd() );
-
-				// reset node + entire subtree
-
-				node.reset( true, true );
-
-				// remove node
-
-				this$1.removeNode( node.indexOctant, node );
-
-			}
-
-			// merge check
-
-			this.checkMerge();
-
-		},
-
-		checkContract: function () {
-			var this$1 = this;
-
-
-			var i, l,
-				node,
-				nodeObjectsCount,
-				nodeHeaviest,
-				nodeHeaviestObjectsCount,
-				outsideHeaviestObjectsCount;
-
-			// find node with highest object count
-
-			if ( this.nodesIndices.length > 0 ) {
-
-				nodeHeaviestObjectsCount = 0;
-				outsideHeaviestObjectsCount = this.objects.length;
-
-				for ( i = 0, l = this.nodesIndices.length; i < l; i ++ ) {
-
-					node = this$1.nodesByIndex[ this$1.nodesIndices[ i ] ];
-
-					nodeObjectsCount = node.getObjectCountEnd();
-					outsideHeaviestObjectsCount += nodeObjectsCount;
-
-					if ( nodeHeaviest instanceof OctreeNode === false || nodeObjectsCount > nodeHeaviestObjectsCount ) {
-
-						nodeHeaviest = node;
-						nodeHeaviestObjectsCount = nodeObjectsCount;
-
-					}
-
-				}
-
-				// subtract heaviest count from outside count
-
-				outsideHeaviestObjectsCount -= nodeHeaviestObjectsCount;
-
-				// if should contract
-
-				if ( outsideHeaviestObjectsCount < this.tree.objectsThreshold && nodeHeaviest instanceof OctreeNode ) {
-
-					this.contract( nodeHeaviest );
-
-				}
-
-			}
-
-		},
-
-		contract: function ( nodeRoot ) {
-			var this$1 = this;
-
-
-			var i, l,
-				node;
-
-			// handle all nodes
-
-			for ( i = 0, l = this.nodesIndices.length; i < l; i ++ ) {
-
-				node = this$1.nodesByIndex[ this$1.nodesIndices[ i ] ];
-
-				// if node is not new root
-
-				if ( node !== nodeRoot ) {
-
-					// add node + all subtree objects to root
-
-					nodeRoot.addObjectWithoutCheck( node.getObjectsEnd() );
-
-					// reset node + entire subtree
-
-					node.reset( true, true );
-
-				}
-
-			}
-
-			// add own objects to root
-
-			nodeRoot.addObjectWithoutCheck( this.objects );
-
-			// reset self
-
-			this.reset( false, true );
-
-			// set new root
-
-			this.tree.setRoot( nodeRoot );
-
-			// contract check on new root
-
-			nodeRoot.checkContract();
-
-		},
-
-		getOctantIndex: function ( objectData ) {
-
-			var positionObj,
-				radiusObj,
-				position = this.position,
-				radiusOverlap = this.radiusOverlap,
-				overlap = this.overlap,
-				deltaX, deltaY, deltaZ,
-				distX, distY, distZ,
-				distance,
-				indexOctant = 0;
-
-			// handle type
-
-			if ( objectData instanceof OctreeObjectData ) {
-
-				radiusObj = objectData.radius;
-
-				positionObj = objectData.position;
-
-				// update object data position last
-
-				objectData.positionLast.copy( positionObj );
-
-			} else if ( objectData instanceof OctreeNode ) {
-
-				positionObj = objectData.position;
-
-				radiusObj = 0;
-
-			}
-
-			// find delta and distance
-
-			deltaX = positionObj.x - position.x;
-			deltaY = positionObj.y - position.y;
-			deltaZ = positionObj.z - position.z;
-
-			distX = Math.abs( deltaX );
-			distY = Math.abs( deltaY );
-			distZ = Math.abs( deltaZ );
-			distance = Math.max( distX, distY, distZ );
-
-			// if outside, use bitwise flags to indicate on which sides object is outside of
-
-			if ( distance + radiusObj > radiusOverlap ) {
-
-				// x
-
-				if ( distX + radiusObj > radiusOverlap ) {
-
-					indexOctant = indexOctant ^ ( deltaX > 0 ? this.tree.FLAG_POS_X : this.tree.FLAG_NEG_X );
-
-				}
-
-				// y
-
-				if ( distY + radiusObj > radiusOverlap ) {
-
-					indexOctant = indexOctant ^ ( deltaY > 0 ? this.tree.FLAG_POS_Y : this.tree.FLAG_NEG_Y );
-
-				}
-
-				// z
-
-				if ( distZ + radiusObj > radiusOverlap ) {
-
-					indexOctant = indexOctant ^ ( deltaZ > 0 ? this.tree.FLAG_POS_Z : this.tree.FLAG_NEG_Z );
-
-				}
-
-				objectData.indexOctant = - indexOctant - this.tree.INDEX_OUTSIDE_OFFSET;
-
-				return objectData.indexOctant;
-
-			}
-
-			// return octant index from delta xyz
-
-			if ( deltaX - radiusObj > - overlap ) {
-
-				// x right
-
-				indexOctant = indexOctant | 1;
-
-			} else if ( ! ( deltaX + radiusObj < overlap ) ) {
-
-				// x left
-
-				objectData.indexOctant = this.tree.INDEX_INSIDE_CROSS;
-				return objectData.indexOctant;
-
-			}
-
-			if ( deltaY - radiusObj > - overlap ) {
-
-				// y right
-
-				indexOctant = indexOctant | 2;
-
-			} else if ( ! ( deltaY + radiusObj < overlap ) ) {
-
-				// y left
-
-				objectData.indexOctant = this.tree.INDEX_INSIDE_CROSS;
-				return objectData.indexOctant;
-
-			}
-			if ( deltaZ - radiusObj > - overlap ) {
-
-				// z right
-
-				indexOctant = indexOctant | 4;
-
-			} else if ( ! ( deltaZ + radiusObj < overlap ) ) {
-
-				// z left
-
-				objectData.indexOctant = this.tree.INDEX_INSIDE_CROSS;
-				return objectData.indexOctant;
-
-			}
-
-			objectData.indexOctant = indexOctant;
-			return objectData.indexOctant;
-
-		},
-
-		getOctantIndexFromPosition: function ( x, y, z ) {
-
-			var indexOctant = 0;
-
-			if ( x > 0 ) {
-
-				indexOctant = indexOctant | 1;
-
-			}
-
-			if ( y > 0 ) {
-
-				indexOctant = indexOctant | 2;
-
-			}
-
-			if ( z > 0 ) {
-
-				indexOctant = indexOctant | 4;
-
-			}
-
-			return indexOctant;
-
-		},
-
-		search: function ( position, radius, objects, direction, directionPct ) {
-			var this$1 = this;
-
-
-			var i, l,
-				node,
-				intersects;
-
-			// test intersects by parameters
-
-			if ( direction ) {
-
-				intersects = this.intersectRay( position, direction, radius, directionPct );
-
-			} else {
-
-				intersects = this.intersectSphere( position, radius );
-
-			}
-
-			// if intersects
-
-			if ( intersects === true ) {
-
-				// gather objects
-
-				objects = objects.concat( this.objects );
-
-				// search subtree
-
-				for ( i = 0, l = this.nodesIndices.length; i < l; i ++ ) {
-
-					node = this$1.nodesByIndex[ this$1.nodesIndices[ i ] ];
-
-					objects = node.search( position, radius, objects, direction );
-
-				}
-
-			}
-
-			return objects;
-
-		},
-
-		intersectSphere: function ( position, radius ) {
-
-			var	distance = radius * radius,
-				px = position.x,
-				py = position.y,
-				pz = position.z;
-
-			if ( px < this.left ) {
-
-				distance -= Math.pow( px - this.left, 2 );
-
-			} else if ( px > this.right ) {
-
-				distance -= Math.pow( px - this.right, 2 );
-
-			}
-
-			if ( py < this.bottom ) {
-
-				distance -= Math.pow( py - this.bottom, 2 );
-
-			} else if ( py > this.top ) {
-
-				distance -= Math.pow( py - this.top, 2 );
-
-			}
-
-			if ( pz < this.back ) {
-
-				distance -= Math.pow( pz - this.back, 2 );
-
-			} else if ( pz > this.front ) {
-
-				distance -= Math.pow( pz - this.front, 2 );
-
-			}
-
-			return distance >= 0;
-
-		},
-
-		intersectRay: function ( origin, direction, distance, directionPct ) {
-
-			if ( typeof directionPct === 'undefined' ) {
-
-				directionPct = this.utilVec31Ray.set( 1, 1, 1 ).divide( direction );
-
-			}
-
-			var t1 = ( this.left - origin.x ) * directionPct.x,
-				t2 = ( this.right - origin.x ) * directionPct.x,
-				t3 = ( this.bottom - origin.y ) * directionPct.y,
-				t4 = ( this.top - origin.y ) * directionPct.y,
-				t5 = ( this.back - origin.z ) * directionPct.z,
-				t6 = ( this.front - origin.z ) * directionPct.z,
-				tmax = Math.min( Math.min( Math.max( t1, t2 ), Math.max( t3, t4 ) ), Math.max( t5, t6 ) ),
-				tmin;
-
-			// ray would intersect in reverse direction, i.e. this is behind ray
-			if ( tmax < 0 ) {
-
-				return false;
-
-			}
-
-			tmin = Math.max( Math.max( Math.min( t1, t2 ), Math.min( t3, t4 ) ), Math.min( t5, t6 ) );
-
-			// if tmin > tmax or tmin > ray distance, ray doesn't intersect AABB
-			if ( tmin > tmax || tmin > distance ) {
-
-				return false;
-
-			}
-
-			return true;
-
-		},
-
-		getDepthEnd: function ( depth ) {
-			var this$1 = this;
-
-
-			var i, l,
-				node;
-
-			if ( this.nodesIndices.length > 0 ) {
-
-				for ( i = 0, l = this.nodesIndices.length; i < l; i ++ ) {
-
-					node = this$1.nodesByIndex[ this$1.nodesIndices[ i ] ];
-
-					depth = node.getDepthEnd( depth );
-
-				}
-
-			} else {
-
-				depth = ! depth || this.depth > depth ? this.depth : depth;
-
-			}
-
-			return depth;
-
-		},
-
-		getNodeCountEnd: function () {
-
-			return this.tree.root.getNodeCountRecursive() + 1;
-
-		},
-
-		getNodeCountRecursive: function () {
-			var this$1 = this;
-
-
-			var i, l,
-				count = this.nodesIndices.length;
-
-			for ( i = 0, l = this.nodesIndices.length; i < l; i ++ ) {
-
-				count += this$1.nodesByIndex[ this$1.nodesIndices[ i ] ].getNodeCountRecursive();
-
-			}
-
-			return count;
-
-		},
-
-		getObjectsEnd: function ( objects ) {
-			var this$1 = this;
-
-
-			var i, l,
-				node;
-
-			objects = ( objects || [] ).concat( this.objects );
-
-			for ( i = 0, l = this.nodesIndices.length; i < l; i ++ ) {
-
-				node = this$1.nodesByIndex[ this$1.nodesIndices[ i ] ];
-
-				objects = node.getObjectsEnd( objects );
-
-			}
-
-			return objects;
-
-		},
-
-		getObjectCountEnd: function () {
-			var this$1 = this;
-
-
-			var i, l,
-				count = this.objects.length;
-
-			for ( i = 0, l = this.nodesIndices.length; i < l; i ++ ) {
-
-				count += this$1.nodesByIndex[ this$1.nodesIndices[ i ] ].getObjectCountEnd();
-
-			}
-
-			return count;
-
-		},
-
-		getObjectCountStart: function () {
-
-			var count = this.objects.length,
-				parent = this.parent;
-
-			while ( parent instanceof OctreeNode ) {
-
-				count += parent.objects.length;
-				parent = parent.parent;
-
-			}
-
-			return count;
-
-		},
-
-		toConsole: function ( space ) {
-			var this$1 = this;
-
-
-			var i, l,
-				node,
-				spaceAddition = '   ';
-
-			space = typeof space === 'string' ? space : spaceAddition;
-
-			console.log( ( this.parent ? space + ' octree NODE > ' : ' octree ROOT > ' ), this, ' // id: ', this.id, ' // indexOctant: ', this.indexOctant, ' // position: ', this.position.x, this.position.y, this.position.z, ' // radius: ', this.radius, ' // depth: ', this.depth );
-			console.log( ( this.parent ? space + ' ' : ' ' ), '+ objects ( ', this.objects.length, ' ) ', this.objects );
-			console.log( ( this.parent ? space + ' ' : ' ' ), '+ children ( ', this.nodesIndices.length, ' )', this.nodesIndices, this.nodesByIndex );
-
-			for ( i = 0, l = this.nodesIndices.length; i < l; i ++ ) {
-
-				node = this$1.nodesByIndex[ this$1.nodesIndices[ i ] ];
-
-				node.toConsole( space + spaceAddition );
-
-			}
-
-		}
-
-	};
-	Raycaster.prototype.intersectOctreeObject = function ( object, recursive ) {
-
-		var intersects,
-			octreeObject,
-			facesAll,
-			facesSearch;
-
-		if ( object.object instanceof Object3D ) {
-
-			octreeObject = object;
-			object = octreeObject.object;
-
-			// temporarily replace object geometry's faces with octree object faces
-
-			facesSearch = octreeObject.faces;
-			facesAll = object.geometry.faces;
-
-			if ( facesSearch.length > 0 ) {
-
-				object.geometry.faces = facesSearch;
-
-			}
-
-			// intersect
-
-			intersects = this.intersectObject( object, recursive );
-
-			// revert object geometry's faces
-
-			if ( facesSearch.length > 0 ) {
-
-				object.geometry.faces = facesAll;
-
-			}
-
-		} else {
-
-			intersects = this.intersectObject( object, recursive );
-
-		}
-
-		return intersects;
-
-	};
-
-	Raycaster.prototype.intersectOctreeObjects = function ( objects, recursive ) {
-		var this$1 = this;
-
-
-		var i, il,
-			intersects = [];
-
-		for ( i = 0, il = objects.length; i < il; i ++ ) {
-
-			intersects = intersects.concat( this$1.intersectOctreeObject( objects[ i ], recursive ) );
-
-		}
-
-		return intersects;
-
-	};
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var PMREMCubeUVPacker = ( function () {
@@ -105645,331 +107355,6 @@ SSAARenderPass.JitterVectors = [
 ];
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Ported from Stefan Gustavson's java implementation
-// http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
-// Read Stefan's excellent paper for details on how this code works.
-//
-// Sean McCullough banksean@gmail.com
-//
-// Added 4D noise
-// Joshua Koo zz85nus@gmail.com 
-var SimplexNoise = function(r) {
-	var this$1 = this;
-
-	if (r == undefined) { r = Math; }
-	this.grad3 = [[ 1,1,0 ],[ -1,1,0 ],[ 1,-1,0 ],[ -1,-1,0 ], 
-                                 [ 1,0,1 ],[ -1,0,1 ],[ 1,0,-1 ],[ -1,0,-1 ], 
-                                 [ 0,1,1 ],[ 0,-1,1 ],[ 0,1,-1 ],[ 0,-1,-1 ]]; 
-
-	this.grad4 = [[ 0,1,1,1 ], [ 0,1,1,-1 ], [ 0,1,-1,1 ], [ 0,1,-1,-1 ],
-	     [ 0,-1,1,1 ], [ 0,-1,1,-1 ], [ 0,-1,-1,1 ], [ 0,-1,-1,-1 ],
-	     [ 1,0,1,1 ], [ 1,0,1,-1 ], [ 1,0,-1,1 ], [ 1,0,-1,-1 ],
-	     [ -1,0,1,1 ], [ -1,0,1,-1 ], [ -1,0,-1,1 ], [ -1,0,-1,-1 ],
-	     [ 1,1,0,1 ], [ 1,1,0,-1 ], [ 1,-1,0,1 ], [ 1,-1,0,-1 ],
-	     [ -1,1,0,1 ], [ -1,1,0,-1 ], [ -1,-1,0,1 ], [ -1,-1,0,-1 ],
-	     [ 1,1,1,0 ], [ 1,1,-1,0 ], [ 1,-1,1,0 ], [ 1,-1,-1,0 ],
-	     [ -1,1,1,0 ], [ -1,1,-1,0 ], [ -1,-1,1,0 ], [ -1,-1,-1,0 ]];
-
-	this.p = [];
-	for (var i = 0; i < 256; i ++) {
-		this$1.p[i] = Math.floor(r.random() * 256);
-	}
-  // To remove the need for index wrapping, double the permutation table length 
-	this.perm = []; 
-	for (var i = 0; i < 512; i ++) {
-		this$1.perm[i] = this$1.p[i & 255];
-	} 
-
-  // A lookup table to traverse the simplex around a given point in 4D. 
-  // Details can be found where this table is used, in the 4D noise method. 
-	this.simplex = [ 
-    [ 0,1,2,3 ],[ 0,1,3,2 ],[ 0,0,0,0 ],[ 0,2,3,1 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 1,2,3,0 ], 
-    [ 0,2,1,3 ],[ 0,0,0,0 ],[ 0,3,1,2 ],[ 0,3,2,1 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 1,3,2,0 ], 
-    [ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ], 
-    [ 1,2,0,3 ],[ 0,0,0,0 ],[ 1,3,0,2 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 2,3,0,1 ],[ 2,3,1,0 ], 
-    [ 1,0,2,3 ],[ 1,0,3,2 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 2,0,3,1 ],[ 0,0,0,0 ],[ 2,1,3,0 ], 
-    [ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ], 
-    [ 2,0,1,3 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 3,0,1,2 ],[ 3,0,2,1 ],[ 0,0,0,0 ],[ 3,1,2,0 ], 
-    [ 2,1,0,3 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 0,0,0,0 ],[ 3,1,0,2 ],[ 0,0,0,0 ],[ 3,2,0,1 ],[ 3,2,1,0 ]]; 
-};
-
-SimplexNoise.prototype.dot = function(g, x, y) { 
-	return g[0] * x + g[1] * y;
-};
-
-SimplexNoise.prototype.dot3 = function(g, x, y, z) {
-	return g[0] * x + g[1] * y + g[2] * z; 
-};
-
-SimplexNoise.prototype.dot4 = function(g, x, y, z, w) {
-	return g[0] * x + g[1] * y + g[2] * z + g[3] * w;
-};
-
-SimplexNoise.prototype.noise = function(xin, yin) { 
-	var n0, n1, n2; // Noise contributions from the three corners 
-  // Skew the input space to determine which simplex cell we're in 
-	var F2 = 0.5 * (Math.sqrt(3.0) - 1.0); 
-	var s = (xin + yin) * F2; // Hairy factor for 2D 
-	var i = Math.floor(xin + s); 
-	var j = Math.floor(yin + s); 
-	var G2 = (3.0 - Math.sqrt(3.0)) / 6.0; 
-	var t = (i + j) * G2; 
-	var X0 = i - t; // Unskew the cell origin back to (x,y) space 
-	var Y0 = j - t; 
-	var x0 = xin - X0; // The x,y distances from the cell origin 
-	var y0 = yin - Y0; 
-  // For the 2D case, the simplex shape is an equilateral triangle. 
-  // Determine which simplex we are in. 
-	var i1, j1; // Offsets for second (middle) corner of simplex in (i,j) coords 
-	if (x0 > y0) {i1 = 1; j1 = 0;} // lower triangle, XY order: (0,0)->(1,0)->(1,1) 
-	else {i1 = 0; j1 = 1;}      // upper triangle, YX order: (0,0)->(0,1)->(1,1) 
-  // A step of (1,0) in (i,j) means a step of (1-c,-c) in (x,y), and 
-  // a step of (0,1) in (i,j) means a step of (-c,1-c) in (x,y), where 
-  // c = (3-sqrt(3))/6 
-	var x1 = x0 - i1 + G2; // Offsets for middle corner in (x,y) unskewed coords 
-	var y1 = y0 - j1 + G2; 
-	var x2 = x0 - 1.0 + 2.0 * G2; // Offsets for last corner in (x,y) unskewed coords 
-	var y2 = y0 - 1.0 + 2.0 * G2; 
-  // Work out the hashed gradient indices of the three simplex corners 
-	var ii = i & 255; 
-	var jj = j & 255; 
-	var gi0 = this.perm[ii + this.perm[jj]] % 12; 
-	var gi1 = this.perm[ii + i1 + this.perm[jj + j1]] % 12; 
-	var gi2 = this.perm[ii + 1 + this.perm[jj + 1]] % 12; 
-  // Calculate the contribution from the three corners 
-	var t0 = 0.5 - x0 * x0 - y0 * y0; 
-	if (t0 < 0) { n0 = 0.0; } 
-	else { 
-		t0 *= t0; 
-		n0 = t0 * t0 * this.dot(this.grad3[gi0], x0, y0);  // (x,y) of grad3 used for 2D gradient 
-	} 
-	var t1 = 0.5 - x1 * x1 - y1 * y1; 
-	if (t1 < 0) { n1 = 0.0; } 
-	else { 
-		t1 *= t1; 
-		n1 = t1 * t1 * this.dot(this.grad3[gi1], x1, y1); 
-	}
-	var t2 = 0.5 - x2 * x2 - y2 * y2; 
-	if (t2 < 0) { n2 = 0.0; } 
-	else { 
-		t2 *= t2; 
-		n2 = t2 * t2 * this.dot(this.grad3[gi2], x2, y2); 
-	} 
-  // Add contributions from each corner to get the final noise value. 
-  // The result is scaled to return values in the interval [-1,1]. 
-	return 70.0 * (n0 + n1 + n2); 
-};
-
-// 3D simplex noise 
-SimplexNoise.prototype.noise3d = function(xin, yin, zin) { 
-	var n0, n1, n2, n3; // Noise contributions from the four corners 
-  // Skew the input space to determine which simplex cell we're in 
-	var F3 = 1.0 / 3.0; 
-	var s = (xin + yin + zin) * F3; // Very nice and simple skew factor for 3D 
-	var i = Math.floor(xin + s); 
-	var j = Math.floor(yin + s); 
-	var k = Math.floor(zin + s); 
-	var G3 = 1.0 / 6.0; // Very nice and simple unskew factor, too 
-	var t = (i + j + k) * G3; 
-	var X0 = i - t; // Unskew the cell origin back to (x,y,z) space 
-	var Y0 = j - t; 
-	var Z0 = k - t; 
-	var x0 = xin - X0; // The x,y,z distances from the cell origin 
-	var y0 = yin - Y0; 
-	var z0 = zin - Z0; 
-  // For the 3D case, the simplex shape is a slightly irregular tetrahedron. 
-  // Determine which simplex we are in. 
-	var i1, j1, k1; // Offsets for second corner of simplex in (i,j,k) coords 
-	var i2, j2, k2; // Offsets for third corner of simplex in (i,j,k) coords 
-	if (x0 >= y0) { 
-		if (y0 >= z0) 
-      { i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 1; k2 = 0; } // X Y Z order 
-      else if (x0 >= z0) { i1 = 1; j1 = 0; k1 = 0; i2 = 1; j2 = 0; k2 = 1; } // X Z Y order 
-		else { i1 = 0; j1 = 0; k1 = 1; i2 = 1; j2 = 0; k2 = 1; } // Z X Y order 
-	} 
-	else { // x0<y0 
-		if (y0 < z0) { i1 = 0; j1 = 0; k1 = 1; i2 = 0; j2 = 1; k2 = 1; } // Z Y X order 
-    else if (x0 < z0) { i1 = 0; j1 = 1; k1 = 0; i2 = 0; j2 = 1; k2 = 1; } // Y Z X order 
-		else { i1 = 0; j1 = 1; k1 = 0; i2 = 1; j2 = 1; k2 = 0; } // Y X Z order 
-	} 
-  // A step of (1,0,0) in (i,j,k) means a step of (1-c,-c,-c) in (x,y,z), 
-  // a step of (0,1,0) in (i,j,k) means a step of (-c,1-c,-c) in (x,y,z), and 
-  // a step of (0,0,1) in (i,j,k) means a step of (-c,-c,1-c) in (x,y,z), where 
-  // c = 1/6.
-	var x1 = x0 - i1 + G3; // Offsets for second corner in (x,y,z) coords 
-	var y1 = y0 - j1 + G3; 
-	var z1 = z0 - k1 + G3; 
-	var x2 = x0 - i2 + 2.0 * G3; // Offsets for third corner in (x,y,z) coords 
-	var y2 = y0 - j2 + 2.0 * G3; 
-	var z2 = z0 - k2 + 2.0 * G3; 
-	var x3 = x0 - 1.0 + 3.0 * G3; // Offsets for last corner in (x,y,z) coords 
-	var y3 = y0 - 1.0 + 3.0 * G3; 
-	var z3 = z0 - 1.0 + 3.0 * G3; 
-  // Work out the hashed gradient indices of the four simplex corners 
-	var ii = i & 255; 
-	var jj = j & 255; 
-	var kk = k & 255; 
-	var gi0 = this.perm[ii + this.perm[jj + this.perm[kk]]] % 12; 
-	var gi1 = this.perm[ii + i1 + this.perm[jj + j1 + this.perm[kk + k1]]] % 12; 
-	var gi2 = this.perm[ii + i2 + this.perm[jj + j2 + this.perm[kk + k2]]] % 12; 
-	var gi3 = this.perm[ii + 1 + this.perm[jj + 1 + this.perm[kk + 1]]] % 12; 
-  // Calculate the contribution from the four corners 
-	var t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0; 
-	if (t0 < 0) { n0 = 0.0; } 
-	else { 
-		t0 *= t0; 
-		n0 = t0 * t0 * this.dot3(this.grad3[gi0], x0, y0, z0); 
-	}
-	var t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1; 
-	if (t1 < 0) { n1 = 0.0; } 
-	else { 
-		t1 *= t1; 
-		n1 = t1 * t1 * this.dot3(this.grad3[gi1], x1, y1, z1); 
-	} 
-	var t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2; 
-	if (t2 < 0) { n2 = 0.0; } 
-	else { 
-		t2 *= t2; 
-		n2 = t2 * t2 * this.dot3(this.grad3[gi2], x2, y2, z2); 
-	} 
-	var t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3; 
-	if (t3 < 0) { n3 = 0.0; } 
-	else { 
-		t3 *= t3; 
-		n3 = t3 * t3 * this.dot3(this.grad3[gi3], x3, y3, z3); 
-	} 
-  // Add contributions from each corner to get the final noise value. 
-  // The result is scaled to stay just inside [-1,1] 
-	return 32.0 * (n0 + n1 + n2 + n3); 
-};
-
-// 4D simplex noise
-SimplexNoise.prototype.noise4d = function( x, y, z, w ) {
-	// For faster and easier lookups
-	var grad4 = this.grad4;
-	var simplex = this.simplex;
-	var perm = this.perm;
-	
-   // The skewing and unskewing factors are hairy again for the 4D case
-	var F4 = (Math.sqrt(5.0) - 1.0) / 4.0;
-	var G4 = (5.0 - Math.sqrt(5.0)) / 20.0;
-	var n0, n1, n2, n3, n4; // Noise contributions from the five corners
-   // Skew the (x,y,z,w) space to determine which cell of 24 simplices we're in
-	var s = (x + y + z + w) * F4; // Factor for 4D skewing
-	var i = Math.floor(x + s);
-	var j = Math.floor(y + s);
-	var k = Math.floor(z + s);
-	var l = Math.floor(w + s);
-	var t = (i + j + k + l) * G4; // Factor for 4D unskewing
-	var X0 = i - t; // Unskew the cell origin back to (x,y,z,w) space
-	var Y0 = j - t;
-	var Z0 = k - t;
-	var W0 = l - t;
-	var x0 = x - X0;  // The x,y,z,w distances from the cell origin
-	var y0 = y - Y0;
-	var z0 = z - Z0;
-	var w0 = w - W0;
-
-   // For the 4D case, the simplex is a 4D shape I won't even try to describe.
-   // To find out which of the 24 possible simplices we're in, we need to
-   // determine the magnitude ordering of x0, y0, z0 and w0.
-   // The method below is a good way of finding the ordering of x,y,z,w and
-   // then find the correct traversal order for the simplex we’re in.
-   // First, six pair-wise comparisons are performed between each possible pair
-   // of the four coordinates, and the results are used to add up binary bits
-   // for an integer index.
-	var c1 = (x0 > y0) ? 32 : 0;
-	var c2 = (x0 > z0) ? 16 : 0;
-	var c3 = (y0 > z0) ? 8 : 0;
-	var c4 = (x0 > w0) ? 4 : 0;
-	var c5 = (y0 > w0) ? 2 : 0;
-	var c6 = (z0 > w0) ? 1 : 0;
-	var c = c1 + c2 + c3 + c4 + c5 + c6;
-	var i1, j1, k1, l1; // The integer offsets for the second simplex corner
-	var i2, j2, k2, l2; // The integer offsets for the third simplex corner
-	var i3, j3, k3, l3; // The integer offsets for the fourth simplex corner
-   // simplex[c] is a 4-vector with the numbers 0, 1, 2 and 3 in some order.
-   // Many values of c will never occur, since e.g. x>y>z>w makes x<z, y<w and x<w
-   // impossible. Only the 24 indices which have non-zero entries make any sense.
-   // We use a thresholding to set the coordinates in turn from the largest magnitude.
-   // The number 3 in the "simplex" array is at the position of the largest coordinate.
-	i1 = simplex[c][0] >= 3 ? 1 : 0;
-	j1 = simplex[c][1] >= 3 ? 1 : 0;
-	k1 = simplex[c][2] >= 3 ? 1 : 0;
-	l1 = simplex[c][3] >= 3 ? 1 : 0;
-   // The number 2 in the "simplex" array is at the second largest coordinate.
-	i2 = simplex[c][0] >= 2 ? 1 : 0;
-	j2 = simplex[c][1] >= 2 ? 1 : 0;    k2 = simplex[c][2] >= 2 ? 1 : 0;
-	l2 = simplex[c][3] >= 2 ? 1 : 0;
-   // The number 1 in the "simplex" array is at the second smallest coordinate.
-	i3 = simplex[c][0] >= 1 ? 1 : 0;
-	j3 = simplex[c][1] >= 1 ? 1 : 0;
-	k3 = simplex[c][2] >= 1 ? 1 : 0;
-	l3 = simplex[c][3] >= 1 ? 1 : 0;
-   // The fifth corner has all coordinate offsets = 1, so no need to look that up.
-	var x1 = x0 - i1 + G4; // Offsets for second corner in (x,y,z,w) coords
-	var y1 = y0 - j1 + G4;
-	var z1 = z0 - k1 + G4;
-	var w1 = w0 - l1 + G4;
-	var x2 = x0 - i2 + 2.0 * G4; // Offsets for third corner in (x,y,z,w) coords
-	var y2 = y0 - j2 + 2.0 * G4;
-	var z2 = z0 - k2 + 2.0 * G4;
-	var w2 = w0 - l2 + 2.0 * G4;
-	var x3 = x0 - i3 + 3.0 * G4; // Offsets for fourth corner in (x,y,z,w) coords
-	var y3 = y0 - j3 + 3.0 * G4;
-	var z3 = z0 - k3 + 3.0 * G4;
-	var w3 = w0 - l3 + 3.0 * G4;
-	var x4 = x0 - 1.0 + 4.0 * G4; // Offsets for last corner in (x,y,z,w) coords
-	var y4 = y0 - 1.0 + 4.0 * G4;
-	var z4 = z0 - 1.0 + 4.0 * G4;
-	var w4 = w0 - 1.0 + 4.0 * G4;
-   // Work out the hashed gradient indices of the five simplex corners
-	var ii = i & 255;
-	var jj = j & 255;
-	var kk = k & 255;
-	var ll = l & 255;
-	var gi0 = perm[ii + perm[jj + perm[kk + perm[ll]]]] % 32;
-	var gi1 = perm[ii + i1 + perm[jj + j1 + perm[kk + k1 + perm[ll + l1]]]] % 32;
-	var gi2 = perm[ii + i2 + perm[jj + j2 + perm[kk + k2 + perm[ll + l2]]]] % 32;
-	var gi3 = perm[ii + i3 + perm[jj + j3 + perm[kk + k3 + perm[ll + l3]]]] % 32;
-	var gi4 = perm[ii + 1 + perm[jj + 1 + perm[kk + 1 + perm[ll + 1]]]] % 32;
-   // Calculate the contribution from the five corners
-	var t0 = 0.6 - x0 * x0 - y0 * y0 - z0 * z0 - w0 * w0;
-	if (t0 < 0) { n0 = 0.0; }
-	else {
-		t0 *= t0;
-		n0 = t0 * t0 * this.dot4(grad4[gi0], x0, y0, z0, w0);
-	}
-	var t1 = 0.6 - x1 * x1 - y1 * y1 - z1 * z1 - w1 * w1;
-	if (t1 < 0) { n1 = 0.0; }
-	else {
-		t1 *= t1;
-		n1 = t1 * t1 * this.dot4(grad4[gi1], x1, y1, z1, w1);
-	}
-	var t2 = 0.6 - x2 * x2 - y2 * y2 - z2 * z2 - w2 * w2;
-	if (t2 < 0) { n2 = 0.0; }
-	else {
-		t2 *= t2;
-		n2 = t2 * t2 * this.dot4(grad4[gi2], x2, y2, z2, w2);
-	}   var t3 = 0.6 - x3 * x3 - y3 * y3 - z3 * z3 - w3 * w3;
-	if (t3 < 0) { n3 = 0.0; }
-	else {
-		t3 *= t3;
-		n3 = t3 * t3 * this.dot4(grad4[gi3], x3, y3, z3, w3);
-	}
-	var t4 = 0.6 - x4 * x4 - y4 * y4 - z4 * z4 - w4 * w4;
-	if (t4 < 0) { n4 = 0.0; }
-	else {
-		t4 *= t4;
-		n4 = t4 * t4 * this.dot4(grad4[gi4], x4, y4, z4, w4);
-	}
-   // Sum up and scale the result to cover the range [-1,1]
-	return 27.0 * (n0 + n1 + n2 + n3 + n4);
-};
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 var SSAOShader = {
 
 	defines: {
@@ -107658,9 +109043,9 @@ var CSS3DRenderer = function () {
 			}
 
 			var element = object.element;
-			var cachedStyle = cache.objects.get( object );
+			var cachedObject = cache.objects.get( object );
 
-			if ( cachedStyle === undefined || cachedStyle !== style ) {
+			if ( cachedObject === undefined || cachedObject.style !== style ) {
 
 				element.style.WebkitTransform = style;
 				element.style.transform = style;
@@ -109698,7 +111083,7 @@ var SoftwareRenderer = function ( parameters ) {
 					}
 				} else {
 
-					if ( material.vertexColors === FaceColors ) {
+					if ( material.vertexColors === FaceColors || material.vertexColors === VertexColors ) {
 
 						string = [
 							'var colorOffset = offset * 4;',
@@ -130947,13 +132332,15 @@ VolumeSlice.prototype = {
 		this.ctx = this.canvas.getContext( '2d' );
 		this.ctxBuffer = this.canvasBuffer.getContext( '2d' );
 
+		if ( this.geometry ) { this.geometry.dispose(); } // dispose existing geometry
+
 		this.geometry = new PlaneBufferGeometry( extracted.planeWidth, extracted.planeHeight );
 
 		if ( this.mesh ) {
 
 			this.mesh.geometry = this.geometry;
 			//reset mesh matrix
-			this.mesh.matrix = ( new Matrix4() ).identity();
+			this.mesh.matrix.identity();
 			this.mesh.applyMatrix( this.matrix );
 
 		}
@@ -131610,17 +132997,15 @@ function ShapeBufferGeometry( shapes, curveSegments ) {
 
 			shapeVertices = shapeVertices.reverse();
 
-			// also check if holes are in the opposite direction
+		}
 
-			for ( i = 0, l = shapeHoles.length; i < l; i ++ ) {
+		for ( i = 0, l = shapeHoles.length; i < l; i ++ ) {
 
-				shapeHole = shapeHoles[ i ];
+			shapeHole = shapeHoles[ i ];
 
-				if ( ShapeUtils.isClockWise( shapeHole ) === true ) {
+			if ( ShapeUtils.isClockWise( shapeHole ) === true ) {
 
-					shapeHoles[ i ] = shapeHole.reverse();
-
-				}
+				shapeHoles[ i ] = shapeHole.reverse();
 
 			}
 
@@ -133205,10 +134590,13 @@ PositionalAudio.prototype = Object.assign( Object.create( Audio.prototype ), {
 
 			Object3D.prototype.updateMatrixWorld.call( this, force );
 
-			var panner = this.panner;
+			if ( this.isPlaying === false ) { return; }
+
 			this.matrixWorld.decompose( position, quaternion, scale );
 
 			orientation.set( 0, 0, 1 ).applyQuaternion( quaternion );
+
+			var panner = this.panner;
 
 			if ( panner.positionX ) {
 
@@ -135544,6 +136932,98 @@ Box3Helper.prototype.updateMatrixWorld = function ( force ) {
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function BoxHelper( object, color ) {
+
+	this.object = object;
+
+	if ( color === undefined ) { color = 0xffff00; }
+
+	var indices = new Uint16Array( [ 0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7 ] );
+	var positions = new Float32Array( 8 * 3 );
+
+	var geometry = new BufferGeometry();
+	geometry.setIndex( new BufferAttribute( indices, 1 ) );
+	geometry.addAttribute( 'position', new BufferAttribute( positions, 3 ) );
+
+	LineSegments.call( this, geometry, new LineBasicMaterial( { color: color } ) );
+
+	this.matrixAutoUpdate = false;
+
+	this.update();
+
+}
+
+BoxHelper.prototype = Object.create( LineSegments.prototype );
+BoxHelper.prototype.constructor = BoxHelper;
+
+BoxHelper.prototype.update = ( function () {
+
+	var box = new Box3();
+
+	return function update( object ) {
+
+		if ( object !== undefined ) {
+
+			console.warn( 'BoxHelper: .update() has no longer arguments.' );
+
+		}
+
+		if ( this.object !== undefined ) {
+
+			box.setFromObject( this.object );
+
+		}
+
+		if ( box.isEmpty() ) { return; }
+
+		var min = box.min;
+		var max = box.max;
+		var position = this.geometry.attributes.position;
+		var array = position.array;
+
+		array[ 0 ] = max.x; array[ 1 ] = max.y; array[ 2 ] = max.z;
+		array[ 3 ] = min.x; array[ 4 ] = max.y; array[ 5 ] = max.z;
+		array[ 6 ] = min.x; array[ 7 ] = min.y; array[ 8 ] = max.z;
+		array[ 9 ] = max.x; array[ 10 ] = min.y; array[ 11 ] = max.z;
+		array[ 12 ] = max.x; array[ 13 ] = max.y; array[ 14 ] = min.z;
+		array[ 15 ] = min.x; array[ 16 ] = max.y; array[ 17 ] = min.z;
+		array[ 18 ] = min.x; array[ 19 ] = min.y; array[ 20 ] = min.z;
+		array[ 21 ] = max.x; array[ 22 ] = min.y; array[ 23 ] = min.z;
+
+		position.needsUpdate = true;
+
+		this.geometry.computeBoundingSphere();
+
+	};
+
+} )();
+
+BoxHelper.prototype.setFromObject = function ( object ) {
+
+	this.object = object;
+	this.update();
+
+	return this;
+
+};
+
+BoxHelper.prototype.copy = function ( source ) {
+
+	LineSegments.prototype.copy.call( this, source );
+
+	this.object = source.object;
+
+	return this;
+
+};
+
+BoxHelper.prototype.clone = function () {
+
+	return new this.constructor().copy( this );
+
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function CameraHelper( camera ) {
 
 	var geometry = new BufferGeometry();
@@ -136222,67 +137702,69 @@ PolarGridHelper.prototype.constructor = PolarGridHelper;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function RectAreaLightHelper( light, color ) {
 
-	Object3D.call( this );
+	this.type = 'RectAreaLightHelper';
 
 	this.light = light;
-	this.light.updateMatrixWorld();
 
-	this.matrix = light.matrixWorld;
-	this.matrixAutoUpdate = false;
+	this.color = color; // optional hardwired color for the helper
 
-	this.color = color;
+	var positions = [ 1, 1, 0, - 1, 1, 0, - 1, - 1, 0, 1, - 1, 0, 1, 1, 0 ];
+
+	var geometry = new BufferGeometry();
+	geometry.addAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
+	geometry.computeBoundingSphere();
 
 	var material = new LineBasicMaterial( { fog: false } );
 
-	var geometry = new BufferGeometry();
+	Line.call( this, geometry, material );
 
-	geometry.addAttribute( 'position', new BufferAttribute( new Float32Array( 5 * 3 ), 3 ) );
+	//
 
-	this.line = new Line( geometry, material );
-	this.add( this.line );
+	var positions2 = [ 1, 1, 0, - 1, 1, 0, - 1, - 1, 0, 1, 1, 0, - 1, - 1, 0, 1, - 1, 0 ];
+
+	var geometry2 = new BufferGeometry();
+	geometry2.addAttribute( 'position', new Float32BufferAttribute( positions2, 3 ) );
+	geometry2.computeBoundingSphere();
+
+	this.add( new Mesh( geometry2, new MeshBasicMaterial( { side: BackSide, fog: false } ) ) );
+
 	this.update();
 
 }
 
-RectAreaLightHelper.prototype = Object.create( Object3D.prototype );
+RectAreaLightHelper.prototype = Object.create( Line.prototype );
 RectAreaLightHelper.prototype.constructor = RectAreaLightHelper;
-
-RectAreaLightHelper.prototype.dispose = function () {
-
-	this.children[ 0 ].geometry.dispose();
-	this.children[ 0 ].material.dispose();
-
-};
 
 RectAreaLightHelper.prototype.update = function () {
 
-	// calculate new dimensions of the helper
-
-	var hx = this.light.width * 0.5;
-	var hy = this.light.height * 0.5;
-
-	var position = this.line.geometry.attributes.position;
-	var array = position.array;
-
-	// update vertices
-
-	array[ 0 ] = hx; array[ 1 ] = - hy; array[ 2 ] = 0;
-	array[ 3 ] = hx; array[ 4 ] = hy; array[ 5 ] = 0;
-	array[ 6 ] = - hx; array[ 7 ] = hy; array[ 8 ] = 0;
-	array[ 9 ] = - hx; array[ 10 ] = - hy; array[ 11 ] = 0;
-	array[ 12 ] = hx; array[ 13 ] = - hy; array[ 14 ] = 0;
-
-	position.needsUpdate = true;
+	this.scale.set( 0.5 * this.light.width, 0.5 * this.light.height, 1 );
 
 	if ( this.color !== undefined ) {
 
-		this.line.material.color.set( this.color );
+		this.material.color.set( this.color );
+		this.children[ 0 ].material.color.set( this.color );
 
 	} else {
 
-		this.line.material.color.copy( this.light.color );
+		this.material.color.copy( this.light.color ).multiplyScalar( this.light.intensity );
+
+		// prevent hue shift
+		var c = this.material.color;
+		var max = Math.max( c.r, c.g, c.b );
+		if ( max > 1 ) { c.multiplyScalar( 1 / max ); }
+
+		this.children[ 0 ].material.color.copy( this.material.color );
 
 	}
+
+};
+
+RectAreaLightHelper.prototype.dispose = function () {
+
+	this.geometry.dispose();
+	this.material.dispose();
+	this.children[ 0 ].geometry.dispose();
+	this.children[ 0 ].material.dispose();
 
 };
 
@@ -137845,12 +139327,17 @@ Object.assign( ObjectLoader.prototype, {
 				}
 
 				if ( data.format !== undefined ) { texture.format = data.format; }
+				if ( data.type !== undefined ) { texture.type = data.type; }
+				if ( data.encoding !== undefined ) { texture.encoding = data.encoding; }
 
 				if ( data.minFilter !== undefined ) { texture.minFilter = parseConstant( data.minFilter, TEXTURE_FILTER ); }
 				if ( data.magFilter !== undefined ) { texture.magFilter = parseConstant( data.magFilter, TEXTURE_FILTER ); }
 				if ( data.anisotropy !== undefined ) { texture.anisotropy = data.anisotropy; }
 
 				if ( data.flipY !== undefined ) { texture.flipY = data.flipY; }
+
+				if ( data.premultiplyAlpha !== undefined ) { texture.premultiplyAlpha = data.premultiplyAlpha; }
+				if ( data.unpackAlignment !== undefined ) { texture.unpackAlignment = data.unpackAlignment; }
 
 				textures[ data.uuid ] = texture;
 
@@ -138576,6 +140063,7 @@ exports.ConvexBufferGeometry = ConvexBufferGeometry;
 exports.DecalGeometry = DecalGeometry;
 exports.hilbert2D = hilbert2D;
 exports.hilbert3D = hilbert3D;
+exports.LightningStrike = LightningStrike;
 exports.TeapotBufferGeometry = TeapotBufferGeometry;
 exports.GPUComputationRenderer = GPUComputationRenderer;
 exports.GPUParticleSystem = GPUParticleSystem;
@@ -138611,6 +140099,7 @@ exports.GLTFLoader = GLTFLoader;
 exports.HDRCubeTextureLoader = HDRCubeTextureLoader;
 exports.KMZLoader = KMZLoader;
 exports.KTXLoader = KTXLoader;
+exports.LDrawLoader = LDrawLoader;
 exports.LoaderSupport = LoaderSupport;
 exports.MD2Loader = MD2Loader;
 exports.MMDLoader = MMDLoader;
@@ -138720,8 +140209,10 @@ exports.SwitchNode = SwitchNode;
 exports.TimerNode = TimerNode;
 exports.UVTransformNode = UVTransformNode;
 exports.VelocityNode = VelocityNode;
+exports.Fire = Fire;
 exports.Lensflare = Lensflare;
 exports.LensflareElement = LensflareElement;
+exports.LightningStorm = LightningStorm;
 exports.Reflector = Reflector;
 exports.ReflectorRTT = ReflectorRTT;
 exports.Refractor = Refractor;
@@ -138730,9 +140221,6 @@ exports.Sky = Sky;
 exports.Water = Water;
 exports.Water2 = Water2;
 exports.Ocean = Ocean;
-exports.Octree = Octree;
-exports.OctreeObjectData = OctreeObjectData;
-exports.OctreeNode = OctreeNode;
 exports.PMREMCubeUVPacker = PMREMCubeUVPacker;
 exports.PMREMGenerator = PMREMGenerator;
 exports.AdaptiveToneMappingPass = AdaptiveToneMappingPass;
