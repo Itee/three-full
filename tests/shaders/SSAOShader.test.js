@@ -2916,7 +2916,7 @@ var Three = (function (exports) {
 
 		defines: {
 			"PERSPECTIVE_CAMERA": 1,
-			"KERNEL_SIZE": 64
+			"KERNEL_SIZE": 32
 		},
 
 		uniforms: {

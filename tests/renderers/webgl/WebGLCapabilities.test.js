@@ -86,6 +86,8 @@ var Three = (function (exports) {
 		var floatFragmentTextures = isWebGL2 || !! extensions.get( 'OES_texture_float' );
 		var floatVertexTextures = vertexTextures && floatFragmentTextures;
 
+		var maxSamples = isWebGL2 ? gl.getParameter( gl.MAX_SAMPLES ) : 0;
+
 		return {
 
 			isWebGL2: isWebGL2,
@@ -108,7 +110,9 @@ var Three = (function (exports) {
 
 			vertexTextures: vertexTextures,
 			floatFragmentTextures: floatFragmentTextures,
-			floatVertexTextures: floatVertexTextures
+			floatVertexTextures: floatVertexTextures,
+
+			maxSamples: maxSamples
 
 		};
 

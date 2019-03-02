@@ -3263,6 +3263,20 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var FrontSide = 0;
+	var BackSide = 1;
+	var DoubleSide = 2;
+	var FlatShading = 1;
+	var NoColors = 0;
+	var NormalBlending = 1;
+	var AddEquation = 100;
+	var SrcAlphaFactor = 204;
+	var OneMinusSrcAlphaFactor = 205;
+	var LessEqualDepth = 3;
+	var MultiplyOperation = 0;
+	var TrianglesDrawMode = 0;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var object3DId = 0;
 
 	function Object3D() {
@@ -3965,6 +3979,10 @@ var Three = (function (exports) {
 			object.matrix = this.matrix.toArray();
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
+
+			// object specific properties
+
+			if ( this.isMesh && this.drawMode !== TrianglesDrawMode ) object.drawMode = this.drawMode;
 
 			//
 
@@ -6940,20 +6958,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var FrontSide = 0;
-	var BackSide = 1;
-	var DoubleSide = 2;
-	var FlatShading = 1;
-	var NoColors = 0;
-	var NormalBlending = 1;
-	var AddEquation = 100;
-	var SrcAlphaFactor = 204;
-	var OneMinusSrcAlphaFactor = 205;
-	var LessEqualDepth = 3;
-	var MultiplyOperation = 0;
-	var TrianglesDrawMode = 0;
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var materialId = 0;
 
 	function Material() {
@@ -9537,21 +9541,7 @@ var Three = (function (exports) {
 
 		toNonIndexed: function () {
 
-			if ( this.index === null ) {
-
-				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
-				return this;
-
-			}
-
-			var geometry2 = new BufferGeometry();
-
-			var indices = this.index.array;
-			var attributes = this.attributes;
-
-			for ( var name in attributes ) {
-
-				var attribute = attributes[ name ];
+			function convertBufferAttribute( attribute, indices ) {
 
 				var array = attribute.array;
 				var itemSize = attribute.itemSize;
@@ -9572,9 +9562,60 @@ var Three = (function (exports) {
 
 				}
 
-				geometry2.addAttribute( name, new BufferAttribute( array2, itemSize ) );
+				return new BufferAttribute( array2, itemSize );
 
 			}
+
+			//
+
+			if ( this.index === null ) {
+
+				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+				return this;
+
+			}
+
+			var geometry2 = new BufferGeometry();
+
+			var indices = this.index.array;
+			var attributes = this.attributes;
+
+			// attributes
+
+			for ( var name in attributes ) {
+
+				var attribute = attributes[ name ];
+
+				var newAttribute = convertBufferAttribute( attribute, indices );
+
+				geometry2.addAttribute( name, newAttribute );
+
+			}
+
+			// morph attributes
+
+			var morphAttributes = this.morphAttributes;
+
+			for ( name in morphAttributes ) {
+
+				var morphArray = [];
+				var morphAttribute = morphAttributes[ name ]; // morphAttribute: array of Float32BufferAttributes
+
+				for ( var i = 0, il = morphAttribute.length; i < il; i ++ ) {
+
+					var attribute = morphAttribute[ i ];
+
+					var newAttribute = convertBufferAttribute( attribute, indices );
+
+					morphArray.push( newAttribute );
+
+				}
+
+				geometry2.morphAttributes[ name ] = morphArray;
+
+			}
+
+			// groups
 
 			var groups = this.groups;
 
@@ -10037,6 +10078,7 @@ var Three = (function (exports) {
 									if ( intersection ) {
 
 										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in indexed buffer semantics
+										intersection.face.materialIndex = group.materialIndex;
 										intersects.push( intersection );
 
 									}
@@ -10094,6 +10136,7 @@ var Three = (function (exports) {
 									if ( intersection ) {
 
 										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in non-indexed buffer semantics
+										intersection.face.materialIndex = group.materialIndex;
 										intersects.push( intersection );
 
 									}
@@ -13706,19 +13749,19 @@ var Three = (function (exports) {
 		var ray = new Raycaster();
 
 		var _tempVector = new Vector3();
-		var _tempVector2 = new Vector3();
 		var _tempQuaternion = new Quaternion();
 		var _unit = {
 			X: new Vector3( 1, 0, 0 ),
 			Y: new Vector3( 0, 1, 0 ),
 			Z: new Vector3( 0, 0, 1 )
 		};
-		var _identityQuaternion = new Quaternion();
-		var _alignVector = new Vector3();
 
 		var pointStart = new Vector3();
 		var pointEnd = new Vector3();
+		var offset = new Vector3();
 		var rotationAxis = new Vector3();
+		var startNorm = new Vector3();
+		var endNorm = new Vector3();
 		var rotationAngle = 0;
 
 		var cameraPosition = new Vector3();
@@ -13727,6 +13770,7 @@ var Three = (function (exports) {
 
 		var parentPosition = new Vector3();
 		var parentQuaternion = new Quaternion();
+		var parentQuaternionInv = new Quaternion();
 		var parentScale = new Vector3();
 
 		var worldPositionStart = new Vector3();
@@ -13735,17 +13779,17 @@ var Three = (function (exports) {
 
 		var worldPosition = new Vector3();
 		var worldQuaternion = new Quaternion();
+		var worldQuaternionInv = new Quaternion();
 		var worldScale = new Vector3();
 
 		var eye = new Vector3();
 
-		var _positionStart = new Vector3();
-		var _quaternionStart = new Quaternion();
-		var _scaleStart = new Vector3();
+		var positionStart = new Vector3();
+		var quaternionStart = new Quaternion();
+		var scaleStart = new Vector3();
 
 		// TODO: remove properties unused in plane and gizmo
 
-		defineProperty( "parentQuaternion", parentQuaternion );
 		defineProperty( "worldPosition", worldPosition );
 		defineProperty( "worldPositionStart", worldPositionStart );
 		defineProperty( "worldQuaternion", worldQuaternion );
@@ -13850,6 +13894,9 @@ var Three = (function (exports) {
 				this.object.parent.matrixWorld.decompose( parentPosition, parentQuaternion, parentScale );
 				this.object.matrixWorld.decompose( worldPosition, worldQuaternion, worldScale );
 
+				parentQuaternionInv.copy( parentQuaternion ).inverse();
+				worldQuaternionInv.copy( worldQuaternion ).inverse();
+
 			}
 
 			this.camera.updateMatrixWorld();
@@ -13926,15 +13973,13 @@ var Three = (function (exports) {
 					this.object.updateMatrixWorld();
 					this.object.parent.updateMatrixWorld();
 
-					_positionStart.copy( this.object.position );
-					_quaternionStart.copy( this.object.quaternion );
-					_scaleStart.copy( this.object.scale );
+					positionStart.copy( this.object.position );
+					quaternionStart.copy( this.object.quaternion );
+					scaleStart.copy( this.object.scale );
 
 					this.object.matrixWorld.decompose( worldPositionStart, worldQuaternionStart, worldScaleStart );
 
 					pointStart.copy( planeIntersect.point ).sub( worldPositionStart );
-
-					if ( space === 'local' ) pointStart.applyQuaternion( worldQuaternionStart.clone().inverse() );
 
 				}
 
@@ -13973,29 +14018,27 @@ var Three = (function (exports) {
 
 			pointEnd.copy( planeIntersect.point ).sub( worldPositionStart );
 
-			if ( space === 'local' ) pointEnd.applyQuaternion( worldQuaternionStart.clone().inverse() );
-
 			if ( mode === 'translate' ) {
-
-				if ( axis.search( 'X' ) === -1 ) {
-					pointEnd.x = pointStart.x;
-				}
-				if ( axis.search( 'Y' ) === -1 ) {
-					pointEnd.y = pointStart.y;
-				}
-				if ( axis.search( 'Z' ) === -1 ) {
-					pointEnd.z = pointStart.z;
-				}
 
 				// Apply translate
 
-				if ( space === 'local' ) {
-					object.position.copy( pointEnd ).sub( pointStart ).applyQuaternion( _quaternionStart );
-				} else {
-					object.position.copy( pointEnd ).sub( pointStart );
+				offset.copy( pointEnd ).sub( pointStart );
+
+				if ( space === 'local' && axis !== 'XYZ' ) {
+					offset.applyQuaternion( worldQuaternionInv );
 				}
 
-				object.position.add( _positionStart );
+				if ( axis.indexOf( 'X' ) === -1 ) offset.x = 0;
+				if ( axis.indexOf( 'Y' ) === -1 ) offset.y = 0;
+				if ( axis.indexOf( 'Z' ) === -1 ) offset.z = 0;
+
+				if ( space === 'local' && axis !== 'XYZ') {
+					offset.applyQuaternion( quaternionStart ).divide( parentScale );
+				} else {
+					offset.applyQuaternion( parentQuaternionInv ).divide( parentScale );
+				}
+
+				object.position.copy( offset ).add( positionStart );
 
 				// Apply translation snap
 
@@ -14003,7 +14046,7 @@ var Three = (function (exports) {
 
 					if ( space === 'local' ) {
 
-						object.position.applyQuaternion(_tempQuaternion.copy( _quaternionStart ).inverse() );
+						object.position.applyQuaternion(_tempQuaternion.copy( quaternionStart ).inverse() );
 
 						if ( axis.search( 'X' ) !== -1 ) {
 							object.position.x = Math.round( object.position.x / this.translationSnap ) * this.translationSnap;
@@ -14017,7 +14060,7 @@ var Three = (function (exports) {
 							object.position.z = Math.round( object.position.z / this.translationSnap ) * this.translationSnap;
 						}
 
-						object.position.applyQuaternion( _quaternionStart );
+						object.position.applyQuaternion( quaternionStart );
 
 					}
 
@@ -14075,41 +14118,40 @@ var Three = (function (exports) {
 
 				// Apply scale
 
-				object.scale.copy( _scaleStart ).multiply( _tempVector );
+				object.scale.copy( scaleStart ).multiply( _tempVector );
 
 			} else if ( mode === 'rotate' ) {
 
+				offset.copy( pointEnd ).sub( pointStart );
+
 				var ROTATION_SPEED = 20 / worldPosition.distanceTo( _tempVector.setFromMatrixPosition( this.camera.matrixWorld ) );
-
-				var quaternion = this.space === "local" ? worldQuaternion : _identityQuaternion;
-
-				var unit = _unit[ axis ];
 
 				if ( axis === 'E' ) {
 
-					_tempVector.copy( pointEnd ).cross( pointStart );
 					rotationAxis.copy( eye );
-					rotationAngle = pointEnd.angleTo( pointStart ) * ( _tempVector.dot( eye ) < 0 ? 1 : -1 );
+					rotationAngle = pointEnd.angleTo( pointStart );
+
+					startNorm.copy( pointStart ).normalize();
+					endNorm.copy( pointEnd ).normalize();
+
+					rotationAngle *= ( endNorm.cross( startNorm ).dot( eye ) < 0 ? 1 : -1);
 
 				} else if ( axis === 'XYZE' ) {
 
-					_tempVector.copy( pointEnd ).sub( pointStart ).cross( eye ).normalize();
-					rotationAxis.copy( _tempVector );
-					rotationAngle = pointEnd.sub( pointStart ).dot( _tempVector.cross( eye ) ) * ROTATION_SPEED;
+					rotationAxis.copy( offset ).cross( eye ).normalize(  );
+					rotationAngle = offset.dot( _tempVector.copy( rotationAxis ).cross( this.eye ) ) * ROTATION_SPEED;
 
 				} else if ( axis === 'X' || axis === 'Y' || axis === 'Z' ) {
 
-					_alignVector.copy( unit ).applyQuaternion( quaternion );
+					rotationAxis.copy( _unit[ axis ] );
 
-					rotationAxis.copy( unit );
+					_tempVector.copy( _unit[ axis ] );
 
-					_tempVector = unit.clone();
-					_tempVector2 = pointEnd.clone().sub( pointStart );
 					if ( space === 'local' ) {
-						_tempVector.applyQuaternion( quaternion );
-						_tempVector2.applyQuaternion( worldQuaternionStart );
+						_tempVector.applyQuaternion( worldQuaternion );
 					}
-					rotationAngle = _tempVector2.dot( _tempVector.cross( eye ).normalize() ) * ROTATION_SPEED;
+
+					rotationAngle = offset.dot( _tempVector.cross( eye ).normalize() ) * ROTATION_SPEED;
 
 				}
 
@@ -14120,16 +14162,16 @@ var Three = (function (exports) {
 				this.rotationAngle = rotationAngle;
 
 				// Apply rotate
+				if ( space === 'local' && axis !== 'E' && axis !== 'XYZE' ) {
 
-				if ( space === 'local' ) {
-
-					object.quaternion.copy( _quaternionStart );
-					object.quaternion.multiply( _tempQuaternion.setFromAxisAngle( rotationAxis, rotationAngle ) );
+					object.quaternion.copy( quaternionStart );
+					object.quaternion.multiply( _tempQuaternion.setFromAxisAngle( rotationAxis, rotationAngle ) ).normalize();
 
 				} else {
 
+					rotationAxis.applyQuaternion( parentQuaternionInv );
 					object.quaternion.copy( _tempQuaternion.setFromAxisAngle( rotationAxis, rotationAngle ) );
-					object.quaternion.multiply( _quaternionStart );
+					object.quaternion.multiply( quaternionStart ).normalize();
 
 				}
 
@@ -14194,7 +14236,7 @@ var Three = (function (exports) {
 			if ( !scope.enabled ) return;
 
 			event.preventDefault();
-			
+
 			document.addEventListener( "mousemove", onPointerMove, false );
 
 			scope.pointerHover( getPointer( event ) );

@@ -6256,6 +6256,40 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var FrontSide = 0;
+	var BackSide = 1;
+	var DoubleSide = 2;
+	var FlatShading = 1;
+	var NoColors = 0;
+	var FaceColors = 1;
+	var VertexColors = 2;
+	var NoBlending = 0;
+	var NormalBlending = 1;
+	var AdditiveBlending = 2;
+	var SubtractiveBlending = 3;
+	var MultiplyBlending = 4;
+	var CustomBlending = 5;
+	var AddEquation = 100;
+	var SrcAlphaFactor = 204;
+	var OneMinusSrcAlphaFactor = 205;
+	var LessEqualDepth = 3;
+	var MultiplyOperation = 0;
+
+	var UVMapping = 300;
+	var RepeatWrapping = 1000;
+	var ClampToEdgeWrapping = 1001;
+	var MirroredRepeatWrapping = 1002;
+	var LinearFilter = 1006;
+	var LinearMipMapLinearFilter = 1008;
+	var UnsignedByteType = 1009;
+	var RGBFormat = 1022;
+	var RGBAFormat = 1023;
+	var TrianglesDrawMode = 0;
+	var LinearEncoding = 3000;
+	var BasicDepthPacking = 3200;
+	var TangentSpaceNormalMap = 0;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var object3DId = 0;
 
 	function Object3D() {
@@ -6958,6 +6992,10 @@ var Three = (function (exports) {
 			object.matrix = this.matrix.toArray();
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
+
+			// object specific properties
+
+			if ( this.isMesh && this.drawMode !== TrianglesDrawMode ) object.drawMode = this.drawMode;
 
 			//
 
@@ -8510,39 +8548,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var FrontSide = 0;
-	var BackSide = 1;
-	var DoubleSide = 2;
-	var FlatShading = 1;
-	var NoColors = 0;
-	var FaceColors = 1;
-	var VertexColors = 2;
-	var NoBlending = 0;
-	var NormalBlending = 1;
-	var AdditiveBlending = 2;
-	var SubtractiveBlending = 3;
-	var MultiplyBlending = 4;
-	var CustomBlending = 5;
-	var AddEquation = 100;
-	var SrcAlphaFactor = 204;
-	var OneMinusSrcAlphaFactor = 205;
-	var LessEqualDepth = 3;
-	var MultiplyOperation = 0;
-
-	var UVMapping = 300;
-	var RepeatWrapping = 1000;
-	var ClampToEdgeWrapping = 1001;
-	var MirroredRepeatWrapping = 1002;
-	var LinearFilter = 1006;
-	var LinearMipMapLinearFilter = 1008;
-	var UnsignedByteType = 1009;
-	var RGBFormat = 1022;
-	var RGBAFormat = 1023;
-	var LinearEncoding = 3000;
-	var BasicDepthPacking = 3200;
-	var TangentSpaceNormalMap = 0;
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var materialId = 0;
 
 	function Material() {
@@ -9855,6 +9860,13 @@ var Three = (function (exports) {
 					value: value.toArray()
 				};
 
+			} else if ( value && value.isMatrix3 ) {
+
+				data.uniforms[ name ] = {
+					type: 'm3',
+					value: value.toArray()
+				};
+
 			} else if ( value && value.isMatrix4 ) {
 
 				data.uniforms[ name ] = {
@@ -10112,6 +10124,9 @@ var Three = (function (exports) {
 						case 'v4':
 							material.uniforms[ name ].value = new Vector4().fromArray( uniform.value );
 							break;
+
+						case 'm3':
+							material.uniforms[ name ].value = new Matrix3().fromArray( uniform.value );
 
 						case 'm4':
 							material.uniforms[ name ].value = new Matrix4().fromArray( uniform.value );

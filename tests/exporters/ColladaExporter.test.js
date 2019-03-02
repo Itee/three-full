@@ -6412,6 +6412,20 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var FrontSide = 0;
+	var BackSide = 1;
+	var DoubleSide = 2;
+	var FlatShading = 1;
+	var NoColors = 0;
+	var NormalBlending = 1;
+	var AddEquation = 100;
+	var SrcAlphaFactor = 204;
+	var OneMinusSrcAlphaFactor = 205;
+	var LessEqualDepth = 3;
+	var MultiplyOperation = 0;
+	var TrianglesDrawMode = 0;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var object3DId = 0;
 
 	function Object3D() {
@@ -7114,6 +7128,10 @@ var Three = (function (exports) {
 			object.matrix = this.matrix.toArray();
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
+
+			// object specific properties
+
+			if ( this.isMesh && this.drawMode !== TrianglesDrawMode ) object.drawMode = this.drawMode;
 
 			//
 
@@ -8138,21 +8156,7 @@ var Three = (function (exports) {
 
 		toNonIndexed: function () {
 
-			if ( this.index === null ) {
-
-				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
-				return this;
-
-			}
-
-			var geometry2 = new BufferGeometry();
-
-			var indices = this.index.array;
-			var attributes = this.attributes;
-
-			for ( var name in attributes ) {
-
-				var attribute = attributes[ name ];
+			function convertBufferAttribute( attribute, indices ) {
 
 				var array = attribute.array;
 				var itemSize = attribute.itemSize;
@@ -8173,9 +8177,60 @@ var Three = (function (exports) {
 
 				}
 
-				geometry2.addAttribute( name, new BufferAttribute( array2, itemSize ) );
+				return new BufferAttribute( array2, itemSize );
 
 			}
+
+			//
+
+			if ( this.index === null ) {
+
+				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+				return this;
+
+			}
+
+			var geometry2 = new BufferGeometry();
+
+			var indices = this.index.array;
+			var attributes = this.attributes;
+
+			// attributes
+
+			for ( var name in attributes ) {
+
+				var attribute = attributes[ name ];
+
+				var newAttribute = convertBufferAttribute( attribute, indices );
+
+				geometry2.addAttribute( name, newAttribute );
+
+			}
+
+			// morph attributes
+
+			var morphAttributes = this.morphAttributes;
+
+			for ( name in morphAttributes ) {
+
+				var morphArray = [];
+				var morphAttribute = morphAttributes[ name ]; // morphAttribute: array of Float32BufferAttributes
+
+				for ( var i = 0, il = morphAttribute.length; i < il; i ++ ) {
+
+					var attribute = morphAttribute[ i ];
+
+					var newAttribute = convertBufferAttribute( attribute, indices );
+
+					morphArray.push( newAttribute );
+
+				}
+
+				geometry2.morphAttributes[ name ] = morphArray;
+
+			}
+
+			// groups
 
 			var groups = this.groups;
 
@@ -8389,20 +8444,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var FrontSide = 0;
-	var BackSide = 1;
-	var DoubleSide = 2;
-	var FlatShading = 1;
-	var NoColors = 0;
-	var NormalBlending = 1;
-	var AddEquation = 100;
-	var SrcAlphaFactor = 204;
-	var OneMinusSrcAlphaFactor = 205;
-	var LessEqualDepth = 3;
-	var MultiplyOperation = 0;
-	var TrianglesDrawMode = 0;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var materialId = 0;
@@ -11504,6 +11545,7 @@ var Three = (function (exports) {
 									if ( intersection ) {
 
 										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in indexed buffer semantics
+										intersection.face.materialIndex = group.materialIndex;
 										intersects.push( intersection );
 
 									}
@@ -11561,6 +11603,7 @@ var Three = (function (exports) {
 									if ( intersection ) {
 
 										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in non-indexed buffer semantics
+										intersection.face.materialIndex = group.materialIndex;
 										intersects.push( intersection );
 
 									}
@@ -12037,6 +12080,15 @@ var Three = (function (exports) {
 
 						type = 'constant';
 
+						if ( m.map !== null ) {
+
+							// The Collada spec does not support diffuse texture maps with the
+							// constant shader type.
+							// mrdoob/three.js#15469
+							console.warn( 'ColladaExporter: Texture maps not supported with MeshBasicMaterial.' );
+
+						}
+
 					}
 
 					var emissive = m.emissive ? m.emissive : new Color( 0, 0, 0 );
@@ -12082,7 +12134,7 @@ var Three = (function (exports) {
 
 						(
 							type !== 'constant' ?
-							'<diffuse>' +
+								'<diffuse>' +
 
 							(
 								m.map ?
@@ -12090,12 +12142,12 @@ var Three = (function (exports) {
 									`<color sid="diffuse">${ diffuse.r } ${ diffuse.g } ${ diffuse.b } 1</color>`
 							) +
 							'</diffuse>'
-							: ''
+								: ''
 						) +
 
 						(
 							type === 'phong' ?
-							`<specular><color sid="specular">${ specular.r } ${ specular.g } ${ specular.b } 1</color></specular>` +
+								`<specular><color sid="specular">${ specular.r } ${ specular.g } ${ specular.b } 1</color></specular>` +
 
 							'<shininess>' +
 
@@ -12105,8 +12157,8 @@ var Three = (function (exports) {
 									`<float sid="shininess">${ shininess }</float>`
 							) +
 
-							'</shininess>' 
-							: ''
+							'</shininess>'
+								: ''
 						) +
 
 						`<reflective><color>${ diffuse.r } ${ diffuse.g } ${ diffuse.b } 1</color></reflective>` +
@@ -12194,10 +12246,15 @@ var Three = (function (exports) {
 					// the materials.
 					var mat = o.material || new MeshBasicMaterial();
 					var materials = Array.isArray( mat ) ? mat : [ mat ];
+
 					if ( geometry.groups.length > materials.length ) {
+
 						matidsArray = new Array( geometry.groups.length );
+
 					} else {
+
 						matidsArray = new Array( materials.length );
+
 					}
 					matids = matidsArray.fill()
 						.map( ( v, i ) => processMaterial( materials[ i % materials.length ] ) );

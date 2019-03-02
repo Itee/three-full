@@ -6412,6 +6412,24 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var DoubleSide = 2;
+	var RepeatWrapping = 1000;
+	var ClampToEdgeWrapping = 1001;
+	var MirroredRepeatWrapping = 1002;
+	var NearestFilter = 1003;
+	var NearestMipMapNearestFilter = 1004;
+	var NearestMipMapLinearFilter = 1005;
+	var LinearFilter = 1006;
+	var LinearMipMapNearestFilter = 1007;
+	var LinearMipMapLinearFilter = 1008;
+	var RGBAFormat = 1023;
+	var InterpolateDiscrete = 2300;
+	var InterpolateLinear = 2301;
+	var TrianglesDrawMode = 0;
+	var TriangleStripDrawMode = 1;
+	var TriangleFanDrawMode = 2;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var object3DId = 0;
 
 	function Object3D() {
@@ -7114,6 +7132,10 @@ var Three = (function (exports) {
 			object.matrix = this.matrix.toArray();
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
+
+			// object specific properties
+
+			if ( this.isMesh && this.drawMode !== TrianglesDrawMode ) object.drawMode = this.drawMode;
 
 			//
 
@@ -8138,21 +8160,7 @@ var Three = (function (exports) {
 
 		toNonIndexed: function () {
 
-			if ( this.index === null ) {
-
-				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
-				return this;
-
-			}
-
-			var geometry2 = new BufferGeometry();
-
-			var indices = this.index.array;
-			var attributes = this.attributes;
-
-			for ( var name in attributes ) {
-
-				var attribute = attributes[ name ];
+			function convertBufferAttribute( attribute, indices ) {
 
 				var array = attribute.array;
 				var itemSize = attribute.itemSize;
@@ -8173,9 +8181,60 @@ var Three = (function (exports) {
 
 				}
 
-				geometry2.addAttribute( name, new BufferAttribute( array2, itemSize ) );
+				return new BufferAttribute( array2, itemSize );
 
 			}
+
+			//
+
+			if ( this.index === null ) {
+
+				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+				return this;
+
+			}
+
+			var geometry2 = new BufferGeometry();
+
+			var indices = this.index.array;
+			var attributes = this.attributes;
+
+			// attributes
+
+			for ( var name in attributes ) {
+
+				var attribute = attributes[ name ];
+
+				var newAttribute = convertBufferAttribute( attribute, indices );
+
+				geometry2.addAttribute( name, newAttribute );
+
+			}
+
+			// morph attributes
+
+			var morphAttributes = this.morphAttributes;
+
+			for ( name in morphAttributes ) {
+
+				var morphArray = [];
+				var morphAttribute = morphAttributes[ name ]; // morphAttribute: array of Float32BufferAttributes
+
+				for ( var i = 0, il = morphAttribute.length; i < il; i ++ ) {
+
+					var attribute = morphAttribute[ i ];
+
+					var newAttribute = convertBufferAttribute( attribute, indices );
+
+					morphArray.push( newAttribute );
+
+				}
+
+				geometry2.morphAttributes[ name ] = morphArray;
+
+			}
+
+			// groups
 
 			var groups = this.groups;
 
@@ -8409,6 +8468,8 @@ var Three = (function (exports) {
 
 		constructor: Scene,
 
+		isScene: true,
+
 		copy: function ( source, recursive ) {
 
 			Object3D.prototype.copy.call( this, source, recursive );
@@ -8433,25 +8494,15 @@ var Three = (function (exports) {
 
 			return data;
 
+		},
+
+		dispose: function () {
+
+			this.dispatchEvent( { type: 'dispose' } );
+
 		}
 
 	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var DoubleSide = 2;
-	var RepeatWrapping = 1000;
-	var ClampToEdgeWrapping = 1001;
-	var MirroredRepeatWrapping = 1002;
-	var NearestFilter = 1003;
-	var NearestMipMapNearestFilter = 1004;
-	var NearestMipMapLinearFilter = 1005;
-	var LinearFilter = 1006;
-	var LinearMipMapNearestFilter = 1007;
-	var LinearMipMapLinearFilter = 1008;
-	var RGBAFormat = 1023;
-	var InterpolateDiscrete = 2300;
-	var TriangleStripDrawMode = 1;
-	var TriangleFanDrawMode = 2;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
@@ -9430,6 +9481,41 @@ var Three = (function (exports) {
 				}
 
 			}
+			function applyTextureTransform( mapDef, texture ) {
+
+				var didTransform = false;
+				var transformDef = {};
+
+				if ( texture.offset.x !== 0 || texture.offset.y !== 0 ) {
+
+					transformDef.offset = texture.offset.toArray();
+					didTransform = true;
+
+				}
+
+				if ( texture.rotation !== 0 ) {
+
+					transformDef.rotation = texture.rotation;
+					didTransform = true;
+
+				}
+
+				if ( texture.repeat.x !== 1 || texture.repeat.y !== 1 ) {
+
+					transformDef.scale = texture.repeat.toArray();
+					didTransform = true;
+
+				}
+
+				if ( didTransform ) {
+
+					mapDef.extensions = mapDef.extensions || {};
+					mapDef.extensions[ 'KHR_texture_transform' ] = transformDef;
+					extensionsUsed[ 'KHR_texture_transform' ] = true;
+
+				}
+
+			}
 			function processBuffer( buffer ) {
 
 				if ( ! outputJSON.buffers ) {
@@ -9883,11 +9969,9 @@ var Three = (function (exports) {
 
 					if ( material.metalnessMap === material.roughnessMap ) {
 
-						gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture = {
-
-							index: processTexture( material.metalnessMap )
-
-						};
+						var metalRoughMapDef = { index: processTexture( material.metalnessMap ) };
+						applyTextureTransform( metalRoughMapDef, material.metalnessMap );
+						gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture = metalRoughMapDef;
 
 					} else {
 
@@ -9900,11 +9984,9 @@ var Three = (function (exports) {
 				// pbrMetallicRoughness.baseColorTexture
 				if ( material.map ) {
 
-					gltfMaterial.pbrMetallicRoughness.baseColorTexture = {
-
-						index: processTexture( material.map )
-
-					};
+					var baseColorMapDef = { index: processTexture( material.map ) };
+					applyTextureTransform( baseColorMapDef, material.map );
+					gltfMaterial.pbrMetallicRoughness.baseColorTexture = baseColorMapDef;
 
 				}
 
@@ -9924,11 +10006,9 @@ var Three = (function (exports) {
 					// emissiveTexture
 					if ( material.emissiveMap ) {
 
-						gltfMaterial.emissiveTexture = {
-
-							index: processTexture( material.emissiveMap )
-
-						};
+						var emissiveMapDef = { index: processTexture( material.emissiveMap ) };
+						applyTextureTransform( emissiveMapDef, material.emissiveMap );
+						gltfMaterial.emissiveTexture = emissiveMapDef;
 
 					}
 
@@ -9937,11 +10017,7 @@ var Three = (function (exports) {
 				// normalTexture
 				if ( material.normalMap ) {
 
-					gltfMaterial.normalTexture = {
-
-						index: processTexture( material.normalMap )
-
-					};
+					var normalMapDef = { index: processTexture( material.normalMap ) };
 
 					if ( material.normalScale.x !== - 1 ) {
 
@@ -9951,26 +10027,33 @@ var Three = (function (exports) {
 
 						}
 
-						gltfMaterial.normalTexture.scale = material.normalScale.x;
+						normalMapDef.scale = material.normalScale.x;
 
 					}
+
+					applyTextureTransform( normalMapDef, material.normalMap );
+
+					gltfMaterial.normalTexture = normalMapDef;
 
 				}
 
 				// occlusionTexture
 				if ( material.aoMap ) {
 
-					gltfMaterial.occlusionTexture = {
-
-						index: processTexture( material.aoMap )
-
+					var occlusionMapDef = {
+						index: processTexture( material.aoMap ),
+						texCoord: 1
 					};
 
 					if ( material.aoMapIntensity !== 1.0 ) {
 
-						gltfMaterial.occlusionTexture.strength = material.aoMapIntensity;
+						occlusionMapDef.strength = material.aoMapIntensity;
 
 					}
+
+					applyTextureTransform( occlusionMapDef, material.aoMap );
+
+					gltfMaterial.occlusionTexture = occlusionMapDef;
 
 				}
 
@@ -10101,6 +10184,7 @@ var Three = (function (exports) {
 
 				// @QUESTION Detect if .vertexColors = VertexColors?
 				// For every attribute create an accessor
+				var modifiedAttribute = null;
 				for ( var attributeName in geometry.attributes ) {
 
 					var attribute = geometry.attributes[ attributeName ];
@@ -10114,7 +10198,7 @@ var Three = (function (exports) {
 					}
 
 					// JOINTS_0 must be UNSIGNED_BYTE or UNSIGNED_SHORT.
-					var modifiedAttribute;
+					modifiedAttribute = null;
 					var array = attribute.array;
 					if ( attributeName === 'JOINTS_0' &&
 						! ( array instanceof Uint16Array ) &&
@@ -10199,9 +10283,9 @@ var Three = (function (exports) {
 
 							var baseAttribute = geometry.attributes[ attributeName ];
 
-							if ( cachedData.attributes.has( baseAttribute ) ) {
+							if ( cachedData.attributes.has( attribute ) ) {
 
-								target[ gltfAttributeName ] = cachedData.attributes.get( baseAttribute );
+								target[ gltfAttributeName ] = cachedData.attributes.get( attribute );
 								continue;
 
 							}
@@ -10398,12 +10482,15 @@ var Three = (function (exports) {
 
 				}
 
+				clip = GLTFExporter.Utils.mergeMorphTargetTracks( clip.clone(), root );
+
+				var tracks = clip.tracks;
 				var channels = [];
 				var samplers = [];
 
-				for ( var i = 0; i < clip.tracks.length; ++ i ) {
+				for ( var i = 0; i < tracks.length; ++ i ) {
 
-					var track = clip.tracks[ i ];
+					var track = tracks[ i ];
 					var trackBinding = PropertyBinding.parseTrackName( track.name );
 					var trackNode = PropertyBinding.findNode( root, trackBinding.nodeName );
 					var trackProperty = PATH_PROPERTIES[ trackBinding.propertyName ];
@@ -10433,16 +10520,6 @@ var Three = (function (exports) {
 					var outputItemSize = track.values.length / track.times.length;
 
 					if ( trackProperty === PATH_PROPERTIES.morphTargetInfluences ) {
-
-						if ( trackNode.morphTargetInfluences.length !== 1 &&
-							trackBinding.propertyIndex !== undefined ) {
-
-							console.warn( 'GLTFExporter: Skipping animation track "%s". ' +
-								'Morph target keyframe tracks must target all available morph targets ' +
-								'for the given mesh.', track.name );
-							continue;
-
-						}
 
 						outputItemSize /= trackNode.morphTargetInfluences.length;
 
@@ -10545,14 +10622,60 @@ var Three = (function (exports) {
 				return skinIndex;
 
 			}
-			function processNode( object ) {
 
-				if ( object.isLight ) {
+			function processLight( light ) {
 
-					console.warn( 'GLTFExporter: Unsupported node type:', object.constructor.name );
-					return null;
+				var lightDef = {};
+
+				if ( light.name ) lightDef.name = light.name;
+
+				lightDef.color = light.color.toArray();
+
+				lightDef.intensity = light.intensity;
+
+				if ( light.isDirectionalLight ) {
+
+					lightDef.type = 'directional';
+
+				} else if ( light.isPointLight ) {
+
+					lightDef.type = 'point';
+					if ( light.distance > 0 ) lightDef.range = light.distance;
+
+				} else if ( light.isSpotLight ) {
+
+					lightDef.type = 'spot';
+					if ( light.distance > 0 ) lightDef.range = light.distance;
+					lightDef.spot = {};
+					lightDef.spot.innerConeAngle = ( light.penumbra - 1.0 ) * light.angle * - 1.0;
+					lightDef.spot.outerConeAngle = light.angle;
 
 				}
+
+				if ( light.decay !== undefined && light.decay !== 2 ) {
+
+					console.warn( 'GLTFExporter: Light decay may be lost. glTF is physically-based, '
+						+ 'and expects light.decay=2.' );
+
+				}
+
+				if ( light.target
+						&& ( light.target.parent !== light
+						 || light.target.position.x !== 0
+						 || light.target.position.y !== 0
+						 || light.target.position.z !== - 1 ) ) {
+
+					console.warn( 'GLTFExporter: Light direction may be lost. For best results, '
+						+ 'make light.target a child of the light with position 0,0,-1.' );
+
+				}
+
+				var lights = outputJSON.extensions[ 'KHR_lights_punctual' ].lights;
+				lights.push( lightDef );
+				return lights.length - 1;
+
+			}
+			function processNode( object ) {
 
 				if ( ! outputJSON.nodes ) {
 
@@ -10623,6 +10746,24 @@ var Three = (function (exports) {
 				} else if ( object.isCamera ) {
 
 					gltfNode.camera = processCamera( object );
+
+				} else if ( object.isDirectionalLight || object.isPointLight || object.isSpotLight ) {
+
+					if ( ! extensionsUsed[ 'KHR_lights_punctual' ] ) {
+
+						outputJSON.extensions = outputJSON.extensions || {};
+						outputJSON.extensions[ 'KHR_lights_punctual' ] = { lights: [] };
+						extensionsUsed[ 'KHR_lights_punctual' ] = true;
+
+					}
+
+					gltfNode.extensions = gltfNode.extensions || {};
+					gltfNode.extensions[ 'KHR_lights_punctual' ] = { light: processLight( object ) };
+
+				} else if ( object.isLight ) {
+
+					console.warn( 'GLTFExporter: Only directional, point, and spot lights are supported.' );
+					return null;
 
 				}
 
@@ -10875,6 +11016,196 @@ var Three = (function (exports) {
 				}
 
 			} );
+
+		}
+
+	};
+
+	GLTFExporter.Utils = {
+
+		insertKeyframe: function ( track, time ) {
+
+			var tolerance = 0.001; // 1ms
+			var valueSize = track.getValueSize();
+
+			var times = new track.TimeBufferType( track.times.length + 1 );
+			var values = new track.ValueBufferType( track.values.length + valueSize );
+			var interpolant = track.createInterpolant( new track.ValueBufferType( valueSize ) );
+
+			var index;
+
+			if ( track.times.length === 0 ) {
+
+				times[ 0 ] = time;
+
+				for ( var i = 0; i < valueSize; i ++ ) {
+
+					values[ i ] = 0;
+
+				}
+
+				index = 0;
+
+			} else if ( time < track.times[ 0 ] ) {
+
+				if ( Math.abs( track.times[ 0 ] - time ) < tolerance ) return 0;
+
+				times[ 0 ] = time;
+				times.set( track.times, 1 );
+
+				values.set( interpolant.evaluate( time ), 0 );
+				values.set( track.values, valueSize );
+
+				index = 0;
+
+			} else if ( time > track.times[ track.times.length - 1 ] ) {
+
+				if ( Math.abs( track.times[ track.times.length - 1 ] - time ) < tolerance ) {
+
+					return track.times.length - 1;
+
+				}
+
+				times[ times.length - 1 ] = time;
+				times.set( track.times, 0 );
+
+				values.set( track.values, 0 );
+				values.set( interpolant.evaluate( time ), track.values.length );
+
+				index = times.length - 1;
+
+			} else {
+
+				for ( var i = 0; i < track.times.length; i ++ ) {
+
+					if ( Math.abs( track.times[ i ] - time ) < tolerance ) return i;
+
+					if ( track.times[ i ] < time && track.times[ i + 1 ] > time ) {
+
+						times.set( track.times.slice( 0, i + 1 ), 0 );
+						times[ i + 1 ] = time;
+						times.set( track.times.slice( i + 1 ), i + 2 );
+
+						values.set( track.values.slice( 0, ( i + 1 ) * valueSize ), 0 );
+						values.set( interpolant.evaluate( time ), ( i + 1 ) * valueSize );
+						values.set( track.values.slice( ( i + 1 ) * valueSize ), ( i + 2 ) * valueSize );
+
+						index = i + 1;
+
+						break;
+
+					}
+
+				}
+
+			}
+
+			track.times = times;
+			track.values = values;
+
+			return index;
+
+		},
+
+		mergeMorphTargetTracks: function ( clip, root ) {
+
+			var tracks = [];
+			var mergedTracks = {};
+			var sourceTracks = clip.tracks;
+
+			for ( var i = 0; i < sourceTracks.length; ++ i ) {
+
+				var sourceTrack = sourceTracks[ i ];
+				var sourceTrackBinding = PropertyBinding.parseTrackName( sourceTrack.name );
+				var sourceTrackNode = PropertyBinding.findNode( root, sourceTrackBinding.nodeName );
+
+				if ( sourceTrackBinding.propertyName !== 'morphTargetInfluences' || sourceTrackBinding.propertyIndex === undefined ) {
+
+					// Tracks that don't affect morph targets, or that affect all morph targets together, can be left as-is.
+					tracks.push( sourceTrack );
+					continue;
+
+				}
+
+				if ( sourceTrack.createInterpolant !== sourceTrack.InterpolantFactoryMethodDiscrete
+					&& sourceTrack.createInterpolant !== sourceTrack.InterpolantFactoryMethodLinear ) {
+
+					if ( sourceTrack.createInterpolant.isInterpolantFactoryMethodGLTFCubicSpline ) {
+
+						// This should never happen, because glTF morph target animations
+						// affect all targets already.
+						throw new Error( 'GLTFExporter: Cannot merge tracks with glTF CUBICSPLINE interpolation.' );
+
+					}
+
+					console.warn( 'GLTFExporter: Morph target interpolation mode not yet supported. Using LINEAR instead.' );
+
+					sourceTrack = sourceTrack.clone();
+					sourceTrack.setInterpolation( InterpolateLinear );
+
+				}
+
+				var targetCount = sourceTrackNode.morphTargetInfluences.length;
+				var targetIndex = sourceTrackNode.morphTargetDictionary[ sourceTrackBinding.propertyIndex ];
+
+				if ( targetIndex === undefined ) {
+
+					throw new Error( 'GLTFExporter: Morph target name not found: ' + sourceTrackBinding.propertyIndex );
+
+				}
+
+				var mergedTrack;
+
+				// If this is the first time we've seen this object, create a new
+				// track to store merged keyframe data for each morph target.
+				if ( mergedTracks[ sourceTrackNode.uuid ] === undefined ) {
+
+					mergedTrack = sourceTrack.clone();
+
+					var values = new mergedTrack.ValueBufferType( targetCount * mergedTrack.times.length );
+
+					for ( var j = 0; j < mergedTrack.times.length; j ++ ) {
+
+						values[ j * targetCount + targetIndex ] = mergedTrack.values[ j ];
+
+					}
+
+					mergedTrack.name = '.morphTargetInfluences';
+					mergedTrack.values = values;
+
+					mergedTracks[ sourceTrackNode.uuid ] = mergedTrack;
+					tracks.push( mergedTrack );
+
+					continue;
+
+				}
+				var sourceInterpolant = sourceTrack.createInterpolant( new sourceTrack.ValueBufferType( 1 ) );
+
+				mergedTrack = mergedTracks[ sourceTrackNode.uuid ];
+
+				// For every existing keyframe of the merged track, write a (possibly
+				// interpolated) value from the source track.
+				for ( var j = 0; j < mergedTrack.times.length; j ++ ) {
+
+					mergedTrack.values[ j * targetCount + targetIndex ] = sourceInterpolant.evaluate( mergedTrack.times[ j ] );
+
+				}
+
+				// For every existing keyframe of the source track, write a (possibly
+				// new) keyframe to the merged track. Values from the previous loop may
+				// be written again, but keyframes are de-duplicated.
+				for ( var j = 0; j < sourceTrack.times.length; j ++ ) {
+
+					var keyframeIndex = this.insertKeyframe( mergedTrack, sourceTrack.times[ j ] );
+					mergedTrack.values[ keyframeIndex * targetCount + targetIndex ] = sourceTrack.values[ j ];
+
+				}
+
+			}
+
+			clip.tracks = tracks;
+
+			return clip;
 
 		}
 

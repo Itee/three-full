@@ -345,9 +345,9 @@ var Three = (function (exports) {
 
 		output = output || this.getType( builder );
 
-		if ( this.isShared( builder, output ) ) {
+		if ( this.getShared( builder, output ) ) {
 
-			var isUnique = this.isUnique( builder, output );
+			var isUnique = this.getUnique( builder, output );
 
 			if ( isUnique && this.constructor.uuid === undefined ) {
 
@@ -362,7 +362,7 @@ var Three = (function (exports) {
 
 			if ( builder.parsing ) {
 
-				if ( ( data.deps || 0 ) > 0 ) {
+				if ( ( data.deps || 0 ) > 0 || this.getLabel() ) {
 
 					this.appendDepsNode( builder, data, output );
 
@@ -378,7 +378,7 @@ var Three = (function (exports) {
 
 				return data.name;
 
-			} else if ( ! this.isShared( builder, type ) || ( ! builder.optimize || data.deps == 1 ) ) {
+			} else if ( ! this.getLabel() && ( ! this.getShared( builder, type ) || ( ! builder.optimize || data.deps === 1 ) ) ) {
 
 				return Node.prototype.build.call( this, builder, output, uuid );
 
@@ -410,15 +410,29 @@ var Three = (function (exports) {
 
 	};
 
-	TempNode.prototype.isShared = function ( builder, output ) {
+	TempNode.prototype.getShared = function ( builder, output ) {
 
 		return output !== 'sampler2D' && output !== 'samplerCube' && this.shared;
 
 	};
 
-	TempNode.prototype.isUnique = function ( builder, output ) {
+	TempNode.prototype.getUnique = function ( builder, output ) {
 
 		return this.unique;
+
+	};
+
+	TempNode.prototype.setLabel = function ( name ) {
+
+		this.label = name;
+
+		return this;
+
+	};
+
+	TempNode.prototype.getLabel = function ( builder ) {
+
+		return this.label;
 
 	};
 
@@ -426,7 +440,7 @@ var Three = (function (exports) {
 
 		var uuid = unique || unique == undefined ? this.constructor.uuid || this.uuid : this.uuid;
 
-		if ( typeof this.scope == "string" ) uuid = this.scope + '-' + uuid;
+		if ( typeof this.scope === "string" ) uuid = this.scope + '-' + uuid;
 
 		return uuid;
 
@@ -444,11 +458,11 @@ var Three = (function (exports) {
 
 	TempNode.prototype.generate = function ( builder, output, uuid, type, ns ) {
 
-		if ( ! this.isShared( builder, output ) ) console.error( "TempNode is not shared!" );
+		if ( ! this.getShared( builder, output ) ) console.error( "TempNode is not shared!" );
 
 		uuid = uuid || this.uuid;
 
-		return builder.getTempVar( uuid, type || this.getType( builder ), ns ).name;
+		return builder.getTempVar( uuid, type || this.getType( builder ), ns, this.getLabel() ).name;
 
 	};
 
@@ -467,7 +481,15 @@ var Three = (function (exports) {
 	InputNode.prototype = Object.create( TempNode.prototype );
 	InputNode.prototype.constructor = InputNode;
 
-	InputNode.prototype.isReadonly = function ( builder ) {
+	InputNode.prototype.setReadonly = function ( value ) {
+
+		this.readonly = value;
+
+		return this;
+
+	};
+
+	InputNode.prototype.getReadonly = function ( builder ) {
 
 		return this.readonly;
 
@@ -497,7 +519,7 @@ var Three = (function (exports) {
 		type = type || this.getType( builder );
 
 		var data = builder.getNodeData( uuid ),
-			readonly = this.isReadonly( builder ) && this.generateReadonly !== undefined;
+			readonly = this.getReadonly( builder ) && this.generateReadonly !== undefined;
 
 		if ( readonly ) {
 
@@ -509,7 +531,7 @@ var Three = (function (exports) {
 
 				if ( ! data.vertex ) {
 
-					data.vertex = builder.createVertexUniform( type, this, ns, needsUpdate );
+					data.vertex = builder.createVertexUniform( type, this, ns, needsUpdate, this.getLabel() );
 
 				}
 
@@ -519,7 +541,7 @@ var Three = (function (exports) {
 
 				if ( ! data.fragment ) {
 
-					data.fragment = builder.createFragmentUniform( type, this, ns, needsUpdate );
+					data.fragment = builder.createFragmentUniform( type, this, ns, needsUpdate, this.getLabel() );
 
 				}
 
@@ -4788,6 +4810,8 @@ var Three = (function (exports) {
 
 			// parse all nodes to reuse generate codes
 
+			if ( this.mask ) this.mask.parse( builder );
+
 			this.color.parse( builder, { slot: 'color' } );
 			this.specular.parse( builder );
 			this.shininess.parse( builder );
@@ -4807,6 +4831,8 @@ var Three = (function (exports) {
 			if ( this.environmentAlpha && this.environment ) this.environmentAlpha.parse( builder );
 
 			// build code
+
+			var mask = this.mask ? this.mask.buildCode( builder, 'b' ) : undefined;
 
 			var color = this.color.buildCode( builder, 'c', { slot: 'color' } );
 			var specular = this.specular.buildCode( builder, 'c' );
@@ -4842,8 +4868,19 @@ var Three = (function (exports) {
 				"#include <normal_fragment_begin>",
 
 				// prevent undeclared material
-				"	BlinnPhongMaterial material;",
+				"	BlinnPhongMaterial material;"
+			];
 
+			if ( mask ) {
+
+				output.push(
+					mask.code,
+					'if ( ! ' + mask.result + ' ) discard;'
+				);
+
+			}
+
+			output.push(
 				color.code,
 				"	vec3 diffuseColor = " + color.result + ";",
 				"	ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );",
@@ -4857,7 +4894,7 @@ var Three = (function (exports) {
 				"	float shininess = max( 0.0001, " + shininess.result + " );",
 
 				"	float specularStrength = 1.0;" // Ignored in MaterialNode ( replace to specular )
-			];
+			);
 
 			if ( alpha ) {
 
@@ -5008,6 +5045,8 @@ var Three = (function (exports) {
 		this.specular = source.specular;
 		this.shininess = source.shininess;
 
+		if ( source.mask ) this.mask = source.mask;
+
 		if ( source.alpha ) this.alpha = source.alpha;
 
 		if ( source.normal ) this.normal = source.normal;
@@ -5042,6 +5081,8 @@ var Three = (function (exports) {
 			data.color = this.color.toJSON( meta ).uuid;
 			data.specular = this.specular.toJSON( meta ).uuid;
 			data.shininess = this.shininess.toJSON( meta ).uuid;
+
+			if ( this.mask ) data.mask = this.mask.toJSON( meta ).uuid;
 
 			if ( this.alpha ) data.alpha = this.alpha.toJSON( meta ).uuid;
 
@@ -5183,7 +5224,7 @@ var Three = (function (exports) {
 
 	FunctionNode.prototype.useKeywords = true;
 
-	FunctionNode.prototype.isShared = function ( builder, output ) {
+	FunctionNode.prototype.getShared = function ( builder, output ) {
 
 		return ! this.isMethod;
 
@@ -6617,7 +6658,7 @@ var Three = (function (exports) {
 		var LinearToLogLuv = new FunctionNode( [
 			"vec4 LinearToLogLuv( in vec4 value ) {",
 
-			"	vec3 Xp_Y_XYZp = value.rgb * cLogLuvM;",
+			"	vec3 Xp_Y_XYZp = cLogLuvM * value.rgb;",
 			"	Xp_Y_XYZp = max(Xp_Y_XYZp, vec3(1e-6, 1e-6, 1e-6));",
 			"	vec4 vResult;",
 			"	vResult.xy = Xp_Y_XYZp.xy / Xp_Y_XYZp.z;",
@@ -6641,7 +6682,7 @@ var Three = (function (exports) {
 			"	Xp_Y_XYZp.y = exp2((Le - 127.0) / 2.0);",
 			"	Xp_Y_XYZp.z = Xp_Y_XYZp.y / value.y;",
 			"	Xp_Y_XYZp.x = value.x * Xp_Y_XYZp.z;",
-			"	vec3 vRGB = Xp_Y_XYZp.rgb * cLogLuvInverseM;",
+			"	vec3 vRGB = cLogLuvInverseM * Xp_Y_XYZp.rgb;",
 			"	return vec4( max(vRGB, 0.0), 1.0 );",
 
 			"}"
@@ -7391,7 +7432,8 @@ var Three = (function (exports) {
 			vec3: 'v3',
 			vec4: 'v4',
 			mat4: 'v4',
-			int: 'i'
+			int: 'i',
+			bool: 'b'
 		},
 		convertTypeToFormat = {
 			t: 'sampler2D',
@@ -7801,9 +7843,7 @@ var Three = (function (exports) {
 
 		},
 
-		getVar: function ( uuid, type, ns, shader ) {
-
-			shader = shader || 'varying';
+		getVar: function ( uuid, type, ns, shader = 'varying', prefix = 'V', label = '' ) {
 
 			var vars = this.getVars( shader ),
 				data = vars[ uuid ];
@@ -7811,7 +7851,7 @@ var Three = (function (exports) {
 			if ( ! data ) {
 
 				var index = vars.length,
-					name = ns ? ns : 'nVv' + index;
+					name = ns ? ns : 'node' + prefix + index + ( label ? '_' + label : '' );
 
 				data = { name: name, type: type };
 
@@ -7824,9 +7864,9 @@ var Three = (function (exports) {
 
 		},
 
-		getTempVar: function ( uuid, type, ns ) {
+		getTempVar: function ( uuid, type, ns, label ) {
 
-			return this.getVar( uuid, type, ns, this.shader );
+			return this.getVar( uuid, type, ns, this.shader, 'T', label );
 
 		},
 
@@ -7909,14 +7949,14 @@ var Three = (function (exports) {
 
 		},
 
-		createUniform: function ( shader, type, node, ns, needsUpdate ) {
+		createUniform: function ( shader, type, node, ns, needsUpdate, label ) {
 
 			var uniforms = this.inputs.uniforms,
 				index = uniforms.list.length;
 
 			var uniform = new NodeUniform( {
 				type: type,
-				name: ns ? ns : 'nVu' + index,
+				name: ns ? ns : 'nodeU' + index + ( label ? '_' + label : '' ),
 				node: node,
 				needsUpdate: needsUpdate
 			} );
@@ -7932,15 +7972,15 @@ var Three = (function (exports) {
 
 		},
 
-		createVertexUniform: function ( type, node, ns, needsUpdate ) {
+		createVertexUniform: function ( type, node, ns, needsUpdate, label ) {
 
-			return this.createUniform( 'vertex', type, node, ns, needsUpdate );
+			return this.createUniform( 'vertex', type, node, ns, needsUpdate, label );
 
 		},
 
-		createFragmentUniform: function ( type, node, ns, needsUpdate ) {
+		createFragmentUniform: function ( type, node, ns, needsUpdate, label ) {
 
-			return this.createUniform( 'fragment', type, node, ns, needsUpdate );
+			return this.createUniform( 'fragment', type, node, ns, needsUpdate, label );
 
 		},
 
@@ -8178,27 +8218,38 @@ var Three = (function (exports) {
 				case 'f <- v2' : return code + '.x';
 				case 'f <- v3' : return code + '.x';
 				case 'f <- v4' : return code + '.x';
-				case 'f <- i' : return 'float( ' + code + ' )';
+				case 'f <- i' :
+				case 'f <- b' :	return 'float( ' + code + ' )';
 
 				case 'v2 <- f' : return 'vec2( ' + code + ' )';
 				case 'v2 <- v3': return code + '.xy';
 				case 'v2 <- v4': return code + '.xy';
-				case 'v2 <- i' : return 'vec2( float( ' + code + ' ) )';
+				case 'v2 <- i' :
+				case 'v2 <- b' : return 'vec2( float( ' + code + ' ) )';
 
 				case 'v3 <- f' : return 'vec3( ' + code + ' )';
 				case 'v3 <- v2': return 'vec3( ' + code + ', 0.0 )';
 				case 'v3 <- v4': return code + '.xyz';
-				case 'v3 <- i' : return 'vec2( float( ' + code + ' ) )';
+				case 'v3 <- i' :
+				case 'v3 <- b' : return 'vec2( float( ' + code + ' ) )';
 
 				case 'v4 <- f' : return 'vec4( ' + code + ' )';
 				case 'v4 <- v2': return 'vec4( ' + code + ', 0.0, 1.0 )';
 				case 'v4 <- v3': return 'vec4( ' + code + ', 1.0 )';
-				case 'v4 <- i' : return 'vec4( float( ' + code + ' ) )';
+				case 'v4 <- i' :
+				case 'v4 <- b' : return 'vec4( float( ' + code + ' ) )';
 
-				case 'i <- f' : return 'int( ' + code + ' )';
+				case 'i <- f' :
+				case 'i <- b' : return 'int( ' + code + ' )';
 				case 'i <- v2' : return 'int( ' + code + '.x )';
 				case 'i <- v3' : return 'int( ' + code + '.x )';
 				case 'i <- v4' : return 'int( ' + code + '.x )';
+
+				case 'b <- f' : return '( ' + code + ' != 0.0 )';
+				case 'b <- v2' : return '( ' + code + ' != vec2( 0.0 ) )';
+				case 'b <- v3' : return '( ' + code + ' != vec3( 0.0 ) )';
+				case 'b <- v4' : return '( ' + code + ' != vec4( 0.0 ) )';
+				case 'b <- i' : return '( ' + code + ' != 0 )';
 
 			}
 
@@ -8344,7 +8395,7 @@ var Three = (function (exports) {
 
 	};
 
-	PositionNode.prototype.isShared = function ( builder ) {
+	PositionNode.prototype.getShared = function ( builder ) {
 
 		switch ( this.scope ) {
 
@@ -9088,6 +9139,13 @@ var Three = (function (exports) {
 					value: value.toArray()
 				};
 
+			} else if ( value && value.isMatrix3 ) {
+
+				data.uniforms[ name ] = {
+					type: 'm3',
+					value: value.toArray()
+				};
+
 			} else if ( value && value.isMatrix4 ) {
 
 				data.uniforms[ name ] = {
@@ -9329,6 +9387,7 @@ var Three = (function (exports) {
 		'ao',
 		'environment',
 		'environmentAlpha',
+		'mask',
 		'position'
 	] );
 

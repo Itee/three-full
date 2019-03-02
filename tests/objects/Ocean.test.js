@@ -3263,6 +3263,33 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var FrontSide = 0;
+	var BackSide = 1;
+	var DoubleSide = 2;
+	var FlatShading = 1;
+	var NoColors = 0;
+	var NormalBlending = 1;
+	var AddEquation = 100;
+	var SrcAlphaFactor = 204;
+	var OneMinusSrcAlphaFactor = 205;
+	var LessEqualDepth = 3;
+	var MultiplyOperation = 0;
+
+	var UVMapping = 300;
+	var RepeatWrapping = 1000;
+	var ClampToEdgeWrapping = 1001;
+	var MirroredRepeatWrapping = 1002;
+	var NearestFilter = 1003;
+	var LinearFilter = 1006;
+	var LinearMipMapLinearFilter = 1008;
+	var UnsignedByteType = 1009;
+	var FloatType = 1015;
+	var HalfFloatType = 1016;
+	var RGBAFormat = 1023;
+	var TrianglesDrawMode = 0;
+	var LinearEncoding = 3000;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var object3DId = 0;
 
 	function Object3D() {
@@ -3966,6 +3993,10 @@ var Three = (function (exports) {
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
 
+			// object specific properties
+
+			if ( this.isMesh && this.drawMode !== TrianglesDrawMode ) object.drawMode = this.drawMode;
+
 			//
 
 			function serialize( library, element ) {
@@ -4360,6 +4391,8 @@ var Three = (function (exports) {
 
 		constructor: Scene,
 
+		isScene: true,
+
 		copy: function ( source, recursive ) {
 
 			Object3D.prototype.copy.call( this, source, recursive );
@@ -4384,36 +4417,15 @@ var Three = (function (exports) {
 
 			return data;
 
+		},
+
+		dispose: function () {
+
+			this.dispatchEvent( { type: 'dispose' } );
+
 		}
 
 	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var FrontSide = 0;
-	var BackSide = 1;
-	var DoubleSide = 2;
-	var FlatShading = 1;
-	var NoColors = 0;
-	var NormalBlending = 1;
-	var AddEquation = 100;
-	var SrcAlphaFactor = 204;
-	var OneMinusSrcAlphaFactor = 205;
-	var LessEqualDepth = 3;
-	var MultiplyOperation = 0;
-
-	var UVMapping = 300;
-	var RepeatWrapping = 1000;
-	var ClampToEdgeWrapping = 1001;
-	var MirroredRepeatWrapping = 1002;
-	var NearestFilter = 1003;
-	var LinearFilter = 1006;
-	var LinearMipMapLinearFilter = 1008;
-	var UnsignedByteType = 1009;
-	var FloatType = 1015;
-	var HalfFloatType = 1016;
-	var RGBAFormat = 1023;
-	var TrianglesDrawMode = 0;
-	var LinearEncoding = 3000;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
@@ -6540,6 +6552,13 @@ var Three = (function (exports) {
 
 				data.uniforms[ name ] = {
 					type: 'v4',
+					value: value.toArray()
+				};
+
+			} else if ( value && value.isMatrix3 ) {
+
+				data.uniforms[ name ] = {
+					type: 'm3',
 					value: value.toArray()
 				};
 
@@ -10481,21 +10500,7 @@ var Three = (function (exports) {
 
 		toNonIndexed: function () {
 
-			if ( this.index === null ) {
-
-				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
-				return this;
-
-			}
-
-			var geometry2 = new BufferGeometry();
-
-			var indices = this.index.array;
-			var attributes = this.attributes;
-
-			for ( var name in attributes ) {
-
-				var attribute = attributes[ name ];
+			function convertBufferAttribute( attribute, indices ) {
 
 				var array = attribute.array;
 				var itemSize = attribute.itemSize;
@@ -10516,9 +10521,60 @@ var Three = (function (exports) {
 
 				}
 
-				geometry2.addAttribute( name, new BufferAttribute( array2, itemSize ) );
+				return new BufferAttribute( array2, itemSize );
 
 			}
+
+			//
+
+			if ( this.index === null ) {
+
+				console.warn( 'BufferGeometry.toNonIndexed(): Geometry is already non-indexed.' );
+				return this;
+
+			}
+
+			var geometry2 = new BufferGeometry();
+
+			var indices = this.index.array;
+			var attributes = this.attributes;
+
+			// attributes
+
+			for ( var name in attributes ) {
+
+				var attribute = attributes[ name ];
+
+				var newAttribute = convertBufferAttribute( attribute, indices );
+
+				geometry2.addAttribute( name, newAttribute );
+
+			}
+
+			// morph attributes
+
+			var morphAttributes = this.morphAttributes;
+
+			for ( name in morphAttributes ) {
+
+				var morphArray = [];
+				var morphAttribute = morphAttributes[ name ]; // morphAttribute: array of Float32BufferAttributes
+
+				for ( var i = 0, il = morphAttribute.length; i < il; i ++ ) {
+
+					var attribute = morphAttribute[ i ];
+
+					var newAttribute = convertBufferAttribute( attribute, indices );
+
+					morphArray.push( newAttribute );
+
+				}
+
+				geometry2.morphAttributes[ name ] = morphArray;
+
+			}
+
+			// groups
 
 			var groups = this.groups;
 
@@ -10981,6 +11037,7 @@ var Three = (function (exports) {
 									if ( intersection ) {
 
 										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in indexed buffer semantics
+										intersection.face.materialIndex = group.materialIndex;
 										intersects.push( intersection );
 
 									}
@@ -11038,6 +11095,7 @@ var Three = (function (exports) {
 									if ( intersection ) {
 
 										intersection.faceIndex = Math.floor( j / 3 ); // triangle number in non-indexed buffer semantics
+										intersection.face.materialIndex = group.materialIndex;
 										intersects.push( intersection );
 
 									}
@@ -12766,6 +12824,24 @@ vec3 objectNormal = vec3( normal );
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var bsdfs = `
+
+// Analytical approximation of the DFG LUT, one half of the
+// split-sum approximation used in indirect specular lighting.
+// via 'environmentBRDF' from "Physically Based Shading on Mobile"
+// https://www.unrealengine.com/blog/physically-based-shading-on-mobile - environmentBRDF for GGX on mobile
+vec2 integrateSpecularBRDF( const in float dotNV, const in float roughness ) {
+	const vec4 c0 = vec4( - 1, - 0.0275, - 0.572, 0.022 );
+
+	const vec4 c1 = vec4( 1, 0.0425, 1.04, - 0.04 );
+
+	vec4 r = roughness * c0 + c1;
+
+	float a004 = min( r.x * r.x, exp2( - 9.28 * dotNV ) ) * r.x + r.y;
+
+	return vec2( -1.04, 1.04 ) * a004 + r.zw;
+
+}
+
 float punctualLightIntensityToIrradianceFactor( const in float lightDistance, const in float cutoffDistance, const in float decayExponent ) {
 
 #if defined ( PHYSICALLY_CORRECT_LIGHTS )
@@ -12986,19 +13062,36 @@ vec3 BRDF_Specular_GGX_Environment( const in GeometricContext geometry, const in
 
 	float dotNV = saturate( dot( geometry.normal, geometry.viewDir ) );
 
-	const vec4 c0 = vec4( - 1, - 0.0275, - 0.572, 0.022 );
+	vec2 brdf = integrateSpecularBRDF( dotNV, roughness );
 
-	const vec4 c1 = vec4( 1, 0.0425, 1.04, - 0.04 );
-
-	vec4 r = roughness * c0 + c1;
-
-	float a004 = min( r.x * r.x, exp2( - 9.28 * dotNV ) ) * r.x + r.y;
-
-	vec2 AB = vec2( -1.04, 1.04 ) * a004 + r.zw;
-
-	return specularColor * AB.x + AB.y;
+	return specularColor * brdf.x + brdf.y;
 
 } // validated
+
+// Fdez-Agüera's "Multiple-Scattering Microfacet Model for Real-Time Image Based Lighting"
+// Approximates multiscattering in order to preserve energy.
+// http://www.jcgt.org/published/0008/01/03/
+void BRDF_Specular_Multiscattering_Environment( const in GeometricContext geometry, const in vec3 specularColor, const in float roughness, inout vec3 singleScatter, inout vec3 multiScatter ) {
+
+	float dotNV = saturate( dot( geometry.normal, geometry.viewDir ) );
+
+	vec3 F = F_Schlick( specularColor, dotNV );
+	vec2 brdf = integrateSpecularBRDF( dotNV, roughness );
+	vec3 FssEss = F * brdf.x + brdf.y;
+
+	float Ess = brdf.x + brdf.y;
+	float Ems = 1.0 - Ess;
+
+	// Paper incorrect indicates coefficient is PI/21, and will
+	// be corrected to 1/21 in future updates.
+	vec3 Favg = specularColor + ( 1.0 - specularColor ) * 0.047619; // 1/21
+	vec3 Fms = FssEss * Favg / ( 1.0 - Ems * Favg );
+
+	singleScatter += FssEss;
+	multiScatter += Fms * Ems;
+
+}
+
 float G_BlinnPhong_Implicit(  ) {
 
 	// geometry term is (n dot l)(n dot v) / 4(n dot l)(n dot v)
@@ -13574,7 +13667,7 @@ vec4 LinearToRGBD( in vec4 value, in float maxRange ) {
 // M matrix, for encoding
 const mat3 cLogLuvM = mat3( 0.2209, 0.3390, 0.4184, 0.1138, 0.6780, 0.7319, 0.0102, 0.1130, 0.2969 );
 vec4 LinearToLogLuv( in vec4 value )  {
-	vec3 Xp_Y_XYZp = value.rgb * cLogLuvM;
+	vec3 Xp_Y_XYZp = cLogLuvM * value.rgb;
 	Xp_Y_XYZp = max( Xp_Y_XYZp, vec3( 1e-6, 1e-6, 1e-6 ) );
 	vec4 vResult;
 	vResult.xy = Xp_Y_XYZp.xy / Xp_Y_XYZp.z;
@@ -13592,7 +13685,7 @@ vec4 LogLuvToLinear( in vec4 value ) {
 	Xp_Y_XYZp.y = exp2( ( Le - 127.0 ) / 2.0 );
 	Xp_Y_XYZp.z = Xp_Y_XYZp.y / value.y;
 	Xp_Y_XYZp.x = value.x * Xp_Y_XYZp.z;
-	vec3 vRGB = Xp_Y_XYZp.rgb * cLogLuvInverseM;
+	vec3 vRGB = cLogLuvInverseM * Xp_Y_XYZp.rgb;
 	return vec4( max( vRGB, 0.0 ), 1.0 );
 }
 `;
@@ -13891,9 +13984,11 @@ backGeometry.normal = -geometry.normal;
 backGeometry.viewDir = geometry.viewDir;
 
 vLightFront = vec3( 0.0 );
+vIndirectFront = vec3( 0.0 );
 
 #ifdef DOUBLE_SIDED
 	vLightBack = vec3( 0.0 );
+	vIndirectBack = vec3( 0.0 );
 #endif
 
 IncidentLight directLight;
@@ -13969,11 +14064,11 @@ vec3 directLightColor_Diffuse;
 	#pragma unroll_loop
 	for ( int i = 0; i < NUM_HEMI_LIGHTS; i ++ ) {
 
-		vLightFront += getHemisphereLightIrradiance( hemisphereLights[ i ], geometry );
+		vIndirectFront += getHemisphereLightIrradiance( hemisphereLights[ i ], geometry );
 
 		#ifdef DOUBLE_SIDED
 
-			vLightBack += getHemisphereLightIrradiance( hemisphereLights[ i ], backGeometry );
+			vIndirectBack += getHemisphereLightIrradiance( hemisphereLights[ i ], backGeometry );
 
 		#endif
 
@@ -14474,11 +14569,17 @@ void RE_Direct_Physical( const in IncidentLight directLight, const in GeometricC
 
 void RE_IndirectDiffuse_Physical( const in vec3 irradiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
 
-	reflectedLight.indirectDiffuse += irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );
+	// Defer to the IndirectSpecular function to compute
+	// the indirectDiffuse if energy preservation is enabled.
+	#ifndef ENVMAP_TYPE_CUBE_UV
+
+		reflectedLight.indirectDiffuse += irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );
+
+	#endif
 
 }
 
-void RE_IndirectSpecular_Physical( const in vec3 radiance, const in vec3 clearCoatRadiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
+void RE_IndirectSpecular_Physical( const in vec3 radiance, const in vec3 irradiance, const in vec3 clearCoatRadiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight) {
 
 	#ifndef STANDARD
 		float dotNV = saturate( dot( geometry.normal, geometry.viewDir ) );
@@ -14488,14 +14589,39 @@ void RE_IndirectSpecular_Physical( const in vec3 radiance, const in vec3 clearCo
 		float clearCoatDHR = 0.0;
 	#endif
 
-	reflectedLight.indirectSpecular += ( 1.0 - clearCoatDHR ) * radiance * BRDF_Specular_GGX_Environment( geometry, material.specularColor, material.specularRoughness );
+	float clearCoatInv = 1.0 - clearCoatDHR;
+
+	// Both indirect specular and diffuse light accumulate here
+	// if energy preservation enabled, and PMREM provided.
+	#if defined( ENVMAP_TYPE_CUBE_UV )
+
+		vec3 singleScattering = vec3( 0.0 );
+		vec3 multiScattering = vec3( 0.0 );
+		vec3 cosineWeightedIrradiance = irradiance * RECIPROCAL_PI;
+
+		BRDF_Specular_Multiscattering_Environment( geometry, material.specularColor, material.specularRoughness, singleScattering, multiScattering );
+
+		// The multiscattering paper uses the below formula for calculating diffuse 
+		// for dielectrics, but this is already handled when initially computing the 
+		// specular and diffuse color, so we can just use the diffuseColor directly.
+		//vec3 diffuse = material.diffuseColor * ( 1.0 - ( singleScattering + multiScattering ) );
+		vec3 diffuse = material.diffuseColor;
+
+		reflectedLight.indirectSpecular += clearCoatInv * radiance * singleScattering;
+		reflectedLight.indirectDiffuse += multiScattering * cosineWeightedIrradiance;
+		reflectedLight.indirectDiffuse += diffuse * cosineWeightedIrradiance;
+
+	#else
+
+		reflectedLight.indirectSpecular += clearCoatInv * radiance * BRDF_Specular_GGX_Environment( geometry, material.specularColor, material.specularRoughness );
+
+	#endif
 
 	#ifndef STANDARD
 
 		reflectedLight.indirectSpecular += clearCoatRadiance * material.clearCoat * BRDF_Specular_GGX_Environment( geometry, vec3( DEFAULT_SPECULAR_COEFFICIENT ), material.clearCoatRoughness );
 
 	#endif
-
 }
 
 #define RE_Direct				RE_Direct_Physical
@@ -14679,7 +14805,7 @@ IncidentLight directLight;
 
 #if defined( RE_IndirectSpecular )
 
-	RE_IndirectSpecular( radiance, clearCoatRadiance, geometry, material, reflectedLight );
+	RE_IndirectSpecular( radiance, irradiance, clearCoatRadiance, geometry, material, reflectedLight );
 
 #endif
 `;
@@ -16260,13 +16386,12 @@ uniform vec3 emissive;
 uniform float opacity;
 
 varying vec3 vLightFront;
+varying vec3 vIndirectFront;
 
 #ifdef DOUBLE_SIDED
-
 	varying vec3 vLightBack;
-
+	varying vec3 vIndirectBack;
 #endif
-
 #include <common>
 #include <packing>
 #include <dithering_pars_fragment>
@@ -16307,6 +16432,16 @@ void main() {
 	// accumulation
 	reflectedLight.indirectDiffuse = getAmbientLightIrradiance( ambientLightColor );
 
+	#ifdef DOUBLE_SIDED
+
+		reflectedLight.indirectDiffuse += ( gl_FrontFacing ) ? vIndirectFront : vIndirectBack;
+
+	#else
+
+		reflectedLight.indirectDiffuse += vIndirectFront;
+
+	#endif
+
 	#include <lightmap_fragment>
 
 	reflectedLight.indirectDiffuse *= BRDF_Diffuse_Lambert( diffuseColor.rgb );
@@ -16337,7 +16472,6 @@ void main() {
 	#include <fog_fragment>
 	#include <premultiplied_alpha_fragment>
 	#include <dithering_fragment>
-
 }
 `;
 
@@ -16348,11 +16482,11 @@ void main() {
 #define LAMBERT
 
 varying vec3 vLightFront;
+varying vec3 vIndirectFront;
 
 #ifdef DOUBLE_SIDED
-
 	varying vec3 vLightBack;
-
+	varying vec3 vIndirectBack;
 #endif
 
 #include <common>
@@ -16393,7 +16527,6 @@ void main() {
 	#include <lights_lambert_vertex>
 	#include <shadowmap_vertex>
 	#include <fog_vertex>
-
 }
 `;
 
@@ -17819,7 +17952,7 @@ void main() {
 		var initialSpectrumUniforms = UniformsUtils.clone( initialSpectrumShader.uniforms );
 		this.materialInitialSpectrum = new ShaderMaterial( {
 			uniforms: initialSpectrumUniforms,
-			vertexShader: fullscreeenVertexShader.vertexShader,
+			vertexShader: initialSpectrumShader.vertexShader,
 			fragmentShader: initialSpectrumShader.fragmentShader
 		} );
 		this.materialInitialSpectrum.uniforms.u_wind = { value: new Vector2() };

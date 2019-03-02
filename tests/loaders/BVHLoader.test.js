@@ -3712,6 +3712,15 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var InterpolateDiscrete = 2300;
+	var InterpolateLinear = 2301;
+	var InterpolateSmooth = 2302;
+	var ZeroCurvatureEnding = 2400;
+	var ZeroSlopeEnding = 2401;
+	var WrapAroundEnding = 2402;
+	var TrianglesDrawMode = 0;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var object3DId = 0;
 
 	function Object3D() {
@@ -4415,6 +4424,10 @@ var Three = (function (exports) {
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
 
+			// object specific properties
+
+			if ( this.isMesh && this.drawMode !== TrianglesDrawMode ) object.drawMode = this.drawMode;
+
 			//
 
 			function serialize( library, element ) {
@@ -4602,14 +4615,6 @@ var Three = (function (exports) {
 		isBone: true
 
 	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var InterpolateDiscrete = 2300;
-	var InterpolateLinear = 2301;
-	var InterpolateSmooth = 2302;
-	var ZeroCurvatureEnding = 2400;
-	var ZeroSlopeEnding = 2401;
-	var WrapAroundEnding = 2402;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
@@ -5637,6 +5642,21 @@ var Three = (function (exports) {
 
 			return this;
 
+		},
+
+		clone: function () {
+
+			var times = AnimationUtils.arraySlice( this.times, 0 );
+			var values = AnimationUtils.arraySlice( this.values, 0 );
+
+			var TypedKeyframeTrack = this.constructor;
+			var track = new TypedKeyframeTrack( this.name, times, values );
+
+			// Interpolant argument to constructor is not saved, so copy the factory method directly.
+			track.createInterpolant = this.createInterpolant;
+
+			return track;
+
 		}
 
 	} );
@@ -6237,6 +6257,19 @@ var Three = (function (exports) {
 			}
 
 			return this;
+
+		},
+		clone: function () {
+
+			var tracks = [];
+
+			for ( var i = 0; i < this.tracks.length; i ++ ) {
+
+				tracks.push( this.tracks[ i ].clone() );
+
+			}
+
+			return new AnimationClip( this.name, this.duration, tracks );
 
 		}
 

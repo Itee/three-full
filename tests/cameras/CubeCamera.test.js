@@ -3263,6 +3263,20 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	var UVMapping = 300;
+	var RepeatWrapping = 1000;
+	var ClampToEdgeWrapping = 1001;
+	var MirroredRepeatWrapping = 1002;
+	var LinearFilter = 1006;
+	var LinearMipMapLinearFilter = 1008;
+	var UnsignedByteType = 1009;
+	var RGBFormat = 1022;
+	var RGBAFormat = 1023;
+	var TrianglesDrawMode = 0;
+	var LinearEncoding = 3000;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var object3DId = 0;
 
 	function Object3D() {
@@ -3966,6 +3980,10 @@ var Three = (function (exports) {
 
 			if ( this.matrixAutoUpdate === false ) object.matrixAutoUpdate = false;
 
+			// object specific properties
+
+			if ( this.isMesh && this.drawMode !== TrianglesDrawMode ) object.drawMode = this.drawMode;
+
 			//
 
 			function serialize( library, element ) {
@@ -4136,19 +4154,6 @@ var Three = (function (exports) {
 		}
 
 	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	var UVMapping = 300;
-	var RepeatWrapping = 1000;
-	var ClampToEdgeWrapping = 1001;
-	var MirroredRepeatWrapping = 1002;
-	var LinearFilter = 1006;
-	var LinearMipMapLinearFilter = 1008;
-	var UnsignedByteType = 1009;
-	var RGBFormat = 1022;
-	var RGBAFormat = 1023;
-	var LinearEncoding = 3000;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
@@ -6018,6 +6023,8 @@ var Three = (function (exports) {
 
 			if ( this.parent === null ) this.updateMatrixWorld();
 
+			var currentRenderTarget = renderer.getRenderTarget();
+
 			var renderTarget = this.renderTarget;
 			var generateMipmaps = renderTarget.texture.generateMipmaps;
 
@@ -6043,11 +6050,13 @@ var Three = (function (exports) {
 			renderTarget.activeCubeFace = 5;
 			renderer.render( scene, cameraNZ, renderTarget );
 
-			renderer.setRenderTarget( null );
+			renderer.setRenderTarget( currentRenderTarget );
 
 		};
 
 		this.clear = function ( renderer, color, depth, stencil ) {
+
+			var currentRenderTarget = renderer.getRenderTarget();
 
 			var renderTarget = this.renderTarget;
 
@@ -6060,7 +6069,7 @@ var Three = (function (exports) {
 
 			}
 
-			renderer.setRenderTarget( null );
+			renderer.setRenderTarget( currentRenderTarget );
 
 		};
 

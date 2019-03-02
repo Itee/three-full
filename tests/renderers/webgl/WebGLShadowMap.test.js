@@ -8,6 +8,7 @@ var Three = (function (exports) {
 	var DoubleSide = 2;
 	var FlatShading = 1;
 	var NoColors = 0;
+	var NoBlending = 0;
 	var NormalBlending = 1;
 	var AddEquation = 100;
 	var SrcAlphaFactor = 204;
@@ -6234,12 +6235,10 @@ var Three = (function (exports) {
 
 			if ( lights.length === 0 ) return;
 
-			// TODO Clean up (needed in case of contextlost)
-			var _gl = _renderer.context;
 			var _state = _renderer.state;
 
 			// Set GL state for depth map.
-			_state.disable( _gl.BLEND );
+			_state.setBlending( NoBlending );
 			_state.buffers.color.setClear( 1, 1, 1, 1 );
 			_state.buffers.depth.setTest( true );
 			_state.setScissorTest( false );

@@ -466,7 +466,139 @@ var Three = (function (exports) {
 
 	};
 
-	exports.TempNode = TempNode;
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function InputNode( type, params ) {
+
+		params = params || {};
+		params.shared = params.shared !== undefined ? params.shared : false;
+
+		TempNode.call( this, type, params );
+
+		this.readonly = false;
+
+	}
+
+	InputNode.prototype = Object.create( TempNode.prototype );
+	InputNode.prototype.constructor = InputNode;
+
+	InputNode.prototype.setReadonly = function ( value ) {
+
+		this.readonly = value;
+
+		return this;
+
+	};
+
+	InputNode.prototype.getReadonly = function ( builder ) {
+
+		return this.readonly;
+
+	};
+
+	InputNode.prototype.copy = function ( source ) {
+
+		TempNode.prototype.copy.call( this, source );
+
+		if ( source.readonly !== undefined ) this.readonly = source.readonly;
+
+	};
+
+	InputNode.prototype.createJSONNode = function ( meta ) {
+
+		var data = TempNode.prototype.createJSONNode.call( this, meta );
+
+		if ( this.readonly === true ) data.readonly = this.readonly;
+
+		return data;
+
+	};
+
+	InputNode.prototype.generate = function ( builder, output, uuid, type, ns, needsUpdate ) {
+
+		uuid = builder.getUuid( uuid || this.getUuid() );
+		type = type || this.getType( builder );
+
+		var data = builder.getNodeData( uuid ),
+			readonly = this.getReadonly( builder ) && this.generateReadonly !== undefined;
+
+		if ( readonly ) {
+
+			return this.generateReadonly( builder, output, uuid, type, ns, needsUpdate );
+
+		} else {
+
+			if ( builder.isShader( 'vertex' ) ) {
+
+				if ( ! data.vertex ) {
+
+					data.vertex = builder.createVertexUniform( type, this, ns, needsUpdate, this.getLabel() );
+
+				}
+
+				return builder.format( data.vertex.name, type, output );
+
+			} else {
+
+				if ( ! data.fragment ) {
+
+					data.fragment = builder.createFragmentUniform( type, this, ns, needsUpdate, this.getLabel() );
+
+				}
+
+				return builder.format( data.fragment.name, type, output );
+
+			}
+
+		}
+
+	};
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function BoolNode( value ) {
+
+		InputNode.call( this, 'b' );
+
+		this.value = Boolean( value );
+
+	}
+
+	BoolNode.prototype = Object.create( InputNode.prototype );
+	BoolNode.prototype.constructor = BoolNode;
+	BoolNode.prototype.nodeType = "Bool";
+
+	BoolNode.prototype.generateReadonly = function ( builder, output, uuid, type, ns, needsUpdate ) {
+
+		return builder.format( this.value, type, output );
+
+	};
+
+	BoolNode.prototype.copy = function ( source ) {
+
+		InputNode.prototype.copy.call( this, source );
+
+		this.value = source.value;
+
+	};
+
+	BoolNode.prototype.toJSON = function ( meta ) {
+
+		var data = this.getJSONNode( meta );
+
+		if ( ! data ) {
+
+			data = this.createJSONNode( meta );
+
+			data.value = this.value;
+
+			if ( this.readonly === true ) data.readonly = true;
+
+		}
+
+		return data;
+
+	};
+
+	exports.BoolNode = BoolNode;
 
 	return exports;
 

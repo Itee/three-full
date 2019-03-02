@@ -85,6 +85,18 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	var UVMapping = 300;
+	var RepeatWrapping = 1000;
+	var ClampToEdgeWrapping = 1001;
+	var MirroredRepeatWrapping = 1002;
+	var LinearFilter = 1006;
+	var LinearMipMapLinearFilter = 1008;
+	var UnsignedByteType = 1009;
+	var RGBAFormat = 1023;
+	var LinearEncoding = 3000;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var _Math = {
@@ -232,6 +244,499 @@ var Three = (function (exports) {
 		}
 
 	};
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function Vector2( x, y ) {
+
+		this.x = x || 0;
+		this.y = y || 0;
+
+	}
+
+	Object.defineProperties( Vector2.prototype, {
+
+		"width": {
+
+			get: function () {
+
+				return this.x;
+
+			},
+
+			set: function ( value ) {
+
+				this.x = value;
+
+			}
+
+		},
+
+		"height": {
+
+			get: function () {
+
+				return this.y;
+
+			},
+
+			set: function ( value ) {
+
+				this.y = value;
+
+			}
+
+		}
+
+	} );
+
+	Object.assign( Vector2.prototype, {
+
+		isVector2: true,
+
+		set: function ( x, y ) {
+
+			this.x = x;
+			this.y = y;
+
+			return this;
+
+		},
+
+		setScalar: function ( scalar ) {
+
+			this.x = scalar;
+			this.y = scalar;
+
+			return this;
+
+		},
+
+		setX: function ( x ) {
+
+			this.x = x;
+
+			return this;
+
+		},
+
+		setY: function ( y ) {
+
+			this.y = y;
+
+			return this;
+
+		},
+
+		setComponent: function ( index, value ) {
+
+			switch ( index ) {
+
+				case 0: this.x = value; break;
+				case 1: this.y = value; break;
+				default: throw new Error( 'index is out of range: ' + index );
+
+			}
+
+			return this;
+
+		},
+
+		getComponent: function ( index ) {
+
+			switch ( index ) {
+
+				case 0: return this.x;
+				case 1: return this.y;
+				default: throw new Error( 'index is out of range: ' + index );
+
+			}
+
+		},
+
+		clone: function () {
+
+			return new this.constructor( this.x, this.y );
+
+		},
+
+		copy: function ( v ) {
+
+			this.x = v.x;
+			this.y = v.y;
+
+			return this;
+
+		},
+
+		add: function ( v, w ) {
+
+			if ( w !== undefined ) {
+
+				console.warn( 'Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				return this.addVectors( v, w );
+
+			}
+
+			this.x += v.x;
+			this.y += v.y;
+
+			return this;
+
+		},
+
+		addScalar: function ( s ) {
+
+			this.x += s;
+			this.y += s;
+
+			return this;
+
+		},
+
+		addVectors: function ( a, b ) {
+
+			this.x = a.x + b.x;
+			this.y = a.y + b.y;
+
+			return this;
+
+		},
+
+		addScaledVector: function ( v, s ) {
+
+			this.x += v.x * s;
+			this.y += v.y * s;
+
+			return this;
+
+		},
+
+		sub: function ( v, w ) {
+
+			if ( w !== undefined ) {
+
+				console.warn( 'Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				return this.subVectors( v, w );
+
+			}
+
+			this.x -= v.x;
+			this.y -= v.y;
+
+			return this;
+
+		},
+
+		subScalar: function ( s ) {
+
+			this.x -= s;
+			this.y -= s;
+
+			return this;
+
+		},
+
+		subVectors: function ( a, b ) {
+
+			this.x = a.x - b.x;
+			this.y = a.y - b.y;
+
+			return this;
+
+		},
+
+		multiply: function ( v ) {
+
+			this.x *= v.x;
+			this.y *= v.y;
+
+			return this;
+
+		},
+
+		multiplyScalar: function ( scalar ) {
+
+			this.x *= scalar;
+			this.y *= scalar;
+
+			return this;
+
+		},
+
+		divide: function ( v ) {
+
+			this.x /= v.x;
+			this.y /= v.y;
+
+			return this;
+
+		},
+
+		divideScalar: function ( scalar ) {
+
+			return this.multiplyScalar( 1 / scalar );
+
+		},
+
+		applyMatrix3: function ( m ) {
+
+			var x = this.x, y = this.y;
+			var e = m.elements;
+
+			this.x = e[ 0 ] * x + e[ 3 ] * y + e[ 6 ];
+			this.y = e[ 1 ] * x + e[ 4 ] * y + e[ 7 ];
+
+			return this;
+
+		},
+
+		min: function ( v ) {
+
+			this.x = Math.min( this.x, v.x );
+			this.y = Math.min( this.y, v.y );
+
+			return this;
+
+		},
+
+		max: function ( v ) {
+
+			this.x = Math.max( this.x, v.x );
+			this.y = Math.max( this.y, v.y );
+
+			return this;
+
+		},
+
+		clamp: function ( min, max ) {
+
+			// assumes min < max, componentwise
+
+			this.x = Math.max( min.x, Math.min( max.x, this.x ) );
+			this.y = Math.max( min.y, Math.min( max.y, this.y ) );
+
+			return this;
+
+		},
+
+		clampScalar: function () {
+
+			var min = new Vector2();
+			var max = new Vector2();
+
+			return function clampScalar( minVal, maxVal ) {
+
+				min.set( minVal, minVal );
+				max.set( maxVal, maxVal );
+
+				return this.clamp( min, max );
+
+			};
+
+		}(),
+
+		clampLength: function ( min, max ) {
+
+			var length = this.length();
+
+			return this.divideScalar( length || 1 ).multiplyScalar( Math.max( min, Math.min( max, length ) ) );
+
+		},
+
+		floor: function () {
+
+			this.x = Math.floor( this.x );
+			this.y = Math.floor( this.y );
+
+			return this;
+
+		},
+
+		ceil: function () {
+
+			this.x = Math.ceil( this.x );
+			this.y = Math.ceil( this.y );
+
+			return this;
+
+		},
+
+		round: function () {
+
+			this.x = Math.round( this.x );
+			this.y = Math.round( this.y );
+
+			return this;
+
+		},
+
+		roundToZero: function () {
+
+			this.x = ( this.x < 0 ) ? Math.ceil( this.x ) : Math.floor( this.x );
+			this.y = ( this.y < 0 ) ? Math.ceil( this.y ) : Math.floor( this.y );
+
+			return this;
+
+		},
+
+		negate: function () {
+
+			this.x = - this.x;
+			this.y = - this.y;
+
+			return this;
+
+		},
+
+		dot: function ( v ) {
+
+			return this.x * v.x + this.y * v.y;
+
+		},
+
+		cross: function ( v ) {
+
+			return this.x * v.y - this.y * v.x;
+
+		},
+
+		lengthSq: function () {
+
+			return this.x * this.x + this.y * this.y;
+
+		},
+
+		length: function () {
+
+			return Math.sqrt( this.x * this.x + this.y * this.y );
+
+		},
+
+		manhattanLength: function () {
+
+			return Math.abs( this.x ) + Math.abs( this.y );
+
+		},
+
+		normalize: function () {
+
+			return this.divideScalar( this.length() || 1 );
+
+		},
+
+		angle: function () {
+
+			// computes the angle in radians with respect to the positive x-axis
+
+			var angle = Math.atan2( this.y, this.x );
+
+			if ( angle < 0 ) angle += 2 * Math.PI;
+
+			return angle;
+
+		},
+
+		distanceTo: function ( v ) {
+
+			return Math.sqrt( this.distanceToSquared( v ) );
+
+		},
+
+		distanceToSquared: function ( v ) {
+
+			var dx = this.x - v.x, dy = this.y - v.y;
+			return dx * dx + dy * dy;
+
+		},
+
+		manhattanDistanceTo: function ( v ) {
+
+			return Math.abs( this.x - v.x ) + Math.abs( this.y - v.y );
+
+		},
+
+		setLength: function ( length ) {
+
+			return this.normalize().multiplyScalar( length );
+
+		},
+
+		lerp: function ( v, alpha ) {
+
+			this.x += ( v.x - this.x ) * alpha;
+			this.y += ( v.y - this.y ) * alpha;
+
+			return this;
+
+		},
+
+		lerpVectors: function ( v1, v2, alpha ) {
+
+			return this.subVectors( v2, v1 ).multiplyScalar( alpha ).add( v1 );
+
+		},
+
+		equals: function ( v ) {
+
+			return ( ( v.x === this.x ) && ( v.y === this.y ) );
+
+		},
+
+		fromArray: function ( array, offset ) {
+
+			if ( offset === undefined ) offset = 0;
+
+			this.x = array[ offset ];
+			this.y = array[ offset + 1 ];
+
+			return this;
+
+		},
+
+		toArray: function ( array, offset ) {
+
+			if ( array === undefined ) array = [];
+			if ( offset === undefined ) offset = 0;
+
+			array[ offset ] = this.x;
+			array[ offset + 1 ] = this.y;
+
+			return array;
+
+		},
+
+		fromBufferAttribute: function ( attribute, index, offset ) {
+
+			if ( offset !== undefined ) {
+
+				console.warn( 'Vector2: offset has been removed from .fromBufferAttribute().' );
+
+			}
+
+			this.x = attribute.getX( index );
+			this.y = attribute.getY( index );
+
+			return this;
+
+		},
+
+		rotateAround: function ( center, angle ) {
+
+			var c = Math.cos( angle ), s = Math.sin( angle );
+
+			var x = this.x - center.x;
+			var y = this.y - center.y;
+
+			this.x = x * c - y * s + center.x;
+			this.y = x * s + y * c + center.y;
+
+			return this;
+
+		}
+
+	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function Matrix4() {
@@ -2502,25 +3007,502 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function Spherical( radius, phi, theta ) {
+	function Matrix3() {
 
-		this.radius = ( radius !== undefined ) ? radius : 1.0;
-		this.phi = ( phi !== undefined ) ? phi : 0; // polar angle
-		this.theta = ( theta !== undefined ) ? theta : 0; // azimuthal angle
+		this.elements = [
 
-		return this;
+			1, 0, 0,
+			0, 1, 0,
+			0, 0, 1
+
+		];
+
+		if ( arguments.length > 0 ) {
+
+			console.error( 'Matrix3: the constructor no longer reads arguments. use .set() instead.' );
+
+		}
 
 	}
 
-	Object.assign( Spherical.prototype, {
+	Object.assign( Matrix3.prototype, {
 
-		set: function ( radius, phi, theta ) {
+		isMatrix3: true,
 
-			this.radius = radius;
-			this.phi = phi;
-			this.theta = theta;
+		set: function ( n11, n12, n13, n21, n22, n23, n31, n32, n33 ) {
+
+			var te = this.elements;
+
+			te[ 0 ] = n11; te[ 1 ] = n21; te[ 2 ] = n31;
+			te[ 3 ] = n12; te[ 4 ] = n22; te[ 5 ] = n32;
+			te[ 6 ] = n13; te[ 7 ] = n23; te[ 8 ] = n33;
 
 			return this;
+
+		},
+
+		identity: function () {
+
+			this.set(
+
+				1, 0, 0,
+				0, 1, 0,
+				0, 0, 1
+
+			);
+
+			return this;
+
+		},
+
+		clone: function () {
+
+			return new this.constructor().fromArray( this.elements );
+
+		},
+
+		copy: function ( m ) {
+
+			var te = this.elements;
+			var me = m.elements;
+
+			te[ 0 ] = me[ 0 ]; te[ 1 ] = me[ 1 ]; te[ 2 ] = me[ 2 ];
+			te[ 3 ] = me[ 3 ]; te[ 4 ] = me[ 4 ]; te[ 5 ] = me[ 5 ];
+			te[ 6 ] = me[ 6 ]; te[ 7 ] = me[ 7 ]; te[ 8 ] = me[ 8 ];
+
+			return this;
+
+		},
+
+		setFromMatrix4: function ( m ) {
+
+			var me = m.elements;
+
+			this.set(
+
+				me[ 0 ], me[ 4 ], me[ 8 ],
+				me[ 1 ], me[ 5 ], me[ 9 ],
+				me[ 2 ], me[ 6 ], me[ 10 ]
+
+			);
+
+			return this;
+
+		},
+
+		applyToBufferAttribute: function () {
+
+			var v1 = new Vector3();
+
+			return function applyToBufferAttribute( attribute ) {
+
+				for ( var i = 0, l = attribute.count; i < l; i ++ ) {
+
+					v1.x = attribute.getX( i );
+					v1.y = attribute.getY( i );
+					v1.z = attribute.getZ( i );
+
+					v1.applyMatrix3( this );
+
+					attribute.setXYZ( i, v1.x, v1.y, v1.z );
+
+				}
+
+				return attribute;
+
+			};
+
+		}(),
+
+		multiply: function ( m ) {
+
+			return this.multiplyMatrices( this, m );
+
+		},
+
+		premultiply: function ( m ) {
+
+			return this.multiplyMatrices( m, this );
+
+		},
+
+		multiplyMatrices: function ( a, b ) {
+
+			var ae = a.elements;
+			var be = b.elements;
+			var te = this.elements;
+
+			var a11 = ae[ 0 ], a12 = ae[ 3 ], a13 = ae[ 6 ];
+			var a21 = ae[ 1 ], a22 = ae[ 4 ], a23 = ae[ 7 ];
+			var a31 = ae[ 2 ], a32 = ae[ 5 ], a33 = ae[ 8 ];
+
+			var b11 = be[ 0 ], b12 = be[ 3 ], b13 = be[ 6 ];
+			var b21 = be[ 1 ], b22 = be[ 4 ], b23 = be[ 7 ];
+			var b31 = be[ 2 ], b32 = be[ 5 ], b33 = be[ 8 ];
+
+			te[ 0 ] = a11 * b11 + a12 * b21 + a13 * b31;
+			te[ 3 ] = a11 * b12 + a12 * b22 + a13 * b32;
+			te[ 6 ] = a11 * b13 + a12 * b23 + a13 * b33;
+
+			te[ 1 ] = a21 * b11 + a22 * b21 + a23 * b31;
+			te[ 4 ] = a21 * b12 + a22 * b22 + a23 * b32;
+			te[ 7 ] = a21 * b13 + a22 * b23 + a23 * b33;
+
+			te[ 2 ] = a31 * b11 + a32 * b21 + a33 * b31;
+			te[ 5 ] = a31 * b12 + a32 * b22 + a33 * b32;
+			te[ 8 ] = a31 * b13 + a32 * b23 + a33 * b33;
+
+			return this;
+
+		},
+
+		multiplyScalar: function ( s ) {
+
+			var te = this.elements;
+
+			te[ 0 ] *= s; te[ 3 ] *= s; te[ 6 ] *= s;
+			te[ 1 ] *= s; te[ 4 ] *= s; te[ 7 ] *= s;
+			te[ 2 ] *= s; te[ 5 ] *= s; te[ 8 ] *= s;
+
+			return this;
+
+		},
+
+		determinant: function () {
+
+			var te = this.elements;
+
+			var a = te[ 0 ], b = te[ 1 ], c = te[ 2 ],
+				d = te[ 3 ], e = te[ 4 ], f = te[ 5 ],
+				g = te[ 6 ], h = te[ 7 ], i = te[ 8 ];
+
+			return a * e * i - a * f * h - b * d * i + b * f * g + c * d * h - c * e * g;
+
+		},
+
+		getInverse: function ( matrix, throwOnDegenerate ) {
+
+			if ( matrix && matrix.isMatrix4 ) {
+
+				console.error( "Matrix3: .getInverse() no longer takes a Matrix4 argument." );
+
+			}
+
+			var me = matrix.elements,
+				te = this.elements,
+
+				n11 = me[ 0 ], n21 = me[ 1 ], n31 = me[ 2 ],
+				n12 = me[ 3 ], n22 = me[ 4 ], n32 = me[ 5 ],
+				n13 = me[ 6 ], n23 = me[ 7 ], n33 = me[ 8 ],
+
+				t11 = n33 * n22 - n32 * n23,
+				t12 = n32 * n13 - n33 * n12,
+				t13 = n23 * n12 - n22 * n13,
+
+				det = n11 * t11 + n21 * t12 + n31 * t13;
+
+			if ( det === 0 ) {
+
+				var msg = "Matrix3: .getInverse() can't invert matrix, determinant is 0";
+
+				if ( throwOnDegenerate === true ) {
+
+					throw new Error( msg );
+
+				} else {
+
+					console.warn( msg );
+
+				}
+
+				return this.identity();
+
+			}
+
+			var detInv = 1 / det;
+
+			te[ 0 ] = t11 * detInv;
+			te[ 1 ] = ( n31 * n23 - n33 * n21 ) * detInv;
+			te[ 2 ] = ( n32 * n21 - n31 * n22 ) * detInv;
+
+			te[ 3 ] = t12 * detInv;
+			te[ 4 ] = ( n33 * n11 - n31 * n13 ) * detInv;
+			te[ 5 ] = ( n31 * n12 - n32 * n11 ) * detInv;
+
+			te[ 6 ] = t13 * detInv;
+			te[ 7 ] = ( n21 * n13 - n23 * n11 ) * detInv;
+			te[ 8 ] = ( n22 * n11 - n21 * n12 ) * detInv;
+
+			return this;
+
+		},
+
+		transpose: function () {
+
+			var tmp, m = this.elements;
+
+			tmp = m[ 1 ]; m[ 1 ] = m[ 3 ]; m[ 3 ] = tmp;
+			tmp = m[ 2 ]; m[ 2 ] = m[ 6 ]; m[ 6 ] = tmp;
+			tmp = m[ 5 ]; m[ 5 ] = m[ 7 ]; m[ 7 ] = tmp;
+
+			return this;
+
+		},
+
+		getNormalMatrix: function ( matrix4 ) {
+
+			return this.setFromMatrix4( matrix4 ).getInverse( this ).transpose();
+
+		},
+
+		transposeIntoArray: function ( r ) {
+
+			var m = this.elements;
+
+			r[ 0 ] = m[ 0 ];
+			r[ 1 ] = m[ 3 ];
+			r[ 2 ] = m[ 6 ];
+			r[ 3 ] = m[ 1 ];
+			r[ 4 ] = m[ 4 ];
+			r[ 5 ] = m[ 7 ];
+			r[ 6 ] = m[ 2 ];
+			r[ 7 ] = m[ 5 ];
+			r[ 8 ] = m[ 8 ];
+
+			return this;
+
+		},
+
+		setUvTransform: function ( tx, ty, sx, sy, rotation, cx, cy ) {
+
+			var c = Math.cos( rotation );
+			var s = Math.sin( rotation );
+
+			this.set(
+				sx * c, sx * s, - sx * ( c * cx + s * cy ) + cx + tx,
+				- sy * s, sy * c, - sy * ( - s * cx + c * cy ) + cy + ty,
+				0, 0, 1
+			);
+
+		},
+
+		scale: function ( sx, sy ) {
+
+			var te = this.elements;
+
+			te[ 0 ] *= sx; te[ 3 ] *= sx; te[ 6 ] *= sx;
+			te[ 1 ] *= sy; te[ 4 ] *= sy; te[ 7 ] *= sy;
+
+			return this;
+
+		},
+
+		rotate: function ( theta ) {
+
+			var c = Math.cos( theta );
+			var s = Math.sin( theta );
+
+			var te = this.elements;
+
+			var a11 = te[ 0 ], a12 = te[ 3 ], a13 = te[ 6 ];
+			var a21 = te[ 1 ], a22 = te[ 4 ], a23 = te[ 7 ];
+
+			te[ 0 ] = c * a11 + s * a21;
+			te[ 3 ] = c * a12 + s * a22;
+			te[ 6 ] = c * a13 + s * a23;
+
+			te[ 1 ] = - s * a11 + c * a21;
+			te[ 4 ] = - s * a12 + c * a22;
+			te[ 7 ] = - s * a13 + c * a23;
+
+			return this;
+
+		},
+
+		translate: function ( tx, ty ) {
+
+			var te = this.elements;
+
+			te[ 0 ] += tx * te[ 2 ]; te[ 3 ] += tx * te[ 5 ]; te[ 6 ] += tx * te[ 8 ];
+			te[ 1 ] += ty * te[ 2 ]; te[ 4 ] += ty * te[ 5 ]; te[ 7 ] += ty * te[ 8 ];
+
+			return this;
+
+		},
+
+		equals: function ( matrix ) {
+
+			var te = this.elements;
+			var me = matrix.elements;
+
+			for ( var i = 0; i < 9; i ++ ) {
+
+				if ( te[ i ] !== me[ i ] ) return false;
+
+			}
+
+			return true;
+
+		},
+
+		fromArray: function ( array, offset ) {
+
+			if ( offset === undefined ) offset = 0;
+
+			for ( var i = 0; i < 9; i ++ ) {
+
+				this.elements[ i ] = array[ i + offset ];
+
+			}
+
+			return this;
+
+		},
+
+		toArray: function ( array, offset ) {
+
+			if ( array === undefined ) array = [];
+			if ( offset === undefined ) offset = 0;
+
+			var te = this.elements;
+
+			array[ offset ] = te[ 0 ];
+			array[ offset + 1 ] = te[ 1 ];
+			array[ offset + 2 ] = te[ 2 ];
+
+			array[ offset + 3 ] = te[ 3 ];
+			array[ offset + 4 ] = te[ 4 ];
+			array[ offset + 5 ] = te[ 5 ];
+
+			array[ offset + 6 ] = te[ 6 ];
+			array[ offset + 7 ] = te[ 7 ];
+			array[ offset + 8 ] = te[ 8 ];
+
+			return array;
+
+		}
+
+	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var _canvas;
+
+	var ImageUtils = {
+
+		getDataURL: function ( image ) {
+
+			var canvas;
+
+			if ( typeof HTMLCanvasElement == 'undefined' ) {
+
+				return image.src;
+
+			} else if ( image instanceof HTMLCanvasElement ) {
+
+				canvas = image;
+
+			} else {
+
+				if ( _canvas === undefined ) _canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
+
+				_canvas.width = image.width;
+				_canvas.height = image.height;
+
+				var context = _canvas.getContext( '2d' );
+
+				if ( image instanceof ImageData ) {
+
+					context.putImageData( image, 0, 0 );
+
+				} else {
+
+					context.drawImage( image, 0, 0, image.width, image.height );
+
+				}
+
+				canvas = _canvas;
+
+			}
+
+			if ( canvas.width > 2048 || canvas.height > 2048 ) {
+
+				return canvas.toDataURL( 'image/jpeg', 0.6 );
+
+			} else {
+
+				return canvas.toDataURL( 'image/png' );
+
+			}
+
+		}
+
+	};
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var textureId = 0;
+
+	function Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
+
+		Object.defineProperty( this, 'id', { value: textureId ++ } );
+
+		this.uuid = _Math.generateUUID();
+
+		this.name = '';
+
+		this.image = image !== undefined ? image : Texture.DEFAULT_IMAGE;
+		this.mipmaps = [];
+
+		this.mapping = mapping !== undefined ? mapping : Texture.DEFAULT_MAPPING;
+
+		this.wrapS = wrapS !== undefined ? wrapS : ClampToEdgeWrapping;
+		this.wrapT = wrapT !== undefined ? wrapT : ClampToEdgeWrapping;
+
+		this.magFilter = magFilter !== undefined ? magFilter : LinearFilter;
+		this.minFilter = minFilter !== undefined ? minFilter : LinearMipMapLinearFilter;
+
+		this.anisotropy = anisotropy !== undefined ? anisotropy : 1;
+
+		this.format = format !== undefined ? format : RGBAFormat;
+		this.type = type !== undefined ? type : UnsignedByteType;
+
+		this.offset = new Vector2( 0, 0 );
+		this.repeat = new Vector2( 1, 1 );
+		this.center = new Vector2( 0, 0 );
+		this.rotation = 0;
+
+		this.matrixAutoUpdate = true;
+		this.matrix = new Matrix3();
+
+		this.generateMipmaps = true;
+		this.premultiplyAlpha = false;
+		this.flipY = true;
+		this.unpackAlignment = 4;	// valid values: 1, 2, 4, 8 (see http://www.khronos.org/opengles/sdk/docs/man/xhtml/glPixelStorei.xml)
+
+		// Values of encoding !== LinearEncoding only supported on map, envMap and emissiveMap.
+		//
+		// Also changing the encoding after already used by a Material will not automatically make the Material
+		// update.  You need to explicitly call Material.needsUpdate to trigger it to recompile.
+		this.encoding = encoding !== undefined ? encoding : LinearEncoding;
+
+		this.version = 0;
+		this.onUpdate = null;
+
+	}
+
+	Texture.DEFAULT_IMAGE = undefined;
+	Texture.DEFAULT_MAPPING = UVMapping;
+
+	Texture.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Texture,
+
+		isTexture: true,
+
+		updateMatrix: function () {
+
+			this.matrix.setUvTransform( this.offset.x, this.offset.y, this.repeat.x, this.repeat.y, this.rotation, this.center.x, this.center.y );
 
 		},
 
@@ -2530,49 +3512,237 @@ var Three = (function (exports) {
 
 		},
 
-		copy: function ( other ) {
+		copy: function ( source ) {
 
-			this.radius = other.radius;
-			this.phi = other.phi;
-			this.theta = other.theta;
+			this.name = source.name;
+
+			this.image = source.image;
+			this.mipmaps = source.mipmaps.slice( 0 );
+
+			this.mapping = source.mapping;
+
+			this.wrapS = source.wrapS;
+			this.wrapT = source.wrapT;
+
+			this.magFilter = source.magFilter;
+			this.minFilter = source.minFilter;
+
+			this.anisotropy = source.anisotropy;
+
+			this.format = source.format;
+			this.type = source.type;
+
+			this.offset.copy( source.offset );
+			this.repeat.copy( source.repeat );
+			this.center.copy( source.center );
+			this.rotation = source.rotation;
+
+			this.matrixAutoUpdate = source.matrixAutoUpdate;
+			this.matrix.copy( source.matrix );
+
+			this.generateMipmaps = source.generateMipmaps;
+			this.premultiplyAlpha = source.premultiplyAlpha;
+			this.flipY = source.flipY;
+			this.unpackAlignment = source.unpackAlignment;
+			this.encoding = source.encoding;
 
 			return this;
 
 		},
 
-		// restrict phi to be betwee EPS and PI-EPS
-		makeSafe: function () {
+		toJSON: function ( meta ) {
 
-			var EPS = 0.000001;
-			this.phi = Math.max( EPS, Math.min( Math.PI - EPS, this.phi ) );
+			var isRootObject = ( meta === undefined || typeof meta === 'string' );
 
-			return this;
+			if ( ! isRootObject && meta.textures[ this.uuid ] !== undefined ) {
 
-		},
-
-		setFromVector3: function ( v ) {
-
-			return this.setFromCartesianCoords( v.x, v.y, v.z );
-
-		},
-
-		setFromCartesianCoords: function ( x, y, z ) {
-
-			this.radius = Math.sqrt( x * x + y * y + z * z );
-
-			if ( this.radius === 0 ) {
-
-				this.theta = 0;
-				this.phi = 0;
-
-			} else {
-
-				this.theta = Math.atan2( x, z );
-				this.phi = Math.acos( _Math.clamp( y / this.radius, - 1, 1 ) );
+				return meta.textures[ this.uuid ];
 
 			}
 
-			return this;
+			var output = {
+
+				metadata: {
+					version: 4.5,
+					type: 'Texture',
+					generator: 'Texture.toJSON'
+				},
+
+				uuid: this.uuid,
+				name: this.name,
+
+				mapping: this.mapping,
+
+				repeat: [ this.repeat.x, this.repeat.y ],
+				offset: [ this.offset.x, this.offset.y ],
+				center: [ this.center.x, this.center.y ],
+				rotation: this.rotation,
+
+				wrap: [ this.wrapS, this.wrapT ],
+
+				format: this.format,
+				type: this.type,
+				encoding: this.encoding,
+
+				minFilter: this.minFilter,
+				magFilter: this.magFilter,
+				anisotropy: this.anisotropy,
+
+				flipY: this.flipY,
+
+				premultiplyAlpha: this.premultiplyAlpha,
+				unpackAlignment: this.unpackAlignment
+
+			};
+
+			if ( this.image !== undefined ) {
+
+				// TODO: Move to Image
+
+				var image = this.image;
+
+				if ( image.uuid === undefined ) {
+
+					image.uuid = _Math.generateUUID(); // UGH
+
+				}
+
+				if ( ! isRootObject && meta.images[ image.uuid ] === undefined ) {
+
+					var url;
+
+					if ( Array.isArray( image ) ) {
+
+						// process array of images e.g. CubeTexture
+
+						url = [];
+
+						for ( var i = 0, l = image.length; i < l; i ++ ) {
+
+							url.push( ImageUtils.getDataURL( image[ i ] ) );
+
+						}
+
+					} else {
+
+						// process single image
+
+						url = ImageUtils.getDataURL( image );
+
+					}
+
+					meta.images[ image.uuid ] = {
+						uuid: image.uuid,
+						url: url
+					};
+
+				}
+
+				output.image = image.uuid;
+
+			}
+
+			if ( ! isRootObject ) {
+
+				meta.textures[ this.uuid ] = output;
+
+			}
+
+			return output;
+
+		},
+
+		dispose: function () {
+
+			this.dispatchEvent( { type: 'dispose' } );
+
+		},
+
+		transformUv: function ( uv ) {
+
+			if ( this.mapping !== UVMapping ) return uv;
+
+			uv.applyMatrix3( this.matrix );
+
+			if ( uv.x < 0 || uv.x > 1 ) {
+
+				switch ( this.wrapS ) {
+
+					case RepeatWrapping:
+
+						uv.x = uv.x - Math.floor( uv.x );
+						break;
+
+					case ClampToEdgeWrapping:
+
+						uv.x = uv.x < 0 ? 0 : 1;
+						break;
+
+					case MirroredRepeatWrapping:
+
+						if ( Math.abs( Math.floor( uv.x ) % 2 ) === 1 ) {
+
+							uv.x = Math.ceil( uv.x ) - uv.x;
+
+						} else {
+
+							uv.x = uv.x - Math.floor( uv.x );
+
+						}
+						break;
+
+				}
+
+			}
+
+			if ( uv.y < 0 || uv.y > 1 ) {
+
+				switch ( this.wrapT ) {
+
+					case RepeatWrapping:
+
+						uv.y = uv.y - Math.floor( uv.y );
+						break;
+
+					case ClampToEdgeWrapping:
+
+						uv.y = uv.y < 0 ? 0 : 1;
+						break;
+
+					case MirroredRepeatWrapping:
+
+						if ( Math.abs( Math.floor( uv.y ) % 2 ) === 1 ) {
+
+							uv.y = Math.ceil( uv.y ) - uv.y;
+
+						} else {
+
+							uv.y = uv.y - Math.floor( uv.y );
+
+						}
+						break;
+
+				}
+
+			}
+
+			if ( this.flipY ) {
+
+				uv.y = 1 - uv.y;
+
+			}
+
+			return uv;
+
+		}
+
+	} );
+
+	Object.defineProperty( Texture.prototype, "needsUpdate", {
+
+		set: function ( value ) {
+
+			if ( value === true ) this.version ++;
 
 		}
 
@@ -2581,57 +3751,25 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function Vector2( x, y ) {
+	function Vector4( x, y, z, w ) {
 
 		this.x = x || 0;
 		this.y = y || 0;
+		this.z = z || 0;
+		this.w = ( w !== undefined ) ? w : 1;
 
 	}
 
-	Object.defineProperties( Vector2.prototype, {
+	Object.assign( Vector4.prototype, {
 
-		"width": {
+		isVector4: true,
 
-			get: function () {
-
-				return this.x;
-
-			},
-
-			set: function ( value ) {
-
-				this.x = value;
-
-			}
-
-		},
-
-		"height": {
-
-			get: function () {
-
-				return this.y;
-
-			},
-
-			set: function ( value ) {
-
-				this.y = value;
-
-			}
-
-		}
-
-	} );
-
-	Object.assign( Vector2.prototype, {
-
-		isVector2: true,
-
-		set: function ( x, y ) {
+		set: function ( x, y, z, w ) {
 
 			this.x = x;
 			this.y = y;
+			this.z = z;
+			this.w = w;
 
 			return this;
 
@@ -2641,6 +3779,8 @@ var Three = (function (exports) {
 
 			this.x = scalar;
 			this.y = scalar;
+			this.z = scalar;
+			this.w = scalar;
 
 			return this;
 
@@ -2662,12 +3802,30 @@ var Three = (function (exports) {
 
 		},
 
+		setZ: function ( z ) {
+
+			this.z = z;
+
+			return this;
+
+		},
+
+		setW: function ( w ) {
+
+			this.w = w;
+
+			return this;
+
+		},
+
 		setComponent: function ( index, value ) {
 
 			switch ( index ) {
 
 				case 0: this.x = value; break;
 				case 1: this.y = value; break;
+				case 2: this.z = value; break;
+				case 3: this.w = value; break;
 				default: throw new Error( 'index is out of range: ' + index );
 
 			}
@@ -2682,6 +3840,8 @@ var Three = (function (exports) {
 
 				case 0: return this.x;
 				case 1: return this.y;
+				case 2: return this.z;
+				case 3: return this.w;
 				default: throw new Error( 'index is out of range: ' + index );
 
 			}
@@ -2690,7 +3850,7 @@ var Three = (function (exports) {
 
 		clone: function () {
 
-			return new this.constructor( this.x, this.y );
+			return new this.constructor( this.x, this.y, this.z, this.w );
 
 		},
 
@@ -2698,6 +3858,8 @@ var Three = (function (exports) {
 
 			this.x = v.x;
 			this.y = v.y;
+			this.z = v.z;
+			this.w = ( v.w !== undefined ) ? v.w : 1;
 
 			return this;
 
@@ -2707,13 +3869,15 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'Vector2: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
+				console.warn( 'Vector4: .add() now only accepts one argument. Use .addVectors( a, b ) instead.' );
 				return this.addVectors( v, w );
 
 			}
 
 			this.x += v.x;
 			this.y += v.y;
+			this.z += v.z;
+			this.w += v.w;
 
 			return this;
 
@@ -2723,6 +3887,8 @@ var Three = (function (exports) {
 
 			this.x += s;
 			this.y += s;
+			this.z += s;
+			this.w += s;
 
 			return this;
 
@@ -2732,6 +3898,8 @@ var Three = (function (exports) {
 
 			this.x = a.x + b.x;
 			this.y = a.y + b.y;
+			this.z = a.z + b.z;
+			this.w = a.w + b.w;
 
 			return this;
 
@@ -2741,6 +3909,8 @@ var Three = (function (exports) {
 
 			this.x += v.x * s;
 			this.y += v.y * s;
+			this.z += v.z * s;
+			this.w += v.w * s;
 
 			return this;
 
@@ -2750,13 +3920,15 @@ var Three = (function (exports) {
 
 			if ( w !== undefined ) {
 
-				console.warn( 'Vector2: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
+				console.warn( 'Vector4: .sub() now only accepts one argument. Use .subVectors( a, b ) instead.' );
 				return this.subVectors( v, w );
 
 			}
 
 			this.x -= v.x;
 			this.y -= v.y;
+			this.z -= v.z;
+			this.w -= v.w;
 
 			return this;
 
@@ -2766,6 +3938,8 @@ var Three = (function (exports) {
 
 			this.x -= s;
 			this.y -= s;
+			this.z -= s;
+			this.w -= s;
 
 			return this;
 
@@ -2775,15 +3949,8 @@ var Three = (function (exports) {
 
 			this.x = a.x - b.x;
 			this.y = a.y - b.y;
-
-			return this;
-
-		},
-
-		multiply: function ( v ) {
-
-			this.x *= v.x;
-			this.y *= v.y;
+			this.z = a.z - b.z;
+			this.w = a.w - b.w;
 
 			return this;
 
@@ -2793,15 +3960,22 @@ var Three = (function (exports) {
 
 			this.x *= scalar;
 			this.y *= scalar;
+			this.z *= scalar;
+			this.w *= scalar;
 
 			return this;
 
 		},
 
-		divide: function ( v ) {
+		applyMatrix4: function ( m ) {
 
-			this.x /= v.x;
-			this.y /= v.y;
+			var x = this.x, y = this.y, z = this.z, w = this.w;
+			var e = m.elements;
+
+			this.x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * z + e[ 12 ] * w;
+			this.y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * z + e[ 13 ] * w;
+			this.z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z + e[ 14 ] * w;
+			this.w = e[ 3 ] * x + e[ 7 ] * y + e[ 11 ] * z + e[ 15 ] * w;
 
 			return this;
 
@@ -2813,13 +3987,159 @@ var Three = (function (exports) {
 
 		},
 
-		applyMatrix3: function ( m ) {
+		setAxisAngleFromQuaternion: function ( q ) {
 
-			var x = this.x, y = this.y;
-			var e = m.elements;
+			// http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle/index.htm
 
-			this.x = e[ 0 ] * x + e[ 3 ] * y + e[ 6 ];
-			this.y = e[ 1 ] * x + e[ 4 ] * y + e[ 7 ];
+			// q is assumed to be normalized
+
+			this.w = 2 * Math.acos( q.w );
+
+			var s = Math.sqrt( 1 - q.w * q.w );
+
+			if ( s < 0.0001 ) {
+
+				this.x = 1;
+				this.y = 0;
+				this.z = 0;
+
+			} else {
+
+				this.x = q.x / s;
+				this.y = q.y / s;
+				this.z = q.z / s;
+
+			}
+
+			return this;
+
+		},
+
+		setAxisAngleFromRotationMatrix: function ( m ) {
+
+			// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToAngle/index.htm
+
+			// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
+
+			var angle, x, y, z,		// variables for result
+				epsilon = 0.01,		// margin to allow for rounding errors
+				epsilon2 = 0.1,		// margin to distinguish between 0 and 180 degrees
+
+				te = m.elements,
+
+				m11 = te[ 0 ], m12 = te[ 4 ], m13 = te[ 8 ],
+				m21 = te[ 1 ], m22 = te[ 5 ], m23 = te[ 9 ],
+				m31 = te[ 2 ], m32 = te[ 6 ], m33 = te[ 10 ];
+
+			if ( ( Math.abs( m12 - m21 ) < epsilon ) &&
+			     ( Math.abs( m13 - m31 ) < epsilon ) &&
+			     ( Math.abs( m23 - m32 ) < epsilon ) ) {
+
+				// singularity found
+				// first check for identity matrix which must have +1 for all terms
+				// in leading diagonal and zero in other terms
+
+				if ( ( Math.abs( m12 + m21 ) < epsilon2 ) &&
+				     ( Math.abs( m13 + m31 ) < epsilon2 ) &&
+				     ( Math.abs( m23 + m32 ) < epsilon2 ) &&
+				     ( Math.abs( m11 + m22 + m33 - 3 ) < epsilon2 ) ) {
+
+					// this singularity is identity matrix so angle = 0
+
+					this.set( 1, 0, 0, 0 );
+
+					return this; // zero angle, arbitrary axis
+
+				}
+
+				// otherwise this singularity is angle = 180
+
+				angle = Math.PI;
+
+				var xx = ( m11 + 1 ) / 2;
+				var yy = ( m22 + 1 ) / 2;
+				var zz = ( m33 + 1 ) / 2;
+				var xy = ( m12 + m21 ) / 4;
+				var xz = ( m13 + m31 ) / 4;
+				var yz = ( m23 + m32 ) / 4;
+
+				if ( ( xx > yy ) && ( xx > zz ) ) {
+
+					// m11 is the largest diagonal term
+
+					if ( xx < epsilon ) {
+
+						x = 0;
+						y = 0.707106781;
+						z = 0.707106781;
+
+					} else {
+
+						x = Math.sqrt( xx );
+						y = xy / x;
+						z = xz / x;
+
+					}
+
+				} else if ( yy > zz ) {
+
+					// m22 is the largest diagonal term
+
+					if ( yy < epsilon ) {
+
+						x = 0.707106781;
+						y = 0;
+						z = 0.707106781;
+
+					} else {
+
+						y = Math.sqrt( yy );
+						x = xy / y;
+						z = yz / y;
+
+					}
+
+				} else {
+
+					// m33 is the largest diagonal term so base result on this
+
+					if ( zz < epsilon ) {
+
+						x = 0.707106781;
+						y = 0.707106781;
+						z = 0;
+
+					} else {
+
+						z = Math.sqrt( zz );
+						x = xz / z;
+						y = yz / z;
+
+					}
+
+				}
+
+				this.set( x, y, z, angle );
+
+				return this; // return 180 deg rotation
+
+			}
+
+			// as we have reached here there are no singularities so we can handle normally
+
+			var s = Math.sqrt( ( m32 - m23 ) * ( m32 - m23 ) +
+			                   ( m13 - m31 ) * ( m13 - m31 ) +
+			                   ( m21 - m12 ) * ( m21 - m12 ) ); // used to normalize
+
+			if ( Math.abs( s ) < 0.001 ) s = 1;
+
+			// prevent divide by zero, should not happen if matrix is orthogonal and should be
+			// caught by singularity test above, but I've left it in just in case
+
+			this.x = ( m32 - m23 ) / s;
+			this.y = ( m13 - m31 ) / s;
+			this.z = ( m21 - m12 ) / s;
+			this.w = Math.acos( ( m11 + m22 + m33 - 1 ) / 2 );
 
 			return this;
 
@@ -2829,6 +4149,8 @@ var Three = (function (exports) {
 
 			this.x = Math.min( this.x, v.x );
 			this.y = Math.min( this.y, v.y );
+			this.z = Math.min( this.z, v.z );
+			this.w = Math.min( this.w, v.w );
 
 			return this;
 
@@ -2838,6 +4160,8 @@ var Three = (function (exports) {
 
 			this.x = Math.max( this.x, v.x );
 			this.y = Math.max( this.y, v.y );
+			this.z = Math.max( this.z, v.z );
+			this.w = Math.max( this.w, v.w );
 
 			return this;
 
@@ -2849,6 +4173,8 @@ var Three = (function (exports) {
 
 			this.x = Math.max( min.x, Math.min( max.x, this.x ) );
 			this.y = Math.max( min.y, Math.min( max.y, this.y ) );
+			this.z = Math.max( min.z, Math.min( max.z, this.z ) );
+			this.w = Math.max( min.w, Math.min( max.w, this.w ) );
 
 			return this;
 
@@ -2856,13 +4182,19 @@ var Three = (function (exports) {
 
 		clampScalar: function () {
 
-			var min = new Vector2();
-			var max = new Vector2();
+			var min, max;
 
 			return function clampScalar( minVal, maxVal ) {
 
-				min.set( minVal, minVal );
-				max.set( maxVal, maxVal );
+				if ( min === undefined ) {
+
+					min = new Vector4();
+					max = new Vector4();
+
+				}
+
+				min.set( minVal, minVal, minVal, minVal );
+				max.set( maxVal, maxVal, maxVal, maxVal );
 
 				return this.clamp( min, max );
 
@@ -2882,6 +4214,8 @@ var Three = (function (exports) {
 
 			this.x = Math.floor( this.x );
 			this.y = Math.floor( this.y );
+			this.z = Math.floor( this.z );
+			this.w = Math.floor( this.w );
 
 			return this;
 
@@ -2891,6 +4225,8 @@ var Three = (function (exports) {
 
 			this.x = Math.ceil( this.x );
 			this.y = Math.ceil( this.y );
+			this.z = Math.ceil( this.z );
+			this.w = Math.ceil( this.w );
 
 			return this;
 
@@ -2900,6 +4236,8 @@ var Three = (function (exports) {
 
 			this.x = Math.round( this.x );
 			this.y = Math.round( this.y );
+			this.z = Math.round( this.z );
+			this.w = Math.round( this.w );
 
 			return this;
 
@@ -2909,6 +4247,8 @@ var Three = (function (exports) {
 
 			this.x = ( this.x < 0 ) ? Math.ceil( this.x ) : Math.floor( this.x );
 			this.y = ( this.y < 0 ) ? Math.ceil( this.y ) : Math.floor( this.y );
+			this.z = ( this.z < 0 ) ? Math.ceil( this.z ) : Math.floor( this.z );
+			this.w = ( this.w < 0 ) ? Math.ceil( this.w ) : Math.floor( this.w );
 
 			return this;
 
@@ -2918,6 +4258,8 @@ var Three = (function (exports) {
 
 			this.x = - this.x;
 			this.y = - this.y;
+			this.z = - this.z;
+			this.w = - this.w;
 
 			return this;
 
@@ -2925,68 +4267,31 @@ var Three = (function (exports) {
 
 		dot: function ( v ) {
 
-			return this.x * v.x + this.y * v.y;
-
-		},
-
-		cross: function ( v ) {
-
-			return this.x * v.y - this.y * v.x;
+			return this.x * v.x + this.y * v.y + this.z * v.z + this.w * v.w;
 
 		},
 
 		lengthSq: function () {
 
-			return this.x * this.x + this.y * this.y;
+			return this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w;
 
 		},
 
 		length: function () {
 
-			return Math.sqrt( this.x * this.x + this.y * this.y );
+			return Math.sqrt( this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w );
 
 		},
 
 		manhattanLength: function () {
 
-			return Math.abs( this.x ) + Math.abs( this.y );
+			return Math.abs( this.x ) + Math.abs( this.y ) + Math.abs( this.z ) + Math.abs( this.w );
 
 		},
 
 		normalize: function () {
 
 			return this.divideScalar( this.length() || 1 );
-
-		},
-
-		angle: function () {
-
-			// computes the angle in radians with respect to the positive x-axis
-
-			var angle = Math.atan2( this.y, this.x );
-
-			if ( angle < 0 ) angle += 2 * Math.PI;
-
-			return angle;
-
-		},
-
-		distanceTo: function ( v ) {
-
-			return Math.sqrt( this.distanceToSquared( v ) );
-
-		},
-
-		distanceToSquared: function ( v ) {
-
-			var dx = this.x - v.x, dy = this.y - v.y;
-			return dx * dx + dy * dy;
-
-		},
-
-		manhattanDistanceTo: function ( v ) {
-
-			return Math.abs( this.x - v.x ) + Math.abs( this.y - v.y );
 
 		},
 
@@ -3000,6 +4305,8 @@ var Three = (function (exports) {
 
 			this.x += ( v.x - this.x ) * alpha;
 			this.y += ( v.y - this.y ) * alpha;
+			this.z += ( v.z - this.z ) * alpha;
+			this.w += ( v.w - this.w ) * alpha;
 
 			return this;
 
@@ -3013,7 +4320,7 @@ var Three = (function (exports) {
 
 		equals: function ( v ) {
 
-			return ( ( v.x === this.x ) && ( v.y === this.y ) );
+			return ( ( v.x === this.x ) && ( v.y === this.y ) && ( v.z === this.z ) && ( v.w === this.w ) );
 
 		},
 
@@ -3023,6 +4330,8 @@ var Three = (function (exports) {
 
 			this.x = array[ offset ];
 			this.y = array[ offset + 1 ];
+			this.z = array[ offset + 2 ];
+			this.w = array[ offset + 3 ];
 
 			return this;
 
@@ -3035,6 +4344,8 @@ var Three = (function (exports) {
 
 			array[ offset ] = this.x;
 			array[ offset + 1 ] = this.y;
+			array[ offset + 2 ] = this.z;
+			array[ offset + 3 ] = this.w;
 
 			return array;
 
@@ -3044,26 +4355,14 @@ var Three = (function (exports) {
 
 			if ( offset !== undefined ) {
 
-				console.warn( 'Vector2: offset has been removed from .fromBufferAttribute().' );
+				console.warn( 'Vector4: offset has been removed from .fromBufferAttribute().' );
 
 			}
 
 			this.x = attribute.getX( index );
 			this.y = attribute.getY( index );
-
-			return this;
-
-		},
-
-		rotateAround: function ( center, angle ) {
-
-			var c = Math.cos( angle ), s = Math.sin( angle );
-
-			var x = this.x - center.x;
-			var y = this.y - center.y;
-
-			this.x = x * c - y * s + center.x;
-			this.y = x * s + y * c + center.y;
+			this.z = attribute.getZ( index );
+			this.w = attribute.getW( index );
 
 			return this;
 
@@ -3072,1047 +4371,110 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2 };
+	function WebGLRenderTarget( width, height, options ) {
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// This set of controls performs orbiting, dollying (zooming), and panning.
-	// Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
-	//
-	//    Orbit - left mouse / touch: one-finger move
-	//    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
-	//    Pan - right mouse, or left mouse + ctrl/meta/shiftKey, or arrow keys / touch: two-finger move
+		this.width = width;
+		this.height = height;
 
-	var OrbitControls = function ( object, domElement ) {
+		this.scissor = new Vector4( 0, 0, width, height );
+		this.scissorTest = false;
 
-		this.object = object;
+		this.viewport = new Vector4( 0, 0, width, height );
 
-		this.domElement = ( domElement !== undefined ) ? domElement : document;
+		options = options || {};
 
-		// Set to false to disable this control
-		this.enabled = true;
+		this.texture = new Texture( undefined, undefined, options.wrapS, options.wrapT, options.magFilter, options.minFilter, options.format, options.type, options.anisotropy, options.encoding );
 
-		// "target" sets the location of focus, where the object orbits around
-		this.target = new Vector3();
+		this.texture.generateMipmaps = options.generateMipmaps !== undefined ? options.generateMipmaps : false;
+		this.texture.minFilter = options.minFilter !== undefined ? options.minFilter : LinearFilter;
 
-		// How far you can dolly in and out ( PerspectiveCamera only )
-		this.minDistance = 0;
-		this.maxDistance = Infinity;
+		this.depthBuffer = options.depthBuffer !== undefined ? options.depthBuffer : true;
+		this.stencilBuffer = options.stencilBuffer !== undefined ? options.stencilBuffer : true;
+		this.depthTexture = options.depthTexture !== undefined ? options.depthTexture : null;
 
-		// How far you can zoom in and out ( OrthographicCamera only )
-		this.minZoom = 0;
-		this.maxZoom = Infinity;
+	}
 
-		// How far you can orbit vertically, upper and lower limits.
-		// Range is 0 to Math.PI radians.
-		this.minPolarAngle = 0; // radians
-		this.maxPolarAngle = Math.PI; // radians
+	WebGLRenderTarget.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
 
-		// How far you can orbit horizontally, upper and lower limits.
-		// If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
-		this.minAzimuthAngle = - Infinity; // radians
-		this.maxAzimuthAngle = Infinity; // radians
+		constructor: WebGLRenderTarget,
 
-		// Set to true to enable damping (inertia)
-		// If damping is enabled, you must call controls.update() in your animation loop
-		this.enableDamping = false;
-		this.dampingFactor = 0.25;
+		isWebGLRenderTarget: true,
 
-		// This option actually enables dollying in and out; left as "zoom" for backwards compatibility.
-		// Set to false to disable zooming
-		this.enableZoom = true;
-		this.zoomSpeed = 1.0;
+		setSize: function ( width, height ) {
 
-		// Set to false to disable rotating
-		this.enableRotate = true;
-		this.rotateSpeed = 1.0;
+			if ( this.width !== width || this.height !== height ) {
 
-		// Set to false to disable panning
-		this.enablePan = true;
-		this.panSpeed = 1.0;
-		this.screenSpacePanning = false; // if true, pan in screen-space
-		this.keyPanSpeed = 7.0;	// pixels moved per arrow key push
+				this.width = width;
+				this.height = height;
 
-		// Set to true to automatically rotate around the target
-		// If auto-rotate is enabled, you must call controls.update() in your animation loop
-		this.autoRotate = false;
-		this.autoRotateSpeed = 2.0; // 30 seconds per round when fps is 60
-
-		// Set to false to disable use of the keys
-		this.enableKeys = true;
-
-		// The four arrow keys
-		this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
-
-		// Mouse buttons
-		this.mouseButtons = { LEFT: MOUSE.LEFT, MIDDLE: MOUSE.MIDDLE, RIGHT: MOUSE.RIGHT };
-
-		// for reset
-		this.target0 = this.target.clone();
-		this.position0 = this.object.position.clone();
-		this.zoom0 = this.object.zoom;
-
-		//
-		// public methods
-		//
-
-		this.getPolarAngle = function () {
-
-			return spherical.phi;
-
-		};
-
-		this.getAzimuthalAngle = function () {
-
-			return spherical.theta;
-
-		};
-
-		this.saveState = function () {
-
-			scope.target0.copy( scope.target );
-			scope.position0.copy( scope.object.position );
-			scope.zoom0 = scope.object.zoom;
-
-		};
-
-		this.reset = function () {
-
-			scope.target.copy( scope.target0 );
-			scope.object.position.copy( scope.position0 );
-			scope.object.zoom = scope.zoom0;
-
-			scope.object.updateProjectionMatrix();
-			scope.dispatchEvent( changeEvent );
-
-			scope.update();
-
-			state = STATE.NONE;
-
-		};
-
-		// this method is exposed, but perhaps it would be better if we can make it private...
-		this.update = function () {
-
-			var offset = new Vector3();
-
-			// so camera.up is the orbit axis
-			var quat = new Quaternion().setFromUnitVectors( object.up, new Vector3( 0, 1, 0 ) );
-			var quatInverse = quat.clone().inverse();
-
-			var lastPosition = new Vector3();
-			var lastQuaternion = new Quaternion();
-
-			return function update() {
-
-				var position = scope.object.position;
-
-				offset.copy( position ).sub( scope.target );
-
-				// rotate offset to "y-axis-is-up" space
-				offset.applyQuaternion( quat );
-
-				// angle from z-axis around y-axis
-				spherical.setFromVector3( offset );
-
-				if ( scope.autoRotate && state === STATE.NONE ) {
-
-					rotateLeft( getAutoRotationAngle() );
-
-				}
-
-				spherical.theta += sphericalDelta.theta;
-				spherical.phi += sphericalDelta.phi;
-
-				// restrict theta to be between desired limits
-				spherical.theta = Math.max( scope.minAzimuthAngle, Math.min( scope.maxAzimuthAngle, spherical.theta ) );
-
-				// restrict phi to be between desired limits
-				spherical.phi = Math.max( scope.minPolarAngle, Math.min( scope.maxPolarAngle, spherical.phi ) );
-
-				spherical.makeSafe();
-				spherical.radius *= scale;
-
-				// restrict radius to be between desired limits
-				spherical.radius = Math.max( scope.minDistance, Math.min( scope.maxDistance, spherical.radius ) );
-
-				// move target to panned location
-				scope.target.add( panOffset );
-
-				offset.setFromSpherical( spherical );
-
-				// rotate offset back to "camera-up-vector-is-up" space
-				offset.applyQuaternion( quatInverse );
-
-				position.copy( scope.target ).add( offset );
-
-				scope.object.lookAt( scope.target );
-
-				if ( scope.enableDamping === true ) {
-
-					sphericalDelta.theta *= ( 1 - scope.dampingFactor );
-					sphericalDelta.phi *= ( 1 - scope.dampingFactor );
-
-					panOffset.multiplyScalar( 1 - scope.dampingFactor );
-
-				} else {
-
-					sphericalDelta.set( 0, 0, 0 );
-
-					panOffset.set( 0, 0, 0 );
-
-				}
-
-				scale = 1;
-
-				// update condition is:
-				// min(camera displacement, camera rotation in radians)^2 > EPS
-				// using small-angle approximation cos(x/2) = 1 - x^2 / 8
-
-				if ( zoomChanged ||
-					lastPosition.distanceToSquared( scope.object.position ) > EPS ||
-					8 * ( 1 - lastQuaternion.dot( scope.object.quaternion ) ) > EPS ) {
-
-					scope.dispatchEvent( changeEvent );
-
-					lastPosition.copy( scope.object.position );
-					lastQuaternion.copy( scope.object.quaternion );
-					zoomChanged = false;
-
-					return true;
-
-				}
-
-				return false;
-
-			};
-
-		}();
-
-		this.dispose = function () {
-
-			scope.domElement.removeEventListener( 'contextmenu', onContextMenu, false );
-			scope.domElement.removeEventListener( 'mousedown', onMouseDown, false );
-			scope.domElement.removeEventListener( 'wheel', onMouseWheel, false );
-
-			scope.domElement.removeEventListener( 'touchstart', onTouchStart, false );
-			scope.domElement.removeEventListener( 'touchend', onTouchEnd, false );
-			scope.domElement.removeEventListener( 'touchmove', onTouchMove, false );
-
-			document.removeEventListener( 'mousemove', onMouseMove, false );
-			document.removeEventListener( 'mouseup', onMouseUp, false );
-
-			window.removeEventListener( 'keydown', onKeyDown, false );
-
-			//scope.dispatchEvent( { type: 'dispose' } ); // should this be added here?
-
-		};
-
-		//
-		// internals
-		//
-
-		var scope = this;
-
-		var changeEvent = { type: 'change' };
-		var startEvent = { type: 'start' };
-		var endEvent = { type: 'end' };
-
-		var STATE = { NONE: - 1, ROTATE: 0, DOLLY: 1, PAN: 2, TOUCH_ROTATE: 3, TOUCH_DOLLY_PAN: 4 };
-
-		var state = STATE.NONE;
-
-		var EPS = 0.000001;
-
-		// current position in spherical coordinates
-		var spherical = new Spherical();
-		var sphericalDelta = new Spherical();
-
-		var scale = 1;
-		var panOffset = new Vector3();
-		var zoomChanged = false;
-
-		var rotateStart = new Vector2();
-		var rotateEnd = new Vector2();
-		var rotateDelta = new Vector2();
-
-		var panStart = new Vector2();
-		var panEnd = new Vector2();
-		var panDelta = new Vector2();
-
-		var dollyStart = new Vector2();
-		var dollyEnd = new Vector2();
-		var dollyDelta = new Vector2();
-
-		function getAutoRotationAngle() {
-
-			return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
-
-		}
-
-		function getZoomScale() {
-
-			return Math.pow( 0.95, scope.zoomSpeed );
-
-		}
-
-		function rotateLeft( angle ) {
-
-			sphericalDelta.theta -= angle;
-
-		}
-
-		function rotateUp( angle ) {
-
-			sphericalDelta.phi -= angle;
-
-		}
-
-		var panLeft = function () {
-
-			var v = new Vector3();
-
-			return function panLeft( distance, objectMatrix ) {
-
-				v.setFromMatrixColumn( objectMatrix, 0 ); // get X column of objectMatrix
-				v.multiplyScalar( - distance );
-
-				panOffset.add( v );
-
-			};
-
-		}();
-
-		var panUp = function () {
-
-			var v = new Vector3();
-
-			return function panUp( distance, objectMatrix ) {
-
-				if ( scope.screenSpacePanning === true ) {
-
-					v.setFromMatrixColumn( objectMatrix, 1 );
-
-				} else {
-
-					v.setFromMatrixColumn( objectMatrix, 0 );
-					v.crossVectors( scope.object.up, v );
-
-				}
-
-				v.multiplyScalar( distance );
-
-				panOffset.add( v );
-
-			};
-
-		}();
-
-		// deltaX and deltaY are in pixels; right and down are positive
-		var pan = function () {
-
-			var offset = new Vector3();
-
-			return function pan( deltaX, deltaY ) {
-
-				var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-
-				if ( scope.object.isPerspectiveCamera ) {
-
-					// perspective
-					var position = scope.object.position;
-					offset.copy( position ).sub( scope.target );
-					var targetDistance = offset.length();
-
-					// half of the fov is center to top of screen
-					targetDistance *= Math.tan( ( scope.object.fov / 2 ) * Math.PI / 180.0 );
-
-					// we use only clientHeight here so aspect ratio does not distort speed
-					panLeft( 2 * deltaX * targetDistance / element.clientHeight, scope.object.matrix );
-					panUp( 2 * deltaY * targetDistance / element.clientHeight, scope.object.matrix );
-
-				} else if ( scope.object.isOrthographicCamera ) {
-
-					// orthographic
-					panLeft( deltaX * ( scope.object.right - scope.object.left ) / scope.object.zoom / element.clientWidth, scope.object.matrix );
-					panUp( deltaY * ( scope.object.top - scope.object.bottom ) / scope.object.zoom / element.clientHeight, scope.object.matrix );
-
-				} else {
-
-					// camera neither orthographic nor perspective
-					console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.' );
-					scope.enablePan = false;
-
-				}
-
-			};
-
-		}();
-
-		function dollyIn( dollyScale ) {
-
-			if ( scope.object.isPerspectiveCamera ) {
-
-				scale /= dollyScale;
-
-			} else if ( scope.object.isOrthographicCamera ) {
-
-				scope.object.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, scope.object.zoom * dollyScale ) );
-				scope.object.updateProjectionMatrix();
-				zoomChanged = true;
-
-			} else {
-
-				console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.' );
-				scope.enableZoom = false;
+				this.dispose();
 
 			}
 
-		}
-
-		function dollyOut( dollyScale ) {
-
-			if ( scope.object.isPerspectiveCamera ) {
-
-				scale *= dollyScale;
-
-			} else if ( scope.object.isOrthographicCamera ) {
-
-				scope.object.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, scope.object.zoom / dollyScale ) );
-				scope.object.updateProjectionMatrix();
-				zoomChanged = true;
-
-			} else {
-
-				console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.' );
-				scope.enableZoom = false;
-
-			}
-
-		}
-
-		//
-		// event callbacks - update the object state
-		//
-
-		function handleMouseDownRotate( event ) {
-
-			//console.log( 'handleMouseDownRotate' );
-
-			rotateStart.set( event.clientX, event.clientY );
-
-		}
-
-		function handleMouseDownDolly( event ) {
-
-			//console.log( 'handleMouseDownDolly' );
-
-			dollyStart.set( event.clientX, event.clientY );
-
-		}
-
-		function handleMouseDownPan( event ) {
-
-			//console.log( 'handleMouseDownPan' );
-
-			panStart.set( event.clientX, event.clientY );
-
-		}
-
-		function handleMouseMoveRotate( event ) {
-
-			//console.log( 'handleMouseMoveRotate' );
-
-			rotateEnd.set( event.clientX, event.clientY );
-
-			rotateDelta.subVectors( rotateEnd, rotateStart ).multiplyScalar( scope.rotateSpeed );
-
-			var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-
-			rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientHeight ); // yes, height
-
-			rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight );
-
-			rotateStart.copy( rotateEnd );
-
-			scope.update();
-
-		}
-
-		function handleMouseMoveDolly( event ) {
-
-			//console.log( 'handleMouseMoveDolly' );
-
-			dollyEnd.set( event.clientX, event.clientY );
-
-			dollyDelta.subVectors( dollyEnd, dollyStart );
-
-			if ( dollyDelta.y > 0 ) {
-
-				dollyIn( getZoomScale() );
-
-			} else if ( dollyDelta.y < 0 ) {
-
-				dollyOut( getZoomScale() );
-
-			}
-
-			dollyStart.copy( dollyEnd );
-
-			scope.update();
-
-		}
-
-		function handleMouseMovePan( event ) {
-
-			//console.log( 'handleMouseMovePan' );
-
-			panEnd.set( event.clientX, event.clientY );
-
-			panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
-
-			pan( panDelta.x, panDelta.y );
-
-			panStart.copy( panEnd );
-
-			scope.update();
-
-		}
-
-		function handleMouseWheel( event ) {
-
-			// console.log( 'handleMouseWheel' );
-
-			if ( event.deltaY < 0 ) {
-
-				dollyOut( getZoomScale() );
-
-			} else if ( event.deltaY > 0 ) {
-
-				dollyIn( getZoomScale() );
-
-			}
-
-			scope.update();
-
-		}
-
-		function handleKeyDown( event ) {
-
-			//console.log( 'handleKeyDown' );
-
-			// prevent the browser from scrolling on cursor up/down
-
-			event.preventDefault();
-
-			switch ( event.keyCode ) {
-
-				case scope.keys.UP:
-					pan( 0, scope.keyPanSpeed );
-					scope.update();
-					break;
-
-				case scope.keys.BOTTOM:
-					pan( 0, - scope.keyPanSpeed );
-					scope.update();
-					break;
-
-				case scope.keys.LEFT:
-					pan( scope.keyPanSpeed, 0 );
-					scope.update();
-					break;
-
-				case scope.keys.RIGHT:
-					pan( - scope.keyPanSpeed, 0 );
-					scope.update();
-					break;
-
-			}
-
-		}
-
-		function handleTouchStartRotate( event ) {
-
-			//console.log( 'handleTouchStartRotate' );
-
-			rotateStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-
-		}
-
-		function handleTouchStartDollyPan( event ) {
-
-			//console.log( 'handleTouchStartDollyPan' );
-
-			if ( scope.enableZoom ) {
-
-				var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-				var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-
-				var distance = Math.sqrt( dx * dx + dy * dy );
-
-				dollyStart.set( 0, distance );
-
-			}
-
-			if ( scope.enablePan ) {
-
-				var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
-				var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
-
-				panStart.set( x, y );
-
-			}
-
-		}
-
-		function handleTouchMoveRotate( event ) {
-
-			//console.log( 'handleTouchMoveRotate' );
-
-			rotateEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-
-			rotateDelta.subVectors( rotateEnd, rotateStart ).multiplyScalar( scope.rotateSpeed );
-
-			var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-
-			rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientHeight ); // yes, height
-
-			rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight );
-
-			rotateStart.copy( rotateEnd );
-
-			scope.update();
-
-		}
-
-		function handleTouchMoveDollyPan( event ) {
-
-			//console.log( 'handleTouchMoveDollyPan' );
-
-			if ( scope.enableZoom ) {
-
-				var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-				var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-
-				var distance = Math.sqrt( dx * dx + dy * dy );
-
-				dollyEnd.set( 0, distance );
-
-				dollyDelta.set( 0, Math.pow( dollyEnd.y / dollyStart.y, scope.zoomSpeed ) );
-
-				dollyIn( dollyDelta.y );
-
-				dollyStart.copy( dollyEnd );
-
-			}
-
-			if ( scope.enablePan ) {
-
-				var x = 0.5 * ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX );
-				var y = 0.5 * ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY );
-
-				panEnd.set( x, y );
-
-				panDelta.subVectors( panEnd, panStart ).multiplyScalar( scope.panSpeed );
-
-				pan( panDelta.x, panDelta.y );
-
-				panStart.copy( panEnd );
-
-			}
-
-			scope.update();
-
-		}
-
-		//
-		// event handlers - FSM: listen for events and reset state
-		//
-
-		function onMouseDown( event ) {
-
-			if ( scope.enabled === false ) return;
-
-			// Prevent the browser from scrolling.
-
-			event.preventDefault();
-
-			// Manually set the focus since calling preventDefault above
-			// prevents the browser from setting it automatically.
-
-			scope.domElement.focus ? scope.domElement.focus() : window.focus();
-
-			switch ( event.button ) {
-
-				case scope.mouseButtons.LEFT:
-
-					if ( event.ctrlKey || event.metaKey || event.shiftKey ) {
-
-						if ( scope.enablePan === false ) return;
-
-						handleMouseDownPan( event );
-
-						state = STATE.PAN;
-
-					} else {
-
-						if ( scope.enableRotate === false ) return;
-
-						handleMouseDownRotate( event );
-
-						state = STATE.ROTATE;
-
-					}
-
-					break;
-
-				case scope.mouseButtons.MIDDLE:
-
-					if ( scope.enableZoom === false ) return;
-
-					handleMouseDownDolly( event );
-
-					state = STATE.DOLLY;
-
-					break;
-
-				case scope.mouseButtons.RIGHT:
-
-					if ( scope.enablePan === false ) return;
-
-					handleMouseDownPan( event );
-
-					state = STATE.PAN;
-
-					break;
-
-			}
-
-			if ( state !== STATE.NONE ) {
-
-				document.addEventListener( 'mousemove', onMouseMove, false );
-				document.addEventListener( 'mouseup', onMouseUp, false );
-
-				scope.dispatchEvent( startEvent );
-
-			}
-
-		}
-
-		function onMouseMove( event ) {
-
-			if ( scope.enabled === false ) return;
-
-			event.preventDefault();
-
-			switch ( state ) {
-
-				case STATE.ROTATE:
-
-					if ( scope.enableRotate === false ) return;
-
-					handleMouseMoveRotate( event );
-
-					break;
-
-				case STATE.DOLLY:
-
-					if ( scope.enableZoom === false ) return;
-
-					handleMouseMoveDolly( event );
-
-					break;
-
-				case STATE.PAN:
-
-					if ( scope.enablePan === false ) return;
-
-					handleMouseMovePan( event );
-
-					break;
-
-			}
-
-		}
-
-		function onMouseUp( event ) {
-
-			if ( scope.enabled === false ) return;
-
-			document.removeEventListener( 'mousemove', onMouseMove, false );
-			document.removeEventListener( 'mouseup', onMouseUp, false );
-
-			scope.dispatchEvent( endEvent );
-
-			state = STATE.NONE;
-
-		}
-
-		function onMouseWheel( event ) {
-
-			if ( scope.enabled === false || scope.enableZoom === false || ( state !== STATE.NONE && state !== STATE.ROTATE ) ) return;
-
-			event.preventDefault();
-			event.stopPropagation();
-
-			scope.dispatchEvent( startEvent );
-
-			handleMouseWheel( event );
-
-			scope.dispatchEvent( endEvent );
-
-		}
-
-		function onKeyDown( event ) {
-
-			if ( scope.enabled === false || scope.enableKeys === false || scope.enablePan === false ) return;
-
-			handleKeyDown( event );
-
-		}
-
-		function onTouchStart( event ) {
-
-			if ( scope.enabled === false ) return;
-
-			event.preventDefault();
-
-			switch ( event.touches.length ) {
-
-				case 1:	// one-fingered touch: rotate
-
-					if ( scope.enableRotate === false ) return;
-
-					handleTouchStartRotate( event );
-
-					state = STATE.TOUCH_ROTATE;
-
-					break;
-
-				case 2:	// two-fingered touch: dolly-pan
-
-					if ( scope.enableZoom === false && scope.enablePan === false ) return;
-
-					handleTouchStartDollyPan( event );
-
-					state = STATE.TOUCH_DOLLY_PAN;
-
-					break;
-
-				default:
-
-					state = STATE.NONE;
-
-			}
-
-			if ( state !== STATE.NONE ) {
-
-				scope.dispatchEvent( startEvent );
-
-			}
-
-		}
-
-		function onTouchMove( event ) {
-
-			if ( scope.enabled === false ) return;
-
-			event.preventDefault();
-			event.stopPropagation();
-
-			switch ( event.touches.length ) {
-
-				case 1: // one-fingered touch: rotate
-
-					if ( scope.enableRotate === false ) return;
-					if ( state !== STATE.TOUCH_ROTATE ) return; // is this needed?
-
-					handleTouchMoveRotate( event );
-
-					break;
-
-				case 2: // two-fingered touch: dolly-pan
-
-					if ( scope.enableZoom === false && scope.enablePan === false ) return;
-					if ( state !== STATE.TOUCH_DOLLY_PAN ) return; // is this needed?
-
-					handleTouchMoveDollyPan( event );
-
-					break;
-
-				default:
-
-					state = STATE.NONE;
-
-			}
-
-		}
-
-		function onTouchEnd( event ) {
-
-			if ( scope.enabled === false ) return;
-
-			scope.dispatchEvent( endEvent );
-
-			state = STATE.NONE;
-
-		}
-
-		function onContextMenu( event ) {
-
-			if ( scope.enabled === false ) return;
-
-			event.preventDefault();
-
-		}
-
-		//
-
-		scope.domElement.addEventListener( 'contextmenu', onContextMenu, false );
-
-		scope.domElement.addEventListener( 'mousedown', onMouseDown, false );
-		scope.domElement.addEventListener( 'wheel', onMouseWheel, false );
-
-		scope.domElement.addEventListener( 'touchstart', onTouchStart, false );
-		scope.domElement.addEventListener( 'touchend', onTouchEnd, false );
-		scope.domElement.addEventListener( 'touchmove', onTouchMove, false );
-
-		window.addEventListener( 'keydown', onKeyDown, false );
-
-		// force an update at start
-
-		this.update();
-
-	};
-
-	OrbitControls.prototype = Object.create( EventDispatcher.prototype );
-	OrbitControls.prototype.constructor = OrbitControls;
-
-	Object.defineProperties( OrbitControls.prototype, {
-
-		center: {
-
-			get: function () {
-
-				console.warn( 'OrbitControls: .center has been renamed to .target' );
-				return this.target;
-
-			}
+			this.viewport.set( 0, 0, width, height );
+			this.scissor.set( 0, 0, width, height );
 
 		},
 
-		// backward compatibility
+		clone: function () {
 
-		noZoom: {
-
-			get: function () {
-
-				console.warn( 'OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.' );
-				return ! this.enableZoom;
-
-			},
-
-			set: function ( value ) {
-
-				console.warn( 'OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.' );
-				this.enableZoom = ! value;
-
-			}
+			return new this.constructor().copy( this );
 
 		},
 
-		noRotate: {
+		copy: function ( source ) {
 
-			get: function () {
+			this.width = source.width;
+			this.height = source.height;
 
-				console.warn( 'OrbitControls: .noRotate has been deprecated. Use .enableRotate instead.' );
-				return ! this.enableRotate;
+			this.viewport.copy( source.viewport );
 
-			},
+			this.texture = source.texture.clone();
 
-			set: function ( value ) {
+			this.depthBuffer = source.depthBuffer;
+			this.stencilBuffer = source.stencilBuffer;
+			this.depthTexture = source.depthTexture;
 
-				console.warn( 'OrbitControls: .noRotate has been deprecated. Use .enableRotate instead.' );
-				this.enableRotate = ! value;
-
-			}
-
-		},
-
-		noPan: {
-
-			get: function () {
-
-				console.warn( 'OrbitControls: .noPan has been deprecated. Use .enablePan instead.' );
-				return ! this.enablePan;
-
-			},
-
-			set: function ( value ) {
-
-				console.warn( 'OrbitControls: .noPan has been deprecated. Use .enablePan instead.' );
-				this.enablePan = ! value;
-
-			}
+			return this;
 
 		},
 
-		noKeys: {
+		dispose: function () {
 
-			get: function () {
-
-				console.warn( 'OrbitControls: .noKeys has been deprecated. Use .enableKeys instead.' );
-				return ! this.enableKeys;
-
-			},
-
-			set: function ( value ) {
-
-				console.warn( 'OrbitControls: .noKeys has been deprecated. Use .enableKeys instead.' );
-				this.enableKeys = ! value;
-
-			}
-
-		},
-
-		staticMoving: {
-
-			get: function () {
-
-				console.warn( 'OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead.' );
-				return ! this.enableDamping;
-
-			},
-
-			set: function ( value ) {
-
-				console.warn( 'OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead.' );
-				this.enableDamping = ! value;
-
-			}
-
-		},
-
-		dynamicDampingFactor: {
-
-			get: function () {
-
-				console.warn( 'OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.' );
-				return this.dampingFactor;
-
-			},
-
-			set: function ( value ) {
-
-				console.warn( 'OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.' );
-				this.dampingFactor = value;
-
-			}
+			this.dispatchEvent( { type: 'dispose' } );
 
 		}
 
 	} );
 
-	exports.OrbitControls = OrbitControls;
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function WebGLMultisampleRenderTarget( width, height, options ) {
+
+		WebGLRenderTarget.call( this, width, height, options );
+
+		this.samples = 4;
+
+	}
+
+	WebGLMultisampleRenderTarget.prototype = Object.assign( Object.create( WebGLRenderTarget.prototype ), {
+
+		constructor: WebGLMultisampleRenderTarget,
+
+		isWebGLMultisampleRenderTarget: true,
+
+		copy: function ( source ) {
+
+			WebGLRenderTarget.prototype.copy.call( this, source );
+
+			this.samples = source.samples;
+
+			return this;
+
+		}
+
+	} );
+
+	exports.WebGLMultisampleRenderTarget = WebGLMultisampleRenderTarget;
 
 	return exports;
 
