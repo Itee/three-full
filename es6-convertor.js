@@ -277,7 +277,7 @@ function _filterJavascriptFiles ( filePaths ) {
 
         // Not a js file like fonts or shaders
         const fileExtension = path.extname( filePath )
-        if ( fileExtension !== '.js' ) {
+        if ( filePath.indexOf("glsl") > -1 || fileExtension !== '.js' ) {
             //            console.log( 'Not Js:  ' + filePath )
             continue
         }
@@ -482,6 +482,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
     let baseName      = undefined
     let edgeCase      = undefined
     let file          = undefined
+    let isGLSL        = undefined
     let isJavascript  = undefined
 
     let overrideFilePath = undefined
@@ -498,7 +499,8 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
         fileExtension = path.extname( filePath )
         baseName      = path.basename( filePath, fileExtension )
         file          = _getUncommentedFileForPath( filePath )
-        isJavascript  = ( fileExtension === '.js' )
+        isGLSL        = (baseName.indexOf("glsl") > -1)
+        isJavascript  = (!isGLSL && fileExtension === '.js' )
 
         if ( _fileMap[ baseName ] ) {
             console.error( 'The key ' + baseName + ' already exist in the file map ! Is there a duplicate file ??? Skip it !' )
