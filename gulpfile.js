@@ -129,11 +129,23 @@ gulp.task( 'fix-struct-node', () => {
 
 } )
 
+gulp.task( 'fix-buffer-geometry-util', () => {
+
+    const replacement = 'for ( var attributeNameIndex = 0, numberOfAttributes = attributeNames.length ; attributeNameIndex < numberOfAttributes ; attributeNameIndex++  ) {\n' +
+                            '\t\t\tvar name = attributeNames[ attributeNameIndex ];'
+
+    return gulp.src( './node_modules/three/examples/js/utils/BufferGeometryUtils.js' )
+               .pipe( replace( [ [ 'for ( var name of attributeNames ) {', replacement  ] ] ) )
+               .pipe( gulp.dest( './node_modules/three/examples/js/utils' ) )
+
+} )
+
 gulp.task( 'patch-three',
     gulp.parallel(
         'fix-effect-composer',
         'create-pass-file',
-        'fix-struct-node'
+        'fix-struct-node',
+        'fix-buffer-geometry-util'
     )
 )
 
