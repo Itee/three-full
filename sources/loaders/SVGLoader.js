@@ -147,10 +147,10 @@ SVGLoader.prototype = {
 				var type = command.charAt( 0 );
 				var data = command.substr( 1 ).trim();
 
-				if ( isFirstPoint ) {
+				if ( isFirstPoint === true ) {
 					doSetFirstPoint = true;
+					isFirstPoint = false;
 				}
-				isFirstPoint = false;
 
 				switch ( type ) {
 
@@ -436,13 +436,11 @@ SVGLoader.prototype = {
 
 				// console.log( type, parseFloats( data ), parseFloats( data ).length  )
 
-				if ( doSetFirstPoint ) {
-
+				if ( doSetFirstPoint === true ) {
 					firstPoint.copy( point );
-
 					doSetFirstPoint = false;
-
 				}
+
 			}
 
 			return path;
@@ -746,7 +744,7 @@ SVGLoader.prototype = {
 			var transform = new Matrix3();
 			var currentTransform = tempTransform0;
 			var transformsTexts = node.getAttribute( 'transform' ).split( ' ' );
-			
+
 			for ( var tIndex = transformsTexts.length - 1; tIndex >= 0; tIndex-- ) {
 
 				var transformText = transformsTexts[ tIndex ];
@@ -758,7 +756,7 @@ SVGLoader.prototype = {
 					var transformType = transformText.substr( 0, openParPos );
 
 					var array = parseFloats( transformText.substr( openParPos + 1, closeParPos - openParPos - 1 ) );
-					
+
 					currentTransform.identity();
 
 					switch ( transformType ) {

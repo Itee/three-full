@@ -185,9 +185,9 @@ var CSS3DRenderer = function () {
 			}
 
 			var element = object.element;
-			var cachedStyle = cache.objects.get( object );
+			var cachedObject = cache.objects.get( object );
 
-			if ( cachedStyle === undefined || cachedStyle !== style ) {
+			if ( cachedObject === undefined || cachedObject.style !== style ) {
 
 				element.style.WebkitTransform = style;
 				element.style.transform = style;

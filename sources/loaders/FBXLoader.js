@@ -1255,6 +1255,7 @@ var FBXLoader = ( function () {
 				} );
 
 				model = new SkinnedMesh( geometry, material );
+				model.normalizeSkinWeights();
 
 			} else {
 

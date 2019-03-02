@@ -106,7 +106,7 @@ MTLLoader.prototype = {
 
 			} else {
 
-				if ( key === 'ka' || key === 'kd' || key === 'ks' ) {
+				if ( key === 'ka' || key === 'kd' || key === 'ks' || key ==='ke' ) {
 
 					var ss = value.split( delimiter_pattern, 3 );
 					info[ key ] = [ parseFloat( ss[ 0 ] ), parseFloat( ss[ 1 ] ), parseFloat( ss[ 2 ] ) ];
@@ -354,6 +354,13 @@ MTLLoader.MaterialCreator.prototype = {
 
 					break;
 
+				case 'ke':
+
+					// Emissive using RGB values
+					params.emissive = new Color().fromArray( value );
+
+					break;
+
 				case 'map_kd':
 
 					// Diffuse texture map
@@ -367,6 +374,14 @@ MTLLoader.MaterialCreator.prototype = {
 					// Specular map
 
 					setMapForType( "specularMap", value );
+
+					break;
+
+				case 'map_ke':
+
+					// Emissive map
+
+					setMapForType( "emissiveMap", value );
 
 					break;
 

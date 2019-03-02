@@ -18,7 +18,8 @@ import { SpriteMaterial } from '../materials/SpriteMaterial.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import {
 	REVISION,
-	FaceColors
+	FaceColors,
+	VertexColors
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
 var SoftwareRenderer = function ( parameters ) {
@@ -535,7 +536,7 @@ var SoftwareRenderer = function ( parameters ) {
 					}
 				} else {
 
-					if ( material.vertexColors === FaceColors ) {
+					if ( material.vertexColors === FaceColors || material.vertexColors === VertexColors ) {
 
 						string = [
 							'var colorOffset = offset * 4;',

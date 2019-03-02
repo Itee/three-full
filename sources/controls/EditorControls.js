@@ -7,6 +7,7 @@ import { Box3 } from '../math/Box3.js'
 import { Matrix3 } from '../math/Matrix3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Spherical } from '../math/Spherical.js'
+import { Sphere } from '../math/Sphere.js'
 var EditorControls = function ( object, domElement ) {
 
 	domElement = ( domElement !== undefined ) ? domElement : document;
@@ -34,6 +35,7 @@ var EditorControls = function ( object, domElement ) {
 	var pointer = new Vector2();
 	var pointerOld = new Vector2();
 	var spherical = new Spherical();
+	var sphere = new Sphere();
 
 	// events
 
@@ -47,8 +49,8 @@ var EditorControls = function ( object, domElement ) {
 
 		if ( box.isEmpty() === false ) {
 
-			center.copy( box.getCenter() );
-			distance = box.getBoundingSphere().radius;
+			box.getCenter( center );
+			distance = box.getBoundingSphere( sphere ).radius;
 
 		} else {
 
