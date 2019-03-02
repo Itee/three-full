@@ -5613,7 +5613,9 @@ var Three = (function (exports) {
 		var _mouse = new Vector2();
 		var _offset = new Vector3();
 		var _intersection = new Vector3();
-
+		var _worldPosition = new Vector3();
+		var _inverseMatrix = new Matrix4();
+		
 		var _selected = null, _hovered = null;
 
 		//
@@ -5665,7 +5667,7 @@ var Three = (function (exports) {
 
 				if ( _raycaster.ray.intersectPlane( _plane, _intersection ) ) {
 
-					_selected.position.copy( _intersection.sub( _offset ) );
+					_selected.position.copy( _intersection.sub( _offset ).applyMatrix4( _inverseMatrix ) );
 
 				}
 
@@ -5683,7 +5685,7 @@ var Three = (function (exports) {
 
 				var object = intersects[ 0 ].object;
 
-				_plane.setFromNormalAndCoplanarPoint( _camera.getWorldDirection( _plane.normal ), object.position );
+				_plane.setFromNormalAndCoplanarPoint( _camera.getWorldDirection( _plane.normal ), _worldPosition.setFromMatrixPosition( object.matrixWorld ) );
 
 				if ( _hovered !== object ) {
 
@@ -5723,7 +5725,8 @@ var Three = (function (exports) {
 
 				if ( _raycaster.ray.intersectPlane( _plane, _intersection ) ) {
 
-					_offset.copy( _intersection ).sub( _selected.position );
+					_inverseMatrix.getInverse( _selected.parent.matrixWorld );
+					_offset.copy( _intersection ).sub( _worldPosition.setFromMatrixPosition( _selected.matrixWorld ) );
 
 				}
 
@@ -5766,7 +5769,7 @@ var Three = (function (exports) {
 
 				if ( _raycaster.ray.intersectPlane( _plane, _intersection ) ) {
 
-					_selected.position.copy( _intersection.sub( _offset ) );
+					_selected.position.copy( _intersection.sub( _offset ).applyMatrix4( _inverseMatrix ) );
 
 				}
 
@@ -5796,11 +5799,12 @@ var Three = (function (exports) {
 
 				_selected = intersects[ 0 ].object;
 
-				_plane.setFromNormalAndCoplanarPoint( _camera.getWorldDirection( _plane.normal ), _selected.position );
+				_plane.setFromNormalAndCoplanarPoint( _camera.getWorldDirection( _plane.normal ), _worldPosition.setFromMatrixPosition( _selected.matrixWorld ) );
 
 				if ( _raycaster.ray.intersectPlane( _plane, _intersection ) ) {
 
-					_offset.copy( _intersection ).sub( _selected.position );
+					_inverseMatrix.getInverse( _selected.parent.matrixWorld );
+					_offset.copy( _intersection ).sub( _worldPosition.setFromMatrixPosition( _selected.matrixWorld ) );
 
 				}
 

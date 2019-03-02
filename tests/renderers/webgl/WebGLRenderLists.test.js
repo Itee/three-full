@@ -64,7 +64,7 @@ var Three = (function (exports) {
 
 		}
 
-		function push( object, geometry, material, z, group ) {
+		function getNextRenderItem( object, geometry, material, z, group ) {
 
 			var renderItem = renderItems[ renderItemsIndex ];
 
@@ -95,9 +95,26 @@ var Three = (function (exports) {
 				renderItem.group = group;
 
 			}
-			( material.transparent === true ? transparent : opaque ).push( renderItem );
 
 			renderItemsIndex ++;
+
+			return renderItem;
+
+		}
+
+		function push( object, geometry, material, z, group ) {
+
+			var renderItem = getNextRenderItem( object, geometry, material, z, group );
+
+			( material.transparent === true ? transparent : opaque ).push( renderItem );
+
+		}
+
+		function unshift( object, geometry, material, z, group ) {
+
+			var renderItem = getNextRenderItem( object, geometry, material, z, group );
+
+			( material.transparent === true ? transparent : opaque ).unshift( renderItem );
 
 		}
 
@@ -114,6 +131,7 @@ var Three = (function (exports) {
 
 			init: init,
 			push: push,
+			unshift: unshift,
 
 			sort: sort
 		};
@@ -126,15 +144,23 @@ var Three = (function (exports) {
 
 		function get( scene, camera ) {
 
-			var hash = scene.id + ',' + camera.id;
-			var list = lists[ hash ];
-
-			if ( list === undefined ) {
-
-				// console.log( 'WebGLRenderLists:', hash );
+			var cameras = lists[ scene.id ];
+			var list;
+			if ( cameras === undefined ) {
 
 				list = new WebGLRenderList();
-				lists[ hash ] = list;
+				lists[ scene.id ] = {};
+				lists[ scene.id ][ camera.id ] = list;
+
+			} else {
+
+				list = cameras[ camera.id ];
+				if ( list === undefined ) {
+
+					list = new WebGLRenderList();
+					cameras[ camera.id ] = list;
+
+				}
 
 			}
 
