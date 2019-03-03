@@ -273,6 +273,9 @@ module.exports = {
             imports: [ 'UniformsUtils' ],
 			replacements: [
 				['EquirectangularToCubeGenerator = (', 'var EquirectangularToCubeGenerator = (']
+			],
+			exports: [
+				'EquirectangularToCubeGenerator'
 			]
 		},
         EXRLoader: {
