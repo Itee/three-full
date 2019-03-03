@@ -3,3 +3,4 @@
 /.idea
 /es6-convertor.js
 /gulpfile.js
+!core

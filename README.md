@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 16.0.0 is now available under Three r0.101.0 !!!**
+**The version 16.0.1 is now available under Three r0.101.0 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -209,6 +209,10 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+
+##### 16.0.1:
+
+* Fix missing core folder due to NPM v6.8.0 [bug](https://npm.community/t/npm-pack-leaving-out-files-6-8-0-only/5382)
 
 ##### 16.0.0:
 
