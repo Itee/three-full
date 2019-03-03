@@ -9494,6 +9494,7 @@ var Three = (function (exports) {
 		this.blending = NormalBlending;
 		this.side = FrontSide;
 		this.flatShading = false;
+		this.vertexTangents = false;
 		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 		this.opacity = 1;
@@ -10352,6 +10353,18 @@ var Three = (function (exports) {
 
 			}
 
+			var tangent = this.attributes.tangent;
+
+			if ( tangent !== undefined ) {
+
+				var normalMatrix = new Matrix3().getNormalMatrix( matrix );
+
+				// Tangent is vec4, but the '.w' component is a sign value (+1/-1).
+				normalMatrix.applyToBufferAttribute( tangent );
+				tangent.needsUpdate = true;
+
+			}
+
 			if ( this.boundingBox !== null ) {
 
 				this.computeBoundingBox();
@@ -11172,11 +11185,9 @@ var Three = (function (exports) {
 
 			if ( index !== null ) {
 
-				var array = Array.prototype.slice.call( index.array );
-
 				data.data.index = {
 					type: index.array.constructor.name,
-					array: array
+					array: Array.prototype.slice.call( index.array )
 				};
 
 			}
@@ -11187,16 +11198,56 @@ var Three = (function (exports) {
 
 				var attribute = attributes[ key ];
 
-				var array = Array.prototype.slice.call( attribute.array );
-
-				data.data.attributes[ key ] = {
+				var attributeData = {
 					itemSize: attribute.itemSize,
 					type: attribute.array.constructor.name,
-					array: array,
+					array: Array.prototype.slice.call( attribute.array ),
 					normalized: attribute.normalized
 				};
 
+				if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+				data.data.attributes[ key ] = attributeData;
+
 			}
+
+			var morphAttributes = {};
+			var hasMorphAttributes = false;
+
+			for ( var key in this.morphAttributes ) {
+
+				var attributeArray = this.morphAttributes[ key ];
+
+				var array = [];
+
+				for ( var i = 0, il = attributeArray.length; i < il; i ++ ) {
+
+					var attribute = attributeArray[ i ];
+
+					var attributeData = {
+						itemSize: attribute.itemSize,
+						type: attribute.array.constructor.name,
+						array: Array.prototype.slice.call( attribute.array ),
+						normalized: attribute.normalized
+					};
+
+					if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+					array.push( attributeData );
+
+				}
+
+				if ( array.length > 0 ) {
+
+					morphAttributes[ key ] = array;
+
+					hasMorphAttributes = true;
+
+				}
+
+			}
+
+			if ( hasMorphAttributes ) data.data.morphAttributes = morphAttributes;
 
 			var groups = this.groups;
 
@@ -14896,7 +14947,7 @@ var Three = (function (exports) {
 
 							if ( data.coordIndex ) {
 
-								function triangulateIndexArray( indexArray, ccw ) {
+								function triangulateIndexArray( indexArray, ccw, colorPerVertex ) {
 
 									if ( ccw === undefined ) {
 
@@ -14910,21 +14961,37 @@ var Three = (function (exports) {
 
 									for ( i = 0, il = indexArray.length; i < il; i ++ ) {
 
-										var indexedFace = indexArray[ i ];
+										if ( colorPerVertex === false ) {
 
-										// VRML support multipoint indexed face sets (more then 3 vertices). You must calculate the composing triangles here
+											var colorIndices = indexArray[ i ];
 
-										skip = 0;
+											for ( j = 0, jl = colorIndices.length; j < jl; j ++ ) {
 
-										while ( indexedFace.length >= 3 && skip < ( indexedFace.length - 2 ) ) {
+												var index = colorIndices[ j ];
 
-											var i1 = indexedFace[ 0 ];
-											var i2 = indexedFace[ skip + ( ccw ? 1 : 2 ) ];
-											var i3 = indexedFace[ skip + ( ccw ? 2 : 1 ) ];
+												triangulatedIndexArray.push( index, index, index );
 
-											triangulatedIndexArray.push( i1, i2, i3 );
+											}
 
-											skip ++;
+										} else {
+
+											var indexedFace = indexArray[ i ];
+
+											// VRML support multipoint indexed face sets (more then 3 vertices). You must calculate the composing triangles here
+
+											skip = 0;
+
+											while ( indexedFace.length >= 3 && skip < ( indexedFace.length - 2 ) ) {
+
+												var i1 = indexedFace[ 0 ];
+												var i2 = indexedFace[ skip + ( ccw ? 1 : 2 ) ];
+												var i3 = indexedFace[ skip + ( ccw ? 2 : 1 ) ];
+
+												triangulatedIndexArray.push( i1, i2, i3 );
+
+												skip ++;
+
+											}
 
 										}
 
@@ -14936,7 +15003,7 @@ var Three = (function (exports) {
 
 								var positionIndexes = data.coordIndex ? triangulateIndexArray( data.coordIndex, data.ccw ) : [];
 								var normalIndexes = data.normalIndex ? triangulateIndexArray( data.normalIndex, data.ccw ) : positionIndexes;
-								var colorIndexes = data.colorIndex ? triangulateIndexArray( data.colorIndex, data.ccw ) : positionIndexes;
+								var colorIndexes = data.colorIndex ? triangulateIndexArray( data.colorIndex, data.ccw, data.colorPerVertex ) : [];
 								var uvIndexes = data.texCoordIndex ? triangulateIndexArray( data.texCoordIndex, data.ccw ) : positionIndexes;
 
 								var newIndexes = [];
@@ -15058,6 +15125,8 @@ var Three = (function (exports) {
 							if ( colors.length > 0 ) {
 
 								geometry.addAttribute( 'color', new Float32BufferAttribute( colors, 3 ) );
+
+								parent.material.vertexColors = VertexColors;
 
 							}
 

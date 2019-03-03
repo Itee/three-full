@@ -307,6 +307,7 @@ var Three = (function (exports) {
 		this.blending = NormalBlending;
 		this.side = FrontSide;
 		this.flatShading = false;
+		this.vertexTangents = false;
 		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 		this.opacity = 1;
@@ -725,6 +726,24 @@ var Three = (function (exports) {
 	var UniformsUtils = { clone: cloneUniforms, merge: mergeUniforms };
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_vertex = `
+void main() {
+	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_fragment = `
+void main() {
+	gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function ShaderMaterial( parameters ) {
 
 		Material.call( this );
@@ -734,8 +753,8 @@ var Three = (function (exports) {
 		this.defines = {};
 		this.uniforms = {};
 
-		this.vertexShader = 'void main() {\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}';
-		this.fragmentShader = 'void main() {\n\tgl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}';
+		this.vertexShader = default_vertex;
+		this.fragmentShader = default_fragment;
 
 		this.linewidth = 1;
 
@@ -9394,6 +9413,18 @@ var Three = (function (exports) {
 
 			}
 
+			var tangent = this.attributes.tangent;
+
+			if ( tangent !== undefined ) {
+
+				var normalMatrix = new Matrix3().getNormalMatrix( matrix );
+
+				// Tangent is vec4, but the '.w' component is a sign value (+1/-1).
+				normalMatrix.applyToBufferAttribute( tangent );
+				tangent.needsUpdate = true;
+
+			}
+
 			if ( this.boundingBox !== null ) {
 
 				this.computeBoundingBox();
@@ -10214,11 +10245,9 @@ var Three = (function (exports) {
 
 			if ( index !== null ) {
 
-				var array = Array.prototype.slice.call( index.array );
-
 				data.data.index = {
 					type: index.array.constructor.name,
-					array: array
+					array: Array.prototype.slice.call( index.array )
 				};
 
 			}
@@ -10229,16 +10258,56 @@ var Three = (function (exports) {
 
 				var attribute = attributes[ key ];
 
-				var array = Array.prototype.slice.call( attribute.array );
-
-				data.data.attributes[ key ] = {
+				var attributeData = {
 					itemSize: attribute.itemSize,
 					type: attribute.array.constructor.name,
-					array: array,
+					array: Array.prototype.slice.call( attribute.array ),
 					normalized: attribute.normalized
 				};
 
+				if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+				data.data.attributes[ key ] = attributeData;
+
 			}
+
+			var morphAttributes = {};
+			var hasMorphAttributes = false;
+
+			for ( var key in this.morphAttributes ) {
+
+				var attributeArray = this.morphAttributes[ key ];
+
+				var array = [];
+
+				for ( var i = 0, il = attributeArray.length; i < il; i ++ ) {
+
+					var attribute = attributeArray[ i ];
+
+					var attributeData = {
+						itemSize: attribute.itemSize,
+						type: attribute.array.constructor.name,
+						array: Array.prototype.slice.call( attribute.array ),
+						normalized: attribute.normalized
+					};
+
+					if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+					array.push( attributeData );
+
+				}
+
+				if ( array.length > 0 ) {
+
+					morphAttributes[ key ] = array;
+
+					hasMorphAttributes = true;
+
+				}
+
+			}
+
+			if ( hasMorphAttributes ) data.data.morphAttributes = morphAttributes;
 
 			var groups = this.groups;
 
@@ -12882,7 +12951,7 @@ var Three = (function (exports) {
 				if ( this.camera.setViewOffset ) {
 
 					this.camera.setViewOffset( width, height,
-						jitterOffset[ 0 ] * 0.0625, jitterOffset[ 1 ] * 0.0625,   // 0.0625 = 1 / 16
+						jitterOffset[ 0 ] * 0.0625, jitterOffset[ 1 ] * 0.0625, // 0.0625 = 1 / 16
 						width, height );
 
 				}
@@ -12902,15 +12971,20 @@ var Three = (function (exports) {
 
 				this.copyUniforms[ "opacity" ].value = sampleWeight;
 				renderer.setClearColor( this.clearColor, this.clearAlpha );
-				renderer.render( this.scene, this.camera, this.sampleRenderTarget, true );
+				renderer.setRenderTarget( this.sampleRenderTarget );
+				renderer.clear();
+				renderer.render( this.scene, this.camera );
+
+				renderer.setRenderTarget( this.renderToScreen ? null : writeBuffer );
 
 				if ( i === 0 ) {
 
 					renderer.setClearColor( 0x000000, 0.0 );
+					renderer.clear();
 
 				}
 
-				renderer.render( this.scene2, this.camera2, this.renderToScreen ? null : writeBuffer, ( i === 0 ) );
+				renderer.render( this.scene2, this.camera2 );
 
 			}
 
@@ -13036,13 +13110,18 @@ var Three = (function (exports) {
 					if ( this.camera.setViewOffset ) {
 
 						this.camera.setViewOffset( readBuffer.width, readBuffer.height,
-							jitterOffset[ 0 ] * 0.0625, jitterOffset[ 1 ] * 0.0625,   // 0.0625 = 1 / 16
+							jitterOffset[ 0 ] * 0.0625, jitterOffset[ 1 ] * 0.0625, // 0.0625 = 1 / 16
 							readBuffer.width, readBuffer.height );
 
 					}
 
-					renderer.render( this.scene, this.camera, writeBuffer, true );
-					renderer.render( this.scene2, this.camera2, this.sampleRenderTarget, ( this.accumulateIndex === 0 ) );
+					renderer.setRenderTarget( writeBuffer );
+					renderer.clear();
+					renderer.render( this.scene, this.camera );
+
+					renderer.setRenderTarget( this.sampleRenderTarget );
+					if ( this.accumulateIndex === 0 ) renderer.clear();
+					renderer.render( this.scene2, this.camera2 );
 
 					this.accumulateIndex ++;
 
@@ -13060,7 +13139,9 @@ var Three = (function (exports) {
 
 				this.copyUniforms[ "opacity" ].value = 1.0;
 				this.copyUniforms[ "tDiffuse" ].value = this.sampleRenderTarget.texture;
-				renderer.render( this.scene2, this.camera2, writeBuffer, true );
+				renderer.setRenderTarget( writeBuffer );
+				renderer.clear();
+				renderer.render( this.scene2, this.camera2 );
 
 			}
 
@@ -13068,7 +13149,9 @@ var Three = (function (exports) {
 
 				this.copyUniforms[ "opacity" ].value = 1.0 - accumulationWeight;
 				this.copyUniforms[ "tDiffuse" ].value = this.holdRenderTarget.texture;
-				renderer.render( this.scene2, this.camera2, writeBuffer, ( accumulationWeight === 0 ) );
+				renderer.setRenderTarget( writeBuffer );
+				if ( accumulationWeight === 0 ) renderer.clear();
+				renderer.render( this.scene2, this.camera2 );
 
 			}
 

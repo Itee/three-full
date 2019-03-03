@@ -11,6 +11,7 @@ import { Geometry } from '../../core/Geometry.js'
 import { DefaultLoadingManager } from '../LoadingManager.js'
 import { Loader } from '../Loader.js'
 import { LoaderUtils } from '../LoaderUtils.js'
+import { AnimationClip } from '../../animation/AnimationClip.js'
 var LegacyJSONLoader = ( function () {
 
 	function LegacyJSONLoader( manager ) {

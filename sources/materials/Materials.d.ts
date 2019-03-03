@@ -1,21 +1,21 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-export { ShadowMaterial } from './ShadowMaterial';
-export { SpriteMaterial } from './SpriteMaterial';
-export { RawShaderMaterial } from './RawShaderMaterial';
-export { ShaderMaterial } from './ShaderMaterial';
-export { PointsMaterial } from './PointsMaterial';
-export { MeshPhysicalMaterial } from './MeshPhysicalMaterial';
-export { MeshStandardMaterial } from './MeshStandardMaterial';
-export { MeshPhongMaterial } from './MeshPhongMaterial';
-//export { MeshToonMaterial } from './MeshToonMaterial';
-export { MeshNormalMaterial } from './MeshNormalMaterial';
-export { MeshLambertMaterial } from './MeshLambertMaterial';
-export { MeshDepthMaterial } from './MeshDepthMaterial';
-//export { MeshDistanceMaterial } from './MeshDistanceMaterial';
-export { MeshBasicMaterial } from './MeshBasicMaterial';
-//export { MeshMatcapMaterial } from './MeshMatcapMaterial';
-export { LineDashedMaterial } from './LineDashedMaterial';
-export { LineBasicMaterial } from './LineBasicMaterial';
-export { Material } from './Material';
+export * from './ShadowMaterial';
+export * from './SpriteMaterial';
+export * from './RawShaderMaterial';
+export * from './ShaderMaterial';
+export * from './PointsMaterial';
+export * from './MeshPhysicalMaterial';
+export * from './MeshStandardMaterial';
+export * from './MeshPhongMaterial';
+//export * from './MeshToonMaterial';
+export * from './MeshNormalMaterial';
+export * from './MeshLambertMaterial';
+export * from './MeshDepthMaterial';
+//export * from './MeshDistanceMaterial';
+export * from './MeshBasicMaterial';
+//export * from './MeshMatcapMaterial';
+export * from './LineDashedMaterial';
+export * from './LineBasicMaterial';
+export * from './Material';

@@ -11,6 +11,7 @@ import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Vector4 } from '../math/Vector4.js'
+import { Vector2 } from '../math/Vector2.js'
 import {
 	LinearFilter,
 	RGBFormat
@@ -201,6 +202,7 @@ var Refractor = function ( geometry, options ) {
 	var render = ( function () {
 
 		var viewport = new Vector4();
+		var size = new Vector2();
 
 		return function render( renderer, scene, camera ) {
 
@@ -213,7 +215,9 @@ var Refractor = function ( geometry, options ) {
 			renderer.vr.enabled = false; // avoid camera modification
 			renderer.shadowMap.autoUpdate = false; // avoid re-computing shadows
 
-			renderer.render( scene, virtualCamera, renderTarget, true );
+			renderer.setRenderTarget( renderTarget );
+			renderer.clear();
+			renderer.render( scene, virtualCamera );
 
 			renderer.vr.enabled = currentVrEnabled;
 			renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
@@ -225,7 +229,7 @@ var Refractor = function ( geometry, options ) {
 
 			if ( bounds !== undefined ) {
 
-				var size = renderer.getSize();
+				renderer.getSize( size );
 				var pixelRatio = renderer.getPixelRatio();
 
 				viewport.x = bounds.x * size.width * pixelRatio;

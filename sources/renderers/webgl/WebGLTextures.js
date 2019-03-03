@@ -25,6 +25,18 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 
 	//
 
+	var useOffscreenCanvas = typeof OffscreenCanvas !== 'undefined';
+
+	function createCanvas( width, height ) {
+
+		// Use OffscreenCanvas when available. Specially needed in web workers
+
+		return useOffscreenCanvas ?
+			new OffscreenCanvas( width, height ) :
+			document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
+
+	}
+
 	function resizeImage( image, needsPowerOfTwo, needsNewCanvas, maxSize ) {
 
 		var scale = 1;
@@ -43,25 +55,28 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 
 			// only perform resize for certain image types
 
-			if ( image instanceof HTMLImageElement || image instanceof HTMLCanvasElement || image instanceof ImageBitmap ) {
-
-				if ( _canvas === undefined ) _canvas = document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' );
-
-				// cube textures can't reuse the same canvas
-
-				var canvas = needsNewCanvas ? document.createElementNS( 'http://www.w3.org/1999/xhtml', 'canvas' ) : _canvas;
+			if ( image instanceof ImageBitmap || image instanceof HTMLImageElement || image instanceof HTMLCanvasElement ) {
 
 				var floor = needsPowerOfTwo ? _Math.floorPowerOfTwo : Math.floor;
 
-				canvas.width = floor( scale * image.width );
-				canvas.height = floor( scale * image.height );
+				var width = floor( scale * image.width );
+				var height = floor( scale * image.height );
+
+				if ( _canvas === undefined ) _canvas = createCanvas( width, height );
+
+				// cube textures can't reuse the same canvas
+
+				var canvas = needsNewCanvas ? createCanvas( width, height ) : _canvas;
+
+				canvas.width = width;
+				canvas.height = height;
 
 				var context = canvas.getContext( '2d' );
-				context.drawImage( image, 0, 0, canvas.width, canvas.height );
+				context.drawImage( image, 0, 0, width, height );
 
-				console.warn( 'WebGLRenderer: Texture has been resized from (' + image.width + 'x' + image.height + ') to (' + canvas.width + 'x' + canvas.height + ').' );
+				console.warn( 'WebGLRenderer: Texture has been resized from (' + image.width + 'x' + image.height + ') to (' + width + 'x' + height + ').' );
 
-				return canvas;
+				return useOffscreenCanvas ? canvas.transferToImageBitmap() : canvas;
 
 			} else {
 
@@ -211,23 +226,10 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 
 		var textureProperties = properties.get( texture );
 
-		if ( texture.image && textureProperties.__image__webglTextureCube ) {
+		if ( textureProperties.__webglInit === undefined ) return;
 
-			// cube texture
+		_gl.deleteTexture( textureProperties.__webglTexture );
 
-			_gl.deleteTexture( textureProperties.__image__webglTextureCube );
-
-		} else {
-
-			// 2D texture
-
-			if ( textureProperties.__webglInit === undefined ) return;
-
-			_gl.deleteTexture( textureProperties.__webglTexture );
-
-		}
-
-		// remove all webgl properties
 		properties.remove( texture );
 
 	}
@@ -320,6 +322,7 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 		state.bindTexture( _gl.TEXTURE_3D, textureProperties.__webglTexture );
 
 	}
+
 	function setTextureCube( texture, slot ) {
 
 		var textureProperties = properties.get( texture );
@@ -328,18 +331,10 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 
 			if ( texture.version > 0 && textureProperties.__version !== texture.version ) {
 
-				if ( ! textureProperties.__image__webglTextureCube ) {
-
-					texture.addEventListener( 'dispose', onTextureDispose );
-
-					textureProperties.__image__webglTextureCube = _gl.createTexture();
-
-					info.memory.textures ++;
-
-				}
+				initTexture( textureProperties, texture );
 
 				state.activeTexture( _gl.TEXTURE0 + slot );
-				state.bindTexture( _gl.TEXTURE_CUBE_MAP, textureProperties.__image__webglTextureCube );
+				state.bindTexture( _gl.TEXTURE_CUBE_MAP, textureProperties.__webglTexture );
 
 				_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, texture.flipY );
 
@@ -440,7 +435,7 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 			} else {
 
 				state.activeTexture( _gl.TEXTURE0 + slot );
-				state.bindTexture( _gl.TEXTURE_CUBE_MAP, textureProperties.__image__webglTextureCube );
+				state.bindTexture( _gl.TEXTURE_CUBE_MAP, textureProperties.__webglTexture );
 
 			}
 
@@ -464,6 +459,12 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 			_gl.texParameteri( textureType, _gl.TEXTURE_WRAP_S, utils.convert( texture.wrapS ) );
 			_gl.texParameteri( textureType, _gl.TEXTURE_WRAP_T, utils.convert( texture.wrapT ) );
 
+			if ( textureType === _gl.TEXTURE_3D ) {
+
+				_gl.texParameteri( textureType, _gl.TEXTURE_WRAP_R, utils.convert( texture.wrapR ) );
+
+			}
+
 			_gl.texParameteri( textureType, _gl.TEXTURE_MAG_FILTER, utils.convert( texture.magFilter ) );
 			_gl.texParameteri( textureType, _gl.TEXTURE_MIN_FILTER, utils.convert( texture.minFilter ) );
 
@@ -471,6 +472,12 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 
 			_gl.texParameteri( textureType, _gl.TEXTURE_WRAP_S, _gl.CLAMP_TO_EDGE );
 			_gl.texParameteri( textureType, _gl.TEXTURE_WRAP_T, _gl.CLAMP_TO_EDGE );
+
+			if ( textureType === _gl.TEXTURE_3D ) {
+
+				_gl.texParameteri( textureType, _gl.TEXTURE_WRAP_R, _gl.CLAMP_TO_EDGE );
+
+			}
 
 			if ( texture.wrapS !== ClampToEdgeWrapping || texture.wrapT !== ClampToEdgeWrapping ) {
 
@@ -507,19 +514,8 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 
 	}
 
-	function uploadTexture( textureProperties, texture, slot ) {
+	function initTexture( textureProperties, texture ) {
 
-		var textureType;
-
-		if ( texture.isDataTexture3D ) {
-
-			textureType = _gl.TEXTURE_3D;
-
-		} else {
-
-			textureType = _gl.TEXTURE_2D;
-
-		}
 		if ( textureProperties.__webglInit === undefined ) {
 
 			textureProperties.__webglInit = true;
@@ -531,8 +527,18 @@ function WebGLTextures( _gl, extensions, state, properties, capabilities, utils,
 			info.memory.textures ++;
 
 		}
+
+	}
+
+	function uploadTexture( textureProperties, texture, slot ) {
+
+		var textureType = ( texture.isDataTexture3D ) ? _gl.TEXTURE_3D : _gl.TEXTURE_2D;
+
+		initTexture( textureProperties, texture );
+
 		state.activeTexture( _gl.TEXTURE0 + slot );
 		state.bindTexture( textureType, textureProperties.__webglTexture );
+
 		_gl.pixelStorei( _gl.UNPACK_FLIP_Y_WEBGL, texture.flipY );
 		_gl.pixelStorei( _gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, texture.premultiplyAlpha );
 		_gl.pixelStorei( _gl.UNPACK_ALIGNMENT, texture.unpackAlignment );

@@ -307,6 +307,7 @@ var Three = (function (exports) {
 		this.blending = NormalBlending;
 		this.side = FrontSide;
 		this.flatShading = false;
+		this.vertexTangents = false;
 		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 		this.opacity = 1;
@@ -725,6 +726,24 @@ var Three = (function (exports) {
 	var UniformsUtils = { clone: cloneUniforms, merge: mergeUniforms };
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_vertex = `
+void main() {
+	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_fragment = `
+void main() {
+	gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function ShaderMaterial( parameters ) {
 
 		Material.call( this );
@@ -734,8 +753,8 @@ var Three = (function (exports) {
 		this.defines = {};
 		this.uniforms = {};
 
-		this.vertexShader = 'void main() {\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}';
-		this.fragmentShader = 'void main() {\n\tgl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}';
+		this.vertexShader = default_vertex;
+		this.fragmentShader = default_fragment;
 
 		this.linewidth = 1;
 
@@ -9394,6 +9413,18 @@ var Three = (function (exports) {
 
 			}
 
+			var tangent = this.attributes.tangent;
+
+			if ( tangent !== undefined ) {
+
+				var normalMatrix = new Matrix3().getNormalMatrix( matrix );
+
+				// Tangent is vec4, but the '.w' component is a sign value (+1/-1).
+				normalMatrix.applyToBufferAttribute( tangent );
+				tangent.needsUpdate = true;
+
+			}
+
 			if ( this.boundingBox !== null ) {
 
 				this.computeBoundingBox();
@@ -10214,11 +10245,9 @@ var Three = (function (exports) {
 
 			if ( index !== null ) {
 
-				var array = Array.prototype.slice.call( index.array );
-
 				data.data.index = {
 					type: index.array.constructor.name,
-					array: array
+					array: Array.prototype.slice.call( index.array )
 				};
 
 			}
@@ -10229,16 +10258,56 @@ var Three = (function (exports) {
 
 				var attribute = attributes[ key ];
 
-				var array = Array.prototype.slice.call( attribute.array );
-
-				data.data.attributes[ key ] = {
+				var attributeData = {
 					itemSize: attribute.itemSize,
 					type: attribute.array.constructor.name,
-					array: array,
+					array: Array.prototype.slice.call( attribute.array ),
 					normalized: attribute.normalized
 				};
 
+				if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+				data.data.attributes[ key ] = attributeData;
+
 			}
+
+			var morphAttributes = {};
+			var hasMorphAttributes = false;
+
+			for ( var key in this.morphAttributes ) {
+
+				var attributeArray = this.morphAttributes[ key ];
+
+				var array = [];
+
+				for ( var i = 0, il = attributeArray.length; i < il; i ++ ) {
+
+					var attribute = attributeArray[ i ];
+
+					var attributeData = {
+						itemSize: attribute.itemSize,
+						type: attribute.array.constructor.name,
+						array: Array.prototype.slice.call( attribute.array ),
+						normalized: attribute.normalized
+					};
+
+					if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+					array.push( attributeData );
+
+				}
+
+				if ( array.length > 0 ) {
+
+					morphAttributes[ key ] = array;
+
+					hasMorphAttributes = true;
+
+				}
+
+			}
+
+			if ( hasMorphAttributes ) data.data.morphAttributes = morphAttributes;
 
 			var groups = this.groups;
 
@@ -12956,7 +13025,7 @@ var Three = (function (exports) {
 
 		this.adaptLuminanceShader = {
 			defines: {
-				"MIP_LEVEL_1X1" : ( Math.log( this.resolution ) / Math.log( 2.0 ) ).toFixed( 1 )
+				"MIP_LEVEL_1X1": ( Math.log( this.resolution ) / Math.log( 2.0 ) ).toFixed( 1 )
 			},
 			uniforms: {
 				"lastLum": { value: null },
@@ -12970,8 +13039,8 @@ var Three = (function (exports) {
 
 				"void main() {",
 
-					"vUv = uv;",
-					"gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+				"	vUv = uv;",
+				"	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
 
 				"}"
 			].join( '\n' ),
@@ -12986,20 +13055,20 @@ var Three = (function (exports) {
 
 				"void main() {",
 
-					"vec4 lastLum = texture2D( lastLum, vUv, MIP_LEVEL_1X1 );",
-					"vec4 currentLum = texture2D( currentLum, vUv, MIP_LEVEL_1X1 );",
+				"	vec4 lastLum = texture2D( lastLum, vUv, MIP_LEVEL_1X1 );",
+				"	vec4 currentLum = texture2D( currentLum, vUv, MIP_LEVEL_1X1 );",
 
-					"float fLastLum = max( minLuminance, lastLum.r );",
-					"float fCurrentLum = max( minLuminance, currentLum.r );",
+				"	float fLastLum = max( minLuminance, lastLum.r );",
+				"	float fCurrentLum = max( minLuminance, currentLum.r );",
 
-					//The adaption seems to work better in extreme lighting differences
-					//if the input luminance is squared.
-					"fCurrentLum *= fCurrentLum;",
+				//The adaption seems to work better in extreme lighting differences
+				//if the input luminance is squared.
+				"	fCurrentLum *= fCurrentLum;",
 
-					// Adapt the luminance using Pattanaik's technique
-					"float fAdaptedLum = fLastLum + (fCurrentLum - fLastLum) * (1.0 - exp(-delta * tau));",
-					// "fAdaptedLum = sqrt(fAdaptedLum);",
-					"gl_FragColor.r = fAdaptedLum;",
+				// Adapt the luminance using Pattanaik's technique
+				"	float fAdaptedLum = fLastLum + (fCurrentLum - fLastLum) * (1.0 - exp(-delta * tau));",
+				// "fAdaptedLum = sqrt(fAdaptedLum);",
+				"	gl_FragColor.r = fAdaptedLum;",
 				"}"
 			].join( '\n' )
 		};
@@ -13025,7 +13094,7 @@ var Three = (function (exports) {
 		} );
 
 		this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-		this.scene  = new Scene();
+		this.scene = new Scene();
 
 		this.quad = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
 		this.quad.frustumCulled = false; // Avoid getting clipped
@@ -13055,7 +13124,8 @@ var Three = (function (exports) {
 				//Render the luminance of the current scene into a render target with mipmapping enabled
 				this.quad.material = this.materialLuminance;
 				this.materialLuminance.uniforms.tDiffuse.value = readBuffer.texture;
-				renderer.render( this.scene, this.camera, this.currentLuminanceRT );
+				renderer.setRenderTarget( this.currentLuminanceRT );
+				renderer.render( this.scene, this.camera );
 
 				//Use the new luminance values, the previous luminance and the frame delta to
 				//adapt the luminance over time.
@@ -13063,12 +13133,14 @@ var Three = (function (exports) {
 				this.materialAdaptiveLum.uniforms.delta.value = deltaTime;
 				this.materialAdaptiveLum.uniforms.lastLum.value = this.previousLuminanceRT.texture;
 				this.materialAdaptiveLum.uniforms.currentLum.value = this.currentLuminanceRT.texture;
-				renderer.render( this.scene, this.camera, this.luminanceRT );
+				renderer.setRenderTarget( this.luminanceRT );
+				renderer.render( this.scene, this.camera );
 
 				//Copy the new adapted luminance value so that it can be used by the next frame.
 				this.quad.material = this.materialCopy;
 				this.copyUniforms.tDiffuse.value = this.luminanceRT.texture;
-				renderer.render( this.scene, this.camera, this.previousLuminanceRT );
+				renderer.setRenderTarget( this.previousLuminanceRT );
+				renderer.render( this.scene, this.camera );
 
 			}
 
@@ -13077,17 +13149,22 @@ var Three = (function (exports) {
 
 			if ( this.renderToScreen ) {
 
+				renderer.setRenderTarget( null );
 				renderer.render( this.scene, this.camera );
 
 			} else {
 
-				renderer.render( this.scene, this.camera, writeBuffer, this.clear );
+				renderer.setRenderTarget( writeBuffer );
+
+				if ( this.clear ) renderer.clear();
+
+				renderer.render( this.scene, this.camera );
 
 			}
 
 		},
 
-		reset: function( renderer ) {
+		reset: function ( renderer ) {
 
 			// render targets
 			if ( this.luminanceRT ) {
@@ -13139,7 +13216,7 @@ var Three = (function (exports) {
 
 		},
 
-		setAdaptive: function( adaptive ) {
+		setAdaptive: function ( adaptive ) {
 
 			if ( adaptive ) {
 
@@ -13158,7 +13235,7 @@ var Three = (function (exports) {
 
 		},
 
-		setAdaptionRate: function( rate ) {
+		setAdaptionRate: function ( rate ) {
 
 			if ( rate ) {
 
@@ -13168,7 +13245,7 @@ var Three = (function (exports) {
 
 		},
 
-		setMinLuminance: function( minLum ) {
+		setMinLuminance: function ( minLum ) {
 
 			if ( minLum ) {
 
@@ -13179,7 +13256,7 @@ var Three = (function (exports) {
 
 		},
 
-		setMaxLuminance: function( maxLum ) {
+		setMaxLuminance: function ( maxLum ) {
 
 			if ( maxLum ) {
 
@@ -13189,7 +13266,7 @@ var Three = (function (exports) {
 
 		},
 
-		setAverageLuminance: function( avgLum ) {
+		setAverageLuminance: function ( avgLum ) {
 
 			if ( avgLum ) {
 
@@ -13199,7 +13276,7 @@ var Three = (function (exports) {
 
 		},
 
-		setMiddleGrey: function( middleGrey ) {
+		setMiddleGrey: function ( middleGrey ) {
 
 			if ( middleGrey ) {
 
@@ -13209,7 +13286,7 @@ var Three = (function (exports) {
 
 		},
 
-		dispose: function() {
+		dispose: function () {
 
 			if ( this.luminanceRT ) {
 

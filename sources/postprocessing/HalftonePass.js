@@ -34,7 +34,7 @@ var HalftonePass = function ( width, height, params ) {
 
 		if ( params.hasOwnProperty( key ) && this.uniforms.hasOwnProperty( key ) ) {
 
-			this.uniforms[key].value = params[key];
+			this.uniforms[ key ].value = params[ key ];
 
 		}
 
@@ -46,9 +46,9 @@ var HalftonePass = function ( width, height, params ) {
  	this.quad.frustumCulled = false;
  	this.scene.add( this.quad );
 
- };
+};
 
- HalftonePass.prototype = Object.assign( Object.create( Pass.prototype ), {
+HalftonePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 	constructor: HalftonePass,
 
@@ -59,11 +59,14 @@ var HalftonePass = function ( width, height, params ) {
 
  		if ( this.renderToScreen ) {
 
+ 			renderer.setRenderTarget( null );
  			renderer.render( this.scene, this.camera );
 
 		} else {
 
-			renderer.render( this.scene, this.camera, writeBuffer, this.clear );
+ 			renderer.setRenderTarget( writeBuffer );
+ 			if ( this.clear ) renderer.clear();
+			renderer.render( this.scene, this.camera );
 
 		}
 

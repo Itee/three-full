@@ -4452,9 +4452,6 @@ var Three = (function (exports) {
 
 		WebGLRenderTarget.call( this, width, height, options );
 
-		this.activeCubeFace = 0; // PX 0, NX 1, PY 2, NY 3, PZ 4, NZ 5
-		this.activeMipMapLevel = 0;
-
 	}
 
 	WebGLRenderTargetCube.prototype = Object.create( WebGLRenderTarget.prototype );

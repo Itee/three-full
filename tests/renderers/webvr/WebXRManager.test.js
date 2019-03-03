@@ -5240,6 +5240,7 @@ var Three = (function (exports) {
 		function onSessionEnd() {
 
 			renderer.setFramebuffer( null );
+			renderer.setRenderTarget( renderer.getRenderTarget() ); // Hack #15830
 			animation.stop();
 
 		}

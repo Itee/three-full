@@ -41,7 +41,7 @@ function reversePainterSortStable( a, b ) {
 
 		return a.renderOrder - b.renderOrder;
 
-	} if ( a.z !== b.z ) {
+	} else if ( a.z !== b.z ) {
 
 		return b.z - a.z;
 

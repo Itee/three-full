@@ -236,6 +236,8 @@ Ocean.prototype.generateMesh = function () {
 
 Ocean.prototype.render = function () {
 
+	var currentRenderTarget = this.renderer.getRenderTarget();
+
 	this.scene.overrideMaterial = null;
 
 	if ( this.changed )
@@ -247,9 +249,11 @@ Ocean.prototype.render = function () {
 	this.renderNormalMap();
 	this.scene.overrideMaterial = null;
 
+	this.renderer.setRenderTarget( currentRenderTarget );
+
 };
 
-Ocean.prototype.generateSeedPhaseTexture = function() {
+Ocean.prototype.generateSeedPhaseTexture = function () {
 
 	// Setup the seed texture
 	this.pingPhase = true;
@@ -258,7 +262,7 @@ Ocean.prototype.generateSeedPhaseTexture = function() {
 
 		for ( var j = 0; j < this.resolution; j ++ ) {
 
-			phaseArray[ i * this.resolution * 4 + j * 4 ] =  Math.random() * 2.0 * Math.PI;
+			phaseArray[ i * this.resolution * 4 + j * 4 ] = Math.random() * 2.0 * Math.PI;
 			phaseArray[ i * this.resolution * 4 + j * 4 + 1 ] = 0.0;
 			phaseArray[ i * this.resolution * 4 + j * 4 + 2 ] = 0.0;
 			phaseArray[ i * this.resolution * 4 + j * 4 + 3 ] = 0.0;
@@ -280,7 +284,10 @@ Ocean.prototype.renderInitialSpectrum = function () {
 	this.scene.overrideMaterial = this.materialInitialSpectrum;
 	this.materialInitialSpectrum.uniforms.u_wind.value.set( this.windX, this.windY );
 	this.materialInitialSpectrum.uniforms.u_size.value = this.size;
-	this.renderer.render( this.scene, this.oceanCamera, this.initialSpectrumFramebuffer, true );
+
+	this.renderer.setRenderTarget( this.initialSpectrumFramebuffer );
+	this.renderer.clear();
+	this.renderer.render( this.scene, this.oceanCamera );
 
 };
 
@@ -293,14 +300,15 @@ Ocean.prototype.renderWavePhase = function () {
 		this.materialPhase.uniforms.u_phases.value = this.pingPhaseTexture;
 		this.initial = false;
 
-	}else {
+	} else {
 
 		this.materialPhase.uniforms.u_phases.value = this.pingPhase ? this.pingPhaseFramebuffer.texture : this.pongPhaseFramebuffer.texture;
 
 	}
 	this.materialPhase.uniforms.u_deltaTime.value = this.deltaTime;
 	this.materialPhase.uniforms.u_size.value = this.size;
-	this.renderer.render( this.scene, this.oceanCamera, this.pingPhase ? this.pongPhaseFramebuffer : this.pingPhaseFramebuffer );
+	this.renderer.setRenderTarget( this.pingPhase ? this.pongPhaseFramebuffer : this.pingPhaseFramebuffer );
+	this.renderer.render( this.scene, this.oceanCamera );
 	this.pingPhase = ! this.pingPhase;
 
 };
@@ -312,11 +320,13 @@ Ocean.prototype.renderSpectrum = function () {
 	this.materialSpectrum.uniforms.u_phases.value = this.pingPhase ? this.pingPhaseFramebuffer.texture : this.pongPhaseFramebuffer.texture;
 	this.materialSpectrum.uniforms.u_choppiness.value = this.choppiness;
 	this.materialSpectrum.uniforms.u_size.value = this.size;
-	this.renderer.render( this.scene, this.oceanCamera, this.spectrumFramebuffer );
+
+	this.renderer.setRenderTarget( this.spectrumFramebuffer );
+	this.renderer.render( this.scene, this.oceanCamera );
 
 };
 
-Ocean.prototype.renderSpectrumFFT = function() {
+Ocean.prototype.renderSpectrumFFT = function () {
 
 	// GPU FFT using Stockham formulation
 	var iterations = Math.log( this.resolution ) / Math.log( 2 ); // log2
@@ -329,19 +339,25 @@ Ocean.prototype.renderSpectrumFFT = function() {
 
 			this.materialOceanHorizontal.uniforms.u_input.value = this.spectrumFramebuffer.texture;
 			this.materialOceanHorizontal.uniforms.u_subtransformSize.value = Math.pow( 2, ( i % ( iterations ) ) + 1 );
-			this.renderer.render( this.scene, this.oceanCamera, this.pingTransformFramebuffer );
+
+			this.renderer.setRenderTarget( this.pingTransformFramebuffer );
+			this.renderer.render( this.scene, this.oceanCamera );
 
 		} else if ( i % 2 === 1 ) {
 
 			this.materialOceanHorizontal.uniforms.u_input.value = this.pingTransformFramebuffer.texture;
 			this.materialOceanHorizontal.uniforms.u_subtransformSize.value = Math.pow( 2, ( i % ( iterations ) ) + 1 );
-			this.renderer.render( this.scene, this.oceanCamera, this.pongTransformFramebuffer );
+
+			this.renderer.setRenderTarget( this.pongTransformFramebuffer );
+			this.renderer.render( this.scene, this.oceanCamera );
 
 		} else {
 
 			this.materialOceanHorizontal.uniforms.u_input.value = this.pongTransformFramebuffer.texture;
 			this.materialOceanHorizontal.uniforms.u_subtransformSize.value = Math.pow( 2, ( i % ( iterations ) ) + 1 );
-			this.renderer.render( this.scene, this.oceanCamera, this.pingTransformFramebuffer );
+
+			this.renderer.setRenderTarget( this.pingTransformFramebuffer );
+			this.renderer.render( this.scene, this.oceanCamera );
 
 		}
 
@@ -353,19 +369,25 @@ Ocean.prototype.renderSpectrumFFT = function() {
 
 			this.materialOceanVertical.uniforms.u_input.value = ( iterations % 2 === 0 ) ? this.pingTransformFramebuffer.texture : this.pongTransformFramebuffer.texture;
 			this.materialOceanVertical.uniforms.u_subtransformSize.value = Math.pow( 2, ( i % ( iterations ) ) + 1 );
-			this.renderer.render( this.scene, this.oceanCamera, this.displacementMapFramebuffer );
+
+			this.renderer.setRenderTarget( this.displacementMapFramebuffer );
+			this.renderer.render( this.scene, this.oceanCamera );
 
 		} else if ( i % 2 === 1 ) {
 
 			this.materialOceanVertical.uniforms.u_input.value = this.pingTransformFramebuffer.texture;
 			this.materialOceanVertical.uniforms.u_subtransformSize.value = Math.pow( 2, ( i % ( iterations ) ) + 1 );
-			this.renderer.render( this.scene, this.oceanCamera, this.pongTransformFramebuffer );
+
+			this.renderer.setRenderTarget( this.pongTransformFramebuffer );
+			this.renderer.render( this.scene, this.oceanCamera );
 
 		} else {
 
 			this.materialOceanVertical.uniforms.u_input.value = this.pongTransformFramebuffer.texture;
 			this.materialOceanVertical.uniforms.u_subtransformSize.value = Math.pow( 2, ( i % ( iterations ) ) + 1 );
-			this.renderer.render( this.scene, this.oceanCamera, this.pingTransformFramebuffer );
+
+			this.renderer.setRenderTarget( this.pingTransformFramebuffer );
+			this.renderer.render( this.scene, this.oceanCamera );
 
 		}
 
@@ -378,7 +400,10 @@ Ocean.prototype.renderNormalMap = function () {
 	this.scene.overrideMaterial = this.materialNormal;
 	if ( this.changed ) this.materialNormal.uniforms.u_size.value = this.size;
 	this.materialNormal.uniforms.u_displacementMap.value = this.displacementMapFramebuffer.texture;
-	this.renderer.render( this.scene, this.oceanCamera, this.normalMapFramebuffer, true );
+
+	this.renderer.setRenderTarget( this.normalMapFramebuffer );
+	this.renderer.clear();
+	this.renderer.render( this.scene, this.oceanCamera );
 
 };
 

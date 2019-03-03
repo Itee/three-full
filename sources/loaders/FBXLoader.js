@@ -74,6 +74,7 @@ var FBXLoader = ( function () {
 			var path = ( self.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : self.path;
 
 			var loader = new FileLoader( this.manager );
+			loader.setPath( self.path );
 			loader.setResponseType( 'arraybuffer' );
 
 			loader.load( url, function ( buffer ) {
@@ -528,7 +529,7 @@ var FBXLoader = ( function () {
 					break;
 				default:
 					console.warn( 'FBXLoader: unknown material type "%s". Defaulting to MeshPhongMaterial.', type );
-					material = new MeshPhongMaterial( { color: 0x3300ff } );
+					material = new MeshPhongMaterial();
 					break;
 
 			}
@@ -561,11 +562,13 @@ var FBXLoader = ( function () {
 				parameters.color = new Color().fromArray( materialNode.DiffuseColor.value );
 
 			}
+
 			if ( materialNode.DisplacementFactor ) {
 
 				parameters.displacementScale = materialNode.DisplacementFactor.value;
 
 			}
+
 			if ( materialNode.Emissive ) {
 
 				parameters.emissive = new Color().fromArray( materialNode.Emissive.value );
@@ -576,31 +579,37 @@ var FBXLoader = ( function () {
 				parameters.emissive = new Color().fromArray( materialNode.EmissiveColor.value );
 
 			}
+
 			if ( materialNode.EmissiveFactor ) {
 
 				parameters.emissiveIntensity = parseFloat( materialNode.EmissiveFactor.value );
 
 			}
+
 			if ( materialNode.Opacity ) {
 
 				parameters.opacity = parseFloat( materialNode.Opacity.value );
 
 			}
+
 			if ( parameters.opacity < 1.0 ) {
 
 				parameters.transparent = true;
 
 			}
+
 			if ( materialNode.ReflectionFactor ) {
 
 				parameters.reflectivity = materialNode.ReflectionFactor.value;
 
 			}
+
 			if ( materialNode.Shininess ) {
 
 				parameters.shininess = materialNode.Shininess.value;
 
 			}
+
 			if ( materialNode.Specular ) {
 
 				parameters.specular = new Color().fromArray( materialNode.Specular.value );
@@ -623,18 +632,25 @@ var FBXLoader = ( function () {
 						parameters.bumpMap = self.getTexture( textureMap, child.ID );
 						break;
 
+					case 'Maya|TEX_ao_map':
+						parameters.aoMap = self.getTexture( textureMap, child.ID );
+						break;
+
 					case 'DiffuseColor':
+					case 'Maya|TEX_color_map':
 						parameters.map = self.getTexture( textureMap, child.ID );
 						break;
 
 					case 'DisplacementColor':
 						parameters.displacementMap = self.getTexture( textureMap, child.ID );
 						break;
+
 					case 'EmissiveColor':
 						parameters.emissiveMap = self.getTexture( textureMap, child.ID );
 						break;
 
 					case 'NormalMap':
+					case 'Maya|TEX_normal_map':
 						parameters.normalMap = self.getTexture( textureMap, child.ID );
 						break;
 
@@ -2357,15 +2373,17 @@ var FBXLoader = ( function () {
 
 			var rawClips = this.parseClips();
 
-			if ( rawClips === undefined ) return;
+			if ( rawClips !== undefined ) {
 
-			for ( var key in rawClips ) {
+				for ( var key in rawClips ) {
 
-				var rawClip = rawClips[ key ];
+					var rawClip = rawClips[ key ];
 
-				var clip = this.addClip( rawClip );
+					var clip = this.addClip( rawClip );
 
-				animationClips.push( clip );
+					animationClips.push( clip );
+
+				}
 
 			}
 
@@ -2531,7 +2549,7 @@ var FBXLoader = ( function () {
 
 										sceneGraph.traverse( function ( child ) {
 
-											if ( child.ID = rawModel.id ) {
+											if ( child.ID === rawModel.id ) {
 
 												node.transform = child.matrix;
 

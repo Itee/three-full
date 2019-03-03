@@ -69,7 +69,9 @@ SavePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		this.quad.material = this.material;
 
-		renderer.render( this.scene, this.camera, this.renderTarget, this.clear );
+		renderer.setRenderTarget( this.renderTarget );
+		if ( this.clear ) renderer.clear();
+		renderer.render( this.scene, this.camera );
 
 	}
 

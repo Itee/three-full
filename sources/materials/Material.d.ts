@@ -47,6 +47,7 @@ export interface MaterialParameters {
   side?: Side;
   transparent?: boolean;
   vertexColors?: Colors;
+  vertexTangents?: boolean;
   visible?: boolean;
 }
 export class Material extends EventDispatcher {
@@ -86,6 +87,7 @@ export class Material extends EventDispatcher {
   type: string;
   uuid: string;
   vertexColors: Colors;
+  vertexTangents: boolean;
   visible: boolean;
   userData: any;
   clone(): this;

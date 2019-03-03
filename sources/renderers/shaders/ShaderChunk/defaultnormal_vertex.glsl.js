@@ -9,4 +9,16 @@ vec3 transformedNormal = normalMatrix * objectNormal;
 	transformedNormal = - transformedNormal;
 
 #endif
+
+#ifdef USE_TANGENT
+
+	vec3 transformedTangent = normalMatrix * objectTangent;
+
+	#ifdef FLIP_SIDED
+
+		transformedTangent = - transformedTangent;
+
+	#endif
+
+#endif
 `;

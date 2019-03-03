@@ -4,262 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function EventDispatcher() {}
-
-	Object.assign( EventDispatcher.prototype, {
-
-		addEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) this._listeners = {};
-
-			var listeners = this._listeners;
-
-			if ( listeners[ type ] === undefined ) {
-
-				listeners[ type ] = [];
-
-			}
-
-			if ( listeners[ type ].indexOf( listener ) === - 1 ) {
-
-				listeners[ type ].push( listener );
-
-			}
-
-		},
-
-		hasEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) return false;
-
-			var listeners = this._listeners;
-
-			return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
-
-		},
-
-		removeEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) return;
-
-			var listeners = this._listeners;
-			var listenerArray = listeners[ type ];
-
-			if ( listenerArray !== undefined ) {
-
-				var index = listenerArray.indexOf( listener );
-
-				if ( index !== - 1 ) {
-
-					listenerArray.splice( index, 1 );
-
-				}
-
-			}
-
-		},
-
-		dispatchEvent: function ( event ) {
-
-			if ( this._listeners === undefined ) return;
-
-			var listeners = this._listeners;
-			var listenerArray = listeners[ event.type ];
-
-			if ( listenerArray !== undefined ) {
-
-				event.target = this;
-
-				var array = listenerArray.slice( 0 );
-
-				for ( var i = 0, l = array.length; i < l; i ++ ) {
-
-					array[ i ].call( this, event );
-
-				}
-
-			}
-
-		}
-
-	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var FrontSide = 0;
-	var BackSide = 1;
-	var DoubleSide = 2;
-	var FlatShading = 1;
-	var NoColors = 0;
-	var NormalBlending = 1;
-	var AddEquation = 100;
-	var SrcAlphaFactor = 204;
-	var OneMinusSrcAlphaFactor = 205;
-	var LessEqualDepth = 3;
-	var MultiplyOperation = 0;
-
-	var UVMapping = 300;
-	var RepeatWrapping = 1000;
-	var ClampToEdgeWrapping = 1001;
-	var MirroredRepeatWrapping = 1002;
-	var LinearFilter = 1006;
-	var LinearMipMapLinearFilter = 1008;
-	var UnsignedByteType = 1009;
-	var RGBAFormat = 1023;
-	var TrianglesDrawMode = 0;
-	var LinearEncoding = 3000;
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var _Math = {
-
-		DEG2RAD: Math.PI / 180,
-		RAD2DEG: 180 / Math.PI,
-
-		generateUUID: ( function () {
-
-			// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
-
-			var lut = [];
-
-			for ( var i = 0; i < 256; i ++ ) {
-
-				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
-
-			}
-
-			return function generateUUID() {
-
-				var d0 = Math.random() * 0xffffffff | 0;
-				var d1 = Math.random() * 0xffffffff | 0;
-				var d2 = Math.random() * 0xffffffff | 0;
-				var d3 = Math.random() * 0xffffffff | 0;
-				var uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
-					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
-					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
-					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
-
-				// .toUpperCase() here flattens concatenated strings to save heap memory space.
-				return uuid.toUpperCase();
-
-			};
-
-		} )(),
-
-		clamp: function ( value, min, max ) {
-
-			return Math.max( min, Math.min( max, value ) );
-
-		},
-
-		// compute euclidian modulo of m % n
-		// https://en.wikipedia.org/wiki/Modulo_operation
-
-		euclideanModulo: function ( n, m ) {
-
-			return ( ( n % m ) + m ) % m;
-
-		},
-
-		// Linear mapping from range <a1, a2> to range <b1, b2>
-
-		mapLinear: function ( x, a1, a2, b1, b2 ) {
-
-			return b1 + ( x - a1 ) * ( b2 - b1 ) / ( a2 - a1 );
-
-		},
-
-		// https://en.wikipedia.org/wiki/Linear_interpolation
-
-		lerp: function ( x, y, t ) {
-
-			return ( 1 - t ) * x + t * y;
-
-		},
-
-		// http://en.wikipedia.org/wiki/Smoothstep
-
-		smoothstep: function ( x, min, max ) {
-
-			if ( x <= min ) return 0;
-			if ( x >= max ) return 1;
-
-			x = ( x - min ) / ( max - min );
-
-			return x * x * ( 3 - 2 * x );
-
-		},
-
-		smootherstep: function ( x, min, max ) {
-
-			if ( x <= min ) return 0;
-			if ( x >= max ) return 1;
-
-			x = ( x - min ) / ( max - min );
-
-			return x * x * x * ( x * ( x * 6 - 15 ) + 10 );
-
-		},
-
-		// Random integer from <low, high> interval
-
-		randInt: function ( low, high ) {
-
-			return low + Math.floor( Math.random() * ( high - low + 1 ) );
-
-		},
-
-		// Random float from <low, high> interval
-
-		randFloat: function ( low, high ) {
-
-			return low + Math.random() * ( high - low );
-
-		},
-
-		// Random float from <-range/2, range/2> interval
-
-		randFloatSpread: function ( range ) {
-
-			return range * ( 0.5 - Math.random() );
-
-		},
-
-		degToRad: function ( degrees ) {
-
-			return degrees * _Math.DEG2RAD;
-
-		},
-
-		radToDeg: function ( radians ) {
-
-			return radians * _Math.RAD2DEG;
-
-		},
-
-		isPowerOfTwo: function ( value ) {
-
-			return ( value & ( value - 1 ) ) === 0 && value !== 0;
-
-		},
-
-		ceilPowerOfTwo: function ( value ) {
-
-			return Math.pow( 2, Math.ceil( Math.log( value ) / Math.LN2 ) );
-
-		},
-
-		floorPowerOfTwo: function ( value ) {
-
-			return Math.pow( 2, Math.floor( Math.log( value ) / Math.LN2 ) );
-
-		}
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function Vector2( x, y ) {
 
 		this.x = x || 0;
@@ -749,6 +493,262 @@ var Three = (function (exports) {
 		}
 
 	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function EventDispatcher() {}
+
+	Object.assign( EventDispatcher.prototype, {
+
+		addEventListener: function ( type, listener ) {
+
+			if ( this._listeners === undefined ) this._listeners = {};
+
+			var listeners = this._listeners;
+
+			if ( listeners[ type ] === undefined ) {
+
+				listeners[ type ] = [];
+
+			}
+
+			if ( listeners[ type ].indexOf( listener ) === - 1 ) {
+
+				listeners[ type ].push( listener );
+
+			}
+
+		},
+
+		hasEventListener: function ( type, listener ) {
+
+			if ( this._listeners === undefined ) return false;
+
+			var listeners = this._listeners;
+
+			return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
+
+		},
+
+		removeEventListener: function ( type, listener ) {
+
+			if ( this._listeners === undefined ) return;
+
+			var listeners = this._listeners;
+			var listenerArray = listeners[ type ];
+
+			if ( listenerArray !== undefined ) {
+
+				var index = listenerArray.indexOf( listener );
+
+				if ( index !== - 1 ) {
+
+					listenerArray.splice( index, 1 );
+
+				}
+
+			}
+
+		},
+
+		dispatchEvent: function ( event ) {
+
+			if ( this._listeners === undefined ) return;
+
+			var listeners = this._listeners;
+			var listenerArray = listeners[ event.type ];
+
+			if ( listenerArray !== undefined ) {
+
+				event.target = this;
+
+				var array = listenerArray.slice( 0 );
+
+				for ( var i = 0, l = array.length; i < l; i ++ ) {
+
+					array[ i ].call( this, event );
+
+				}
+
+			}
+
+		}
+
+	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var FrontSide = 0;
+	var BackSide = 1;
+	var DoubleSide = 2;
+	var FlatShading = 1;
+	var NoColors = 0;
+	var NormalBlending = 1;
+	var AddEquation = 100;
+	var SrcAlphaFactor = 204;
+	var OneMinusSrcAlphaFactor = 205;
+	var LessEqualDepth = 3;
+	var MultiplyOperation = 0;
+
+	var UVMapping = 300;
+	var RepeatWrapping = 1000;
+	var ClampToEdgeWrapping = 1001;
+	var MirroredRepeatWrapping = 1002;
+	var LinearFilter = 1006;
+	var LinearMipMapLinearFilter = 1008;
+	var UnsignedByteType = 1009;
+	var RGBAFormat = 1023;
+	var TrianglesDrawMode = 0;
+	var LinearEncoding = 3000;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var _Math = {
+
+		DEG2RAD: Math.PI / 180,
+		RAD2DEG: 180 / Math.PI,
+
+		generateUUID: ( function () {
+
+			// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
+
+			var lut = [];
+
+			for ( var i = 0; i < 256; i ++ ) {
+
+				lut[ i ] = ( i < 16 ? '0' : '' ) + ( i ).toString( 16 );
+
+			}
+
+			return function generateUUID() {
+
+				var d0 = Math.random() * 0xffffffff | 0;
+				var d1 = Math.random() * 0xffffffff | 0;
+				var d2 = Math.random() * 0xffffffff | 0;
+				var d3 = Math.random() * 0xffffffff | 0;
+				var uuid = lut[ d0 & 0xff ] + lut[ d0 >> 8 & 0xff ] + lut[ d0 >> 16 & 0xff ] + lut[ d0 >> 24 & 0xff ] + '-' +
+					lut[ d1 & 0xff ] + lut[ d1 >> 8 & 0xff ] + '-' + lut[ d1 >> 16 & 0x0f | 0x40 ] + lut[ d1 >> 24 & 0xff ] + '-' +
+					lut[ d2 & 0x3f | 0x80 ] + lut[ d2 >> 8 & 0xff ] + '-' + lut[ d2 >> 16 & 0xff ] + lut[ d2 >> 24 & 0xff ] +
+					lut[ d3 & 0xff ] + lut[ d3 >> 8 & 0xff ] + lut[ d3 >> 16 & 0xff ] + lut[ d3 >> 24 & 0xff ];
+
+				// .toUpperCase() here flattens concatenated strings to save heap memory space.
+				return uuid.toUpperCase();
+
+			};
+
+		} )(),
+
+		clamp: function ( value, min, max ) {
+
+			return Math.max( min, Math.min( max, value ) );
+
+		},
+
+		// compute euclidian modulo of m % n
+		// https://en.wikipedia.org/wiki/Modulo_operation
+
+		euclideanModulo: function ( n, m ) {
+
+			return ( ( n % m ) + m ) % m;
+
+		},
+
+		// Linear mapping from range <a1, a2> to range <b1, b2>
+
+		mapLinear: function ( x, a1, a2, b1, b2 ) {
+
+			return b1 + ( x - a1 ) * ( b2 - b1 ) / ( a2 - a1 );
+
+		},
+
+		// https://en.wikipedia.org/wiki/Linear_interpolation
+
+		lerp: function ( x, y, t ) {
+
+			return ( 1 - t ) * x + t * y;
+
+		},
+
+		// http://en.wikipedia.org/wiki/Smoothstep
+
+		smoothstep: function ( x, min, max ) {
+
+			if ( x <= min ) return 0;
+			if ( x >= max ) return 1;
+
+			x = ( x - min ) / ( max - min );
+
+			return x * x * ( 3 - 2 * x );
+
+		},
+
+		smootherstep: function ( x, min, max ) {
+
+			if ( x <= min ) return 0;
+			if ( x >= max ) return 1;
+
+			x = ( x - min ) / ( max - min );
+
+			return x * x * x * ( x * ( x * 6 - 15 ) + 10 );
+
+		},
+
+		// Random integer from <low, high> interval
+
+		randInt: function ( low, high ) {
+
+			return low + Math.floor( Math.random() * ( high - low + 1 ) );
+
+		},
+
+		// Random float from <low, high> interval
+
+		randFloat: function ( low, high ) {
+
+			return low + Math.random() * ( high - low );
+
+		},
+
+		// Random float from <-range/2, range/2> interval
+
+		randFloatSpread: function ( range ) {
+
+			return range * ( 0.5 - Math.random() );
+
+		},
+
+		degToRad: function ( degrees ) {
+
+			return degrees * _Math.DEG2RAD;
+
+		},
+
+		radToDeg: function ( radians ) {
+
+			return radians * _Math.RAD2DEG;
+
+		},
+
+		isPowerOfTwo: function ( value ) {
+
+			return ( value & ( value - 1 ) ) === 0 && value !== 0;
+
+		},
+
+		ceilPowerOfTwo: function ( value ) {
+
+			return Math.pow( 2, Math.ceil( Math.log( value ) / Math.LN2 ) );
+
+		},
+
+		floorPowerOfTwo: function ( value ) {
+
+			return Math.pow( 2, Math.floor( Math.log( value ) / Math.LN2 ) );
+
+		}
+
+	};
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function Matrix4() {
@@ -4508,6 +4508,7 @@ var Three = (function (exports) {
 		this.blending = NormalBlending;
 		this.side = FrontSide;
 		this.flatShading = false;
+		this.vertexTangents = false;
 		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 		this.opacity = 1;
@@ -4926,6 +4927,24 @@ var Three = (function (exports) {
 	var UniformsUtils = { clone: cloneUniforms, merge: mergeUniforms };
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_vertex = `
+void main() {
+	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_fragment = `
+void main() {
+	gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function ShaderMaterial( parameters ) {
 
 		Material.call( this );
@@ -4935,8 +4954,8 @@ var Three = (function (exports) {
 		this.defines = {};
 		this.uniforms = {};
 
-		this.vertexShader = 'void main() {\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}';
-		this.fragmentShader = 'void main() {\n\tgl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}';
+		this.vertexShader = default_vertex;
+		this.fragmentShader = default_fragment;
 
 		this.linewidth = 1;
 
@@ -9834,6 +9853,18 @@ var Three = (function (exports) {
 
 			}
 
+			var tangent = this.attributes.tangent;
+
+			if ( tangent !== undefined ) {
+
+				var normalMatrix = new Matrix3().getNormalMatrix( matrix );
+
+				// Tangent is vec4, but the '.w' component is a sign value (+1/-1).
+				normalMatrix.applyToBufferAttribute( tangent );
+				tangent.needsUpdate = true;
+
+			}
+
 			if ( this.boundingBox !== null ) {
 
 				this.computeBoundingBox();
@@ -10654,11 +10685,9 @@ var Three = (function (exports) {
 
 			if ( index !== null ) {
 
-				var array = Array.prototype.slice.call( index.array );
-
 				data.data.index = {
 					type: index.array.constructor.name,
-					array: array
+					array: Array.prototype.slice.call( index.array )
 				};
 
 			}
@@ -10669,16 +10698,56 @@ var Three = (function (exports) {
 
 				var attribute = attributes[ key ];
 
-				var array = Array.prototype.slice.call( attribute.array );
-
-				data.data.attributes[ key ] = {
+				var attributeData = {
 					itemSize: attribute.itemSize,
 					type: attribute.array.constructor.name,
-					array: array,
+					array: Array.prototype.slice.call( attribute.array ),
 					normalized: attribute.normalized
 				};
 
+				if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+				data.data.attributes[ key ] = attributeData;
+
 			}
+
+			var morphAttributes = {};
+			var hasMorphAttributes = false;
+
+			for ( var key in this.morphAttributes ) {
+
+				var attributeArray = this.morphAttributes[ key ];
+
+				var array = [];
+
+				for ( var i = 0, il = attributeArray.length; i < il; i ++ ) {
+
+					var attribute = attributeArray[ i ];
+
+					var attributeData = {
+						itemSize: attribute.itemSize,
+						type: attribute.array.constructor.name,
+						array: Array.prototype.slice.call( attribute.array ),
+						normalized: attribute.normalized
+					};
+
+					if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+					array.push( attributeData );
+
+				}
+
+				if ( array.length > 0 ) {
+
+					morphAttributes[ key ] = array;
+
+					hasMorphAttributes = true;
+
+				}
+
+			}
+
+			if ( hasMorphAttributes ) data.data.morphAttributes = morphAttributes;
 
 			var groups = this.groups;
 
@@ -12787,7 +12856,7 @@ var Three = (function (exports) {
 
 		constructor: ShaderPass,
 
-		render: function( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
+		render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
 
 			if ( this.uniforms[ this.textureID ] ) {
 
@@ -12799,11 +12868,15 @@ var Three = (function (exports) {
 
 			if ( this.renderToScreen ) {
 
+				renderer.setRenderTarget( null );
 				renderer.render( this.scene, this.camera );
 
 			} else {
 
-				renderer.render( this.scene, this.camera, writeBuffer, this.clear );
+				renderer.setRenderTarget( writeBuffer );
+				// TODO: Avoid using autoClear properties, see https://github.com/mrdoob/three.js/pull/15571#issuecomment-465669600
+				if ( this.clear ) renderer.clear( renderer.autoClearColor, renderer.autoClearDepth, renderer.autoClearStencil );
+				renderer.render( this.scene, this.camera );
 
 			}
 
@@ -12868,8 +12941,13 @@ var Three = (function (exports) {
 
 			// draw into the stencil buffer
 
-			renderer.render( this.scene, this.camera, readBuffer, this.clear );
-			renderer.render( this.scene, this.camera, writeBuffer, this.clear );
+			renderer.setRenderTarget( readBuffer );
+			if ( this.clear ) renderer.clear();
+			renderer.render( this.scene, this.camera );
+
+			renderer.setRenderTarget( writeBuffer );
+			if ( this.clear ) renderer.clear();
+			renderer.render( this.scene, this.camera );
 
 			// unlock color and depth buffer for subsequent rendering
 
@@ -12878,7 +12956,7 @@ var Three = (function (exports) {
 
 			// only render where stencil is set to 1
 
-			state.buffers.stencil.setFunc( context.EQUAL, 1, 0xffffffff );  // draw if == 1
+			state.buffers.stencil.setFunc( context.EQUAL, 1, 0xffffffff ); // draw if == 1
 			state.buffers.stencil.setOp( context.KEEP, context.KEEP, context.KEEP );
 
 		}
@@ -12962,7 +13040,7 @@ var Three = (function (exports) {
 				stencilBuffer: false
 			};
 
-			var size = renderer.getDrawingBufferSize();
+			var size = renderer.getDrawingBufferSize( new Vector2() );
 			renderTarget = new WebGLRenderTarget( size.width, size.height, parameters );
 			renderTarget.texture.name = 'EffectComposer.rt1';
 
@@ -13011,7 +13089,7 @@ var Three = (function (exports) {
 
 			this.passes.push( pass );
 
-			var size = this.renderer.getDrawingBufferSize();
+			var size = this.renderer.getDrawingBufferSize( new Vector2() );
 			pass.setSize( size.width, size.height );
 
 		},
@@ -13033,6 +13111,8 @@ var Three = (function (exports) {
 			}
 
 			this._previousFrameTime = Date.now();
+
+			var currentRenderTarget = this.renderer.getRenderTarget();
 
 			var maskActive = false;
 
@@ -13080,13 +13160,15 @@ var Three = (function (exports) {
 
 			}
 
+			this.renderer.setRenderTarget( currentRenderTarget );
+
 		},
 
 		reset: function ( renderTarget ) {
 
 			if ( renderTarget === undefined ) {
 
-				var size = this.renderer.getDrawingBufferSize();
+				var size = this.renderer.getDrawingBufferSize( new Vector2() );
 
 				renderTarget = this.renderTarget1.clone();
 				renderTarget.setSize( size.width, size.height );

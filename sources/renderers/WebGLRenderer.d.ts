@@ -10,6 +10,7 @@ import { WebGLCapabilities } from './webgl/WebGLCapabilities';
 import { WebGLProperties } from './webgl/WebGLProperties';
 import { WebGLRenderLists } from './webgl/WebGLRenderLists';
 import { WebGLState } from './webgl/WebGLState';
+import { Vector2 } from './../math/Vector2';
 import { Vector4 } from './../math/Vector4';
 import { Color } from './../math/Color';
 import { WebGLRenderTarget } from './WebGLRenderTarget';
@@ -38,10 +39,8 @@ export interface WebGLRendererParameters {
   antialias?: boolean;
   stencil?: boolean;
   preserveDrawingBuffer?: boolean;
-  clearColor?: number;
-  clearAlpha?: number;
-
-  devicePixelRatio?: number;
+  powerPreference?: string;
+  depth?: boolean;
   logarithmicDepthBuffer?: boolean;
 }
 export class WebGLRenderer implements Renderer {
@@ -95,13 +94,15 @@ export class WebGLRenderer implements Renderer {
   getDrawingBufferSize(): { width: number; height: number };
   setDrawingBufferSize(width: number, height: number, pixelRatio: number): void;
 
-  getSize(): { width: number; height: number };
+  getSize(target: Vector2): Vector2;
   setSize(width: number, height: number, updateStyle?: boolean): void;
 
-  getCurrentViewport(): Vector4;
-  
-  setViewport(x?: number, y?: number, width?: number, height?: number): void;
-  setScissor(x: number, y: number, width: number, height: number): void;
+  getCurrentViewport(target: Vector4): Vector4;
+  getViewport(target: Vector4): Vector4;
+  setViewport(x: Vector4 | number, y?: number, width?: number, height?: number): void;
+  getScissor(target: Vector4): Vector4;
+  setScissor(x: Vector4 | number, y?: number, width?: number, height?: number): void;
+  getScissorTest(): boolean;
   setScissorTest(enable: boolean): void;
   getClearColor(): Color;
   setClearColor(color: Color, alpha?: number): void;
@@ -140,9 +141,7 @@ export class WebGLRenderer implements Renderer {
   animate(callback: Function): void;
   render(
     scene: Scene,
-    camera: Camera,
-    renderTarget?: RenderTarget,
-    forceClear?: boolean
+    camera: Camera
   ): void;
   setTexture(texture: Texture, slot: number): void;
   setTexture2D(texture: Texture, slot: number): void;
@@ -150,7 +149,7 @@ export class WebGLRenderer implements Renderer {
   getRenderTarget(): RenderTarget;
   
   getCurrentRenderTarget(): RenderTarget;
-  setRenderTarget(renderTarget?: RenderTarget): void;
+  setRenderTarget(renderTarget?: RenderTarget, activeCubeFace?: number, activeMipMapLevel?: number): void;
   readRenderTargetPixels(
     renderTarget: RenderTarget,
     x: number,

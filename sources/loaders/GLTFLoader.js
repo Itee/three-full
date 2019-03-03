@@ -278,7 +278,7 @@ var GLTFLoader = ( function () {
 							break;
 
 						case EXTENSIONS.MSFT_TEXTURE_DDS:
-							extensions[ EXTENSIONS.MSFT_TEXTURE_DDS ] = new GLTFTextureDDSExtension( json );
+							extensions[ EXTENSIONS.MSFT_TEXTURE_DDS ] = new GLTFTextureDDSExtension();
 							break;
 
 						case EXTENSIONS.KHR_TEXTURE_TRANSFORM:
@@ -1217,6 +1217,7 @@ var GLTFLoader = ( function () {
 	var ATTRIBUTES = {
 		POSITION: 'position',
 		NORMAL: 'normal',
+		TANGENT: 'tangent',
 		TEXCOORD_0: 'uv',
 		TEXCOORD_1: 'uv2',
 		COLOR_0: 'color',
@@ -1355,8 +1356,10 @@ var GLTFLoader = ( function () {
 				var accessor = target.POSITION !== undefined
 					? parser.getDependency( 'accessor', target.POSITION )
 						.then( function ( accessor ) {
+
 							// Cloning not to pollute original accessor below
 							return cloneBufferAttribute( accessor );
+
 						} )
 					: geometry.attributes.position;
 
@@ -1370,7 +1373,9 @@ var GLTFLoader = ( function () {
 				var accessor = target.NORMAL !== undefined
 					? parser.getDependency( 'accessor', target.NORMAL )
 						.then( function ( accessor ) {
+
 							return cloneBufferAttribute( accessor );
+
 						} )
 					: geometry.attributes.normal;
 
@@ -1503,30 +1508,6 @@ var GLTFLoader = ( function () {
 		}
 
 	}
-
-	function isPrimitiveEqual( a, b ) {
-
-		var dracoExtA = a.extensions ? a.extensions[ EXTENSIONS.KHR_DRACO_MESH_COMPRESSION ] : undefined;
-		var dracoExtB = b.extensions ? b.extensions[ EXTENSIONS.KHR_DRACO_MESH_COMPRESSION ] : undefined;
-
-		if ( dracoExtA && dracoExtB ) {
-
-			if ( dracoExtA.bufferView !== dracoExtB.bufferView ) return false;
-
-			return isObjectEqual( dracoExtA.attributes, dracoExtB.attributes );
-
-		}
-
-		if ( a.indices !== b.indices ) {
-
-			return false;
-
-		}
-
-		return isObjectEqual( a.attributes, b.attributes );
-
-	}
-
 	function isObjectEqual( a, b ) {
 
 		if ( Object.keys( a ).length !== Object.keys( b ).length ) return false;
@@ -1541,59 +1522,68 @@ var GLTFLoader = ( function () {
 
 	}
 
-	function isArrayEqual( a, b ) {
+	function createPrimitiveKey( primitiveDef ) {
 
-		if ( a.length !== b.length ) return false;
+		var dracoExtension = primitiveDef.extensions && primitiveDef.extensions[ EXTENSIONS.KHR_DRACO_MESH_COMPRESSION ];
+		var geometryKey;
+
+		if ( dracoExtension ) {
+
+			geometryKey = 'draco:' + dracoExtension.bufferView
+				+ ':' + dracoExtension.indices
+				+ ':' + createAttributesKey( dracoExtension.attributes );
+
+		} else {
+
+			geometryKey = primitiveDef.indices + ':' + createAttributesKey( primitiveDef.attributes ) + ':' + primitiveDef.mode;
+
+		}
+
+		return geometryKey;
+
+	}
+
+	function createAttributesKey( attributes ) {
+
+		var attributesKey = '';
+
+		var keys = Object.keys( attributes ).sort();
+
+		for ( var i = 0, il = keys.length; i < il; i ++ ) {
+
+			attributesKey += keys[ i ] + ':' + attributes[ keys[ i ] ] + ';';
+
+		}
+
+		return attributesKey;
+
+	}
+
+	function createArrayKeyBufferGeometry( a ) {
+
+		var arrayKey = '';
 
 		for ( var i = 0, il = a.length; i < il; i ++ ) {
 
-			if ( a[ i ] !== b[ i ] ) return false;
+			arrayKey += ':' + a[ i ].uuid;
 
 		}
 
-		return true;
+		return arrayKey;
 
 	}
 
-	function getCachedGeometry( cache, newPrimitive ) {
+	function createMultiPassGeometryKey( geometry, primitives ) {
 
-		for ( var i = 0, il = cache.length; i < il; i ++ ) {
+		var key = geometry.uuid;
 
-			var cached = cache[ i ];
+		for ( var i = 0, il = primitives.length; i < il; i ++ ) {
 
-			if ( isPrimitiveEqual( cached.primitive, newPrimitive ) ) return cached.promise;
-
-		}
-
-		return null;
-
-	}
-
-	function getCachedCombinedGeometry( cache, geometries ) {
-
-		for ( var i = 0, il = cache.length; i < il; i ++ ) {
-
-			var cached = cache[ i ];
-
-			if ( isArrayEqual( geometries, cached.baseGeometries ) ) return cached.geometry;
+			key += i + createPrimitiveKey( primitives[ i ] );
 
 		}
 
-		return null;
-
-	}
-
-	function getCachedMultiPassGeometry( cache, geometry, primitives ) {
-
-		for ( var i = 0, il = cache.length; i < il; i ++ ) {
-
-			var cached = cache[ i ];
-
-			if ( geometry === cached.baseGeometry && isArrayEqual( primitives, cached.primitives ) ) return cached.geometry;
-
-		}
-
-		return null;
+		return key;
 
 	}
 
@@ -1664,9 +1654,9 @@ var GLTFLoader = ( function () {
 		this.cache = new GLTFRegistry();
 
 		// BufferGeometry caching
-		this.primitiveCache = [];
-		this.multiplePrimitivesCache = [];
-		this.multiPassGeometryCache = [];
+		this.primitiveCache = {};
+		this.multiplePrimitivesCache = {};
+		this.multiPassGeometryCache = {};
 
 		this.textureLoader = new TextureLoader( this.options.manager );
 		this.textureLoader.setCrossOrigin( this.options.crossOrigin );
@@ -2154,6 +2144,18 @@ var GLTFLoader = ( function () {
 
 		return this.getDependency( 'texture', mapDef.index ).then( function ( texture ) {
 
+			switch ( mapName ) {
+
+				case 'aoMap':
+				case 'emissiveMap':
+				case 'metalnessMap':
+				case 'normalMap':
+				case 'roughnessMap':
+					texture.format = RGBFormat;
+					break;
+
+			}
+
 			if ( parser.extensions[ EXTENSIONS.KHR_TEXTURE_TRANSFORM ] ) {
 
 				var transform = mapDef.extensions !== undefined ? mapDef.extensions[ EXTENSIONS.KHR_TEXTURE_TRANSFORM ] : undefined;
@@ -2313,14 +2315,6 @@ var GLTFLoader = ( function () {
 
 			if ( materialDef.name !== undefined ) material.name = materialDef.name;
 
-			// Normal map textures use OpenGL conventions:
-			// https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#materialnormaltexture
-			if ( material.normalScale ) {
-
-				material.normalScale.y = - material.normalScale.y;
-
-			}
-
 			// baseColorTexture, emissiveTexture, and specularGlossinessTexture use sRGB encoding.
 			if ( material.map ) material.map.encoding = sRGBEncoding;
 			if ( material.emissiveMap ) material.emissiveMap.encoding = sRGBEncoding;
@@ -2427,14 +2421,15 @@ var GLTFLoader = ( function () {
 		for ( var i = 0, il = primitives.length; i < il; i ++ ) {
 
 			var primitive = primitives[ i ];
+			var cacheKey = createPrimitiveKey( primitive );
 
 			// See if we've already created this geometry
-			var cached = getCachedGeometry( cache, primitive );
+			var cached = cache[ cacheKey ];
 
 			if ( cached ) {
 
 				// Use the cached geometry if it exists
-				pending.push( cached );
+				pending.push( cached.promise );
 
 			} else {
 
@@ -2453,7 +2448,7 @@ var GLTFLoader = ( function () {
 				}
 
 				// Cache this geometry
-				cache.push( { primitive: primitive, promise: geometryPromise } );
+				cache[ cacheKey ] = { primitive: primitive, promise: geometryPromise };
 
 				pending.push( geometryPromise );
 
@@ -2469,7 +2464,8 @@ var GLTFLoader = ( function () {
 
 				// See if we've already created this combined geometry
 				var cache = parser.multiPassGeometryCache;
-				var cached = getCachedMultiPassGeometry( cache, baseGeometry, originalPrimitives );
+				var cacheKey = createMultiPassGeometryKey( baseGeometry, originalPrimitives );
+				var cached = cache[ cacheKey ];
 
 				if ( cached !== null ) return [ cached.geometry ];
 
@@ -2510,7 +2506,7 @@ var GLTFLoader = ( function () {
 
 					geometry.setIndex( indices );
 
-					cache.push( { geometry: geometry, baseGeometry: baseGeometry, primitives: originalPrimitives } );
+					cache[ cacheKey ] = { geometry: geometry, baseGeometry: baseGeometry, primitives: originalPrimitives };
 
 					return [ geometry ];
 
@@ -2529,7 +2525,8 @@ var GLTFLoader = ( function () {
 
 				// See if we've already created this combined geometry
 				var cache = parser.multiplePrimitivesCache;
-				var cached = getCachedCombinedGeometry( cache, geometries );
+				var cacheKey = createArrayKeyBufferGeometry( geometries );
+				var cached = cache[ cacheKey ];
 
 				if ( cached ) {
 
@@ -2539,7 +2536,7 @@ var GLTFLoader = ( function () {
 
 					var geometry = BufferGeometryUtils.mergeBufferGeometries( geometries, true );
 
-					cache.push( { geometry: geometry, baseGeometries: geometries } );
+					cache[ cacheKey ] = { geometry: geometry, baseGeometries: geometries };
 
 					if ( geometry !== null ) return [ geometry ];
 
@@ -2654,6 +2651,7 @@ var GLTFLoader = ( function () {
 
 					var materials = isMultiMaterial ? mesh.material : [ mesh.material ];
 
+					var useVertexTangents = geometry.attributes.tangent !== undefined;
 					var useVertexColors = geometry.attributes.color !== undefined;
 					var useFlatShading = geometry.attributes.normal === undefined;
 					var useSkinning = mesh.isSkinnedMesh === true;
@@ -2706,12 +2704,13 @@ var GLTFLoader = ( function () {
 						}
 
 						// Clone the material if it will be modified
-						if ( useVertexColors || useFlatShading || useSkinning || useMorphTargets ) {
+						if ( useVertexTangents || useVertexColors || useFlatShading || useSkinning || useMorphTargets ) {
 
 							var cacheKey = 'ClonedMaterial:' + material.uuid + ':';
 
 							if ( material.isGLTFSpecularGlossinessMaterial ) cacheKey += 'specular-glossiness:';
 							if ( useSkinning ) cacheKey += 'skinning:';
+							if ( useVertexTangents ) cacheKey += 'vertex-tangents:';
 							if ( useVertexColors ) cacheKey += 'vertex-colors:';
 							if ( useFlatShading ) cacheKey += 'flat-shading:';
 							if ( useMorphTargets ) cacheKey += 'morph-targets:';
@@ -2726,6 +2725,7 @@ var GLTFLoader = ( function () {
 									: material.clone();
 
 								if ( useSkinning ) cachedMaterial.skinning = true;
+								if ( useVertexTangents ) cachedMaterial.vertexTangents = true;
 								if ( useVertexColors ) cachedMaterial.vertexColors = VertexColors;
 								if ( useFlatShading ) cachedMaterial.flatShading = true;
 								if ( useMorphTargets ) cachedMaterial.morphTargets = true;
@@ -3189,7 +3189,7 @@ var GLTFLoader = ( function () {
 
 						mesh.bind( new Skeleton( bones, boneInverses ), mesh.matrixWorld );
 
-					};
+					}
 
 					return node;
 

@@ -4,6 +4,7 @@
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Vector3 } from '../math/Vector3.js'
 import { WebGLRenderer } from './WebGLRenderer.js'
+import { Vector2 } from '../math/Vector2.js'
 import { DepthTexture } from '../textures/DepthTexture.js'
 import { RenderPass } from '../postprocessing/RenderPass.js'
 import { WebGLRenderTarget } from './WebGLRenderTarget.js'
@@ -42,7 +43,8 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 	var _this = this;
 
-	var _gl;
+	var _context;
+	var _state;
 
 	var _width, _height;
 
@@ -116,7 +118,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 	this.renderer = undefined;
 	this.domElement = undefined;
 
-	this.forwardRendering = false;  // for debug
+	this.forwardRendering = false; // for debug
 
 	// private methods
 
@@ -125,10 +127,11 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		_this.renderer = parameters.renderer !== undefined ? parameters.renderer : new WebGLRenderer();
 		_this.domElement = _this.renderer.domElement;
 
-		_gl = _this.renderer.context;
+		_context = _this.renderer.context;
+		_state = _this.renderer.state;
 
-		_width = parameters.width !== undefined ? parameters.width : _this.renderer.getSize().width;
-		_height = parameters.height !== undefined ? parameters.height : _this.renderer.getSize().height;
+		_width = parameters.width !== undefined ? parameters.width : _this.renderer.getSize( new Vector2() ).width;
+		_height = parameters.height !== undefined ? parameters.height : _this.renderer.getSize( new Vector2() ).height;
 
 		var antialias = parameters.antialias !== undefined ? parameters.antialias : false;
 
@@ -1173,7 +1176,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 			if ( cache[ key ].used === false ) {
 
-				cache[ key ].count++;
+				cache[ key ].count ++;
 
 				if ( cache[ key ].keepAlive === false && cache[ key ].count > _removeThresholdCount ) {
 
@@ -1233,9 +1236,9 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		_this.renderer.autoClearDepth = true;
 		_this.renderer.autoClearStencil = true;
 
-		_gl.enable( _gl.STENCIL_TEST );
-		_gl.stencilFunc( _gl.ALWAYS, 1, 0xffffffff );
-		_gl.stencilOp( _gl.REPLACE, _gl.REPLACE, _gl.REPLACE );
+		_state.buffers.stencil.setTest( true );
+		_state.buffers.stencil.setFunc( _context.ALWAYS, 1, 0xffffffff );
+		_state.buffers.stencil.setOp( _context.REPLACE, _context.REPLACE, _context.REPLACE );
 
 		_compNormalDepth.render();
 
@@ -1252,8 +1255,8 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		_this.renderer.autoClearDepth = false;
 		_this.renderer.autoClearStencil = false;
 
-		_gl.stencilFunc( _gl.EQUAL, 1, 0xffffffff );
-		_gl.stencilOp( _gl.KEEP, _gl.KEEP, _gl.KEEP );
+		_state.buffers.stencil.setFunc( _context.EQUAL, 1, 0xffffffff );
+		_state.buffers.stencil.setOp( _context.KEEP, _context.KEEP, _context.KEEP );
 
 		_compColor.render();
 
@@ -1277,7 +1280,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 		_compLight.render();
 
-		_gl.disable( _gl.STENCIL_TEST );
+		_state.buffers.stencil.setTest( false );
 
 	}
 	function renderLightPre( scene, camera ) {
@@ -1295,8 +1298,8 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		_this.renderer.autoClearDepth = false;
 		_this.renderer.autoClearStencil = false;
 
-		_gl.stencilFunc( _gl.EQUAL, 1, 0xffffffff );
-		_gl.stencilOp( _gl.KEEP, _gl.KEEP, _gl.KEEP );
+		_state.buffers.stencil.setFunc( _context.EQUAL, 1, 0xffffffff );
+		_state.buffers.stencil.setOp( _context.KEEP, _context.KEEP, _context.KEEP );
 
 		_compLight.render();
 
@@ -1313,7 +1316,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 		_compReconstruction.render();
 
-		_gl.disable( _gl.STENCIL_TEST );
+		_state.buffers.stencil.setTest( false );
 
 		scene.traverse( restoreOriginalMaterial );
 

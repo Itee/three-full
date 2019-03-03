@@ -3767,6 +3767,8 @@ var Three = (function (exports) {
 		this.magFilter = NearestFilter;
 		this.minFilter = NearestFilter;
 
+		this.wrapR = ClampToEdgeWrapping;
+
 		this.generateMipmaps = false;
 		this.flipY = false;
 

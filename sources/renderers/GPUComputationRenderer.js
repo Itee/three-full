@@ -191,7 +191,9 @@ function GPUComputationRenderer( sizeX, sizeY, renderer ) {
 		addResolutionDefine( material );
 
 		return material;
+
 	}
+
 	this.createShaderMaterial = createShaderMaterial;
 
 	this.createRenderTarget = function( sizeXTexture, sizeYTexture, wrapS, wrapT, minFilter, magFilter ) {
@@ -229,6 +231,7 @@ function GPUComputationRenderer( sizeX, sizeY, renderer ) {
 		return texture;
 
 	};
+
 	this.renderTexture = function( input, output ) {
 
 		// Takes a texture, and render out in rendertarget
@@ -245,9 +248,14 @@ function GPUComputationRenderer( sizeX, sizeY, renderer ) {
 
 	this.doRenderTarget = function( material, output ) {
 
+		var currentRenderTarget = renderer.getRenderTarget();
+
 		mesh.material = material;
-		renderer.render( scene, camera, output );
+		renderer.setRenderTarget( output );
+		renderer.render( scene, camera );
 		mesh.material = passThruShader;
+
+		renderer.setRenderTarget( currentRenderTarget );
 
 	};
 

@@ -224,6 +224,8 @@ var Three = (function (exports) {
 
 			} );
 
+			scope.manager.itemStart( url );
+
 		},
 
 		setCrossOrigin: function (  ) {

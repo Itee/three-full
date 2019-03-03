@@ -859,6 +859,7 @@ var Three = (function (exports) {
 		this.blending = NormalBlending;
 		this.side = FrontSide;
 		this.flatShading = false;
+		this.vertexTangents = false;
 		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 		this.opacity = 1;
@@ -1273,6 +1274,24 @@ var Three = (function (exports) {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_vertex = `
+void main() {
+	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_fragment = `
+void main() {
+	gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function ShaderMaterial( parameters ) {
 
 		Material.call( this );
@@ -1282,8 +1301,8 @@ var Three = (function (exports) {
 		this.defines = {};
 		this.uniforms = {};
 
-		this.vertexShader = 'void main() {\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}';
-		this.fragmentShader = 'void main() {\n\tgl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}';
+		this.vertexShader = default_vertex;
+		this.fragmentShader = default_fragment;
 
 		this.linewidth = 1;
 
@@ -1533,6 +1552,12 @@ vec3 transformed = vec3( position );
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var beginnormal_vertex = `
 vec3 objectNormal = vec3( normal );
+
+#ifdef USE_TANGENT
+
+	vec3 objectTangent = vec3( tangent.xyz );
+
+#endif
 `;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2257,6 +2282,18 @@ vec3 transformedNormal = normalMatrix * objectNormal;
 	transformedNormal = - transformedNormal;
 
 #endif
+
+#ifdef USE_TANGENT
+
+	vec3 transformedTangent = normalMatrix * objectTangent;
+
+	#ifdef FLIP_SIDED
+
+		transformedTangent = - transformedTangent;
+
+	#endif
+
+#endif
 `;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2313,7 +2350,7 @@ vec3 transformedNormal = normalMatrix * objectNormal;
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var encodings_fragment = `
-  gl_FragColor = linearToOutputTexel( gl_FragColor );
+gl_FragColor = linearToOutputTexel( gl_FragColor );
 `;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3743,6 +3780,20 @@ float metalnessFactor = metalness;
 
 	#endif
 
+	#ifdef USE_TANGENT
+
+		vec3 tangent = normalize( vTangent );
+		vec3 bitangent = normalize( vBitangent );
+
+		#ifdef DOUBLE_SIDED
+
+			tangent = tangent * ( float( gl_FrontFacing ) * 2.0 - 1.0 );
+			bitangent = bitangent * ( float( gl_FrontFacing ) * 2.0 - 1.0 );
+
+		#endif
+
+	#endif
+
 #endif
 `;
 
@@ -3772,7 +3823,18 @@ float metalnessFactor = metalness;
 
 	#else // tangent-space normal map
 
-		normal = perturbNormal2Arb( -vViewPosition, normal );
+		#ifdef USE_TANGENT
+
+			mat3 vTBN = mat3( tangent, bitangent, normal );
+			vec3 mapN = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0;
+			mapN.xy = normalScale * mapN.xy;
+			normal = normalize( vTBN * mapN );
+
+		#else
+
+			normal = perturbNormal2Arb( -vViewPosition, normal );
+
+		#endif
 
 	#endif
 
@@ -3905,7 +3967,7 @@ gl_Position = projectionMatrix * mvPosition;
 	var dithering_fragment = `
 #if defined( DITHERING )
 
-  gl_FragColor.rgb = dithering( gl_FragColor.rgb );
+	gl_FragColor.rgb = dithering( gl_FragColor.rgb );
 
 #endif
 `;
@@ -4429,6 +4491,12 @@ float getShadowMask() {
 
 	objectNormal = vec4( skinMatrix * vec4( objectNormal, 0.0 ) ).xyz;
 
+	#ifdef USE_TANGENT
+
+		objectTangent = vec4( skinMatrix * vec4( objectTangent, 0.0 ) ).xyz;
+
+	#endif
+
 #endif
 `;
 
@@ -4467,7 +4535,7 @@ float specularStrength;
 	var tonemapping_fragment = `
 #if defined( TONE_MAPPING )
 
-  gl_FragColor.rgb = toneMapping( gl_FragColor.rgb );
+	gl_FragColor.rgb = toneMapping( gl_FragColor.rgb );
 
 #endif
 `;
@@ -5534,6 +5602,13 @@ varying vec3 vViewPosition;
 
 	varying vec3 vNormal;
 
+	#ifdef USE_TANGENT
+
+		varying vec3 vTangent;
+		varying vec3 vBitangent;
+
+	#endif
+
 #endif
 
 #include <common>
@@ -5615,6 +5690,13 @@ varying vec3 vViewPosition;
 
 	varying vec3 vNormal;
 
+	#ifdef USE_TANGENT
+
+		varying vec3 vTangent;
+		varying vec3 vBitangent;
+
+	#endif
+
 #endif
 
 #include <common>
@@ -5644,6 +5726,13 @@ void main() {
 #ifndef FLAT_SHADED // Normal computed with derivatives when FLAT_SHADED
 
 	vNormal = normalize( transformedNormal );
+
+	#ifdef USE_TANGENT
+
+		vTangent = normalize( transformedTangent );
+		vBitangent = normalize( cross( vNormal, vTangent ) * tangent.w );
+
+	#endif
 
 #endif
 
@@ -5682,6 +5771,13 @@ uniform float opacity;
 
 	varying vec3 vNormal;
 
+	#ifdef USE_TANGENT
+
+		varying vec3 vTangent;
+		varying vec3 vBitangent;
+
+	#endif
+
 #endif
 
 #include <packing>
@@ -5717,6 +5813,13 @@ void main() {
 
 	varying vec3 vNormal;
 
+	#ifdef USE_TANGENT
+
+		varying vec3 vTangent;
+		varying vec3 vBitangent;
+
+	#endif
+
 #endif
 
 #include <uv_pars_vertex>
@@ -5738,6 +5841,13 @@ void main() {
 #ifndef FLAT_SHADED // Normal computed with derivatives when FLAT_SHADED
 
 	vNormal = normalize( transformedNormal );
+
+	#ifdef USE_TANGENT
+
+		vTangent = normalize( transformedTangent );
+		vBitangent = normalize( cross( vNormal, vTangent ) * tangent.w );
+
+	#endif
 
 #endif
 
@@ -10061,11 +10171,32 @@ void main() {
 
 		}
 
-		this.render = function ( scene, camera, renderTarget, forceClear ) {
+		this.render = function ( scene, camera ) {
+
+			var renderTarget = null;
+			var forceClear = false;
+
+			if ( arguments[ 2 ] !== undefined ) {
+
+				console.warn( 'OutlineEffect.render(): the renderTarget argument has been removed. Use .setRenderTarget() instead.' );
+				renderTarget = arguments[ 2 ];
+
+			}
+
+			if ( arguments[ 3 ] !== undefined ) {
+
+				console.warn( 'OutlineEffect.render(): the forceClear argument has been removed. Use .clear() instead.' );
+				forceClear = arguments[ 3 ];
+
+			}
+
+			renderer.setRenderTarget( renderTarget );
+
+			if ( forceClear ) renderer.clear();
 
 			if ( this.enabled === false ) {
 
-				renderer.render( scene, camera, renderTarget, forceClear );
+				renderer.render( scene, camera );
 				return;
 
 			}
@@ -10074,7 +10205,7 @@ void main() {
 			renderer.autoClear = this.autoClear;
 
 			// 1. render normally
-			renderer.render( scene, camera, renderTarget, forceClear );
+			renderer.render( scene, camera );
 
 			// 2. render outline
 			var currentSceneAutoUpdate = scene.autoUpdate;
@@ -10088,7 +10219,7 @@ void main() {
 
 			scene.traverse( setOutlineMaterial );
 
-			renderer.render( scene, camera, renderTarget );
+			renderer.render( scene, camera );
 
 			scene.traverse( restoreOriginalMaterial );
 
@@ -10122,9 +10253,9 @@ void main() {
 
 		};
 
-		this.getSize = function () {
+		this.getSize = function ( target ) {
 
-			return renderer.getSize();
+			return renderer.getSize( target );
 
 		};
 

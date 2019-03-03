@@ -5106,6 +5106,7 @@ var Three = (function (exports) {
 		this.blending = NormalBlending;
 		this.side = FrontSide;
 		this.flatShading = false;
+		this.vertexTangents = false;
 		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 		this.opacity = 1;
@@ -5524,6 +5525,24 @@ var Three = (function (exports) {
 	var UniformsUtils = { clone: cloneUniforms, merge: mergeUniforms };
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_vertex = `
+void main() {
+	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_fragment = `
+void main() {
+	gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function ShaderMaterial( parameters ) {
 
 		Material.call( this );
@@ -5533,8 +5552,8 @@ var Three = (function (exports) {
 		this.defines = {};
 		this.uniforms = {};
 
-		this.vertexShader = 'void main() {\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}';
-		this.fragmentShader = 'void main() {\n\tgl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}';
+		this.vertexShader = default_vertex;
+		this.fragmentShader = default_fragment;
 
 		this.linewidth = 1;
 
@@ -9835,6 +9854,18 @@ var Three = (function (exports) {
 
 			}
 
+			var tangent = this.attributes.tangent;
+
+			if ( tangent !== undefined ) {
+
+				var normalMatrix = new Matrix3().getNormalMatrix( matrix );
+
+				// Tangent is vec4, but the '.w' component is a sign value (+1/-1).
+				normalMatrix.applyToBufferAttribute( tangent );
+				tangent.needsUpdate = true;
+
+			}
+
 			if ( this.boundingBox !== null ) {
 
 				this.computeBoundingBox();
@@ -10655,11 +10686,9 @@ var Three = (function (exports) {
 
 			if ( index !== null ) {
 
-				var array = Array.prototype.slice.call( index.array );
-
 				data.data.index = {
 					type: index.array.constructor.name,
-					array: array
+					array: Array.prototype.slice.call( index.array )
 				};
 
 			}
@@ -10670,16 +10699,56 @@ var Three = (function (exports) {
 
 				var attribute = attributes[ key ];
 
-				var array = Array.prototype.slice.call( attribute.array );
-
-				data.data.attributes[ key ] = {
+				var attributeData = {
 					itemSize: attribute.itemSize,
 					type: attribute.array.constructor.name,
-					array: array,
+					array: Array.prototype.slice.call( attribute.array ),
 					normalized: attribute.normalized
 				};
 
+				if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+				data.data.attributes[ key ] = attributeData;
+
 			}
+
+			var morphAttributes = {};
+			var hasMorphAttributes = false;
+
+			for ( var key in this.morphAttributes ) {
+
+				var attributeArray = this.morphAttributes[ key ];
+
+				var array = [];
+
+				for ( var i = 0, il = attributeArray.length; i < il; i ++ ) {
+
+					var attribute = attributeArray[ i ];
+
+					var attributeData = {
+						itemSize: attribute.itemSize,
+						type: attribute.array.constructor.name,
+						array: Array.prototype.slice.call( attribute.array ),
+						normalized: attribute.normalized
+					};
+
+					if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+					array.push( attributeData );
+
+				}
+
+				if ( array.length > 0 ) {
+
+					morphAttributes[ key ] = array;
+
+					hasMorphAttributes = true;
+
+				}
+
+			}
+
+			if ( hasMorphAttributes ) data.data.morphAttributes = morphAttributes;
 
 			var groups = this.groups;
 
@@ -13050,7 +13119,9 @@ var Three = (function (exports) {
 				this.quad.material = this.basic;
 				this.basic.map = readBuffer.texture;
 
-				renderer.render( this.scene, this.camera, undefined, true );
+				renderer.setRenderTarget( null );
+				renderer.clear();
+				renderer.render( this.scene, this.camera );
 
 			}
 
@@ -13060,7 +13131,9 @@ var Three = (function (exports) {
 			this.highPassUniforms[ "luminosityThreshold" ].value = this.threshold;
 			this.quad.material = this.materialHighPassFilter;
 
-			renderer.render( this.scene, this.camera, this.renderTargetBright, true );
+			renderer.setRenderTarget( this.renderTargetBright );
+			renderer.clear();
+			renderer.render( this.scene, this.camera );
 
 			// 2. Blur All the mips progressively
 
@@ -13072,11 +13145,15 @@ var Three = (function (exports) {
 
 				this.separableBlurMaterials[ i ].uniforms[ "colorTexture" ].value = inputRenderTarget.texture;
 				this.separableBlurMaterials[ i ].uniforms[ "direction" ].value = UnrealBloomPass.BlurDirectionX;
-				renderer.render( this.scene, this.camera, this.renderTargetsHorizontal[ i ], true );
+				renderer.setRenderTarget( this.renderTargetsHorizontal[ i ] );
+				renderer.clear();
+				renderer.render( this.scene, this.camera );
 
 				this.separableBlurMaterials[ i ].uniforms[ "colorTexture" ].value = this.renderTargetsHorizontal[ i ].texture;
 				this.separableBlurMaterials[ i ].uniforms[ "direction" ].value = UnrealBloomPass.BlurDirectionY;
-				renderer.render( this.scene, this.camera, this.renderTargetsVertical[ i ], true );
+				renderer.setRenderTarget( this.renderTargetsVertical[ i ] );
+				renderer.clear();
+				renderer.render( this.scene, this.camera );
 
 				inputRenderTarget = this.renderTargetsVertical[ i ];
 
@@ -13089,7 +13166,9 @@ var Three = (function (exports) {
 			this.compositeMaterial.uniforms[ "bloomRadius" ].value = this.radius;
 			this.compositeMaterial.uniforms[ "bloomTintColors" ].value = this.bloomTintColors;
 
-			renderer.render( this.scene, this.camera, this.renderTargetsHorizontal[ 0 ], true );
+			renderer.setRenderTarget( this.renderTargetsHorizontal[ 0 ] );
+			renderer.clear();
+			renderer.render( this.scene, this.camera );
 
 			// Blend it additively over the input texture
 
@@ -13099,11 +13178,13 @@ var Three = (function (exports) {
 			if ( maskActive ) renderer.context.enable( renderer.context.STENCIL_TEST );
 			if ( this.renderToScreen ) {
 
-				renderer.render( this.scene, this.camera, undefined, false );
+				renderer.setRenderTarget( null );
+				renderer.render( this.scene, this.camera );
 
 			} else {
 
-				renderer.render( this.scene, this.camera, readBuffer, false );
+				renderer.setRenderTarget( readBuffer );
+				renderer.render( this.scene, this.camera );
 
 			}
 
