@@ -4716,7 +4716,9 @@ var Three = (function (exports) {
 
 			//
 
-			var canvas = document.createElement( 'canvas' );
+			var useOffscreen = typeof OffscreenCanvas !== 'undefined';
+
+			var canvas = useOffscreen ? new OffscreenCanvas( header.width, header.height ) : document.createElement( 'canvas' );
 			canvas.width = header.width;
 			canvas.height = header.height;
 
@@ -4728,7 +4730,7 @@ var Three = (function (exports) {
 
 			context.putImageData( imageData, 0, 0 );
 
-			return canvas;
+			return useOffscreen ? canvas.transferToImageBitmap() : canvas;
 
 		},
 

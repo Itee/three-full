@@ -6475,6 +6475,7 @@ var Three = (function (exports) {
 		this.blending = NormalBlending;
 		this.side = FrontSide;
 		this.flatShading = false;
+		this.vertexTangents = false;
 		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 		this.opacity = 1;
@@ -7007,6 +7008,24 @@ var Three = (function (exports) {
 	var UniformsUtils = { clone: cloneUniforms, merge: mergeUniforms };
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_vertex = `
+void main() {
+	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_fragment = `
+void main() {
+	gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function ShaderMaterial( parameters ) {
 
 		Material.call( this );
@@ -7016,8 +7035,8 @@ var Three = (function (exports) {
 		this.defines = {};
 		this.uniforms = {};
 
-		this.vertexShader = 'void main() {\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}';
-		this.fragmentShader = 'void main() {\n\tgl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}';
+		this.vertexShader = default_vertex;
+		this.fragmentShader = default_fragment;
 
 		this.linewidth = 1;
 
@@ -10198,6 +10217,18 @@ var Three = (function (exports) {
 
 			}
 
+			var tangent = this.attributes.tangent;
+
+			if ( tangent !== undefined ) {
+
+				var normalMatrix = new Matrix3().getNormalMatrix( matrix );
+
+				// Tangent is vec4, but the '.w' component is a sign value (+1/-1).
+				normalMatrix.applyToBufferAttribute( tangent );
+				tangent.needsUpdate = true;
+
+			}
+
 			if ( this.boundingBox !== null ) {
 
 				this.computeBoundingBox();
@@ -11018,11 +11049,9 @@ var Three = (function (exports) {
 
 			if ( index !== null ) {
 
-				var array = Array.prototype.slice.call( index.array );
-
 				data.data.index = {
 					type: index.array.constructor.name,
-					array: array
+					array: Array.prototype.slice.call( index.array )
 				};
 
 			}
@@ -11033,16 +11062,56 @@ var Three = (function (exports) {
 
 				var attribute = attributes[ key ];
 
-				var array = Array.prototype.slice.call( attribute.array );
-
-				data.data.attributes[ key ] = {
+				var attributeData = {
 					itemSize: attribute.itemSize,
 					type: attribute.array.constructor.name,
-					array: array,
+					array: Array.prototype.slice.call( attribute.array ),
 					normalized: attribute.normalized
 				};
 
+				if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+				data.data.attributes[ key ] = attributeData;
+
 			}
+
+			var morphAttributes = {};
+			var hasMorphAttributes = false;
+
+			for ( var key in this.morphAttributes ) {
+
+				var attributeArray = this.morphAttributes[ key ];
+
+				var array = [];
+
+				for ( var i = 0, il = attributeArray.length; i < il; i ++ ) {
+
+					var attribute = attributeArray[ i ];
+
+					var attributeData = {
+						itemSize: attribute.itemSize,
+						type: attribute.array.constructor.name,
+						array: Array.prototype.slice.call( attribute.array ),
+						normalized: attribute.normalized
+					};
+
+					if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+					array.push( attributeData );
+
+				}
+
+				if ( array.length > 0 ) {
+
+					morphAttributes[ key ] = array;
+
+					hasMorphAttributes = true;
+
+				}
+
+			}
+
+			if ( hasMorphAttributes ) data.data.morphAttributes = morphAttributes;
 
 			var groups = this.groups;
 
@@ -16690,8 +16759,8 @@ var Three = (function (exports) {
 		};
 
 		var WEBGL_SIDES = {
-			1028: BackSide,  // Culling front
-			1029: FrontSide  // Culling back
+			1028: BackSide, // Culling front
+			1029: FrontSide // Culling back
 			//1032: NoSide   // Culling front and back, what to do?
 		};
 
@@ -16762,8 +16831,10 @@ var Three = (function (exports) {
 		};
 		function _each( object, callback, thisObj ) {
 
-			if ( !object ) {
+			if ( ! object ) {
+
 				return Promise.resolve();
+
 			}
 
 			var results;
@@ -16785,11 +16856,11 @@ var Three = (function (exports) {
 
 						if ( value instanceof Promise ) {
 
-							value.then( function( key, value ) {
+							value.then( function ( key, value ) {
 
 								results[ key ] = value;
 
-							}.bind( this, idx ));
+							}.bind( this, idx ) );
 
 						} else {
 
@@ -16817,11 +16888,11 @@ var Three = (function (exports) {
 
 							if ( value instanceof Promise ) {
 
-								value.then( function( key, value ) {
+								value.then( function ( key, value ) {
 
 									results[ key ] = value;
 
-								}.bind( this, key ));
+								}.bind( this, key ) );
 
 							} else {
 
@@ -16837,11 +16908,11 @@ var Three = (function (exports) {
 
 			}
 
-			return Promise.all( fns ).then( function() {
+			return Promise.all( fns ).then( function () {
 
 				return results;
 
-			});
+			} );
 
 		}
 
@@ -17403,7 +17474,7 @@ var Three = (function (exports) {
 
 						}
 
-						keys.forEach( function( v ) {
+						keys.forEach( function ( v ) {
 
 							if ( khr_material.values[ v ] !== undefined ) materialValues[ v ] = khr_material.values[ v ];
 
@@ -17708,7 +17779,7 @@ var Three = (function (exports) {
 
 						materialParams.color = new Color().fromArray( materialValues.diffuse );
 
-					} else if ( typeof( materialValues.diffuse ) === 'string' ) {
+					} else if ( typeof ( materialValues.diffuse ) === 'string' ) {
 
 						materialParams.map = dependencies.textures[ materialValues.diffuse ];
 
@@ -17716,13 +17787,13 @@ var Three = (function (exports) {
 
 					delete materialParams.diffuse;
 
-					if ( typeof( materialValues.reflective ) === 'string' ) {
+					if ( typeof ( materialValues.reflective ) === 'string' ) {
 
 						materialParams.envMap = dependencies.textures[ materialValues.reflective ];
 
 					}
 
-					if ( typeof( materialValues.bump ) === 'string' ) {
+					if ( typeof ( materialValues.bump ) === 'string' ) {
 
 						materialParams.bumpMap = dependencies.textures[ materialValues.bump ];
 
@@ -17740,7 +17811,7 @@ var Three = (function (exports) {
 
 						}
 
-					} else if ( typeof( materialValues.emission ) === 'string' ) {
+					} else if ( typeof ( materialValues.emission ) === 'string' ) {
 
 						if ( materialType === MeshBasicMaterial ) {
 
@@ -17758,7 +17829,7 @@ var Three = (function (exports) {
 
 						materialParams.specular = new Color().fromArray( materialValues.specular );
 
-					} else if ( typeof( materialValues.specular ) === 'string' ) {
+					} else if ( typeof ( materialValues.specular ) === 'string' ) {
 
 						materialParams.specularMap = dependencies.textures[ materialValues.specular ];
 
@@ -17863,9 +17934,9 @@ var Three = (function (exports) {
 
 										var parameters = json.techniques[ material.technique ].parameters || {};
 
-										for( var attributeName in parameters ) {
+										for ( var attributeName in parameters ) {
 
-											if ( parameters [ attributeName ][ 'semantic' ] === attributeId ) {
+											if ( parameters[ attributeName ][ 'semantic' ] === attributeId ) {
 
 												geometry.addAttribute( attributeName, bufferAttribute );
 
@@ -18410,8 +18481,10 @@ var Three = (function (exports) {
 						if ( child.material && child.material.isRawShaderMaterial ) {
 
 							child.gltfShader = new GLTFShader( child, dependencies.nodes );
-							child.onBeforeRender = function(renderer, scene, camera){
-								this.gltfShader.update(scene, camera);
+							child.onBeforeRender = function ( renderer, scene, camera ) {
+
+								this.gltfShader.update( scene, camera );
+
 							};
 
 						}

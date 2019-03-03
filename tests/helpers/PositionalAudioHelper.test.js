@@ -4,538 +4,6 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function EventDispatcher() {}
-
-	Object.assign( EventDispatcher.prototype, {
-
-		addEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) this._listeners = {};
-
-			var listeners = this._listeners;
-
-			if ( listeners[ type ] === undefined ) {
-
-				listeners[ type ] = [];
-
-			}
-
-			if ( listeners[ type ].indexOf( listener ) === - 1 ) {
-
-				listeners[ type ].push( listener );
-
-			}
-
-		},
-
-		hasEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) return false;
-
-			var listeners = this._listeners;
-
-			return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
-
-		},
-
-		removeEventListener: function ( type, listener ) {
-
-			if ( this._listeners === undefined ) return;
-
-			var listeners = this._listeners;
-			var listenerArray = listeners[ type ];
-
-			if ( listenerArray !== undefined ) {
-
-				var index = listenerArray.indexOf( listener );
-
-				if ( index !== - 1 ) {
-
-					listenerArray.splice( index, 1 );
-
-				}
-
-			}
-
-		},
-
-		dispatchEvent: function ( event ) {
-
-			if ( this._listeners === undefined ) return;
-
-			var listeners = this._listeners;
-			var listenerArray = listeners[ event.type ];
-
-			if ( listenerArray !== undefined ) {
-
-				event.target = this;
-
-				var array = listenerArray.slice( 0 );
-
-				for ( var i = 0, l = array.length; i < l; i ++ ) {
-
-					array[ i ].call( this, event );
-
-				}
-
-			}
-
-		}
-
-	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var Cache = {
-
-		enabled: false,
-
-		files: {},
-
-		add: function ( key, file ) {
-
-			if ( this.enabled === false ) return;
-
-			// console.log( 'Cache', 'Adding key:', key );
-
-			this.files[ key ] = file;
-
-		},
-
-		get: function ( key ) {
-
-			if ( this.enabled === false ) return;
-
-			// console.log( 'Cache', 'Checking key:', key );
-
-			return this.files[ key ];
-
-		},
-
-		remove: function ( key ) {
-
-			delete this.files[ key ];
-
-		},
-
-		clear: function () {
-
-			this.files = {};
-
-		}
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function LoadingManager( onLoad, onProgress, onError ) {
-
-		var scope = this;
-
-		var isLoading = false;
-		var itemsLoaded = 0;
-		var itemsTotal = 0;
-		var urlModifier = undefined;
-
-		// Refer to #5689 for the reason why we don't set .onStart
-		// in the constructor
-
-		this.onStart = undefined;
-		this.onLoad = onLoad;
-		this.onProgress = onProgress;
-		this.onError = onError;
-
-		this.itemStart = function ( url ) {
-
-			itemsTotal ++;
-
-			if ( isLoading === false ) {
-
-				if ( scope.onStart !== undefined ) {
-
-					scope.onStart( url, itemsLoaded, itemsTotal );
-
-				}
-
-			}
-
-			isLoading = true;
-
-		};
-
-		this.itemEnd = function ( url ) {
-
-			itemsLoaded ++;
-
-			if ( scope.onProgress !== undefined ) {
-
-				scope.onProgress( url, itemsLoaded, itemsTotal );
-
-			}
-
-			if ( itemsLoaded === itemsTotal ) {
-
-				isLoading = false;
-
-				if ( scope.onLoad !== undefined ) {
-
-					scope.onLoad();
-
-				}
-
-			}
-
-		};
-
-		this.itemError = function ( url ) {
-
-			if ( scope.onError !== undefined ) {
-
-				scope.onError( url );
-
-			}
-
-		};
-
-		this.resolveURL = function ( url ) {
-
-			if ( urlModifier ) {
-
-				return urlModifier( url );
-
-			}
-
-			return url;
-
-		};
-
-		this.setURLModifier = function ( transform ) {
-
-			urlModifier = transform;
-			return this;
-
-		};
-
-	}
-
-	var DefaultLoadingManager = new LoadingManager();
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var loading = {};
-
-	function FileLoader( manager ) {
-
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
-
-	}
-
-	Object.assign( FileLoader.prototype, {
-
-		load: function ( url, onLoad, onProgress, onError ) {
-
-			if ( url === undefined ) url = '';
-
-			if ( this.path !== undefined ) url = this.path + url;
-
-			url = this.manager.resolveURL( url );
-
-			var scope = this;
-
-			var cached = Cache.get( url );
-
-			if ( cached !== undefined ) {
-
-				scope.manager.itemStart( url );
-
-				setTimeout( function () {
-
-					if ( onLoad ) onLoad( cached );
-
-					scope.manager.itemEnd( url );
-
-				}, 0 );
-
-				return cached;
-
-			}
-
-			// Check if request is duplicate
-
-			if ( loading[ url ] !== undefined ) {
-
-				loading[ url ].push( {
-
-					onLoad: onLoad,
-					onProgress: onProgress,
-					onError: onError
-
-				} );
-
-				return;
-
-			}
-
-			// Check for data: URI
-			var dataUriRegex = /^data:(.*?)(;base64)?,(.*)$/;
-			var dataUriRegexResult = url.match( dataUriRegex );
-
-			// Safari can not handle Data URIs through XMLHttpRequest so process manually
-			if ( dataUriRegexResult ) {
-
-				var mimeType = dataUriRegexResult[ 1 ];
-				var isBase64 = !! dataUriRegexResult[ 2 ];
-				var data = dataUriRegexResult[ 3 ];
-
-				data = decodeURIComponent( data );
-
-				if ( isBase64 ) data = atob( data );
-
-				try {
-
-					var response;
-					var responseType = ( this.responseType || '' ).toLowerCase();
-
-					switch ( responseType ) {
-
-						case 'arraybuffer':
-						case 'blob':
-
-							var view = new Uint8Array( data.length );
-
-							for ( var i = 0; i < data.length; i ++ ) {
-
-								view[ i ] = data.charCodeAt( i );
-
-							}
-
-							if ( responseType === 'blob' ) {
-
-								response = new Blob( [ view.buffer ], { type: mimeType } );
-
-							} else {
-
-								response = view.buffer;
-
-							}
-
-							break;
-
-						case 'document':
-
-							var parser = new DOMParser();
-							response = parser.parseFromString( data, mimeType );
-
-							break;
-
-						case 'json':
-
-							response = JSON.parse( data );
-
-							break;
-
-						default: // 'text' or other
-
-							response = data;
-
-							break;
-
-					}
-
-					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					setTimeout( function () {
-
-						if ( onLoad ) onLoad( response );
-
-						scope.manager.itemEnd( url );
-
-					}, 0 );
-
-				} catch ( error ) {
-
-					// Wait for next browser tick like standard XMLHttpRequest event dispatching does
-					setTimeout( function () {
-
-						if ( onError ) onError( error );
-
-						scope.manager.itemError( url );
-						scope.manager.itemEnd( url );
-
-					}, 0 );
-
-				}
-
-			} else {
-
-				// Initialise array for duplicate requests
-
-				loading[ url ] = [];
-
-				loading[ url ].push( {
-
-					onLoad: onLoad,
-					onProgress: onProgress,
-					onError: onError
-
-				} );
-
-				var request = new XMLHttpRequest();
-
-				request.open( 'GET', url, true );
-
-				request.addEventListener( 'load', function ( event ) {
-
-					var response = this.response;
-
-					Cache.add( url, response );
-
-					var callbacks = loading[ url ];
-
-					delete loading[ url ];
-
-					if ( this.status === 200 || this.status === 0 ) {
-
-						// Some browsers return HTTP Status 0 when using non-http protocol
-						// e.g. 'file://' or 'data://'. Handle as success.
-
-						if ( this.status === 0 ) console.warn( 'FileLoader: HTTP Status 0 received.' );
-
-						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-							var callback = callbacks[ i ];
-							if ( callback.onLoad ) callback.onLoad( response );
-
-						}
-
-						scope.manager.itemEnd( url );
-
-					} else {
-
-						for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-							var callback = callbacks[ i ];
-							if ( callback.onError ) callback.onError( event );
-
-						}
-
-						scope.manager.itemError( url );
-						scope.manager.itemEnd( url );
-
-					}
-
-				}, false );
-
-				request.addEventListener( 'progress', function ( event ) {
-
-					var callbacks = loading[ url ];
-
-					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-						var callback = callbacks[ i ];
-						if ( callback.onProgress ) callback.onProgress( event );
-
-					}
-
-				}, false );
-
-				request.addEventListener( 'error', function ( event ) {
-
-					var callbacks = loading[ url ];
-
-					delete loading[ url ];
-
-					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-						var callback = callbacks[ i ];
-						if ( callback.onError ) callback.onError( event );
-
-					}
-
-					scope.manager.itemError( url );
-					scope.manager.itemEnd( url );
-
-				}, false );
-
-				request.addEventListener( 'abort', function ( event ) {
-
-					var callbacks = loading[ url ];
-
-					delete loading[ url ];
-
-					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
-
-						var callback = callbacks[ i ];
-						if ( callback.onError ) callback.onError( event );
-
-					}
-
-					scope.manager.itemError( url );
-					scope.manager.itemEnd( url );
-
-				}, false );
-
-				if ( this.responseType !== undefined ) request.responseType = this.responseType;
-				if ( this.withCredentials !== undefined ) request.withCredentials = this.withCredentials;
-
-				if ( request.overrideMimeType ) request.overrideMimeType( this.mimeType !== undefined ? this.mimeType : 'text/plain' );
-
-				for ( var header in this.requestHeader ) {
-
-					request.setRequestHeader( header, this.requestHeader[ header ] );
-
-				}
-
-				request.send( null );
-
-			}
-
-			scope.manager.itemStart( url );
-
-			return request;
-
-		},
-
-		setPath: function ( value ) {
-
-			this.path = value;
-			return this;
-
-		},
-
-		setResponseType: function ( value ) {
-
-			this.responseType = value;
-			return this;
-
-		},
-
-		setWithCredentials: function ( value ) {
-
-			this.withCredentials = value;
-			return this;
-
-		},
-
-		setMimeType: function ( value ) {
-
-			this.mimeType = value;
-			return this;
-
-		},
-
-		setRequestHeader: function ( value ) {
-
-			this.requestHeader = value;
-			return this;
-
-		}
-
-	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var _Math = {
 
 		DEG2RAD: Math.PI / 180,
@@ -3731,6 +3199,89 @@ var Three = (function (exports) {
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function EventDispatcher() {}
+
+	Object.assign( EventDispatcher.prototype, {
+
+		addEventListener: function ( type, listener ) {
+
+			if ( this._listeners === undefined ) this._listeners = {};
+
+			var listeners = this._listeners;
+
+			if ( listeners[ type ] === undefined ) {
+
+				listeners[ type ] = [];
+
+			}
+
+			if ( listeners[ type ].indexOf( listener ) === - 1 ) {
+
+				listeners[ type ].push( listener );
+
+			}
+
+		},
+
+		hasEventListener: function ( type, listener ) {
+
+			if ( this._listeners === undefined ) return false;
+
+			var listeners = this._listeners;
+
+			return listeners[ type ] !== undefined && listeners[ type ].indexOf( listener ) !== - 1;
+
+		},
+
+		removeEventListener: function ( type, listener ) {
+
+			if ( this._listeners === undefined ) return;
+
+			var listeners = this._listeners;
+			var listenerArray = listeners[ type ];
+
+			if ( listenerArray !== undefined ) {
+
+				var index = listenerArray.indexOf( listener );
+
+				if ( index !== - 1 ) {
+
+					listenerArray.splice( index, 1 );
+
+				}
+
+			}
+
+		},
+
+		dispatchEvent: function ( event ) {
+
+			if ( this._listeners === undefined ) return;
+
+			var listeners = this._listeners;
+			var listenerArray = listeners[ event.type ];
+
+			if ( listenerArray !== undefined ) {
+
+				event.target = this;
+
+				var array = listenerArray.slice( 0 );
+
+				for ( var i = 0, l = array.length; i < l; i ++ ) {
+
+					array[ i ].call( this, event );
+
+				}
+
+			}
+
+		}
+
+	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function Vector4( x, y, z, w ) {
 
 		this.x = x || 0;
@@ -6861,6 +6412,14 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var FrontSide = 0;
+	var FlatShading = 1;
+	var NoColors = 0;
+	var NormalBlending = 1;
+	var AddEquation = 100;
+	var SrcAlphaFactor = 204;
+	var OneMinusSrcAlphaFactor = 205;
+	var LessEqualDepth = 3;
 	var TrianglesDrawMode = 0;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -8934,1188 +8493,1305 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var LoaderUtils = {
+	var materialId = 0;
 
-		decodeText: function ( array ) {
+	function Material() {
 
-			if ( typeof TextDecoder !== 'undefined' ) {
+		Object.defineProperty( this, 'id', { value: materialId ++ } );
 
-				return new TextDecoder().decode( array );
+		this.uuid = _Math.generateUUID();
+
+		this.name = '';
+		this.type = 'Material';
+
+		this.fog = true;
+		this.lights = true;
+
+		this.blending = NormalBlending;
+		this.side = FrontSide;
+		this.flatShading = false;
+		this.vertexTangents = false;
+		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
+
+		this.opacity = 1;
+		this.transparent = false;
+
+		this.blendSrc = SrcAlphaFactor;
+		this.blendDst = OneMinusSrcAlphaFactor;
+		this.blendEquation = AddEquation;
+		this.blendSrcAlpha = null;
+		this.blendDstAlpha = null;
+		this.blendEquationAlpha = null;
+
+		this.depthFunc = LessEqualDepth;
+		this.depthTest = true;
+		this.depthWrite = true;
+
+		this.clippingPlanes = null;
+		this.clipIntersection = false;
+		this.clipShadows = false;
+
+		this.shadowSide = null;
+
+		this.colorWrite = true;
+
+		this.precision = null; // override the renderer's default precision for this material
+
+		this.polygonOffset = false;
+		this.polygonOffsetFactor = 0;
+		this.polygonOffsetUnits = 0;
+
+		this.dithering = false;
+
+		this.alphaTest = 0;
+		this.premultipliedAlpha = false;
+
+		this.visible = true;
+
+		this.userData = {};
+
+		this.needsUpdate = true;
+
+	}
+
+	Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), {
+
+		constructor: Material,
+
+		isMaterial: true,
+
+		onBeforeCompile: function () {},
+
+		setValues: function ( values ) {
+
+			if ( values === undefined ) return;
+
+			for ( var key in values ) {
+
+				var newValue = values[ key ];
+
+				if ( newValue === undefined ) {
+
+					console.warn( "Material: '" + key + "' parameter is undefined." );
+					continue;
+
+				}
+
+				// for backward compatability if shading is set in the constructor
+				if ( key === 'shading' ) {
+
+					console.warn( '' + this.type + ': .shading has been removed. Use the boolean .flatShading instead.' );
+					this.flatShading = ( newValue === FlatShading ) ? true : false;
+					continue;
+
+				}
+
+				var currentValue = this[ key ];
+
+				if ( currentValue === undefined ) {
+
+					console.warn( "" + this.type + ": '" + key + "' is not a property of this material." );
+					continue;
+
+				}
+
+				if ( currentValue && currentValue.isColor ) {
+
+					currentValue.set( newValue );
+
+				} else if ( ( currentValue && currentValue.isVector3 ) && ( newValue && newValue.isVector3 ) ) {
+
+					currentValue.copy( newValue );
+
+				} else {
+
+					this[ key ] = newValue;
+
+				}
 
 			}
 
-			// Avoid the String.fromCharCode.apply(null, array) shortcut, which
-			// throws a "maximum call stack size exceeded" error for large arrays.
+		},
 
-			var s = '';
+		toJSON: function ( meta ) {
 
-			for ( var i = 0, il = array.length; i < il; i ++ ) {
+			var isRoot = ( meta === undefined || typeof meta === 'string' );
 
-				// Implicitly assumes little-endian.
-				s += String.fromCharCode( array[ i ] );
+			if ( isRoot ) {
+
+				meta = {
+					textures: {},
+					images: {}
+				};
 
 			}
 
-			// Merges multi-byte utf-8 characters.
-			return decodeURIComponent( escape( s ) );
+			var data = {
+				metadata: {
+					version: 4.5,
+					type: 'Material',
+					generator: 'Material.toJSON'
+				}
+			};
+
+			// standard Material serialization
+			data.uuid = this.uuid;
+			data.type = this.type;
+
+			if ( this.name !== '' ) data.name = this.name;
+
+			if ( this.color && this.color.isColor ) data.color = this.color.getHex();
+
+			if ( this.roughness !== undefined ) data.roughness = this.roughness;
+			if ( this.metalness !== undefined ) data.metalness = this.metalness;
+
+			if ( this.emissive && this.emissive.isColor ) data.emissive = this.emissive.getHex();
+			if ( this.emissiveIntensity !== 1 ) data.emissiveIntensity = this.emissiveIntensity;
+
+			if ( this.specular && this.specular.isColor ) data.specular = this.specular.getHex();
+			if ( this.shininess !== undefined ) data.shininess = this.shininess;
+			if ( this.clearCoat !== undefined ) data.clearCoat = this.clearCoat;
+			if ( this.clearCoatRoughness !== undefined ) data.clearCoatRoughness = this.clearCoatRoughness;
+
+			if ( this.map && this.map.isTexture ) data.map = this.map.toJSON( meta ).uuid;
+			if ( this.alphaMap && this.alphaMap.isTexture ) data.alphaMap = this.alphaMap.toJSON( meta ).uuid;
+			if ( this.lightMap && this.lightMap.isTexture ) data.lightMap = this.lightMap.toJSON( meta ).uuid;
+
+			if ( this.aoMap && this.aoMap.isTexture ) {
+
+				data.aoMap = this.aoMap.toJSON( meta ).uuid;
+				data.aoMapIntensity = this.aoMapIntensity;
+
+			}
+
+			if ( this.bumpMap && this.bumpMap.isTexture ) {
+
+				data.bumpMap = this.bumpMap.toJSON( meta ).uuid;
+				data.bumpScale = this.bumpScale;
+
+			}
+
+			if ( this.normalMap && this.normalMap.isTexture ) {
+
+				data.normalMap = this.normalMap.toJSON( meta ).uuid;
+				data.normalMapType = this.normalMapType;
+				data.normalScale = this.normalScale.toArray();
+
+			}
+
+			if ( this.displacementMap && this.displacementMap.isTexture ) {
+
+				data.displacementMap = this.displacementMap.toJSON( meta ).uuid;
+				data.displacementScale = this.displacementScale;
+				data.displacementBias = this.displacementBias;
+
+			}
+
+			if ( this.roughnessMap && this.roughnessMap.isTexture ) data.roughnessMap = this.roughnessMap.toJSON( meta ).uuid;
+			if ( this.metalnessMap && this.metalnessMap.isTexture ) data.metalnessMap = this.metalnessMap.toJSON( meta ).uuid;
+
+			if ( this.emissiveMap && this.emissiveMap.isTexture ) data.emissiveMap = this.emissiveMap.toJSON( meta ).uuid;
+			if ( this.specularMap && this.specularMap.isTexture ) data.specularMap = this.specularMap.toJSON( meta ).uuid;
+
+			if ( this.envMap && this.envMap.isTexture ) {
+
+				data.envMap = this.envMap.toJSON( meta ).uuid;
+				data.reflectivity = this.reflectivity; // Scale behind envMap
+
+				if ( this.combine !== undefined ) data.combine = this.combine;
+				if ( this.envMapIntensity !== undefined ) data.envMapIntensity = this.envMapIntensity;
+
+			}
+
+			if ( this.gradientMap && this.gradientMap.isTexture ) {
+
+				data.gradientMap = this.gradientMap.toJSON( meta ).uuid;
+
+			}
+
+			if ( this.size !== undefined ) data.size = this.size;
+			if ( this.sizeAttenuation !== undefined ) data.sizeAttenuation = this.sizeAttenuation;
+
+			if ( this.blending !== NormalBlending ) data.blending = this.blending;
+			if ( this.flatShading === true ) data.flatShading = this.flatShading;
+			if ( this.side !== FrontSide ) data.side = this.side;
+			if ( this.vertexColors !== NoColors ) data.vertexColors = this.vertexColors;
+
+			if ( this.opacity < 1 ) data.opacity = this.opacity;
+			if ( this.transparent === true ) data.transparent = this.transparent;
+
+			data.depthFunc = this.depthFunc;
+			data.depthTest = this.depthTest;
+			data.depthWrite = this.depthWrite;
+
+			// rotation (SpriteMaterial)
+			if ( this.rotation !== 0 ) data.rotation = this.rotation;
+
+			if ( this.polygonOffset === true ) data.polygonOffset = true;
+			if ( this.polygonOffsetFactor !== 0 ) data.polygonOffsetFactor = this.polygonOffsetFactor;
+			if ( this.polygonOffsetUnits !== 0 ) data.polygonOffsetUnits = this.polygonOffsetUnits;
+
+			if ( this.linewidth !== 1 ) data.linewidth = this.linewidth;
+			if ( this.dashSize !== undefined ) data.dashSize = this.dashSize;
+			if ( this.gapSize !== undefined ) data.gapSize = this.gapSize;
+			if ( this.scale !== undefined ) data.scale = this.scale;
+
+			if ( this.dithering === true ) data.dithering = true;
+
+			if ( this.alphaTest > 0 ) data.alphaTest = this.alphaTest;
+			if ( this.premultipliedAlpha === true ) data.premultipliedAlpha = this.premultipliedAlpha;
+
+			if ( this.wireframe === true ) data.wireframe = this.wireframe;
+			if ( this.wireframeLinewidth > 1 ) data.wireframeLinewidth = this.wireframeLinewidth;
+			if ( this.wireframeLinecap !== 'round' ) data.wireframeLinecap = this.wireframeLinecap;
+			if ( this.wireframeLinejoin !== 'round' ) data.wireframeLinejoin = this.wireframeLinejoin;
+
+			if ( this.morphTargets === true ) data.morphTargets = true;
+			if ( this.skinning === true ) data.skinning = true;
+
+			if ( this.visible === false ) data.visible = false;
+			if ( JSON.stringify( this.userData ) !== '{}' ) data.userData = this.userData;
+
+			// TODO: Copied from Object3D.toJSON
+
+			function extractFromCache( cache ) {
+
+				var values = [];
+
+				for ( var key in cache ) {
+
+					var data = cache[ key ];
+					delete data.metadata;
+					values.push( data );
+
+				}
+
+				return values;
+
+			}
+
+			if ( isRoot ) {
+
+				var textures = extractFromCache( meta.textures );
+				var images = extractFromCache( meta.images );
+
+				if ( textures.length > 0 ) data.textures = textures;
+				if ( images.length > 0 ) data.images = images;
+
+			}
+
+			return data;
 
 		},
 
-		extractUrlBase: function ( url ) {
+		clone: function () {
 
-			var index = url.lastIndexOf( '/' );
-
-			if ( index === - 1 ) return './';
-
-			return url.substr( 0, index + 1 );
-
-		}
-
-	};
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var VTKLoader = function ( manager ) {
-
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
-
-	};
-
-	Object.assign( VTKLoader.prototype, EventDispatcher.prototype, {
-
-		load: function ( url, onLoad, onProgress, onError ) {
-
-			var scope = this;
-
-			var loader = new FileLoader( scope.manager );
-			loader.setPath( scope.path );
-			loader.setResponseType( 'arraybuffer' );
-			loader.load( url, function ( text ) {
-
-				onLoad( scope.parse( text ) );
-
-			}, onProgress, onError );
+			return new this.constructor().copy( this );
 
 		},
 
-		setPath: function ( value ) {
+		copy: function ( source ) {
 
-			this.path = value;
+			this.name = source.name;
+
+			this.fog = source.fog;
+			this.lights = source.lights;
+
+			this.blending = source.blending;
+			this.side = source.side;
+			this.flatShading = source.flatShading;
+			this.vertexColors = source.vertexColors;
+
+			this.opacity = source.opacity;
+			this.transparent = source.transparent;
+
+			this.blendSrc = source.blendSrc;
+			this.blendDst = source.blendDst;
+			this.blendEquation = source.blendEquation;
+			this.blendSrcAlpha = source.blendSrcAlpha;
+			this.blendDstAlpha = source.blendDstAlpha;
+			this.blendEquationAlpha = source.blendEquationAlpha;
+
+			this.depthFunc = source.depthFunc;
+			this.depthTest = source.depthTest;
+			this.depthWrite = source.depthWrite;
+
+			this.colorWrite = source.colorWrite;
+
+			this.precision = source.precision;
+
+			this.polygonOffset = source.polygonOffset;
+			this.polygonOffsetFactor = source.polygonOffsetFactor;
+			this.polygonOffsetUnits = source.polygonOffsetUnits;
+
+			this.dithering = source.dithering;
+
+			this.alphaTest = source.alphaTest;
+			this.premultipliedAlpha = source.premultipliedAlpha;
+
+			this.visible = source.visible;
+			this.userData = JSON.parse( JSON.stringify( source.userData ) );
+
+			this.clipShadows = source.clipShadows;
+			this.clipIntersection = source.clipIntersection;
+
+			var srcPlanes = source.clippingPlanes,
+				dstPlanes = null;
+
+			if ( srcPlanes !== null ) {
+
+				var n = srcPlanes.length;
+				dstPlanes = new Array( n );
+
+				for ( var i = 0; i !== n; ++ i )
+					dstPlanes[ i ] = srcPlanes[ i ].clone();
+
+			}
+
+			this.clippingPlanes = dstPlanes;
+
+			this.shadowSide = source.shadowSide;
+
 			return this;
 
 		},
 
-		parse: function ( data ) {
+		dispose: function () {
 
-			function parseASCII( data ) {
-
-				// connectivity of the triangles
-				var indices = [];
-
-				// triangles vertices
-				var positions = [];
-
-				// red, green, blue colors in the range 0 to 1
-				var colors = [];
-
-				// normal vector, one per vertex
-				var normals = [];
-
-				var result;
-
-				// pattern for reading vertices, 3 floats or integers
-				var pat3Floats = /(\-?\d+\.?[\d\-\+e]*)\s+(\-?\d+\.?[\d\-\+e]*)\s+(\-?\d+\.?[\d\-\+e]*)/g;
-
-				// pattern for connectivity, an integer followed by any number of ints
-				// the first integer is the number of polygon nodes
-				var patConnectivity = /^(\d+)\s+([\s\d]*)/;
-
-				// indicates start of vertex data section
-				var patPOINTS = /^POINTS /;
-
-				// indicates start of polygon connectivity section
-				var patPOLYGONS = /^POLYGONS /;
-
-				// indicates start of triangle strips section
-				var patTRIANGLE_STRIPS = /^TRIANGLE_STRIPS /;
-
-				// POINT_DATA number_of_values
-				var patPOINT_DATA = /^POINT_DATA[ ]+(\d+)/;
-
-				// CELL_DATA number_of_polys
-				var patCELL_DATA = /^CELL_DATA[ ]+(\d+)/;
-
-				// Start of color section
-				var patCOLOR_SCALARS = /^COLOR_SCALARS[ ]+(\w+)[ ]+3/;
-
-				// NORMALS Normals float
-				var patNORMALS = /^NORMALS[ ]+(\w+)[ ]+(\w+)/;
-
-				var inPointsSection = false;
-				var inPolygonsSection = false;
-				var inTriangleStripSection = false;
-				var inPointDataSection = false;
-				var inCellDataSection = false;
-				var inColorSection = false;
-				var inNormalsSection = false;
-
-				var lines = data.split( '\n' );
-
-				for ( var i in lines ) {
-
-					var line = lines[ i ];
-
-					if ( inPointsSection ) {
-
-						// get the vertices
-						while ( ( result = pat3Floats.exec( line ) ) !== null ) {
-
-							var x = parseFloat( result[ 1 ] );
-							var y = parseFloat( result[ 2 ] );
-							var z = parseFloat( result[ 3 ] );
-							positions.push( x, y, z );
-
-						}
-
-					} else if ( inPolygonsSection ) {
-
-						if ( ( result = patConnectivity.exec( line ) ) !== null ) {
-
-							// numVertices i0 i1 i2 ...
-							var numVertices = parseInt( result[ 1 ] );
-							var inds = result[ 2 ].split( /\s+/ );
-
-							if ( numVertices >= 3 ) {
-
-								var i0 = parseInt( inds[ 0 ] );
-								var i1, i2;
-								var k = 1;
-								// split the polygon in numVertices - 2 triangles
-								for ( var j = 0; j < numVertices - 2; ++ j ) {
-
-									i1 = parseInt( inds[ k ] );
-									i2 = parseInt( inds[ k + 1 ] );
-									indices.push( i0, i1, i2 );
-									k ++;
-
-								}
-
-							}
-
-						}
-
-					} else if ( inTriangleStripSection ) {
-
-						if ( ( result = patConnectivity.exec( line ) ) !== null ) {
-
-							// numVertices i0 i1 i2 ...
-							var numVertices = parseInt( result[ 1 ] );
-							var inds = result[ 2 ].split( /\s+/ );
-
-							if ( numVertices >= 3 ) {
-
-								var i0, i1, i2;
-								// split the polygon in numVertices - 2 triangles
-								for ( var j = 0; j < numVertices - 2; j ++ ) {
-
-									if ( j % 2 === 1 ) {
-
-										i0 = parseInt( inds[ j ] );
-										i1 = parseInt( inds[ j + 2 ] );
-										i2 = parseInt( inds[ j + 1 ] );
-										indices.push( i0, i1, i2 );
-
-									} else {
-
-										i0 = parseInt( inds[ j ] );
-										i1 = parseInt( inds[ j + 1 ] );
-										i2 = parseInt( inds[ j + 2 ] );
-										indices.push( i0, i1, i2 );
-
-									}
-
-								}
-
-							}
-
-						}
-
-					} else if ( inPointDataSection || inCellDataSection ) {
-
-						if ( inColorSection ) {
-
-							// Get the colors
-
-							while ( ( result = pat3Floats.exec( line ) ) !== null ) {
-
-								var r = parseFloat( result[ 1 ] );
-								var g = parseFloat( result[ 2 ] );
-								var b = parseFloat( result[ 3 ] );
-								colors.push( r, g, b );
-
-							}
-
-						} else if ( inNormalsSection ) {
-
-							// Get the normal vectors
-
-							while ( ( result = pat3Floats.exec( line ) ) !== null ) {
-
-								var nx = parseFloat( result[ 1 ] );
-								var ny = parseFloat( result[ 2 ] );
-								var nz = parseFloat( result[ 3 ] );
-								normals.push( nx, ny, nz );
-
-							}
-
-						}
-
-					}
-
-					if ( patPOLYGONS.exec( line ) !== null ) {
-
-						inPolygonsSection = true;
-						inPointsSection = false;
-						inTriangleStripSection = false;
-
-					} else if ( patPOINTS.exec( line ) !== null ) {
-
-						inPolygonsSection = false;
-						inPointsSection = true;
-						inTriangleStripSection = false;
-
-					} else if ( patTRIANGLE_STRIPS.exec( line ) !== null ) {
-
-						inPolygonsSection = false;
-						inPointsSection = false;
-						inTriangleStripSection = true;
-
-					} else if ( patPOINT_DATA.exec( line ) !== null ) {
-
-						inPointDataSection = true;
-						inPointsSection = false;
-						inPolygonsSection = false;
-						inTriangleStripSection = false;
-
-					} else if ( patCELL_DATA.exec( line ) !== null ) {
-
-						inCellDataSection = true;
-						inPointsSection = false;
-						inPolygonsSection = false;
-						inTriangleStripSection = false;
-
-					} else if ( patCOLOR_SCALARS.exec( line ) !== null ) {
-
-						inColorSection = true;
-						inNormalsSection = false;
-						inPointsSection = false;
-						inPolygonsSection = false;
-						inTriangleStripSection = false;
-
-					} else if ( patNORMALS.exec( line ) !== null ) {
-
-						inNormalsSection = true;
-						inColorSection = false;
-						inPointsSection = false;
-						inPolygonsSection = false;
-						inTriangleStripSection = false;
-
-					}
-
-				}
-
-				var geometry = new BufferGeometry();
-				geometry.setIndex( indices );
-				geometry.addAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
-
-				if ( normals.length === positions.length ) {
-
-					geometry.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
-
-				}
-
-				if ( colors.length !== indices.length ) {
-
-					// stagger
-
-					if ( colors.length === positions.length ) {
-
-						geometry.addAttribute( 'color', new Float32BufferAttribute( colors, 3 ) );
-
-					}
-
-				} else {
-
-					// cell
-
-					geometry = geometry.toNonIndexed();
-					var numTriangles = geometry.attributes.position.count / 3;
-
-					if ( colors.length === ( numTriangles * 3 ) ) {
-
-						var newColors = [];
-
-						for ( var i = 0; i < numTriangles; i ++ ) {
-
-							var r = colors[ 3 * i + 0 ];
-							var g = colors[ 3 * i + 1 ];
-							var b = colors[ 3 * i + 2 ];
-
-							newColors.push( r, g, b );
-							newColors.push( r, g, b );
-							newColors.push( r, g, b );
-
-						}
-
-						geometry.addAttribute( 'color', new Float32BufferAttribute( newColors, 3 ) );
-
-					}
-
-				}
-
-				return geometry;
-
-			}
-
-			function parseBinary( data ) {
-
-				var count, pointIndex, i, numberOfPoints, s;
-				var buffer = new Uint8Array( data );
-				var dataView = new DataView( data );
-
-				// Points and normals, by default, are empty
-				var points = [];
-				var normals = [];
-				var indices = [];
-				var index = 0;
-
-				function findString( buffer, start ) {
-
-					var index = start;
-					var c = buffer[ index ];
-					var s = [];
-					while ( c !== 10 ) {
-
-						s.push( String.fromCharCode( c ) );
-						index ++;
-						c = buffer[ index ];
-
-					}
-
-					return { start: start,
-						end: index,
-						next: index + 1,
-						parsedString: s.join( '' ) };
-
-				}
-
-				var state, line;
-
-				while ( true ) {
-
-					// Get a string
-					state = findString( buffer, index );
-					line = state.parsedString;
-
-					if ( line.indexOf( 'POINTS' ) === 0 ) {
-						// Add the points
-						numberOfPoints = parseInt( line.split( ' ' )[ 1 ], 10 );
-
-						// Each point is 3 4-byte floats
-						count = numberOfPoints * 4 * 3;
-
-						points = new Float32Array( numberOfPoints * 3 );
-
-						pointIndex = state.next;
-						for ( i = 0; i < numberOfPoints; i ++ ) {
-
-							points[ 3 * i ] = dataView.getFloat32( pointIndex, false );
-							points[ 3 * i + 1 ] = dataView.getFloat32( pointIndex + 4, false );
-							points[ 3 * i + 2 ] = dataView.getFloat32( pointIndex + 8, false );
-							pointIndex = pointIndex + 12;
-
-						}
-						// increment our next pointer
-						state.next = state.next + count + 1;
-
-					} else if ( line.indexOf( 'TRIANGLE_STRIPS' ) === 0 ) {
-
-						var numberOfStrips = parseInt( line.split( ' ' )[ 1 ], 10 );
-						var size = parseInt( line.split( ' ' )[ 2 ], 10 );
-						// 4 byte integers
-						count = size * 4;
-
-						indices = new Uint32Array( 3 * size - 9 * numberOfStrips );
-						var indicesIndex = 0;
-
-						pointIndex = state.next;
-						for ( i = 0; i < numberOfStrips; i ++ ) {
-
-							// For each strip, read the first value, then record that many more points
-							var indexCount = dataView.getInt32( pointIndex, false );
-							var strip = [];
-							pointIndex += 4;
-							for ( s = 0; s < indexCount; s ++ ) {
-
-								strip.push( dataView.getInt32( pointIndex, false ) );
-								pointIndex += 4;
-
-							}
-
-							// retrieves the n-2 triangles from the triangle strip
-							for ( var j = 0; j < indexCount - 2; j ++ ) {
-
-								if ( j % 2 ) {
-
-									indices[ indicesIndex ++ ] = strip[ j ];
-									indices[ indicesIndex ++ ] = strip[ j + 2 ];
-									indices[ indicesIndex ++ ] = strip[ j + 1 ];
-
-								} else {
-									indices[ indicesIndex ++ ] = strip[ j ];
-									indices[ indicesIndex ++ ] = strip[ j + 1 ];
-									indices[ indicesIndex ++ ] = strip[ j + 2 ];
-
-								}
-
-							}
-
-						}
-						// increment our next pointer
-						state.next = state.next + count + 1;
-
-					} else if ( line.indexOf( 'POLYGONS' ) === 0 ) {
-
-						var numberOfStrips = parseInt( line.split( ' ' )[ 1 ], 10 );
-						var size = parseInt( line.split( ' ' )[ 2 ], 10 );
-						// 4 byte integers
-						count = size * 4;
-
-						indices = new Uint32Array( 3 * size - 9 * numberOfStrips );
-						var indicesIndex = 0;
-
-						pointIndex = state.next;
-						for ( i = 0; i < numberOfStrips; i ++ ) {
-
-							// For each strip, read the first value, then record that many more points
-							var indexCount = dataView.getInt32( pointIndex, false );
-							var strip = [];
-							pointIndex += 4;
-							for ( s = 0; s < indexCount; s ++ ) {
-
-								strip.push( dataView.getInt32( pointIndex, false ) );
-								pointIndex += 4;
-
-							}
-
-							// divide the polygon in n-2 triangle
-							for ( var j = 1; j < indexCount - 1; j ++ ) {
-
-								indices[ indicesIndex ++ ] = strip[ 0 ];
-								indices[ indicesIndex ++ ] = strip[ j ];
-								indices[ indicesIndex ++ ] = strip[ j + 1 ];
-
-							}
-
-						}
-						// increment our next pointer
-						state.next = state.next + count + 1;
-
-					} else if ( line.indexOf( 'POINT_DATA' ) === 0 ) {
-
-						numberOfPoints = parseInt( line.split( ' ' )[ 1 ], 10 );
-
-						// Grab the next line
-						state = findString( buffer, state.next );
-
-						// Now grab the binary data
-						count = numberOfPoints * 4 * 3;
-
-						normals = new Float32Array( numberOfPoints * 3 );
-						pointIndex = state.next;
-						for ( i = 0; i < numberOfPoints; i ++ ) {
-
-							normals[ 3 * i ] = dataView.getFloat32( pointIndex, false );
-							normals[ 3 * i + 1 ] = dataView.getFloat32( pointIndex + 4, false );
-							normals[ 3 * i + 2 ] = dataView.getFloat32( pointIndex + 8, false );
-							pointIndex += 12;
-
-						}
-
-						// Increment past our data
-						state.next = state.next + count;
-
-					}
-
-					// Increment index
-					index = state.next;
-
-					if ( index >= buffer.byteLength ) {
-
-						break;
-
-					}
-
-				}
-
-				var geometry = new BufferGeometry();
-				geometry.setIndex( new BufferAttribute( indices, 1 ) );
-				geometry.addAttribute( 'position', new BufferAttribute( points, 3 ) );
-
-				if ( normals.length === points.length ) {
-
-					geometry.addAttribute( 'normal', new BufferAttribute( normals, 3 ) );
-
-				}
-
-				return geometry;
-
-			}
-
-			function Float32Concat( first, second ) {
-
-			    var firstLength = first.length, result = new Float32Array( firstLength + second.length );
-
-			    result.set( first );
-			    result.set( second, firstLength );
-
-			    return result;
-
-			}
-
-			function Int32Concat( first, second ) {
-
-			    var firstLength = first.length, result = new Int32Array( firstLength + second.length );
-
-			    result.set( first );
-			    result.set( second, firstLength );
-
-			    return result;
-
-			}
-
-			function parseXML( stringFile ) {
-
-				// Changes XML to JSON, based on https://davidwalsh.name/convert-xml-json
-
-				function xmlToJson( xml ) {
-
-					// Create the return object
-					var obj = {};
-
-					if ( xml.nodeType === 1 ) { // element
-
-						// do attributes
-
-						if ( xml.attributes ) {
-
-							if ( xml.attributes.length > 0 ) {
-
-								obj[ 'attributes' ] = {};
-
-								for ( var j = 0; j < xml.attributes.length; j ++ ) {
-
-									var attribute = xml.attributes.item( j );
-									obj[ 'attributes' ][ attribute.nodeName ] = attribute.nodeValue.trim();
-
-								}
-
-							}
-
-						}
-
-					} else if ( xml.nodeType === 3 ) { // text
-
-						obj = xml.nodeValue.trim();
-
-					}
-
-					// do children
-					if ( xml.hasChildNodes() ) {
-
-						for ( var i = 0; i < xml.childNodes.length; i ++ ) {
-
-							var item = xml.childNodes.item( i );
-							var nodeName = item.nodeName;
-
-							if ( typeof obj[ nodeName ] === 'undefined' ) {
-
-								var tmp = xmlToJson( item );
-
-								if ( tmp !== '' ) obj[ nodeName ] = tmp;
-
-							} else {
-
-								if ( typeof obj[ nodeName ].push === 'undefined' ) {
-
-									var old = obj[ nodeName ];
-									obj[ nodeName ] = [ old ];
-
-								}
-
-								var tmp = xmlToJson( item );
-
-								if ( tmp !== '' ) obj[ nodeName ].push( tmp );
-
-							}
-
-						}
-
-					}
-
-					return obj;
-
-				}
-
-				// Taken from Base64-js
-				function Base64toByteArray( b64 ) {
-
-					var Arr = typeof Uint8Array !== 'undefined' ? Uint8Array : Array;
-					var i;
-					var lookup = [];
-					var revLookup = [];
-					var code = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-					var len = code.length;
-
-					for ( i = 0; i < len; i ++ ) {
-
-						lookup[ i ] = code[ i ];
-
-					}
-
-					for ( i = 0; i < len; ++ i ) {
-
-						revLookup[ code.charCodeAt( i ) ] = i;
-
-					}
-
-					revLookup[ '-'.charCodeAt( 0 ) ] = 62;
-					revLookup[ '_'.charCodeAt( 0 ) ] = 63;
-
-					var j, l, tmp, placeHolders, arr;
-					var len = b64.length;
-
-					if ( len % 4 > 0 ) {
-
-						throw new Error( 'Invalid string. Length must be a multiple of 4' );
-
-					}
-
-					placeHolders = b64[ len - 2 ] === '=' ? 2 : b64[ len - 1 ] === '=' ? 1 : 0;
-					arr = new Arr( len * 3 / 4 - placeHolders );
-					l = placeHolders > 0 ? len - 4 : len;
-
-					var L = 0;
-
-					for ( i = 0, j = 0; i < l; i += 4, j += 3 ) {
-
-						tmp = ( revLookup[ b64.charCodeAt( i ) ] << 18 ) | ( revLookup[ b64.charCodeAt( i + 1 ) ] << 12 ) | ( revLookup[ b64.charCodeAt( i + 2 ) ] << 6 ) | revLookup[ b64.charCodeAt( i + 3 ) ];
-						arr[ L ++ ] = ( tmp & 0xFF0000 ) >> 16;
-						arr[ L ++ ] = ( tmp & 0xFF00 ) >> 8;
-						arr[ L ++ ] = tmp & 0xFF;
-
-					}
-
-					if ( placeHolders === 2 ) {
-
-						tmp = ( revLookup[ b64.charCodeAt( i ) ] << 2 ) | ( revLookup[ b64.charCodeAt( i + 1 ) ] >> 4 );
-						arr[ L ++ ] = tmp & 0xFF;
-
-					} else if ( placeHolders === 1 ) {
-
-						tmp = ( revLookup[ b64.charCodeAt( i ) ] << 10 ) | ( revLookup[ b64.charCodeAt( i + 1 ) ] << 4 ) | ( revLookup[ b64.charCodeAt( i + 2 ) ] >> 2 );
-						arr[ L ++ ] = ( tmp >> 8 ) & 0xFF;
-						arr[ L ++ ] = tmp & 0xFF;
-
-					}
-
-					return arr;
-
-				}
-
-				function parseDataArray( ele, compressed ) {
-
-					var numBytes = 0;
-
-					if ( json.attributes.header_type === 'UInt64' ) {
-
-						numBytes = 8;
-
-					}	else if ( json.attributes.header_type === 'UInt32' ) {
-
-						numBytes = 4;
-
-					}
-					// Check the format
-					if ( ele.attributes.format === 'binary' && compressed ) {
-
-						var rawData, content, byteData, blocks, cSizeStart, headerSize, padding, dataOffsets, currentOffset;
-
-						if ( ele.attributes.type === 'Float32' ) {
-
-							var txt = new Float32Array( );
-
-						} else if ( ele.attributes.type === 'Int64' ) {
-
-							var txt = new Int32Array( );
-
-						}
-
-						// VTP data with the header has the following structure:
-						// [#blocks][#u-size][#p-size][#c-size-1][#c-size-2]...[#c-size-#blocks][DATA]
-						//
-						// Each token is an integer value whose type is specified by "header_type" at the top of the file (UInt32 if no type specified). The token meanings are:
-						// [#blocks] = Number of blocks
-						// [#u-size] = Block size before compression
-						// [#p-size] = Size of last partial block (zero if it not needed)
-						// [#c-size-i] = Size in bytes of block i after compression
-						//
-						// The [DATA] portion stores contiguously every block appended together. The offset from the beginning of the data section to the beginning of a block is
-						// computed by summing the compressed block sizes from preceding blocks according to the header.
-
-						rawData = ele[ '#text' ];
-
-						byteData = Base64toByteArray( rawData );
-
-						blocks = byteData[ 0 ];
-						for ( var i = 1; i < numBytes - 1; i ++ ) {
-
-							blocks = blocks | ( byteData[ i ] << ( i * numBytes ) );
-
-						}
-
-						headerSize = ( blocks + 3 ) * numBytes;
-						padding = ( ( headerSize % 3 ) > 0 ) ? 3 - ( headerSize % 3 ) : 0;
-						headerSize = headerSize + padding;
-
-						dataOffsets = [];
-						currentOffset = headerSize;
-						dataOffsets.push( currentOffset );
-
-						// Get the blocks sizes after the compression.
-						// There are three blocks before c-size-i, so we skip 3*numBytes
-						cSizeStart = 3 * numBytes;
-
-						for ( var i = 0; i < blocks; i ++ ) {
-
-							var currentBlockSize = byteData[ i * numBytes + cSizeStart ];
-
-							for ( var j = 1; j < numBytes - 1; j ++ ) {
-
-								// Each data point consists of 8 bytes regardless of the header type
-								currentBlockSize = currentBlockSize | ( byteData[ i * numBytes + cSizeStart + j ] << ( j * 8 ) );
-
-							}
-
-							currentOffset = currentOffset + currentBlockSize;
-							dataOffsets.push( currentOffset );
-
-						}
-
-						for ( var i = 0; i < dataOffsets.length - 1; i ++ ) {
-
-							var inflate = new Zlib.Inflate( byteData.slice( dataOffsets[ i ], dataOffsets[ i + 1 ] ), { resize: true, verify: true } ); // eslint-disable-line no-undef
-							content = inflate.decompress();
-							content = content.buffer;
-
-							if ( ele.attributes.type === 'Float32' ) {
-
-								content = new Float32Array( content );
-								txt = Float32Concat( txt, content );
-
-							} else if ( ele.attributes.type === 'Int64' ) {
-
-								content = new Int32Array( content );
-								txt = Int32Concat( txt, content );
-
-							}
-
-						}
-
-						delete ele[ '#text' ];
-
-						if ( ele.attributes.type === 'Int64' ) {
-
-							if ( ele.attributes.format === 'binary' ) {
-
-								txt = txt.filter( function ( el, idx ) {
-
-									if ( idx % 2 !== 1 ) return true;
-
-								} );
-
-							}
-
-						}
-
-					} else {
-
-						if ( ele.attributes.format === 'binary' && ! compressed ) {
-
-							var content = Base64toByteArray( ele[ '#text' ] );
-
-							//  VTP data for the uncompressed case has the following structure:
-							// [#bytes][DATA]
-							// where "[#bytes]" is an integer value specifying the number of bytes in the block of data following it.
-							content = content.slice( numBytes ).buffer;
-
-						} else {
-
-							if ( ele[ '#text' ] ) {
-
-								var content = ele[ '#text' ].split( /\s+/ ).filter( function ( el ) {
-
-									if ( el !== '' ) return el;
-
-								} );
-
-							} else {
-
-								var content = new Int32Array( 0 ).buffer;
-
-							}
-
-						}
-
-						delete ele[ '#text' ];
-
-						// Get the content and optimize it
-						if ( ele.attributes.type === 'Float32' ) {
-
-							var txt = new Float32Array( content );
-
-						} else if ( ele.attributes.type === 'Int32' ) {
-
-							var txt = new Int32Array( content );
-
-						} else if ( ele.attributes.type === 'Int64' ) {
-
-							var txt = new Int32Array( content );
-
-							if ( ele.attributes.format === 'binary' ) {
-
-								txt = txt.filter( function ( el, idx ) {
-
-									if ( idx % 2 !== 1 ) return true;
-
-								} );
-
-							}
-
-						}
-
-					} // endif ( ele.attributes.format === 'binary' && compressed )
-
-					return txt;
-
-				}
-
-				// Main part
-				// Get Dom
-				var dom = null;
-
-				if ( window.DOMParser ) {
-
-					try {
-
-						dom = ( new DOMParser() ).parseFromString( stringFile, 'text/xml' );
-
-					} catch ( e ) {
-
-						dom = null;
-
-					}
-
-				} else if ( window.ActiveXObject ) {
-
-					try {
-
-						dom = new ActiveXObject( 'Microsoft.XMLDOM' ); // eslint-disable-line no-undef
-						dom.async = false;
-
-						if ( ! dom.loadXML(  ) ) {
-
-							throw new Error( dom.parseError.reason + dom.parseError.srcText );
-
-						}
-
-					} catch ( e ) {
-
-						dom = null;
-
-					}
-
-				} else {
-
-					throw new Error( 'Cannot parse xml string!' );
-
-				}
-
-				// Get the doc
-				var doc = dom.documentElement;
-				// Convert to json
-				var json = xmlToJson( doc );
-				var points = [];
-				var normals = [];
-				var indices = [];
-
-				if ( json.PolyData ) {
-
-					var piece = json.PolyData.Piece;
-					var compressed = json.attributes.hasOwnProperty( 'compressor' );
-
-					// Can be optimized
-					// Loop through the sections
-					var sections = [ 'PointData', 'Points', 'Strips', 'Polys' ];// +['CellData', 'Verts', 'Lines'];
-					var sectionIndex = 0, numberOfSections = sections.length;
-
-					while ( sectionIndex < numberOfSections ) {
-
-						var section = piece[ sections[ sectionIndex ] ];
-
-						// If it has a DataArray in it
-
-						if ( section && section.DataArray ) {
-
-							// Depending on the number of DataArrays
-
-							if ( Object.prototype.toString.call( section.DataArray ) === '[object Array]' ) {
-
-								var arr = section.DataArray;
-
-							} else {
-
-								var arr = [ section.DataArray ];
-
-							}
-
-							var dataArrayIndex = 0, numberOfDataArrays = arr.length;
-
-							while ( dataArrayIndex < numberOfDataArrays ) {
-
-								// Parse the DataArray
-								if ( ( '#text' in arr[ dataArrayIndex ] ) && ( arr[ dataArrayIndex ][ '#text' ].length > 0 ) ) {
-
-									arr[ dataArrayIndex ].text = parseDataArray( arr[ dataArrayIndex ], compressed );
-
-								}
-
-								dataArrayIndex ++;
-
-							}
-
-							switch ( sections[ sectionIndex ] ) {
-
-								// if iti is point data
-								case 'PointData':
-
-									var numberOfPoints = parseInt( piece.attributes.NumberOfPoints );
-									var normalsName = section.attributes.Normals;
-
-									if ( numberOfPoints > 0 ) {
-
-										for ( var i = 0, len = arr.length; i < len; i ++ ) {
-
-											if ( normalsName === arr[ i ].attributes.Name ) {
-
-												var components = arr[ i ].attributes.NumberOfComponents;
-												normals = new Float32Array( numberOfPoints * components );
-												normals.set( arr[ i ].text, 0 );
-
-											}
-
-										}
-
-									}
-
-									break;
-
-								// if it is points
-								case 'Points':
-
-									var numberOfPoints = parseInt( piece.attributes.NumberOfPoints );
-
-									if ( numberOfPoints > 0 ) {
-
-										var components = section.DataArray.attributes.NumberOfComponents;
-										points = new Float32Array( numberOfPoints * components );
-										points.set( section.DataArray.text, 0 );
-
-									}
-
-									break;
-
-								// if it is strips
-								case 'Strips':
-
-									var numberOfStrips = parseInt( piece.attributes.NumberOfStrips );
-
-									if ( numberOfStrips > 0 ) {
-
-										var connectivity = new Int32Array( section.DataArray[ 0 ].text.length );
-										var offset = new Int32Array( section.DataArray[ 1 ].text.length );
-										connectivity.set( section.DataArray[ 0 ].text, 0 );
-										offset.set( section.DataArray[ 1 ].text, 0 );
-
-										var size = numberOfStrips + connectivity.length;
-										indices = new Uint32Array( 3 * size - 9 * numberOfStrips );
-
-										var indicesIndex = 0;
-
-										for ( var i = 0, len = numberOfStrips; i < len; i ++ ) {
-
-											var strip = [];
-
-											for ( var s = 0, len1 = offset[ i ], len0 = 0; s < len1 - len0; s ++ ) {
-
-												strip.push( connectivity[ s ] );
-
-												if ( i > 0 ) len0 = offset[ i - 1 ];
-
-											}
-
-											for ( var j = 0, len1 = offset[ i ], len0 = 0; j < len1 - len0 - 2; j ++ ) {
-
-												if ( j % 2 ) {
-
-													indices[ indicesIndex ++ ] = strip[ j ];
-													indices[ indicesIndex ++ ] = strip[ j + 2 ];
-													indices[ indicesIndex ++ ] = strip[ j + 1 ];
-
-												} else {
-
-													indices[ indicesIndex ++ ] = strip[ j ];
-													indices[ indicesIndex ++ ] = strip[ j + 1 ];
-													indices[ indicesIndex ++ ] = strip[ j + 2 ];
-
-												}
-
-												if ( i > 0 ) len0 = offset[ i - 1 ];
-
-											}
-
-										}
-
-									}
-
-									break;
-
-								// if it is polys
-								case 'Polys':
-
-									var numberOfPolys = parseInt( piece.attributes.NumberOfPolys );
-
-									if ( numberOfPolys > 0 ) {
-
-										var connectivity = new Int32Array( section.DataArray[ 0 ].text.length );
-										var offset = new Int32Array( section.DataArray[ 1 ].text.length );
-										connectivity.set( section.DataArray[ 0 ].text, 0 );
-										offset.set( section.DataArray[ 1 ].text, 0 );
-
-										var size = numberOfPolys + connectivity.length;
-										indices = new Uint32Array( 3 * size - 9 * numberOfPolys );
-										var indicesIndex = 0, connectivityIndex = 0;
-										var i = 0, len = numberOfPolys, len0 = 0;
-
-										while ( i < len ) {
-
-											var poly = [];
-											var s = 0, len1 = offset[ i ];
-
-											while ( s < len1 - len0 ) {
-
-												poly.push( connectivity[ connectivityIndex ++ ] );
-												s ++;
-
-											}
-
-											var j = 1;
-
-											while ( j < len1 - len0 - 1 ) {
-
-												indices[ indicesIndex ++ ] = poly[ 0 ];
-												indices[ indicesIndex ++ ] = poly[ j ];
-												indices[ indicesIndex ++ ] = poly[ j + 1 ];
-												j ++;
-
-											}
-
-											i ++;
-											len0 = offset[ i - 1 ];
-
-										}
-
-									}
-
-									break;
-
-								default:
-									break;
-
-							}
-
-						}
-
-						sectionIndex ++;
-
-					}
-
-					var geometry = new BufferGeometry();
-					geometry.setIndex( new BufferAttribute( indices, 1 ) );
-					geometry.addAttribute( 'position', new BufferAttribute( points, 3 ) );
-
-					if ( normals.length === points.length ) {
-
-						geometry.addAttribute( 'normal', new BufferAttribute( normals, 3 ) );
-
-					}
-
-					return geometry;
-
-				}
-
-			}
-
-			function getStringFile( data ) {
-
-				var stringFile = '';
-				var charArray = new Uint8Array( data );
-				var i = 0;
-				var len = charArray.length;
-
-				while ( len -- ) {
-
-					stringFile += String.fromCharCode( charArray[ i ++ ] );
-
-				}
-
-				return stringFile;
-
-			}
-
-			// get the 5 first lines of the files to check if there is the key word binary
-			var meta = LoaderUtils.decodeText( new Uint8Array( data, 0, 250 ) ).split( '\n' );
-
-			if ( meta[ 0 ].indexOf( 'xml' ) !== - 1 ) {
-
-				return parseXML( getStringFile( data ) );
-
-			} else if ( meta[ 2 ].includes( 'ASCII' ) ) {
-
-				return parseASCII( getStringFile( data ) );
-
-			} else {
-
-				return parseBinary( data );
-
-			}
+			this.dispatchEvent( { type: 'dispose' } );
 
 		}
 
 	} );
 
-	exports.VTKLoader = VTKLoader;
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function LineBasicMaterial( parameters ) {
+
+		Material.call( this );
+
+		this.type = 'LineBasicMaterial';
+
+		this.color = new Color( 0xffffff );
+
+		this.linewidth = 1;
+		this.linecap = 'round';
+		this.linejoin = 'round';
+
+		this.lights = false;
+
+		this.setValues( parameters );
+
+	}
+
+	LineBasicMaterial.prototype = Object.create( Material.prototype );
+	LineBasicMaterial.prototype.constructor = LineBasicMaterial;
+
+	LineBasicMaterial.prototype.isLineBasicMaterial = true;
+
+	LineBasicMaterial.prototype.copy = function ( source ) {
+
+		Material.prototype.copy.call( this, source );
+
+		this.color.copy( source.color );
+
+		this.linewidth = source.linewidth;
+		this.linecap = source.linecap;
+		this.linejoin = source.linejoin;
+
+		return this;
+
+	};
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function Ray( origin, direction ) {
+
+		this.origin = ( origin !== undefined ) ? origin : new Vector3();
+		this.direction = ( direction !== undefined ) ? direction : new Vector3();
+
+	}
+
+	Object.assign( Ray.prototype, {
+
+		set: function ( origin, direction ) {
+
+			this.origin.copy( origin );
+			this.direction.copy( direction );
+
+			return this;
+
+		},
+
+		clone: function () {
+
+			return new this.constructor().copy( this );
+
+		},
+
+		copy: function ( ray ) {
+
+			this.origin.copy( ray.origin );
+			this.direction.copy( ray.direction );
+
+			return this;
+
+		},
+
+		at: function ( t, target ) {
+
+			if ( target === undefined ) {
+
+				console.warn( 'Ray: .at() target is now required' );
+				target = new Vector3();
+
+			}
+
+			return target.copy( this.direction ).multiplyScalar( t ).add( this.origin );
+
+		},
+
+		lookAt: function ( v ) {
+
+			this.direction.copy( v ).sub( this.origin ).normalize();
+
+			return this;
+
+		},
+
+		recast: function () {
+
+			var v1 = new Vector3();
+
+			return function recast( t ) {
+
+				this.origin.copy( this.at( t, v1 ) );
+
+				return this;
+
+			};
+
+		}(),
+
+		closestPointToPoint: function ( point, target ) {
+
+			if ( target === undefined ) {
+
+				console.warn( 'Ray: .closestPointToPoint() target is now required' );
+				target = new Vector3();
+
+			}
+
+			target.subVectors( point, this.origin );
+
+			var directionDistance = target.dot( this.direction );
+
+			if ( directionDistance < 0 ) {
+
+				return target.copy( this.origin );
+
+			}
+
+			return target.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
+
+		},
+
+		distanceToPoint: function ( point ) {
+
+			return Math.sqrt( this.distanceSqToPoint( point ) );
+
+		},
+
+		distanceSqToPoint: function () {
+
+			var v1 = new Vector3();
+
+			return function distanceSqToPoint( point ) {
+
+				var directionDistance = v1.subVectors( point, this.origin ).dot( this.direction );
+
+				// point behind the ray
+
+				if ( directionDistance < 0 ) {
+
+					return this.origin.distanceToSquared( point );
+
+				}
+
+				v1.copy( this.direction ).multiplyScalar( directionDistance ).add( this.origin );
+
+				return v1.distanceToSquared( point );
+
+			};
+
+		}(),
+
+		distanceSqToSegment: function () {
+
+			var segCenter = new Vector3();
+			var segDir = new Vector3();
+			var diff = new Vector3();
+
+			return function distanceSqToSegment( v0, v1, optionalPointOnRay, optionalPointOnSegment ) {
+
+				// from http://www.geometrictools.com/GTEngine/Include/Mathematics/GteDistRaySegment.h
+				// It returns the min distance between the ray and the segment
+				// defined by v0 and v1
+				// It can also set two optional targets :
+				// - The closest point on the ray
+				// - The closest point on the segment
+
+				segCenter.copy( v0 ).add( v1 ).multiplyScalar( 0.5 );
+				segDir.copy( v1 ).sub( v0 ).normalize();
+				diff.copy( this.origin ).sub( segCenter );
+
+				var segExtent = v0.distanceTo( v1 ) * 0.5;
+				var a01 = - this.direction.dot( segDir );
+				var b0 = diff.dot( this.direction );
+				var b1 = - diff.dot( segDir );
+				var c = diff.lengthSq();
+				var det = Math.abs( 1 - a01 * a01 );
+				var s0, s1, sqrDist, extDet;
+
+				if ( det > 0 ) {
+
+					// The ray and segment are not parallel.
+
+					s0 = a01 * b1 - b0;
+					s1 = a01 * b0 - b1;
+					extDet = segExtent * det;
+
+					if ( s0 >= 0 ) {
+
+						if ( s1 >= - extDet ) {
+
+							if ( s1 <= extDet ) {
+
+								// region 0
+								// Minimum at interior points of ray and segment.
+
+								var invDet = 1 / det;
+								s0 *= invDet;
+								s1 *= invDet;
+								sqrDist = s0 * ( s0 + a01 * s1 + 2 * b0 ) + s1 * ( a01 * s0 + s1 + 2 * b1 ) + c;
+
+							} else {
+
+								// region 1
+
+								s1 = segExtent;
+								s0 = Math.max( 0, - ( a01 * s1 + b0 ) );
+								sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+
+							}
+
+						} else {
+
+							// region 5
+
+							s1 = - segExtent;
+							s0 = Math.max( 0, - ( a01 * s1 + b0 ) );
+							sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+
+						}
+
+					} else {
+
+						if ( s1 <= - extDet ) {
+
+							// region 4
+
+							s0 = Math.max( 0, - ( - a01 * segExtent + b0 ) );
+							s1 = ( s0 > 0 ) ? - segExtent : Math.min( Math.max( - segExtent, - b1 ), segExtent );
+							sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+
+						} else if ( s1 <= extDet ) {
+
+							// region 3
+
+							s0 = 0;
+							s1 = Math.min( Math.max( - segExtent, - b1 ), segExtent );
+							sqrDist = s1 * ( s1 + 2 * b1 ) + c;
+
+						} else {
+
+							// region 2
+
+							s0 = Math.max( 0, - ( a01 * segExtent + b0 ) );
+							s1 = ( s0 > 0 ) ? segExtent : Math.min( Math.max( - segExtent, - b1 ), segExtent );
+							sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+
+						}
+
+					}
+
+				} else {
+
+					// Ray and segment are parallel.
+
+					s1 = ( a01 > 0 ) ? - segExtent : segExtent;
+					s0 = Math.max( 0, - ( a01 * s1 + b0 ) );
+					sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+
+				}
+
+				if ( optionalPointOnRay ) {
+
+					optionalPointOnRay.copy( this.direction ).multiplyScalar( s0 ).add( this.origin );
+
+				}
+
+				if ( optionalPointOnSegment ) {
+
+					optionalPointOnSegment.copy( segDir ).multiplyScalar( s1 ).add( segCenter );
+
+				}
+
+				return sqrDist;
+
+			};
+
+		}(),
+
+		intersectSphere: function () {
+
+			var v1 = new Vector3();
+
+			return function intersectSphere( sphere, target ) {
+
+				v1.subVectors( sphere.center, this.origin );
+				var tca = v1.dot( this.direction );
+				var d2 = v1.dot( v1 ) - tca * tca;
+				var radius2 = sphere.radius * sphere.radius;
+
+				if ( d2 > radius2 ) return null;
+
+				var thc = Math.sqrt( radius2 - d2 );
+
+				// t0 = first intersect point - entrance on front of sphere
+				var t0 = tca - thc;
+
+				// t1 = second intersect point - exit point on back of sphere
+				var t1 = tca + thc;
+
+				// test to see if both t0 and t1 are behind the ray - if so, return null
+				if ( t0 < 0 && t1 < 0 ) return null;
+
+				// test to see if t0 is behind the ray:
+				// if it is, the ray is inside the sphere, so return the second exit point scaled by t1,
+				// in order to always return an intersect point that is in front of the ray.
+				if ( t0 < 0 ) return this.at( t1, target );
+
+				// else t0 is in front of the ray, so return the first collision point scaled by t0
+				return this.at( t0, target );
+
+			};
+
+		}(),
+
+		intersectsSphere: function ( sphere ) {
+
+			return this.distanceSqToPoint( sphere.center ) <= ( sphere.radius * sphere.radius );
+
+		},
+
+		distanceToPlane: function ( plane ) {
+
+			var denominator = plane.normal.dot( this.direction );
+
+			if ( denominator === 0 ) {
+
+				// line is coplanar, return origin
+				if ( plane.distanceToPoint( this.origin ) === 0 ) {
+
+					return 0;
+
+				}
+
+				// Null is preferable to undefined since undefined means.... it is undefined
+
+				return null;
+
+			}
+
+			var t = - ( this.origin.dot( plane.normal ) + plane.constant ) / denominator;
+
+			// Return if the ray never intersects the plane
+
+			return t >= 0 ? t : null;
+
+		},
+
+		intersectPlane: function ( plane, target ) {
+
+			var t = this.distanceToPlane( plane );
+
+			if ( t === null ) {
+
+				return null;
+
+			}
+
+			return this.at( t, target );
+
+		},
+
+		intersectsPlane: function ( plane ) {
+
+			// check if the ray lies on the plane first
+
+			var distToPoint = plane.distanceToPoint( this.origin );
+
+			if ( distToPoint === 0 ) {
+
+				return true;
+
+			}
+
+			var denominator = plane.normal.dot( this.direction );
+
+			if ( denominator * distToPoint < 0 ) {
+
+				return true;
+
+			}
+
+			// ray origin is behind the plane (and is pointing behind it)
+
+			return false;
+
+		},
+
+		intersectBox: function ( box, target ) {
+
+			var tmin, tmax, tymin, tymax, tzmin, tzmax;
+
+			var invdirx = 1 / this.direction.x,
+				invdiry = 1 / this.direction.y,
+				invdirz = 1 / this.direction.z;
+
+			var origin = this.origin;
+
+			if ( invdirx >= 0 ) {
+
+				tmin = ( box.min.x - origin.x ) * invdirx;
+				tmax = ( box.max.x - origin.x ) * invdirx;
+
+			} else {
+
+				tmin = ( box.max.x - origin.x ) * invdirx;
+				tmax = ( box.min.x - origin.x ) * invdirx;
+
+			}
+
+			if ( invdiry >= 0 ) {
+
+				tymin = ( box.min.y - origin.y ) * invdiry;
+				tymax = ( box.max.y - origin.y ) * invdiry;
+
+			} else {
+
+				tymin = ( box.max.y - origin.y ) * invdiry;
+				tymax = ( box.min.y - origin.y ) * invdiry;
+
+			}
+
+			if ( ( tmin > tymax ) || ( tymin > tmax ) ) return null;
+
+			// These lines also handle the case where tmin or tmax is NaN
+			// (result of 0 * Infinity). x !== x returns true if x is NaN
+
+			if ( tymin > tmin || tmin !== tmin ) tmin = tymin;
+
+			if ( tymax < tmax || tmax !== tmax ) tmax = tymax;
+
+			if ( invdirz >= 0 ) {
+
+				tzmin = ( box.min.z - origin.z ) * invdirz;
+				tzmax = ( box.max.z - origin.z ) * invdirz;
+
+			} else {
+
+				tzmin = ( box.max.z - origin.z ) * invdirz;
+				tzmax = ( box.min.z - origin.z ) * invdirz;
+
+			}
+
+			if ( ( tmin > tzmax ) || ( tzmin > tmax ) ) return null;
+
+			if ( tzmin > tmin || tmin !== tmin ) tmin = tzmin;
+
+			if ( tzmax < tmax || tmax !== tmax ) tmax = tzmax;
+
+			//return point closest to the ray (positive side)
+
+			if ( tmax < 0 ) return null;
+
+			return this.at( tmin >= 0 ? tmin : tmax, target );
+
+		},
+
+		intersectsBox: ( function () {
+
+			var v = new Vector3();
+
+			return function intersectsBox( box ) {
+
+				return this.intersectBox( box, v ) !== null;
+
+			};
+
+		} )(),
+
+		intersectTriangle: function () {
+
+			// Compute the offset origin, edges, and normal.
+			var diff = new Vector3();
+			var edge1 = new Vector3();
+			var edge2 = new Vector3();
+			var normal = new Vector3();
+
+			return function intersectTriangle( a, b, c, backfaceCulling, target ) {
+
+				// from http://www.geometrictools.com/GTEngine/Include/Mathematics/GteIntrRay3Triangle3.h
+
+				edge1.subVectors( b, a );
+				edge2.subVectors( c, a );
+				normal.crossVectors( edge1, edge2 );
+
+				// Solve Q + t*D = b1*E1 + b2*E2 (Q = kDiff, D = ray direction,
+				// E1 = kEdge1, E2 = kEdge2, N = Cross(E1,E2)) by
+				//   |Dot(D,N)|*b1 = sign(Dot(D,N))*Dot(D,Cross(Q,E2))
+				//   |Dot(D,N)|*b2 = sign(Dot(D,N))*Dot(D,Cross(E1,Q))
+				//   |Dot(D,N)|*t = -sign(Dot(D,N))*Dot(Q,N)
+				var DdN = this.direction.dot( normal );
+				var sign;
+
+				if ( DdN > 0 ) {
+
+					if ( backfaceCulling ) return null;
+					sign = 1;
+
+				} else if ( DdN < 0 ) {
+
+					sign = - 1;
+					DdN = - DdN;
+
+				} else {
+
+					return null;
+
+				}
+
+				diff.subVectors( this.origin, a );
+				var DdQxE2 = sign * this.direction.dot( edge2.crossVectors( diff, edge2 ) );
+
+				// b1 < 0, no intersection
+				if ( DdQxE2 < 0 ) {
+
+					return null;
+
+				}
+
+				var DdE1xQ = sign * this.direction.dot( edge1.cross( diff ) );
+
+				// b2 < 0, no intersection
+				if ( DdE1xQ < 0 ) {
+
+					return null;
+
+				}
+
+				// b1+b2 > 1, no intersection
+				if ( DdQxE2 + DdE1xQ > DdN ) {
+
+					return null;
+
+				}
+
+				// Line intersects triangle, check if ray does.
+				var QdN = - sign * diff.dot( normal );
+
+				// t < 0, no intersection
+				if ( QdN < 0 ) {
+
+					return null;
+
+				}
+
+				// Ray intersects triangle.
+				return this.at( QdN / DdN, target );
+
+			};
+
+		}(),
+
+		applyMatrix4: function ( matrix4 ) {
+
+			this.origin.applyMatrix4( matrix4 );
+			this.direction.transformDirection( matrix4 );
+
+			return this;
+
+		},
+
+		equals: function ( ray ) {
+
+			return ray.origin.equals( this.origin ) && ray.direction.equals( this.direction );
+
+		}
+
+	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function Line( geometry, material, mode ) {
+
+		if ( mode === 1 ) {
+
+			console.error( 'Line: parameter LinePieces no longer supported. Use LineSegments instead.' );
+
+		}
+
+		Object3D.call( this );
+
+		this.type = 'Line';
+
+		this.geometry = geometry !== undefined ? geometry : new BufferGeometry();
+		this.material = material !== undefined ? material : new LineBasicMaterial( { color: Math.random() * 0xffffff } );
+
+	}
+
+	Line.prototype = Object.assign( Object.create( Object3D.prototype ), {
+
+		constructor: Line,
+
+		isLine: true,
+
+		computeLineDistances: ( function () {
+
+			var start = new Vector3();
+			var end = new Vector3();
+
+			return function computeLineDistances() {
+
+				var geometry = this.geometry;
+
+				if ( geometry.isBufferGeometry ) {
+
+					// we assume non-indexed geometry
+
+					if ( geometry.index === null ) {
+
+						var positionAttribute = geometry.attributes.position;
+						var lineDistances = [ 0 ];
+
+						for ( var i = 1, l = positionAttribute.count; i < l; i ++ ) {
+
+							start.fromBufferAttribute( positionAttribute, i - 1 );
+							end.fromBufferAttribute( positionAttribute, i );
+
+							lineDistances[ i ] = lineDistances[ i - 1 ];
+							lineDistances[ i ] += start.distanceTo( end );
+
+						}
+
+						geometry.addAttribute( 'lineDistance', new Float32BufferAttribute( lineDistances, 1 ) );
+
+					} else {
+
+						console.warn( 'Line.computeLineDistances(): Computation only possible with non-indexed BufferGeometry.' );
+
+					}
+
+				} else if ( geometry.isGeometry ) {
+
+					var vertices = geometry.vertices;
+					var lineDistances = geometry.lineDistances;
+
+					lineDistances[ 0 ] = 0;
+
+					for ( var i = 1, l = vertices.length; i < l; i ++ ) {
+
+						lineDistances[ i ] = lineDistances[ i - 1 ];
+						lineDistances[ i ] += vertices[ i - 1 ].distanceTo( vertices[ i ] );
+
+					}
+
+				}
+
+				return this;
+
+			};
+
+		}() ),
+
+		raycast: ( function () {
+
+			var inverseMatrix = new Matrix4();
+			var ray = new Ray();
+			var sphere = new Sphere();
+
+			return function raycast( raycaster, intersects ) {
+
+				var precision = raycaster.linePrecision;
+
+				var geometry = this.geometry;
+				var matrixWorld = this.matrixWorld;
+
+				// Checking boundingSphere distance to ray
+
+				if ( geometry.boundingSphere === null ) geometry.computeBoundingSphere();
+
+				sphere.copy( geometry.boundingSphere );
+				sphere.applyMatrix4( matrixWorld );
+				sphere.radius += precision;
+
+				if ( raycaster.ray.intersectsSphere( sphere ) === false ) return;
+
+				//
+
+				inverseMatrix.getInverse( matrixWorld );
+				ray.copy( raycaster.ray ).applyMatrix4( inverseMatrix );
+
+				var localPrecision = precision / ( ( this.scale.x + this.scale.y + this.scale.z ) / 3 );
+				var localPrecisionSq = localPrecision * localPrecision;
+
+				var vStart = new Vector3();
+				var vEnd = new Vector3();
+				var interSegment = new Vector3();
+				var interRay = new Vector3();
+				var step = ( this && this.isLineSegments ) ? 2 : 1;
+
+				if ( geometry.isBufferGeometry ) {
+
+					var index = geometry.index;
+					var attributes = geometry.attributes;
+					var positions = attributes.position.array;
+
+					if ( index !== null ) {
+
+						var indices = index.array;
+
+						for ( var i = 0, l = indices.length - 1; i < l; i += step ) {
+
+							var a = indices[ i ];
+							var b = indices[ i + 1 ];
+
+							vStart.fromArray( positions, a * 3 );
+							vEnd.fromArray( positions, b * 3 );
+
+							var distSq = ray.distanceSqToSegment( vStart, vEnd, interRay, interSegment );
+
+							if ( distSq > localPrecisionSq ) continue;
+
+							interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
+
+							var distance = raycaster.ray.origin.distanceTo( interRay );
+
+							if ( distance < raycaster.near || distance > raycaster.far ) continue;
+
+							intersects.push( {
+
+								distance: distance,
+								// What do we want? intersection point on the ray or on the segment??
+								// point: raycaster.ray.at( distance ),
+								point: interSegment.clone().applyMatrix4( this.matrixWorld ),
+								index: i,
+								face: null,
+								faceIndex: null,
+								object: this
+
+							} );
+
+						}
+
+					} else {
+
+						for ( var i = 0, l = positions.length / 3 - 1; i < l; i += step ) {
+
+							vStart.fromArray( positions, 3 * i );
+							vEnd.fromArray( positions, 3 * i + 3 );
+
+							var distSq = ray.distanceSqToSegment( vStart, vEnd, interRay, interSegment );
+
+							if ( distSq > localPrecisionSq ) continue;
+
+							interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
+
+							var distance = raycaster.ray.origin.distanceTo( interRay );
+
+							if ( distance < raycaster.near || distance > raycaster.far ) continue;
+
+							intersects.push( {
+
+								distance: distance,
+								// What do we want? intersection point on the ray or on the segment??
+								// point: raycaster.ray.at( distance ),
+								point: interSegment.clone().applyMatrix4( this.matrixWorld ),
+								index: i,
+								face: null,
+								faceIndex: null,
+								object: this
+
+							} );
+
+						}
+
+					}
+
+				} else if ( geometry.isGeometry ) {
+
+					var vertices = geometry.vertices;
+					var nbVertices = vertices.length;
+
+					for ( var i = 0; i < nbVertices - 1; i += step ) {
+
+						var distSq = ray.distanceSqToSegment( vertices[ i ], vertices[ i + 1 ], interRay, interSegment );
+
+						if ( distSq > localPrecisionSq ) continue;
+
+						interRay.applyMatrix4( this.matrixWorld ); //Move back to world space for distance calculation
+
+						var distance = raycaster.ray.origin.distanceTo( interRay );
+
+						if ( distance < raycaster.near || distance > raycaster.far ) continue;
+
+						intersects.push( {
+
+							distance: distance,
+							// What do we want? intersection point on the ray or on the segment??
+							// point: raycaster.ray.at( distance ),
+							point: interSegment.clone().applyMatrix4( this.matrixWorld ),
+							index: i,
+							face: null,
+							faceIndex: null,
+							object: this
+
+						} );
+
+					}
+
+				}
+
+			};
+
+		}() ),
+
+		copy: function ( source ) {
+
+			Object3D.prototype.copy.call( this, source );
+
+			this.geometry.copy( source.geometry );
+			this.material.copy( source.material );
+
+			return this;
+
+		},
+
+		clone: function () {
+
+			return new this.constructor().copy( this );
+
+		}
+
+	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	function PositionalAudioHelper( audio, range, divisionsInnerAngle, divisionsOuterAngle ) {
+
+		this.audio = audio;
+		this.range = range || 1;
+		this.divisionsInnerAngle = divisionsInnerAngle || 16;
+		this.divisionsOuterAngle = divisionsOuterAngle || 2;
+
+		var geometry = new BufferGeometry();
+		var divisions = this.divisionsInnerAngle + this.divisionsOuterAngle * 2;
+		var positions = new Float32Array( ( divisions * 3 + 3 ) * 3 );
+		geometry.addAttribute( 'position', new BufferAttribute( positions, 3 ) );
+
+		var materialInnerAngle = new LineBasicMaterial( { color: 0x00ff00 } );
+		var materialOuterAngle = new LineBasicMaterial( { color: 0xffff00 } );
+
+		Line.call( this, geometry, [ materialOuterAngle, materialInnerAngle ] );
+
+		this.update();
+
+	}
+
+	PositionalAudioHelper.prototype = Object.create( Line.prototype );
+	PositionalAudioHelper.prototype.constructor = PositionalAudioHelper;
+
+	PositionalAudioHelper.prototype.update = function () {
+
+		var audio = this.audio;
+		var range = this.range;
+		var divisionsInnerAngle = this.divisionsInnerAngle;
+		var divisionsOuterAngle = this.divisionsOuterAngle;
+
+		var coneInnerAngle = _Math.degToRad( audio.panner.coneInnerAngle );
+		var coneOuterAngle = _Math.degToRad( audio.panner.coneOuterAngle );
+
+		var halfConeInnerAngle = coneInnerAngle / 2;
+		var halfConeOuterAngle = coneOuterAngle / 2;
+
+		var start = 0;
+		var count = 0;
+		var i, stride;
+
+		var geometry = this.geometry;
+		var positionAttribute = geometry.attributes.position;
+
+		geometry.clearGroups();
+
+		//
+
+		function generateSegment( from, to, divisions, materialIndex ) {
+
+			var step = ( to - from ) / divisions;
+
+			positionAttribute.setXYZ( start, 0, 0, 0 );
+			count ++;
+
+			for ( i = from; i < to; i += step ) {
+
+				stride = start + count;
+
+				positionAttribute.setXYZ( stride, Math.sin( i ) * range, 0, Math.cos( i ) * range );
+				positionAttribute.setXYZ( stride + 1, Math.sin( Math.min( i + step, to ) ) * range, 0, Math.cos( Math.min( i + step, to ) ) * range );
+				positionAttribute.setXYZ( stride + 2, 0, 0, 0 );
+
+				count += 3;
+
+			}
+
+			geometry.addGroup( start, count, materialIndex );
+
+			start += count;
+			count = 0;
+
+		}
+
+		//
+
+		generateSegment( - halfConeOuterAngle, - halfConeInnerAngle, divisionsOuterAngle, 0 );
+		generateSegment( - halfConeInnerAngle, halfConeInnerAngle, divisionsInnerAngle, 1 );
+		generateSegment( halfConeInnerAngle, halfConeOuterAngle, divisionsOuterAngle, 0 );
+
+		//
+
+		positionAttribute.needsUpdate = true;
+
+		if ( coneInnerAngle === coneOuterAngle ) this.material[ 0 ].visible = false;
+
+	};
+
+	PositionalAudioHelper.prototype.dispose = function () {
+
+		this.geometry.dispose();
+		this.material[ 0 ].dispose();
+		this.material[ 1 ].dispose();
+
+	};
+
+	exports.PositionalAudioHelper = PositionalAudioHelper;
 
 	return exports;
 

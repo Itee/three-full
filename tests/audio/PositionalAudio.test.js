@@ -4580,7 +4580,7 @@ var Three = (function (exports) {
 
 				Object3D.prototype.updateMatrixWorld.call( this, force );
 
-				if ( this.isPlaying === false ) return;
+				if ( this.hasPlaybackControl === true && this.isPlaying === false ) return;
 
 				this.matrixWorld.decompose( position, quaternion, scale );
 

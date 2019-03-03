@@ -4161,6 +4161,603 @@ var Three = (function (exports) {
 	ImmediateRenderObject.prototype.isImmediateRenderObject = true;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
+		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
+		'brown': 0xA52A2A, 'burlywood': 0xDEB887, 'cadetblue': 0x5F9EA0, 'chartreuse': 0x7FFF00, 'chocolate': 0xD2691E, 'coral': 0xFF7F50,
+		'cornflowerblue': 0x6495ED, 'cornsilk': 0xFFF8DC, 'crimson': 0xDC143C, 'cyan': 0x00FFFF, 'darkblue': 0x00008B, 'darkcyan': 0x008B8B,
+		'darkgoldenrod': 0xB8860B, 'darkgray': 0xA9A9A9, 'darkgreen': 0x006400, 'darkgrey': 0xA9A9A9, 'darkkhaki': 0xBDB76B, 'darkmagenta': 0x8B008B,
+		'darkolivegreen': 0x556B2F, 'darkorange': 0xFF8C00, 'darkorchid': 0x9932CC, 'darkred': 0x8B0000, 'darksalmon': 0xE9967A, 'darkseagreen': 0x8FBC8F,
+		'darkslateblue': 0x483D8B, 'darkslategray': 0x2F4F4F, 'darkslategrey': 0x2F4F4F, 'darkturquoise': 0x00CED1, 'darkviolet': 0x9400D3,
+		'deeppink': 0xFF1493, 'deepskyblue': 0x00BFFF, 'dimgray': 0x696969, 'dimgrey': 0x696969, 'dodgerblue': 0x1E90FF, 'firebrick': 0xB22222,
+		'floralwhite': 0xFFFAF0, 'forestgreen': 0x228B22, 'fuchsia': 0xFF00FF, 'gainsboro': 0xDCDCDC, 'ghostwhite': 0xF8F8FF, 'gold': 0xFFD700,
+		'goldenrod': 0xDAA520, 'gray': 0x808080, 'green': 0x008000, 'greenyellow': 0xADFF2F, 'grey': 0x808080, 'honeydew': 0xF0FFF0, 'hotpink': 0xFF69B4,
+		'indianred': 0xCD5C5C, 'indigo': 0x4B0082, 'ivory': 0xFFFFF0, 'khaki': 0xF0E68C, 'lavender': 0xE6E6FA, 'lavenderblush': 0xFFF0F5, 'lawngreen': 0x7CFC00,
+		'lemonchiffon': 0xFFFACD, 'lightblue': 0xADD8E6, 'lightcoral': 0xF08080, 'lightcyan': 0xE0FFFF, 'lightgoldenrodyellow': 0xFAFAD2, 'lightgray': 0xD3D3D3,
+		'lightgreen': 0x90EE90, 'lightgrey': 0xD3D3D3, 'lightpink': 0xFFB6C1, 'lightsalmon': 0xFFA07A, 'lightseagreen': 0x20B2AA, 'lightskyblue': 0x87CEFA,
+		'lightslategray': 0x778899, 'lightslategrey': 0x778899, 'lightsteelblue': 0xB0C4DE, 'lightyellow': 0xFFFFE0, 'lime': 0x00FF00, 'limegreen': 0x32CD32,
+		'linen': 0xFAF0E6, 'magenta': 0xFF00FF, 'maroon': 0x800000, 'mediumaquamarine': 0x66CDAA, 'mediumblue': 0x0000CD, 'mediumorchid': 0xBA55D3,
+		'mediumpurple': 0x9370DB, 'mediumseagreen': 0x3CB371, 'mediumslateblue': 0x7B68EE, 'mediumspringgreen': 0x00FA9A, 'mediumturquoise': 0x48D1CC,
+		'mediumvioletred': 0xC71585, 'midnightblue': 0x191970, 'mintcream': 0xF5FFFA, 'mistyrose': 0xFFE4E1, 'moccasin': 0xFFE4B5, 'navajowhite': 0xFFDEAD,
+		'navy': 0x000080, 'oldlace': 0xFDF5E6, 'olive': 0x808000, 'olivedrab': 0x6B8E23, 'orange': 0xFFA500, 'orangered': 0xFF4500, 'orchid': 0xDA70D6,
+		'palegoldenrod': 0xEEE8AA, 'palegreen': 0x98FB98, 'paleturquoise': 0xAFEEEE, 'palevioletred': 0xDB7093, 'papayawhip': 0xFFEFD5, 'peachpuff': 0xFFDAB9,
+		'peru': 0xCD853F, 'pink': 0xFFC0CB, 'plum': 0xDDA0DD, 'powderblue': 0xB0E0E6, 'purple': 0x800080, 'rebeccapurple': 0x663399, 'red': 0xFF0000, 'rosybrown': 0xBC8F8F,
+		'royalblue': 0x4169E1, 'saddlebrown': 0x8B4513, 'salmon': 0xFA8072, 'sandybrown': 0xF4A460, 'seagreen': 0x2E8B57, 'seashell': 0xFFF5EE,
+		'sienna': 0xA0522D, 'silver': 0xC0C0C0, 'skyblue': 0x87CEEB, 'slateblue': 0x6A5ACD, 'slategray': 0x708090, 'slategrey': 0x708090, 'snow': 0xFFFAFA,
+		'springgreen': 0x00FF7F, 'steelblue': 0x4682B4, 'tan': 0xD2B48C, 'teal': 0x008080, 'thistle': 0xD8BFD8, 'tomato': 0xFF6347, 'turquoise': 0x40E0D0,
+		'violet': 0xEE82EE, 'wheat': 0xF5DEB3, 'white': 0xFFFFFF, 'whitesmoke': 0xF5F5F5, 'yellow': 0xFFFF00, 'yellowgreen': 0x9ACD32 };
+
+	function Color( r, g, b ) {
+
+		if ( g === undefined && b === undefined ) {
+
+			// r is Color, hex or string
+			return this.set( r );
+
+		}
+
+		return this.setRGB( r, g, b );
+
+	}
+
+	Object.assign( Color.prototype, {
+
+		isColor: true,
+
+		r: 1, g: 1, b: 1,
+
+		set: function ( value ) {
+
+			if ( value && value.isColor ) {
+
+				this.copy( value );
+
+			} else if ( typeof value === 'number' ) {
+
+				this.setHex( value );
+
+			} else if ( typeof value === 'string' ) {
+
+				this.setStyle( value );
+
+			}
+
+			return this;
+
+		},
+
+		setScalar: function ( scalar ) {
+
+			this.r = scalar;
+			this.g = scalar;
+			this.b = scalar;
+
+			return this;
+
+		},
+
+		setHex: function ( hex ) {
+
+			hex = Math.floor( hex );
+
+			this.r = ( hex >> 16 & 255 ) / 255;
+			this.g = ( hex >> 8 & 255 ) / 255;
+			this.b = ( hex & 255 ) / 255;
+
+			return this;
+
+		},
+
+		setRGB: function ( r, g, b ) {
+
+			this.r = r;
+			this.g = g;
+			this.b = b;
+
+			return this;
+
+		},
+
+		setHSL: function () {
+
+			function hue2rgb( p, q, t ) {
+
+				if ( t < 0 ) t += 1;
+				if ( t > 1 ) t -= 1;
+				if ( t < 1 / 6 ) return p + ( q - p ) * 6 * t;
+				if ( t < 1 / 2 ) return q;
+				if ( t < 2 / 3 ) return p + ( q - p ) * 6 * ( 2 / 3 - t );
+				return p;
+
+			}
+
+			return function setHSL( h, s, l ) {
+
+				// h,s,l ranges are in 0.0 - 1.0
+				h = _Math.euclideanModulo( h, 1 );
+				s = _Math.clamp( s, 0, 1 );
+				l = _Math.clamp( l, 0, 1 );
+
+				if ( s === 0 ) {
+
+					this.r = this.g = this.b = l;
+
+				} else {
+
+					var p = l <= 0.5 ? l * ( 1 + s ) : l + s - ( l * s );
+					var q = ( 2 * l ) - p;
+
+					this.r = hue2rgb( q, p, h + 1 / 3 );
+					this.g = hue2rgb( q, p, h );
+					this.b = hue2rgb( q, p, h - 1 / 3 );
+
+				}
+
+				return this;
+
+			};
+
+		}(),
+
+		setStyle: function ( style ) {
+
+			function handleAlpha( string ) {
+
+				if ( string === undefined ) return;
+
+				if ( parseFloat( string ) < 1 ) {
+
+					console.warn( 'Color: Alpha component of ' + style + ' will be ignored.' );
+
+				}
+
+			}
+			var m;
+
+			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
+
+				// rgb / hsl
+
+				var color;
+				var name = m[ 1 ];
+				var components = m[ 2 ];
+
+				switch ( name ) {
+
+					case 'rgb':
+					case 'rgba':
+
+						if ( color = /^(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*([0-9]*\.?[0-9]+)\s*)?$/.exec( components ) ) {
+
+							// rgb(255,0,0) rgba(255,0,0,0.5)
+							this.r = Math.min( 255, parseInt( color[ 1 ], 10 ) ) / 255;
+							this.g = Math.min( 255, parseInt( color[ 2 ], 10 ) ) / 255;
+							this.b = Math.min( 255, parseInt( color[ 3 ], 10 ) ) / 255;
+
+							handleAlpha( color[ 5 ] );
+
+							return this;
+
+						}
+
+						if ( color = /^(\d+)\%\s*,\s*(\d+)\%\s*,\s*(\d+)\%\s*(,\s*([0-9]*\.?[0-9]+)\s*)?$/.exec( components ) ) {
+
+							// rgb(100%,0%,0%) rgba(100%,0%,0%,0.5)
+							this.r = Math.min( 100, parseInt( color[ 1 ], 10 ) ) / 100;
+							this.g = Math.min( 100, parseInt( color[ 2 ], 10 ) ) / 100;
+							this.b = Math.min( 100, parseInt( color[ 3 ], 10 ) ) / 100;
+
+							handleAlpha( color[ 5 ] );
+
+							return this;
+
+						}
+
+						break;
+
+					case 'hsl':
+					case 'hsla':
+
+						if ( color = /^([0-9]*\.?[0-9]+)\s*,\s*(\d+)\%\s*,\s*(\d+)\%\s*(,\s*([0-9]*\.?[0-9]+)\s*)?$/.exec( components ) ) {
+
+							// hsl(120,50%,50%) hsla(120,50%,50%,0.5)
+							var h = parseFloat( color[ 1 ] ) / 360;
+							var s = parseInt( color[ 2 ], 10 ) / 100;
+							var l = parseInt( color[ 3 ], 10 ) / 100;
+
+							handleAlpha( color[ 5 ] );
+
+							return this.setHSL( h, s, l );
+
+						}
+
+						break;
+
+				}
+
+			} else if ( m = /^\#([A-Fa-f0-9]+)$/.exec( style ) ) {
+
+				// hex color
+
+				var hex = m[ 1 ];
+				var size = hex.length;
+
+				if ( size === 3 ) {
+
+					// #ff0
+					this.r = parseInt( hex.charAt( 0 ) + hex.charAt( 0 ), 16 ) / 255;
+					this.g = parseInt( hex.charAt( 1 ) + hex.charAt( 1 ), 16 ) / 255;
+					this.b = parseInt( hex.charAt( 2 ) + hex.charAt( 2 ), 16 ) / 255;
+
+					return this;
+
+				} else if ( size === 6 ) {
+
+					// #ff0000
+					this.r = parseInt( hex.charAt( 0 ) + hex.charAt( 1 ), 16 ) / 255;
+					this.g = parseInt( hex.charAt( 2 ) + hex.charAt( 3 ), 16 ) / 255;
+					this.b = parseInt( hex.charAt( 4 ) + hex.charAt( 5 ), 16 ) / 255;
+
+					return this;
+
+				}
+
+			}
+
+			if ( style && style.length > 0 ) {
+
+				// color keywords
+				var hex = ColorKeywords[ style ];
+
+				if ( hex !== undefined ) {
+
+					// red
+					this.setHex( hex );
+
+				} else {
+
+					// unknown color
+					console.warn( 'Color: Unknown color ' + style );
+
+				}
+
+			}
+
+			return this;
+
+		},
+
+		clone: function () {
+
+			return new this.constructor( this.r, this.g, this.b );
+
+		},
+
+		copy: function ( color ) {
+
+			this.r = color.r;
+			this.g = color.g;
+			this.b = color.b;
+
+			return this;
+
+		},
+
+		copyGammaToLinear: function ( color, gammaFactor ) {
+
+			if ( gammaFactor === undefined ) gammaFactor = 2.0;
+
+			this.r = Math.pow( color.r, gammaFactor );
+			this.g = Math.pow( color.g, gammaFactor );
+			this.b = Math.pow( color.b, gammaFactor );
+
+			return this;
+
+		},
+
+		copyLinearToGamma: function ( color, gammaFactor ) {
+
+			if ( gammaFactor === undefined ) gammaFactor = 2.0;
+
+			var safeInverse = ( gammaFactor > 0 ) ? ( 1.0 / gammaFactor ) : 1.0;
+
+			this.r = Math.pow( color.r, safeInverse );
+			this.g = Math.pow( color.g, safeInverse );
+			this.b = Math.pow( color.b, safeInverse );
+
+			return this;
+
+		},
+
+		convertGammaToLinear: function ( gammaFactor ) {
+
+			this.copyGammaToLinear( this, gammaFactor );
+
+			return this;
+
+		},
+
+		convertLinearToGamma: function ( gammaFactor ) {
+
+			this.copyLinearToGamma( this, gammaFactor );
+
+			return this;
+
+		},
+
+		copySRGBToLinear: function () {
+
+			function SRGBToLinear( c ) {
+
+				return ( c < 0.04045 ) ? c * 0.0773993808 : Math.pow( c * 0.9478672986 + 0.0521327014, 2.4 );
+
+			}
+
+			return function copySRGBToLinear( color ) {
+
+				this.r = SRGBToLinear( color.r );
+				this.g = SRGBToLinear( color.g );
+				this.b = SRGBToLinear( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		copyLinearToSRGB: function () {
+
+			function LinearToSRGB( c ) {
+
+				return ( c < 0.0031308 ) ? c * 12.92 : 1.055 * ( Math.pow( c, 0.41666 ) ) - 0.055;
+
+			}
+
+			return function copyLinearToSRGB( color ) {
+
+				this.r = LinearToSRGB( color.r );
+				this.g = LinearToSRGB( color.g );
+				this.b = LinearToSRGB( color.b );
+
+				return this;
+
+			};
+
+		}(),
+
+		convertSRGBToLinear: function () {
+
+			this.copySRGBToLinear( this );
+
+			return this;
+
+		},
+
+		convertLinearToSRGB: function () {
+
+			this.copyLinearToSRGB( this );
+
+			return this;
+
+		},
+
+		getHex: function () {
+
+			return ( this.r * 255 ) << 16 ^ ( this.g * 255 ) << 8 ^ ( this.b * 255 ) << 0;
+
+		},
+
+		getHexString: function () {
+
+			return ( '000000' + this.getHex().toString( 16 ) ).slice( - 6 );
+
+		},
+
+		getHSL: function ( target ) {
+
+			// h,s,l ranges are in 0.0 - 1.0
+
+			if ( target === undefined ) {
+
+				console.warn( 'Color: .getHSL() target is now required' );
+				target = { h: 0, s: 0, l: 0 };
+
+			}
+
+			var r = this.r, g = this.g, b = this.b;
+
+			var max = Math.max( r, g, b );
+			var min = Math.min( r, g, b );
+
+			var hue, saturation;
+			var lightness = ( min + max ) / 2.0;
+
+			if ( min === max ) {
+
+				hue = 0;
+				saturation = 0;
+
+			} else {
+
+				var delta = max - min;
+
+				saturation = lightness <= 0.5 ? delta / ( max + min ) : delta / ( 2 - max - min );
+
+				switch ( max ) {
+
+					case r: hue = ( g - b ) / delta + ( g < b ? 6 : 0 ); break;
+					case g: hue = ( b - r ) / delta + 2; break;
+					case b: hue = ( r - g ) / delta + 4; break;
+
+				}
+
+				hue /= 6;
+
+			}
+
+			target.h = hue;
+			target.s = saturation;
+			target.l = lightness;
+
+			return target;
+
+		},
+
+		getStyle: function () {
+
+			return 'rgb(' + ( ( this.r * 255 ) | 0 ) + ',' + ( ( this.g * 255 ) | 0 ) + ',' + ( ( this.b * 255 ) | 0 ) + ')';
+
+		},
+
+		offsetHSL: function () {
+
+			var hsl = {};
+
+			return function ( h, s, l ) {
+
+				this.getHSL( hsl );
+
+				hsl.h += h; hsl.s += s; hsl.l += l;
+
+				this.setHSL( hsl.h, hsl.s, hsl.l );
+
+				return this;
+
+			};
+
+		}(),
+
+		add: function ( color ) {
+
+			this.r += color.r;
+			this.g += color.g;
+			this.b += color.b;
+
+			return this;
+
+		},
+
+		addColors: function ( color1, color2 ) {
+
+			this.r = color1.r + color2.r;
+			this.g = color1.g + color2.g;
+			this.b = color1.b + color2.b;
+
+			return this;
+
+		},
+
+		addScalar: function ( s ) {
+
+			this.r += s;
+			this.g += s;
+			this.b += s;
+
+			return this;
+
+		},
+
+		sub: function ( color ) {
+
+			this.r = Math.max( 0, this.r - color.r );
+			this.g = Math.max( 0, this.g - color.g );
+			this.b = Math.max( 0, this.b - color.b );
+
+			return this;
+
+		},
+
+		multiply: function ( color ) {
+
+			this.r *= color.r;
+			this.g *= color.g;
+			this.b *= color.b;
+
+			return this;
+
+		},
+
+		multiplyScalar: function ( s ) {
+
+			this.r *= s;
+			this.g *= s;
+			this.b *= s;
+
+			return this;
+
+		},
+
+		lerp: function ( color, alpha ) {
+
+			this.r += ( color.r - this.r ) * alpha;
+			this.g += ( color.g - this.g ) * alpha;
+			this.b += ( color.b - this.b ) * alpha;
+
+			return this;
+
+		},
+
+		lerpHSL: function () {
+
+			var hslA = { h: 0, s: 0, l: 0 };
+			var hslB = { h: 0, s: 0, l: 0 };
+
+			return function lerpHSL( color, alpha ) {
+
+				this.getHSL( hslA );
+				color.getHSL( hslB );
+
+				var h = _Math.lerp( hslA.h, hslB.h, alpha );
+				var s = _Math.lerp( hslA.s, hslB.s, alpha );
+				var l = _Math.lerp( hslA.l, hslB.l, alpha );
+
+				this.setHSL( h, s, l );
+
+				return this;
+
+			};
+
+		}(),
+
+		equals: function ( c ) {
+
+			return ( c.r === this.r ) && ( c.g === this.g ) && ( c.b === this.b );
+
+		},
+
+		fromArray: function ( array, offset ) {
+
+			if ( offset === undefined ) offset = 0;
+
+			this.r = array[ offset ];
+			this.g = array[ offset + 1 ];
+			this.b = array[ offset + 2 ];
+
+			return this;
+
+		},
+
+		toArray: function ( array, offset ) {
+
+			if ( array === undefined ) array = [];
+			if ( offset === undefined ) offset = 0;
+
+			array[ offset ] = this.r;
+			array[ offset + 1 ] = this.g;
+			array[ offset + 2 ] = this.b;
+
+			return array;
+
+		},
+
+		toJSON: function () {
+
+			return this.getHex();
+
+		}
+
+	} );
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function Sphere( center, radius ) {
 
 		this.center = ( center !== undefined ) ? center : new Vector3();
@@ -6054,603 +6651,6 @@ var Three = (function (exports) {
 	} );
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	var ColorKeywords = { 'aliceblue': 0xF0F8FF, 'antiquewhite': 0xFAEBD7, 'aqua': 0x00FFFF, 'aquamarine': 0x7FFFD4, 'azure': 0xF0FFFF,
-		'beige': 0xF5F5DC, 'bisque': 0xFFE4C4, 'black': 0x000000, 'blanchedalmond': 0xFFEBCD, 'blue': 0x0000FF, 'blueviolet': 0x8A2BE2,
-		'brown': 0xA52A2A, 'burlywood': 0xDEB887, 'cadetblue': 0x5F9EA0, 'chartreuse': 0x7FFF00, 'chocolate': 0xD2691E, 'coral': 0xFF7F50,
-		'cornflowerblue': 0x6495ED, 'cornsilk': 0xFFF8DC, 'crimson': 0xDC143C, 'cyan': 0x00FFFF, 'darkblue': 0x00008B, 'darkcyan': 0x008B8B,
-		'darkgoldenrod': 0xB8860B, 'darkgray': 0xA9A9A9, 'darkgreen': 0x006400, 'darkgrey': 0xA9A9A9, 'darkkhaki': 0xBDB76B, 'darkmagenta': 0x8B008B,
-		'darkolivegreen': 0x556B2F, 'darkorange': 0xFF8C00, 'darkorchid': 0x9932CC, 'darkred': 0x8B0000, 'darksalmon': 0xE9967A, 'darkseagreen': 0x8FBC8F,
-		'darkslateblue': 0x483D8B, 'darkslategray': 0x2F4F4F, 'darkslategrey': 0x2F4F4F, 'darkturquoise': 0x00CED1, 'darkviolet': 0x9400D3,
-		'deeppink': 0xFF1493, 'deepskyblue': 0x00BFFF, 'dimgray': 0x696969, 'dimgrey': 0x696969, 'dodgerblue': 0x1E90FF, 'firebrick': 0xB22222,
-		'floralwhite': 0xFFFAF0, 'forestgreen': 0x228B22, 'fuchsia': 0xFF00FF, 'gainsboro': 0xDCDCDC, 'ghostwhite': 0xF8F8FF, 'gold': 0xFFD700,
-		'goldenrod': 0xDAA520, 'gray': 0x808080, 'green': 0x008000, 'greenyellow': 0xADFF2F, 'grey': 0x808080, 'honeydew': 0xF0FFF0, 'hotpink': 0xFF69B4,
-		'indianred': 0xCD5C5C, 'indigo': 0x4B0082, 'ivory': 0xFFFFF0, 'khaki': 0xF0E68C, 'lavender': 0xE6E6FA, 'lavenderblush': 0xFFF0F5, 'lawngreen': 0x7CFC00,
-		'lemonchiffon': 0xFFFACD, 'lightblue': 0xADD8E6, 'lightcoral': 0xF08080, 'lightcyan': 0xE0FFFF, 'lightgoldenrodyellow': 0xFAFAD2, 'lightgray': 0xD3D3D3,
-		'lightgreen': 0x90EE90, 'lightgrey': 0xD3D3D3, 'lightpink': 0xFFB6C1, 'lightsalmon': 0xFFA07A, 'lightseagreen': 0x20B2AA, 'lightskyblue': 0x87CEFA,
-		'lightslategray': 0x778899, 'lightslategrey': 0x778899, 'lightsteelblue': 0xB0C4DE, 'lightyellow': 0xFFFFE0, 'lime': 0x00FF00, 'limegreen': 0x32CD32,
-		'linen': 0xFAF0E6, 'magenta': 0xFF00FF, 'maroon': 0x800000, 'mediumaquamarine': 0x66CDAA, 'mediumblue': 0x0000CD, 'mediumorchid': 0xBA55D3,
-		'mediumpurple': 0x9370DB, 'mediumseagreen': 0x3CB371, 'mediumslateblue': 0x7B68EE, 'mediumspringgreen': 0x00FA9A, 'mediumturquoise': 0x48D1CC,
-		'mediumvioletred': 0xC71585, 'midnightblue': 0x191970, 'mintcream': 0xF5FFFA, 'mistyrose': 0xFFE4E1, 'moccasin': 0xFFE4B5, 'navajowhite': 0xFFDEAD,
-		'navy': 0x000080, 'oldlace': 0xFDF5E6, 'olive': 0x808000, 'olivedrab': 0x6B8E23, 'orange': 0xFFA500, 'orangered': 0xFF4500, 'orchid': 0xDA70D6,
-		'palegoldenrod': 0xEEE8AA, 'palegreen': 0x98FB98, 'paleturquoise': 0xAFEEEE, 'palevioletred': 0xDB7093, 'papayawhip': 0xFFEFD5, 'peachpuff': 0xFFDAB9,
-		'peru': 0xCD853F, 'pink': 0xFFC0CB, 'plum': 0xDDA0DD, 'powderblue': 0xB0E0E6, 'purple': 0x800080, 'rebeccapurple': 0x663399, 'red': 0xFF0000, 'rosybrown': 0xBC8F8F,
-		'royalblue': 0x4169E1, 'saddlebrown': 0x8B4513, 'salmon': 0xFA8072, 'sandybrown': 0xF4A460, 'seagreen': 0x2E8B57, 'seashell': 0xFFF5EE,
-		'sienna': 0xA0522D, 'silver': 0xC0C0C0, 'skyblue': 0x87CEEB, 'slateblue': 0x6A5ACD, 'slategray': 0x708090, 'slategrey': 0x708090, 'snow': 0xFFFAFA,
-		'springgreen': 0x00FF7F, 'steelblue': 0x4682B4, 'tan': 0xD2B48C, 'teal': 0x008080, 'thistle': 0xD8BFD8, 'tomato': 0xFF6347, 'turquoise': 0x40E0D0,
-		'violet': 0xEE82EE, 'wheat': 0xF5DEB3, 'white': 0xFFFFFF, 'whitesmoke': 0xF5F5F5, 'yellow': 0xFFFF00, 'yellowgreen': 0x9ACD32 };
-
-	function Color( r, g, b ) {
-
-		if ( g === undefined && b === undefined ) {
-
-			// r is Color, hex or string
-			return this.set( r );
-
-		}
-
-		return this.setRGB( r, g, b );
-
-	}
-
-	Object.assign( Color.prototype, {
-
-		isColor: true,
-
-		r: 1, g: 1, b: 1,
-
-		set: function ( value ) {
-
-			if ( value && value.isColor ) {
-
-				this.copy( value );
-
-			} else if ( typeof value === 'number' ) {
-
-				this.setHex( value );
-
-			} else if ( typeof value === 'string' ) {
-
-				this.setStyle( value );
-
-			}
-
-			return this;
-
-		},
-
-		setScalar: function ( scalar ) {
-
-			this.r = scalar;
-			this.g = scalar;
-			this.b = scalar;
-
-			return this;
-
-		},
-
-		setHex: function ( hex ) {
-
-			hex = Math.floor( hex );
-
-			this.r = ( hex >> 16 & 255 ) / 255;
-			this.g = ( hex >> 8 & 255 ) / 255;
-			this.b = ( hex & 255 ) / 255;
-
-			return this;
-
-		},
-
-		setRGB: function ( r, g, b ) {
-
-			this.r = r;
-			this.g = g;
-			this.b = b;
-
-			return this;
-
-		},
-
-		setHSL: function () {
-
-			function hue2rgb( p, q, t ) {
-
-				if ( t < 0 ) t += 1;
-				if ( t > 1 ) t -= 1;
-				if ( t < 1 / 6 ) return p + ( q - p ) * 6 * t;
-				if ( t < 1 / 2 ) return q;
-				if ( t < 2 / 3 ) return p + ( q - p ) * 6 * ( 2 / 3 - t );
-				return p;
-
-			}
-
-			return function setHSL( h, s, l ) {
-
-				// h,s,l ranges are in 0.0 - 1.0
-				h = _Math.euclideanModulo( h, 1 );
-				s = _Math.clamp( s, 0, 1 );
-				l = _Math.clamp( l, 0, 1 );
-
-				if ( s === 0 ) {
-
-					this.r = this.g = this.b = l;
-
-				} else {
-
-					var p = l <= 0.5 ? l * ( 1 + s ) : l + s - ( l * s );
-					var q = ( 2 * l ) - p;
-
-					this.r = hue2rgb( q, p, h + 1 / 3 );
-					this.g = hue2rgb( q, p, h );
-					this.b = hue2rgb( q, p, h - 1 / 3 );
-
-				}
-
-				return this;
-
-			};
-
-		}(),
-
-		setStyle: function ( style ) {
-
-			function handleAlpha( string ) {
-
-				if ( string === undefined ) return;
-
-				if ( parseFloat( string ) < 1 ) {
-
-					console.warn( 'Color: Alpha component of ' + style + ' will be ignored.' );
-
-				}
-
-			}
-			var m;
-
-			if ( m = /^((?:rgb|hsl)a?)\(\s*([^\)]*)\)/.exec( style ) ) {
-
-				// rgb / hsl
-
-				var color;
-				var name = m[ 1 ];
-				var components = m[ 2 ];
-
-				switch ( name ) {
-
-					case 'rgb':
-					case 'rgba':
-
-						if ( color = /^(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*([0-9]*\.?[0-9]+)\s*)?$/.exec( components ) ) {
-
-							// rgb(255,0,0) rgba(255,0,0,0.5)
-							this.r = Math.min( 255, parseInt( color[ 1 ], 10 ) ) / 255;
-							this.g = Math.min( 255, parseInt( color[ 2 ], 10 ) ) / 255;
-							this.b = Math.min( 255, parseInt( color[ 3 ], 10 ) ) / 255;
-
-							handleAlpha( color[ 5 ] );
-
-							return this;
-
-						}
-
-						if ( color = /^(\d+)\%\s*,\s*(\d+)\%\s*,\s*(\d+)\%\s*(,\s*([0-9]*\.?[0-9]+)\s*)?$/.exec( components ) ) {
-
-							// rgb(100%,0%,0%) rgba(100%,0%,0%,0.5)
-							this.r = Math.min( 100, parseInt( color[ 1 ], 10 ) ) / 100;
-							this.g = Math.min( 100, parseInt( color[ 2 ], 10 ) ) / 100;
-							this.b = Math.min( 100, parseInt( color[ 3 ], 10 ) ) / 100;
-
-							handleAlpha( color[ 5 ] );
-
-							return this;
-
-						}
-
-						break;
-
-					case 'hsl':
-					case 'hsla':
-
-						if ( color = /^([0-9]*\.?[0-9]+)\s*,\s*(\d+)\%\s*,\s*(\d+)\%\s*(,\s*([0-9]*\.?[0-9]+)\s*)?$/.exec( components ) ) {
-
-							// hsl(120,50%,50%) hsla(120,50%,50%,0.5)
-							var h = parseFloat( color[ 1 ] ) / 360;
-							var s = parseInt( color[ 2 ], 10 ) / 100;
-							var l = parseInt( color[ 3 ], 10 ) / 100;
-
-							handleAlpha( color[ 5 ] );
-
-							return this.setHSL( h, s, l );
-
-						}
-
-						break;
-
-				}
-
-			} else if ( m = /^\#([A-Fa-f0-9]+)$/.exec( style ) ) {
-
-				// hex color
-
-				var hex = m[ 1 ];
-				var size = hex.length;
-
-				if ( size === 3 ) {
-
-					// #ff0
-					this.r = parseInt( hex.charAt( 0 ) + hex.charAt( 0 ), 16 ) / 255;
-					this.g = parseInt( hex.charAt( 1 ) + hex.charAt( 1 ), 16 ) / 255;
-					this.b = parseInt( hex.charAt( 2 ) + hex.charAt( 2 ), 16 ) / 255;
-
-					return this;
-
-				} else if ( size === 6 ) {
-
-					// #ff0000
-					this.r = parseInt( hex.charAt( 0 ) + hex.charAt( 1 ), 16 ) / 255;
-					this.g = parseInt( hex.charAt( 2 ) + hex.charAt( 3 ), 16 ) / 255;
-					this.b = parseInt( hex.charAt( 4 ) + hex.charAt( 5 ), 16 ) / 255;
-
-					return this;
-
-				}
-
-			}
-
-			if ( style && style.length > 0 ) {
-
-				// color keywords
-				var hex = ColorKeywords[ style ];
-
-				if ( hex !== undefined ) {
-
-					// red
-					this.setHex( hex );
-
-				} else {
-
-					// unknown color
-					console.warn( 'Color: Unknown color ' + style );
-
-				}
-
-			}
-
-			return this;
-
-		},
-
-		clone: function () {
-
-			return new this.constructor( this.r, this.g, this.b );
-
-		},
-
-		copy: function ( color ) {
-
-			this.r = color.r;
-			this.g = color.g;
-			this.b = color.b;
-
-			return this;
-
-		},
-
-		copyGammaToLinear: function ( color, gammaFactor ) {
-
-			if ( gammaFactor === undefined ) gammaFactor = 2.0;
-
-			this.r = Math.pow( color.r, gammaFactor );
-			this.g = Math.pow( color.g, gammaFactor );
-			this.b = Math.pow( color.b, gammaFactor );
-
-			return this;
-
-		},
-
-		copyLinearToGamma: function ( color, gammaFactor ) {
-
-			if ( gammaFactor === undefined ) gammaFactor = 2.0;
-
-			var safeInverse = ( gammaFactor > 0 ) ? ( 1.0 / gammaFactor ) : 1.0;
-
-			this.r = Math.pow( color.r, safeInverse );
-			this.g = Math.pow( color.g, safeInverse );
-			this.b = Math.pow( color.b, safeInverse );
-
-			return this;
-
-		},
-
-		convertGammaToLinear: function ( gammaFactor ) {
-
-			this.copyGammaToLinear( this, gammaFactor );
-
-			return this;
-
-		},
-
-		convertLinearToGamma: function ( gammaFactor ) {
-
-			this.copyLinearToGamma( this, gammaFactor );
-
-			return this;
-
-		},
-
-		copySRGBToLinear: function () {
-
-			function SRGBToLinear( c ) {
-
-				return ( c < 0.04045 ) ? c * 0.0773993808 : Math.pow( c * 0.9478672986 + 0.0521327014, 2.4 );
-
-			}
-
-			return function copySRGBToLinear( color ) {
-
-				this.r = SRGBToLinear( color.r );
-				this.g = SRGBToLinear( color.g );
-				this.b = SRGBToLinear( color.b );
-
-				return this;
-
-			};
-
-		}(),
-
-		copyLinearToSRGB: function () {
-
-			function LinearToSRGB( c ) {
-
-				return ( c < 0.0031308 ) ? c * 12.92 : 1.055 * ( Math.pow( c, 0.41666 ) ) - 0.055;
-
-			}
-
-			return function copyLinearToSRGB( color ) {
-
-				this.r = LinearToSRGB( color.r );
-				this.g = LinearToSRGB( color.g );
-				this.b = LinearToSRGB( color.b );
-
-				return this;
-
-			};
-
-		}(),
-
-		convertSRGBToLinear: function () {
-
-			this.copySRGBToLinear( this );
-
-			return this;
-
-		},
-
-		convertLinearToSRGB: function () {
-
-			this.copyLinearToSRGB( this );
-
-			return this;
-
-		},
-
-		getHex: function () {
-
-			return ( this.r * 255 ) << 16 ^ ( this.g * 255 ) << 8 ^ ( this.b * 255 ) << 0;
-
-		},
-
-		getHexString: function () {
-
-			return ( '000000' + this.getHex().toString( 16 ) ).slice( - 6 );
-
-		},
-
-		getHSL: function ( target ) {
-
-			// h,s,l ranges are in 0.0 - 1.0
-
-			if ( target === undefined ) {
-
-				console.warn( 'Color: .getHSL() target is now required' );
-				target = { h: 0, s: 0, l: 0 };
-
-			}
-
-			var r = this.r, g = this.g, b = this.b;
-
-			var max = Math.max( r, g, b );
-			var min = Math.min( r, g, b );
-
-			var hue, saturation;
-			var lightness = ( min + max ) / 2.0;
-
-			if ( min === max ) {
-
-				hue = 0;
-				saturation = 0;
-
-			} else {
-
-				var delta = max - min;
-
-				saturation = lightness <= 0.5 ? delta / ( max + min ) : delta / ( 2 - max - min );
-
-				switch ( max ) {
-
-					case r: hue = ( g - b ) / delta + ( g < b ? 6 : 0 ); break;
-					case g: hue = ( b - r ) / delta + 2; break;
-					case b: hue = ( r - g ) / delta + 4; break;
-
-				}
-
-				hue /= 6;
-
-			}
-
-			target.h = hue;
-			target.s = saturation;
-			target.l = lightness;
-
-			return target;
-
-		},
-
-		getStyle: function () {
-
-			return 'rgb(' + ( ( this.r * 255 ) | 0 ) + ',' + ( ( this.g * 255 ) | 0 ) + ',' + ( ( this.b * 255 ) | 0 ) + ')';
-
-		},
-
-		offsetHSL: function () {
-
-			var hsl = {};
-
-			return function ( h, s, l ) {
-
-				this.getHSL( hsl );
-
-				hsl.h += h; hsl.s += s; hsl.l += l;
-
-				this.setHSL( hsl.h, hsl.s, hsl.l );
-
-				return this;
-
-			};
-
-		}(),
-
-		add: function ( color ) {
-
-			this.r += color.r;
-			this.g += color.g;
-			this.b += color.b;
-
-			return this;
-
-		},
-
-		addColors: function ( color1, color2 ) {
-
-			this.r = color1.r + color2.r;
-			this.g = color1.g + color2.g;
-			this.b = color1.b + color2.b;
-
-			return this;
-
-		},
-
-		addScalar: function ( s ) {
-
-			this.r += s;
-			this.g += s;
-			this.b += s;
-
-			return this;
-
-		},
-
-		sub: function ( color ) {
-
-			this.r = Math.max( 0, this.r - color.r );
-			this.g = Math.max( 0, this.g - color.g );
-			this.b = Math.max( 0, this.b - color.b );
-
-			return this;
-
-		},
-
-		multiply: function ( color ) {
-
-			this.r *= color.r;
-			this.g *= color.g;
-			this.b *= color.b;
-
-			return this;
-
-		},
-
-		multiplyScalar: function ( s ) {
-
-			this.r *= s;
-			this.g *= s;
-			this.b *= s;
-
-			return this;
-
-		},
-
-		lerp: function ( color, alpha ) {
-
-			this.r += ( color.r - this.r ) * alpha;
-			this.g += ( color.g - this.g ) * alpha;
-			this.b += ( color.b - this.b ) * alpha;
-
-			return this;
-
-		},
-
-		lerpHSL: function () {
-
-			var hslA = { h: 0, s: 0, l: 0 };
-			var hslB = { h: 0, s: 0, l: 0 };
-
-			return function lerpHSL( color, alpha ) {
-
-				this.getHSL( hslA );
-				color.getHSL( hslB );
-
-				var h = _Math.lerp( hslA.h, hslB.h, alpha );
-				var s = _Math.lerp( hslA.s, hslB.s, alpha );
-				var l = _Math.lerp( hslA.l, hslB.l, alpha );
-
-				this.setHSL( h, s, l );
-
-				return this;
-
-			};
-
-		}(),
-
-		equals: function ( c ) {
-
-			return ( c.r === this.r ) && ( c.g === this.g ) && ( c.b === this.b );
-
-		},
-
-		fromArray: function ( array, offset ) {
-
-			if ( offset === undefined ) offset = 0;
-
-			this.r = array[ offset ];
-			this.g = array[ offset + 1 ];
-			this.b = array[ offset + 2 ];
-
-			return this;
-
-		},
-
-		toArray: function ( array, offset ) {
-
-			if ( array === undefined ) array = [];
-			if ( offset === undefined ) offset = 0;
-
-			array[ offset ] = this.r;
-			array[ offset + 1 ] = this.g;
-			array[ offset + 2 ] = this.b;
-
-			return array;
-
-		},
-
-		toJSON: function () {
-
-			return this.getHex();
-
-		}
-
-	} );
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function BufferAttribute( array, itemSize, normalized ) {
 
 		if ( Array.isArray( array ) ) {
@@ -7464,6 +7464,18 @@ var Three = (function (exports) {
 
 				normalMatrix.applyToBufferAttribute( normal );
 				normal.needsUpdate = true;
+
+			}
+
+			var tangent = this.attributes.tangent;
+
+			if ( tangent !== undefined ) {
+
+				var normalMatrix = new Matrix3().getNormalMatrix( matrix );
+
+				// Tangent is vec4, but the '.w' component is a sign value (+1/-1).
+				normalMatrix.applyToBufferAttribute( tangent );
+				tangent.needsUpdate = true;
 
 			}
 
@@ -8287,11 +8299,9 @@ var Three = (function (exports) {
 
 			if ( index !== null ) {
 
-				var array = Array.prototype.slice.call( index.array );
-
 				data.data.index = {
 					type: index.array.constructor.name,
-					array: array
+					array: Array.prototype.slice.call( index.array )
 				};
 
 			}
@@ -8302,16 +8312,56 @@ var Three = (function (exports) {
 
 				var attribute = attributes[ key ];
 
-				var array = Array.prototype.slice.call( attribute.array );
-
-				data.data.attributes[ key ] = {
+				var attributeData = {
 					itemSize: attribute.itemSize,
 					type: attribute.array.constructor.name,
-					array: array,
+					array: Array.prototype.slice.call( attribute.array ),
 					normalized: attribute.normalized
 				};
 
+				if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+				data.data.attributes[ key ] = attributeData;
+
 			}
+
+			var morphAttributes = {};
+			var hasMorphAttributes = false;
+
+			for ( var key in this.morphAttributes ) {
+
+				var attributeArray = this.morphAttributes[ key ];
+
+				var array = [];
+
+				for ( var i = 0, il = attributeArray.length; i < il; i ++ ) {
+
+					var attribute = attributeArray[ i ];
+
+					var attributeData = {
+						itemSize: attribute.itemSize,
+						type: attribute.array.constructor.name,
+						array: Array.prototype.slice.call( attribute.array ),
+						normalized: attribute.normalized
+					};
+
+					if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+					array.push( attributeData );
+
+				}
+
+				if ( array.length > 0 ) {
+
+					morphAttributes[ key ] = array;
+
+					hasMorphAttributes = true;
+
+				}
+
+			}
+
+			if ( hasMorphAttributes ) data.data.morphAttributes = morphAttributes;
 
 			var groups = this.groups;
 
@@ -8461,6 +8511,7 @@ var Three = (function (exports) {
 
 		var vlist = new Float32Array( 12 * 3 );
 		var nlist = new Float32Array( 12 * 3 );
+		var clist = new Float32Array( 12 * 3 );
 
 		this.enableUvs = enableUvs !== undefined ? enableUvs : false;
 		this.enableColors = enableColors !== undefined ? enableColors : false;
@@ -8492,6 +8543,7 @@ var Three = (function (exports) {
 
 			this.field = new Float32Array( this.size3 );
 			this.normal_cache = new Float32Array( this.size3 * 3 );
+			this.palette = new Float32Array( this.size3 * 3 );
 
 			// immediate render mode simulator
 
@@ -8530,7 +8582,7 @@ var Three = (function (exports) {
 
 		}
 
-		function VIntX( q, offset, isol, x, y, z, valp1, valp2 ) {
+		function VIntX( q, offset, isol, x, y, z, valp1, valp2, c_offset1, c_offset2 ) {
 
 			var mu = ( isol - valp1 ) / ( valp2 - valp1 ),
 				nc = scope.normal_cache;
@@ -8543,9 +8595,13 @@ var Three = (function (exports) {
 			nlist[ offset + 1 ] = lerp( nc[ q + 1 ], nc[ q + 4 ], mu );
 			nlist[ offset + 2 ] = lerp( nc[ q + 2 ], nc[ q + 5 ], mu );
 
+			clist[ offset + 0 ] = lerp( scope.palette[ c_offset1 * 3 + 0 ], scope.palette[ c_offset2 * 3 + 0 ], mu );
+			clist[ offset + 1 ] = lerp( scope.palette[ c_offset1 * 3 + 1 ], scope.palette[ c_offset2 * 3 + 1 ], mu );
+			clist[ offset + 2 ] = lerp( scope.palette[ c_offset1 * 3 + 2 ], scope.palette[ c_offset2 * 3 + 2 ], mu );
+
 		}
 
-		function VIntY( q, offset, isol, x, y, z, valp1, valp2 ) {
+		function VIntY( q, offset, isol, x, y, z, valp1, valp2, c_offset1, c_offset2 ) {
 
 			var mu = ( isol - valp1 ) / ( valp2 - valp1 ),
 				nc = scope.normal_cache;
@@ -8560,9 +8616,13 @@ var Three = (function (exports) {
 			nlist[ offset + 1 ] = lerp( nc[ q + 1 ], nc[ q2 + 1 ], mu );
 			nlist[ offset + 2 ] = lerp( nc[ q + 2 ], nc[ q2 + 2 ], mu );
 
+			clist[ offset + 0 ] = lerp( scope.palette[ c_offset1 * 3 + 0 ], scope.palette[ c_offset2 * 3 + 0 ], mu );
+			clist[ offset + 1 ] = lerp( scope.palette[ c_offset1 * 3 + 1 ], scope.palette[ c_offset2 * 3 + 1 ], mu );
+			clist[ offset + 2 ] = lerp( scope.palette[ c_offset1 * 3 + 2 ], scope.palette[ c_offset2 * 3 + 2 ], mu );
+
 		}
 
-		function VIntZ( q, offset, isol, x, y, z, valp1, valp2 ) {
+		function VIntZ( q, offset, isol, x, y, z, valp1, valp2, c_offset1, c_offset2 ) {
 
 			var mu = ( isol - valp1 ) / ( valp2 - valp1 ),
 				nc = scope.normal_cache;
@@ -8577,6 +8637,10 @@ var Three = (function (exports) {
 			nlist[ offset + 1 ] = lerp( nc[ q + 1 ], nc[ q2 + 1 ], mu );
 			nlist[ offset + 2 ] = lerp( nc[ q + 2 ], nc[ q2 + 2 ], mu );
 
+			clist[ offset + 0 ] = lerp( scope.palette[ c_offset1 * 3 + 0 ], scope.palette[ c_offset2 * 3 + 0 ], mu );
+			clist[ offset + 1 ] = lerp( scope.palette[ c_offset1 * 3 + 1 ], scope.palette[ c_offset2 * 3 + 1 ], mu );
+			clist[ offset + 2 ] = lerp( scope.palette[ c_offset1 * 3 + 2 ], scope.palette[ c_offset2 * 3 + 2 ], mu );
+
 		}
 
 		function compNorm( q ) {
@@ -8586,8 +8650,10 @@ var Three = (function (exports) {
 			if ( scope.normal_cache[ q3 ] === 0.0 ) {
 
 				scope.normal_cache[ q3 + 0 ] = scope.field[ q - 1 ] - scope.field[ q + 1 ];
-				scope.normal_cache[ q3 + 1 ] = scope.field[ q - scope.yd ] - scope.field[ q + scope.yd ];
-				scope.normal_cache[ q3 + 2 ] = scope.field[ q - scope.zd ] - scope.field[ q + scope.zd ];
+				scope.normal_cache[ q3 + 1 ] =
+					scope.field[ q - scope.yd ] - scope.field[ q + scope.yd ];
+				scope.normal_cache[ q3 + 2 ] =
+					scope.field[ q - scope.zd ] - scope.field[ q + scope.zd ];
 
 			}
 
@@ -8642,7 +8708,7 @@ var Three = (function (exports) {
 
 				compNorm( q );
 				compNorm( q1 );
-				VIntX( q * 3, 0, isol, fx, fy, fz, field0, field1 );
+				VIntX( q * 3, 0, isol, fx, fy, fz, field0, field1, q, q1 );
 
 			}
 
@@ -8650,7 +8716,7 @@ var Three = (function (exports) {
 
 				compNorm( q1 );
 				compNorm( q1y );
-				VIntY( q1 * 3, 3, isol, fx2, fy, fz, field1, field3 );
+				VIntY( q1 * 3, 3, isol, fx2, fy, fz, field1, field3, q1, q1y );
 
 			}
 
@@ -8658,7 +8724,7 @@ var Three = (function (exports) {
 
 				compNorm( qy );
 				compNorm( q1y );
-				VIntX( qy * 3, 6, isol, fx, fy2, fz, field2, field3 );
+				VIntX( qy * 3, 6, isol, fx, fy2, fz, field2, field3, qy, q1y );
 
 			}
 
@@ -8666,7 +8732,7 @@ var Three = (function (exports) {
 
 				compNorm( q );
 				compNorm( qy );
-				VIntY( q * 3, 9, isol, fx, fy, fz, field0, field2 );
+				VIntY( q * 3, 9, isol, fx, fy, fz, field0, field2, q, qy );
 
 			}
 
@@ -8676,7 +8742,7 @@ var Three = (function (exports) {
 
 				compNorm( qz );
 				compNorm( q1z );
-				VIntX( qz * 3, 12, isol, fx, fy, fz2, field4, field5 );
+				VIntX( qz * 3, 12, isol, fx, fy, fz2, field4, field5, qz, q1z );
 
 			}
 
@@ -8684,7 +8750,18 @@ var Three = (function (exports) {
 
 				compNorm( q1z );
 				compNorm( q1yz );
-				VIntY( q1z * 3, 15, isol, fx2, fy, fz2, field5, field7 );
+				VIntY(
+					q1z * 3,
+					15,
+					isol,
+					fx2,
+					fy,
+					fz2,
+					field5,
+					field7,
+					q1z,
+					q1yz
+				);
 
 			}
 
@@ -8692,7 +8769,18 @@ var Three = (function (exports) {
 
 				compNorm( qyz );
 				compNorm( q1yz );
-				VIntX( qyz * 3, 18, isol, fx, fy2, fz2, field6, field7 );
+				VIntX(
+					qyz * 3,
+					18,
+					isol,
+					fx,
+					fy2,
+					fz2,
+					field6,
+					field7,
+					qyz,
+					q1yz
+				);
 
 			}
 
@@ -8700,17 +8788,16 @@ var Three = (function (exports) {
 
 				compNorm( qz );
 				compNorm( qyz );
-				VIntY( qz * 3, 21, isol, fx, fy, fz2, field4, field6 );
+				VIntY( qz * 3, 21, isol, fx, fy, fz2, field4, field6, qz, qyz );
 
 			}
 
 			// vertical lines of the cube
-
 			if ( bits & 256 ) {
 
 				compNorm( q );
 				compNorm( qz );
-				VIntZ( q * 3, 24, isol, fx, fy, fz, field0, field4 );
+				VIntZ( q * 3, 24, isol, fx, fy, fz, field0, field4, q, qz );
 
 			}
 
@@ -8718,7 +8805,7 @@ var Three = (function (exports) {
 
 				compNorm( q1 );
 				compNorm( q1z );
-				VIntZ( q1 * 3, 27, isol, fx2, fy, fz, field1, field5 );
+				VIntZ( q1 * 3, 27, isol, fx2, fy, fz, field1, field5, q1, q1z );
 
 			}
 
@@ -8726,7 +8813,18 @@ var Three = (function (exports) {
 
 				compNorm( q1y );
 				compNorm( q1yz );
-				VIntZ( q1y * 3, 30, isol, fx2, fy2, fz, field3, field7 );
+				VIntZ(
+					q1y * 3,
+					30,
+					isol,
+					fx2,
+					fy2,
+					fz,
+					field3,
+					field7,
+					q1y,
+					q1yz
+				);
 
 			}
 
@@ -8734,13 +8832,17 @@ var Three = (function (exports) {
 
 				compNorm( qy );
 				compNorm( qyz );
-				VIntZ( qy * 3, 33, isol, fx, fy2, fz, field2, field6 );
+				VIntZ( qy * 3, 33, isol, fx, fy2, fz, field2, field6, qy, qyz );
 
 			}
 
 			cubeindex <<= 4; // re-purpose cubeindex into an offset into triTable
 
-			var o1, o2, o3, numtris = 0, i = 0;
+			var o1,
+				o2,
+				o3,
+				numtris = 0,
+				i = 0;
 
 			// here is where triangles are created
 
@@ -8750,11 +8852,15 @@ var Three = (function (exports) {
 				o2 = o1 + 1;
 				o3 = o1 + 2;
 
-				posnormtriv( vlist, nlist,
+				posnormtriv(
+					vlist,
+					nlist,
+					clist,
 					3 * triTable[ o1 ],
 					3 * triTable[ o2 ],
 					3 * triTable[ o3 ],
-					renderCallback );
+					renderCallback
+				);
 
 				i += 3;
 				numtris ++;
@@ -8769,7 +8875,7 @@ var Three = (function (exports) {
 		// Immediate render mode simulator
 		/////////////////////////////////////
 
-		function posnormtriv( pos, norm, o1, o2, o3, renderCallback ) {
+		function posnormtriv( pos, norm, colors, o1, o2, o3, renderCallback ) {
 
 			var c = scope.count * 3;
 
@@ -8806,6 +8912,7 @@ var Three = (function (exports) {
 				scope.normalArray[ c + 6 ] = nx;
 				scope.normalArray[ c + 7 ] = ny;
 				scope.normalArray[ c + 8 ] = nz;
+
 			} else {
 
 				scope.normalArray[ c + 0 ] = norm[ o1 + 0 ];
@@ -8843,17 +8950,17 @@ var Three = (function (exports) {
 
 			if ( scope.enableColors ) {
 
-				scope.colorArray[ c + 0 ] = pos[ o1 + 0 ];
-				scope.colorArray[ c + 1 ] = pos[ o1 + 1 ];
-				scope.colorArray[ c + 2 ] = pos[ o1 + 2 ];
+				scope.colorArray[ c + 0 ] = colors[ o1 + 0 ];
+				scope.colorArray[ c + 1 ] = colors[ o1 + 1 ];
+				scope.colorArray[ c + 2 ] = colors[ o1 + 2 ];
 
-				scope.colorArray[ c + 3 ] = pos[ o2 + 0 ];
-				scope.colorArray[ c + 4 ] = pos[ o2 + 1 ];
-				scope.colorArray[ c + 5 ] = pos[ o2 + 2 ];
+				scope.colorArray[ c + 3 ] = colors[ o2 + 0 ];
+				scope.colorArray[ c + 4 ] = colors[ o2 + 1 ];
+				scope.colorArray[ c + 5 ] = colors[ o2 + 2 ];
 
-				scope.colorArray[ c + 6 ] = pos[ o3 + 0 ];
-				scope.colorArray[ c + 7 ] = pos[ o3 + 1 ];
-				scope.colorArray[ c + 8 ] = pos[ o3 + 2 ];
+				scope.colorArray[ c + 6 ] = colors[ o3 + 0 ];
+				scope.colorArray[ c + 7 ] = colors[ o3 + 1 ];
+				scope.colorArray[ c + 8 ] = colors[ o3 + 2 ];
 
 			}
 
@@ -8929,10 +9036,35 @@ var Three = (function (exports) {
 		// Adds a reciprocal ball (nice and blobby) that, to be fast, fades to zero after
 		// a fixed distance, determined by strength and subtract.
 
-		this.addBall = function ( ballx, bally, ballz, strength, subtract ) {
+		this.addBall = function ( ballx, bally, ballz, strength, subtract, colors ) {
 
 			var sign = Math.sign( strength );
 			strength = Math.abs( strength );
+			var userDefineColor = ! ( colors === undefined || colors === null );
+			var ballColor = new Color( ballx, bally, ballz );
+			if ( userDefineColor ) {
+
+				try {
+
+					ballColor =
+						colors instanceof Color
+							? colors
+							: Array.isArray( colors )
+								? new Color(
+									Math.min( Math.abs( colors[ 0 ] ), 1 ),
+									Math.min( Math.abs( colors[ 1 ] ), 1 ),
+									Math.min( Math.abs( colors[ 2 ] ), 1 )
+							  )
+								: new Color( colors );
+
+				} catch ( err ) {
+
+					userDefineColor = false;
+					ballColor = new Color( ballx, bally, ballz );
+
+				}
+
+			}
 
 			// Let's solve the equation to find the radius:
 			// 1.0 / (0.000001 + radius^2) * strength - subtract = 0
@@ -8946,17 +9078,23 @@ var Three = (function (exports) {
 				ys = bally * this.size,
 				xs = ballx * this.size;
 
-			var min_z = Math.floor( zs - radius ); if ( min_z < 1 ) min_z = 1;
-			var max_z = Math.floor( zs + radius ); if ( max_z > this.size - 1 ) max_z = this.size - 1;
-			var min_y = Math.floor( ys - radius ); if ( min_y < 1 ) min_y = 1;
-			var max_y = Math.floor( ys + radius ); if ( max_y > this.size - 1 ) max_y = this.size - 1;
-			var min_x = Math.floor( xs - radius ); if ( min_x < 1 ) min_x = 1;
-			var max_x = Math.floor( xs + radius ); if ( max_x > this.size - 1 ) max_x = this.size - 1;
+			var min_z = Math.floor( zs - radius );
+			if ( min_z < 1 ) min_z = 1;
+			var max_z = Math.floor( zs + radius );
+			if ( max_z > this.size - 1 ) max_z = this.size - 1;
+			var min_y = Math.floor( ys - radius );
+			if ( min_y < 1 ) min_y = 1;
+			var max_y = Math.floor( ys + radius );
+			if ( max_y > this.size - 1 ) max_y = this.size - 1;
+			var min_x = Math.floor( xs - radius );
+			if ( min_x < 1 ) min_x = 1;
+			var max_x = Math.floor( xs + radius );
+			if ( max_x > this.size - 1 ) max_x = this.size - 1;
+
 			// Don't polygonize in the outer layer because normals aren't
 			// well-defined there.
 
 			var x, y, z, y_offset, z_offset, fx, fy, fz, fz2, fy2, val;
-
 			for ( z = min_z; z < max_z; z ++ ) {
 
 				z_offset = this.size2 * z;
@@ -8973,7 +9111,21 @@ var Three = (function (exports) {
 
 						fx = x / this.size - ballx;
 						val = strength / ( 0.000001 + fx * fx + fy2 + fz2 ) - subtract;
-						if ( val > 0.0 ) this.field[ y_offset + x ] += val * sign;
+						if ( val > 0.0 ) {
+
+							this.field[ y_offset + x ] += val * sign;
+
+							// optimization
+							// http://www.geisswerks.com/ryan/BLOBS/blobs.html
+							const ratio =
+								Math.sqrt( ( x - xs ) * ( x - xs ) + ( y - ys ) * ( y - ys ) + ( z - zs ) * ( z - zs ) ) / radius;
+							const contrib =
+								1 - ratio * ratio * ratio * ( ratio * ( ratio * 6 - 15 ) + 10 );
+							this.palette[ ( y_offset + x ) * 3 + 0 ] += ballColor.r * contrib;
+							this.palette[ ( y_offset + x ) * 3 + 1 ] += ballColor.g * contrib;
+							this.palette[ ( y_offset + x ) * 3 + 2 ] += ballColor.b * contrib;
+
+						}
 
 					}
 
@@ -8985,14 +9137,18 @@ var Three = (function (exports) {
 
 		this.addPlaneX = function ( strength, subtract ) {
 
-			var x, y, z, xx, val, xdiv, cxy,
-
+			var x,
+				y,
+				z,
+				xx,
+				val,
+				xdiv,
+				cxy,
 				// cache attribute lookups
 				size = this.size,
 				yd = this.yd,
 				zd = this.zd,
 				field = this.field,
-
 				dist = size * Math.sqrt( strength / subtract );
 
 			if ( dist > size ) dist = size;
@@ -9025,14 +9181,19 @@ var Three = (function (exports) {
 
 		this.addPlaneY = function ( strength, subtract ) {
 
-			var x, y, z, yy, val, ydiv, cy, cxy,
-
+			var x,
+				y,
+				z,
+				yy,
+				val,
+				ydiv,
+				cy,
+				cxy,
 				// cache attribute lookups
 				size = this.size,
 				yd = this.yd,
 				zd = this.zd,
 				field = this.field,
-
 				dist = size * Math.sqrt( strength / subtract );
 
 			if ( dist > size ) dist = size;
@@ -9051,8 +9212,7 @@ var Three = (function (exports) {
 
 						cxy = cy + x;
 
-						for ( z = 0; z < size; z ++ )
-							field[ zd * z + cxy ] += val;
+						for ( z = 0; z < size; z ++ ) field[ zd * z + cxy ] += val;
 
 					}
 
@@ -9064,14 +9224,19 @@ var Three = (function (exports) {
 
 		this.addPlaneZ = function ( strength, subtract ) {
 
-			var x, y, z, zz, val, zdiv, cz, cyz,
-
+			var x,
+				y,
+				z,
+				zz,
+				val,
+				zdiv,
+				cz,
+				cyz,
 				// cache attribute lookups
 				size = this.size,
 				yd = this.yd,
 				zd = this.zd,
 				field = this.field,
-
 				dist = size * Math.sqrt( strength / subtract );
 
 			if ( dist > size ) dist = size;
@@ -9089,8 +9254,7 @@ var Three = (function (exports) {
 
 						cyz = cz + y * yd;
 
-						for ( x = 0; x < size; x ++ )
-							field[ cyz + x ] += val;
+						for ( x = 0; x < size; x ++ ) field[ cyz + x ] += val;
 
 					}
 
@@ -9114,6 +9278,9 @@ var Three = (function (exports) {
 
 				this.normal_cache[ i * 3 ] = 0.0;
 				this.field[ i ] = 0.0;
+				this.palette[ i * 3 ] = this.palette[ i * 3 + 1 ] = this.palette[
+					i * 3 + 2
+				] = 0.0;
 
 			}
 
@@ -9156,7 +9323,9 @@ var Three = (function (exports) {
 
 		this.generateGeometry = function () {
 
-			console.warn( 'MarchingCubes: generateGeometry() now returns BufferGeometry' );
+			console.warn(
+				"MarchingCubes: generateGeometry() now returns BufferGeometry"
+			);
 			return this.generateBufferGeometry();
 
 		};
@@ -9181,10 +9350,26 @@ var Three = (function (exports) {
 
 			var geo_callback = function ( object ) {
 
-				if ( scope.hasPositions ) posArray = concatenate( posArray, object.positionArray, object.count * 3 );
-				if ( scope.hasNormals ) normArray = concatenate( normArray, object.normalArray, object.count * 3 );
-				if ( scope.hasColors ) colorArray = concatenate( colorArray, object.colorArray, object.count * 3 );
-				if ( scope.hasUvs ) uvArray = concatenate( uvArray, object.uvArray, object.count * 2 );
+				if ( scope.hasPositions )
+					posArray = concatenate(
+						posArray,
+						object.positionArray,
+						object.count * 3
+					);
+				if ( scope.hasNormals )
+					normArray = concatenate(
+						normArray,
+						object.normalArray,
+						object.count * 3
+					);
+				if ( scope.hasColors )
+					colorArray = concatenate(
+						colorArray,
+						object.colorArray,
+						object.count * 3
+					);
+				if ( scope.hasUvs )
+					uvArray = concatenate( uvArray, object.uvArray, object.count * 2 );
 
 				object.count = 0;
 
@@ -9192,10 +9377,14 @@ var Three = (function (exports) {
 
 			this.render( geo_callback );
 
-			if ( this.hasPositions ) geo.addAttribute( 'position', new BufferAttribute( posArray, 3 ) );
-			if ( this.hasNormals ) geo.addAttribute( 'normal', new BufferAttribute( normArray, 3 ) );
-			if ( this.hasColors ) geo.addAttribute( 'color', new BufferAttribute( colorArray, 3 ) );
-			if ( this.hasUvs ) geo.addAttribute( 'uv', new BufferAttribute( uvArray, 2 ) );
+			if ( this.hasPositions )
+				geo.addAttribute( "position", new BufferAttribute( posArray, 3 ) );
+			if ( this.hasNormals )
+				geo.addAttribute( "normal", new BufferAttribute( normArray, 3 ) );
+			if ( this.hasColors )
+				geo.addAttribute( "color", new BufferAttribute( colorArray, 3 ) );
+			if ( this.hasUvs )
+				geo.addAttribute( "uv", new BufferAttribute( uvArray, 2 ) );
 
 			return geo;
 

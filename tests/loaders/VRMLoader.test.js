@@ -7445,6 +7445,7 @@ var Three = (function (exports) {
 		this.blending = NormalBlending;
 		this.side = FrontSide;
 		this.flatShading = false;
+		this.vertexTangents = false;
 		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 		this.opacity = 1;
@@ -7863,6 +7864,24 @@ var Three = (function (exports) {
 	var UniformsUtils = { clone: cloneUniforms, merge: mergeUniforms };
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_vertex = `
+void main() {
+	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_fragment = `
+void main() {
+	gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function ShaderMaterial( parameters ) {
 
 		Material.call( this );
@@ -7872,8 +7891,8 @@ var Three = (function (exports) {
 		this.defines = {};
 		this.uniforms = {};
 
-		this.vertexShader = 'void main() {\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}';
-		this.fragmentShader = 'void main() {\n\tgl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}';
+		this.vertexShader = default_vertex;
+		this.fragmentShader = default_fragment;
 
 		this.linewidth = 1;
 
@@ -10781,6 +10800,18 @@ var Three = (function (exports) {
 
 			}
 
+			var tangent = this.attributes.tangent;
+
+			if ( tangent !== undefined ) {
+
+				var normalMatrix = new Matrix3().getNormalMatrix( matrix );
+
+				// Tangent is vec4, but the '.w' component is a sign value (+1/-1).
+				normalMatrix.applyToBufferAttribute( tangent );
+				tangent.needsUpdate = true;
+
+			}
+
 			if ( this.boundingBox !== null ) {
 
 				this.computeBoundingBox();
@@ -11601,11 +11632,9 @@ var Three = (function (exports) {
 
 			if ( index !== null ) {
 
-				var array = Array.prototype.slice.call( index.array );
-
 				data.data.index = {
 					type: index.array.constructor.name,
-					array: array
+					array: Array.prototype.slice.call( index.array )
 				};
 
 			}
@@ -11616,16 +11645,56 @@ var Three = (function (exports) {
 
 				var attribute = attributes[ key ];
 
-				var array = Array.prototype.slice.call( attribute.array );
-
-				data.data.attributes[ key ] = {
+				var attributeData = {
 					itemSize: attribute.itemSize,
 					type: attribute.array.constructor.name,
-					array: array,
+					array: Array.prototype.slice.call( attribute.array ),
 					normalized: attribute.normalized
 				};
 
+				if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+				data.data.attributes[ key ] = attributeData;
+
 			}
+
+			var morphAttributes = {};
+			var hasMorphAttributes = false;
+
+			for ( var key in this.morphAttributes ) {
+
+				var attributeArray = this.morphAttributes[ key ];
+
+				var array = [];
+
+				for ( var i = 0, il = attributeArray.length; i < il; i ++ ) {
+
+					var attribute = attributeArray[ i ];
+
+					var attributeData = {
+						itemSize: attribute.itemSize,
+						type: attribute.array.constructor.name,
+						array: Array.prototype.slice.call( attribute.array ),
+						normalized: attribute.normalized
+					};
+
+					if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+					array.push( attributeData );
+
+				}
+
+				if ( array.length > 0 ) {
+
+					morphAttributes[ key ] = array;
+
+					hasMorphAttributes = true;
+
+				}
+
+			}
+
+			if ( hasMorphAttributes ) data.data.morphAttributes = morphAttributes;
 
 			var groups = this.groups;
 
@@ -15641,6 +15710,12 @@ vec3 transformed = vec3( position );
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var beginnormal_vertex = `
 vec3 objectNormal = vec3( normal );
+
+#ifdef USE_TANGENT
+
+	vec3 objectTangent = vec3( tangent.xyz );
+
+#endif
 `;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -16365,6 +16440,18 @@ vec3 transformedNormal = normalMatrix * objectNormal;
 	transformedNormal = - transformedNormal;
 
 #endif
+
+#ifdef USE_TANGENT
+
+	vec3 transformedTangent = normalMatrix * objectTangent;
+
+	#ifdef FLIP_SIDED
+
+		transformedTangent = - transformedTangent;
+
+	#endif
+
+#endif
 `;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -16421,7 +16508,7 @@ vec3 transformedNormal = normalMatrix * objectNormal;
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var encodings_fragment = `
-  gl_FragColor = linearToOutputTexel( gl_FragColor );
+gl_FragColor = linearToOutputTexel( gl_FragColor );
 `;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -17851,6 +17938,20 @@ float metalnessFactor = metalness;
 
 	#endif
 
+	#ifdef USE_TANGENT
+
+		vec3 tangent = normalize( vTangent );
+		vec3 bitangent = normalize( vBitangent );
+
+		#ifdef DOUBLE_SIDED
+
+			tangent = tangent * ( float( gl_FrontFacing ) * 2.0 - 1.0 );
+			bitangent = bitangent * ( float( gl_FrontFacing ) * 2.0 - 1.0 );
+
+		#endif
+
+	#endif
+
 #endif
 `;
 
@@ -17880,7 +17981,18 @@ float metalnessFactor = metalness;
 
 	#else // tangent-space normal map
 
-		normal = perturbNormal2Arb( -vViewPosition, normal );
+		#ifdef USE_TANGENT
+
+			mat3 vTBN = mat3( tangent, bitangent, normal );
+			vec3 mapN = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0;
+			mapN.xy = normalScale * mapN.xy;
+			normal = normalize( vTBN * mapN );
+
+		#else
+
+			normal = perturbNormal2Arb( -vViewPosition, normal );
+
+		#endif
 
 	#endif
 
@@ -18013,7 +18125,7 @@ gl_Position = projectionMatrix * mvPosition;
 	var dithering_fragment = `
 #if defined( DITHERING )
 
-  gl_FragColor.rgb = dithering( gl_FragColor.rgb );
+	gl_FragColor.rgb = dithering( gl_FragColor.rgb );
 
 #endif
 `;
@@ -18537,6 +18649,12 @@ float getShadowMask() {
 
 	objectNormal = vec4( skinMatrix * vec4( objectNormal, 0.0 ) ).xyz;
 
+	#ifdef USE_TANGENT
+
+		objectTangent = vec4( skinMatrix * vec4( objectTangent, 0.0 ) ).xyz;
+
+	#endif
+
 #endif
 `;
 
@@ -18575,7 +18693,7 @@ float specularStrength;
 	var tonemapping_fragment = `
 #if defined( TONE_MAPPING )
 
-  gl_FragColor.rgb = toneMapping( gl_FragColor.rgb );
+	gl_FragColor.rgb = toneMapping( gl_FragColor.rgb );
 
 #endif
 `;
@@ -19642,6 +19760,13 @@ varying vec3 vViewPosition;
 
 	varying vec3 vNormal;
 
+	#ifdef USE_TANGENT
+
+		varying vec3 vTangent;
+		varying vec3 vBitangent;
+
+	#endif
+
 #endif
 
 #include <common>
@@ -19723,6 +19848,13 @@ varying vec3 vViewPosition;
 
 	varying vec3 vNormal;
 
+	#ifdef USE_TANGENT
+
+		varying vec3 vTangent;
+		varying vec3 vBitangent;
+
+	#endif
+
 #endif
 
 #include <common>
@@ -19752,6 +19884,13 @@ void main() {
 #ifndef FLAT_SHADED // Normal computed with derivatives when FLAT_SHADED
 
 	vNormal = normalize( transformedNormal );
+
+	#ifdef USE_TANGENT
+
+		vTangent = normalize( transformedTangent );
+		vBitangent = normalize( cross( vNormal, vTangent ) * tangent.w );
+
+	#endif
 
 #endif
 
@@ -19790,6 +19929,13 @@ uniform float opacity;
 
 	varying vec3 vNormal;
 
+	#ifdef USE_TANGENT
+
+		varying vec3 vTangent;
+		varying vec3 vBitangent;
+
+	#endif
+
 #endif
 
 #include <packing>
@@ -19825,6 +19971,13 @@ void main() {
 
 	varying vec3 vNormal;
 
+	#ifdef USE_TANGENT
+
+		varying vec3 vTangent;
+		varying vec3 vBitangent;
+
+	#endif
+
 #endif
 
 #include <uv_pars_vertex>
@@ -19846,6 +19999,13 @@ void main() {
 #ifndef FLAT_SHADED // Normal computed with derivatives when FLAT_SHADED
 
 	vNormal = normalize( transformedNormal );
+
+	#ifdef USE_TANGENT
+
+		vTangent = normalize( transformedTangent );
+		vBitangent = normalize( cross( vNormal, vTangent ) * tangent.w );
+
+	#endif
 
 #endif
 
@@ -23328,7 +23488,7 @@ void main() {
 								break;
 
 							case EXTENSIONS.MSFT_TEXTURE_DDS:
-								extensions[ EXTENSIONS.MSFT_TEXTURE_DDS ] = new GLTFTextureDDSExtension( json );
+								extensions[ EXTENSIONS.MSFT_TEXTURE_DDS ] = new GLTFTextureDDSExtension();
 								break;
 
 							case EXTENSIONS.KHR_TEXTURE_TRANSFORM:
@@ -24213,6 +24373,7 @@ void main() {
 		var ATTRIBUTES = {
 			POSITION: 'position',
 			NORMAL: 'normal',
+			TANGENT: 'tangent',
 			TEXCOORD_0: 'uv',
 			TEXCOORD_1: 'uv2',
 			COLOR_0: 'color',
@@ -24342,8 +24503,10 @@ void main() {
 					var accessor = target.POSITION !== undefined
 						? parser.getDependency( 'accessor', target.POSITION )
 							.then( function ( accessor ) {
+
 								// Cloning not to pollute original accessor below
 								return cloneBufferAttribute( accessor );
+
 							} )
 						: geometry.attributes.position;
 
@@ -24357,7 +24520,9 @@ void main() {
 					var accessor = target.NORMAL !== undefined
 						? parser.getDependency( 'accessor', target.NORMAL )
 							.then( function ( accessor ) {
+
 								return cloneBufferAttribute( accessor );
+
 							} )
 						: geometry.attributes.normal;
 
@@ -24490,30 +24655,6 @@ void main() {
 			}
 
 		}
-
-		function isPrimitiveEqual( a, b ) {
-
-			var dracoExtA = a.extensions ? a.extensions[ EXTENSIONS.KHR_DRACO_MESH_COMPRESSION ] : undefined;
-			var dracoExtB = b.extensions ? b.extensions[ EXTENSIONS.KHR_DRACO_MESH_COMPRESSION ] : undefined;
-
-			if ( dracoExtA && dracoExtB ) {
-
-				if ( dracoExtA.bufferView !== dracoExtB.bufferView ) return false;
-
-				return isObjectEqual( dracoExtA.attributes, dracoExtB.attributes );
-
-			}
-
-			if ( a.indices !== b.indices ) {
-
-				return false;
-
-			}
-
-			return isObjectEqual( a.attributes, b.attributes );
-
-		}
-
 		function isObjectEqual( a, b ) {
 
 			if ( Object.keys( a ).length !== Object.keys( b ).length ) return false;
@@ -24528,59 +24669,68 @@ void main() {
 
 		}
 
-		function isArrayEqual( a, b ) {
+		function createPrimitiveKey( primitiveDef ) {
 
-			if ( a.length !== b.length ) return false;
+			var dracoExtension = primitiveDef.extensions && primitiveDef.extensions[ EXTENSIONS.KHR_DRACO_MESH_COMPRESSION ];
+			var geometryKey;
+
+			if ( dracoExtension ) {
+
+				geometryKey = 'draco:' + dracoExtension.bufferView
+					+ ':' + dracoExtension.indices
+					+ ':' + createAttributesKey( dracoExtension.attributes );
+
+			} else {
+
+				geometryKey = primitiveDef.indices + ':' + createAttributesKey( primitiveDef.attributes ) + ':' + primitiveDef.mode;
+
+			}
+
+			return geometryKey;
+
+		}
+
+		function createAttributesKey( attributes ) {
+
+			var attributesKey = '';
+
+			var keys = Object.keys( attributes ).sort();
+
+			for ( var i = 0, il = keys.length; i < il; i ++ ) {
+
+				attributesKey += keys[ i ] + ':' + attributes[ keys[ i ] ] + ';';
+
+			}
+
+			return attributesKey;
+
+		}
+
+		function createArrayKeyBufferGeometry( a ) {
+
+			var arrayKey = '';
 
 			for ( var i = 0, il = a.length; i < il; i ++ ) {
 
-				if ( a[ i ] !== b[ i ] ) return false;
+				arrayKey += ':' + a[ i ].uuid;
 
 			}
 
-			return true;
+			return arrayKey;
 
 		}
 
-		function getCachedGeometry( cache, newPrimitive ) {
+		function createMultiPassGeometryKey( geometry, primitives ) {
 
-			for ( var i = 0, il = cache.length; i < il; i ++ ) {
+			var key = geometry.uuid;
 
-				var cached = cache[ i ];
+			for ( var i = 0, il = primitives.length; i < il; i ++ ) {
 
-				if ( isPrimitiveEqual( cached.primitive, newPrimitive ) ) return cached.promise;
-
-			}
-
-			return null;
-
-		}
-
-		function getCachedCombinedGeometry( cache, geometries ) {
-
-			for ( var i = 0, il = cache.length; i < il; i ++ ) {
-
-				var cached = cache[ i ];
-
-				if ( isArrayEqual( geometries, cached.baseGeometries ) ) return cached.geometry;
+				key += i + createPrimitiveKey( primitives[ i ] );
 
 			}
 
-			return null;
-
-		}
-
-		function getCachedMultiPassGeometry( cache, geometry, primitives ) {
-
-			for ( var i = 0, il = cache.length; i < il; i ++ ) {
-
-				var cached = cache[ i ];
-
-				if ( geometry === cached.baseGeometry && isArrayEqual( primitives, cached.primitives ) ) return cached.geometry;
-
-			}
-
-			return null;
+			return key;
 
 		}
 
@@ -24651,9 +24801,9 @@ void main() {
 			this.cache = new GLTFRegistry();
 
 			// BufferGeometry caching
-			this.primitiveCache = [];
-			this.multiplePrimitivesCache = [];
-			this.multiPassGeometryCache = [];
+			this.primitiveCache = {};
+			this.multiplePrimitivesCache = {};
+			this.multiPassGeometryCache = {};
 
 			this.textureLoader = new TextureLoader( this.options.manager );
 			this.textureLoader.setCrossOrigin( this.options.crossOrigin );
@@ -25141,6 +25291,18 @@ void main() {
 
 			return this.getDependency( 'texture', mapDef.index ).then( function ( texture ) {
 
+				switch ( mapName ) {
+
+					case 'aoMap':
+					case 'emissiveMap':
+					case 'metalnessMap':
+					case 'normalMap':
+					case 'roughnessMap':
+						texture.format = RGBFormat;
+						break;
+
+				}
+
 				if ( parser.extensions[ EXTENSIONS.KHR_TEXTURE_TRANSFORM ] ) {
 
 					var transform = mapDef.extensions !== undefined ? mapDef.extensions[ EXTENSIONS.KHR_TEXTURE_TRANSFORM ] : undefined;
@@ -25300,14 +25462,6 @@ void main() {
 
 				if ( materialDef.name !== undefined ) material.name = materialDef.name;
 
-				// Normal map textures use OpenGL conventions:
-				// https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#materialnormaltexture
-				if ( material.normalScale ) {
-
-					material.normalScale.y = - material.normalScale.y;
-
-				}
-
 				// baseColorTexture, emissiveTexture, and specularGlossinessTexture use sRGB encoding.
 				if ( material.map ) material.map.encoding = sRGBEncoding;
 				if ( material.emissiveMap ) material.emissiveMap.encoding = sRGBEncoding;
@@ -25414,14 +25568,15 @@ void main() {
 			for ( var i = 0, il = primitives.length; i < il; i ++ ) {
 
 				var primitive = primitives[ i ];
+				var cacheKey = createPrimitiveKey( primitive );
 
 				// See if we've already created this geometry
-				var cached = getCachedGeometry( cache, primitive );
+				var cached = cache[ cacheKey ];
 
 				if ( cached ) {
 
 					// Use the cached geometry if it exists
-					pending.push( cached );
+					pending.push( cached.promise );
 
 				} else {
 
@@ -25440,7 +25595,7 @@ void main() {
 					}
 
 					// Cache this geometry
-					cache.push( { primitive: primitive, promise: geometryPromise } );
+					cache[ cacheKey ] = { primitive: primitive, promise: geometryPromise };
 
 					pending.push( geometryPromise );
 
@@ -25456,7 +25611,8 @@ void main() {
 
 					// See if we've already created this combined geometry
 					var cache = parser.multiPassGeometryCache;
-					var cached = getCachedMultiPassGeometry( cache, baseGeometry, originalPrimitives );
+					var cacheKey = createMultiPassGeometryKey( baseGeometry, originalPrimitives );
+					var cached = cache[ cacheKey ];
 
 					if ( cached !== null ) return [ cached.geometry ];
 
@@ -25497,7 +25653,7 @@ void main() {
 
 						geometry.setIndex( indices );
 
-						cache.push( { geometry: geometry, baseGeometry: baseGeometry, primitives: originalPrimitives } );
+						cache[ cacheKey ] = { geometry: geometry, baseGeometry: baseGeometry, primitives: originalPrimitives };
 
 						return [ geometry ];
 
@@ -25516,7 +25672,8 @@ void main() {
 
 					// See if we've already created this combined geometry
 					var cache = parser.multiplePrimitivesCache;
-					var cached = getCachedCombinedGeometry( cache, geometries );
+					var cacheKey = createArrayKeyBufferGeometry( geometries );
+					var cached = cache[ cacheKey ];
 
 					if ( cached ) {
 
@@ -25526,7 +25683,7 @@ void main() {
 
 						var geometry = BufferGeometryUtils.mergeBufferGeometries( geometries, true );
 
-						cache.push( { geometry: geometry, baseGeometries: geometries } );
+						cache[ cacheKey ] = { geometry: geometry, baseGeometries: geometries };
 
 						if ( geometry !== null ) return [ geometry ];
 
@@ -25641,6 +25798,7 @@ void main() {
 
 						var materials = isMultiMaterial ? mesh.material : [ mesh.material ];
 
+						var useVertexTangents = geometry.attributes.tangent !== undefined;
 						var useVertexColors = geometry.attributes.color !== undefined;
 						var useFlatShading = geometry.attributes.normal === undefined;
 						var useSkinning = mesh.isSkinnedMesh === true;
@@ -25693,12 +25851,13 @@ void main() {
 							}
 
 							// Clone the material if it will be modified
-							if ( useVertexColors || useFlatShading || useSkinning || useMorphTargets ) {
+							if ( useVertexTangents || useVertexColors || useFlatShading || useSkinning || useMorphTargets ) {
 
 								var cacheKey = 'ClonedMaterial:' + material.uuid + ':';
 
 								if ( material.isGLTFSpecularGlossinessMaterial ) cacheKey += 'specular-glossiness:';
 								if ( useSkinning ) cacheKey += 'skinning:';
+								if ( useVertexTangents ) cacheKey += 'vertex-tangents:';
 								if ( useVertexColors ) cacheKey += 'vertex-colors:';
 								if ( useFlatShading ) cacheKey += 'flat-shading:';
 								if ( useMorphTargets ) cacheKey += 'morph-targets:';
@@ -25713,6 +25872,7 @@ void main() {
 										: material.clone();
 
 									if ( useSkinning ) cachedMaterial.skinning = true;
+									if ( useVertexTangents ) cachedMaterial.vertexTangents = true;
 									if ( useVertexColors ) cachedMaterial.vertexColors = VertexColors;
 									if ( useFlatShading ) cachedMaterial.flatShading = true;
 									if ( useMorphTargets ) cachedMaterial.morphTargets = true;
@@ -26177,6 +26337,7 @@ void main() {
 							mesh.bind( new Skeleton( bones, boneInverses ), mesh.matrixWorld );
 
 						}
+
 						return node;
 
 					} );

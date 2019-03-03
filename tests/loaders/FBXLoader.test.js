@@ -4894,7 +4894,9 @@ var Three = (function (exports) {
 
 			//
 
-			var canvas = document.createElement( 'canvas' );
+			var useOffscreen = typeof OffscreenCanvas !== 'undefined';
+
+			var canvas = useOffscreen ? new OffscreenCanvas( header.width, header.height ) : document.createElement( 'canvas' );
 			canvas.width = header.width;
 			canvas.height = header.height;
 
@@ -4906,7 +4908,7 @@ var Three = (function (exports) {
 
 			context.putImageData( imageData, 0, 0 );
 
-			return canvas;
+			return useOffscreen ? canvas.transferToImageBitmap() : canvas;
 
 		},
 
@@ -4937,6 +4939,7 @@ var Three = (function (exports) {
 		this.blending = NormalBlending;
 		this.side = FrontSide;
 		this.flatShading = false;
+		this.vertexTangents = false;
 		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 		this.opacity = 1;
@@ -11307,6 +11310,18 @@ var Three = (function (exports) {
 
 			}
 
+			var tangent = this.attributes.tangent;
+
+			if ( tangent !== undefined ) {
+
+				var normalMatrix = new Matrix3().getNormalMatrix( matrix );
+
+				// Tangent is vec4, but the '.w' component is a sign value (+1/-1).
+				normalMatrix.applyToBufferAttribute( tangent );
+				tangent.needsUpdate = true;
+
+			}
+
 			if ( this.boundingBox !== null ) {
 
 				this.computeBoundingBox();
@@ -12127,11 +12142,9 @@ var Three = (function (exports) {
 
 			if ( index !== null ) {
 
-				var array = Array.prototype.slice.call( index.array );
-
 				data.data.index = {
 					type: index.array.constructor.name,
-					array: array
+					array: Array.prototype.slice.call( index.array )
 				};
 
 			}
@@ -12142,16 +12155,56 @@ var Three = (function (exports) {
 
 				var attribute = attributes[ key ];
 
-				var array = Array.prototype.slice.call( attribute.array );
-
-				data.data.attributes[ key ] = {
+				var attributeData = {
 					itemSize: attribute.itemSize,
 					type: attribute.array.constructor.name,
-					array: array,
+					array: Array.prototype.slice.call( attribute.array ),
 					normalized: attribute.normalized
 				};
 
+				if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+				data.data.attributes[ key ] = attributeData;
+
 			}
+
+			var morphAttributes = {};
+			var hasMorphAttributes = false;
+
+			for ( var key in this.morphAttributes ) {
+
+				var attributeArray = this.morphAttributes[ key ];
+
+				var array = [];
+
+				for ( var i = 0, il = attributeArray.length; i < il; i ++ ) {
+
+					var attribute = attributeArray[ i ];
+
+					var attributeData = {
+						itemSize: attribute.itemSize,
+						type: attribute.array.constructor.name,
+						array: Array.prototype.slice.call( attribute.array ),
+						normalized: attribute.normalized
+					};
+
+					if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+					array.push( attributeData );
+
+				}
+
+				if ( array.length > 0 ) {
+
+					morphAttributes[ key ] = array;
+
+					hasMorphAttributes = true;
+
+				}
+
+			}
+
+			if ( hasMorphAttributes ) data.data.morphAttributes = morphAttributes;
 
 			var groups = this.groups;
 
@@ -16529,6 +16582,7 @@ var Three = (function (exports) {
 				var path = ( self.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : self.path;
 
 				var loader = new FileLoader( this.manager );
+				loader.setPath( self.path );
 				loader.setResponseType( 'arraybuffer' );
 
 				loader.load( url, function ( buffer ) {
@@ -16983,7 +17037,7 @@ var Three = (function (exports) {
 						break;
 					default:
 						console.warn( 'FBXLoader: unknown material type "%s". Defaulting to MeshPhongMaterial.', type );
-						material = new MeshPhongMaterial( { color: 0x3300ff } );
+						material = new MeshPhongMaterial();
 						break;
 
 				}
@@ -17016,11 +17070,13 @@ var Three = (function (exports) {
 					parameters.color = new Color().fromArray( materialNode.DiffuseColor.value );
 
 				}
+
 				if ( materialNode.DisplacementFactor ) {
 
 					parameters.displacementScale = materialNode.DisplacementFactor.value;
 
 				}
+
 				if ( materialNode.Emissive ) {
 
 					parameters.emissive = new Color().fromArray( materialNode.Emissive.value );
@@ -17031,31 +17087,37 @@ var Three = (function (exports) {
 					parameters.emissive = new Color().fromArray( materialNode.EmissiveColor.value );
 
 				}
+
 				if ( materialNode.EmissiveFactor ) {
 
 					parameters.emissiveIntensity = parseFloat( materialNode.EmissiveFactor.value );
 
 				}
+
 				if ( materialNode.Opacity ) {
 
 					parameters.opacity = parseFloat( materialNode.Opacity.value );
 
 				}
+
 				if ( parameters.opacity < 1.0 ) {
 
 					parameters.transparent = true;
 
 				}
+
 				if ( materialNode.ReflectionFactor ) {
 
 					parameters.reflectivity = materialNode.ReflectionFactor.value;
 
 				}
+
 				if ( materialNode.Shininess ) {
 
 					parameters.shininess = materialNode.Shininess.value;
 
 				}
+
 				if ( materialNode.Specular ) {
 
 					parameters.specular = new Color().fromArray( materialNode.Specular.value );
@@ -17078,18 +17140,25 @@ var Three = (function (exports) {
 							parameters.bumpMap = self.getTexture( textureMap, child.ID );
 							break;
 
+						case 'Maya|TEX_ao_map':
+							parameters.aoMap = self.getTexture( textureMap, child.ID );
+							break;
+
 						case 'DiffuseColor':
+						case 'Maya|TEX_color_map':
 							parameters.map = self.getTexture( textureMap, child.ID );
 							break;
 
 						case 'DisplacementColor':
 							parameters.displacementMap = self.getTexture( textureMap, child.ID );
 							break;
+
 						case 'EmissiveColor':
 							parameters.emissiveMap = self.getTexture( textureMap, child.ID );
 							break;
 
 						case 'NormalMap':
+						case 'Maya|TEX_normal_map':
 							parameters.normalMap = self.getTexture( textureMap, child.ID );
 							break;
 
@@ -18812,15 +18881,17 @@ var Three = (function (exports) {
 
 				var rawClips = this.parseClips();
 
-				if ( rawClips === undefined ) return;
+				if ( rawClips !== undefined ) {
 
-				for ( var key in rawClips ) {
+					for ( var key in rawClips ) {
 
-					var rawClip = rawClips[ key ];
+						var rawClip = rawClips[ key ];
 
-					var clip = this.addClip( rawClip );
+						var clip = this.addClip( rawClip );
 
-					animationClips.push( clip );
+						animationClips.push( clip );
+
+					}
 
 				}
 
@@ -18986,7 +19057,7 @@ var Three = (function (exports) {
 
 											sceneGraph.traverse( function ( child ) {
 
-												if ( child.ID = rawModel.id ) {
+												if ( child.ID === rawModel.id ) {
 
 													node.transform = child.matrix;
 

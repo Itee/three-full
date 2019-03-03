@@ -4240,6 +4240,7 @@ var Three = (function (exports) {
 		this.blending = NormalBlending;
 		this.side = FrontSide;
 		this.flatShading = false;
+		this.vertexTangents = false;
 		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 		this.opacity = 1;
@@ -4658,6 +4659,24 @@ var Three = (function (exports) {
 	var UniformsUtils = { clone: cloneUniforms, merge: mergeUniforms };
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_vertex = `
+void main() {
+	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	var default_fragment = `
+void main() {
+	gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );
+}
+`;
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	function ShaderMaterial( parameters ) {
 
 		Material.call( this );
@@ -4667,8 +4686,8 @@ var Three = (function (exports) {
 		this.defines = {};
 		this.uniforms = {};
 
-		this.vertexShader = 'void main() {\n\tgl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n}';
-		this.fragmentShader = 'void main() {\n\tgl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );\n}';
+		this.vertexShader = default_vertex;
+		this.fragmentShader = default_fragment;
 
 		this.linewidth = 1;
 
@@ -9160,6 +9179,18 @@ var Three = (function (exports) {
 
 			}
 
+			var tangent = this.attributes.tangent;
+
+			if ( tangent !== undefined ) {
+
+				var normalMatrix = new Matrix3().getNormalMatrix( matrix );
+
+				// Tangent is vec4, but the '.w' component is a sign value (+1/-1).
+				normalMatrix.applyToBufferAttribute( tangent );
+				tangent.needsUpdate = true;
+
+			}
+
 			if ( this.boundingBox !== null ) {
 
 				this.computeBoundingBox();
@@ -9980,11 +10011,9 @@ var Three = (function (exports) {
 
 			if ( index !== null ) {
 
-				var array = Array.prototype.slice.call( index.array );
-
 				data.data.index = {
 					type: index.array.constructor.name,
-					array: array
+					array: Array.prototype.slice.call( index.array )
 				};
 
 			}
@@ -9995,16 +10024,56 @@ var Three = (function (exports) {
 
 				var attribute = attributes[ key ];
 
-				var array = Array.prototype.slice.call( attribute.array );
-
-				data.data.attributes[ key ] = {
+				var attributeData = {
 					itemSize: attribute.itemSize,
 					type: attribute.array.constructor.name,
-					array: array,
+					array: Array.prototype.slice.call( attribute.array ),
 					normalized: attribute.normalized
 				};
 
+				if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+				data.data.attributes[ key ] = attributeData;
+
 			}
+
+			var morphAttributes = {};
+			var hasMorphAttributes = false;
+
+			for ( var key in this.morphAttributes ) {
+
+				var attributeArray = this.morphAttributes[ key ];
+
+				var array = [];
+
+				for ( var i = 0, il = attributeArray.length; i < il; i ++ ) {
+
+					var attribute = attributeArray[ i ];
+
+					var attributeData = {
+						itemSize: attribute.itemSize,
+						type: attribute.array.constructor.name,
+						array: Array.prototype.slice.call( attribute.array ),
+						normalized: attribute.normalized
+					};
+
+					if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+					array.push( attributeData );
+
+				}
+
+				if ( array.length > 0 ) {
+
+					morphAttributes[ key ] = array;
+
+					hasMorphAttributes = true;
+
+				}
+
+			}
+
+			if ( hasMorphAttributes ) data.data.morphAttributes = morphAttributes;
 
 			var groups = this.groups;
 
@@ -12594,9 +12663,6 @@ var Three = (function (exports) {
 
 		WebGLRenderTarget.call( this, width, height, options );
 
-		this.activeCubeFace = 0; // PX 0, NX 1, PY 2, NY 3, PZ 4, NZ 5
-		this.activeMipMapLevel = 0;
-
 	}
 
 	WebGLRenderTargetCube.prototype = Object.create( WebGLRenderTarget.prototype );
@@ -12908,25 +12974,25 @@ var Three = (function (exports) {
 
 			renderTarget.texture.generateMipmaps = false;
 
-			renderTarget.activeCubeFace = 0;
-			renderer.render( scene, cameraPX, renderTarget );
+			renderer.setRenderTarget( renderTarget, 0 );
+			renderer.render( scene, cameraPX );
 
-			renderTarget.activeCubeFace = 1;
-			renderer.render( scene, cameraNX, renderTarget );
+			renderer.setRenderTarget( renderTarget, 1 );
+			renderer.render( scene, cameraNX );
 
-			renderTarget.activeCubeFace = 2;
-			renderer.render( scene, cameraPY, renderTarget );
+			renderer.setRenderTarget( renderTarget, 2 );
+			renderer.render( scene, cameraPY );
 
-			renderTarget.activeCubeFace = 3;
-			renderer.render( scene, cameraNY, renderTarget );
+			renderer.setRenderTarget( renderTarget, 3 );
+			renderer.render( scene, cameraNY );
 
-			renderTarget.activeCubeFace = 4;
-			renderer.render( scene, cameraPZ, renderTarget );
+			renderer.setRenderTarget( renderTarget, 4 );
+			renderer.render( scene, cameraPZ );
 
 			renderTarget.texture.generateMipmaps = generateMipmaps;
 
-			renderTarget.activeCubeFace = 5;
-			renderer.render( scene, cameraNZ, renderTarget );
+			renderer.setRenderTarget( renderTarget, 5 );
+			renderer.render( scene, cameraNZ );
 
 			renderer.setRenderTarget( currentRenderTarget );
 
@@ -12940,8 +13006,7 @@ var Three = (function (exports) {
 
 			for ( var i = 0; i < 6; i ++ ) {
 
-				renderTarget.activeCubeFace = i;
-				renderer.setRenderTarget( renderTarget );
+				renderer.setRenderTarget( renderTarget, i );
 
 				renderer.clear( color, depth, stencil );
 
@@ -12964,6 +13029,8 @@ var Three = (function (exports) {
 	};
 
 	CubemapGenerator.prototype.fromEquirectangular = function ( texture, options ) {
+
+		options = options || {};
 
 		var scene = new Scene();
 
@@ -13046,9 +13113,9 @@ var Three = (function (exports) {
 			type: texture.type,
 			format: texture.format,
 			encoding: texture.encoding,
-			generateMipmaps: ( options.generateMipmaps !== undefined ) ?  options.generateMipmaps : texture.generateMipmaps,
-			minFilter: ( options.minFilter !== undefined ) ?  options.minFilter : texture.minFilter,
-			magFilter: ( options.magFilter !== undefined ) ?  options.magFilter : texture.magFilter
+			generateMipmaps: ( options.generateMipmaps !== undefined ) ? options.generateMipmaps : texture.generateMipmaps,
+			minFilter: ( options.minFilter !== undefined ) ? options.minFilter : texture.minFilter,
+			magFilter: ( options.magFilter !== undefined ) ? options.magFilter : texture.magFilter
 		};
 
 		var camera = new CubeCamera( 1, 10, resolution, params );
@@ -13073,6 +13140,8 @@ var Three = (function (exports) {
 		scene.add( boxMesh );
 
 		var EquirectangularToCubeGenerator = function ( sourceTexture, options ) {
+
+			options = options || {};
 
 			this.sourceTexture = sourceTexture;
 			this.resolution = options.resolution || 512;
@@ -13106,11 +13175,11 @@ var Three = (function (exports) {
 
 			update: function ( renderer ) {
 
+				var currentRenderTarget = renderer.getRenderTarget();
+
 				boxMesh.material.uniforms.equirectangularMap.value = this.sourceTexture;
 
 				for ( var i = 0; i < 6; i ++ ) {
-
-					this.renderTarget.activeCubeFace = i;
 
 					var v = this.views[ i ];
 
@@ -13118,9 +13187,13 @@ var Three = (function (exports) {
 					camera.up.set( v.u[ 0 ], v.u[ 1 ], v.u[ 2 ] );
 					camera.lookAt( v.t[ 0 ], v.t[ 1 ], v.t[ 2 ] );
 
-					renderer.render( scene, camera, this.renderTarget, true );
+					renderer.setRenderTarget( this.renderTarget, i );
+					renderer.clear();
+					renderer.render( scene, camera );
 
 				}
+
+				renderer.setRenderTarget( currentRenderTarget );
 
 				return this.renderTarget.texture;
 
@@ -13182,6 +13255,7 @@ var Three = (function (exports) {
 	} )();
 
 	exports.CubemapGenerator = CubemapGenerator;
+	exports.EquirectangularToCubeGenerator = EquirectangularToCubeGenerator;
 
 	return exports;
 

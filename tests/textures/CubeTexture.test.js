@@ -94,6 +94,7 @@ var Three = (function (exports) {
 	var LinearFilter = 1006;
 	var LinearMipMapLinearFilter = 1008;
 	var UnsignedByteType = 1009;
+	var RGBFormat = 1022;
 	var RGBAFormat = 1023;
 	var LinearEncoding = 3000;
 
@@ -3754,6 +3755,7 @@ var Three = (function (exports) {
 
 		images = images !== undefined ? images : [];
 		mapping = mapping !== undefined ? mapping : CubeReflectionMapping;
+		format = format !== undefined ? format : RGBFormat;
 
 		Texture.call( this, images, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding );
 

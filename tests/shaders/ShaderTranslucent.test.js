@@ -4221,6 +4221,12 @@ vec3 transformed = vec3( position );
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var beginnormal_vertex = `
 vec3 objectNormal = vec3( normal );
+
+#ifdef USE_TANGENT
+
+	vec3 objectTangent = vec3( tangent.xyz );
+
+#endif
 `;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4945,6 +4951,18 @@ vec3 transformedNormal = normalMatrix * objectNormal;
 	transformedNormal = - transformedNormal;
 
 #endif
+
+#ifdef USE_TANGENT
+
+	vec3 transformedTangent = normalMatrix * objectTangent;
+
+	#ifdef FLIP_SIDED
+
+		transformedTangent = - transformedTangent;
+
+	#endif
+
+#endif
 `;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -5001,7 +5019,7 @@ vec3 transformedNormal = normalMatrix * objectNormal;
 	// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	var encodings_fragment = `
-  gl_FragColor = linearToOutputTexel( gl_FragColor );
+gl_FragColor = linearToOutputTexel( gl_FragColor );
 `;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6431,6 +6449,20 @@ float metalnessFactor = metalness;
 
 	#endif
 
+	#ifdef USE_TANGENT
+
+		vec3 tangent = normalize( vTangent );
+		vec3 bitangent = normalize( vBitangent );
+
+		#ifdef DOUBLE_SIDED
+
+			tangent = tangent * ( float( gl_FrontFacing ) * 2.0 - 1.0 );
+			bitangent = bitangent * ( float( gl_FrontFacing ) * 2.0 - 1.0 );
+
+		#endif
+
+	#endif
+
 #endif
 `;
 
@@ -6460,7 +6492,18 @@ float metalnessFactor = metalness;
 
 	#else // tangent-space normal map
 
-		normal = perturbNormal2Arb( -vViewPosition, normal );
+		#ifdef USE_TANGENT
+
+			mat3 vTBN = mat3( tangent, bitangent, normal );
+			vec3 mapN = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0;
+			mapN.xy = normalScale * mapN.xy;
+			normal = normalize( vTBN * mapN );
+
+		#else
+
+			normal = perturbNormal2Arb( -vViewPosition, normal );
+
+		#endif
 
 	#endif
 
@@ -6593,7 +6636,7 @@ gl_Position = projectionMatrix * mvPosition;
 	var dithering_fragment = `
 #if defined( DITHERING )
 
-  gl_FragColor.rgb = dithering( gl_FragColor.rgb );
+	gl_FragColor.rgb = dithering( gl_FragColor.rgb );
 
 #endif
 `;
@@ -7117,6 +7160,12 @@ float getShadowMask() {
 
 	objectNormal = vec4( skinMatrix * vec4( objectNormal, 0.0 ) ).xyz;
 
+	#ifdef USE_TANGENT
+
+		objectTangent = vec4( skinMatrix * vec4( objectTangent, 0.0 ) ).xyz;
+
+	#endif
+
 #endif
 `;
 
@@ -7155,7 +7204,7 @@ float specularStrength;
 	var tonemapping_fragment = `
 #if defined( TONE_MAPPING )
 
-  gl_FragColor.rgb = toneMapping( gl_FragColor.rgb );
+	gl_FragColor.rgb = toneMapping( gl_FragColor.rgb );
 
 #endif
 `;
@@ -8222,6 +8271,13 @@ varying vec3 vViewPosition;
 
 	varying vec3 vNormal;
 
+	#ifdef USE_TANGENT
+
+		varying vec3 vTangent;
+		varying vec3 vBitangent;
+
+	#endif
+
 #endif
 
 #include <common>
@@ -8303,6 +8359,13 @@ varying vec3 vViewPosition;
 
 	varying vec3 vNormal;
 
+	#ifdef USE_TANGENT
+
+		varying vec3 vTangent;
+		varying vec3 vBitangent;
+
+	#endif
+
 #endif
 
 #include <common>
@@ -8332,6 +8395,13 @@ void main() {
 #ifndef FLAT_SHADED // Normal computed with derivatives when FLAT_SHADED
 
 	vNormal = normalize( transformedNormal );
+
+	#ifdef USE_TANGENT
+
+		vTangent = normalize( transformedTangent );
+		vBitangent = normalize( cross( vNormal, vTangent ) * tangent.w );
+
+	#endif
 
 #endif
 
@@ -8370,6 +8440,13 @@ uniform float opacity;
 
 	varying vec3 vNormal;
 
+	#ifdef USE_TANGENT
+
+		varying vec3 vTangent;
+		varying vec3 vBitangent;
+
+	#endif
+
 #endif
 
 #include <packing>
@@ -8405,6 +8482,13 @@ void main() {
 
 	varying vec3 vNormal;
 
+	#ifdef USE_TANGENT
+
+		varying vec3 vTangent;
+		varying vec3 vBitangent;
+
+	#endif
+
 #endif
 
 #include <uv_pars_vertex>
@@ -8426,6 +8510,13 @@ void main() {
 #ifndef FLAT_SHADED // Normal computed with derivatives when FLAT_SHADED
 
 	vNormal = normalize( transformedNormal );
+
+	#ifdef USE_TANGENT
+
+		vTangent = normalize( transformedTangent );
+		vBitangent = normalize( cross( vNormal, vTangent ) * tangent.w );
+
+	#endif
 
 #endif
 

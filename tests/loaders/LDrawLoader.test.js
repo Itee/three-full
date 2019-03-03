@@ -7463,6 +7463,18 @@ var Three = (function (exports) {
 
 			}
 
+			var tangent = this.attributes.tangent;
+
+			if ( tangent !== undefined ) {
+
+				var normalMatrix = new Matrix3().getNormalMatrix( matrix );
+
+				// Tangent is vec4, but the '.w' component is a sign value (+1/-1).
+				normalMatrix.applyToBufferAttribute( tangent );
+				tangent.needsUpdate = true;
+
+			}
+
 			if ( this.boundingBox !== null ) {
 
 				this.computeBoundingBox();
@@ -8283,11 +8295,9 @@ var Three = (function (exports) {
 
 			if ( index !== null ) {
 
-				var array = Array.prototype.slice.call( index.array );
-
 				data.data.index = {
 					type: index.array.constructor.name,
-					array: array
+					array: Array.prototype.slice.call( index.array )
 				};
 
 			}
@@ -8298,16 +8308,56 @@ var Three = (function (exports) {
 
 				var attribute = attributes[ key ];
 
-				var array = Array.prototype.slice.call( attribute.array );
-
-				data.data.attributes[ key ] = {
+				var attributeData = {
 					itemSize: attribute.itemSize,
 					type: attribute.array.constructor.name,
-					array: array,
+					array: Array.prototype.slice.call( attribute.array ),
 					normalized: attribute.normalized
 				};
 
+				if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+				data.data.attributes[ key ] = attributeData;
+
 			}
+
+			var morphAttributes = {};
+			var hasMorphAttributes = false;
+
+			for ( var key in this.morphAttributes ) {
+
+				var attributeArray = this.morphAttributes[ key ];
+
+				var array = [];
+
+				for ( var i = 0, il = attributeArray.length; i < il; i ++ ) {
+
+					var attribute = attributeArray[ i ];
+
+					var attributeData = {
+						itemSize: attribute.itemSize,
+						type: attribute.array.constructor.name,
+						array: Array.prototype.slice.call( attribute.array ),
+						normalized: attribute.normalized
+					};
+
+					if ( attribute.name !== '' ) attributeData.name = attribute.name;
+
+					array.push( attributeData );
+
+				}
+
+				if ( array.length > 0 ) {
+
+					morphAttributes[ key ] = array;
+
+					hasMorphAttributes = true;
+
+				}
+
+			}
+
+			if ( hasMorphAttributes ) data.data.morphAttributes = morphAttributes;
 
 			var groups = this.groups;
 
@@ -9003,6 +9053,7 @@ var Three = (function (exports) {
 		this.blending = NormalBlending;
 		this.side = FrontSide;
 		this.flatShading = false;
+		this.vertexTangents = false;
 		this.vertexColors = NoColors; // NoColors, VertexColors, FaceColors
 
 		this.opacity = 1;
@@ -11484,13 +11535,13 @@ var Three = (function (exports) {
 
 			},
 
-			getRemainingString: function() {
+			getRemainingString: function () {
 
 				return this.line.substring( this.currentCharIndex, this.lineLength );
 
 			},
 
-			isAtTheEnd: function() {
+			isAtTheEnd: function () {
 
 				return this.currentCharIndex >= this.lineLength;
 
@@ -11504,19 +11555,25 @@ var Three = (function (exports) {
 
 			getLineNumberString: function () {
 
-				return this.lineNumber >= 0? " at line " + this.lineNumber: "";
+				return this.lineNumber >= 0 ? " at line " + this.lineNumber : "";
 
 			}
 		};
 
-		function sortByMaterial ( a, b ) {
+		function sortByMaterial( a, b ) {
 
 			if ( a.colourCode === b.colourCode ) {
+
 				return 0;
+
 			}
+
 			if ( a.colourCode < b.colourCode ) {
-				return -1;
+
+				return - 1;
+
 			}
+
 			return 1;
 
 		}
@@ -11565,14 +11622,14 @@ var Three = (function (exports) {
 					index0 = iElem * elementSize;
 					numGroupVerts = elementSize;
 
-				}
-				else {
+				} else {
 
 					numGroupVerts += elementSize;
 
 				}
 
 			}
+
 			if ( numGroupVerts > 0 ) {
 
 				bufferGeometry.addGroup( index0, Infinity, materials.length - 1 );
@@ -11582,12 +11639,12 @@ var Three = (function (exports) {
 			bufferGeometry.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 
 			var object3d = null;
+
 			if ( elementSize === 2 ) {
 
 				object3d = new LineSegments( bufferGeometry, materials );
 
-			}
-			else if ( elementSize === 3 ) {
+			} else if ( elementSize === 3 ) {
 
 				bufferGeometry.computeVertexNormals();
 
@@ -11675,7 +11732,7 @@ var Three = (function (exports) {
 
 				var fileLoader = new FileLoader( this.manager );
 				fileLoader.setPath( this.path );
-				fileLoader.load( url, function( text ) {
+				fileLoader.load( url, function ( text ) {
 
 					processObject( text, onLoad );
 
@@ -11722,10 +11779,10 @@ var Three = (function (exports) {
 								finalizeObject();
 
 							}
+
 						}
 
-					}
-					else {
+					} else {
 
 						// No subobjects, finish object
 						finalizeObject();
@@ -11763,7 +11820,7 @@ var Three = (function (exports) {
 
 					}
 
-					function loadSubobject ( subobject, sync ) {
+					function loadSubobject( subobject, sync ) {
 
 						parseScope.mainColourCode = subobject.material.userData.code;
 						parseScope.mainEdgeColourCode = subobject.material.userData.edgeMaterial.userData.code;
@@ -11830,8 +11887,7 @@ var Three = (function (exports) {
 									// Try absolute path
 									newLocationState = LDrawLoader.FILE_LOCATION_NOT_FOUND;
 
-								}
-								else {
+								} else {
 
 									// Next attempt is lower case
 									subobject.fileName = subobject.fileName.toLowerCase();
@@ -11856,8 +11912,7 @@ var Three = (function (exports) {
 									scope.removeScopeLevel();
 									onProcessed( objGroup );
 
-								}
-								else {
+								} else {
 
 									// Load next subobject
 									loadSubobject( parseScope.subobjects[ parseScope.subobjectIndex ] );
@@ -11899,8 +11954,7 @@ var Three = (function (exports) {
 
 							loadSubobject( parseScope.subobjects[ parseScope.subobjectIndex ] );
 
-						}
-						else {
+						} else {
 
 							finalizeObject();
 
@@ -11908,7 +11962,7 @@ var Three = (function (exports) {
 
 					}
 
-					function addSubobject ( subobject, subobjectGroup ) {
+					function addSubobject( subobject, subobjectGroup ) {
 
 						if ( scope.separateObjects ) {
 
@@ -11960,7 +12014,7 @@ var Three = (function (exports) {
 
 			},
 
-			setFileMap: function( fileMap ) {
+			setFileMap: function ( fileMap ) {
 
 				this.fileMap = fileMap;
 
@@ -12015,7 +12069,7 @@ var Three = (function (exports) {
 
 			},
 
-			removeScopeLevel: function() {
+			removeScopeLevel: function () {
 
 				this.parseScopesStack.pop();
 
@@ -12055,7 +12109,7 @@ var Three = (function (exports) {
 
 				}
 
-				for ( var i = this.parseScopesStack.length - 1; i >= 0; i-- ) {
+				for ( var i = this.parseScopesStack.length - 1; i >= 0; i -- ) {
 
 					var material = this.parseScopesStack[ i ].lib[ colourCode ];
 
@@ -12150,9 +12204,10 @@ var Three = (function (exports) {
 
 								colour = '#' + colour.substring( 2 );
 
-							}
-							else if ( ! colour.startsWith( '#' ) ) {
+							} else if ( ! colour.startsWith( '#' ) ) {
+
 								throw 'LDrawLoader: Invalid colour while parsing material' + lineParser.getLineNumberString() + ".";
+
 							}
 							break;
 
@@ -12163,8 +12218,7 @@ var Three = (function (exports) {
 
 								edgeColour = '#' + edgeColour.substring( 2 );
 
-							}
-							else if ( ! edgeColour.startsWith( '#' ) ) {
+							} else if ( ! edgeColour.startsWith( '#' ) ) {
 
 								// Try to see if edge colour is a colour code
 								edgeMaterial = this.getMaterial( edgeColour );
@@ -12263,13 +12317,13 @@ var Three = (function (exports) {
 							// Default plastic material with shiny specular
 							hsl.l = Math.min( 1, hsl.l + ( 1 - hsl.l ) * 0.12 );
 
-						}
-						else {
+						} else {
 
 							// Try to imitate pearlescency by setting the specular to the complementary of the color, and low shininess
 							hsl.h = ( hsl.h + 0.5 ) % 1;
 							hsl.l = Math.min( 1, hsl.l + ( 1 - hsl.l ) * 0.7 );
 							shininess = 10;
+
 						}
 
 						specular.setHSL( hsl.h, hsl.s, hsl.l );
@@ -12305,6 +12359,7 @@ var Three = (function (exports) {
 					default:
 						// Should not happen
 						break;
+
 				}
 
 				// BFC (Back Face Culling) LDraw language meta extension is not implemented, so set all materials double-sided:
@@ -12316,15 +12371,19 @@ var Three = (function (exports) {
 				material.userData.canHaveEnvMap = canHaveEnvMap;
 
 				if ( luminance !== 0 ) {
+
 					material.emissive.set( material.color ).multiplyScalar( luminance );
+
 				}
 
 				if ( ! edgeMaterial ) {
+
 					// This is the material used for edges
 					edgeMaterial = new LineBasicMaterial( { color: edgeColour } );
 					edgeMaterial.userData.code = code;
 					edgeMaterial.name = name + " - Edge";
 					edgeMaterial.userData.canHaveEnvMap = false;
+
 				}
 
 				material.userData.code = code;
@@ -12362,8 +12421,7 @@ var Three = (function (exports) {
 					triangles = [];
 					lineSegments = [];
 
-				}
-				else {
+				} else {
 
 					if ( this.currentGroupObject === null ) {
 
@@ -12428,7 +12486,7 @@ var Three = (function (exports) {
 
 				}
 
-				function parseVector ( lp ) {
+				function parseVector( lp ) {
 
 					var v = new Vector3( parseFloat( lp.getToken() ), parseFloat( lp.getToken() ), parseFloat( lp.getToken() ) );
 
@@ -12445,7 +12503,7 @@ var Three = (function (exports) {
 				// Parse all line commands
 				for ( lineIndex = 0; lineIndex < numLines; lineIndex ++ ) {
 
-					line = lines[ lineIndex ];
+					var line = lines[ lineIndex ];
 
 					if ( line.length === 0 ) continue;
 
@@ -12460,8 +12518,7 @@ var Three = (function (exports) {
 							currentEmbeddedFileName = line.substring( 7 );
 							currentEmbeddedText = '';
 
-						}
-						else {
+						} else {
 
 							currentEmbeddedText += line + '\n';
 
@@ -12476,8 +12533,10 @@ var Three = (function (exports) {
 					lp.seekNonSpace();
 
 					if ( lp.isAtTheEnd() ) {
+
 						// Empty line
 						continue;
+
 					}
 
 					// Parse the line type
@@ -12502,6 +12561,10 @@ var Three = (function (exports) {
 
 											this.addMaterial( material );
 
+										}	else {
+
+											console.warn( 'LDrawLoader: Error parsing material' + lp.getLineNumberString() );
+
 										}
 										break;
 
@@ -12512,22 +12575,22 @@ var Three = (function (exports) {
 
 									case '!KEYWORDS':
 
-											var newKeywords = lp.getRemainingString().split( ',' );
-											if ( newKeywords.length > 0 ) {
+										var newKeywords = lp.getRemainingString().split( ',' );
+										if ( newKeywords.length > 0 ) {
 
-												if ( ! keywords ) {
+											if ( ! keywords ) {
 
-													keywords = [];
-
-												}
-
-												newKeywords.forEach( function( keyword ) {
-
-													keywords.push( keyword.trim() );
-
-												} );
+												keywords = [];
 
 											}
+
+											newKeywords.forEach( function ( keyword ) {
+
+												keywords.push( keyword.trim() );
+
+											} );
+
+										}
 										break;
 
 									case 'FILE':
@@ -12585,16 +12648,14 @@ var Three = (function (exports) {
 								// Found the subobject path in the preloaded file path map
 								fileName = scope.fileMap[ fileName ];
 
-							}
-							else {
+							}	else {
 
 								// Standardized subfolders
 								if ( fileName.startsWith( 's/' ) ) {
 
 									fileName = 'parts/' + fileName;
 
-								}
-								else if ( fileName.startsWith( '48/' ) ) {
+								} else if ( fileName.startsWith( '48/' ) ) {
 
 									fileName = 'p/' + fileName;
 
@@ -12709,8 +12770,7 @@ var Three = (function (exports) {
 
 					}
 
-				}
-				else {
+				} else {
 
 					groupObject = this.currentGroupObject;
 
