@@ -110,7 +110,7 @@ export class Object3D extends EventDispatcher {
 
   traverseAncestors(callback: (object: Object3D) => any): void;
   updateMatrix(): void;
-  updateMatrixWorld(force: boolean): void;
+  updateMatrixWorld(force?: boolean): void;
 
   updateWorldMatrix(updateParents: boolean, updateChildren: boolean): void;
 

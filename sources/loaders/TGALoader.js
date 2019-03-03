@@ -522,7 +522,9 @@ TGALoader.prototype = {
 
 		//
 
-		var canvas = document.createElement( 'canvas' );
+		var useOffscreen = typeof OffscreenCanvas !== 'undefined';
+
+		var canvas = useOffscreen ? new OffscreenCanvas( header.width, header.height ) : document.createElement( 'canvas' );
 		canvas.width = header.width;
 		canvas.height = header.height;
 
@@ -534,7 +536,7 @@ TGALoader.prototype = {
 
 		context.putImageData( imageData, 0, 0 );
 
-		return canvas;
+		return useOffscreen ? canvas.transferToImageBitmap() : canvas;
 
 	},
 

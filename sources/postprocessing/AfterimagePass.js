@@ -56,7 +56,7 @@ var AfterimagePass = function ( damp ) {
 	this.sceneComp = new Scene();
 	this.scene = new Scene();
 
-	this.camera = new OrthographicCamera( -1, 1, 1, -1, 0, 1 );
+	this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
 	this.camera.position.z = 1;
 
 	var geometry = new PlaneBufferGeometry( 2, 2 );
@@ -64,7 +64,7 @@ var AfterimagePass = function ( damp ) {
 	this.quadComp = new Mesh( geometry, this.shaderMaterial );
 	this.sceneComp.add( this.quadComp );
 
-	var material = new MeshBasicMaterial( { 
+	var material = new MeshBasicMaterial( {
 		map: this.textureComp.texture
 	} );
 
@@ -84,17 +84,25 @@ AfterimagePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		this.quadComp.material = this.shaderMaterial;
 
-		renderer.render( this.sceneComp, this.camera, this.textureComp );
-		renderer.render( this.scene, this.camera, this.textureOld );
-		
+		renderer.setRenderTarget( this.textureComp );
+		renderer.render( this.sceneComp, this.camera );
+
+		renderer.setRenderTarget( this.textureOld );
+		renderer.render( this.scene, this.camera );
+
 		if ( this.renderToScreen ) {
-			
+
+			renderer.setRenderTarget( null );
 			renderer.render( this.scene, this.camera );
-			
+
 		} else {
-			
-			renderer.render( this.scene, this.camera, writeBuffer, this.clear );
-			
+
+			renderer.setRenderTarget( writeBuffer );
+
+			if ( this.clear ) renderer.clear();
+
+			renderer.render( this.scene, this.camera );
+
 		}
 
 	}

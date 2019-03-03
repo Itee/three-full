@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Vector2 } from '../math/Vector2.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { ShaderPass } from './ShaderPass.js'
 import {
@@ -25,7 +26,7 @@ var EffectComposer = function ( renderer, renderTarget ) {
 			stencilBuffer: false
 		};
 
-		var size = renderer.getDrawingBufferSize();
+		var size = renderer.getDrawingBufferSize( new Vector2() );
 		renderTarget = new WebGLRenderTarget( size.width, size.height, parameters );
 		renderTarget.texture.name = 'EffectComposer.rt1';
 
@@ -74,7 +75,7 @@ Object.assign( EffectComposer.prototype, {
 
 		this.passes.push( pass );
 
-		var size = this.renderer.getDrawingBufferSize();
+		var size = this.renderer.getDrawingBufferSize( new Vector2() );
 		pass.setSize( size.width, size.height );
 
 	},
@@ -96,6 +97,8 @@ Object.assign( EffectComposer.prototype, {
 		}
 
 		this._previousFrameTime = Date.now();
+
+		var currentRenderTarget = this.renderer.getRenderTarget();
 
 		var maskActive = false;
 
@@ -143,13 +146,15 @@ Object.assign( EffectComposer.prototype, {
 
 		}
 
+		this.renderer.setRenderTarget( currentRenderTarget );
+
 	},
 
 	reset: function ( renderTarget ) {
 
 		if ( renderTarget === undefined ) {
 
-			var size = this.renderer.getDrawingBufferSize();
+			var size = this.renderer.getDrawingBufferSize( new Vector2() );
 
 			renderTarget = this.renderTarget1.clone();
 			renderTarget.setSize( size.width, size.height );

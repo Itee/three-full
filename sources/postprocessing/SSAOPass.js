@@ -211,7 +211,9 @@ SSAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		// render beauty and depth
 
-		renderer.render( this.scene, this.camera, this.beautyRenderTarget, true );
+		renderer.setRenderTarget( this.beautyRenderTarget );
+		renderer.clear();
+		renderer.render( this.scene, this.camera );
 
 		// render normals
 
@@ -296,18 +298,20 @@ SSAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		var originalClearAlpha = renderer.getClearAlpha();
 		var originalAutoClear = renderer.autoClear;
 
+		renderer.setRenderTarget( renderTarget );
+
 		// setup pass state
 		renderer.autoClear = false;
-		var clearNeeded = ( clearColor !== undefined ) && ( clearColor !== null );
-		if ( clearNeeded ) {
+		if ( ( clearColor !== undefined ) && ( clearColor !== null ) ) {
 
 			renderer.setClearColor( clearColor );
 			renderer.setClearAlpha( clearAlpha || 0.0 );
+			renderer.clear();
 
 		}
 
 		this.quad.material = passMaterial;
-		renderer.render( this.quadScene, this.quadCamera, renderTarget, clearNeeded );
+		renderer.render( this.quadScene, this.quadCamera );
 
 		// restore original state
 		renderer.autoClear = originalAutoClear;
@@ -322,22 +326,22 @@ SSAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		var originalClearAlpha = renderer.getClearAlpha();
 		var originalAutoClear = renderer.autoClear;
 
+		renderer.setRenderTarget( renderTarget );
 		renderer.autoClear = false;
 
 		clearColor = overrideMaterial.clearColor || clearColor;
 		clearAlpha = overrideMaterial.clearAlpha || clearAlpha;
 
-		var clearNeeded = ( clearColor !== undefined ) && ( clearColor !== null );
-
-		if ( clearNeeded ) {
+		if ( ( clearColor !== undefined ) && ( clearColor !== null ) ) {
 
 			renderer.setClearColor( clearColor );
 			renderer.setClearAlpha( clearAlpha || 0.0 );
+			renderer.clear();
 
 		}
 
 		this.scene.overrideMaterial = overrideMaterial;
-		renderer.render( this.scene, this.camera, renderTarget, clearNeeded );
+		renderer.render( this.scene, this.camera );
 		this.scene.overrideMaterial = null;
 
 		// restore original state
@@ -422,7 +426,7 @@ SSAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		}
 
-		this.noiseTexture = new DataTexture( data, width, height, RGBA, FloatType );
+		this.noiseTexture = new DataTexture( data, width, height, RGBAFormat, FloatType );
 		this.noiseTexture.wrapS = RepeatWrapping;
 		this.noiseTexture.wrapT = RepeatWrapping;
 		this.noiseTexture.needsUpdate = true;

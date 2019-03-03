@@ -546,8 +546,8 @@ var LegacyGLTFLoader = ( function () {
 	};
 
 	var WEBGL_SIDES = {
-		1028: BackSide,  // Culling front
-		1029: FrontSide  // Culling back
+		1028: BackSide, // Culling front
+		1029: FrontSide // Culling back
 		//1032: NoSide   // Culling front and back, what to do?
 	};
 
@@ -618,8 +618,10 @@ var LegacyGLTFLoader = ( function () {
 	};
 	function _each( object, callback, thisObj ) {
 
-		if ( !object ) {
+		if ( ! object ) {
+
 			return Promise.resolve();
+
 		}
 
 		var results;
@@ -641,11 +643,11 @@ var LegacyGLTFLoader = ( function () {
 
 					if ( value instanceof Promise ) {
 
-						value.then( function( key, value ) {
+						value.then( function ( key, value ) {
 
 							results[ key ] = value;
 
-						}.bind( this, idx ));
+						}.bind( this, idx ) );
 
 					} else {
 
@@ -673,11 +675,11 @@ var LegacyGLTFLoader = ( function () {
 
 						if ( value instanceof Promise ) {
 
-							value.then( function( key, value ) {
+							value.then( function ( key, value ) {
 
 								results[ key ] = value;
 
-							}.bind( this, key ));
+							}.bind( this, key ) );
 
 						} else {
 
@@ -693,11 +695,11 @@ var LegacyGLTFLoader = ( function () {
 
 		}
 
-		return Promise.all( fns ).then( function() {
+		return Promise.all( fns ).then( function () {
 
 			return results;
 
-		});
+		} );
 
 	}
 
@@ -1259,7 +1261,7 @@ var LegacyGLTFLoader = ( function () {
 
 					}
 
-					keys.forEach( function( v ) {
+					keys.forEach( function ( v ) {
 
 						if ( khr_material.values[ v ] !== undefined ) materialValues[ v ] = khr_material.values[ v ];
 
@@ -1564,7 +1566,7 @@ var LegacyGLTFLoader = ( function () {
 
 					materialParams.color = new Color().fromArray( materialValues.diffuse );
 
-				} else if ( typeof( materialValues.diffuse ) === 'string' ) {
+				} else if ( typeof ( materialValues.diffuse ) === 'string' ) {
 
 					materialParams.map = dependencies.textures[ materialValues.diffuse ];
 
@@ -1572,13 +1574,13 @@ var LegacyGLTFLoader = ( function () {
 
 				delete materialParams.diffuse;
 
-				if ( typeof( materialValues.reflective ) === 'string' ) {
+				if ( typeof ( materialValues.reflective ) === 'string' ) {
 
 					materialParams.envMap = dependencies.textures[ materialValues.reflective ];
 
 				}
 
-				if ( typeof( materialValues.bump ) === 'string' ) {
+				if ( typeof ( materialValues.bump ) === 'string' ) {
 
 					materialParams.bumpMap = dependencies.textures[ materialValues.bump ];
 
@@ -1596,7 +1598,7 @@ var LegacyGLTFLoader = ( function () {
 
 					}
 
-				} else if ( typeof( materialValues.emission ) === 'string' ) {
+				} else if ( typeof ( materialValues.emission ) === 'string' ) {
 
 					if ( materialType === MeshBasicMaterial ) {
 
@@ -1614,7 +1616,7 @@ var LegacyGLTFLoader = ( function () {
 
 					materialParams.specular = new Color().fromArray( materialValues.specular );
 
-				} else if ( typeof( materialValues.specular ) === 'string' ) {
+				} else if ( typeof ( materialValues.specular ) === 'string' ) {
 
 					materialParams.specularMap = dependencies.textures[ materialValues.specular ];
 
@@ -1719,9 +1721,9 @@ var LegacyGLTFLoader = ( function () {
 
 									var parameters = json.techniques[ material.technique ].parameters || {};
 
-									for( var attributeName in parameters ) {
+									for ( var attributeName in parameters ) {
 
-										if ( parameters [ attributeName ][ 'semantic' ] === attributeId ) {
+										if ( parameters[ attributeName ][ 'semantic' ] === attributeId ) {
 
 											geometry.addAttribute( attributeName, bufferAttribute );
 
@@ -2266,8 +2268,10 @@ var LegacyGLTFLoader = ( function () {
 					if ( child.material && child.material.isRawShaderMaterial ) {
 
 						child.gltfShader = new GLTFShader( child, dependencies.nodes );
-						child.onBeforeRender = function(renderer, scene, camera){
-							this.gltfShader.update(scene, camera);
+						child.onBeforeRender = function ( renderer, scene, camera ) {
+
+							this.gltfShader.update( scene, camera );
+
 						};
 
 					}

@@ -33,7 +33,7 @@ var GlitchPass = function ( dt_size ) {
 	} );
 
 	this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-	this.scene  = new Scene();
+	this.scene = new Scene();
 
 	this.quad = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
 	this.quad.frustumCulled = false; // Avoid getting clipped
@@ -86,23 +86,26 @@ GlitchPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		if ( this.renderToScreen ) {
 
+			renderer.setRenderTarget( null );
 			renderer.render( this.scene, this.camera );
 
 		} else {
 
-			renderer.render( this.scene, this.camera, writeBuffer, this.clear );
+			renderer.setRenderTarget( writeBuffer );
+			if ( this.clear ) renderer.clear();
+			renderer.render( this.scene, this.camera );
 
 		}
 
 	},
 
-	generateTrigger: function() {
+	generateTrigger: function () {
 
 		this.randX = _Math.randInt( 120, 240 );
 
 	},
 
-	generateHeightmap: function( dt_size ) {
+	generateHeightmap: function ( dt_size ) {
 
 		var data_arr = new Float32Array( dt_size * dt_size * 3 );
 		var length = dt_size * dt_size;

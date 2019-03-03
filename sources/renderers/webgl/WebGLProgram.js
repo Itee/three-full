@@ -383,6 +383,8 @@ function WebGLProgram( renderer, extensions, code, material, shader, parameters,
 			parameters.roughnessMap ? '#define USE_ROUGHNESSMAP' : '',
 			parameters.metalnessMap ? '#define USE_METALNESSMAP' : '',
 			parameters.alphaMap ? '#define USE_ALPHAMAP' : '',
+
+			parameters.vertexTangents ? '#define USE_TANGENT' : '',
 			parameters.vertexColors ? '#define USE_COLOR' : '',
 
 			parameters.flatShading ? '#define FLAT_SHADED' : '',
@@ -413,6 +415,12 @@ function WebGLProgram( renderer, extensions, code, material, shader, parameters,
 			'attribute vec3 position;',
 			'attribute vec3 normal;',
 			'attribute vec2 uv;',
+
+			'#ifdef USE_TANGENT',
+
+			'	attribute vec4 tangent;',
+
+			'#endif',
 
 			'#ifdef USE_COLOR',
 
@@ -490,6 +498,8 @@ function WebGLProgram( renderer, extensions, code, material, shader, parameters,
 			parameters.roughnessMap ? '#define USE_ROUGHNESSMAP' : '',
 			parameters.metalnessMap ? '#define USE_METALNESSMAP' : '',
 			parameters.alphaMap ? '#define USE_ALPHAMAP' : '',
+
+			parameters.vertexTangents ? '#define USE_TANGENT' : '',
 			parameters.vertexColors ? '#define USE_COLOR' : '',
 
 			parameters.gradientMap ? '#define USE_GRADIENTMAP' : '',

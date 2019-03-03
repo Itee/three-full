@@ -36,7 +36,7 @@ var TexturePass = function ( map, opacity ) {
 	this.needsSwap = false;
 
 	this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-	this.scene  = new Scene();
+	this.scene = new Scene();
 
 	this.quad = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
 	this.quad.frustumCulled = false; // Avoid getting clipped
@@ -59,7 +59,9 @@ TexturePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		this.uniforms[ "tDiffuse" ].value = this.map;
 		this.material.transparent = ( this.opacity < 1.0 );
 
-		renderer.render( this.scene, this.camera, this.renderToScreen ? null : readBuffer, this.clear );
+		renderer.setRenderTarget( this.renderToScreen ? null : readBuffer );
+		if ( this.clear ) renderer.clear();
+		renderer.render( this.scene, this.camera );
 
 		renderer.autoClear = oldAutoClear;
 	}

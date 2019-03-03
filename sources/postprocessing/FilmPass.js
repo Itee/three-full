@@ -34,7 +34,7 @@ var FilmPass = function ( noiseIntensity, scanlinesIntensity, scanlinesCount, gr
 	if ( scanlinesCount !== undefined ) this.uniforms.sCount.value = scanlinesCount;
 
 	this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-	this.scene  = new Scene();
+	this.scene = new Scene();
 
 	this.quad = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
 	this.quad.frustumCulled = false; // Avoid getting clipped
@@ -55,11 +55,14 @@ FilmPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		if ( this.renderToScreen ) {
 
+			renderer.setRenderTarget( null );
 			renderer.render( this.scene, this.camera );
 
 		} else {
 
-			renderer.render( this.scene, this.camera, writeBuffer, this.clear );
+			renderer.setRenderTarget( writeBuffer );
+			if ( this.clear ) renderer.clear();
+			renderer.render( this.scene, this.camera );
 
 		}
 

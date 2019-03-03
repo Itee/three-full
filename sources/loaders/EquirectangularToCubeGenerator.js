@@ -21,6 +21,8 @@ var CubemapGenerator = function ( renderer ) {
 
 CubemapGenerator.prototype.fromEquirectangular = function ( texture, options ) {
 
+	options = options || {};
+
 	var scene = new Scene();
 
 	var shader = {
@@ -102,9 +104,9 @@ CubemapGenerator.prototype.fromEquirectangular = function ( texture, options ) {
 		type: texture.type,
 		format: texture.format,
 		encoding: texture.encoding,
-		generateMipmaps: ( options.generateMipmaps !== undefined ) ?  options.generateMipmaps : texture.generateMipmaps,
-		minFilter: ( options.minFilter !== undefined ) ?  options.minFilter : texture.minFilter,
-		magFilter: ( options.magFilter !== undefined ) ?  options.magFilter : texture.magFilter
+		generateMipmaps: ( options.generateMipmaps !== undefined ) ? options.generateMipmaps : texture.generateMipmaps,
+		minFilter: ( options.minFilter !== undefined ) ? options.minFilter : texture.minFilter,
+		magFilter: ( options.magFilter !== undefined ) ? options.magFilter : texture.magFilter
 	};
 
 	var camera = new CubeCamera( 1, 10, resolution, params );
@@ -129,6 +131,8 @@ var EquirectangularToCubeGenerator = ( function () {
 	scene.add( boxMesh );
 
 	var EquirectangularToCubeGenerator = function ( sourceTexture, options ) {
+
+		options = options || {};
 
 		this.sourceTexture = sourceTexture;
 		this.resolution = options.resolution || 512;
@@ -162,11 +166,11 @@ var EquirectangularToCubeGenerator = ( function () {
 
 		update: function ( renderer ) {
 
+			var currentRenderTarget = renderer.getRenderTarget();
+
 			boxMesh.material.uniforms.equirectangularMap.value = this.sourceTexture;
 
 			for ( var i = 0; i < 6; i ++ ) {
-
-				this.renderTarget.activeCubeFace = i;
 
 				var v = this.views[ i ];
 
@@ -174,9 +178,13 @@ var EquirectangularToCubeGenerator = ( function () {
 				camera.up.set( v.u[ 0 ], v.u[ 1 ], v.u[ 2 ] );
 				camera.lookAt( v.t[ 0 ], v.t[ 1 ], v.t[ 2 ] );
 
-				renderer.render( scene, camera, this.renderTarget, true );
+				renderer.setRenderTarget( this.renderTarget, i );
+				renderer.clear();
+				renderer.render( scene, camera );
 
 			}
+
+			renderer.setRenderTarget( currentRenderTarget );
 
 			return this.renderTarget.texture;
 
@@ -237,4 +245,7 @@ var EquirectangularToCubeGenerator = ( function () {
 
 } )();
 
-export { CubemapGenerator }
+export {
+	CubemapGenerator,
+	EquirectangularToCubeGenerator
+}

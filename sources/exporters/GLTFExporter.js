@@ -953,6 +953,8 @@ GLTFExporter.prototype = {
 
 				if ( ! geometry.isBufferGeometry ) {
 
+					console.warn( 'GLTFExporter: Exporting Geometry will increase file size. Use BufferGeometry instead.' );
+
 					var geometryTemp = new BufferGeometry();
 					geometryTemp.fromGeometry( geometry );
 					geometry = geometryTemp;
@@ -1276,7 +1278,7 @@ GLTFExporter.prototype = {
 				gltfCamera.perspective = {
 
 					aspectRatio: camera.aspect,
-					yfov: _Math.degToRad( camera.fov ) / camera.aspect,
+					yfov: _Math.degToRad( camera.fov ),
 					zfar: camera.far <= 0 ? 0.001 : camera.far,
 					znear: camera.near < 0 ? 0 : camera.near
 

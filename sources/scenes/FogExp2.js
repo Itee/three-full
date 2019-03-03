@@ -11,22 +11,26 @@ function FogExp2( color, density ) {
 
 }
 
-FogExp2.prototype.isFogExp2 = true;
+Object.assign( FogExp2.prototype, {
 
-FogExp2.prototype.clone = function () {
+	isFogExp2: true,
 
-	return new FogExp2( this.color, this.density );
+	clone: function () {
 
-};
+		return new FogExp2( this.color, this.density );
 
-FogExp2.prototype.toJSON = function (  ) {
+	},
 
-	return {
-		type: 'FogExp2',
-		color: this.color.getHex(),
-		density: this.density
-	};
+	toJSON: function (  ) {
 
-};
+		return {
+			type: 'FogExp2',
+			color: this.color.getHex(),
+			density: this.density
+		};
+
+	}
+
+} );
 
 export { FogExp2 }

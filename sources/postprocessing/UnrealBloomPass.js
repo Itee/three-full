@@ -219,7 +219,9 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 			this.quad.material = this.basic;
 			this.basic.map = readBuffer.texture;
 
-			renderer.render( this.scene, this.camera, undefined, true );
+			renderer.setRenderTarget( null );
+			renderer.clear();
+			renderer.render( this.scene, this.camera );
 
 		}
 
@@ -229,7 +231,9 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		this.highPassUniforms[ "luminosityThreshold" ].value = this.threshold;
 		this.quad.material = this.materialHighPassFilter;
 
-		renderer.render( this.scene, this.camera, this.renderTargetBright, true );
+		renderer.setRenderTarget( this.renderTargetBright );
+		renderer.clear();
+		renderer.render( this.scene, this.camera );
 
 		// 2. Blur All the mips progressively
 
@@ -241,11 +245,15 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 			this.separableBlurMaterials[ i ].uniforms[ "colorTexture" ].value = inputRenderTarget.texture;
 			this.separableBlurMaterials[ i ].uniforms[ "direction" ].value = UnrealBloomPass.BlurDirectionX;
-			renderer.render( this.scene, this.camera, this.renderTargetsHorizontal[ i ], true );
+			renderer.setRenderTarget( this.renderTargetsHorizontal[ i ] );
+			renderer.clear();
+			renderer.render( this.scene, this.camera );
 
 			this.separableBlurMaterials[ i ].uniforms[ "colorTexture" ].value = this.renderTargetsHorizontal[ i ].texture;
 			this.separableBlurMaterials[ i ].uniforms[ "direction" ].value = UnrealBloomPass.BlurDirectionY;
-			renderer.render( this.scene, this.camera, this.renderTargetsVertical[ i ], true );
+			renderer.setRenderTarget( this.renderTargetsVertical[ i ] );
+			renderer.clear();
+			renderer.render( this.scene, this.camera );
 
 			inputRenderTarget = this.renderTargetsVertical[ i ];
 
@@ -258,7 +266,9 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		this.compositeMaterial.uniforms[ "bloomRadius" ].value = this.radius;
 		this.compositeMaterial.uniforms[ "bloomTintColors" ].value = this.bloomTintColors;
 
-		renderer.render( this.scene, this.camera, this.renderTargetsHorizontal[ 0 ], true );
+		renderer.setRenderTarget( this.renderTargetsHorizontal[ 0 ] );
+		renderer.clear();
+		renderer.render( this.scene, this.camera );
 
 		// Blend it additively over the input texture
 
@@ -268,11 +278,13 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		if ( maskActive ) renderer.context.enable( renderer.context.STENCIL_TEST );
 		if ( this.renderToScreen ) {
 
-			renderer.render( this.scene, this.camera, undefined, false );
+			renderer.setRenderTarget( null );
+			renderer.render( this.scene, this.camera );
 
 		} else {
 
-			renderer.render( this.scene, this.camera, readBuffer, false );
+			renderer.setRenderTarget( readBuffer );
+			renderer.render( this.scene, this.camera );
 
 		}
 

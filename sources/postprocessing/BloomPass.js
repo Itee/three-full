@@ -71,7 +71,7 @@ var BloomPass = function ( strength, kernelSize, sigma, resolution ) {
 	this.materialConvolution = new ShaderMaterial( {
 
 		uniforms: this.convolutionUniforms,
-		vertexShader:  convolutionShader.vertexShader,
+		vertexShader: convolutionShader.vertexShader,
 		fragmentShader: convolutionShader.fragmentShader,
 		defines: {
 			"KERNEL_SIZE_FLOAT": kernelSize.toFixed( 1 ),
@@ -83,7 +83,7 @@ var BloomPass = function ( strength, kernelSize, sigma, resolution ) {
 	this.needsSwap = false;
 
 	this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-	this.scene  = new Scene();
+	this.scene = new Scene();
 
 	this.quad = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
 	this.quad.frustumCulled = false; // Avoid getting clipped
@@ -106,13 +106,17 @@ BloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		this.convolutionUniforms[ "tDiffuse" ].value = readBuffer.texture;
 		this.convolutionUniforms[ "uImageIncrement" ].value = BloomPass.blurX;
 
-		renderer.render( this.scene, this.camera, this.renderTargetX, true );
+		renderer.setRenderTarget( this.renderTargetX );
+		renderer.clear();
+		renderer.render( this.scene, this.camera );
 		// Render quad with blured scene into texture (convolution pass 2)
 
 		this.convolutionUniforms[ "tDiffuse" ].value = this.renderTargetX.texture;
 		this.convolutionUniforms[ "uImageIncrement" ].value = BloomPass.blurY;
 
-		renderer.render( this.scene, this.camera, this.renderTargetY, true );
+		renderer.setRenderTarget( this.renderTargetY );
+		renderer.clear();
+		renderer.render( this.scene, this.camera );
 
 		// Render original scene with superimposed blur to texture
 
@@ -122,7 +126,9 @@ BloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		if ( maskActive ) renderer.context.enable( renderer.context.STENCIL_TEST );
 
-		renderer.render( this.scene, this.camera, readBuffer, this.clear );
+		renderer.setRenderTarget( readBuffer );
+		if ( this.clear ) renderer.clear();
+		renderer.render( this.scene, this.camera );
 
 	}
 

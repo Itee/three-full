@@ -2,10 +2,12 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { StereoCamera } from '../cameras/StereoCamera.js'
+import { Vector2 } from '../math/Vector2.js'
 var StereoEffect = function ( renderer ) {
 
 	var _stereo = new StereoCamera();
 	_stereo.aspect = 0.5;
+	var size = new Vector2();
 
 	this.setEyeSeparation = function ( eyeSep ) {
 
@@ -27,7 +29,7 @@ var StereoEffect = function ( renderer ) {
 
 		_stereo.update( camera );
 
-		var size = renderer.getSize();
+		renderer.getSize( size );
 
 		if ( renderer.autoClear ) renderer.clear();
 		renderer.setScissorTest( true );

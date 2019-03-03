@@ -58,8 +58,13 @@ MaskPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		// draw into the stencil buffer
 
-		renderer.render( this.scene, this.camera, readBuffer, this.clear );
-		renderer.render( this.scene, this.camera, writeBuffer, this.clear );
+		renderer.setRenderTarget( readBuffer );
+		if ( this.clear ) renderer.clear();
+		renderer.render( this.scene, this.camera );
+
+		renderer.setRenderTarget( writeBuffer );
+		if ( this.clear ) renderer.clear();
+		renderer.render( this.scene, this.camera );
 
 		// unlock color and depth buffer for subsequent rendering
 
@@ -68,7 +73,7 @@ MaskPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		// only render where stencil is set to 1
 
-		state.buffers.stencil.setFunc( context.EQUAL, 1, 0xffffffff );  // draw if == 1
+		state.buffers.stencil.setFunc( context.EQUAL, 1, 0xffffffff ); // draw if == 1
 		state.buffers.stencil.setOp( context.KEEP, context.KEEP, context.KEEP );
 
 	}

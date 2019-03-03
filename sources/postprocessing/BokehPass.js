@@ -82,7 +82,7 @@ var BokehPass = function ( scene, camera, params ) {
 	this.needsSwap = false;
 
 	this.camera2 = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-	this.scene2  = new Scene();
+	this.scene2 = new Scene();
 
 	this.quad2 = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
 	this.quad2.frustumCulled = false; // Avoid getting clipped
@@ -112,7 +112,9 @@ BokehPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		renderer.setClearColor( 0xffffff );
 		renderer.setClearAlpha( 1.0 );
-		renderer.render( this.scene, this.camera, this.renderTargetDepth, true );
+		renderer.setRenderTarget( this.renderTargetDepth );
+		renderer.clear();
+		renderer.render( this.scene, this.camera );
 
 		// Render bokeh composite
 
@@ -122,11 +124,14 @@ BokehPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		if ( this.renderToScreen ) {
 
+			renderer.setRenderTarget( null );
 			renderer.render( this.scene2, this.camera2 );
 
 		} else {
 
-			renderer.render( this.scene2, this.camera2, writeBuffer, this.clear );
+			renderer.setRenderTarget( writeBuffer );
+			renderer.clear();
+			renderer.render( this.scene2, this.camera2 );
 
 		}
 
@@ -134,7 +139,7 @@ BokehPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		renderer.setClearColor( this.oldClearColor );
 		renderer.setClearAlpha( this.oldClearAlpha );
 		renderer.autoClear = this.oldAutoClear;
-	
+
 	}
 
 } );

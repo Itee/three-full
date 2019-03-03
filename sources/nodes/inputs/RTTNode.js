@@ -76,7 +76,9 @@ RTTNode.prototype.updateFramesaveTo = function ( frame ) {
 
 	this.saveToCurrent = this.saveTo;
 
-	frame.renderer.render( this.saveToScene, this.camera, this.saveTo.renderTarget, this.saveTo.clear );
+	frame.renderer.setRenderTarget( this.saveTo.renderTarget );
+	if ( this.saveTo.clear ) frame.renderer.clear();
+	frame.renderer.render( this.saveToScene, this.camera );
 
 };
 
@@ -100,7 +102,9 @@ RTTNode.prototype.updateFrame = function ( frame ) {
 
 			}
 
-			frame.renderer.render( this.scene, this.camera, this.renderTarget, this.clear );
+			frame.renderer.setRenderTarget( this.renderTarget );
+			if ( this.clear ) frame.renderer.clear();
+			frame.renderer.render( this.scene, this.camera );
 
 		}
 

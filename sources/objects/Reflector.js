@@ -7,6 +7,7 @@ import { Plane } from '../math/Plane.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Vector4 } from '../math/Vector4.js'
+import { Vector2 } from '../math/Vector2.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
@@ -47,6 +48,7 @@ var Reflector = function ( geometry, options ) {
 	var view = new Vector3();
 	var target = new Vector3();
 	var q = new Vector4();
+	var size = new Vector2();
 
 	var textureMatrix = new Matrix4();
 	var virtualCamera = new PerspectiveCamera();
@@ -174,7 +176,9 @@ var Reflector = function ( geometry, options ) {
 		renderer.vr.enabled = false; // Avoid camera modification and recursion
 		renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
 
-		renderer.render( scene, virtualCamera, renderTarget, true );
+		renderer.setRenderTarget( renderTarget );
+		renderer.clear();
+		renderer.render( scene, virtualCamera );
 
 		renderer.vr.enabled = currentVrEnabled;
 		renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
@@ -187,7 +191,7 @@ var Reflector = function ( geometry, options ) {
 
 		if ( bounds !== undefined ) {
 
-			var size = renderer.getSize();
+			renderer.getSize( size );
 			var pixelRatio = renderer.getPixelRatio();
 
 			viewport.x = bounds.x * size.width * pixelRatio;
