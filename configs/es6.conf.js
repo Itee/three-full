@@ -886,7 +886,9 @@ module.exports = {
 		},
 		ShaderMaterial: {
 			imports: [
-                ['cloneUniforms', 'from', '../renderers/shaders/UniformsUtils']
+                ['cloneUniforms', 'from', '../renderers/shaders/UniformsUtils'],
+                ['default as default_vertex', 'from', '../renderers/shaders/ShaderChunk/default_vertex.glsl.js'],
+                ['default as default_fragment', 'from', '../renderers/shaders/ShaderChunk/default_fragment.glsl.js']
 			]
 		},
         Shape: {
