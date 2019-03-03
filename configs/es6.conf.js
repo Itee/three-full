@@ -433,7 +433,8 @@ module.exports = {
             imports: [
                 'DefaultLoadingManager',
                 'Loader',
-                'LoaderUtils'
+                'LoaderUtils',
+				'AnimationClip'
             ]
 		},
         LightningStorm: {
