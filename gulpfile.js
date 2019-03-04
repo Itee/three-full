@@ -6,12 +6,15 @@
  */
 
 const fs      = require( 'fs' )
+const path    = require( 'path' )
 const gulp    = require( 'gulp' )
 const util    = require( 'gulp-util' )
 const eslint  = require( 'gulp-eslint' )
 const replace = require( 'gulp-batch-replace' )
 const del     = require( 'del' )
 const rollup  = require( 'rollup' )
+const fsUtils = require( './utils' )
+const karma     = require( 'karma' )
 
 const log     = util.log
 const colors  = util.colors
@@ -266,7 +269,7 @@ gulp.task( 'convert-three', ( done ) => {
 ////// BUILDS ///////
 /////////////////////
 
-gulp.task( 'build-test', ( done ) => {
+gulp.task( 'build-test-javascript', ( done ) => {
 
     const configs = require( './configs/rollup.tests.conf' )
 
@@ -307,6 +310,90 @@ gulp.task( 'build-test', ( done ) => {
               } )
 
     }
+
+} )
+
+gulp.task( 'build-test-unit', ( done ) => {
+
+    const unitsConfig = require( './configs/units.conf' )
+    const excludes       = [
+//        'shaders'
+    ]
+
+    const basePath     = path.join( __dirname, 'tests' )
+    const filesPath    = fsUtils.getFilesPathsUnder( basePath )
+    const allowedPaths = fsUtils.excludesFilesPaths( filesPath, excludes )
+    const jsFilesPath  = fsUtils.filterJavascriptFiles( allowedPaths )
+
+    for ( let pathIndex = 0, numberOfPaths = jsFilesPath.length ; pathIndex < numberOfPaths ; pathIndex++ ) {
+
+        const filePath     = jsFilesPath[ pathIndex ]
+        const dirPath      = path.dirname( filePath )
+        const fileBaseName = path.basename( filePath )
+        const fileName     = path.basename( filePath, '.test.js' )
+        const outputPath   = path.join( dirPath, fileName + '.unit.js' )
+
+        // Get exports from file then for each...
+
+        const imports    = ''
+        const preRequise = ''
+        const snipet     = '\t\t\t\tvar ' + fileName.toLowerCase() + ' = new Three.' + fileName + '()\n'
+
+        const template = '/* global describe, it */\n' +
+            '\n' +
+            'describe( \'' + fileName + '\', () => {\n' +
+            '\n' +
+            '    it( \'is bundlable\', () => {\n' +
+            '\n' +
+            '       should.exist( Three[\'' + fileName + '\'] )\n' +
+            '\n' +
+            '    } )\n' +
+            '\n' +
+            '    it( \'is instanciable\', () => {\n' +
+            '\n' +
+            '       should.exist( new Three[\'' + fileName + '\']() )\n' +
+            '\n' +
+            '    } )\n' +
+            '\n' +
+            '} )\n'
+
+
+        console.log( 'Create ' + outputPath )
+        fs.writeFileSync( outputPath, template )
+
+    }
+
+    done()
+
+} )
+
+gulp.task( 'build-test', gulp.series( 'clean-tests', 'build-test-javascript', 'build-test-unit' ) )
+
+/**
+ * @method npm run unit
+ * @description Will run unit tests using karma
+ */
+gulp.task( 'test', ( done ) => {
+
+    const karmaServer = new karma.Server( {
+        configFile: `${__dirname}/configs/karma.units.conf.js`,
+        singleRun:  true
+    }, ( exitCode ) => {
+
+        if ( exitCode !== 0 ) {
+            done( `Karma server exit with code ${exitCode}` )
+        } else {
+            log( `Karma server exit with code ${exitCode}` )
+            done()
+        }
+
+    } )
+
+    karmaServer.on( 'browser_error', ( browser, error ) => {
+        log( 'browser_error: ' + red( error.message ) )
+    } )
+
+    karmaServer.start()
 
 } )
 
