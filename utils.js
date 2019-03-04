@@ -1,20 +1,47 @@
 /**
+ * @author [Tristan Valcke]{@link https://github.com/Itee}
+ * @license [BSD-3-Clause]{@link https://opensource.org/licenses/BSD-3-Clause}
+ *
  * @file Todo
  *
- * @author Itee <valcketristan@gmail.com>
- * @license MIT
+ * @example Todo
+ *
  */
 
 const fs   = require( 'fs' )
 const path = require( 'path' )
 
-function _fileExistForPath ( filePath ) {
+function fileExistForPath ( filePath ) {
 
     return fs.existsSync( filePath )
 
 }
 
-function _getFilesPathsUnder ( filePaths ) {
+function getFileForPath ( filePath ) {
+
+    // In case files doesn't exist
+    if ( !fileExistForPath( filePath ) ) {
+        throw new Error( 'Invalid file path "' + filePath + '" file does not exist !' )
+    }
+
+    return fs.readFileSync( filePath, 'utf8' )
+
+}
+
+function getUncommentedFileForPath ( filePath ) {
+
+    return getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/g, '$1' )
+
+}
+
+/**
+ * Return all the files paths under filePaths in a recursive way.
+ *
+ * @param filePaths - An array of string, representing the base path where looking for get all files paths
+ * @return {Array.<string>} - An array of files paths
+ * @private
+ */
+function getFilesPathsUnder ( filePaths ) {
 
     let files = []
 
@@ -49,8 +76,8 @@ function _getFilesPathsUnder ( filePaths ) {
 
     function checkStateOf ( filePath ) {
 
-        if ( !_fileExistForPath( filePath ) ) {
-            console.error( 'Invalid file path "' + filePath + '"' )
+        if ( !fileExistForPath( filePath ) ) {
+            console.error( 'ES6Converter: Invalid file path "' + filePath + '"' )
             return
         }
 
@@ -81,7 +108,7 @@ function _getFilesPathsUnder ( filePaths ) {
  * @return {Array.<string>} The cleaned filePaths of excludes paths
  * @private
  */
-function _excludesFilesPaths ( filePaths, excludes ) {
+function excludesFilesPaths ( filePaths, excludes ) {
 
     let filteredFilesPath = []
 
@@ -115,7 +142,7 @@ function _excludesFilesPaths ( filePaths, excludes ) {
                     isExclude = true
                 }
 
-            } else if ( path.contains( excludePattern ) ) {
+            } else if ( path.includes( excludePattern ) ) {
                 isExclude = true
             }
 
@@ -134,7 +161,7 @@ function _excludesFilesPaths ( filePaths, excludes ) {
  * @return {Array.<string>} The filtered path with only javascript files
  * @private
  */
-function _filterJavascriptFiles ( filePaths ) {
+function filterJavascriptFiles ( filePaths ) {
 
     let filteredFilesPath = []
 
@@ -157,84 +184,11 @@ function _filterJavascriptFiles ( filePaths ) {
 
 }
 
-function glsl () {
-
-    return {
-
-        transform ( code, id ) {
-
-            if ( /\.glsl$/.test( id ) === false ) {
-                return;
-            }
-
-            var transformedCode = 'export default ' + JSON.stringify(
-                code
-                    .replace( /[ \t]*\/\/.*\n/g, '' ) // remove //
-                    .replace( /[ \t]*\/\*[\s\S]*?\*\//g, '' ) // remove /* */
-                    .replace( /\n{2,}/g, '\n' ) // # \n+ to \n
-            ) + ';';
-            return {
-                code: transformedCode,
-                map:  { mappings: '' }
-            };
-
-        }
-
-    };
-
+module.exports = {
+    fileExistForPath,
+    getFileForPath,
+    getFilesPathsUnder,
+    getUncommentedFileForPath,
+    excludesFilesPaths,
+    filterJavascriptFiles
 }
-
-function RollupTestConfigurationBuilder () {
-
-    const excludes = [
-        'Three.js',
-        'polyfills.js',
-        'utils.js',
-        'constants.js',
-        'scene.js',
-        'offscreen.js',
-        'jank.js'
-    ]
-
-    const basePath            = path.join( __dirname, '..' )
-    const sourcesPath         = path.join( basePath, 'sources' )
-    const testsPath           = path.join( basePath, 'tests' )
-    const sourcesFilesPath    = _getFilesPathsUnder( sourcesPath )
-    const availableFilesPaths = _excludesFilesPaths( sourcesFilesPath, excludes )
-    const jsFilesPath         = _filterJavascriptFiles( availableFilesPaths )
-
-    const configs = []
-
-    for ( let pathIndex = 0, numberOfPaths = jsFilesPath.length ; pathIndex < numberOfPaths ; pathIndex++ ) {
-        const filePath = jsFilesPath[ pathIndex ]
-        const dirPath  = path.dirname( filePath )
-
-        const sourcePathSplits = dirPath.split( path.sep )
-        while ( sourcePathSplits[ 0 ] !== 'sources' || sourcePathSplits.length === 0 ) {
-            sourcePathSplits.shift()
-        }
-        sourcePathSplits.shift()
-
-        const fileName     = path.basename( filePath, path.extname( filePath ) )
-        const testFileName = fileName + '.test.js'
-        const testPath     = path.join( testsPath, sourcePathSplits.join( path.sep ), testFileName )
-
-        configs.push( {
-            input:     filePath,
-            plugins:   [ glsl() ],
-            treeshake: true,
-            output:    {
-                indent: '\t',
-                format: 'iife',
-                extend: 'Three',
-                name:   'Three',
-                file:   testPath
-            }
-        } )
-    }
-
-    return configs
-
-}
-
-module.exports = RollupTestConfigurationBuilder()
