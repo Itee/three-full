@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 17.0.0 is now available under Three r0.102.0 !!!**
+**The version 17.1.0 is now available under Three r0.102.0 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -208,6 +208,14 @@ All others folders under example file tree will be mapped to their counter-part 
 
 
 #### Change log ####
+
+
+##### 17.1.0:
+
+* Add unit tests about the usability of each Three class
+* Add new npm script 'test' to run unit under karma server
+* Add new gulp tasks to auto-generate unit tests
+* Generate an HTML report after 'npm run test'
 
 ##### 17.0.0:
 
