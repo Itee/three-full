@@ -148,7 +148,7 @@ function _getFilesPathsUnder ( filePaths ) {
 
         } else {
 
-            console.error( "Invalid stat object !" )
+            console.error( 'Invalid stat object !' )
 
         }
 
@@ -227,35 +227,35 @@ function _getFileType ( file ) {
 
     const es6Match = file.match( es6Regex )
     if ( es6Match && es6Match.length > 0 ) {
-        return "es6"
+        return 'es6'
     }
 
     const amdMatch = file.match( amdRegex )
     if ( amdMatch && amdMatch.length > 0 ) {
-        return "amd"
+        return 'amd'
     }
 
     const cjsMatch = file.match( cjsRegex )
     if ( cjsMatch && cjsMatch.length > 0 ) {
-        return "cjs"
+        return 'cjs'
     }
 
     const classicObjectMatch = file.match( classicObjectRegex )
     if ( classicObjectMatch && classicObjectMatch.length > 0 ) {
-        return "classic"
+        return 'classic'
     }
 
     const prototypedObjectMatch = file.match( prototypedObjectRegex )
     if ( prototypedObjectMatch && prototypedObjectMatch.length > 0 ) {
-        return "prototype"
+        return 'prototype'
     }
 
     const libMatch = file.match( libRegex )
     if ( libMatch && libMatch.length > 0 ) {
-        return "lib"
+        return 'lib'
     }
 
-    return "unknown"
+    return 'unknown'
 
 }
 
@@ -277,7 +277,7 @@ function _filterJavascriptFiles ( filePaths ) {
 
         // Not a js file like fonts or shaders
         const fileExtension = path.extname( filePath )
-        if ( filePath.indexOf("glsl") > -1 || fileExtension !== '.js' ) {
+        if ( filePath.indexOf( 'glsl' ) > -1 || fileExtension !== '.js' ) {
             //            console.log( 'Not Js:  ' + filePath )
             continue
         }
@@ -339,7 +339,7 @@ function _copyFile ( banner, fileDatas ) {
 
 }
 
-function _cleanFile( file ) {
+function _cleanFile ( file ) {
 
     // Remove extra blank lines then extra semi-colon
     return file.replace( /(^[\s\t]*[\r\n]){2,}/gm, '' )
@@ -499,8 +499,8 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
         fileExtension = path.extname( filePath )
         baseName      = path.basename( filePath, fileExtension )
         file          = _getUncommentedFileForPath( filePath )
-        isGLSL        = (baseName.indexOf("glsl") > -1)
-        isJavascript  = (!isGLSL && fileExtension === '.js' )
+        isGLSL        = ( baseName.indexOf( 'glsl' ) > -1 )
+        isJavascript  = ( !isGLSL && fileExtension === '.js' )
 
         if ( _fileMap[ baseName ] ) {
             console.error( 'The key ' + baseName + ' already exist in the file map ! Is there a duplicate file ??? Skip it !' )
@@ -799,8 +799,8 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
             const exporterBaseName           = path.basename( exporterFilePath )
             const relativePath               = path.relative( importerDirectoryName, exporterDirectoryName )
             const firstChar                  = relativePath[ 0 ]
-            const notStartWithDot            = (firstChar !== '.')
-            const relativeFilePath           = (notStartWithDot) ? './' + path.join( relativePath, exporterBaseName ) : path.join( relativePath, exporterBaseName )
+            const notStartWithDot            = ( firstChar !== '.' )
+            const relativeFilePath           = ( notStartWithDot ) ? './' + path.join( relativePath, exporterBaseName ) : path.join( relativePath, exporterBaseName )
             const relativeFilePathNormalized = relativeFilePath.replace( /\\/g, '/' )
 
             if ( !importsMap[ relativeFilePathNormalized ] ) {
@@ -1279,7 +1279,7 @@ function _getOutputFor ( filePath, outputBasePath, outputOverride = undefined ) 
 
         } else {
 
-            console.error( "Unable to find specific path part for: " + path )
+            console.error( 'Unable to find specific path part for: ' + path )
             specificPath = ''
 
         }
@@ -1298,7 +1298,7 @@ function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath,
         imports:      imports,
         replacements: replacements,
         exports:      exports,
-        output:       outputPath,
+        output:       outputPath
     }
 
     if ( edgeCase ) {
@@ -1472,7 +1472,7 @@ Object.assign( Es6.prototype, {
         const formatedExportStatements = formatedImportStatements.replace( /import/g, 'export' )
         return formatedExportStatements
 
-    },
+    }
 
 } )
 
