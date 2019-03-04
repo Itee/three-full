@@ -220,11 +220,13 @@ function RollupTestConfigurationBuilder () {
         const testPath     = path.join( testsPath, sourcePathSplits.join( path.sep ), testFileName )
 
         configs.push( {
-            input:   filePath,
-            plugins: [ glsl() ],
-            output:  {
+            input:     filePath,
+            plugins:   [ glsl() ],
+            treeshake: true,
+            output:    {
                 indent: '\t',
                 format: 'iife',
+                extend: 'Three',
                 name:   'Three',
                 file:   testPath
             }
