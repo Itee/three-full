@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -10101,6 +10101,4 @@ var Three = (function (exports) {
 	exports.TorusKnotGeometry = TorusKnotGeometry;
 	exports.TorusKnotBufferGeometry = TorusKnotBufferGeometry;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

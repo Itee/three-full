@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -240,6 +240,4 @@ var Three = (function (exports) {
 
 	exports.ImageLoader = ImageLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

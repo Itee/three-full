@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -655,6 +655,4 @@ var Three = (function (exports) {
 	exports.DepthLimitedBlurShader = DepthLimitedBlurShader;
 	exports.BlurShaderUtils = BlurShaderUtils;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

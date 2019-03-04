@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -10117,6 +10117,4 @@ var Three = (function (exports) {
 
 	exports.VTKLoader = VTKLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

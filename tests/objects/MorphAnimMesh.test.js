@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -14340,6 +14340,4 @@ var Three = (function (exports) {
 
 	exports.MorphAnimMesh = MorphAnimMesh;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

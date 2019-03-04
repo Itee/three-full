@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -9244,6 +9244,4 @@ var Three = (function (exports) {
 
 	exports.WireframeGeometry2 = WireframeGeometry2;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -191,6 +191,4 @@ var Three = (function (exports) {
 
 	exports.ParallaxShader = ParallaxShader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

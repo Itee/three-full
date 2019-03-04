@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13830,6 +13830,4 @@ var Three = (function (exports) {
 
 	exports.ConvexObjectBreaker = ConvexObjectBreaker;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

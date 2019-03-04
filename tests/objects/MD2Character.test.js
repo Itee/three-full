@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -15983,6 +15983,4 @@ var Three = (function (exports) {
 
 	exports.MD2Character = MD2Character;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

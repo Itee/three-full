@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2886,6 +2886,4 @@ var Three = (function (exports) {
 
 	exports.Matrix4Node = Matrix4Node;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

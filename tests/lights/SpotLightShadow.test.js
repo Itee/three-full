@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4975,6 +4975,4 @@ var Three = (function (exports) {
 
 	exports.SpotLightShadow = SpotLightShadow;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

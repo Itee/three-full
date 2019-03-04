@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -8425,6 +8425,4 @@ var Three = (function (exports) {
 
 	exports.SVGLoader = SVGLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

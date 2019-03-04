@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -5460,6 +5460,4 @@ var Three = (function (exports) {
 
 	exports.WebXRManager = WebXRManager;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

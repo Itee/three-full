@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -716,6 +716,4 @@ var Three = (function (exports) {
 	exports.NodeMaterialLoader = NodeMaterialLoader;
 	exports.NodeMaterialLoaderUtils = NodeMaterialLoaderUtils;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -532,6 +532,4 @@ var Three = (function (exports) {
 
 	exports.TypedArrayUtils = TypedArrayUtils;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

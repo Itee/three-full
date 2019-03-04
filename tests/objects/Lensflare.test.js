@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -11825,6 +11825,4 @@ void main() {
 	exports.Lensflare = Lensflare;
 	exports.LensflareElement = LensflareElement;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

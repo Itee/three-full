@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1295,6 +1295,4 @@ var Three = (function (exports) {
 
 	exports.MeshBasicMaterial = MeshBasicMaterial;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

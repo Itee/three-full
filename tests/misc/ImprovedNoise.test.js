@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -78,6 +78,4 @@ var Three = (function (exports) {
 
 	exports.ImprovedNoise = ImprovedNoise;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

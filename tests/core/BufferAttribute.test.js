@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4533,6 +4533,4 @@ var Three = (function (exports) {
 	exports.Int8BufferAttribute = Int8BufferAttribute;
 	exports.BufferAttribute = BufferAttribute;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

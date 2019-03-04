@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4161,6 +4161,4 @@ var Three = (function (exports) {
 
 	exports.ImmediateRenderObject = ImmediateRenderObject;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

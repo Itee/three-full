@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2760,6 +2760,4 @@ var Three = (function (exports) {
 
 	exports.Euler = Euler;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

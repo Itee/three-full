@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -10112,6 +10112,4 @@ var Three = (function (exports) {
 	exports.BoxGeometry = BoxGeometry;
 	exports.BoxBufferGeometry = BoxBufferGeometry;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

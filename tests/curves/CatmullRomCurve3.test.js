@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3023,6 +3023,4 @@ var Three = (function (exports) {
 
 	exports.CatmullRomCurve3 = CatmullRomCurve3;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

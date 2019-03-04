@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4606,6 +4606,4 @@ var Three = (function (exports) {
 
 	exports.DDSLoader = DDSLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

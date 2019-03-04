@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -10677,6 +10677,4 @@ var Three = (function (exports) {
 
 	exports.RectAreaLightHelper = RectAreaLightHelper;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

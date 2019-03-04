@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -10293,6 +10293,4 @@ var Three = (function (exports) {
 	exports.TetrahedronGeometry = TetrahedronGeometry;
 	exports.TetrahedronBufferGeometry = TetrahedronBufferGeometry;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

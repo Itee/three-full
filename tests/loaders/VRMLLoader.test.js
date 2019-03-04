@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -15332,6 +15332,4 @@ var Three = (function (exports) {
 
 	exports.VRMLLoader = VRMLLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

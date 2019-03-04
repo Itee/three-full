@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,6 +55,4 @@ var Three = (function (exports) {
 
 	exports.KaleidoShader = KaleidoShader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

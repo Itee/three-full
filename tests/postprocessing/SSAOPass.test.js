@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -14007,6 +14007,4 @@ void main() {
 
 	exports.SSAOPass = SSAOPass;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

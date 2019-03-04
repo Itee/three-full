@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4584,6 +4584,4 @@ var Three = (function (exports) {
 
 	exports.AnimationLoader = AnimationLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

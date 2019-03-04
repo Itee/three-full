@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -69,6 +69,4 @@ var Three = (function (exports) {
 	exports.cloneUniforms = cloneUniforms;
 	exports.mergeUniforms = mergeUniforms;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

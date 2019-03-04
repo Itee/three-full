@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4262,6 +4262,4 @@ var Three = (function (exports) {
 
 	exports.DaydreamController = DaydreamController;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

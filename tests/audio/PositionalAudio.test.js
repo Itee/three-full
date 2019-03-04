@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4615,6 +4615,4 @@ var Three = (function (exports) {
 
 	exports.PositionalAudio = PositionalAudio;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

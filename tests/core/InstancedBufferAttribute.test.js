@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4561,6 +4561,4 @@ var Three = (function (exports) {
 
 	exports.InstancedBufferAttribute = InstancedBufferAttribute;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

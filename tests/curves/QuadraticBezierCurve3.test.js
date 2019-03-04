@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2903,6 +2903,4 @@ var Three = (function (exports) {
 
 	exports.QuadraticBezierCurve3 = QuadraticBezierCurve3;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

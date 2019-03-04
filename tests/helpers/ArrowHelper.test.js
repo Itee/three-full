@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -12404,6 +12404,4 @@ var Three = (function (exports) {
 
 	exports.ArrowHelper = ArrowHelper;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

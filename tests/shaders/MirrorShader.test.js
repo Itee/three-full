@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,6 +56,4 @@ var Three = (function (exports) {
 
 	exports.MirrorShader = MirrorShader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

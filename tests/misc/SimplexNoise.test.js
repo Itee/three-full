@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -326,6 +326,4 @@ var Three = (function (exports) {
 
 	exports.SimplexNoise = SimplexNoise;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

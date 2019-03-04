@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3203,6 +3203,4 @@ var Three = (function (exports) {
 	exports.SSAODepthShader = SSAODepthShader;
 	exports.SSAOBlurShader = SSAOBlurShader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

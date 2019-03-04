@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13804,6 +13804,4 @@ void main() {
 
 	exports.LoaderSupport = LoaderSupport;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

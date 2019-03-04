@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,6 +37,4 @@ var Three = (function (exports) {
 
 	exports.NodeUniform = NodeUniform;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

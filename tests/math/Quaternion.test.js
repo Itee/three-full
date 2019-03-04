@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2420,6 +2420,4 @@ var Three = (function (exports) {
 
 	exports.Quaternion = Quaternion;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

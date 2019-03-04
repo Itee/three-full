@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4890,6 +4890,4 @@ var Three = (function (exports) {
 
 	exports.HDRCubeTextureLoader = HDRCubeTextureLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

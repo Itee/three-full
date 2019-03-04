@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6464,6 +6464,4 @@ var Three = (function (exports) {
 
 	exports.MeshStandardNode = MeshStandardNode;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

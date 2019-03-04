@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -12968,6 +12968,4 @@ void main() {
 
 	exports.AfterimagePass = AfterimagePass;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

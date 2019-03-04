@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4830,6 +4830,4 @@ var Three = (function (exports) {
 
 	exports.HemisphereLight = HemisphereLight;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2864,6 +2864,4 @@ var Three = (function (exports) {
 
 	exports.DeviceOrientationControls = DeviceOrientationControls;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

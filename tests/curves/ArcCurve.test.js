@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3461,6 +3461,4 @@ var Three = (function (exports) {
 
 	exports.ArcCurve = ArcCurve;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

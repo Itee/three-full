@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -8486,6 +8486,4 @@ var Three = (function (exports) {
 
 	exports.BufferGeometry = BufferGeometry;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));
