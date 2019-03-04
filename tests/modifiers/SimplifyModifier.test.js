@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -10394,6 +10394,4 @@ var Three = (function (exports) {
 
 	exports.SimplifyModifier = SimplifyModifier;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

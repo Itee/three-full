@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -8177,6 +8177,4 @@ void main() {
 
 	exports.MTLLoader = MTLLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -11417,6 +11417,4 @@ var Three = (function (exports) {
 
 	exports.AMFLoader = AMFLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

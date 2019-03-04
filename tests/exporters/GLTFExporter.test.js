@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -11265,6 +11265,4 @@ var Three = (function (exports) {
 
 	exports.GLTFExporter = GLTFExporter;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

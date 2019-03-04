@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,6 +86,4 @@ var Three = (function (exports) {
 
 	exports.EventDispatcher = EventDispatcher;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

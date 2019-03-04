@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3439,6 +3439,4 @@ var Three = (function (exports) {
 
 	exports.NURBSSurface = NURBSSurface;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

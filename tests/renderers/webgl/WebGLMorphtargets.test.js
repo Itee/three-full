@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -111,6 +111,4 @@ var Three = (function (exports) {
 
 	exports.WebGLMorphtargets = WebGLMorphtargets;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

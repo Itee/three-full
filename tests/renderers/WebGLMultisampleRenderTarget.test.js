@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4476,6 +4476,4 @@ var Three = (function (exports) {
 
 	exports.WebGLMultisampleRenderTarget = WebGLMultisampleRenderTarget;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

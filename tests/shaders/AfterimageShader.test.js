@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,6 +59,4 @@ var Three = (function (exports) {
 
 	exports.AfterimageShader = AfterimageShader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1479,6 +1479,4 @@ var Three = (function (exports) {
 
 	exports.CubeTextureNode = CubeTextureNode;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

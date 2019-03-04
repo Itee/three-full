@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -11930,6 +11930,4 @@ var Three = (function (exports) {
 
 	exports.BabylonLoader = BabylonLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4478,6 +4478,4 @@ var Three = (function (exports) {
 	exports.CSS3DSprite = CSS3DSprite;
 	exports.CSS3DRenderer = CSS3DRenderer;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

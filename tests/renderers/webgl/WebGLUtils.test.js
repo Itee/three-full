@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,6 +234,4 @@ var Three = (function (exports) {
 
 	exports.WebGLUtils = WebGLUtils;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

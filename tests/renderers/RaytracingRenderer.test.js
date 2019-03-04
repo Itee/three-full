@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1112,6 +1112,4 @@ var Three = (function (exports) {
 
 	exports.RaytracingRenderer = RaytracingRenderer;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

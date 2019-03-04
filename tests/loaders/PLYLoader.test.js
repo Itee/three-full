@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -9453,6 +9453,4 @@ var Three = (function (exports) {
 
 	exports.PLYLoader = PLYLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2691,6 +2691,4 @@ var Three = (function (exports) {
 
 	exports.QuaternionLinearInterpolant = QuaternionLinearInterpolant;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

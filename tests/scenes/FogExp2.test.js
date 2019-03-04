@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -781,6 +781,4 @@ var Three = (function (exports) {
 
 	exports.FogExp2 = FogExp2;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

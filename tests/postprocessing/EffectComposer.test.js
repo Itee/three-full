@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -13202,6 +13202,4 @@ void main() {
 
 	exports.EffectComposer = EffectComposer;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

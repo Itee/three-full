@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4120,6 +4120,4 @@ var Three = (function (exports) {
 
 	exports.OrbitControls = OrbitControls;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

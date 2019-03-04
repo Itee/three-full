@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2472,6 +2472,4 @@ var Three = (function (exports) {
 
 	exports.setProjectionFromUnion = setProjectionFromUnion;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

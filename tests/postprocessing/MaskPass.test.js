@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,6 +133,4 @@ var Three = (function (exports) {
 	exports.MaskPass = MaskPass;
 	exports.ClearMaskPass = ClearMaskPass;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

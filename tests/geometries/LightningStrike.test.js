@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -9712,6 +9712,4 @@ var Three = (function (exports) {
 
 	exports.LightningStrike = LightningStrike;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -9912,6 +9912,4 @@ var Three = (function (exports) {
 
 	exports.VertexNormalsHelper = VertexNormalsHelper;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

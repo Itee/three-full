@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4114,6 +4114,4 @@ var Three = (function (exports) {
 
 	exports.SelectionBox = SelectionBox;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -10634,6 +10634,4 @@ var Three = (function (exports) {
 
 	exports.MorphBlendMesh = MorphBlendMesh;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

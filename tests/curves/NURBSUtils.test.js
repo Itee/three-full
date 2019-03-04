@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3399,6 +3399,4 @@ var Three = (function (exports) {
 
 	exports.NURBSUtils = NURBSUtils;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

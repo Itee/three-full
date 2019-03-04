@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3217,6 +3217,4 @@ var Three = (function (exports) {
 
 	exports.VolumeRenderShader1 = VolumeRenderShader1;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

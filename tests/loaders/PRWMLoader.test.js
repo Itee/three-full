@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -9211,6 +9211,4 @@ var Three = (function (exports) {
 
 	exports.PRWMLoader = PRWMLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -763,6 +763,4 @@ var Three = (function (exports) {
 
 	exports.DirectGeometry = DirectGeometry;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

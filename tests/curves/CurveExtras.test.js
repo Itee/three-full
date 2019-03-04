@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3209,6 +3209,4 @@ var Three = (function (exports) {
 	exports.DecoratedTorusKnot5a = DecoratedTorusKnot5a;
 	exports.DecoratedTorusKnot5c = DecoratedTorusKnot5c;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

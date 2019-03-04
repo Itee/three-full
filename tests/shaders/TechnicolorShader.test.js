@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,6 +45,4 @@ var Three = (function (exports) {
 
 	exports.TechnicolorShader = TechnicolorShader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

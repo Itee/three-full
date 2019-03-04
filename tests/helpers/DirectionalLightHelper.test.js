@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -9780,6 +9780,4 @@ var Three = (function (exports) {
 
 	exports.DirectionalLightHelper = DirectionalLightHelper;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

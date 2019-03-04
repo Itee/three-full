@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4556,6 +4556,4 @@ var Three = (function (exports) {
 
 	exports.CurvePath = CurvePath;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

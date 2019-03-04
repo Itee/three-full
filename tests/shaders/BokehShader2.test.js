@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -871,6 +871,4 @@ var Three = (function (exports) {
 	exports.BokehShader2 = BokehShader2;
 	exports.BokehDepthShader = BokehDepthShader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

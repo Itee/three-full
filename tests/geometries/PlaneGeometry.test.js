@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -10036,6 +10036,4 @@ var Three = (function (exports) {
 	exports.PlaneGeometry = PlaneGeometry;
 	exports.PlaneBufferGeometry = PlaneBufferGeometry;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

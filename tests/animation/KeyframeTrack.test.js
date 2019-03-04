@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1056,6 +1056,4 @@ var Three = (function (exports) {
 
 	exports.KeyframeTrack = KeyframeTrack;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

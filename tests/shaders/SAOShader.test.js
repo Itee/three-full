@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3091,6 +3091,4 @@ var Three = (function (exports) {
 
 	exports.SAOShader = SAOShader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

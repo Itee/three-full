@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2914,6 +2914,4 @@ var Three = (function (exports) {
 
 	exports.CubicBezierCurve3 = CubicBezierCurve3;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -11586,6 +11586,4 @@ var Three = (function (exports) {
 	exports.ExtrudeGeometry = ExtrudeGeometry;
 	exports.ExtrudeBufferGeometry = ExtrudeBufferGeometry;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

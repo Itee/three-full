@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -17053,6 +17053,4 @@ void main() {
 
 	exports.Line2 = Line2;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

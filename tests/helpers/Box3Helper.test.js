@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -9816,6 +9816,4 @@ var Three = (function (exports) {
 
 	exports.Box3Helper = Box3Helper;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

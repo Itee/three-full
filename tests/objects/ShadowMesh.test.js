@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -10382,6 +10382,4 @@ var Three = (function (exports) {
 
 	exports.ShadowMesh = ShadowMesh;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1258,6 +1258,4 @@ var Three = (function (exports) {
 
 	exports.PointsMaterial = PointsMaterial;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

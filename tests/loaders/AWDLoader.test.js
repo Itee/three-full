@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -12529,6 +12529,4 @@ var Three = (function (exports) {
 
 	exports.AWDLoader = AWDLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

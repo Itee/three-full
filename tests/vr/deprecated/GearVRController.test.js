@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4274,6 +4274,4 @@ var Three = (function (exports) {
 
 	exports.GearVRController = GearVRController;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2945,6 +2945,4 @@ var Three = (function (exports) {
 
 	exports.Vector3Node = Vector3Node;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

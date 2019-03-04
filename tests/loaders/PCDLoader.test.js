@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -10374,6 +10374,4 @@ var Three = (function (exports) {
 
 	exports.PCDLoader = PCDLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -9289,6 +9289,4 @@ var Three = (function (exports) {
 
 	exports.STLLoader = STLLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

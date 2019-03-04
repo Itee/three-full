@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -519,6 +519,4 @@ var Three = (function (exports) {
 
 	exports.AudioLoader = AudioLoader;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));

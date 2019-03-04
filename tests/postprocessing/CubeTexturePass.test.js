@@ -1,4 +1,4 @@
-var Three = (function (exports) {
+(function (exports) {
 	'use strict';
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -17720,6 +17720,4 @@ void main() {
 
 	exports.CubeTexturePass = CubeTexturePass;
 
-	return exports;
-
-}({}));
+}((this.Three = this.Three || {})));
