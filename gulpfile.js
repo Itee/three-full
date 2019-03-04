@@ -153,15 +153,32 @@ gulp.task( 'patch-three',
 ////// CLEAN ////////
 /////////////////////
 
-gulp.task( 'clean', () => {
+gulp.task( 'clean-builds', () => {
 
     return del( [
-        './builds',
-        './sources',
-        './tests/**/*.js',
+        './builds'
     ] )
 
-} )
+})
+
+gulp.task( 'clean-sources', () => {
+
+    return del( [
+        './sources'
+    ] )
+
+})
+
+gulp.task( 'clean-tests', () => {
+
+    return del( [
+        './tests/**/*.js',
+        './tests/**/*.html',
+    ] )
+
+})
+
+gulp.task( 'clean', gulp.parallel('clean-builds', 'clean-sources', 'clean-tests') )
 
 /**
  * @method npm run lint
