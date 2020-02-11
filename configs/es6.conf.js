@@ -41,6 +41,7 @@ module.exports = {
 		'crossfade',                        // Scene has already been declared
 		'offscreen',						// Should be in HTML File
 		'ldraw',							// target NodeJs and use require
+		'jsm',								// Contain duplicate exports
 
 		// Specific file
 		'Cloth.js',							// Use global variable from example html ! Need to be refactored
