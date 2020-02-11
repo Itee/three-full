@@ -334,29 +334,30 @@ gulp.task( 'build-test-unit', ( done ) => {
         const outputPath   = path.join( dirPath, fileName + '.unit.js' )
 
         // Get exports from file then for each...
+        const edgeCases  = unitsConfig[ fileName ] || {}
+        const imports    = edgeCases.imports || ''
+        const preRequise = edgeCases.preRequise || ''
+        const args       = edgeCases.args || ''
+        const exports    = edgeCases.exports || [ fileName ]
 
-        const imports    = ''
-        const preRequise = ''
-        const snipet     = '\t\t\t\tvar ' + fileName.toLowerCase() + ' = new Three.' + fileName + '()\n'
-
-        const template = '/* global describe, it */\n' +
-            '\n' +
-            'describe( \'' + fileName + '\', () => {\n' +
-            '\n' +
-            '    it( \'is bundlable\', () => {\n' +
-            '\n' +
-            '       should.exist( Three[\'' + fileName + '\'] )\n' +
-            '\n' +
-            '    } )\n' +
-            '\n' +
-            '    it( \'is instanciable\', () => {\n' +
-            '\n' +
-            '       should.exist( new Three[\'' + fileName + '\']() )\n' +
-            '\n' +
-            '    } )\n' +
-            '\n' +
-            '} )\n'
-
+        const template = `
+            /* global describe, it */
+            describe( '${fileName}', () => {
+                ${Object.values( exports ).map( function ( value ) {
+                    
+                    return `
+                    it( '${value} is bundlable', () => {
+                        should.exist( Three['${value}'] )
+                    } )
+                    
+                    it( '${value} is instanciable', () => {
+                        should.exist( new Three['${value}'](${args}) )
+                    } )
+                    `
+        
+                } ).join( '\n' )}
+            } )
+            `
 
         console.log( 'Create ' + outputPath )
         fs.writeFileSync( outputPath, template )
@@ -388,33 +389,73 @@ gulp.task( 'build-test-html', ( done ) => {
         const outputPath   = path.join( dirPath, fileName + '.unit.html' )
 
         // Get exports from file then for each...
+        const edgeCases  = unitsConfig[ fileName ] || {}
+        const imports    = edgeCases.imports || ''
+        const preRequise = edgeCases.preRequise || ''
+        const args       = edgeCases.args || ''
+        const exports    = edgeCases.exports || [ fileName ]
 
-        const imports    = ''
-        const preRequise = ''
-        const args       = ''
-
-        const template = '' +
-            '<!DOCTYPE html>\n' +
-            '<html lang="en">\n' +
-            '    <head>\n' +
-            '        <meta charset="UTF-8">\n' +
-            '        <title>' + fileName + '</title>\n' +
-            '    </head>\n' +
-            '    <body>\n' +
-            '        <script type="application/javascript" src="./' + fileName + '.unit.js"></script>\n' +
-            imports +
-            '        <script type="application/javascript">\n' +
-            '            /* global Three */\n' +
-            preRequise +
-            '            try {\n' +
-            '                var instance = new Three["' + fileName + '"](' + args + ')\n' +
-            '            } catch(error) {\n' +
-            '                console.error(error)\n' +
-            '            }\n' +
-            '        </script>\n' +
-            '    </body>\n' +
-            '</html>\n'
-
+        let template = `
+            <!DOCTYPE html>
+            <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${fileName}</title>
+                    <style>
+                        html {
+                            height: 100%;
+                        }
+                        body {
+                            min-height: 100%;
+                            /*display: table;*/
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            margin: 0;
+                            text-align: center;
+                        }
+                    </style>
+                </head>
+                <body id="body">
+                    ${imports} 
+                    <script type="application/javascript" src="./${fileName}.test.js"></script>
+                    <script type="application/javascript">
+                        /* global Three */
+                        ${preRequise}
+                        try {
+                            
+                            ${Object.values( exports ).map( function ( value ) {
+            return 'var instance = new Three["' + value + '"]()'
+        } ).join( '\n\t\t\t\t\t\t\t' )}
+                            
+                            onResult ( 'SUCCESS', 'Successfully instancing ${exports.toString()}', 'green' )
+                    
+                        } catch ( error ) {
+                    
+                            onResult ( 'ERROR', error.message, 'red' )
+                    
+                        }
+                    
+                        function onResult ( title, message, bgColor ) {
+                    
+                            var container = document.createElement( 'div' )
+                            document.body.appendChild( container )
+                    
+                            var titleElement = document.createElement( 'h1' )
+                            titleElement.innerHTML += title
+                            container.appendChild( titleElement )
+                    
+                            var messageElement = document.createElement( 'p' )
+                            messageElement.innerHTML += message
+                            container.appendChild( messageElement )
+                    
+                            document.body.style.backgroundColor = bgColor
+                    
+                        }
+                    </script>
+                </body>
+            </html>
+            `
 
         console.log( 'Create ' + outputPath )
         fs.writeFileSync( outputPath, template )
@@ -429,22 +470,47 @@ gulp.task( 'build-test-three', ( done ) => {
 
     const outputPath = path.join( __dirname, 'tests', 'Three.unit.html' )
 
-    const template = '' +
-        '<!DOCTYPE html>\n' +
-        '<html lang="en">\n' +
-        '    <head>\n' +
-        '        <meta charset="UTF-8">\n' +
-        '        <title>Three Unit</title>\n' +
-        '    </head>\n' +
-        '    <body>\n' +
-        '        <script type="application/javascript" src="../builds/Three.iife.js"></script>\n' +
-        '        <script type="application/javascript">\n' +
-        '            /* global Three */\n' +
-        '            alert( Three.REVISION )\n' +
-        '        </script>\n' +
-        '    </body>\n' +
-        '</html>\n'
-
+    const template = `
+            <!DOCTYPE html>
+            <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Three Unit</title>
+                    <style>
+                        html {
+                            height: 100%;
+                        }
+                        body {
+                            min-height: 100%;
+                            /*display: table;*/
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            margin: 0;
+                            text-align: center;
+                        }
+                    </style>
+                </head>
+                <body id="body">
+                    <script type="application/javascript" src="../builds/Three.iife.js"></script>
+                    <script type="application/javascript">
+                        /* global Three */
+                        var container = document.createElement( 'div' )
+                        document.body.appendChild( container )
+                
+                        var titleElement = document.createElement( 'h1' )
+                        titleElement.innerHTML += 'Three'
+                        container.appendChild( titleElement )
+                
+                        var messageElement = document.createElement( 'p' )
+                        messageElement.innerHTML += 'revision ' + Three.REVISION
+                        container.appendChild( messageElement )
+                
+                        document.body.style.backgroundColor = 'green'
+                    </script>
+                </body>
+            </html>
+            `
 
     console.log( 'Create ' + outputPath )
     fs.writeFileSync( outputPath, template )
