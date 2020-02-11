@@ -84,9 +84,146 @@ function _getFileForPath ( filePath ) {
 
 }
 
-function _getUncommentedFileForPath ( filePath ) {
+function _removeCommentsFrom( file ) {
 
-    return _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/g, '$1' )
+    return file.replace( /\/\*[\s\S]*?\*\//g, '' ) // Multi-lines comment
+               .replace( /\/\/.*/g, '' ) // Single line comment
+
+}
+
+function _removeStringsFrom( file ) {
+
+    return file.replace( /".*"|\'.*\'/g, '')
+//    return file.replace( /(?<=').*(?=')|(?<=").*(?=")|(?<=`).*(?=`)/g, '')
+
+    //return removeDoubleQuoteContentFrom ( removeSingleQuoteContentFrom ( file ) )
+
+    /*
+    let chars = file.split('')
+
+    let singleQuote  = false
+    let doubleQuote  = false
+    let oneLineComment = false
+    let previousChar = undefined
+    let currentChar  = undefined
+    let nextChar     = undefined
+    for ( let i = 1, n = chars.length ; i < n - 1 ; i++ ) {
+
+        previousChar = chars[ i - 1 ]
+        currentChar = chars[ i ]
+        nextChar = chars[ i + 1 ]
+
+        if ( currentChar === '/' && nextChar === '/' ) {
+            oneLineComment = true
+            chars[ i ] = ''
+            continue
+        }
+        if ( oneLineComment && currentChar === '\n' || nextChar === '\r' ) {
+            oneLineComment = false
+            continue
+        }
+
+        if( oneLineComment ) {
+            chars[ i ] = ''
+            continue
+        }
+
+        if( currentChar === '\'' ) {
+
+            if( singleQuote && previousChar === '\\') {
+                chars[ i ] = ''
+            } else {
+                singleQuote = !singleQuote
+            }
+
+            continue
+
+        }
+
+        if( currentChar === '"' ) {
+
+            if( doubleQuote && previousChar === '\\') {
+                chars[ i ] = ''
+            } else {
+                doubleQuote = !doubleQuote
+            }
+
+            continue
+
+        }
+
+        if ( singleQuote || doubleQuote ) { chars[ i ] = '' }
+
+    }
+
+    return chars.join('')
+    */
+
+    function removeSingleQuoteContentFrom ( file ) {
+
+        let chars = file.split( '' )
+
+        let singleQuote  = false
+        let previousChar = undefined
+        let currentChar  = undefined
+        let nextChar     = undefined
+
+        for ( let i = 1, n = chars.length ; i < n - 1 ; i++ ) {
+
+            previousChar = chars[ i - 1 ]
+            currentChar = chars[ i ]
+            nextChar = chars[ i + 1 ]
+
+            if ( currentChar === '\'' ) {
+
+                singleQuote = !singleQuote
+
+            } else if ( singleQuote ) {
+
+                if ( currentChar === '\\' && nextChar === '\''  ) { chars[ i + 1 ] = '' }
+
+                chars[ i ] = ''
+
+            }
+
+        }
+
+        return chars.join('')
+
+    }
+
+    function removeDoubleQuoteContentFrom ( file ) {
+
+        let chars = file.split( '' )
+
+        let doubleQuote  = false
+        let previousChar = undefined
+        let currentChar  = undefined
+        let nextChar     = undefined
+
+        for ( let i = 1, n = chars.length ; i < n - 1 ; i++ ) {
+
+            previousChar = chars[ i - 1 ]
+            currentChar = chars[ i ]
+            nextChar = chars[ i + 1 ]
+
+            if ( currentChar === '"' ) {
+
+                doubleQuote = !doubleQuote
+
+            } else if ( doubleQuote ) {
+
+                if ( currentChar === '\\' && nextChar === '"'  ) { chars[ i + 1 ] = '' }
+
+                chars[ i ] = ''
+
+            }
+
+        }
+
+        return chars.join('')
+
+    }
 
 }
 
@@ -393,6 +530,7 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
     let fileExtension = undefined
     let baseName      = undefined
     let edgeCase      = undefined
+    let baseFile      = undefined
     let file          = undefined
 
     let exports          = undefined
@@ -404,7 +542,8 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
         fileExtension = path.extname( filePath )
         baseName      = path.basename( filePath, fileExtension )
         edgeCase      = edgeCases[ baseName ] || {}
-        file          = _getUncommentedFileForPath( filePath )
+        baseFile      = _getFileForPath( filePath )
+        file          = _removeCommentsFrom ( _removeStringsFrom( baseFile ) )
 
         exports = _getExportsFor( file, edgeCase[ 'exportsOverride' ] )
         if ( !exports ) {
@@ -482,6 +621,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
     let baseName      = undefined
     let edgeCase      = undefined
     let file          = undefined
+    let baseFile      = undefined
     let isGLSL        = undefined
     let isJavascript  = undefined
 
@@ -498,7 +638,8 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
 
         fileExtension = path.extname( filePath )
         baseName      = path.basename( filePath, fileExtension )
-        file          = _getUncommentedFileForPath( filePath )
+        baseFile      = _getFileForPath( filePath )
+        file          = _removeCommentsFrom( baseFile )
         isGLSL        = ( baseName.indexOf( 'glsl' ) > -1 )
         isJavascript  = ( !isGLSL && fileExtension === '.js' )
 
@@ -524,7 +665,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
             }
 
             imports = _getImportsFor( {
-                file:    file,
+                file:   _removeCommentsFrom ( _removeStringsFrom( baseFile ) ),
                 exports: exports,
                 output:  outputPath
             } )
@@ -537,7 +678,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
                 path:         filePath,
                 isJavascript: ( fileExtension === '.js' ),
                 fileType:     fileType,
-                file:         file,
+                file:         baseFile,
                 imports:      data.imports,
                 replacements: data.replacements,
                 exports:      data.exports,
