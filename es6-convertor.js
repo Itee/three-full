@@ -545,7 +545,7 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
         baseFile      = _getFileForPath( filePath )
         file          = _removeCommentsFrom ( _removeStringsFrom( baseFile ) )
 
-        exports = _getExportsFor( file, edgeCase[ 'exportsOverride' ] )
+        exports = _getExportsFor( file, edgeCase[ 'exports' ], edgeCase[ 'exportsOverride' ] )
         if ( !exports ) {
 
             // Fallback with file name in last resore
@@ -655,7 +655,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
             fileType   = _getFileType( file )
 
             // Processing exports
-            exports = _getExportsFor( file, edgeCase[ 'exportsOverride' ] )
+            exports = _getExportsFor( file, edgeCase[ 'exports' ], edgeCase[ 'exportsOverride' ] )
             if ( !exports ) {
 
                 // Fallback with file name in last resore
@@ -1267,7 +1267,7 @@ function _getExportsStatementInLibFile ( file ) {
 
 }
 
-function _getExportsFor ( file, exportsOverride = undefined ) {
+function _getExportsFor ( file, exportsMissing = [], exportsOverride = undefined ) {
 
     if ( exportsOverride ) {
         return exportsOverride
@@ -1279,6 +1279,7 @@ function _getExportsFor ( file, exportsOverride = undefined ) {
 
         const es6Exports = _getExportsStatementsInES6File( file )
         if ( es6Exports.length > 0 ) {
+            if( exportsMissing ) { Array.prototype.push.apply( es6Exports, exportsMissing ) }
             return es6Exports
         }
 
@@ -1291,19 +1292,31 @@ function _getExportsFor ( file, exportsOverride = undefined ) {
     }
 
     const commonjsExports = _getExportsStatementsInCJSFile( file )
-    if ( commonjsExports.length > 0 ) { return commonjsExports }
+    if ( commonjsExports.length > 0 ) {
+        if( exportsMissing ) { Array.prototype.push.apply( commonjsExports, exportsMissing ) }
+        return commonjsExports
+    }
 
     // Try to find potential export from assigned javascript object
     const assignementExports = _getExportsStatementsInJSAssignmentsFile( file )
-    if ( assignementExports.length > 0 ) { return assignementExports }
+    if ( assignementExports.length > 0 ) {
+        if( exportsMissing ) { Array.prototype.push.apply( assignementExports, exportsMissing ) }
+        return assignementExports
+    }
 
     // Try to find potential export from prototype javascript object
     const prototypeExports = _getExportsStatementsInPrototypedFile( file )
-    if ( prototypeExports.length > 0 ) { return prototypeExports }
+    if ( prototypeExports.length > 0 ) {
+        if( exportsMissing ) { Array.prototype.push.apply( prototypeExports, exportsMissing ) }
+        return prototypeExports
+    }
 
     // Try to find potential export from library style
     const libExports = _getExportsStatementInLibFile( file )
-    if ( libExports.length > 0 ) { return libExports }
+    if ( libExports.length > 0 ) {
+        if( exportsMissing ) { Array.prototype.push.apply( libExports, exportsMissing ) }
+        return libExports
+    }
 
     return null
 
@@ -1451,8 +1464,8 @@ function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath,
             data.imports.filter( _makeUnique )
         }
 
-        if ( edgeCase.replacements_override ) {
-            data.replacements = edgeCase.replacements_override
+        if ( edgeCase.replacementsOverride ) {
+            data.replacements = edgeCase.replacementsOverride
         } else if ( edgeCase.replacements ) {
             Array.prototype.push.apply( data.replacements, edgeCase.replacements )
             data.replacements.filter( _makeUnique )
