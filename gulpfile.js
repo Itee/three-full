@@ -367,7 +367,93 @@ gulp.task( 'build-test-unit', ( done ) => {
 
 } )
 
-gulp.task( 'build-test', gulp.series( 'clean-tests', 'build-test-javascript', 'build-test-unit' ) )
+gulp.task( 'build-test-html', ( done ) => {
+
+    const unitsConfig = require( './configs/units.conf' )
+    const excludes       = [
+        //        'shaders'
+    ]
+
+    const basePath     = path.join( __dirname, 'tests' )
+    const filesPath    = fsUtils.getFilesPathsUnder( basePath )
+    const allowedPaths = fsUtils.excludesFilesPaths( filesPath, excludes )
+    const jsFilesPath  = fsUtils.filterJavascriptFiles( allowedPaths )
+
+    for ( let pathIndex = 0, numberOfPaths = jsFilesPath.length ; pathIndex < numberOfPaths ; pathIndex++ ) {
+
+        const filePath     = jsFilesPath[ pathIndex ]
+        const dirPath      = path.dirname( filePath )
+        const fileBaseName = path.basename( filePath )
+        const fileName     = path.basename( filePath, '.test.js' )
+        const outputPath   = path.join( dirPath, fileName + '.unit.html' )
+
+        // Get exports from file then for each...
+
+        const imports    = ''
+        const preRequise = ''
+        const args       = ''
+
+        const template = '' +
+            '<!DOCTYPE html>\n' +
+            '<html lang="en">\n' +
+            '    <head>\n' +
+            '        <meta charset="UTF-8">\n' +
+            '        <title>' + fileName + '</title>\n' +
+            '    </head>\n' +
+            '    <body>\n' +
+            '        <script type="application/javascript" src="./' + fileName + '.unit.js"></script>\n' +
+            imports +
+            '        <script type="application/javascript">\n' +
+            '            /* global Three */' +
+            preRequise +
+            '            try {' +
+            '                var instance = new Three["' + fileName + '"](' + args + ')\n' +
+            '            } catch(error) {\n' +
+            '                console.error(error)\n' +
+            '            }' +
+            '        </script>\n' +
+            '    </body>\n' +
+            '</html>\n'
+
+
+        console.log( 'Create ' + outputPath )
+        fs.writeFileSync( outputPath, template )
+
+    }
+
+    done()
+
+} )
+
+gulp.task( 'build-test-three', ( done ) => {
+
+    const outputPath = path.join( __dirname, 'tests', 'Three.unit.html' )
+
+    const template = '' +
+        '<!DOCTYPE html>\n' +
+        '<html lang="en">\n' +
+        '    <head>\n' +
+        '        <meta charset="UTF-8">\n' +
+        '        <title>Three Unit</title>\n' +
+        '    </head>\n' +
+        '    <body>\n' +
+        '        <script type="application/javascript" src="../builds/Three.iife.js"></script>\n' +
+        '        <script type="application/javascript">\n' +
+        '            /* global Three */\n' +
+        '            alert( Three.REVISION )\n' +
+        '        </script>\n' +
+        '    </body>\n' +
+        '</html>\n'
+
+
+    console.log( 'Create ' + outputPath )
+    fs.writeFileSync( outputPath, template )
+
+    done()
+
+} )
+
+gulp.task( 'build-test', gulp.series( 'clean-tests', 'build-test-javascript', 'build-test-unit', 'build-test-html', 'build-test-three' ) )
 
 /**
  * @method npm run unit
