@@ -316,14 +316,21 @@ gulp.task( 'build-test-javascript', ( done ) => {
 gulp.task( 'build-test-unit', ( done ) => {
 
     const unitsConfig = require( './configs/units.conf' )
-    const excludes       = [
-//        'shaders'
+    const excludes    = [
+        //        'shaders'
     ]
 
     const basePath     = path.join( __dirname, 'tests' )
     const filesPath    = fsUtils.getFilesPathsUnder( basePath )
     const allowedPaths = fsUtils.excludesFilesPaths( filesPath, excludes )
-    const jsFilesPath  = fsUtils.filterJavascriptFiles( allowedPaths )
+    const jsFilesPath  = fsUtils.filterJavascriptFiles( allowedPaths, ( path ) => {
+
+        if ( path.includes( 'glsl' ) || !path.includes( '.js' ) || path.includes( '.unit.js' ) ) {
+            return false
+        }
+        return true
+
+    } )
 
     for ( let pathIndex = 0, numberOfPaths = jsFilesPath.length ; pathIndex < numberOfPaths ; pathIndex++ ) {
 
@@ -371,14 +378,21 @@ gulp.task( 'build-test-unit', ( done ) => {
 gulp.task( 'build-test-html', ( done ) => {
 
     const unitsConfig = require( './configs/units.conf' )
-    const excludes       = [
+    const excludes    = [
         //        'shaders'
     ]
 
     const basePath     = path.join( __dirname, 'tests' )
     const filesPath    = fsUtils.getFilesPathsUnder( basePath )
     const allowedPaths = fsUtils.excludesFilesPaths( filesPath, excludes )
-    const jsFilesPath  = fsUtils.filterJavascriptFiles( allowedPaths )
+    const jsFilesPath  = fsUtils.filterJavascriptFiles( allowedPaths, ( path ) => {
+
+        if ( path.includes( 'glsl' ) || !path.includes( '.js' ) || path.includes( '.unit.js' ) ) {
+            return false
+        }
+        return true
+
+    } )
 
     for ( let pathIndex = 0, numberOfPaths = jsFilesPath.length ; pathIndex < numberOfPaths ; pathIndex++ ) {
 
