@@ -560,7 +560,27 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
             // Check case where export is an array with 'from' or 'as'
             if ( Array.isArray( exportedElement ) ) {
-                exportedElement = exportedElement[ 0 ]
+
+                if ( exportedElement.length === 3 ) {
+
+                    if ( exportedElement[ 1 ] === 'as' ) {
+
+                        exportedElement = exportedElement[ 2 ]
+
+                    } else {
+
+                        console.error( 'WARNING: Element "' + exportedElement + '" in file ' + path.basename( filePath ) + ' contain multiples element or alias in an unmanaged way. Defaulting to the first element as export of the file !' )
+                        exportedElement = exportedElement[ 0 ]
+
+                    }
+
+                } else {
+
+                    console.error( 'WARNING: Element "' + exportedElement + '" in file ' + path.basename( filePath ) + ' contain multiples element or alias in an unmanaged way. Defaulting to the first element as export of the file !' )
+                    exportedElement = exportedElement[ 0 ]
+
+                }
+
             }
 
             if ( _exportMap[ exportedElement ] ) {
