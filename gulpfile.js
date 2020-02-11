@@ -404,13 +404,13 @@ gulp.task( 'build-test-html', ( done ) => {
             '        <script type="application/javascript" src="./' + fileName + '.unit.js"></script>\n' +
             imports +
             '        <script type="application/javascript">\n' +
-            '            /* global Three */' +
+            '            /* global Three */\n' +
             preRequise +
-            '            try {' +
+            '            try {\n' +
             '                var instance = new Three["' + fileName + '"](' + args + ')\n' +
             '            } catch(error) {\n' +
             '                console.error(error)\n' +
-            '            }' +
+            '            }\n' +
             '        </script>\n' +
             '    </body>\n' +
             '</html>\n'
