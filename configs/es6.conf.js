@@ -698,6 +698,12 @@ module.exports = {
         VolumeShader:                {
             exportsOverride: [ 'VolumeRenderShader1' ]
         },
+        VRMLLoader:                {
+            replacements: [
+                [ 'throw Error', 'console.error'],
+                [ 'required.\' );', 'required.\' ); \nreturn;'],
+            ]
+        },
         Water:                       {
             imports: [
                 '_Math'
