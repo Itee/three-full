@@ -194,7 +194,9 @@ function RollupTestConfigurationBuilder () {
         'constants.js',
         'scene.js',
         'offscreen.js',
-        'jank.js'
+        'jank.js',
+
+        'libs'
     ]
 
     const basePath            = path.join( __dirname, '..' )
