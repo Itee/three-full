@@ -109,6 +109,10 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
             // advanced options
             onwarn: function onWarn ( { loc, frame, message } ) {
                 if ( loc ) {
+                    // Ignore eval error from LoaderSupport
+                    if(loc.file.includes('LoaderSupport.js')) {
+                        return
+                    }
                     console.warn( `${loc.file} (${loc.line}:${loc.column}) ${message}` )
                     if ( frame ) {
                         console.warn( frame )
