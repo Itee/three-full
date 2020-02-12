@@ -19,7 +19,8 @@ module.exports = {
         'libs',
         'Three.js',
         'Three.Legacy.js',
-        'polyfills.js',
+        'polyfills.js',     // Ignore pure function call (include from gulp)
+        'HelioWebXRPolyfill.js',     // Ignore pure function call (include from gulp)
         '.DS_Store',        // Ignore DS_Store from r90
         'README',
 

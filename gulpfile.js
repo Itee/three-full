@@ -263,6 +263,7 @@ gulp.task( 'convert-three', ( done ) => {
     function copyPolyfills () {
 
         fs.writeFileSync( './sources/polyfills.js', fs.readFileSync( './node_modules/three/src/polyfills.js', 'utf8' ) )
+        fs.writeFileSync( './sources/vr/HelioWebXRPolyfill.js', fs.readFileSync( './node_modules/three/examples/js/vr/HelioWebXRPolyfill.js', 'utf8' ) )
 
     }
 

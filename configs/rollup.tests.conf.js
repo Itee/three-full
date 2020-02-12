@@ -189,6 +189,7 @@ function RollupTestConfigurationBuilder () {
     const excludes = [
         'Three.js',
         'polyfills.js',
+        'HelioWebXRPolyfill.js',
         'utils.js',
         'constants.js',
         'scene.js',
