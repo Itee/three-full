@@ -300,9 +300,7 @@ module.exports = {
             exportsOverride: [ 'LoaderSupport' ]
         },
         Lut:                         {
-            replacements: [
-                [ 'ColorMapKeywords = ', 'var ColorMapKeywords = ' ]
-            ]
+            exportsOverride: [ 'Lut', 'ColorMapKeywords' ]
         },
         MarchingCubes:               {
             replacements:   [
