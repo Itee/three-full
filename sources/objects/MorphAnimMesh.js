@@ -17,6 +17,7 @@ var MorphAnimMesh = function ( geometry, material ) {
 
 	this.mixer = new AnimationMixer( this );
 	this.activeAction = null;
+
 };
 
 MorphAnimMesh.prototype = Object.create( Mesh.prototype );
@@ -30,17 +31,17 @@ MorphAnimMesh.prototype.setDirectionForward = function () {
 
 MorphAnimMesh.prototype.setDirectionBackward = function () {
 
-	this.mixer.timeScale = -1.0;
+	this.mixer.timeScale = - 1.0;
 
 };
 
 MorphAnimMesh.prototype.playAnimation = function ( label, fps ) {
 
-	if( this.activeAction ) {
+	if ( this.activeAction ) {
 
 		this.activeAction.stop();
 		this.activeAction = null;
-		
+
 	}
 
 	var clip = AnimationClip.findByName( this, label );

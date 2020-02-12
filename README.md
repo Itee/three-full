@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 20.0.0 is now available under Three r0.105.2 !!!**
+**The version 21.0.0 is now available under Three r0.106.2 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -116,6 +116,7 @@ This is the list of unsupported part of example, which cannot/won't be converted
     * **Curves.js**
     * **Geometries.js**
     * **Materials.js**
+    * **Nodes.js**
     
 * **Workers** 
     * **RaytracingWorker.js**
@@ -128,18 +129,19 @@ This is the list of unsupported part of example, which cannot/won't be converted
     * **crossfade** //*Scene has already been declared*
     * **offscreen** //*Code that should be in HTML file example*
     * **ldraw**     //*Code that should run under nodejs*
+    * **jsm**     //*Ducplication modules code*
         
 * **Specific Files**   
     * **Cloth.js** //*Use global variable from html example file !*
-    * **ParametricGeometries.js** //*Wrong export of TorusKnotCurve*
-    * **OceanShaders.js** //*Need to check how to extends imported lib properly*
-    * **RectAreaLightUniformsLib.js** //*Need to check how to extends imported lib properly*
     * **Volume.js** //*Use Eval !*
     * **NRRDLoader.js** //*Import Volume.js*
+    * **VRMLLoader.js** //*Unprocessable chevrotain AMD module style*
     * **XLoader.js** //*Unprocessable AMD module style*
 
 #### <a id="miss"></a>Missings Imports ####
 
+* **Scene** Could use \_\_THREE_DEVTOOLS__
+* **WebGLRenderer** Could use \_\_THREE_DEVTOOLS__
 * **MMDLoader** Require MMDParser available at three/examples/js/libs/mmdparser.min.js
 * **MMDExporter** Require MMDParser available at three/examples/js/libs/mmdparser.min.js
 * **FBXLoader** Require Zlib.Inflate available at three/examples/js/libs/inflate.min.js
@@ -212,6 +214,23 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+
+##### 21.0.0:
+
+* Support of Three r106.2
+* Ignore VRMLLoader due to incompatible AMD dependencies
+* Add RectAreaLightUniformsLib
+* Add CarControls
+* Add MathNode
+* Add GodRayShader
+* Add OceanShader
+* Add SkinShader
+* Add TerrainShader
+* Add ToonShader
+* Add TranslucentShader
+* Fix DRACOExporter name
+* Fix ObjectLoader curves imports
+* Fix TextureCubeUVNode imports
 
 ##### 20.0.0:
 

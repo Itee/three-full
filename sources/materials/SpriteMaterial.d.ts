@@ -9,6 +9,7 @@ export interface SpriteMaterialParameters extends MaterialParameters {
 	color?: Color | string | number;
 	map?: Texture;
 	rotation?: number;
+	sizeAttenuation?: boolean;
 }
 
 export class SpriteMaterial extends Material {
@@ -18,6 +19,7 @@ export class SpriteMaterial extends Material {
 	color: Color;
 	map: Texture | null;
 	rotation: number;
+	sizeAttenuation: boolean;
 	isSpriteMaterial: true;
 
 	setValues( parameters: SpriteMaterialParameters ): void;

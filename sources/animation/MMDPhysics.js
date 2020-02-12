@@ -27,6 +27,8 @@ import { Mesh } from '../objects/Mesh.js'
  *  - Physics in Worker
  */
 
+/* global Ammo */
+
 var MMDPhysics = ( function () {
 
 	/**
@@ -153,7 +155,7 @@ var MMDPhysics = ( function () {
 		 */
 		reset: function () {
 
-			for ( var i = 0, il = this.bodies.length; i < il; i++ ) {
+			for ( var i = 0, il = this.bodies.length; i < il; i ++ ) {
 
 				this.bodies[ i ].reset();
 
@@ -171,7 +173,7 @@ var MMDPhysics = ( function () {
 		 */
 		warmup: function ( cycles ) {
 
-			for ( var i = 0; i < cycles; i++ ) {
+			for ( var i = 0; i < cycles; i ++ ) {
 
 				this.update( 1 / 60 );
 
@@ -274,7 +276,7 @@ var MMDPhysics = ( function () {
 
 		_initRigidBodies: function ( rigidBodies ) {
 
-			for ( var i = 0, il = rigidBodies.length; i < il; i++ ) {
+			for ( var i = 0, il = rigidBodies.length; i < il; i ++ ) {
 
 				this.bodies.push( new RigidBody(
 					this.mesh, this.world, rigidBodies[ i ], this.manager ) );
@@ -285,7 +287,7 @@ var MMDPhysics = ( function () {
 
 		_initConstraints: function ( constraints ) {
 
-			for ( var i = 0, il = constraints.length; i < il; i++ ) {
+			for ( var i = 0, il = constraints.length; i < il; i ++ ) {
 
 				var params = constraints[ i ];
 				var bodyA = this.bodies[ params.rigidBodyIndex1 ];
@@ -321,7 +323,7 @@ var MMDPhysics = ( function () {
 
 		_updateRigidBodies: function () {
 
-			for ( var i = 0, il = this.bodies.length; i < il; i++ ) {
+			for ( var i = 0, il = this.bodies.length; i < il; i ++ ) {
 
 				this.bodies[ i ].updateFromBone();
 
@@ -331,7 +333,7 @@ var MMDPhysics = ( function () {
 
 		_updateBones: function () {
 
-			for ( var i = 0, il = this.bodies.length; i < il; i++ ) {
+			for ( var i = 0, il = this.bodies.length; i < il; i ++ ) {
 
 				this.bodies[ i ].updateBone();
 
@@ -490,32 +492,32 @@ var MMDPhysics = ( function () {
 
 		},
 
-		getOrigin: function( t ) {
+		getOrigin: function ( t ) {
 
 			return t.getOrigin();
 
 		},
 
-		setOrigin: function( t, v ) {
+		setOrigin: function ( t, v ) {
 
 			t.getOrigin().setValue( v.x(), v.y(), v.z() );
 
 		},
 
-		copyOrigin: function( t1, t2 ) {
+		copyOrigin: function ( t1, t2 ) {
 
 			var o = t2.getOrigin();
 			this.setOrigin( t1, o );
 
 		},
 
-		setBasis: function( t, q ) {
+		setBasis: function ( t, q ) {
 
 			t.setRotation( q );
 
 		},
 
-		setBasisFromMatrix3: function( t, m ) {
+		setBasisFromMatrix3: function ( t, m ) {
 
 			var q = this.matrix3ToQuaternion( m );
 			this.setBasis( t, q );
@@ -640,7 +642,7 @@ var MMDPhysics = ( function () {
 
 		},
 
-		addVector3: function( v1, v2 ) {
+		addVector3: function ( v1, v2 ) {
 
 			var v = this.allocVector3();
 			v.setValue( v1.x() + v2.x(), v1.y() + v2.y(), v1.z() + v2.z() );
@@ -648,13 +650,13 @@ var MMDPhysics = ( function () {
 
 		},
 
-		dotVectors3: function( v1, v2 ) {
+		dotVectors3: function ( v1, v2 ) {
 
 			return v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
 
 		},
 
-		rowOfMatrix3: function( m, i ) {
+		rowOfMatrix3: function ( m, i ) {
 
 			var v = this.allocVector3();
 			v.setValue( m[ i * 3 + 0 ], m[ i * 3 + 1 ], m[ i * 3 + 2 ] );
@@ -662,7 +664,7 @@ var MMDPhysics = ( function () {
 
 		},
 
-		columnOfMatrix3: function( m, i ) {
+		columnOfMatrix3: function ( m, i ) {
 
 			var v = this.allocVector3();
 			v.setValue( m[ i + 0 ], m[ i + 3 ], m[ i + 6 ] );
@@ -670,10 +672,10 @@ var MMDPhysics = ( function () {
 
 		},
 
-		negativeVector3: function( v ) {
+		negativeVector3: function ( v ) {
 
 			var v2 = this.allocVector3();
-			v2.setValue( -v.x(), -v.y(), -v.z() );
+			v2.setValue( - v.x(), - v.y(), - v.z() );
 			return v2;
 
 		},
@@ -699,7 +701,7 @@ var MMDPhysics = ( function () {
 
 		},
 
-		transposeMatrix3: function( m ) {
+		transposeMatrix3: function ( m ) {
 
 			var m2 = [];
 			m2[ 0 ] = m[ 0 ];
@@ -750,12 +752,12 @@ var MMDPhysics = ( function () {
 
 		},
 
-		matrix3ToQuaternion: function( m ) {
+		matrix3ToQuaternion: function ( m ) {
 
 			var t = m[ 0 ] + m[ 4 ] + m[ 8 ];
 			var s, x, y, z, w;
 
-			if( t > 0 ) {
+			if ( t > 0 ) {
 
 				s = Math.sqrt( t + 1.0 ) * 2;
 				w = 0.25 * s;
@@ -763,7 +765,7 @@ var MMDPhysics = ( function () {
 				y = ( m[ 2 ] - m[ 6 ] ) / s;
 				z = ( m[ 3 ] - m[ 1 ] ) / s;
 
-			} else if( ( m[ 0 ] > m[ 4 ] ) && ( m[ 0 ] > m[ 8 ] ) ) {
+			} else if ( ( m[ 0 ] > m[ 4 ] ) && ( m[ 0 ] > m[ 8 ] ) ) {
 
 				s = Math.sqrt( 1.0 + m[ 0 ] - m[ 4 ] - m[ 8 ] ) * 2;
 				w = ( m[ 7 ] - m[ 5 ] ) / s;
@@ -771,7 +773,7 @@ var MMDPhysics = ( function () {
 				y = ( m[ 1 ] + m[ 3 ] ) / s;
 				z = ( m[ 2 ] + m[ 6 ] ) / s;
 
-			} else if( m[ 4 ] > m[ 8 ] ) {
+			} else if ( m[ 4 ] > m[ 8 ] ) {
 
 				s = Math.sqrt( 1.0 + m[ 4 ] - m[ 0 ] - m[ 8 ] ) * 2;
 				w = ( m[ 2 ] - m[ 6 ] ) / s;
@@ -808,7 +810,7 @@ var MMDPhysics = ( function () {
 	 */
 	function RigidBody( mesh, world, params, manager ) {
 
-		this.mesh  = mesh;
+		this.mesh = mesh;
 		this.world = world;
 		this.params = params;
 		this.manager = manager;
@@ -896,7 +898,7 @@ var MMDPhysics = ( function () {
 
 			function generateShape( p ) {
 
-				switch( p.shapeType ) {
+				switch ( p.shapeType ) {
 
 					case 0:
 						return new Ammo.btSphereShape( p.width );
@@ -926,7 +928,7 @@ var MMDPhysics = ( function () {
 			var localInertia = manager.allocVector3();
 			localInertia.setValue( 0, 0, 0 );
 
-			if( weight !== 0 ) {
+			if ( weight !== 0 ) {
 
 				shape.calculateLocalInertia( weight, localInertia );
 
@@ -1117,7 +1119,7 @@ var MMDPhysics = ( function () {
 	 */
 	function Constraint( mesh, world, bodyA, bodyB, params, manager ) {
 
-		this.mesh  = mesh;
+		this.mesh = mesh;
 		this.world = world;
 		this.bodyA = bodyA;
 		this.bodyB = bodyB;
@@ -1185,9 +1187,9 @@ var MMDPhysics = ( function () {
 			constraint.setAngularLowerLimit( all );
 			constraint.setAngularUpperLimit( aul );
 
-			for ( var i = 0; i < 3; i++ ) {
+			for ( var i = 0; i < 3; i ++ ) {
 
-				if( params.springPosition[ i ] !== 0 ) {
+				if ( params.springPosition[ i ] !== 0 ) {
 
 					constraint.enableSpring( i, true );
 					constraint.setStiffness( i, params.springPosition[ i ] );
@@ -1196,9 +1198,9 @@ var MMDPhysics = ( function () {
 
 			}
 
-			for ( var i = 0; i < 3; i++ ) {
+			for ( var i = 0; i < 3; i ++ ) {
 
-				if( params.springRotation[ i ] !== 0 ) {
+				if ( params.springRotation[ i ] !== 0 ) {
 
 					constraint.enableSpring( i + 3, true );
 					constraint.setStiffness( i + 3, params.springRotation[ i ] );

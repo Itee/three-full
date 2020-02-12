@@ -9,23 +9,22 @@ import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 /**
  * @author daoshengmu / http://dsmu.me/
  *
+ * ------------------------------------------------------------------------------------------
+ * Subsurface Scattering shader
+ * Base on GDC 2011 – Approximating Translucency for a Fast, Cheap and Convincing Subsurface Scattering Look
+ * https://colinbarrebrisebois.com/2011/03/07/gdc-2011-approximating-translucency-for-a-fast-cheap-and-convincing-subsurface-scattering-look/
+ *------------------------------------------------------------------------------------------
  */
-var TranslucentShader = function TranslucentShader() {
 
-	/* ------------------------------------------------------------------------------------------
-	//	Subsurface Scattering shader
-	// 		- Base on GDC 2011 – Approximating Translucency for a Fast, Cheap and Convincing Subsurface Scattering Look
-	// 			https://colinbarrebrisebois.com/2011/03/07/gdc-2011-approximating-translucency-for-a-fast-cheap-and-convincing-subsurface-scattering-look/
-	// ------------------------------------------------------------------------------------------ */
+var TranslucentShader = {
 
-	this.uniforms = UniformsUtils.merge( [
+	uniforms: UniformsUtils.merge( [
 
 		UniformsLib[ "common" ],
 		UniformsLib[ "lights" ],
-
 		{
-			"color":  { value: new Color( 0xffffff ) },
-			"diffuse":  { value: new Color( 0xffffff ) },
+			"color": { value: new Color( 0xffffff ) },
+			"diffuse": { value: new Color( 0xffffff ) },
 			"specular": { value: new Color( 0xffffff ) },
 			"emissive": { value: new Color( 0x000000 ) },
 			"opacity": { value: 1 },
@@ -40,9 +39,36 @@ var TranslucentShader = function TranslucentShader() {
 			"thicknessScale": { value: 10.0 }
 		}
 
-	] );
+	] ),
 
-	this.fragmentShader = [
+	vertexShader: [
+
+		"varying vec3 vNormal;",
+		"varying vec2 vUv;",
+
+		"varying vec3 vViewPosition;",
+
+		ShaderChunk[ "common" ],
+
+		"void main() {",
+
+		"	vec4 worldPosition = modelMatrix * vec4( position, 1.0 );",
+
+		"	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );",
+
+		"	vViewPosition = -mvPosition.xyz;",
+
+		"	vNormal = normalize( normalMatrix * normal );",
+
+		"	vUv = uv;",
+
+		"	gl_Position = projectionMatrix * mvPosition;",
+
+		"}",
+
+	].join( "\n" ),
+
+	fragmentShader: [
 		"#define USE_MAP",
 		"#define PHONG",
 		"#define TRANSLUCENT",
@@ -88,13 +114,13 @@ var TranslucentShader = function TranslucentShader() {
 		"	vec4 diffuseColor = vec4( diffuse, opacity );",
 		"	ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );",
 
-			ShaderChunk[ "map_fragment" ],
-			ShaderChunk[ "color_fragment" ],
-			ShaderChunk[ "specularmap_fragment" ],
+		ShaderChunk[ "map_fragment" ],
+		ShaderChunk[ "color_fragment" ],
+		ShaderChunk[ "specularmap_fragment" ],
 
 		"	vec3 totalEmissiveRadiance = emissive;",
 
-			ShaderChunk["lights_phong_fragment"],
+		ShaderChunk[ "lights_phong_fragment" ],
 
 		// Doing lights fragment begin.
 		"	GeometricContext geometry;",
@@ -171,43 +197,16 @@ var TranslucentShader = function TranslucentShader() {
 		"		vec3 clearCoatRadiance = vec3( 0.0 );",
 
 		"	#endif",
-			ShaderChunk["lights_fragment_end"],
+		ShaderChunk[ "lights_fragment_end" ],
 
 		"	vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;",
 		"	gl_FragColor = vec4( outgoingLight, diffuseColor.a );",	// TODO, this should be pre-multiplied to allow for bright highlights on very transparent objects
 
-			ShaderChunk["encodings_fragment"],
+		ShaderChunk[ "encodings_fragment" ],
 
 		"}"
 
 	].join( "\n" ),
-
-	this.vertexShader = [
-
-		"varying vec3 vNormal;",
-		"varying vec2 vUv;",
-
-		"varying vec3 vViewPosition;",
-
-		ShaderChunk[ "common" ],
-
-		"void main() {",
-
-		"	vec4 worldPosition = modelMatrix * vec4( position, 1.0 );",
-
-		"	vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );",
-
-		"	vViewPosition = -mvPosition.xyz;",
-
-		"	vNormal = normalize( normalMatrix * normal );",
-
-		"	vUv = uv;",
-
-		"	gl_Position = projectionMatrix * mvPosition;",
-
-		"}",
-
-	].join( "\n" )
 
 };
 

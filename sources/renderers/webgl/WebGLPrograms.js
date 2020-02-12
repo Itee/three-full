@@ -15,7 +15,7 @@ import { WebGLProgram } from './WebGLProgram.js'
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-function WebGLPrograms( renderer, extensions, capabilities, textures ) {
+function WebGLPrograms( renderer, extensions, capabilities ) {
 
 	var programs = [];
 
@@ -287,7 +287,7 @@ function WebGLPrograms( renderer, extensions, capabilities, textures ) {
 
 		if ( program === undefined ) {
 
-			program = new WebGLProgram( renderer, extensions, code, material, shader, parameters, capabilities, textures );
+			program = new WebGLProgram( renderer, extensions, code, material, shader, parameters, capabilities );
 			programs.push( program );
 
 		}

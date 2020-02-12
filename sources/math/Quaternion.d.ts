@@ -14,7 +14,7 @@ export class Quaternion {
 	set( x: number, y: number, z: number, w: number ): Quaternion;
 	clone(): this;
 	copy( q: Quaternion ): this;
-	setFromEuler( euler: Euler, update?: boolean ): Quaternion;
+	setFromEuler( euler: Euler ): Quaternion;
 	setFromAxisAngle( axis: Vector3, angle: number ): Quaternion;
 	setFromRotationMatrix( m: Matrix4 ): Quaternion;
 	setFromUnitVectors( vFrom: Vector3, vTo: Vector3 ): Quaternion;
@@ -39,8 +39,8 @@ export class Quaternion {
 	fromArray( xyzw: number[], offset?: number ): Quaternion;
 	toArray( xyzw?: number[], offset?: number ): number[];
 
-	onChange( callback: Function ): Quaternion;
-	onChangeCallback: Function;
+	_onChange( callback: Function ): Quaternion;
+	_onChangeCallback: Function;
 	static slerp(
 		qa: Quaternion,
 		qb: Quaternion,

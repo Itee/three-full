@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { FileLoader } from './FileLoader.js'
 import { CompressedTexture } from '../textures/CompressedTexture.js'
 import {
 	LinearFilter,
@@ -17,6 +18,8 @@ import { DefaultLoadingManager } from './LoadingManager.js'
  * @author Shrek Shao / https://github.com/shrekshao
  */
 
+/* global Module, createBasisModule */
+
 /**
  * Loader for Basis Universal GPU Texture Codec.
  *
@@ -29,46 +32,66 @@ import { DefaultLoadingManager } from './LoadingManager.js'
  * of web workers, before transferring the transcoded compressed texture back
  * to the main thread.
  */
-// TODO(donmccurdy): Don't use ES6 classes.
-var BasisTextureLoader = class BasisTextureLoader {
+var BasisTextureLoader = function ( manager ) {
 
-	constructor ( manager ) {
+	this.manager = manager || DefaultLoadingManager;
 
-		// TODO(donmccurdy): Loading manager is unused.
-		this.manager = manager || DefaultLoadingManager;
+	this.crossOrigin = 'anonymous';
 
-		this.transcoderPath = '';
-		this.transcoderBinary = null;
-		this.transcoderPending = null;
+	this.transcoderPath = '';
+	this.transcoderBinary = null;
+	this.transcoderPending = null;
 
-		this.workerLimit = 4;
-		this.workerPool = [];
-		this.workerNextTaskID = 1;
-		this.workerSourceURL = '';
-		this.workerConfig = {
-			format: null,
-			etcSupported: false,
-			dxtSupported: false,
-			pvrtcSupported: false,
-		};
+	this.workerLimit = 4;
+	this.workerPool = [];
+	this.workerNextTaskID = 1;
+	this.workerSourceURL = '';
+	this.workerConfig = {
+		format: null,
+		etcSupported: false,
+		dxtSupported: false,
+		pvrtcSupported: false,
+	};
 
-	}
+};
 
-	setTranscoderPath ( path ) {
+BasisTextureLoader.prototype = {
+
+	constructor: BasisTextureLoader,
+
+	setCrossOrigin: function ( crossOrigin ) {
+
+		this.crossOrigin = crossOrigin;
+
+		return this;
+
+	},
+
+	setTranscoderPath: function ( path ) {
 
 		this.transcoderPath = path;
 
-	}
+		return this;
 
-	detectSupport ( renderer ) {
+	},
+
+	setWorkerLimit: function ( workerLimit ) {
+
+		this.workerLimit = workerLimit;
+
+		return this;
+
+	},
+
+	detectSupport: function ( renderer ) {
 
 		var context = renderer.context;
 		var config = this.workerConfig;
 
-		config.etcSupported = !! context.getExtension('WEBGL_compressed_texture_etc1');
-		config.dxtSupported = !! context.getExtension('WEBGL_compressed_texture_s3tc');
-		config.pvrtcSupported = !! context.getExtension('WEBGL_compressed_texture_pvrtc')
-			|| !! context.getExtension('WEBKIT_WEBGL_compressed_texture_pvrtc');
+		config.etcSupported = !! context.getExtension( 'WEBGL_compressed_texture_etc1' );
+		config.dxtSupported = !! context.getExtension( 'WEBGL_compressed_texture_s3tc' );
+		config.pvrtcSupported = !! context.getExtension( 'WEBGL_compressed_texture_pvrtc' )
+			|| !! context.getExtension( 'WEBKIT_WEBGL_compressed_texture_pvrtc' );
 
 		if ( config.etcSupported ) {
 
@@ -90,36 +113,44 @@ var BasisTextureLoader = class BasisTextureLoader {
 
 		return this;
 
-	}
+	},
 
-	load ( url, onLoad, onProgress, onError ) {
+	load: function ( url, onLoad, onProgress, onError ) {
 
-		// TODO(donmccurdy): Use FileLoader.
-		fetch( url )
-			.then( ( res ) => res.arrayBuffer() )
-			.then( ( buffer ) => this._createTexture( buffer ) )
-			.then( onLoad )
-			.catch( onError );
+		var loader = new FileLoader( this.manager );
 
-	}
+		loader.setResponseType( 'arraybuffer' );
+
+		loader.load( url, ( buffer ) => {
+
+			this._createTexture( buffer )
+				.then( onLoad )
+				.catch( onError );
+
+		}, onProgress, onError );
+
+	},
 
 	/**
 	 * @param  {ArrayBuffer} buffer
 	 * @return {Promise<CompressedTexture>}
 	 */
-	_createTexture ( buffer ) {
+	_createTexture: function ( buffer ) {
 
-		return this.getWorker()
-			.then( ( worker ) => {
+		var worker;
+		var taskID;
 
-				return new Promise( ( resolve ) => {
+		var texturePending = this._getWorker()
+			.then( ( _worker ) => {
 
-					var taskID = this.workerNextTaskID++;
+				worker = _worker;
+				taskID = this.workerNextTaskID ++;
 
-					worker._callbacks[ taskID ] = resolve;
+				return new Promise( ( resolve, reject ) => {
+
+					worker._callbacks[ taskID ] = { resolve, reject };
 					worker._taskCosts[ taskID ] = buffer.byteLength;
 					worker._taskLoad += worker._taskCosts[ taskID ];
-					worker._taskCount++;
 
 					worker.postMessage( { type: 'transcode', id: taskID, buffer }, [ buffer ] );
 
@@ -130,9 +161,7 @@ var BasisTextureLoader = class BasisTextureLoader {
 
 				var config = this.workerConfig;
 
-				var { data, width, height } = message;
-
-				var mipmaps = [ { data, width, height } ];
+				var { width, height, mipmaps } = message;
 
 				var texture;
 
@@ -154,27 +183,54 @@ var BasisTextureLoader = class BasisTextureLoader {
 
 				}
 
-				texture.minFilter = LinearMipMapLinearFilter;
+				texture.minFilter = mipmaps.length === 1 ? LinearFilter : LinearMipMapLinearFilter;
 				texture.magFilter = LinearFilter;
 				texture.generateMipmaps = false;
 				texture.needsUpdate = true;
 
 				return texture;
 
-			});
+			} );
 
-	}
+		texturePending
+			.finally( () => {
 
-	_initTranscoder () {
+				if ( worker && taskID ) {
+
+					worker._taskLoad -= worker._taskCosts[ taskID ];
+					delete worker._callbacks[ taskID ];
+					delete worker._taskCosts[ taskID ];
+
+				}
+
+			} );
+
+		return texturePending;
+
+	},
+
+	_initTranscoder: function () {
 
 		if ( ! this.transcoderBinary ) {
 
-			// TODO(donmccurdy): Use FileLoader.
-			var jsContent = fetch( this.transcoderPath + 'basis_transcoder.js' )
-				.then( ( response ) => response.text() );
+			// Load transcoder wrapper.
+			var jsLoader = new FileLoader( this.manager );
+			jsLoader.setPath( this.transcoderPath );
+			var jsContent = new Promise( ( resolve, reject ) => {
 
-			var binaryContent = fetch( this.transcoderPath + 'basis_transcoder.wasm' )
-				.then( ( response ) => response.arrayBuffer() );
+				jsLoader.load( 'basis_transcoder.js', resolve, undefined, reject );
+
+			} );
+
+			// Load transcoder WASM binary.
+			var binaryLoader = new FileLoader( this.manager );
+			binaryLoader.setPath( this.transcoderPath );
+			binaryLoader.setResponseType( 'arraybuffer' );
+			var binaryContent = new Promise( ( resolve, reject ) => {
+
+				binaryLoader.load( 'basis_transcoder.wasm', resolve, undefined, reject );
+
+			} );
 
 			this.transcoderPending = Promise.all( [ jsContent, binaryContent ] )
 				.then( ( [ jsContent, binaryContent ] ) => {
@@ -202,9 +258,9 @@ var BasisTextureLoader = class BasisTextureLoader {
 
 		return this.transcoderPending;
 
-	}
+	},
 
-	getWorker () {
+	_getWorker: function () {
 
 		return this._initTranscoder().then( () => {
 
@@ -215,7 +271,6 @@ var BasisTextureLoader = class BasisTextureLoader {
 				worker._callbacks = {};
 				worker._taskCosts = {};
 				worker._taskLoad = 0;
-				worker._taskCount = 0;
 
 				worker.postMessage( {
 					type: 'init',
@@ -230,24 +285,29 @@ var BasisTextureLoader = class BasisTextureLoader {
 					switch ( message.type ) {
 
 						case 'transcode':
-							worker._callbacks[ message.id ]( message );
-							worker._taskLoad -= worker._taskCosts[ message.id ];
-							delete worker._callbacks[ message.id ];
-							delete worker._taskCosts[ message.id ];
+							worker._callbacks[ message.id ].resolve( message );
+							break;
+
+						case 'error':
+							worker._callbacks[ message.id ].reject( message );
 							break;
 
 						default:
-							throw new Error( 'BasisTextureLoader: Unexpected message, "' + message.type + '"' );
+							console.error( 'BasisTextureLoader: Unexpected message, "' + message.type + '"' );
 
 					}
 
-				}
+				};
 
 				this.workerPool.push( worker );
 
 			} else {
 
-				this.workerPool.sort( function ( a, b ) { return a._taskLoad > b._taskLoad ? -1 : 1; } );
+				this.workerPool.sort( function ( a, b ) {
+
+					return a._taskLoad > b._taskLoad ? - 1 : 1;
+
+				} );
 
 			}
 
@@ -255,11 +315,11 @@ var BasisTextureLoader = class BasisTextureLoader {
 
 		} );
 
-	}
+	},
 
-	dispose () {
+	dispose: function () {
 
-		for ( var i = 0; i < this.workerPool.length; i++ ) {
+		for ( var i = 0; i < this.workerPool.length; i ++ ) {
 
 			this.workerPool[ i ].terminate();
 
@@ -267,8 +327,10 @@ var BasisTextureLoader = class BasisTextureLoader {
 
 		this.workerPool.length = 0;
 
+		return this;
+
 	}
-}
+};
 
 /* CONSTANTS */
 
@@ -300,6 +362,7 @@ BasisTextureLoader.DXT_FORMAT_MAP[ BasisTextureLoader.BASIS_FORMAT.cTFBC3 ] =
 /* WEB WORKER */
 
 BasisTextureLoader.BasisWorker = function () {
+
 	var config;
 	var transcoderPending;
 	var _BasisFile;
@@ -318,9 +381,27 @@ BasisTextureLoader.BasisWorker = function () {
 			case 'transcode':
 				transcoderPending.then( () => {
 
-					var { data, width, height } = transcode( message.buffer );
+					try {
 
-					self.postMessage( { type: 'transcode', id: message.id, data, width, height }, [ data.buffer ] );
+						var { width, height, mipmaps } = transcode( message.buffer );
+
+						var buffers = [];
+
+						for ( var i = 0; i < mipmaps.length; ++ i ) {
+
+							buffers.push( mipmaps[ i ].data.buffer );
+
+						}
+
+						self.postMessage( { type: 'transcode', id: message.id, width, height, mipmaps }, buffers );
+
+					} catch ( error ) {
+
+						console.error( error );
+
+						self.postMessage( { type: 'error', id: message.id, error: error.message } );
+
+					}
 
 				} );
 				break;
@@ -329,7 +410,7 @@ BasisTextureLoader.BasisWorker = function () {
 
 	};
 
-	function init ( wasmBinary ) {
+	function init( wasmBinary ) {
 
 		transcoderPending = new Promise( ( resolve ) => {
 
@@ -355,23 +436,22 @@ BasisTextureLoader.BasisWorker = function () {
 
 	}
 
-	function transcode ( buffer ) {
+	function transcode( buffer ) {
 
 		var basisFile = new _BasisFile( new Uint8Array( buffer ) );
 
 		var width = basisFile.getImageWidth( 0, 0 );
 		var height = basisFile.getImageHeight( 0, 0 );
-		var images = basisFile.getNumImages();
 		var levels = basisFile.getNumLevels( 0 );
 
-		function cleanup () {
+		function cleanup() {
 
 			basisFile.close();
 			basisFile.delete();
 
 		}
 
-		if ( ! width || ! height || ! images || ! levels ) {
+		if ( ! width || ! height || ! levels ) {
 
 			cleanup();
 			throw new Error( 'BasisTextureLoader:  Invalid .basis file' );
@@ -385,28 +465,43 @@ BasisTextureLoader.BasisWorker = function () {
 
 		}
 
-		var dst = new Uint8Array( basisFile.getImageTranscodedSizeInBytes( 0, 0, config.format ) );
+		if ( basisFile.getHasAlpha() ) {
 
-		var startTime = performance.now();
-
-		var status = basisFile.transcodeImage(
-			dst,
-			0,
-			0,
-			config.format,
-			config.etcSupported ? 0 : ( config.dxtSupported ? 1 : 0 ),
-			0
-		);
-
-		cleanup();
-
-		if ( ! status ) {
-
-			throw new Error( 'BasisTextureLoader: .transcodeImage failed.' );
+			console.warn( 'BasisTextureLoader: Alpha not yet implemented.' );
 
 		}
 
-		return { data: dst, width, height };
+		var mipmaps = [];
+
+		for ( var mip = 0; mip < levels; mip ++ ) {
+
+			var mipWidth = basisFile.getImageWidth( 0, mip );
+			var mipHeight = basisFile.getImageHeight( 0, mip );
+			var dst = new Uint8Array( basisFile.getImageTranscodedSizeInBytes( 0, mip, config.format ) );
+
+			var status = basisFile.transcodeImage(
+				dst,
+				0,
+				mip,
+				config.format,
+				config.etcSupported ? 0 : ( config.dxtSupported ? 1 : 0 ),
+				0
+			);
+
+			if ( ! status ) {
+
+				cleanup();
+				throw new Error( 'BasisTextureLoader: .transcodeImage failed.' );
+
+			}
+
+			mipmaps.push( { data: dst, width: mipWidth, height: mipHeight } );
+
+		}
+
+		cleanup();
+
+		return { width, height, mipmaps };
 
 	}
 

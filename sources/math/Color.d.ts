@@ -28,10 +28,10 @@ export class Color {
 	copy( color: Color ): this;
 	copyGammaToLinear( color: Color, gammaFactor?: number ): Color;
 	copyLinearToGamma( color: Color, gammaFactor?: number ): Color;
-	convertGammaToLinear(): Color;
-	convertLinearToGamma(): Color;
-	copySRGBToLinear(): Color;
-	copyLinearToSRGB(): Color;
+	convertGammaToLinear( gammaFactor?: number ): Color;
+	convertLinearToGamma( gammaFactor?: number ): Color;
+	copySRGBToLinear( color: Color ): Color;
+	copyLinearToSRGB( color: Color ): Color;
 	convertSRGBToLinear(): Color;
 	convertLinearToSRGB(): Color;
 	getHex(): number;

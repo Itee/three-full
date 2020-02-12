@@ -6,7 +6,6 @@ export { MMDAnimationHelper } from './animation/MMDAnimationHelper.js'
 export { MMDPhysics } from './animation/MMDPhysics.js'
 export { TimelinerController } from './animation/TimelinerController.js'
 export { CinematicCamera } from './cameras/CinematicCamera.js'
-export { Car } from './objects/Car.js'
 export { DeviceOrientationControls } from './controls/DeviceOrientationControls.js'
 export { DragControls } from './controls/DragControls.js'
 export { EditorControls } from './controls/EditorControls.js'
@@ -22,7 +21,6 @@ export {
 	TransformControlsGizmo,
 	TransformControlsPlane
 } from './controls/TransformControls.js'
-export { ConvexObjectBreaker } from './modifiers/ConvexObjectBreaker.js'
 export {
 	GrannyKnot,
 	HeartCurve,
@@ -49,7 +47,7 @@ export { ParallaxBarrierEffect } from './effects/ParallaxBarrierEffect.js'
 export { PeppersGhostEffect } from './effects/PeppersGhostEffect.js'
 export { StereoEffect } from './effects/StereoEffect.js'
 export { ColladaExporter } from './exporters/ColladaExporter.js'
-export { DRACOExporter } from './exporters/DracoExporter.js'
+export { DRACOExporter } from './exporters/DRACOExporter.js'
 export { GLTFExporter } from './exporters/GLTFExporter.js'
 export { MMDExporter } from './exporters/MMDExporter.js'
 export { OBJExporter } from './exporters/OBJExporter.js'
@@ -68,15 +66,10 @@ export {
 export { LightningStrike } from './geometries/LightningStrike.js'
 export { ParametricGeometries } from './geometries/ParametricGeometries.js'
 export { TeapotBufferGeometry } from './geometries/TeapotBufferGeometry.js'
-export { GPUComputationRenderer } from './renderers/GPUComputationRenderer.js'
-export {
-	GPUParticleSystem,
-	GPUParticleContainer
-} from './objects/GPUParticleSystem.js'
-export { Gyroscope } from './objects/Gyroscope.js'
 export { SelectionBox } from './interactive/SelectionBox.js'
 export { SelectionHelper } from './interactive/SelectionHelper.js'
 export { LightProbeGenerator } from './lights/LightProbeGenerator.js'
+export { RectAreaLightUniformsLib } from './lights/RectAreaLightUniformsLib.js'
 export { Line2 } from './lines/Line2.js'
 export { LineGeometry } from './lines/LineGeometry.js'
 export { LineMaterial } from './lines/LineMaterial.js'
@@ -109,7 +102,6 @@ export { HDRCubeTextureLoader } from './loaders/HDRCubeTextureLoader.js'
 export { KMZLoader } from './loaders/KMZLoader.js'
 export { KTXLoader } from './loaders/KTXLoader.js'
 export { LDrawLoader } from './loaders/LDrawLoader.js'
-export { LoaderSupport } from './loaders/LoaderSupport.js'
 export { LWOLoader } from './loaders/LWOLoader.js'
 export { MD2Loader } from './loaders/MD2Loader.js'
 export { MMDLoader } from './loaders/MMDLoader.js'
@@ -119,7 +111,6 @@ export {
 	NodeMaterialLoaderUtils
 } from './loaders/NodeMaterialLoader.js'
 export { OBJLoader } from './loaders/OBJLoader.js'
-export { OBJLoader2 } from './loaders/OBJLoader2.js'
 export { PCDLoader } from './loaders/PCDLoader.js'
 export { PDBLoader } from './loaders/PDBLoader.js'
 export { PlayCanvasLoader } from './loaders/PlayCanvasLoader.js'
@@ -132,10 +123,8 @@ export { SVGLoader } from './loaders/SVGLoader.js'
 export { TDSLoader } from './loaders/TDSLoader.js'
 export { TGALoader } from './loaders/TGALoader.js'
 export { TTFLoader } from './loaders/TTFLoader.js'
-export { VRMLLoader } from './loaders/VRMLLoader.js'
 export { VRMLoader } from './loaders/VRMLoader.js'
 export { VTKLoader } from './loaders/VTKLoader.js'
-export { MarchingCubes } from './objects/MarchingCubes.js'
 export { ColorConverter } from './math/ColorConverter.js'
 export { ConvexHull } from './math/ConvexHull.js'
 export { ImprovedNoise } from './misc/ImprovedNoise.js'
@@ -144,14 +133,27 @@ export {
 	ColorMapKeywords
 } from './math/Lut.js'
 export { SimplexNoise } from './misc/SimplexNoise.js'
+export { CarControls } from './misc/CarControls.js'
+export { ConvexObjectBreaker } from './modifiers/ConvexObjectBreaker.js'
+export { GPUComputationRenderer } from './renderers/GPUComputationRenderer.js'
+export { Gyroscope } from './objects/Gyroscope.js'
 export { MD2Character } from './objects/MD2Character.js'
 export { MD2CharacterComplex } from './objects/MD2CharacterComplex.js'
+export { MorphAnimMesh } from './objects/MorphAnimMesh.js'
+export { MorphBlendMesh } from './objects/MorphBlendMesh.js'
+export { Ocean } from './objects/Ocean.js'
+export {
+	RollerCoasterGeometry,
+	RollerCoasterLiftersGeometry,
+	RollerCoasterShadowGeometry,
+	SkyGeometry,
+	TreesGeometry
+} from './objects/RollerCoaster.js'
+export { VolumeSlice } from './audio/VolumeSlice.js'
 export { ExplodeModifier } from './modifiers/ExplodeModifier.js'
 export { SimplifyModifier } from './modifiers/SimplifyModifier.js'
 export { SubdivisionModifier } from './modifiers/SubdivisionModifier.js'
 export { TessellateModifier } from './modifiers/TessellateModifier.js'
-export { MorphAnimMesh } from './objects/MorphAnimMesh.js'
-export { MorphBlendMesh } from './objects/MorphBlendMesh.js'
 export { CameraNode } from './nodes/accessors/CameraNode.js'
 export { ColorsNode } from './nodes/accessors/ColorsNode.js'
 export { LightNode } from './nodes/accessors/LightNode.js'
@@ -208,9 +210,7 @@ export { PhongNodeMaterial } from './nodes/materials/PhongNodeMaterial.js'
 export { SpriteNodeMaterial } from './nodes/materials/SpriteNodeMaterial.js'
 export { StandardNodeMaterial } from './nodes/materials/StandardNodeMaterial.js'
 export { CondNode } from './nodes/math/CondNode.js'
-export { Math1Node } from './nodes/math/Math1Node.js'
-export { Math2Node } from './nodes/math/Math2Node.js'
-export { Math3Node } from './nodes/math/Math3Node.js'
+export { MathNode } from './nodes/math/MathNode.js'
 export { OperatorNode } from './nodes/math/OperatorNode.js'
 export { BumpMapNode } from './nodes/misc/BumpMapNode.js'
 export { NormalMapNode } from './nodes/misc/NormalMapNode.js'
@@ -234,6 +234,7 @@ export {
 	LensflareElement
 } from './objects/Lensflare.js'
 export { LightningStorm } from './objects/LightningStorm.js'
+export { MarchingCubes } from './objects/MarchingCubes.js'
 export { Reflector } from './objects/Reflector.js'
 export { ReflectorRTT } from './objects/ReflectorRTT.js'
 export { Refractor } from './objects/Refractor.js'
@@ -241,7 +242,6 @@ export { ShadowMesh } from './objects/ShadowMesh.js'
 export { Sky } from './objects/Sky.js'
 export { Water } from './objects/Water.js'
 export { Water2 } from './objects/Water2.js'
-export { Ocean } from './objects/Ocean.js'
 export { PMREMCubeUVPacker } from './pmrem/PMREMCubeUVPacker.js'
 export { PMREMGenerator } from './pmrem/PMREMGenerator.js'
 export { AdaptiveToneMappingPass } from './postprocessing/AdaptiveToneMappingPass.js'
@@ -300,14 +300,6 @@ export {
 	ShaderDeferredCommon,
 	DeferredShaderChunk
 } from './renderers/WebGLDeferredRenderer.js'
-export {
-	RollerCoasterGeometry,
-	RollerCoasterLiftersGeometry,
-	RollerCoasterShadowGeometry,
-	SkyGeometry,
-	TreesGeometry
-} from './objects/RollerCoaster.js'
-export { ShaderGodRays } from './shaders/ShaderGodRays.js'
 export { AfterimageShader } from './shaders/AfterimageShader.js'
 export { BasicShader } from './shaders/BasicShader.js'
 export { BleachBypassShader } from './shaders/BleachBypassShader.js'
@@ -335,6 +327,12 @@ export { FreiChenShader } from './shaders/FreiChenShader.js'
 export { FresnelShader } from './shaders/FresnelShader.js'
 export { FXAAShader } from './shaders/FXAAShader.js'
 export { GammaCorrectionShader } from './shaders/GammaCorrectionShader.js'
+export {
+	GodRaysDepthMaskShader,
+	GodRaysGenerateShader,
+	GodRaysCombineShader,
+	GodRaysFakeSunShader
+} from './shaders/GodRaysShader.js'
 export { HalftoneShader } from './shaders/HalftoneShader.js'
 export { HorizontalBlurShader } from './shaders/HorizontalBlurShader.js'
 export { HorizontalTiltShiftShader } from './shaders/HorizontalTiltShiftShader.js'
@@ -344,11 +342,17 @@ export { LuminosityHighPassShader } from './shaders/LuminosityHighPassShader.js'
 export { LuminosityShader } from './shaders/LuminosityShader.js'
 export { MirrorShader } from './shaders/MirrorShader.js'
 export { NormalMapShader } from './shaders/NormalMapShader.js'
+export { OceanShaders } from './shaders/OceanShaders.js'
 export { ParallaxShader } from './shaders/ParallaxShader.js'
 export { PixelShader } from './shaders/PixelShader.js'
 export { RGBShiftShader } from './shaders/RGBShiftShader.js'
 export { SAOShader } from './shaders/SAOShader.js'
 export { SepiaShader } from './shaders/SepiaShader.js'
+export {
+	SkinShaderBasic,
+	SkinShaderAdvanced,
+	SkinShaderBeckmann
+} from './shaders/SkinShader.js'
 export {
 	SMAAEdgesShader,
 	SMAAWeightsShader,
@@ -361,7 +365,15 @@ export {
 	SSAOBlurShader
 } from './shaders/SSAOShader.js'
 export { TechnicolorShader } from './shaders/TechnicolorShader.js'
+export { TerrainShader } from './shaders/TerrainShader.js'
 export { ToneMapShader } from './shaders/ToneMapShader.js'
+export {
+	ToonShader1,
+	ToonShader2,
+	ToonShaderHatching,
+	ToonShaderDotted
+} from './shaders/ToonShader.js'
+export { TranslucentShader } from './shaders/TranslucentShader.js'
 export { TriangleBlurShader } from './shaders/TriangleBlurShader.js'
 export { UnpackDepthRGBAShader } from './shaders/UnpackDepthRGBAShader.js'
 export { VerticalBlurShader } from './shaders/VerticalBlurShader.js'
@@ -369,10 +381,6 @@ export { VerticalTiltShiftShader } from './shaders/VerticalTiltShiftShader.js'
 export { VignetteShader } from './shaders/VignetteShader.js'
 export { VolumeRenderShader1 } from './shaders/VolumeShader.js'
 export { WaterRefractionShader } from './shaders/WaterRefractionShader.js'
-export { ShaderSkin } from './shaders/ShaderSkin.js'
-export { ShaderTerrain } from './shaders/ShaderTerrain.js'
-export { ShaderToon } from './shaders/ShaderToon.js'
-export { TranslucentShader } from './shaders/ShaderTranslucent.js'
 export { BufferGeometryUtils } from './utils/BufferGeometryUtils.js'
 export { GeometryUtils } from './utils/GeometryUtils.js'
 export { MathUtils } from './utils/MathUtils.js'
@@ -381,7 +389,6 @@ export { ShadowMapViewer } from './utils/ShadowMapViewer.js'
 export { SkeletonUtils } from './utils/SkeletonUtils.js'
 export { TypedArrayUtils } from './utils/TypedArrayUtils.js'
 export { UVsDebug } from './utils/UVsDebug.js'
-export { VolumeSlice } from './audio/VolumeSlice.js'
 export { DaydreamController } from './vr/deprecated/DaydreamController.js'
 export { GearVRController } from './vr/deprecated/GearVRController.js'
 export { PaintViveController } from './vr/PaintViveController.js'

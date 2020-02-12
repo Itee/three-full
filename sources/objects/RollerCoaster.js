@@ -11,7 +11,7 @@ import { Raycaster } from '../core/Raycaster.js'
  * @author mrdoob / http://mrdoob.com/
  */
 
-function RollerCoasterGeometry( curve, divisions ) {
+var RollerCoasterGeometry = function ( curve, divisions ) {
 
 	BufferGeometry.call( this );
 
@@ -219,11 +219,11 @@ function RollerCoasterGeometry( curve, divisions ) {
 	this.addAttribute( 'normal', new BufferAttribute( new Float32Array( normals ), 3 ) );
 	this.addAttribute( 'color', new BufferAttribute( new Float32Array( colors ), 3 ) );
 
-}
+};
 
 RollerCoasterGeometry.prototype = Object.create( BufferGeometry.prototype );
 
-function RollerCoasterLiftersGeometry( curve, divisions ) {
+var RollerCoasterLiftersGeometry = function ( curve, divisions ) {
 
 	BufferGeometry.call( this );
 
@@ -393,11 +393,11 @@ function RollerCoasterLiftersGeometry( curve, divisions ) {
 	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
 	this.addAttribute( 'normal', new BufferAttribute( new Float32Array( normals ), 3 ) );
 
-}
+};
 
 RollerCoasterLiftersGeometry.prototype = Object.create( BufferGeometry.prototype );
 
-function RollerCoasterShadowGeometry( curve, divisions ) {
+var RollerCoasterShadowGeometry = function ( curve, divisions ) {
 
 	BufferGeometry.call( this );
 
@@ -463,11 +463,11 @@ function RollerCoasterShadowGeometry( curve, divisions ) {
 
 	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
 
-}
+};
 
 RollerCoasterShadowGeometry.prototype = Object.create( BufferGeometry.prototype );
 
-function SkyGeometry() {
+var SkyGeometry = function () {
 
 	BufferGeometry.call( this );
 
@@ -492,11 +492,11 @@ function SkyGeometry() {
 	}
 	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
 
-}
+};
 
 SkyGeometry.prototype = Object.create( BufferGeometry.prototype );
 
-function TreesGeometry( landscape ) {
+var TreesGeometry = function ( landscape ) {
 
 	BufferGeometry.call( this );
 
@@ -546,7 +546,7 @@ function TreesGeometry( landscape ) {
 	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
 	this.addAttribute( 'color', new BufferAttribute( new Float32Array( colors ), 3 ) );
 
-}
+};
 
 TreesGeometry.prototype = Object.create( BufferGeometry.prototype );
 
