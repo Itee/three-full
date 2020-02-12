@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 189.0.0 is now available under Three r0.104.0 !!!**
+**The version 20.0.0 is now available under Three r0.105.2 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -206,11 +206,23 @@ This is the list of unsupported part of example, which cannot/won't be converted
 All others folders under example file tree will be mapped to their counter-part under sources folders
 
 #### <a id="bug"></a>Bugs ####
-- No known bug
+- (Warning - Severity 0 [False positive]) Missing export statement for Math
+- (Warning - Severity 0 [False positive]) Missing export statement for shaders from ShaderChunk
 
 
 #### Change log ####
 
+
+##### 20.0.0:
+
+* Support of Three r105.2
+* Add special treatment for HelioWebXRPolyfill
+* Update Pass patch
+* Add BasisTextureLoader
+* Fix Lut export
+* Fix NodeMaterialLoader export
+* Fix SMAAShader export
+* Fix WebGLDeferredRenderer export
 
 ##### 19.0.0:
 
