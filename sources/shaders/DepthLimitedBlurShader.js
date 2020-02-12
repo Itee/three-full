@@ -10,14 +10,14 @@ var DepthLimitedBlurShader = {
 		'PERSPECTIVE_CAMERA': 1
 	},
 	uniforms: {
-		'tDiffuse': { type: 't', value: null },
-		'size': { type: 'v2', value: new Vector2( 512, 512 ) },
-		'sampleUvOffsets': { type: 'v2v', value: [ new Vector2( 0, 0 ) ] },
-		'sampleWeights': { type: '1fv', value: [ 1.0 ] },
-		'tDepth': { type: 't', value: null },
-		'cameraNear': { type: 'f', value: 10 },
-		'cameraFar': { type: 'f', value: 1000 },
-		'depthCutoff': { type: 'f', value: 10 },
+		'tDiffuse': { value: null },
+		'size': { value: new Vector2( 512, 512 ) },
+		'sampleUvOffsets': { value: [ new Vector2( 0, 0 ) ] },
+		'sampleWeights': { value: [ 1.0 ] },
+		'tDepth': { value: null },
+		'cameraNear': { value: 10 },
+		'cameraFar': { value: 1000 },
+		'depthCutoff': { value: 10 },
 	},
 	vertexShader: [
 		"#include <common>",

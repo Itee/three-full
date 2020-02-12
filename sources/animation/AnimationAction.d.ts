@@ -20,6 +20,7 @@ export class AnimationAction {
   stop(): AnimationAction;
   reset(): AnimationAction;
   isRunning(): boolean;
+  isScheduled(): boolean;
   startAt(time: number): AnimationAction;
   setLoop(
     mode: AnimationActionLoopStyles,

@@ -1008,14 +1008,8 @@ var MMDPhysics = ( function () {
 		_getWorldTransformForBone: function () {
 
 			var manager = this.manager;
-
-			var tr = manager.allocTransform();
-			this.body.getMotionState().getWorldTransform( tr );
-			var tr2 = manager.multiplyTransforms( tr, this.boneOffsetFormInverse );
-
-			manager.freeTransform( tr );
-
-			return tr2;
+			var tr = this.body.getCenterOfMassTransform();
+			return manager.multiplyTransforms( tr, this.boneOffsetFormInverse );
 
 		},
 
@@ -1071,7 +1065,11 @@ var MMDPhysics = ( function () {
 			//this.bone.quaternion.multiply( thQ2 );
 
 			thQ3.setFromRotationMatrix( this.bone.matrix );
-			this.bone.quaternion.copy( thQ2.multiply( thQ3 ) );
+
+			// Renormalizing quaternion here because repeatedly transforming
+			// quaternion continuously accumulates floating point error and
+			// can end up being overflow. See #15335
+			this.bone.quaternion.copy( thQ2.multiply( thQ3 ).normalize() );
 
 			manager.freeThreeQuaternion( thQ );
 			manager.freeThreeQuaternion( thQ2 );
@@ -1086,19 +1084,24 @@ var MMDPhysics = ( function () {
 
 			var manager = this.manager;
 
-			var tr = this.body.getCenterOfMassTransform();
-			var origin = tr.getOrigin();
-			
-			var matrixInv = manager.allocThreeMatrix4();
-			matrixInv.copy( this.bone.parent.matrixWorld ).getInverse( matrixInv );
-			
-			var pos = manager.allocThreeVector3();
-			pos.set( origin.x(), origin.y(), origin.z() ).applyMatrix4( matrixInv );
+			var tr = this._getWorldTransformForBone();
 
-			this.bone.position.copy( pos );
+			var thV = manager.allocThreeVector3();
 
-			manager.freeThreeVector3( pos );
-			manager.freeThreeMatrix4( matrixInv );
+			var o = manager.getOrigin( tr );
+			thV.set( o.x(), o.y(), o.z() );
+
+			if ( this.bone.parent ) {
+
+				this.bone.parent.worldToLocal( thV );
+
+			}
+
+			this.bone.position.copy( thV );
+
+			manager.freeThreeVector3( thV );
+
+			manager.freeTransform( tr );
 
 		}
 
