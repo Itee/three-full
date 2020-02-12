@@ -33,8 +33,20 @@ module.exports = {
     DracoExporter:        {
         exports: [ 'DRACOExporter' ]
     },
+    GodRaysShader:        {
+        exports: [
+            'GodRaysDepthMaskShader',
+            'GodRaysGenerateShader',
+            'GodRaysCombineShader',
+            'GodRaysFakeSunShader'
+        ]
+    },
     Interpolations:       {
-        exports: [ 'CatmullRom', 'QuadraticBezier', 'CubicBezier' ]
+        exports: [
+            'CatmullRom',
+            'QuadraticBezier',
+            'CubicBezier'
+        ]
     },
     Math:                 {
         exports: [ '_Math' ]
@@ -59,8 +71,27 @@ module.exports = {
     ShaderTranslucent:    {
         exports: [ 'TranslucentShader' ]
     },
-    SMAAShader:    {
-        exports: [ 'SMAABlendShader', 'SMAAEdgesShader', 'SMAAWeightsShader'  ]
+    SkinShader:           {
+        exports: [
+            'SkinShaderBasic',
+            'SkinShaderAdvanced',
+            'SkinShaderBeckmann'
+        ]
+    },
+    SMAAShader:           {
+        exports: [
+            'SMAABlendShader',
+            'SMAAEdgesShader',
+            'SMAAWeightsShader'
+        ]
+    },
+    ToonShader:           {
+        exports: [
+            'ToonShader1',
+            'ToonShader2',
+            'ToonShaderHatching',
+            'ToonShaderDotted'
+        ]
     },
     VolumeShader:         {
         exports: [ 'VolumeRenderShader1' ]
