@@ -84,9 +84,16 @@ function _getFileForPath ( filePath ) {
 
 }
 
-function _getUncommentedFileForPath ( filePath ) {
+function _removeCommentsFrom ( file ) {
 
-    return _getFileForPath( filePath ).replace( /\/\*[\s\S]*?\*\/|([^\\:]|^)\/\/.*$/g, '$1' )
+    return file.replace( /\/\*[\s\S]*?\*\//g, '' ) // Multi-lines comment
+               .replace( /\/\/.*/g, '' ) // Single line comment
+
+}
+
+function _removeStringsFrom ( file ) {
+
+    return file.replace( /".*"|\'.*\'/g, '' )
 
 }
 
@@ -148,7 +155,7 @@ function _getFilesPathsUnder ( filePaths ) {
 
         } else {
 
-            console.error( "Invalid stat object !" )
+            console.error( 'Invalid stat object !' )
 
         }
 
@@ -173,7 +180,6 @@ function _excludesFilesPaths ( filePaths, excludes ) {
         filePath = filePaths[ filePathIndex ]
 
         if ( isExclude( filePath ) ) {
-            //            console.log( 'Exclude: ' + filePath )
             continue
         }
 
@@ -223,39 +229,37 @@ function _getFileType ( file ) {
     const prototypedObjectRegex = new RegExp( /prototype\.constructor\s?=\s?(THREE\.)?(\w)+/g )
     const libRegex              = new RegExp( /THREE.(\w+) = \{/g )
 
-    let fileType = undefined
-
     const es6Match = file.match( es6Regex )
     if ( es6Match && es6Match.length > 0 ) {
-        return "es6"
+        return 'es6'
     }
 
     const amdMatch = file.match( amdRegex )
     if ( amdMatch && amdMatch.length > 0 ) {
-        return "amd"
+        return 'amd'
     }
 
     const cjsMatch = file.match( cjsRegex )
     if ( cjsMatch && cjsMatch.length > 0 ) {
-        return "cjs"
+        return 'cjs'
     }
 
     const classicObjectMatch = file.match( classicObjectRegex )
     if ( classicObjectMatch && classicObjectMatch.length > 0 ) {
-        return "classic"
+        return 'classic'
     }
 
     const prototypedObjectMatch = file.match( prototypedObjectRegex )
     if ( prototypedObjectMatch && prototypedObjectMatch.length > 0 ) {
-        return "prototype"
+        return 'prototype'
     }
 
     const libMatch = file.match( libRegex )
     if ( libMatch && libMatch.length > 0 ) {
-        return "lib"
+        return 'lib'
     }
 
-    return "unknown"
+    return 'unknown'
 
 }
 
@@ -277,8 +281,7 @@ function _filterJavascriptFiles ( filePaths ) {
 
         // Not a js file like fonts or shaders
         const fileExtension = path.extname( filePath )
-        if ( filePath.indexOf("glsl") > -1 || fileExtension !== '.js' ) {
-            //            console.log( 'Not Js:  ' + filePath )
+        if ( filePath.indexOf( 'glsl' ) > -1 || fileExtension !== '.js' ) {
             continue
         }
 
@@ -339,7 +342,7 @@ function _copyFile ( banner, fileDatas ) {
 
 }
 
-function _cleanFile( file ) {
+function _cleanFile ( file ) {
 
     // Remove extra blank lines then extra semi-colon
     return file.replace( /(^[\s\t]*[\r\n]){2,}/gm, '' )
@@ -351,7 +354,6 @@ function _cleanFile( file ) {
 
 function _makeUnique ( value, index, array ) {
 
-    //.filter( ( v, i, a ) => a.indexOf( v ) === i )
     return array.indexOf( value ) === index
 
 }
@@ -393,6 +395,7 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
     let fileExtension = undefined
     let baseName      = undefined
     let edgeCase      = undefined
+    let baseFile      = undefined
     let file          = undefined
 
     let exports          = undefined
@@ -404,9 +407,10 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
         fileExtension = path.extname( filePath )
         baseName      = path.basename( filePath, fileExtension )
         edgeCase      = edgeCases[ baseName ] || {}
-        file          = _getUncommentedFileForPath( filePath )
+        baseFile      = _getFileForPath( filePath )
+        file          = _removeCommentsFrom( _removeStringsFrom( baseFile ) )
 
-        exports = _getExportsFor( file, edgeCase[ 'exportsOverride' ] )
+        exports = _getExportsFor( file, edgeCase[ 'exports' ], edgeCase[ 'exportsOverride' ] )
         if ( !exports ) {
 
             // Fallback with file name in last resore
@@ -421,7 +425,27 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
             // Check case where export is an array with 'from' or 'as'
             if ( Array.isArray( exportedElement ) ) {
-                exportedElement = exportedElement[ 0 ]
+
+                if ( exportedElement.length === 3 ) {
+
+                    if ( exportedElement[ 1 ] === 'as' ) {
+
+                        exportedElement = exportedElement[ 2 ]
+
+                    } else {
+
+                        console.error( 'WARNING: Element "' + exportedElement + '" in file ' + path.basename( filePath ) + ' contain multiples element or alias in an unmanaged way. Defaulting to the first element as export of the file !' )
+                        exportedElement = exportedElement[ 0 ]
+
+                    }
+
+                } else {
+
+                    console.error( 'WARNING: Element "' + exportedElement + '" in file ' + path.basename( filePath ) + ' contain multiples element or alias in an unmanaged way. Defaulting to the first element as export of the file !' )
+                    exportedElement = exportedElement[ 0 ]
+
+                }
+
             }
 
             if ( _exportMap[ exportedElement ] ) {
@@ -482,6 +506,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
     let baseName      = undefined
     let edgeCase      = undefined
     let file          = undefined
+    let baseFile      = undefined
     let isGLSL        = undefined
     let isJavascript  = undefined
 
@@ -498,9 +523,10 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
 
         fileExtension = path.extname( filePath )
         baseName      = path.basename( filePath, fileExtension )
-        file          = _getUncommentedFileForPath( filePath )
-        isGLSL        = (baseName.indexOf("glsl") > -1)
-        isJavascript  = (!isGLSL && fileExtension === '.js' )
+        baseFile      = _getFileForPath( filePath )
+        file          = _removeCommentsFrom( baseFile )
+        isGLSL        = ( baseName.indexOf( 'glsl' ) > -1 )
+        isJavascript  = ( !isGLSL && fileExtension === '.js' )
 
         if ( _fileMap[ baseName ] ) {
             console.error( 'The key ' + baseName + ' already exist in the file map ! Is there a duplicate file ??? Skip it !' )
@@ -514,7 +540,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
             fileType   = _getFileType( file )
 
             // Processing exports
-            exports = _getExportsFor( file, edgeCase[ 'exportsOverride' ] )
+            exports = _getExportsFor( file, edgeCase[ 'exports' ], edgeCase[ 'exportsOverride' ] )
             if ( !exports ) {
 
                 // Fallback with file name in last resore
@@ -524,7 +550,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
             }
 
             imports = _getImportsFor( {
-                file:    file,
+                file:    _removeCommentsFrom( _removeStringsFrom( baseFile ) ),
                 exports: exports,
                 output:  outputPath
             } )
@@ -537,7 +563,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
                 path:         filePath,
                 isJavascript: ( fileExtension === '.js' ),
                 fileType:     fileType,
-                file:         file,
+                file:         baseFile,
                 imports:      data.imports,
                 replacements: data.replacements,
                 exports:      data.exports,
@@ -566,36 +592,19 @@ function _getAllImportsStatementIn ( file, exports ) {
     let statements = []
 
     const matchs = file.match( /import\s+(?:(?:({[\w\s,]+})|([\w,*-]+))\s+)+from/g ) || []
-    matchs.filter( _makeUnique )
-          .forEach( ( value ) => {
+    matchs.forEach( ( value ) => {
 
-              const results = value.replace( 'import', '' )
-                                   .replace( 'from', '' )
-                                   .replace( /[{}]/g, '' )
-                                   .replace( /\s+/g, '' )
-                                   .split( ',' )
+        const results = value.replace( 'import', '' )
+                             .replace( 'from', '' )
+                             .replace( /[{}]/g, '' )
+                             .replace( /\s+/g, '' )
+                             .split( ',' )
 
-              // Check if the extends statement is not about the exported object !
-              let result = undefined
-              for ( let i = results.length - 1 ; i >= 0 ; --i ) {
-                  result = results[ i ]
+        if ( results.length > 0 ) {
+            Array.prototype.push.apply( statements, results )
+        }
 
-                  // Check if import matching does no concerne inner class
-                  if ( exports.includes( result ) ) {
-                      return
-                  }
-
-                  if ( !result ) {
-                      results.splice( i, 1 )
-                  }
-
-              }
-
-              if ( results.length > 0 ) {
-                  Array.prototype.push.apply( statements, results )
-              }
-
-          } )
+    } )
 
     return statements
 
@@ -607,32 +616,19 @@ function _getAllExtendsStatementIn ( file, exports ) {
 
     // By Object.assign
     const matchs = file.match( /Object\.assign\(\s*((THREE.)?(\w+)\.prototype[,]*\s*){2,}/g ) || []
-    matchs.filter( _makeUnique )
-          .forEach( ( value ) => {
+    matchs.forEach( ( value ) => {
 
-              const results = value.replace( /Object\.assign\(\s+/g, '' )
-                                   .replace( /THREE\./g, '' )
-                                   .replace( /\.prototype/g, '' )
-                                   .replace( /\s+/g, '' )
-                                   .split( ',' )
+        const results = value.replace( /Object\.assign\(\s+/g, '' )
+                             .replace( /THREE\./g, '' )
+                             .replace( /\.prototype/g, '' )
+                             .replace( /\s+/g, '' )
+                             .split( ',' )
 
-              // Check if the extends statement is not about the exported object !
-              let result = undefined
-              for ( let i = results.length - 1 ; i >= 0 ; --i ) {
-                  result = results[ i ]
+        if ( results.length > 0 ) {
+            Array.prototype.push.apply( statements, results )
+        }
 
-                  // Check if import matching does no concerne inner class
-                  if ( !result || exports.includes( result ) ) {
-                      results.splice( i, 1 )
-                  }
-
-              }
-
-              if ( results.length > 0 ) {
-                  Array.prototype.push.apply( statements, results )
-              }
-
-          } )
+    } )
 
     return statements
 
@@ -643,31 +639,19 @@ function _getAllInheritStatementsIn ( file, exports ) {
     let statements = []
 
     const matchs = file.match( /Object\.create\(\s+((THREE.)?(\w+)\.prototype[,]?\s*)+\)/g ) || []
-    matchs.filter( _makeUnique )
-          .forEach( ( value ) => {
+    matchs.forEach( ( value ) => {
 
-              const results = value.replace( /Object\.create\(\s+(THREE.)?/g, '' )
-                                   .replace( /\.prototype/g, '' )
-                                   .replace( /\)/g, '' )
-                                   .replace( /\s+/g, '' )
-                                   .split( ',' )
+        const results = value.replace( /Object\.create\(\s+(THREE.)?/g, '' )
+                             .replace( /\.prototype/g, '' )
+                             .replace( /\)/g, '' )
+                             .replace( /\s+/g, '' )
+                             .split( ',' )
 
-              // Check if the inherit statement is not about the exported object !
-              let result = undefined
-              for ( let i = 0, resultLength = results.length ; i < resultLength ; i++ ) {
-                  result = results[ i ]
+        if ( results.length > 0 ) {
+            Array.prototype.push.apply( statements, results )
+        }
 
-                  if ( !result || exports.includes( result ) ) {
-                      results.splice( i, 1 )
-                  }
-
-              }
-
-              if ( results.length > 0 ) {
-                  Array.prototype.push.apply( statements, results )
-              }
-
-          } )
+    } )
 
     return statements
 
@@ -677,21 +661,15 @@ function _getAllNewStatementIn ( file, exports ) {
 
     let statements = []
 
-    const matchs = file.match( /new\sTHREE.(\w+)\s?/g ) || []
-    matchs.filter( _makeUnique )
-          .forEach( ( value ) => {
+    const matchs = file.match( /new\sTHREE\.(\w+)\s?/g ) || []
+    matchs.forEach( ( value ) => {
 
-              const result = value.replace( /new\sTHREE\./g, '' )
-                                  .replace( /\s+/g, '' )
+        const result = value.replace( /new\sTHREE\./g, '' )
+                            .replace( /\s+/g, '' )
 
-              // Check if the new statement is not about the exported object !
-              if ( exports.includes( result ) ) {
-                  return
-              }
+        if ( result ) { statements.push( result ) }
 
-              if ( result ) { statements.push( result ) }
-
-          } )
+    } )
 
     return statements
 
@@ -702,52 +680,54 @@ function _getAllInstanceOfStatementIn ( file, exports ) {
     let statements = []
 
     const matchs = file.match( /instanceof\sTHREE.(\w+)\s?/g ) || []
-    matchs.filter( _makeUnique )
-          .forEach( ( value ) => {
+    matchs.forEach( ( value ) => {
 
-              const result = value.replace( /instanceof\sTHREE\./g, '' )
-                                  .replace( /\s+/g, '' )
-
-              // Check if the new statement is not about the exported object !
-              if ( exports.includes( result ) ) {
-                  return
-              }
-
-              if ( result ) { statements.push( result ) }
-
-          } )
-
-    return statements
-
-}
-
-function _getAllConstantStatementIn ( file ) {
-
-    const constantFilePath = _exportMap[ 'REVISION' ]
-    const constants        = _revertExportMap[ constantFilePath ]
-    if ( !constants ) { throw new Error( 'No constants for: ' + constantFilePath ) }
-
-    // Find
-    let matchedStatements = []
-    constants.forEach( ( value ) => {
-
-        const regex  = new RegExp( 'THREE.' + value, 'g' )
-        const matchs = file.match( regex )
-
-        Array.prototype.push.apply( matchedStatements, matchs )
-
-    } )
-
-    // Clean
-    let statements = []
-    matchedStatements.filter( _makeUnique ).forEach( ( value ) => {
-
-        const result = value.replace( /THREE\./g, '' )
+        const result = value.replace( /instanceof\sTHREE\./g, '' )
                             .replace( /\s+/g, '' )
 
         if ( result ) { statements.push( result ) }
 
     } )
+
+    return statements
+
+}
+
+function _getAllThreeObjectsIn ( file, exports ) {
+
+    let statements = []
+
+    const matchs = file.match( /(?<=THREE\.)(\w+)/g ) || []
+    matchs.forEach( ( value ) => {
+
+        if ( value ) { statements.push( value ) }
+
+    } )
+
+    return statements
+
+}
+
+function _getAllImportsFromExports ( file, exports ) {
+
+    let statements = []
+
+    for ( let exportName in _exportMap ) {
+
+        const regex  = new RegExp( '(?<!\\w)' + exportName + '(?!\\w)', 'g' )
+        const matchs = file.match( regex ) || []
+        matchs.forEach( ( value ) => {
+
+            // Check if the new statement is not about the exported object !
+            if ( exports.includes( value ) ) {
+                return
+            }
+
+            if ( value ) { statements.push( value ) }
+
+        } )
+
+    }
 
     return statements
 
@@ -766,10 +746,15 @@ function _getImportsFor ( fileDatas ) {
     Array.prototype.push.apply( statements, _getAllExtendsStatementIn( file, exports ) )
     Array.prototype.push.apply( statements, _getAllNewStatementIn( file, exports ) )
     Array.prototype.push.apply( statements, _getAllInstanceOfStatementIn( file, exports ) )
-    Array.prototype.push.apply( statements, _getAllConstantStatementIn( file ) )
+    Array.prototype.push.apply( statements, _getAllImportsFromExports( file, exports ) )
+    Array.prototype.push.apply( statements, _getAllThreeObjectsIn( file, exports ) )
+    //    Array.prototype.push.apply( statements, _getAllConstantStatementIn( file ) )
+
+    const s1 = statements.filter( _makeUnique )
+    const s2 = s1.filter( function ( value ) { return !exports.includes( value ) } )
 
     // A class can be inherited and dynamicaly create by new in the same file so we need to check uniqueness
-    return statements.filter( _makeUnique )
+    return s2
 
 }
 
@@ -799,8 +784,8 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
             const exporterBaseName           = path.basename( exporterFilePath )
             const relativePath               = path.relative( importerDirectoryName, exporterDirectoryName )
             const firstChar                  = relativePath[ 0 ]
-            const notStartWithDot            = (firstChar !== '.')
-            const relativeFilePath           = (notStartWithDot) ? './' + path.join( relativePath, exporterBaseName ) : path.join( relativePath, exporterBaseName )
+            const notStartWithDot            = ( firstChar !== '.' )
+            const relativeFilePath           = ( notStartWithDot ) ? './' + path.join( relativePath, exporterBaseName ) : path.join( relativePath, exporterBaseName )
             const relativeFilePathNormalized = relativeFilePath.replace( /\\/g, '/' )
 
             if ( !importsMap[ relativeFilePathNormalized ] ) {
@@ -1061,19 +1046,10 @@ function _getExportsStatementsInJSAssignmentsFile ( file ) {
 
     let exportedElements = []
 
-    const potentialClassicObjectExports = file.match( /(THREE.(\w+)\s*=\s*)+\s*function/g )
+    const potentialClassicObjectExports = file.match( /(?<=THREE\.)(\w+)(?=\s*=\s*function)|(?<=THREE\.)(\w+)(?=\s*=\s*\(\s*function)/g )
     if ( potentialClassicObjectExports ) {
 
-        // Clean
-        potentialClassicObjectExports.forEach( ( value ) => {
-
-            const results = value.replace( /THREE\.|\s*=\s*function/g, '' )
-                                 .replace( /\s*/g, '' )
-                                 .split( '=' )
-
-            Array.prototype.push.apply( exportedElements, results )
-
-        } )
+        Array.prototype.push.apply( exportedElements, potentialClassicObjectExports )
 
     }
 
@@ -1126,7 +1102,7 @@ function _getExportsStatementInLibFile ( file ) {
 
 }
 
-function _getExportsFor ( file, exportsOverride = undefined ) {
+function _getExportsFor ( file, exportsMissing = [], exportsOverride = undefined ) {
 
     if ( exportsOverride ) {
         return exportsOverride
@@ -1138,6 +1114,7 @@ function _getExportsFor ( file, exportsOverride = undefined ) {
 
         const es6Exports = _getExportsStatementsInES6File( file )
         if ( es6Exports.length > 0 ) {
+            if ( exportsMissing ) { Array.prototype.push.apply( es6Exports, exportsMissing ) }
             return es6Exports
         }
 
@@ -1145,24 +1122,36 @@ function _getExportsFor ( file, exportsOverride = undefined ) {
 
     const amdRegex = new RegExp( /define\.amd/, 'g' )
     if ( file.match( amdRegex ) ) {
-        console.error( 'WARNING: ' + path.basename( filePath ) + ' is unable to be process... It is an AMD module. Sorry for the disagreement.' )
-        return [ path.basename( filePath, '.js' ) ]
+        console.error( 'WARNING: ' + path.basename( file ) + ' is unable to be process... It is an AMD module. Sorry for the disagreement.' )
+        return [ path.basename( file, '.js' ) ]
     }
 
     const commonjsExports = _getExportsStatementsInCJSFile( file )
-    if ( commonjsExports.length > 0 ) { return commonjsExports }
+    if ( commonjsExports.length > 0 ) {
+        if ( exportsMissing ) { Array.prototype.push.apply( commonjsExports, exportsMissing ) }
+        return commonjsExports
+    }
 
     // Try to find potential export from assigned javascript object
     const assignementExports = _getExportsStatementsInJSAssignmentsFile( file )
-    if ( assignementExports.length > 0 ) { return assignementExports }
+    if ( assignementExports.length > 0 ) {
+        if ( exportsMissing ) { Array.prototype.push.apply( assignementExports, exportsMissing ) }
+        return assignementExports
+    }
 
     // Try to find potential export from prototype javascript object
     const prototypeExports = _getExportsStatementsInPrototypedFile( file )
-    if ( prototypeExports.length > 0 ) { return prototypeExports }
+    if ( prototypeExports.length > 0 ) {
+        if ( exportsMissing ) { Array.prototype.push.apply( prototypeExports, exportsMissing ) }
+        return prototypeExports
+    }
 
     // Try to find potential export from library style
     const libExports = _getExportsStatementInLibFile( file )
-    if ( libExports.length > 0 ) { return libExports }
+    if ( libExports.length > 0 ) {
+        if ( exportsMissing ) { Array.prototype.push.apply( libExports, exportsMissing ) }
+        return libExports
+    }
 
     return null
 
@@ -1279,7 +1268,7 @@ function _getOutputFor ( filePath, outputBasePath, outputOverride = undefined ) 
 
         } else {
 
-            console.error( "Unable to find specific path part for: " + path )
+            console.error( 'Unable to find specific path part for: ' + path )
             specificPath = ''
 
         }
@@ -1298,7 +1287,7 @@ function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath,
         imports:      imports,
         replacements: replacements,
         exports:      exports,
-        output:       outputPath,
+        output:       outputPath
     }
 
     if ( edgeCase ) {
@@ -1310,8 +1299,8 @@ function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath,
             data.imports.filter( _makeUnique )
         }
 
-        if ( edgeCase.replacements_override ) {
-            data.replacements = edgeCase.replacements_override
+        if ( edgeCase.replacementsOverride ) {
+            data.replacements = edgeCase.replacementsOverride
         } else if ( edgeCase.replacements ) {
             Array.prototype.push.apply( data.replacements, edgeCase.replacements )
             data.replacements.filter( _makeUnique )
@@ -1343,6 +1332,9 @@ function Es6 () {
     this.banner    = ''
 
 }
+
+// STATICS
+Object.assign( Es6, {} )
 
 Object.assign( Es6.prototype, {
 
@@ -1423,9 +1415,9 @@ Object.assign( Es6.prototype, {
 
     convert: function convert ( callback ) {
 
-        const inputs   = this.inputs
-        const excludes = this.excludes
-        const output   = _output = this.output
+        const inputs    = this.inputs
+        const excludes  = this.excludes
+        const output    = _output = this.output
         const edgeCases = this.edgeCases
         const banner    = this.banner
 
@@ -1449,12 +1441,10 @@ Object.assign( Es6.prototype, {
 
             if ( fileDatas.isJavascript ) {
 
-                //                console.log('Convert: ' + fileDatas.path)
                 _convertFile( banner, fileDatas )
 
             } else {
 
-                //                console.log('Copy:    ' + fileDatas.path)
                 _copyFile( banner, fileDatas )
 
             }
@@ -1472,9 +1462,10 @@ Object.assign( Es6.prototype, {
         const formatedExportStatements = formatedImportStatements.replace( /import/g, 'export' )
         return formatedExportStatements
 
-    },
+    }
 
 } )
 
 const instance = new Es6()
+
 module.exports = instance
