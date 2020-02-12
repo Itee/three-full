@@ -49,6 +49,7 @@ module.exports = {
         'Cloth.js',							// Use global variable from example html ! Need to be refactored
         'Volume.js',                        // damned eval
         'NRRDLoader.js',                    // Import Volume.js
+        'VRMLLoader.js',                    // rely on unbundlable chevrotain amd module using eval...
         'XLoader.js'                     	// amd module
     ],
     output:    path.join( __dirname, '..', 'sources' ),
@@ -699,12 +700,12 @@ module.exports = {
         VolumeShader:                {
             exportsOverride: [ 'VolumeRenderShader1' ]
         },
-        VRMLLoader:                {
-            replacements: [
-                [ 'throw Error', 'console.error'],
-                [ 'required.\' );', 'required.\' ); \nreturn;'],
-            ]
-        },
+//        VRMLLoader:                {
+//            imports: [
+//                [ 'chevrotain', 'from', '../libs/chevrotain.min.js' ]
+////                [ 'chevrotain', 'from', '../libs/chevrotain.module.min.js' ],
+//            ],
+//        },
         Water:                       {
             imports: [
                 '_Math'
