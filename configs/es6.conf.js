@@ -378,9 +378,7 @@ module.exports = {
             ]
         },
         NodeMaterialLoader:          {
-            replacements: [
-                [ 'NodeMaterialLoaderUtils = {', 'var NodeMaterialLoaderUtils = {' ]
-            ]
+            exportsOverride: [ 'NodeMaterialLoader', 'NodeMaterialLoaderUtils' ]
         },
         NodePass:                    {
             imports: [
