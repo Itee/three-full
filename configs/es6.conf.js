@@ -243,6 +243,9 @@ module.exports = {
 		hilbert3D: {
             exportsOverride: [ 'hilbert3D' ],
 		},
+        ImageUtils: {
+            outputOverride: 'utils/ImageUtils.js'
+        },
         ImmediateRenderObject: {
             outputOverride: 'objects/ImmediateRenderObject.js'
         },
