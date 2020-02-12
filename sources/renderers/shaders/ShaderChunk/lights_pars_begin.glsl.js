@@ -58,8 +58,6 @@ vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
 	};
 
 	uniform PointLight pointLights[ NUM_POINT_LIGHTS ];
-
-	// directLight is an out parameter as having it as a return value caused compiler errors on some devices
 	void getPointDirectLightIrradiance( const in PointLight pointLight, const in GeometricContext geometry, out IncidentLight directLight ) {
 
 		vec3 lVector = pointLight.position - geometry.position;
@@ -92,8 +90,6 @@ vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
 	};
 
 	uniform SpotLight spotLights[ NUM_SPOT_LIGHTS ];
-
-	// directLight is an out parameter as having it as a return value caused compiler errors on some devices
 	void getSpotDirectLightIrradiance( const in SpotLight spotLight, const in GeometricContext geometry, out IncidentLight directLight  ) {
 
 		vec3 lVector = spotLight.position - geometry.position;
@@ -127,11 +123,8 @@ vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
 		vec3 halfWidth;
 		vec3 halfHeight;
 	};
-
-	// Pre-computed values of LinearTransformedCosine approximation of BRDF
-	// BRDF approximation Texture is 64x64
-	uniform sampler2D ltc_1; // RGBA Float
-	uniform sampler2D ltc_2; // RGBA Float
+	uniform sampler2D ltc_1; 
+	uniform sampler2D ltc_2; 
 
 	uniform RectAreaLight rectAreaLights[ NUM_RECT_AREA_LIGHTS ];
 

@@ -3,6 +3,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from '../core/TempNode.js'
 import { NodeLib } from '../core/NodeLib.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function NormalNode( scope ) {
 
 	TempNode.call( this, 'v3' );

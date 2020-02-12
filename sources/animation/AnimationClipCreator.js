@@ -7,6 +7,15 @@ import { Vector3 } from '../math/Vector3.js'
 import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js'
 import { BooleanKeyframeTrack } from './tracks/BooleanKeyframeTrack.js'
 import { ColorKeyframeTrack } from './tracks/ColorKeyframeTrack.js'
+
+/**
+ *
+ * Creator of typical test AnimationClips / KeyframeTracks
+ *
+ * @author Ben Houston / http://clara.io/
+ * @author David Sarno / http://lighthaus.us/
+ */
+
 var AnimationClipCreator = function () {};
 
 AnimationClipCreator.CreateRotationAnimation = function ( period, axis ) {

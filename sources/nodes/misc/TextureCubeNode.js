@@ -3,6 +3,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from '../core/TempNode.js'
 import { TextureCubeUVNode } from './TextureCubeUVNode.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function TextureCubeNode( value, uv ) {
 
 	TempNode.call( this, 'v4' );

@@ -2,6 +2,11 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { ShapePath } from './ShapePath.js'
+
+/**
+ * @author zz85 / http://www.lab4games.net/zz85/blog
+ * @author mrdoob / http://mrdoob.com/
+ */
 function Font( data ) {
 
 	this.type = 'Font';

@@ -2,6 +2,16 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { MeshStandardMaterial } from './MeshStandardMaterial.js'
+/**
+ * @author WestLangley / http://github.com/WestLangley
+ *
+ * parameters = {
+ *  reflectivity: <float>
+ *  clearCoat: <float>
+ *  clearCoatRoughness: <float>
+ * }
+ */
+
 function MeshPhysicalMaterial( parameters ) {
 
 	MeshStandardMaterial.call( this );

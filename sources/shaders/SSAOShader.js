@@ -3,6 +3,16 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector2 } from '../math/Vector2.js'
 import { Matrix4 } from '../math/Matrix4.js'
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * References:
+ * http://john-chapman-graphics.blogspot.com/2013/01/ssao-tutorial.html
+ * https://learnopengl.com/Advanced-Lighting/SSAO
+ * https://github.com/McNopper/OpenGL/blob/master/Example28/shader/ssao.frag.glsl
+ */
+
 var SSAOShader = {
 
 	defines: {

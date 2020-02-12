@@ -13,6 +13,13 @@ import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { CopyShader } from '../shaders/CopyShader.js'
+import {
+	DepthLimitedBlurShader,
+	BlurShaderUtils
+} from '../shaders/DepthLimitedBlurShader.js'
+import { SAOShader } from '../shaders/SAOShader.js'
+import { UnpackDepthRGBAShader } from '../shaders/UnpackDepthRGBAShader.js'
 import {
 	NoBlending,
 	CustomBlending,
@@ -26,14 +33,13 @@ import {
 	RGBAFormat,
 	RGBADepthPacking
 } from '../constants.js'
-import { SAOShader } from '../shaders/SAOShader.js'
-import {
-	DepthLimitedBlurShader,
-	BlurShaderUtils
-} from '../shaders/DepthLimitedBlurShader.js'
-import { CopyShader } from '../shaders/CopyShader.js'
-import { UnpackDepthRGBAShader } from '../shaders/UnpackDepthRGBAShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author ludobaka / ludobaka.github.io
+ * SAO implementation inspired from bhouston previous SAO work
+ */
+
 var SAOPass = function ( scene, camera, depthTexture, useNormals, resolution ) {
 
 	Pass.call( this );

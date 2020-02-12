@@ -3,6 +3,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
+
 var NodeMaterialLoader = function ( manager, library ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -265,7 +270,4 @@ Object.assign( NodeMaterialLoader.prototype, {
 
 } );
 
-export {
-	NodeMaterialLoader,
-	NodeMaterialLoaderUtils
-}
+export { NodeMaterialLoader }

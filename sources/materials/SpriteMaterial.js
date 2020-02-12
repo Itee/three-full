@@ -3,6 +3,17 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Material } from './Material.js'
 import { Color } from '../math/Color.js'
+/**
+ * @author alteredq / http://alteredqualia.com/
+ *
+ * parameters = {
+ *  color: <hex>,
+ *  map: new Texture( <Image> ),
+ *  rotation: <float>,
+ *  sizeAttenuation: <bool>
+ * }
+ */
+
 function SpriteMaterial( parameters ) {
 
 	Material.call( this );

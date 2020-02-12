@@ -8,10 +8,16 @@ import { Vector2 } from '../../math/Vector2.js'
 import { Color } from '../../math/Color.js'
 import { Vector4 } from '../../math/Vector4.js'
 import { Geometry } from '../../core/Geometry.js'
-import { DefaultLoadingManager } from '../LoadingManager.js'
+import { AnimationClip } from '../../animation/AnimationClip.js'
 import { Loader } from '../Loader.js'
 import { LoaderUtils } from '../LoaderUtils.js'
-import { AnimationClip } from '../../animation/AnimationClip.js'
+import { DefaultLoadingManager } from '../LoadingManager.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 var LegacyJSONLoader = ( function () {
 
 	function LegacyJSONLoader( manager ) {

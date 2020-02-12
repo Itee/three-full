@@ -3,6 +3,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Frustum } from '../math/Frustum.js'
 import { Vector3 } from '../math/Vector3.js'
+
+/**
+ * @author HypnosNova / https://www.threejs.org.cn/gallery
+ * This is a class to check whether objects are in a selection area in 3D space
+ */
+
 var SelectionBox = ( function () {
 
 	var frustum = new Frustum();

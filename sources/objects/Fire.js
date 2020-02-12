@@ -18,6 +18,15 @@ import {
 	RGBAFormat
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
+
+/**
+ * @author Mike Piecuch / https://github.com/mikepiecuch
+ *
+ * Based on research paper "Real-Time Fluid Dynamics for Games" by Jos Stam
+ * http://www.dgp.toronto.edu/people/stam/reality/Research/pdf/GDC03.pdf
+ *
+ */
+
 var Fire = function ( geometry, options ) {
 
 	Mesh.call( this, geometry );

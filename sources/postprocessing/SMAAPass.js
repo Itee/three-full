@@ -9,14 +9,19 @@ import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { SMAAShader } from '../shaders/SMAAShader.js'
 import {
 	NearestFilter,
 	LinearFilter,
 	RGBFormat,
 	RGBAFormat
 } from '../constants.js'
-import { SMAAShader } from '../shaders/SMAAShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author mpk / http://polko.me/
+ */
+
 var SMAAPass = function ( width, height ) {
 
 	Pass.call( this );

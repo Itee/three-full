@@ -39,8 +39,6 @@ void main() {
 	#include <specularmap_fragment>
 
 	ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
-
-	// accumulation (baked indirect lighting only)
 	#ifdef USE_LIGHTMAP
 
 		reflectedLight.indirectDiffuse += texture2D( lightMap, vUv2 ).xyz * lightMapIntensity;
@@ -50,8 +48,6 @@ void main() {
 		reflectedLight.indirectDiffuse += vec3( 1.0 );
 
 	#endif
-
-	// modulation
 	#include <aomap_fragment>
 
 	reflectedLight.indirectDiffuse *= diffuseColor.rgb;

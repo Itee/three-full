@@ -5,9 +5,9 @@ import { Vector3 } from '../math/Vector3.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Scene } from '../scenes/Scene.js'
+import { PropertyBinding } from '../animation/PropertyBinding.js'
 import {
 	DoubleSide,
-	VertexColors,
 	RepeatWrapping,
 	ClampToEdgeWrapping,
 	MirroredRepeatWrapping,
@@ -19,12 +19,18 @@ import {
 	LinearMipMapLinearFilter,
 	RGBAFormat,
 	InterpolateDiscrete,
+	InterpolateLinear,
 	TriangleStripDrawMode,
-	TriangleFanDrawMode,
-	InterpolateLinear
+	TriangleFanDrawMode
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
-import { PropertyBinding } from '../animation/PropertyBinding.js'
+
+/**
+ * @author fernandojsg / http://fernandojsg.com
+ * @author Don McCurdy / https://www.donmccurdy.com
+ * @author Takahiro / https://github.com/takahirox
+ */
+
 //------------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------------
@@ -84,6 +90,13 @@ var GLTFExporter = function () {};
 GLTFExporter.prototype = {
 
 	constructor: GLTFExporter,
+
+	/**
+	 * Parse scenes and generate GLTF output
+	 * @param  {Scene or [Scenes]} input   Scene or Array of Scenes
+	 * @param  {Function} onDone  Callback on completed
+	 * @param  {Object} options options
+	 */
 	parse: function ( input, onDone, options ) {
 
 		var DEFAULT_OPTIONS = {
@@ -135,6 +148,16 @@ GLTFExporter.prototype = {
 		};
 
 		var cachedCanvas;
+
+		/**
+		 * Compare two arrays
+		 */
+		/**
+		 * Compare two arrays
+		 * @param  {Array} array1 Array 1 to compare
+		 * @param  {Array} array2 Array 2 to compare
+		 * @return {Boolean}        Returns true if both arrays are equal
+		 */
 		function equalArray( array1, array2 ) {
 
 			return ( array1.length === array2.length ) && array1.every( function ( element, index ) {
@@ -144,6 +167,12 @@ GLTFExporter.prototype = {
 			} );
 
 		}
+
+		/**
+		 * Converts a string to an ArrayBuffer.
+		 * @param  {string} text
+		 * @return {ArrayBuffer}
+		 */
 		function stringToArrayBuffer( text ) {
 
 			if ( window.TextEncoder !== undefined ) {
@@ -166,6 +195,14 @@ GLTFExporter.prototype = {
 			return array.buffer;
 
 		}
+
+		/**
+		 * Get the min and max vectors from the given attribute
+		 * @param  {BufferAttribute} attribute Attribute to find the min/max in range from start to start + count
+		 * @param  {Integer} start
+		 * @param  {Integer} count
+		 * @return {Object} Object containing the `min` and `max` values (As an array of attribute.itemSize components)
+		 */
 		function getMinMax( attribute, start, count ) {
 
 			var output = {
@@ -190,11 +227,27 @@ GLTFExporter.prototype = {
 			return output;
 
 		}
+
+		/**
+		 * Checks if image size is POT.
+		 *
+		 * @param {Image} image The image to be checked.
+		 * @returns {Boolean} Returns true if image size is POT.
+		 *
+		 */
 		function isPowerOfTwo( image ) {
 
 			return _Math.isPowerOfTwo( image.width ) && _Math.isPowerOfTwo( image.height );
 
 		}
+
+		/**
+		 * Checks if normal attribute values are normalized.
+		 *
+		 * @param {BufferAttribute} normal
+		 * @returns {Boolean}
+		 *
+		 */
 		function isNormalizedNormalAttribute( normal ) {
 
 			if ( cachedData.attributesNormalized.has( normal ) ) {
@@ -215,6 +268,14 @@ GLTFExporter.prototype = {
 			return true;
 
 		}
+
+		/**
+		 * Creates normalized normal buffer attribute.
+		 *
+		 * @param {BufferAttribute} normal
+		 * @returns {BufferAttribute}
+		 *
+		 */
 		function createNormalizedNormalAttribute( normal ) {
 
 			if ( cachedData.attributesNormalized.has( normal ) ) {
@@ -251,11 +312,28 @@ GLTFExporter.prototype = {
 			return attribute;
 
 		}
+
+		/**
+		 * Get the required size + padding for a buffer, rounded to the next 4-byte boundary.
+		 * https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#data-alignment
+		 *
+		 * @param {Integer} bufferSize The size the original buffer.
+		 * @returns {Integer} new buffer size with required padding.
+		 *
+		 */
 		function getPaddedBufferSize( bufferSize ) {
 
 			return Math.ceil( bufferSize / 4 ) * 4;
 
 		}
+
+		/**
+		 * Returns a buffer aligned to 4-byte boundary.
+		 *
+		 * @param {ArrayBuffer} arrayBuffer Buffer to pad
+		 * @param {Integer} paddingByte (Optional)
+		 * @returns {ArrayBuffer} The same buffer if it's already aligned to 4-byte boundary or a new buffer
+		 */
 		function getPaddedArrayBuffer( arrayBuffer, paddingByte ) {
 
 			paddingByte = paddingByte || 0;
@@ -284,6 +362,13 @@ GLTFExporter.prototype = {
 			return arrayBuffer;
 
 		}
+
+		/**
+		 * Serializes a userData.
+		 *
+		 * @param {Object3D|Material} object
+		 * @returns {Object}
+		 */
 		function serializeUserData( object ) {
 
 			try {
@@ -300,6 +385,11 @@ GLTFExporter.prototype = {
 			}
 
 		}
+
+		/**
+		 * Applies a texture transform, if present, to the map definition. Requires
+		 * the KHR_texture_transform extension.
+		 */
 		function applyTextureTransform( mapDef, texture ) {
 
 			var didTransform = false;
@@ -335,6 +425,12 @@ GLTFExporter.prototype = {
 			}
 
 		}
+
+		/**
+		 * Process a buffer to append to the default one.
+		 * @param  {ArrayBuffer} buffer
+		 * @return {Integer}
+		 */
 		function processBuffer( buffer ) {
 
 			if ( ! outputJSON.buffers ) {
@@ -349,6 +445,16 @@ GLTFExporter.prototype = {
 			return 0;
 
 		}
+
+		/**
+		 * Process and generate a BufferView
+		 * @param  {BufferAttribute} attribute
+		 * @param  {number} componentType
+		 * @param  {number} start
+		 * @param  {number} count
+		 * @param  {number} target (Optional) Target usage of the BufferView
+		 * @return {Object}
+		 */
 		function processBufferView( attribute, componentType, start, count, target ) {
 
 			if ( ! outputJSON.bufferViews ) {
@@ -443,6 +549,12 @@ GLTFExporter.prototype = {
 			return output;
 
 		}
+
+		/**
+		 * Process and generate a BufferView from an image Blob.
+		 * @param {Blob} blob
+		 * @return {Promise<Integer>}
+		 */
 		function processBufferViewImage( blob ) {
 
 			if ( ! outputJSON.bufferViews ) {
@@ -476,6 +588,15 @@ GLTFExporter.prototype = {
 			} );
 
 		}
+
+		/**
+		 * Process attribute to generate an accessor
+		 * @param  {BufferAttribute} attribute Attribute to process
+		 * @param  {BufferGeometry} geometry (Optional) Geometry used for truncated draw range
+		 * @param  {Integer} start (Optional)
+		 * @param  {Integer} count (Optional)
+		 * @return {Integer}           Index of the processed accessor on the "accessors" array
+		 */
 		function processAccessor( attribute, geometry, start, count ) {
 
 			var types = {
@@ -575,6 +696,14 @@ GLTFExporter.prototype = {
 			return outputJSON.accessors.length - 1;
 
 		}
+
+		/**
+		 * Process image
+		 * @param  {Image} image to process
+		 * @param  {Integer} format of the image (e.g. RGBFormat, RGBAFormat etc)
+		 * @param  {Boolean} flipY before writing out the image
+		 * @return {Integer}     Index of the processed texture in the "images" array
+		 */
 		function processImage( image, format, flipY ) {
 
 			if ( ! cachedData.images.has( image ) ) {
@@ -666,6 +795,12 @@ GLTFExporter.prototype = {
 			return index;
 
 		}
+
+		/**
+		 * Process sampler
+		 * @param  {Texture} map Texture to process
+		 * @return {Integer}     Index of the processed texture in the "samplers" array
+		 */
 		function processSampler( map ) {
 
 			if ( ! outputJSON.samplers ) {
@@ -688,6 +823,12 @@ GLTFExporter.prototype = {
 			return outputJSON.samplers.length - 1;
 
 		}
+
+		/**
+		 * Process texture
+		 * @param  {Texture} map Map to process
+		 * @return {Integer}     Index of the processed texture in the "textures" array
+		 */
 		function processTexture( map ) {
 
 			if ( cachedData.textures.has( map ) ) {
@@ -717,6 +858,12 @@ GLTFExporter.prototype = {
 			return index;
 
 		}
+
+		/**
+		 * Process material
+		 * @param  {Material} material Material to process
+		 * @return {Integer}      Index of the processed material in the "materials" array
+		 */
 		function processMaterial( material ) {
 
 			if ( cachedData.materials.has( material ) ) {
@@ -919,6 +1066,12 @@ GLTFExporter.prototype = {
 			return index;
 
 		}
+
+		/**
+		 * Process mesh
+		 * @param  {Mesh} mesh Mesh to process
+		 * @return {Integer}      Index of the processed mesh in the "meshes" array
+		 */
 		function processMesh( mesh ) {
 
 			var cacheKey = mesh.geometry.uuid + ':' + mesh.material.uuid;
@@ -1246,6 +1399,12 @@ GLTFExporter.prototype = {
 			return index;
 
 		}
+
+		/**
+		 * Process camera
+		 * @param  {Camera} camera Camera to process
+		 * @return {Integer}      Index of the processed mesh in the "camera" array
+		 */
 		function processCamera( camera ) {
 
 			if ( ! outputJSON.cameras ) {
@@ -1297,6 +1456,17 @@ GLTFExporter.prototype = {
 			return outputJSON.cameras.length - 1;
 
 		}
+
+		/**
+		 * Creates glTF animation entry from AnimationClip object.
+		 *
+		 * Status:
+		 * - Only properties listed in PATH_PROPERTIES may be animated.
+		 *
+		 * @param {AnimationClip} clip
+		 * @param {Object3D} root
+		 * @return {number}
+		 */
 		function processAnimation( clip, root ) {
 
 			if ( ! outputJSON.animations ) {
@@ -1498,6 +1668,12 @@ GLTFExporter.prototype = {
 			return lights.length - 1;
 
 		}
+
+		/**
+		 * Process Object3D node
+		 * @param  {Object3D} node Object3D to processNode
+		 * @return {Integer}      Index of the node in the nodes list
+		 */
 		function processNode( object ) {
 
 			if ( ! outputJSON.nodes ) {
@@ -1633,6 +1809,11 @@ GLTFExporter.prototype = {
 			return nodeIndex;
 
 		}
+
+		/**
+		 * Process Scene
+		 * @param  {Scene} node Scene to process
+		 */
 		function processScene( scene ) {
 
 			if ( ! outputJSON.scenes ) {
@@ -1689,6 +1870,11 @@ GLTFExporter.prototype = {
 			}
 
 		}
+
+		/**
+		 * Creates a Scene to hold a list of objects and parse it
+		 * @param  {Array} objects List of objects to process
+		 */
 		function processObjects( objects ) {
 
 			var scene = new Scene();

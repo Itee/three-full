@@ -17,8 +17,6 @@ struct PhysicalMaterial {
 
 #define MAXIMUM_SPECULAR_COEFFICIENT 0.16
 #define DEFAULT_SPECULAR_COEFFICIENT 0.04
-
-// Clear coat directional hemishperical reflectance (this approximation should be improved)
 float clearCoatDHRApprox( const in float roughness, const in float dotNL ) {
 
 	return DEFAULT_SPECULAR_COEFFICIENT + ( 1.0 - DEFAULT_SPECULAR_COEFFICIENT ) * ( pow( 1.0 - dotNL, 5.0 ) * pow( 1.0 - roughness, 2.0 ) );
@@ -39,7 +37,7 @@ float clearCoatDHRApprox( const in float roughness, const in float dotNL ) {
 		float roughness = material.specularRoughness;
 
 		vec3 rectCoords[ 4 ];
-		rectCoords[ 0 ] = lightPos + halfWidth - halfHeight; // counterclockwise; light shines in local neg z direction
+		rectCoords[ 0 ] = lightPos + halfWidth - halfHeight; 
 		rectCoords[ 1 ] = lightPos - halfWidth - halfHeight;
 		rectCoords[ 2 ] = lightPos - halfWidth + halfHeight;
 		rectCoords[ 3 ] = lightPos + halfWidth + halfHeight;
@@ -54,9 +52,6 @@ float clearCoatDHRApprox( const in float roughness, const in float dotNL ) {
 			vec3(    0, 1,    0 ),
 			vec3( t1.z, 0, t1.w )
 		);
-
-		// LTC Fresnel Approximation by Stephen Hill
-		// http://blog.selfshadow.com/publications/s2016-advances/s2016_ltc_fresnel.pdf
 		vec3 fresnel = ( material.specularColor * t2.x + ( vec3( 1.0 ) - material.specularColor ) * t2.y );
 
 		reflectedLight.directSpecular += lightColor * fresnel * LTC_Evaluate( normal, viewDir, position, mInv, rectCoords );
@@ -75,7 +70,7 @@ void RE_Direct_Physical( const in IncidentLight directLight, const in GeometricC
 
 	#ifndef PHYSICALLY_CORRECT_LIGHTS
 
-		irradiance *= PI; // punctual light
+		irradiance *= PI; 
 
 	#endif
 
@@ -98,9 +93,6 @@ void RE_Direct_Physical( const in IncidentLight directLight, const in GeometricC
 }
 
 void RE_IndirectDiffuse_Physical( const in vec3 irradiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
-
-	// Defer to the IndirectSpecular function to compute
-	// the indirectDiffuse if energy preservation is enabled.
 	#ifndef ENVMAP_TYPE_CUBE_UV
 
 		reflectedLight.indirectDiffuse += irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );
@@ -120,9 +112,6 @@ void RE_IndirectSpecular_Physical( const in vec3 radiance, const in vec3 irradia
 	#endif
 
 	float clearCoatInv = 1.0 - clearCoatDHR;
-
-	// Both indirect specular and diffuse light accumulate here
-	// if energy preservation enabled, and PMREM provided.
 	#if defined( ENVMAP_TYPE_CUBE_UV )
 
 		vec3 singleScattering = vec3( 0.0 );
@@ -130,11 +119,6 @@ void RE_IndirectSpecular_Physical( const in vec3 radiance, const in vec3 irradia
 		vec3 cosineWeightedIrradiance = irradiance * RECIPROCAL_PI;
 
 		BRDF_Specular_Multiscattering_Environment( geometry, material.specularColor, material.specularRoughness, singleScattering, multiScattering );
-
-		// The multiscattering paper uses the below formula for calculating diffuse 
-		// for dielectrics, but this is already handled when initially computing the 
-		// specular and diffuse color, so we can just use the diffuseColor directly.
-		//vec3 diffuse = material.diffuseColor * ( 1.0 - ( singleScattering + multiScattering ) );
 		vec3 diffuse = material.diffuseColor;
 
 		reflectedLight.indirectSpecular += clearCoatInv * radiance * singleScattering;
@@ -161,8 +145,6 @@ void RE_IndirectSpecular_Physical( const in vec3 radiance, const in vec3 irradia
 
 #define Material_BlinnShininessExponent( material )   GGXRoughnessToBlinnExponent( material.specularRoughness )
 #define Material_ClearCoat_BlinnShininessExponent( material )   GGXRoughnessToBlinnExponent( material.clearCoatRoughness )
-
-// ref: https://seblagarde.files.wordpress.com/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf
 float computeSpecularOcclusion( const in float dotNV, const in float ambientOcclusion, const in float roughness ) {
 
 	return saturate( pow( dotNV + ambientOcclusion, exp2( - 16.0 * roughness - 1.0 ) ) - 1.0 + ambientOcclusion );

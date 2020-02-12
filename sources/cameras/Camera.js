@@ -4,6 +4,12 @@
 import { Matrix4 } from '../math/Matrix4.js'
 import { Object3D } from '../core/Object3D.js'
 import { Vector3 } from '../math/Vector3.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author mikael emtinger / http://gomo.se/
+ * @author WestLangley / http://github.com/WestLangley
+*/
 function Camera() {
 
 	Object3D.call( this );

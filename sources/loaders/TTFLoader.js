@@ -3,6 +3,16 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * @author gero3 / https://github.com/gero3
+ * @author tentone / https://github.com/tentone
+ *
+ * Requires opentype.js to be included in the project.
+ * Loads TTF files and converts them into typeface JSON that can be used directly
+ * to create Font objects.
+ */
+
 var TTFLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

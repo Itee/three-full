@@ -2,6 +2,15 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector2 } from '../math/Vector2.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ *
+ * Dot screen shader
+ * based on glfx.js sepia shader
+ * https://github.com/evanw/glfx.js
+ */
+
 var DotScreenShader = {
 
 	uniforms: {

@@ -12,6 +12,11 @@ import { Group } from '../objects/Group.js'
 import { Shape } from '../core/Shape.js'
 import { ShapeBufferGeometry } from '../geometries/ShapeGeometry.js'
 import { DoubleSide } from '../constants.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com
+ */
+
 var PaintViveController = function ( id ) {
 
 	ViveController.call( this, id );

@@ -31,6 +31,10 @@ import {
 	sRGBEncoding,
 	LinearEncoding
 } from '../../constants.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 var programIdCount = 0;
 
 function getEncodingComponents( encoding ) {

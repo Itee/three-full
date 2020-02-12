@@ -5,6 +5,10 @@ import { NodeMaterial } from '../materials/NodeMaterial.js'
 import { ScreenNode } from '../inputs/ScreenNode.js'
 import { ShaderPass } from '../../postprocessing/ShaderPass.js'
 import { _Math } from '../../math/Math.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function NodePass() {
 
 	ShaderPass.call( this );

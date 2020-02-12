@@ -4,6 +4,21 @@
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix3 } from '../math/Matrix3.js'
+
+/**
+ * @author Garrett Johnson / http://gkjohnson.github.io/
+ * https://github.com/gkjohnson/ply-exporter-js
+ *
+ * Usage:
+ *  var exporter = new PLYExporter();
+ *
+ *  // second argument is a list of options
+ *  exporter.parse(mesh, data => console.log(data), { binary: true, excludeAttributes: [ 'color' ] });
+ *
+ * Format Definition:
+ * http://paulbourke.net/dataformats/ply/
+ */
+
 var PLYExporter = function () {};
 
 PLYExporter.prototype = {

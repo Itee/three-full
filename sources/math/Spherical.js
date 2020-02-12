@@ -2,6 +2,16 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { _Math } from './Math.js'
+/**
+ * @author bhouston / http://clara.io
+ * @author WestLangley / http://github.com/WestLangley
+ *
+ * Ref: https://en.wikipedia.org/wiki/Spherical_coordinate_system
+ *
+ * The polar angle (phi) is measured from the positive y-axis. The positive y-axis is up.
+ * The azimuthal angle (theta) is measured from the positive z-axiz.
+ */
+
 function Spherical( radius, phi, theta ) {
 
 	this.radius = ( radius !== undefined ) ? radius : 1.0;

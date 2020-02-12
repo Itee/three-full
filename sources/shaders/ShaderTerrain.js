@@ -3,10 +3,25 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Color } from '../math/Color.js'
 import { Vector2 } from '../math/Vector2.js'
-import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
-import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 import { ShaderChunk } from '../renderers/shaders/ShaderChunk.js'
+import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ *
+ */
+
 var ShaderTerrain = {
+
+	/* -------------------------------------------------------------------------
+	//	Dynamic terrain shader
+	//		- Blinn-Phong
+	//		- height + normal + diffuse1 + diffuse2 + specular + detail maps
+	//		- point, directional and hemisphere lights (use with "lights: true" material option)
+	//		- shadow maps receiving
+	 ------------------------------------------------------------------------- */
+
 	'terrain' : {
 
 		uniforms: UniformsUtils.merge( [

@@ -5,6 +5,36 @@ import { TangentSpaceNormalMap } from '../constants.js'
 import { Material } from './Material.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Color } from '../math/Color.js'
+/**
+ * @author WestLangley / http://github.com/WestLangley
+ *
+ * parameters = {
+ *  color: <hex>,
+ *  opacity: <float>,
+ *
+ *  matcap: new Texture( <Image> ),
+ *
+ *  map: new Texture( <Image> ),
+ *
+ *  bumpMap: new Texture( <Image> ),
+ *  bumpScale: <float>,
+ *
+ *  normalMap: new Texture( <Image> ),
+ *  normalMapType: TangentSpaceNormalMap,
+ *  normalScale: <Vector2>,
+ *
+ *  displacementMap: new Texture( <Image> ),
+ *  displacementScale: <float>,
+ *  displacementBias: <float>,
+ *
+ *  alphaMap: new Texture( <Image> ),
+ *
+ *  skinning: <bool>,
+ *  morphTargets: <bool>,
+ *  morphNormals: <bool>
+ * }
+ */
+
 function MeshMatcapMaterial( parameters ) {
 
 	Material.call( this );

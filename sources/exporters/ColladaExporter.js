@@ -9,6 +9,20 @@ import { Geometry } from '../core/Geometry.js'
 import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
 import { DoubleSide } from '../constants.js'
+
+/**
+ * @author Garrett Johnson / http://gkjohnson.github.io/
+ * https://github.com/gkjohnson/collada-exporter-js
+ *
+ * Usage:
+ *  var exporter = new ColladaExporter();
+ *
+ *  var data = exporter.parse(mesh);
+ *
+ * Format Definition:
+ *  https://www.khronos.org/collada/
+ */
+
 var ColladaExporter = function () {};
 
 ColladaExporter.prototype = {

@@ -4,6 +4,11 @@
 import { Mesh } from './Mesh.js'
 import { AnimationMixer } from '../animation/AnimationMixer.js'
 import { AnimationClip } from '../animation/AnimationClip.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 var MorphAnimMesh = function ( geometry, material ) {
 
 	Mesh.call( this, geometry, material );

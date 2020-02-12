@@ -6,6 +6,11 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author Mugen87 / https://github.com/Mugen87
+ */
 // CylinderGeometry
 
 function CylinderGeometry( radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded, thetaStart, thetaLength ) {

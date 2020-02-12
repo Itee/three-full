@@ -7,8 +7,6 @@ export default `
 	#if defined( USE_BUMPMAP ) || defined( USE_NORMALMAP ) || defined( PHONG )
 
 		vec3 cameraToVertex = normalize( vWorldPosition - cameraPosition );
-
-		// Transforming Normal Vectors with the Inverse Transformation
 		vec3 worldNormal = inverseTransformDirection( normal, viewMatrix );
 
 		#ifdef ENVMAP_MODE_REFLECTION

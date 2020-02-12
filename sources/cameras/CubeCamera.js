@@ -9,6 +9,13 @@ import {
 } from '../constants.js'
 import { Vector3 } from '../math/Vector3.js'
 import { PerspectiveCamera } from './PerspectiveCamera.js'
+/**
+ * Camera for rendering cube maps
+ *	- renders scene into axis-aligned cube
+ *
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 function CubeCamera( near, far, cubeResolution, options ) {
 
 	Object3D.call( this );

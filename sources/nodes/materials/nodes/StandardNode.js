@@ -5,8 +5,12 @@ import { Node } from '../../core/Node.js'
 import { ColorNode } from '../../inputs/ColorNode.js'
 import { FloatNode } from '../../inputs/FloatNode.js'
 import { RoughnessToBlinnExponentNode } from '../../bsdfs/RoughnessToBlinnExponentNode.js'
-import { UniformsUtils } from '../../../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../../../renderers/shaders/UniformsLib.js'
+import { UniformsUtils } from '../../../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function StandardNode() {
 
 	Node.call( this );

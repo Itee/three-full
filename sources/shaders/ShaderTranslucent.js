@@ -2,10 +2,22 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Color } from '../math/Color.js'
-import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
-import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 import { ShaderChunk } from '../renderers/shaders/ShaderChunk.js'
+import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author daoshengmu / http://dsmu.me/
+ *
+ */
 var TranslucentShader = function TranslucentShader() {
+
+	/* ------------------------------------------------------------------------------------------
+	//	Subsurface Scattering shader
+	// 		- Base on GDC 2011 – Approximating Translucency for a Fast, Cheap and Convincing Subsurface Scattering Look
+	// 			https://colinbarrebrisebois.com/2011/03/07/gdc-2011-approximating-translucency-for-a-fast-cheap-and-convincing-subsurface-scattering-look/
+	// ------------------------------------------------------------------------------------------ */
+
 	this.uniforms = UniformsUtils.merge( [
 
 		UniformsLib[ "common" ],

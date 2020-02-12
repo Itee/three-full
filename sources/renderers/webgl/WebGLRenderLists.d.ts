@@ -10,7 +10,7 @@ import { Scene } from './../../scenes/Scene';
 import { Camera } from './../../cameras/Camera';
 import { BufferGeometry } from '../../core/BufferGeometry';
 
-export interface RenderTarget {} // not defined in the code, used in LightShadow and WebGRenderer classes
+export interface RenderTarget {} 
 
 export interface RenderItem {
   id: number;

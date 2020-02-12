@@ -18,6 +18,10 @@ import {
 	NearestMipMapNearestFilter
 } from '../../constants.js'
 import { _Math } from '../../math/Math.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 function WebGLTextures( _gl, extensions, state, properties, capabilities, utils, info ) {
 
 	var _videoTextures = {};

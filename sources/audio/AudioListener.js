@@ -6,6 +6,10 @@ import { Quaternion } from '../math/Quaternion.js'
 import { Clock } from '../core/Clock.js'
 import { Object3D } from '../core/Object3D.js'
 import { AudioContext } from './AudioContext.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 function AudioListener() {
 
 	Object3D.call( this );

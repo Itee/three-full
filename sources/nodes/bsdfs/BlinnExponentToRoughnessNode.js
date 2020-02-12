@@ -3,6 +3,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from '../core/TempNode.js'
 import { BlinnShininessExponentNode } from './BlinnShininessExponentNode.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function BlinnExponentToRoughnessNode( blinnExponent ) {
 
 	TempNode.call( this, 'f' );

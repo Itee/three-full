@@ -11,7 +11,11 @@ import { ShaderMaterial } from '../../materials/ShaderMaterial.js'
 import { Color } from '../../math/Color.js'
 import { Mesh } from '../../objects/Mesh.js'
 import { ShaderLib } from '../shaders/ShaderLib.js'
-import { cloneUniforms } from '../shaders/UniformsUtils'
+import { cloneUniforms } from '../shaders/UniformsUtils.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 function WebGLBackground( renderer, state, objects, premultipliedAlpha ) {
 
 	var clearColor = new Color( 0x000000 );

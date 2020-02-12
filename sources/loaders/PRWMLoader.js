@@ -5,9 +5,19 @@ import { FileLoader } from './FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * @author Kevin Chapelier / https://github.com/kchapelier
+ * See https://github.com/kchapelier/PRWM for more informations about this file format
+ */
 	'use strict';
 
 	var bigEndianPlatform = null;
+
+	/**
+	 * Check if the endianness of the platform is big-endian (most significant bit first)
+	 * @returns {boolean} True if big-endian, false if little-endian
+	 */
 	function isBigEndianPlatform() {
 
 		if ( bigEndianPlatform === null ) {
@@ -102,6 +112,9 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			indicesNumber = array[ 5 ] + ( array[ 6 ] << 8 ) + ( array[ 7 ] << 16 );
 
 		}
+
+		/** PRELIMINARY CHECKS **/
+
 		if ( version === 0 ) {
 
 			throw new Error( 'PRWM decoder: Invalid format version: 0' );
@@ -125,6 +138,9 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			}
 
 		}
+
+		/** PARSING **/
+
 		var pos = 8;
 
 		var attributes = {},

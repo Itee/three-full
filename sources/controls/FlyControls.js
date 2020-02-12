@@ -3,6 +3,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Quaternion } from '../math/Quaternion.js'
 import { Vector3 } from '../math/Vector3.js'
+
+/**
+ * @author James Baicoianu / http://www.baicoianu.com/
+ */
+
 var FlyControls = function ( object, domElement ) {
 
 	this.object = object;
@@ -42,25 +47,25 @@ var FlyControls = function ( object, domElement ) {
 
 		switch ( event.keyCode ) {
 
-			case 16:  this.movementSpeedMultiplier = .1; break;
+			case 16: /* shift */ this.movementSpeedMultiplier = .1; break;
 
-			case 87:  this.moveState.forward = 1; break;
-			case 83:  this.moveState.back = 1; break;
+			case 87: /*W*/ this.moveState.forward = 1; break;
+			case 83: /*S*/ this.moveState.back = 1; break;
 
-			case 65:  this.moveState.left = 1; break;
-			case 68:  this.moveState.right = 1; break;
+			case 65: /*A*/ this.moveState.left = 1; break;
+			case 68: /*D*/ this.moveState.right = 1; break;
 
-			case 82:  this.moveState.up = 1; break;
-			case 70:  this.moveState.down = 1; break;
+			case 82: /*R*/ this.moveState.up = 1; break;
+			case 70: /*F*/ this.moveState.down = 1; break;
 
-			case 38:  this.moveState.pitchUp = 1; break;
-			case 40:  this.moveState.pitchDown = 1; break;
+			case 38: /*up*/ this.moveState.pitchUp = 1; break;
+			case 40: /*down*/ this.moveState.pitchDown = 1; break;
 
-			case 37:  this.moveState.yawLeft = 1; break;
-			case 39:  this.moveState.yawRight = 1; break;
+			case 37: /*left*/ this.moveState.yawLeft = 1; break;
+			case 39: /*right*/ this.moveState.yawRight = 1; break;
 
-			case 81:  this.moveState.rollLeft = 1; break;
-			case 69:  this.moveState.rollRight = 1; break;
+			case 81: /*Q*/ this.moveState.rollLeft = 1; break;
+			case 69: /*E*/ this.moveState.rollRight = 1; break;
 
 		}
 
@@ -73,25 +78,25 @@ var FlyControls = function ( object, domElement ) {
 
 		switch ( event.keyCode ) {
 
-			case 16:  this.movementSpeedMultiplier = 1; break;
+			case 16: /* shift */ this.movementSpeedMultiplier = 1; break;
 
-			case 87:  this.moveState.forward = 0; break;
-			case 83:  this.moveState.back = 0; break;
+			case 87: /*W*/ this.moveState.forward = 0; break;
+			case 83: /*S*/ this.moveState.back = 0; break;
 
-			case 65:  this.moveState.left = 0; break;
-			case 68:  this.moveState.right = 0; break;
+			case 65: /*A*/ this.moveState.left = 0; break;
+			case 68: /*D*/ this.moveState.right = 0; break;
 
-			case 82:  this.moveState.up = 0; break;
-			case 70:  this.moveState.down = 0; break;
+			case 82: /*R*/ this.moveState.up = 0; break;
+			case 70: /*F*/ this.moveState.down = 0; break;
 
-			case 38:  this.moveState.pitchUp = 0; break;
-			case 40:  this.moveState.pitchDown = 0; break;
+			case 38: /*up*/ this.moveState.pitchUp = 0; break;
+			case 40: /*down*/ this.moveState.pitchDown = 0; break;
 
-			case 37:  this.moveState.yawLeft = 0; break;
-			case 39:  this.moveState.yawRight = 0; break;
+			case 37: /*left*/ this.moveState.yawLeft = 0; break;
+			case 39: /*right*/ this.moveState.yawRight = 0; break;
 
-			case 81:  this.moveState.rollLeft = 0; break;
-			case 69:  this.moveState.rollRight = 0; break;
+			case 81: /*Q*/ this.moveState.rollLeft = 0; break;
+			case 69: /*E*/ this.moveState.rollRight = 0; break;
 
 		}
 

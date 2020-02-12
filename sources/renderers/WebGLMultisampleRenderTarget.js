@@ -2,6 +2,11 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { WebGLRenderTarget } from './WebGLRenderTarget.js'
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ * @author Matt DesLauriers / @mattdesl
+ */
+
 function WebGLMultisampleRenderTarget( width, height, options ) {
 
 	WebGLRenderTarget.call( this, width, height, options );

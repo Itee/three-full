@@ -11,6 +11,10 @@ import { ArrayCamera } from '../../cameras/ArrayCamera.js'
 import { PerspectiveCamera } from '../../cameras/PerspectiveCamera.js'
 import { WebGLAnimation } from '../webgl/WebGLAnimation.js'
 import { setProjectionFromUnion } from './WebVRUtils.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 function WebVRManager( renderer ) {
 
 	var scope = this;

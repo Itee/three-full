@@ -6,6 +6,14 @@ import { Color } from '../math/Color.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { NoColors } from '../constants.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ * @author mrdoob / http://mrdoob.com
+ * @author chaht01 / http://hyuntak.com
+ * Port of http://webglsamples.org/blob/blob.html
+ */
+
 var MarchingCubes = function ( resolution, material, enableUvs, enableColors ) {
 
 	ImmediateRenderObject.call( this, material );

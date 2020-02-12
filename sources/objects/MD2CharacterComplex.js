@@ -8,6 +8,11 @@ import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
 import { MorphBlendMesh } from './MorphBlendMesh.js'
 import { UVMapping } from '../constants.js'
 import { _Math } from '../math/Math.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 var MD2CharacterComplex = function () {
 
 	var scope = this;

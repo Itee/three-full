@@ -4,8 +4,12 @@
 import { Node } from '../../core/Node.js'
 import { ColorNode } from '../../inputs/ColorNode.js'
 import { FloatNode } from '../../inputs/FloatNode.js'
-import { UniformsUtils } from '../../../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../../../renderers/shaders/UniformsLib.js'
+import { UniformsUtils } from '../../../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function PhongNode() {
 
 	Node.call( this );
@@ -298,7 +302,17 @@ PhongNode.prototype.build = function ( builder ) {
 			}
 
 		}
-		
+		/*
+		switch( builder.material.combine ) {
+
+			case ENVMAP_BLENDING_MULTIPLY:
+
+				//output.push( "vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular;" );
+				//outgoingLight = mix( outgoingLight, outgoingLight * envColor.xyz, specularStrength * reflectivity );
+
+				break;
+		}
+	*/
 		if ( alpha ) {
 
 			output.push( "gl_FragColor = vec4( outgoingLight, " + alpha.result + " );" );

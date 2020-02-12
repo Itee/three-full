@@ -4,10 +4,6 @@
 import { Material, MaterialParameters } from './Material';
 import { Color } from './../math/Color';
 import { Texture } from './../textures/Texture';
-
-// MultiMaterial does not inherit the Material class in the original code. However, it should treat as Material class.
-// See tests/canvas/canvas_materials.ts.
-
 export class MultiMaterial extends Material {
   constructor(materials?: Material[]);
 

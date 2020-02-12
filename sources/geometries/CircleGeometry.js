@@ -6,6 +6,12 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
+
+/**
+ * @author benaadams / https://twitter.com/ben_a_adams
+ * @author Mugen87 / https://github.com/Mugen87
+ * @author hughes
+ */
 // CircleGeometry
 
 function CircleGeometry( radius, segments, thetaStart, thetaLength ) {

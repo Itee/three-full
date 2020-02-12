@@ -6,6 +6,11 @@ import { VertexColors } from '../constants.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
+
+/**
+ * @author sroucheray / http://sroucheray.org/
+ * @author mrdoob / http://mrdoob.com/
+ */
 function AxesHelper( size ) {
 
 	size = size || 1;

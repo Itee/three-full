@@ -8,6 +8,57 @@ import {
 import { Material } from './Material.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Color } from '../math/Color.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ *
+ * parameters = {
+ *  color: <hex>,
+ *  specular: <hex>,
+ *  shininess: <float>,
+ *  opacity: <float>,
+ *
+ *  map: new Texture( <Image> ),
+ *
+ *  lightMap: new Texture( <Image> ),
+ *  lightMapIntensity: <float>
+ *
+ *  aoMap: new Texture( <Image> ),
+ *  aoMapIntensity: <float>
+ *
+ *  emissive: <hex>,
+ *  emissiveIntensity: <float>
+ *  emissiveMap: new Texture( <Image> ),
+ *
+ *  bumpMap: new Texture( <Image> ),
+ *  bumpScale: <float>,
+ *
+ *  normalMap: new Texture( <Image> ),
+ *  normalMapType: TangentSpaceNormalMap,
+ *  normalScale: <Vector2>,
+ *
+ *  displacementMap: new Texture( <Image> ),
+ *  displacementScale: <float>,
+ *  displacementBias: <float>,
+ *
+ *  specularMap: new Texture( <Image> ),
+ *
+ *  alphaMap: new Texture( <Image> ),
+ *
+ *  envMap: new CubeTexture( [posx, negx, posy, negy, posz, negz] ),
+ *  combine: Multiply,
+ *  reflectivity: <float>,
+ *  refractionRatio: <float>,
+ *
+ *  wireframe: <boolean>,
+ *  wireframeLinewidth: <float>,
+ *
+ *  skinning: <bool>,
+ *  morphTargets: <bool>,
+ *  morphNormals: <bool>
+ * }
+ */
+
 function MeshPhongMaterial( parameters ) {
 
 	Material.call( this );

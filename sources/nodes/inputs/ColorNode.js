@@ -4,6 +4,10 @@
 import { InputNode } from '../core/InputNode.js'
 import { NodeUtils } from '../core/NodeUtils.js'
 import { Color } from '../../math/Color.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function ColorNode( color, g, b ) {
 
 	InputNode.call( this, 'c' );

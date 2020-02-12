@@ -2,6 +2,15 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { CompressedTextureLoader } from './CompressedTextureLoader.js'
+
+/**
+ * @author amakaseev / https://github.com/amakaseev
+ *
+ * for description see https://www.khronos.org/opengles/sdk/tools/KTX/
+ * for file layout see https://www.khronos.org/opengles/sdk/tools/KTX/file_format_spec/
+ *
+ * ported from https://github.com/BabylonJS/Babylon.js/blob/master/src/Tools/babylon.khronosTextureContainer.ts
+ */
 var KTXLoader = function ( manager ) {
 
 	CompressedTextureLoader.call( this, manager );
@@ -29,6 +38,13 @@ KTXLoader.parse = function ( buffer, loadMipmaps ) {
 };
 
 var KhronosTextureContainer = ( function () {
+
+	/**
+	 * @param {ArrayBuffer} arrayBuffer- contents of the KTX container file
+	 * @param {number} facesExpected- should be either 1 or 6, based whether a cube texture or or
+	 * @param {boolean} threeDExpected- provision for indicating that data should be a 3D texture, not implemented
+	 * @param {boolean} textureArrayExpected- provision for indicating that data should be a texture array, not implemented
+	 */
 	function KhronosTextureContainer( arrayBuffer, facesExpected, threeDExpected, textureArrayExpected ) {
 
 		this.arrayBuffer = arrayBuffer;

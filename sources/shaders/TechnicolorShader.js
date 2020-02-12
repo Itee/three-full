@@ -1,6 +1,15 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * @author flimshaw / http://charliehoey.com
+ *
+ * Technicolor Shader
+ * Simulates the look of the two-strip technicolor process popular in early 20th century films.
+ * More historical info here: http://www.widescreenmuseum.com/oldcolor/technicolor1.htm
+ * Demo here: http://charliehoey.com/technicolor_shader/shader_test.html
+ */
+
 var TechnicolorShader = {
 
 	uniforms: {

@@ -4,7 +4,40 @@
 import { Color } from '../math/Color.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { BackSide } from '../constants.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
+import { MeshPhysicalMaterial } from '../materials/MeshPhysicalMaterial.js'
+import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
+import { MeshToonMaterial } from '../materials/MeshToonMaterial.js'
 import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
+
+/**
+ * @author takahirox / http://github.com/takahirox/
+ *
+ * Reference: https://en.wikipedia.org/wiki/Cel_shading
+ *
+ * // How to set default outline parameters
+ * new OutlineEffect( renderer, {
+ * 	defaultThickness: 0.01,
+ * 	defaultColor: [ 0, 0, 0 ],
+ * 	defaultAlpha: 0.8,
+ * 	defaultKeepAlive: true // keeps outline material in cache even if material is removed from scene
+ * } );
+ *
+ * // How to set outline parameters for each material
+ * material.userData.outlineParameters = {
+ * 	thickness: 0.01,
+ * 	color: [ 0, 0, 0 ]
+ * 	alpha: 0.8,
+ * 	visible: true,
+ * 	keepAlive: true
+ * };
+ *
+ * TODO
+ *  - support shader material without objectNormal in its vertexShader
+ */
+
 var OutlineEffect = function ( renderer, parameters ) {
 
 	parameters = parameters || {};
@@ -443,6 +476,21 @@ var OutlineEffect = function ( renderer, parameters ) {
 		renderer.shadowMap.enabled = currentShadowMapEnabled;
 
 	};
+
+	/*
+	 * See #9918
+	 *
+	 * The following property copies and wrapper methods enable
+	 * OutlineEffect to be called from other *Effect, like
+	 *
+	 * effect = new StereoEffect( new OutlineEffect( renderer ) );
+	 *
+	 * function render () {
+	 *
+ 	 * 	effect.render( scene, camera );
+	 *
+	 * }
+	 */
 	this.autoClear = renderer.autoClear;
 	this.domElement = renderer.domElement;
 	this.shadowMap = renderer.shadowMap;

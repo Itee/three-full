@@ -4,6 +4,41 @@
 import { Material } from './Material.js'
 import { MultiplyOperation } from '../constants.js'
 import { Color } from '../math/Color.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ *
+ * parameters = {
+ *  color: <hex>,
+ *  opacity: <float>,
+ *  map: new Texture( <Image> ),
+ *
+ *  lightMap: new Texture( <Image> ),
+ *  lightMapIntensity: <float>
+ *
+ *  aoMap: new Texture( <Image> ),
+ *  aoMapIntensity: <float>
+ *
+ *  specularMap: new Texture( <Image> ),
+ *
+ *  alphaMap: new Texture( <Image> ),
+ *
+ *  envMap: new CubeTexture( [posx, negx, posy, negy, posz, negz] ),
+ *  combine: Multiply,
+ *  reflectivity: <float>,
+ *  refractionRatio: <float>,
+ *
+ *  depthTest: <bool>,
+ *  depthWrite: <bool>,
+ *
+ *  wireframe: <boolean>,
+ *  wireframeLinewidth: <float>,
+ *
+ *  skinning: <bool>,
+ *  morphTargets: <bool>
+ * }
+ */
+
 function MeshBasicMaterial( parameters ) {
 
 	Material.call( this );

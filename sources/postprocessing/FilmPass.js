@@ -9,6 +9,11 @@ import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { FilmShader } from '../shaders/FilmShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 var FilmPass = function ( noiseIntensity, scanlinesIntensity, scanlinesCount, grayscale ) {
 
 	Pass.call( this );

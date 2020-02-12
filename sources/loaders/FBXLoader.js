@@ -39,16 +39,44 @@ import { Euler } from '../math/Euler.js'
 import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
 import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
 import { NumberKeyframeTrack } from '../animation/tracks/NumberKeyframeTrack.js'
+import { NormalNode } from '../nodes/accessors/NormalNode.js'
+import { UVNode } from '../nodes/accessors/UVNode.js'
+import { Node } from '../nodes/core/Node.js'
+import { ColorNode } from '../nodes/inputs/ColorNode.js'
+import { PropertyBinding } from '../animation/PropertyBinding.js'
 import {
 	VertexColors,
 	EquirectangularReflectionMapping,
 	RepeatWrapping,
 	ClampToEdgeWrapping
 } from '../constants.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
+import { Geometry } from '../core/Geometry.js'
+import { Loader } from './Loader.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { PropertyBinding } from '../animation/PropertyBinding.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { Material } from '../materials/Material.js'
+import { Points } from '../objects/Points.js'
 import { _Math } from '../math/Math.js'
+
+/**
+ * @author Kyle-Larson https://github.com/Kyle-Larson
+ * @author Takahiro https://github.com/takahirox
+ * @author Lewy Blue https://github.com/looeee
+ *
+ * Loader loads FBX file and generates Group representing FBX scene.
+ * Requires FBX file to be >= 7.0 and in ASCII or >= 6400 in Binary format
+ * Versions lower than this may load but will probably have errors
+ *
+ * Needs Support:
+ *  Morph normals / blend shape normals
+ *
+ * FBX format references:
+ * 	https://wiki.blender.org/index.php/User:Mont29/Foundation/FBX_File_Structure
+ * 	http://help.autodesk.com/view/FBX/2017/ENU/?guid=__cpp_ref_index_html (C++ SDK reference)
+ *
+ * 	Binary format specification:
+ *		https://code.blender.org/2013/08/fbx-binary-file-format-specification/
+ */
 var FBXLoader = ( function () {
 
 	var fbxTree;

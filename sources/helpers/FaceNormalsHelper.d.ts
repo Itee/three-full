@@ -3,10 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Object3D } from './../core/Object3D';
 import { LineSegments } from './../objects/LineSegments';
-// export class EdgesHelper extends LineSegments {
-//   constructor(object: Object3D, hex?: number, thresholdAngle?: number);
-// }
-
 export class FaceNormalsHelper extends LineSegments {
   constructor(
     object: Object3D,

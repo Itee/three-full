@@ -171,7 +171,7 @@ export * from './renderers/webgl/WebGLShadowMap';
 export * from './renderers/webgl/WebGLState';
 export * from './renderers/webgl/WebGLTextures';
 export * from './renderers/webgl/WebGLUniforms';
-//export * from './renderers/webgl/WebGLUtils';
+
 export * from './renderers/webvr/WebVRManager';
 export * from './constants';
 export * from './Three.Legacy';

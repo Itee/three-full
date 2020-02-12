@@ -5,6 +5,13 @@ import { Vector3 } from '../math/Vector3.js'
 import { Line3 } from '../math/Line3.js'
 import { Plane } from '../math/Plane.js'
 import { Triangle } from '../math/Triangle.js'
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Ported from: https://github.com/maurizzzio/quickhull3d/ by Mauricio Poppe (https://github.com/maurizzzio)
+ *
+ */
 	var Visible = 0;
 	var Deleted = 1;
 

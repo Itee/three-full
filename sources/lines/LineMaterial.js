@@ -3,9 +3,24 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Vector2 } from '../math/Vector2.js'
+import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
 import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
-import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
+
+/**
+ * @author WestLangley / http://github.com/WestLangley
+ *
+ * parameters = {
+ *  color: <hex>,
+ *  linewidth: <float>,
+ *  dashed: <boolean>,
+ *  dashScale: <float>,
+ *  dashSize: <float>,
+ *  gapSize: <float>,
+ *  resolution: <Vector2>, // to be set by renderer
+ * }
+ */
+
 UniformsLib.line = {
 
 	linewidth: { value: 1 },

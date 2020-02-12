@@ -20,6 +20,8 @@ import { AnimationClip } from '../animation/AnimationClip.js'
 import { NumberKeyframeTrack } from '../animation/tracks/NumberKeyframeTrack.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Euler } from '../math/Euler.js'
+import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
+import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
 import {
 	FrontSide,
 	DoubleSide,
@@ -32,11 +34,46 @@ import {
 	SphericalReflectionMapping,
 	RepeatWrapping
 } from '../constants.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
+import { Loader } from './Loader.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
-import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * @author takahiro / https://github.com/takahirox
+ *
+ * Dependencies
+ *  - mmd-parser https://github.com/takahirox/mmd-parser
+ *  - TGALoader
+ *  - OutlineEffect
+ *
+ * MMDLoader creates Three.js Objects from MMD resources as
+ * PMD, PMX, VMD, and VPD files.
+ *
+ * PMD/PMX is a model data format, VMD is a motion data format
+ * VPD is a posing data format used in MMD(Miku Miku Dance).
+ *
+ * MMD official site
+ *  - http://www.geocities.jp/higuchuu4/index_e.htm
+ *
+ * PMD, VMD format (in Japanese)
+ *  - http://blog.goo.ne.jp/torisu_tetosuki/e/209ad341d3ece2b1b4df24abf619d6e4
+ *
+ * PMX format
+ *  - https://gist.github.com/felixjones/f8a06bd48f9da9a4539f
+ *
+ * TODO
+ *  - light motion in vmd support.
+ *  - SDEF support.
+ *  - uv/material/bone morphing support.
+ *  - more precise grant skinning support.
+ *  - shadow support.
+ */
+
 var MMDLoader = ( function () {
+
+	/**
+	 * @param {LoadingManager} manager
+	 */
 	function MMDLoader( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -54,24 +91,44 @@ var MMDLoader = ( function () {
 		constructor: MMDLoader,
 
 		crossOrigin: 'anonymous',
+
+		/**
+		 * @param {string} crossOrigin
+		 * @return {MMDLoader}
+		 */
 		setCrossOrigin: function ( crossOrigin ) {
 
 			this.crossOrigin = crossOrigin;
 			return this;
 
 		},
+
+		/**
+		 * @param {string} animationPath
+		 * @return {MMDLoader}
+		 */
 		setAnimationPath: function ( animationPath ) {
 
 			this.animationPath = animationPath;
 			return this;
 
 		},
+
+		/**
+		 * @param {string} path
+		 * @return {MMDLoader}
+		 */
 		setPath: function ( path ) {
 
 			this.path = path;
 			return this;
 
 		},
+
+		/**
+		 * @param {string} resourcePath
+		 * @return {MMDLoader}
+		 */
 		setResoucePath: function ( resourcePath ) {
 
 			this.resourcePath = resourcePath;
@@ -80,6 +137,15 @@ var MMDLoader = ( function () {
 		},
 
 		// Load MMD assets as Three.js Object
+
+		/**
+		 * Loads Model file (.pmd or .pmx) as a SkinnedMesh.
+		 *
+		 * @param {string} url - url to Model(.pmd or .pmx) file
+		 * @param {function} onLoad
+		 * @param {function} onProgress
+		 * @param {function} onError
+		 */
 		load: function ( url, onLoad, onProgress, onError ) {
 
 			var builder = this.meshBuilder.setCrossOrigin( this.crossOrigin );
@@ -120,6 +186,17 @@ var MMDLoader = ( function () {
 			}, onProgress, onError );
 
 		},
+
+		/**
+		 * Loads Motion file(s) (.vmd) as a AnimationClip.
+		 * If two or more files are specified, they'll be merged.
+		 *
+		 * @param {string|Array<string>} url - url(s) to animation(.vmd) file(s)
+		 * @param {SkinnedMesh|Camera} object - tracks will be fitting to this object
+		 * @param {function} onLoad
+		 * @param {function} onProgress
+		 * @param {function} onError
+		 */
 		loadAnimation: function ( url, object, onLoad, onProgress, onError ) {
 
 			var builder = this.animationBuilder;
@@ -133,6 +210,18 @@ var MMDLoader = ( function () {
 			}, onProgress, onError );
 
 		},
+
+		/**
+		 * Loads mode file and motion file(s) as an object containing
+		 * a SkinnedMesh and a AnimationClip.
+		 * Tracks of AnimationClip are fitting to the model.
+		 *
+		 * @param {string} modelUrl - url to Model(.pmd or .pmx) file
+		 * @param {string|Array{string}} vmdUrl - url(s) to animation(.vmd) file
+		 * @param {function} onLoad
+		 * @param {function} onProgress
+		 * @param {function} onError
+		 */
 		loadWithAnimation: function ( modelUrl, vmdUrl, onLoad, onProgress, onError ) {
 
 			var scope = this;
@@ -153,6 +242,15 @@ var MMDLoader = ( function () {
 		},
 
 		// Load MMD assets as Object data parsed by MMDParser
+
+		/**
+		 * Loads .pmd file as an Object.
+		 *
+		 * @param {string} url - url to .pmd file
+		 * @param {function} onLoad
+		 * @param {function} onProgress
+		 * @param {function} onError
+		 */
 		loadPMD: function ( url, onLoad, onProgress, onError ) {
 
 			var parser = this._getParser();
@@ -168,6 +266,15 @@ var MMDLoader = ( function () {
 				}, onProgress, onError );
 
 		},
+
+		/**
+		 * Loads .pmx file as an Object.
+		 *
+		 * @param {string} url - url to .pmx file
+		 * @param {function} onLoad
+		 * @param {function} onProgress
+		 * @param {function} onError
+		 */
 		loadPMX: function ( url, onLoad, onProgress, onError ) {
 
 			var parser = this._getParser();
@@ -183,6 +290,16 @@ var MMDLoader = ( function () {
 				}, onProgress, onError );
 
 		},
+
+		/**
+		 * Loads .vmd file as an Object. If two or more files are specified
+		 * they'll be merged.
+		 *
+		 * @param {string|Array<string>} url - url(s) to .vmd file(s)
+		 * @param {function} onLoad
+		 * @param {function} onProgress
+		 * @param {function} onError
+		 */
 		loadVMD: function ( url, onLoad, onProgress, onError ) {
 
 			var urls = Array.isArray( url ) ? url : [ url ];
@@ -210,6 +327,16 @@ var MMDLoader = ( function () {
 			}
 
 		},
+
+		/**
+		 * Loads .vpd file as an Object.
+		 *
+		 * @param {string} url - url to .vpd file
+		 * @param {boolean} isUnicode
+		 * @param {function} onLoad
+		 * @param {function} onProgress
+		 * @param {function} onError
+		 */
 		loadVPD: function ( url, isUnicode, onLoad, onProgress, onError ) {
 
 			var parser = this._getParser();
@@ -256,6 +383,12 @@ var MMDLoader = ( function () {
 	};
 
 	// Utilities
+
+	/*
+	 * base64 encoded defalut toon textures toon00.bmp - toon10.bmp.
+	 * We don't need to request external toon image files.
+	 * This idea is from http://www20.atpages.jp/katwat/three.js_r58/examples/mytest37/mmd.three.js
+	 */
 	var DEFAULT_TOON_TEXTURES = [
 		'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAL0lEQVRYR+3QQREAAAzCsOFfNJPBJ1XQS9r2hsUAAQIECBAgQIAAAQIECBAgsBZ4MUx/ofm2I/kAAAAASUVORK5CYII=',
 		'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAN0lEQVRYR+3WQREAMBACsZ5/bWiiMvgEBTt5cW37hjsBBAgQIECAwFwgyfYPCCBAgAABAgTWAh8aBHZBl14e8wAAAABJRU5ErkJggg==',
@@ -271,6 +404,10 @@ var MMDLoader = ( function () {
 	];
 
 	// Builders. They build Three.js object from Object data parsed by MMDParser.
+
+	/**
+	 * @param {LoadingManager} manager
+	 */
 	function MeshBuilder( manager ) {
 
 		this.geometryBuilder = new GeometryBuilder();
@@ -283,12 +420,25 @@ var MMDLoader = ( function () {
 		constructor: MeshBuilder,
 
 		crossOrigin: 'anonymous',
+
+		/**
+		 * @param {string} crossOrigin
+		 * @return {MeshBuilder}
+		 */
 		setCrossOrigin: function ( crossOrigin ) {
 
 			this.crossOrigin = crossOrigin;
 			return this;
 
 		},
+
+		/**
+		 * @param {Object} data - parsed PMD/PMX data
+		 * @param {string} resourcePath
+		 * @param {function} onProgress
+		 * @param {function} onError
+		 * @return {SkinnedMesh}
+		 */
 		build: function ( data, resourcePath, onProgress, onError ) {
 
 			var geometry = this.geometryBuilder.build( data );
@@ -383,6 +533,11 @@ var MMDLoader = ( function () {
 	GeometryBuilder.prototype = {
 
 		constructor: GeometryBuilder,
+
+		/**
+		 * @param {Object} data - parsed PMD/PMX data
+		 * @return {BufferGeometry}
+		 */
 		build: function ( data ) {
 
 			// for geometry
@@ -766,6 +921,12 @@ var MMDLoader = ( function () {
 					params[ key ] = rigidBody[ key ];
 
 				}
+
+				/*
+				 * RigidBody position parameter in PMX seems global position
+				 * while the one in PMD seems offset from corresponding bone.
+				 * So unify being offset.
+				 */
 				if ( data.metadata.format === 'pmx' ) {
 
 					if ( params.boneIndex !== - 1 ) {
@@ -855,6 +1016,10 @@ var MMDLoader = ( function () {
 	};
 
 	//
+
+	/**
+	 * @param {LoadingManager} manager
+	 */
 	function MaterialBuilder( manager ) {
 
 		this.manager = manager;
@@ -871,18 +1036,36 @@ var MMDLoader = ( function () {
 		crossOrigin: 'anonymous',
 
 		resourcePath: undefined,
+
+		/**
+		 * @param {string} crossOrigin
+		 * @return {MaterialBuilder}
+		 */
 		setCrossOrigin: function ( crossOrigin ) {
 
 			this.crossOrigin = crossOrigin;
 			return this;
 
 		},
+
+		/**
+		 * @param {string} resourcePath
+		 * @return {MaterialBuilder}
+		 */
 		setResourcePath: function ( resourcePath ) {
 
 			this.resourcePath = resourcePath;
 			return this;
 
 		},
+
+		/**
+		 * @param {Object} data - parsed PMD/PMX data
+		 * @param {BufferGeometry} geometry - some properties are dependend on geometry
+		 * @param {function} onProgress
+		 * @param {function} onError
+		 * @return {Array<MeshToonMaterial>}
+		 */
 		build: function ( data, geometry, onProgress, onError ) {
 
 			var materials = [];
@@ -900,6 +1083,19 @@ var MMDLoader = ( function () {
 				var params = { userData: {} };
 
 				if ( material.name !== undefined ) params.name = material.name;
+
+				/*
+				 * Color
+				 *
+				 * MMD         MeshToonMaterial
+				 * diffuse  -  color
+				 * specular -  specular
+				 * ambient  -  emissive * a
+				 *               (a = 1.0 without map texture or 0.2 with map texture)
+				 *
+				 * MeshToonMaterial doesn't have ambient. Set it to emissive instead.
+				 * It'll be too bright if material has map texture so using coef 0.2.
+				 */
 				params.color = new Color().fromArray( material.diffuse );
 				params.opacity = material.diffuse[ 3 ];
 				params.specular = new Color().fromArray( material.specular );
@@ -1308,6 +1504,14 @@ var MMDLoader = ( function () {
 					return false;
 
 				}
+
+				/*
+				 * This method expects
+				 *   texture.flipY = false
+				 *   texture.wrapS = RepeatWrapping
+				 *   texture.wrapT = RepeatWrapping
+				 * TODO: more precise
+				 */
 				function getAlphaByUv( image, uv ) {
 
 					var width = image.width;
@@ -1355,6 +1559,12 @@ var MMDLoader = ( function () {
 	AnimationBuilder.prototype = {
 
 		constructor: AnimationBuilder,
+
+		/**
+		 * @param {Object} vmd - parsed VMD data
+		 * @param {SkinnedMesh} mesh - tracks will be fitting to mesh
+		 * @return {AnimationClip}
+		 */
 		build: function ( vmd, mesh ) {
 
 			// combine skeletal and morph animations
@@ -1371,6 +1581,12 @@ var MMDLoader = ( function () {
 			return new AnimationClip( '', - 1, tracks );
 
 		},
+
+		/**
+		 * @param {Object} vmd - parsed VMD data
+		 * @param {SkinnedMesh} mesh - tracks will be fitting to mesh
+		 * @return {AnimationClip}
+		 */
 		buildSkeletalAnimation: function ( vmd, mesh ) {
 
 			function pushInterpolation( array, interpolation, index ) {
@@ -1451,6 +1667,12 @@ var MMDLoader = ( function () {
 			return new AnimationClip( '', - 1, tracks );
 
 		},
+
+		/**
+		 * @param {Object} vmd - parsed VMD data
+		 * @param {SkinnedMesh} mesh - tracks will be fitting to mesh
+		 * @return {AnimationClip}
+		 */
 		buildMorphAnimation: function ( vmd, mesh ) {
 
 			var tracks = [];
@@ -1497,6 +1719,11 @@ var MMDLoader = ( function () {
 			return new AnimationClip( '', - 1, tracks );
 
 		},
+
+		/**
+		 * @param {Object} vmd - parsed VMD data
+		 * @return {AnimationClip}
+		 */
 		buildCameraAnimation: function ( vmd ) {
 
 			function pushVector3( array, vec ) {
@@ -1614,6 +1841,12 @@ var MMDLoader = ( function () {
 		// private method
 
 		_createTrack: function ( node, typedKeyframeTrack, times, values, interpolations ) {
+
+			/*
+			 * optimizes here not to let KeyframeTrackPrototype optimize
+			 * because KeyframeTrackPrototype optimizes times and values but
+			 * doesn't optimize interpolations.
+			 */
 			if ( times.length > 2 ) {
 
 				times = times.slice();
@@ -1752,6 +1985,44 @@ var MMDLoader = ( function () {
 		},
 
 		_calculate: function ( x1, x2, y1, y2, x ) {
+
+			/*
+			 * Cubic Bezier curves
+			 *   https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B.C3.A9zier_curves
+			 *
+			 * B(t) = ( 1 - t ) ^ 3 * P0
+			 *      + 3 * ( 1 - t ) ^ 2 * t * P1
+			 *      + 3 * ( 1 - t ) * t^2 * P2
+			 *      + t ^ 3 * P3
+			 *      ( 0 <= t <= 1 )
+			 *
+			 * MMD uses Cubic Bezier curves for bone and camera animation interpolation.
+			 *   http://d.hatena.ne.jp/edvakf/20111016/1318716097
+			 *
+			 *    x = ( 1 - t ) ^ 3 * x0
+			 *      + 3 * ( 1 - t ) ^ 2 * t * x1
+			 *      + 3 * ( 1 - t ) * t^2 * x2
+			 *      + t ^ 3 * x3
+			 *    y = ( 1 - t ) ^ 3 * y0
+			 *      + 3 * ( 1 - t ) ^ 2 * t * y1
+			 *      + 3 * ( 1 - t ) * t^2 * y2
+			 *      + t ^ 3 * y3
+			 *      ( x0 = 0, y0 = 0 )
+			 *      ( x3 = 1, y3 = 1 )
+			 *      ( 0 <= t, x1, x2, y1, y2 <= 1 )
+			 *
+			 * Here solves this equation with Bisection method,
+			 *   https://en.wikipedia.org/wiki/Bisection_method
+			 * gets t, and then calculate y.
+			 *
+			 * f(t) = 3 * ( 1 - t ) ^ 2 * t * x1
+			 *      + 3 * ( 1 - t ) * t^2 * x2
+			 *      + t ^ 3 - x = 0
+			 *
+			 * (Another option: Newton's method
+			 *    https://en.wikipedia.org/wiki/Newton%27s_method)
+			 */
+
 			var c = 0.5;
 			var t = c;
 			var s = 1.0 - t;

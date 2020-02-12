@@ -1,6 +1,15 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * @author meatbags / xavierburrow.com, github/meatbags
+ *
+ * RGB Halftone shader for three.js.
+ *	NOTE:
+ * 		Shape (1 = Dot, 2 = Ellipse, 3 = Line, 4 = Square)
+ *		Blending Mode (1 = Linear, 2 = Multiply, 3 = Add, 4 = Lighter, 5 = Darker)
+ */
+
 var HalftoneShader = {
 
 	uniforms: {

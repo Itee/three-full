@@ -2,6 +2,14 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Face3 } from '../core/Face3.js'
+
+/**
+ * Break faces with edges longer than maxEdgeLength
+ * - not recursive
+ *
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 var TessellateModifier = function ( maxEdgeLength ) {
 
 	this.maxEdgeLength = maxEdgeLength;

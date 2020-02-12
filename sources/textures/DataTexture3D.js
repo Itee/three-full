@@ -6,6 +6,10 @@ import {
 	ClampToEdgeWrapping,
 	NearestFilter
 } from '../constants.js'
+
+/**
+ * @author Artur Trzesiok
+ */
 function DataTexture3D( data, width, height, depth ) {
 
 	// We're going to add .setXXX() methods for setting properties later.

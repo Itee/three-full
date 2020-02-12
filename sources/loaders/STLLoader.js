@@ -8,8 +8,39 @@ import {
 	Float32BufferAttribute
 } from '../core/BufferAttribute.js'
 import { Vector3 } from '../math/Vector3.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * @author aleeper / http://adamleeper.com/
+ * @author mrdoob / http://mrdoob.com/
+ * @author gero3 / https://github.com/gero3
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Description: A THREE loader for STL ASCII files, as created by Solidworks and other CAD programs.
+ *
+ * Supports both binary and ASCII encoded files, with automatic detection of type.
+ *
+ * The loader returns a non-indexed buffer geometry.
+ *
+ * Limitations:
+ *  Binary decoding supports "Magics" color format (http://en.wikipedia.org/wiki/STL_(file_format)#Color_in_binary_STL).
+ *  There is perhaps some question as to how valid it is to always assume little-endian-ness.
+ *  ASCII decoding assumes file is UTF-8.
+ *
+ * Usage:
+ *  var loader = new STLLoader();
+ *  loader.load( './models/stl/slotted_disk.stl', function ( geometry ) {
+ *    scene.add( new Mesh( geometry ) );
+ *  });
+ *
+ * For binary STLs geometry might contain colors for vertices. To use it:
+ *  // use the same code to load STL as above
+ *  if (geometry.hasColors) {
+ *    material = new MeshPhongMaterial({ opacity: geometry.alpha, vertexColors: VertexColors });
+ *  } else { .... }
+ *  var mesh = new Mesh( geometry, material );
+ */
 var STLLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -123,9 +154,9 @@ STLLoader.prototype = {
 
 			for ( var index = 0; index < 80 - 10; index ++ ) {
 
-				if ( ( reader.getUint32( index, false ) == 0x434F4C4F  ) &&
-					( reader.getUint8( index + 4 ) == 0x52  ) &&
-					( reader.getUint8( index + 5 ) == 0x3D  ) ) {
+				if ( ( reader.getUint32( index, false ) == 0x434F4C4F /*COLO*/ ) &&
+					( reader.getUint8( index + 4 ) == 0x52 /*'R'*/ ) &&
+					( reader.getUint8( index + 5 ) == 0x3D /*'='*/ ) ) {
 
 					hasColors = true;
 					colors = [];

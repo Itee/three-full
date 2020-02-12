@@ -4,6 +4,21 @@
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix3 } from '../math/Matrix3.js'
 import { Geometry } from '../core/Geometry.js'
+
+/**
+ * @author kovacsv / http://kovacsv.hu/
+ * @author mrdoob / http://mrdoob.com/
+ * @author mudcube / http://mudcu.be/
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Usage:
+ *  var exporter = new STLExporter();
+ *
+ *  // second argument is a list of options
+ *  var data = exporter.parse( mesh, { binary: true } );
+ *
+ */
+
 var STLExporter = function () {};
 
 STLExporter.prototype = {

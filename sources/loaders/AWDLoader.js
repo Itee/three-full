@@ -12,6 +12,11 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * Author: Pierre Lepers
+ * Date: 09/12/2013 17:21
+ */
 	var UNCOMPRESSED = 0,
 		DEFLATE = 1,
 		LZMA = 2,
@@ -1163,12 +1168,24 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 			return a;
 
 		},
+
+		/**
+	 * Converts a UTF-8 byte array to JavaScript's 16-bit Unicode.
+	 * @param {Array.<number>} bytes UTF-8 byte array.
+	 * @return {string} 16-bit Unicode string.
+	 */
 		readUTF: function () {
 
 			var len = this.readU16();
 			return this.readUTFBytes( len );
 
 		},
+
+		/**
+		 * Converts a UTF-8 byte array to JavaScript's 16-bit Unicode.
+		 * @param {Array.<number>} bytes UTF-8 byte array.
+		 * @return {string} 16-bit Unicode string.
+		 */
 		readUTFBytes: function ( len ) {
 
 			// TODO(user): Use native implementations if/when available

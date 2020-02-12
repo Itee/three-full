@@ -13,22 +13,44 @@ import { MaterialLoader } from './MaterialLoader.js'
 import { FileLoader } from './FileLoader.js'
 import { VertexColors } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-'use strict';
 
-/*
-if ( var LoaderSupport === undefined ) { var LoaderSupport = {} }
-*/
+/**
+  * @author Kai Salmen / https://kaisalmen.de
+  * Development repository: https://github.com/kaisalmen/WWOBJLoader
+  */
+
+'use strict';
+/**
+ * Validation functions.
+ * @class
+ */
+
 var LoaderSupport = {}
 LoaderSupport.Validator = {
-	
+	/**
+	 * If given input is null or undefined, false is returned otherwise true.
+	 *
+	 * @param input Can be anything
+	 * @returns {boolean}
+	 */
 	isValid: function( input ) {
 		return ( input !== null && input !== undefined );
 	},
-	
+	/**
+	 * If given input is null or undefined, the defaultValue is returned otherwise the given input.
+	 *
+	 * @param input Can be anything
+	 * @param defaultValue Can be anything
+	 * @returns {*}
+	 */
 	verifyInput: function( input, defaultValue ) {
 		return ( input === null || input === undefined ) ? defaultValue : input;
 	}
 };
+/**
+ * Callbacks utilized by loaders and builders.
+ * @class
+ */
 LoaderSupport.Callbacks = function () {
 	this.onProgress = null;
 	this.onReportError = null;
@@ -40,23 +62,61 @@ LoaderSupport.Callbacks = function () {
 LoaderSupport.Callbacks.prototype = {
 
 	constructor: LoaderSupport.Callbacks,
+
+	/**
+	 * Register callback function that is invoked by internal function "announceProgress" to print feedback.
+	 *
+	 * @param {callback} callbackOnProgress Callback function for described functionality
+	 */
 	setCallbackOnProgress: function ( callbackOnProgress ) {
 		this.onProgress = LoaderSupport.Validator.verifyInput( callbackOnProgress, this.onProgress );
 	},
+
+	/**
+	 * Register callback function that is invoked when an error is reported.
+	 *
+	 * @param {callback} callbackOnReportError Callback function for described functionality
+	 */
 	setCallbackOnReportError: function ( callbackOnReportError ) {
 		this.onReportError = LoaderSupport.Validator.verifyInput( callbackOnReportError, this.onReportError );
 	},
+
+	/**
+	 * Register callback function that is called every time a mesh was loaded.
+	 * Use {@link LoaderSupport.LoadedMeshUserOverride} for alteration instructions (geometry, material or disregard mesh).
+	 *
+	 * @param {callback} callbackOnMeshAlter Callback function for described functionality
+	 */
 	setCallbackOnMeshAlter: function ( callbackOnMeshAlter ) {
 		this.onMeshAlter = LoaderSupport.Validator.verifyInput( callbackOnMeshAlter, this.onMeshAlter );
 	},
+
+	/**
+	 * Register callback function that is called once loading of the complete OBJ file is completed.
+	 *
+	 * @param {callback} callbackOnLoad Callback function for described functionality
+	 */
 	setCallbackOnLoad: function ( callbackOnLoad ) {
 		this.onLoad = LoaderSupport.Validator.verifyInput( callbackOnLoad, this.onLoad );
 	},
+
+	/**
+	 * Register callback function that is called when materials have been loaded.
+	 *
+	 * @param {callback} callbackOnLoadMaterials Callback function for described functionality
+	 */
 	setCallbackOnLoadMaterials: function ( callbackOnLoadMaterials ) {
 		this.onLoadMaterials = LoaderSupport.Validator.verifyInput( callbackOnLoadMaterials, this.onLoadMaterials );
 	}
 
 };
+/**
+ * Object to return by callback onMeshAlter. Used to disregard a certain mesh or to return one to many meshes.
+ * @class
+ *
+ * @param {boolean} disregardMesh=false Tell implementation to completely disregard this mesh
+ * @param {boolean} disregardMesh=false Tell implementation that mesh(es) have been altered or added
+ */
 LoaderSupport.LoadedMeshUserOverride = function( disregardMesh, alteredMesh ) {
 	this.disregardMesh = disregardMesh === true;
 	this.alteredMesh = alteredMesh === true;
@@ -66,18 +126,43 @@ LoaderSupport.LoadedMeshUserOverride = function( disregardMesh, alteredMesh ) {
 LoaderSupport.LoadedMeshUserOverride.prototype = {
 
 	constructor: LoaderSupport.LoadedMeshUserOverride,
+
+	/**
+	 * Add a mesh created within callback.
+	 *
+	 * @param {Mesh} mesh
+	 */
 	addMesh: function ( mesh ) {
 		this.meshes.push( mesh );
 		this.alteredMesh = true;
 	},
+
+	/**
+	 * Answers if mesh shall be disregarded completely.
+	 *
+	 * @returns {boolean}
+	 */
 	isDisregardMesh: function () {
 		return this.disregardMesh;
 	},
+
+	/**
+	 * Answers if new mesh(es) were created.
+	 *
+	 * @returns {boolean}
+	 */
 	providesAlteredMeshes: function () {
 		return this.alteredMesh;
 	}
 
 };
+/**
+ * A resource description used by {@link LoaderSupport.PrepData} and others.
+ * @class
+ *
+ * @param {string} url URL to the file
+ * @param {string} extension The file extension (type)
+ */
 LoaderSupport.ResourceDescriptor = function ( url, extension ) {
 	var urlParts = url.split( '/' );
 
@@ -101,13 +186,28 @@ LoaderSupport.ResourceDescriptor = function ( url, extension ) {
 LoaderSupport.ResourceDescriptor.prototype = {
 
 	constructor: LoaderSupport.ResourceDescriptor,
+
+	/**
+	 * Set the content of this resource
+	 *
+	 * @param {Object} content The file content as arraybuffer or text
+	 */
 	setContent: function ( content ) {
 		this.content = LoaderSupport.Validator.verifyInput( content, null );
 	},
+
+	/**
+	 * Allows to specify resourcePath for dependencies of specified resource.
+	 * @param {string} resourcePath
+	 */
 	setResourcePath: function ( resourcePath ) {
 		this.resourcePath = LoaderSupport.Validator.verifyInput( resourcePath, this.resourcePath );
 	}
 };
+/**
+ * Configuration instructions to be used by run method.
+ * @class
+ */
 LoaderSupport.PrepData = function ( modelName ) {
 	this.logging = {
 		enabled: true,
@@ -121,16 +221,41 @@ LoaderSupport.PrepData = function ( modelName ) {
 LoaderSupport.PrepData.prototype = {
 
 	constructor: LoaderSupport.PrepData,
+
+	/**
+	 * Enable or disable logging in general (except warn and error), plus enable or disable debug logging.
+	 *
+	 * @param {boolean} enabled True or false.
+	 * @param {boolean} debug True or false.
+	 */
 	setLogging: function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 	},
+
+	/**
+	 * Returns all callbacks as {@link LoaderSupport.Callbacks}
+	 *
+	 * @returns {LoaderSupport.Callbacks}
+	 */
 	getCallbacks: function () {
 		return this.callbacks;
 	},
+
+	/**
+	 * Add a resource description.
+	 *
+	 * @param {LoaderSupport.ResourceDescriptor} Adds a {@link LoaderSupport.ResourceDescriptor}
+	 */
 	addResource: function ( resource ) {
 		this.resources.push( resource );
 	},
+
+	/**
+	 * Clones this object and returns it afterwards. Callbacks and resources are not cloned deep (references!).
+	 *
+	 * @returns {@link LoaderSupport.PrepData}
+	 */
 	clone: function () {
 		var clone = new LoaderSupport.PrepData( this.modelName );
 		clone.logging.enabled = this.logging.enabled;
@@ -151,6 +276,14 @@ LoaderSupport.PrepData.prototype = {
 
 		return clone;
 	},
+
+	/**
+	 * Identify files or content of interest from an Array of {@link LoaderSupport.ResourceDescriptor}.
+	 *
+	 * @param {LoaderSupport.ResourceDescriptor[]} resources Array of {@link LoaderSupport.ResourceDescriptor}
+	 * @param Object fileDesc Object describing which resources are of interest (ext, type (string or UInt8Array) and ignore (boolean))
+	 * @returns {{}} Object with each "ext" and the corresponding {@link LoaderSupport.ResourceDescriptor}
+	 */
 	checkResourceDescriptorFiles: function ( resources, fileDesc ) {
 		var resource, triple, i, found;
 		var result = {};
@@ -214,6 +347,12 @@ LoaderSupport.PrepData.prototype = {
 		return result;
 	}
 };
+
+/**
+ * Builds one or many Mesh from one raw set of Arraybuffers, materialGroup descriptions and further parameters.
+ * Supports vertex, vertexColor, normal, uv and index buffers.
+ * @class
+ */
 LoaderSupport.MeshBuilder = function() {
 	console.info( 'Using LoaderSupport.MeshBuilder version: ' + LoaderSupport.MeshBuilder.LOADER_MESH_BUILDER_VERSION );
 	this.validator = LoaderSupport.Validator;
@@ -231,10 +370,22 @@ LoaderSupport.MeshBuilder.LOADER_MESH_BUILDER_VERSION = '1.3.0';
 LoaderSupport.MeshBuilder.prototype = {
 
 	constructor: LoaderSupport.MeshBuilder,
+
+	/**
+	 * Enable or disable logging in general (except warn and error), plus enable or disable debug logging.
+	 *
+	 * @param {boolean} enabled True or false.
+	 * @param {boolean} debug True or false.
+	 */
 	setLogging: function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 	},
+
+	/**
+	 * Initializes the MeshBuilder (currently only default material initialisation).
+	 *
+	 */
 	init: function () {
 		var defaultMaterial = new MeshStandardMaterial( { color: 0xDCF1FF } );
 		defaultMaterial.name = 'defaultMaterial';
@@ -266,6 +417,12 @@ LoaderSupport.MeshBuilder.prototype = {
 			}
 		);
 	},
+
+	/**
+	 * Set materials loaded by any supplier of an Array of {@link Material}.
+	 *
+	 * @param {Material[]} materials Array of {@link Material}
+	 */
 	setMaterials: function ( materials ) {
 		var payload = {
 			cmd: 'materialData',
@@ -285,6 +442,13 @@ LoaderSupport.MeshBuilder.prototype = {
 		if ( this.validator.isValid( callbacks.onLoad ) ) this.callbacks.setCallbackOnLoad( callbacks.onLoad );
 		if ( this.validator.isValid( callbacks.onLoadMaterials ) ) this.callbacks.setCallbackOnLoadMaterials( callbacks.onLoadMaterials );
 	},
+
+	/**
+	 * Delegates processing of the payload (mesh building or material update) to the corresponding functions (BW-compatibility).
+	 *
+	 * @param {Object} payload Raw Mesh or Material descriptions.
+	 * @returns {Mesh[]} mesh Array of {@link Mesh} or null in case of material update
+	 */
 	processPayload: function ( payload ) {
 		if ( payload.cmd === 'meshData' ) {
 
@@ -297,6 +461,13 @@ LoaderSupport.MeshBuilder.prototype = {
 
 		}
 	},
+
+	/**
+	 * Builds one or multiple meshes from the data described in the payload (buffers, params, material info).
+	 *
+	 * @param {Object} meshPayload Raw mesh description (buffers, params, materials) used to build one to many meshes.
+	 * @returns {Mesh[]} mesh Array of {@link Mesh}
+	 */
 	buildMeshes: function ( meshPayload ) {
 		var meshName = meshPayload.params.meshName;
 
@@ -448,6 +619,12 @@ LoaderSupport.MeshBuilder.prototype = {
 
 		return meshes;
 	},
+
+	/**
+	 * Updates the materials with contained material objects (sync) or from alteration instructions (async).
+	 *
+	 * @param {Object} materialPayload Material update instructions
+	 */
 	updateMaterials: function ( materialPayload ) {
 		var material, materialName;
 		var materialCloneInstructions = materialPayload.materials.materialCloneInstructions;
@@ -510,6 +687,12 @@ LoaderSupport.MeshBuilder.prototype = {
 
 		}
 	},
+
+	/**
+	 * Returns the mapping object of material name and corresponding jsonified material.
+	 *
+	 * @returns {Object} Map of Materials in JSON representation
+	 */
 	getMaterialsJSON: function () {
 		var materialsJSON = {};
 		var material;
@@ -521,11 +704,23 @@ LoaderSupport.MeshBuilder.prototype = {
 
 		return materialsJSON;
 	},
+
+	/**
+	 * Returns the mapping object of material name and corresponding material.
+	 *
+	 * @returns {Object} Map of {@link Material}
+	 */
 	getMaterials: function () {
 		return this.materials;
 	}
 
 };
+
+/**
+ * This class provides means to transform existing parser code into a web worker. It defines a simple communication protocol
+ * which allows to configure the worker and receive raw mesh data during execution.
+ * @class
+ */
 LoaderSupport.WorkerSupport = function () {
 	console.info( 'Using LoaderSupport.WorkerSupport version: ' + LoaderSupport.WorkerSupport.WORKER_SUPPORT_VERSION );
 	this.logging = {
@@ -542,14 +737,37 @@ LoaderSupport.WorkerSupport.WORKER_SUPPORT_VERSION = '2.3.0';
 LoaderSupport.WorkerSupport.prototype = {
 
 	constructor: LoaderSupport.WorkerSupport,
+
+	/**
+	 * Enable or disable logging in general (except warn and error), plus enable or disable debug logging.
+	 *
+	 * @param {boolean} enabled True or false.
+	 * @param {boolean} debug True or false.
+	 */
 	setLogging: function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 		this.loaderWorker.setLogging( this.logging.enabled, this.logging.debug );
 	},
+
+	/**
+	 * Forces all ArrayBuffers to be transferred to worker to be copied.
+	 *
+	 * @param {boolean} forceWorkerDataCopy True or false.
+	 */
 	setForceWorkerDataCopy: function ( forceWorkerDataCopy ) {
 		this.loaderWorker.setForceCopy( forceWorkerDataCopy );
 	},
+
+	/**
+	 * Validate the status of worker code and the derived worker.
+	 *
+	 * @param {Function} functionCodeBuilder Function that is invoked with funcBuildObject and funcBuildSingleton that allows stringification of objects and singletons.
+	 * @param {String} parserName Name of the Parser object
+	 * @param {String[]} libLocations URL of libraries that shall be added to worker code relative to libPath
+	 * @param {String} libPath Base path used for loading libraries
+	 * @param {LoaderSupport.WorkerRunnerRefImpl} runnerImpl The default worker parser wrapper implementation (communication and execution). An extended class could be passed here.
+	 */
 	validate: function ( functionCodeBuilder, parserName, libLocations, libPath, runnerImpl ) {
 		if ( LoaderSupport.Validator.isValid( this.loaderWorker.worker ) ) return;
 
@@ -615,12 +833,31 @@ LoaderSupport.WorkerSupport.prototype = {
 
 		}
 	},
+
+	/**
+	 * Specify functions that should be build when new raw mesh data becomes available and when the parser is finished.
+	 *
+	 * @param {Function} meshBuilder The mesh builder function. Default is {@link LoaderSupport.MeshBuilder}.
+	 * @param {Function} onLoad The function that is called when parsing is complete.
+	 */
 	setCallbacks: function ( meshBuilder, onLoad ) {
 		this.loaderWorker.setCallbacks( meshBuilder, onLoad );
 	},
+
+	/**
+	 * Runs the parser with the provided configuration.
+	 *
+	 * @param {Object} payload Raw mesh description (buffers, params, materials) used to build one to many meshes.
+	 */
 	run: function ( payload ) {
 		this.loaderWorker.run( payload );
 	},
+
+	/**
+	 * Request termination of worker once parser is finished.
+	 *
+	 * @param {boolean} terminateRequested True or false.
+	 */
 	setTerminateRequested: function ( terminateRequested ) {
 		this.loaderWorker.setTerminateRequested( terminateRequested );
 	}
@@ -650,6 +887,14 @@ LoaderSupport.WorkerSupport.LoaderWorker.prototype = {
 		this.started = false;
 		this.forceCopy = false;
 	},
+
+	/**
+	 * Check support for Workers and other necessary features returning
+	 * reason if the environment is unsupported
+	 *
+	 * @returns {string|undefined} Returns undefined if supported, or
+	 * string with error if not supported
+	 */
 	checkSupport: function() {
 		if ( window.Worker === undefined ) return "This browser does not support web workers!";
 		if ( window.Blob === undefined  ) return "This browser does not support Blob!";
@@ -685,6 +930,10 @@ LoaderSupport.WorkerSupport.LoaderWorker.prototype = {
 		// process stored queuedMessage
 		this._postMessage();
 	},
+
+	/**
+	 * Executed in worker scope
+	 */
 	_receiveWorkerMessage: function ( e ) {
 		var payload = e.data;
 		switch ( payload.cmd ) {
@@ -806,6 +1055,13 @@ LoaderSupport.WorkerSupport.LoaderWorker.prototype = {
 	}
 };
 LoaderSupport.WorkerSupport.CodeSerializer = {
+
+	/**
+	 *
+	 * @param fullName
+	 * @param object
+	 * @returns {string}
+	 */
 	serializeObject: function ( fullName, object ) {
 		var objectString = fullName + ' = {\n\n';
 		var part;
@@ -838,6 +1094,15 @@ LoaderSupport.WorkerSupport.CodeSerializer = {
 
 		return objectString;
 	},
+
+	/**
+	 *
+	 * @param fullName
+	 * @param object
+	 * @param basePrototypeName
+	 * @param ignoreFunctions
+	 * @returns {string}
+	 */
 	serializeClass: function ( fullName, object, constructorName, basePrototypeName, ignoreFunctions, includeFunctions, overrideFunctions ) {
 		var valueString, objectPart, constructorString, i, funcOverride;
 		var prototypeFunctions = [];
@@ -960,6 +1225,12 @@ LoaderSupport.WorkerSupport.CodeSerializer = {
 		return objectString;
 	},
 };
+
+/**
+ * Default implementation of the WorkerRunner responsible for creation and configuration of the parser within the worker.
+ *
+ * @class
+ */
 LoaderSupport.WorkerRunnerRefImpl = function () {
 	var scopedRunner = function( event ) {
 		this.processMessage( event.data );
@@ -972,9 +1243,23 @@ LoaderSupport.WorkerRunnerRefImpl.runnerName = 'LoaderSupport.WorkerRunnerRefImp
 LoaderSupport.WorkerRunnerRefImpl.prototype = {
 
 	constructor: LoaderSupport.WorkerRunnerRefImpl,
+
+	/**
+	 * Returns the parent scope that this worker was spawned in.
+	 *
+	 * @returns {WorkerGlobalScope|Object} Returns a references
+	 * to the parent global scope or compatible type.
+	 */
 	getParentScope: function () {
 		return self;
 	},
+
+	/**
+	 * Applies values from parameter object via set functions or via direct assignment.
+	 *
+	 * @param {Object} parser The parser instance
+	 * @param {Object} params The parameter object
+	 */
 	applyProperties: function ( parser, params ) {
 		var property, funcName, values;
 		for ( property in params ) {
@@ -992,6 +1277,12 @@ LoaderSupport.WorkerRunnerRefImpl.prototype = {
 			}
 		}
 	},
+
+	/**
+	 * Configures the Parser implementation according the supplied configuration object.
+	 *
+	 * @param {Object} payload Raw mesh description (buffers, params, materials) used to build one to many meshes.
+	 */
 	processMessage: function ( payload ) {
 		if ( payload.cmd === 'run' ) {
 
@@ -1028,6 +1319,11 @@ LoaderSupport.WorkerRunnerRefImpl.prototype = {
 		}
 	}
 };
+/**
+ * This class provides the NodeJS implementation of the WorkerRunnerRefImpl
+ * @class
+ * @extends LoaderSupport.WorkerRunnerRefImpl
+ */
 LoaderSupport.NodeWorkerRunnerRefImpl = function () {
 	this.runnerName = 'LoaderSupport.NodeWorkerRunnerRefImpl';
 	// No call to super because super class only binds to processMessage
@@ -1052,12 +1348,21 @@ LoaderSupport.NodeWorkerRunnerRefImpl.prototype = {
 		return _require( 'worker_threads' ).parentPort;
 	}
 };
+/**
+ * This class provides the NodeJS implementation of LoaderWorker
+ * @class
+ * @extends LoaderWorker
+ */
 LoaderSupport.WorkerSupport.NodeLoaderWorker = function (){
 	LoaderSupport.WorkerSupport.LoaderWorker.call( this );
 };
 
 LoaderSupport.WorkerSupport.NodeLoaderWorker.prototype = Object.create( LoaderSupport.WorkerSupport.LoaderWorker.prototype );
 LoaderSupport.WorkerSupport.NodeLoaderWorker.prototype.constructor = LoaderSupport.WorkerSupport.NodeLoaderWorker;
+
+/**
+ * @inheritdoc
+  */
 LoaderSupport.WorkerSupport.NodeLoaderWorker.checkSupport = function() {
 	try {
 		// Work around webpack builds failing with NodeJS requires
@@ -1068,6 +1373,10 @@ LoaderSupport.WorkerSupport.NodeLoaderWorker.checkSupport = function() {
 		return 'This version of Node does not support web workers!';
 	}
 };
+
+/**
+ * @inheritdoc
+ */
 LoaderSupport.WorkerSupport.NodeLoaderWorker.prototype.initWorker = function ( code, runnerImplName ) {
 	var supportError = this.checkSupport();
 	if( supportError ) {
@@ -1090,6 +1399,19 @@ LoaderSupport.WorkerSupport.NodeLoaderWorker.prototype.initWorker = function ( c
 	// process stored queuedMessage
 	this._postMessage();
 };
+
+/**
+ * Orchestrate loading of multiple OBJ files/data from an instruction queue with a configurable amount of workers (1-16).
+ * Workflow:
+ *   prepareWorkers
+ *   enqueueForRun
+ *   processQueue
+ *   tearDown (to force stop)
+ *
+ * @class
+ *
+ * @param {string} classDef Class definition to be used for construction
+ */
 LoaderSupport.WorkerDirector = function ( classDef ) {
 	console.info( 'Using LoaderSupport.WorkerDirector version: ' + LoaderSupport.WorkerDirector.LOADER_WORKER_DIRECTOR_VERSION );
 	this.logging = {
@@ -1122,23 +1444,60 @@ LoaderSupport.WorkerDirector.MAX_QUEUE_SIZE = 2048;
 LoaderSupport.WorkerDirector.prototype = {
 
 	constructor: LoaderSupport.WorkerDirector,
-	
+	/**
+	 * Enable or disable logging in general (except warn and error), plus enable or disable debug logging.
+	 *
+	 * @param {boolean} enabled True or false.
+	 * @param {boolean} debug True or false.
+	 */
 	setLogging: function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 	},
+
+	/**
+	 * Returns the maximum length of the instruction queue.
+	 *
+	 * @returns {number}
+	 */
 	getMaxQueueSize: function () {
 		return this.maxQueueSize;
 	},
+
+	/**
+	 * Returns the maximum number of workers.
+	 *
+	 * @returns {number}
+	 */
 	getMaxWebWorkers: function () {
 		return this.maxWebWorkers;
 	},
+
+	/**
+	 * Sets the CORS string to be used.
+	 *
+	 * @param {string} crossOrigin CORS value
+	 */
 	setCrossOrigin: function ( crossOrigin ) {
 		this.crossOrigin = crossOrigin;
 	},
+
+	/**
+	 * Forces all ArrayBuffers to be transferred to worker to be copied.
+	 *
+	 * @param {boolean} forceWorkerDataCopy True or false.
+	 */
 	setForceWorkerDataCopy: function ( forceWorkerDataCopy ) {
 		this.workerDescription.forceWorkerDataCopy = forceWorkerDataCopy === true;
 	},
+
+	/**
+	 * Create or destroy workers according limits. Set the name and register callbacks for dynamically created web workers.
+	 *
+	 * @param {OBJLoader2.WWOBJLoader2.PrepDataCallbacks} globalCallbacks  Register global callbacks used by all web workers
+	 * @param {number} maxQueueSize Set the maximum size of the instruction queue (1-1024)
+	 * @param {number} maxWebWorkers Set the maximum amount of workers (1-16)
+	 */
 	prepareWorkers: function ( globalCallbacks, maxQueueSize, maxWebWorkers ) {
 		if ( LoaderSupport.Validator.isValid( globalCallbacks ) ) this.workerDescription.globalCallbacks = globalCallbacks;
 		this.maxQueueSize = Math.min( maxQueueSize, LoaderSupport.WorkerDirector.MAX_QUEUE_SIZE );
@@ -1163,15 +1522,31 @@ LoaderSupport.WorkerDirector.prototype = {
 
 		}
 	},
+
+	/**
+	 * Store run instructions in internal instructionQueue.
+	 *
+	 * @param {LoaderSupport.PrepData} prepData
+	 */
 	enqueueForRun: function ( prepData ) {
 		if ( this.instructionQueue.length < this.maxQueueSize ) {
 			this.instructionQueue.push( prepData );
 		}
 	},
+
+	/**
+	 * Returns if any workers are running.
+	 *
+	 * @returns {boolean}
+	 */
 	isRunning: function () {
 		var wsKeys = Object.keys( this.workerDescription.workerSupports );
 		return ( ( this.instructionQueue.length > 0 && this.instructionQueuePointer < this.instructionQueue.length ) || wsKeys.length > 0 );
 	},
+
+	/**
+	 * Process the instructionQueue until it is depleted.
+	 */
 	processQueue: function () {
 		var prepData, supportDesc;
 		for ( var instanceNo in this.workerDescription.workerSupports ) {
@@ -1308,6 +1683,12 @@ LoaderSupport.WorkerDirector.prototype = {
 
 		}
 	},
+
+	/**
+	 * Terminate all workers.
+	 *
+	 * @param {callback} callbackOnFinishedProcessing Function called once all workers finished processing.
+	 */
 	tearDown: function ( callbackOnFinishedProcessing ) {
 		if ( this.logging.enabled ) console.info( 'WorkerDirector received the deregister call. Terminating all workers!' );
 

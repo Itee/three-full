@@ -4,6 +4,10 @@
 import { Light } from './Light.js'
 import { SpotLightShadow } from './SpotLightShadow.js'
 import { Object3D } from '../core/Object3D.js'
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 function SpotLight( color, intensity, distance, angle, penumbra, decay ) {
 
 	Light.call( this, color, intensity );

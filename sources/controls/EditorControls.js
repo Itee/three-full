@@ -8,6 +8,14 @@ import { Matrix3 } from '../math/Matrix3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Spherical } from '../math/Spherical.js'
 import { Sphere } from '../math/Sphere.js'
+
+/**
+ * @author qiao / https://github.com/qiao
+ * @author mrdoob / http://mrdoob.com
+ * @author alteredq / http://alteredqualia.com/
+ * @author WestLangley / http://github.com/WestLangley
+ */
+
 var EditorControls = function ( object, domElement ) {
 
 	domElement = ( domElement !== undefined ) ? domElement : document;

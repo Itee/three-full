@@ -1,6 +1,18 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * @author felixturner / http://airtight.cc/
+ *
+ * Kaleidoscope Shader
+ * Radial reflection around center point
+ * Ported from: http://pixelshaders.com/editor/
+ * by Toby Schachman / http://tobyschachman.com/
+ *
+ * sides: number of reflections
+ * angle: initial angle in radians
+ */
+
 var KaleidoShader = {
 
 	uniforms: {

@@ -97,13 +97,9 @@ export class Geometry extends EventDispatcher {
 
   copy(source: Geometry): this;
   dispose(): void;
-
-  // These properties do not exist in a normal Geometry class, but if you use the instance that was passed by JSONLoader, it will be added.
   bones: Bone[];
   animation: AnimationClip;
   animations: AnimationClip[];
-
-  // EventDispatcher mixins
   addEventListener(type: string, listener: (event: Event) => void): void;
   hasEventListener(type: string, listener: (event: Event) => void): boolean;
   removeEventListener(type: string, listener: (event: Event) => void): void;

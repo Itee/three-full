@@ -12,6 +12,16 @@ import { LineCurve3 } from '../curves/LineCurve3.js'
 import { QuadraticBezierCurve } from '../curves/QuadraticBezierCurve.js'
 import { QuadraticBezierCurve3 } from '../curves/QuadraticBezierCurve3.js'
 import { SplineCurve } from '../curves/SplineCurve.js'
+/**
+ * @author zz85 / http://www.lab4games.net/zz85/blog
+ *
+ **/
+
+/**************************************************************
+ *	Curved Path - a curve path is simply a array of connected
+ *  curves, but retains the api of a curve
+ **************************************************************/
+
 var Curves = {
     ArcCurve: ArcCurve,
     CatmullRomCurve3: CatmullRomCurve3,

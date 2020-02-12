@@ -13,6 +13,13 @@ import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { Color } from '../math/Color.js'
 import { Vector3 } from '../math/Vector3.js'
 import { DataTexture } from '../textures/DataTexture.js'
+import { CopyShader } from '../shaders/CopyShader.js'
+import {
+	SSAOShader,
+	SSAODepthShader,
+	SSAOBlurShader
+} from '../shaders/SSAOShader.js'
+import { SimplexNoise } from '../misc/SimplexNoise.js'
 import {
 	NoBlending,
 	CustomBlending,
@@ -27,15 +34,13 @@ import {
 	FloatType,
 	RGBAFormat
 } from '../constants.js'
-import { _Math } from '../math/Math.js'
-import { CopyShader } from '../shaders/CopyShader.js'
-import { SimplexNoise } from '../misc/SimplexNoise.js'
-import {
-	SSAOBlurShader,
-	SSAODepthShader,
-	SSAOShader
-} from '../shaders/SSAOShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { _Math } from '../math/Math.js'
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
 var SSAOPass = function ( scene, camera, width, height ) {
 
 	Pass.call( this );
@@ -207,7 +212,7 @@ SSAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 	},
 
-	render: function ( renderer, writeBuffer  ) {
+	render: function ( renderer, writeBuffer /*, readBuffer, deltaTime, maskActive */ ) {
 
 		// render beauty and depth
 

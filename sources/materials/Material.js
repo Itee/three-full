@@ -10,11 +10,14 @@ import {
 	LessEqualDepth,
 	AddEquation,
 	OneMinusSrcAlphaFactor,
-	SrcAlphaFactor,
-	FaceColors,
-	VertexColors
+	SrcAlphaFactor
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 var materialId = 0;
 
 function Material() {

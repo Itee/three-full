@@ -10,8 +10,8 @@ vec3 unpackRGBToNormal( const in vec3 rgb ) {
 	return 2.0 * rgb.xyz - 1.0;
 }
 
-const float PackUpscale = 256. / 255.; // fraction -> 0..1 (including 1)
-const float UnpackDownscale = 255. / 256.; // 0..1 -> fraction (excluding 1)
+const float PackUpscale = 256. / 255.; 
+const float UnpackDownscale = 255. / 256.; 
 
 const vec3 PackFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );
 const vec4 UnpackFactors = UnpackDownscale / vec4( PackFactors, 1. );
@@ -20,16 +20,13 @@ const float ShiftRight8 = 1. / 256.;
 
 vec4 packDepthToRGBA( const in float v ) {
 	vec4 r = vec4( fract( v * PackFactors ), v );
-	r.yzw -= r.xyz * ShiftRight8; // tidy overflow
+	r.yzw -= r.xyz * ShiftRight8; 
 	return r * PackUpscale;
 }
 
 float unpackRGBAToDepth( const in vec4 v ) {
 	return dot( v, UnpackFactors );
 }
-
-// NOTE: viewZ/eyeZ is < 0 when in front of the camera per OpenGL conventions
-
 float viewZToOrthographicDepth( const in float viewZ, const in float near, const in float far ) {
 	return ( viewZ + near ) / ( near - far );
 }

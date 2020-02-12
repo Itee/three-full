@@ -9,13 +9,18 @@ import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { Mesh } from '../objects/Mesh.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { AfterimageShader } from '../shaders/AfterimageShader.js'
 import {
 	NearestFilter,
 	LinearFilter,
 	RGBAFormat
 } from '../constants.js'
-import { AfterimageShader } from '../shaders/AfterimageShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author HypnosNova / https://www.threejs.org.cn/gallery/
+ */
+
 var AfterimagePass = function ( damp ) {
 
 	Pass.call( this );

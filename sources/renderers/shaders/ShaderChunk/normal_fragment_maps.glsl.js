@@ -6,7 +6,7 @@ export default `
 
 	#ifdef OBJECTSPACE_NORMALMAP
 
-		normal = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0; // overrides both flatShading and attribute normals
+		normal = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0; 
 
 		#ifdef FLIP_SIDED
 
@@ -22,7 +22,7 @@ export default `
 
 		normal = normalize( normalMatrix * normal );
 
-	#else // tangent-space normal map
+	#else 
 
 		#ifdef USE_TANGENT
 

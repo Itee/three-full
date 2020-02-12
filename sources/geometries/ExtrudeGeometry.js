@@ -7,6 +7,29 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Vector3 } from '../math/Vector3.js'
 import { ShapeUtils } from '../utils/ShapeUtils.js'
+
+/**
+ * @author zz85 / http://www.lab4games.net/zz85/blog
+ *
+ * Creates extruded geometry from a path shape.
+ *
+ * parameters = {
+ *
+ *  curveSegments: <int>, // number of points on the curves
+ *  steps: <int>, // number of points for z-side extrusions / used for subdividing segments of extrude spline too
+ *  depth: <float>, // Depth to extrude the shape
+ *
+ *  bevelEnabled: <bool>, // turn on bevel
+ *  bevelThickness: <float>, // how deep into the original shape bevel goes
+ *  bevelSize: <float>, // how far from shape outline is bevel
+ *  bevelSegments: <int>, // number of bevel layers
+ *
+ *  extrudePath: <Curve> // curve to extrude shape along
+ *
+ *  UVGenerator: <Object> // object that provides UV generator functions
+ *
+ * }
+ */
 // ExtrudeGeometry
 
 function ExtrudeGeometry( shapes, options ) {
@@ -170,6 +193,9 @@ function ExtrudeBufferGeometry( shapes, options ) {
 
 		}
 		var faces = ShapeUtils.triangulateShape( vertices, holes );
+
+		/* Vertices */
+
 		var contour = vertices; // vertices has all points but contour has only points of circumference
 
 		for ( h = 0, hl = holes.length; h < hl; h ++ ) {
@@ -490,6 +516,9 @@ function ExtrudeBufferGeometry( shapes, options ) {
 			}
 
 		}
+
+		/* Faces */
+
 		// Top and bottom faces
 
 		buildLidFaces();

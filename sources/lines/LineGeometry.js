@@ -2,6 +2,12 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { LineSegmentsGeometry } from './LineSegmentsGeometry.js'
+
+/**
+ * @author WestLangley / http://github.com/WestLangley
+ *
+ */
+
 var LineGeometry = function () {
 
 	LineSegmentsGeometry.call( this );

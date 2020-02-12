@@ -9,11 +9,41 @@ import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Texture } from '../textures/Texture.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { UnpackDepthRGBAShader } from '../shaders/UnpackDepthRGBAShader.js'
 import {
 	DoubleSide,
 	LinearFilter
 } from '../constants.js'
-import { UnpackDepthRGBAShader } from '../shaders/UnpackDepthRGBAShader.js'
+
+/**
+ * @author arya-s / https://github.com/arya-s
+ *
+ * This is a helper for visualising a given light's shadow map.
+ * It works for shadow casting lights: DirectionalLight and SpotLight.
+ * It renders out the shadow map and displays it on a HUD.
+ *
+ * Example usage:
+ *	1) Include <script src='examples/js/utils/ShadowMapViewer.js'><script> in your html file
+ *
+ *	2) Create a shadow casting light and name it optionally:
+ *		var light = new DirectionalLight( 0xffffff, 1 );
+ *		light.castShadow = true;
+ *		light.name = 'Sun';
+ *
+ *	3) Create a shadow map viewer for that light and set its size and position optionally:
+ *		var shadowMapViewer = new ShadowMapViewer( light );
+ *		shadowMapViewer.size.set( 128, 128 );	//width, height  default: 256, 256
+ *		shadowMapViewer.position.set( 10, 10 );	//x, y in pixel	 default: 0, 0 (top left corner)
+ *
+ *	4) Render the shadow map viewer in your render loop:
+ *		shadowMapViewer.render( renderer );
+ *
+ *	5) Optionally: Update the shadow map viewer on window resize:
+ *		shadowMapViewer.updateForWindowResize();
+ *
+ *	6) If you set the position or size members directly, you need to call shadowMapViewer.update();
+ */
+
 var ShadowMapViewer = function ( light ) {
 
 	//- Internals

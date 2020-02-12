@@ -9,8 +9,13 @@ import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Group } from '../objects/Group.js'
 import { VertexColors } from '../constants.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * @author technohippy / https://github.com/technohippy
+ */
+
 var ThreeMFLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

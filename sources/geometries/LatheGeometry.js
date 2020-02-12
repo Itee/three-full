@@ -7,6 +7,12 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { _Math } from '../math/Math.js'
+
+/**
+ * @author zz85 / https://github.com/zz85
+ * @author bhouston / http://clara.io
+ * @author Mugen87 / https://github.com/Mugen87
+ */
 // LatheGeometry
 
 function LatheGeometry( points, segments, phiStart, phiLength ) {

@@ -8,6 +8,10 @@ import { Object3D } from '../core/Object3D.js'
 import { Vector3 } from '../math/Vector3.js'
 import { PointsMaterial } from '../materials/PointsMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 function Points( geometry, material ) {
 
 	Object3D.call( this );

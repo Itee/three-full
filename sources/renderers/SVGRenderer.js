@@ -19,6 +19,11 @@ import {
 	FaceColors,
 	VertexColors
 } from '../constants.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
 var SVGObject = function ( node ) {
 
 	Object3D.call( this );

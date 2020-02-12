@@ -6,6 +6,55 @@ import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { LightningStrike } from '../geometries/LightningStrike.js'
 import { Mesh } from './Mesh.js'
 import { _Math } from '../math/Math.js'
+
+/**
+ * @author yomboprime https://github.com/yomboprime
+ *
+ * @fileoverview Lightning strike object generator
+ *
+ * 
+ * Usage
+ * 
+ * var myStorm = new LightningStorm( paramsObject );
+ * myStorm.position.set( ... );
+ * scene.add( myStorm );
+ * ...
+ * myStorm.update( currentTime );
+ * 
+ * The "currentTime" can only go forwards or be stopped.
+ * 
+ * 
+ * LightningStorm parameters:
+ *
+ * @param {double} size Size of the storm. If no 'onRayPosition' parameter is defined, it means the side of the rectangle the storm covers.
+ *
+ * @param {double} minHeight Minimum height a ray can start at. If no 'onRayPosition' parameter is defined, it means the height above plane y = 0.
+ * 
+ * @param {double} maxHeight Maximum height a ray can start at. If no 'onRayPosition' parameter is defined, it means the height above plane y = 0.
+ * 
+ * @param {double} maxSlope The maximum inclination slope of a ray. If no 'onRayPosition' parameter is defined, it means the slope relative to plane y = 0.
+ * 
+ * @param {integer} maxLightnings Greater than 0. The maximum number of simultaneous rays.
+ * 
+ * @param {double} lightningMinPeriod minimum time between two consecutive rays.
+ * 
+ * @param {double} lightningMaxPeriod maximum time between two consecutive rays.
+ * 
+ * @param {double} lightningMinDuration The minimum time a ray can last.
+ * 
+ * @param {double} lightningMaxDuration The maximum time a ray can last.
+ * 
+ * @param {Object} lightningParameters The parameters for created rays. See LightningStrike (geometry)
+ * 
+ * @param {Material} lightningMaterial The Material used for the created rays.
+ * 
+ * @param {function} onRayPosition Optional callback with two Vector3 parameters (source, dest). You can set here the start and end points for each created ray, using the standard size, minHeight, etc parameters and other values in your algorithm.
+ * 
+ * @param {function} onLightningDown This optional callback is called with one parameter (lightningStrike) when a ray ends propagating, so it has hit the ground.
+ * 
+ *
+*/
+
 var LightningStorm = function ( stormParams ) {
 
 	Object3D.call( this );

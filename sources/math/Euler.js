@@ -5,6 +5,12 @@ import { Quaternion } from './Quaternion.js'
 import { Vector3 } from './Vector3.js'
 import { Matrix4 } from './Matrix4.js'
 import { _Math } from './Math.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author WestLangley / http://github.com/WestLangley
+ * @author bhouston / http://clara.io
+ */
+
 function Euler( x, y, z, order ) {
 
 	this._x = x || 0;

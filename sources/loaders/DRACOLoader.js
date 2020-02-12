@@ -7,16 +7,17 @@ import {
 	TrianglesDrawMode,
 	TriangleStripDrawMode
 } from '../constants.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 import {
-	Uint8BufferAttribute,
-	Uint16BufferAttribute,
+	Float32BufferAttribute,
 	Uint32BufferAttribute,
-	Int8BufferAttribute,
-	Int16BufferAttribute,
 	Int32BufferAttribute,
-	Float32BufferAttribute
+	Uint16BufferAttribute,
+	Int16BufferAttribute,
+	Uint8BufferAttribute,
+	Int8BufferAttribute
 } from '../core/BufferAttribute.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { Mesh } from '../objects/Mesh.js'
 
 // Copyright 2016 The Draco Authors.
 //
@@ -33,6 +34,10 @@ import {
 // limitations under the License.
 //
 'use strict';
+
+/**
+ * @param {LoadingManager} manager
+ */
 var DRACOLoader = function(manager) {
     this.timeLoaded = 0;
     this.manager = manager || DefaultLoadingManager;
@@ -72,10 +77,24 @@ DRACOLoader.prototype = {
         this.verbosity = level;
         return this;
     },
+
+    /**
+     *  Sets desired mode for generated geometry indices.
+     *  Can be either:
+     *      TrianglesDrawMode
+     *      TriangleStripDrawMode
+     */
     setDrawMode: function(drawMode) {
         this.drawMode = drawMode;
         return this;
     },
+
+    /**
+     * Skips dequantization for a specific attribute.
+     * |attributeName| is the js name of the given attribute type.
+     * The only currently supported |attributeName| is 'position', more may be
+     * added in future.
+     */
     setSkipDequantization: function(attributeName, skip) {
         var skipDequantization = true;
         if (typeof skip !== 'undefined')
@@ -84,6 +103,22 @@ DRACOLoader.prototype = {
             skipDequantization;
         return this;
     },
+
+    /**
+     * Decompresses a Draco buffer. Names of attributes (for ID and type maps)
+     * must be one of the supported three.js types, including: position, color,
+     * normal, uv, uv2, skinIndex, skinWeight.
+     *
+     * @param {ArrayBuffer} rawBuffer
+     * @param {Function} callback
+     * @param {Object|undefined} attributeUniqueIdMap Provides a pre-defined ID
+     *     for each attribute in the geometry to be decoded. If given,
+     *     `attributeTypeMap` is required and `nativeAttributeMap` will be
+     *     ignored.
+     * @param {Object|undefined} attributeTypeMap Provides a predefined data
+     *     type (as a typed array constructor) for each attribute in the
+     *     geometry to be decoded.
+     */
     decodeDracoFile: function(rawBuffer, callback, attributeUniqueIdMap,
                               attributeTypeMap) {
       var scope = this;
@@ -96,10 +131,16 @@ DRACOLoader.prototype = {
 
     decodeDracoFileInternal: function(rawBuffer, dracoDecoder, callback,
                                       attributeUniqueIdMap, attributeTypeMap) {
-      
+      /*
+       * Here is how to use Draco Javascript decoder and get the geometry.
+       */
       var buffer = new dracoDecoder.DecoderBuffer();
       buffer.Init(new Int8Array(rawBuffer), rawBuffer.byteLength);
       var decoder = new dracoDecoder.Decoder();
+
+      /*
+       * Determine what type is this file: mesh or point cloud.
+       */
       var geometryType = decoder.GetEncodedGeometryType(buffer);
       if (geometryType == dracoDecoder.TRIANGULAR_MESH) {
         if (this.verbosity > 0) {
@@ -238,7 +279,9 @@ DRACOLoader.prototype = {
 
         var decode_end = performance.now();
         dracoDecoder.destroy(buffer);
-        
+        /*
+         * Example on how to retrieve mesh and attributes.
+         */
         var numFaces;
         if (geometryType == dracoDecoder.TRIANGULAR_MESH) {
           numFaces = dracoGeometry.num_faces();
@@ -386,9 +429,20 @@ DRACOLoader.prototype = {
 DRACOLoader.decoderPath = './';
 DRACOLoader.decoderConfig = {};
 DRACOLoader.decoderModulePromise = null;
+
+/**
+ * Sets the base path for decoder source files.
+ * @param {string} path
+ */
 DRACOLoader.setDecoderPath = function ( path ) {
   DRACOLoader.decoderPath = path;
 };
+
+/**
+ * Sets decoder configuration and releases singleton decoder module. Module
+ * will be recreated with the next decoding call.
+ * @param {Object} config
+ */
 DRACOLoader.setDecoderConfig = function ( config ) {
   var wasmBinary = DRACOLoader.decoderConfig.wasmBinary;
   DRACOLoader.decoderConfig = config || {};
@@ -397,9 +451,21 @@ DRACOLoader.setDecoderConfig = function ( config ) {
   // Reuse WASM binary.
   if ( wasmBinary ) DRACOLoader.decoderConfig.wasmBinary = wasmBinary;
 };
+
+/**
+ * Releases the singleton DracoDecoderModule instance. Module will be recreated
+ * with the next decoding call.
+ */
 DRACOLoader.releaseDecoderModule = function () {
   DRACOLoader.decoderModulePromise = null;
 };
+
+/**
+ * Gets WebAssembly or asm.js singleton instance of DracoDecoderModule
+ * after testing for browser support. Returns Promise that resolves when
+ * module is available.
+ * @return {Promise<{decoder: DracoDecoderModule}>}
+ */
 DRACOLoader.getDecoderModule = function () {
   var scope = this;
   var path = DRACOLoader.decoderPath;
@@ -442,6 +508,11 @@ DRACOLoader.getDecoderModule = function () {
   DRACOLoader.decoderModulePromise = promise;
   return promise;
 };
+
+/**
+ * @param {string} src
+ * @return {Promise}
+ */
 DRACOLoader._loadScript = function ( src ) {
   var prevScript = document.getElementById( 'decoder_script' );
   if ( prevScript !== null ) {
@@ -457,6 +528,11 @@ DRACOLoader._loadScript = function ( src ) {
     head.appendChild( script );
   });
 };
+
+/**
+ * @param {string} src
+ * @return {Promise}
+ */
 DRACOLoader._loadArrayBuffer = function ( src ) {
   var loader = new FileLoader();
   loader.setResponseType( 'arraybuffer' );

@@ -37,9 +37,15 @@ import {
 	RepeatWrapping,
 	ClampToEdgeWrapping
 } from '../constants.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
 import { _Math } from '../math/Math.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
 var ColladaLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

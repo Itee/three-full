@@ -12,6 +12,10 @@ import {
 	NormalBlending,
 	LessEqualDepth
 } from '../../constants.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function NodeMaterial( vertex, fragment ) {
 
 	ShaderMaterial.call( this );

@@ -3,6 +3,37 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { PropertyBinding } from './PropertyBinding.js'
 import { _Math } from '../math/Math.js'
+/**
+ *
+ * A group of objects that receives a shared animation state.
+ *
+ * Usage:
+ *
+ *  - Add objects you would otherwise pass as 'root' to the
+ *    constructor or the .clipAction method of AnimationMixer.
+ *
+ *  - Instead pass this object as 'root'.
+ *
+ *  - You can also add and remove objects later when the mixer
+ *    is running.
+ *
+ * Note:
+ *
+ *    Objects of this class appear as one object to the mixer,
+ *    so cache control of the individual objects must be done
+ *    on the group.
+ *
+ * Limitation:
+ *
+ *  - The animated properties must be compatible among the
+ *    all objects in the group.
+ *
+ *  - A single property can either be controlled through a
+ *    target group or directly, but not both.
+ *
+ * @author tschw
+ */
+
 function AnimationObjectGroup() {
 
 	this.uuid = _Math.generateUUID();

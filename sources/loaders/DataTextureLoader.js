@@ -9,6 +9,12 @@ import {
 import { FileLoader } from './FileLoader.js'
 import { DataTexture } from '../textures/DataTexture.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+/**
+ * @author Nikos M. / https://github.com/foo123/
+ *
+ * Abstract Base class to load generic binary textures formats (rgbe, hdr, ...)
+ */
+
 function DataTextureLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

@@ -7,6 +7,11 @@ import { LineSegments } from '../objects/LineSegments.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author WestLangley / http://github.com/WestLangley
+ */
 function VertexNormalsHelper( object, size, hex, linewidth ) {
 
 	this.object = object;

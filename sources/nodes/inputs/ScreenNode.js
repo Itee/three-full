@@ -3,6 +3,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { InputNode } from '../core/InputNode.js'
 import { TextureNode } from './TextureNode.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function ScreenNode( uv ) {
 
 	TextureNode.call( this, undefined, uv );

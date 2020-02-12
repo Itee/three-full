@@ -8,7 +8,6 @@ import { Material } from './../materials/Material';
 import { Object3D } from './../core/Object3D';
 import { Color } from '../math/Color';
 import { Texture } from '../textures/Texture';
-// Scenes /////////////////////////////////////////////////////////////////////
 export class Scene extends Object3D {
   constructor();
 

@@ -4,6 +4,10 @@
 import { SpriteNode } from './nodes/SpriteNode.js'
 import { NodeMaterial } from './NodeMaterial.js'
 import { NodeUtils } from '../core/NodeUtils.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function SpriteNodeMaterial() {
 
 	var node = new SpriteNode();

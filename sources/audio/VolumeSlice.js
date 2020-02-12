@@ -10,12 +10,26 @@ import {
 	ClampToEdgeWrapping,
 	LinearFilter
 } from '../constants.js'
+
+/**
+ * This class has been made to hold a slice of a volume data
+ * @class
+ * @author Valentin Demeusy / https://github.com/stity
+ * @param   {Volume} volume    The associated volume
+ * @param   {number}       [index=0] The index of the slice
+ * @param   {string}       [axis='z']      For now only 'x', 'y' or 'z' but later it will change to a normal vector
+ * @see Volume
+ */
 var VolumeSlice = function ( volume, index, axis ) {
 
 	var slice = this;
-	
+	/**
+	 * @member {Volume} volume The associated volume
+	 */
 	this.volume = volume;
-	
+	/**
+	 * @member {Number} index The index of the slice, if changed, will automatically call updateGeometry at the next repaint
+	 */
 	index = index || 0;
 	Object.defineProperty( this, 'index', {
 		get: function () {
@@ -31,25 +45,65 @@ var VolumeSlice = function ( volume, index, axis ) {
 
 		}
 	} );
-	
+	/**
+	 * @member {String} axis The normal axis
+	 */
 	this.axis = axis || 'z';
+
+	/**
+	 * @member {HTMLCanvasElement} canvas The final canvas used for the texture
+	 */
+	/**
+	 * @member {CanvasRenderingContext2D} ctx Context of the canvas
+	 */
 	this.canvas = document.createElement( 'canvas' );
+	/**
+	 * @member {HTMLCanvasElement} canvasBuffer The intermediary canvas used to paint the data
+	 */
+	/**
+	 * @member {CanvasRenderingContext2D} ctxBuffer Context of the canvas buffer
+	 */
 	this.canvasBuffer = document.createElement( 'canvas' );
 	this.updateGeometry();
 	var canvasMap = new Texture( this.canvas );
 	canvasMap.minFilter = LinearFilter;
 	canvasMap.wrapS = canvasMap.wrapT = ClampToEdgeWrapping;
 	var material = new MeshBasicMaterial( { map: canvasMap, side: DoubleSide, transparent: true } );
-	
+	/**
+	 * @member {Mesh} mesh The mesh ready to get used in the scene
+	 */
 	this.mesh = new Mesh( this.geometry, material );
-	
+	/**
+	 * @member {Boolean} geometryNeedsUpdate If set to true, updateGeometry will be triggered at the next repaint
+	 */
 	this.geometryNeedsUpdate = true;
 	this.repaint();
+
+	/**
+	 * @member {Number} iLength Width of slice in the original coordinate system, corresponds to the width of the buffer canvas
+	 */
+
+	/**
+	 * @member {Number} jLength Height of slice in the original coordinate system, corresponds to the height of the buffer canvas
+	 */
+
+	/**
+	 * @member {Function} sliceAccess Function that allow the slice to access right data
+	 * @see Volume.extractPerpendicularPlane
+	 * @param {Number} i The first coordinate
+	 * @param {Number} j The second coordinate
+	 * @returns {Number} the index corresponding to the voxel in volume.data of the given position in the slice
+	 */
 };
 
 VolumeSlice.prototype = {
 
 	constructor: VolumeSlice,
+
+	/**
+	 * @member {Function} repaint Refresh the texture and the geometry if geometryNeedsUpdate is set to true
+	 * @memberof VolumeSlice
+	 */
 	repaint: function () {
 
 		if ( this.geometryNeedsUpdate ) {
@@ -126,6 +180,12 @@ VolumeSlice.prototype = {
 		this.mesh.material.map.needsUpdate = true;
 
 	},
+
+	/**
+	 * @member {Function} Refresh the geometry according to axis and index
+	 * @see Volume.extractPerpendicularPlane
+	 * @memberof VolumeSlice
+	 */
 	updateGeometry: function () {
 
 		var extracted = this.volume.extractPerpendicularPlane( this.axis, this.index );

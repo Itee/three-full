@@ -3,6 +3,29 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Material } from './Material.js'
 import { Vector3 } from '../math/Vector3.js'
+/**
+ * @author WestLangley / http://github.com/WestLangley
+ *
+ * parameters = {
+ *
+ *  referencePosition: <float>,
+ *  nearDistance: <float>,
+ *  farDistance: <float>,
+ *
+ *  skinning: <bool>,
+ *  morphTargets: <bool>,
+ *
+ *  map: new Texture( <Image> ),
+ *
+ *  alphaMap: new Texture( <Image> ),
+ *
+ *  displacementMap: new Texture( <Image> ),
+ *  displacementScale: <float>,
+ *  displacementBias: <float>
+ *
+ * }
+ */
+
 function MeshDistanceMaterial( parameters ) {
 
 	Material.call( this );

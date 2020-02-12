@@ -10,6 +10,14 @@ import { Layers } from './Layers.js'
 import { Matrix3 } from '../math/Matrix3.js'
 import { _Math } from '../math/Math.js'
 import { TrianglesDrawMode } from '../constants.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author mikael emtinger / http://gomo.se/
+ * @author alteredq / http://alteredqualia.com/
+ * @author WestLangley / http://github.com/WestLangley
+ * @author elephantatwork / www.elephantatwork.ch
+ */
+
 var object3DId = 0;
 
 function Object3D() {

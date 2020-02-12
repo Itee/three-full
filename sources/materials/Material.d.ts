@@ -12,8 +12,6 @@ import {
   Side,
   Colors,
 } from '../constants';
-
-// Materials //////////////////////////////////////////////////////////////////////////////////
 export let MaterialIdCount: number;
 
 export interface MaterialParameters {

@@ -5,6 +5,13 @@ import { Geometry } from '../core/Geometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Vector3 } from '../math/Vector3.js'
+
+/**
+ * @author oosmoxiecode
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * based on http://www.blackpawn.com/texts/pqtorus/
+ */
 // TorusKnotGeometry
 
 function TorusKnotGeometry( radius, tube, tubularSegments, radialSegments, p, q, heightScale ) {

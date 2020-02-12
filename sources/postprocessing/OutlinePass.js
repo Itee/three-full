@@ -14,6 +14,7 @@ import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Vector3 } from '../math/Vector3.js'
+import { CopyShader } from '../shaders/CopyShader.js'
 import {
 	DoubleSide,
 	NoBlending,
@@ -22,8 +23,12 @@ import {
 	RGBAFormat,
 	RGBADepthPacking
 } from '../constants.js'
-import { CopyShader } from '../shaders/CopyShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author spidersharma / http://eduperiment.com/
+ */
+
 var OutlinePass = function ( resolution, scene, camera, selectedObjects ) {
 
 	this.renderScene = scene;

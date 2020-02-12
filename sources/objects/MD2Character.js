@@ -8,6 +8,11 @@ import { TextureLoader } from '../loaders/TextureLoader.js'
 import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
 import { Mesh } from './Mesh.js'
 import { UVMapping } from '../constants.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 var MD2Character = function () {
 
 	var scope = this;

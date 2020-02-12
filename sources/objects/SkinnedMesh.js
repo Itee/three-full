@@ -4,6 +4,12 @@
 import { Mesh } from './Mesh.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Vector4 } from '../math/Vector4.js'
+
+/**
+ * @author mikael emtinger / http://gomo.se/
+ * @author alteredq / http://alteredqualia.com/
+ * @author ikerr / http://verold.com
+ */
 function SkinnedMesh( geometry, material ) {
 
 	if ( geometry && geometry.isGeometry ) {

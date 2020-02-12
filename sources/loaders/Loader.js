@@ -19,6 +19,10 @@ import { _Math } from '../math/Math.js'
 import { MaterialLoader } from './MaterialLoader.js'
 import { TextureLoader } from './TextureLoader.js'
 import { Color } from '../math/Color.js'
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 function Loader() {}
 
 Loader.Handlers = {

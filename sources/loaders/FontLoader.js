@@ -4,6 +4,10 @@
 import { Font } from '../core/Font.js'
 import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
 function FontLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

@@ -29,6 +29,9 @@ import { SkinnedMesh } from '../../objects/SkinnedMesh.js'
 import { Skeleton } from '../../objects/Skeleton.js'
 import { Scene } from '../../scenes/Scene.js'
 import { Texture } from '../../textures/Texture.js'
+import { AnimationUtils } from '../../animation/AnimationUtils.js'
+import { QuaternionKeyframeTrack } from '../../animation/tracks/QuaternionKeyframeTrack.js'
+import { VectorKeyframeTrack } from '../../animation/tracks/VectorKeyframeTrack.js'
 import {
 	FrontSide,
 	BackSide,
@@ -77,20 +80,25 @@ import {
 	InterpolateDiscrete,
 	InterpolateLinear
 } from '../../constants.js'
-import { DefaultLoadingManager } from '../LoadingManager.js'
 import { Loader } from '../Loader.js'
+import { LoaderUtils } from '../LoaderUtils.js'
+import { DefaultLoadingManager } from '../LoadingManager.js'
+import { MeshBasicMaterial } from '../../materials/MeshBasicMaterial.js'
+import { MeshLambertMaterial } from '../../materials/MeshLambertMaterial.js'
 import { Matrix3 } from '../../math/Matrix3.js'
 import { Vector2 } from '../../math/Vector2.js'
 import { Vector3 } from '../../math/Vector3.js'
 import { Vector4 } from '../../math/Vector4.js'
 import { UniformsUtils } from '../../renderers/shaders/UniformsUtils.js'
-import { MeshBasicMaterial } from '../../materials/MeshBasicMaterial.js'
-import { MeshLambertMaterial } from '../../materials/MeshLambertMaterial.js'
-import { QuaternionKeyframeTrack } from '../../animation/tracks/QuaternionKeyframeTrack.js'
-import { VectorKeyframeTrack } from '../../animation/tracks/VectorKeyframeTrack.js'
-import { AnimationUtils } from '../../animation/AnimationUtils.js'
-import { LoaderUtils } from '../LoaderUtils.js'
 import { _Math } from '../../math/Math.js'
+
+/**
+ * @author Rich Tibbett / https://github.com/richtr
+ * @author mrdoob / http://mrdoob.com/
+ * @author Tony Parisi / http://www.tonyparisi.com/
+ * @author Takahiro / https://github.com/takahirox
+ */
+
 var LegacyGLTFLoader = ( function () {
 
 	function LegacyGLTFLoader( manager ) {
@@ -208,6 +216,9 @@ var LegacyGLTFLoader = ( function () {
 		}
 
 	};
+
+	/* GLTFREGISTRY */
+
 	function GLTFRegistry() {
 
 		var objects = {};
@@ -257,6 +268,9 @@ var LegacyGLTFLoader = ( function () {
 		};
 
 	}
+
+	/* GLTFSHADERS */
+
 	LegacyGLTFLoader.Shaders = {
 
 		update: function () {
@@ -266,6 +280,9 @@ var LegacyGLTFLoader = ( function () {
 		}
 
 	};
+
+	/* GLTFSHADER */
+
 	function GLTFShader( targetNode, allNodes ) {
 
 		var boundUniforms = {};
@@ -366,6 +383,8 @@ var LegacyGLTFLoader = ( function () {
 		}
 
 	};
+	/* ANIMATION */
+
 	LegacyGLTFLoader.Animations = {
 
 		update: function () {
@@ -375,10 +394,18 @@ var LegacyGLTFLoader = ( function () {
 		}
 
 	};
+
+	/*********************************/
+	/********** EXTENSIONS ***********/
+	/*********************************/
+
 	var EXTENSIONS = {
 		KHR_BINARY_GLTF: 'KHR_binary_glTF',
 		KHR_MATERIALS_COMMON: 'KHR_materials_common'
 	};
+
+	/* MATERIALS COMMON EXTENSION */
+
 	function GLTFMaterialsCommonExtension( json ) {
 
 		this.name = EXTENSIONS.KHR_MATERIALS_COMMON;
@@ -427,6 +454,9 @@ var LegacyGLTFLoader = ( function () {
 		}
 
 	}
+
+	/* BINARY EXTENSION */
+
 	var BINARY_EXTENSION_BUFFER_NAME = 'binary_glTF';
 
 	var BINARY_EXTENSION_HEADER_DEFAULTS = { magic: 'glTF', version: 1, contentFormat: 0 };
@@ -475,6 +505,13 @@ var LegacyGLTFLoader = ( function () {
 		return LoaderUtils.decodeText( array );
 
 	};
+
+	/*********************************/
+	/********** INTERNALS ************/
+	/*********************************/
+
+	/* CONSTANTS */
+
 	var WEBGL_CONSTANTS = {
 		FLOAT: 5126,
 		//FLOAT_MAT2: 35674,
@@ -616,6 +653,9 @@ var LegacyGLTFLoader = ( function () {
 		32823: 'POLYGON_OFFSET_FILL',
 		32926: 'SAMPLE_ALPHA_TO_COVERAGE'
 	};
+
+	/* UTILITY FUNCTIONS */
+
 	function _each( object, callback, thisObj ) {
 
 		if ( ! object ) {
@@ -880,6 +920,9 @@ var LegacyGLTFLoader = ( function () {
 		return new RawShaderMaterial( this.params );
 
 	};
+
+	/* GLTF PARSER */
+
 	function GLTFParser( json, extensions, options ) {
 
 		this.json = json || {};

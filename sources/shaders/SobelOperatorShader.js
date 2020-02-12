@@ -2,6 +2,16 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector2 } from '../math/Vector2.js'
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Sobel Edge Detection (see https://youtu.be/uihBwtPIBxM)
+ *
+ * As mentioned in the video the Sobel operator expects a grayscale image as input.
+ *
+ */
+
 var SobelOperatorShader = {
 
 	uniforms: {

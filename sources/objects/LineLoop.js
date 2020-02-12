@@ -2,6 +2,10 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Line } from './Line.js'
+/**
+ * @author mgreter / http://github.com/mgreter
+ */
+
 function LineLoop( geometry, material ) {
 
 	Line.call( this, geometry, material );

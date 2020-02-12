@@ -3,6 +3,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { LineSegmentsGeometry } from './LineSegmentsGeometry.js'
 import { WireframeGeometry } from '../geometries/WireframeGeometry.js'
+
+/**
+ * @author WestLangley / http://github.com/WestLangley
+ *
+ */
+
 var WireframeGeometry2 = function ( geometry ) {
 
 	LineSegmentsGeometry.call( this );

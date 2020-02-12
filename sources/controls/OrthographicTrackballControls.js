@@ -5,6 +5,14 @@ import { EventDispatcher } from '../core/EventDispatcher.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Quaternion } from '../math/Quaternion.js'
+
+/**
+ * @author Eberhard Graether / http://egraether.com/
+ * @author Mark Lundin 	/ http://mark-lundin.com
+ * @author Patrick Fuller / http://patrick-fuller.com
+ * @author Max Smolens / https://github.com/msmolens
+ */
+
 var OrthographicTrackballControls = function ( object, domElement ) {
 
 	var _this = this;
@@ -32,7 +40,7 @@ var OrthographicTrackballControls = function ( object, domElement ) {
 	this.staticMoving = false;
 	this.dynamicDampingFactor = 0.2;
 
-	this.keys = [ 65 , 83 , 68  ];
+	this.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
 
 	// internals
 

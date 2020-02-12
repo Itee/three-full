@@ -8,6 +8,13 @@ import { Path } from '../core/Path.js'
 import { Matrix3 } from '../math/Matrix3.js'
 import { Vector3 } from '../math/Vector3.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author zz85 / http://joshuakoo.com/
+ * @author yomboprime / https://yombo.org
+ */
+
 var SVGLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -461,6 +468,16 @@ SVGLoader.prototype = {
 			return path;
 
 		}
+
+		/**
+		 * https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
+		 * https://mortoray.com/2017/02/16/rendering-an-svg-elliptical-arc-as-bezier-curves/ Appendix: Endpoint to center arc conversion
+		 * From
+		 * rx ry x-axis-rotation large-arc-flag sweep-flag x y
+		 * To
+		 * aX, aY, xRadius, yRadius, aStartAngle, aEndAngle, aClockwise, aRotation
+		 */
+
 		function parseArcCommand( path, rx, ry, x_axis_rotation, large_arc_flag, sweep_flag, start, end ) {
 
 			x_axis_rotation = x_axis_rotation * Math.PI / 180;
@@ -523,6 +540,11 @@ SVGLoader.prototype = {
 			return ang;
 
 		}
+
+		/*
+		* According to https://www.w3.org/TR/SVG/shapes.html#RectElementRXAttribute
+		* rounded corner should be rendered to elliptical arc, but bezier curve does the job well enough
+		*/
 		function parseRectNode( node, style ) {
 
 			var x = parseFloat( node.getAttribute( 'x' ) || 0 );

@@ -7,7 +7,30 @@ import { Quaternion } from '../math/Quaternion.js'
 import { AnimationMixer } from './AnimationMixer.js'
 import { CCDIKSolver } from './CCDIKSolver.js'
 import { MMDPhysics } from './MMDPhysics.js'
+
+/**
+ * @author takahiro / https://github.com/takahirox
+ *
+ * MMDAnimationHelper handles animation of MMD assets loaded by MMDLoader
+ * with MMD special features as IK, Grant, and Physics.
+ *
+ * Dependencies
+ *  - ammo.js https://github.com/kripken/ammo.js
+ *  - MMDPhysics
+ *  - CCDIKSolver
+ *
+ * TODO
+ *  - more precise grant skinning support.
+ */
+
 var MMDAnimationHelper = ( function () {
+
+	/**
+	 * @param {Object} params - (optional)
+	 * @param {boolean} params.sync - Whether animation durations of added objects are synched. Default is true.
+	 * @param {Number} params.afterglow - Default is 0.0.
+	 * @param {boolean} params resetPhysicsOnLoop - Default is true.
+	 */
 	function MMDAnimationHelper( params ) {
 
 		params = params || {};
@@ -51,6 +74,23 @@ var MMDAnimationHelper = ( function () {
 	MMDAnimationHelper.prototype = {
 
 		constructor: MMDAnimationHelper,
+
+		/**
+		 * Adds an Three.js Object to helper and setups animation.
+		 * The anmation durations of added objects are synched
+		 * if this.configuration.sync is true.
+		 *
+		 * @param {SkinnedMesh|Camera|Audio} object
+		 * @param {Object} params - (optional)
+		 * @param {AnimationClip|Array<AnimationClip>} params.animation - Only for SkinnedMesh and Camera. Default is undefined.
+		 * @param {boolean} params.physics - Only for SkinnedMesh. Default is true.
+		 * @param {Integer} params.warmup - Only for SkinnedMesh and physics is true. Default is 60.
+		 * @param {Number} params.unitStep - Only for SkinnedMesh and physics is true. Default is 1 / 65.
+		 * @param {Integer} params.maxStepNum - Only for SkinnedMesh and physics is true. Default is 3.
+		 * @param {Vector3} params.gravity - Only for SkinnedMesh and physics is true. Default ( 0, - 9.8 * 10, 0 ).
+		 * @param {Number} params.delayTime - Only for Audio. Default is 0.0.
+		 * @return {MMDAnimationHelper}
+		 */
 		add: function ( object, params ) {
 
 			params = params || {};
@@ -82,6 +122,13 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
+
+		/**
+		 * Removes an Three.js Object from helper.
+		 *
+		 * @param {SkinnedMesh|Camera|Audio} object
+		 * @return {MMDAnimationHelper}
+		 */
 		remove: function ( object ) {
 
 			if ( object.isSkinnedMesh ) {
@@ -111,6 +158,13 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
+
+		/**
+		 * Updates the animation.
+		 *
+		 * @param {Number} delta
+		 * @return {MMDAnimationHelper}
+		 */
 		update: function ( delta ) {
 
 			if ( this.audioManager !== null ) this.audioManager.control( delta );
@@ -128,6 +182,18 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
+
+		/**
+		 * Changes the pose of SkinnedMesh as VPD specifies.
+		 *
+		 * @param {SkinnedMesh} mesh
+		 * @param {Object} vpd - VPD content parsed MMDParser
+		 * @param {Object} params - (optional)
+		 * @param {boolean} params.resetPose - Default is true.
+		 * @param {boolean} params.ik - Default is true.
+		 * @param {boolean} params.grant - Default is true.
+		 * @return {MMDAnimationHelper}
+		 */
 		pose: function ( mesh, vpd, params ) {
 
 			params = params || {};
@@ -178,6 +244,14 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
+
+		/**
+		 * Enabes/Disables an animation feature.
+		 *
+		 * @param {string} key
+		 * @param {boolean} enebled
+		 * @return {MMDAnimationHelper}
+		 */
 		enable: function ( key, enabled ) {
 
 			if ( this.enabled[ key ] === undefined ) {
@@ -202,6 +276,13 @@ var MMDAnimationHelper = ( function () {
 			return this;
 
 		},
+
+		/**
+		 * Creates an GrantSolver instance.
+		 *
+		 * @param {SkinnedMesh} mesh
+		 * @return {GrantSolver}
+		 */
 		createGrantSolver: function ( mesh ) {
 
 			return new GrantSolver( mesh, mesh.geometry.userData.MMD.grants );
@@ -567,6 +648,11 @@ var MMDAnimationHelper = ( function () {
 				params );
 
 		},
+
+		/*
+		 * Detects the longest duration and then sets it to them to sync.
+		 * TODO: Not to access private properties ( ._actions and ._clip )
+		 */
 		_syncDuration: function () {
 
 			var max = 0.0;
@@ -697,6 +783,16 @@ var MMDAnimationHelper = ( function () {
 			}
 
 		},
+
+		/*
+		 * Avoiding these two issues by restore/save bones before/after mixer animation.
+		 *
+		 * 1. PropertyMixer used by AnimationMixer holds cache value in .buffer.
+		 *    Calculating IK, Grant, and Physics after mixer animation can break
+		 *    the cache coherency.
+		 *
+		 * 2. Applying Grant two or more times without reset the posing breaks model.
+		 */
 		_saveBones: function ( mesh ) {
 
 			var objects = this.objects.get( mesh );
@@ -804,6 +900,12 @@ var MMDAnimationHelper = ( function () {
 	};
 
 	//
+
+	/**
+	 * @param {Audio} audio
+	 * @param {Object} params - (optional)
+	 * @param {Nuumber} params.delayTime
+	 */
 	function AudioManager( audio, params ) {
 
 		params = params || {};
@@ -823,6 +925,11 @@ var MMDAnimationHelper = ( function () {
 	AudioManager.prototype = {
 
 		constructor: AudioManager,
+
+		/**
+		 * @param {Number} delta
+		 * @return {AudioManager}
+		 */
 		control: function ( delta ) {
 
 			this.elapsed += delta;
@@ -866,6 +973,11 @@ var MMDAnimationHelper = ( function () {
 		}
 
 	};
+
+	/**
+	 * @param {SkinnedMesh} mesh
+	 * @param {Array<Object>} grants
+	 */
 	function GrantSolver( mesh, grants ) {
 
 		this.mesh = mesh;
@@ -876,6 +988,10 @@ var MMDAnimationHelper = ( function () {
 	GrantSolver.prototype = {
 
 		constructor: GrantSolver,
+
+		/**
+		 * @return {GrantSolver}
+		 */
 		update: function () {
 
 			var quaternion = new Quaternion();

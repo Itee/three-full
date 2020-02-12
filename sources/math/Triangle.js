@@ -2,6 +2,11 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from './Vector3.js'
+/**
+ * @author bhouston / http://clara.io
+ * @author mrdoob / http://mrdoob.com/
+ */
+
 function Triangle( a, b, c ) {
 
 	this.a = ( a !== undefined ) ? a : new Vector3();

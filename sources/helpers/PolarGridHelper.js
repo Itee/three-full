@@ -7,6 +7,12 @@ import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Color } from '../math/Color.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author Mugen87 / http://github.com/Mugen87
+ * @author Hectate / http://www.github.com/Hectate
+ */
 function PolarGridHelper( radius, radials, circles, divisions, color1, color2 ) {
 
 	radius = radius || 10;

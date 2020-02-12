@@ -9,6 +9,16 @@ import { FaceColors } from '../constants.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ *	- shows frustum, line of sight and up of the camera
+ *	- suitable for fast updates
+ * 	- based on frustum visualization in lightgl.js shadowmap example
+ *		http://evanw.github.com/lightgl.js/tests/shadowmap.html
+ */
 function CameraHelper( camera ) {
 
 	var geometry = new BufferGeometry();

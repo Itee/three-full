@@ -16,6 +16,13 @@ import {
 } from '../constants.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ * @author mikael emtinger / http://gomo.se/
+ * @author jonobr1 / http://jonobr1.com/
+ */
+
 function Mesh( geometry, material ) {
 
 	Object3D.call( this );

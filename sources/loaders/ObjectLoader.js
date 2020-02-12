@@ -131,6 +131,10 @@ import {
 	BoxGeometry,
 	BoxBufferGeometry
 } from '../geometries/BoxGeometry.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
 var Geometries = {
     WireframeGeometry: WireframeGeometry,
     TetrahedronGeometry: TetrahedronGeometry,

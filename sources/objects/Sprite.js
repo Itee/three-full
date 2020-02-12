@@ -10,6 +10,11 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { InterleavedBuffer } from '../core/InterleavedBuffer.js'
 import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js'
 import { SpriteMaterial } from '../materials/SpriteMaterial.js'
+
+/**
+ * @author mikael emtinger / http://gomo.se/
+ * @author alteredq / http://alteredqualia.com/
+ */
 var geometry;
 
 function Sprite( material ) {

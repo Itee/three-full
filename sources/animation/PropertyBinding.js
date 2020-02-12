@@ -1,6 +1,16 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ *
+ * A reference to a real property in the scene graph.
+ *
+ *
+ * @author Ben Houston / http://clara.io/
+ * @author David Sarno / http://lighthaus.us/
+ * @author tschw
+ */
+
 // Characters [].:/ are reserved for track binding syntax.
 var RESERVED_CHARS_RE = '\\[\\]\\.:\\/';
 
@@ -92,6 +102,14 @@ Object.assign( PropertyBinding, {
 		}
 
 	},
+
+	/**
+	 * Replaces spaces with underscores and removes unsupported characters from
+	 * node names, to ensure compatibility with parseTrackName().
+	 *
+	 * @param  {string} name Node name to be sanitized.
+	 * @return {string}
+	 */
 	sanitizeNodeName: ( function () {
 
 		var reservedRe = new RegExp( '[' + RESERVED_CHARS_RE + ']', 'g' );

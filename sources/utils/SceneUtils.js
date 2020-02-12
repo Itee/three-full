@@ -4,6 +4,11 @@
 import { Group } from '../objects/Group.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Matrix4 } from '../math/Matrix4.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 var SceneUtils = {
 
 	createMultiMaterialObject: function ( geometry, materials ) {

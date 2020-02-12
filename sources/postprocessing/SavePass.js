@@ -8,12 +8,17 @@ import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { CopyShader } from '../shaders/CopyShader.js'
 import {
 	LinearFilter,
 	RGBFormat
 } from '../constants.js'
-import { CopyShader } from '../shaders/CopyShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 var SavePass = function ( renderTarget ) {
 
 	Pass.call( this );

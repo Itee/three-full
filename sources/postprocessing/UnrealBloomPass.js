@@ -12,14 +12,21 @@ import { Scene } from '../scenes/Scene.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { CopyShader } from '../shaders/CopyShader.js'
+import { LuminosityHighPassShader } from '../shaders/LuminosityHighPassShader.js'
 import {
 	AdditiveBlending,
 	LinearFilter,
 	RGBAFormat
 } from '../constants.js'
-import { LuminosityHighPassShader } from '../shaders/LuminosityHighPassShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
-import { CopyShader } from '../shaders/CopyShader.js'
+
+/**
+ * @author spidersharma / http://eduperiment.com/
+ *
+ * Inspired from Unreal Engine
+ * https://docs.unrealengine.com/latest/INT/Engine/Rendering/PostProcessEffects/Bloom/
+ */
 var UnrealBloomPass = function ( resolution, strength, radius, threshold ) {
 
 	Pass.call( this );

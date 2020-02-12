@@ -7,6 +7,16 @@ import { LinearInterpolant } from '../math/interpolants/LinearInterpolant.js'
 import { PropertyBinding } from './PropertyBinding.js'
 import { PropertyMixer } from './PropertyMixer.js'
 import { AnimationClip } from './AnimationClip.js'
+/**
+ *
+ * Player for AnimationClips.
+ *
+ *
+ * @author Ben Houston / http://clara.io/
+ * @author David Sarno / http://lighthaus.us/
+ * @author tschw
+ */
+
 function AnimationMixer( root ) {
 
 	this._root = root;

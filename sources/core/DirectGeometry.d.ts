@@ -42,8 +42,6 @@ export class DirectGeometry extends EventDispatcher {
   computeGroups(geometry: Geometry): void;
   fromGeometry(geometry: Geometry): DirectGeometry;
   dispose(): void;
-
-  // EventDispatcher mixins
   addEventListener(type: string, listener: (event: Event) => void): void;
   hasEventListener(type: string, listener: (event: Event) => void): boolean;
   removeEventListener(type: string, listener: (event: Event) => void): void;

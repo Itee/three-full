@@ -3,6 +3,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from '../core/TempNode.js'
 import { NodeLib } from '../core/NodeLib.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 var vertexDict = [ 'uv', 'uv2' ],
 	fragmentDict = [ 'vUv', 'vUv2' ];
 

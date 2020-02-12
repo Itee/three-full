@@ -5,6 +5,23 @@ import { AnimationMixer } from './AnimationMixer.js'
 import { AnimationClip } from './AnimationClip.js'
 import { PropertyBinding } from './PropertyBinding.js'
 import { AnimationUtils } from './AnimationUtils.js'
+
+/**
+ * Controller class for the Timeliner GUI.
+ *
+ * Timeliner GUI library (required to use this class):
+ *
+ * 		./libs/timeliner_gui.min.js
+ *
+ * Source code:
+ *
+ * 		https://github.com/tschw/timeliner_gui
+ * 		https://github.com/zz85/timeliner (fork's origin)
+ *
+ * @author tschw
+ *
+ */
+
 var TimelinerController = function TimelinerController( scene, trackInfo, onUpdate ) {
 
 	this._scene = scene;
