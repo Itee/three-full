@@ -19,6 +19,7 @@ module.exports = {
         'libs',
         'Three.js',
         'Three.Legacy.js',
+        'Three.Legacy.d.ts',
         'polyfills.js',     // Ignore pure function call (include from gulp)
         'HelioWebXRPolyfill.js',     // Ignore pure function call (include from gulp)
         '.DS_Store',        // Ignore DS_Store from r90
@@ -46,10 +47,9 @@ module.exports = {
 
         // Specific file
         'Cloth.js',							// Use global variable from example html ! Need to be refactored
-        'OceanShaders.js',                  // Todo: check how to extends imported lib properly
-        'RectAreaLightUniformsLib.js',      // Todo: check how to extends imported lib properly
         'Volume.js',                        // damned eval
         'NRRDLoader.js',                    // Import Volume.js
+        'VRMLLoader.js',                    // rely on unbundlable chevrotain amd module using eval...
         'XLoader.js'                     	// amd module
     ],
     output:    path.join( __dirname, '..', 'sources' ),
@@ -105,20 +105,24 @@ module.exports = {
         },
         CurveExtras:                 {
             replacements:   [
-                [ 'Curves.GrannyKnot = GrannyKnot;', '' ],
-                [ 'Curves.HeartCurve = HeartCurve;', '' ],
-                [ 'Curves.VivianiCurve = VivianiCurve;', '' ],
-                [ 'Curves.KnotCurve = KnotCurve;', '' ],
-                [ 'Curves.HelixCurve = HelixCurve;', '' ],
-                [ 'Curves.TrefoilKnot = TrefoilKnot;', '' ],
-                [ 'Curves.TorusKnot = TorusKnot;', '' ],
-                [ 'Curves.CinquefoilKnot = CinquefoilKnot;', '' ],
-                [ 'Curves.TrefoilPolynomialKnot = TrefoilPolynomialKnot;', '' ],
-                [ 'Curves.FigureEightPolynomialKnot = FigureEightPolynomialKnot;', '' ],
-                [ 'Curves.DecoratedTorusKnot4a = DecoratedTorusKnot4a;', '' ],
-                [ 'Curves.DecoratedTorusKnot4b = DecoratedTorusKnot4b;', '' ],
-                [ 'Curves.DecoratedTorusKnot5a = DecoratedTorusKnot5a;', '' ],
-                [ 'Curves.DecoratedTorusKnot5c = DecoratedTorusKnot5c;', '' ]
+                [ 'Curves = ( function () {', '' ],
+                [ /return {([\n].*)*/g, '\n' ]
+            ],
+            exportsOverride: [
+                'GrannyKnot',
+                'HeartCurve',
+                'VivianiCurve',
+                'KnotCurve',
+                'HelixCurve',
+                'TrefoilKnot',
+                'TorusKnot',
+                'CinquefoilKnot',
+                'TrefoilPolynomialKnot',
+                'FigureEightPolynomialKnot',
+                'DecoratedTorusKnot4a',
+                'DecoratedTorusKnot4b',
+                'DecoratedTorusKnot5a',
+                'DecoratedTorusKnot5c'
             ],
             outputOverride: 'curves/CurveExtras.js'
         },
@@ -134,12 +138,27 @@ module.exports = {
                 'LineCurve3',
                 'QuadraticBezierCurve',
                 'QuadraticBezierCurve3',
-                'SplineCurve'
+                'SplineCurve',
+                'GrannyKnot',
+                'HeartCurve',
+                'VivianiCurve',
+                'KnotCurve',
+                'HelixCurve',
+                'TrefoilKnot',
+                'TorusKnot',
+                'CinquefoilKnot',
+                'TrefoilPolynomialKnot',
+                'FigureEightPolynomialKnot',
+                'DecoratedTorusKnot4a',
+                'DecoratedTorusKnot4b',
+                'DecoratedTorusKnot5a',
+                'DecoratedTorusKnot5c'
             ],
             replacements:   [
                 [
                     'function CurvePath() {',
                     'var Curves = {\n' +
+
                     '    ArcCurve: ArcCurve,\n' +
                     '    CatmullRomCurve3: CatmullRomCurve3,\n' +
                     '    CubicBezierCurve: CubicBezierCurve,\n' +
@@ -149,7 +168,23 @@ module.exports = {
                     '    LineCurve3: LineCurve3,\n' +
                     '    QuadraticBezierCurve: QuadraticBezierCurve,\n' +
                     '    QuadraticBezierCurve3: QuadraticBezierCurve3,\n' +
-                    '    SplineCurve: SplineCurve\n' +
+                    '    SplineCurve: SplineCurve,\n' +
+
+                    '    GrannyKnot: GrannyKnot,\n' +
+                    '    HeartCurve: HeartCurve,\n' +
+                    '    VivianiCurve: VivianiCurve,\n' +
+                    '    KnotCurve: KnotCurve,\n' +
+                    '    HelixCurve: HelixCurve,\n' +
+                    '    TrefoilKnot: TrefoilKnot,\n' +
+                    '    TorusKnot: TorusKnot,\n' +
+                    '    CinquefoilKnot: CinquefoilKnot,\n' +
+                    '    TrefoilPolynomialKnot: TrefoilPolynomialKnot,\n' +
+                    '    FigureEightPolynomialKnot: FigureEightPolynomialKnot,\n' +
+                    '    DecoratedTorusKnot4a: DecoratedTorusKnot4a,\n' +
+                    '    DecoratedTorusKnot4b: DecoratedTorusKnot4b,\n' +
+                    '    DecoratedTorusKnot5a: DecoratedTorusKnot5a,\n' +
+                    '    DecoratedTorusKnot5c: DecoratedTorusKnot5c\n' +
+
                     '}\n' +
                     'function CurvePath() {'
                 ]
@@ -161,7 +196,7 @@ module.exports = {
                 '_Math'
             ]
         },
-        DracoExporter:               {
+        DRACOExporter:               {
             importsOverride: [ 'BufferGeometry' ]
         },
         DRACOLoader:                 {
@@ -386,8 +421,8 @@ module.exports = {
             ]
         },
         ObjectLoader:                {
-            // Equivalent to ( import * as Geometries from 'intermediary exporter file Geometries' )
             imports:      [
+                // Equivalent to ( import * as Geometries from 'intermediary exporter file Geometries' )
                 'WireframeGeometry',
                 'TetrahedronGeometry',
                 'TetrahedronBufferGeometry',
@@ -426,7 +461,32 @@ module.exports = {
                 'CircleGeometry',
                 'CircleBufferGeometry',
                 'BoxGeometry',
-                'BoxBufferGeometry'
+                'BoxBufferGeometry',
+                // Equivalent to ( import * as Curves from 'intermediary exporter file Curves' )
+                'ArcCurve',
+                'CatmullRomCurve3',
+                'CubicBezierCurve',
+                'CubicBezierCurve3',
+                'EllipseCurve',
+                'LineCurve',
+                'LineCurve3',
+                'QuadraticBezierCurve',
+                'QuadraticBezierCurve3',
+                'SplineCurve',
+                'GrannyKnot',
+                'HeartCurve',
+                'VivianiCurve',
+                'KnotCurve',
+                'HelixCurve',
+                'TrefoilKnot',
+                'TorusKnot',
+                'CinquefoilKnot',
+                'TrefoilPolynomialKnot',
+                'FigureEightPolynomialKnot',
+                'DecoratedTorusKnot4a',
+                'DecoratedTorusKnot4b',
+                'DecoratedTorusKnot5a',
+                'DecoratedTorusKnot5c'
             ],
             replacements: [
                 [
@@ -471,6 +531,32 @@ module.exports = {
                     '    CircleBufferGeometry: CircleBufferGeometry,\n' +
                     '    BoxGeometry: BoxGeometry,\n' +
                     '    BoxBufferGeometry: BoxBufferGeometry\n' +
+                    '}\n' +
+                    'var Curves = {\n' +
+                    '	ArcCurve: ArcCurve,\n' +
+                    '	CatmullRomCurve3: CatmullRomCurve3,\n' +
+                    '	CubicBezierCurve: CubicBezierCurve,\n' +
+                    '	CubicBezierCurve3: CubicBezierCurve3,\n' +
+                    '	EllipseCurve: EllipseCurve,\n' +
+                    '	LineCurve: LineCurve,\n' +
+                    '	LineCurve3: LineCurve3,\n' +
+                    '	QuadraticBezierCurve: QuadraticBezierCurve,\n' +
+                    '	QuadraticBezierCurve3: QuadraticBezierCurve3,\n' +
+                    '	SplineCurve: SplineCurve,\n' +
+                    '	GrannyKnot: GrannyKnot,\n' +
+                    '	HeartCurve: HeartCurve,\n' +
+                    '	VivianiCurve: VivianiCurve,\n' +
+                    '	KnotCurve: KnotCurve,\n' +
+                    '	HelixCurve: HelixCurve,\n' +
+                    '	TrefoilKnot: TrefoilKnot,\n' +
+                    '	TorusKnot: TorusKnot,\n' +
+                    '	CinquefoilKnot: CinquefoilKnot,\n' +
+                    '	TrefoilPolynomialKnot: TrefoilPolynomialKnot,\n' +
+                    '	FigureEightPolynomialKnot: FigureEightPolynomialKnot,\n' +
+                    '	DecoratedTorusKnot4a: DecoratedTorusKnot4a,\n' +
+                    '	DecoratedTorusKnot4b: DecoratedTorusKnot4b,\n' +
+                    '	DecoratedTorusKnot5a: DecoratedTorusKnot5a,\n' +
+                    '	DecoratedTorusKnot5c: DecoratedTorusKnot5c,\n' +
                     '}\n' +
                     'function ObjectLoader( manager ) {'
                 ]
@@ -640,6 +726,12 @@ module.exports = {
         TempNode:                    {
             imports: [ '_Math' ]
         },
+        TextureCubeUVNode:               {
+            imports: [
+                '!ReflectNode',
+                '!FloatNode'
+            ]
+        },
         TransformControls:           {
             imports: [ '!CircleGeometry' ]
         },
@@ -665,6 +757,12 @@ module.exports = {
         VolumeShader:                {
             exportsOverride: [ 'VolumeRenderShader1' ]
         },
+//        VRMLLoader:                {
+//            imports: [
+//                [ 'chevrotain', 'from', '../libs/chevrotain.min.js' ]
+////                [ 'chevrotain', 'from', '../libs/chevrotain.module.min.js' ],
+//            ],
+//        },
         Water:                       {
             imports: [
                 '_Math'

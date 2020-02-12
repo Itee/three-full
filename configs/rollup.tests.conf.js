@@ -115,7 +115,7 @@ function _excludesFilesPaths ( filePaths, excludes ) {
                     isExclude = true
                 }
 
-            } else if ( path.contains( excludePattern ) ) {
+            } else if ( path.includes( excludePattern ) ) {
                 isExclude = true
             }
 
@@ -194,7 +194,9 @@ function RollupTestConfigurationBuilder () {
         'constants.js',
         'scene.js',
         'offscreen.js',
-        'jank.js'
+        'jank.js',
+
+        'libs'
     ]
 
     const basePath            = path.join( __dirname, '..' )

@@ -196,8 +196,7 @@ gulp.task( 'clean-sources', () => {
 gulp.task( 'clean-tests', () => {
 
     return del( [
-        './tests/**/*.js',
-        './tests/**/*.html'
+        './tests'
     ] )
 
 } )
@@ -254,6 +253,7 @@ gulp.task( 'convert-three', ( done ) => {
 
            copyPolyfills()
            copyShaderChunk()
+           //copyLibs()
            updateThreeExports()
 
            done()
@@ -270,6 +270,53 @@ gulp.task( 'convert-three', ( done ) => {
     function copyShaderChunk () {
 
         fs.writeFileSync( './sources/renderers/shaders/ShaderChunk.js', fs.readFileSync( './node_modules/three/src/renderers/shaders/ShaderChunk.js', 'utf8' ) )
+
+    }
+
+    function copyLibs () {
+
+        // From modules
+        fs.mkdirSync('./sources/libs', { recursive: true })
+        fs.writeFileSync( './sources/libs/chevrotain.module.min.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/chevrotain.module.min.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/dat.gui.module.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/dat.gui.module.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/gunzip.module.min.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/gunzip.module.min.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/inflate.module.min.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/inflate.module.min.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/mmdparser.module.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/mmdparser.module.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/stats.module.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/stats.module.js', 'utf8' ) )
+
+        // From libs
+        fs.mkdirSync('./sources/libs', { recursive: true })
+        fs.writeFileSync( './sources/libs/ammo.js', fs.readFileSync( './node_modules/three/examples/js/libs/ammo.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/chevrotain.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/chevrotain.min.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/ctm.js', fs.readFileSync( './node_modules/three/examples/js/libs/ctm.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/dat.gui.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/dat.gui.min.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/gunzip.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/gunzip.min.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/inflate.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/inflate.min.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/jszip.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/jszip.min.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/lzma.js', fs.readFileSync( './node_modules/three/examples/js/libs/lzma.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/mmdparser.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/mmdparser.min.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/opentype.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/opentype.min.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/stats.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/stats.min.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/system.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/system.min.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/timeliner_gui.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/timeliner_gui.min.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/tween.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/tween.min.js', 'utf8' ) )
+
+        fs.mkdirSync('./sources/libs/basis', { recursive: true })
+        fs.writeFileSync( './sources/libs/basis/basis_transcoder.js', fs.readFileSync( './node_modules/three/examples/js/libs/basis/basis_transcoder.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/basis/basis_transcoder.wasm', fs.readFileSync( './node_modules/three/examples/js/libs/basis/basis_transcoder.wasm', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/basis/README.md', fs.readFileSync( './node_modules/three/examples/js/libs/basis/README.md', 'utf8' ) )
+
+        fs.mkdirSync('./sources/libs/draco', { recursive: true })
+        fs.writeFileSync( './sources/libs/draco/draco_decoder.js', fs.readFileSync( './node_modules/three/examples/js/libs/draco/draco_decoder.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/draco/draco_decoder.wasm', fs.readFileSync( './node_modules/three/examples/js/libs/draco/draco_decoder.wasm', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/draco/draco_encoder.js', fs.readFileSync( './node_modules/three/examples/js/libs/draco/draco_encoder.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/draco/draco_wasm_wrapper.js', fs.readFileSync( './node_modules/three/examples/js/libs/draco/draco_wasm_wrapper.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/draco/README.md', fs.readFileSync( './node_modules/three/examples/js/libs/draco/README.md', 'utf8' ) )
+        fs.mkdirSync('./sources/libs/draco/gltf', { recursive: true })
+        fs.writeFileSync( './sources/libs/draco/gltf/draco_decoder.js', fs.readFileSync( './node_modules/three/examples/js/libs/draco/gltf/draco_decoder.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/draco/gltf/draco_decoder.wasm', fs.readFileSync( './node_modules/three/examples/js/libs/draco/gltf/draco_decoder.wasm', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/draco/gltf/draco_encoder.js', fs.readFileSync( './node_modules/three/examples/js/libs/draco/gltf/draco_encoder.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/draco/gltf/draco_wasm_wrapper.js', fs.readFileSync( './node_modules/three/examples/js/libs/draco/gltf/draco_wasm_wrapper.js', 'utf8' ) )
 
     }
 
@@ -374,7 +421,12 @@ gulp.task( 'build-test-unit', ( done ) => {
             describe( '${fileName}', () => {
                 ${Object.values( exports ).map( function ( value ) {
 
-                    const statement = `Three${Array.isArray(value) ? Object.values( value ).map( (property) => { return `['${property}']`}).join('') : `['${value}']`}`
+                    const statement = `Three${Array.isArray(value) ? 
+                        Object.values( value ).map( (property) => { 
+                            return `['${property}']`
+                        }).join('') 
+                        : 
+                        `['${value}']`}`
                     
                     return `
                             it( '${value} is bundlable', () => {
@@ -455,6 +507,24 @@ gulp.task( 'build-test-html', ( done ) => {
                     </style>
                 </head>
                 <body id="body">
+                    <div id="container">
+                        <h1 id="title"></h1>
+                        <div id="messages"></div>
+                    </div>
+                    
+                    <script type="application/javascript">
+                        var _isOnError = false
+                        window.onerror = function onErrorHandler( error ) {
+                            
+                            document.body.style.backgroundColor = 'red'
+                            document.getElementById('title').innerHTML = 'Error'
+                            
+                            var messageElement = document.createElement( 'p' )
+                            messageElement.innerHTML == error
+                            document.getElementById('messages').appendChild( messageElement )
+                            
+                        }
+                    </script>
                     ${imports} 
                     <script type="application/javascript" src="./${fileName}.test.js"></script>
                     <script type="application/javascript">
@@ -477,18 +547,12 @@ gulp.task( 'build-test-html', ( done ) => {
                     
                         function onResult ( title, message, bgColor ) {
                     
-                            var container = document.createElement( 'div' )
-                            document.body.appendChild( container )
-                    
-                            var titleElement = document.createElement( 'h1' )
-                            titleElement.innerHTML += title
-                            container.appendChild( titleElement )
-                    
-                            var messageElement = document.createElement( 'p' )
-                            messageElement.innerHTML += message
-                            container.appendChild( messageElement )
-                    
                             document.body.style.backgroundColor = bgColor
+                            document.getElementById('title').innerHTML = title
+                            
+                            var messageElement = document.createElement( 'p' )
+                            messageElement.innerHTML == message
+                            document.getElementById('messages').appendChild( messageElement )
                     
                         }
                     </script>
@@ -530,22 +594,48 @@ gulp.task( 'build-test-three', ( done ) => {
                         }
                     </style>
                 </head>
-                <body>
+                <body id="body">
+                    <div id="container">
+                        <h1 id="title"></h1>
+                        <div id="messages"></div>
+                    </div>
+                    
+                    <script type="application/javascript">
+                        var _isOnError = false
+                        window.onerror = function onErrorHandler( error ) {
+                            
+                            if(_isOnError) {
+                                var messageElement = document.createElement( 'p' )
+                                messageElement.innerHTML = error
+                                document.getElementById('messages').appendChild( messageElement )
+
+                                return
+                            }
+                            
+                            document.body.style.backgroundColor = 'red'
+                            document.getElementById('title').innerHTML = 'Error'
+                            
+                            var messageElement = document.createElement( 'p' )
+                            messageElement.innerHTML = error
+                            document.getElementById('messages').appendChild( messageElement )
+                            
+                        }
+                    </script>
                     <script type="application/javascript" src="builds/Three.iife.js"></script>
                     <script type="application/javascript">
                         /* global Three */
-                        var container = document.createElement( 'div' )
-                        document.body.appendChild( container )
-                
-                        var titleElement = document.createElement( 'h1' )
-                        titleElement.innerHTML += 'Three'
-                        container.appendChild( titleElement )
-                
-                        var messageElement = document.createElement( 'p' )
-                        messageElement.innerHTML += 'revision ' + Three.REVISION
-                        container.appendChild( messageElement )
-                
-                        document.body.style.backgroundColor = 'green'
+                        
+                        if(Three) {
+                            
+                            document.body.style.backgroundColor = 'green'
+                            document.getElementById('title').innerHTML = 'Three'
+                            
+                            var messageElement = document.createElement( 'p' )
+                            messageElement.innerHTML = 'revision ' + Three.REVISION
+                            document.getElementById('messages').appendChild( messageElement )
+                            
+                        }
+                        
                     </script>
                 </body>
             </html>
