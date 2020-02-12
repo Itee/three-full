@@ -328,17 +328,19 @@ gulp.task( 'build-test-unit', ( done ) => {
             describe( '${fileName}', () => {
                 ${Object.values( exports ).map( function ( value ) {
 
-            return `
-                    it( '${value} is bundlable', () => {
-                        should.exist( Three['${value}'] )
-                    } )
+                    const statement = `Three${Array.isArray(value) ? Object.values( value ).map( (property) => { return `['${property}']`}).join('') : `['${value}']`}`
                     
-                    it( '${value} is instanciable', () => {
-                        should.exist( new Three['${value}'](${args}) )
-                    } )
-                    `
-
-        } ).join( '\n' )}
+                    return `
+                            it( '${value} is bundlable', () => {
+                                should.exist( ${statement} )
+                            } )
+                            
+                            it( '${value} is instanciable', () => {
+                                should.exist( new ${statement}(${args}) )
+                            } )
+                            `
+        
+                } ).join( '\n' )}
             } )
             `
 
@@ -415,8 +417,9 @@ gulp.task( 'build-test-html', ( done ) => {
                         try {
                             
                             ${Object.values( exports ).map( function ( value ) {
-            return 'var instance = new Three["' + value + '"]()'
-        } ).join( '\n\t\t\t\t\t\t\t' )}
+                                const statement = `Three${Array.isArray(value) ? Object.values( value ).map( (property) => { return `['${property}']`}).join('') : `['${value}']`}`
+                                return `var instance = new ${statement}()`
+                            } ).join( '\n\t\t\t\t\t\t\t' )}
                             
                             onResult ( 'SUCCESS', 'Successfully instancing ${exports.toString()}', 'green' )
                     
