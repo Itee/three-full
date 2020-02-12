@@ -1,6 +1,6 @@
 const path        = require( 'path' )
 const buble       = require( 'rollup-plugin-buble' )
-const uglify      = require( 'rollup-plugin-uglify-es' )
+const terser       = require( 'rollup-plugin-terser' ).terser
 
 // const onProduction = process.env.BUILD || false
 // const wantSourceMap = process.env.SOURCEMAP || false
@@ -103,7 +103,7 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
             plugins:  [
                 glsl(),
                 buble(),
-                onProduction && uglify()
+                onProduction && terser()
             ],
 
             // advanced options
