@@ -1293,9 +1293,43 @@ function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath,
     if ( edgeCase ) {
 
         if ( edgeCase.importsOverride ) {
+
             data.imports = edgeCase.importsOverride
+
         } else if ( edgeCase.imports ) {
-            Array.prototype.push.apply( data.imports, edgeCase.imports )
+
+            // Add/Remove exports from edgeCase
+            for ( let i = 0, numberOfExports = edgeCase.imports.length ; i < numberOfExports ; i++ ) {
+
+                const edgeCaseImport = edgeCase.imports[ i ]
+
+                if ( typeof edgeCaseImport === 'string' && edgeCaseImport.startsWith( '!' ) ) {
+
+                    const realImportName = edgeCaseImport.slice( 1 )
+
+                    if ( data.imports.includes( realImportName ) ) {
+
+                        data.imports.splice( data.imports.indexOf( realImportName ), 1 )
+
+                    } else {
+
+                        console.error( `Try to remove unexisting import ${realImportName} from ${filePath}. You should remove the this case from config file.` )
+
+                    }
+
+                } else {
+
+                    if ( data.imports.includes( edgeCaseImport ) ) {
+                        console.error( `Try to add already existing import ${edgeCaseImport} from ${filePath}. You should remove this edge case from config file.` )
+                    } else {
+                        data.imports.push( edgeCaseImport )
+                    }
+
+                }
+
+            }
+
+            //Array.prototype.push.apply( data.imports, edgeCase.imports )
             data.imports.filter( _makeUnique )
         }
 
