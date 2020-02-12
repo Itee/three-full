@@ -28,6 +28,8 @@ LOD.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 	constructor: LOD,
 
+	isLOD: true,
+
 	copy: function ( source ) {
 
 		Object3D.prototype.copy.call( this, source, false );
@@ -67,6 +69,8 @@ LOD.prototype = Object.assign( Object.create( Object3D.prototype ), {
 		levels.splice( l, 0, { distance: distance, object: object } );
 
 		this.add( object );
+
+		return this;
 
 	},
 

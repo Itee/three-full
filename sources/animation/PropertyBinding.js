@@ -107,7 +107,7 @@ Object.assign( PropertyBinding, {
 	 * Replaces spaces with underscores and removes unsupported characters from
 	 * node names, to ensure compatibility with parseTrackName().
 	 *
-	 * @param  {string} name Node name to be sanitized.
+	 * @param {string} name Node name to be sanitized.
 	 * @return {string}
 	 */
 	sanitizeNodeName: ( function () {

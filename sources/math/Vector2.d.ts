@@ -73,6 +73,7 @@ export class Vector2 implements Vector {
   roundToZero(): this;
   negate(): this;
   dot(v: Vector2): number;
+  cross(v: Vector2): number;
   lengthSq(): number;
   length(): number;
   lengthManhattan(): number;

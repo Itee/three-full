@@ -2,6 +2,7 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector2Node } from '../inputs/Vector2Node.js'
+import { Vector2 } from '../../math/Vector2.js'
 
 /**
  * @author sunag / http://www.sunag.com.br/
@@ -9,6 +10,8 @@ import { Vector2Node } from '../inputs/Vector2Node.js'
 function ResolutionNode() {
 
 	Vector2Node.call( this );
+
+	this.size = new Vector2();
 
 }
 
@@ -20,11 +23,12 @@ ResolutionNode.prototype.updateFrame = function ( frame ) {
 
 	if ( frame.renderer ) {
 
-		var size = frame.renderer.getSize(),
-			pixelRatio = frame.renderer.getPixelRatio();
+		frame.renderer.getSize( this.size );
 
-		this.x = size.width * pixelRatio;
-		this.y = size.height * pixelRatio;
+		var pixelRatio = frame.renderer.getPixelRatio();
+
+		this.x = this.size.width * pixelRatio;
+		this.y = this.size.height * pixelRatio;
 
 	} else {
 

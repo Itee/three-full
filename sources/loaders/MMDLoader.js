@@ -32,7 +32,8 @@ import {
 	MultiplyOperation,
 	AddOperation,
 	SphericalReflectionMapping,
-	RepeatWrapping
+	RepeatWrapping,
+	NearestFilter
 } from '../constants.js'
 import { Loader } from './Loader.js'
 import { LoaderUtils } from './LoaderUtils.js'
@@ -1398,6 +1399,9 @@ var MMDLoader = ( function () {
 				if ( params.isToonTexture === true ) {
 
 					t.image = scope._getRotatedImage( t.image );
+
+					t.magFilter = NearestFilter;
+					t.minFilter = NearestFilter;
 
 				}
 

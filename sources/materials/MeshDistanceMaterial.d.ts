@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { DepthPackingStrategies } from '../constants';
 import { MaterialParameters, Material } from './Material';
+import { Vector3 } from './../math/Vector3';
 import { Texture } from './../textures/Texture';
 
-export interface MeshDepthMaterialParameters extends MaterialParameters {
-	depthPacking?: DepthPackingStrategies;
+export interface MeshDistanceMaterialParameters extends MaterialParameters {
+	referencePosition?: Vector3;
+	nearDistance?: number;
+	farDistance?: number;
 	displacementMap?: Texture;
 	displacementScale?: number;
 	displacementBias?: number;
-	wireframe?: boolean;
-	wireframeLinewidth?: number;
 }
 
-export class MeshDepthMaterial extends Material {
-	constructor(parameters?: MeshDepthMaterialParameters);
+export class MeshDistanceMaterial extends Material {
+	constructor(parameters?: MeshDistanceMaterialParameters);
 
-	depthPacking: DepthPackingStrategies;
+	referencePosition: Vector3;
+	nearDistance: number;
+	farDistance: number;
 	displacementMap: Texture | null;
 	displacementScale: number;
 	displacementBias: number;
-	wireframe: boolean;
-	wireframeLinewidth: number;
 
-	setValues(parameters: MeshDepthMaterialParameters): void;
+	setValues(parameters: MeshDistanceMaterialParameters): void;
 }

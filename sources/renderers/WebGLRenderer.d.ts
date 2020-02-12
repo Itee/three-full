@@ -43,6 +43,11 @@ export interface WebGLRendererParameters {
   depth?: boolean;
   logarithmicDepthBuffer?: boolean;
 }
+
+export interface WebGLDebug {
+  checkShaderErrors: boolean;
+
+}
 export class WebGLRenderer implements Renderer {
   
   constructor(parameters?: WebGLRendererParameters);
@@ -52,6 +57,7 @@ export class WebGLRenderer implements Renderer {
   autoClearColor: boolean;
   autoClearDepth: boolean;
   autoClearStencil: boolean;
+  debug: WebGLDebug;
   sortObjects: boolean;
 
   clippingPlanes: any[];
@@ -90,7 +96,7 @@ export class WebGLRenderer implements Renderer {
   getPixelRatio(): number;
   setPixelRatio(value: number): void;
 
-  getDrawingBufferSize(): { width: number; height: number };
+  getDrawingBufferSize(target: Vector2): Vector2;
   setDrawingBufferSize(width: number, height: number, pixelRatio: number): void;
 
   getSize(target: Vector2): Vector2;
@@ -138,14 +144,18 @@ export class WebGLRenderer implements Renderer {
   ): void;
   setAnimationLoop(callback: Function): void;
   animate(callback: Function): void;
+  compile(
+    scene: Scene,
+    camera: Camera
+  ): void;
   render(
     scene: Scene,
     camera: Camera
   ): void;
-  getRenderTarget(): RenderTarget;
-  
-  getCurrentRenderTarget(): RenderTarget;
-  setRenderTarget(renderTarget?: RenderTarget, activeCubeFace?: number, activeMipMapLevel?: number): void;
+  getRenderTarget(): RenderTarget | null;
+  getCurrentRenderTarget(): RenderTarget | null;
+  setRenderTarget(renderTarget: RenderTarget | null, activeCubeFace?: number, activeMipMapLevel?: number): void;
+
   readRenderTargetPixels(
     renderTarget: RenderTarget,
     x: number,

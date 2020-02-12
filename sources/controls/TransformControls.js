@@ -154,6 +154,13 @@ var TransformControls = function ( camera, domElement ) {
 		domElement.removeEventListener( "touchcancel", onPointerUp );
 		domElement.removeEventListener( "touchleave", onPointerUp );
 
+		this.traverse( function ( child ) {
+
+			if ( child.geometry ) child.geometry.dispose();
+			if ( child.material ) child.material.dispose();
+
+		} );
+
 	};
 
 	// Set current object
@@ -1005,6 +1012,7 @@ var TransformControlsGizmo = function () {
 				var tempGeometry = object.geometry.clone();
 				tempGeometry.applyMatrix(object.matrix);
 				object.geometry = tempGeometry;
+				object.renderOrder = Infinity;
 
 				object.position.set( 0, 0, 0 );
 				object.rotation.set( 0, 0, 0 );
