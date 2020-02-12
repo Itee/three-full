@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 17.1.0 is now available under Three r0.102.0 !!!**
+**The version 17.2.0 is now available under Three r0.102.0 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -209,6 +209,14 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+
+##### 17.2.0:
+
+* Auto generate unit test files for karma and html
+* Fix DRACOLoader, NormalNode, , Loader, Material naming (internal $1) 
+* Export EquirectangularToCubeGenerator
+* Export cloneUniforms and mergeUniforms from UniformsUtils
+* Unexport HDRLoader (Use RGBELoader instead)
 
 ##### 17.1.0:
 
