@@ -17,19 +17,19 @@ function CreateEslintConfiguration () {
 
     return {
         env:           {
-            "browser": true,
-            "node":    true,
-            "es6":     true
+            'browser': true,
+            'node':    true,
+            'es6':     true
         },
         parserOptions: {
             ecmaVersion: 6,
-            sourceType:  "module"
+            sourceType:  'module'
         },
         extends:       [
             'eslint:recommended'
         ],
         rules:         {
-            "no-multiple-empty-lines": [ 1, { "max": 1 } ]
+            'no-multiple-empty-lines': [ 1, { 'max': 1 } ]
         },
         fix:           true,
         useEslintrc:   false

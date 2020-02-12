@@ -121,34 +121,10 @@ gulp.task( 'create-pass-file', ( done ) => {
 
 } )
 
-/**
- * Add missing this statement in generate method of StructNode
- */
-gulp.task( 'fix-struct-node', () => {
-
-    return gulp.src( './node_modules/three/examples/js/nodes/core/StructNode.js' )
-               .pipe( replace( [ [ '+ src +', '+ this.src +' ] ] ) )
-               .pipe( gulp.dest( './node_modules/three/examples/js/nodes/core' ) )
-
-} )
-
-gulp.task( 'fix-buffer-geometry-util', () => {
-
-    const replacement = 'for ( var attributeNameIndex = 0, numberOfAttributes = attributeNames.length ; attributeNameIndex < numberOfAttributes ; attributeNameIndex++  ) {\n' +
-        '\t\t\tvar name = attributeNames[ attributeNameIndex ];'
-
-    return gulp.src( './node_modules/three/examples/js/utils/BufferGeometryUtils.js' )
-               .pipe( replace( [ [ 'for ( var name of attributeNames ) {', replacement ] ] ) )
-               .pipe( gulp.dest( './node_modules/three/examples/js/utils' ) )
-
-} )
-
 gulp.task( 'patch-three',
     gulp.parallel(
         'fix-effect-composer',
-        'create-pass-file',
-        'fix-struct-node',
-        'fix-buffer-geometry-util'
+        'create-pass-file'
     )
 )
 
@@ -352,17 +328,19 @@ gulp.task( 'build-test-unit', ( done ) => {
             describe( '${fileName}', () => {
                 ${Object.values( exports ).map( function ( value ) {
 
-            return `
-                    it( '${value} is bundlable', () => {
-                        should.exist( Three['${value}'] )
-                    } )
+                    const statement = `Three${Array.isArray(value) ? Object.values( value ).map( (property) => { return `['${property}']`}).join('') : `['${value}']`}`
                     
-                    it( '${value} is instanciable', () => {
-                        should.exist( new Three['${value}'](${args}) )
-                    } )
-                    `
-
-        } ).join( '\n' )}
+                    return `
+                            it( '${value} is bundlable', () => {
+                                should.exist( ${statement} )
+                            } )
+                            
+                            it( '${value} is instanciable', () => {
+                                should.exist( new ${statement}(${args}) )
+                            } )
+                            `
+        
+                } ).join( '\n' )}
             } )
             `
 
@@ -439,8 +417,9 @@ gulp.task( 'build-test-html', ( done ) => {
                         try {
                             
                             ${Object.values( exports ).map( function ( value ) {
-            return 'var instance = new Three["' + value + '"]()'
-        } ).join( '\n\t\t\t\t\t\t\t' )}
+                                const statement = `Three${Array.isArray(value) ? Object.values( value ).map( (property) => { return `['${property}']`}).join('') : `['${value}']`}`
+                                return `var instance = new ${statement}()`
+                            } ).join( '\n\t\t\t\t\t\t\t' )}
                             
                             onResult ( 'SUCCESS', 'Successfully instancing ${exports.toString()}', 'green' )
                     
@@ -505,8 +484,8 @@ gulp.task( 'build-test-three', ( done ) => {
                         }
                     </style>
                 </head>
-                <body id="body">
-                    <script type="application/javascript" src="../builds/Three.iife.js"></script>
+                <body>
+                    <script type="application/javascript" src="builds/Three.iife.js"></script>
                     <script type="application/javascript">
                         /* global Three */
                         var container = document.createElement( 'div' )
