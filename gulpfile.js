@@ -14,7 +14,7 @@ const replace = require( 'gulp-batch-replace' )
 const del     = require( 'del' )
 const rollup  = require( 'rollup' )
 const fsUtils = require( './utils' )
-const karma     = require( 'karma' )
+const karma   = require( 'karma' )
 
 const log     = util.log
 const colors  = util.colors
@@ -108,16 +108,16 @@ gulp.task( 'create-pass-file', ( done ) => {
         '\n' +
         '} );'
 
-    fs.writeFile( "./node_modules/three/examples/js/postprocessing/Pass.js", stringFile, ( error ) => {
+    fs.writeFile( './node_modules/three/examples/js/postprocessing/Pass.js', stringFile, ( error ) => {
 
         if ( error ) {
             return console.error( error )
         }
 
-        console.log( "Pass.js was saved !" )
+        console.log( 'Pass.js was saved !' )
         done()
 
-    } );
+    } )
 
 } )
 
@@ -135,10 +135,10 @@ gulp.task( 'fix-struct-node', () => {
 gulp.task( 'fix-buffer-geometry-util', () => {
 
     const replacement = 'for ( var attributeNameIndex = 0, numberOfAttributes = attributeNames.length ; attributeNameIndex < numberOfAttributes ; attributeNameIndex++  ) {\n' +
-                            '\t\t\tvar name = attributeNames[ attributeNameIndex ];'
+        '\t\t\tvar name = attributeNames[ attributeNameIndex ];'
 
     return gulp.src( './node_modules/three/examples/js/utils/BufferGeometryUtils.js' )
-               .pipe( replace( [ [ 'for ( var name of attributeNames ) {', replacement  ] ] ) )
+               .pipe( replace( [ [ 'for ( var name of attributeNames ) {', replacement ] ] ) )
                .pipe( gulp.dest( './node_modules/three/examples/js/utils' ) )
 
 } )
@@ -162,7 +162,7 @@ gulp.task( 'clean-builds', () => {
         './builds'
     ] )
 
-})
+} )
 
 gulp.task( 'clean-sources', () => {
 
@@ -170,18 +170,18 @@ gulp.task( 'clean-sources', () => {
         './sources'
     ] )
 
-})
+} )
 
 gulp.task( 'clean-tests', () => {
 
     return del( [
         './tests/**/*.js',
-        './tests/**/*.html',
+        './tests/**/*.html'
     ] )
 
-})
+} )
 
-gulp.task( 'clean', gulp.parallel('clean-builds', 'clean-sources', 'clean-tests') )
+gulp.task( 'clean', gulp.parallel( 'clean-builds', 'clean-sources', 'clean-tests' ) )
 
 /**
  * @method npm run lint
@@ -213,7 +213,7 @@ gulp.task( 'lint-tests', () => {
 
 } )
 
-gulp.task( 'lint', gulp.parallel('lint-sources', 'lint-tests') )
+gulp.task( 'lint', gulp.parallel( 'lint-sources', 'lint-tests' ) )
 
 /////////////////////
 ///// CONVERT ///////
@@ -351,8 +351,8 @@ gulp.task( 'build-test-unit', ( done ) => {
             /* global describe, it */
             describe( '${fileName}', () => {
                 ${Object.values( exports ).map( function ( value ) {
-                    
-                    return `
+
+            return `
                     it( '${value} is bundlable', () => {
                         should.exist( Three['${value}'] )
                     } )
@@ -361,8 +361,8 @@ gulp.task( 'build-test-unit', ( done ) => {
                         should.exist( new Three['${value}'](${args}) )
                     } )
                     `
-        
-                } ).join( '\n' )}
+
+        } ).join( '\n' )}
             } )
             `
 
