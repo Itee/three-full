@@ -481,8 +481,8 @@ gulp.task( 'build-test-three', ( done ) => {
                         }
                     </style>
                 </head>
-                <body id="body">
-                    <script type="application/javascript" src="../builds/Three.iife.js"></script>
+                <body>
+                    <script type="application/javascript" src="builds/Three.iife.js"></script>
                     <script type="application/javascript">
                         /* global Three */
                         var container = document.createElement( 'div' )
