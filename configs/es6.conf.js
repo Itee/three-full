@@ -726,6 +726,12 @@ module.exports = {
         TempNode:                    {
             imports: [ '_Math' ]
         },
+        TextureCubeUVNode:               {
+            imports: [
+                '!ReflectNode',
+                '!FloatNode'
+            ]
+        },
         TransformControls:           {
             imports: [ '!CircleGeometry' ]
         },
