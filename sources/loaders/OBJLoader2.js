@@ -24,8 +24,6 @@ if ( LoaderSupport === undefined ) console.error( '"LoaderSupport" is not availa
  */
 
 var OBJLoader2 = function ( manager ) {
-	console.info( 'Using OBJLoader2 version: ' + OBJLoader2.OBJLOADER2_VERSION );
-
 	this.manager = LoaderSupport.Validator.verifyInput( manager, DefaultLoadingManager );
 	this.logging = {
 		enabled: true,
@@ -47,9 +45,8 @@ var OBJLoader2 = function ( manager ) {
 	this.workerSupport = new LoaderSupport.WorkerSupport();
 	this.terminateWorkerOnLoad = true;
 };
-
-OBJLoader2.OBJLOADER2_VERSION = '2.5.0';
-
+OBJLoader2.OBJLOADER2_VERSION = '2.5.1';
+console.info( 'Using OBJLoader2 version: ' + OBJLoader2.OBJLOADER2_VERSION );
 OBJLoader2.prototype = {
 
 	constructor: OBJLoader2,
@@ -181,19 +178,12 @@ OBJLoader2.prototype = {
 		if ( this.logging.enabled && this.logging.debug ) console.debug( content );
 	},
 
-	_onError: function ( event ) {
-		var output = 'Error occurred while downloading!';
+	_onError: function ( errorMessage ) {
+		if ( this.logging.enabled && this.logging.debug ) {
 
-		if ( event.currentTarget && event.currentTarget.statusText !== null ) {
-
-			output += '\nurl: ' + event.currentTarget.responseURL + '\nstatus: ' + event.currentTarget.statusText;
+			console.log( errorMessage );
 
 		}
-		this.onProgress( 'error', output, -1 );
-		this._throwError( output );
-	},
-
-	_throwError: function ( errorMessage ) {
 		if ( LoaderSupport.Validator.isValid( this.callbacks.onReportError ) )  {
 
 			this.callbacks.onReportError( errorMessage );
@@ -223,9 +213,18 @@ OBJLoader2.prototype = {
 	_loadObj: function ( resource, onLoad, onProgress, onError, onMeshAlter, useAsync ) {
 		var scope = this;
 		if ( ! LoaderSupport.Validator.isValid( onError ) ) {
+
 			onError = function ( event ) {
-				scope._onError( event );
-			}
+
+				var errorMessage = event;
+				if ( event.currentTarget && event.currentTarget.statusText !== null ) {
+
+					errorMessage = 'Error occurred while downloading!\nurl: ' + event.currentTarget.responseURL + '\nstatus: ' + event.currentTarget.statusText;
+
+				}
+				scope._onError( errorMessage );
+
+			};
 		}
 
 		// fast-fail
@@ -344,10 +343,9 @@ OBJLoader2.prototype = {
 	 */
 	parse: function ( content ) {
 		// fast-fail in case of illegal data
-		if ( ! LoaderSupport.Validator.isValid( content ) ) {
+		if ( content === null || content === undefined ) {
 
-			console.warn( 'Provided content is not a valid ArrayBuffer or String.' );
-			return this.loaderRootNode;
+			throw 'Provided content is not a valid ArrayBuffer or String. Unable to continue parsing';
 
 		}
 		if ( this.logging.enabled ) console.time( 'OBJLoader2 parse: ' + this.modelName );
@@ -371,11 +369,15 @@ OBJLoader2.prototype = {
 				scope.loaderRootNode.add( mesh );
 			}
 		};
-		parser.setCallbackMeshBuilder( onMeshLoaded );
+		parser.setCallbackOnAssetAvailable( onMeshLoaded );
 		var onProgressScoped = function ( text, numericalValue ) {
 			scope.onProgress( 'progressParse', text, numericalValue );
 		};
-		parser.setCallbackProgress( onProgressScoped );
+		parser.setCallbackOnProgress( onProgressScoped );
+		var onErrorScoped = function ( message ) {
+			scope._onError( message );
+		};
+		parser.setCallbackOnError( onErrorScoped );
 
 		if ( content instanceof ArrayBuffer || content instanceof Uint8Array ) {
 
@@ -389,7 +391,7 @@ OBJLoader2.prototype = {
 
 		} else {
 
-			this._throwError( 'Provided content was neither of type String nor Uint8Array! Aborting...' );
+			this._onError( 'Provided content was neither of type String nor Uint8Array! Aborting...' );
 
 		}
 		if ( this.logging.enabled ) console.timeEnd( 'OBJLoader2 parse: ' + this.modelName );
@@ -419,10 +421,9 @@ OBJLoader2.prototype = {
 			if ( measureTime && scope.logging.enabled ) console.timeEnd( 'OBJLoader2 parseAsync: ' + scope.modelName );
 		};
 		// fast-fail in case of illegal data
-		if ( ! LoaderSupport.Validator.isValid( content ) ) {
+		if ( content === null || content === undefined ) {
 
-			console.warn( 'Provided content is not a valid ArrayBuffer.' );
-			scopedOnLoad()
+			throw 'Provided content is not a valid ArrayBuffer or String. Unable to continue parsing';
 
 		} else {
 
@@ -446,7 +447,6 @@ OBJLoader2.prototype = {
 			workerCode += '  * This code was constructed by OBJLoader2 buildCode.\n';
 			workerCode += '  */\n\n';
 			workerCode += 'THREE = { LoaderSupport: {}, OBJLoader2: {} };\n\n';
-			workerCode += codeSerializer.serializeObject( 'LoaderSupport.Validator', LoaderSupport.Validator );
 			workerCode += codeSerializer.serializeClass( 'OBJLoader2.Parser', OBJLoader2.Parser );
 
 			return workerCode;
@@ -508,7 +508,7 @@ OBJLoader2.prototype = {
 		if ( MTLLoader === undefined ) console.error( '"MTLLoader" is not available. "OBJLoader2" requires it for loading MTL files.' );
 		if ( LoaderSupport.Validator.isValid( resource ) && this.logging.enabled ) console.time( 'Loading MTL: ' + resource.name );
 
-		var materials = [];
+		var materials = {};
 		var scope = this;
 		var processMaterials = function ( materialCreator ) {
 			var materialCreatorMaterials = [];
@@ -553,7 +553,7 @@ OBJLoader2.prototype = {
 
 					} else {
 
-						this._throwError( 'Unable to parse mtl as it it seems to be neither a String, an Array or an ArrayBuffer!' );
+						scope._onError( 'Unable to parse mtl as it it seems to be neither a String, an Array or an ArrayBuffer!' );
 					}
 
 				}
@@ -600,8 +600,11 @@ OBJLoader2.prototype = {
  * @class
  */
 OBJLoader2.Parser = function () {
-	this.callbackProgress = null;
-	this.callbackMeshBuilder = null;
+	this.callbacks = {
+		onProgress: null,
+		onAssetAvailable: null,
+		onError: null
+	};
 	this.contentRef = null;
 	this.legacyMode = false;
 
@@ -697,29 +700,59 @@ OBJLoader2.Parser.prototype = {
 	},
 
 	setMaterials: function ( materials ) {
-		this.materials = LoaderSupport.Validator.verifyInput( materials, this.materials );
-		this.materials = LoaderSupport.Validator.verifyInput( this.materials, {} );
+		if ( materials === undefined || materials === null ) return;
+
+		for ( var materialName in materials ) {
+			if ( materials.hasOwnProperty( materialName ) ) {
+
+				this.materials[ materialName ] = materials[ materialName ];
+
+			}
+		}
 	},
 
-	setCallbackMeshBuilder: function ( callbackMeshBuilder ) {
-		if ( ! LoaderSupport.Validator.isValid( callbackMeshBuilder ) ) {
+	setCallbackOnAssetAvailable: function ( onAssetAvailable ) {
+		if ( onAssetAvailable !== null && onAssetAvailable !== undefined ) {
 
-			this._throwError( 'Unable to run as no "MeshBuilder" callback is set.' );
+			this.callbacks.onAssetAvailable = onAssetAvailable;
 
 		}
-		this.callbackMeshBuilder = callbackMeshBuilder;
 	},
 
-	setCallbackProgress: function ( callbackProgress ) {
-		this.callbackProgress = callbackProgress;
+	setCallbackOnProgress: function ( onProgress ) {
+		if ( onProgress !== null && onProgress !== undefined ) {
+
+			this.callbacks.onProgress = onProgress;
+
+		}
 	},
 
+	setCallbackOnError: function ( onError ) {
+		if ( onError !== null && onError !== undefined ) {
+
+			this.callbacks.onError = onError;
+
+		}
+	},
 	setLogging: function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 	},
 
 	configure: function () {
+		if ( this.callbacks.onAssetAvailable === null ) {
+
+			var errorMessage = 'Unable to run as no callback for building meshes is set.';
+			if ( this.callbacks.onError !== null ) {
+
+				this.callbacks.onError( errorMessage );
+
+			} else {
+
+				throw errorMessage;
+			}
+
+		}
 		this.pushSmoothingGroup( 1 );
 
 		if ( this.logging.enabled ) {
@@ -732,9 +765,16 @@ OBJLoader2.Parser.prototype = {
 				+ '\n\tmaterialPerSmoothingGroup: ' + this.materialPerSmoothingGroup
 				+ '\n\tuseOAsMesh: ' + this.useOAsMesh
 				+ '\n\tuseIndices: ' + this.useIndices
-				+ '\n\tdisregardNormals: ' + this.disregardNormals
-				+ '\n\tcallbackMeshBuilderName: ' + this.callbackMeshBuilder.name
-				+ '\n\tcallbackProgressName: ' + this.callbackProgress.name;
+				+ '\n\tdisregardNormals: ' + this.disregardNormals;
+			if ( this.callbacks.onProgress !== null ) {
+				printedConfig += '\n\tcallbacks.onProgress: ' + this.callbacks.onProgress.name;
+			}
+			if ( this.callbacks.onAssetAvailable !== null ) {
+				printedConfig += '\n\tcallbacks.onAssetAvailable: ' + this.callbacks.onAssetAvailable.name;
+			}
+			if ( this.callbacks.onError !== null ) {
+				printedConfig += '\n\tcallbacks.onError: ' + this.callbacks.onError.name;
+			}
 			console.info( printedConfig );
 		}
 	},
@@ -1041,7 +1081,7 @@ OBJLoader2.Parser.prototype = {
 		var index = this.rawMesh.activeMtlName + '|' + this.rawMesh.smoothingGroup.normalized;
 		this.rawMesh.subGroupInUse = this.rawMesh.subGroups[ index ];
 
-		if ( ! LoaderSupport.Validator.isValid( this.rawMesh.subGroupInUse ) ) {
+		if ( this.rawMesh.subGroupInUse === undefined || this.rawMesh.subGroupInUse === null ) {
 
 			this.rawMesh.subGroupInUse = {
 				index: index,
@@ -1109,16 +1149,16 @@ OBJLoader2.Parser.prototype = {
 
 			var mappingName = faceIndexV + ( faceIndexU ? '_' + faceIndexU : '_n' ) + ( faceIndexN ? '_' + faceIndexN : '_n' );
 			var indicesPointer = this.rawMesh.subGroupInUse.indexMappings[ mappingName ];
-			if ( LoaderSupport.Validator.isValid( indicesPointer ) ) {
-
-				this.rawMesh.counts.doubleIndicesCount++;
-
-			} else {
+			if ( indicesPointer === undefined || indicesPointer === null ) {
 
 				indicesPointer = this.rawMesh.subGroupInUse.vertices.length / 3;
 				updateSubGroupInUse();
 				this.rawMesh.subGroupInUse.indexMappings[ mappingName ] = indicesPointer;
 				this.rawMesh.subGroupInUse.indexMappingsCount++;
+
+			} else {
+
+				this.rawMesh.counts.doubleIndicesCount++;
 
 			}
 			this.rawMesh.subGroupInUse.indices.push( indicesPointer );
@@ -1201,11 +1241,12 @@ OBJLoader2.Parser.prototype = {
 
 	processCompletedMesh: function () {
 		var result = this.finalizeRawMesh();
-		if ( LoaderSupport.Validator.isValid( result ) ) {
+		var haveMesh = result !== null;
+		if ( haveMesh ) {
 
-			if ( this.colors.length > 0 && this.colors.length !== this.vertices.length ) {
+			if ( this.colors.length > 0 && this.colors.length !== this.vertices.length && this.callbacks.onError !== null ) {
 
-				this._throwError( 'Vertex Colors were detected, but vertex count and color count do not match!' );
+				this.callbacks.onError( 'Vertex Colors were detected, but vertex count and color count do not match!' );
 
 			}
 			if ( this.logging.enabled && this.logging.debug ) console.debug( this.createRawMeshReport( this.inputObjectCount ) );
@@ -1213,14 +1254,17 @@ OBJLoader2.Parser.prototype = {
 
 			this.buildMesh( result );
 			var progressBytesPercent = this.globalCounts.currentByte / this.globalCounts.totalBytes;
-			this.callbackProgress( 'Completed [o: ' + this.rawMesh.objectName + ' g:' + this.rawMesh.groupName + '] Total progress: ' + ( progressBytesPercent * 100 ).toFixed( 2 ) + '%', progressBytesPercent );
+			if ( this.callbacks.onProgress !== null ) {
+
+				this.callbacks.onProgress( 'Completed [o: ' + this.rawMesh.objectName + ' g:' + this.rawMesh.groupName +
+					'] Total progress: ' + ( progressBytesPercent * 100 ).toFixed( 2 ) + '%', progressBytesPercent );
+
+			}
 			this.resetRawMesh();
 			return true;
 
-		} else {
-
-			return false;
 		}
+		return haveMesh;
 	},
 
 	/**
@@ -1240,7 +1284,7 @@ OBJLoader2.Parser.prototype = {
 		var colorFA = ( result.absoluteColorCount > 0 ) ? new Float32Array( result.absoluteColorCount ) : null;
 		var normalFA = ( result.absoluteNormalCount > 0 ) ? new Float32Array( result.absoluteNormalCount ) : null;
 		var uvFA = ( result.absoluteUvCount > 0 ) ? new Float32Array( result.absoluteUvCount ) : null;
-		var haveVertexColors = LoaderSupport.Validator.isValid( colorFA );
+		var haveVertexColors = colorFA !== null;
 
 		var meshOutputGroup;
 		var materialNames = [];
@@ -1280,25 +1324,20 @@ OBJLoader2.Parser.prototype = {
 			material = this.materials[ materialName ];
 
 			// both original and derived names do not lead to an existing material => need to use a default material
-			if ( ! LoaderSupport.Validator.isValid( materialOrg ) && ! LoaderSupport.Validator.isValid( material ) ) {
+			if ( ( materialOrg === undefined || materialOrg === null ) && ( material === undefined || material === null ) ) {
 
-				var defaultMaterialName = haveVertexColors ? 'defaultVertexColorMaterial' : 'defaultMaterial';
-				materialOrg = this.materials[ defaultMaterialName ];
-				if ( this.logging.enabled ) console.warn( 'object_group "' + meshOutputGroup.objectName + '_' +
-					meshOutputGroup.groupName + '" was defined with unresolvable material "' +
-					materialNameOrg + '"! Assigning "' + defaultMaterialName + '".' );
-				materialNameOrg = defaultMaterialName;
+				materialName = haveVertexColors ? 'defaultVertexColorMaterial' : 'defaultMaterial';
+				material = this.materials[ materialName ];
+				if ( this.logging.enabled ) {
 
-				// if names are identical then there is no need for later manipulation
-				if ( materialNameOrg === materialName ) {
-
-					material = materialOrg;
-					materialName = defaultMaterialName;
+					console.info( 'object_group "' + meshOutputGroup.objectName + '_' +
+						meshOutputGroup.groupName + '" was defined with unresolvable material "' +
+						materialNameOrg + '"! Assigning "' + materialName + '".' );
 
 				}
 
 			}
-			if ( ! LoaderSupport.Validator.isValid( material ) ) {
+			if ( material === undefined || material === null ) {
 
 				var materialCloneInstructions = {
 					materialNameOrg: materialNameOrg,
@@ -1314,7 +1353,7 @@ OBJLoader2.Parser.prototype = {
 						materialCloneInstructions: materialCloneInstructions
 					}
 				};
-				this.callbackMeshBuilder( payload );
+				this.callbacks.onAssetAvailable( payload );
 
 				// fake entry for async; sync Parser always works on material references (Builder update directly visible here)
 				if ( this.useAsync ) this.materials[ materialName ] = materialCloneInstructions;
@@ -1379,7 +1418,7 @@ OBJLoader2.Parser.prototype = {
 			}
 
 			if ( this.logging.enabled && this.logging.debug ) {
-				var materialIndexLine = LoaderSupport.Validator.isValid( selectedMaterialIndex ) ? '\n\t\tmaterialIndex: ' + selectedMaterialIndex : '';
+				var materialIndexLine = ( selectedMaterialIndex === undefined || selectedMaterialIndex === null ) ? '' : '\n\t\tmaterialIndex: ' + selectedMaterialIndex;
 				var createdReport = '\tOutput Object no.: ' + this.outputObjectCount +
 					'\n\t\tgroupName: ' + meshOutputGroup.groupName +
 					'\n\t\tIndex: ' + meshOutputGroup.index +
@@ -1399,7 +1438,7 @@ OBJLoader2.Parser.prototype = {
 		}
 
 		this.outputObjectCount++;
-		this.callbackMeshBuilder(
+		this.callbacks.onAssetAvailable(
 			{
 				cmd: 'meshData',
 				progress: {
@@ -1424,10 +1463,10 @@ OBJLoader2.Parser.prototype = {
 				geometryType: this.rawMesh.faceType < 4 ? 0 : ( this.rawMesh.faceType === 6 ) ? 2 : 1
 			},
 			[ vertexFA.buffer ],
-			LoaderSupport.Validator.isValid( indexUA ) ? [ indexUA.buffer ] : null,
-			LoaderSupport.Validator.isValid( colorFA ) ? [ colorFA.buffer ] : null,
-			LoaderSupport.Validator.isValid( normalFA ) ? [ normalFA.buffer ] : null,
-			LoaderSupport.Validator.isValid( uvFA ) ? [ uvFA.buffer ] : null
+			indexUA !== null ?  [ indexUA.buffer ] : null,
+			colorFA !== null ? [ colorFA.buffer ] : null,
+			normalFA !== null ? [ normalFA.buffer ] : null,
+			uvFA !== null ? [ uvFA.buffer ] : null
 		);
 	},
 

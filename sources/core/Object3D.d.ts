@@ -20,106 +20,111 @@ import { Intersection } from './Raycaster';
 
 export let Object3DIdCount: number;
 export class Object3D extends EventDispatcher {
-  constructor();
-  id: number;
-  uuid: string;
-  name: string;
 
-  type: string;
-  parent: Object3D | null;
-  children: Object3D[];
-  up: Vector3;
-  position: Vector3;
-  rotation: Euler;
-  quaternion: Quaternion;
-  scale: Vector3;
+	constructor();
+	id: number;
+	uuid: string;
+	name: string;
 
-  modelViewMatrix: Matrix4;
+	type: string;
+	parent: Object3D | null;
+	children: Object3D[];
+	up: Vector3;
+	position: Vector3;
+	rotation: Euler;
+	quaternion: Quaternion;
+	scale: Vector3;
 
-  normalMatrix: Matrix3;
-  matrix: Matrix4;
-  matrixWorld: Matrix4;
-  matrixAutoUpdate: boolean;
-  matrixWorldNeedsUpdate: boolean;
+	modelViewMatrix: Matrix4;
 
-  layers: Layers;
-  
-  visible: boolean;
-  castShadow: boolean;
-  receiveShadow: boolean;
-  frustumCulled: boolean;
-  renderOrder: number;
-  userData: { [key: string]: any };
-  isObject3D: true;
-  onBeforeRender: (
-    renderer: WebGLRenderer,
-    scene: Scene,
-    camera: Camera,
-    geometry: Geometry | BufferGeometry,
-    material: Material,
-    group: Group
-  ) => void;
-  onAfterRender: (
-    renderer: WebGLRenderer,
-    scene: Scene,
-    camera: Camera,
-    geometry: Geometry | BufferGeometry,
-    material: Material,
-    group: Group
-  ) => void;
+	normalMatrix: Matrix3;
+	matrix: Matrix4;
+	matrixWorld: Matrix4;
+	matrixAutoUpdate: boolean;
+	matrixWorldNeedsUpdate: boolean;
 
-  static DefaultUp: Vector3;
-  static DefaultMatrixAutoUpdate: boolean;
-  applyMatrix(matrix: Matrix4): void;
+	layers: Layers;
+	
+	visible: boolean;
+	castShadow: boolean;
+	receiveShadow: boolean;
+	frustumCulled: boolean;
+	renderOrder: number;
+	userData: { [key: string]: any };
+	customDepthMaterial: Material;
+	customDistanceMaterial: Material;
+	isObject3D: true;
+	onBeforeRender: (
+		renderer: WebGLRenderer,
+		scene: Scene,
+		camera: Camera,
+		geometry: Geometry | BufferGeometry,
+		material: Material,
+		group: Group
+	) => void;
+	onAfterRender: (
+		renderer: WebGLRenderer,
+		scene: Scene,
+		camera: Camera,
+		geometry: Geometry | BufferGeometry,
+		material: Material,
+		group: Group
+	) => void;
 
-  applyQuaternion(quaternion: Quaternion): this;
-  setRotationFromAxisAngle(axis: Vector3, angle: number): void;
-  setRotationFromEuler(euler: Euler): void;
-  setRotationFromMatrix(m: Matrix4): void;
-  setRotationFromQuaternion(q: Quaternion): void;
-  rotateOnAxis(axis: Vector3, angle: number): this;
-  rotateOnWorldAxis(axis: Vector3, angle: number): this;
-  rotateX(angle: number): this;
-  rotateY(angle: number): this;
-  rotateZ(angle: number): this;
-  translateOnAxis(axis: Vector3, distance: number): this;
-  translateX(distance: number): this;
-  translateY(distance: number): this;
-  translateZ(distance: number): this;
-  localToWorld(vector: Vector3): Vector3;
-  worldToLocal(vector: Vector3): Vector3;
-  lookAt(vector: Vector3 | number, y?: number, z?: number): void;
-  add(...object: Object3D[]): this;
-  remove(...object: Object3D[]): this;
-  getObjectById(id: number): Object3D | undefined;
-  getObjectByName(name: string): Object3D | undefined;
+	static DefaultUp: Vector3;
+	static DefaultMatrixAutoUpdate: boolean;
+	applyMatrix( matrix: Matrix4 ): void;
 
-  getObjectByProperty(name: string, value: string): Object3D | undefined;
+	applyQuaternion( quaternion: Quaternion ): this;
+	setRotationFromAxisAngle( axis: Vector3, angle: number ): void;
+	setRotationFromEuler( euler: Euler ): void;
+	setRotationFromMatrix( m: Matrix4 ): void;
+	setRotationFromQuaternion( q: Quaternion ): void;
+	rotateOnAxis( axis: Vector3, angle: number ): this;
+	rotateOnWorldAxis( axis: Vector3, angle: number ): this;
+	rotateX( angle: number ): this;
+	rotateY( angle: number ): this;
+	rotateZ( angle: number ): this;
+	translateOnAxis( axis: Vector3, distance: number ): this;
+	translateX( distance: number ): this;
+	translateY( distance: number ): this;
+	translateZ( distance: number ): this;
+	localToWorld( vector: Vector3 ): Vector3;
+	worldToLocal( vector: Vector3 ): Vector3;
+	lookAt( vector: Vector3 | number, y?: number, z?: number ): void;
+	add( ...object: Object3D[] ): this;
+	remove( ...object: Object3D[] ): this;
+	attach( object: Object3D ): this;
+	getObjectById( id: number ): Object3D | undefined;
+	getObjectByName( name: string ): Object3D | undefined;
 
-  getWorldPosition(target: Vector3): Vector3;
-  getWorldQuaternion(target: Quaternion): Quaternion;
-  getWorldScale(target: Vector3): Vector3;
-  getWorldDirection(target: Vector3): Vector3;
+	getObjectByProperty( name: string, value: string ): Object3D | undefined;
 
-  raycast(raycaster: Raycaster, intersects: Intersection[]): void;
+	getWorldPosition( target: Vector3 ): Vector3;
+	getWorldQuaternion( target: Quaternion ): Quaternion;
+	getWorldScale( target: Vector3 ): Vector3;
+	getWorldDirection( target: Vector3 ): Vector3;
 
-  traverse(callback: (object: Object3D) => any): void;
+	raycast( raycaster: Raycaster, intersects: Intersection[] ): void;
 
-  traverseVisible(callback: (object: Object3D) => any): void;
+	traverse( callback: ( object: Object3D ) => any ): void;
 
-  traverseAncestors(callback: (object: Object3D) => any): void;
-  updateMatrix(): void;
-  updateMatrixWorld(force?: boolean): void;
+	traverseVisible( callback: ( object: Object3D ) => any ): void;
 
-  updateWorldMatrix(updateParents: boolean, updateChildren: boolean): void;
+	traverseAncestors( callback: ( object: Object3D ) => any ): void;
+	updateMatrix(): void;
+	updateMatrixWorld( force?: boolean ): void;
 
-  toJSON(meta?: {
-    geometries: any;
-    materials: any;
-    textures: any;
-    images: any;
-  }): any;
+	updateWorldMatrix( updateParents: boolean, updateChildren: boolean ): void;
 
-  clone(recursive?: boolean): this;
-  copy(source: Object3D, recursive?: boolean): this;
+	toJSON( meta?: {
+		geometries: any;
+		materials: any;
+		textures: any;
+		images: any;
+	} ): any;
+
+	clone( recursive?: boolean ): this;
+	copy( source: Object3D, recursive?: boolean ): this;
+
 }

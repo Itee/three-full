@@ -18,8 +18,8 @@ var KaleidoShader = {
 	uniforms: {
 
 		"tDiffuse": { value: null },
-		"sides":    { value: 6.0 },
-		"angle":    { value: 0.0 }
+		"sides": { value: 6.0 },
+		"angle": { value: 0.0 }
 
 	},
 
@@ -41,7 +41,7 @@ var KaleidoShader = {
 		"uniform sampler2D tDiffuse;",
 		"uniform float sides;",
 		"uniform float angle;",
-		
+
 		"varying vec2 vUv;",
 
 		"void main() {",

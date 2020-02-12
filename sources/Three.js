@@ -1,9 +1,10 @@
 import './polyfills.js';
 
+export { AnimationClipCreator } from './animation/AnimationClipCreator.js'
 export { CCDIKSolver } from './animation/CCDIKSolver.js'
 export { MMDAnimationHelper } from './animation/MMDAnimationHelper.js'
 export { MMDPhysics } from './animation/MMDPhysics.js'
-export { AnimationClipCreator } from './animation/AnimationClipCreator.js'
+export { TimelinerController } from './animation/TimelinerController.js'
 export { CinematicCamera } from './cameras/CinematicCamera.js'
 export { Car } from './objects/Car.js'
 export { DeviceOrientationControls } from './controls/DeviceOrientationControls.js'
@@ -60,10 +61,12 @@ export {
 	ConvexGeometry,
 	ConvexBufferGeometry
 } from './geometries/ConvexGeometry.js'
-export { DecalGeometry } from './geometries/DecalGeometry.js'
-export { hilbert2D } from './geometries/hilbert2D.js'
-export { hilbert3D } from './geometries/hilbert3D.js'
+export {
+	DecalGeometry,
+	DecalVertex
+} from './geometries/DecalGeometry.js'
 export { LightningStrike } from './geometries/LightningStrike.js'
+export { ParametricGeometries } from './geometries/ParametricGeometries.js'
 export { TeapotBufferGeometry } from './geometries/TeapotBufferGeometry.js'
 export { GPUComputationRenderer } from './renderers/GPUComputationRenderer.js'
 export {
@@ -71,7 +74,6 @@ export {
 	GPUParticleContainer
 } from './objects/GPUParticleSystem.js'
 export { Gyroscope } from './objects/Gyroscope.js'
-export { ImprovedNoise } from './misc/ImprovedNoise.js'
 export { SelectionBox } from './interactive/SelectionBox.js'
 export { SelectionHelper } from './interactive/SelectionHelper.js'
 export { LightProbeGenerator } from './lights/LightProbeGenerator.js'
@@ -88,6 +90,7 @@ export { AssimpJSONLoader } from './loaders/AssimpJSONLoader.js'
 export { AssimpLoader } from './loaders/AssimpLoader.js'
 export { AWDLoader } from './loaders/AWDLoader.js'
 export { BabylonLoader } from './loaders/BabylonLoader.js'
+export { BasisTextureLoader } from './loaders/BasisTextureLoader.js'
 export { BVHLoader } from './loaders/BVHLoader.js'
 export { ColladaLoader } from './loaders/ColladaLoader.js'
 export { DDSLoader } from './loaders/DDSLoader.js'
@@ -111,7 +114,10 @@ export { LWOLoader } from './loaders/LWOLoader.js'
 export { MD2Loader } from './loaders/MD2Loader.js'
 export { MMDLoader } from './loaders/MMDLoader.js'
 export { MTLLoader } from './loaders/MTLLoader.js'
-export { NodeMaterialLoader } from './loaders/NodeMaterialLoader.js'
+export {
+	NodeMaterialLoader,
+	NodeMaterialLoaderUtils
+} from './loaders/NodeMaterialLoader.js'
 export { OBJLoader } from './loaders/OBJLoader.js'
 export { OBJLoader2 } from './loaders/OBJLoader2.js'
 export { PCDLoader } from './loaders/PCDLoader.js'
@@ -131,7 +137,13 @@ export { VRMLoader } from './loaders/VRMLoader.js'
 export { VTKLoader } from './loaders/VTKLoader.js'
 export { MarchingCubes } from './objects/MarchingCubes.js'
 export { ColorConverter } from './math/ColorConverter.js'
-export { Lut } from './math/Lut.js'
+export { ConvexHull } from './math/ConvexHull.js'
+export { ImprovedNoise } from './misc/ImprovedNoise.js'
+export {
+	Lut,
+	ColorMapKeywords
+} from './math/Lut.js'
+export { SimplexNoise } from './misc/SimplexNoise.js'
 export { MD2Character } from './objects/MD2Character.js'
 export { MD2CharacterComplex } from './objects/MD2CharacterComplex.js'
 export { ExplodeModifier } from './modifiers/ExplodeModifier.js'
@@ -230,7 +242,6 @@ export { Sky } from './objects/Sky.js'
 export { Water } from './objects/Water.js'
 export { Water2 } from './objects/Water2.js'
 export { Ocean } from './objects/Ocean.js'
-export { ParametricGeometries } from './geometries/ParametricGeometries.js'
 export { PMREMCubeUVPacker } from './pmrem/PMREMCubeUVPacker.js'
 export { PMREMGenerator } from './pmrem/PMREMGenerator.js'
 export { AdaptiveToneMappingPass } from './postprocessing/AdaptiveToneMappingPass.js'
@@ -260,8 +271,6 @@ export { SSAOPass } from './postprocessing/SSAOPass.js'
 export { TAARenderPass } from './postprocessing/TAARenderPass.js'
 export { TexturePass } from './postprocessing/TexturePass.js'
 export { UnrealBloomPass } from './postprocessing/UnrealBloomPass.js'
-export { PRNG } from './utils/PRNG.js'
-export { QuickHull } from './utils/QuickHull.js'
 export {
 	CSS2DObject,
 	CSS2DRenderer
@@ -285,7 +294,12 @@ export {
 	SVGObject,
 	SVGRenderer
 } from './renderers/SVGRenderer.js'
-export { WebGLDeferredRenderer } from './renderers/WebGLDeferredRenderer.js'
+export {
+	WebGLDeferredRenderer,
+	ShaderDeferred,
+	ShaderDeferredCommon,
+	DeferredShaderChunk
+} from './renderers/WebGLDeferredRenderer.js'
 export {
 	RollerCoasterGeometry,
 	RollerCoasterLiftersGeometry,
@@ -335,7 +349,11 @@ export { PixelShader } from './shaders/PixelShader.js'
 export { RGBShiftShader } from './shaders/RGBShiftShader.js'
 export { SAOShader } from './shaders/SAOShader.js'
 export { SepiaShader } from './shaders/SepiaShader.js'
-export { SMAAShader } from './shaders/SMAAShader.js'
+export {
+	SMAAEdgesShader,
+	SMAAWeightsShader,
+	SMAABlendShader
+} from './shaders/SMAAShader.js'
 export { SobelOperatorShader } from './shaders/SobelOperatorShader.js'
 export {
 	SSAOShader,
@@ -355,8 +373,6 @@ export { ShaderSkin } from './shaders/ShaderSkin.js'
 export { ShaderTerrain } from './shaders/ShaderTerrain.js'
 export { ShaderToon } from './shaders/ShaderToon.js'
 export { TranslucentShader } from './shaders/ShaderTranslucent.js'
-export { SimplexNoise } from './misc/SimplexNoise.js'
-export { TimelinerController } from './animation/TimelinerController.js'
 export { BufferGeometryUtils } from './utils/BufferGeometryUtils.js'
 export { GeometryUtils } from './utils/GeometryUtils.js'
 export { MathUtils } from './utils/MathUtils.js'

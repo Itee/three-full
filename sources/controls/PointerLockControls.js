@@ -12,10 +12,18 @@ import { Vector3 } from '../math/Vector3.js'
 
 var PointerLockControls = function ( camera, domElement ) {
 
-	var scope = this;
-
 	this.domElement = domElement || document.body;
 	this.isLocked = false;
+
+	//
+	// internals
+	//
+
+	var scope = this;
+
+	var changeEvent = { type: 'change' };
+	var lockEvent = { type: 'lock' };
+	var unlockEvent = { type: 'unlock' };
 
 	var euler = new Euler( 0, 0, 0, 'YXZ' );
 
@@ -37,19 +45,21 @@ var PointerLockControls = function ( camera, domElement ) {
 
 		camera.quaternion.setFromEuler( euler );
 
+		scope.dispatchEvent( changeEvent );
+
 	}
 
 	function onPointerlockChange() {
 
 		if ( document.pointerLockElement === scope.domElement ) {
 
-			scope.dispatchEvent( { type: 'lock' } );
+			scope.dispatchEvent( lockEvent );
 
 			scope.isLocked = true;
 
 		} else {
 
-			scope.dispatchEvent( { type: 'unlock' } );
+			scope.dispatchEvent( unlockEvent );
 
 			scope.isLocked = false;
 

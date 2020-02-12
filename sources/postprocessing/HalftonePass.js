@@ -52,7 +52,7 @@ HalftonePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 	constructor: HalftonePass,
 
-	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer/*, deltaTime, maskActive*/ ) {
 
  		this.material.uniforms[ "tDiffuse" ].value = readBuffer.texture;
 

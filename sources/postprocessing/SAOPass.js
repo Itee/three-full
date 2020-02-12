@@ -180,7 +180,7 @@ var SAOPass = function ( scene, camera, depthTexture, useNormals, resolution ) {
 	this.materialCopy.blendDstAlpha = ZeroFactor;
 	this.materialCopy.blendEquationAlpha = AddEquation;
 
-	if ( CopyShader === undefined ) {
+	if ( UnpackDepthRGBAShader === undefined ) {
 
 		console.error( 'SAOPass relies on UnpackDepthRGBAShader' );
 
@@ -208,7 +208,7 @@ SAOPass.OUTPUT = {
 SAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 	constructor: SAOPass,
 
-	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer/*, deltaTime, maskActive*/ ) {
 
 		// Rendering readBuffer first when rendering to screen
 		if ( this.renderToScreen ) {

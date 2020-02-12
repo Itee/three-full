@@ -14,9 +14,9 @@ var BrightnessContrastShader = {
 
 	uniforms: {
 
-		"tDiffuse":   { value: null },
+		"tDiffuse": { value: null },
 		"brightness": { value: 0 },
-		"contrast":   { value: 0 }
+		"contrast": { value: 0 }
 
 	},
 

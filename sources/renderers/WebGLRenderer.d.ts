@@ -17,164 +17,166 @@ import { WebGLRenderTarget } from './WebGLRenderTarget';
 import { Object3D } from './../core/Object3D';
 import { Material } from './../materials/Material';
 import { Fog } from './../scenes/Fog';
-import { Texture } from './../textures/Texture';
 import { ToneMapping, ShadowMapType, CullFace } from '../constants';
 import { WebVRManager } from '../renderers/webvr/WebVRManager';
 import { RenderTarget } from './webgl/WebGLRenderLists';
 
 export interface Renderer {
-  domElement: HTMLCanvasElement;
+	domElement: HTMLCanvasElement;
 
-  render(scene: Scene, camera: Camera): void;
-  setSize(width: number, height: number, updateStyle?: boolean): void;
+	render( scene: Scene, camera: Camera ): void;
+	setSize( width: number, height: number, updateStyle?: boolean ): void;
 }
 
 export interface WebGLRendererParameters {
-  
-  canvas?: HTMLCanvasElement;
-  context?: WebGLRenderingContext;
-  precision?: string;
-  alpha?: boolean;
-  premultipliedAlpha?: boolean;
-  antialias?: boolean;
-  stencil?: boolean;
-  preserveDrawingBuffer?: boolean;
-  powerPreference?: string;
-  depth?: boolean;
-  logarithmicDepthBuffer?: boolean;
+	
+	canvas?: HTMLCanvasElement;
+	context?: WebGLRenderingContext;
+	precision?: string;
+	alpha?: boolean;
+	premultipliedAlpha?: boolean;
+	antialias?: boolean;
+	stencil?: boolean;
+	preserveDrawingBuffer?: boolean;
+	powerPreference?: string;
+	depth?: boolean;
+	logarithmicDepthBuffer?: boolean;
 }
 
 export interface WebGLDebug {
-  checkShaderErrors: boolean;
+	checkShaderErrors: boolean;
 
 }
 export class WebGLRenderer implements Renderer {
-  
-  constructor(parameters?: WebGLRendererParameters);
-  domElement: HTMLCanvasElement;
-  context: WebGLRenderingContext;
-  autoClear: boolean;
-  autoClearColor: boolean;
-  autoClearDepth: boolean;
-  autoClearStencil: boolean;
-  debug: WebGLDebug;
-  sortObjects: boolean;
+	constructor( parameters?: WebGLRendererParameters );
+	domElement: HTMLCanvasElement;
+	context: WebGLRenderingContext;
+	autoClear: boolean;
+	autoClearColor: boolean;
+	autoClearDepth: boolean;
+	autoClearStencil: boolean;
+	debug: WebGLDebug;
+	sortObjects: boolean;
 
-  clippingPlanes: any[];
-  localClippingEnabled: boolean;
+	clippingPlanes: any[];
+	localClippingEnabled: boolean;
 
-  extensions: WebGLExtensions;
-  gammaInput: boolean;
-  gammaOutput: boolean;
+	extensions: WebGLExtensions;
+	gammaInput: boolean;
+	gammaOutput: boolean;
 
-  physicallyCorrectLights: boolean;
-  toneMapping: ToneMapping;
-  toneMappingExposure: number;
-  toneMappingWhitePoint: number;
-  shadowMapDebug: boolean;
-  maxMorphTargets: number;
-  maxMorphNormals: number;
+	physicallyCorrectLights: boolean;
+	toneMapping: ToneMapping;
+	toneMappingExposure: number;
+	toneMappingWhitePoint: number;
+	shadowMapDebug: boolean;
+	maxMorphTargets: number;
+	maxMorphNormals: number;
 
-  info: WebGLInfo;
+	info: WebGLInfo;
 
-  shadowMap: WebGLShadowMap;
+	shadowMap: WebGLShadowMap;
 
-  pixelRation: number;
+	pixelRation: number;
 
-  capabilities: WebGLCapabilities;
-  properties: WebGLProperties;
-  renderLists: WebGLRenderLists;
-  state: WebGLState;
+	capabilities: WebGLCapabilities;
+	properties: WebGLProperties;
+	renderLists: WebGLRenderLists;
+	state: WebGLState;
 
-  vr: WebVRManager;
-  getContext(): WebGLRenderingContext;
-  getContextAttributes(): any;
-  forceContextLoss(): void;
-  getMaxAnisotropy(): number;
-  getPrecision(): string;
+	vr: WebVRManager;
+	getContext(): WebGLRenderingContext;
+	getContextAttributes(): any;
+	forceContextLoss(): void;
+	getMaxAnisotropy(): number;
+	getPrecision(): string;
 
-  getPixelRatio(): number;
-  setPixelRatio(value: number): void;
+	getPixelRatio(): number;
+	setPixelRatio( value: number ): void;
 
-  getDrawingBufferSize(target: Vector2): Vector2;
-  setDrawingBufferSize(width: number, height: number, pixelRatio: number): void;
+	getDrawingBufferSize( target: Vector2 ): Vector2;
+	setDrawingBufferSize( width: number, height: number, pixelRatio: number ): void;
 
-  getSize(target: Vector2): Vector2;
-  setSize(width: number, height: number, updateStyle?: boolean): void;
+	getSize( target: Vector2 ): Vector2;
+	setSize( width: number, height: number, updateStyle?: boolean ): void;
 
-  getCurrentViewport(target: Vector4): Vector4;
-  getViewport(target: Vector4): Vector4;
-  setViewport(x: Vector4 | number, y?: number, width?: number, height?: number): void;
-  getScissor(target: Vector4): Vector4;
-  setScissor(x: Vector4 | number, y?: number, width?: number, height?: number): void;
-  getScissorTest(): boolean;
-  setScissorTest(enable: boolean): void;
-  getClearColor(): Color;
-  setClearColor(color: Color, alpha?: number): void;
-  setClearColor(color: string, alpha?: number): void;
-  setClearColor(color: number, alpha?: number): void;
-  getClearAlpha(): number;
+	getCurrentViewport( target: Vector4 ): Vector4;
+	getViewport( target: Vector4 ): Vector4;
+	setViewport( x: Vector4 | number, y?: number, width?: number, height?: number ): void;
+	getScissor( target: Vector4 ): Vector4;
+	setScissor( x: Vector4 | number, y?: number, width?: number, height?: number ): void;
+	getScissorTest(): boolean;
+	setScissorTest( enable: boolean ): void;
+	getClearColor(): Color;
+	setClearColor( color: Color, alpha?: number ): void;
+	setClearColor( color: string, alpha?: number ): void;
+	setClearColor( color: number, alpha?: number ): void;
+	getClearAlpha(): number;
 
-  setClearAlpha(alpha: number): void;
-  clear(color?: boolean, depth?: boolean, stencil?: boolean): void;
+	setClearAlpha( alpha: number ): void;
+	clear( color?: boolean, depth?: boolean, stencil?: boolean ): void;
 
-  clearColor(): void;
-  clearDepth(): void;
-  clearStencil(): void;
-  clearTarget(
-    renderTarget: WebGLRenderTarget,
-    color: boolean,
-    depth: boolean,
-    stencil: boolean
-  ): void;
-  resetGLState(): void;
-  dispose(): void;
-  renderBufferImmediate(
-    object: Object3D,
-    program: Object,
-    material: Material
-  ): void;
+	clearColor(): void;
+	clearDepth(): void;
+	clearStencil(): void;
+	clearTarget(
+		renderTarget: WebGLRenderTarget,
+		color: boolean,
+		depth: boolean,
+		stencil: boolean
+	): void;
+	resetGLState(): void;
+	dispose(): void;
+	renderBufferImmediate(
+		object: Object3D,
+		program: Object,
+		material: Material
+	): void;
 
-  renderBufferDirect(
-    camera: Camera,
-    fog: Fog,
-    material: Material,
-    geometryGroup: any,
-    object: Object3D
-  ): void;
-  setAnimationLoop(callback: Function): void;
-  animate(callback: Function): void;
-  compile(
-    scene: Scene,
-    camera: Camera
-  ): void;
-  render(
-    scene: Scene,
-    camera: Camera
-  ): void;
-  getRenderTarget(): RenderTarget | null;
-  getCurrentRenderTarget(): RenderTarget | null;
-  setRenderTarget(renderTarget: RenderTarget | null, activeCubeFace?: number, activeMipMapLevel?: number): void;
+	renderBufferDirect(
+		camera: Camera,
+		fog: Fog,
+		material: Material,
+		geometryGroup: any,
+		object: Object3D
+	): void;
+	setAnimationLoop( callback: Function ): void;
+	animate( callback: Function ): void;
+	compile(
+		scene: Scene,
+		camera: Camera
+	): void;
+	render(
+		scene: Scene,
+		camera: Camera
+	): void;
+	getActiveCubeFace(): number;
+	getActiveMipMapLevel(): number;
+	getRenderTarget(): RenderTarget | null;
+	getCurrentRenderTarget(): RenderTarget | null;
+	setRenderTarget( renderTarget: RenderTarget | null, activeCubeFace?: number, activeMipMapLevel?: number ): void;
 
-  readRenderTargetPixels(
-    renderTarget: RenderTarget,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    buffer: any
-  ): void;
-  gammaFactor: number;
-  shadowMapEnabled: boolean;
-  shadowMapType: ShadowMapType;
-  shadowMapCullFace: CullFace;
-  supportsFloatTextures(): any;
-  supportsHalfFloatTextures(): any;
-  supportsStandardDerivatives(): any;
-  supportsCompressedTextureS3TC(): any;
-  supportsCompressedTexturePVRTC(): any;
-  supportsBlendMinMax(): any;
-  supportsVertexTextures(): any;
-  supportsInstancedArrays(): any;
-  enableScissorTest(boolean: any): any;
+	readRenderTargetPixels(
+		renderTarget: RenderTarget,
+		x: number,
+		y: number,
+		width: number,
+		height: number,
+		buffer: any,
+		activeCubeFaceIndex?: number
+	): void;
+	gammaFactor: number;
+	shadowMapEnabled: boolean;
+	shadowMapType: ShadowMapType;
+	shadowMapCullFace: CullFace;
+	supportsFloatTextures(): any;
+	supportsHalfFloatTextures(): any;
+	supportsStandardDerivatives(): any;
+	supportsCompressedTextureS3TC(): any;
+	supportsCompressedTexturePVRTC(): any;
+	supportsBlendMinMax(): any;
+	supportsVertexTextures(): any;
+	supportsInstancedArrays(): any;
+	enableScissorTest( boolean: any ): any;
+
 }

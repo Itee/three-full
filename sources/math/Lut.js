@@ -15,20 +15,6 @@ var Lut = function ( colormap, numberofcolors ) {
 
 };
 
-var defaultLabelParameters = {
-	fontsize: 24,
-	fontface: 'Arial',
-	title: '',
-	um: '',
-	ticks: 0,
-	decimal: 2,
-	notation: 'standard'
-};
-
-var defaultBackgroundColor = { r: 255, g: 100, b: 100, a: 0.8 };
-var defaultBorderColor = { r: 255, g: 0, b: 0, a: 1.0 };
-var defaultBorderThickness = 4;
-
 Lut.prototype = {
 
 	constructor: Lut,
@@ -193,6 +179,7 @@ Lut.prototype = {
 
 	}
 };
+
 var ColorMapKeywords = {
 
 	"rainbow": [[ 0.0, 0x0000FF ], [ 0.2, 0x00FFFF ], [ 0.5, 0x00FF00 ], [ 0.8, 0xFFFF00 ], [ 1.0, 0xFF0000 ]],
@@ -202,4 +189,7 @@ var ColorMapKeywords = {
 
 };
 
-export { Lut }
+export {
+	Lut,
+	ColorMapKeywords
+}

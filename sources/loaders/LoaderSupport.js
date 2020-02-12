@@ -354,7 +354,6 @@ LoaderSupport.PrepData.prototype = {
  * @class
  */
 LoaderSupport.MeshBuilder = function() {
-	console.info( 'Using LoaderSupport.MeshBuilder version: ' + LoaderSupport.MeshBuilder.LOADER_MESH_BUILDER_VERSION );
 	this.validator = LoaderSupport.Validator;
 
 	this.logging = {
@@ -363,10 +362,10 @@ LoaderSupport.MeshBuilder = function() {
 	};
 
 	this.callbacks = new LoaderSupport.Callbacks();
-	this.materials = [];
+	this.materials = {};
 };
-LoaderSupport.MeshBuilder.LOADER_MESH_BUILDER_VERSION = '1.3.0';
-
+LoaderSupport.MeshBuilder.LOADER_MESH_BUILDER_VERSION = '1.3.1';
+console.info( 'Using LoaderSupport.MeshBuilder version: ' + LoaderSupport.MeshBuilder.LOADER_MESH_BUILDER_VERSION );
 LoaderSupport.MeshBuilder.prototype = {
 
 	constructor: LoaderSupport.MeshBuilder,
@@ -722,7 +721,6 @@ LoaderSupport.MeshBuilder.prototype = {
  * @class
  */
 LoaderSupport.WorkerSupport = function () {
-	console.info( 'Using LoaderSupport.WorkerSupport version: ' + LoaderSupport.WorkerSupport.WORKER_SUPPORT_VERSION );
 	this.logging = {
 		enabled: true,
 		debug: false
@@ -733,7 +731,7 @@ LoaderSupport.WorkerSupport = function () {
 };
 
 LoaderSupport.WorkerSupport.WORKER_SUPPORT_VERSION = '2.3.0';
-
+console.info( 'Using LoaderSupport.WorkerSupport version: ' + LoaderSupport.WorkerSupport.WORKER_SUPPORT_VERSION );
 LoaderSupport.WorkerSupport.prototype = {
 
 	constructor: LoaderSupport.WorkerSupport,
@@ -1288,10 +1286,10 @@ LoaderSupport.WorkerRunnerRefImpl.prototype = {
 
 			var self = this.getParentScope();
 			var callbacks = {
-				callbackMeshBuilder: function ( payload ) {
+				callbackOnAssetAvailable: function ( payload ) {
 					self.postMessage( payload );
 				},
-				callbackProgress: function ( text ) {
+				callbackOnProgress: function ( text ) {
 					if ( payload.logging.enabled && payload.logging.debug ) console.debug( 'WorkerRunner: progress: ' + text );
 				}
 			};
@@ -1307,7 +1305,7 @@ LoaderSupport.WorkerRunnerRefImpl.prototype = {
 
 			if ( payload.logging.enabled ) console.log( 'WorkerRunner: Run complete!' );
 
-			callbacks.callbackMeshBuilder( {
+			callbacks.callbackOnAssetAvailable( {
 				cmd: 'complete',
 				msg: 'WorkerRunner completed run.'
 			} );
@@ -1413,7 +1411,6 @@ LoaderSupport.WorkerSupport.NodeLoaderWorker.prototype.initWorker = function ( c
  * @param {string} classDef Class definition to be used for construction
  */
 LoaderSupport.WorkerDirector = function ( classDef ) {
-	console.info( 'Using LoaderSupport.WorkerDirector version: ' + LoaderSupport.WorkerDirector.LOADER_WORKER_DIRECTOR_VERSION );
 	this.logging = {
 		enabled: true,
 		debug: false
@@ -1440,7 +1437,7 @@ LoaderSupport.WorkerDirector = function ( classDef ) {
 LoaderSupport.WorkerDirector.LOADER_WORKER_DIRECTOR_VERSION = '2.3.0';
 LoaderSupport.WorkerDirector.MAX_WEB_WORKER = 16;
 LoaderSupport.WorkerDirector.MAX_QUEUE_SIZE = 2048;
-
+console.info( 'Using LoaderSupport.WorkerDirector version: ' + LoaderSupport.WorkerDirector.LOADER_WORKER_DIRECTOR_VERSION );
 LoaderSupport.WorkerDirector.prototype = {
 
 	constructor: LoaderSupport.WorkerDirector,

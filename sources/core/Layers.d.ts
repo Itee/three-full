@@ -2,13 +2,15 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export class Layers {
-  constructor();
 
-  mask: number;
+	constructor();
 
-  set(channel: number): void;
-  enable(channel: number): void;
-  toggle(channel: number): void;
-  disable(channel: number): void;
-  test(layers: Layers): boolean;
+	mask: number;
+
+	set( channel: number ): void;
+	enable( channel: number ): void;
+	toggle( channel: number ): void;
+	disable( channel: number ): void;
+	test( layers: Layers ): boolean;
+
 }

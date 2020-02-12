@@ -23,6 +23,7 @@ import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
  * Inspired from Unreal Engine
  * https://docs.unrealengine.com/latest/INT/Engine/Rendering/PostProcessEffects/Bloom/
  */
+
 var UnrealBloomPass = function ( resolution, strength, radius, threshold ) {
 
 	Pass.call( this );
@@ -125,7 +126,7 @@ var UnrealBloomPass = function ( resolution, strength, radius, threshold ) {
 	// copy material
 	if ( CopyShader === undefined ) {
 
-		console.error( "BloomPass relies on CopyShader" );
+		console.error( "UnrealBloomPass relies on CopyShader" );
 
 	}
 

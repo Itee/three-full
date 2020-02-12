@@ -19,7 +19,8 @@ module.exports = {
         'libs',
         'Three.js',
         'Three.Legacy.js',
-        'polyfills.js',
+        'polyfills.js',     // Ignore pure function call (include from gulp)
+        'HelioWebXRPolyfill.js',     // Ignore pure function call (include from gulp)
         '.DS_Store',        // Ignore DS_Store from r90
         'README',
 
@@ -58,6 +59,9 @@ module.exports = {
         },
         ArcCurve:                    {
             outputOverride: 'curves/ArcCurve.js'
+        },
+        BasisTextureLoader:          {
+            exportsOverride: [ 'BasisTextureLoader' ]
         },
         BokehShader2:                {
             importsOverride: [ 'Vector2' ],
@@ -296,9 +300,7 @@ module.exports = {
             exportsOverride: [ 'LoaderSupport' ]
         },
         Lut:                         {
-            replacements: [
-                [ 'ColorMapKeywords = ', 'var ColorMapKeywords = ' ]
-            ]
+            exportsOverride: [ 'Lut', 'ColorMapKeywords' ]
         },
         MarchingCubes:               {
             replacements:   [
@@ -376,9 +378,7 @@ module.exports = {
             ]
         },
         NodeMaterialLoader:          {
-            replacements: [
-                [ 'NodeMaterialLoaderUtils = {', 'var NodeMaterialLoaderUtils = {' ]
-            ]
+            exportsOverride: [ 'NodeMaterialLoader', 'NodeMaterialLoaderUtils' ]
         },
         NodePass:                    {
             imports: [
@@ -621,7 +621,7 @@ module.exports = {
             exportsOverride: [ 'SMAAPass' ]
         },
         SMAAShader:                  {
-            exportsOverride: [ 'SMAAShader' ]
+            exportsOverride: [ 'SMAAEdgesShader', 'SMAAWeightsShader', 'SMAABlendShader' ]
         },
         SoftwareRenderer:            {
             imports: [ '_Math', '!Texture' ]
@@ -700,11 +700,7 @@ module.exports = {
             ]
         },
         WebGLDeferredRenderer:       {
-            replacements: [
-                [ 'DeferredShaderChunk = ', 'var DeferredShaderChunk = ' ],
-                [ 'ShaderDeferredCommon = ', 'var ShaderDeferredCommon = ' ],
-                [ 'ShaderDeferred = ', 'var ShaderDeferred = ' ]
-            ]
+            exportsOverride: [ 'WebGLDeferredRenderer', 'ShaderDeferred', 'ShaderDeferredCommon', 'DeferredShaderChunk' ]
         },
         WebVR:                       {
             replacements:    [

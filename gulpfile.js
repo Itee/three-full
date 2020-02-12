@@ -69,8 +69,9 @@ gulp.task( 'help', ( done ) => {
 gulp.task( 'fix-effect-composer', () => {
 
     return gulp.src( './node_modules/three/examples/js/postprocessing/EffectComposer.js' )
-               .pipe( replace( [ [ 'THREE.Pass = function () {', '/*\n' ] ] ) )
-               .pipe( replace( [ [ /console\.error\(\s?\'THREE.Pass:[\w\s'.:();}]+/g, '\n*/' ] ] ) )
+               .pipe( replace( [ [ /\/\*[\s\S]*?\*\//g, '' ] ] ) ) // Clear multiline comment
+               .pipe( replace( [ [ 'THREE.Pass = function () {', '/* START COMMENT\nTHREE.Pass = function () {' ] ] ) ) // Add multiline comment around pass class
+               .pipe( replace( [ [ /}\s\)\(\);/g, '} )();\nEND COMMENT */' ] ] ) )
                .pipe( gulp.dest( './node_modules/three/examples/js/postprocessing' ) )
 
 } )
@@ -80,33 +81,77 @@ gulp.task( 'fix-effect-composer', () => {
  */
 gulp.task( 'create-pass-file', ( done ) => {
 
-    const stringFile = 'THREE.Pass = function () {\n' +
-        '\n' +
-        '\t// if set to true, the pass is processed by the composer\n' +
-        '\tthis.enabled = true;\n' +
-        '\n' +
-        '\t// if set to true, the pass indicates to swap read and write buffer after rendering\n' +
-        '\tthis.needsSwap = true;\n' +
-        '\n' +
-        '\t// if set to true, the pass clears its buffer before rendering\n' +
-        '\tthis.clear = false;\n' +
-        '\n' +
-        '\t// if set to true, the result of the pass is rendered to screen\n' +
-        '\tthis.renderToScreen = false;\n' +
-        '\n' +
-        '};\n' +
-        '\n' +
-        'Object.assign( THREE.Pass.prototype, {\n' +
-        '\n' +
-        '\tsetSize: function ( width, height ) {},\n' +
-        '\n' +
-        '\trender: function ( renderer, writeBuffer, readBuffer, delta, maskActive ) {\n' +
-        '\n' +
-        '\t\tconsole.error( \'THREE.Pass: .render() must be implemented in derived pass.\' );\n' +
-        '\n' +
-        '\t}\n' +
-        '\n' +
-        '} );'
+    const stringFile = `
+    THREE.Pass = function () {
+    
+    \t// if set to true, the pass is processed by the composer
+    \tthis.enabled = true;
+    
+    \t// if set to true, the pass indicates to swap read and write buffer after rendering
+    \tthis.needsSwap = true;
+    
+    \t// if set to true, the pass clears its buffer before rendering
+    \tthis.clear = false;
+    
+    \t// if set to true, the result of the pass is rendered to screen. This is set automatically by EffectComposer.
+    \tthis.renderToScreen = false;
+    
+    };
+    
+    Object.assign( THREE.Pass.prototype, {
+    
+    \tsetSize: function ( /* width, height */ ) {},
+    
+    \trender: function ( /* renderer, writeBuffer, readBuffer, deltaTime, maskActive */ ) {
+    
+    \t\tconsole.error( 'THREE.Pass: .render() must be implemented in derived pass.' );
+    
+    \t}
+    
+    } );
+    
+    // Helper for passes that need to fill the viewport with a single quad.
+    THREE.Pass.FullScreenQuad = ( function () {
+    
+    \tvar camera = new THREE.OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
+    \tvar geometry = new THREE.PlaneBufferGeometry( 2, 2 );
+    
+    \tvar FullScreenQuad = function ( material ) {
+    
+    \t\tthis._mesh = new THREE.Mesh( geometry, material );
+    
+    \t};
+    
+    \tObject.defineProperty( FullScreenQuad.prototype, 'material', {
+    
+    \t\tget: function () {
+    
+    \t\t\treturn this._mesh.material;
+    
+    \t\t},
+    
+    \t\tset: function ( value ) {
+    
+    \t\t\tthis._mesh.material = value;
+    
+    \t\t}
+    
+    \t} );
+    
+    \tObject.assign( FullScreenQuad.prototype, {
+    
+    \t\trender: function ( renderer ) {
+    
+    \t\t\trenderer.render( this._mesh, camera );
+    
+    \t\t}
+    
+    \t} );
+    
+    \treturn FullScreenQuad;
+    
+    } )();
+    `
 
     fs.writeFile( './node_modules/three/examples/js/postprocessing/Pass.js', stringFile, ( error ) => {
 
@@ -218,6 +263,7 @@ gulp.task( 'convert-three', ( done ) => {
     function copyPolyfills () {
 
         fs.writeFileSync( './sources/polyfills.js', fs.readFileSync( './node_modules/three/src/polyfills.js', 'utf8' ) )
+        fs.writeFileSync( './sources/vr/HelioWebXRPolyfill.js', fs.readFileSync( './node_modules/three/examples/js/vr/HelioWebXRPolyfill.js', 'utf8' ) )
 
     }
 

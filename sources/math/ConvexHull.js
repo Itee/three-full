@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from '../math/Vector3.js'
-import { Line3 } from '../math/Line3.js'
-import { Plane } from '../math/Plane.js'
-import { Triangle } from '../math/Triangle.js'
+import { Vector3 } from './Vector3.js'
+import { Line3 } from './Line3.js'
+import { Plane } from './Plane.js'
+import { Triangle } from './Triangle.js'
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -12,12 +12,15 @@ import { Triangle } from '../math/Triangle.js'
  * Ported from: https://github.com/maurizzzio/quickhull3d/ by Mauricio Poppe (https://github.com/maurizzzio)
  *
  */
+
+var ConvexHull = ( function () {
+
 	var Visible = 0;
 	var Deleted = 1;
 
 	var v1 = new Vector3();
 
-	function QuickHull() {
+	function ConvexHull() {
 
 		this.tolerance = - 1;
 
@@ -41,19 +44,19 @@ import { Triangle } from '../math/Triangle.js'
 
 	}
 
-	Object.assign( QuickHull.prototype, {
+	Object.assign( ConvexHull.prototype, {
 
 		setFromPoints: function ( points ) {
 
 			if ( Array.isArray( points ) !== true ) {
 
-				console.error( 'QuickHull: Points parameter is not an array.' );
+				console.error( 'ConvexHull: Points parameter is not an array.' );
 
 			}
 
 			if ( points.length < 4 ) {
 
-				console.error( 'QuickHull: The algorithm needs at least four points.' );
+				console.error( 'ConvexHull: The algorithm needs at least four points.' );
 
 			}
 
@@ -1312,5 +1315,8 @@ import { Triangle } from '../math/Triangle.js'
 
 	} );
 
-	// export
-export { QuickHull }
+	return ConvexHull;
+
+} )();
+
+export { ConvexHull }

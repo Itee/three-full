@@ -456,7 +456,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 	}
 
-	function createDeferredNormalDepthMaterial( originalMaterial ) {
+	function createDeferredNormalDepthMaterial() {
 
 		var shader = ( _lightPrePass ) ? ShaderDeferred[ 'normalDepthShininess' ] : ShaderDeferred[ 'normalDepth' ];
 
@@ -486,7 +486,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 	}
 
-	function updateDeferredNormalDepthUniforms( renderer, scene, camera, geometry, material, group ) {
+	function updateDeferredNormalDepthUniforms( renderer, scene, camera, geometry, material ) {
 
 		if ( ! _lightPrePass ) return;
 
@@ -550,7 +550,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 	}
 
-	function updateDeferredColorUniforms( renderer, scene, camera, geometry, material, group ) {
+	function updateDeferredColorUniforms( renderer, scene, camera, geometry, material ) {
 
 		var originalMaterial = _originalMaterialsTable[ material.uuid ];
 		var uniforms = material.uniforms;
@@ -644,7 +644,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 		}
 
-		updateDeferredColorUniforms( renderer, scene, camera, geometry, material, group );
+		updateDeferredColorUniforms( renderer, scene, camera, geometry, material );
 
 		material.uniforms.samplerLight.value = _compLight.renderTarget2.texture;
 
@@ -715,7 +715,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		var geometry = new PlaneBufferGeometry( 2, 2 );
 		var mesh = new Mesh( geometry, material );
 
-		mesh.onBeforeRender = function ( renderer, scene, camera, geometry, material, group ) {
+		mesh.onBeforeRender = function ( renderer, scene, camera, geometry, material ) {
 
 			material.uniforms.samplerColor.value = _compColor.renderTarget2.texture;
 
@@ -878,7 +878,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 	}
 
-	function updateDeferredPointLightUniforms( renderer, scene, camera, geometry, material, group ) {
+	function updateDeferredPointLightUniforms( renderer, scene, camera, geometry, material ) {
 
 		var light = this;
 
@@ -924,7 +924,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 	}
 
-	function updateDeferredSpotLightUniforms( renderer, scene, camera, geometry, material, group ) {
+	function updateDeferredSpotLightUniforms() {
 
 		var light = this;
 
@@ -967,7 +967,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 	}
 
-	function updateDeferredDirectionalLightUniforms( renderer, scene, camera, geometry, material, group ) {
+	function updateDeferredDirectionalLightUniforms() {
 
 		var light = this;
 
@@ -2526,4 +2526,9 @@ var ShaderDeferred = {
 
 };
 
-export { WebGLDeferredRenderer }
+export {
+	WebGLDeferredRenderer,
+	ShaderDeferred,
+	ShaderDeferredCommon,
+	DeferredShaderChunk
+}

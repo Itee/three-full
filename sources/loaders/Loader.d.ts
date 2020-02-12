@@ -4,18 +4,20 @@
 import { Material } from './../materials/Material';
 import { LoaderHandler } from './FileLoader';
 export class Loader {
-  constructor();
-  onLoadStart: () => void;
-  onLoadProgress: () => void;
-  onLoadComplete: () => void;
-  crossOrigin: string;
-  extractUrlBase(url: string): string;
-  initMaterials(materials: Material[], texturePath: string): Material[];
-  createMaterial(
-    m: Material,
-    texturePath: string,
-    crossOrigin?: string
-  ): boolean;
 
-  static Handlers: LoaderHandler;
+	constructor();
+	onLoadStart: () => void;
+	onLoadProgress: () => void;
+	onLoadComplete: () => void;
+	crossOrigin: string;
+	extractUrlBase( url: string ): string;
+	initMaterials( materials: Material[], texturePath: string ): Material[];
+	createMaterial(
+		m: Material,
+		texturePath: string,
+		crossOrigin?: string
+	): boolean;
+
+	static Handlers: LoaderHandler;
+
 }

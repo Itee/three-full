@@ -8,16 +8,16 @@ import { Object3D } from './../core/Object3D';
 import { BufferGeometry } from '../core/BufferGeometry';
 import { Intersection } from '../core/Raycaster';
 export class Points extends Object3D {
-  
-  constructor(
-    geometry?: Geometry | BufferGeometry,
-    material?: Material | Material[]
-  );
+	constructor(
+		geometry?: Geometry | BufferGeometry,
+		material?: Material | Material[]
+	);
 
-  type: 'Points';
-  isPoints: true;
-  geometry: Geometry | BufferGeometry;
-  material: Material | Material[];
+	type: 'Points';
+	isPoints: true;
+	geometry: Geometry | BufferGeometry;
+	material: Material | Material[];
 
-  raycast(raycaster: Raycaster, intersects: Intersection[]): void;
+	raycast( raycaster: Raycaster, intersects: Intersection[] ): void;
+
 }

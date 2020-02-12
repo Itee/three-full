@@ -18,6 +18,7 @@ import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 /**
  * Depth-of-field post-process with bokeh shader
  */
+
 var BokehPass = function ( scene, camera, params ) {
 
 	Pass.call( this );
@@ -84,7 +85,6 @@ var BokehPass = function ( scene, camera, params ) {
 	this.fsQuad = new Pass.FullScreenQuad( this.materialBokeh );
 
 	this.oldClearColor = new Color();
-	this.oldClearAlpha = 1;
 
 };
 
@@ -92,14 +92,14 @@ BokehPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 	constructor: BokehPass,
 
-	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer/*, deltaTime, maskActive*/ ) {
 
 		// Render depth into texture
 
 		this.scene.overrideMaterial = this.materialDepth;
 
 		this.oldClearColor.copy( renderer.getClearColor() );
-		this.oldClearAlpha = renderer.getClearAlpha();
+		var oldClearAlpha = renderer.getClearAlpha();
 		var oldAutoClear = renderer.autoClear;
 		renderer.autoClear = false;
 
@@ -130,8 +130,8 @@ BokehPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		this.scene.overrideMaterial = null;
 		renderer.setClearColor( this.oldClearColor );
-		renderer.setClearAlpha( this.oldClearAlpha );
-		renderer.autoClear = this.oldAutoClear;
+		renderer.setClearAlpha( oldClearAlpha );
+		renderer.autoClear = oldAutoClear;
 
 	}
 

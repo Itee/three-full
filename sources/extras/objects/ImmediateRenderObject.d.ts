@@ -4,8 +4,10 @@
 import { Object3D } from './../../core/Object3D';
 import { Material } from './../../materials/Material';
 export class ImmediateRenderObject extends Object3D {
-  constructor(material: Material);
 
-  material: Material;
-  render(renderCallback: Function): void;
+	constructor( material: Material );
+
+	material: Material;
+	render( renderCallback: Function ): void;
+
 }

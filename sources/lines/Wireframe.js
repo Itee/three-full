@@ -64,7 +64,7 @@ Wireframe.prototype = Object.assign( Object.create( Mesh.prototype ), {
 
 	}() ),
 
-	copy: function ( source ) {
+	copy: function ( /* source */ ) {
 
 		// todo
 

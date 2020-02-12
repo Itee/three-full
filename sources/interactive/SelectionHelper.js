@@ -1,6 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Vector2 } from '../math/Vector2.js'
+
 /**
  * @author HypnosNova / https://www.threejs.org.cn/gallery
  */
@@ -15,9 +17,9 @@ var SelectionHelper = ( function () {
 
 		this.renderer = renderer;
 
-		this.startPoint = { x: 0, y: 0 };
-		this.pointTopLeft = { x: 0, y: 0 };
-		this.pointBottomRight = { x: 0, y: 0 };
+		this.startPoint = new Vector2();
+		this.pointTopLeft = new Vector2();
+		this.pointBottomRight = new Vector2();
 
 		this.isDown = false;
 

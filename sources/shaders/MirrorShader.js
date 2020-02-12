@@ -15,7 +15,7 @@ var MirrorShader = {
 	uniforms: {
 
 		"tDiffuse": { value: null },
-		"side":     { value: 1 }
+		"side": { value: 1 }
 
 	},
 
@@ -36,7 +36,7 @@ var MirrorShader = {
 
 		"uniform sampler2D tDiffuse;",
 		"uniform int side;",
-		
+
 		"varying vec2 vUv;",
 
 		"void main() {",

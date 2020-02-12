@@ -32,6 +32,7 @@ import { Scene } from '../scenes/Scene.js'
 import { TextureLoader } from './TextureLoader.js'
 import { TGALoader } from './TGALoader.js'
 import { Euler } from '../math/Euler.js'
+import { Node } from '../nodes/core/Node.js'
 import {
 	DoubleSide,
 	RepeatWrapping,
@@ -3857,6 +3858,35 @@ ColladaLoader.prototype = {
 
 		}
 
+		// convert the parser error element into text with each child elements text
+		// separated by new lines.
+
+		function parserErrorToText( parserError ) {
+
+			var result = '';
+			var stack = [ parserError ];
+
+			while ( stack.length ) {
+
+				var node = stack.shift();
+
+				if ( node.nodeType === Node.TEXT_NODE ) {
+
+					result += node.textContent;
+
+				} else {
+
+					result += '\n';
+					stack.push.apply( stack, node.childNodes );
+
+				}
+
+			}
+
+			return result.trim();
+
+		}
+
 		if ( text.length === 0 ) {
 
 			return { scene: new Scene() };
@@ -3866,6 +3896,30 @@ ColladaLoader.prototype = {
 		var xml = new DOMParser().parseFromString( text, 'application/xml' );
 
 		var collada = getElementsByTagName( xml, 'COLLADA' )[ 0 ];
+
+		var parserError = xml.getElementsByTagName( 'parsererror' )[ 0 ];
+		if ( parserError !== undefined ) {
+
+			// Chrome will return parser error with a div in it
+
+			var errorElement = getElementsByTagName( parserError, 'div' )[ 0 ];
+			var errorText;
+
+			if ( errorElement ) {
+
+				errorText = errorElement.textContent;
+
+			} else {
+
+				errorText = parserErrorToText( parserError );
+
+			}
+
+			console.error( 'ColladaLoader: Failed to parse collada file.\n', errorText );
+
+			return null;
+
+		}
 
 		// metadata
 

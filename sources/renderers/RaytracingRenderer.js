@@ -131,8 +131,6 @@ var RaytracingRenderer = function ( parameters ) {
 		canvasWidth = canvas.width;
 		canvasHeight = canvas.height;
 
-		context.fillStyle = 'white';
-
 		pool.forEach( updateSettings );
 
 	};
@@ -182,7 +180,6 @@ var RaytracingRenderer = function ( parameters ) {
 		} );
 
 		context.fillStyle = '#' + worker.color;
-
 		context.fillRect( blockX, blockY, blockSize, blockSize );
 
 	}
@@ -251,7 +248,9 @@ var RaytracingRenderer = function ( parameters ) {
 
 		} );
 
-		context.clearRect( 0, 0, canvasWidth, canvasHeight );
+		context.fillStyle = clearColor.getStyle();
+		context.fillRect( 0, 0, canvasWidth, canvasHeight );
+
 		reallyThen = Date.now();
 
 		xblocks = Math.ceil( canvasWidth / blockSize );
