@@ -61,6 +61,7 @@ module.exports = {
 			outputOverride: 'curves/ArcCurve.js'
 		},
         BokehShader2: {
+            importsOverride: [ 'Vector2' ],
             replacements:    [
                 [ 'BokehShader', 'BokehShader2' ],
                 [ 'BokehShader2 = {', 'var BokehShader2 = {' ]
@@ -157,6 +158,12 @@ module.exports = {
                 '_Math'
             ]
         },
+        DracoExporter: {
+            importsOverride: [ 'BufferGeometry' ]
+        },
+        DRACOLoader: {
+            imports: [ '!Mesh' ]
+        },
 		Earcut: {
 			importsOverride: [],
             outputOverride: 'misc/Earcut.js'
@@ -165,9 +172,16 @@ module.exports = {
             outputOverride: 'curves/EllipseCurve.js'
         },
 		FBXLoader: {
-			imports: [
-				'_Math'
-			]
+            imports: [
+                '_Math',
+                '!NormalNode',
+                '!UVNode',
+                '!Node',
+                '!ColorNode',
+                '!Geometry',
+                '!Material',
+                '!Points'
+            ]
 		},
 		Fire: {
 			imports: [
@@ -251,6 +265,11 @@ module.exports = {
 			],
             exportsOverride: [ 'LegacyGLTFLoader' ]
 		},
+        Lensflare: {
+            imports: [
+                '!Geometry'
+            ]
+        },
         LightningStorm: {
             imports: [
                 '_Math'
@@ -368,8 +387,6 @@ module.exports = {
             // Equivalent to ( import * as Geometries from 'intermediary exporter file Geometries' )
             imports: [
                 'WireframeGeometry',
-                'ParametricGeometry', 		//Invalid due to TorusKnotCurve bug
-                'ParametricBufferGeometry',	//Invalid due to TorusKnotCurve bug
                 'TetrahedronGeometry',
                 'TetrahedronBufferGeometry',
                 'OctahedronGeometry',
@@ -484,6 +501,16 @@ module.exports = {
                 ['HorizontalPanning = 1;', 'var HorizontalPanning = 1;']
             ]
 		},
+        OutlineEffect: {
+            imports: [
+                '!MeshBasicMaterial',
+                '!MeshLambertMaterial',
+                '!MeshPhongMaterial',
+                '!MeshToonMaterial',
+                '!MeshStandardMaterial',
+                '!MeshPhysicalMaterial'
+            ]
+        },
         Pass: {
             exportsOverride: [ 'Pass' ]
 		},
@@ -495,6 +522,13 @@ module.exports = {
             exportsOverride: [ 'PRNG' ]
 		},
 		ParametricGeometries: {
+            importsOverride: [
+                'Vector3',
+                'ParametricGeometry',
+                'Geometry',
+                'ArrowHelper',
+                'Curve'
+            ],
 			exportsOverride: [ 'ParametricGeometries' ],
             outputOverride: 'geometries/ParametricGeometries.js'
 		},
@@ -507,6 +541,9 @@ module.exports = {
         QuickHull: {
             exportsOverride: [ 'QuickHull' ],
 			outputOverride: 'utils/QuickHull.js'
+		},
+        Raycaster: {
+            importsOverride: [ 'Ray' ]
 		},
 		Refractor: {
             imports: [
@@ -569,6 +606,9 @@ module.exports = {
 			outputOverride: 'misc/SimplexNoise.js',
             exportsOverride: [ 'SimplexNoise' ]
 		},
+        SimplifyModifier: {
+            imports: ['!Triangle']
+        },
 		SkeletonUtils: {
 			replacements: [
                 [ 'new Vector2( targetParentPos.x, targetParentPos.y ),', 'new Vector2( targetParentPos.x, targetParentPos.y )' ],
@@ -582,7 +622,7 @@ module.exports = {
             exportsOverride: [ 'SMAAShader' ]
 		},
         SoftwareRenderer: {
-            imports: [ '_Math' ]
+            imports: [ '_Math', '!Texture' ]
         },
         SplineCurve: {
             outputOverride: 'curves/SplineCurve.js'
@@ -598,9 +638,12 @@ module.exports = {
 		TempNode: {
 			imports: [ '_Math' ]
 		},
-		TypedArrayUtils: {
+        TransformControls: {
+            imports: [ '!CircleGeometry' ]
+        },
+        TypedArrayUtils: {
 			imports: [
-				'Timeliner'
+				'!Node'
 			],
 			outputOverride: 'utils/TypedArrayUtils.js'
 		},
@@ -626,6 +669,9 @@ module.exports = {
 			]
 		},
         Water2: {
+            imports: [
+                '!Water'
+            ],
             replacements:    [
                 [ /Water/g, 'Water2' ],
                 [ 'Water2 = function (', 'function Water2(' ],
@@ -638,6 +684,18 @@ module.exports = {
             ],
             exportsOverride: [ 'WebGL' ],
             outputOverride: 'helpers/WebGL.js'
+        },
+        WebGLPrograms: {
+            importsOverride: [
+                'BackSide',
+                'DoubleSide',
+                'CubeUVRefractionMapping',
+                'CubeUVReflectionMapping',
+                'GammaEncoding',
+                'LinearEncoding',
+                'ObjectSpaceNormalMap',
+                'WebGLProgram'
+            ]
         },
 		WebGLDeferredRenderer: {
 			replacements: [
