@@ -103,20 +103,24 @@ module.exports = {
         },
         CurveExtras:                 {
             replacements:   [
-                [ 'Curves.GrannyKnot = GrannyKnot;', '' ],
-                [ 'Curves.HeartCurve = HeartCurve;', '' ],
-                [ 'Curves.VivianiCurve = VivianiCurve;', '' ],
-                [ 'Curves.KnotCurve = KnotCurve;', '' ],
-                [ 'Curves.HelixCurve = HelixCurve;', '' ],
-                [ 'Curves.TrefoilKnot = TrefoilKnot;', '' ],
-                [ 'Curves.TorusKnot = TorusKnot;', '' ],
-                [ 'Curves.CinquefoilKnot = CinquefoilKnot;', '' ],
-                [ 'Curves.TrefoilPolynomialKnot = TrefoilPolynomialKnot;', '' ],
-                [ 'Curves.FigureEightPolynomialKnot = FigureEightPolynomialKnot;', '' ],
-                [ 'Curves.DecoratedTorusKnot4a = DecoratedTorusKnot4a;', '' ],
-                [ 'Curves.DecoratedTorusKnot4b = DecoratedTorusKnot4b;', '' ],
-                [ 'Curves.DecoratedTorusKnot5a = DecoratedTorusKnot5a;', '' ],
-                [ 'Curves.DecoratedTorusKnot5c = DecoratedTorusKnot5c;', '' ]
+                [ 'Curves = ( function () {', '' ],
+                [ /return {([\n].*)*/g, '\n' ]
+            ],
+            exportsOverride: [
+                'GrannyKnot',
+                'HeartCurve',
+                'VivianiCurve',
+                'KnotCurve',
+                'HelixCurve',
+                'TrefoilKnot',
+                'TorusKnot',
+                'CinquefoilKnot',
+                'TrefoilPolynomialKnot',
+                'FigureEightPolynomialKnot',
+                'DecoratedTorusKnot4a',
+                'DecoratedTorusKnot4b',
+                'DecoratedTorusKnot5a',
+                'DecoratedTorusKnot5c'
             ],
             outputOverride: 'curves/CurveExtras.js'
         },
@@ -132,12 +136,27 @@ module.exports = {
                 'LineCurve3',
                 'QuadraticBezierCurve',
                 'QuadraticBezierCurve3',
-                'SplineCurve'
+                'SplineCurve',
+                'GrannyKnot',
+                'HeartCurve',
+                'VivianiCurve',
+                'KnotCurve',
+                'HelixCurve',
+                'TrefoilKnot',
+                'TorusKnot',
+                'CinquefoilKnot',
+                'TrefoilPolynomialKnot',
+                'FigureEightPolynomialKnot',
+                'DecoratedTorusKnot4a',
+                'DecoratedTorusKnot4b',
+                'DecoratedTorusKnot5a',
+                'DecoratedTorusKnot5c'
             ],
             replacements:   [
                 [
                     'function CurvePath() {',
                     'var Curves = {\n' +
+
                     '    ArcCurve: ArcCurve,\n' +
                     '    CatmullRomCurve3: CatmullRomCurve3,\n' +
                     '    CubicBezierCurve: CubicBezierCurve,\n' +
@@ -147,7 +166,23 @@ module.exports = {
                     '    LineCurve3: LineCurve3,\n' +
                     '    QuadraticBezierCurve: QuadraticBezierCurve,\n' +
                     '    QuadraticBezierCurve3: QuadraticBezierCurve3,\n' +
-                    '    SplineCurve: SplineCurve\n' +
+                    '    SplineCurve: SplineCurve,\n' +
+
+                    '    GrannyKnot: GrannyKnot,\n' +
+                    '    HeartCurve: HeartCurve,\n' +
+                    '    VivianiCurve: VivianiCurve,\n' +
+                    '    KnotCurve: KnotCurve,\n' +
+                    '    HelixCurve: HelixCurve,\n' +
+                    '    TrefoilKnot: TrefoilKnot,\n' +
+                    '    TorusKnot: TorusKnot,\n' +
+                    '    CinquefoilKnot: CinquefoilKnot,\n' +
+                    '    TrefoilPolynomialKnot: TrefoilPolynomialKnot,\n' +
+                    '    FigureEightPolynomialKnot: FigureEightPolynomialKnot,\n' +
+                    '    DecoratedTorusKnot4a: DecoratedTorusKnot4a,\n' +
+                    '    DecoratedTorusKnot4b: DecoratedTorusKnot4b,\n' +
+                    '    DecoratedTorusKnot5a: DecoratedTorusKnot5a,\n' +
+                    '    DecoratedTorusKnot5c: DecoratedTorusKnot5c\n' +
+
                     '}\n' +
                     'function CurvePath() {'
                 ]
