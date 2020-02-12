@@ -5,53 +5,53 @@ import { Vector3 } from './../math/Vector3';
 import { Color } from './../math/Color';
 
 export interface Event {
-  type: string;
-  target?: any;
-  [attachment: string]: any;
+	type: string;
+	target?: any;
+	[attachment: string]: any;
 }
 export class Face3 {
-  
-  constructor(
-    a: number,
-    b: number,
-    c: number,
-    normal?: Vector3,
-    color?: Color,
-    materialIndex?: number
-  );
-  constructor(
-    a: number,
-    b: number,
-    c: number,
-    normal?: Vector3,
-    vertexColors?: Color[],
-    materialIndex?: number
-  );
-  constructor(
-    a: number,
-    b: number,
-    c: number,
-    vertexNormals?: Vector3[],
-    color?: Color,
-    materialIndex?: number
-  );
-  constructor(
-    a: number,
-    b: number,
-    c: number,
-    vertexNormals?: Vector3[],
-    vertexColors?: Color[],
-    materialIndex?: number
-  );
-  a: number;
-  b: number;
-  c: number;
-  normal: Vector3;
-  vertexNormals: Vector3[];
-  color: Color;
-  vertexColors: Color[];
-  materialIndex: number;
+	constructor(
+		a: number,
+		b: number,
+		c: number,
+		normal?: Vector3,
+		color?: Color,
+		materialIndex?: number
+	);
+	constructor(
+		a: number,
+		b: number,
+		c: number,
+		normal?: Vector3,
+		vertexColors?: Color[],
+		materialIndex?: number
+	);
+	constructor(
+		a: number,
+		b: number,
+		c: number,
+		vertexNormals?: Vector3[],
+		color?: Color,
+		materialIndex?: number
+	);
+	constructor(
+		a: number,
+		b: number,
+		c: number,
+		vertexNormals?: Vector3[],
+		vertexColors?: Color[],
+		materialIndex?: number
+	);
+	a: number;
+	b: number;
+	c: number;
+	normal: Vector3;
+	vertexNormals: Vector3[];
+	color: Color;
+	vertexColors: Color[];
+	materialIndex: number;
 
-  clone(): this;
-  copy(source: Face3): this;
+	clone(): this;
+	copy( source: Face3 ): this;
+
 }

@@ -18,7 +18,7 @@ import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
  *
  */
 
-var TAARenderPass = function ( scene, camera, params ) {
+var TAARenderPass = function ( scene, camera, clearColor, clearAlpha ) {
 
 	if ( SSAARenderPass === undefined ) {
 
@@ -26,7 +26,7 @@ var TAARenderPass = function ( scene, camera, params ) {
 
 	}
 
-	SSAARenderPass.call( this, scene, camera, params );
+	SSAARenderPass.call( this, scene, camera, clearColor, clearAlpha );
 
 	this.sampleLevel = 0;
 	this.accumulate = false;

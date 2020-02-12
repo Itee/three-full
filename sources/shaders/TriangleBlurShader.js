@@ -17,10 +17,10 @@ import { Vector2 } from '../math/Vector2.js'
 
 var TriangleBlurShader = {
 
-	uniforms : {
+	uniforms: {
 
 		"texture": { value: null },
-		"delta":   { value: new Vector2( 1, 1 ) }
+		"delta": { value: new Vector2( 1, 1 ) }
 
 	},
 

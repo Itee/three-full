@@ -546,6 +546,7 @@ Object.assign( ObjectLoader.prototype, {
 						break;
 
 					case 'BufferGeometry':
+					case 'InstancedBufferGeometry':
 
 						geometry = bufferGeometryLoader.parse( data );
 

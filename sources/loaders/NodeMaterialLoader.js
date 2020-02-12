@@ -270,4 +270,7 @@ Object.assign( NodeMaterialLoader.prototype, {
 
 } );
 
-export { NodeMaterialLoader }
+export {
+	NodeMaterialLoader,
+	NodeMaterialLoaderUtils
+}

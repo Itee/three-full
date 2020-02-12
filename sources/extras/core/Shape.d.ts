@@ -6,17 +6,19 @@ import { Path } from './Path';
 import { ExtrudeGeometry } from './../../geometries/ExtrudeGeometry';
 import { ShapeGeometry } from './../../geometries/ShapeGeometry';
 export class Shape extends Path {
-  constructor(points?: Vector2[]);
 
-  holes: Path[];
-  extrude(options?: any): ExtrudeGeometry;
-  makeGeometry(options?: any): ShapeGeometry;
-  getPointsHoles(divisions: number): Vector2[][];
-  extractAllPoints(
-    divisions: number
-  ): {
-    shape: Vector2[];
-    holes: Vector2[][];
-  };
-  extractPoints(divisions: number): Vector2[];
+	constructor( points?: Vector2[] );
+
+	holes: Path[];
+	extrude( options?: any ): ExtrudeGeometry;
+	makeGeometry( options?: any ): ShapeGeometry;
+	getPointsHoles( divisions: number ): Vector2[][];
+	extractAllPoints(
+		divisions: number
+	): {
+		shape: Vector2[];
+		holes: Vector2[][];
+	};
+	extractPoints( divisions: number ): Vector2[];
+
 }

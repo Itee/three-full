@@ -14,7 +14,7 @@ var SepiaShader = {
 	uniforms: {
 
 		"tDiffuse": { value: null },
-		"amount":   { value: 1.0 }
+		"amount": { value: 1.0 }
 
 	},
 

@@ -5,31 +5,33 @@ import { Color } from './../math/Color';
 import { LightShadow } from './LightShadow';
 import { Object3D } from './../core/Object3D';
 export class Light extends Object3D {
-  constructor(hex?: number | string, intensity?: number);
 
-  color: Color;
-  intensity: number;
-  isLight: true;
-  receiveShadow: boolean;
-  shadow: LightShadow;
-  
-  shadowCameraFov: any;
-  
-  shadowCameraLeft: any;
-  
-  shadowCameraRight: any;
-  
-  shadowCameraTop: any;
-  
-  shadowCameraBottom: any;
-  
-  shadowCameraNear: any;
-  
-  shadowCameraFar: any;
-  
-  shadowBias: any;
-  
-  shadowMapWidth: any;
-  
-  shadowMapHeight: any;
+	constructor( hex?: number | string, intensity?: number );
+
+	color: Color;
+	intensity: number;
+	isLight: true;
+	receiveShadow: boolean;
+	shadow: LightShadow;
+	
+	shadowCameraFov: any;
+	
+	shadowCameraLeft: any;
+	
+	shadowCameraRight: any;
+	
+	shadowCameraTop: any;
+	
+	shadowCameraBottom: any;
+	
+	shadowCameraNear: any;
+	
+	shadowCameraFar: any;
+	
+	shadowBias: any;
+	
+	shadowMapWidth: any;
+	
+	shadowMapHeight: any;
+
 }

@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Group } from '../objects/Group.js'
 import { Mesh } from '../objects/Mesh.js'
-import { Matrix4 } from '../math/Matrix4.js'
 
 /**
  * @author alteredq / http://alteredqualia.com/
@@ -27,18 +26,17 @@ var SceneUtils = {
 
 	detach: function ( child, parent, scene ) {
 
-		child.applyMatrix( parent.matrixWorld );
-		parent.remove( child );
-		scene.add( child );
+		console.warn( 'SceneUtils: detach() has been deprecated. Use scene.attach( child ) instead.' );
+
+		scene.attach( child );
 
 	},
 
 	attach: function ( child, scene, parent ) {
 
-		child.applyMatrix( new Matrix4().getInverse( parent.matrixWorld ) );
+		console.warn( 'SceneUtils: attach() has been deprecated. Use parent.attach( child ) instead.' );
 
-		scene.remove( child );
-		parent.add( child );
+		parent.attach( child );
 
 	}
 

@@ -14,8 +14,8 @@ var HueSaturationShader = {
 
 	uniforms: {
 
-		"tDiffuse":   { value: null },
-		"hue":        { value: 0 },
+		"tDiffuse": { value: null },
+		"hue": { value: 0 },
 		"saturation": { value: 0 }
 
 	},

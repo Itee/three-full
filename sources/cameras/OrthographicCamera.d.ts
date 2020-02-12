@@ -3,45 +3,45 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Camera } from './Camera';
 export class OrthographicCamera extends Camera {
-  
-  constructor(
-    left: number,
-    right: number,
-    top: number,
-    bottom: number,
-    near?: number,
-    far?: number
-  );
+	constructor(
+		left: number,
+		right: number,
+		top: number,
+		bottom: number,
+		near?: number,
+		far?: number
+	);
 
-  type: 'OrthographicCamera';
+	type: 'OrthographicCamera';
 
-  isOrthographicCamera: true;
+	isOrthographicCamera: true;
 
-  zoom: number;
-  view: null | {
-    enabled: boolean;
-    fullWidth: number;
-    fullHeight: number;
-    offsetX: number;
-    offsetY: number;
-    width: number;
-    height: number;
-  };
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
-  near: number;
-  far: number;
-  updateProjectionMatrix(): void;
-  setViewOffset(
-    fullWidth: number,
-    fullHeight: number,
-    offsetX: number,
-    offsetY: number,
-    width: number,
-    height: number
-  ): void;
-  clearViewOffset(): void;
-  toJSON(meta?: any): any;
+	zoom: number;
+	view: null | {
+		enabled: boolean;
+		fullWidth: number;
+		fullHeight: number;
+		offsetX: number;
+		offsetY: number;
+		width: number;
+		height: number;
+	};
+	left: number;
+	right: number;
+	top: number;
+	bottom: number;
+	near: number;
+	far: number;
+	updateProjectionMatrix(): void;
+	setViewOffset(
+		fullWidth: number,
+		fullHeight: number,
+		offsetX: number,
+		offsetY: number,
+		width: number,
+		height: number
+	): void;
+	clearViewOffset(): void;
+	toJSON( meta?: any ): any;
+
 }

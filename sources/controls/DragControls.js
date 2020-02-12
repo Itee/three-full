@@ -32,7 +32,7 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 	var _intersection = new Vector3();
 	var _worldPosition = new Vector3();
 	var _inverseMatrix = new Matrix4();
-	
+
 	var _selected = null, _hovered = null;
 
 	//

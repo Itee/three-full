@@ -16,92 +16,94 @@ import { Bone } from './../objects/Bone';
 import { AnimationClip } from './../animation/AnimationClip';
 import { EventDispatcher } from './EventDispatcher';
 export interface MorphTarget {
-  name: string;
-  vertices: Vector3[];
+	name: string;
+	vertices: Vector3[];
 }
 
 export interface MorphColor {
-  name: string;
-  colors: Color[];
+	name: string;
+	colors: Color[];
 }
 
 export interface MorphNormals {
-  name: string;
-  normals: Vector3[];
+	name: string;
+	normals: Vector3[];
 }
 
 export let GeometryIdCount: number;
 export class Geometry extends EventDispatcher {
-  constructor();
-  id: number;
 
-  uuid: string;
-  name: string;
+	constructor();
+	id: number;
 
-  type: string;
-  vertices: Vector3[];
-  colors: Color[];
-  faces: Face3[];
-  faceVertexUvs: Vector2[][][];
-  morphTargets: MorphTarget[];
-  morphNormals: MorphNormals[];
-  skinWeights: Vector4[];
-  skinIndices: Vector4[];
-  lineDistances: number[];
-  boundingBox: Box3;
-  boundingSphere: Sphere;
-  verticesNeedUpdate: boolean;
-  elementsNeedUpdate: boolean;
-  uvsNeedUpdate: boolean;
-  normalsNeedUpdate: boolean;
-  colorsNeedUpdate: boolean;
-  lineDistancesNeedUpdate: boolean;
-  groupsNeedUpdate: boolean;
-  applyMatrix(matrix: Matrix4): Geometry;
+	uuid: string;
+	name: string;
 
-  rotateX(angle: number): Geometry;
-  rotateY(angle: number): Geometry;
-  rotateZ(angle: number): Geometry;
+	type: string;
+	vertices: Vector3[];
+	colors: Color[];
+	faces: Face3[];
+	faceVertexUvs: Vector2[][][];
+	morphTargets: MorphTarget[];
+	morphNormals: MorphNormals[];
+	skinWeights: Vector4[];
+	skinIndices: Vector4[];
+	lineDistances: number[];
+	boundingBox: Box3;
+	boundingSphere: Sphere;
+	verticesNeedUpdate: boolean;
+	elementsNeedUpdate: boolean;
+	uvsNeedUpdate: boolean;
+	normalsNeedUpdate: boolean;
+	colorsNeedUpdate: boolean;
+	lineDistancesNeedUpdate: boolean;
+	groupsNeedUpdate: boolean;
+	applyMatrix( matrix: Matrix4 ): Geometry;
 
-  translate(x: number, y: number, z: number): Geometry;
-  scale(x: number, y: number, z: number): Geometry;
-  lookAt(vector: Vector3): void;
+	rotateX( angle: number ): Geometry;
+	rotateY( angle: number ): Geometry;
+	rotateZ( angle: number ): Geometry;
 
-  fromBufferGeometry(geometry: BufferGeometry): Geometry;
+	translate( x: number, y: number, z: number ): Geometry;
+	scale( x: number, y: number, z: number ): Geometry;
+	lookAt( vector: Vector3 ): void;
 
-  center(): Geometry;
+	fromBufferGeometry( geometry: BufferGeometry ): Geometry;
 
-  normalize(): Geometry;
-  computeFaceNormals(): void;
-  computeVertexNormals(areaWeighted?: boolean): void;
-  computeFlatVertexNormals(): void;
-  computeMorphNormals(): void;
-  computeBoundingBox(): void;
-  computeBoundingSphere(): void;
+	center(): Geometry;
 
-  merge(
-    geometry: Geometry,
-    matrix?: Matrix,
-    materialIndexOffset?: number
-  ): void;
+	normalize(): Geometry;
+	computeFaceNormals(): void;
+	computeVertexNormals( areaWeighted?: boolean ): void;
+	computeFlatVertexNormals(): void;
+	computeMorphNormals(): void;
+	computeBoundingBox(): void;
+	computeBoundingSphere(): void;
 
-  mergeMesh(mesh: Mesh): void;
-  mergeVertices(): number;
+	merge(
+		geometry: Geometry,
+		matrix?: Matrix,
+		materialIndexOffset?: number
+	): void;
 
-  setFromPoints(points: Array<Vector2> | Array<Vector3>): this;
+	mergeMesh( mesh: Mesh ): void;
+	mergeVertices(): number;
 
-  sortFacesByMaterialIndex(): void;
+	setFromPoints( points: Array<Vector2> | Array<Vector3> ): this;
 
-  toJSON(): any;
-  clone(): this;
+	sortFacesByMaterialIndex(): void;
 
-  copy(source: Geometry): this;
-  dispose(): void;
-  bones: Bone[];
-  animation: AnimationClip;
-  animations: AnimationClip[];
-  addEventListener(type: string, listener: (event: Event) => void): void;
-  hasEventListener(type: string, listener: (event: Event) => void): boolean;
-  removeEventListener(type: string, listener: (event: Event) => void): void;
-  dispatchEvent(event: { type: string; [attachment: string]: any }): void;
+	toJSON(): any;
+	clone(): this;
+
+	copy( source: Geometry ): this;
+	dispose(): void;
+	bones: Bone[];
+	animation: AnimationClip;
+	animations: AnimationClip[];
+	addEventListener( type: string, listener: ( event: Event ) => void ): void;
+	hasEventListener( type: string, listener: ( event: Event ) => void ): boolean;
+	removeEventListener( type: string, listener: ( event: Event ) => void ): void;
+	dispatchEvent( event: { type: string; [attachment: string]: any } ): void;
+
 }

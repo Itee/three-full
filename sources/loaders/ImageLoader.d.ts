@@ -3,19 +3,21 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { LoadingManager } from './LoadingManager';
 export class ImageLoader {
-  constructor(manager?: LoadingManager);
 
-  manager: LoadingManager;
-  crossOrigin: string;
-  withCredentials: string;
-  path: string;
-  load(
-    url: string,
-    onLoad?: (image: HTMLImageElement) => void,
-    onProgress?: (event: ProgressEvent) => void,
-    onError?: (event: ErrorEvent) => void
-  ): HTMLImageElement;
-  setCrossOrigin(crossOrigin: string): ImageLoader;
-  setWithCredentials(value: string): ImageLoader;
-  setPath(value: string): ImageLoader;
+	constructor( manager?: LoadingManager );
+
+	manager: LoadingManager;
+	crossOrigin: string;
+	withCredentials: string;
+	path: string;
+	load(
+		url: string,
+		onLoad?: ( image: HTMLImageElement ) => void,
+		onProgress?: ( event: ProgressEvent ) => void,
+		onError?: ( event: ErrorEvent ) => void
+	): HTMLImageElement;
+	setCrossOrigin( crossOrigin: string ): ImageLoader;
+	setWithCredentials( value: string ): ImageLoader;
+	setPath( value: string ): ImageLoader;
+
 }

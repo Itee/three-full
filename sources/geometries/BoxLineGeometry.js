@@ -34,10 +34,10 @@ var BoxLineGeometry = function ( width, height, depth, widthSegments, heightSegm
 
 	for ( var i = 0; i <= widthSegments; i ++ ) {
 
-		vertices.push( x, - heightHalf, - depthHalf, x,   heightHalf, - depthHalf );
-		vertices.push( x,   heightHalf, - depthHalf, x,   heightHalf,   depthHalf );
-		vertices.push( x,   heightHalf,   depthHalf, x, - heightHalf,   depthHalf );
-		vertices.push( x, - heightHalf,   depthHalf, x, - heightHalf, - depthHalf );
+		vertices.push( x, - heightHalf, - depthHalf, x, heightHalf, - depthHalf );
+		vertices.push( x, heightHalf, - depthHalf, x, heightHalf, depthHalf );
+		vertices.push( x, heightHalf, depthHalf, x, - heightHalf, depthHalf );
+		vertices.push( x, - heightHalf, depthHalf, x, - heightHalf, - depthHalf );
 
 		x += segmentWidth;
 
@@ -45,10 +45,10 @@ var BoxLineGeometry = function ( width, height, depth, widthSegments, heightSegm
 
 	for ( var i = 0; i <= heightSegments; i ++ ) {
 
-		vertices.push( - widthHalf, y, - depthHalf,   widthHalf, y, - depthHalf );
-		vertices.push(   widthHalf, y, - depthHalf,   widthHalf, y,   depthHalf );
-		vertices.push(   widthHalf, y,   depthHalf, - widthHalf, y,   depthHalf );
-		vertices.push( - widthHalf, y,   depthHalf, - widthHalf, y, - depthHalf );
+		vertices.push( - widthHalf, y, - depthHalf, widthHalf, y, - depthHalf );
+		vertices.push( widthHalf, y, - depthHalf, widthHalf, y, depthHalf );
+		vertices.push( widthHalf, y, depthHalf, - widthHalf, y, depthHalf );
+		vertices.push( - widthHalf, y, depthHalf, - widthHalf, y, - depthHalf );
 
 		y += segmentHeight;
 
@@ -56,10 +56,10 @@ var BoxLineGeometry = function ( width, height, depth, widthSegments, heightSegm
 
 	for ( var i = 0; i <= depthSegments; i ++ ) {
 
-		vertices.push( - widthHalf, - heightHalf, z, - widthHalf,   heightHalf, z );
-		vertices.push( - widthHalf,   heightHalf, z,   widthHalf,   heightHalf, z );
-		vertices.push(   widthHalf,   heightHalf, z,   widthHalf, - heightHalf, z );
-		vertices.push(   widthHalf, - heightHalf, z, - widthHalf, - heightHalf, z );
+		vertices.push( - widthHalf, - heightHalf, z, - widthHalf, heightHalf, z );
+		vertices.push( - widthHalf, heightHalf, z, widthHalf, heightHalf, z );
+		vertices.push( widthHalf, heightHalf, z, widthHalf, - heightHalf, z );
+		vertices.push( widthHalf, - heightHalf, z, - widthHalf, - heightHalf, z );
 
 		z += segmentDepth;
 
@@ -67,7 +67,7 @@ var BoxLineGeometry = function ( width, height, depth, widthSegments, heightSegm
 
 	this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
 
-}
+};
 
 BoxLineGeometry.prototype = Object.create( BufferGeometry.prototype );
 BoxLineGeometry.prototype.constructor = BoxLineGeometry;

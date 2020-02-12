@@ -7,19 +7,23 @@ import { PerspectiveCamera } from './../cameras/PerspectiveCamera';
 import { LightShadow } from './LightShadow';
 
 export class PointLightShadow extends LightShadow {
-  camera: PerspectiveCamera;
+
+	camera: PerspectiveCamera;
+
 }
 export class PointLight extends Light {
-  constructor(
-    color?: Color | string | number,
-    intensity?: number,
-    distance?: number,
-    decay?: number
-  );
-  intensity: number;
-  distance: number;
 
-  decay: number;
-  shadow: PointLightShadow;
-  power: number;
+	constructor(
+		color?: Color | string | number,
+		intensity?: number,
+		distance?: number,
+		decay?: number
+	);
+	intensity: number;
+	distance: number;
+
+	decay: number;
+	shadow: PointLightShadow;
+	power: number;
+
 }

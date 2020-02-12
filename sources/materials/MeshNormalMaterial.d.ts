@@ -24,7 +24,8 @@ export interface MeshNormalMaterialParameters extends MaterialParameters {
 }
 
 export class MeshNormalMaterial extends Material {
-	constructor(parameters?: MeshNormalMaterialParameters);
+
+	constructor( parameters?: MeshNormalMaterialParameters );
 
 	bumpMap: Texture | null;
 	bumpScale: number;
@@ -40,5 +41,6 @@ export class MeshNormalMaterial extends Material {
 	morphTargets: boolean;
 	morphNormals: boolean;
 
-	setValues(parameters: MeshNormalMaterialParameters): void;
+	setValues( parameters: MeshNormalMaterialParameters ): void;
+
 }

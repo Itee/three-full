@@ -179,7 +179,7 @@ PCDLoader.prototype = {
 
 		}
 
-		var textData = LoaderUtils.decodeText( data );
+		var textData = LoaderUtils.decodeText( new Uint8Array( data ) );
 
 		// parse header (always ascii format)
 

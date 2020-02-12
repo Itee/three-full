@@ -4,18 +4,18 @@
 import { Mapping } from '../constants';
 import { Texture } from '../textures/Texture';
 export namespace ImageUtils {
-  
-  export let crossOrigin: string;
-  export function loadTexture(
-    url: string,
-    mapping?: Mapping,
-    onLoad?: (texture: Texture) => void,
-    onError?: (message: string) => void
-  ): Texture;
-  export function loadTextureCube(
-    array: string[],
-    mapping?: Mapping,
-    onLoad?: (texture: Texture) => void,
-    onError?: (message: string) => void
-  ): Texture;
+	
+	export let crossOrigin: string;
+	export function loadTexture(
+		url: string,
+		mapping?: Mapping,
+		onLoad?: ( texture: Texture ) => void,
+		onError?: ( message: string ) => void
+	): Texture;
+	export function loadTextureCube(
+		array: string[],
+		mapping?: Mapping,
+		onLoad?: ( texture: Texture ) => void,
+		onError?: ( message: string ) => void
+	): Texture;
 }

@@ -16,13 +16,12 @@ function WebXRManager( renderer ) {
 
 	var gl = renderer.context;
 
-	var device = null;
 	var session = null;
 
 	var framebufferScaleFactor = 1.0;
 
-	var frameOfReference = null;
-	var frameOfReferenceType = 'stage';
+	var referenceSpace = null;
+	var referenceSpaceType = 'local-floor';
 
 	var pose = null;
 
@@ -31,7 +30,7 @@ function WebXRManager( renderer ) {
 
 	function isPresenting() {
 
-		return session !== null && frameOfReference !== null;
+		return session !== null && referenceSpace !== null;
 
 	}
 
@@ -71,25 +70,19 @@ function WebXRManager( renderer ) {
 
 	};
 
-	this.getDevice = function () {
-
-		return device;
-
-	};
-
-	this.setDevice = function ( value ) {
-
-		if ( value !== undefined ) device = value;
-		if ( value instanceof XRDevice ) gl.setCompatibleXRDevice( value );
-
-	};
-
 	//
 
 	function onSessionEvent( event ) {
 
-		var controller = controllers[ inputSources.indexOf( event.inputSource ) ];
-		if ( controller ) controller.dispatchEvent( { type: event.type } );
+		for ( var i = 0; i < controllers.length; i ++ ) {
+
+			if ( inputSources[ i ] === event.inputSource ) {
+
+				controllers[ i ].dispatchEvent( { type: event.type } );
+
+			}
+
+		}
 
 	}
 
@@ -101,15 +94,30 @@ function WebXRManager( renderer ) {
 
 	}
 
+	function onRequestReferenceSpace( value ) {
+
+		referenceSpace = value;
+
+		animation.setContext( session );
+		animation.start();
+
+	}
+
 	this.setFramebufferScaleFactor = function ( value ) {
 
 		framebufferScaleFactor = value;
 
 	};
 
-	this.setFrameOfReferenceType = function ( value ) {
+	this.setReferenceSpaceType = function ( value ) {
 
-		frameOfReferenceType = value;
+		referenceSpaceType = value;
+
+	};
+
+	this.getSession = function () {
+
+		return session;
 
 	};
 
@@ -124,25 +132,17 @@ function WebXRManager( renderer ) {
 			session.addEventListener( 'selectend', onSessionEvent );
 			session.addEventListener( 'end', onSessionEnd );
 
-			session.baseLayer = new XRWebGLLayer( session, gl, { framebufferScaleFactor: framebufferScaleFactor } );
-			session.requestFrameOfReference( frameOfReferenceType ).then( function ( value ) {
+			session.updateRenderState( { baseLayer: new XRWebGLLayer( session, gl ) } );
 
-				frameOfReference = value;
-
-				renderer.setFramebuffer( session.baseLayer.framebuffer );
-
-				animation.setContext( session );
-				animation.start();
-
-			} );
+			session.requestReferenceSpace( referenceSpaceType ).then( onRequestReferenceSpace );
 
 			//
 
-			inputSources = session.getInputSources();
+			inputSources = session.inputSources;
 
 			session.addEventListener( 'inputsourceschange', function () {
 
-				inputSources = session.getInputSources();
+				inputSources = session.inputSources;
 				console.log( inputSources );
 
 				for ( var i = 0; i < controllers.length; i ++ ) {
@@ -219,18 +219,20 @@ function WebXRManager( renderer ) {
 
 	function onAnimationFrame( time, frame ) {
 
-		pose = frame.getDevicePose( frameOfReference );
+		pose = frame.getViewerPose( referenceSpace );
 
 		if ( pose !== null ) {
 
-			var layer = session.baseLayer;
-			var views = frame.views;
+			var views = pose.views;
+			var baseLayer = session.renderState.baseLayer;
+
+			renderer.setFramebuffer( baseLayer.framebuffer );
 
 			for ( var i = 0; i < views.length; i ++ ) {
 
 				var view = views[ i ];
-				var viewport = layer.getViewport( view );
-				var viewMatrix = pose.getViewMatrix( view );
+				var viewport = baseLayer.getViewport( view );
+				var viewMatrix = view.transform.inverse.matrix;
 
 				var camera = cameraVR.cameras[ i ];
 				camera.matrix.fromArray( viewMatrix ).getInverse( camera.matrix );
@@ -257,22 +259,11 @@ function WebXRManager( renderer ) {
 
 			if ( inputSource ) {
 
-				var inputPose = frame.getInputPose( inputSource, frameOfReference );
+				var inputPose = frame.getPose( inputSource.targetRaySpace, referenceSpace );
 
 				if ( inputPose !== null ) {
 
-					if ( 'targetRay' in inputPose ) {
-
-						controller.matrix.elements = inputPose.targetRay.transformMatrix;
-
-					} else if ( 'pointerMatrix' in inputPose ) {
-
-						// DEPRECATED
-
-						controller.matrix.elements = inputPose.pointerMatrix;
-
-					}
-
+					controller.matrix.fromArray( inputPose.transform.matrix );
 					controller.matrix.decompose( controller.position, controller.rotation, controller.scale );
 					controller.visible = true;
 
@@ -307,6 +298,24 @@ function WebXRManager( renderer ) {
 
 		console.warn( 'WebXRManager: getStandingMatrix() is no longer needed.' );
 		return new Matrix4();
+
+	};
+
+	this.getDevice = function () {
+
+		console.warn( 'WebXRManager: getDevice() has been deprecated.' );
+
+	};
+
+	this.setDevice = function () {
+
+		console.warn( 'WebXRManager: setDevice() has been deprecated.' );
+
+	};
+
+	this.setFrameOfReferenceType = function () {
+
+		console.warn( 'WebXRManager: setFrameOfReferenceType() has been deprecated.' );
 
 	};
 

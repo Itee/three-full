@@ -2,7 +2,9 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export class WebGLLights {
-  constructor(gl: WebGLRenderingContext, properties: any, info: any);
 
-  get(light: any): any;
+	constructor( gl: WebGLRenderingContext, properties: any, info: any );
+
+	get( light: any ): any;
+
 }

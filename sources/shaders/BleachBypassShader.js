@@ -14,7 +14,7 @@ var BleachBypassShader = {
 	uniforms: {
 
 		"tDiffuse": { value: null },
-		"opacity":  { value: 1.0 }
+		"opacity": { value: 1.0 }
 
 	},
 

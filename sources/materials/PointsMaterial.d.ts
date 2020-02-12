@@ -5,28 +5,32 @@ import { Material, MaterialParameters } from './Material';
 import { Color } from './../math/Color';
 import { Texture } from './../textures/Texture';
 export class MultiMaterial extends Material {
-  constructor(materials?: Material[]);
 
-  isMultiMaterial: true;
+	constructor( materials?: Material[] );
 
-  materials: Material[];
+	isMultiMaterial: true;
 
-  toJSON(meta: any): any;
+	materials: Material[];
+
+	toJSON( meta: any ): any;
+
 }
 export interface PointsMaterialParameters extends MaterialParameters {
-  color?: Color | string | number;
-  map?: Texture;
-  size?: number;
-  sizeAttenuation?: boolean;
+	color?: Color | string | number;
+	map?: Texture;
+	size?: number;
+	sizeAttenuation?: boolean;
 }
 
 export class PointsMaterial extends Material {
-  constructor(parameters?: PointsMaterialParameters);
 
-  color: Color;
-  map: Texture | null;
-  size: number;
-  sizeAttenuation: boolean;
+	constructor( parameters?: PointsMaterialParameters );
 
-  setValues(parameters: PointsMaterialParameters): void;
+	color: Color;
+	map: Texture | null;
+	size: number;
+	sizeAttenuation: boolean;
+
+	setValues( parameters: PointsMaterialParameters ): void;
+
 }

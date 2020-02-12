@@ -11,7 +11,7 @@ import { Vector2 } from '../math/Vector2.js'
  * https://github.com/iryoku/smaa/releases/tag/v2.8
  */
 
-var SMAAShader = [ {
+var SMAAEdgesShader = {
 
 	defines: {
 
@@ -21,8 +21,8 @@ var SMAAShader = [ {
 
 	uniforms: {
 
-		"tDiffuse":		{ value: null },
-		"resolution":	{ value: new Vector2( 1 / 1024, 1 / 512 ) }
+		"tDiffuse": { value: null },
+		"resolution": { value: new Vector2( 1 / 1024, 1 / 512 ) }
 
 	},
 
@@ -49,7 +49,7 @@ var SMAAShader = [ {
 
 		"}"
 
-	].join("\n"),
+	].join( "\n" ),
 
 	fragmentShader: [
 
@@ -116,25 +116,27 @@ var SMAAShader = [ {
 
 		"}"
 
-	].join("\n")
+	].join( "\n" )
 
-}, {
+};
+
+var SMAAWeightsShader = {
 
 	defines: {
 
-		"SMAA_MAX_SEARCH_STEPS":		"8",
-		"SMAA_AREATEX_MAX_DISTANCE":	"16",
-		"SMAA_AREATEX_PIXEL_SIZE":		"( 1.0 / vec2( 160.0, 560.0 ) )",
-		"SMAA_AREATEX_SUBTEX_SIZE":		"( 1.0 / 7.0 )"
+		"SMAA_MAX_SEARCH_STEPS": "8",
+		"SMAA_AREATEX_MAX_DISTANCE": "16",
+		"SMAA_AREATEX_PIXEL_SIZE": "( 1.0 / vec2( 160.0, 560.0 ) )",
+		"SMAA_AREATEX_SUBTEX_SIZE": "( 1.0 / 7.0 )"
 
 	},
 
 	uniforms: {
 
-		"tDiffuse":		{ value: null },
-		"tArea":		{ value: null },
-		"tSearch":		{ value: null },
-		"resolution":	{ value: new Vector2( 1 / 1024, 1 / 512 ) }
+		"tDiffuse": { value: null },
+		"tArea": { value: null },
+		"tSearch": { value: null },
+		"resolution": { value: new Vector2( 1 / 1024, 1 / 512 ) }
 
 	},
 
@@ -168,7 +170,7 @@ var SMAAShader = [ {
 
 		"}"
 
-	].join("\n"),
+	].join( "\n" ),
 
 	fragmentShader: [
 
@@ -370,15 +372,17 @@ var SMAAShader = [ {
 
 		"}"
 
-	].join("\n")
+	].join( "\n" )
 
-}, {
+};
+
+var SMAABlendShader = {
 
 	uniforms: {
 
-		"tDiffuse":		{ value: null },
-		"tColor":		{ value: null },
-		"resolution":	{ value: new Vector2( 1 / 1024, 1 / 512 ) }
+		"tDiffuse": { value: null },
+		"tColor": { value: null },
+		"resolution": { value: new Vector2( 1 / 1024, 1 / 512 ) }
 
 	},
 
@@ -404,7 +408,7 @@ var SMAAShader = [ {
 
 		"}"
 
-	].join("\n"),
+	].join( "\n" ),
 
 	fragmentShader: [
 
@@ -462,8 +466,12 @@ var SMAAShader = [ {
 
 		"}"
 
-	].join("\n")
+	].join( "\n" )
 
-} ];
+};
 
-export { SMAAShader }
+export {
+	SMAAEdgesShader,
+	SMAAWeightsShader,
+	SMAABlendShader
+}
