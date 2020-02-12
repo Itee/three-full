@@ -1,6 +1,6 @@
-const path        = require( 'path' )
-const buble       = require( 'rollup-plugin-buble' )
-const uglify      = require( 'rollup-plugin-uglify-es' )
+const path   = require( 'path' )
+const buble  = require( 'rollup-plugin-buble' )
+const terser = require( 'rollup-plugin-terser' ).terser
 
 // const onProduction = process.env.BUILD || false
 // const wantSourceMap = process.env.SOURCEMAP || false
@@ -12,12 +12,12 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
     const _wantSourceMap = wantSourceMap || false
 
     const fileName       = 'Three'
-    const fileExtension  = (_onProduction) ? '.min.js' : '.js'
+    const fileExtension  = ( _onProduction ) ? '.min.js' : '.js'
     const inputFilePath  = path.join( __dirname, '..', 'sources/' + fileName + '.js' )
     const outputFilePath = path.join( __dirname, '..', 'builds/' + fileName + '.' + _format + fileExtension )
 
     let banner = '// Made by Itee (https://github.com/Itee) with ES6 Convertor script\n\n'
-    if( _format === 'cjs' ) {
+    if ( _format === 'cjs' ) {
         banner += '' +
             'var DEBUG = (process && process.env && process.env.Debug);\n' +
             'var window = getGlobalWindowObject();\n' +
@@ -81,11 +81,11 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
                 }
 
                 var transformedCode = 'export default ' + JSON.stringify(
-                        code
-                            .replace( /[ \t]*\/\/.*\n/g, '' )
-                            .replace( /[ \t]*\/\*[\s\S]*?\*\//g, '' )
-                            .replace( /\n{2,}/g, '\n' )
-                    ) + ';'
+                    code
+                        .replace( /[ \t]*\/\/.*\n/g, '' )
+                        .replace( /[ \t]*\/\*[\s\S]*?\*\//g, '' )
+                        .replace( /\n{2,}/g, '\n' )
+                ) + ';'
                 return {
                     code: transformedCode,
                     map:  { mappings: '' }
@@ -103,14 +103,14 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
             plugins:  [
                 glsl(),
                 buble(),
-                onProduction && uglify()
+                onProduction && terser()
             ],
 
             // advanced options
             onwarn: function onWarn ( { loc, frame, message } ) {
                 if ( loc ) {
                     // Ignore eval error from LoaderSupport
-                    if(loc.file.includes('LoaderSupport.js')) {
+                    if ( loc.file.includes( 'LoaderSupport.js' ) ) {
                         return
                     }
                     console.warn( `${loc.file} (${loc.line}:${loc.column}) ${message}` )
@@ -145,10 +145,10 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
             interop:   true,
 
             // danger zone
-//            exports: 'none',
-//            amd:     {},
-            indent:  '  ',
-            strict:  true
+            //            exports: 'none',
+            //            amd:     {},
+            indent: '  ',
+            strict: true
         }
     }
 

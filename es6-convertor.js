@@ -462,12 +462,12 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
                     if ( filePath.contains( srcPathTarget ) ) {
 
-                        console.error( 'WARNING: Element "' + exportedElement + '" in source ' + path.basename( filePath ) + ' is already exported by source ' + path.basename( exportPath ) + '! Unable to determine which source file is the right exporter !!!' )
+                        console.error( 'WARNING: Element "' + exportedElement + '" in source ' + filePath + ' is already exported by source ' + exportPath + '! Unable to determine which source file is the right exporter !!!' )
 
                     } else {
 
                         // stay like this
-                        console.warn( 'WARNING: Element "' + exportedElement + '" in example ' + path.basename( filePath ) + ' is already exported by source ' + path.basename( exportPath ) + '. Ignoring the example export !' )
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in example ' + filePath + ' is already exported by source ' + exportPath + '. Ignoring the example export !' )
 
                     }
 
@@ -476,11 +476,11 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
                     if ( filePath.contains( srcPathTarget ) ) {
 
                         _exportMap[ exportedElement ] = outputPath
-                        console.warn( 'WARNING: Element "' + exportedElement + '" in source ' + path.basename( filePath ) + ' is already exported by example ' + path.basename( exportPath ) + ' replacing by the source file !' )
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in source ' + filePath + ' is already exported by example ' + exportPath + ' replacing by the source file !' )
 
                     } else {
 
-                        console.error( 'WARNING: Element "' + exportedElement + '" in example ' + path.basename( filePath ) + ' is already exported by example ' + path.basename( exportPath ) + '! Unable to determine which example file is the right exporter !!!' )
+                        console.error( 'WARNING: Element "' + exportedElement + '" in example ' + filePath + ' is already exported by example ' + exportPath + '! Unable to determine which example file is the right exporter !!!' )
 
                     }
 
@@ -1293,9 +1293,39 @@ function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath,
     if ( edgeCase ) {
 
         if ( edgeCase.importsOverride ) {
+
             data.imports = edgeCase.importsOverride
+
         } else if ( edgeCase.imports ) {
-            Array.prototype.push.apply( data.imports, edgeCase.imports )
+
+            // Add/Remove exports from edgeCase
+            for ( let i = 0, numberOfExports = edgeCase.imports.length ; i < numberOfExports ; i++ ) {
+
+                const edgeCaseImport = edgeCase.imports[ i ]
+
+                if ( typeof edgeCaseImport === 'string' && edgeCaseImport.startsWith( '!' ) ) {
+
+                    const realImportName = edgeCaseImport.slice( 1 )
+
+                    if ( data.imports.includes( realImportName ) ) {
+                        data.imports.splice( data.imports.indexOf( realImportName ), 1 )
+                    } else {
+                        console.error( `Try to remove unexisting import ${realImportName} from ${filePath}. You should remove the this case from config file.` )
+                    }
+
+                } else {
+
+                    if ( data.imports.includes( edgeCaseImport ) ) {
+                        console.error( `Try to add already existing import ${edgeCaseImport} from ${filePath}. You should remove this edge case from config file.` )
+                    } else {
+                        data.imports.push( edgeCaseImport )
+                    }
+
+                }
+
+            }
+
+            //Array.prototype.push.apply( data.imports, edgeCase.imports )
             data.imports.filter( _makeUnique )
         }
 

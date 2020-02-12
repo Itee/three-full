@@ -65,7 +65,7 @@ function _getFilesPathsUnder ( filePaths ) {
 
         } else {
 
-            console.error( "Invalid stat object !" )
+            console.error( 'Invalid stat object !' )
 
         }
 
@@ -145,7 +145,7 @@ function _filterJavascriptFiles ( filePaths ) {
 
         // Not a js file like fonts or shaders
         const fileExtension = path.extname( filePath )
-        if ( filePath.indexOf("glsl") > -1 || fileExtension !== '.js' ) {
+        if ( filePath.indexOf( 'glsl' ) > -1 || fileExtension !== '.js' ) {
             continue
         }
 
@@ -164,7 +164,7 @@ function glsl () {
         transform ( code, id ) {
 
             if ( /\.glsl$/.test( id ) === false ) {
-                return;
+                return
             }
 
             var transformedCode = 'export default ' + JSON.stringify(
@@ -172,15 +172,15 @@ function glsl () {
                     .replace( /[ \t]*\/\/.*\n/g, '' ) // remove //
                     .replace( /[ \t]*\/\*[\s\S]*?\*\//g, '' ) // remove /* */
                     .replace( /\n{2,}/g, '\n' ) // # \n+ to \n
-            ) + ';';
+            ) + ';'
             return {
                 code: transformedCode,
                 map:  { mappings: '' }
-            };
+            }
 
         }
 
-    };
+    }
 
 }
 

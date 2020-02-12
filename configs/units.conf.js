@@ -9,10 +9,10 @@
  */
 
 module.exports = {
-    '3MFLoader': {
+    '3MFLoader':          {
         exports: [ 'ThreeMFLoader' ]
     },
-    CurveExtras: {
+    CurveExtras:          {
         exports: [
             'GrannyKnot',
             'HeartCurve',
@@ -30,13 +30,24 @@ module.exports = {
             'DecoratedTorusKnot5c'
         ]
     },
-    Interpolations: {
+    DracoExporter:        {
+        exports: [ 'DRACOExporter' ]
+    },
+    Interpolations:       {
         exports: [ 'CatmullRom', 'QuadraticBezier', 'CubicBezier' ]
     },
-    Math: {
+    Math:                 {
         exports: [ '_Math' ]
     },
-    RollerCoaster: {
+    ParametricGeometries: {
+        exports: [
+            [ 'ParametricGeometries', 'TubeGeometry' ],
+            [ 'ParametricGeometries', 'TorusKnotGeometry' ],
+            [ 'ParametricGeometries', 'SphereGeometry' ],
+            [ 'ParametricGeometries', 'PlaneGeometry' ]
+        ]
+    },
+    RollerCoaster:        {
         exports: [
             'RollerCoasterGeometry',
             'RollerCoasterLiftersGeometry',
@@ -45,10 +56,13 @@ module.exports = {
             'TreesGeometry'
         ]
     },
-    ShaderTranslucent: {
+    ShaderTranslucent:    {
         exports: [ 'TranslucentShader' ]
     },
-    WebVRUtils: {
-        exports: [ 'setProjectionFromUnion' ]
+    VolumeShader:         {
+        exports: [ 'VolumeRenderShader1' ]
     },
+    WebVRUtils:           {
+        exports: [ 'setProjectionFromUnion' ]
+    }
 }
