@@ -700,11 +700,7 @@ module.exports = {
             ]
         },
         WebGLDeferredRenderer:       {
-            replacements: [
-                [ 'DeferredShaderChunk = ', 'var DeferredShaderChunk = ' ],
-                [ 'ShaderDeferredCommon = ', 'var ShaderDeferredCommon = ' ],
-                [ 'ShaderDeferred = ', 'var ShaderDeferred = ' ]
-            ]
+            exportsOverride: [ 'WebGLDeferredRenderer', 'ShaderDeferred', 'ShaderDeferredCommon', 'DeferredShaderChunk' ]
         },
         WebVR:                       {
             replacements:    [
