@@ -2,6 +2,10 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { WebGLLights } from './WebGLLights.js'
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ */
 function WebGLRenderState() {
 
 	var lights = new WebGLLights();

@@ -19,6 +19,8 @@ import { Uniform } from '../core/Uniform.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Vector4 } from '../math/Vector4.js'
 import { Color } from '../math/Color.js'
+import { CopyShader } from '../shaders/CopyShader.js'
+import { FXAAShader } from '../shaders/FXAAShader.js'
 import {
 	BackSide,
 	NoBlending,
@@ -33,8 +35,41 @@ import {
 	RGBAFormat,
 	DepthStencilFormat
 } from '../constants.js'
-import { CopyShader } from '../shaders/CopyShader.js'
-import { FXAAShader } from '../shaders/FXAAShader.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ * @author MPanknin / http://www.redplant.de/
+ * @author takahiro / https://github.com/takahirox
+ *
+ * WebGLDeferredRenderer supports two types of Deferred Renderings.
+ * One is Classic Deferred Rendering and the other one is
+ * Light Pre-Pass (Deferred Lighting).
+ * Classic Deferred Rendering is default. You can use Light Pre-Pass
+ * by calling .enableLightPrePass( true ) method.
+ *
+ * Dependencies
+ *  - CopyShader
+ *  - RenderPass
+ *  - ShaderPass
+ *  - EffectComposer
+ *  - FXAAShader
+ *
+ * TODO
+ *  - reuse existing glsl
+ *  - shadow
+ *  - optimization
+ *  - MRT (when it's available on Three.js)
+ *  - AmbientLight
+ *  - HemisphereLight
+ *  - PointLight (distance < 0)
+ *  - morphNormals
+ *  - BumpMap
+ *  - ToneMap
+ *  - envMap
+ *  - wrapAround
+ *  - addEffect
+ */
+
 var WebGLDeferredRenderer = function ( parameters ) {
 
 	parameters = parameters || {};
@@ -807,6 +842,11 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		return mesh;
 
 	}
+
+	/*
+	 * optimization:
+	 * Renders PointLight only back face with stencil test.
+	 */
 	function createDeferredPointLightMaterial() {
 
 		var shader = ( _lightPrePass ) ? ShaderDeferred[ 'pointLightPre' ] : ShaderDeferred[ 'pointLight' ];
@@ -1226,6 +1266,25 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		cleanupTable( _originalVisibleTable );
 
 	}
+
+	/*
+	 * Classic Deferred Rendering
+	 *
+	 * 1) g-buffer normal + depth pass
+	 *
+	 * RGB: normal
+	 *   A: depth
+	 *
+	 *
+	 * Light Pre-Pass Rendering
+	 *
+	 * 1') g-buffer normal + depth pass + shininess
+	 *
+	 *  RG: normal
+	 *   B: shininess
+	 *   A: depth
+	 */
+
 	function renderNormalDepth( scene, camera ) {
 
 		scene.traverse( setMaterialNormalDepth );
@@ -1245,6 +1304,18 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		scene.traverse( restoreOriginalMaterial );
 
 	}
+
+	/*
+	 * Classic Deferred Rendering
+	 *
+	 * 2) g-buffer color pass
+	 *
+	 * R: diffuse
+	 * G: emissive
+	 * B: specular
+	 * A: shininess
+	 */
+
 	function renderColor( scene, camera ) {
 
 		scene.traverse( setMaterialColor );
@@ -1263,6 +1334,13 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		scene.traverse( restoreOriginalMaterial );
 
 	}
+
+	/*
+	 * Classic Deferred Rendering
+	 *
+	 * 3) light pass
+	 */
+
 	function renderLight( scene, camera ) {
 
 		scene.traverse( addDeferredLightsToLightScene );
@@ -1283,6 +1361,13 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		_state.buffers.stencil.setTest( false );
 
 	}
+
+	/*
+	 * Light Pre-Pass Rendering
+	 *
+	 * 2') Light pre pass
+	 */
+
 	function renderLightPre( scene, camera ) {
 
 		scene.traverse( addDeferredLightsToLightScene );
@@ -1304,6 +1389,16 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		_compLight.render();
 
 	}
+
+	/*
+	 * Light Pre-Pass Rendering
+	 *
+	 * 3') Reconstruction pass
+	 *
+	 * Transprency handling:
+	 * Here renders transparent objects with normal forward rendering.
+	 */
+
 	function renderReconstruction( scene, camera ) {
 
 		scene.traverse( setMaterialReconstruction );
@@ -1321,6 +1416,30 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		scene.traverse( restoreOriginalMaterial );
 
 	}
+
+	/*
+	 * Classic Deferred Rendering
+	 *
+	 * 4) Final pass
+	 *
+	 * transparency handling:
+	 * If there's any transparent objects, here renders them on the deferred rendering result
+	 * with normal forward rendering. This may be the easist way but heavy.
+	 * We should consider any better ways someday.
+	 *
+	 *
+	 * Light Pre-Pass Rendering
+	 *
+	 * 4') Final pass
+	 *
+	 *
+	 * Common
+	 *
+	 * antialias handling:
+	 * Here uses postprocessing FXAA for antialias.
+	 *
+	 */
+
 	function renderFinal( scene, camera ) {
 
 		if ( ! _lightPrePass && _hasTransparentObject ) {

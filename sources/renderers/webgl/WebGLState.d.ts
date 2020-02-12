@@ -86,9 +86,9 @@ export class WebGLState {
   getScissorTest(): boolean;
   activeTexture(webglSlot: any): void;
   bindTexture(webglType: any, webglTexture: any): void;
-  // Same interface as https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/compressedTexImage2D
+  
   compressedTexImage2D(): void;
-  // Same interface as https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/texImage2D
+  
   texImage2D(): void;
   clearColor(r: number, g: number, b: number, a: number): void;
   clearDepth(depth: number): void;

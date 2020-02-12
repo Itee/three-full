@@ -7,6 +7,12 @@ import { Line } from '../objects/Line.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ * @author mrdoob / http://mrdoob.com/
+ * @author WestLangley / http://github.com/WestLangley
+ */
 function DirectionalLightHelper( light, size, color ) {
 
 	Object3D.call( this );

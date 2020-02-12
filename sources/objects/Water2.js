@@ -11,9 +11,20 @@ import { Reflector } from './Reflector.js'
 import { Refractor } from './Refractor.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Vector4 } from '../math/Vector4.js'
+import { Water } from './Water.js'
 import { RepeatWrapping } from '../constants.js'
-import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * References:
+ *	http://www.valvesoftware.com/publications/2010/siggraph2010_vlachos_waterflow.pdf
+ * 	http://graphicsrunner.blogspot.de/2010/08/water-using-flow-maps.html
+ *
+ */
+
 function Water2( geometry, options ) {
 
 	Mesh.call( this, geometry );

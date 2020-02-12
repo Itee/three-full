@@ -21,7 +21,16 @@ import {
 	FaceColors,
 	VertexColors
 } from '../constants.js'
+import { Texture } from '../textures/Texture.js'
 import { _Math } from '../math/Math.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author ryg / http://farbrausch.de/~fg
+ * @author mraleph / http://mrale.ph/
+ * @author daoshengmu / http://dsmu.me/
+ */
+
 var SoftwareRenderer = function ( parameters ) {
 
 	console.log( 'SoftwareRenderer', REVISION );
@@ -307,6 +316,21 @@ var SoftwareRenderer = function ( parameters ) {
 		var y = Math.min( recty1, prevrecty1 );
 		var width = Math.max( rectx2, prevrectx2 ) - x;
 		var height = Math.max( recty2, prevrecty2 ) - y;
+
+		/*
+		// debug; draw zbuffer
+
+		for ( var i = 0, l = zbuffer.length; i < l; i++ ) {
+
+			var o = i * 4;
+			var v = (65535 - zbuffer[ i ]) >> 3;
+			data[ o + 0 ] = v;
+			data[ o + 1 ] = v;
+			data[ o + 2 ] = v;
+			data[ o + 3 ] = 255;
+		}
+		*/
+
 		if ( x !== Infinity ) {
 
 			context.putImageData( imagedata, 0, 0, x, y, width, height );
@@ -601,6 +625,33 @@ var SoftwareRenderer = function ( parameters ) {
 		return shader;
 
 	}
+
+	/*
+	function clearRectangle( x1, y1, x2, y2 ) {
+
+		var xmin = Math.max( Math.min( x1, x2 ), 0 );
+		var xmax = Math.min( Math.max( x1, x2 ), canvasWidth );
+		var ymin = Math.max( Math.min( y1, y2 ), 0 );
+		var ymax = Math.min( Math.max( y1, y2 ), canvasHeight );
+
+		var offset = ( xmin + ymin * canvasWidth ) * 4 + 3;
+		var linestep = ( canvasWidth - ( xmax - xmin ) ) * 4;
+
+		for ( var y = ymin; y < ymax; y ++ ) {
+
+			for ( var x = xmin; x < xmax; x ++ ) {
+
+				data[ offset += 4 ] = 0;
+
+			}
+
+			offset += linestep;
+
+		}
+
+	}
+	*/
+
 	function drawTriangle( v1, v2, v3, uv1, uv2, uv3, shader, face, material ) {
 
 		// TODO: Implement per-pixel z-clipping

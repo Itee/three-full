@@ -5,6 +5,10 @@ import {
 	CylinderGeometry,
 	CylinderBufferGeometry
 } from './CylinderGeometry.js'
+
+/**
+ * @author abelnation / http://github.com/abelnation
+ */
 // ConeGeometry
 
 function ConeGeometry( radius, height, radialSegments, heightSegments, openEnded, thetaStart, thetaLength ) {

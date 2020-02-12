@@ -8,6 +8,14 @@ import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BackSide } from '../constants.js'
+
+/**
+ * @author abelnation / http://github.com/abelnation
+ * @author Mugen87 / http://github.com/Mugen87
+ * @author WestLangley / http://github.com/WestLangley
+ *
+ *  This helper must be added as a child of the light
+ */
 function RectAreaLightHelper( light, color ) {
 
 	this.type = 'RectAreaLightHelper';

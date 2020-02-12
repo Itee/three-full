@@ -4,6 +4,10 @@
 import { PhongNode } from './nodes/PhongNode.js'
 import { NodeMaterial } from './NodeMaterial.js'
 import { NodeUtils } from '../core/NodeUtils.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function PhongNodeMaterial() {
 
 	var node = new PhongNode();

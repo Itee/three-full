@@ -74,14 +74,10 @@ void main() {
 	#include <normal_fragment_begin>
 	#include <normal_fragment_maps>
 	#include <emissivemap_fragment>
-
-	// accumulation
 	#include <lights_physical_fragment>
 	#include <lights_fragment_begin>
 	#include <lights_fragment_maps>
 	#include <lights_fragment_end>
-
-	// modulation
 	#include <aomap_fragment>
 
 	vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;

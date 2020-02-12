@@ -5,6 +5,14 @@ import { Vector3 } from '../math/Vector3.js'
 import { Euler } from '../math/Euler.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { _Math } from '../math/Math.js'
+
+/**
+ * @author richt / http://richt.me
+ * @author WestLangley / http://github.com/WestLangley
+ *
+ * W3C Device Orientation control (http://w3c.github.io/deviceorientation/spec-source-orientation.html)
+ */
+
 var DeviceOrientationControls = function ( object ) {
 
 	var scope = this;

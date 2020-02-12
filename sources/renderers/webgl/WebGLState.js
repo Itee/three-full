@@ -24,6 +24,11 @@ import {
 	BackSide
 } from '../../constants.js'
 import { Vector4 } from '../../math/Vector4.js'
+import { WebGL } from '../../helpers/WebGL.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 function WebGLState( gl, extensions, utils, capabilities ) {
 
 	function ColorBuffer() {

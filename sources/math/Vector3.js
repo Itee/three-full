@@ -4,6 +4,15 @@
 import { _Math } from './Math.js'
 import { Matrix4 } from './Matrix4.js'
 import { Quaternion } from './Quaternion.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author kile / http://kile.stravaganza.org/
+ * @author philogb / http://blog.thejit.org/
+ * @author mikael emtinger / http://gomo.se/
+ * @author egraether / http://egraether.com/
+ * @author WestLangley / http://github.com/WestLangley
+ */
+
 function Vector3( x, y, z ) {
 
 	this.x = x || 0;

@@ -1,7 +1,26 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Node } from '../nodes/core/Node.js'
 var TypedArrayUtils = {};
+
+/**
+ * In-place quicksort for typed arrays (e.g. for Float32Array)
+ * provides fast sorting
+ * useful e.g. for a custom shader and/or BufferGeometry
+ *
+ * @author Roman Bolzern <roman.bolzern@fhnw.ch>, 2013
+ * @author I4DS http://www.fhnw.ch/i4ds, 2013
+ * @license MIT License <http://www.opensource.org/licenses/mit-license.php>
+ *
+ * Complexity: http://bigocheatsheet.com/ see Quicksort
+ *
+ * Example: 
+ * points: [x, y, z, x, y, z, x, y, z, ...]
+ * eleSize: 3 //because of (x, y, z)
+ * orderElement: 0 //order according to x
+ */
+
 TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 
 	var stack = [];
@@ -137,6 +156,32 @@ TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 	return arr;
 
 };
+/**
+ * k-d Tree for typed arrays (e.g. for Float32Array), in-place
+ * provides fast nearest neighbour search
+ * useful e.g. for a custom shader and/or BufferGeometry, saves tons of memory
+ * has no insert and remove, only buildup and neares neighbour search
+ *
+ * Based on https://github.com/ubilabs/kd-tree-javascript by Ubilabs
+ *
+ * @author Roman Bolzern <roman.bolzern@fhnw.ch>, 2013
+ * @author I4DS http://www.fhnw.ch/i4ds, 2013
+ * @license MIT License <http://www.opensource.org/licenses/mit-license.php>
+ *
+ * Requires typed array quicksort
+ *
+ * Example: 
+ * points: [x, y, z, x, y, z, x, y, z, ...]
+ * metric: function(a, b){	return Math.pow(a[0] - b[0], 2) +  Math.pow(a[1] - b[1], 2) +  Math.pow(a[2] - b[2], 2); }  //Manhatten distance
+ * eleSize: 3 //because of (x, y, z)
+ *
+ * Further information (including mathematical properties)
+ * http://en.wikipedia.org/wiki/Binary_tree
+ * http://en.wikipedia.org/wiki/K-d_tree
+ *
+ * If you want to further minimize memory usage, remove Node.depth and replace in search algorithm with a traversal to root node (see comments at TypedArrayUtils.Kdtree.prototype.Node)
+ */
+
  TypedArrayUtils.Kdtree = function ( points, metric, eleSize ) {
 
 	var self = this;
@@ -186,6 +231,13 @@ TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 	};
 	
 	this.nearest = function ( point, maxNodes, maxDistance ) {
+	
+		 /* point: array of size eleSize 
+			maxNodes: max amount of nodes to return 
+			maxDistance: maximum distance to point result nodes should have
+			condition (not implemented): function to test node before it's added to the result list, e.g. test for view frustum
+		*/
+
 		var i,
 			result,
 			bestNodes;
@@ -337,6 +389,22 @@ TypedArrayUtils.quicksortIP = function ( arr, eleSize, orderElement ) {
 	};
 	
 };
+
+/**
+ * If you need to free up additional memory and agree with an additional O( log n ) traversal time you can get rid of "depth" and "pos" in Node:
+ * Depth can be easily done by adding 1 for every parent (care: root node has depth 0, not 1)
+ * Pos is a bit tricky: Assuming the tree is balanced (which is the case when after we built it up), perform the following steps:
+ *   By traversing to the root store the path e.g. in a bit pattern (01001011, 0 is left, 1 is right)
+ *   From buildTree we know that "median = Math.floor( plength / 2 );", therefore for each bit...
+ *     0: amountOfNodesRelevantForUs = Math.floor( (pamountOfNodesRelevantForUs - 1) / 2 );
+ *     1: amountOfNodesRelevantForUs = Math.ceil( (pamountOfNodesRelevantForUs - 1) / 2 );
+ *        pos += Math.floor( (pamountOfNodesRelevantForUs - 1) / 2 );
+ *     when recursion done, we still need to add all left children of target node:
+ *        pos += Math.floor( (pamountOfNodesRelevantForUs - 1) / 2 );
+ *        and I think you need to +1 for the current position, not sure.. depends, try it out ^^
+ *
+ * I experienced that for 200'000 nodes you can get rid of 4 MB memory each, leading to 8 MB memory saved.
+ */
 TypedArrayUtils.Kdtree.prototype.Node = function ( obj, depth, parent, pos ) {
 
 	this.obj = obj;
@@ -347,6 +415,12 @@ TypedArrayUtils.Kdtree.prototype.Node = function ( obj, depth, parent, pos ) {
 	this.pos = pos;
 
 }; 
+
+/**
+ * Binary heap implementation
+ * @author http://eloquentjavascript.net/appendix2.htm
+ */
+
 TypedArrayUtils.Kdtree.BinaryHeap = function ( scoreFunction ) {
 
 	this.content = [];

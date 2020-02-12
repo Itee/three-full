@@ -8,8 +8,20 @@ import {
 	Float32BufferAttribute,
 	BufferAttribute
 } from '../core/BufferAttribute.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author Alex Pletzer
+ *
+ * Updated on 22.03.2017
+ * VTK header is now parsed and used to extract all the compressed data
+ * @author Andrii Iudin https://github.com/andreyyudin
+ * @author Paul Kibet Korir https://github.com/polarise
+ * @author Sriram Somasundharam https://github.com/raamssundar
+ */
+
 var VTKLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -873,7 +885,7 @@ Object.assign( VTKLoader.prototype, EventDispatcher.prototype, {
 					dom = new ActiveXObject( 'Microsoft.XMLDOM' ); // eslint-disable-line no-undef
 					dom.async = false;
 
-					if ( ! dom.loadXML(  ) ) {
+					if ( ! dom.loadXML( /* xml */ ) ) {
 
 						throw new Error( dom.parseError.reason + dom.parseError.srcText );
 

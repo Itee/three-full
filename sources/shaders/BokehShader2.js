@@ -2,6 +2,17 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector2 } from '../math/Vector2.js'
+import { BokehShader } from './BokehShader.js'
+
+/**
+ * @author zz85 / https://github.com/zz85 | twitter.com/blurspline
+ *
+ * Depth-of-field shader with bokeh
+ * ported from GLSL shader by Martins Upitis
+ * http://blenderartists.org/forum/showthread.php?237488-GLSL-depth-of-field-with-bokeh-v2-4-(update)
+ *
+ * Requires #define RINGS and SAMPLES integers
+ */
 var BokehShader2 = {
 
 	uniforms: {
@@ -68,7 +79,9 @@ var BokehShader2 = {
 		"uniform float fstop; //f-stop value",
 		"uniform bool showFocus; //show debug focus point and focal range (red = focal point, green = focal range)",
 
-		"",
+		"/*",
+		"make sure that these two values are the same for your camera, otherwise distances will be wrong.",
+		"*/",
 
 		"uniform float znear; // camera clipping start",
 		"uniform float zfar; // camera clipping end",
@@ -118,7 +131,11 @@ var BokehShader2 = {
 		"uniform bool depthblur; // blur the depth buffer",
 		"float dbsize = 1.25; // depth blur size",
 
-		"",
+		"/*",
+		"next part is experimental",
+		"not looking good with small sample and ring count",
+		"looks okay starting from samples = 4, rings = 4",
+		"*/",
 
 		"uniform bool pentagon; //use pentagon as bokeh shape?",
 		"float feather = 0.4; //pentagon shape feather",
@@ -304,14 +321,14 @@ var BokehShader2 = {
 				"int ringsamples;",
 
 				"for (int i = 1; i <= rings; i++) {",
-					"",
+					"/*unboxstart*/",
 					"ringsamples = i * samples;",
 
 					"for (int j = 0 ; j < maxringsamples ; j++) {",
 						"if (j >= ringsamples) break;",
 						"s += gather(float(i), float(j), ringsamples, col, w, h, blur);",
 					"}",
-					"",
+					"/*unboxend*/",
 				"}",
 
 				"col /= s; //divide by sample count",

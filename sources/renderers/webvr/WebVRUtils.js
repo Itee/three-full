@@ -2,8 +2,20 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from '../../math/Vector3.js'
+
+/**
+ * @author jsantell / https://www.jsantell.com/
+ * @author mrdoob / http://mrdoob.com/
+ */
 var cameraLPos = new Vector3();
 var cameraRPos = new Vector3();
+
+/**
+ * Assumes 2 cameras that are parallel and share an X-axis, and that
+ * the cameras' projection and world matrices have already been set.
+ * And that near and far planes are identical for both cameras.
+ * Visualization of this technique: https://computergraphics.stackexchange.com/a/4765
+ */
 function setProjectionFromUnion( camera, cameraL, cameraR ) {
 
 	cameraLPos.setFromMatrixPosition( cameraL.matrixWorld );

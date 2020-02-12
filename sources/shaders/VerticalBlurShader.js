@@ -1,6 +1,18 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * @author zz85 / http://www.lab4games.net/zz85/blog
+ *
+ * Two pass Gaussian blur filter (horizontal and vertical blur shaders)
+ * - described in http://www.gamerendering.com/2008/10/11/gaussian-blur-filter-shader/
+ *   and used in http://www.cake23.de/traveling-wavefronts-lit-up.html
+ *
+ * - 9 samples per pass
+ * - standard deviation 2.7
+ * - "h" and "v" parameters should be set to "1 / width" and "1 / height"
+ */
+
 var VerticalBlurShader = {
 
 	uniforms: {

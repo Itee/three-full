@@ -9,6 +9,10 @@ import {
 } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Object3D } from '../core/Object3D.js'
+
+/**
+ * @author WestLangley / http://github.com/WestLangley
+ */
 function Box3Helper( box, hex ) {
 
 	this.type = 'Box3Helper';

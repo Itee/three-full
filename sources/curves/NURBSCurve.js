@@ -5,7 +5,21 @@ import { Curve } from './Curve.js'
 import { Vector4 } from '../math/Vector4.js'
 import { Vector3 } from '../math/Vector3.js'
 import { NURBSUtils } from './NURBSUtils.js'
-var NURBSCurve = function ( degree, knots , controlPoints , startKnot , endKnot  ) {
+
+/**
+ * @author renej
+ * NURBS curve object
+ *
+ * Derives from Curve, overriding getPoint and getTangent.
+ *
+ * Implementation is based on (x, y [, z=0 [, w=1]]) control points with w=weight.
+ *
+ **/
+/**************************************************************
+ *	NURBS curve
+ **************************************************************/
+
+var NURBSCurve = function ( degree, knots /* array of reals */, controlPoints /* array of Vector(2|3|4) */, startKnot /* index in knots */, endKnot /* index in knots */ ) {
 
 	Curve.call( this );
 

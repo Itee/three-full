@@ -9,7 +9,6 @@ import { Matrix3 } from '../math/Matrix3.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-import { FlatShading } from '../constants.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { LineDashedMaterial } from '../materials/LineDashedMaterial.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
@@ -26,6 +25,10 @@ import { RawShaderMaterial } from '../materials/RawShaderMaterial.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { ShadowMaterial } from '../materials/ShadowMaterial.js'
 import { SpriteMaterial } from '../materials/SpriteMaterial.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
 function MaterialLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

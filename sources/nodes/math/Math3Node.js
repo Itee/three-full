@@ -2,6 +2,10 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from '../core/TempNode.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function Math3Node( a, b, c, method ) {
 
 	TempNode.call( this );

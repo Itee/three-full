@@ -3,6 +3,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Cache } from './Cache.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 function ImageLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

@@ -2,6 +2,19 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector2 } from '../math/Vector2.js'
+
+/*
+ * @author zz85 / http://github.com/zz85
+ * @author WestLangley / http://github.com/WestLangley
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * tool for "unwrapping" and debugging three.js geometries UV mapping
+ *
+ * Sample usage:
+ *	document.body.appendChild( UVsDebug( new SphereBufferGeometry( 10, 10, 10, 10 ) );
+ *
+ */
+
 var UVsDebug = function ( geometry, size ) {
 
 	// handles wrapping of uv.x > 1 only

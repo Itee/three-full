@@ -4,6 +4,10 @@
 import { Light } from './Light.js'
 import { Color } from '../math/Color.js'
 import { Object3D } from '../core/Object3D.js'
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 function HemisphereLight( skyColor, groundColor, intensity ) {
 
 	Light.call( this, skyColor, intensity );

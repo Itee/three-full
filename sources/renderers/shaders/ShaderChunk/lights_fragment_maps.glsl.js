@@ -10,7 +10,7 @@ export default `
 
 		#ifndef PHYSICALLY_CORRECT_LIGHTS
 
-			lightMapIrradiance *= PI; // factor of PI should not be present; included here to prevent breakage
+			lightMapIrradiance *= PI; 
 
 		#endif
 

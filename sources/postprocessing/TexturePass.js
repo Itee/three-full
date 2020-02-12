@@ -9,6 +9,11 @@ import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { CopyShader } from '../shaders/CopyShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 var TexturePass = function ( map, opacity ) {
 
 	Pass.call( this );

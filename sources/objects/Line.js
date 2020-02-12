@@ -9,6 +9,10 @@ import { Vector3 } from '../math/Vector3.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
 function Line( geometry, material, mode ) {
 
 	if ( mode === 1 ) {

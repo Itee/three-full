@@ -5,6 +5,12 @@ import { EventDispatcher } from '../core/EventDispatcher.js'
 import { Object3D } from '../core/Object3D.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Euler } from '../math/Euler.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
 var PointerLockControls = function ( camera, domElement ) {
 
 	var scope = this;

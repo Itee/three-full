@@ -3,7 +3,19 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector4 } from '../math/Vector4.js'
 import { NURBSUtils } from './NURBSUtils.js'
-var NURBSSurface = function ( degree1, degree2, knots1, knots2 , controlPoints  ) {
+
+/**
+ * @author renej
+ * NURBS surface object
+ *
+ * Implementation is based on (x, y [, z=0 [, w=1]]) control points with w=weight.
+ *
+ **/
+/**************************************************************
+ *	NURBS surface
+ **************************************************************/
+
+var NURBSSurface = function ( degree1, degree2, knots1, knots2 /* arrays of reals */, controlPoints /* array^2 of Vector(2|3|4) */ ) {
 
 	this.degree1 = degree1;
 	this.degree2 = degree2;

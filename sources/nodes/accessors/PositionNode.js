@@ -3,6 +3,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from '../core/TempNode.js'
 import { NodeLib } from '../core/NodeLib.js'
+import { NormalNode } from './NormalNode.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function PositionNode( scope ) {
 
 	TempNode.call( this, 'v3' );

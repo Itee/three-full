@@ -8,6 +8,10 @@ import { PerspectiveCamera } from '../../cameras/PerspectiveCamera.js'
 import { WebGLAnimation } from '../webgl/WebGLAnimation.js'
 import { setProjectionFromUnion } from './WebVRUtils.js'
 import { Matrix4 } from '../../math/Matrix4.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 function WebXRManager( renderer ) {
 
 	var gl = renderer.context;

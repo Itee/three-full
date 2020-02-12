@@ -11,6 +11,11 @@ import { AnimationClip } from '../animation/AnimationClip.js'
 import { SkeletonHelper } from '../helpers/SkeletonHelper.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Euler } from '../math/Euler.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br
+ */
+
 'use strict';
 
 var SkeletonUtils = {

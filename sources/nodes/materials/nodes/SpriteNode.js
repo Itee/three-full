@@ -3,8 +3,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Node } from '../../core/Node.js'
 import { ColorNode } from '../../inputs/ColorNode.js'
-import { UniformsUtils } from '../../../renderers/shaders/UniformsUtils.js'
 import { UniformsLib } from '../../../renderers/shaders/UniformsLib.js'
+import { UniformsUtils } from '../../../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function SpriteNode() {
 
 	Node.call( this );

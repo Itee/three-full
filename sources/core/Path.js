@@ -8,6 +8,11 @@ import { SplineCurve } from '../curves/SplineCurve.js'
 import { CubicBezierCurve } from '../curves/CubicBezierCurve.js'
 import { QuadraticBezierCurve } from '../curves/QuadraticBezierCurve.js'
 import { LineCurve } from '../curves/LineCurve.js'
+/**
+ * @author zz85 / http://www.lab4games.net/zz85/blog
+ * Creates free form 2d path using series of points, lines or curves.
+ **/
+
 function Path( points ) {
 
 	CurvePath.call( this );
@@ -84,7 +89,7 @@ Path.prototype = Object.assign( Object.create( CurvePath.prototype ), {
 
 	},
 
-	splineThru: function ( pts  ) {
+	splineThru: function ( pts /*Array of Vector*/ ) {
 
 		var npts = [ this.currentPoint.clone() ].concat( pts );
 

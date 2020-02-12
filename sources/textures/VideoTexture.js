@@ -6,6 +6,10 @@ import {
 	LinearFilter
 } from '../constants.js'
 import { Texture } from './Texture.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 function VideoTexture( video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy ) {
 
 	Texture.call( this, video, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy );

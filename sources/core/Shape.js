@@ -3,6 +3,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Path } from './Path.js'
 import { _Math } from '../math/Math.js'
+/**
+ * @author zz85 / http://www.lab4games.net/zz85/blog
+ * Defines a 2d shape plane using paths.
+ **/
+
 // STEP 1 Create a path.
 // STEP 2 Turn path into shape.
 // STEP 3 ExtrudeGeometry takes in Shape/Shapes

@@ -4,6 +4,10 @@
 import { Matrix4 } from '../math/Matrix4.js'
 import { _Math } from '../math/Math.js'
 import { PerspectiveCamera } from './PerspectiveCamera.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
 function StereoCamera() {
 
 	this.type = 'StereoCamera';

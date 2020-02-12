@@ -19,6 +19,13 @@ import {
 	NearestFilter,
 	RGBFormat
 } from '../constants.js'
+import { Geometry } from '../core/Geometry.js'
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ * @author mrdoob / http://mrdoob.com/
+ */
+
 var Lensflare = function () {
 
 	Mesh.call( this, Lensflare.Geometry, new MeshBasicMaterial( { opacity: 0, transparent: true } ) );

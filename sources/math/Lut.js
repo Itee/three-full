@@ -17,6 +17,11 @@ import {
 	DoubleSide,
 	LinearFilter
 } from '../constants.js'
+
+/**
+ * @author daron1337 / http://daron1337.github.io/
+ */
+
 var Lut = function ( colormap, numberofcolors ) {
 
 	this.lut = [];

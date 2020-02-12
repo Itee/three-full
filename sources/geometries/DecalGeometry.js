@@ -5,6 +5,24 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+
+/**
+ * @author Mugen87 / https://github.com/Mugen87
+ * @author spite / https://github.com/spite
+ *
+ * You can use this geometry to create a decal mesh, that serves different kinds of purposes.
+ * e.g. adding unique details to models, performing dynamic visual environmental changes or covering seams.
+ *
+ * Constructor parameter:
+ *
+ * mesh — Any mesh object
+ * position — Position of the decal projector
+ * orientation — Orientation of the decal projector
+ * size — Size of the decal projector
+ *
+ * reference: http://blog.wolfire.com/2009/06/how-to-project-decals/
+ *
+ */
 	function DecalGeometry( mesh, position, orientation, size ) {
 
 		BufferGeometry.call( this );

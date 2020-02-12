@@ -2,11 +2,17 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { ShaderChunk } from './ShaderChunk.js'
+import { mergeUniforms } from './UniformsUtils.js'
 import { Vector3 } from '../../math/Vector3.js'
 import { UniformsLib } from './UniformsLib.js'
 import { Color } from '../../math/Color.js'
 import { Matrix3 } from '../../math/Matrix3.js'
-import { mergeUniforms } from './UniformsUtils'
+/**
+ * @author alteredq / http://alteredqualia.com/
+ * @author mrdoob / http://mrdoob.com/
+ * @author mikael emtinger / http://gomo.se/
+ */
+
 var ShaderLib = {
 
 	basic: {
@@ -200,6 +206,10 @@ var ShaderLib = {
 		fragmentShader: ShaderChunk.background_frag
 
 	},
+	/* -------------------------------------------------------------------------
+	//	Cube map shader
+	 ------------------------------------------------------------------------- */
+
 	cube: {
 
 		uniforms: {

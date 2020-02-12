@@ -3,6 +3,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { InputNode } from '../core/InputNode.js'
 import { Matrix4 } from '../../math/Matrix4.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function Matrix4Node( matrix ) {
 
 	InputNode.call( this, 'm4' );

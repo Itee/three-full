@@ -4,6 +4,10 @@
 import { TempNode } from '../core/TempNode.js'
 import { FunctionNode } from '../core/FunctionNode.js'
 import { UVNode } from '../accessors/UVNode.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function CheckerNode( uv ) {
 
 	TempNode.call( this, 'f' );

@@ -1,6 +1,15 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
+ * @author zz85 / https://github.com/zz85
+ *
+ * Ascii generation is based on http://www.nihilogic.dk/labs/jsascii/
+ * Maybe more about this later with a blog post at http://lab4games.net/zz85/blog
+ *
+ * 16 April 2012 - @blurspline
+ */
+
 var AsciiEffect = function ( renderer, charSet, options ) {
 
 	// its fun to create one your own!
@@ -54,6 +63,13 @@ var AsciiEffect = function ( renderer, charSet, options ) {
 
 	this.domElement = domElement;
 	// Throw in ascii library from http://www.nihilogic.dk/labs/jsascii/jsascii.js
+
+	/*
+	* jsAscii 0.1
+	* Copyright (c) 2008 Jacob Seidelin, jseidelin@nihilogic.dk, http://blog.nihilogic.dk/
+	* MIT License [http://www.nihilogic.dk/licenses/mit-license.txt]
+	*/
+
 	function initAsciiSize() {
 
 		iWidth = Math.round( width * fResolution );

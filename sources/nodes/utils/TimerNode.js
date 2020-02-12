@@ -3,6 +3,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { FloatNode } from '../inputs/FloatNode.js'
 import { NodeLib } from '../core/NodeLib.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function TimerNode( scale, scope, timeScale ) {
 
 	FloatNode.call( this );

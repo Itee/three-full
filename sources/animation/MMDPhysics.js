@@ -13,7 +13,31 @@ import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
 import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
 import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js'
 import { Mesh } from '../objects/Mesh.js'
+
+/**
+ * @author takahiro / https://github.com/takahirox
+ *
+ * Dependencies
+ *  - Ammo.js https://github.com/kripken/ammo.js
+ *
+ * MMDPhysics calculates physics with Ammo(Bullet based JavaScript Physics engine)
+ * for MMD model loaded by MMDLoader.
+ *
+ * TODO
+ *  - Physics in Worker
+ */
+
 var MMDPhysics = ( function () {
+
+	/**
+	 * @param {SkinnedMesh} mesh
+	 * @param {Array<Object>} rigidBodyParams
+	 * @param {Array<Object>} (optional) constraintParams
+	 * @param {Object} params - (optional)
+	 * @param {Number} params.unitStep - Default is 1 / 65.
+	 * @param {Integer} params.maxStepNum - Default is 3.
+	 * @param {Vector3} params.gravity - Default is ( 0, - 9.8 * 10, 0 )
+	 */
 	function MMDPhysics( mesh, rigidBodyParams, constraintParams, params ) {
 
 		if ( typeof Ammo === 'undefined' ) {
@@ -28,6 +52,13 @@ var MMDPhysics = ( function () {
 		this.manager = new ResourceManager();
 
 		this.mesh = mesh;
+
+		/*
+		 * I don't know why but 1/60 unitStep easily breaks models
+		 * so I set it 1/65 so far.
+		 * Don't set too small unitStep because
+		 * the smaller unitStep can make the performance worse.
+		 */
 		this.unitStep = ( params.unitStep !== undefined ) ? params.unitStep : 1 / 65;
 		this.maxStepNum = ( params.maxStepNum !== undefined ) ? params.maxStepNum : 3;
 		this.gravity = new Vector3( 0, - 9.8 * 10, 0 );
@@ -46,6 +77,13 @@ var MMDPhysics = ( function () {
 	MMDPhysics.prototype = {
 
 		constructor: MMDPhysics,
+
+		/**
+		 * Advances Physics calculation and updates bones.
+		 *
+		 * @param {Number} delta - time in second
+		 * @return {MMDPhysics}
+		 */
 		update: function ( delta ) {
 
 			var manager = this.manager;
@@ -107,6 +145,12 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
+
+		/**
+		 * Resets rigid bodies transorm to current bone's.
+		 *
+		 * @return {MMDPhysics}
+		 */
 		reset: function () {
 
 			for ( var i = 0, il = this.bodies.length; i < il; i++ ) {
@@ -118,6 +162,13 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
+
+		/**
+		 * Warm ups Rigid bodies. Calculates cycles steps.
+		 *
+		 * @param {Integer} cycles
+		 * @return {MMDPhysics}
+		 */
 		warmup: function ( cycles ) {
 
 			for ( var i = 0; i < cycles; i++ ) {
@@ -129,6 +180,13 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
+
+		/**
+		 * Sets gravity.
+		 *
+		 * @param {Vector3} gravity
+		 * @return {MMDPhysicsHelper}
+		 */
 		setGravity: function ( gravity ) {
 
 			this.world.setGravity( new Ammo.btVector3( gravity.x, gravity.y, gravity.z ) );
@@ -137,6 +195,12 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
+
+		/**
+		 * Creates MMDPhysicsHelper
+		 *
+		 * @return {MMDPhysicsHelper}
+		 */
 		createHelper: function () {
 
 			return new MMDPhysicsHelper( this.mesh, this );
@@ -276,6 +340,16 @@ var MMDPhysics = ( function () {
 		}
 
 	};
+
+	/**
+	 * This manager's responsibilies are
+	 *
+	 * 1. manage Ammo.js and Three.js object resources and
+	 *    improve the performance and the memory consumption by
+	 *    reusing objects.
+	 *
+	 * 2. provide simple Ammo object operations.
+	 */
 	function ResourceManager() {
 
 		// for Three.js
@@ -725,6 +799,13 @@ var MMDPhysics = ( function () {
 		}
 
 	};
+
+	/**
+	 * @param {SkinnedMesh} mesh
+	 * @param {Ammo.btDiscreteDynamicsWorld} world
+	 * @param {Object} params
+	 * @param {ResourceManager} manager
+	 */
 	function RigidBody( mesh, world, params, manager ) {
 
 		this.mesh  = mesh;
@@ -744,12 +825,24 @@ var MMDPhysics = ( function () {
 	RigidBody.prototype = {
 
 		constructor: MMDPhysics.RigidBody,
+
+		/**
+		 * Resets rigid body transform to the current bone's.
+		 *
+		 * @return {RigidBody}
+		 */
 		reset: function () {
 
 			this._setTransformFromBone();
 			return this;
 
 		},
+
+		/**
+		 * Updates rigid body's transform from the current bone.
+		 *
+		 * @return {RidigBody}
+		 */
 		updateFromBone: function () {
 
 			if ( this.params.boneIndex !== - 1 &&
@@ -762,6 +855,12 @@ var MMDPhysics = ( function () {
 			return this;
 
 		},
+
+		/**
+		 * Updates bone from the current ridid body's transform.
+		 *
+		 * @return {RidigBody}
+		 */
 		updateBone: function () {
 
 			if ( this.params.type === 0 ||
@@ -855,6 +954,12 @@ var MMDPhysics = ( function () {
 			if ( params.type === 0 ) {
 
 				body.setCollisionFlags( body.getCollisionFlags() | 2 );
+
+				/*
+				 * It'd be better to comment out this line though in general I should call this method
+				 * because I'm not sure why but physics will be more like MMD's
+				 * if I comment out.
+				 */
 				body.setActivationState( 4 );
 
 			}
@@ -998,6 +1103,15 @@ var MMDPhysics = ( function () {
 		}
 
 	};
+
+	/**
+	 * @param {SkinnedMesh} mesh
+	 * @param {Ammo.btDiscreteDynamicsWorld} world
+	 * @param {RigidBody} bodyA
+	 * @param {RigidBody} bodyB
+	 * @param {Object} params
+	 * @param {ResourceManager} manager
+	 */
 	function Constraint( mesh, world, bodyA, bodyB, params, manager ) {
 
 		this.mesh  = mesh;
@@ -1089,6 +1203,13 @@ var MMDPhysics = ( function () {
 				}
 
 			}
+
+			/*
+			 * Currently(10/31/2016) official ammo.js doesn't support
+			 * btGeneric6DofSpringConstraint.setParam method.
+			 * You need custom ammo.js (add the method into idl) if you wanna use.
+			 * By setting this parameter, physics will be more like MMD's
+			 */
 			if ( constraint.setParam !== undefined ) {
 
 				for ( var i = 0; i < 6; i ++ ) {
@@ -1118,6 +1239,13 @@ var MMDPhysics = ( function () {
 		}
 
 	};
+
+	/**
+	 * Visualize Rigid bodies
+	 *
+	 * @param {SkinnedMesh} mesh
+	 * @param {Physics} physics
+	 */
 	function MMDPhysicsHelper( mesh, physics ) {
 
 		Object3D.call( this );
@@ -1170,6 +1298,10 @@ var MMDPhysics = ( function () {
 	MMDPhysicsHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		constructor: MMDPhysicsHelper,
+
+		/**
+		 * Updates Rigid Bodies visualization.
+		 */
 		updateMatrixWorld: function () {
 
 			var position = new Vector3();

@@ -3,6 +3,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Geometry } from '../core/Geometry.js'
 import { PolyhedronBufferGeometry } from './PolyhedronGeometry.js'
+
+/**
+ * @author Abe Pazos / https://hamoid.com
+ * @author Mugen87 / https://github.com/Mugen87
+ */
 // DodecahedronGeometry
 
 function DodecahedronGeometry( radius, detail ) {

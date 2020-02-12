@@ -13,6 +13,13 @@ import {
 	LinearFilter,
 	RGBAFormat
 } from '../constants.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author marklundin / http://mark-lundin.com/
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 var ParallaxBarrierEffect = function ( renderer ) {
 
 	var _camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );

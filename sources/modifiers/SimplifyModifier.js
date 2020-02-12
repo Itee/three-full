@@ -5,6 +5,18 @@ import { Vector3 } from '../math/Vector3.js'
 import { Geometry } from '../core/Geometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Triangle } from '../math/Triangle.js'
+
+/*
+ *	@author zz85 / http://twitter.com/blurspline / http://www.lab4games.net/zz85/blog
+ *
+ *	Simplification Geometry Modifier
+ *    - based on code and technique
+ *	  - by Stan Melax in 1998
+ *	  - Progressive Mesh type Polygon Reduction Algorithm
+ *    - http://www.melax.com/polychop/
+ */
+
 var SimplifyModifier = function () {};
 
 ( function () {

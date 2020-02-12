@@ -6,6 +6,10 @@ import { FloatNode } from '../inputs/FloatNode.js'
 import { FunctionNode } from '../core/FunctionNode.js'
 import { NormalNode } from '../accessors/NormalNode.js'
 import { PositionNode } from '../accessors/PositionNode.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function BumpMapNode( value, scale ) {
 
 	TempNode.call( this, 'v3' );

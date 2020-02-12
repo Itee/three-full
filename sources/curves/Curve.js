@@ -4,6 +4,41 @@
 import { _Math } from '../math/Math.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix4 } from '../math/Matrix4.js'
+/**
+ * @author zz85 / http://www.lab4games.net/zz85/blog
+ * Extensible curve object
+ *
+ * Some common of curve methods:
+ * .getPoint( t, optionalTarget ), .getTangent( t )
+ * .getPointAt( u, optionalTarget ), .getTangentAt( u )
+ * .getPoints(), .getSpacedPoints()
+ * .getLength()
+ * .updateArcLengths()
+ *
+ * This following curves inherit from Curve:
+ *
+ * -- 2D curves --
+ * ArcCurve
+ * CubicBezierCurve
+ * EllipseCurve
+ * LineCurve
+ * QuadraticBezierCurve
+ * SplineCurve
+ *
+ * -- 3D curves --
+ * CatmullRomCurve3
+ * CubicBezierCurve3
+ * LineCurve3
+ * QuadraticBezierCurve3
+ *
+ * A series of curves can be represented as a CurvePath.
+ *
+ **/
+
+/**************************************************************
+ *	Abstract Curve base class
+ **************************************************************/
+
 function Curve() {
 
 	this.type = 'Curve';
@@ -17,7 +52,7 @@ Object.assign( Curve.prototype, {
 	// Virtual base class method to overwrite and implement in subclasses
 	//	- t [0 .. 1]
 
-	getPoint: function (  ) {
+	getPoint: function ( /* t, optionalTarget */ ) {
 
 		console.warn( 'Curve: .getPoint() not implemented.' );
 		return null;

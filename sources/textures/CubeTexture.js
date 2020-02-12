@@ -6,6 +6,10 @@ import {
 	CubeReflectionMapping,
 	RGBFormat
 } from '../constants.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 function CubeTexture( images, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {
 
 	images = images !== undefined ? images : [];

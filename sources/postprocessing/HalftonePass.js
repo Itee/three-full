@@ -7,8 +7,16 @@ import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
-import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { HalftoneShader } from '../shaders/HalftoneShader.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author meatbags / xavierburrow.com, github/meatbags
+ *
+ * RGB Halftone pass for three.js effects composer. Requires HalftoneShader.
+ *
+ */
+
 var HalftonePass = function ( width, height, params ) {
 
 	Pass.call( this );

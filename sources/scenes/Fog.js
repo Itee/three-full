@@ -2,6 +2,11 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Color } from '../math/Color.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ */
 function Fog( color, near, far ) {
 
 	this.name = '';
@@ -23,7 +28,7 @@ Object.assign( Fog.prototype, {
 
 	},
 
-	toJSON: function (  ) {
+	toJSON: function ( /* meta */ ) {
 
 		return {
 			type: 'Fog',

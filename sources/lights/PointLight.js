@@ -4,6 +4,9 @@
 import { Light } from './Light.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { LightShadow } from './LightShadow.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 function PointLight( color, intensity, distance, decay ) {
 
 	Light.call( this, color, intensity );

@@ -4,6 +4,10 @@
 import { ImageLoader } from './ImageLoader.js'
 import { CubeTexture } from '../textures/CubeTexture.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 function CubeTextureLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

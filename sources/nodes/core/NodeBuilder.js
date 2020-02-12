@@ -12,6 +12,7 @@ import { Vector3Node } from '../inputs/Vector3Node.js'
 import { Vector4Node } from '../inputs/Vector4Node.js'
 import { TextureNode } from '../inputs/TextureNode.js'
 import { CubeTextureNode } from '../inputs/CubeTextureNode.js'
+import { TextureCubeNode } from '../misc/TextureCubeNode.js'
 import {
 	CubeReflectionMapping,
 	CubeRefractionMapping,
@@ -20,7 +21,10 @@ import {
 	LinearEncoding,
 	GammaEncoding
 } from '../../constants.js'
-import { TextureCubeNode } from '../misc/TextureCubeNode.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 var elements = NodeUtils.elements,
 	constructors = [ 'float', 'vec2', 'vec3', 'vec4' ],
 	convertFormatToType = {

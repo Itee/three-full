@@ -5,6 +5,10 @@ import { TempNode } from '../core/TempNode.js'
 import { FunctionNode } from '../core/FunctionNode.js'
 import { MaxMIPLevelNode } from '../utils/MaxMIPLevelNode.js'
 import { BlinnShininessExponentNode } from './BlinnShininessExponentNode.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function RoughnessToBlinnExponentNode( texture ) {
 
 	TempNode.call( this, 'f' );

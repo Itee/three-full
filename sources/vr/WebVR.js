@@ -1,6 +1,13 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * @author mrdoob / http://mrdoob.com
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ * Based on @tojiro's vr-samples-utils.js
+ */
+
 var WebVR = {
 
 	createButton: function ( renderer, options ) {
@@ -77,7 +84,7 @@ var WebVR = {
 
 				if ( currentSession === null ) {
 
-					device.requestSession( { immersive: true, exclusive: true  } ).then( onSessionStarted );
+					device.requestSession( { immersive: true, exclusive: true /* DEPRECATED */ } ).then( onSessionStarted );
 
 				} else {
 
@@ -136,7 +143,7 @@ var WebVR = {
 
 			navigator.xr.requestDevice().then( function ( device ) {
 
-				device.supportsSession( { immersive: true, exclusive: true  } )
+				device.supportsSession( { immersive: true, exclusive: true /* DEPRECATED */ } )
 					.then( function () { showEnterXR( device ); } )
 					.catch( showVRNotFound );
 

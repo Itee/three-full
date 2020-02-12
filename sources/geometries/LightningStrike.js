@@ -7,8 +7,112 @@ import {
 	Uint32BufferAttribute,
 	Float32BufferAttribute
 } from '../core/BufferAttribute.js'
-import { _Math } from '../math/Math.js'
 import { SimplexNoise } from '../misc/SimplexNoise.js'
+import { _Math } from '../math/Math.js'
+
+/**
+ * @author yomboprime https://github.com/yomboprime
+ *
+ * @fileoverview LightningStrike object for creating lightning strikes and voltaic arcs.
+ * 
+ * 
+ * Usage
+ * 
+ * var myRay = new LightningStrike( paramsObject );
+ * var myRayMesh = new Mesh( myRay, myMaterial );
+ * scene.add( myRayMesh );
+ * ...
+ * myRay.update( currentTime );
+ * 
+ * The "currentTime" can vary its rate, go forwards, backwards or even jump, but it cannot be negative.
+ * 
+ * You should normally leave the ray position to (0, 0, 0). You should control it by changing the sourceOffset and destOffset parameters.
+ * 
+ * 
+ * LightningStrike parameters
+ * 
+ * The paramsObject can contain any of the following parameters.
+ * 
+ * Legend:
+ * 'LightningStrike' (also called 'ray'): An independent voltaic arc with its ramifications and defined with a set of parameters.
+ * 'Subray': A ramification of the ray. It is not a LightningStrike object.
+ * 'Segment': A linear segment piece of a subray.
+ * 'Leaf segment': A ray segment which cannot be smaller.
+ * 
+ * 
+ * The following parameters can be changed any time and if they vary smoothly, the ray form will also change smoothly:
+ * 
+ * @param {Vector3} sourceOffset The point where the ray starts.
+ * 
+ * @param {Vector3} destOffset The point where the ray ends.
+ * 
+ * @param {double} timeScale The rate at wich the ray form changes in time. Default: 1
+ * 
+ * @param {double} roughness From 0 to 1. The higher the value, the more wrinkled is the ray. Default: 0.9
+ * 
+ * @param {double} straightness From 0 to 1. The higher the value, the more straight will be a subray path. Default: 0.7
+ * 
+ * @param {Vector3} up0 Ray 'up' direction at the ray starting point. Must be normalized. It should be perpendicular to the ray forward direction but it doesn't matter much.
+ * 
+ * @param {Vector3} up1 Like the up0 parameter but at the end of the ray. Must be normalized.
+ * 
+ * @param {double} radius0 Radius of the main ray trunk at the start point. Default: 1
+ * 
+ * @param {double} radius1 Radius of the main ray trunk at the end point. Default: 1
+ * 
+ * @param {double} radius0Factor The radius0 of a subray is this factor times the radius0 of its parent subray. Default: 0.5
+ * 
+ * @param {double} radius1Factor The radius1 of a subray is this factor times the radius1 of its parent subray. Default: 0.2
+ * 
+ * @param {minRadius} Minimum value a subray radius0 or radius1 can get. Default: 0.1
+ * 
+ * 
+ * The following parameters should not be changed after lightning creation. They can be changed but the ray will change its form abruptly:
+ * 
+ * @param {boolean} isEternal If true the ray never extinguishes. Otherwise its life is controlled by the 'birthTime' and 'deathTime' parameters. Default: true if any of those two parameters is undefined.
+ * 
+ * @param {double} birthTime The time at which the ray starts its life and begins propagating. Only if isEternal is false. Default: None.
+ * 
+ * @param {double} deathTime The time at which the ray ends vanishing and its life. Only if isEternal is false. Default: None.
+ * 
+ * @param {double} propagationTimeFactor From 0 to 1. Lifetime factor at which the ray ends propagating and enters the steady phase. For example, 0.1 means it is propagating 1/10 of its lifetime. Default: 0.1
+ * 
+ * @param {double} vanishingTimeFactor From 0 to 1. Lifetime factor at which the ray ends the steady phase and begins vanishing. For example, 0.9 means it is vanishing 1/10 of its lifetime. Default: 0.9
+ * 
+ * @param {double} subrayPeriod Subrays cycle periodically. This is their time period. Default: 4
+ * 
+ * @param {double} subrayDutyCycle From 0 to 1. This is the fraction of time a subray is active. Default: 0.6
+ * 
+ * 
+ * These parameters cannot change after lightning creation:
+ * 
+ * @param {integer} maxIterations: Greater than 0. The number of ray's leaf segments is 2**maxIterations. Default: 9
+ * 
+ * @param {boolean} isStatic Set to true only for rays which won't change over time and are not attached to moving objects (Rare case). It is used to set the vertex buffers non-dynamic. You can omit calling update() for these rays.
+ *  
+ * @param {integer} ramification Greater than 0. Maximum number of child subrays a subray can have. Default: 5
+ *
+ * @param {integer} maxSubrayRecursion Greater than 0. Maximum level of recursion (subray descendant generations). Default: 3 
+ *
+ * @param {double} recursionProbability From 0 to 1. The lower the value, the less chance each new generation of subrays has to generate new subrays. Default: 0.6
+ *
+ * @param {boolean} generateUVs If true, the ray geometry will have uv coordinates generated. u runs along the ray, and v across its perimeter. Default: false.
+ *
+ * @param {Object} randomGenerator Set here your random number generator which will seed the SimplexNoise and other decisions during ray tree creation.
+ * It can be used to generate repeatable rays. For that, set also the noiseSeed parameter, and each ray created with that generator and seed pair will be identical in time.
+ * The randomGenerator parameter should be an object with a random() function similar to Math.random, but seedable.
+ * It must have also a getSeed() method, which returns the current seed, and a setSeed( seed ) method, which accepts as seed a fractional number from 0 to 1, as well as any other number.
+ * The default value is an internal generator for some uses and Math.random for others (It is non-repeatable even if noiseSeed is supplied)
+ * 
+ * @param {double} noiseSeed Seed used to make repeatable rays (see the randomGenerator)
+ * 
+ * @param {function} onDecideSubrayCreation Set this to change the callback which decides subray creation. You can look at the default callback in the code (createDefaultSubrayCreationCallbacks)for more info.
+ * 
+ * @param {function} onSubrayCreation This is another callback, more simple than the previous one. It can be used to adapt the form of subrays or other parameters once a subray has been created and initialized. It is used in the examples to adapt subrays to a sphere or to a plane.
+ * 
+ *
+*/
+
 var LightningStrike = function ( rayParameters ) {
 
 	BufferGeometry.call( this );

@@ -3,6 +3,27 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector2 } from '../math/Vector2.js'
 import { Color } from '../math/Color.js'
+
+/**
+ * @author huwb / http://huwbowles.com/
+ *
+ * God-rays (crepuscular rays)
+ *
+ * Similar implementation to the one used by Crytek for CryEngine 2 [Sousa2008].
+ * Blurs a mask generated from the depth map along radial lines emanating from the light
+ * source. The blur repeatedly applies a blur filter of increasing support but constant
+ * sample count to produce a blur filter with large support.
+ *
+ * My implementation performs 3 passes, similar to the implementation from Sousa. I found
+ * just 6 samples per pass produced acceptible results. The blur is applied three times,
+ * with decreasing filter support. The result is equivalent to a single pass with
+ * 6*6*6 = 216 samples.
+ *
+ * References:
+ *
+ * Sousa2008 - Crysis Next Gen Effects, GDC2008, http://www.crytek.com/sites/default/files/GDC08_SousaT_CrysisEffects.ppt
+ */
+
 var ShaderGodRays = {
 
 	'godrays_depthMask': {
@@ -42,6 +63,21 @@ var ShaderGodRays = {
 		].join( "\n" )
 
 	},
+	/**
+	 * The god-ray generation shader.
+	 *
+	 * First pass:
+	 *
+	 * The depth map is blurred along radial lines towards the "sun". The
+	 * output is written to a temporary render target (I used a 1/4 sized
+	 * target).
+	 *
+	 * Pass two & three:
+	 *
+	 * The results of the previous pass are re-blurred, each time with a
+	 * decreased distance between samples.
+	 */
+
 	'godrays_generate': {
 
 		uniforms: {
@@ -102,6 +138,27 @@ var ShaderGodRays = {
 
 				// This breaks ANGLE in Chrome 22
 				//	- see http://code.google.com/p/chromium/issues/detail?id=153105
+
+				/*
+				// Unrolling didnt do much on my hardware (ATI Mobility Radeon 3450),
+				// so i've just left the loop
+
+				"for ( float i = 0.0; i < TAPS_PER_PASS; i += 1.0 ) {",
+
+					// Accumulate samples, making sure we dont walk past the light source.
+
+					// The check for uv.y < 1 would not be necessary with "border" UV wrap
+					// mode, with a black border color. I don't think this is currently
+					// exposed by three.js. As a result there might be artifacts when the
+					// sun is to the left, right or bottom of screen as these cases are
+					// not specifically handled.
+
+					"col += ( i <= iters && uv.y < 1.0 ? texture2D( tInput, uv ).r : 0.0 );",
+					"uv += stepv;",
+
+				"}",
+				*/
+
 				// Unrolling loop manually makes it work in ANGLE
 
 				"if ( 0.0 <= iters && uv.y < 1.0 ) col += texture2D( tInput, uv ).r;",
@@ -137,6 +194,12 @@ var ShaderGodRays = {
 		].join( "\n" )
 
 	},
+
+	/**
+	 * Additively applies god rays from texture tGodRays to a background (tColors).
+	 * fGodRayIntensity attenuates the god rays.
+	 */
+
 	'godrays_combine': {
 
 		uniforms: {
@@ -196,6 +259,11 @@ var ShaderGodRays = {
 		].join( "\n" )
 
 	},
+	/**
+	 * A dodgy sun/sky shader. Makes a bright spot at the sun location. Would be
+	 * cheaper/faster/simpler to implement this as a simple sun sprite.
+	 */
+
 	'godrays_fake_sun': {
 
 		uniforms: {

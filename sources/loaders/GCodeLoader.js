@@ -11,6 +11,17 @@ import { Euler } from '../math/Euler.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
 'use strict';
+
+/**
+ * GCodeLoader is used to load gcode files usually used for 3D printing or CNC applications.
+ *
+ * Gcode files are composed by commands used by machines to create objects.
+ *
+ * @class GCodeLoader
+ * @param {Manager} manager Loading manager.
+ * @author tentone
+ * @author joewalnes
+ */
 var GCodeLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

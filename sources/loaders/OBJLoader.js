@@ -16,6 +16,12 @@ import {
 	VertexColors
 } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+import { Material } from '../materials/Material.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
 var OBJLoader = ( function () {
 
 	// o object_name | g group_name
@@ -604,6 +610,18 @@ var OBJLoader = ( function () {
 					// This requires some care to not create extra material on each smooth value for "normal" obj files.
 					// where explicit usemtl defines geometry groups.
 					// Example asset: examples/models/obj/cerberus/Cerberus.obj
+
+					/*
+					 * http://paulbourke.net/dataformats/obj/
+					 * or
+					 * http://www.cs.utah.edu/~boulos/cs3505/obj_spec.pdf
+					 *
+					 * From chapter "Grouping" Syntax explanation "s group_number":
+					 * "group_number is the smoothing group number. To turn off smoothing groups, use a value of 0 or off.
+					 * Polygonal elements use group numbers to put elements in different smoothing groups. For free-form
+					 * surfaces, smoothing groups are either turned on or off; there is no difference between values greater
+					 * than 0."
+					 */
 					if ( result.length > 1 ) {
 
 						var value = result[ 1 ].trim().toLowerCase();

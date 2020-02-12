@@ -3,6 +3,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from './Vector3.js'
 import { Sphere } from './Sphere.js'
+/**
+ * @author bhouston / http://clara.io
+ * @author WestLangley / http://github.com/WestLangley
+ */
+
 function Box3( min, max ) {
 
 	this.min = ( min !== undefined ) ? min : new Vector3( + Infinity, + Infinity, + Infinity );

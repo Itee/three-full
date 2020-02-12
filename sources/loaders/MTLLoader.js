@@ -10,9 +10,16 @@ import {
 	FrontSide,
 	RepeatWrapping
 } from '../constants.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
-import { LoaderUtils } from './LoaderUtils.js'
 import { Loader } from './Loader.js'
+import { LoaderUtils } from './LoaderUtils.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * Loads a Wavefront .mtl file specifying materials
+ *
+ * @author angelxuanchang
+ */
+
 var MTLLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
@@ -22,6 +29,20 @@ var MTLLoader = function ( manager ) {
 MTLLoader.prototype = {
 
 	constructor: MTLLoader,
+
+	/**
+	 * Loads and parses a MTL asset from a URL.
+	 *
+	 * @param {String} url - URL to the MTL file.
+	 * @param {Function} [onLoad] - Callback invoked with the loaded object.
+	 * @param {Function} [onProgress] - Callback for download progress.
+	 * @param {Function} [onError] - Callback for download errors.
+	 *
+	 * @see setPath setResourcePath
+	 *
+	 * @note In order for relative texture references to resolve correctly
+	 * you must call setResourcePath() explicitly prior to load.
+	 */
 	load: function ( url, onLoad, onProgress, onError ) {
 
 		var scope = this;
@@ -37,12 +58,38 @@ MTLLoader.prototype = {
 		}, onProgress, onError );
 
 	},
+
+	/**
+	 * Set base path for resolving references.
+	 * If set this path will be prepended to each loaded and found reference.
+	 *
+	 * @see setResourcePath
+	 * @param {String} path
+	 * @return {MTLLoader}
+	 *
+	 * @example
+	 *     mtlLoader.setPath( 'assets/obj/' );
+	 *     mtlLoader.load( 'my.mtl', ... );
+	 */
 	setPath: function ( path ) {
 
 		this.path = path;
 		return this;
 
 	},
+
+	/**
+	 * Set base path for additional resources like textures.
+	 *
+	 * @see setPath
+	 * @param {String} path
+	 * @return {MTLLoader}
+	 *
+	 * @example
+	 *     mtlLoader.setPath( 'assets/obj/' );
+	 *     mtlLoader.setResourcePath( 'assets/textures/' );
+	 *     mtlLoader.load( 'my.mtl', ... );
+	 */
 	setResourcePath: function ( path ) {
 
 		this.resourcePath = path;
@@ -70,6 +117,18 @@ MTLLoader.prototype = {
 		return this;
 
 	},
+
+	/**
+	 * Parses a MTL file.
+	 *
+	 * @param {String} text - Content of MTL file
+	 * @return {MTLLoader.MaterialCreator}
+	 *
+	 * @see setPath setResourcePath
+	 *
+	 * @note In order for relative texture references to resolve correctly
+	 * you must call setResourcePath() explicitly prior to parse.
+	 */
 	parse: function ( text, path ) {
 
 		var lines = text.split( '\n' );
@@ -130,6 +189,22 @@ MTLLoader.prototype = {
 	}
 
 };
+
+/**
+ * Create a new THREE-MTLLoader.MaterialCreator
+ * @param baseUrl - Url relative to which textures are loaded
+ * @param options - Set of options on how to construct the materials
+ *                  side: Which side to apply the material
+ *                        FrontSide (default), BackSide, DoubleSide
+ *                  wrap: What type of wrapping to apply for textures
+ *                        RepeatWrapping (default), ClampToEdgeWrapping, MirroredRepeatWrapping
+ *                  normalizeRGB: RGBs need to be normalized to 0-1 from 0-255
+ *                                Default: false, assumed to be already normalized
+ *                  ignoreZeroRGBs: Ignore values of RGBs (Ka,Kd,Ks) that are all 0's
+ *                                  Default: false
+ * @constructor
+ */
+
 MTLLoader.MaterialCreator = function ( baseUrl, options ) {
 
 	this.baseUrl = baseUrl || '';

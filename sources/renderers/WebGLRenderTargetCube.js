@@ -2,6 +2,10 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { WebGLRenderTarget } from './WebGLRenderTarget.js'
+/**
+ * @author alteredq / http://alteredqualia.com
+ */
+
 function WebGLRenderTargetCube( width, height, options ) {
 
 	WebGLRenderTarget.call( this, width, height, options );

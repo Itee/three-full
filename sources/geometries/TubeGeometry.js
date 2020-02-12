@@ -6,6 +6,16 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Vector3 } from '../math/Vector3.js'
+
+/**
+ * @author oosmoxiecode / https://github.com/oosmoxiecode
+ * @author WestLangley / https://github.com/WestLangley
+ * @author zz85 / https://github.com/zz85
+ * @author miningold / https://github.com/miningold
+ * @author jonobr1 / https://github.com/jonobr1
+ * @author Mugen87 / https://github.com/Mugen87
+ *
+ */
 // TubeGeometry
 
 function TubeGeometry( path, tubularSegments, radius, radialSegments, closed, taper ) {

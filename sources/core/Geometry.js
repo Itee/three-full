@@ -12,6 +12,15 @@ import { Vector2 } from '../math/Vector2.js'
 import { Color } from '../math/Color.js'
 import { Object3D } from './Object3D.js'
 import { _Math } from '../math/Math.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author kile / http://kile.stravaganza.org/
+ * @author alteredq / http://alteredqualia.com/
+ * @author mikael emtinger / http://gomo.se/
+ * @author zz85 / http://www.lab4games.net/zz85/blog
+ * @author bhouston / http://clara.io
+ */
+
 var geometryId = 0; // Geometry uses even numbers as Id
 
 function Geometry() {
@@ -807,6 +816,13 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 		this.merge( mesh.geometry, mesh.matrix );
 
 	},
+
+	/*
+	 * Checks for duplicate vertices with hashmap.
+	 * Duplicated vertices are removed
+	 * and faces' vertices are updated.
+	 */
+
 	mergeVertices: function () {
 
 		var verticesMap = {}; // Hashmap for looking up vertices by position coordinates (and making sure they are unique)
@@ -1144,6 +1160,31 @@ Geometry.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 	},
 
 	clone: function () {
+
+		/*
+		 // Handle primitives
+
+		 var parameters = this.parameters;
+
+		 if ( parameters !== undefined ) {
+
+		 var values = [];
+
+		 for ( var key in parameters ) {
+
+		 values.push( parameters[ key ] );
+
+		 }
+
+		 var geometry = Object.create( this.constructor.prototype );
+		 this.constructor.apply( geometry, values );
+		 return geometry;
+
+		 }
+
+		 return new this.constructor().copy( this );
+		 */
+
 		return new Geometry().copy( this );
 
 	},

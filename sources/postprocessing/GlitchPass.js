@@ -8,13 +8,18 @@ import { Scene } from '../scenes/Scene.js'
 import { Mesh } from '../objects/Mesh.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { DataTexture } from '../textures/DataTexture.js'
+import { DigitalGlitch } from '../shaders/DigitalGlitch.js'
 import {
 	FloatType,
 	RGBFormat
 } from '../constants.js'
-import { DigitalGlitch } from '../shaders/DigitalGlitch.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { _Math } from '../math/Math.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 var GlitchPass = function ( dt_size ) {
 
 	Pass.call( this );

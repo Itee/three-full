@@ -7,6 +7,11 @@ import { Vector2 } from '../math/Vector2.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { InterleavedBuffer } from '../core/InterleavedBuffer.js'
 import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
 var BufferGeometryUtils = {
 
 	computeTangents: function ( geometry ) {
@@ -188,6 +193,12 @@ var BufferGeometryUtils = {
 		}
 
 	},
+
+	/**
+	 * @param  {Array<BufferGeometry>} geometries
+	 * @param  {Boolean} useGroups
+	 * @return {BufferGeometry}
+	 */
 	mergeBufferGeometries: function ( geometries, useGroups ) {
 
 		var isIndexed = geometries[ 0 ].index !== null;
@@ -336,6 +347,11 @@ var BufferGeometryUtils = {
 		return mergedGeometry;
 
 	},
+
+	/**
+	 * @param {Array<BufferAttribute>} attributes
+	 * @return {BufferAttribute}
+	 */
 	mergeBufferAttributes: function ( attributes ) {
 
 		var TypedArray;
@@ -376,6 +392,11 @@ var BufferGeometryUtils = {
 		return new BufferAttribute( array, itemSize, normalized );
 
 	},
+
+	/**
+	 * @param {Array<BufferAttribute>} attributes
+	 * @return {Array<InterleavedBufferAttribute>}
+	 */
 	interleaveAttributes: function ( attributes ) {
 
 		// Interleaves the provided attributes into an InterleavedBuffer and returns
@@ -436,6 +457,11 @@ var BufferGeometryUtils = {
 		return res;
 
 	},
+
+	/**
+	 * @param {Array<BufferGeometry>} geometry
+	 * @return {number}
+	 */
 	estimateBytesUsed: function ( geometry ) {
 
 		// Return the estimated memory used by this geometry in bytes
@@ -454,6 +480,12 @@ var BufferGeometryUtils = {
 		return mem;
 
 	},
+
+	/**
+	 * @param {BufferGeometry} geometry
+	 * @param {number} tolerance
+	 * @return {BufferGeometry>}
+	 */
 	mergeVertices: function ( geometry, tolerance = 1e-4 ) {
 
 		tolerance = Math.max( tolerance, Number.EPSILON );

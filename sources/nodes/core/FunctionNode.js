@@ -3,6 +3,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from './TempNode.js'
 import { NodeLib } from './NodeLib.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ * @thanks bhouston / https://clara.io/
+ */
 var declarationRegexp = /^([a-z_0-9]+)\s([a-z_0-9]+)\s*\((.*?)\)/i,
 	propertiesRegexp = /[a-z_0-9]+/ig;
 

@@ -11,12 +11,12 @@ export interface WebGLRenderTargetOptions {
   wrapT?: Wrapping;
   magFilter?: TextureFilter;
   minFilter?: TextureFilter;
-  format?: number; // RGBAFormat;
-  type?: TextureDataType; // UnsignedByteType;
-  anisotropy?: number; // 1;
-  depthBuffer?: boolean; // true;
-  stencilBuffer?: boolean; // true;
-  generateMipmaps?: boolean; // true;
+  format?: number; 
+  type?: TextureDataType; 
+  anisotropy?: number; 
+  depthBuffer?: boolean; 
+  stencilBuffer?: boolean; 
+  generateMipmaps?: boolean; 
 }
 
 export class WebGLRenderTarget extends EventDispatcher {

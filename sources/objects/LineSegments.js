@@ -4,6 +4,10 @@
 import { Line } from './Line.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
+
 function LineSegments( geometry, material ) {
 
 	Line.call( this, geometry, material );

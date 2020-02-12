@@ -2,9 +2,30 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Material } from './Material.js'
-import { cloneUniforms } from '../renderers/shaders/UniformsUtils'
+import { cloneUniforms } from '../renderers/shaders/UniformsUtils.js'
 import { default as default_vertex } from '../renderers/shaders/ShaderChunk/default_vertex.glsl.js'
 import { default as default_fragment } from '../renderers/shaders/ShaderChunk/default_fragment.glsl.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ *
+ * parameters = {
+ *  defines: { "label" : "value" },
+ *  uniforms: { "parameter1": { value: 1.0 }, "parameter2": { value2: 2 } },
+ *
+ *  fragmentShader: <string>,
+ *  vertexShader: <string>,
+ *
+ *  wireframe: <boolean>,
+ *  wireframeLinewidth: <float>,
+ *
+ *  lights: <bool>,
+ *
+ *  skinning: <bool>,
+ *  morphTargets: <bool>,
+ *  morphNormals: <bool>
+ * }
+ */
 function ShaderMaterial( parameters ) {
 
 	Material.call( this );

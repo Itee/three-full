@@ -8,6 +8,10 @@ import {
 import { ImageLoader } from './ImageLoader.js'
 import { Texture } from '../textures/Texture.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 function TextureLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

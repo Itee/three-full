@@ -4,6 +4,13 @@
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
+
+/**
+ * Created by tpowellmeto on 29/10/2015.
+ *
+ * peppers ghost effect based on http://www.instructables.com/id/Reflective-Prism/?ALLSTEPS
+ */
+
 var PeppersGhostEffect = function ( renderer ) {
 
 	var scope = this;

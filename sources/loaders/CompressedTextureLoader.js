@@ -5,6 +5,12 @@ import { LinearFilter } from '../constants.js'
 import { FileLoader } from './FileLoader.js'
 import { CompressedTexture } from '../textures/CompressedTexture.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+/**
+ * @author mrdoob / http://mrdoob.com/
+ *
+ * Abstract Base class to block based textures loader (dds, pvr, ...)
+ */
+
 function CompressedTextureLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

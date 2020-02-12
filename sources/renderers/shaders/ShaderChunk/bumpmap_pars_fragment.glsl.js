@@ -6,12 +6,6 @@ export default `
 
 	uniform sampler2D bumpMap;
 	uniform float bumpScale;
-
-	// Bump Mapping Unparametrized Surfaces on the GPU by Morten S. Mikkelsen
-	// http://api.unrealengine.com/attachments/Engine/Rendering/LightingAndShadows/BumpMappingWithoutTangentSpace/mm_sfgrad_bump.pdf
-
-	// Evaluate the derivative of the height w.r.t. screen-space using forward differencing (listing 2)
-
 	vec2 dHdxy_fwd() {
 
 		vec2 dSTdx = dFdx( vUv );
@@ -26,12 +20,9 @@ export default `
 	}
 
 	vec3 perturbNormalArb( vec3 surf_pos, vec3 surf_norm, vec2 dHdxy ) {
-
-		// Workaround for Adreno 3XX dFd*( vec3 ) bug. See #9988
-
 		vec3 vSigmaX = vec3( dFdx( surf_pos.x ), dFdx( surf_pos.y ), dFdx( surf_pos.z ) );
 		vec3 vSigmaY = vec3( dFdy( surf_pos.x ), dFdy( surf_pos.y ), dFdy( surf_pos.z ) );
-		vec3 vN = surf_norm;		// normalized
+		vec3 vN = surf_norm;		
 
 		vec3 R1 = cross( vSigmaY, vN );
 		vec3 R2 = cross( vN, vSigmaX );

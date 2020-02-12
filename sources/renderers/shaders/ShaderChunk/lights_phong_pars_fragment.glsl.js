@@ -33,7 +33,7 @@ void RE_Direct_BlinnPhong( const in IncidentLight directLight, const in Geometri
 
 	#ifndef PHYSICALLY_CORRECT_LIGHTS
 
-		irradiance *= PI; // punctual light
+		irradiance *= PI; 
 
 	#endif
 

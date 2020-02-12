@@ -3,6 +3,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Mesh } from './Mesh.js'
 import { _Math } from '../math/Math.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 var MorphBlendMesh = function ( geometry, material ) {
 
 	Mesh.call( this, geometry, material );

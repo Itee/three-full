@@ -6,6 +6,38 @@ import { Plane } from '../math/Plane.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Mesh } from '../objects/Mesh.js'
 import { ConvexBufferGeometry } from '../geometries/ConvexGeometry.js'
+
+/**
+ * @author yomboprime https://github.com/yomboprime
+ *
+ * @fileoverview This class can be used to subdivide a convex Geometry object into pieces.
+ *
+ * Usage:
+ *
+ * Use the function prepareBreakableObject to prepare a Mesh object to be broken.
+ *
+ * Then, call the various functions to subdivide the object (subdivideByImpact, cutByPlane)
+ *
+ * Sub-objects that are product of subdivision don't need prepareBreakableObject to be called on them.
+ *
+ * Requisites for the object:
+ *
+ *  - Mesh object must have a BufferGeometry (not Geometry) and a Material
+ *
+ *  - Vertex normals must be planar (not smoothed)
+ *
+ *  - The geometry must be convex (this is not checked in the library). You can create convex
+ *  geometries with ConvexBufferGeometry. The BoxBufferGeometry, SphereBufferGeometry and other convex primitives
+ *  can also be used.
+ *
+ * Note: This lib adds member variables to object's userData member (see prepareBreakableObject function)
+ * Use with caution and read the code when using with other libs.
+ *
+ * @param {double} minSizeForBreak Min size a debris can have to break.
+ * @param {double} smallDelta Max distance to consider that a point belongs to a plane.
+ *
+*/
+
 var ConvexObjectBreaker = function ( minSizeForBreak, smallDelta ) {
 
 	this.minSizeForBreak = minSizeForBreak || 1.4;
@@ -58,6 +90,13 @@ ConvexObjectBreaker.prototype = {
 		userData.breakable = breakable;
 
 	},
+
+	/*
+	 * @param {int} maxRadialIterations Iterations for radial cuts.
+	 * @param {int} maxRandomIterations Max random iterations for not-radial cuts
+	 *
+	 * Returns the array of pieces
+	 */
 	subdivideByImpact: function ( object, pointOfImpact, normal, maxRadialIterations, maxRandomIterations ) {
 
 		var debris = [];

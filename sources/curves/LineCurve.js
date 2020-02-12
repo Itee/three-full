@@ -46,7 +46,7 @@ LineCurve.prototype.getPointAt = function ( u, optionalTarget ) {
 
 };
 
-LineCurve.prototype.getTangent = function (  ) {
+LineCurve.prototype.getTangent = function ( /* t */ ) {
 
 	var tangent = this.v2.clone().sub( this.v1 );
 

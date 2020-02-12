@@ -3,6 +3,14 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { StereoCamera } from '../cameras/StereoCamera.js'
 import { Vector2 } from '../math/Vector2.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ * @authod mrdoob / http://mrdoob.com/
+ * @authod arodic / http://aleksandarrodic.com/
+ * @authod fonserbc / http://fonserbc.github.io/
+*/
+
 var StereoEffect = function ( renderer ) {
 
 	var _stereo = new StereoCamera();

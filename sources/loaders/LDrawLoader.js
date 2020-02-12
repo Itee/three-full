@@ -16,6 +16,14 @@ import { Group } from '../objects/Group.js'
 import { Vector3 } from '../math/Vector3.js'
 import { DoubleSide } from '../constants.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author yomboprime / https://github.com/yomboprime/
+ *
+ *
+ */
+
 var LDrawLoader = ( function () {
 
 	function LineParser( line, lineNumber ) {

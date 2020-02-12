@@ -4,6 +4,10 @@
 import { InputNode } from '../core/InputNode.js'
 import { UVNode } from '../accessors/UVNode.js'
 import { ColorSpaceNode } from '../utils/ColorSpaceNode.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function TextureNode( value, uv, bias, project ) {
 
 	InputNode.call( this, 'v4', { shared: true } );

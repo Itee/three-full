@@ -13,7 +13,35 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Line } from '../objects/Line.js'
+
+/**
+ * @author takahiro / https://github.com/takahirox
+ *
+ * CCD Algorithm
+ *  - https://sites.google.com/site/auraliusproject/ccd-algorithm
+ *
+ * // ik parameter example
+ * //
+ * // target, effector, index in links are bone index in skeleton.bones.
+ * // the bones relation should be
+ * // <-- parent                                  child -->
+ * // links[ n ], links[ n - 1 ], ..., links[ 0 ], effector
+ * iks = [ {
+ *	target: 1,
+ *	effector: 2,
+ *	links: [ { index: 5, limitation: new Vector3( 1, 0, 0 ) }, { index: 4, enabled: false }, { index : 3 } ],
+ *	iteration: 10,
+ *	minAngle: 0.0,
+ *	maxAngle: 1.0,
+ * } ];
+ */
+
 var CCDIKSolver = ( function () {
+
+	/**
+	 * @param {SkinnedMesh} mesh
+	 * @param {Array<Object>} iks
+	 */
 	function CCDIKSolver( mesh, iks ) {
 
 		this.mesh = mesh;
@@ -26,6 +54,12 @@ var CCDIKSolver = ( function () {
 	CCDIKSolver.prototype = {
 
 		constructor: CCDIKSolver,
+
+		/**
+		 * Update IK bones.
+		 *
+		 * @return {CCDIKSolver}
+		 */
 		update: function () {
 
 			var q = new Quaternion();
@@ -177,6 +211,12 @@ var CCDIKSolver = ( function () {
 			};
 
 		}(),
+
+		/**
+		 * Creates Helper
+		 *
+		 * @return {CCDIKHelper}
+		 */
 		createHelper: function () {
 
 			return new CCDIKHelper( this.mesh, this.mesh.geometry.userData.MMD.iks );
@@ -218,6 +258,13 @@ var CCDIKSolver = ( function () {
 		}
 
 	};
+
+	/**
+	 * Visualize IK bones
+	 *
+	 * @param {SkinnedMesh} mesh
+	 * @param {Array<Object>} iks
+	 */
 	function CCDIKHelper( mesh, iks ) {
 
 		Object3D.call( this );
@@ -265,6 +312,10 @@ var CCDIKSolver = ( function () {
 	CCDIKHelper.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		constructor: CCDIKHelper,
+
+		/**
+		 * Updates IK bones visualization.
+		 */
 		updateMatrixWorld: function () {
 
 			var matrix = new Matrix4();

@@ -6,16 +6,71 @@ import { Matrix4 } from '../math/Matrix4.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector4 } from '../math/Vector4.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
+
+/**
+ * @author Eric Haines / http://erichaines.com/
+ *
+ * Tessellates the famous Utah teapot database by Martin Newell into triangles.
+ *
+ * var TeapotBufferGeometry = function ( size, segments, bottom, lid, body, fitLid, blinn )
+ *
+ * defaults: size = 50, segments = 10, bottom = true, lid = true, body = true,
+ *   fitLid = false, blinn = true
+ *
+ * size is a relative scale: I've scaled the teapot to fit vertically between -1 and 1.
+ * Think of it as a "radius".
+ * segments - number of line segments to subdivide each patch edge;
+ *   1 is possible but gives degenerates, so two is the real minimum.
+ * bottom - boolean, if true (default) then the bottom patches are added. Some consider
+ *   adding the bottom heresy, so set this to "false" to adhere to the One True Way.
+ * lid - to remove the lid and look inside, set to true.
+ * body - to remove the body and leave the lid, set this and "bottom" to false.
+ * fitLid - the lid is a tad small in the original. This stretches it a bit so you can't
+ *   see the teapot's insides through the gap.
+ * blinn - Jim Blinn scaled the original data vertically by dividing by about 1.3 to look
+ *   nicer. If you want to see the original teapot, similar to the real-world model, set
+ *   this to false. True by default.
+ *   See http://en.wikipedia.org/wiki/File:Original_Utah_Teapot.jpg for the original
+ *   real-world teapot (from http://en.wikipedia.org/wiki/Utah_teapot).
+ *
+ * Note that the bottom (the last four patches) is not flat - blame Frank Crow, not me.
+ *
+ * The teapot should normally be rendered as a double sided object, since for some
+ * patches both sides can be seen, e.g., the gap around the lid and inside the spout.
+ *
+ * Segments 'n' determines the number of triangles output.
+ *   Total triangles = 32*2*n*n - 8*n    [degenerates at the top and bottom cusps are deleted]
+ *
+ *   size_factor   # triangles
+ *       1          56
+ *       2         240
+ *       3         552
+ *       4         992
+ *
+ *      10        6320
+ *      20       25440
+ *      30       57360
+ *
+ * Code converted from my ancient SPD software, http://tog.acm.org/resources/SPD/
+ * Created for the Udacity course "Interactive Rendering", http://bit.ly/ericity
+ * Lesson: https://www.udacity.com/course/viewer#!/c-cs291/l-68866048/m-106482448
+ * YouTube video on teapot history: https://www.youtube.com/watch?v=DxMfblPzFNc
+ *
+ * See https://en.wikipedia.org/wiki/Utah_teapot for the history of the teapot
+ *
+ */
+/*global THREE */
+
 var TeapotBufferGeometry = function ( size, segments, bottom, lid, body, fitLid, blinn ) {
 
 	// 32 * 4 * 4 Bezier spline patches
 	var teapotPatches = [
-		
+		/*rim*/
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 		3, 16, 17, 18, 7, 19, 20, 21, 11, 22, 23, 24, 15, 25, 26, 27,
 		18, 28, 29, 30, 21, 31, 32, 33, 24, 34, 35, 36, 27, 37, 38, 39,
 		30, 40, 41, 0, 33, 42, 43, 4, 36, 44, 45, 8, 39, 46, 47, 12,
-		
+		/*body*/
 		12, 13, 14, 15, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
 		15, 25, 26, 27, 51, 60, 61, 62, 55, 63, 64, 65, 59, 66, 67, 68,
 		27, 37, 38, 39, 62, 69, 70, 71, 65, 72, 73, 74, 68, 75, 76, 77,
@@ -24,17 +79,17 @@ var TeapotBufferGeometry = function ( size, segments, bottom, lid, body, fitLid,
 		59, 66, 67, 68, 87, 96, 97, 98, 91, 99, 100, 101, 95, 102, 103, 104,
 		68, 75, 76, 77, 98, 105, 106, 107, 101, 108, 109, 110, 104, 111, 112, 113,
 		77, 82, 83, 56, 107, 114, 115, 84, 110, 116, 117, 88, 113, 118, 119, 92,
-		
+		/*handle*/
 		120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135,
 		123, 136, 137, 120, 127, 138, 139, 124, 131, 140, 141, 128, 135, 142, 143, 132,
 		132, 133, 134, 135, 144, 145, 146, 147, 148, 149, 150, 151, 68, 152, 153, 154,
 		135, 142, 143, 132, 147, 155, 156, 144, 151, 157, 158, 148, 154, 159, 160, 68,
-		
+		/*spout*/
 		161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176,
 		164, 177, 178, 161, 168, 179, 180, 165, 172, 181, 182, 169, 176, 183, 184, 173,
 		173, 174, 175, 176, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196,
 		176, 183, 184, 173, 188, 197, 198, 185, 192, 199, 200, 189, 196, 201, 202, 193,
-		
+		/*lid*/
 		203, 203, 203, 203, 204, 205, 206, 207, 208, 208, 208, 208, 209, 210, 211, 212,
 		203, 203, 203, 203, 207, 213, 214, 215, 208, 208, 208, 208, 212, 216, 217, 218,
 		203, 203, 203, 203, 215, 219, 220, 221, 208, 208, 208, 208, 218, 222, 223, 224,
@@ -43,7 +98,7 @@ var TeapotBufferGeometry = function ( size, segments, bottom, lid, body, fitLid,
 		212, 216, 217, 218, 232, 241, 242, 243, 236, 244, 245, 246, 240, 247, 248, 249,
 		218, 222, 223, 224, 243, 250, 251, 252, 246, 253, 254, 255, 249, 256, 257, 258,
 		224, 227, 228, 209, 252, 259, 260, 229, 255, 261, 262, 233, 258, 263, 264, 237,
-		
+		/*bottom*/
 		265, 265, 265, 265, 266, 267, 268, 269, 270, 271, 272, 273, 92, 119, 118, 113,
 		265, 265, 265, 265, 269, 274, 275, 276, 273, 277, 278, 279, 113, 112, 111, 104,
 		265, 265, 265, 265, 276, 280, 281, 282, 279, 283, 284, 285, 104, 103, 102, 95,

@@ -7,6 +7,10 @@ import { FloatNode } from '../inputs/FloatNode.js'
 import { Vector2Node } from '../inputs/Vector2Node.js'
 import { UVNode } from '../accessors/UVNode.js'
 import { Vector2 } from '../../math/Vector2.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function BlurNode( value, uv, radius, size ) {
 
 	TempNode.call( this, 'v4' );

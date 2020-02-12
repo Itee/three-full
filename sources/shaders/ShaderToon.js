@@ -3,6 +3,19 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from '../math/Vector3.js'
 import { Color } from '../math/Color.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ *
+ * ShaderToon currently contains:
+ *
+ *	toon1
+ *	toon2
+ *	hatching
+ *	dotted
+ */
+
 var ShaderToon = {
 
 	'toon1' : {

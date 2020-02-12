@@ -10,6 +10,16 @@ import { CubicInterpolant } from '../math/interpolants/CubicInterpolant.js'
 import { LinearInterpolant } from '../math/interpolants/LinearInterpolant.js'
 import { DiscreteInterpolant } from '../math/interpolants/DiscreteInterpolant.js'
 import { AnimationUtils } from './AnimationUtils.js'
+/**
+ *
+ * A timed sequence of keyframes for a specific property.
+ *
+ *
+ * @author Ben Houston / http://clara.io/
+ * @author David Sarno / http://lighthaus.us/
+ * @author tschw
+ */
+
 function KeyframeTrack( name, times, values, interpolation ) {
 
 	if ( name === undefined ) throw new Error( 'KeyframeTrack: track name is undefined' );

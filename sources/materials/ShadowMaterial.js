@@ -3,6 +3,14 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Material } from './Material.js'
 import { Color } from '../math/Color.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ *
+ * parameters = {
+ *  color: <Color>
+ * }
+ */
 function ShadowMaterial( parameters ) {
 
 	Material.call( this );

@@ -3,6 +3,13 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { _Math } from './Math.js'
 import { Vector3 } from './Vector3.js'
+
+/**
+ * @author mikael emtinger / http://gomo.se/
+ * @author alteredq / http://alteredqualia.com/
+ * @author WestLangley / http://github.com/WestLangley
+ * @author bhouston / http://clara.io
+ */
 function Quaternion( x, y, z, w ) {
 
 	this._x = x || 0;

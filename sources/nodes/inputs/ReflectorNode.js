@@ -7,6 +7,10 @@ import { OperatorNode } from '../math/OperatorNode.js'
 import { TextureNode } from './TextureNode.js'
 import { Matrix4Node } from './Matrix4Node.js'
 import { InputNode } from '../core/InputNode.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function ReflectorNode( mirror ) {
 
 	TempNode.call( this, 'v4' );

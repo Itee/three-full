@@ -5,6 +5,10 @@ import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Audio } from './Audio.js'
 import { Object3D } from '../core/Object3D.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 function PositionalAudio( listener ) {
 
 	Audio.call( this, listener );

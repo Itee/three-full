@@ -3,6 +3,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from '../core/TempNode.js'
 import { NodeUtils } from '../core/NodeUtils.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 var inputs = NodeUtils.elements;
 
 function JoinNode( x, y, z, w ) {

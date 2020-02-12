@@ -4,6 +4,10 @@
 import { InputNode } from '../core/InputNode.js'
 import { NodeUtils } from '../core/NodeUtils.js'
 import { Vector2 } from '../../math/Vector2.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function Vector2Node( x, y ) {
 
 	InputNode.call( this, 'v2' );

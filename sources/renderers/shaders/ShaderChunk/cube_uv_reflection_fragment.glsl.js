@@ -33,7 +33,7 @@ vec2 MipLevelInfo( vec3 vec, float roughnessLevel, float roughness ) {
 	vec3 dx = dFdx( vec * scale * dxRoughness );
 	vec3 dy = dFdy( vec * scale * dyRoughness );
 	float d = max( dot( dx, dx ), dot( dy, dy ) );
-	// Clamp the value to the max mip level counts. hard coded to 6 mips
+	
 	d = clamp(d, 1.0, cubeUV_rangeClamp);
 	float mipLevel = 0.5 * log2(d);
 	return vec2(floor(mipLevel), fract(mipLevel));
@@ -48,11 +48,11 @@ vec2 getCubeUV(vec3 direction, float roughnessLevel, float mipLevel) {
 
 	vec2 exp2_packed = exp2( vec2( roughnessLevel, mipLevel ) );
 	vec2 rcp_exp2_packed = vec2( 1.0 ) / exp2_packed;
-	// float powScale = exp2(roughnessLevel + mipLevel);
+	
 	float powScale = exp2_packed.x * exp2_packed.y;
-	// float scale =  1.0 / exp2(roughnessLevel + 2.0 + mipLevel);
+	
 	float scale = rcp_exp2_packed.x * rcp_exp2_packed.y * 0.25;
-	// float mipOffset = 0.75*(1.0 - 1.0/exp2(mipLevel))/exp2(roughnessLevel);
+	
 	float mipOffset = 0.75*(1.0 - rcp_exp2_packed.y) * rcp_exp2_packed.x;
 
 	bool bRes = mipLevel == 0.0;
@@ -113,11 +113,7 @@ vec4 textureCubeUV( sampler2D envMap, vec3 reflectedDirection, float roughness )
 	float level0 = mipInfo.x;
 	float level1 = level0 + 1.0;
 	level1 = level1 > 5.0 ? 5.0 : level1;
-
-	// round to nearest mipmap if we are not interpolating.
 	level0 += min( floor( s + 0.5 ), 5.0 );
-
-	// Tri linear interpolation.
 	vec2 uv_10 = getCubeUV(reflectedDirection, r1, level0);
 	vec4 color10 = envMapTexelToLinear(texture2D(envMap, uv_10));
 

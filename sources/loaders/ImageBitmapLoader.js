@@ -3,6 +3,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Cache } from './Cache.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * @author thespite / http://clicktorelease.com/
+ */
 function ImageBitmapLoader( manager ) {
 
 	if ( typeof createImageBitmap === 'undefined' ) {
@@ -91,7 +95,7 @@ ImageBitmapLoader.prototype = {
 
 	},
 
-	setCrossOrigin: function (  ) {
+	setCrossOrigin: function ( /* value */ ) {
 
 		return this;
 

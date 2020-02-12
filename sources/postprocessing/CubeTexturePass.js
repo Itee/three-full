@@ -9,6 +9,11 @@ import { Scene } from '../scenes/Scene.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { BackSide } from '../constants.js'
 import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
+
+/**
+ * @author bhouston / http://clara.io/
+ */
+
 var CubeTexturePass = function ( camera, envMap, opacity ) {
 
 	Pass.call( this );

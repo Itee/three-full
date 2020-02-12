@@ -71,6 +71,10 @@ import {
 	ClampToEdgeWrapping,
 	RepeatWrapping
 } from '../../constants.js'
+
+/**
+ * @author thespite / http://www.twitter.com/thespite
+ */
 function WebGLUtils( gl, extensions, capabilities ) {
 
 	function convert( p ) {

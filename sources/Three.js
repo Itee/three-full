@@ -92,7 +92,10 @@ export { DDSLoader } from './loaders/DDSLoader.js'
 export { LegacyGLTFLoader } from './loaders/deprecated/LegacyGLTFLoader.js'
 export { LegacyJSONLoader } from './loaders/deprecated/LegacyJSONLoader.js'
 export { DRACOLoader } from './loaders/DRACOLoader.js'
-export { CubemapGenerator } from './loaders/EquirectangularToCubeGenerator.js'
+export {
+	CubemapGenerator,
+	EquirectangularToCubeGenerator
+} from './loaders/EquirectangularToCubeGenerator.js'
 export { EXRLoader } from './loaders/EXRLoader.js'
 export { FBXLoader } from './loaders/FBXLoader.js'
 export { GCodeLoader } from './loaders/GCodeLoader.js'
@@ -114,10 +117,7 @@ export { PlayCanvasLoader } from './loaders/PlayCanvasLoader.js'
 export { PLYLoader } from './loaders/PLYLoader.js'
 export { PRWMLoader } from './loaders/PRWMLoader.js'
 export { PVRLoader } from './loaders/PVRLoader.js'
-export {
-	HDRLoader,
-	RGBELoader
-} from './loaders/RGBELoader.js'
+export { RGBELoader } from './loaders/RGBELoader.js'
 export { STLLoader } from './loaders/STLLoader.js'
 export { SVGLoader } from './loaders/SVGLoader.js'
 export { TDSLoader } from './loaders/TDSLoader.js'
@@ -775,7 +775,11 @@ export { Sprite } from './objects/Sprite.js'
 export { ShaderChunk } from './renderers/shaders/ShaderChunk.js'
 export { ShaderLib } from './renderers/shaders/ShaderLib.js'
 export { UniformsLib } from './renderers/shaders/UniformsLib.js'
-export { UniformsUtils } from './renderers/shaders/UniformsUtils.js'
+export {
+	UniformsUtils,
+	cloneUniforms,
+	mergeUniforms
+} from './renderers/shaders/UniformsUtils.js'
 export { WebGLAnimation } from './renderers/webgl/WebGLAnimation.js'
 export { WebGLAttributes } from './renderers/webgl/WebGLAttributes.js'
 export { WebGLBackground } from './renderers/webgl/WebGLBackground.js'

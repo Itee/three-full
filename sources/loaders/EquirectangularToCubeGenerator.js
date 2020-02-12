@@ -13,6 +13,12 @@ import {
 	NoBlending
 } from '../constants.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+
+/**
+* @author Richard M. / https://github.com/richardmonette
+* @author WestLangley / http://github.com/WestLangley
+*/
+
 var CubemapGenerator = function ( renderer ) {
 
 	this.renderer = renderer;

@@ -23,8 +23,8 @@ export class ObjectLoader {
   setTexturePath(value: string): void;
   setCrossOrigin(crossOrigin: string): void;
   parse<T extends Object3D>(json: any, onLoad?: (object: Object3D) => void): T;
-  parseGeometries(json: any): any[]; // Array of BufferGeometry or Geometry or Geometry2.
-  parseMaterials(json: any, textures: Texture[]): Material[]; // Array of Classes that inherits from Matrial.
+  parseGeometries(json: any): any[]; 
+  parseMaterials(json: any, textures: Texture[]): Material[]; 
   parseAnimations(json: any): AnimationClip[];
   parseImages(
     json: any,

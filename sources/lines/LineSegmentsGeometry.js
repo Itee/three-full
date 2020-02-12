@@ -10,6 +10,12 @@ import { WireframeGeometry } from '../geometries/WireframeGeometry.js'
 import { Box3 } from '../math/Box3.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Sphere } from '../math/Sphere.js'
+
+/**
+ * @author WestLangley / http://github.com/WestLangley
+ *
+ */
+
 var LineSegmentsGeometry = function () {
 
 	InstancedBufferGeometry.call( this );

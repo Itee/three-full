@@ -5,10 +5,24 @@ import { Group } from '../objects/Group.js'
 import { LoaderSupport } from './LoaderSupport.js'
 import { FileLoader } from './FileLoader.js'
 import { MTLLoader } from './MTLLoader.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 import { LoaderUtils } from './LoaderUtils.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+  * @author Kai Salmen / https://kaisalmen.de
+  * Development repository: https://github.com/kaisalmen/WWOBJLoader
+  */
+
 'use strict';
 if ( LoaderSupport === undefined ) console.error( '"LoaderSupport" is not available. "OBJLoader2" requires it. Please include "LoaderSupport.js" in your HTML.' );
+
+/**
+ * Use this class to load OBJ data from files or to parse OBJ data from an arraybuffer
+ * @class
+ *
+ * @param {DefaultLoadingManager} [manager] The loadingManager for the loader to use. Default is {@link DefaultLoadingManager}
+ */
+
 var OBJLoader2 = function ( manager ) {
 	console.info( 'Using OBJLoader2 version: ' + OBJLoader2.OBJLOADER2_VERSION );
 
@@ -39,35 +53,95 @@ OBJLoader2.OBJLOADER2_VERSION = '2.5.0';
 OBJLoader2.prototype = {
 
 	constructor: OBJLoader2,
+
+	/**
+	 * Enable or disable logging in general (except warn and error), plus enable or disable debug logging.
+	 *
+	 * @param {boolean} enabled True or false.
+	 * @param {boolean} debug True or false.
+	 */
 	setLogging: function ( enabled, debug ) {
 		this.logging.enabled = enabled === true;
 		this.logging.debug = debug === true;
 		this.meshBuilder.setLogging( this.logging.enabled, this.logging.debug );
 	},
+
+	/**
+	 * Set the name of the model.
+	 *
+	 * @param {string} modelName
+	 */
 	setModelName: function ( modelName ) {
 		this.modelName = LoaderSupport.Validator.verifyInput( modelName, this.modelName );
 	},
+
+	/**
+	 * The URL of the base path.
+	 *
+	 * @param {string} path URL
+	 */
 	setPath: function ( path ) {
 		this.path = LoaderSupport.Validator.verifyInput( path, this.path );
 	},
+
+	/**
+	 * Allows to specify resourcePath for dependencies of specified resource.
+	 * @param {string} resourcePath
+	 */
 	setResourcePath: function ( resourcePath ) {
 		this.resourcePath = LoaderSupport.Validator.verifyInput( resourcePath, this.resourcePath );
 	},
+
+	/**
+	 * Set the node where the loaded objects will be attached directly.
+	 *
+	 * @param {Object3D} streamMeshesTo Object already attached to scenegraph where new meshes will be attached to
+	 */
 	setStreamMeshesTo: function ( streamMeshesTo ) {
 		this.loaderRootNode = LoaderSupport.Validator.verifyInput( streamMeshesTo, this.loaderRootNode );
 	},
+
+	/**
+	 * Set materials loaded by MTLLoader or any other supplier of an Array of {@link Material}.
+	 *
+	 * @param {Material[]} materials Array of {@link Material}
+	 */
 	setMaterials: function ( materials ) {
 		this.meshBuilder.setMaterials( materials );
 	},
+
+	/**
+	 * Instructs loaders to create indexed {@link BufferGeometry}.
+	 *
+	 * @param {boolean} useIndices=false
+	 */
 	setUseIndices: function ( useIndices ) {
 		this.useIndices = useIndices === true;
 	},
+
+	/**
+	 * Tells whether normals should be completely disregarded and regenerated.
+	 *
+	 * @param {boolean} disregardNormals=false
+	 */
 	setDisregardNormals: function ( disregardNormals ) {
 		this.disregardNormals = disregardNormals === true;
 	},
+
+	/**
+	 * Tells whether a material shall be created per smoothing group.
+	 *
+	 * @param {boolean} materialPerSmoothingGroup=false
+	 */
 	setMaterialPerSmoothingGroup: function ( materialPerSmoothingGroup ) {
 		this.materialPerSmoothingGroup = materialPerSmoothingGroup === true;
 	},
+
+	/**
+	 * Usually 'o' is meta-information and does not result in creation of new meshes, but mesh creation on occurrence of "o" can be enforced.
+	 *
+	 * @param {boolean} useOAsMesh=false
+	 */
 	setUseOAsMesh: function ( useOAsMesh ) {
 		this.useOAsMesh = useOAsMesh === true;
 	},
@@ -81,6 +155,15 @@ OBJLoader2.prototype = {
 
 		this.meshBuilder._setCallbacks( this.callbacks );
 	},
+
+	/**
+	 * Announce feedback which is give to the registered callbacks.
+	 * @private
+	 *
+	 * @param {string} type The type of event
+	 * @param {string} text Textual description of the event
+	 * @param {number} numericalValue Numerical value describing the progress
+	 */
 	onProgress: function ( type, text, numericalValue ) {
 		var content = LoaderSupport.Validator.isValid( text ) ? text: '';
 		var event = {
@@ -121,6 +204,17 @@ OBJLoader2.prototype = {
 
 		}
 	},
+
+	/**
+	 * Use this convenient method to load a file at the given URL. By default the fileLoader uses an ArrayBuffer.
+	 *
+	 * @param {string} url A string containing the path/URL of the file to be loaded.
+	 * @param {callback} onLoad A function to be called after loading is successfully completed. The function receives loaded Object3D as an argument.
+	 * @param {callback} [onProgress] A function to be called while the loading is in progress. The argument will be the XMLHttpRequest instance, which contains total and Integer bytes.
+	 * @param {callback} [onError] A function to be called if an error occurs during loading. The function receives the error as an argument.
+	 * @param {callback} [onMeshAlter] A function to be called after a new mesh raw data becomes available for alteration.
+	 * @param {boolean} [useAsync] If true, uses async loading with worker, if false loads data synchronously.
+	 */
 	load: function ( url, onLoad, onProgress, onError, onMeshAlter, useAsync ) {
 		var resource = new LoaderSupport.ResourceDescriptor( url, 'OBJ' );
 		this._loadObj( resource, onLoad, onProgress, onError, onMeshAlter, useAsync );
@@ -193,6 +287,13 @@ OBJLoader2.prototype = {
 
 		}
 	},
+
+	/**
+	 * Run the loader according the provided instructions.
+	 *
+	 * @param {LoaderSupport.PrepData} prepData All parameters and resources required for execution
+	 * @param {LoaderSupport.WorkerSupport} [workerSupportExternal] Use pre-existing WorkerSupport
+	 */
 	run: function ( prepData, workerSupportExternal ) {
 		this._applyPrepData( prepData );
 		var available = prepData.checkResourceDescriptorFiles( prepData.resources,
@@ -235,6 +336,12 @@ OBJLoader2.prototype = {
 
 		}
 	},
+
+	/**
+	 * Parses OBJ data synchronously from arraybuffer or string.
+	 *
+	 * @param {arraybuffer|string} content OBJ data as Uint8Array or String
+	 */
 	parse: function ( content ) {
 		// fast-fail in case of illegal data
 		if ( ! LoaderSupport.Validator.isValid( content ) ) {
@@ -289,6 +396,13 @@ OBJLoader2.prototype = {
 
 		return this.loaderRootNode;
 	},
+
+	/**
+	 * Parses OBJ content asynchronously from arraybuffer.
+	 *
+	 * @param {arraybuffer} content OBJ data as Uint8Array
+	 * @param {callback} onLoad Called after worker successfully completed loading
+	 */
 	parseAsync: function ( content, onLoad ) {
 		var scope = this;
 		var measureTime = false;
@@ -328,8 +442,10 @@ OBJLoader2.prototype = {
 		};
 		var buildCode = function ( codeSerializer ) {
 			var workerCode = '';
-			workerCode += '\n\n';
-			workerCode += 'LoaderSupport = {} \nOBJLoader2 = {};\n\n';
+			workerCode += '/**\n';
+			workerCode += '  * This code was constructed by OBJLoader2 buildCode.\n';
+			workerCode += '  */\n\n';
+			workerCode += 'THREE = { LoaderSupport: {}, OBJLoader2: {} };\n\n';
 			workerCode += codeSerializer.serializeObject( 'LoaderSupport.Validator', LoaderSupport.Validator );
 			workerCode += codeSerializer.serializeClass( 'OBJLoader2.Parser', OBJLoader2.Parser );
 
@@ -370,6 +486,18 @@ OBJLoader2.prototype = {
 			}
 		);
 	},
+
+	/**
+	 * Utility method for loading an mtl file according resource description. Provide url or content.
+	 *
+	 * @param {string} url URL to the file
+	 * @param {Object} content The file content as arraybuffer or text
+	 * @param {function} onLoad Callback to be called after successful load
+	 * @param {callback} [onProgress] A function to be called while the loading is in progress. The argument will be the XMLHttpRequest instance, which contains total and Integer bytes.
+	 * @param {callback} [onError] A function to be called if an error occurs during loading. The function receives the error as an argument.
+	 * @param {string} [crossOrigin] CORS value
+ 	 * @param {Object} [materialOptions] Set material loading options for MTLLoader
+	 */
 	loadMtl: function ( url, content, onLoad, onProgress, onError, crossOrigin, materialOptions ) {
 		var resource = new LoaderSupport.ResourceDescriptor( url, 'MTL' );
 		resource.setContent( content );
@@ -467,6 +595,10 @@ OBJLoader2.prototype = {
 		}
 	}
 };
+/**
+ * Parse OBJ data either from ArrayBuffer or string
+ * @class
+ */
 OBJLoader2.Parser = function () {
 	this.callbackProgress = null;
 	this.callbackMeshBuilder = null;
@@ -606,6 +738,12 @@ OBJLoader2.Parser.prototype = {
 			console.info( printedConfig );
 		}
 	},
+
+	/**
+	 * Parse the provided arraybuffer
+	 *
+	 * @param {Uint8Array} arrayBuffer OBJ data as Uint8Array
+	 */
 	parse: function ( arrayBuffer ) {
 		if ( this.logging.enabled ) console.time( 'OBJLoader2.Parser.parse' );
 		this.configure();
@@ -655,6 +793,12 @@ OBJLoader2.Parser.prototype = {
 		this.finalizeParsing();
 		if ( this.logging.enabled ) console.timeEnd(  'OBJLoader2.Parser.parse' );
 	},
+
+	/**
+	 * Parse the provided text
+	 *
+	 * @param {string} text OBJ data as string
+	 */
 	parseText: function ( text ) {
 		if ( this.logging.enabled ) console.time(  'OBJLoader2.Parser.parseText' );
 		this.configure();
@@ -872,6 +1016,17 @@ OBJLoader2.Parser.prototype = {
 
 		}
 	},
+
+	/**
+	 * Expanded faceTypes include all four face types, both line types and the point type
+	 * faceType = 0: "f vertex ..."
+	 * faceType = 1: "f vertex/uv ..."
+	 * faceType = 2: "f vertex/uv/normal ..."
+	 * faceType = 3: "f vertex//normal ..."
+	 * faceType = 4: "l vertex/uv ..." or "l vertex ..."
+	 * faceType = 5: "l vertex ..."
+	 * faceType = 6: "p vertex ..."
+	 */
 	checkFaceType: function ( faceType ) {
 		if ( this.rawMesh.faceType !== faceType ) {
 
@@ -988,6 +1143,10 @@ OBJLoader2.Parser.prototype = {
 			'\n\tMaterial count: ' + this.rawMesh.counts.mtlCount +
 			'\n\tReal MeshOutputGroup count: ' + this.rawMesh.subGroups.length;
 	},
+
+	/**
+	 * Clear any empty subGroup and calculate absolute vertex, normal and uv counts
+	 */
 	finalizeRawMesh: function () {
 		var meshOutputGroupTemp = [];
 		var meshOutputGroup;
@@ -1063,6 +1222,13 @@ OBJLoader2.Parser.prototype = {
 			return false;
 		}
 	},
+
+	/**
+	 * SubGroups are transformed to too intermediate format that is forwarded to the MeshBuilder.
+	 * It is ensured that SubGroups only contain objects with vertices (no need to check).
+	 *
+	 * @param result
+	 */
 	buildMesh: function ( result ) {
 		var meshOutputGroups = result.subGroups;
 

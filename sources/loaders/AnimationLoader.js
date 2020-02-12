@@ -4,6 +4,10 @@
 import { AnimationClip } from '../animation/AnimationClip.js'
 import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+/**
+ * @author bhouston / http://clara.io/
+ */
+
 function AnimationLoader( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

@@ -10,6 +10,14 @@ import { QuaternionKeyframeTrack } from './tracks/QuaternionKeyframeTrack.js'
 import { StringKeyframeTrack } from './tracks/StringKeyframeTrack.js'
 import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js'
 import { _Math } from '../math/Math.js'
+/**
+ *
+ * Reusable set of Tracks that represent an animation.
+ *
+ * @author Ben Houston / http://clara.io/
+ * @author David Sarno / http://lighthaus.us/
+ */
+
 function AnimationClip( name, duration, tracks ) {
 
 	this.name = name;

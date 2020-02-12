@@ -14,6 +14,12 @@ import { HemisphereLight } from '../lights/HemisphereLight.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Group } from '../objects/Group.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author Mugen87 / https://github.com/Mugen87
+ */
+
 var BabylonLoader = function ( manager ) {
 
 	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;

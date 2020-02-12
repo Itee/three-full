@@ -4,7 +4,7 @@
 import { Curve } from './Curve.js'
 import { CatmullRom } from '../core/Interpolations.js'
 import { Vector2 } from '../math/Vector2.js'
-function SplineCurve( points  ) {
+function SplineCurve( points /* array of Vector2 */ ) {
 
 	Curve.call( this );
 

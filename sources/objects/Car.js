@@ -5,6 +5,18 @@ import { Group } from './Group.js'
 import { Box3 } from '../math/Box3.js'
 import { Vector3 } from '../math/Vector3.js'
 import { _Math } from '../math/Math.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ * @author Lewy Blue https://github.com/looeee
+ *
+ * The model is expected to follow real world car proportions. You can try unusual car types
+ * but your results may be unexpected. Scaled models are also not supported.
+ *
+ * Defaults are rough estimates for a real world scale car model
+ *
+ */
+
 var Car = ( function ( ) {
 
 	// private variables

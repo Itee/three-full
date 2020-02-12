@@ -3,6 +3,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { TempNode } from '../core/TempNode.js'
 import { ResolutionNode } from './ResolutionNode.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function ScreenUVNode( resolution ) {
 
 	TempNode.call( this, 'v2' );

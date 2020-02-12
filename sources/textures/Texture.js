@@ -17,6 +17,12 @@ import { _Math } from '../math/Math.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Matrix3 } from '../math/Matrix3.js'
 import { ImageUtils } from '../extras/ImageUtils.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ * @author szimek / https://github.com/szimek/
+ */
 var textureId = 0;
 
 function Texture( image, mapping, wrapS, wrapT, magFilter, minFilter, format, type, anisotropy, encoding ) {

@@ -13,6 +13,10 @@ import {
 	LinearFilter,
 	RGBAFormat
 } from '../../constants.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function NodePostProcessing( renderer, renderTarget ) {
 
 	if ( renderTarget === undefined ) {

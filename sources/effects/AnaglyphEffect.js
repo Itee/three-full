@@ -14,6 +14,14 @@ import {
 	LinearFilter,
 	RGBAFormat
 } from '../constants.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author marklundin / http://mark-lundin.com/
+ * @author alteredq / http://alteredqualia.com/
+ * @author tschw
+ */
+
 var AnaglyphEffect = function ( renderer, width, height ) {
 
 	// Matrices generated with angler.js https://github.com/tschw/angler.js/

@@ -17,8 +17,6 @@ float pow2( const in float x ) { return x*x; }
 float pow3( const in float x ) { return x*x*x; }
 float pow4( const in float x ) { float x2 = x*x; return x2*x2; }
 float average( const in vec3 color ) { return dot( color, vec3( 0.3333 ) ); }
-// expects values in the range of [0,1]x[0,1], returns values in the [0,1] range.
-// do not collapse into a single function per: http://byteblacksmith.com/improvements-to-the-canonical-one-liner-glsl-rand-for-opengl-es-2-0/
 highp float rand( const in vec2 uv ) {
 	const highp float a = 12.9898, b = 78.233, c = 43758.5453;
 	highp float dt = dot( uv.xy, vec2( a,b ) ), sn = mod( dt, PI );
@@ -49,8 +47,6 @@ vec3 transformDirection( in vec3 dir, in mat4 matrix ) {
 	return normalize( ( matrix * vec4( dir, 0.0 ) ).xyz );
 
 }
-
-// http://en.wikibooks.org/wiki/GLSL_Programming/Applying_Matrix_Transformations
 vec3 inverseTransformDirection( in vec3 dir, in mat4 matrix ) {
 
 	return normalize( ( vec4( dir, 0.0 ) * matrix ).xyz );
@@ -88,8 +84,6 @@ mat3 transposeMat3( const in mat3 m ) {
 	return tmp;
 
 }
-
-// https://en.wikipedia.org/wiki/Relative_luminance
 float linearToRelativeLuminance( const in vec3 color ) {
 
 	vec3 weights = vec3( 0.2126, 0.7152, 0.0722 );

@@ -7,6 +7,12 @@ import { LineMaterial } from './LineMaterial.js'
 import { Vector3 } from '../math/Vector3.js'
 import { InstancedInterleavedBuffer } from '../core/InstancedInterleavedBuffer.js'
 import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js'
+
+/**
+ * @author WestLangley / http://github.com/WestLangley
+ *
+ */
+
 var LineSegments2 = function ( geometry, material ) {
 
 	Mesh.call( this );

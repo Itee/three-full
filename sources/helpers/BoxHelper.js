@@ -6,6 +6,11 @@ import { LineSegments } from '../objects/LineSegments.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author Mugen87 / http://github.com/Mugen87
+ */
 function BoxHelper( object, color ) {
 
 	this.object = object;
@@ -52,6 +57,23 @@ BoxHelper.prototype.update = ( function () {
 
 		var min = box.min;
 		var max = box.max;
+
+		/*
+		  5____4
+		1/___0/|
+		| 6__|_7
+		2/___3/
+
+		0: max.x, max.y, max.z
+		1: min.x, max.y, max.z
+		2: min.x, min.y, max.z
+		3: max.x, min.y, max.z
+		4: max.x, max.y, min.z
+		5: min.x, max.y, min.z
+		6: min.x, min.y, min.z
+		7: max.x, min.y, min.z
+		*/
+
 		var position = this.geometry.attributes.position;
 		var array = position.array;
 

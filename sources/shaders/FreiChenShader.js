@@ -2,6 +2,16 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector2 } from '../math/Vector2.js'
+
+/**
+ * @author zz85 / https://github.com/zz85 | https://www.lab4games.net/zz85/blog
+ *
+ * Edge Detection Shader using Frei-Chen filter
+ * Based on http://rastergrid.com/blog/2011/01/frei-chen-edge-detector
+ *
+ * aspect: vec2 of (1/width, 1/height)
+ */
+
 var FreiChenShader = {
 
 	uniforms: {
@@ -61,12 +71,16 @@ var FreiChenShader = {
 			"mat3 I;",
 			"float cnv[9];",
 			"vec3 sample;",
+
+			/* fetch the 3x3 neighbourhood and use the RGB vector's length as intensity value */
 			"for (float i=0.0; i<3.0; i++) {",
 				"for (float j=0.0; j<3.0; j++) {",
 					"sample = texture2D(tDiffuse, vUv + texel * vec2(i-1.0,j-1.0) ).rgb;",
 					"I[int(i)][int(j)] = length(sample);",
 				"}",
 			"}",
+
+			/* calculate the convolution values for all the masks */
 			"for (int i=0; i<9; i++) {",
 				"float dp3 = dot(G[i][0], I[0]) + dot(G[i][1], I[1]) + dot(G[i][2], I[2]);",
 				"cnv[i] = dp3 * dp3;",

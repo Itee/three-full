@@ -10,6 +10,22 @@ import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Line } from '../objects/Line.js'
 import { Vector3 } from '../math/Vector3.js'
+
+/**
+ * @author WestLangley / http://github.com/WestLangley
+ * @author zz85 / http://github.com/zz85
+ * @author bhouston / http://clara.io
+ *
+ * Creates an arrow for visualizing directions
+ *
+ * Parameters:
+ *  dir - Vector3
+ *  origin - Vector3
+ *  length - Number
+ *  color - color in hex value
+ *  headLength - Number
+ *  headWidth - Number
+ */
 var lineGeometry, coneGeometry;
 
 function ArrowHelper( dir, origin, length, color, headLength, headWidth ) {

@@ -5,6 +5,58 @@ import { TangentSpaceNormalMap } from '../constants.js'
 import { Material } from './Material.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Color } from '../math/Color.js'
+/**
+ * @author WestLangley / http://github.com/WestLangley
+ *
+ * parameters = {
+ *  color: <hex>,
+ *  roughness: <float>,
+ *  metalness: <float>,
+ *  opacity: <float>,
+ *
+ *  map: new Texture( <Image> ),
+ *
+ *  lightMap: new Texture( <Image> ),
+ *  lightMapIntensity: <float>
+ *
+ *  aoMap: new Texture( <Image> ),
+ *  aoMapIntensity: <float>
+ *
+ *  emissive: <hex>,
+ *  emissiveIntensity: <float>
+ *  emissiveMap: new Texture( <Image> ),
+ *
+ *  bumpMap: new Texture( <Image> ),
+ *  bumpScale: <float>,
+ *
+ *  normalMap: new Texture( <Image> ),
+ *  normalMapType: TangentSpaceNormalMap,
+ *  normalScale: <Vector2>,
+ *
+ *  displacementMap: new Texture( <Image> ),
+ *  displacementScale: <float>,
+ *  displacementBias: <float>,
+ *
+ *  roughnessMap: new Texture( <Image> ),
+ *
+ *  metalnessMap: new Texture( <Image> ),
+ *
+ *  alphaMap: new Texture( <Image> ),
+ *
+ *  envMap: new CubeTexture( [posx, negx, posy, negy, posz, negz] ),
+ *  envMapIntensity: <float>
+ *
+ *  refractionRatio: <float>,
+ *
+ *  wireframe: <boolean>,
+ *  wireframeLinewidth: <float>,
+ *
+ *  skinning: <bool>,
+ *  morphTargets: <bool>,
+ *  morphNormals: <bool>
+ * }
+ */
+
 function MeshStandardMaterial( parameters ) {
 
 	Material.call( this );

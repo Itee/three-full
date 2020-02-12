@@ -5,6 +5,10 @@ import { TempNode } from '../core/TempNode.js'
 import { FunctionNode } from '../core/FunctionNode.js'
 import { FloatNode } from '../inputs/FloatNode.js'
 import { PositionNode } from './PositionNode.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function CameraNode( scope, camera ) {
 
 	TempNode.call( this, 'v3' );

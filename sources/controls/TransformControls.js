@@ -23,6 +23,12 @@ import { Color } from '../math/Color.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { DoubleSide } from '../constants.js'
+import { CircleGeometry } from '../geometries/CircleGeometry.js'
+
+/**
+ * @author arodic / https://github.com/arodic
+ */
+
 var TransformControls = function ( camera, domElement ) {
 
 	Object3D.call( this );

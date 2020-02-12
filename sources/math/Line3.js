@@ -3,6 +3,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from './Vector3.js'
 import { _Math } from './Math.js'
+/**
+ * @author bhouston / http://clara.io
+ */
+
 function Line3( start, end ) {
 
 	this.start = ( start !== undefined ) ? start : new Vector3();

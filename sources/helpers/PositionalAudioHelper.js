@@ -6,6 +6,10 @@ import { BufferAttribute } from '../core/BufferAttribute.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Line } from '../objects/Line.js'
 import { _Math } from '../math/Math.js'
+
+/**
+ * @author Mugen87 / http://github.com/Mugen87
+ */
 function PositionalAudioHelper( audio, range, divisionsInnerAngle, divisionsOuterAngle ) {
 
 	this.audio = audio;

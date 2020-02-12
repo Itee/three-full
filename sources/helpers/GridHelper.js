@@ -7,6 +7,10 @@ import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Color } from '../math/Color.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ */
 function GridHelper( size, divisions, color1, color2 ) {
 
 	size = size || 10;

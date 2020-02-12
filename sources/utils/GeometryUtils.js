@@ -3,6 +3,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from '../math/Vector3.js'
 import { Mesh } from '../objects/Mesh.js'
+
+/**
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ */
+
 var GeometryUtils = {
 
 	// Merge two geometries or geometry and geometry from object (using object's transform)

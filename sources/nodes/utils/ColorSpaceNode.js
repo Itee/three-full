@@ -13,6 +13,10 @@ import {
 	RGBM16Encoding,
 	RGBDEncoding
 } from '../../constants.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function ColorSpaceNode( input, method ) {
 
 	TempNode.call( this, 'v4' );

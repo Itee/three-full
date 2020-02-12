@@ -4,6 +4,10 @@
 import { MeshStandardNode } from './nodes/MeshStandardNode.js'
 import { NodeMaterial } from './NodeMaterial.js'
 import { NodeUtils } from '../core/NodeUtils.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function MeshStandardNodeMaterial() {
 
 	var node = new MeshStandardNode();

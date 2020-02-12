@@ -5,8 +5,6 @@ import { Geometry } from '../core/Geometry';
 import { BufferGeometry } from '../core/BufferGeometry';
 import { Float32BufferAttribute } from '../core/BufferAttribute';
 import { Vector3 } from '../math/Vector3';
-
-// Extras / Geometries /////////////////////////////////////////////////////////////////////
 export class BoxBufferGeometry extends BufferGeometry {
   constructor(
     width?: number,

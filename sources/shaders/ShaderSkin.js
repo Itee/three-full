@@ -4,10 +4,29 @@
 import { Color } from '../math/Color.js'
 import { Vector4 } from '../math/Vector4.js'
 import { Vector3 } from '../math/Vector3.js'
-import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
-import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 import { ShaderChunk } from '../renderers/shaders/ShaderChunk.js'
+import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+
+/**
+ * @author alteredq / http://alteredqualia.com/
+ *
+ */
 var ShaderSkin = {
+
+	/* ------------------------------------------------------------------------------------------
+	//	Simple skin shader
+	//		- per-pixel Blinn-Phong diffuse term mixed with half-Lambert wrap-around term (per color component)
+	//		- physically based specular term (Kelemen/Szirmay-Kalos specular reflectance)
+	//
+	//		- diffuse map
+	//		- bump map
+	//		- specular map
+	//		- point, directional and hemisphere lights (use with "lights: true" material option)
+	//		- fog (use with "fog: true" material option)
+	//
+	// ------------------------------------------------------------------------------------------ */
+
 	'skinSimple' : {
 
 		uniforms: UniformsUtils.merge( [
@@ -274,6 +293,22 @@ var ShaderSkin = {
 		].join( "\n" )
 
 	},
+
+	/* ------------------------------------------------------------------------------------------
+	//	Skin shader
+	//		- Blinn-Phong diffuse term (using normal + diffuse maps)
+	//		- subsurface scattering approximation by four blur layers
+	//		- physically based specular term (Kelemen/Szirmay-Kalos specular reflectance)
+	//
+	//		- point and directional lights (use with "lights: true" material option)
+	//
+	//		- based on Nvidia Advanced Skin Rendering GDC 2007 presentation
+	//		  and GPU Gems 3 Chapter 14. Advanced Techniques for Realistic Real-Time Skin Rendering
+	//
+	//			http://developer.download.nvidia.com/presentations/2007/gdc/Advanced_Skin.pdf
+	//			http://http.developer.nvidia.com/GPUGems3/gpugems3_ch14.html
+	// ------------------------------------------------------------------------------------------ */
+
 	'skin' : {
 
 		uniforms: UniformsUtils.merge( [
@@ -594,6 +629,15 @@ var ShaderSkin = {
 		].join( "\n" )
 
 	},
+
+	/* ------------------------------------------------------------------------------------------
+	// Beckmann distribution function
+	//	- to be used in specular term of skin shader
+	//	- render a screen-aligned quad to precompute a 512 x 512 texture
+	//
+	//		- from http://developer.nvidia.com/node/171
+	 ------------------------------------------------------------------------------------------ */
+
 	"beckmann" : {
 
 		uniforms: {},

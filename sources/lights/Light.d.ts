@@ -4,8 +4,6 @@
 import { Color } from './../math/Color';
 import { LightShadow } from './LightShadow';
 import { Object3D } from './../core/Object3D';
-
-// Lights //////////////////////////////////////////////////////////////////////////////////
 export class Light extends Object3D {
   constructor(hex?: number | string, intensity?: number);
 

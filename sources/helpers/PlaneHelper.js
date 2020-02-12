@@ -12,6 +12,10 @@ import {
 	FrontSide,
 	BackSide
 } from '../constants.js'
+
+/**
+ * @author WestLangley / http://github.com/WestLangley
+ */
 function PlaneHelper( plane, size, hex ) {
 
 	this.type = 'PlaneHelper';

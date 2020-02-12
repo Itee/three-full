@@ -14,6 +14,24 @@ import {
 	RepeatWrapping
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
+
+/*
+ * GPU Particle System
+ * @author flimshaw - Charlie Hoey - http://charliehoey.com
+ *
+ * A simple to use, general purpose GPU system. Particles are spawn-and-forget with
+ * several options available, and do not require monitoring or cleanup after spawning.
+ * Because the paths of all particles are completely deterministic once spawned, the scale
+ * and direction of time is also variable.
+ *
+ * Currently uses a static wrapping perlin noise texture for turbulence, and a small png texture for
+ * particles, but adding support for a particle texture atlas or changing to a different type of turbulence
+ * would be a fairly light day's work.
+ *
+ * Shader and javascript packing code derrived from several Stack Overflow examples.
+ *
+ */
+
 var GPUParticleSystem = function ( options ) {
 
 	Object3D.apply( this, arguments );

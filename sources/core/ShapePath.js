@@ -5,6 +5,11 @@ import { Color } from '../math/Color.js'
 import { Path } from './Path.js'
 import { Shape } from './Shape.js'
 import { ShapeUtils } from '../utils/ShapeUtils.js'
+
+/**
+ * @author zz85 / http://www.lab4games.net/zz85/blog
+ * minimal class for proxing functions to Path. Replaces old "extractSubpaths()"
+ **/
 function ShapePath() {
 
 	this.type = 'ShapePath';

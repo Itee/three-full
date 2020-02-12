@@ -2,6 +2,29 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from '../math/Vector3.js'
+
+/**
+ * Hilbert Curve: Generates 2D-Coordinates in a very fast way.
+ *
+ * @author Dylan Grafmyre
+ *
+ * Based on work by:
+ * @author Thomas Diewald
+ * @link http://www.openprocessing.org/visuals/?visualID=15599
+ *
+ * @param center     Center of Hilbert curve.
+ * @param size       Total width of Hilbert curve.
+ * @param iterations Number of subdivisions.
+ * @param v0         Corner index -X, +Y, -Z.
+ * @param v1         Corner index -X, +Y, +Z.
+ * @param v2         Corner index -X, -Y, +Z.
+ * @param v3         Corner index -X, -Y, -Z.
+ * @param v4         Corner index +X, -Y, -Z.
+ * @param v5         Corner index +X, -Y, +Z.
+ * @param v6         Corner index +X, +Y, +Z.
+ * @param v7         Corner index +X, +Y, -Z.
+ */
+
 function hilbert3D( center, size, iterations, v0, v1, v2, v3, v4, v5, v6, v7 ) {
 
 	// Default Vars

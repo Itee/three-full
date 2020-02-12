@@ -19,6 +19,7 @@ import { Frustum } from '../math/Frustum.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { ShaderLib } from './shaders/ShaderLib.js'
 import { UniformsLib } from './shaders/UniformsLib.js'
+import { cloneUniforms } from './shaders/UniformsUtils.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector4 } from '../math/Vector4.js'
@@ -45,7 +46,14 @@ import { WebGLUniforms } from './webgl/WebGLUniforms.js'
 import { WebGLUtils } from './webgl/WebGLUtils.js'
 import { WebVRManager } from './webvr/WebVRManager.js'
 import { WebXRManager } from './webvr/WebXRManager.js'
-import { cloneUniforms } from './shaders/UniformsUtils'
+/**
+ * @author supereggbert / http://www.paulbrunt.co.uk/
+ * @author mrdoob / http://mrdoob.com/
+ * @author alteredq / http://alteredqualia.com/
+ * @author szimek / https://github.com/szimek/
+ * @author tschw
+ */
+
 function WebGLRenderer( parameters ) {
 
 	console.log( 'WebGLRenderer', REVISION );
@@ -580,7 +588,7 @@ function WebGLRenderer( parameters ) {
 
 	}
 
-	function onContextRestore(  ) {
+	function onContextRestore( /* event */ ) {
 
 		console.log( 'WebGLRenderer: Context Restored.' );
 

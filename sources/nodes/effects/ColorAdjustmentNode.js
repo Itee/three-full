@@ -4,6 +4,10 @@
 import { TempNode } from '../core/TempNode.js'
 import { FunctionNode } from '../core/FunctionNode.js'
 import { LuminanceNode } from './LuminanceNode.js'
+
+/**
+ * @author sunag / http://www.sunag.com.br/
+ */
 function ColorAdjustmentNode( rgb, adjustment, method ) {
 
 	TempNode.call( this, 'v3' );

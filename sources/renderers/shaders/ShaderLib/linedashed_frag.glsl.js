@@ -32,7 +32,7 @@ void main() {
 	#include <logdepthbuf_fragment>
 	#include <color_fragment>
 
-	outgoingLight = diffuseColor.rgb; // simple shader
+	outgoingLight = diffuseColor.rgb; 
 
 	gl_FragColor = vec4( outgoingLight, diffuseColor.a );
 

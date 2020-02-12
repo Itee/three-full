@@ -6,9 +6,6 @@ import { Line } from './../objects/Line';
 import { Mesh } from './../objects/Mesh';
 import { Color } from './../math/Color';
 import { Object3D } from './../core/Object3D';
-
-// Extras / Helpers /////////////////////////////////////////////////////////////////////
-
 export class ArrowHelper extends Object3D {
   constructor(
     dir: Vector3,

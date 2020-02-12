@@ -3,6 +3,15 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
+
+/**
+ * @author Almar Klein / http://almarklein.org
+ *
+ * Shaders to render 3D volumes using raycasting.
+ * The applied techniques are based on similar implementations in the Visvis and Vispy projects.
+ * This is not the only approach, therefore it's marked 1.
+ */
+
 var VolumeRenderShader1 = {
 	uniforms: {
         "u_size": { value: new Vector3( 1, 1, 1 ) },
@@ -161,7 +170,7 @@ var VolumeRenderShader1 = {
                 'discard;',
         '}',
         'float sample1(vec3 texcoords) {',
-            '',
+            '/* Sample float value from a 3D texture. Assumes intensity data. */',
             'return texture(u_data, texcoords.xyz).r;',
         '}',
         'vec4 apply_colormap(float val) {',
