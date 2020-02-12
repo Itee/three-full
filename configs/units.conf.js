@@ -39,7 +39,15 @@ module.exports = {
     Math: {
         exports: [ '_Math' ]
     },
-    RollerCoaster: {
+    ParametricGeometries: {
+        exports: [
+            ['ParametricGeometries','TubeGeometry'],
+            ['ParametricGeometries','TorusKnotGeometry'],
+            ['ParametricGeometries','SphereGeometry'],
+            ['ParametricGeometries','PlaneGeometry']
+        ]
+    },
+    RollerCoaster:        {
         exports: [
             'RollerCoasterGeometry',
             'RollerCoasterLiftersGeometry',
