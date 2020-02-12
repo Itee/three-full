@@ -616,6 +616,9 @@ module.exports = {
 		VolumeSlice: {
 			outputOverride: 'audio/VolumeSlice.js'
 		},
+        VolumeShader: {
+            exportsOverride: [ 'VolumeRenderShader1' ]
+        },
 		Water: {
 			imports: [
 				'_Math'
