@@ -621,7 +621,7 @@ module.exports = {
             exportsOverride: [ 'SMAAPass' ]
         },
         SMAAShader:                  {
-            exportsOverride: [ 'SMAAShader' ]
+            exportsOverride: [ 'SMAAEdgesShader', 'SMAAWeightsShader', 'SMAABlendShader' ]
         },
         SoftwareRenderer:            {
             imports: [ '_Math', '!Texture' ]
