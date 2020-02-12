@@ -30,6 +30,9 @@ module.exports = {
             'DecoratedTorusKnot5c'
         ]
     },
+    DracoExporter: {
+        exports: [ 'DRACOExporter' ]
+    },
     Interpolations: {
         exports: [ 'CatmullRom', 'QuadraticBezier', 'CubicBezier' ]
     },
@@ -47,6 +50,9 @@ module.exports = {
     },
     ShaderTranslucent: {
         exports: [ 'TranslucentShader' ]
+    },
+    VolumeShader: {
+        exports: [ 'VolumeRenderShader1' ]
     },
     WebVRUtils: {
         exports: [ 'setProjectionFromUnion' ]
