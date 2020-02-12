@@ -46,7 +46,6 @@ module.exports = {
 
 		// Specific file
 		'Cloth.js',							// Use global variable from example html ! Need to be refactored
-		'ParametricGeometries.js',          // Bug TorusKnotCurve from es6-exports
 		'OceanShaders.js',                  // Todo: check how to extends imported lib properly
 		'RectAreaLightUniformsLib.js',      // Todo: check how to extends imported lib properly
 		'Volume.js',                        // damned eval
@@ -369,8 +368,8 @@ module.exports = {
             // Equivalent to ( import * as Geometries from 'intermediary exporter file Geometries' )
             imports: [
                 'WireframeGeometry',
-                //'ParametricGeometry', 		Invalid due to TorusKnotCurve bug
-                //'ParametricBufferGeometry',	Invalid due to TorusKnotCurve bug
+                'ParametricGeometry', 		//Invalid due to TorusKnotCurve bug
+                'ParametricBufferGeometry',	//Invalid due to TorusKnotCurve bug
                 'TetrahedronGeometry',
                 'TetrahedronBufferGeometry',
                 'OctahedronGeometry',
@@ -496,7 +495,8 @@ module.exports = {
             exportsOverride: [ 'PRNG' ]
 		},
 		ParametricGeometries: {
-			exports: [ 'ParametricGeometries' ]
+			exportsOverride: [ 'ParametricGeometries' ],
+            outputOverride: 'geometries/ParametricGeometries.js'
 		},
         QuadraticBezierCurve: {
             outputOverride: 'curves/QuadraticBezierCurve.js'
