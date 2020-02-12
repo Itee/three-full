@@ -196,8 +196,7 @@ gulp.task( 'clean-sources', () => {
 gulp.task( 'clean-tests', () => {
 
     return del( [
-        './tests/**/*.js',
-        './tests/**/*.html'
+        './tests'
     ] )
 
 } )
