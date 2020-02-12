@@ -196,7 +196,7 @@ module.exports = {
                 '_Math'
             ]
         },
-        DracoExporter:               {
+        DRACOExporter:               {
             importsOverride: [ 'BufferGeometry' ]
         },
         DRACOLoader:                 {
