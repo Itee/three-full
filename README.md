@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 17.2.0 is now available under Three r0.102.0 !!!**
+**The version 18.0.0 is now available under Three r0.103.0 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -167,6 +167,7 @@ This is the list of unsupported part of example, which cannot/won't be converted
 * GPUComputationRenderer ---> 'renderers/GPUComputationRenderer.js'
 * GPUParticleSystem ---> 'objects/GPUParticleSystem.js'
 * Gyroscope ---> 'objects/Gyroscope.js'
+* ImageUtils ---> 'utils/ImageUtils.js'
 * ImmediateRenderObject ---> 'objects/ImmediateRenderObject.js'
 * ImprovedNoise ---> 'misc/ImprovedNoise.js'
 * Interpolation ---> 'core/Interpolation.js'
@@ -177,6 +178,7 @@ This is the list of unsupported part of example, which cannot/won't be converted
 * MD2CharacterComplex ---> 'objects/MD2CharacterComplex.js'
 * MorphAnimMesh ---> 'objects/MorphAnimMesh.js'
 * MorphBlendMesh ---> 'objects/MorphBlendMesh.js'
+* ParametricGeometries ---> 'geometries/ParametricGeometries.js'
 * Ocean ---> 'objects/Ocean.js'
 * Octree ---> 'utils/Octree.js'
 * Path ---> 'core/Path.js'
@@ -209,6 +211,16 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+
+##### 18.0.0:
+
+* Support of Three r103
+* Add DracoExporter
+* Add LWOLoader
+* Add DataTexture2DArray
+* Move ImageUtils into utils folder
+* Reintroduce ParametricGeometries
+* Allow to remove exports from config file using negation
 
 ##### 17.2.0:
 
