@@ -455,6 +455,24 @@ gulp.task( 'build-test-html', ( done ) => {
                     </style>
                 </head>
                 <body id="body">
+                    <div id="container">
+                        <h1 id="title"></h1>
+                        <div id="messages"></div>
+                    </div>
+                    
+                    <script type="application/javascript">
+                        var _isOnError = false
+                        window.onerror = function onErrorHandler( error ) {
+                            
+                            document.body.style.backgroundColor = 'red'
+                            document.getElementById('title').innerHTML = 'Error'
+                            
+                            var messageElement = document.createElement( 'p' )
+                            messageElement.innerHTML == error
+                            document.getElementById('messages').appendChild( messageElement )
+                            
+                        }
+                    </script>
                     ${imports} 
                     <script type="application/javascript" src="./${fileName}.test.js"></script>
                     <script type="application/javascript">
@@ -477,18 +495,12 @@ gulp.task( 'build-test-html', ( done ) => {
                     
                         function onResult ( title, message, bgColor ) {
                     
-                            var container = document.createElement( 'div' )
-                            document.body.appendChild( container )
-                    
-                            var titleElement = document.createElement( 'h1' )
-                            titleElement.innerHTML += title
-                            container.appendChild( titleElement )
-                    
-                            var messageElement = document.createElement( 'p' )
-                            messageElement.innerHTML += message
-                            container.appendChild( messageElement )
-                    
                             document.body.style.backgroundColor = bgColor
+                            document.getElementById('title').innerHTML = title
+                            
+                            var messageElement = document.createElement( 'p' )
+                            messageElement.innerHTML == message
+                            document.getElementById('messages').appendChild( messageElement )
                     
                         }
                     </script>
@@ -530,22 +542,48 @@ gulp.task( 'build-test-three', ( done ) => {
                         }
                     </style>
                 </head>
-                <body>
+                <body id="body">
+                    <div id="container">
+                        <h1 id="title"></h1>
+                        <div id="messages"></div>
+                    </div>
+                    
+                    <script type="application/javascript">
+                        var _isOnError = false
+                        window.onerror = function onErrorHandler( error ) {
+                            
+                            if(_isOnError) {
+                                var messageElement = document.createElement( 'p' )
+                                messageElement.innerHTML = error
+                                document.getElementById('messages').appendChild( messageElement )
+
+                                return
+                            }
+                            
+                            document.body.style.backgroundColor = 'red'
+                            document.getElementById('title').innerHTML = 'Error'
+                            
+                            var messageElement = document.createElement( 'p' )
+                            messageElement.innerHTML = error
+                            document.getElementById('messages').appendChild( messageElement )
+                            
+                        }
+                    </script>
                     <script type="application/javascript" src="builds/Three.iife.js"></script>
                     <script type="application/javascript">
                         /* global Three */
-                        var container = document.createElement( 'div' )
-                        document.body.appendChild( container )
-                
-                        var titleElement = document.createElement( 'h1' )
-                        titleElement.innerHTML += 'Three'
-                        container.appendChild( titleElement )
-                
-                        var messageElement = document.createElement( 'p' )
-                        messageElement.innerHTML += 'revision ' + Three.REVISION
-                        container.appendChild( messageElement )
-                
-                        document.body.style.backgroundColor = 'green'
+                        
+                        if(Three) {
+                            
+                            document.body.style.backgroundColor = 'green'
+                            document.getElementById('title').innerHTML = 'Three'
+                            
+                            var messageElement = document.createElement( 'p' )
+                            messageElement.innerHTML = 'revision ' + Three.REVISION
+                            document.getElementById('messages').appendChild( messageElement )
+                            
+                        }
+                        
                     </script>
                 </body>
             </html>
