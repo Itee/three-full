@@ -59,6 +59,9 @@ module.exports = {
     ShaderTranslucent:    {
         exports: [ 'TranslucentShader' ]
     },
+    SMAAShader:    {
+        exports: [ 'SMAABlendShader', 'SMAAEdgesShader', 'SMAAWeightsShader'  ]
+    },
     VolumeShader:         {
         exports: [ 'VolumeRenderShader1' ]
     },

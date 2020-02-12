@@ -3,44 +3,44 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Geometry } from '../core/Geometry';
 import { BufferGeometry } from '../core/BufferGeometry';
-import { Float32BufferAttribute } from '../core/BufferAttribute';
-import { Vector3 } from '../math/Vector3';
 export class BoxBufferGeometry extends BufferGeometry {
-  constructor(
-    width?: number,
-    height?: number,
-    depth?: number,
-    widthSegments?: number,
-    heightSegments?: number,
-    depthSegments?: number
-  );
 
-  parameters: {
-    width: number;
-    height: number;
-    depth: number;
-    widthSegments: number;
-    heightSegments: number;
-    depthSegments: number;
-  };
+	constructor(
+		width?: number,
+		height?: number,
+		depth?: number,
+		widthSegments?: number,
+		heightSegments?: number,
+		depthSegments?: number
+	);
+
+	parameters: {
+		width: number;
+		height: number;
+		depth: number;
+		widthSegments: number;
+		heightSegments: number;
+		depthSegments: number;
+	};
+
 }
 export class BoxGeometry extends Geometry {
-  
-  constructor(
-    width?: number,
-    height?: number,
-    depth?: number,
-    widthSegments?: number,
-    heightSegments?: number,
-    depthSegments?: number
-  );
+	constructor(
+		width?: number,
+		height?: number,
+		depth?: number,
+		widthSegments?: number,
+		heightSegments?: number,
+		depthSegments?: number
+	);
 
-  parameters: {
-    width: number;
-    height: number;
-    depth: number;
-    widthSegments: number;
-    heightSegments: number;
-    depthSegments: number;
-  };
+	parameters: {
+		width: number;
+		height: number;
+		depth: number;
+		widthSegments: number;
+		heightSegments: number;
+		depthSegments: number;
+	};
+
 }

@@ -22,7 +22,7 @@ ClearPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 	constructor: ClearPass,
 
-	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer /*, deltaTime, maskActive */ ) {
 
 		var oldClearColor, oldClearAlpha;
 

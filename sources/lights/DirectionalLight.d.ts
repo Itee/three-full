@@ -6,9 +6,11 @@ import { Object3D } from './../core/Object3D';
 import { DirectionalLightShadow } from './DirectionalLightShadow';
 import { Light } from './Light';
 export class DirectionalLight extends Light {
-  constructor(color?: Color | string | number, intensity?: number);
-  target: Object3D;
-  intensity: number;
 
-  shadow: DirectionalLightShadow;
+	constructor( color?: Color | string | number, intensity?: number );
+	target: Object3D;
+	intensity: number;
+
+	shadow: DirectionalLightShadow;
+
 }

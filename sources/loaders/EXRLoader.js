@@ -94,14 +94,14 @@ EXRLoader.prototype = Object.create( DataTextureLoader.prototype );
 
 EXRLoader.prototype._parser = function ( buffer ) {
 
-	const USHORT_RANGE = (1 << 16);
-	const BITMAP_SIZE = (USHORT_RANGE >> 3);
+	const USHORT_RANGE = ( 1 << 16 );
+	const BITMAP_SIZE = ( USHORT_RANGE >> 3 );
 
-	const HUF_ENCBITS = 16;  // literal (value) bit length
-	const HUF_DECBITS = 14;  // decoding bit size (>= 8)
+	const HUF_ENCBITS = 16; // literal (value) bit length
+	const HUF_DECBITS = 14; // decoding bit size (>= 8)
 
-	const HUF_ENCSIZE = (1 << HUF_ENCBITS) + 1;  // encoding table size
-	const HUF_DECSIZE = 1 << HUF_DECBITS;        // decoding table size
+	const HUF_ENCSIZE = ( 1 << HUF_ENCBITS ) + 1; // encoding table size
+	const HUF_DECSIZE = 1 << HUF_DECBITS; // decoding table size
 	const HUF_DECMASK = HUF_DECSIZE - 1;
 
 	const SHORT_ZEROCODE_RUN = 59;
@@ -168,6 +168,7 @@ EXRLoader.prototype._parser = function ( buffer ) {
 		getBitsReturn.l = ( c >> lc ) & ( ( 1 << nBits ) - 1 );
 		getBitsReturn.c = c;
 		getBitsReturn.lc = lc;
+
 	}
 
 	const hufTableBuffer = new Array( 59 );
@@ -260,9 +261,17 @@ EXRLoader.prototype._parser = function ( buffer ) {
 
 	}
 
-	function hufLength( code ) { return code & 63; }
+	function hufLength( code ) {
 
-	function hufCode( code ) { return code >> 6; }
+		return code & 63;
+
+	}
+
+	function hufCode( code ) {
+
+		return code >> 6;
+
+	}
 
 	function hufBuildDecTable( hcode, im, iM, hdecod ) {
 
@@ -366,7 +375,7 @@ EXRLoader.prototype._parser = function ( buffer ) {
 			lc -= 8;
 
 			var cs = ( c >> lc );
-			var cs = new Uint8Array([cs])[0];
+			var cs = new Uint8Array( [ cs ] )[ 0 ];
 
 			if ( outBufferOffset.value + cs > outBufferEndOffset ) {
 
@@ -376,7 +385,7 @@ EXRLoader.prototype._parser = function ( buffer ) {
 
 			var s = outBuffer[ outBufferOffset.value - 1 ];
 
-			while ( cs-- > 0 ) {
+			while ( cs -- > 0 ) {
 
 				outBuffer[ outBufferOffset.value ++ ] = s;
 
@@ -816,7 +825,7 @@ EXRLoader.prototype._parser = function ( buffer ) {
 
 	function parseUint32( dataView, offset ) {
 
-		var Uint32 = dataView.getUint32(offset.value, true);
+		var Uint32 = dataView.getUint32( offset.value, true );
 
 		offset.value = offset.value + INT32_SIZE;
 
@@ -826,7 +835,7 @@ EXRLoader.prototype._parser = function ( buffer ) {
 
 	function parseUint8Array( uInt8Array, offset ) {
 
-		var Uint8 = uInt8Array[offset.value];
+		var Uint8 = uInt8Array[ offset.value ];
 
 		offset.value = offset.value + INT8_SIZE;
 
@@ -836,7 +845,7 @@ EXRLoader.prototype._parser = function ( buffer ) {
 
 	function parseUint8( dataView, offset ) {
 
-		var Uint8 = dataView.getUint8(offset.value);
+		var Uint8 = dataView.getUint8( offset.value );
 
 		offset.value = offset.value + INT8_SIZE;
 
@@ -846,7 +855,7 @@ EXRLoader.prototype._parser = function ( buffer ) {
 
 	function parseFloat32( dataView, offset ) {
 
-		var float = dataView.getFloat32(offset.value, true);
+		var float = dataView.getFloat32( offset.value, true );
 
 		offset.value += FLOAT32_SIZE;
 
@@ -884,7 +893,7 @@ EXRLoader.prototype._parser = function ( buffer ) {
 
 	function parseFloat16( buffer, offset ) {
 
-		return decodeFloat16( parseUint16( buffer, offset) );
+		return decodeFloat16( parseUint16( buffer, offset ) );
 
 	}
 
@@ -1032,8 +1041,8 @@ EXRLoader.prototype._parser = function ( buffer ) {
 
 	}
 
-	var bufferDataView = new DataView(buffer);
-	var uInt8Array = new Uint8Array(buffer);
+	var bufferDataView = new DataView( buffer );
+	var uInt8Array = new Uint8Array( buffer );
 
 	var EXRHeader = {};
 

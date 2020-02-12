@@ -13,8 +13,8 @@ var BlendShader = {
 
 		"tDiffuse1": { value: null },
 		"tDiffuse2": { value: null },
-		"mixRatio":  { value: 0.5 },
-		"opacity":   { value: 1.0 }
+		"mixRatio": { value: 0.5 },
+		"opacity": { value: 1.0 }
 
 	},
 

@@ -54,6 +54,14 @@ vec3 F_Schlick( const in vec3 specularColor, const in float dotLH ) {
 	return ( 1.0 - specularColor ) * fresnel + specularColor;
 
 } 
+
+vec3 F_Schlick_RoughnessDependent( const in vec3 F0, const in float dotNV, const in float roughness ) {
+	float fresnel = exp2( ( -5.55473 * dotNV - 6.98316 ) * dotNV );
+	vec3 Fr = max( vec3( 1.0 - roughness ), F0 ) - F0;
+
+	return Fr * fresnel + F0;
+
+}
 float G_GGX_Smith( const in float alpha, const in float dotNL, const in float dotNV ) {
 	float a2 = pow2( alpha );
 
@@ -179,12 +187,13 @@ void BRDF_Specular_Multiscattering_Environment( const in GeometricContext geomet
 
 	float dotNV = saturate( dot( geometry.normal, geometry.viewDir ) );
 
-	vec3 F = F_Schlick( specularColor, dotNV );
+	vec3 F = F_Schlick_RoughnessDependent( specularColor, dotNV, roughness );
 	vec2 brdf = integrateSpecularBRDF( dotNV, roughness );
 	vec3 FssEss = F * brdf.x + brdf.y;
 
 	float Ess = brdf.x + brdf.y;
 	float Ems = 1.0 - Ess;
+
 	vec3 Favg = specularColor + ( 1.0 - specularColor ) * 0.047619; 
 	vec3 Fms = FssEss * Favg / ( 1.0 - Ems * Favg );
 

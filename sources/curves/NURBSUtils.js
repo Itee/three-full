@@ -26,7 +26,7 @@ var NURBSUtils = {
 
 	returns the span
 	*/
-	findSpan: function( p,  u,  U ) {
+	findSpan: function ( p, u, U ) {
 
 		var n = U.length - p - 1;
 
@@ -75,7 +75,7 @@ var NURBSUtils = {
 
 	returns array[p+1] with basis functions values.
 	*/
-	calcBasisFunctions: function( span, u, p, U ) {
+	calcBasisFunctions: function ( span, u, p, U ) {
 
 		var N = [];
 		var left = [];
@@ -116,7 +116,7 @@ var NURBSUtils = {
 
 	returns point for given u
 	*/
-	calcBSplinePoint: function( p, U, P, u ) {
+	calcBSplinePoint: function ( p, U, P, u ) {
 
 		var span = this.findSpan( p, u, U );
 		var N = this.calcBasisFunctions( span, u, p, U );
@@ -148,7 +148,7 @@ var NURBSUtils = {
 
 	returns array[n+1][p+1] with basis functions derivatives
 	*/
-	calcBasisFunctionDerivatives: function( span,  u,  p,  n,  U ) {
+	calcBasisFunctionDerivatives: function ( span, u, p, n, U ) {
 
 		var zeroArr = [];
 		for ( var i = 0; i <= p; ++ i )
@@ -223,7 +223,7 @@ var NURBSUtils = {
 				}
 
 				var j1 = ( rk >= - 1 ) ? 1 : - rk;
-				var j2 = ( r - 1 <= pk ) ? k - 1 :  p - r;
+				var j2 = ( r - 1 <= pk ) ? k - 1 : p - r;
 
 				for ( var j = j1; j <= j2; ++ j ) {
 
@@ -276,7 +276,7 @@ var NURBSUtils = {
 
 		returns array[d+1] with derivatives
 		*/
-	calcBSplineDerivatives: function( p,  U,  P,  u,  nd ) {
+	calcBSplineDerivatives: function ( p, U, P, u, nd ) {
 
 		var du = nd < p ? nd : p;
 		var CK = [];
@@ -324,7 +324,7 @@ var NURBSUtils = {
 
 	returns k!/(i!(k-i)!)
 	*/
-	calcKoverI: function( k, i ) {
+	calcKoverI: function ( k, i ) {
 
 		var nom = 1;
 
@@ -402,7 +402,7 @@ var NURBSUtils = {
 
 	returns array with derivatives.
 	*/
-	calcNURBSDerivatives: function( p,  U,  P,  u,  nd ) {
+	calcNURBSDerivatives: function ( p, U, P, u, nd ) {
 
 		var Pders = this.calcBSplineDerivatives( p, U, P, u, nd );
 		return this.calcRationalCurveDerivatives( Pders );

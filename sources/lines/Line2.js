@@ -27,7 +27,7 @@ Line2.prototype = Object.assign( Object.create( LineSegments2.prototype ), {
 
 	isLine2: true,
 
-	copy: function ( source ) {
+	copy: function ( /* source */ ) {
 
 		// todo
 

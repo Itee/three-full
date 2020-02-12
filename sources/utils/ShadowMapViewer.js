@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { Scene } from '../scenes/Scene.js'
-import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { Mesh } from '../objects/Mesh.js'
@@ -14,6 +13,7 @@ import {
 	DoubleSide,
 	LinearFilter
 } from '../constants.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
 /**
  * @author arya-s / https://github.com/arya-s
@@ -66,7 +66,7 @@ var ShadowMapViewer = function ( light ) {
 	//HUD for shadow map
 	var shader = UnpackDepthRGBAShader;
 
-	var uniforms = new UniformsUtils.clone( shader.uniforms );
+	var uniforms = UniformsUtils.clone( shader.uniforms );
 	var material = new ShaderMaterial( {
 		uniforms: uniforms,
 		vertexShader: shader.vertexShader,
@@ -108,7 +108,7 @@ var ShadowMapViewer = function ( light ) {
 		scene.add( labelMesh );
 
 	}
-	function resetPosition () {
+	function resetPosition() {
 
 		scope.position.set( scope.position.x, scope.position.y );
 
@@ -186,6 +186,7 @@ var ShadowMapViewer = function ( light ) {
 			 camera.updateProjectionMatrix();
 
 			 this.update();
+
 		}
 
 	};

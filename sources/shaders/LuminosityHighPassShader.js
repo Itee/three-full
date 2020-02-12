@@ -12,7 +12,7 @@ import { Color } from '../math/Color.js'
 
 var LuminosityHighPassShader = {
 
-  shaderID: "luminosityHighPass",
+	shaderID: "luminosityHighPass",
 
 	uniforms: {
 
@@ -20,7 +20,7 @@ var LuminosityHighPassShader = {
 		"luminosityThreshold": { value: 1.0 },
 		"smoothWidth": { value: 1.0 },
 		"defaultColor": { value: new Color( 0x000000 ) },
-		"defaultOpacity":  { value: 0.0 }
+		"defaultOpacity": { value: 0.0 }
 
 	},
 

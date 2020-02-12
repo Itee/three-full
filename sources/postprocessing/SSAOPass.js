@@ -8,6 +8,7 @@ import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { MeshNormalMaterial } from '../materials/MeshNormalMaterial.js'
 import { Color } from '../math/Color.js'
 import { Vector3 } from '../math/Vector3.js'
+import { SimplexNoise } from '../misc/SimplexNoise.js'
 import { DataTexture } from '../textures/DataTexture.js'
 import { CopyShader } from '../shaders/CopyShader.js'
 import {
@@ -15,7 +16,6 @@ import {
 	SSAODepthShader,
 	SSAOBlurShader
 } from '../shaders/SSAOShader.js'
-import { SimplexNoise } from '../misc/SimplexNoise.js'
 import {
 	NoBlending,
 	CustomBlending,
@@ -232,7 +232,7 @@ SSAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 				this.copyMaterial.uniforms[ 'tDiffuse' ].value = this.ssaoRenderTarget.texture;
 				this.copyMaterial.blending = NoBlending;
-				this.renderPass( renderer, this.copyMaterial, null );
+				this.renderPass( renderer, this.copyMaterial, this.renderToScreen ? null : writeBuffer );
 
 				break;
 
@@ -240,7 +240,7 @@ SSAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 				this.copyMaterial.uniforms[ 'tDiffuse' ].value = this.blurRenderTarget.texture;
 				this.copyMaterial.blending = NoBlending;
-				this.renderPass( renderer, this.copyMaterial, null );
+				this.renderPass( renderer, this.copyMaterial, this.renderToScreen ? null : writeBuffer );
 
 				break;
 
@@ -248,13 +248,13 @@ SSAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 				this.copyMaterial.uniforms[ 'tDiffuse' ].value = this.beautyRenderTarget.texture;
 				this.copyMaterial.blending = NoBlending;
-				this.renderPass( renderer, this.copyMaterial, null );
+				this.renderPass( renderer, this.copyMaterial, this.renderToScreen ? null : writeBuffer );
 
 				break;
 
 			case SSAOPass.OUTPUT.Depth:
 
-				this.renderPass( renderer, this.depthRenderMaterial, null );
+				this.renderPass( renderer, this.depthRenderMaterial, this.renderToScreen ? null : writeBuffer );
 
 				break;
 
@@ -262,7 +262,7 @@ SSAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 				this.copyMaterial.uniforms[ 'tDiffuse' ].value = this.normalRenderTarget.texture;
 				this.copyMaterial.blending = NoBlending;
-				this.renderPass( renderer, this.copyMaterial, null );
+				this.renderPass( renderer, this.copyMaterial, this.renderToScreen ? null : writeBuffer );
 
 				break;
 
@@ -270,7 +270,7 @@ SSAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 				this.copyMaterial.uniforms[ 'tDiffuse' ].value = this.beautyRenderTarget.texture;
 				this.copyMaterial.blending = NoBlending;
-				this.renderPass( renderer, this.copyMaterial, null );
+				this.renderPass( renderer, this.copyMaterial, this.renderToScreen ? null : writeBuffer );
 
 				this.copyMaterial.uniforms[ 'tDiffuse' ].value = this.blurRenderTarget.texture;
 				this.copyMaterial.blending = CustomBlending;

@@ -48,7 +48,7 @@ CubeTexturePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 	constructor: CubeTexturePass,
 
-	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer/*, deltaTime, maskActive*/ ) {
 
 		var oldAutoClear = renderer.autoClear;
 		renderer.autoClear = false;

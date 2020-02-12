@@ -143,7 +143,7 @@ AdaptiveToneMappingPass.prototype = Object.assign( Object.create( Pass.prototype
 
 	constructor: AdaptiveToneMappingPass,
 
-	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer, deltaTime/*, maskActive*/ ) {
 
 		if ( this.needsInit ) {
 
@@ -201,7 +201,7 @@ AdaptiveToneMappingPass.prototype = Object.assign( Object.create( Pass.prototype
 
 	},
 
-	reset: function ( renderer ) {
+	reset: function () {
 
 		// render targets
 		if ( this.luminanceRT ) {

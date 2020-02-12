@@ -37,13 +37,14 @@ var ShaderPass = function ( shader, textureID ) {
 	}
 
 	this.fsQuad = new Pass.FullScreenQuad( this.material );
+
 };
 
 ShaderPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 	constructor: ShaderPass,
 
-	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
+	render: function ( renderer, writeBuffer, readBuffer /*, deltaTime, maskActive */ ) {
 
 		if ( this.uniforms[ this.textureID ] ) {
 

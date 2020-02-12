@@ -1,19 +1,22 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Vector3 } from '../math/Vector3.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
-import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import {
+	Float32BufferAttribute,
+	BufferAttribute
+} from '../core/BufferAttribute.js'
 import { LineSegments } from '../objects/LineSegments.js'
 import { Mesh } from '../objects/Mesh.js'
 import { FileLoader } from './FileLoader.js'
 import { Matrix4 } from '../math/Matrix4.js'
+import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
 import { Color } from '../math/Color.js'
 import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
-import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
-import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Group } from '../objects/Group.js'
-import { Vector3 } from '../math/Vector3.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
@@ -24,6 +27,276 @@ import { DefaultLoadingManager } from './LoadingManager.js'
  */
 
 var LDrawLoader = ( function () {
+
+	var conditionalLineVertShader = /* glsl */`
+	attribute vec3 control0;
+	attribute vec3 control1;
+	attribute vec3 direction;
+	varying float discardFlag;
+
+	#include <common>
+	#include <color_pars_vertex>
+	#include <fog_pars_vertex>
+	#include <logdepthbuf_pars_vertex>
+	#include <clipping_planes_pars_vertex>
+	void main() {
+		#include <color_vertex>
+
+		vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+		gl_Position = projectionMatrix * mvPosition;
+
+		// Transform the line segment ends and control points into camera clip space
+		vec4 c0 = projectionMatrix * modelViewMatrix * vec4( control0, 1.0 );
+		vec4 c1 = projectionMatrix * modelViewMatrix * vec4( control1, 1.0 );
+		vec4 p0 = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+		vec4 p1 = projectionMatrix * modelViewMatrix * vec4( position + direction, 1.0 );
+
+		c0.xy /= c0.w;
+		c1.xy /= c1.w;
+		p0.xy /= p0.w;
+		p1.xy /= p1.w;
+
+		// Get the direction of the segment and an orthogonal vector
+		vec2 dir = p1.xy - p0.xy;
+		vec2 norm = vec2( -dir.y, dir.x );
+
+		// Get control point directions from the line
+		vec2 c0dir = c0.xy - p1.xy;
+		vec2 c1dir = c1.xy - p1.xy;
+
+		// If the vectors to the controls points are pointed in different directions away
+		// from the line segment then the line should not be drawn.
+		float d0 = dot( normalize( norm ), normalize( c0dir ) );
+		float d1 = dot( normalize( norm ), normalize( c1dir ) );
+		discardFlag = float( sign( d0 ) != sign( d1 ) );
+
+		#include <logdepthbuf_vertex>
+		#include <clipping_planes_vertex>
+		#include <fog_vertex>
+	}
+	`;
+
+	var conditionalLineFragShader = /* glsl */`
+	uniform vec3 diffuse;
+	uniform float opacity;
+	varying float discardFlag;
+
+	#include <common>
+	#include <color_pars_fragment>
+	#include <fog_pars_fragment>
+	#include <logdepthbuf_pars_fragment>
+	#include <clipping_planes_pars_fragment>
+	void main() {
+
+		if ( discardFlag > 0.5 ) discard;
+
+		#include <clipping_planes_fragment>
+		vec3 outgoingLight = vec3( 0.0 );
+		vec4 diffuseColor = vec4( diffuse, opacity );
+		#include <logdepthbuf_fragment>
+		#include <color_fragment>
+		outgoingLight = diffuseColor.rgb; // simple shader
+		gl_FragColor = vec4( outgoingLight, diffuseColor.a );
+		#include <premultiplied_alpha_fragment>
+		#include <tonemapping_fragment>
+		#include <encodings_fragment>
+		#include <fog_fragment>
+	}
+	`;
+	var tempVec0 = new Vector3();
+	var tempVec1 = new Vector3();
+	function smoothNormals( triangles, lineSegments ) {
+
+		function hashVertex( v ) {
+
+			// NOTE: 1e2 is pretty coarse but was chosen because it allows edges
+			// to be smoothed as expected (see minifig arms). The errors between edges
+			// could be due to matrix multiplication.
+			var x = ~ ~ ( v.x * 1e2 );
+			var y = ~ ~ ( v.y * 1e2 );
+			var z = ~ ~ ( v.z * 1e2 );
+			return `${ x },${ y },${ z }`;
+
+		}
+
+		function hashEdge( v0, v1 ) {
+
+			return `${ hashVertex( v0 ) }_${ hashVertex( v1 ) }`;
+
+		}
+
+		var hardEdges = new Set();
+		var halfEdgeList = {};
+		var fullHalfEdgeList = {};
+		var normals = [];
+
+		// Save the list of hard edges by hash
+		for ( var i = 0, l = lineSegments.length; i < l; i ++ ) {
+
+			var ls = lineSegments[ i ];
+			var v0 = ls.v0;
+			var v1 = ls.v1;
+			hardEdges.add( hashEdge( v0, v1 ) );
+			hardEdges.add( hashEdge( v1, v0 ) );
+
+		}
+
+		// track the half edges associated with each triangle
+		for ( var i = 0, l = triangles.length; i < l; i ++ ) {
+
+			var tri = triangles[ i ];
+			for ( var i2 = 0, l2 = 3; i2 < l2; i2 ++ ) {
+
+				var index = i2;
+				var next = ( i2 + 1 ) % 3;
+				var v0 = tri[ `v${ index }` ];
+				var v1 = tri[ `v${ next }` ];
+				var hash = hashEdge( v0, v1 );
+
+				// don't add the triangle if the edge is supposed to be hard
+				if ( hardEdges.has( hash ) ) continue;
+				halfEdgeList[ hash ] = tri;
+				fullHalfEdgeList[ hash ] = tri;
+
+			}
+
+		}
+
+		// NOTE: Some of the normals wind up being skewed in an unexpected way because
+		// quads provide more "influence" to some vertex normals than a triangle due to
+		// the fact that a quad is made up of two triangles and all triangles are weighted
+		// equally. To fix this quads could be tracked separately so their vertex normals
+		// are weighted appropriately or we could try only adding a normal direction
+		// once per normal.
+
+		// Iterate until we've tried to connect all triangles to share normals
+		while ( true ) {
+
+			// Stop if there are no more triangles left
+			var halfEdges = Object.keys( halfEdgeList );
+			if ( halfEdges.length === 0 ) break;
+
+			// Exhaustively find all connected triangles
+			var i = 0;
+			var queue = [ fullHalfEdgeList[ halfEdges[ 0 ] ] ];
+			while ( i < queue.length ) {
+
+				// initialize all vertex normals in this triangle
+				var tri = queue[ i ];
+				i ++;
+
+				var faceNormal = tri.faceNormal;
+				if ( tri.n0 === null ) {
+
+					tri.n0 = faceNormal.clone();
+					normals.push( tri.n0 );
+
+				}
+
+				if ( tri.n1 === null ) {
+
+					tri.n1 = faceNormal.clone();
+					normals.push( tri.n1 );
+
+				}
+
+				if ( tri.n2 === null ) {
+
+					tri.n2 = faceNormal.clone();
+					normals.push( tri.n2 );
+
+				}
+
+				// Check if any edge is connected to another triangle edge
+				for ( var i2 = 0, l2 = 3; i2 < l2; i2 ++ ) {
+
+					var index = i2;
+					var next = ( i2 + 1 ) % 3;
+					var v0 = tri[ `v${ index }` ];
+					var v1 = tri[ `v${ next }` ];
+
+					// delete this triangle from the list so it won't be found again
+					var hash = hashEdge( v0, v1 );
+					delete halfEdgeList[ hash ];
+
+					var reverseHash = hashEdge( v1, v0 );
+					var otherTri = fullHalfEdgeList[ reverseHash ];
+					if ( otherTri ) {
+
+						// NOTE: If the angle between triangles is > 67.5 degrees then assume it's
+						// hard edge. There are some cases where the line segments do not line up exactly
+						// with or span multiple triangle edges (see Lunar Vehicle wheels).
+						if ( Math.abs( otherTri.faceNormal.dot( tri.faceNormal ) ) < 0.25 ) {
+
+							continue;
+
+						}
+
+						// if this triangle has already been traversed then it won't be in
+						// the halfEdgeList. If it has not then add it to the queue and delete
+						// it so it won't be found again.
+						if ( reverseHash in halfEdgeList ) {
+
+							queue.push( otherTri );
+							delete halfEdgeList[ reverseHash ];
+
+						}
+
+						// Find the matching edge in this triangle and copy the normal vector over
+						for ( var i3 = 0, l3 = 3; i3 < l3; i3 ++ ) {
+
+							var otherIndex = i3;
+							var otherNext = ( i3 + 1 ) % 3;
+							var otherV0 = otherTri[ `v${ otherIndex }` ];
+							var otherV1 = otherTri[ `v${ otherNext }` ];
+
+							var otherHash = hashEdge( otherV0, otherV1 );
+							if ( otherHash === reverseHash ) {
+
+								if ( otherTri[ `n${ otherIndex }` ] === null ) {
+
+									var norm = tri[ `n${ next }` ];
+									otherTri[ `n${ otherIndex }` ] = norm;
+									norm.add( otherTri.faceNormal );
+
+								}
+
+								if ( otherTri[ `n${ otherNext }` ] === null ) {
+
+									var norm = tri[ `n${ index }` ];
+									otherTri[ `n${ otherNext }` ] = norm;
+									norm.add( otherTri.faceNormal );
+
+								}
+
+								break;
+
+							}
+
+						}
+
+					}
+
+				}
+
+			}
+
+		}
+
+		// The normals of each face have been added up so now we average them by normalizing the vector.
+		for ( var i = 0, l = normals.length; i < l; i ++ ) {
+
+			normals[ i ].normalize();
+
+		}
+
+	}
+
+	function isPrimitiveType( type ) {
+
+		return /primitive/i.test( type ) || type === 'Subpart';
+
+	}
 
 	function LineParser( line, lineNumber ) {
 
@@ -127,7 +400,7 @@ var LDrawLoader = ( function () {
 
 	}
 
-	function createObject( elements, elementSize ) {
+	function createObject( elements, elementSize, isConditionalSegments ) {
 
 		// Creates a LineSegments (elementSize = 2) or a Mesh (elementSize = 3 )
 		// With per face / segment material, implemented with mesh groups and materials array
@@ -135,11 +408,11 @@ var LDrawLoader = ( function () {
 		// Sort the triangles or line segments by colour code to make later the mesh groups
 		elements.sort( sortByMaterial );
 
-		var vertices = [];
+		var positions = [];
+		var normals = [];
 		var materials = [];
 
 		var bufferGeometry = new BufferGeometry();
-		bufferGeometry.clearGroups();
 		var prevMaterial = null;
 		var index0 = 0;
 		var numGroupVerts = 0;
@@ -150,10 +423,17 @@ var LDrawLoader = ( function () {
 			var v0 = elem.v0;
 			var v1 = elem.v1;
 			// Note that LDraw coordinate system is rotated 180 deg. in the X axis w.r.t. Three.js's one
-			vertices.push( v0.x, v0.y, v0.z, v1.x, v1.y, v1.z );
+			positions.push( v0.x, v0.y, v0.z, v1.x, v1.y, v1.z );
 			if ( elementSize === 3 ) {
 
-				vertices.push( elem.v2.x, elem.v2.y, elem.v2.z );
+				positions.push( elem.v2.x, elem.v2.y, elem.v2.z );
+
+				var n0 = elem.n0 || elem.faceNormal;
+				var n1 = elem.n1 || elem.faceNormal;
+				var n2 = elem.n2 || elem.faceNormal;
+				normals.push( n0.x, n0.y, n0.z );
+				normals.push( n1.x, n1.y, n1.z );
+				normals.push( n2.x, n2.y, n2.z );
 
 			}
 
@@ -185,7 +465,13 @@ var LDrawLoader = ( function () {
 
 		}
 
-		bufferGeometry.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
+		bufferGeometry.addAttribute( 'position', new Float32BufferAttribute( positions, 3 ) );
+
+		if ( elementSize === 3 ) {
+
+			bufferGeometry.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
+
+		}
 
 		var object3d = null;
 
@@ -195,9 +481,51 @@ var LDrawLoader = ( function () {
 
 		} else if ( elementSize === 3 ) {
 
-			bufferGeometry.computeVertexNormals();
-
 			object3d = new Mesh( bufferGeometry, materials );
+
+		}
+
+		if ( isConditionalSegments ) {
+
+			object3d.isConditionalLine = true;
+
+			var controlArray0 = new Float32Array( elements.length * 3 * 2 );
+			var controlArray1 = new Float32Array( elements.length * 3 * 2 );
+			var directionArray = new Float32Array( elements.length * 3 * 2 );
+			for ( var i = 0, l = elements.length; i < l; i ++ ) {
+
+				var os = elements[ i ];
+				var c0 = os.c0;
+				var c1 = os.c1;
+				var v0 = os.v0;
+				var v1 = os.v1;
+				var index = i * 3 * 2;
+				controlArray0[ index + 0 ] = c0.x;
+				controlArray0[ index + 1 ] = c0.y;
+				controlArray0[ index + 2 ] = c0.z;
+				controlArray0[ index + 3 ] = c0.x;
+				controlArray0[ index + 4 ] = c0.y;
+				controlArray0[ index + 5 ] = c0.z;
+
+				controlArray1[ index + 0 ] = c1.x;
+				controlArray1[ index + 1 ] = c1.y;
+				controlArray1[ index + 2 ] = c1.z;
+				controlArray1[ index + 3 ] = c1.x;
+				controlArray1[ index + 4 ] = c1.y;
+				controlArray1[ index + 5 ] = c1.z;
+
+				directionArray[ index + 0 ] = v1.x - v0.x;
+				directionArray[ index + 1 ] = v1.y - v0.y;
+				directionArray[ index + 2 ] = v1.z - v0.z;
+				directionArray[ index + 3 ] = v1.x - v0.x;
+				directionArray[ index + 4 ] = v1.y - v0.y;
+				directionArray[ index + 5 ] = v1.z - v0.z;
+
+			}
+
+			bufferGeometry.addAttribute( 'control0', new BufferAttribute( controlArray0, 3, false ) );
+			bufferGeometry.addAttribute( 'control1', new BufferAttribute( controlArray1, 3, false ) );
+			bufferGeometry.addAttribute( 'direction', new BufferAttribute( directionArray, 3, false ) );
 
 		}
 
@@ -239,10 +567,8 @@ var LDrawLoader = ( function () {
 		// If not (the default), only one object which contains all the merged primitives will be created.
 		this.separateObjects = false;
 
-		// Current merged object and primitives
-		this.currentGroupObject = null;
-		this.currentTriangles = null;
-		this.currentLineSegments = null;
+		// If this flag is set to true the vertex normals will be smoothed.
+		this.smoothNormals = true;
 
 	}
 
@@ -294,6 +620,15 @@ var LDrawLoader = ( function () {
 
 				var parentParseScope = scope.getParentParseScope();
 
+				// Set current matrix
+				if ( subobject ) {
+
+					parseScope.currentMatrix.multiplyMatrices( parentParseScope.currentMatrix, subobject.matrix );
+					parseScope.matrix.copy( subobject.matrix );
+					parseScope.inverted = subobject.inverted;
+
+				}
+
 				// Add to cache
 				var currentFileName = parentParseScope.currentFileName;
 				if ( currentFileName !== null ) {
@@ -307,21 +642,10 @@ var LDrawLoader = ( function () {
 					scope.subobjectCache[ currentFileName ] = text;
 
 				}
-
-				parseScope.inverted = subobject !== undefined ? subobject.inverted : false;
-
 				// Parse the object (returns a Group)
-				var objGroup = scope.parse( text );
-
-				// Load subobjects
-				parseScope.subobjects = objGroup.userData.subobjects;
-				parseScope.numSubobjects = parseScope.subobjects.length;
-				parseScope.subobjectIndex = 0;
-
+				scope.parse( text );
 				var finishedCount = 0;
 				onSubobjectFinish();
-
-				return objGroup;
 
 				function onSubobjectFinish() {
 
@@ -353,18 +677,98 @@ var LDrawLoader = ( function () {
 
 				function finalizeObject() {
 
-					if ( ! scope.separateObjects && ! parentParseScope.isFromParse ) {
+					if ( scope.smoothNormals && parseScope.type === 'Part' ) {
 
-						// We are finalizing the root object and merging primitives is activated, so create the entire Mesh and LineSegments objects now
-						if ( scope.currentLineSegments.length > 0 ) {
+						smoothNormals( parseScope.triangles, parseScope.lineSegments );
 
-							objGroup.add( createObject( scope.currentLineSegments, 2 ) );
+					}
+
+					var isRoot = ! parentParseScope.isFromParse;
+					if ( scope.separateObjects && ! isPrimitiveType( parseScope.type ) || isRoot ) {
+						const objGroup = parseScope.groupObject;
+						if ( parseScope.triangles.length > 0 ) {
+
+							objGroup.add( createObject( parseScope.triangles, 3 ) );
 
 						}
 
-						if ( scope.currentTriangles.length > 0 ) {
+						if ( parseScope.lineSegments.length > 0 ) {
 
-							objGroup.add( createObject( scope.currentTriangles, 3 ) );
+							objGroup.add( createObject( parseScope.lineSegments, 2 ) );
+
+						}
+
+						if ( parseScope.conditionalSegments.length > 0 ) {
+
+							objGroup.add( createObject( parseScope.conditionalSegments, 2, true ) );
+
+						}
+
+						if ( parentParseScope.groupObject ) {
+
+							objGroup.name = parseScope.fileName;
+							objGroup.userData.category = parseScope.category;
+							objGroup.userData.keywords = parseScope.keywords;
+							parseScope.matrix.decompose( objGroup.position, objGroup.quaternion, objGroup.scale );
+
+							parentParseScope.groupObject.add( objGroup );
+
+						}
+
+					} else {
+
+						var separateObjects = scope.separateObjects;
+						var parentLineSegments = parentParseScope.lineSegments;
+						var parentConditionalSegments = parentParseScope.conditionalSegments;
+						var parentTriangles = parentParseScope.triangles;
+
+						var lineSegments = parseScope.lineSegments;
+						var conditionalSegments = parseScope.conditionalSegments;
+						var triangles = parseScope.triangles;
+
+						for ( var i = 0, l = lineSegments.length; i < l; i ++ ) {
+
+							var ls = lineSegments[ i ];
+							if ( separateObjects ) {
+
+								ls.v0.applyMatrix4( parseScope.matrix );
+								ls.v1.applyMatrix4( parseScope.matrix );
+
+							}
+							parentLineSegments.push( ls );
+
+						}
+
+						for ( var i = 0, l = conditionalSegments.length; i < l; i ++ ) {
+
+							var os = conditionalSegments[ i ];
+							if ( separateObjects ) {
+
+								os.v0.applyMatrix4( parseScope.matrix );
+								os.v1.applyMatrix4( parseScope.matrix );
+								os.c0.applyMatrix4( parseScope.matrix );
+								os.c1.applyMatrix4( parseScope.matrix );
+
+							}
+							parentConditionalSegments.push( os );
+
+						}
+
+						for ( var i = 0, l = triangles.length; i < l; i ++ ) {
+
+							var tri = triangles[ i ];
+							if ( separateObjects ) {
+
+								tri.v0 = tri.v0.clone().applyMatrix4( parseScope.matrix );
+								tri.v1 = tri.v1.clone().applyMatrix4( parseScope.matrix );
+								tri.v2 = tri.v2.clone().applyMatrix4( parseScope.matrix );
+
+								tempVec0.subVectors( tri.v1, tri.v0 );
+								tempVec1.subVectors( tri.v2, tri.v1 );
+								tri.faceNormal.crossVectors( tempVec0, tempVec1 ).normalize();
+
+							}
+							parentTriangles.push( tri );
 
 						}
 
@@ -374,7 +778,7 @@ var LDrawLoader = ( function () {
 
 					if ( onProcessed ) {
 
-						onProcessed( objGroup );
+						onProcessed( parseScope.groupObject );
 
 					}
 
@@ -385,14 +789,6 @@ var LDrawLoader = ( function () {
 					parseScope.mainColourCode = subobject.material.userData.code;
 					parseScope.mainEdgeColourCode = subobject.material.userData.edgeMaterial.userData.code;
 					parseScope.currentFileName = subobject.originalFileName;
-
-					if ( ! scope.separateObjects ) {
-
-						// Set current matrix
-						parseScope.currentMatrix.multiplyMatrices( parentParseScope.currentMatrix, subobject.matrix );
-
-					}
-
 					// If subobject was cached previously, use the cached one
 					var cached = scope.subobjectCache[ subobject.originalFileName.toLowerCase() ];
 					if ( cached ) {
@@ -501,22 +897,6 @@ var LDrawLoader = ( function () {
 
 					}
 
-					// Add the subobject just loaded
-					addSubobject( subobject, subobjectGroup );
-
-				}
-
-				function addSubobject( subobject, subobjectGroup ) {
-
-					if ( scope.separateObjects ) {
-
-						subobjectGroup.name = subobject.fileName;
-						objGroup.add( subobjectGroup );
-						subobjectGroup.matrix.copy( subobject.matrix );
-						subobjectGroup.matrixAutoUpdate = false;
-
-					}
-
 					scope.fileMap[ subobject.originalFileName ] = subobject.url;
 
 				}
@@ -552,8 +932,6 @@ var LDrawLoader = ( function () {
 
 			this.materials = materials;
 
-			this.currentGroupObject = null;
-
 			return this;
 
 		},
@@ -584,9 +962,6 @@ var LDrawLoader = ( function () {
 			}
 
 			var topParseScope = this.getCurrentParseScope();
-
-			var parentParseScope = this.getParentParseScope();
-
 			var newParseScope = {
 
 				lib: matLib,
@@ -597,15 +972,22 @@ var LDrawLoader = ( function () {
 				numSubobjects: 0,
 				subobjectIndex: 0,
 				inverted: false,
+				category: null,
+				keywords: null,
 
 				// Current subobject
 				currentFileName: null,
 				mainColourCode: topParseScope ? topParseScope.mainColourCode : '16',
 				mainEdgeColourCode: topParseScope ? topParseScope.mainEdgeColourCode : '24',
 				currentMatrix: new Matrix4(),
+				matrix: new Matrix4(),
 
 				// If false, it is a root material scope previous to parse
-				isFromParse: true
+				isFromParse: true,
+
+				triangles: null,
+				lineSegments: null,
+				conditionalSegments: null,
 			};
 
 			this.parseScopesStack.push( newParseScope );
@@ -851,29 +1233,20 @@ var LDrawLoader = ( function () {
 			switch ( finishType ) {
 
 				case LDrawLoader.FINISH_TYPE_DEFAULT:
+
+					material = new MeshStandardMaterial( { color: colour, roughness: 0.3, envMapIntensity: 0.3, metalness: 0 } );
+					break;
+
 				case LDrawLoader.FINISH_TYPE_PEARLESCENT:
 
+					// Try to imitate pearlescency by setting the specular to the complementary of the color, and low shininess
 					var specular = new Color( colour );
-					var shininess = 35;
 					var hsl = specular.getHSL( { h: 0, s: 0, l: 0 } );
-
-					if ( finishType === LDrawLoader.FINISH_TYPE_DEFAULT ) {
-
-						// Default plastic material with shiny specular
-						hsl.l = Math.min( 1, hsl.l + ( 1 - hsl.l ) * 0.12 );
-
-					} else {
-
-						// Try to imitate pearlescency by setting the specular to the complementary of the color, and low shininess
-						hsl.h = ( hsl.h + 0.5 ) % 1;
-						hsl.l = Math.min( 1, hsl.l + ( 1 - hsl.l ) * 0.7 );
-						shininess = 10;
-
-					}
-
+					hsl.h = ( hsl.h + 0.5 ) % 1;
+					hsl.l = Math.min( 1, hsl.l + ( 1 - hsl.l ) * 0.7 );
 					specular.setHSL( hsl.h, hsl.s, hsl.l );
 
-					material = new MeshPhongMaterial( { color: colour, specular: specular, shininess: shininess, reflectivity: 0.3 } );
+					material = new MeshPhongMaterial( { color: colour, specular: specular, shininess: 10, reflectivity: 0.3 } );
 					break;
 
 				case LDrawLoader.FINISH_TYPE_CHROME:
@@ -884,8 +1257,8 @@ var LDrawLoader = ( function () {
 
 				case LDrawLoader.FINISH_TYPE_RUBBER:
 
-					// Rubber is best simulated with Lambert
-					material = new MeshLambertMaterial( { color: colour } );
+					// Rubber finish
+					material = new MeshStandardMaterial( { color: colour, roughness: 0.9, metalness: 0 } );
 					canHaveEnvMap = false;
 					break;
 
@@ -908,7 +1281,12 @@ var LDrawLoader = ( function () {
 			}
 
 			material.transparent = isTransparent;
+			material.premultipliedAlpha = true;
 			material.opacity = alpha;
+			material.depthWrite = ! isTransparent;
+
+			material.polygonOffset = true;
+			material.polygonOffsetFactor = 1;
 
 			material.userData.canHaveEnvMap = canHaveEnvMap;
 
@@ -921,10 +1299,32 @@ var LDrawLoader = ( function () {
 			if ( ! edgeMaterial ) {
 
 				// This is the material used for edges
-				edgeMaterial = new LineBasicMaterial( { color: edgeColour } );
+				edgeMaterial = new LineBasicMaterial( {
+					color: edgeColour,
+					transparent: isTransparent,
+					opacity: alpha,
+					depthWrite: ! isTransparent
+				} );
 				edgeMaterial.userData.code = code;
 				edgeMaterial.name = name + " - Edge";
 				edgeMaterial.userData.canHaveEnvMap = false;
+
+				// This is the material used for conditional edges
+				edgeMaterial.userData.conditionalEdgeMaterial = new ShaderMaterial( {
+					vertexShader: conditionalLineVertShader,
+					fragmentShader: conditionalLineFragShader,
+					uniforms: {
+						diffuse: {
+							value: new Color( edgeColour )
+						},
+						opacity: {
+							value: alpha
+						}
+					},
+					transparent: isTransparent,
+					depthWrite: ! isTransparent
+				} );
+				edgeMaterial.userData.conditionalEdgeMaterial.userData.canHaveEnvMap = false;
 
 			}
 
@@ -957,26 +1357,7 @@ var LDrawLoader = ( function () {
 			// Parse result variables
 			var triangles;
 			var lineSegments;
-
-			if ( this.separateObjects ) {
-
-				triangles = [];
-				lineSegments = [];
-
-			} else {
-
-				if ( this.currentGroupObject === null ) {
-
-					this.currentGroupObject = new Group();
-					this.currentTriangles = [];
-					this.currentLineSegments = [];
-
-				}
-
-				triangles = this.currentTriangles;
-				lineSegments = this.currentLineSegments;
-
-			}
+			var conditionalSegments;
 
 			var subobjects = [];
 
@@ -997,6 +1378,12 @@ var LDrawLoader = ( function () {
 			var parsingEmbeddedFiles = false;
 			var currentEmbeddedFileName = null;
 			var currentEmbeddedText = null;
+
+			var bfcCertified = false;
+			var bfcCCW = true;
+			var bfcInverted = false;
+			var bfcCull = true;
+			var type = '';
 
 			var scope = this;
 			function parseColourCode( lineParser, forEdge ) {
@@ -1034,18 +1421,13 @@ var LDrawLoader = ( function () {
 
 				if ( ! scope.separateObjects ) {
 
-					v.applyMatrix4( parentParseScope.currentMatrix );
+					v.applyMatrix4( currentParseScope.currentMatrix );
 
 				}
 
 				return v;
 
 			}
-
-			var bfcCertified = false;
-			var bfcCCW = true;
-			var bfcInverted = false;
-			var bfcCull = true;
 
 			// Parse all line commands
 			for ( lineIndex = 0; lineIndex < numLines; lineIndex ++ ) {
@@ -1100,6 +1482,45 @@ var LDrawLoader = ( function () {
 						if ( meta ) {
 
 							switch ( meta ) {
+
+								case '!LDRAW_ORG':
+
+									type = lp.getToken();
+
+									if ( ! parsingEmbeddedFiles ) {
+
+										currentParseScope.triangles = [];
+										currentParseScope.lineSegments = [];
+										currentParseScope.conditionalSegments = [];
+										currentParseScope.type = type;
+
+										var isRoot = ! parentParseScope.isFromParse;
+										if ( isRoot || scope.separateObjects && ! isPrimitiveType( type ) ) {
+
+											currentParseScope.groupObject = new Group();
+
+										}
+
+										// If the scale of the object is negated then the triangle winding order
+										// needs to be flipped.
+										var matrix = currentParseScope.matrix;
+										if (
+											matrix.determinant() < 0 && (
+												scope.separateObjects && isPrimitiveType( type ) ||
+												! scope.separateObjects
+											) ) {
+
+											currentParseScope.inverted = ! currentParseScope.inverted;
+
+										}
+
+										triangles = currentParseScope.triangles;
+										lineSegments = currentParseScope.lineSegments;
+										conditionalSegments = currentParseScope.conditionalSegments;
+
+									}
+
+									break;
 
 								case '!COLOUR':
 
@@ -1262,14 +1683,6 @@ var LDrawLoader = ( function () {
 
 						}
 
-						// If the scale of the object is negated then the triangle winding order
-						// needs to be flipped.
-						if ( scope.separateObjects === false && matrix.determinant() < 0 ) {
-
-							bfcInverted = ! bfcInverted;
-
-						}
-
 						subobjects.push( {
 							material: material,
 							matrix: matrix,
@@ -1290,12 +1703,32 @@ var LDrawLoader = ( function () {
 
 						var material = parseColourCode( lp, true );
 
-						lineSegments.push( {
+						var segment = {
 							material: material.userData.edgeMaterial,
 							colourCode: material.userData.code,
 							v0: parseVector( lp ),
 							v1: parseVector( lp )
-						} );
+						};
+
+						lineSegments.push( segment );
+
+						break;
+
+					// Line type 5: Conditional Line segment
+					case '5':
+
+						var material = parseColourCode( lp, true );
+
+						var segment = {
+							material: material.userData.edgeMaterial.userData.conditionalEdgeMaterial,
+							colourCode: material.userData.code,
+							v0: parseVector( lp ),
+							v1: parseVector( lp ),
+							c0: parseVector( lp ),
+							c1: parseVector( lp )
+						};
+
+						conditionalSegments.push( segment );
 
 						break;
 
@@ -1307,7 +1740,7 @@ var LDrawLoader = ( function () {
 						var inverted = currentParseScope.inverted;
 						var ccw = bfcCCW !== inverted;
 						var doubleSided = ! bfcCertified || ! bfcCull;
-						var v0, v1, v2;
+						var v0, v1, v2, faceNormal;
 
 						if ( ccw === true ) {
 
@@ -1323,12 +1756,22 @@ var LDrawLoader = ( function () {
 
 						}
 
+						tempVec0.subVectors( v1, v0 );
+						tempVec1.subVectors( v2, v1 );
+						faceNormal = new Vector3()
+							.crossVectors( tempVec0, tempVec1 )
+							.normalize();
+
 						triangles.push( {
 							material: material,
 							colourCode: material.userData.code,
 							v0: v0,
 							v1: v1,
-							v2: v2
+							v2: v2,
+							faceNormal: faceNormal,
+							n0: null,
+							n1: null,
+							n2: null
 						} );
 
 						if ( doubleSided === true ) {
@@ -1338,7 +1781,11 @@ var LDrawLoader = ( function () {
 								colourCode: material.userData.code,
 								v0: v0,
 								v1: v2,
-								v2: v1
+								v2: v1,
+								faceNormal: faceNormal,
+								n0: null,
+								n1: null,
+								n2: null
 							} );
 
 						}
@@ -1353,7 +1800,7 @@ var LDrawLoader = ( function () {
 						var inverted = currentParseScope.inverted;
 						var ccw = bfcCCW !== inverted;
 						var doubleSided = ! bfcCertified || ! bfcCull;
-						var v0, v1, v2, v3;
+						var v0, v1, v2, v3, faceNormal;
 
 						if ( ccw === true ) {
 
@@ -1371,12 +1818,22 @@ var LDrawLoader = ( function () {
 
 						}
 
+						tempVec0.subVectors( v1, v0 );
+						tempVec1.subVectors( v2, v1 );
+						faceNormal = new Vector3()
+							.crossVectors( tempVec0, tempVec1 )
+							.normalize();
+
 						triangles.push( {
 							material: material,
 							colourCode: material.userData.code,
 							v0: v0,
 							v1: v1,
-							v2: v2
+							v2: v2,
+							faceNormal: faceNormal,
+							n0: null,
+							n1: null,
+							n2: null
 						} );
 
 						triangles.push( {
@@ -1384,7 +1841,11 @@ var LDrawLoader = ( function () {
 							colourCode: material.userData.code,
 							v0: v0,
 							v1: v2,
-							v2: v3
+							v2: v3,
+							faceNormal: faceNormal,
+							n0: null,
+							n1: null,
+							n2: null
 						} );
 
 						if ( doubleSided === true ) {
@@ -1394,7 +1855,11 @@ var LDrawLoader = ( function () {
 								colourCode: material.userData.code,
 								v0: v0,
 								v1: v2,
-								v2: v1
+								v2: v1,
+								faceNormal: faceNormal,
+								n0: null,
+								n1: null,
+								n2: null
 							} );
 
 							triangles.push( {
@@ -1402,16 +1867,15 @@ var LDrawLoader = ( function () {
 								colourCode: material.userData.code,
 								v0: v0,
 								v1: v3,
-								v2: v2
+								v2: v2,
+								faceNormal: faceNormal,
+								n0: null,
+								n1: null,
+								n2: null
 							} );
 
 						}
 
-						break;
-
-					// Line type 5: Optional line
-					case '5':
-						// Line type 5 is not implemented
 						break;
 
 					default:
@@ -1428,38 +1892,11 @@ var LDrawLoader = ( function () {
 
 			}
 
-			//
-
-			var groupObject = null;
-
-			if ( this.separateObjects ) {
-
-				groupObject = new Group();
-
-				if ( lineSegments.length > 0 ) {
-
-					groupObject.add( createObject( lineSegments, 2 ) );
-				}
-
-				if ( triangles.length > 0 ) {
-
-					groupObject.add( createObject( triangles, 3 ) );
-
-				}
-
-			} else {
-
-				groupObject = this.currentGroupObject;
-
-			}
-
-			groupObject.userData.category = category;
-			groupObject.userData.keywords = keywords;
-			groupObject.userData.subobjects = subobjects;
-
-			//console.timeEnd( 'LDrawLoader' );
-
-			return groupObject;
+			currentParseScope.category = category;
+			currentParseScope.keywords = keywords;
+			currentParseScope.subobjects = subobjects;
+			currentParseScope.numSubobjects = subobjects.length;
+			currentParseScope.subobjectIndex = 0;
 
 		}
 

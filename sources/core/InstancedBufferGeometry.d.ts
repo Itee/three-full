@@ -3,10 +3,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { BufferGeometry } from './BufferGeometry';
 export class InstancedBufferGeometry extends BufferGeometry {
-  constructor();
 
-  groups: { start: number; count: number; instances: number }[];
-  maxInstancedCount: number;
+	constructor();
 
-  addGroup(start: number, count: number, instances: number): void;
+	groups: { start: number; count: number; instances: number }[];
+	maxInstancedCount: number;
+
+	addGroup( start: number, count: number, instances: number ): void;
+
 }

@@ -22,9 +22,9 @@ var ConvolutionShader = {
 
 	uniforms: {
 
-		"tDiffuse":        { value: null },
+		"tDiffuse": { value: null },
 		"uImageIncrement": { value: new Vector2( 0.001953125, 0.0 ) },
-		"cKernel":         { value: [] }
+		"cKernel": { value: [] }
 
 	},
 

@@ -27,8 +27,17 @@ var LoaderUtils = {
 
 		}
 
-		// Merges multi-byte utf-8 characters.
-		return decodeURIComponent( escape( s ) );
+		try {
+
+			// merges multi-byte utf-8 characters.
+
+			return decodeURIComponent( escape( s ) );
+
+		} catch ( e ) { // see #16358
+
+			return s;
+
+		}
 
 	},
 

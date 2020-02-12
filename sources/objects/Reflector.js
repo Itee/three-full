@@ -7,7 +7,6 @@ import { Plane } from '../math/Plane.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Vector4 } from '../math/Vector4.js'
-import { Vector2 } from '../math/Vector2.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
@@ -48,12 +47,10 @@ var Reflector = function ( geometry, options ) {
 	var rotationMatrix = new Matrix4();
 	var lookAtPosition = new Vector3( 0, 0, - 1 );
 	var clipPlane = new Vector4();
-	var viewport = new Vector4();
 
 	var view = new Vector3();
 	var target = new Vector3();
 	var q = new Vector4();
-	var size = new Vector2();
 
 	var textureMatrix = new Matrix4();
 	var virtualCamera = new PerspectiveCamera();
@@ -192,19 +189,9 @@ var Reflector = function ( geometry, options ) {
 
 		// Restore viewport
 
-		var bounds = camera.bounds;
+		if ( camera.isArrayCamera ) {
 
-		if ( bounds !== undefined ) {
-
-			renderer.getSize( size );
-			var pixelRatio = renderer.getPixelRatio();
-
-			viewport.x = bounds.x * size.width * pixelRatio;
-			viewport.y = bounds.y * size.height * pixelRatio;
-			viewport.z = bounds.z * size.width * pixelRatio;
-			viewport.w = bounds.w * size.height * pixelRatio;
-
-			renderer.state.viewport( viewport );
+			renderer.state.viewport( camera.viewport );
 
 		}
 
@@ -228,17 +215,14 @@ Reflector.ReflectorShader = {
 	uniforms: {
 
 		'color': {
-			type: 'c',
 			value: null
 		},
 
 		'tDiffuse': {
-			type: 't',
 			value: null
 		},
 
 		'textureMatrix': {
-			type: 'm4',
 			value: null
 		}
 

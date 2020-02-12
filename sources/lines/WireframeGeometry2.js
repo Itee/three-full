@@ -27,7 +27,7 @@ WireframeGeometry2.prototype = Object.assign( Object.create( LineSegmentsGeometr
 
 	isWireframeGeometry2: true,
 
-	copy: function ( source ) {
+	copy: function ( /* source */ ) {
 
 		// todo
 

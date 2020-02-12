@@ -5,12 +5,14 @@ import { Color } from './../math/Color';
 import { IFog } from './Fog';
 
 export class FogExp2 implements IFog {
-  constructor(hex: number | string, density?: number);
 
-  name: string;
-  color: Color;
-  density: number;
+	constructor( hex: number | string, density?: number );
 
-  clone(): this;
-  toJSON(): any;
+	name: string;
+	color: Color;
+	density: number;
+
+	clone(): this;
+	toJSON(): any;
+
 }

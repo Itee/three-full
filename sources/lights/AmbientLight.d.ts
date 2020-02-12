@@ -4,8 +4,8 @@
 import { Color } from './../math/Color';
 import { Light } from './Light';
 export class AmbientLight extends Light {
-  
-  constructor(color?: Color | string | number, intensity?: number);
+	constructor( color?: Color | string | number, intensity?: number );
 
-  castShadow: boolean;
+	castShadow: boolean;
+
 }

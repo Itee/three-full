@@ -14,10 +14,10 @@ var NormalMapShader = {
 
 	uniforms: {
 
-		"heightMap":  { value: null },
+		"heightMap": { value: null },
 		"resolution": { value: new Vector2( 512, 512 ) },
-		"scale":      { value: new Vector2( 1, 1 ) },
-		"height":     { value: 0.05 }
+		"scale": { value: new Vector2( 1, 1 ) },
+		"height": { value: 0.05 }
 
 	},
 

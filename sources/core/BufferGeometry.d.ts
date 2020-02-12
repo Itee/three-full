@@ -13,76 +13,76 @@ import { DirectGeometry } from './DirectGeometry';
 import { EventDispatcher } from './EventDispatcher';
 import { InterleavedBufferAttribute } from './InterleavedBufferAttribute';
 export class BufferGeometry extends EventDispatcher {
-  
-  constructor();
+	constructor();
 
-  static MaxIndex: number;
-  id: number;
-  uuid: string;
-  name: string;
-  type: string;
-  index: BufferAttribute;
-  attributes: {
-    [name: string]: BufferAttribute | InterleavedBufferAttribute;
-  };
-  morphAttributes: any;
-  groups: { start: number; count: number; materialIndex?: number }[];
-  boundingBox: Box3;
-  boundingSphere: Sphere;
-  drawRange: { start: number; count: number };
-  userData: {[key: string]: any};
+	static MaxIndex: number;
+	id: number;
+	uuid: string;
+	name: string;
+	type: string;
+	index: BufferAttribute;
+	attributes: {
+		[name: string]: BufferAttribute | InterleavedBufferAttribute;
+	};
+	morphAttributes: any;
+	groups: { start: number; count: number; materialIndex?: number }[];
+	boundingBox: Box3;
+	boundingSphere: Sphere;
+	drawRange: { start: number; count: number };
+	userData: {[key: string]: any};
 
-  getIndex(): BufferAttribute;
-  setIndex(index: BufferAttribute | number[]): void;
+	getIndex(): BufferAttribute;
+	setIndex( index: BufferAttribute | number[] ): void;
 
-  addAttribute(
-    name: string,
-    attribute: BufferAttribute | InterleavedBufferAttribute
-  ): BufferGeometry;
+	addAttribute(
+		name: string,
+		attribute: BufferAttribute | InterleavedBufferAttribute
+	): BufferGeometry;
 
-  getAttribute(name: string): BufferAttribute | InterleavedBufferAttribute;
-  removeAttribute(name: string): BufferGeometry;
+	getAttribute( name: string ): BufferAttribute | InterleavedBufferAttribute;
+	removeAttribute( name: string ): BufferGeometry;
 
-  addGroup(start: number, count: number, materialIndex?: number): void;
-  clearGroups(): void;
+	addGroup( start: number, count: number, materialIndex?: number ): void;
+	clearGroups(): void;
 
-  setDrawRange(start: number, count: number): void;
-  applyMatrix(matrix: Matrix4): BufferGeometry;
+	setDrawRange( start: number, count: number ): void;
+	applyMatrix( matrix: Matrix4 ): BufferGeometry;
 
-  rotateX(angle: number): BufferGeometry;
-  rotateY(angle: number): BufferGeometry;
-  rotateZ(angle: number): BufferGeometry;
-  translate(x: number, y: number, z: number): BufferGeometry;
-  scale(x: number, y: number, z: number): BufferGeometry;
-  lookAt(v: Vector3): void;
+	rotateX( angle: number ): BufferGeometry;
+	rotateY( angle: number ): BufferGeometry;
+	rotateZ( angle: number ): BufferGeometry;
+	translate( x: number, y: number, z: number ): BufferGeometry;
+	scale( x: number, y: number, z: number ): BufferGeometry;
+	lookAt( v: Vector3 ): void;
 
-  center(): BufferGeometry;
+	center(): BufferGeometry;
 
-  setFromObject(object: Object3D): BufferGeometry;
-  setFromPoints(points: Vector3[] | Vector2[]): BufferGeometry;
-  updateFromObject(object: Object3D): void;
+	setFromObject( object: Object3D ): BufferGeometry;
+	setFromPoints( points: Vector3[] | Vector2[] ): BufferGeometry;
+	updateFromObject( object: Object3D ): void;
 
-  fromGeometry(geometry: Geometry, settings?: any): BufferGeometry;
+	fromGeometry( geometry: Geometry, settings?: any ): BufferGeometry;
 
-  fromDirectGeometry(geometry: DirectGeometry): BufferGeometry;
-  computeBoundingBox(): void;
-  computeBoundingSphere(): void;
-  computeVertexNormals(): void;
+	fromDirectGeometry( geometry: DirectGeometry ): BufferGeometry;
+	computeBoundingBox(): void;
+	computeBoundingSphere(): void;
+	computeVertexNormals(): void;
 
-  merge(geometry: BufferGeometry, offset: number): BufferGeometry;
-  normalizeNormals(): void;
+	merge( geometry: BufferGeometry, offset: number ): BufferGeometry;
+	normalizeNormals(): void;
 
-  toNonIndexed(): BufferGeometry;
+	toNonIndexed(): BufferGeometry;
 
-  toJSON(): any;
-  clone(): this;
-  copy(source: BufferGeometry): this;
-  dispose(): void;
-  drawcalls: any;
-  offsets: any;
-  addIndex(index: any): void;
-  addDrawCall(start: any, count: any, indexOffset?: any): void;
-  clearDrawCalls(): void;
+	toJSON(): any;
+	clone(): this;
+	copy( source: BufferGeometry ): this;
+	dispose(): void;
+	drawcalls: any;
+	offsets: any;
+	addIndex( index: any ): void;
+	addDrawCall( start: any, count: any, indexOffset?: any ): void;
+	clearDrawCalls(): void;
 
-  addAttribute(name: any, array: any, itemSize: any): any;
+	addAttribute( name: any, array: any, itemSize: any ): any;
+
 }

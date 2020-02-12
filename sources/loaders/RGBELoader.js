@@ -326,8 +326,7 @@ RGBELoader.prototype._parser = function ( buffer ) {
 		}
 	;
 
-	var byteArray = new Uint8Array( buffer ),
-		byteLength = byteArray.byteLength;
+	var byteArray = new Uint8Array( buffer );
 	byteArray.pos = 0;
 	var rgbe_header_info = RGBE_ReadHeader( byteArray );
 
@@ -400,4 +399,5 @@ RGBELoader.prototype.setType = function ( value ) {
 	return this;
 
 };
+
 export { RGBELoader }

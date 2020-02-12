@@ -4,8 +4,10 @@
 import { RectAreaLight } from './../lights/RectAreaLight';
 import { Color } from './../math/Color';
 export class RectAreaLightHelper {
-  constructor(light: RectAreaLight, color?: Color | string | number);
 
-  light: RectAreaLight;
-  color: Color | string | number | undefined;
+	constructor( light: RectAreaLight, color?: Color | string | number );
+
+	light: RectAreaLight;
+	color: Color | string | number | undefined;
+
 }

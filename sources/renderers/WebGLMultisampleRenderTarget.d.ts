@@ -2,14 +2,16 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import {
-  WebGLRenderTarget,
-  WebGLRenderTargetOptions,
+	WebGLRenderTarget,
+	WebGLRenderTargetOptions,
 } from './WebGLRenderTarget';
 
 export class WebGLMultisampleRenderTarget extends WebGLRenderTarget {
-  constructor(
-    width: number,
-    height: number,
-    options?: WebGLRenderTargetOptions
-  );
+
+	constructor(
+		width: number,
+		height: number,
+		options?: WebGLRenderTargetOptions
+	);
+
 }

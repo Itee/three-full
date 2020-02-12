@@ -17,8 +17,8 @@ var HorizontalTiltShiftShader = {
 	uniforms: {
 
 		"tDiffuse": { value: null },
-		"h":        { value: 1.0 / 512.0 },
-		"r":        { value: 0.35 }
+		"h": { value: 1.0 / 512.0 },
+		"r": { value: 0.35 }
 
 	},
 

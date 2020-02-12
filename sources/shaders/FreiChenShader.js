@@ -17,7 +17,7 @@ var FreiChenShader = {
 	uniforms: {
 
 		"tDiffuse": { value: null },
-		"aspect":    { value: new Vector2( 512, 512 ) }
+		"aspect": { value: new Vector2( 512, 512 ) }
 	},
 
 	vertexShader: [
