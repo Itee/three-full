@@ -4,10 +4,6 @@
 import { Pass } from './Pass.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { Scene } from '../scenes/Scene.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
-import { Mesh } from '../objects/Mesh.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { AfterimageShader } from '../shaders/AfterimageShader.js'
 import {
@@ -58,23 +54,10 @@ var AfterimagePass = function ( damp ) {
 
 	} );
 
-	this.sceneComp = new Scene();
-	this.scene = new Scene();
+	this.compFsQuad = new Pass.FullScreenQuad( this.shaderMaterial );
 
-	this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-	this.camera.position.z = 1;
-
-	var geometry = new PlaneBufferGeometry( 2, 2 );
-
-	this.quadComp = new Mesh( geometry, this.shaderMaterial );
-	this.sceneComp.add( this.quadComp );
-
-	var material = new MeshBasicMaterial( {
-		map: this.textureComp.texture
-	} );
-
-	var quadScreen = new Mesh( geometry, material );
-	this.scene.add( quadScreen );
+	var material = new MeshBasicMaterial();
+	this.copyFsQuad = new Pass.FullScreenQuad( material );
 
 };
 
@@ -87,18 +70,15 @@ AfterimagePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		this.uniforms[ "tOld" ].value = this.textureOld.texture;
 		this.uniforms[ "tNew" ].value = readBuffer.texture;
 
-		this.quadComp.material = this.shaderMaterial;
-
 		renderer.setRenderTarget( this.textureComp );
-		renderer.render( this.sceneComp, this.camera );
+		this.compFsQuad.render( renderer );
 
-		renderer.setRenderTarget( this.textureOld );
-		renderer.render( this.scene, this.camera );
+		this.copyFsQuad.material.map = this.textureComp.texture;
 
 		if ( this.renderToScreen ) {
 
 			renderer.setRenderTarget( null );
-			renderer.render( this.scene, this.camera );
+			this.copyFsQuad.render( renderer );
 
 		} else {
 
@@ -106,9 +86,22 @@ AfterimagePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 			if ( this.clear ) renderer.clear();
 
-			renderer.render( this.scene, this.camera );
+			this.copyFsQuad.render( renderer );
 
 		}
+
+		// Swap buffers.
+		var temp = this.textureOld;
+		this.textureOld = this.textureComp;
+		this.textureComp = temp;
+		// Now textureOld contains the latest image, ready for the next frame.
+
+	},
+
+	setSize: function ( width, height ) {
+
+		this.textureComp.setSize( width, height );
+		this.textureOld.setSize( width, height );
 
 	}
 

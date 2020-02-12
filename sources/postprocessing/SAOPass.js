@@ -9,10 +9,6 @@ import { DepthTexture } from '../textures/DepthTexture.js'
 import { MeshDepthMaterial } from '../materials/MeshDepthMaterial.js'
 import { MeshNormalMaterial } from '../materials/MeshNormalMaterial.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { Scene } from '../scenes/Scene.js'
-import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { CopyShader } from '../shaders/CopyShader.js'
 import {
 	DepthLimitedBlurShader,
@@ -197,10 +193,7 @@ var SAOPass = function ( scene, camera, depthTexture, useNormals, resolution ) {
 		blending: NoBlending
 	} );
 
-	this.quadCamera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-	this.quadScene = new Scene();
-	this.quad = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
-	this.quadScene.add( this.quad );
+	this.fsQuad = new Pass.FullScreenQuad( null );
 
 };
 
@@ -368,8 +361,8 @@ SAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		}
 
-		this.quad.material = passMaterial;
-		renderer.render( this.quadScene, this.quadCamera );
+		this.fsQuad.material = passMaterial;
+		this.fsQuad.render( renderer );
 
 		// restore original state
 		renderer.autoClear = originalAutoClear;

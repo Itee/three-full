@@ -19,7 +19,8 @@ export class Quaternion {
   setFromAxisAngle(axis: Vector3, angle: number): Quaternion;
   setFromRotationMatrix(m: Matrix4): Quaternion;
   setFromUnitVectors(vFrom: Vector3, vTo: Vector3): Quaternion;
-  
+  angleTo(q: Quaternion): number;
+  rotateTowards(q: Quaternion, step: number): Quaternion;
   inverse(): Quaternion;
 
   conjugate(): Quaternion;

@@ -18,6 +18,7 @@ export interface RenderItem {
   geometry: Geometry | BufferGeometry;
   material: Material;
   program: WebGLProgram;
+  groupOrder: number;
   renderOrder: number;
   z: number;
   group: Group;

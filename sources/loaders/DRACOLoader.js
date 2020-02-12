@@ -17,7 +17,6 @@ import {
 	Int8BufferAttribute
 } from '../core/BufferAttribute.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-import { Mesh } from '../objects/Mesh.js'
 
 // Copyright 2016 The Draco Authors.
 //

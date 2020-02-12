@@ -2,7 +2,9 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Plane } from './../math/Plane';
+import { Shader } from './../renderers/shaders/ShaderLib'
 import { EventDispatcher } from './../core/EventDispatcher';
+import { WebGLRenderer } from './../renderers/WebGLRenderer';
 import {
   BlendingDstFactor,
   BlendingEquation,
@@ -91,6 +93,7 @@ export class Material extends EventDispatcher {
   clone(): this;
   copy(material: Material): this;
   dispose(): void;
+  onBeforeCompile ( shader : Shader, renderer : WebGLRenderer ) : void;
   setValues(values: MaterialParameters): void;
   toJSON(meta?: any): any;
   update(): void;

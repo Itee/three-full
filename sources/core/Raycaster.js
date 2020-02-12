@@ -2,11 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Ray } from '../math/Ray.js'
-import { Line } from '../objects/Line.js'
-import { LOD } from '../objects/LOD.js'
-import { Mesh } from '../objects/Mesh.js'
-import { Points } from '../objects/Points.js'
-import { Sprite } from '../objects/Sprite.js'
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author bhouston / http://clara.io/

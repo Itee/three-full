@@ -5,7 +5,7 @@ import { AnimationMixer } from './AnimationMixer';
 import { AnimationClip } from './AnimationClip';
 import { AnimationActionLoopStyles } from '../constants';
 export class AnimationAction {
-  loop: boolean;
+  loop: AnimationActionLoopStyles;
   time: number;
   timeScale: number;
   weight: number;

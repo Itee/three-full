@@ -3,10 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Pass } from './Pass.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { Scene } from '../scenes/Scene.js'
-import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { DotScreenShader } from '../shaders/DotScreenShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
@@ -37,12 +33,7 @@ var DotScreenPass = function ( center, angle, scale ) {
 
 	} );
 
-	this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-	this.scene = new Scene();
-
-	this.quad = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
-	this.quad.frustumCulled = false; // Avoid getting clipped
-	this.scene.add( this.quad );
+	this.fsQuad = new Pass.FullScreenQuad( this.material );
 
 };
 
@@ -55,18 +46,16 @@ DotScreenPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		this.uniforms[ "tDiffuse" ].value = readBuffer.texture;
 		this.uniforms[ "tSize" ].value.set( readBuffer.width, readBuffer.height );
 
-		this.quad.material = this.material;
-
 		if ( this.renderToScreen ) {
 
 			renderer.setRenderTarget( null );
-			renderer.render( this.scene, this.camera );
+			this.fsQuad.render( renderer );
 
 		} else {
 
 			renderer.setRenderTarget( writeBuffer );
 			if ( this.clear ) renderer.clear();
-			renderer.render( this.scene, this.camera );
+			this.fsQuad.render( renderer );
 
 		}
 

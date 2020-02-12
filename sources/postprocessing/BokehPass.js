@@ -5,10 +5,6 @@ import { Pass } from './Pass.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { MeshDepthMaterial } from '../materials/MeshDepthMaterial.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { Scene } from '../scenes/Scene.js'
-import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { Color } from '../math/Color.js'
 import { BokehShader } from '../shaders/BokehShader.js'
 import {
@@ -85,12 +81,7 @@ var BokehPass = function ( scene, camera, params ) {
 	this.uniforms = bokehUniforms;
 	this.needsSwap = false;
 
-	this.camera2 = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-	this.scene2 = new Scene();
-
-	this.quad2 = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
-	this.quad2.frustumCulled = false; // Avoid getting clipped
-	this.scene2.add( this.quad2 );
+	this.fsQuad = new Pass.FullScreenQuad( this.materialBokeh );
 
 	this.oldClearColor = new Color();
 	this.oldClearAlpha = 1;
@@ -102,8 +93,6 @@ BokehPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 	constructor: BokehPass,
 
 	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
-
-		this.quad2.material = this.materialBokeh;
 
 		// Render depth into texture
 
@@ -129,13 +118,13 @@ BokehPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		if ( this.renderToScreen ) {
 
 			renderer.setRenderTarget( null );
-			renderer.render( this.scene2, this.camera2 );
+			this.fsQuad.render( renderer );
 
 		} else {
 
 			renderer.setRenderTarget( writeBuffer );
 			renderer.clear();
-			renderer.render( this.scene2, this.camera2 );
+			this.fsQuad.render( renderer );
 
 		}
 

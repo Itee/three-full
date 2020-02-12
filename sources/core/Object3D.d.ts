@@ -48,7 +48,6 @@ export class Object3D extends EventDispatcher {
   castShadow: boolean;
   receiveShadow: boolean;
   frustumCulled: boolean;
-
   renderOrder: number;
   userData: { [key: string]: any };
   isObject3D: true;

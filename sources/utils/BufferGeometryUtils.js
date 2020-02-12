@@ -508,8 +508,8 @@ var BufferGeometryUtils = {
 		var getters = [ 'getX', 'getY', 'getZ', 'getW' ];
 
 		// initialize the arrays
-		for ( var attributeNameIndex = 0, numberOfAttributes = attributeNames.length ; attributeNameIndex < numberOfAttributes ; attributeNameIndex++  ) {
-			var name = attributeNames[ attributeNameIndex ];
+		for ( var i = 0, l = attributeNames.length; i < l; i ++ ) {
+			var name = attributeNames[ i ];
 
 			attrArrays[ name ] = [];
 

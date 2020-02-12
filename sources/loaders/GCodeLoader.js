@@ -158,7 +158,7 @@ GCodeLoader.prototype.parse = function ( data ) {
 		} else if ( cmd === 'G2' || cmd === 'G3' ) {
 
 			//G2/G3 - Arc Movement ( G2 clock wise and G3 counter clock wise )
-			console.warn( 'GCodeLoader: Arc command not supported' );
+			//console.warn( 'GCodeLoader: Arc command not supported' );
 
 		} else if ( cmd === 'G90' ) {
 
@@ -182,7 +182,7 @@ GCodeLoader.prototype.parse = function ( data ) {
 
 		} else {
 
-			console.warn( 'GCodeLoader: Command not supported:' + cmd );
+			//console.warn( 'GCodeLoader: Command not supported:' + cmd );
 
 		}
 

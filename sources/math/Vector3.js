@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { _Math } from './Math.js'
-import { Matrix4 } from './Matrix4.js'
 import { Quaternion } from './Quaternion.js'
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -320,17 +319,11 @@ Object.assign( Vector3.prototype, {
 
 	},
 
-	unproject: function () {
+	unproject: function ( camera ) {
 
-		var matrix = new Matrix4();
+		return this.applyMatrix4( camera.projectionMatrixInverse ).applyMatrix4( camera.matrixWorld );
 
-		return function unproject( camera ) {
-
-			return this.applyMatrix4( matrix.getInverse( camera.projectionMatrix ) ).applyMatrix4( camera.matrixWorld );
-
-		};
-
-	}(),
+	},
 
 	transformDirection: function ( m ) {
 

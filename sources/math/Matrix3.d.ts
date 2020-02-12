@@ -6,7 +6,7 @@ import { BufferAttribute } from './../core/BufferAttribute';
 import { Vector3 } from './Vector3';
 export interface Matrix {
   
-  elements: Float32Array;
+  elements: number[];
   identity(): Matrix;
   copy(m: this): this;
   multiplyScalar(s: number): Matrix;
@@ -19,7 +19,7 @@ export interface Matrix {
 export class Matrix3 implements Matrix {
   
   constructor();
-  elements: Float32Array;
+  elements: number[];
 
   set(
     n11: number,
