@@ -421,8 +421,8 @@ module.exports = {
             ]
         },
         ObjectLoader:                {
-            // Equivalent to ( import * as Geometries from 'intermediary exporter file Geometries' )
             imports:      [
+                // Equivalent to ( import * as Geometries from 'intermediary exporter file Geometries' )
                 'WireframeGeometry',
                 'TetrahedronGeometry',
                 'TetrahedronBufferGeometry',
@@ -461,7 +461,32 @@ module.exports = {
                 'CircleGeometry',
                 'CircleBufferGeometry',
                 'BoxGeometry',
-                'BoxBufferGeometry'
+                'BoxBufferGeometry',
+                // Equivalent to ( import * as Curves from 'intermediary exporter file Curves' )
+                'ArcCurve',
+                'CatmullRomCurve3',
+                'CubicBezierCurve',
+                'CubicBezierCurve3',
+                'EllipseCurve',
+                'LineCurve',
+                'LineCurve3',
+                'QuadraticBezierCurve',
+                'QuadraticBezierCurve3',
+                'SplineCurve',
+                'GrannyKnot',
+                'HeartCurve',
+                'VivianiCurve',
+                'KnotCurve',
+                'HelixCurve',
+                'TrefoilKnot',
+                'TorusKnot',
+                'CinquefoilKnot',
+                'TrefoilPolynomialKnot',
+                'FigureEightPolynomialKnot',
+                'DecoratedTorusKnot4a',
+                'DecoratedTorusKnot4b',
+                'DecoratedTorusKnot5a',
+                'DecoratedTorusKnot5c'
             ],
             replacements: [
                 [
@@ -506,6 +531,32 @@ module.exports = {
                     '    CircleBufferGeometry: CircleBufferGeometry,\n' +
                     '    BoxGeometry: BoxGeometry,\n' +
                     '    BoxBufferGeometry: BoxBufferGeometry\n' +
+                    '}\n' +
+                    'var Curves = {\n' +
+                    '	ArcCurve: ArcCurve,\n' +
+                    '	CatmullRomCurve3: CatmullRomCurve3,\n' +
+                    '	CubicBezierCurve: CubicBezierCurve,\n' +
+                    '	CubicBezierCurve3: CubicBezierCurve3,\n' +
+                    '	EllipseCurve: EllipseCurve,\n' +
+                    '	LineCurve: LineCurve,\n' +
+                    '	LineCurve3: LineCurve3,\n' +
+                    '	QuadraticBezierCurve: QuadraticBezierCurve,\n' +
+                    '	QuadraticBezierCurve3: QuadraticBezierCurve3,\n' +
+                    '	SplineCurve: SplineCurve,\n' +
+                    '	GrannyKnot: GrannyKnot,\n' +
+                    '	HeartCurve: HeartCurve,\n' +
+                    '	VivianiCurve: VivianiCurve,\n' +
+                    '	KnotCurve: KnotCurve,\n' +
+                    '	HelixCurve: HelixCurve,\n' +
+                    '	TrefoilKnot: TrefoilKnot,\n' +
+                    '	TorusKnot: TorusKnot,\n' +
+                    '	CinquefoilKnot: CinquefoilKnot,\n' +
+                    '	TrefoilPolynomialKnot: TrefoilPolynomialKnot,\n' +
+                    '	FigureEightPolynomialKnot: FigureEightPolynomialKnot,\n' +
+                    '	DecoratedTorusKnot4a: DecoratedTorusKnot4a,\n' +
+                    '	DecoratedTorusKnot4b: DecoratedTorusKnot4b,\n' +
+                    '	DecoratedTorusKnot5a: DecoratedTorusKnot5a,\n' +
+                    '	DecoratedTorusKnot5c: DecoratedTorusKnot5c,\n' +
                     '}\n' +
                     'function ObjectLoader( manager ) {'
                 ]
