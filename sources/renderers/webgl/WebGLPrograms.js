@@ -11,26 +11,11 @@ import {
 	ObjectSpaceNormalMap
 } from '../../constants.js'
 import { WebGLProgram } from './WebGLProgram.js'
-import { LineBasicMaterial } from '../../materials/LineBasicMaterial.js'
-import { LineDashedMaterial } from '../../materials/LineDashedMaterial.js'
-import { MeshBasicMaterial } from '../../materials/MeshBasicMaterial.js'
-import { MeshDepthMaterial } from '../../materials/MeshDepthMaterial.js'
-import { MeshDistanceMaterial } from '../../materials/MeshDistanceMaterial.js'
-import { MeshLambertMaterial } from '../../materials/MeshLambertMaterial.js'
-import { MeshMatcapMaterial } from '../../materials/MeshMatcapMaterial.js'
-import { MeshNormalMaterial } from '../../materials/MeshNormalMaterial.js'
-import { MeshPhongMaterial } from '../../materials/MeshPhongMaterial.js'
-import { MeshPhysicalMaterial } from '../../materials/MeshPhysicalMaterial.js'
-import { MeshStandardMaterial } from '../../materials/MeshStandardMaterial.js'
-import { MeshToonMaterial } from '../../materials/MeshToonMaterial.js'
-import { PointsMaterial } from '../../materials/PointsMaterial.js'
-import { ShadowMaterial } from '../../materials/ShadowMaterial.js'
-import { SpriteMaterial } from '../../materials/SpriteMaterial.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-function WebGLPrograms( renderer, extensions, capabilities ) {
+function WebGLPrograms( renderer, extensions, capabilities, textures ) {
 
 	var programs = [];
 
@@ -302,7 +287,7 @@ function WebGLPrograms( renderer, extensions, capabilities ) {
 
 		if ( program === undefined ) {
 
-			program = new WebGLProgram( renderer, extensions, code, material, shader, parameters, capabilities );
+			program = new WebGLProgram( renderer, extensions, code, material, shader, parameters, capabilities, textures );
 			programs.push( program );
 
 		}

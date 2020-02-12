@@ -4,10 +4,14 @@
 import { Vector2 } from '../math/Vector2.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { ShaderPass } from './ShaderPass.js'
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { Mesh } from '../objects/Mesh.js'
 import {
 	MaskPass,
 	ClearMaskPass
 } from './MaskPass.js'
+import { Pass } from './Pass.js'
 import { CopyShader } from '../shaders/CopyShader.js'
 import {
 	LinearFilter,
@@ -43,6 +47,8 @@ var EffectComposer = function ( renderer, renderTarget ) {
 
 	this.writeBuffer = this.renderTarget1;
 	this.readBuffer = this.renderTarget2;
+
+	this.renderToScreen = true;
 
 	this.passes = [];
 
@@ -91,6 +97,22 @@ Object.assign( EffectComposer.prototype, {
 
 	},
 
+	isLastEnabledPass: function ( passIndex ) {
+
+		for ( var i = passIndex + 1; i < this.passes.length; i ++ ) {
+
+			if ( this.passes[ i ].enabled ) {
+
+				return false;
+
+			}
+
+		}
+
+		return true;
+
+	},
+
 	render: function ( deltaTime ) {
 
 		// deltaTime value is in seconds
@@ -115,6 +137,7 @@ Object.assign( EffectComposer.prototype, {
 
 			if ( pass.enabled === false ) continue;
 
+			pass.renderToScreen = ( this.renderToScreen && this.isLastEnabledPass( i ) );
 			pass.render( this.renderer, this.writeBuffer, this.readBuffer, deltaTime, maskActive );
 
 			if ( pass.needsSwap ) {
@@ -200,7 +223,7 @@ Object.assign( EffectComposer.prototype, {
 	// if set to true, the pass clears its buffer before rendering
 	this.clear = false;
 
-	// if set to true, the result of the pass is rendered to screen
+	// if set to true, the result of the pass is rendered to screen. This is set automatically by EffectComposer.
 	this.renderToScreen = false;
 
 };
@@ -210,5 +233,46 @@ Object.assign( Pass.prototype, {
 	setSize: function ( width, height ) {},
 
 	render: function ( renderer, writeBuffer, readBuffer, deltaTime, maskActive ) {
-*/
+*/// Helper for passes that need to fill the viewport with a single quad.
+Pass.FullScreenQuad = ( function () {
+
+	var camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
+	var geometry = new PlaneBufferGeometry( 2, 2 );
+
+	var FullScreenQuad = function ( material ) {
+
+		this._mesh = new Mesh( geometry, material );
+
+	};
+
+	Object.defineProperty( FullScreenQuad.prototype, 'material', {
+
+		get: function () {
+
+			return this._mesh.material;
+
+		},
+
+		set: function ( value ) {
+
+			this._mesh.material = value;
+
+		}
+
+	} );
+
+	Object.assign( FullScreenQuad.prototype, {
+
+		render: function ( renderer ) {
+
+			renderer.render( this._mesh, camera );
+
+		}
+
+	} );
+
+	return FullScreenQuad;
+
+} )();
+
 export { EffectComposer }

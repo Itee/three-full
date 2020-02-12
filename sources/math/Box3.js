@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from './Vector3.js'
-import { Sphere } from './Sphere.js'
 /**
  * @author bhouston / http://clara.io
  * @author WestLangley / http://github.com/WestLangley
@@ -525,8 +524,8 @@ Object.assign( Box3.prototype, {
 
 			if ( target === undefined ) {
 
-				console.warn( 'Box3: .getBoundingSphere() target is now required' );
-				target = new Sphere();
+				console.error( 'Box3: .getBoundingSphere() target is now required' );
+				//target = new Sphere(); // removed to avoid cyclic dependency
 
 			}
 

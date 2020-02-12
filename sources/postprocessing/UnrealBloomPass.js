@@ -7,11 +7,7 @@ import { Color } from '../math/Color.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Vector3 } from '../math/Vector3.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { Scene } from '../scenes/Scene.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { CopyShader } from '../shaders/CopyShader.js'
 import { LuminosityHighPassShader } from '../shaders/LuminosityHighPassShader.js'
 import {
@@ -154,14 +150,9 @@ var UnrealBloomPass = function ( resolution, strength, radius, threshold ) {
 	this.oldClearColor = new Color();
 	this.oldClearAlpha = 1;
 
-	this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-	this.scene = new Scene();
-
 	this.basic = new MeshBasicMaterial();
 
-	this.quad = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
-	this.quad.frustumCulled = false; // Avoid getting clipped
-	this.scene.add( this.quad );
+	this.fsQuad = new Pass.FullScreenQuad( null );
 
 };
 
@@ -223,12 +214,12 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		if ( this.renderToScreen ) {
 
-			this.quad.material = this.basic;
+			this.fsQuad.material = this.basic;
 			this.basic.map = readBuffer.texture;
 
 			renderer.setRenderTarget( null );
 			renderer.clear();
-			renderer.render( this.scene, this.camera );
+			this.fsQuad.render( renderer );
 
 		}
 
@@ -236,11 +227,11 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		this.highPassUniforms[ "tDiffuse" ].value = readBuffer.texture;
 		this.highPassUniforms[ "luminosityThreshold" ].value = this.threshold;
-		this.quad.material = this.materialHighPassFilter;
+		this.fsQuad.material = this.materialHighPassFilter;
 
 		renderer.setRenderTarget( this.renderTargetBright );
 		renderer.clear();
-		renderer.render( this.scene, this.camera );
+		this.fsQuad.render( renderer );
 
 		// 2. Blur All the mips progressively
 
@@ -248,19 +239,19 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		for ( var i = 0; i < this.nMips; i ++ ) {
 
-			this.quad.material = this.separableBlurMaterials[ i ];
+			this.fsQuad.material = this.separableBlurMaterials[ i ];
 
 			this.separableBlurMaterials[ i ].uniforms[ "colorTexture" ].value = inputRenderTarget.texture;
 			this.separableBlurMaterials[ i ].uniforms[ "direction" ].value = UnrealBloomPass.BlurDirectionX;
 			renderer.setRenderTarget( this.renderTargetsHorizontal[ i ] );
 			renderer.clear();
-			renderer.render( this.scene, this.camera );
+			this.fsQuad.render( renderer );
 
 			this.separableBlurMaterials[ i ].uniforms[ "colorTexture" ].value = this.renderTargetsHorizontal[ i ].texture;
 			this.separableBlurMaterials[ i ].uniforms[ "direction" ].value = UnrealBloomPass.BlurDirectionY;
 			renderer.setRenderTarget( this.renderTargetsVertical[ i ] );
 			renderer.clear();
-			renderer.render( this.scene, this.camera );
+			this.fsQuad.render( renderer );
 
 			inputRenderTarget = this.renderTargetsVertical[ i ];
 
@@ -268,30 +259,30 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		// Composite All the mips
 
-		this.quad.material = this.compositeMaterial;
+		this.fsQuad.material = this.compositeMaterial;
 		this.compositeMaterial.uniforms[ "bloomStrength" ].value = this.strength;
 		this.compositeMaterial.uniforms[ "bloomRadius" ].value = this.radius;
 		this.compositeMaterial.uniforms[ "bloomTintColors" ].value = this.bloomTintColors;
 
 		renderer.setRenderTarget( this.renderTargetsHorizontal[ 0 ] );
 		renderer.clear();
-		renderer.render( this.scene, this.camera );
+		this.fsQuad.render( renderer );
 
 		// Blend it additively over the input texture
 
-		this.quad.material = this.materialCopy;
+		this.fsQuad.material = this.materialCopy;
 		this.copyUniforms[ "tDiffuse" ].value = this.renderTargetsHorizontal[ 0 ].texture;
 
 		if ( maskActive ) renderer.context.enable( renderer.context.STENCIL_TEST );
 		if ( this.renderToScreen ) {
 
 			renderer.setRenderTarget( null );
-			renderer.render( this.scene, this.camera );
+			this.fsQuad.render( renderer );
 
 		} else {
 
 			renderer.setRenderTarget( readBuffer );
-			renderer.render( this.scene, this.camera );
+			this.fsQuad.render( renderer );
 
 		}
 

@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Object3D } from '../core/Object3D.js'
 import { MD2Loader } from '../loaders/MD2Loader.js'
+import { Box3 } from '../math/Box3.js'
 import { AnimationMixer } from '../animation/AnimationMixer.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
 import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
@@ -55,8 +56,10 @@ var MD2Character = function () {
 
 		loader.load( config.baseUrl + config.body, function ( geo ) {
 
-			geo.computeBoundingBox();
-			scope.root.position.y = - scope.scale * geo.boundingBox.min.y;
+			var boundingBox = new Box3();
+			boundingBox.setFromBufferAttribute( geo.attributes.position );
+			
+			scope.root.position.y = - scope.scale * boundingBox.min.y;
 
 			var mesh = createPart( geo, scope.skinsBody[ 0 ] );
 			mesh.scale.set( scope.scale, scope.scale, scope.scale );

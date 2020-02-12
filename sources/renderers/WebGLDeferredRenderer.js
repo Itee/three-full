@@ -220,6 +220,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		rt.texture.generateMipamps = false;
 
 		_compNormalDepth = new EffectComposer( _this.renderer, rt );
+		_compNormalDepth.renderToScreen = false;
 		_compNormalDepth.addPass( _passNormalDepth );
 
 	}
@@ -240,6 +241,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		rt.texture.generateMipamps = false;
 
 		_compColor = new EffectComposer( _this.renderer, rt );
+		_compColor.renderToScreen = false;
 		_compColor.addPass( _passColor );
 
 	}
@@ -264,6 +266,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		rt.texture.generateMipamps = false;
 
 		_compLight = new EffectComposer( _this.renderer, rt );
+		_compLight.renderToScreen = false;
 		_compLight.addPass( _passLightFullscreen );
 		_compLight.addPass( _passLight );
 
@@ -285,6 +288,7 @@ var WebGLDeferredRenderer = function ( parameters ) {
 		rt.texture.generateMipamps = false;
 
 		_compReconstruction = new EffectComposer( _this.renderer, rt );
+		_compReconstruction.renderToScreen = false;
 		_compReconstruction.addPass( _passReconstruction );
 
 	}
@@ -1106,24 +1110,15 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 		if ( _lightPrePass ) {
 
-			_passForward.renderToScreen = false;
 			_passForward.enabled = false;
-
-			_passCopy.renderToScreen = false;
 			_passCopy.enabled = false;
 
 			if ( _antialias ) {
 
-				_passFinal.renderToScreen = false;
-
-				_passFXAA.renderToScreen = true;
 				_passFXAA.enabled = true;
 
 			} else {
 
-				_passFinal.renderToScreen = true;
-
-				_passFXAA.renderToScreen = false;
 				_passFXAA.enabled = false;
 
 			}
@@ -1134,28 +1129,14 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 				if ( _antialias ) {
 
-					_passFinal.renderToScreen = false;
-
-					_passForward.renderToScreen = false;
 					_passForward.enabled = true;
-
-					_passCopy.renderToScreen = false;
 					_passCopy.enabled = false;
-
-					_passFXAA.renderToScreen = true;
 					_passFXAA.enabled = true;
 
 				} else {
 
-					_passFinal.renderToScreen = false;
-
-					_passForward.renderToScreen = false;
 					_passForward.enabled = true;
-
-					_passCopy.renderToScreen = true;
 					_passCopy.enabled = true;
-
-					_passFXAA.renderToScreen = false;
 					_passFXAA.enabled = false;
 
 				}
@@ -1164,28 +1145,14 @@ var WebGLDeferredRenderer = function ( parameters ) {
 
 				if ( _antialias ) {
 
-					_passFinal.renderToScreen = false;
-
-					_passForward.renderToScreen = false;
 					_passForward.enabled = false;
-
-					_passCopy.renderToScreen = false;
 					_passCopy.enabled = false;
-
-					_passFXAA.renderToScreen = true;
 					_passFXAA.enabled = true;
 
 				} else {
 
-					_passFinal.renderToScreen = true;
-
-					_passForward.renderToScreen = false;
 					_passForward.enabled = false;
-
-					_passCopy.renderToScreen = false;
 					_passCopy.enabled = false;
-
-					_passFXAA.renderToScreen = false;
 					_passFXAA.enabled = false;
 
 				}

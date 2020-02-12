@@ -88,7 +88,7 @@ var UVsDebug = function ( geometry, size ) {
 				uvs[ 1 ].fromBufferAttribute( uvAttribute, face[ 1 ] );
 				uvs[ 2 ].fromBufferAttribute( uvAttribute, face[ 2 ] );
 
-				processFace( face, uvs, i );
+				processFace( face, uvs, i / 3 );
 
 			}
 
@@ -106,7 +106,7 @@ var UVsDebug = function ( geometry, size ) {
 				uvs[ 1 ].fromBufferAttribute( uvAttribute, face[ 1 ] );
 				uvs[ 2 ].fromBufferAttribute( uvAttribute, face[ 2 ] );
 
-				processFace( face, uvs, i );
+				processFace( face, uvs, i / 3 );
 
 			}
 

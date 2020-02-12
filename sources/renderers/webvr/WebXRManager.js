@@ -2,12 +2,12 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Group } from '../../objects/Group.js'
+import { Matrix4 } from '../../math/Matrix4.js'
 import { Vector4 } from '../../math/Vector4.js'
 import { ArrayCamera } from '../../cameras/ArrayCamera.js'
 import { PerspectiveCamera } from '../../cameras/PerspectiveCamera.js'
 import { WebGLAnimation } from '../webgl/WebGLAnimation.js'
 import { setProjectionFromUnion } from './WebVRUtils.js'
-import { Matrix4 } from '../../math/Matrix4.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/

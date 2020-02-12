@@ -79,7 +79,6 @@ export class WebGLRenderer implements Renderer {
   properties: WebGLProperties;
   renderLists: WebGLRenderLists;
   state: WebGLState;
-  allocTextureUnit: any;
 
   vr: WebVRManager;
   getContext(): WebGLRenderingContext;
@@ -143,9 +142,6 @@ export class WebGLRenderer implements Renderer {
     scene: Scene,
     camera: Camera
   ): void;
-  setTexture(texture: Texture, slot: number): void;
-  setTexture2D(texture: Texture, slot: number): void;
-  setTextureCube(texture: Texture, slot: number): void;
   getRenderTarget(): RenderTarget;
   
   getCurrentRenderTarget(): RenderTarget;

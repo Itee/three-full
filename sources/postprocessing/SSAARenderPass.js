@@ -3,10 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Pass } from './Pass.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { Scene } from '../scenes/Scene.js'
-import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { CopyShader } from '../shaders/CopyShader.js'
 import {
@@ -58,11 +54,7 @@ var SSAARenderPass = function ( scene, camera, clearColor, clearAlpha ) {
 		depthWrite: false
 	} );
 
-	this.camera2 = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-	this.scene2	= new Scene();
-	this.quad2 = new Mesh( new PlaneBufferGeometry( 2, 2 ), this.copyMaterial );
-	this.quad2.frustumCulled = false; // Avoid getting clipped
-	this.scene2.add( this.quad2 );
+	this.fsQuad = new Pass.FullScreenQuad( this.copyMaterial );
 
 };
 
@@ -151,7 +143,7 @@ SSAARenderPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 			}
 
-			renderer.render( this.scene2, this.camera2 );
+			this.fsQuad.render( renderer );
 
 		}
 

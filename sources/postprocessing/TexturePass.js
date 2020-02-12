@@ -3,10 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Pass } from './Pass.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { Scene } from '../scenes/Scene.js'
-import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { CopyShader } from '../shaders/CopyShader.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
@@ -40,12 +36,7 @@ var TexturePass = function ( map, opacity ) {
 
 	this.needsSwap = false;
 
-	this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-	this.scene = new Scene();
-
-	this.quad = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
-	this.quad.frustumCulled = false; // Avoid getting clipped
-	this.scene.add( this.quad );
+	this.fsQuad = new Pass.FullScreenQuad( null );
 
 };
 
@@ -58,7 +49,7 @@ TexturePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		var oldAutoClear = renderer.autoClear;
 		renderer.autoClear = false;
 
-		this.quad.material = this.material;
+		this.fsQuad.material = this.material;
 
 		this.uniforms[ "opacity" ].value = this.opacity;
 		this.uniforms[ "tDiffuse" ].value = this.map;
@@ -66,7 +57,7 @@ TexturePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		renderer.setRenderTarget( this.renderToScreen ? null : readBuffer );
 		if ( this.clear ) renderer.clear();
-		renderer.render( this.scene, this.camera );
+		this.fsQuad.render( renderer );
 
 		renderer.autoClear = oldAutoClear;
 	}

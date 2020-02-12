@@ -19,7 +19,6 @@ import {
 	NearestFilter,
 	RGBFormat
 } from '../constants.js'
-import { Geometry } from '../core/Geometry.js'
 
 /**
  * @author Mugen87 / https://github.com/Mugen87

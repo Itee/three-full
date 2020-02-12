@@ -21,7 +21,6 @@ import {
 	FaceColors,
 	VertexColors
 } from '../constants.js'
-import { Texture } from '../textures/Texture.js'
 import { _Math } from '../math/Math.js'
 
 /**

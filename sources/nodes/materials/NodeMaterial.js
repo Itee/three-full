@@ -20,10 +20,20 @@ function NodeMaterial( vertex, fragment ) {
 
 	ShaderMaterial.call( this );
 
+	var self = this;
+
 	this.vertex = vertex || new RawNode( new PositionNode( PositionNode.PROJECTION ) );
 	this.fragment = fragment || new RawNode( new ColorNode( 0xFF0000 ) );
 
 	this.updaters = [];
+
+	// it fix the programCache and share the code with others materials
+
+	this.onBeforeCompile.toString = function() {
+
+		return self.needsCompile;
+
+	};
 
 }
 
@@ -40,6 +50,22 @@ Object.defineProperties( NodeMaterial.prototype, {
 		get: function () {
 
 			return this.fragment.properties;
+
+		}
+
+	},
+
+	needsUpdate: {
+
+		set: function ( value ) {
+
+			this.needsCompile = value;
+
+		},
+
+		get: function () {
+
+			return this.needsCompile;
 
 		}
 

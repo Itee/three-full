@@ -5,10 +5,6 @@ import { Pass } from './Pass.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { Texture } from '../textures/Texture.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { Scene } from '../scenes/Scene.js'
-import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { SMAAShader } from '../shaders/SMAAShader.js'
 import {
 	NearestFilter,
@@ -129,12 +125,7 @@ var SMAAPass = function ( width, height ) {
 
 	this.needsSwap = false;
 
-	this.camera = new OrthographicCamera( -1, 1, 1, -1, 0, 1 );
-	this.scene  = new Scene();
-
-	this.quad = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
-	this.quad.frustumCulled = false; // Avoid getting clipped
-	this.scene.add( this.quad );
+	this.fsQuad = new Pass.FullScreenQuad( null );
 
 };
 
@@ -148,36 +139,36 @@ SMAAPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		this.uniformsEdges[ "tDiffuse" ].value = readBuffer.texture;
 
-		this.quad.material = this.materialEdges;
+		this.fsQuad.material = this.materialEdges;
 
 		renderer.setRenderTarget( this.edgesRT );
 		if ( this.clear ) renderer.clear();
-		renderer.render( this.scene, this.camera );
+		this.fsQuad.render( renderer );
 
 		// pass 2
 
-		this.quad.material = this.materialWeights;
+		this.fsQuad.material = this.materialWeights;
 
 		renderer.setRenderTarget( this.weightsRT );
 		if ( this.clear ) renderer.clear();
-		renderer.render( this.scene, this.camera );
+		this.fsQuad.render( renderer );
 
 		// pass 3
 
 		this.uniformsBlend[ "tColor" ].value = readBuffer.texture;
 
-		this.quad.material = this.materialBlend;
+		this.fsQuad.material = this.materialBlend;
 
 		if ( this.renderToScreen ) {
 
 			renderer.setRenderTarget( null );
-			renderer.render( this.scene, this.camera );
+			this.fsQuad.render( renderer );
 
 		} else {
 
 			renderer.setRenderTarget( writeBuffer );
 			if ( this.clear ) renderer.clear();
-			renderer.render( this.scene, this.camera );
+			this.fsQuad.render( renderer );
 
 		}
 

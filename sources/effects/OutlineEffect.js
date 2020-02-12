@@ -4,12 +4,6 @@
 import { Color } from '../math/Color.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { BackSide } from '../constants.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
-import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
-import { MeshPhysicalMaterial } from '../materials/MeshPhysicalMaterial.js'
-import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
-import { MeshToonMaterial } from '../materials/MeshToonMaterial.js'
 import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
 
 /**

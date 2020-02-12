@@ -16,7 +16,7 @@ import {
 import { _Math } from '../math/Math.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Matrix3 } from '../math/Matrix3.js'
-import { ImageUtils } from '../extras/ImageUtils.js'
+import { ImageUtils } from '../utils/ImageUtils.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/

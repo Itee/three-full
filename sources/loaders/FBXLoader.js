@@ -39,10 +39,6 @@ import { Euler } from '../math/Euler.js'
 import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
 import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
 import { NumberKeyframeTrack } from '../animation/tracks/NumberKeyframeTrack.js'
-import { NormalNode } from '../nodes/accessors/NormalNode.js'
-import { UVNode } from '../nodes/accessors/UVNode.js'
-import { Node } from '../nodes/core/Node.js'
-import { ColorNode } from '../nodes/inputs/ColorNode.js'
 import { PropertyBinding } from '../animation/PropertyBinding.js'
 import {
 	VertexColors,
@@ -50,12 +46,9 @@ import {
 	RepeatWrapping,
 	ClampToEdgeWrapping
 } from '../constants.js'
-import { Geometry } from '../core/Geometry.js'
 import { Loader } from './Loader.js'
 import { LoaderUtils } from './LoaderUtils.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
-import { Material } from '../materials/Material.js'
-import { Points } from '../objects/Points.js'
 import { _Math } from '../math/Math.js'
 
 /**

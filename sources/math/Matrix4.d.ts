@@ -9,7 +9,7 @@ import { Matrix } from './Matrix3';
 
 export class Matrix4 implements Matrix {
   constructor();
-  elements: Float32Array;
+  elements: number[];
   set(
     n11: number,
     n12: number,

@@ -17,7 +17,7 @@ var CSS2DObject = function ( element ) {
 	this.element = element;
 	this.element.style.position = 'absolute';
 
-	this.addEventListener( 'removed', function ( event ) {
+	this.addEventListener( 'removed', function () {
 
 		if ( this.element.parentNode !== null ) {
 
@@ -90,6 +90,7 @@ var CSS2DRenderer = function () {
 			element.style.MozTransform = style;
 			element.style.oTransform = style;
 			element.style.transform = style;
+			element.style.display = ( vector.z < - 1 || vector.z > 1 ) ? 'none' : '';
 
 			var objectData = {
 				distanceToCameraSquared: getDistanceToSquared( camera, object )

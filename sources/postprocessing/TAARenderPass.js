@@ -105,7 +105,7 @@ TAARenderPass.prototype = Object.assign( Object.create( SSAARenderPass.prototype
 
 				renderer.setRenderTarget( this.sampleRenderTarget );
 				if ( this.accumulateIndex === 0 ) renderer.clear();
-				renderer.render( this.scene2, this.camera2 );
+				this.fsQuad.render( renderer );
 
 				this.accumulateIndex ++;
 
@@ -125,7 +125,7 @@ TAARenderPass.prototype = Object.assign( Object.create( SSAARenderPass.prototype
 			this.copyUniforms[ "tDiffuse" ].value = this.sampleRenderTarget.texture;
 			renderer.setRenderTarget( writeBuffer );
 			renderer.clear();
-			renderer.render( this.scene2, this.camera2 );
+			this.fsQuad.render( renderer );
 
 		}
 
@@ -135,7 +135,7 @@ TAARenderPass.prototype = Object.assign( Object.create( SSAARenderPass.prototype
 			this.copyUniforms[ "tDiffuse" ].value = this.holdRenderTarget.texture;
 			renderer.setRenderTarget( writeBuffer );
 			if ( accumulationWeight === 0 ) renderer.clear();
-			renderer.render( this.scene2, this.camera2 );
+			this.fsQuad.render( renderer );
 
 		}
 

@@ -444,7 +444,7 @@ var Fire = function ( geometry, options ) {
 
 	};
 
-	this.onBeforeRender = function ( renderer, scene, camera ) {
+	this.onBeforeRender = function ( renderer ) {
 
 		var delta = this.clock.getDelta();
 		if ( delta > 0.1 ) {
