@@ -20,7 +20,8 @@ module.exports = {
 		'Three.js',
 		'Three.Legacy.js',
 		'polyfills.js',
-        '.DS_Store',						// Ignore DS_Store from r90
+        '.DS_Store',        // Ignore DS_Store from r90
+        'README',
 
         // Intermediary exporter files
 		'Curves.js',
