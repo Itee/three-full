@@ -46,8 +46,6 @@ module.exports = {
 
         // Specific file
         'Cloth.js',							// Use global variable from example html ! Need to be refactored
-        'OceanShaders.js',                  // Todo: check how to extends imported lib properly
-        'RectAreaLightUniformsLib.js',      // Todo: check how to extends imported lib properly
         'Volume.js',                        // damned eval
         'NRRDLoader.js',                    // Import Volume.js
         'XLoader.js'                     	// amd module
