@@ -374,7 +374,12 @@ gulp.task( 'build-test-unit', ( done ) => {
             describe( '${fileName}', () => {
                 ${Object.values( exports ).map( function ( value ) {
 
-                    const statement = `Three${Array.isArray(value) ? Object.values( value ).map( (property) => { return `['${property}']`}).join('') : `['${value}']`}`
+                    const statement = `Three${Array.isArray(value) ? 
+                        Object.values( value ).map( (property) => { 
+                            return `['${property}']`
+                        }).join('') 
+                        : 
+                        `['${value}']`}`
                     
                     return `
                             it( '${value} is bundlable', () => {
