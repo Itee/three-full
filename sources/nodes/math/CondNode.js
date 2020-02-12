@@ -34,10 +34,10 @@ CondNode.prototype.nodeType = "Cond";
 CondNode.prototype.getType = function ( builder ) {
 
 	if (this.ifNode) {
-		
+
 		var ifType = this.ifNode.getType( builder );
 		var elseType = this.elseNode.getType( builder );
-		
+
 		if ( builder.getTypeLength( elseType ) > builder.getTypeLength( ifType ) ) {
 
 			return elseType;
@@ -45,7 +45,7 @@ CondNode.prototype.getType = function ( builder ) {
 		}
 
 		return ifType;
-		
+
 	}
 	
 	return 'b';
@@ -71,18 +71,18 @@ CondNode.prototype.generate = function ( builder, output ) {
 		a = this.a.build( builder, condType ),
 		b = this.b.build( builder, condType ),
 		code;
-		
+
 	if (this.ifNode) {
-		
+
 		var ifCode = this.ifNode.build( builder, type ),
 			elseCode = this.elseNode.build( builder, type );
 		
 		code = '( ' + [ a, this.op, b, '?', ifCode, ':', elseCode ].join( ' ' ) + ' )';
-		
+
 	} else {
 
 		code = '( ' + a + ' ' + this.op + ' ' +  b  + ' )';
-		
+
 	}
 
 	return builder.format( code, this.getType( builder ), output );

@@ -1,10 +1,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Group } from './Group.js'
+import { Group } from '../objects/Group.js'
 import { Box3 } from '../math/Box3.js'
 import { Vector3 } from '../math/Vector3.js'
-import { _Math } from '../math/Math.js'
 
 /**
  * @author alteredq / http://alteredqualia.com/
@@ -17,7 +16,7 @@ import { _Math } from '../math/Math.js'
  *
  */
 
-var Car = ( function ( ) {
+var CarControls = ( function ( ) {
 
 	// private variables
 	var steeringWheelSpeed = 1.5;
@@ -59,7 +58,7 @@ var Car = ( function ( ) {
 
 	};
 
-	function Car( maxSpeed, acceleration, brakePower, turningRadius, keys ) {
+	function CarControls( maxSpeed, acceleration, brakePower, turningRadius, keys ) {
 
 		this.enabled = true;
 
@@ -104,9 +103,9 @@ var Car = ( function ( ) {
 
 	}
 
-	Car.prototype = {
+	CarControls.prototype = {
 
-		constructor: Car,
+		constructor: CarControls,
 
 		onKeyDown: function ( event ) {
 
@@ -308,8 +307,8 @@ var Car = ( function ( ) {
 
 	}
 
-	return Car;
+	return CarControls;
 
 } )();
 
-export { Car }
+export { CarControls }

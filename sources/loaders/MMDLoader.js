@@ -1067,7 +1067,7 @@ var MMDLoader = ( function () {
 		 * @param {function} onError
 		 * @return {Array<MeshToonMaterial>}
 		 */
-		build: function ( data, geometry, onProgress, onError ) {
+		build: function ( data, geometry /*, onProgress, onError */ ) {
 
 			var materials = [];
 

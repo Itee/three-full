@@ -76,9 +76,9 @@ var VRMLoader = ( function () {
 
 		parse: function ( gltf, onLoad ) {
 
-			var gltfParser = gltf.parser;
-			var gltfExtensions = gltf.userData.gltfExtensions || {};
-			var vrmExtension = gltfExtensions.VRM || {};
+			// var gltfParser = gltf.parser;
+			// var gltfExtensions = gltf.userData.gltfExtensions || {};
+			// var vrmExtension = gltfExtensions.VRM || {};
 
 			// handle VRM Extension here
 

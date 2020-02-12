@@ -8,6 +8,7 @@ export class Camera extends Object3D {
 	constructor();
 	matrixWorldInverse: Matrix4;
 	projectionMatrix: Matrix4;
+	projectionMatrixInverse: Matrix4;
 
 	isCamera: true;
 

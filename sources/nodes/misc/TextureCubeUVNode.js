@@ -5,9 +5,6 @@ import { TempNode } from '../core/TempNode.js'
 import { ConstNode } from '../core/ConstNode.js'
 import { StructNode } from '../core/StructNode.js'
 import { FunctionNode } from '../core/FunctionNode.js'
-import { ReflectNode } from '../accessors/ReflectNode.js'
-import { FloatNode } from '../inputs/FloatNode.js'
-import { BlinnExponentToRoughnessNode } from '../bsdfs/BlinnExponentToRoughnessNode.js'
 
 /**
  * @author sunag / http://www.sunag.com.br/
@@ -16,9 +13,9 @@ function TextureCubeUVNode( uv, textureSize, blinnExponentToRoughness ) {
 
 	TempNode.call( this, 'TextureCubeUVData' ); // TextureCubeUVData is type as StructNode
 
-	this.uv = uv || new ReflectNode( ReflectNode.VECTOR );
-	this.textureSize = textureSize || new FloatNode( 1024 );
-	this.blinnExponentToRoughness = blinnExponentToRoughness || new BlinnExponentToRoughnessNode();
+	this.uv = uv;
+	this.textureSize = textureSize;
+	this.blinnExponentToRoughness = blinnExponentToRoughness;
 
 }
 

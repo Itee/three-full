@@ -10,7 +10,8 @@ import { DefaultLoadingManager } from './LoadingManager.js'
  * @author Kevin Chapelier / https://github.com/kchapelier
  * See https://github.com/kchapelier/PRWM for more informations about this file format
  */
-	'use strict';
+
+var PRWMLoader = ( function () {
 
 	var bigEndianPlatform = null;
 
@@ -225,11 +226,11 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 	// Define the public interface
 
-	var PRWMLoader = function PRWMLoader( manager ) {
+	function PRWMLoader( manager ) {
 
 		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
 
-	};
+	}
 
 	PRWMLoader.prototype = {
 
@@ -262,8 +263,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 		parse: function ( arrayBuffer ) {
 
-			console.time( 'PRWMLoader' );
-
 			var data = decodePrwm( arrayBuffer ),
 				attributesKey = Object.keys( data.attributes ),
 				bufferGeometry = new BufferGeometry(),
@@ -283,8 +282,6 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 			}
 
-			console.timeEnd( 'PRWMLoader' );
-
 			return bufferGeometry;
 
 		}
@@ -296,4 +293,9 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 		return isBigEndianPlatform();
 
 	};
+
+	return PRWMLoader;
+
+} )();
+
 export { PRWMLoader }

@@ -116,8 +116,8 @@ ArrowHelper.prototype.setLength = function ( length, headLength, headWidth ) {
 
 ArrowHelper.prototype.setColor = function ( color ) {
 
-	this.line.material.color.copy( color );
-	this.cone.material.color.copy( color );
+	this.line.material.color.set( color );
+	this.cone.material.color.set( color );
 
 };
 

@@ -164,7 +164,7 @@ var MD2CharacterComplex = function () {
 
 		var loader = new MD2Loader();
 
-		loader.load( config.baseUrl + config.body, function( geo ) {
+		loader.load( config.baseUrl + config.body, function ( geo ) {
 
 			var boundingBox = new Box3();
 			boundingBox.setFromBufferAttribute( geo.attributes.position );
@@ -187,7 +187,7 @@ var MD2CharacterComplex = function () {
 
 		var generateCallback = function ( index, name ) {
 
-			return function( geo ) {
+			return function ( geo ) {
 
 				var mesh = createPart( geo, scope.skinsWeapon[ index ] );
 				mesh.scale.set( scope.scale, scope.scale, scope.scale );
@@ -203,7 +203,7 @@ var MD2CharacterComplex = function () {
 
 				checkLoadingComplete();
 
-			}
+			};
 
 		};
 
@@ -238,7 +238,7 @@ var MD2CharacterComplex = function () {
 
 	};
 
-	this.setSkin = function( index ) {
+	this.setSkin = function ( index ) {
 
 		if ( this.meshBody && this.meshBody.material.wireframe === false ) {
 
@@ -301,7 +301,7 @@ var MD2CharacterComplex = function () {
 
 		if ( this.animations ) {
 
-			this.updateBehaviors( delta );
+			this.updateBehaviors();
 			this.updateAnimations( delta );
 
 		}
@@ -324,7 +324,7 @@ var MD2CharacterComplex = function () {
 			this.meshBody.update( delta );
 
 			this.meshBody.setAnimationWeight( this.activeAnimation, mix );
-			this.meshBody.setAnimationWeight( this.oldAnimation,  1 - mix );
+			this.meshBody.setAnimationWeight( this.oldAnimation, 1 - mix );
 
 		}
 
@@ -333,13 +333,13 @@ var MD2CharacterComplex = function () {
 			this.meshWeapon.update( delta );
 
 			this.meshWeapon.setAnimationWeight( this.activeAnimation, mix );
-			this.meshWeapon.setAnimationWeight( this.oldAnimation,  1 - mix );
+			this.meshWeapon.setAnimationWeight( this.oldAnimation, 1 - mix );
 
 		}
 
 	};
 
-	this.updateBehaviors = function ( delta ) {
+	this.updateBehaviors = function () {
 
 		var controls = this.controls;
 		var animations = this.animations;
@@ -457,7 +457,7 @@ var MD2CharacterComplex = function () {
 
 		this.maxReverseSpeed = - this.maxSpeed;
 
-		if ( controls.moveForward )  this.speed = _Math.clamp( this.speed + delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
+		if ( controls.moveForward ) this.speed = _Math.clamp( this.speed + delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
 		if ( controls.moveBackward ) this.speed = _Math.clamp( this.speed - delta * this.backAcceleration, this.maxReverseSpeed, this.maxSpeed );
 
 		// orientation based on controls

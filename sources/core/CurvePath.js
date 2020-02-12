@@ -12,6 +12,22 @@ import { LineCurve3 } from '../curves/LineCurve3.js'
 import { QuadraticBezierCurve } from '../curves/QuadraticBezierCurve.js'
 import { QuadraticBezierCurve3 } from '../curves/QuadraticBezierCurve3.js'
 import { SplineCurve } from '../curves/SplineCurve.js'
+import {
+	GrannyKnot,
+	HeartCurve,
+	VivianiCurve,
+	KnotCurve,
+	HelixCurve,
+	TrefoilKnot,
+	TorusKnot,
+	CinquefoilKnot,
+	TrefoilPolynomialKnot,
+	FigureEightPolynomialKnot,
+	DecoratedTorusKnot4a,
+	DecoratedTorusKnot4b,
+	DecoratedTorusKnot5a,
+	DecoratedTorusKnot5c
+} from '../curves/CurveExtras.js'
 /**
  * @author zz85 / http://www.lab4games.net/zz85/blog
  *
@@ -32,7 +48,21 @@ var Curves = {
     LineCurve3: LineCurve3,
     QuadraticBezierCurve: QuadraticBezierCurve,
     QuadraticBezierCurve3: QuadraticBezierCurve3,
-    SplineCurve: SplineCurve
+    SplineCurve: SplineCurve,
+    GrannyKnot: GrannyKnot,
+    HeartCurve: HeartCurve,
+    VivianiCurve: VivianiCurve,
+    KnotCurve: KnotCurve,
+    HelixCurve: HelixCurve,
+    TrefoilKnot: TrefoilKnot,
+    TorusKnot: TorusKnot,
+    CinquefoilKnot: CinquefoilKnot,
+    TrefoilPolynomialKnot: TrefoilPolynomialKnot,
+    FigureEightPolynomialKnot: FigureEightPolynomialKnot,
+    DecoratedTorusKnot4a: DecoratedTorusKnot4a,
+    DecoratedTorusKnot4b: DecoratedTorusKnot4b,
+    DecoratedTorusKnot5a: DecoratedTorusKnot5a,
+    DecoratedTorusKnot5c: DecoratedTorusKnot5c
 }
 function CurvePath() {
 

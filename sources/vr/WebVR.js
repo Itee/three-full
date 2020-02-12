@@ -96,7 +96,7 @@ var WebVR = {
 
 		}
 
-		function showVRNotFound() {
+		function disableButton() {
 
 			button.style.display = '';
 
@@ -104,14 +104,28 @@ var WebVR = {
 			button.style.left = 'calc(50% - 75px)';
 			button.style.width = '150px';
 
-			button.textContent = 'VR NOT FOUND';
-
 			button.onmouseenter = null;
 			button.onmouseleave = null;
 
 			button.onclick = null;
 
+		}
+
+		function showVRNotFound() {
+
+			disableButton();
+
+			button.textContent = 'VR NOT FOUND';
+
 			renderer.vr.setDevice( null );
+
+		}
+
+		function showXRNotFound() {
+
+			disableButton();
+
+			button.textContent = 'XR NOT FOUND';
 
 		}
 
@@ -139,7 +153,7 @@ var WebVR = {
 
 			stylizeElement( button );
 
-			navigator.xr.supportsSession( 'immersive-vr' ).then( showEnterXR );
+			navigator.xr.supportsSession( 'immersive-vr' ).then( showEnterXR ).catch( showXRNotFound );
 
 			return button;
 

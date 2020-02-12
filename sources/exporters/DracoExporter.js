@@ -3,8 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { BufferGeometry } from '../core/BufferGeometry.js'
 
-'use strict';
-
 /**
  * Export draco compressed files from threejs geometry objects.
  *
@@ -21,6 +19,8 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
  * @class DRACOExporter
  * @author tentone
  */
+
+/* global DracoEncoderModule */
 
 var DRACOExporter = function () {};
 
@@ -81,7 +81,7 @@ DRACOExporter.prototype = {
 
 		} else {
 
-			var faces = new ( vertices.count > 65535 ? Uint32Array : Uint16Array ) ( vertices.count );
+			var faces = new ( vertices.count > 65535 ? Uint32Array : Uint16Array )( vertices.count );
 
 			for ( var i = 0; i < faces.length; i ++ ) {
 

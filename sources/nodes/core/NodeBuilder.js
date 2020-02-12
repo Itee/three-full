@@ -151,8 +151,7 @@ function NodeBuilder() {
 
 	// --
 
-	this.parsing = false;
-	this.optimize = true;
+	this.analyzing = false;
 
 }
 
@@ -289,6 +288,8 @@ NodeBuilder.prototype = {
 	addContext: function ( context ) {
 
 		this.context = Object.assign( {}, this.context, context );
+		this.context.extra = this.context.extra || {};
+
 		this.contexts.push( this.context );
 
 		return this;

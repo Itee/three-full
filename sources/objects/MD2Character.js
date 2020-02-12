@@ -58,7 +58,7 @@ var MD2Character = function () {
 
 			var boundingBox = new Box3();
 			boundingBox.setFromBufferAttribute( geo.attributes.position );
-			
+
 			scope.root.position.y = - scope.scale * boundingBox.min.y;
 
 			var mesh = createPart( geo, scope.skinsBody[ 0 ] );

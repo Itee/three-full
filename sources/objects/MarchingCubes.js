@@ -572,7 +572,6 @@ var MarchingCubes = function ( resolution, material, enableUvs, enableColors ) {
 
 			} catch ( err ) {
 
-				userDefineColor = false;
 				ballColor = new Color( ballx, bally, ballz );
 
 			}
@@ -982,6 +981,7 @@ var MarchingCubes = function ( resolution, material, enableUvs, enableColors ) {
 
 MarchingCubes.prototype = Object.create( ImmediateRenderObject.prototype );
 MarchingCubes.prototype.constructor = MarchingCubes;
+
 /////////////////////////////////////
 // Marching cubes lookup tables
 /////////////////////////////////////

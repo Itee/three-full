@@ -131,6 +131,32 @@ import {
 	BoxGeometry,
 	BoxBufferGeometry
 } from '../geometries/BoxGeometry.js'
+import { ArcCurve } from '../curves/ArcCurve.js'
+import { CatmullRomCurve3 } from '../curves/CatmullRomCurve3.js'
+import { CubicBezierCurve } from '../curves/CubicBezierCurve.js'
+import { CubicBezierCurve3 } from '../curves/CubicBezierCurve3.js'
+import { EllipseCurve } from '../curves/EllipseCurve.js'
+import { LineCurve } from '../curves/LineCurve.js'
+import { LineCurve3 } from '../curves/LineCurve3.js'
+import { QuadraticBezierCurve } from '../curves/QuadraticBezierCurve.js'
+import { QuadraticBezierCurve3 } from '../curves/QuadraticBezierCurve3.js'
+import { SplineCurve } from '../curves/SplineCurve.js'
+import {
+	GrannyKnot,
+	HeartCurve,
+	VivianiCurve,
+	KnotCurve,
+	HelixCurve,
+	TrefoilKnot,
+	TorusKnot,
+	CinquefoilKnot,
+	TrefoilPolynomialKnot,
+	FigureEightPolynomialKnot,
+	DecoratedTorusKnot4a,
+	DecoratedTorusKnot4b,
+	DecoratedTorusKnot5a,
+	DecoratedTorusKnot5c
+} from '../curves/CurveExtras.js'
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -175,6 +201,32 @@ var Geometries = {
     CircleBufferGeometry: CircleBufferGeometry,
     BoxGeometry: BoxGeometry,
     BoxBufferGeometry: BoxBufferGeometry
+}
+var Curves = {
+	ArcCurve: ArcCurve,
+	CatmullRomCurve3: CatmullRomCurve3,
+	CubicBezierCurve: CubicBezierCurve,
+	CubicBezierCurve3: CubicBezierCurve3,
+	EllipseCurve: EllipseCurve,
+	LineCurve: LineCurve,
+	LineCurve3: LineCurve3,
+	QuadraticBezierCurve: QuadraticBezierCurve,
+	QuadraticBezierCurve3: QuadraticBezierCurve3,
+	SplineCurve: SplineCurve,
+	GrannyKnot: GrannyKnot,
+	HeartCurve: HeartCurve,
+	VivianiCurve: VivianiCurve,
+	KnotCurve: KnotCurve,
+	HelixCurve: HelixCurve,
+	TrefoilKnot: TrefoilKnot,
+	TorusKnot: TorusKnot,
+	CinquefoilKnot: CinquefoilKnot,
+	TrefoilPolynomialKnot: TrefoilPolynomialKnot,
+	FigureEightPolynomialKnot: FigureEightPolynomialKnot,
+	DecoratedTorusKnot4a: DecoratedTorusKnot4a,
+	DecoratedTorusKnot4b: DecoratedTorusKnot4b,
+	DecoratedTorusKnot5a: DecoratedTorusKnot5a,
+	DecoratedTorusKnot5c: DecoratedTorusKnot5c,
 }
 function ObjectLoader( manager ) {
 

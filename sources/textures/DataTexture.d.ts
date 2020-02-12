@@ -15,7 +15,7 @@ import { TypedArray } from '../polyfills';
 export class DataTexture extends Texture {
 
 	constructor(
-		data: ArrayBuffer | TypedArray,
+		data: TypedArray,
 		width: number,
 		height: number,
 		format?: PixelFormat,

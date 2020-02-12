@@ -407,8 +407,6 @@ import { Vector3 } from '../math/Vector3.js'
 		return point.set( x, y, z ).multiplyScalar( this.scale );
 
 	};
-
-	// export
 export {
 	GrannyKnot,
 	HeartCurve,

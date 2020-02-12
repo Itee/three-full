@@ -29,7 +29,9 @@ ColladaExporter.prototype = {
 
 	constructor: ColladaExporter,
 
-	parse: function ( object, onDone, options = {} ) {
+	parse: function ( object, onDone, options ) {
+
+		options = options || {};
 
 		options = Object.assign( {
 			version: '1.4.1',
@@ -389,7 +391,7 @@ ColladaExporter.prototype = {
 				var reflectivity = m.reflectivity || 0;
 
 				// Do not export and alpha map for the reasons mentioned in issue (#13792)
-				// in js alpha maps are black and white, but collada expects the alpha
+				// in three.js alpha maps are black and white, but collada expects the alpha
 				// channel to specify the transparency
 				var transparencyNode = '';
 				if ( m.transparent === true ) {
@@ -598,7 +600,7 @@ ColladaExporter.prototype = {
 			'<asset>' +
 			(
 				'<contributor>' +
-				'<authoring_tool>js Collada Exporter</authoring_tool>' +
+				'<authoring_tool>three.js Collada Exporter</authoring_tool>' +
 				( options.author !== null ? `<author>${ options.author }</author>` : '' ) +
 				'</contributor>' +
 				`<created>${ ( new Date() ).toISOString() }</created>` +
