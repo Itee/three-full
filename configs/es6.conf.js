@@ -60,6 +60,9 @@ module.exports = {
         ArcCurve:                    {
             outputOverride: 'curves/ArcCurve.js'
         },
+        BasisTextureLoader:          {
+            exportsOverride: [ 'BasisTextureLoader' ]
+        },
         BokehShader2:                {
             importsOverride: [ 'Vector2' ],
             replacements:    [
