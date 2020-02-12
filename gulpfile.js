@@ -14,7 +14,7 @@ const replace = require( 'gulp-batch-replace' )
 const del     = require( 'del' )
 const rollup  = require( 'rollup' )
 const fsUtils = require( './utils' )
-const karma     = require( 'karma' )
+const karma   = require( 'karma' )
 
 const log     = util.log
 const colors  = util.colors
@@ -108,16 +108,16 @@ gulp.task( 'create-pass-file', ( done ) => {
         '\n' +
         '} );'
 
-    fs.writeFile( "./node_modules/three/examples/js/postprocessing/Pass.js", stringFile, ( error ) => {
+    fs.writeFile( './node_modules/three/examples/js/postprocessing/Pass.js', stringFile, ( error ) => {
 
         if ( error ) {
             return console.error( error )
         }
 
-        console.log( "Pass.js was saved !" )
+        console.log( 'Pass.js was saved !' )
         done()
 
-    } );
+    } )
 
 } )
 
@@ -135,10 +135,10 @@ gulp.task( 'fix-struct-node', () => {
 gulp.task( 'fix-buffer-geometry-util', () => {
 
     const replacement = 'for ( var attributeNameIndex = 0, numberOfAttributes = attributeNames.length ; attributeNameIndex < numberOfAttributes ; attributeNameIndex++  ) {\n' +
-                            '\t\t\tvar name = attributeNames[ attributeNameIndex ];'
+        '\t\t\tvar name = attributeNames[ attributeNameIndex ];'
 
     return gulp.src( './node_modules/three/examples/js/utils/BufferGeometryUtils.js' )
-               .pipe( replace( [ [ 'for ( var name of attributeNames ) {', replacement  ] ] ) )
+               .pipe( replace( [ [ 'for ( var name of attributeNames ) {', replacement ] ] ) )
                .pipe( gulp.dest( './node_modules/three/examples/js/utils' ) )
 
 } )
@@ -162,7 +162,7 @@ gulp.task( 'clean-builds', () => {
         './builds'
     ] )
 
-})
+} )
 
 gulp.task( 'clean-sources', () => {
 
@@ -170,18 +170,18 @@ gulp.task( 'clean-sources', () => {
         './sources'
     ] )
 
-})
+} )
 
 gulp.task( 'clean-tests', () => {
 
     return del( [
         './tests/**/*.js',
-        './tests/**/*.html',
+        './tests/**/*.html'
     ] )
 
-})
+} )
 
-gulp.task( 'clean', gulp.parallel('clean-builds', 'clean-sources', 'clean-tests') )
+gulp.task( 'clean', gulp.parallel( 'clean-builds', 'clean-sources', 'clean-tests' ) )
 
 /**
  * @method npm run lint
@@ -213,7 +213,7 @@ gulp.task( 'lint-tests', () => {
 
 } )
 
-gulp.task( 'lint', gulp.parallel('lint-sources', 'lint-tests') )
+gulp.task( 'lint', gulp.parallel( 'lint-sources', 'lint-tests' ) )
 
 /////////////////////
 ///// CONVERT ///////
@@ -316,14 +316,21 @@ gulp.task( 'build-test-javascript', ( done ) => {
 gulp.task( 'build-test-unit', ( done ) => {
 
     const unitsConfig = require( './configs/units.conf' )
-    const excludes       = [
-//        'shaders'
+    const excludes    = [
+        //        'shaders'
     ]
 
     const basePath     = path.join( __dirname, 'tests' )
     const filesPath    = fsUtils.getFilesPathsUnder( basePath )
     const allowedPaths = fsUtils.excludesFilesPaths( filesPath, excludes )
-    const jsFilesPath  = fsUtils.filterJavascriptFiles( allowedPaths )
+    const jsFilesPath  = fsUtils.filterJavascriptFiles( allowedPaths, ( path ) => {
+
+        if ( path.includes( 'glsl' ) || !path.includes( '.js' ) || path.includes( '.unit.js' ) ) {
+            return false
+        }
+        return true
+
+    } )
 
     for ( let pathIndex = 0, numberOfPaths = jsFilesPath.length ; pathIndex < numberOfPaths ; pathIndex++ ) {
 
@@ -334,29 +341,30 @@ gulp.task( 'build-test-unit', ( done ) => {
         const outputPath   = path.join( dirPath, fileName + '.unit.js' )
 
         // Get exports from file then for each...
+        const edgeCases  = unitsConfig[ fileName ] || {}
+        const imports    = edgeCases.imports || ''
+        const preRequise = edgeCases.preRequise || ''
+        const args       = edgeCases.args || ''
+        const exports    = edgeCases.exports || [ fileName ]
 
-        const imports    = ''
-        const preRequise = ''
-        const snipet     = '\t\t\t\tvar ' + fileName.toLowerCase() + ' = new Three.' + fileName + '()\n'
+        const template = `
+            /* global describe, it */
+            describe( '${fileName}', () => {
+                ${Object.values( exports ).map( function ( value ) {
 
-        const template = '/* global describe, it */\n' +
-            '\n' +
-            'describe( \'' + fileName + '\', () => {\n' +
-            '\n' +
-            '    it( \'is bundlable\', () => {\n' +
-            '\n' +
-            '       should.exist( Three[\'' + fileName + '\'] )\n' +
-            '\n' +
-            '    } )\n' +
-            '\n' +
-            '    it( \'is instanciable\', () => {\n' +
-            '\n' +
-            '       should.exist( new Three[\'' + fileName + '\']() )\n' +
-            '\n' +
-            '    } )\n' +
-            '\n' +
-            '} )\n'
+            return `
+                    it( '${value} is bundlable', () => {
+                        should.exist( Three['${value}'] )
+                    } )
+                    
+                    it( '${value} is instanciable', () => {
+                        should.exist( new Three['${value}'](${args}) )
+                    } )
+                    `
 
+        } ).join( '\n' )}
+            } )
+            `
 
         console.log( 'Create ' + outputPath )
         fs.writeFileSync( outputPath, template )
@@ -367,7 +375,165 @@ gulp.task( 'build-test-unit', ( done ) => {
 
 } )
 
-gulp.task( 'build-test', gulp.series( 'clean-tests', 'build-test-javascript', 'build-test-unit' ) )
+gulp.task( 'build-test-html', ( done ) => {
+
+    const unitsConfig = require( './configs/units.conf' )
+    const excludes    = [
+        //        'shaders'
+    ]
+
+    const basePath     = path.join( __dirname, 'tests' )
+    const filesPath    = fsUtils.getFilesPathsUnder( basePath )
+    const allowedPaths = fsUtils.excludesFilesPaths( filesPath, excludes )
+    const jsFilesPath  = fsUtils.filterJavascriptFiles( allowedPaths, ( path ) => {
+
+        if ( path.includes( 'glsl' ) || !path.includes( '.js' ) || path.includes( '.unit.js' ) ) {
+            return false
+        }
+        return true
+
+    } )
+
+    for ( let pathIndex = 0, numberOfPaths = jsFilesPath.length ; pathIndex < numberOfPaths ; pathIndex++ ) {
+
+        const filePath     = jsFilesPath[ pathIndex ]
+        const dirPath      = path.dirname( filePath )
+        const fileBaseName = path.basename( filePath )
+        const fileName     = path.basename( filePath, '.test.js' )
+        const outputPath   = path.join( dirPath, fileName + '.unit.html' )
+
+        // Get exports from file then for each...
+        const edgeCases  = unitsConfig[ fileName ] || {}
+        const imports    = edgeCases.imports || ''
+        const preRequise = edgeCases.preRequise || ''
+        const args       = edgeCases.args || ''
+        const exports    = edgeCases.exports || [ fileName ]
+
+        let template = `
+            <!DOCTYPE html>
+            <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${fileName}</title>
+                    <style>
+                        html {
+                            height: 100%;
+                        }
+                        body {
+                            min-height: 100%;
+                            /*display: table;*/
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            margin: 0;
+                            text-align: center;
+                        }
+                    </style>
+                </head>
+                <body id="body">
+                    ${imports} 
+                    <script type="application/javascript" src="./${fileName}.test.js"></script>
+                    <script type="application/javascript">
+                        /* global Three */
+                        ${preRequise}
+                        try {
+                            
+                            ${Object.values( exports ).map( function ( value ) {
+            return 'var instance = new Three["' + value + '"]()'
+        } ).join( '\n\t\t\t\t\t\t\t' )}
+                            
+                            onResult ( 'SUCCESS', 'Successfully instancing ${exports.toString()}', 'green' )
+                    
+                        } catch ( error ) {
+                    
+                            onResult ( 'ERROR', error.message, 'red' )
+                    
+                        }
+                    
+                        function onResult ( title, message, bgColor ) {
+                    
+                            var container = document.createElement( 'div' )
+                            document.body.appendChild( container )
+                    
+                            var titleElement = document.createElement( 'h1' )
+                            titleElement.innerHTML += title
+                            container.appendChild( titleElement )
+                    
+                            var messageElement = document.createElement( 'p' )
+                            messageElement.innerHTML += message
+                            container.appendChild( messageElement )
+                    
+                            document.body.style.backgroundColor = bgColor
+                    
+                        }
+                    </script>
+                </body>
+            </html>
+            `
+
+        console.log( 'Create ' + outputPath )
+        fs.writeFileSync( outputPath, template )
+
+    }
+
+    done()
+
+} )
+
+gulp.task( 'build-test-three', ( done ) => {
+
+    const outputPath = path.join( __dirname, 'tests', 'Three.unit.html' )
+
+    const template = `
+            <!DOCTYPE html>
+            <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Three Unit</title>
+                    <style>
+                        html {
+                            height: 100%;
+                        }
+                        body {
+                            min-height: 100%;
+                            /*display: table;*/
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            margin: 0;
+                            text-align: center;
+                        }
+                    </style>
+                </head>
+                <body id="body">
+                    <script type="application/javascript" src="../builds/Three.iife.js"></script>
+                    <script type="application/javascript">
+                        /* global Three */
+                        var container = document.createElement( 'div' )
+                        document.body.appendChild( container )
+                
+                        var titleElement = document.createElement( 'h1' )
+                        titleElement.innerHTML += 'Three'
+                        container.appendChild( titleElement )
+                
+                        var messageElement = document.createElement( 'p' )
+                        messageElement.innerHTML += 'revision ' + Three.REVISION
+                        container.appendChild( messageElement )
+                
+                        document.body.style.backgroundColor = 'green'
+                    </script>
+                </body>
+            </html>
+            `
+
+    console.log( 'Create ' + outputPath )
+    fs.writeFileSync( outputPath, template )
+
+    done()
+
+} )
+
+gulp.task( 'build-test', gulp.series( 'clean-tests', 'build-test-javascript', 'build-test-unit', 'build-test-html', 'build-test-three' ) )
 
 /**
  * @method npm run unit

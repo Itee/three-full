@@ -76800,7 +76800,7 @@ OBJLoader2.prototype = {
 		var buildCode = function ( codeSerializer ) {
 			var workerCode = '';
 			workerCode += '\n\n';
-			workerCode += 'THREE = { LoaderSupport: {}, OBJLoader2: {} };\n\n';
+			workerCode += 'LoaderSupport = {} \nOBJLoader2 = {};\n\n';
 			workerCode += codeSerializer.serializeObject( 'LoaderSupport.Validator', LoaderSupport.Validator );
 			workerCode += codeSerializer.serializeClass( 'OBJLoader2.Parser', OBJLoader2.Parser );
 

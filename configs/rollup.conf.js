@@ -34,8 +34,9 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
             '               return global;\n' +
             '           } else if ( global.hasOwnProperty(\'window\') && global.window instanceof Window ) {\n' +
             '               return global.window;\n' +
-            '           } else if( DEBUG ) {\n' +
-            '               console.warn("Three-Full: Unable to assign global variable as window object. Some dependencies that depending on global window variable could not work properly.");\n' +
+            '           } else {\n' +
+            '               if( DEBUG ) { console.warn("Three-Full: Unable to assign global variable as window object. Some dependencies that depending on global window variable could not work properly."); }\n' +
+            '               return {};\n' +
             '           }\n' +
             '           \n' +
             '       } else if ( GLOBAL ) {\n' +
@@ -44,8 +45,9 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
             '               return GLOBAL;\n' +
             '           } else if ( GLOBAL.hasOwnProperty(\'window\') && GLOBAL.window instanceof Window ) {\n' +
             '               return GLOBAL.window;\n' +
-            '           } else if( DEBUG ) {\n' +
-            '               console.warn("Three-Full: Unable to assign GLOBAL variable as window object. Some dependencies that depending on global window variable could not work properly.");\n' +
+            '           } else {\n' +
+            '               if( DEBUG ) { console.warn("Three-Full: Unable to assign GLOBAL variable as window object. Some dependencies that depending on global window variable could not work properly."); }\n' +
+            '               return {};\n' +
             '           }\n' +
             '           \n' +
             '       } else if ( self ) {\n' +
@@ -54,16 +56,19 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
             '               return self;\n' +
             '           } else if ( self.hasOwnProperty(\'window\') && self.window instanceof Window ) {\n' +
             '               return self.window;\n' +
-            '           } else if( DEBUG ) {\n' +
-            '               console.warn("Three-Full: Unable to assign self variable as window object. Some dependencies that depending on global window variable could not work properly.");\n' +
+            '           } else {\n' +
+            '               if( DEBUG ) { console.warn("Three-Full: Unable to assign self variable as window object. Some dependencies that depending on global window variable could not work properly."); }\n' +
+            '               return {};\n' +
             '           }\n' +
             '           \n' +
-            '       } else if( DEBUG ) {\n' +
-            '           console.warn("Three-Full: Unable to find classic window global variable declaration in [window, global, GLOBAL or self]. Some dependencies that depending on global window variable could not work properly.");\n' +
+            '       } else {\n' +
+            '           if( DEBUG ) { console.warn("Three-Full: Unable to find classic window global variable declaration in [window, global, GLOBAL or self]. Some dependencies that depending on global window variable could not work properly."); }\n' +
+            '           return {};\n' +
             '       }\n' +
             '   \n' +
-            '   } else if( DEBUG ) {\n' +
-            '       console.warn("Three-Full: It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly.");\n' +
+            '   } else {\n' +
+            '       if( DEBUG ) { console.warn("Three-Full: It seems you are using this package in a non-browser environment. Some dependencies that depending on global window variable could not work properly."); }\n' +
+            '       return {};\n' +
             '   }\n' +
             '}\n\n'
     }
@@ -104,6 +109,10 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
             // advanced options
             onwarn: function onWarn ( { loc, frame, message } ) {
                 if ( loc ) {
+                    // Ignore eval error from LoaderSupport
+                    if(loc.file.includes('LoaderSupport.js')) {
+                        return
+                    }
                     console.warn( `${loc.file} (${loc.line}:${loc.column}) ${message}` )
                     if ( frame ) {
                         console.warn( frame )

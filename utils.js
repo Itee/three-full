@@ -92,7 +92,7 @@ function getFilesPathsUnder ( filePaths ) {
 
         } else {
 
-            console.error( "Invalid stat object !" )
+            console.error( 'Invalid stat object !' )
 
         }
 
@@ -161,7 +161,7 @@ function excludesFilesPaths ( filePaths, excludes ) {
  * @return {Array.<string>} The filtered path with only javascript files
  * @private
  */
-function filterJavascriptFiles ( filePaths ) {
+function filterJavascriptFiles ( filePaths, filter ) {
 
     let filteredFilesPath = []
 
@@ -171,9 +171,13 @@ function filterJavascriptFiles ( filePaths ) {
         filePath = filePaths[ filePathIndex ]
 
         // Not a js file like fonts or shaders
-        const fileExtension = path.extname( filePath )
-        if ( filePath.indexOf("glsl") > -1 || fileExtension !== '.js' ) {
+        if ( filter && !filter( filePath ) ) {
             continue
+        } else {
+            const fileExtension = path.extname( filePath )
+            if ( filePath.indexOf( 'glsl' ) > -1 || fileExtension !== '.js' ) {
+                continue
+            }
         }
 
         filteredFilesPath.push( filePath )
