@@ -1308,13 +1308,9 @@ function _applyEdgeCases ( filePath, imports, replacements, exports, outputPath,
                     const realImportName = edgeCaseImport.slice( 1 )
 
                     if ( data.imports.includes( realImportName ) ) {
-
                         data.imports.splice( data.imports.indexOf( realImportName ), 1 )
-
                     } else {
-
                         console.error( `Try to remove unexisting import ${realImportName} from ${filePath}. You should remove the this case from config file.` )
-
                     }
 
                 } else {
