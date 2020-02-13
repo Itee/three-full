@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
 import { Group } from '../objects/Group.js'
 import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
@@ -15,7 +16,6 @@ import {
 	AdditiveBlending
 } from '../constants.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
  * Autodesk 3DS three.js file loader, based on lib3ds.
@@ -30,7 +30,8 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 var TDSLoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
+
 	this.debug = false;
 
 	this.group = null;
@@ -41,11 +42,9 @@ var TDSLoader = function ( manager ) {
 
 };
 
-TDSLoader.prototype = {
+TDSLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 	constructor: TDSLoader,
-
-	crossOrigin: 'anonymous',
 
 	/**
 	 * Load 3ds file from url.
@@ -60,7 +59,7 @@ TDSLoader.prototype = {
 
 		var scope = this;
 
-		var path = this.path !== undefined ? this.path : LoaderUtils.extractUrlBase( url );
+		var path = ( scope.path === '' ) ? LoaderUtils.extractUrlBase( url ) : scope.path;
 
 		var loader = new FileLoader( this.manager );
 		loader.setPath( this.path );
@@ -291,6 +290,13 @@ TDSLoader.prototype = {
 				var shininess = this.readWord( data );
 				material.shininess = shininess;
 				this.debugMessage( '   Shininess : ' + shininess );
+
+			} else if ( next === MAT_TRANSPARENCY ) {
+
+				var opacity = this.readWord( data );
+				material.opacity = opacity * 0.01;
+				this.debugMessage( '  Opacity : ' + opacity );
+				material.transparent = opacity < 100 ? true : false;
 
 			} else if ( next === MAT_TEXMAP ) {
 
@@ -863,52 +869,6 @@ TDSLoader.prototype = {
 	},
 
 	/**
-	 * Set path to adjust the path to the original 3ds file.
-	 *
-	 * @method setPath
-	 * @param {String} path Path to file.
-	 * @return Self for chaining.
-	 */
-	setPath: function ( path ) {
-
-		this.path = path;
-
-		return this;
-
-	},
-
-	/**
-	 * Set resource path used to determine the path to attached resources like textures.
-	 *
-	 * @method setResourcePath
-	 * @param {String} resourcePath Path to resources.
-	 * @return Self for chaining.
-	 */
-	setResourcePath: function ( resourcePath ) {
-
-		this.resourcePath = resourcePath;
-
-		return this;
-
-	},
-
-	/**
-	 * Set crossOrigin value to configure CORS settings
-	 * for the image loading process.
-	 *
-	 * @method setCrossOrigin
-	 * @param {String} crossOrigin crossOrigin string.
-	 * @return Self for chaining.
-	 */
-	setCrossOrigin: function ( crossOrigin ) {
-
-		this.crossOrigin = crossOrigin;
-
-		return this;
-
-	},
-
-	/**
 	 * Print debug message to the console.
 	 *
 	 * Is controlled by a flag to show or hide debug messages.
@@ -925,7 +885,8 @@ TDSLoader.prototype = {
 		}
 
 	}
-};
+
+} );
 
 // var NULL_CHUNK = 0x0000;
 var M3DMAGIC = 0x4D4D;
@@ -975,7 +936,7 @@ var MAT_DIFFUSE = 0xA020;
 var MAT_SPECULAR = 0xA030;
 var MAT_SHININESS = 0xA040;
 // var MAT_SHIN2PCT = 0xA041;
-// var MAT_TRANSPARENCY = 0xA050;
+var MAT_TRANSPARENCY = 0xA050;
 // var MAT_XPFALL = 0xA052;
 // var MAT_USE_XPFALL = 0xA240;
 // var MAT_REFBLUR = 0xA053;

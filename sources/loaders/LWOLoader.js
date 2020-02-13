@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
 import { TextureLoader } from './TextureLoader.js'
 import { Points } from '../objects/Points.js'
@@ -28,7 +29,6 @@ import {
 	MirroredRepeatWrapping
 } from '../constants.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 import { MeshPhysicalMaterial } from '../materials/MeshPhysicalMaterial.js'
 import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
 
@@ -2045,25 +2045,23 @@ var lwoTree;
 
 var LWOLoader = function ( manager, parameters ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 	parameters = parameters || {};
 
-	this.resourcePath = ( parameters.resourcePath !== undefined ) ? parameters.resourcePath : undefined;
+	this.resourcePath = ( parameters.resourcePath !== undefined ) ? parameters.resourcePath : '';
 
 };
 
-LWOLoader.prototype = {
+LWOLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 	constructor: LWOLoader,
-
-	crossOrigin: 'anonymous',
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
 		var self = this;
 
-		var path = ( self.path === undefined ) ? extractParentUrl( url, 'Objects' ) : self.path;
+		var path = ( self.path === '' ) ? extractParentUrl( url, 'Objects' ) : self.path;
 
 		// give the mesh a default name based on the filename
 		var modelName = url.split( path ).pop().split( '.' )[ 0 ];
@@ -2082,27 +2080,6 @@ LWOLoader.prototype = {
 
 	},
 
-	setCrossOrigin: function ( value ) {
-
-		this.crossOrigin = value;
-		return this;
-
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
-
-	},
-
-	setResourcePath: function ( value ) {
-
-		this.resourcePath = value;
-		return this;
-
-	},
-
 	parse: function ( iffBuffer, path, modelName ) {
 
 		lwoTree = new IFFParser().parse( iffBuffer );
@@ -2115,7 +2092,7 @@ LWOLoader.prototype = {
 
 	}
 
-};
+} );
 
 // Parse the lwoTree object
 function LWOTreeParser( textureLoader ) {

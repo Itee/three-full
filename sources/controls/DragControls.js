@@ -7,7 +7,6 @@ import { Raycaster } from '../core/Raycaster.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix4 } from '../math/Matrix4.js'
-import { Camera } from '../cameras/Camera.js'
 
 /**
  * @author zz85 / https://github.com/zz85
@@ -16,13 +15,6 @@ import { Camera } from '../cameras/Camera.js'
  */
 
 var DragControls = function ( _objects, _camera, _domElement ) {
-
-	if ( _objects instanceof Camera ) {
-
-		console.warn( 'DragControls: Constructor now expects ( objects, camera, domElement )' );
-		var temp = _objects; _objects = _camera; _camera = temp;
-
-	}
 
 	var _plane = new Plane();
 	var _raycaster = new Raycaster();
@@ -257,35 +249,6 @@ var DragControls = function ( _objects, _camera, _domElement ) {
 	this.activate = activate;
 	this.deactivate = deactivate;
 	this.dispose = dispose;
-
-	// Backward compatibility
-
-	this.setObjects = function () {
-
-		console.error( 'DragControls: setObjects() has been removed.' );
-
-	};
-
-	this.on = function ( type, listener ) {
-
-		console.warn( 'DragControls: on() has been deprecated. Use addEventListener() instead.' );
-		scope.addEventListener( type, listener );
-
-	};
-
-	this.off = function ( type, listener ) {
-
-		console.warn( 'DragControls: off() has been deprecated. Use removeEventListener() instead.' );
-		scope.removeEventListener( type, listener );
-
-	};
-
-	this.notify = function ( type ) {
-
-		console.error( 'DragControls: notify() has been deprecated. Use dispatchEvent() instead.' );
-		scope.dispatchEvent( { type: type } );
-
-	};
 
 };
 

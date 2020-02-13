@@ -19,7 +19,7 @@ function WebXRManager( renderer, gl ) {
 
 	var session = null;
 
-	var framebufferScaleFactor = 1.0;
+	// var framebufferScaleFactor = 1.0;
 
 	var referenceSpace = null;
 	var referenceSpaceType = 'local-floor';
@@ -108,9 +108,9 @@ function WebXRManager( renderer, gl ) {
 
 	}
 
-	this.setFramebufferScaleFactor = function ( value ) {
+	this.setFramebufferScaleFactor = function ( /* value */ ) {
 
-		framebufferScaleFactor = value;
+		// framebufferScaleFactor = value;
 
 	};
 
@@ -137,6 +137,7 @@ function WebXRManager( renderer, gl ) {
 			session.addEventListener( 'selectend', onSessionEvent );
 			session.addEventListener( 'end', onSessionEnd );
 
+			// eslint-disable-next-line no-undef
 			session.updateRenderState( { baseLayer: new XRWebGLLayer( session, gl ) } );
 
 			session.requestReferenceSpace( referenceSpaceType ).then( onRequestReferenceSpace );

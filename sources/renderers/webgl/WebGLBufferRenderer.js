@@ -23,7 +23,9 @@ function WebGLBufferRenderer( gl, extensions, info, capabilities ) {
 
 	}
 
-	function renderInstances( geometry, start, count ) {
+	function renderInstances( geometry, start, count, primcount ) {
+
+		if ( primcount === 0 ) return;
 
 		var extension, methodName;
 
@@ -46,9 +48,9 @@ function WebGLBufferRenderer( gl, extensions, info, capabilities ) {
 
 		}
 
-		extension[ methodName ]( mode, start, count, geometry.maxInstancedCount );
+		extension[ methodName ]( mode, start, count, primcount );
 
-		info.update( count, mode, geometry.maxInstancedCount );
+		info.update( count, mode, primcount );
 
 	}
 

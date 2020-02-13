@@ -1,9 +1,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { Texture } from '../textures/Texture.js'
 import { FileLoader } from './FileLoader.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
  * @author Daosheng Mu / https://github.com/DaoshengMu/
@@ -13,11 +13,11 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 var TGALoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 };
 
-TGALoader.prototype = {
+TGALoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 	constructor: TGALoader,
 
@@ -67,7 +67,7 @@ TGALoader.prototype = {
 					}
 					break;
 
-				// check colormap type
+					// check colormap type
 
 				case TGA_TYPE_RGB:
 				case TGA_TYPE_GREY:
@@ -80,12 +80,12 @@ TGALoader.prototype = {
 					}
 					break;
 
-				// What the need of a file without data ?
+					// What the need of a file without data ?
 
 				case TGA_TYPE_NO_DATA:
 					console.error( 'TGALoader: No data.' );
 
-				// Invalid type ?
+					// Invalid type ?
 
 				default:
 					console.error( 'TGALoader: Invalid type "%s".', header.image_type );
@@ -478,7 +478,7 @@ TGALoader.prototype = {
 				flags: content[ offset ++ ]
 			};
 
-			// check tga if it is valid format
+		// check tga if it is valid format
 
 		tgaCheckHeader( header );
 
@@ -545,15 +545,8 @@ TGALoader.prototype = {
 
 		return useOffscreen ? canvas.transferToImageBitmap() : canvas;
 
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
-
 	}
 
-};
+} );
 
 export { TGALoader }

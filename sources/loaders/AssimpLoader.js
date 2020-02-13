@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
 import { TextureLoader } from './TextureLoader.js'
 import { Vector3 } from '../math/Vector3.js'
@@ -17,7 +18,6 @@ import { Color } from '../math/Color.js'
 import { Object3D } from '../core/Object3D.js'
 import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
  * @author Virtulous / https://virtulo.us/
@@ -25,21 +25,19 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 var AssimpLoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 };
 
-AssimpLoader.prototype = {
+AssimpLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 	constructor: AssimpLoader,
-
-	crossOrigin: 'anonymous',
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
 		var scope = this;
 
-		var path = ( scope.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : scope.path;
+		var path = ( scope.path === '' ) ? LoaderUtils.extractUrlBase( url ) : scope.path;
 
 		var loader = new FileLoader( this.manager );
 		loader.setPath( scope.path );
@@ -50,27 +48,6 @@ AssimpLoader.prototype = {
 			onLoad( scope.parse( buffer, path ) );
 
 		}, onProgress, onError );
-
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
-
-	},
-
-	setResourcePath: function ( value ) {
-
-		this.resourcePath = value;
-		return this;
-
-	},
-
-	setCrossOrigin: function ( value ) {
-
-		this.crossOrigin = value;
-		return this;
 
 	},
 
@@ -2287,6 +2264,6 @@ AssimpLoader.prototype = {
 
 	}
 
-};
+} );
 
 export { AssimpLoader }

@@ -528,11 +528,13 @@ Object.assign( Vector3.prototype, {
 
 	},
 
-	projectOnVector: function ( vector ) {
+	projectOnVector: function ( v ) {
 
-		var scalar = vector.dot( this ) / vector.lengthSq();
+		// v cannot be the zero v
 
-		return this.copy( vector ).multiplyScalar( scalar );
+		var scalar = v.dot( this ) / v.lengthSq();
+
+		return this.copy( v ).multiplyScalar( scalar );
 
 	},
 
@@ -555,7 +557,11 @@ Object.assign( Vector3.prototype, {
 
 	angleTo: function ( v ) {
 
-		var theta = this.dot( v ) / ( Math.sqrt( this.lengthSq() * v.lengthSq() ) );
+		var denominator = Math.sqrt( this.lengthSq() * v.lengthSq() );
+
+		if ( denominator === 0 ) console.error( 'Vector3: angleTo() can\'t handle zero length vectors.' );
+
+		var theta = this.dot( v ) / denominator;
 
 		// clamp, to handle numerical problems
 

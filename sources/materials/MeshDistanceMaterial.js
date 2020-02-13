@@ -48,7 +48,6 @@ function MeshDistanceMaterial( parameters ) {
 	this.displacementBias = 0;
 
 	this.fog = false;
-	this.lights = false;
 
 	this.setValues( parameters );
 

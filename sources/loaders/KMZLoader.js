@@ -1,11 +1,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
-import {
-	LoadingManager,
-	DefaultLoadingManager
-} from './LoadingManager.js'
+import { LoadingManager } from './LoadingManager.js'
 import { ColladaLoader } from './ColladaLoader.js'
 import { Group } from '../objects/Group.js'
 
@@ -15,11 +13,11 @@ import { Group } from '../objects/Group.js'
 
 var KMZLoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 };
 
-KMZLoader.prototype = {
+KMZLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 	constructor: KMZLoader,
 
@@ -35,13 +33,6 @@ KMZLoader.prototype = {
 			onLoad( scope.parse( text ) );
 
 		}, onProgress, onError );
-
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
 
 	},
 
@@ -120,6 +111,6 @@ KMZLoader.prototype = {
 
 	}
 
-};
+} );
 
 export { KMZLoader }

@@ -33,13 +33,9 @@ export default `
 		mapN.xy *= normalScale;
 
 		#ifdef DOUBLE_SIDED
-			vec3 NfromST = cross( S, T );
-			if( dot( NfromST, N ) > 0.0 ) {
+			bool frontFacing = dot( cross( S, T ), N ) > 0.0;
 
-				S *= -1.0;
-				T *= -1.0;
-
-			}
+			mapN.xy *= ( float( frontFacing ) * 2.0 - 1.0 );
 
 		#else
 

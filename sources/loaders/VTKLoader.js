@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { EventDispatcher } from '../core/EventDispatcher.js'
+import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import {
@@ -9,7 +9,6 @@ import {
 	BufferAttribute
 } from '../core/BufferAttribute.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -24,11 +23,13 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 var VTKLoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 };
 
-Object.assign( VTKLoader.prototype, EventDispatcher.prototype, {
+VTKLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
+
+	constructor: VTKLoader,
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -42,13 +43,6 @@ Object.assign( VTKLoader.prototype, EventDispatcher.prototype, {
 			onLoad( scope.parse( text ) );
 
 		}, onProgress, onError );
-
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
 
 	},
 

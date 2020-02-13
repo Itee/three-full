@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { GLTFLoader } from './GLTFLoader.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
  * @author Takahiro / https://github.com/takahirox
@@ -23,16 +23,15 @@ var VRMLoader = ( function () {
 
 		}
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+		Loader.call( this, manager );
+
 		this.gltfLoader = new GLTFLoader( this.manager );
 
 	}
 
-	VRMLoader.prototype = {
+	VRMLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 		constructor: VRMLoader,
-
-		crossOrigin: 'anonymous',
 
 		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -43,27 +42,6 @@ var VRMLoader = ( function () {
 				scope.parse( gltf, onLoad );
 
 			}, onProgress, onError );
-
-		},
-
-		setCrossOrigin: function ( value ) {
-
-			this.glTFLoader.setCrossOrigin( value );
-			return this;
-
-		},
-
-		setPath: function ( value ) {
-
-			this.glTFLoader.setPath( value );
-			return this;
-
-		},
-
-		setResourcePath: function ( value ) {
-
-			this.glTFLoader.setResourcePath( value );
-			return this;
 
 		},
 
@@ -86,7 +64,7 @@ var VRMLoader = ( function () {
 
 		}
 
-	};
+	} );
 
 	return VRMLoader;
 

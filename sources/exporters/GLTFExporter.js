@@ -105,6 +105,7 @@ GLTFExporter.prototype = {
 			onlyVisible: true,
 			truncateDrawRange: true,
 			embedImages: true,
+			maxTextureSize: Infinity,
 			animations: [],
 			forceIndices: false,
 			forcePowerOfTwoTextures: false,
@@ -778,10 +779,10 @@ GLTFExporter.prototype = {
 
 				var canvas = cachedCanvas = cachedCanvas || document.createElement( 'canvas' );
 
-				canvas.width = image.width;
-				canvas.height = image.height;
+				canvas.width = Math.min( image.width, options.maxTextureSize );
+				canvas.height = Math.min( image.height, options.maxTextureSize );
 
-				if ( options.forcePowerOfTwoTextures && ! isPowerOfTwo( image ) ) {
+				if ( options.forcePowerOfTwoTextures && ! isPowerOfTwo( canvas ) ) {
 
 					console.warn( 'GLTFExporter: Resized non-power-of-two image.', image );
 
@@ -928,7 +929,7 @@ GLTFExporter.prototype = {
 
 			}
 
-			if ( material.isShaderMaterial && !material.isGLTFSpecularGlossinessMaterial ) {
+			if ( material.isShaderMaterial && ! material.isGLTFSpecularGlossinessMaterial ) {
 
 				console.warn( 'GLTFExporter: ShaderMaterial not supported.' );
 				return null;
@@ -988,11 +989,11 @@ GLTFExporter.prototype = {
 
 			// pbrSpecularGlossiness diffuse, specular and glossiness factor
 			if ( material.isGLTFSpecularGlossinessMaterial ) {
-				
+
 				if ( gltfMaterial.pbrMetallicRoughness.baseColorFactor ) {
 
 					gltfMaterial.extensions.KHR_materials_pbrSpecularGlossiness.diffuseFactor = gltfMaterial.pbrMetallicRoughness.baseColorFactor;
-				  
+
 				}
 
 				var specularFactor = [ 1, 1, 1 ];
@@ -1000,7 +1001,7 @@ GLTFExporter.prototype = {
 				gltfMaterial.extensions.KHR_materials_pbrSpecularGlossiness.specularFactor = specularFactor;
 
 				gltfMaterial.extensions.KHR_materials_pbrSpecularGlossiness.glossinessFactor = material.glossiness;
-			
+
 			}
 
 			// pbrMetallicRoughness.metallicRoughnessTexture
@@ -1033,7 +1034,7 @@ GLTFExporter.prototype = {
 				}
 
 				gltfMaterial.pbrMetallicRoughness.baseColorTexture = baseColorMapDef;
-				
+
 			}
 
 			// pbrSpecularGlossiness specular map
@@ -1115,13 +1116,15 @@ GLTFExporter.prototype = {
 			}
 
 			// alphaMode
-			if ( material.transparent || material.alphaTest > 0.0 ) {
+			if ( material.transparent ) {
 
-				gltfMaterial.alphaMode = material.opacity < 1.0 ? 'BLEND' : 'MASK';
+				gltfMaterial.alphaMode = 'BLEND';
 
-				// Write alphaCutoff if it's non-zero and different from the default (0.5).
-				if ( material.alphaTest > 0.0 && material.alphaTest !== 0.5 ) {
+			} else {
 
+				if ( material.alphaTest > 0.0 ) {
+
+					gltfMaterial.alphaMode = 'MASK';
 					gltfMaterial.alphaCutoff = material.alphaTest;
 
 				}

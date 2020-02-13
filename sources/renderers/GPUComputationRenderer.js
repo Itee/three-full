@@ -332,11 +332,8 @@ var GPUComputationRenderer = function ( sizeX, sizeY, renderer ) {
 
 	this.createTexture = function () {
 
-		var a = new Float32Array( sizeX * sizeY * 4 );
-		var texture = new DataTexture( a, sizeX, sizeY, RGBAFormat, FloatType );
-		texture.needsUpdate = true;
-
-		return texture;
+		var data = new Float32Array( sizeX * sizeY * 4 );
+		return new DataTexture( data, sizeX, sizeY, RGBAFormat, FloatType );
 
 	};
 

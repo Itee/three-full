@@ -24,8 +24,8 @@ var BlendShader = {
 
 		"void main() {",
 
-			"vUv = uv;",
-			"gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+		"	vUv = uv;",
+		"	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
 
 		"}"
 
@@ -43,9 +43,9 @@ var BlendShader = {
 
 		"void main() {",
 
-			"vec4 texel1 = texture2D( tDiffuse1, vUv );",
-			"vec4 texel2 = texture2D( tDiffuse2, vUv );",
-			"gl_FragColor = opacity * mix( texel1, texel2, mixRatio );",
+		"	vec4 texel1 = texture2D( tDiffuse1, vUv );",
+		"	vec4 texel2 = texture2D( tDiffuse2, vUv );",
+		"	gl_FragColor = opacity * mix( texel1, texel2, mixRatio );",
 
 		"}"
 

@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { Vector3 } from '../math/Vector3.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import {
@@ -17,7 +18,6 @@ import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { Group } from '../objects/Group.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -538,15 +538,13 @@ var LDrawLoader = ( function () {
 
 	function LDrawLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+		Loader.call( this, manager );
 
 		// This is a stack of 'parse scopes' with one level per subobject loaded file.
 		// Each level contains a material lib and also other runtime variables passed between parent and child subobjects
 		// When searching for a material code, the stack is read from top of the stack to bottom
 		// Each material library is an object map keyed by colour codes.
 		this.parseScopesStack = null;
-
-		this.path = '';
 
 		// Array of Material
 		this.materials = [];
@@ -592,7 +590,7 @@ var LDrawLoader = ( function () {
 	LDrawLoader.FILE_LOCATION_TRY_ABSOLUTE = 5;
 	LDrawLoader.FILE_LOCATION_NOT_FOUND = 6;
 
-	LDrawLoader.prototype = {
+	LDrawLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 		constructor: LDrawLoader,
 
@@ -621,14 +619,6 @@ var LDrawLoader = ( function () {
 			// Async parse.  This function calls onParse with the parsed Object3D as parameter
 
 			this.processObject( text, onLoad, null, path );
-
-		},
-
-		setPath: function ( value ) {
-
-			this.path = value;
-
-			return this;
 
 		},
 
@@ -1957,7 +1947,7 @@ var LDrawLoader = ( function () {
 
 		}
 
-	};
+	} );
 
 	return LDrawLoader;
 
