@@ -773,7 +773,7 @@ module.exports = {
         },
         WebGL:                       {
             replacements:    [
-                [ 'WEBGL', 'WebGL' ]
+                [ 'WEBGL', 'var WebGL' ]
             ],
             exportsOverride: [ 'WebGL' ],
             outputOverride:  'helpers/WebGL.js'
