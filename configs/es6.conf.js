@@ -212,10 +212,6 @@ module.exports = {
         FBXLoader:                   {
             imports: [
                 '_Math',
-                '!NormalNode',
-                '!UVNode',
-                '!Node',
-                '!ColorNode',
                 '!Geometry',
                 '!Material',
                 '!Points'
