@@ -253,7 +253,7 @@ gulp.task( 'convert-three', ( done ) => {
 
            copyPolyfills()
            copyShaderChunk()
-           //copyLibs()
+           copyLibs()
            updateThreeExports()
 
            done()
