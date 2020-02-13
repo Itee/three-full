@@ -104,7 +104,7 @@ module.exports = {
             outputOverride: 'curves/Curve.js'
         },
         CurveExtras:                 {
-            replacements:   [
+            replacements:    [
                 [ 'Curves = ( function () {', '' ],
                 [ /return {([\n].*)*/g, '\n' ]
             ],
@@ -124,7 +124,7 @@ module.exports = {
                 'DecoratedTorusKnot5a',
                 'DecoratedTorusKnot5c'
             ],
-            outputOverride: 'curves/CurveExtras.js'
+            outputOverride:  'curves/CurveExtras.js'
         },
         CurvePath:                   {
             // Equivalent to ( import * as Curves from 'intermediary exporter file Curves' )
@@ -722,7 +722,7 @@ module.exports = {
         TempNode:                    {
             imports: [ '_Math' ]
         },
-        TextureCubeUVNode:               {
+        TextureCubeUVNode:           {
             imports: [
                 '!ReflectNode',
                 '!FloatNode'
@@ -750,12 +750,12 @@ module.exports = {
         VolumeShader:                {
             exportsOverride: [ 'VolumeRenderShader1' ]
         },
-//        VRMLLoader:                {
-//            imports: [
-//                [ 'chevrotain', 'from', '../libs/chevrotain.min.js' ]
-////                [ 'chevrotain', 'from', '../libs/chevrotain.module.min.js' ],
-//            ],
-//        },
+        //        VRMLLoader:                {
+        //            imports: [
+        //                [ 'chevrotain', 'from', '../libs/chevrotain.min.js' ]
+        ////                [ 'chevrotain', 'from', '../libs/chevrotain.module.min.js' ],
+        //            ],
+        //        },
         Water:                       {
             imports: [
                 '_Math'

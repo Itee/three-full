@@ -960,8 +960,7 @@ gulp.task( 'release',
     gulp.series(
         'clean',
         'convert-three',
-        'build-test',
-        'lint',
+        'lint-sources',
         'build-three'
     )
 )
