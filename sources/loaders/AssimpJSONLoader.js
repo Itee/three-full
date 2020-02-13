@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
@@ -11,7 +12,6 @@ import { Mesh } from '../objects/Mesh.js'
 import { TextureLoader } from './TextureLoader.js'
 import { RepeatWrapping } from '../constants.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
  * @author Alexander Gessler / http://www.greentoken.de/
@@ -28,21 +28,19 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 var AssimpJSONLoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 };
 
-AssimpJSONLoader.prototype = {
+AssimpJSONLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 	constructor: AssimpJSONLoader,
-
-	crossOrigin: 'anonymous',
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
 		var scope = this;
 
-		var path = ( scope.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : scope.path;
+		var path = ( scope.path === '' ) ? LoaderUtils.extractUrlBase( url ) : scope.path;
 
 		var loader = new FileLoader( this.manager );
 		loader.setPath( scope.path );
@@ -77,27 +75,6 @@ AssimpJSONLoader.prototype = {
 			onLoad( scope.parse( json, path ) );
 
 		}, onProgress, onError );
-
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
-
-	},
-
-	setResourcePath: function ( value ) {
-
-		this.resourcePath = value;
-		return this;
-
-	},
-
-	setCrossOrigin: function ( value ) {
-
-		this.crossOrigin = value;
-		return this;
 
 	},
 
@@ -305,6 +282,6 @@ AssimpJSONLoader.prototype = {
 
 	}
 
-};
+} );
 
 export { AssimpJSONLoader }

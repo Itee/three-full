@@ -15,7 +15,6 @@ export class InterleavedBuffer {
 	count: number;
 	needsUpdate: boolean;
 
-	setArray( array?: ArrayBufferView ): void;
 	setDynamic( dynamic: boolean ): InterleavedBuffer;
 	clone(): this;
 	copy( source: InterleavedBuffer ): this;

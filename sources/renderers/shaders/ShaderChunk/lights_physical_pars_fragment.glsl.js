@@ -146,7 +146,8 @@ void RE_IndirectSpecular_Physical( const in vec3 radiance, const in vec3 irradia
 	vec3 diffuse = material.diffuseColor * ( 1.0 - ( singleScattering + multiScattering ) );
 
 	reflectedLight.indirectSpecular += clearcoatInv * radiance * singleScattering;
-	reflectedLight.indirectDiffuse += multiScattering * cosineWeightedIrradiance;
+	reflectedLight.indirectSpecular += multiScattering * cosineWeightedIrradiance;
+
 	reflectedLight.indirectDiffuse += diffuse * cosineWeightedIrradiance;
 
 }

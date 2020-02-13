@@ -32,7 +32,6 @@ function Material() {
 	this.type = 'Material';
 
 	this.fog = true;
-	this.lights = true;
 
 	this.blending = NormalBlending;
 	this.side = FrontSide;
@@ -54,9 +53,10 @@ function Material() {
 	this.depthTest = true;
 	this.depthWrite = true;
 
+	this.stencilWriteMask = 0xff;
 	this.stencilFunc = AlwaysStencilFunc;
 	this.stencilRef = 0;
-	this.stencilMask = 0xff;
+	this.stencilFuncMask = 0xff;
 	this.stencilFail = KeepStencilOp;
 	this.stencilZFail = KeepStencilOp;
 	this.stencilZPass = KeepStencilOp;
@@ -182,6 +182,7 @@ Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 		if ( this.roughness !== undefined ) data.roughness = this.roughness;
 		if ( this.metalness !== undefined ) data.metalness = this.metalness;
 
+		if ( this.sheen && this.sheen.isColor ) data.sheen = this.sheen.getHex();
 		if ( this.emissive && this.emissive.isColor ) data.emissive = this.emissive.getHex();
 		if ( this.emissiveIntensity && this.emissiveIntensity !== 1 ) data.emissiveIntensity = this.emissiveIntensity;
 
@@ -271,9 +272,10 @@ Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 		data.depthWrite = this.depthWrite;
 
 		data.stencilWrite = this.stencilWrite;
+		data.stencilWriteMask = this.stencilWriteMask;
 		data.stencilFunc = this.stencilFunc;
 		data.stencilRef = this.stencilRef;
-		data.stencilMask = this.stencilMask;
+		data.stencilFuncMask = this.stencilFuncMask;
 		data.stencilFail = this.stencilFail;
 		data.stencilZFail = this.stencilZFail;
 		data.stencilZPass = this.stencilZPass;
@@ -353,7 +355,6 @@ Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 		this.name = source.name;
 
 		this.fog = source.fog;
-		this.lights = source.lights;
 
 		this.blending = source.blending;
 		this.side = source.side;
@@ -375,9 +376,10 @@ Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 		this.depthWrite = source.depthWrite;
 
 		this.stencilWrite = source.stencilWrite;
+		this.stencilWriteMask = source.stencilWriteMask;
 		this.stencilFunc = source.stencilFunc;
 		this.stencilRef = source.stencilRef;
-		this.stencilMask = source.stencilMask;
+		this.stencilFuncMask = source.stencilFuncMask;
 		this.stencilFail = source.stencilFail;
 		this.stencilZFail = source.stencilZFail;
 		this.stencilZPass = source.stencilZPass;

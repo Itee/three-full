@@ -2,6 +2,7 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export default `
+uniform bool receiveShadow;
 uniform vec3 ambientLightColor;
 uniform vec3 lightProbe[ 9 ];
 vec3 shGetIrradianceAt( in vec3 normal, in vec3 shCoefficients[ 9 ] ) {

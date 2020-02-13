@@ -26,9 +26,9 @@ var ColorCorrectionShader = {
 
 		"void main() {",
 
-			"vUv = uv;",
+		"	vUv = uv;",
 
-			"gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+		"	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
 
 		"}"
 
@@ -45,8 +45,8 @@ var ColorCorrectionShader = {
 
 		"void main() {",
 
-			"gl_FragColor = texture2D( tDiffuse, vUv );",
-			"gl_FragColor.rgb = mulRGB * pow( ( gl_FragColor.rgb + addRGB ), powRGB );",
+		"	gl_FragColor = texture2D( tDiffuse, vUv );",
+		"	gl_FragColor.rgb = mulRGB * pow( ( gl_FragColor.rgb + addRGB ), powRGB );",
 
 		"}"
 

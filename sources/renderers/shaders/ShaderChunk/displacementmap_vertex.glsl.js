@@ -4,7 +4,7 @@
 export default `
 #ifdef USE_DISPLACEMENTMAP
 
-	transformed += normalize( objectNormal ) * ( texture2D( displacementMap, uv ).x * displacementScale + displacementBias );
+	transformed += normalize( objectNormal ) * ( texture2D( displacementMap, vUv ).x * displacementScale + displacementBias );
 
 #endif
 `;

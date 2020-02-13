@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
@@ -9,7 +10,6 @@ import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { Mesh } from '../objects/Mesh.js'
 import { Group } from '../objects/Group.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
  * @author technohippy / https://github.com/technohippy
@@ -29,12 +29,13 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 var ThreeMFLoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
+
 	this.availableExtensions = [];
 
 };
 
-ThreeMFLoader.prototype = {
+ThreeMFLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 	constructor: ThreeMFLoader,
 
@@ -49,13 +50,6 @@ ThreeMFLoader.prototype = {
 			onLoad( scope.parse( buffer ) );
 
 		}, onProgress, onError );
-
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
 
 	},
 
@@ -939,6 +933,6 @@ ThreeMFLoader.prototype = {
 
 	}
 
-};
+} );
 
 export { ThreeMFLoader }

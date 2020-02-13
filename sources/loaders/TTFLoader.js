@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
  * @author gero3 / https://github.com/gero3
@@ -16,12 +16,12 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 var TTFLoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
+
 	this.reversed = false;
 
 };
-
-TTFLoader.prototype = {
+TTFLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 	constructor: TTFLoader,
 
@@ -40,13 +40,6 @@ TTFLoader.prototype = {
 
 	},
 
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
-
-	},
-
 	parse: function ( arraybuffer ) {
 
 		function convert( font, reversed ) {
@@ -55,7 +48,7 @@ TTFLoader.prototype = {
 
 			var glyphs = {};
 			var scale = ( 100000 ) / ( ( font.unitsPerEm || 2048 ) * 72 );
-			
+
 			var glyphIndexMap = font.encoding.cmap.glyphIndexMap;
 			var unicodes = Object.keys( glyphIndexMap );
 
@@ -208,6 +201,6 @@ TTFLoader.prototype = {
 
 	}
 
-};
+} );
 
 export { TTFLoader }

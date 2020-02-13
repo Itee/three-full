@@ -6,6 +6,7 @@ export default `
 
 	uniform float logDepthBufFC;
 	varying float vFragDepth;
+	varying float vIsPerspective;
 
 #endif
 `;

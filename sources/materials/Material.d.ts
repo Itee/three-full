@@ -35,7 +35,6 @@ export interface MaterialParameters {
 	depthTest?: boolean;
 	depthWrite?: boolean;
 	fog?: boolean;
-	lights?: boolean;
 	name?: string;
 	opacity?: number;
 	overdraw?: number;
@@ -48,6 +47,7 @@ export interface MaterialParameters {
 	flatShading?: boolean;
 	side?: Side;
 	shadowSide?: Side;
+	toneMapped?: boolean;
 	transparent?: boolean;
 	vertexColors?: Colors;
 	vertexTangents?: boolean;
@@ -88,7 +88,6 @@ export class Material extends EventDispatcher {
 	stencilZFail: StencilOp;
 	stencilZPass: StencilOp;
 	isMaterial: boolean;
-	lights: boolean;
 	name: string;
 	needsUpdate: boolean;
 	opacity: number;
@@ -101,6 +100,7 @@ export class Material extends EventDispatcher {
 	dithering: boolean;
 	flatShading: boolean;
 	side: Side;
+	toneMapped: boolean;
 	transparent: boolean;
 	type: string;
 	uuid: string;

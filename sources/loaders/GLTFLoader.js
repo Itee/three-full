@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { Interpolant } from '../math/Interpolant.js'
 import { FileLoader } from './FileLoader.js'
 import { Color } from '../math/Color.js'
@@ -57,9 +58,7 @@ import {
 	TriangleFanDrawMode,
 	sRGBEncoding
 } from '../constants.js'
-import { Loader } from './Loader.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 import { Material } from '../materials/Material.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
@@ -78,17 +77,16 @@ var GLTFLoader = ( function () {
 
 	function GLTFLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+		Loader.call( this, manager );
+
 		this.dracoLoader = null;
 		this.ddsLoader = null;
 
 	}
 
-	GLTFLoader.prototype = {
+	GLTFLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 		constructor: GLTFLoader,
-
-		crossOrigin: 'anonymous',
 
 		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -96,11 +94,11 @@ var GLTFLoader = ( function () {
 
 			var resourcePath;
 
-			if ( this.resourcePath !== undefined ) {
+			if ( this.resourcePath !== '' ) {
 
 				resourcePath = this.resourcePath;
 
-			} else if ( this.path !== undefined ) {
+			} else if ( this.path !== '' ) {
 
 				resourcePath = this.path;
 
@@ -162,27 +160,6 @@ var GLTFLoader = ( function () {
 				}
 
 			}, onProgress, _onError );
-
-		},
-
-		setCrossOrigin: function ( value ) {
-
-			this.crossOrigin = value;
-			return this;
-
-		},
-
-		setPath: function ( value ) {
-
-			this.path = value;
-			return this;
-
-		},
-
-		setResourcePath: function ( value ) {
-
-			this.resourcePath = value;
-			return this;
 
 		},
 
@@ -304,7 +281,7 @@ var GLTFLoader = ( function () {
 
 		}
 
-	};
+	} );
 
 	/* GLTFREGISTRY */
 
@@ -359,8 +336,7 @@ var GLTFLoader = ( function () {
 	/**
 	 * DDS Texture Extension
 	 *
-	 * Specification:
-	 * https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/MSFT_texture_dds
+	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Vendor/MSFT_texture_dds
 	 *
 	 */
 	function GLTFTextureDDSExtension( ddsLoader ) {
@@ -377,9 +353,9 @@ var GLTFLoader = ( function () {
 	}
 
 	/**
-	 * Lights Extension
+	 * Punctual Lights Extension
 	 *
-	 * Specification: PENDING
+	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_lights_punctual
 	 */
 	function GLTFLightsExtension( json ) {
 
@@ -446,9 +422,9 @@ var GLTFLoader = ( function () {
 	};
 
 	/**
-	 * Unlit Materials Extension (pending)
+	 * Unlit Materials Extension
 	 *
-	 * PR: https://github.com/KhronosGroup/glTF/pull/1163
+	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_materials_unlit
 	 */
 	function GLTFMaterialsUnlitExtension() {
 
@@ -563,7 +539,7 @@ var GLTFLoader = ( function () {
 	/**
 	 * DRACO Mesh Compression Extension
 	 *
-	 * Specification: https://github.com/KhronosGroup/glTF/pull/874
+	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_draco_mesh_compression
 	 */
 	function GLTFDracoMeshCompressionExtension( json, dracoLoader ) {
 
@@ -641,7 +617,7 @@ var GLTFLoader = ( function () {
 	/**
 	 * Texture Transform Extension
 	 *
-	 * Specification:
+	 * Specification: https://github.com/KhronosGroup/glTF/tree/master/extensions/2.0/Khronos/KHR_texture_transform
 	 */
 	function GLTFTextureTransformExtension() {
 
@@ -794,7 +770,7 @@ var GLTFLoader = ( function () {
 				materialParams.vertexShader = shader.vertexShader;
 				materialParams.fragmentShader = fragmentShader;
 				materialParams.uniforms = uniforms;
-				materialParams.defines = { 'STANDARD': '' }
+				materialParams.defines = { 'STANDARD': '' };
 
 				materialParams.color = new Color( 1.0, 1.0, 1.0 );
 				materialParams.opacity = 1.0;
@@ -1255,11 +1231,11 @@ var GLTFLoader = ( function () {
 
 		// Invalid URL
 		if ( typeof url !== 'string' || url === '' ) return '';
-		
+
 		// Host Relative URL
 		if ( /^https?:\/\//i.test( path ) && /^\//.test( url ) ) {
 
-			path = path.replace( /(^https?:\/\/[^\/]+).*/i , '$1' );
+			path = path.replace( /(^https?:\/\/[^\/]+).*/i, '$1' );
 
 		}
 
@@ -1967,7 +1943,7 @@ var GLTFLoader = ( function () {
 
 				}
 
-				bufferAttribute = new InterleavedBufferAttribute( ib, itemSize, (byteOffset % byteStride) / elementBytes, normalized );
+				bufferAttribute = new InterleavedBufferAttribute( ib, itemSize, ( byteOffset % byteStride ) / elementBytes, normalized );
 
 			} else {
 
@@ -2000,7 +1976,7 @@ var GLTFLoader = ( function () {
 				if ( bufferView !== null ) {
 
 					// Avoid modifying the original ArrayBuffer, if the bufferView wasn't initialized with zeroes.
-					bufferAttribute.setArray( bufferAttribute.array.slice() );
+					bufferAttribute = new BufferAttribute( bufferAttribute.array.slice(), bufferAttribute.itemSize, bufferAttribute.normalized );
 
 				}
 
@@ -2076,7 +2052,7 @@ var GLTFLoader = ( function () {
 
 			// Load Texture resource.
 
-			var loader = Loader.Handlers.get( sourceURI );
+			var loader = options.manager.getHandler( sourceURI );
 
 			if ( ! loader ) {
 
@@ -2207,7 +2183,6 @@ var GLTFLoader = ( function () {
 				Material.prototype.copy.call( pointsMaterial, material );
 				pointsMaterial.color.copy( material.color );
 				pointsMaterial.map = material.map;
-				pointsMaterial.lights = false; // PointsMaterial doesn't support lights yet
 				pointsMaterial.sizeAttenuation = false; // glTF spec says points should be 1px
 
 				this.cache.add( cacheKey, pointsMaterial );
@@ -2227,7 +2202,6 @@ var GLTFLoader = ( function () {
 				lineMaterial = new LineBasicMaterial();
 				Material.prototype.copy.call( lineMaterial, material );
 				lineMaterial.color.copy( material.color );
-				lineMaterial.lights = false; // LineBasicMaterial doesn't support lights yet
 
 				this.cache.add( cacheKey, lineMaterial );
 

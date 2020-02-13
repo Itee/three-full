@@ -16,6 +16,7 @@ export class AnimationMixer extends EventDispatcher {
 	existingAction( clip: AnimationClip, root?: any ): AnimationAction;
 	stopAllAction(): AnimationMixer;
 	update( deltaTime: number ): AnimationMixer;
+	setTime( timeInSeconds: number ): AnimationMixer;
 	getRoot(): any;
 	uncacheClip( clip: AnimationClip ): void;
 	uncacheRoot( root: any ): void;

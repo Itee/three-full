@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
 import { Group } from '../objects/Group.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
@@ -15,7 +16,6 @@ import {
 	NoColors,
 	VertexColors
 } from '../constants.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 import { Material } from '../materials/Material.js'
 
 /**
@@ -306,6 +306,12 @@ var OBJLoader = ( function () {
 
 				this.addVertex( ia, ib, ic );
 
+				if ( this.colors.length > 0 ) {
+
+					this.addColor( ia, ib, ic );
+
+				}
+
 				if ( ua !== undefined && ua !== '' ) {
 
 					var uvLen = this.uvs.length;
@@ -326,12 +332,6 @@ var OBJLoader = ( function () {
 					ic = na === nc ? ia : this.parseNormalIndex( nc, nLen );
 
 					this.addNormal( ia, ib, ic );
-
-				}
-
-				if ( this.colors.length > 0 ) {
-
-					this.addColor( ia, ib, ic );
 
 				}
 
@@ -384,13 +384,13 @@ var OBJLoader = ( function () {
 
 	function OBJLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+		Loader.call( this, manager );
 
 		this.materials = null;
 
 	}
 
-	OBJLoader.prototype = {
+	OBJLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 		constructor: OBJLoader,
 
@@ -405,14 +405,6 @@ var OBJLoader = ( function () {
 				onLoad( scope.parse( text ) );
 
 			}, onProgress, onError );
-
-		},
-
-		setPath: function ( value ) {
-
-			this.path = value;
-
-			return this;
 
 		},
 
@@ -710,7 +702,6 @@ var OBJLoader = ( function () {
 							var materialLine = new LineBasicMaterial();
 							Material.prototype.copy.call( materialLine, material );
 							materialLine.color.copy( material.color );
-							materialLine.lights = false;
 							material = materialLine;
 
 						} else if ( isPoints && material && ! ( material instanceof PointsMaterial ) ) {
@@ -719,7 +710,6 @@ var OBJLoader = ( function () {
 							Material.prototype.copy.call( materialPoints, material );
 							materialPoints.color.copy( material.color );
 							materialPoints.map = material.map;
-							materialPoints.lights = false;
 							material = materialPoints;
 
 						}
@@ -810,7 +800,7 @@ var OBJLoader = ( function () {
 
 		}
 
-	};
+	} );
 
 	return OBJLoader;
 

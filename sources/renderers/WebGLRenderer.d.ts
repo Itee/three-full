@@ -32,7 +32,7 @@ export interface Renderer {
 
 export interface WebGLRendererParameters {
 	
-	canvas?: HTMLCanvasElement;
+	canvas?: HTMLCanvasElement | OffscreenCanvas;
 	context?: WebGLRenderingContext;
 	precision?: string;
 	alpha?: boolean;
@@ -79,7 +79,7 @@ export class WebGLRenderer implements Renderer {
 
 	shadowMap: WebGLShadowMap;
 
-	pixelRation: number;
+	pixelRatio: number;
 
 	capabilities: WebGLCapabilities;
 	properties: WebGLProperties;
@@ -143,7 +143,7 @@ export class WebGLRenderer implements Renderer {
 		object: Object3D,
 		geometryGroup: any
 	): void;
-	setAnimationLoop( callback: Function ): void;
+	setAnimationLoop( callback: Function | null ): void;
 	animate( callback: Function ): void;
 	compile(
 		scene: Scene,

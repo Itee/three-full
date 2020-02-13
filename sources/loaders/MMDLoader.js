@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { Interpolant } from '../math/Interpolant.js'
 import { FileLoader } from './FileLoader.js'
 import { SkinnedMesh } from '../objects/SkinnedMesh.js'
@@ -35,9 +36,7 @@ import {
 	RepeatWrapping,
 	NearestFilter
 } from '../constants.js'
-import { Loader } from './Loader.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
  * @author takahiro / https://github.com/takahirox
@@ -77,7 +76,7 @@ var MMDLoader = ( function () {
 	 */
 	function MMDLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+		Loader.call( this, manager );
 
 		this.loader = new FileLoader( this.manager );
 
@@ -87,22 +86,9 @@ var MMDLoader = ( function () {
 
 	}
 
-	MMDLoader.prototype = {
+	MMDLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 		constructor: MMDLoader,
-
-		crossOrigin: 'anonymous',
-
-		/**
-		 * @param {string} crossOrigin
-		 * @return {MMDLoader}
-		 */
-		setCrossOrigin: function ( crossOrigin ) {
-
-			this.crossOrigin = crossOrigin;
-			return this;
-
-		},
 
 		/**
 		 * @param {string} animationPath
@@ -111,28 +97,6 @@ var MMDLoader = ( function () {
 		setAnimationPath: function ( animationPath ) {
 
 			this.animationPath = animationPath;
-			return this;
-
-		},
-
-		/**
-		 * @param {string} path
-		 * @return {MMDLoader}
-		 */
-		setPath: function ( path ) {
-
-			this.path = path;
-			return this;
-
-		},
-
-		/**
-		 * @param {string} resourcePath
-		 * @return {MMDLoader}
-		 */
-		setResoucePath: function ( resourcePath ) {
-
-			this.resourcePath = resourcePath;
 			return this;
 
 		},
@@ -155,11 +119,11 @@ var MMDLoader = ( function () {
 
 			var resourcePath;
 
-			if ( this.resourcePath !== undefined ) {
+			if ( this.resourcePath !== '' ) {
 
 				resourcePath = this.resourcePath;
 
-			} else if ( this.path !== undefined ) {
+			} else if ( this.path !== '' ) {
 
 				resourcePath = this.path;
 
@@ -381,7 +345,7 @@ var MMDLoader = ( function () {
 
 		}
 
-	};
+	} );
 
 	// Utilities
 
@@ -1108,7 +1072,6 @@ var MMDLoader = ( function () {
 
 				params.skinning = geometry.bones.length > 0 ? true : false;
 				params.morphTargets = geometry.morphTargets.length > 0 ? true : false;
-				params.lights = true;
 				params.fog = true;
 
 				// blend
@@ -1381,7 +1344,7 @@ var MMDLoader = ( function () {
 
 			if ( textures[ fullPath ] !== undefined ) return textures[ fullPath ];
 
-			var loader = Loader.Handlers.get( fullPath );
+			var loader = this.manager.getHandler( fullPath );
 
 			if ( loader === null ) {
 

@@ -1,12 +1,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { AnimationClip } from '../animation/AnimationClip.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -14,11 +14,11 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 var MD2Loader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 };
 
-MD2Loader.prototype = {
+MD2Loader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 	constructor: MD2Loader,
 
@@ -34,13 +34,6 @@ MD2Loader.prototype = {
 			onLoad( scope.parse( buffer ) );
 
 		}, onProgress, onError );
-
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
 
 	},
 
@@ -394,6 +387,6 @@ MD2Loader.prototype = {
 
 	} )()
 
-};
+} );
 
 export { MD2Loader }

@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
@@ -8,7 +9,6 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { LineSegments } from '../objects/LineSegments.js'
 import { Group } from '../objects/Group.js'
 import { Euler } from '../math/Euler.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
  * GCodeLoader is used to load gcode files usually used for 3D printing or CNC applications.
@@ -23,13 +23,13 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 var GCodeLoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 	this.splitLayer = false;
 
 };
 
-GCodeLoader.prototype = {
+GCodeLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 	constructor: GCodeLoader,
 
@@ -44,13 +44,6 @@ GCodeLoader.prototype = {
 			onLoad( self.parse( text ) );
 
 		}, onProgress, onError );
-
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
 
 	},
 
@@ -239,6 +232,6 @@ GCodeLoader.prototype = {
 
 	}
 
-};
+} );
 
 export { GCodeLoader }

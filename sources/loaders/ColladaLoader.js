@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
@@ -38,7 +39,6 @@ import {
 	ClampToEdgeWrapping
 } from '../constants.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 import { _Math } from '../math/Math.js'
 
 /**
@@ -48,21 +48,19 @@ import { _Math } from '../math/Math.js'
 
 var ColladaLoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 };
 
-ColladaLoader.prototype = {
+ColladaLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 	constructor: ColladaLoader,
-
-	crossOrigin: 'anonymous',
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
 		var scope = this;
 
-		var path = ( scope.path === undefined ) ? LoaderUtils.extractUrlBase( url ) : scope.path;
+		var path = ( scope.path === '' ) ? LoaderUtils.extractUrlBase( url ) : scope.path;
 
 		var loader = new FileLoader( scope.manager );
 		loader.setPath( scope.path );
@@ -74,20 +72,6 @@ ColladaLoader.prototype = {
 
 	},
 
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
-
-	},
-
-	setResourcePath: function ( value ) {
-
-		this.resourcePath = value;
-		return this;
-
-	},
-
 	options: {
 
 		set convertUpAxis( value ) {
@@ -95,13 +79,6 @@ ColladaLoader.prototype = {
 			console.warn( 'ColladaLoader: options.convertUpAxis() has been removed. Up axis is converted automatically.' );
 
 		}
-
-	},
-
-	setCrossOrigin: function ( value ) {
-
-		this.crossOrigin = value;
-		return this;
 
 	},
 
@@ -4011,6 +3988,6 @@ ColladaLoader.prototype = {
 
 	}
 
-};
+} );
 
 export { ColladaLoader }

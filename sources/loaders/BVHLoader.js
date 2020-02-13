@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Quaternion } from '../math/Quaternion.js'
@@ -9,7 +10,6 @@ import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
 import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
 import { AnimationClip } from '../animation/AnimationClip.js'
 import { Skeleton } from '../objects/Skeleton.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
  * @author herzig / http://github.com/herzig
@@ -23,14 +23,14 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 var BVHLoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 	this.animateBonePositions = true;
 	this.animateBoneRotations = true;
 
 };
 
-BVHLoader.prototype = {
+BVHLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 	constructor: BVHLoader,
 
@@ -45,13 +45,6 @@ BVHLoader.prototype = {
 			onLoad( scope.parse( text ) );
 
 		}, onProgress, onError );
-
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
 
 	},
 
@@ -424,6 +417,6 @@ BVHLoader.prototype = {
 
 	}
 
-};
+} );
 
 export { BVHLoader }

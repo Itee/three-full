@@ -101,15 +101,21 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 		}
 
-		this.attributes[ name ] = attribute;
-
-		return this;
+		return this.setAttribute( name, attribute );
 
 	},
 
 	getAttribute: function ( name ) {
 
 		return this.attributes[ name ];
+
+	},
+
+	setAttribute: function ( name, attribute ) {
+
+		this.attributes[ name ] = attribute;
+
+		return this;
 
 	},
 

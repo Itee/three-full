@@ -7,6 +7,7 @@ export default `
 	#ifdef USE_LOGDEPTHBUF_EXT
 
 		varying float vFragDepth;
+		varying float vIsPerspective;
 
 	#else
 

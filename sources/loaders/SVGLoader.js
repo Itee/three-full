@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
 import { ShapePath } from '../core/ShapePath.js'
 import { Vector2 } from '../math/Vector2.js'
@@ -9,7 +10,6 @@ import { Matrix3 } from '../math/Matrix3.js'
 import { Vector3 } from '../math/Vector3.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -19,11 +19,11 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 var SVGLoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 };
 
-SVGLoader.prototype = {
+SVGLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 	constructor: SVGLoader,
 
@@ -38,13 +38,6 @@ SVGLoader.prototype = {
 			onLoad( scope.parse( text ) );
 
 		}, onProgress, onError );
-
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
 
 	},
 
@@ -1181,7 +1174,7 @@ SVGLoader.prototype = {
 
 	}
 
-};
+} );
 
 SVGLoader.getStrokeStyle = function ( width, color, lineJoin, lineCap, miterLimit ) {
 

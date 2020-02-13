@@ -7,7 +7,7 @@ import { MaterialParameters, Material } from './Material';
 
 export interface SpriteMaterialParameters extends MaterialParameters {
 	color?: Color | string | number;
-	map?: Texture;
+	map?: Texture | null;
 	rotation?: number;
 	sizeAttenuation?: boolean;
 }

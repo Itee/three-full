@@ -1,6 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from '../Loader.js'
 import { FileLoader } from '../FileLoader.js'
 import { Matrix4 } from '../../math/Matrix4.js'
 import { Color } from '../../math/Color.js'
@@ -80,9 +81,7 @@ import {
 	InterpolateDiscrete,
 	InterpolateLinear
 } from '../../constants.js'
-import { Loader } from '../Loader.js'
 import { LoaderUtils } from '../LoaderUtils.js'
-import { DefaultLoadingManager } from '../LoadingManager.js'
 import { MeshBasicMaterial } from '../../materials/MeshBasicMaterial.js'
 import { MeshLambertMaterial } from '../../materials/MeshLambertMaterial.js'
 import { Matrix3 } from '../../math/Matrix3.js'
@@ -103,15 +102,13 @@ var LegacyGLTFLoader = ( function () {
 
 	function LegacyGLTFLoader( manager ) {
 
-		this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+		Loader.call( this, manager );
 
 	}
 
-	LegacyGLTFLoader.prototype = {
+	LegacyGLTFLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 		constructor: LegacyGLTFLoader,
-
-		crossOrigin: 'anonymous',
 
 		load: function ( url, onLoad, onProgress, onError ) {
 
@@ -119,11 +116,11 @@ var LegacyGLTFLoader = ( function () {
 
 			var resourcePath;
 
-			if ( this.resourcePath !== undefined ) {
+			if ( this.resourcePath !== '' ) {
 
 				resourcePath = this.resourcePath;
 
-			} else if ( this.path !== undefined ) {
+			} else if ( this.path !== '' ) {
 
 				resourcePath = this.path;
 
@@ -143,26 +140,6 @@ var LegacyGLTFLoader = ( function () {
 				scope.parse( data, resourcePath, onLoad );
 
 			}, onProgress, onError );
-
-		},
-
-		setCrossOrigin: function ( value ) {
-
-			this.crossOrigin = value;
-			return this;
-
-		},
-
-		setPath: function ( value ) {
-
-			this.path = value;
-
-		},
-
-		setResourcePath: function ( value ) {
-
-			this.resourcePath = value;
-			return this;
 
 		},
 
@@ -215,7 +192,7 @@ var LegacyGLTFLoader = ( function () {
 
 		}
 
-	};
+	} );
 
 	/* GLTFREGISTRY */
 
@@ -1193,7 +1170,7 @@ var LegacyGLTFLoader = ( function () {
 
 						}
 
-						var textureLoader = Loader.Handlers.get( sourceUri );
+						var textureLoader = options.manager.getHandler( sourceUri );
 
 						if ( textureLoader === null ) {
 
