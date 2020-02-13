@@ -166,10 +166,23 @@ gulp.task( 'create-pass-file', ( done ) => {
 
 } )
 
+/**
+ * Remove wrong return in top level, in favor of if check
+ */
+gulp.task( 'fix-helio-polyfill', () => {
+
+    return gulp.src( './node_modules/three/examples/js/vr/HelioWebXRPolyfill.js' )
+               .pipe( replace( [ [ 'if ( \'isSessionSupported\' in navigator.xr ) return;', '' ] ] ) ) // Clear multiline comment
+               .pipe( replace( [ [ 'if ( /(Helio)/g.test( navigator.userAgent ) && "xr" in navigator ) {', 'if ( /(Helio)/g.test( navigator.userAgent ) && "xr" in navigator && !( \'isSessionSupported\' in navigator.xr ) ) {' ] ] ) )
+               .pipe( gulp.dest( './node_modules/three/examples/js/vr' ) )
+
+} )
+
 gulp.task( 'patch-three',
     gulp.parallel(
         'fix-effect-composer',
-        'create-pass-file'
+        'create-pass-file',
+        'fix-helio-polyfill'
     )
 )
 
