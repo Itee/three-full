@@ -787,6 +787,8 @@ module.exports = {
                 'GammaEncoding',
                 'LinearEncoding',
                 'ObjectSpaceNormalMap',
+                'TangentSpaceNormalMap',
+                'NoToneMapping',
                 'WebGLProgram'
             ]
         },

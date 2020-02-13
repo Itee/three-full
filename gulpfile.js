@@ -253,7 +253,7 @@ gulp.task( 'convert-three', ( done ) => {
 
            copyPolyfills()
            copyShaderChunk()
-           //copyLibs()
+           copyLibs()
            updateThreeExports()
 
            done()
@@ -283,23 +283,18 @@ gulp.task( 'convert-three', ( done ) => {
         fs.writeFileSync( './sources/libs/inflate.module.min.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/inflate.module.min.js', 'utf8' ) )
         fs.writeFileSync( './sources/libs/mmdparser.module.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/mmdparser.module.js', 'utf8' ) )
         fs.writeFileSync( './sources/libs/stats.module.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/stats.module.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/tween.module.min.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/tween.module.min.js', 'utf8' ) )
 
         // From libs
         fs.mkdirSync('./sources/libs', { recursive: true })
         fs.writeFileSync( './sources/libs/ammo.js', fs.readFileSync( './node_modules/three/examples/js/libs/ammo.js', 'utf8' ) )
         fs.writeFileSync( './sources/libs/chevrotain.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/chevrotain.min.js', 'utf8' ) )
-        fs.writeFileSync( './sources/libs/ctm.js', fs.readFileSync( './node_modules/three/examples/js/libs/ctm.js', 'utf8' ) )
         fs.writeFileSync( './sources/libs/dat.gui.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/dat.gui.min.js', 'utf8' ) )
-        fs.writeFileSync( './sources/libs/gunzip.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/gunzip.min.js', 'utf8' ) )
         fs.writeFileSync( './sources/libs/inflate.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/inflate.min.js', 'utf8' ) )
         fs.writeFileSync( './sources/libs/jszip.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/jszip.min.js', 'utf8' ) )
-        fs.writeFileSync( './sources/libs/lzma.js', fs.readFileSync( './node_modules/three/examples/js/libs/lzma.js', 'utf8' ) )
-        fs.writeFileSync( './sources/libs/mmdparser.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/mmdparser.min.js', 'utf8' ) )
         fs.writeFileSync( './sources/libs/opentype.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/opentype.min.js', 'utf8' ) )
         fs.writeFileSync( './sources/libs/stats.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/stats.min.js', 'utf8' ) )
-        fs.writeFileSync( './sources/libs/system.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/system.min.js', 'utf8' ) )
         fs.writeFileSync( './sources/libs/timeliner_gui.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/timeliner_gui.min.js', 'utf8' ) )
-        fs.writeFileSync( './sources/libs/tween.min.js', fs.readFileSync( './node_modules/three/examples/js/libs/tween.min.js', 'utf8' ) )
 
         fs.mkdirSync('./sources/libs/basis', { recursive: true })
         fs.writeFileSync( './sources/libs/basis/basis_transcoder.js', fs.readFileSync( './node_modules/three/examples/js/libs/basis/basis_transcoder.js', 'utf8' ) )
@@ -516,6 +511,14 @@ gulp.task( 'build-test-html', ( done ) => {
                         var _isOnError = false
                         window.onerror = function onErrorHandler( error ) {
                             
+                            if(_isOnError) {
+                                var messageElement = document.createElement( 'p' )
+                                messageElement.innerHTML == error
+                                document.getElementById('messages').appendChild( messageElement )
+                                return
+                            }
+                            _isOnError = true
+                            
                             document.body.style.backgroundColor = 'red'
                             document.getElementById('title').innerHTML = 'Error'
                             
@@ -551,7 +554,7 @@ gulp.task( 'build-test-html', ( done ) => {
                             document.getElementById('title').innerHTML = title
                             
                             var messageElement = document.createElement( 'p' )
-                            messageElement.innerHTML == message
+                            messageElement.innerHTML = message
                             document.getElementById('messages').appendChild( messageElement )
                     
                         }
