@@ -159,7 +159,7 @@
   var MultiplyOperation = 0;
   var MixOperation = 1;
   var AddOperation = 2;
-  var NoToneMapping$1 = 0;
+  var NoToneMapping = 0;
   var LinearToneMapping = 1;
   var ReinhardToneMapping = 2;
   var Uncharted2ToneMapping = 3;
@@ -253,7 +253,7 @@
   var RGBDEncoding = 3006;
   var BasicDepthPacking = 3200;
   var RGBADepthPacking = 3201;
-  var TangentSpaceNormalMap$1 = 0;
+  var TangentSpaceNormalMap = 0;
   var ObjectSpaceNormalMap = 1;
 
   var ZeroStencilOp = 0;
@@ -45014,7 +45014,7 @@
   	this.bumpScale = 1;
 
   	this.normalMap = null;
-  	this.normalMapType = TangentSpaceNormalMap$1;
+  	this.normalMapType = TangentSpaceNormalMap;
   	this.normalScale = new Vector2( 1, 1 );
 
   	this.displacementMap = null;
@@ -60008,7 +60008,7 @@
   	this.bumpScale = 1;
 
   	this.normalMap = null;
-  	this.normalMapType = TangentSpaceNormalMap$1;
+  	this.normalMapType = TangentSpaceNormalMap;
   	this.normalScale = new Vector2( 1, 1 );
 
   	this.displacementMap = null;
@@ -60141,7 +60141,7 @@
   	this.bumpScale = 1;
 
   	this.normalMap = null;
-  	this.normalMapType = TangentSpaceNormalMap$1;
+  	this.normalMapType = TangentSpaceNormalMap;
   	this.normalScale = new Vector2( 1, 1 );
 
   	this.displacementMap = null;
@@ -96801,7 +96801,7 @@
   		renderer.vr.enabled = false; // Avoid camera modification and recursion
   		renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
   		renderer.antialias = false;
-  		renderer.toneMapping = NoToneMapping$1;
+  		renderer.toneMapping = NoToneMapping;
 
   		this.sourceMesh.visible = false;
   		this.diffuseMesh.visible = false;
@@ -114882,9 +114882,9 @@
   			'uniform mat4 viewMatrix;',
   			'uniform vec3 cameraPosition;',
 
-  			( parameters.toneMapping !== NoToneMapping$1 ) ? '#define TONE_MAPPING' : '',
-  			( parameters.toneMapping !== NoToneMapping$1 ) ? ShaderChunk[ 'tonemapping_pars_fragment' ] : '', // this code is required here because it is used by the toneMapping() function defined below
-  			( parameters.toneMapping !== NoToneMapping$1 ) ? getToneMappingFunction( 'toneMapping', parameters.toneMapping ) : '',
+  			( parameters.toneMapping !== NoToneMapping ) ? '#define TONE_MAPPING' : '',
+  			( parameters.toneMapping !== NoToneMapping ) ? ShaderChunk[ 'tonemapping_pars_fragment' ] : '', // this code is required here because it is used by the toneMapping() function defined below
+  			( parameters.toneMapping !== NoToneMapping ) ? getToneMappingFunction( 'toneMapping', parameters.toneMapping ) : '',
 
   			parameters.dithering ? '#define DITHERING' : '',
 
@@ -140881,7 +140881,7 @@
   	this.bumpScale = 1;
 
   	this.normalMap = null;
-  	this.normalMapType = TangentSpaceNormalMap$1;
+  	this.normalMapType = TangentSpaceNormalMap;
   	this.normalScale = new Vector2( 1, 1 );
 
   	this.displacementMap = null;
@@ -141629,7 +141629,7 @@
   exports.NeverStencilFunc = NeverStencilFunc;
   exports.NoBlending = NoBlending;
   exports.NoColors = NoColors;
-  exports.NoToneMapping = NoToneMapping$1;
+  exports.NoToneMapping = NoToneMapping;
   exports.NormalBlending = NormalBlending;
   exports.NormalMapShader = NormalMapShader;
   exports.NotEqualDepth = NotEqualDepth;
@@ -141837,7 +141837,7 @@
   exports.TGALoader = TGALoader;
   exports.TOUCH = TOUCH;
   exports.TTFLoader = TTFLoader;
-  exports.TangentSpaceNormalMap = TangentSpaceNormalMap$1;
+  exports.TangentSpaceNormalMap = TangentSpaceNormalMap;
   exports.TeapotBufferGeometry = TeapotBufferGeometry;
   exports.TechnicolorShader = TechnicolorShader;
   exports.TerrainShader = TerrainShader;
