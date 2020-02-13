@@ -2,7 +2,11 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export default `
-#if defined( USE_ENVMAP ) && defined( PHYSICAL )
+#if defined( USE_ENVMAP )
+
+	#ifdef ENVMAP_MODE_REFRACTION
+		uniform float refractionRatio;
+	#endif
 
 	vec3 getLightProbeIndirectIrradiance(  const in GeometricContext geometry, const in int maxMIPLevel ) {
 
@@ -36,28 +40,32 @@ export default `
 		return PI * envMapColor.rgb * envMapIntensity;
 
 	}
-	float getSpecularMIPLevel( const in float blinnShininessExponent, const in int maxMIPLevel ) {
+	float getSpecularMIPLevel( const in float roughness, const in int maxMIPLevel ) {
+
 		float maxMIPLevelScalar = float( maxMIPLevel );
-		float desiredMIPLevel = maxMIPLevelScalar + 0.79248 - 0.5 * log2( pow2( blinnShininessExponent ) + 1.0 );
+
+		float sigma = PI * roughness * roughness / ( 1.0 + roughness );
+		float desiredMIPLevel = maxMIPLevelScalar + log2( sigma );
 		return clamp( desiredMIPLevel, 0.0, maxMIPLevelScalar );
 
 	}
 
-	vec3 getLightProbeIndirectRadiance(  const in GeometricContext geometry, const in float blinnShininessExponent, const in int maxMIPLevel ) {
+	vec3 getLightProbeIndirectRadiance(  const in vec3 viewDir, const in vec3 normal, const in float roughness, const in int maxMIPLevel ) {
 
 		#ifdef ENVMAP_MODE_REFLECTION
 
-			vec3 reflectVec = reflect( -geometry.viewDir, geometry.normal );
+		  vec3 reflectVec = reflect( -viewDir, normal );
+		  reflectVec = normalize( mix( reflectVec, normal, roughness * roughness) );
 
 		#else
 
-			vec3 reflectVec = refract( -geometry.viewDir, geometry.normal, refractionRatio );
+		  vec3 reflectVec = refract( -viewDir, normal, refractionRatio );
 
 		#endif
 
 		reflectVec = inverseTransformDirection( reflectVec, viewMatrix );
 
-		float specularMIPLevel = getSpecularMIPLevel( blinnShininessExponent, maxMIPLevel );
+		float specularMIPLevel = getSpecularMIPLevel( roughness, maxMIPLevel );
 
 		#ifdef ENVMAP_TYPE_CUBE
 
@@ -78,7 +86,7 @@ export default `
 		#elif defined( ENVMAP_TYPE_CUBE_UV )
 
 			vec3 queryReflectVec = vec3( flipEnvMap * reflectVec.x, reflectVec.yz );
-			vec4 envMapColor = textureCubeUV( envMap, queryReflectVec, BlinnExponentToGGXRoughness(blinnShininessExponent ));
+			vec4 envMapColor = textureCubeUV( envMap, queryReflectVec, roughness );
 
 		#elif defined( ENVMAP_TYPE_EQUIREC )
 

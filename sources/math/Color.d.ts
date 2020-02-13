@@ -51,7 +51,8 @@ export class Color {
 	lerp( color: Color, alpha: number ): this;
 	lerpHSL( color: Color, alpha: number ): this;
 	equals( color: Color ): boolean;
-	fromArray( rgb: number[], offset?: number ): this;
+	fromArray( array: number[], offset?: number ): this;
+	fromArray( array: ArrayLike<number>, offset?: number ): this;
 	toArray( array?: number[], offset?: number ): number[];
 	toArray( xyz: ArrayLike<number>, offset?: number ): ArrayLike<number>;
 

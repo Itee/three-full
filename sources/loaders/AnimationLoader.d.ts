@@ -2,13 +2,12 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { LoadingManager } from './LoadingManager';
+import { Loader } from './Loader';
 import { AnimationClip } from './../animation/AnimationClip';
 
-export class AnimationLoader {
+export class AnimationLoader extends Loader {
 
 	constructor( manager?: LoadingManager );
-
-	manager: LoadingManager;
 
 	load(
 		url: string,
@@ -17,6 +16,5 @@ export class AnimationLoader {
 		onError?: ( event: ErrorEvent ) => void
 	): any;
 	parse( json: any ): AnimationClip[];
-	setPath( path: string ): AnimationLoader;
 
 }

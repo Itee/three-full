@@ -3,18 +3,20 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { AudioContext } from '../audio/AudioContext.js'
 import { FileLoader } from './FileLoader.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
+import { Loader } from './Loader.js'
 /**
  * @author Reece Aaron Lecrivain / http://reecenotes.com/
  */
 
 function AudioLoader( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 }
 
-Object.assign( AudioLoader.prototype, {
+AudioLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
+
+	constructor: AudioLoader,
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -35,13 +37,6 @@ Object.assign( AudioLoader.prototype, {
 			} );
 
 		}, onProgress, onError );
-
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
 
 	}
 

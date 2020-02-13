@@ -8,7 +8,7 @@ import {
 } from '../constants.js'
 import { FileLoader } from './FileLoader.js'
 import { DataTexture } from '../textures/DataTexture.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
+import { Loader } from './Loader.js'
 /**
  * @author Nikos M. / https://github.com/foo123/
  *
@@ -17,14 +17,16 @@ import { DefaultLoadingManager } from './LoadingManager.js'
 
 function DataTextureLoader( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 	// override in sub classes
 	this._parser = null;
 
 }
 
-Object.assign( DataTextureLoader.prototype, {
+DataTextureLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
+
+	constructor: DataTextureLoader,
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -90,13 +92,6 @@ Object.assign( DataTextureLoader.prototype, {
 
 		}, onProgress, onError );
 		return texture;
-
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
 
 	}
 

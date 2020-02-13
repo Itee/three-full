@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 22.0.0 is now available under Three r0.107.0 !!!**
+**The version 23.0.0 is now available under Three r0.108.0 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -214,6 +214,15 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+
+##### 23.0.0:
+
+* Support of Three r108.0
+* Add missing imports to WebGLPrograms
+* Add missing libs folder
+* Add PointLightShadow
+* Add some ShaderChunk
+* Add VSM shader
 
 ##### 22.0.0:
 

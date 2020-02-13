@@ -5,7 +5,7 @@ import { Texture } from '../textures/Texture.js'
 import { FileLoader } from './FileLoader.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-/*
+/**
  * @author Daosheng Mu / https://github.com/DaoshengMu/
  * @author mrdoob / http://mrdoob.com/
  * @author takahirox / https://github.com/takahirox/

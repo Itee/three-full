@@ -10,7 +10,7 @@ import {
 	RGB_ETC1_Format
 } from '../constants.js'
 
-/*
+/**
  * @author mrdoob / http://mrdoob.com/
  */
 

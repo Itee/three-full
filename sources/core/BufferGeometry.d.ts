@@ -30,6 +30,7 @@ export class BufferGeometry extends EventDispatcher {
 	boundingSphere: Sphere;
 	drawRange: { start: number; count: number };
 	userData: {[key: string]: any};
+	isBufferGeometry: boolean;
 
 	getIndex(): BufferAttribute;
 	setIndex( index: BufferAttribute | number[] ): void;

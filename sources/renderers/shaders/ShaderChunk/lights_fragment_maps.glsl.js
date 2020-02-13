@@ -18,9 +18,9 @@ export default `
 
 	#endif
 
-	#if defined( USE_ENVMAP ) && defined( PHYSICAL ) && defined( ENVMAP_TYPE_CUBE_UV )
+	#if defined( USE_ENVMAP ) && defined( STANDARD ) && defined( ENVMAP_TYPE_CUBE_UV )
 
-		irradiance += getLightProbeIndirectIrradiance(  geometry, maxMipLevel );
+		iblIrradiance += getLightProbeIndirectIrradiance(  geometry, maxMipLevel );
 
 	#endif
 
@@ -28,10 +28,12 @@ export default `
 
 #if defined( USE_ENVMAP ) && defined( RE_IndirectSpecular )
 
-	radiance += getLightProbeIndirectRadiance(  geometry, Material_BlinnShininessExponent( material ), maxMipLevel );
+	radiance += getLightProbeIndirectRadiance(  geometry.viewDir, geometry.normal, material.specularRoughness, maxMipLevel );
 
-	#ifndef STANDARD
-		clearCoatRadiance += getLightProbeIndirectRadiance(  geometry, Material_ClearCoat_BlinnShininessExponent( material ), maxMipLevel );
+	#ifdef CLEARCOAT
+
+		clearcoatRadiance += getLightProbeIndirectRadiance(  geometry.viewDir, geometry.clearcoatNormal, material.clearcoatRoughness, maxMipLevel );
+
 	#endif
 
 #endif

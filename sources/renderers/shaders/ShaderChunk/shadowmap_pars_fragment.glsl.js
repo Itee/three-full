@@ -4,24 +4,24 @@
 export default `
 #ifdef USE_SHADOWMAP
 
-	#if NUM_DIR_LIGHTS > 0
+	#if NUM_DIR_LIGHT_SHADOWS > 0
 
-		uniform sampler2D directionalShadowMap[ NUM_DIR_LIGHTS ];
-		varying vec4 vDirectionalShadowCoord[ NUM_DIR_LIGHTS ];
-
-	#endif
-
-	#if NUM_SPOT_LIGHTS > 0
-
-		uniform sampler2D spotShadowMap[ NUM_SPOT_LIGHTS ];
-		varying vec4 vSpotShadowCoord[ NUM_SPOT_LIGHTS ];
+		uniform sampler2D directionalShadowMap[ NUM_DIR_LIGHT_SHADOWS ];
+		varying vec4 vDirectionalShadowCoord[ NUM_DIR_LIGHT_SHADOWS ];
 
 	#endif
 
-	#if NUM_POINT_LIGHTS > 0
+	#if NUM_SPOT_LIGHT_SHADOWS > 0
 
-		uniform sampler2D pointShadowMap[ NUM_POINT_LIGHTS ];
-		varying vec4 vPointShadowCoord[ NUM_POINT_LIGHTS ];
+		uniform sampler2D spotShadowMap[ NUM_SPOT_LIGHT_SHADOWS ];
+		varying vec4 vSpotShadowCoord[ NUM_SPOT_LIGHT_SHADOWS ];
+
+	#endif
+
+	#if NUM_POINT_LIGHT_SHADOWS > 0
+
+		uniform sampler2D pointShadowMap[ NUM_POINT_LIGHT_SHADOWS ];
+		varying vec4 vPointShadowCoord[ NUM_POINT_LIGHT_SHADOWS ];
 
 	#endif
 	float texture2DCompare( sampler2D depths, vec2 uv, float compare ) {
@@ -30,12 +30,39 @@ export default `
 
 	}
 
+	vec2 texture2DDistribution( sampler2D shadow, vec2 uv ) {
+
+		return decodeHalfRGBA( texture2D( shadow, uv ) );
+
+	}
+
+	float VSMShadow (sampler2D shadow, vec2 uv, float compare ){
+
+		float occlusion = 1.0;
+
+		vec2 distribution = texture2DDistribution( shadow, uv );
+
+		float hard_shadow = step( compare , distribution.x ); 
+
+		if (hard_shadow != 1.0 ) {
+
+			float distance = compare - distribution.x ;
+			float variance = max( 0.00000, distribution.y * distribution.y );
+			float softness_probability = variance / (variance + distance * distance ); 
+			softness_probability = clamp( ( softness_probability - 0.3 ) / ( 0.95 - 0.3 ), 0.0, 1.0 ); 
+			occlusion = clamp( max( hard_shadow, softness_probability ), 0.0, 1.0 );
+
+		}
+		return occlusion;
+
+	}
+
 	float texture2DShadowLerp( sampler2D depths, vec2 size, vec2 uv, float compare ) {
 
 		const vec2 offset = vec2( 0.0, 1.0 );
 
 		vec2 texelSize = vec2( 1.0 ) / size;
-		vec2 centroidUV = floor( uv * size + 0.5 ) / size;
+		vec2 centroidUV = ( floor( uv * size - 0.5 ) + 0.5 ) * texelSize;
 
 		float lb = texture2DCompare( depths, centroidUV + texelSize * offset.xx, compare );
 		float lt = texture2DCompare( depths, centroidUV + texelSize * offset.xy, compare );
@@ -121,6 +148,10 @@ export default `
 				texture2DShadowLerp( shadowMap, shadowMapSize, shadowCoord.xy + vec2( dx1, dy1 ), shadowCoord.z )
 			) * ( 1.0 / 9.0 );
 
+		#elif defined( SHADOWMAP_TYPE_VSM )
+
+			shadow = VSMShadow( shadowMap, shadowCoord.xy, shadowCoord.z );
+
 		#else 
 
 			shadow = texture2DCompare( shadowMap, shadowCoord.xy, shadowCoord.z );
@@ -171,7 +202,7 @@ export default `
 		dp += shadowBias;
 		vec3 bd3D = normalize( lightToPosition );
 
-		#if defined( SHADOWMAP_TYPE_PCF ) || defined( SHADOWMAP_TYPE_PCF_SOFT )
+		#if defined( SHADOWMAP_TYPE_PCF ) || defined( SHADOWMAP_TYPE_PCF_SOFT ) || defined( SHADOWMAP_TYPE_VSM )
 
 			vec2 offset = vec2( - 1, 1 ) * shadowRadius * texelSize.y;
 

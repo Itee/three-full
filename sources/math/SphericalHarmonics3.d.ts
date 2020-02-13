@@ -18,8 +18,10 @@ export class SphericalHarmonics3 {
 	equals( sh: SphericalHarmonics3 ): boolean;
 	copy( sh: SphericalHarmonics3 ): SphericalHarmonics3;
 	clone(): SphericalHarmonics3;
-	fromArray( array: number[] ): SphericalHarmonics3;
-	toArray(): number[];
+	fromArray( array: number[], offset?: number ): this;
+	fromArray( array: ArrayLike<number>, offset?: number ): this;
+	toArray( array?: number[], offset?: number ): number[];
+	toArray( array: ArrayLike<number>, offset?: number ): ArrayLike<number>;
 
 	getAt( normal: Vector3, target: Vector3 ) : Vector3;
 	getIrradianceAt( normal: Vector3, target: Vector3 ) : Vector3;

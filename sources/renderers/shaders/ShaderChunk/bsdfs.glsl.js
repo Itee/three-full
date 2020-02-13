@@ -89,15 +89,15 @@ float D_GGX( const in float alpha, const in float dotNH ) {
 	return RECIPROCAL_PI * a2 / pow2( denom );
 
 }
-vec3 BRDF_Specular_GGX( const in IncidentLight incidentLight, const in GeometricContext geometry, const in vec3 specularColor, const in float roughness ) {
+vec3 BRDF_Specular_GGX( const in IncidentLight incidentLight, const in vec3 viewDir, const in vec3 normal, const in vec3 specularColor, const in float roughness ) {
 
 	float alpha = pow2( roughness ); 
 
-	vec3 halfDir = normalize( incidentLight.direction + geometry.viewDir );
+	vec3 halfDir = normalize( incidentLight.direction + viewDir );
 
-	float dotNL = saturate( dot( geometry.normal, incidentLight.direction ) );
-	float dotNV = saturate( dot( geometry.normal, geometry.viewDir ) );
-	float dotNH = saturate( dot( geometry.normal, halfDir ) );
+	float dotNL = saturate( dot( normal, incidentLight.direction ) );
+	float dotNV = saturate( dot( normal, viewDir ) );
+	float dotNH = saturate( dot( normal, halfDir ) );
 	float dotLH = saturate( dot( incidentLight.direction, halfDir ) );
 
 	vec3 F = F_Schlick( specularColor, dotLH );
@@ -174,9 +174,9 @@ vec3 LTC_Evaluate( const in vec3 N, const in vec3 V, const in vec3 P, const in m
 	return vec3( result );
 
 }
-vec3 BRDF_Specular_GGX_Environment( const in GeometricContext geometry, const in vec3 specularColor, const in float roughness ) {
+vec3 BRDF_Specular_GGX_Environment( const in vec3 viewDir, const in vec3 normal, const in vec3 specularColor, const in float roughness ) {
 
-	float dotNV = saturate( dot( geometry.normal, geometry.viewDir ) );
+	float dotNV = saturate( dot( normal, viewDir ) );
 
 	vec2 brdf = integrateSpecularBRDF( dotNV, roughness );
 
@@ -235,4 +235,31 @@ float GGXRoughnessToBlinnExponent( const in float ggxRoughness ) {
 float BlinnExponentToGGXRoughness( const in float blinnExponent ) {
 	return sqrt( 2.0 / ( blinnExponent + 2.0 ) );
 }
+
+#if defined( USE_SHEEN )
+float D_Charlie(float roughness, float NoH) {
+	
+	float invAlpha  = 1.0 / roughness;
+	float cos2h = NoH * NoH;
+	float sin2h = max(1.0 - cos2h, 0.0078125); 
+	return (2.0 + invAlpha) * pow(sin2h, invAlpha * 0.5) / (2.0 * PI);
+}
+float V_Neubelt(float NoV, float NoL) {
+	
+	return saturate(1.0 / (4.0 * (NoL + NoV - NoL * NoV)));
+}
+
+vec3 BRDF_Specular_Sheen( const in float roughness, const in vec3 L, const in GeometricContext geometry, vec3 specularColor ) {
+
+	vec3 N = geometry.normal;
+	vec3 V = geometry.viewDir;
+
+	vec3 H = normalize( V + L );
+	float dotNH = saturate( dot( N, H ) );
+
+	return specularColor * D_Charlie( roughness, dotNH ) * V_Neubelt( dot(N, V), dot(N, L) );
+
+}
+
+#endif
 `;

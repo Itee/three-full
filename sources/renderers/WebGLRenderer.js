@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import {
-	REVISION,
 	RGBAFormat,
 	HalfFloatType,
 	FloatType,
@@ -55,8 +54,6 @@ import { WebXRManager } from './webvr/WebXRManager.js'
  */
 
 function WebGLRenderer( parameters ) {
-
-	console.log( 'WebGLRenderer', REVISION );
 
 	parameters = parameters || {};
 
@@ -2268,8 +2265,24 @@ function WebGLRenderer( parameters ) {
 
 		uniforms.reflectivity.value = material.reflectivity; // also part of uniforms common
 
-		uniforms.clearCoat.value = material.clearCoat;
-		uniforms.clearCoatRoughness.value = material.clearCoatRoughness;
+		uniforms.clearcoat.value = material.clearcoat;
+		uniforms.clearcoatRoughness.value = material.clearcoatRoughness;
+		if ( material.sheen ) uniforms.sheen.value.copy( material.sheen );
+
+		if ( material.clearcoatNormalMap ) {
+
+			uniforms.clearcoatNormalScale.value.copy( material.clearcoatNormalScale );
+			uniforms.clearcoatNormalMap.value = material.clearcoatNormalMap;
+
+			if ( material.side === BackSide ) {
+
+				uniforms.clearcoatNormalScale.value.negate();
+
+			}
+
+		}
+
+		uniforms.transparency.value = material.transparency;
 
 	}
 

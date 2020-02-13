@@ -13,13 +13,13 @@ import { arrayMax } from '../../utils.js'
  */
 function WebGLGeometries( gl, attributes, info ) {
 
-	var geometries = {};
-	var wireframeAttributes = {};
+	var geometries = new WeakMap();
+	var wireframeAttributes = new WeakMap();
 
 	function onGeometryDispose( event ) {
 
 		var geometry = event.target;
-		var buffergeometry = geometries[ geometry.id ];
+		var buffergeometry = geometries.get( geometry );
 
 		if ( buffergeometry.index !== null ) {
 
@@ -35,14 +35,14 @@ function WebGLGeometries( gl, attributes, info ) {
 
 		geometry.removeEventListener( 'dispose', onGeometryDispose );
 
-		delete geometries[ geometry.id ];
+		geometries.delete( geometry );
 
-		var attribute = wireframeAttributes[ buffergeometry.id ];
+		var attribute = wireframeAttributes.get( buffergeometry );
 
 		if ( attribute ) {
 
 			attributes.remove( attribute );
-			delete wireframeAttributes[ buffergeometry.id ];
+			wireframeAttributes.delete( buffergeometry );
 
 		}
 
@@ -54,7 +54,7 @@ function WebGLGeometries( gl, attributes, info ) {
 
 	function get( object, geometry ) {
 
-		var buffergeometry = geometries[ geometry.id ];
+		var buffergeometry = geometries.get( geometry );
 
 		if ( buffergeometry ) return buffergeometry;
 
@@ -76,7 +76,7 @@ function WebGLGeometries( gl, attributes, info ) {
 
 		}
 
-		geometries[ geometry.id ] = buffergeometry;
+		geometries.set( geometry, buffergeometry );
 
 		info.memory.geometries ++;
 
@@ -166,19 +166,19 @@ function WebGLGeometries( gl, attributes, info ) {
 
 		//
 
-		var previousAttribute = wireframeAttributes[ geometry.id ];
+		var previousAttribute = wireframeAttributes.get( geometry );
 
 		if ( previousAttribute ) attributes.remove( previousAttribute );
 
 		//
 
-		wireframeAttributes[ geometry.id ] = attribute;
+		wireframeAttributes.set( geometry, attribute );
 
 	}
 
 	function getWireframeAttribute( geometry ) {
 
-		var currentAttribute = wireframeAttributes[ geometry.id ];
+		var currentAttribute = wireframeAttributes.get( geometry );
 
 		if ( currentAttribute ) {
 
@@ -202,7 +202,7 @@ function WebGLGeometries( gl, attributes, info ) {
 
 		}
 
-		return wireframeAttributes[ geometry.id ];
+		return wireframeAttributes.get( geometry );
 
 	}
 

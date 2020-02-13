@@ -105,15 +105,17 @@ export class Vector3 implements Vector {
 	distanceToManhattan( v: Vector3 ): number;
 
 	setFromSpherical( s: Spherical ): this;
+	setFromSphericalCoords( r: number, phi: number, theta:number ): this;
 	setFromCylindrical( s: Cylindrical ): this;
+	setFromCylindricalCoords( radius: number, theta: number, y: number ): this;
 	setFromMatrixPosition( m: Matrix4 ): this;
 	setFromMatrixScale( m: Matrix4 ): this;
 	setFromMatrixColumn( matrix: Matrix4, index: number ): this;
 	equals( v: Vector3 ): boolean;
-
-	fromArray( xyz: number[], offset?: number ): Vector3;
-	toArray( xyz?: number[], offset?: number ): number[];
-	toArray( xyz: ArrayLike<number>, offset?: number ): ArrayLike<number>;
+	fromArray( array: number[], offset?: number ): this;
+	fromArray( array: ArrayLike<number>, offset?: number ): this;
+	toArray( array?: number[], offset?: number ): number[];
+	toArray( array: ArrayLike<number>, offset?: number ): ArrayLike<number>;
 
 	fromBufferAttribute(
 		attribute: BufferAttribute,

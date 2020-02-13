@@ -33,11 +33,10 @@ export class Quaternion {
 
 	slerp( qb: Quaternion, t: number ): Quaternion;
 	equals( v: Quaternion ): boolean;
-	fromArray( n: number[] ): Quaternion;
-	toArray(): number[];
-
-	fromArray( xyzw: number[], offset?: number ): Quaternion;
-	toArray( xyzw?: number[], offset?: number ): number[];
+	fromArray( array: number[], offset?: number ): this;
+	fromArray( array: ArrayLike<number>, offset?: number ): this;
+	toArray( array?: number[], offset?: number ): number[];
+	toArray( array: ArrayLike<number>, offset?: number ): ArrayLike<number>;
 
 	_onChange( callback: Function ): Quaternion;
 	_onChangeCallback: Function;

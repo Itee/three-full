@@ -37,6 +37,7 @@ export class Raycaster {
 	ray: Ray;
 	near: number;
 	far: number;
+	camera: Camera;
 
 	params: RaycasterParameters;
 	linePrecision: number;

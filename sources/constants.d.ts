@@ -30,6 +30,7 @@ export enum ShadowMapType {}
 export const BasicShadowMap: ShadowMapType;
 export const PCFShadowMap: ShadowMapType;
 export const PCFSoftShadowMap: ShadowMapType;
+export const VSMShadowMap: ShadowMapType;
 export enum Side {}
 export const FrontSide: Side;
 export const BackSide: Side;

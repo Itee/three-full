@@ -9,7 +9,7 @@ import { Vector3 } from './Vector3.js'
  * @author tschw
  */
 
-var _vector;
+var _vector = new Vector3();
 
 function Matrix3() {
 
@@ -95,8 +95,6 @@ Object.assign( Matrix3.prototype, {
 	},
 
 	applyToBufferAttribute: function ( attribute ) {
-
-		if ( _vector === undefined ) _vector = new Vector3();
 
 		for ( var i = 0, l = attribute.count; i < l; i ++ ) {
 

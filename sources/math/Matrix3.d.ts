@@ -59,10 +59,10 @@ export class Matrix3 implements Matrix {
 	translate( tx: number, ty: number ): Matrix3;
 
 	equals( matrix: Matrix3 ): boolean;
-
 	fromArray( array: number[], offset?: number ): Matrix3;
-
+	fromArray( array: ArrayLike<number>, offset?: number ): Matrix3;
 	toArray( array?: number[], offset?: number ): number[];
+	toArray( array?: ArrayLike<number>, offset?: number ): ArrayLike<number>;
 	multiply( m: Matrix3 ): Matrix3;
 
 	premultiply( m: Matrix3 ): Matrix3;

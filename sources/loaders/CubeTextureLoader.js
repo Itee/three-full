@@ -3,20 +3,20 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { ImageLoader } from './ImageLoader.js'
 import { CubeTexture } from '../textures/CubeTexture.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
+import { Loader } from './Loader.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
  */
 function CubeTextureLoader( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 }
 
-Object.assign( CubeTextureLoader.prototype, {
+CubeTextureLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
-	crossOrigin: 'anonymous',
+	constructor: CubeTextureLoader,
 
 	load: function ( urls, onLoad, onProgress, onError ) {
 
@@ -55,20 +55,6 @@ Object.assign( CubeTextureLoader.prototype, {
 		}
 
 		return texture;
-
-	},
-
-	setCrossOrigin: function ( value ) {
-
-		this.crossOrigin = value;
-		return this;
-
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
 
 	}
 

@@ -2,40 +2,37 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export default `
-#ifdef USE_NORMALMAP
 
-	#ifdef OBJECTSPACE_NORMALMAP
+#ifdef OBJECTSPACE_NORMALMAP
 
-		normal = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0; 
+	normal = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0; 
 
-		#ifdef FLIP_SIDED
+	#ifdef FLIP_SIDED
 
-			normal = - normal;
+		normal = - normal;
 
-		#endif
+	#endif
 
-		#ifdef DOUBLE_SIDED
+	#ifdef DOUBLE_SIDED
 
-			normal = normal * ( float( gl_FrontFacing ) * 2.0 - 1.0 );
+		normal = normal * ( float( gl_FrontFacing ) * 2.0 - 1.0 );
 
-		#endif
+	#endif
 
-		normal = normalize( normalMatrix * normal );
+	normal = normalize( normalMatrix * normal );
 
-	#else 
+#elif defined( TANGENTSPACE_NORMALMAP )
 
-		#ifdef USE_TANGENT
+	#ifdef USE_TANGENT
 
-			mat3 vTBN = mat3( tangent, bitangent, normal );
-			vec3 mapN = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0;
-			mapN.xy = normalScale * mapN.xy;
-			normal = normalize( vTBN * mapN );
+		mat3 vTBN = mat3( tangent, bitangent, normal );
+		vec3 mapN = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0;
+		mapN.xy = normalScale * mapN.xy;
+		normal = normalize( vTBN * mapN );
 
-		#else
+	#else
 
-			normal = perturbNormal2Arb( -vViewPosition, normal );
-
-		#endif
+		normal = perturbNormal2Arb( -vViewPosition, normal, normalScale, normalMap );
 
 	#endif
 

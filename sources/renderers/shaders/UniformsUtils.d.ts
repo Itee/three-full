@@ -1,7 +1,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export function cloneUniforms( uniforms_src: any ): any;
+export function mergeUniforms( uniforms: any[] ): any;
+
 export namespace UniformsUtils {
-	export function merge( uniforms: any[] ): any;
-	export function clone( uniforms_src: any ): any;
+	export {
+		mergeUniforms as merge,
+		cloneUniforms as clone,
+	};
 }

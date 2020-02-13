@@ -357,6 +357,7 @@ export {
 	BasicShadowMap,
 	PCFShadowMap,
 	PCFSoftShadowMap,
+	VSMShadowMap,
 	FrontSide,
 	BackSide,
 	DoubleSide,
@@ -672,6 +673,7 @@ export { Light } from './lights/Light.js'
 export { LightProbe } from './lights/LightProbe.js'
 export { LightShadow } from './lights/LightShadow.js'
 export { PointLight } from './lights/PointLight.js'
+export { PointLightShadow } from './lights/PointLightShadow.js'
 export { RectAreaLight } from './lights/RectAreaLight.js'
 export { SpotLight } from './lights/SpotLight.js'
 export { SpotLightShadow } from './lights/SpotLightShadow.js'

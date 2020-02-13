@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var REVISION = '107';
+var REVISION = '108';
 var MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2, ROTATE: 0, DOLLY: 1, PAN: 2 };
 var TOUCH = { ROTATE: 0, PAN: 1, DOLLY_PAN: 2, DOLLY_ROTATE: 3 };
 var CullFaceNone = 0;
@@ -13,6 +13,7 @@ var FrontFaceDirectionCCW = 1;
 var BasicShadowMap = 0;
 var PCFShadowMap = 1;
 var PCFSoftShadowMap = 2;
+var VSMShadowMap = 3;
 var FrontSide = 0;
 var BackSide = 1;
 var DoubleSide = 2;
@@ -182,6 +183,7 @@ export {
 	BasicShadowMap,
 	PCFShadowMap,
 	PCFSoftShadowMap,
+	VSMShadowMap,
 	FrontSide,
 	BackSide,
 	DoubleSide,

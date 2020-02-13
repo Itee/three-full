@@ -69,6 +69,7 @@ var TranslucentShader = {
 	].join( "\n" ),
 
 	fragmentShader: [
+		"#define USE_UV",
 		"#define USE_MAP",
 		"#define PHONG",
 		"#define TRANSLUCENT",
@@ -145,7 +146,7 @@ var TranslucentShader = {
 
 		"			RE_Direct( directLight, geometry, material, reflectedLight );",
 
-		"			#if defined( TRANSLUCENT ) && defined( USE_MAP )",
+		"			#if defined( TRANSLUCENT ) && defined( USE_UV )",
 		"			RE_Direct_Scattering(directLight, vUv, geometry, reflectedLight);",
 		"			#endif",
 		"		}",
@@ -167,7 +168,7 @@ var TranslucentShader = {
 
 		"			RE_Direct( directLight, geometry, material, reflectedLight );",
 
-		"			#if defined( TRANSLUCENT ) && defined( USE_MAP )",
+		"			#if defined( TRANSLUCENT ) && defined( USE_UV )",
 		"			RE_Direct_Scattering(directLight, vUv, geometry, reflectedLight);",
 		"			#endif",
 		"		}",
@@ -194,7 +195,7 @@ var TranslucentShader = {
 		"	#if defined( RE_IndirectSpecular )",
 
 		"		vec3 radiance = vec3( 0.0 );",
-		"		vec3 clearCoatRadiance = vec3( 0.0 );",
+		"		vec3 clearcoatRadiance = vec3( 0.0 );",
 
 		"	#endif",
 		ShaderChunk[ "lights_fragment_end" ],

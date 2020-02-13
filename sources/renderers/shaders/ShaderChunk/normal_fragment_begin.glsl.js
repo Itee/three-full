@@ -32,4 +32,6 @@ export default `
 	#endif
 
 #endif
+vec3 geometryNormal = normal;
+
 `;

@@ -6,7 +6,7 @@ import { Geometry } from '../core/Geometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
-/*
+/**
  *	@author zz85 / http://twitter.com/blurspline / http://www.lab4games.net/zz85/blog
  *
  *	Simplification Geometry Modifier

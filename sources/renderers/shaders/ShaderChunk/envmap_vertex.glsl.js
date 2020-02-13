@@ -4,7 +4,7 @@
 export default `
 #ifdef USE_ENVMAP
 
-	#if defined( USE_BUMPMAP ) || defined( USE_NORMALMAP ) || defined( PHONG )
+	#ifdef ENV_WORLDPOS
 
 		vWorldPosition = worldPosition.xyz;
 

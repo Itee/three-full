@@ -114,6 +114,5 @@ export class Material extends EventDispatcher {
 	onBeforeCompile ( shader : Shader, renderer : WebGLRenderer ) : void;
 	setValues( values: MaterialParameters ): void;
 	toJSON( meta?: any ): any;
-	update(): void;
 
 }

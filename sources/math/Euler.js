@@ -11,7 +11,8 @@ import { _Math } from './Math.js'
  * @author bhouston / http://clara.io
  */
 
-var _matrix, _quaternion;
+var _matrix = new Matrix4();
+var _quaternion = new Quaternion();
 
 function Euler( x, y, z, order ) {
 
@@ -151,7 +152,7 @@ Object.assign( Euler.prototype, {
 
 			this._y = Math.asin( clamp( m13, - 1, 1 ) );
 
-			if ( Math.abs( m13 ) < 0.99999 ) {
+			if ( Math.abs( m13 ) < 0.9999999 ) {
 
 				this._x = Math.atan2( - m23, m33 );
 				this._z = Math.atan2( - m12, m11 );
@@ -167,7 +168,7 @@ Object.assign( Euler.prototype, {
 
 			this._x = Math.asin( - clamp( m23, - 1, 1 ) );
 
-			if ( Math.abs( m23 ) < 0.99999 ) {
+			if ( Math.abs( m23 ) < 0.9999999 ) {
 
 				this._y = Math.atan2( m13, m33 );
 				this._z = Math.atan2( m21, m22 );
@@ -183,7 +184,7 @@ Object.assign( Euler.prototype, {
 
 			this._x = Math.asin( clamp( m32, - 1, 1 ) );
 
-			if ( Math.abs( m32 ) < 0.99999 ) {
+			if ( Math.abs( m32 ) < 0.9999999 ) {
 
 				this._y = Math.atan2( - m31, m33 );
 				this._z = Math.atan2( - m12, m22 );
@@ -199,7 +200,7 @@ Object.assign( Euler.prototype, {
 
 			this._y = Math.asin( - clamp( m31, - 1, 1 ) );
 
-			if ( Math.abs( m31 ) < 0.99999 ) {
+			if ( Math.abs( m31 ) < 0.9999999 ) {
 
 				this._x = Math.atan2( m32, m33 );
 				this._z = Math.atan2( m21, m11 );
@@ -215,7 +216,7 @@ Object.assign( Euler.prototype, {
 
 			this._z = Math.asin( clamp( m21, - 1, 1 ) );
 
-			if ( Math.abs( m21 ) < 0.99999 ) {
+			if ( Math.abs( m21 ) < 0.9999999 ) {
 
 				this._x = Math.atan2( - m23, m22 );
 				this._y = Math.atan2( - m31, m11 );
@@ -231,7 +232,7 @@ Object.assign( Euler.prototype, {
 
 			this._z = Math.asin( - clamp( m12, - 1, 1 ) );
 
-			if ( Math.abs( m12 ) < 0.99999 ) {
+			if ( Math.abs( m12 ) < 0.9999999 ) {
 
 				this._x = Math.atan2( m32, m22 );
 				this._y = Math.atan2( m13, m11 );
@@ -259,8 +260,6 @@ Object.assign( Euler.prototype, {
 
 	setFromQuaternion: function ( q, order, update ) {
 
-		if ( _matrix === undefined ) _matrix = new Matrix4();
-
 		_matrix.makeRotationFromQuaternion( q );
 
 		return this.setFromRotationMatrix( _matrix, order, update );
@@ -276,8 +275,6 @@ Object.assign( Euler.prototype, {
 	reorder: function ( newOrder ) {
 
 		// WARNING: this discards revolution information -bhouston
-
-		if ( _quaternion === undefined ) _quaternion = new Quaternion();
 
 		_quaternion.setFromEuler( this );
 
