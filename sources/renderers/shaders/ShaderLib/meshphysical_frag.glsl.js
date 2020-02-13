@@ -2,7 +2,13 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export default `
-#define PHYSICAL
+#define STANDARD
+
+#ifdef PHYSICAL
+	#define REFLECTIVITY
+	#define CLEARCOAT
+	#define TRANSPARENCY
+#endif
 
 uniform vec3 diffuse;
 uniform vec3 emissive;
@@ -10,9 +16,21 @@ uniform float roughness;
 uniform float metalness;
 uniform float opacity;
 
-#ifndef STANDARD
-	uniform float clearCoat;
-	uniform float clearCoatRoughness;
+#ifdef TRANSPARENCY
+	uniform float transparency;
+#endif
+
+#ifdef REFLECTIVITY
+	uniform float reflectivity;
+#endif
+
+#ifdef CLEARCOAT
+	uniform float clearcoat;
+	uniform float clearcoatRoughness;
+#endif
+
+#ifdef USE_SHEEN
+	uniform vec3 sheen;
 #endif
 
 varying vec3 vViewPosition;
@@ -43,7 +61,7 @@ varying vec3 vViewPosition;
 #include <emissivemap_pars_fragment>
 #include <bsdfs>
 #include <cube_uv_reflection_fragment>
-#include <envmap_pars_fragment>
+#include <envmap_common_pars_fragment>
 #include <envmap_physical_pars_fragment>
 #include <fog_pars_fragment>
 #include <lights_pars_begin>
@@ -51,6 +69,7 @@ varying vec3 vViewPosition;
 #include <shadowmap_pars_fragment>
 #include <bumpmap_pars_fragment>
 #include <normalmap_pars_fragment>
+#include <clearcoat_normalmap_pars_fragment>
 #include <roughnessmap_pars_fragment>
 #include <metalnessmap_pars_fragment>
 #include <logdepthbuf_pars_fragment>
@@ -73,6 +92,8 @@ void main() {
 	#include <metalnessmap_fragment>
 	#include <normal_fragment_begin>
 	#include <normal_fragment_maps>
+	#include <clearcoat_normal_fragment_begin>
+	#include <clearcoat_normal_fragment_maps>
 	#include <emissivemap_fragment>
 	#include <lights_physical_fragment>
 	#include <lights_fragment_begin>
@@ -81,6 +102,9 @@ void main() {
 	#include <aomap_fragment>
 
 	vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;
+	#ifdef TRANSPARENCY
+		diffuseColor.a *= saturate( 1. - transparency + linearToRelativeLuminance( reflectedLight.directSpecular + reflectedLight.indirectSpecular ) );
+	#endif
 
 	gl_FragColor = vec4( outgoingLight, diffuseColor.a );
 

@@ -4,7 +4,7 @@
 export default `
 #ifdef USE_ENVMAP
 
-	#if defined( USE_BUMPMAP ) || defined( USE_NORMALMAP ) || defined( PHONG )
+	#ifdef ENV_WORLDPOS
 
 		vec3 cameraToVertex = normalize( vWorldPosition - cameraPosition );
 		vec3 worldNormal = inverseTransformDirection( normal, viewMatrix );

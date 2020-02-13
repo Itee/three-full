@@ -1,19 +1,16 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader';
 import { LoadingManager } from './LoadingManager';
 import { Object3D } from './../core/Object3D';
 import { Texture } from './../textures/Texture';
 import { Material } from './../materials/Material';
 import { AnimationClip } from './../animation/AnimationClip';
 
-export class ObjectLoader {
+export class ObjectLoader extends Loader {
 
 	constructor( manager?: LoadingManager );
-
-	manager: LoadingManager;
-	texturePass: string;
-	crossOrigin: string;
 
 	load(
 		url: string,
@@ -21,8 +18,6 @@ export class ObjectLoader {
 		onProgress?: ( event: ProgressEvent ) => void,
 		onError?: ( event: Error | ErrorEvent ) => void
 	): void;
-	setTexturePath( value: string ): void;
-	setCrossOrigin( crossOrigin: string ): void;
 	parse<T extends Object3D>( json: any, onLoad?: ( object: Object3D ) => void ): T;
 	parseGeometries( json: any ): any[]; 
 	parseMaterials( json: any, textures: Texture[] ): Material[]; 

@@ -7,7 +7,7 @@ import { Geometry } from '../core/Geometry.js'
 import { ArrowHelper } from '../helpers/ArrowHelper.js'
 import { Curve } from '../curves/Curve.js'
 
-/*
+/**
  * @author zz85
  *
  * Experimenting of primitive geometry creation using Surface Parametric equations

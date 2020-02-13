@@ -1,22 +1,21 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Loader } from './Loader';
 import { LoadingManager } from './LoadingManager.js';
 
-export class ImageBitmapLoader {
+export class ImageBitmapLoader extends Loader {
 
 	constructor( manager?: LoadingManager );
 
-	manager: LoadingManager;
+	options: undefined | object;
 
-	setOptions( options: any ): ImageBitmapLoader;
+	setOptions( options: object ): ImageBitmapLoader;
 	load(
 		url: string,
 		onLoad?: ( response: string | ArrayBuffer ) => void,
 		onProgress?: ( request: ProgressEvent ) => void,
 		onError?: ( event: ErrorEvent ) => void
 	): any;
-	setCrossOrigin(): ImageBitmapLoader;
-	setPath( path: string ): ImageBitmapLoader;
 
 }

@@ -2,8 +2,7 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Light } from './Light.js'
-import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
-import { LightShadow } from './LightShadow.js'
+import { PointLightShadow } from './PointLightShadow.js'
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -33,7 +32,7 @@ function PointLight( color, intensity, distance, decay ) {
 	this.distance = ( distance !== undefined ) ? distance : 0;
 	this.decay = ( decay !== undefined ) ? decay : 1;	// for physically correct lights, should be 2.
 
-	this.shadow = new LightShadow( new PerspectiveCamera( 90, 1, 0.5, 500 ) );
+	this.shadow = new PointLightShadow();
 
 }
 

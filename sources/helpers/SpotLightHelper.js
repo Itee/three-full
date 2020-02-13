@@ -13,6 +13,8 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
  * @author mrdoob / http://mrdoob.com/
  * @author WestLangley / http://github.com/WestLangley
  */
+var _vector = new Vector3();
+
 function SpotLightHelper( light, color ) {
 
 	Object3D.call( this );
@@ -70,33 +72,27 @@ SpotLightHelper.prototype.dispose = function () {
 
 SpotLightHelper.prototype.update = function () {
 
-	var vector = new Vector3();
+	this.light.updateMatrixWorld();
 
-	return function update() {
+	var coneLength = this.light.distance ? this.light.distance : 1000;
+	var coneWidth = coneLength * Math.tan( this.light.angle );
 
-		this.light.updateMatrixWorld();
+	this.cone.scale.set( coneWidth, coneWidth, coneLength );
 
-		var coneLength = this.light.distance ? this.light.distance : 1000;
-		var coneWidth = coneLength * Math.tan( this.light.angle );
+	_vector.setFromMatrixPosition( this.light.target.matrixWorld );
 
-		this.cone.scale.set( coneWidth, coneWidth, coneLength );
+	this.cone.lookAt( _vector );
 
-		vector.setFromMatrixPosition( this.light.target.matrixWorld );
+	if ( this.color !== undefined ) {
 
-		this.cone.lookAt( vector );
+		this.cone.material.color.set( this.color );
 
-		if ( this.color !== undefined ) {
+	} else {
 
-			this.cone.material.color.set( this.color );
+		this.cone.material.color.copy( this.light.color );
 
-		} else {
+	}
 
-			this.cone.material.color.copy( this.light.color );
-
-		}
-
-	};
-
-}();
+};
 
 export { SpotLightHelper }

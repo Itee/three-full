@@ -11,7 +11,7 @@ import { Mesh } from '../objects/Mesh.js'
 import { LoaderUtils } from './LoaderUtils.js'
 import { DefaultLoadingManager } from './LoadingManager.js'
 
-/*
+/**
  * @author tamarintech / https://tamarintech.com
  *
  * Description: Early release of an AMF Loader following the pattern of the

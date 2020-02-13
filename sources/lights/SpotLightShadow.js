@@ -20,7 +20,7 @@ SpotLightShadow.prototype = Object.assign( Object.create( LightShadow.prototype 
 
 	isSpotLightShadow: true,
 
-	update: function ( light ) {
+	updateMatrices: function ( light, viewCamera, viewportIndex ) {
 
 		var camera = this.camera;
 
@@ -36,6 +36,8 @@ SpotLightShadow.prototype = Object.assign( Object.create( LightShadow.prototype 
 			camera.updateProjectionMatrix();
 
 		}
+
+		LightShadow.prototype.updateMatrices.call( this, light, viewCamera, viewportIndex );
 
 	}
 

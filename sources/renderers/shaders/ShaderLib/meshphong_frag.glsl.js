@@ -21,6 +21,7 @@ uniform float opacity;
 #include <aomap_pars_fragment>
 #include <lightmap_pars_fragment>
 #include <emissivemap_pars_fragment>
+#include <envmap_common_pars_fragment>
 #include <envmap_pars_fragment>
 #include <gradientmap_pars_fragment>
 #include <fog_pars_fragment>

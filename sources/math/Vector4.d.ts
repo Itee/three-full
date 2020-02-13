@@ -67,10 +67,10 @@ export class Vector4 implements Vector {
 
 	lerpVectors( v1: Vector4, v2: Vector4, alpha: number ): this;
 	equals( v: Vector4 ): boolean;
-
-	fromArray( xyzw: number[], offset?: number ): this;
-
-	toArray( xyzw?: number[], offset?: number ): number[];
+	fromArray( array: number[], offset?: number ): this;
+	fromArray( array: ArrayLike<number>, offset?: number ): this;
+	toArray( array?: number[], offset?: number ): number[];
+	toArray( array: ArrayLike<number>, offset?: number ): ArrayLike<number>;
 
 	fromBufferAttribute(
 		attribute: BufferAttribute,

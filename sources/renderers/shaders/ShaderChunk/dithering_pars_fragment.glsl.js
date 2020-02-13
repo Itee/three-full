@@ -2,7 +2,7 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export default `
-#if defined( DITHERING )
+#ifdef DITHERING
 	vec3 dithering( vec3 color ) {
 		
 		float grid_position = rand( gl_FragCoord.xy );

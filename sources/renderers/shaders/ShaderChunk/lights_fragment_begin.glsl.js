@@ -8,6 +8,12 @@ geometry.position = - vViewPosition;
 geometry.normal = normal;
 geometry.viewDir = normalize( vViewPosition );
 
+#ifdef CLEARCOAT
+
+	geometry.clearcoatNormal = clearcoatNormal;
+
+#endif
+
 IncidentLight directLight;
 
 #if ( NUM_POINT_LIGHTS > 0 ) && defined( RE_Direct )
@@ -21,7 +27,7 @@ IncidentLight directLight;
 
 		getPointDirectLightIrradiance( pointLight, geometry, directLight );
 
-		#ifdef USE_SHADOWMAP
+		#if defined( USE_SHADOWMAP ) && ( UNROLLED_LOOP_INDEX < NUM_POINT_LIGHT_SHADOWS )
 		directLight.color *= all( bvec2( pointLight.shadow, directLight.visible ) ) ? getPointShadow( pointShadowMap[ i ], pointLight.shadowMapSize, pointLight.shadowBias, pointLight.shadowRadius, vPointShadowCoord[ i ], pointLight.shadowCameraNear, pointLight.shadowCameraFar ) : 1.0;
 		#endif
 
@@ -42,7 +48,7 @@ IncidentLight directLight;
 
 		getSpotDirectLightIrradiance( spotLight, geometry, directLight );
 
-		#ifdef USE_SHADOWMAP
+		#if defined( USE_SHADOWMAP ) && ( UNROLLED_LOOP_INDEX < NUM_SPOT_LIGHT_SHADOWS )
 		directLight.color *= all( bvec2( spotLight.shadow, directLight.visible ) ) ? getShadow( spotShadowMap[ i ], spotLight.shadowMapSize, spotLight.shadowBias, spotLight.shadowRadius, vSpotShadowCoord[ i ] ) : 1.0;
 		#endif
 
@@ -63,7 +69,7 @@ IncidentLight directLight;
 
 		getDirectionalDirectLightIrradiance( directionalLight, geometry, directLight );
 
-		#ifdef USE_SHADOWMAP
+		#if defined( USE_SHADOWMAP ) && ( UNROLLED_LOOP_INDEX < NUM_DIR_LIGHT_SHADOWS )
 		directLight.color *= all( bvec2( directionalLight.shadow, directLight.visible ) ) ? getShadow( directionalShadowMap[ i ], directionalLight.shadowMapSize, directionalLight.shadowBias, directionalLight.shadowRadius, vDirectionalShadowCoord[ i ] ) : 1.0;
 		#endif
 
@@ -89,6 +95,8 @@ IncidentLight directLight;
 
 #if defined( RE_IndirectDiffuse )
 
+	vec3 iblIrradiance = vec3( 0.0 );
+
 	vec3 irradiance = getAmbientLightIrradiance( ambientLightColor );
 
 	irradiance += getLightProbeIrradiance( lightProbe, geometry );
@@ -109,7 +117,7 @@ IncidentLight directLight;
 #if defined( RE_IndirectSpecular )
 
 	vec3 radiance = vec3( 0.0 );
-	vec3 clearCoatRadiance = vec3( 0.0 );
+	vec3 clearcoatRadiance = vec3( 0.0 );
 
 #endif
 `;

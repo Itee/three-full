@@ -97,8 +97,9 @@ export class Matrix4 implements Matrix {
 	): Matrix4;
 	equals( matrix: Matrix4 ): boolean;
 	fromArray( array: number[], offset?: number ): Matrix4;
-
+	fromArray( array: ArrayLike<number>, offset?: number ): Matrix4;
 	toArray( array?: number[], offset?: number ): number[];
+	toArray( array?: ArrayLike<number>, offset?: number ): ArrayLike<number>;
 	extractPosition( m: Matrix4 ): Matrix4;
 	setRotationFromQuaternion( q: Quaternion ): Matrix4;
 	multiplyVector3( v: any ): any;

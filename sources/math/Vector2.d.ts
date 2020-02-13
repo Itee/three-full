@@ -89,6 +89,7 @@ export class Vector2 implements Vector {
 	lerpVectors( v1: Vector2, v2: Vector2, alpha: number ): this;
 	equals( v: Vector2 ): boolean;
 	fromArray( array: number[], offset?: number ): this;
+	fromArray( array: ArrayLike<number>, offset?: number ): this;
 	toArray( array?: number[], offset?: number ): number[];
 	toArray( array: ArrayLike<number>, offset?: number ): ArrayLike<number>;
 	fromBufferAttribute( attribute: BufferAttribute, index: number ): this;

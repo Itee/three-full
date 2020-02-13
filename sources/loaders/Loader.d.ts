@@ -1,23 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Material } from './../materials/Material';
-import { LoaderHandler } from './FileLoader';
+import { LoadingManager } from './LoadingManager';
 export class Loader {
 
-	constructor();
-	onLoadStart: () => void;
-	onLoadProgress: () => void;
-	onLoadComplete: () => void;
+	constructor( manager?: LoadingManager );
+
 	crossOrigin: string;
-	extractUrlBase( url: string ): string;
-	initMaterials( materials: Material[], texturePath: string ): Material[];
-	createMaterial(
-		m: Material,
-		texturePath: string,
-		crossOrigin?: string
-	): boolean;
+	path: string;
+	resourcePath: string;
+	manager: LoadingManager;
+	setCrossOrigin( crossOrigin: string ): this;
+	setPath( path: string ): this;
+	setResourcePath( resourcePath: string ): this;
 
 	static Handlers: LoaderHandler;
 
+}
+export interface LoaderHandler {
+	handlers: ( RegExp | Loader )[];
+
+	add( regex: RegExp, loader: Loader ): void;
+	get( file: string ): Loader | null;
 }

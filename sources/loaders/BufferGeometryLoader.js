@@ -6,7 +6,7 @@ import { Vector3 } from '../math/Vector3.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { FileLoader } from './FileLoader.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
+import { Loader } from './Loader.js'
 import { InstancedBufferGeometry } from '../core/InstancedBufferGeometry.js'
 import { InstancedBufferAttribute } from '../core/InstancedBufferAttribute.js'
 /**
@@ -15,11 +15,13 @@ import { InstancedBufferAttribute } from '../core/InstancedBufferAttribute.js'
 
 function BufferGeometryLoader( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : DefaultLoadingManager;
+	Loader.call( this, manager );
 
 }
 
-Object.assign( BufferGeometryLoader.prototype, {
+BufferGeometryLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
+
+	constructor: BufferGeometryLoader,
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
@@ -122,13 +124,6 @@ Object.assign( BufferGeometryLoader.prototype, {
 		if ( json.userData ) geometry.userData = json.userData;
 
 		return geometry;
-
-	},
-
-	setPath: function ( value ) {
-
-		this.path = value;
-		return this;
 
 	}
 
