@@ -585,16 +585,6 @@ module.exports = {
                 [ 'HorizontalPanning = 1;', 'var HorizontalPanning = 1;' ]
             ]
         },
-        OutlineEffect:               {
-            imports: [
-                '!MeshBasicMaterial',
-                '!MeshLambertMaterial',
-                '!MeshPhongMaterial',
-                '!MeshToonMaterial',
-                '!MeshStandardMaterial',
-                '!MeshPhysicalMaterial'
-            ]
-        },
         Pass:                        {
             exportsOverride: [ 'Pass' ]
         },
