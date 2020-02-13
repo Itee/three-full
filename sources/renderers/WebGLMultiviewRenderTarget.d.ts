@@ -1,18 +1,20 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader';
-import { LoadingManager } from './LoadingManager';
+import {
+	WebGLRenderTarget,
+	WebGLRenderTargetOptions,
+} from './WebGLRenderTarget';
 
-export class AudioLoader extends Loader {
+export class WebGLMultiviewRenderTarget extends WebGLRenderTarget {
 
-	constructor( manager?: LoadingManager );
+	constructor(
+		width: number,
+		height: number,
+		numViews: number,
+		options?: WebGLRenderTargetOptions
+	);
 
-	load(
-		url: string,
-		onLoad: ( audioBuffer: AudioBuffer ) => void,
-		onProgress?: ( request: ProgressEvent ) => void,
-		onError?: ( event: ErrorEvent ) => void
-	): void;
+	setNumViews( numViews: number ): this;
 
 }

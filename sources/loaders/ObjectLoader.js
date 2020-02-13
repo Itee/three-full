@@ -55,7 +55,6 @@ import { LoaderUtils } from './LoaderUtils.js'
 import { BufferGeometryLoader } from './BufferGeometryLoader.js'
 import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
-import { LegacyJSONLoader } from './deprecated/LegacyJSONLoader.js'
 import { WireframeGeometry } from '../geometries/WireframeGeometry.js'
 import {
 	TetrahedronGeometry,
@@ -1126,6 +1125,8 @@ ObjectLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 		}
 
 		if ( data.type === 'LOD' ) {
+
+			if ( data.autoUpdate !== undefined ) object.autoUpdate = data.autoUpdate;
 
 			var levels = data.levels;
 
