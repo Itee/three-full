@@ -6,16 +6,26 @@ export default `
 
 	#ifdef ENV_WORLDPOS
 
-		vec3 cameraToVertex = normalize( vWorldPosition - cameraPosition );
+		vec3 cameraToFrag;
+		
+		if ( isOrthographic ) {
+
+			cameraToFrag = normalize( vec3( - viewMatrix[ 0 ][ 2 ], - viewMatrix[ 1 ][ 2 ], - viewMatrix[ 2 ][ 2 ] ) );
+
+		}  else {
+
+			cameraToFrag = normalize( vWorldPosition - cameraPosition );
+
+		}
 		vec3 worldNormal = inverseTransformDirection( normal, viewMatrix );
 
 		#ifdef ENVMAP_MODE_REFLECTION
 
-			vec3 reflectVec = reflect( cameraToVertex, worldNormal );
+			vec3 reflectVec = reflect( cameraToFrag, worldNormal );
 
 		#else
 
-			vec3 reflectVec = refract( cameraToVertex, worldNormal, refractionRatio );
+			vec3 reflectVec = refract( cameraToFrag, worldNormal, refractionRatio );
 
 		#endif
 

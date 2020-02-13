@@ -37,7 +37,6 @@ export interface MaterialParameters {
 	fog?: boolean;
 	name?: string;
 	opacity?: number;
-	overdraw?: number;
 	polygonOffset?: boolean;
 	polygonOffsetFactor?: number;
 	polygonOffsetUnits?: number;
@@ -91,7 +90,6 @@ export class Material extends EventDispatcher {
 	name: string;
 	needsUpdate: boolean;
 	opacity: number;
-	overdraw: number;
 	polygonOffset: boolean;
 	polygonOffsetFactor: number;
 	polygonOffsetUnits: number;

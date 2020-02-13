@@ -12,7 +12,14 @@ import { Vector3 } from '../math/Vector3.js'
 
 var PointerLockControls = function ( camera, domElement ) {
 
-	this.domElement = domElement || document.body;
+	if ( domElement === undefined ) {
+
+		console.warn( 'PointerLockControls: The second parameter "domElement" is now mandatory.' );
+		domElement = document.body;
+
+	}
+
+	this.domElement = domElement;
 	this.isLocked = false;
 
 	//

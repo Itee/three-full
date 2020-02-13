@@ -79,7 +79,6 @@ export { Wireframe } from './lines/Wireframe.js'
 export { WireframeGeometry2 } from './lines/WireframeGeometry2.js'
 export { ThreeMFLoader } from './loaders/3MFLoader.js'
 export { AMFLoader } from './loaders/AMFLoader.js'
-export { AssimpJSONLoader } from './loaders/AssimpJSONLoader.js'
 export { AssimpLoader } from './loaders/AssimpLoader.js'
 export { BasisTextureLoader } from './loaders/BasisTextureLoader.js'
 export { BVHLoader } from './loaders/BVHLoader.js'
@@ -88,10 +87,6 @@ export { DDSLoader } from './loaders/DDSLoader.js'
 export { LegacyGLTFLoader } from './loaders/deprecated/LegacyGLTFLoader.js'
 export { LegacyJSONLoader } from './loaders/deprecated/LegacyJSONLoader.js'
 export { DRACOLoader } from './loaders/DRACOLoader.js'
-export {
-	CubemapGenerator,
-	EquirectangularToCubeGenerator
-} from './loaders/EquirectangularToCubeGenerator.js'
 export { EXRLoader } from './loaders/EXRLoader.js'
 export { FBXLoader } from './loaders/FBXLoader.js'
 export { GCodeLoader } from './loaders/GCodeLoader.js'
@@ -208,7 +203,6 @@ export {
 	Projector
 } from './renderers/Projector.js'
 export { RaytracingRenderer } from './renderers/RaytracingRenderer.js'
-export { SoftwareRenderer } from './renderers/SoftwareRenderer.js'
 export {
 	SVGObject,
 	SVGRenderer
@@ -504,7 +498,16 @@ export {
 	GreaterStencilFunc,
 	NotEqualStencilFunc,
 	GreaterEqualStencilFunc,
-	AlwaysStencilFunc
+	AlwaysStencilFunc,
+	StaticDrawUsage,
+	DynamicDrawUsage,
+	StreamDrawUsage,
+	StaticReadUsage,
+	DynamicReadUsage,
+	StreamReadUsage,
+	StaticCopyUsage,
+	DynamicCopyUsage,
+	StreamCopyUsage
 } from './constants.js'
 export {
 	Float64BufferAttribute,
@@ -780,7 +783,6 @@ export { WebGLState } from './renderers/webgl/WebGLState.js'
 export { WebGLTextures } from './renderers/webgl/WebGLTextures.js'
 export { WebGLUniforms } from './renderers/webgl/WebGLUniforms.js'
 export { WebGLUtils } from './renderers/webgl/WebGLUtils.js'
-export { WebGL2Renderer } from './renderers/WebGL2Renderer.js'
 export { WebGLMultisampleRenderTarget } from './renderers/WebGLMultisampleRenderTarget.js'
 export { WebGLMultiviewRenderTarget } from './renderers/WebGLMultiviewRenderTarget.js'
 export { WebGLRenderer } from './renderers/WebGLRenderer.js'

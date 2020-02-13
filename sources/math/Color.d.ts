@@ -24,6 +24,7 @@ export class Color {
 	setRGB( r: number, g: number, b: number ): Color;
 	setHSL( h: number, s: number, l: number ): Color;
 	setStyle( style: string ): Color;
+	setColorName( style: string ): Color;
 	clone(): this;
 	copy( color: Color ): this;
 	copyGammaToLinear( color: Color, gammaFactor?: number ): Color;
@@ -55,5 +56,6 @@ export class Color {
 	fromArray( array: ArrayLike<number>, offset?: number ): this;
 	toArray( array?: number[], offset?: number ): number[];
 	toArray( xyz: ArrayLike<number>, offset?: number ): ArrayLike<number>;
+	static NAMES: Record<string, number>;
 
 }

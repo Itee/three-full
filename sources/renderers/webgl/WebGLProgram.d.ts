@@ -12,14 +12,14 @@ export class WebGLProgram {
 	constructor(
 		renderer: WebGLRenderer,
 		extensions: WebGLExtensions,
-		code: string,
+		cacheKey: string,
 		material: ShaderMaterial,
 		shader: WebGLShader,
 		parameters: WebGLRendererParameters
 	);
 
 	id: number;
-	code: string;
+	cacheKey: string; 
 	usedTimes: number;
 	program: any;
 	vertexShader: WebGLShader;

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var REVISION = '109';
+var REVISION = '110';
 var MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2, ROTATE: 0, DOLLY: 1, PAN: 2 };
 var TOUCH = { ROTATE: 0, PAN: 1, DOLLY_PAN: 2, DOLLY_ROTATE: 3 };
 var CullFaceNone = 0;
@@ -170,6 +170,16 @@ var NotEqualStencilFunc = 517;
 var GreaterEqualStencilFunc = 518;
 var AlwaysStencilFunc = 519;
 
+var StaticDrawUsage = 35044;
+var DynamicDrawUsage = 35048;
+var StreamDrawUsage = 35040;
+var StaticReadUsage = 35045;
+var DynamicReadUsage = 35049;
+var StreamReadUsage = 35041;
+var StaticCopyUsage = 35046;
+var DynamicCopyUsage = 35050;
+var StreamCopyUsage = 35042;
+
 export {
 	REVISION,
 	MOUSE,
@@ -335,5 +345,14 @@ export {
 	GreaterStencilFunc,
 	NotEqualStencilFunc,
 	GreaterEqualStencilFunc,
-	AlwaysStencilFunc
+	AlwaysStencilFunc,
+	StaticDrawUsage,
+	DynamicDrawUsage,
+	StreamDrawUsage,
+	StaticReadUsage,
+	DynamicReadUsage,
+	StreamReadUsage,
+	StaticCopyUsage,
+	DynamicCopyUsage,
+	StreamCopyUsage
 }

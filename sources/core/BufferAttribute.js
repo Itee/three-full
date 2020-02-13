@@ -5,6 +5,7 @@ import { Vector4 } from '../math/Vector4.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Color } from '../math/Color.js'
+import { StaticDrawUsage } from '../constants.js'
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -24,7 +25,7 @@ function BufferAttribute( array, itemSize, normalized ) {
 	this.count = array !== undefined ? array.length / itemSize : 0;
 	this.normalized = normalized === true;
 
-	this.dynamic = false;
+	this.usage = StaticDrawUsage;
 	this.updateRange = { offset: 0, count: - 1 };
 
 	this.version = 0;
@@ -47,9 +48,9 @@ Object.assign( BufferAttribute.prototype, {
 
 	onUploadCallback: function () {},
 
-	setDynamic: function ( value ) {
+	setUsage: function ( value ) {
 
-		this.dynamic = value;
+		this.usage = value;
 
 		return this;
 
@@ -63,7 +64,7 @@ Object.assign( BufferAttribute.prototype, {
 		this.count = source.count;
 		this.normalized = source.normalized;
 
-		this.dynamic = source.dynamic;
+		this.usage = source.usage;
 
 		return this;
 

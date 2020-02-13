@@ -24,7 +24,9 @@ export class BufferGeometry extends EventDispatcher {
 	attributes: {
 		[name: string]: BufferAttribute | InterleavedBufferAttribute;
 	};
-	morphAttributes: any;
+	morphAttributes: {
+		[name: string]: ( BufferAttribute | InterleavedBufferAttribute )[];
+	};
 	groups: { start: number; count: number; materialIndex?: number }[];
 	boundingBox: Box3;
 	boundingSphere: Sphere;
@@ -35,13 +37,9 @@ export class BufferGeometry extends EventDispatcher {
 	getIndex(): BufferAttribute;
 	setIndex( index: BufferAttribute | number[] ): void;
 
-	addAttribute(
-		name: string,
-		attribute: BufferAttribute | InterleavedBufferAttribute
-	): BufferGeometry;
-
+	setAttribute( name: string, attribute: BufferAttribute | InterleavedBufferAttribute ): BufferGeometry;
 	getAttribute( name: string ): BufferAttribute | InterleavedBufferAttribute;
-	removeAttribute( name: string ): BufferGeometry;
+	deleteAttribute( name: string ): BufferGeometry;
 
 	addGroup( start: number, count: number, materialIndex?: number ): void;
 	clearGroups(): void;
@@ -83,6 +81,11 @@ export class BufferGeometry extends EventDispatcher {
 	addIndex( index: any ): void;
 	addDrawCall( start: any, count: any, indexOffset?: any ): void;
 	clearDrawCalls(): void;
+	addAttribute(
+		name: string,
+		attribute: BufferAttribute | InterleavedBufferAttribute
+	): BufferGeometry;
+	removeAttribute( name: string ): BufferGeometry;
 
 	addAttribute( name: any, array: any, itemSize: any ): any;
 

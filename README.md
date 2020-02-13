@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 24.0.0 is now available under Three r0.109.0 !!!**
+**The version 25.0.0 is now available under Three r0.110.0 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -214,6 +214,14 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+
+##### 25.0.0:
+
+* Support of Three r110.0
+* Remove AssimpJSONLoader
+* Remove EquirectangularToCubeGenerator
+* Remove SoftwareRenderer
+* Remove WebGL2Renderer
 
 ##### 24.0.0:
 

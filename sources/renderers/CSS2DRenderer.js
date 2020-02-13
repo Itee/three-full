@@ -4,7 +4,6 @@
 import { Object3D } from '../core/Object3D.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Matrix4 } from '../math/Matrix4.js'
-import { REVISION } from '../constants.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -35,8 +34,6 @@ CSS2DObject.prototype.constructor = CSS2DObject;
 //
 
 var CSS2DRenderer = function () {
-
-	console.log( 'CSS2DRenderer', REVISION );
 
 	var _width, _height;
 	var _widthHalf, _heightHalf;

@@ -22,6 +22,7 @@ import { WebVRManager } from '../renderers/webvr/WebVRManager';
 import { RenderTarget } from './webgl/WebGLRenderLists';
 import { Geometry } from './../core/Geometry';
 import { BufferGeometry } from './../core/BufferGeometry';
+import { Texture } from '../textures/Texture';
 
 export interface Renderer {
 	domElement: HTMLCanvasElement;
@@ -168,6 +169,9 @@ export class WebGLRenderer implements Renderer {
 		buffer: any,
 		activeCubeFaceIndex?: number
 	): void;
+	copyFramebufferToTexture( position: Vector2, texture: Texture, level?: number ): void;
+	copyTextureToTexture( position: Vector2, srcTexture: Texture, dstTexture: Texture, level?: number ): void;
+	initTexture( texture: Texture ): void;
 	gammaFactor: number;
 	shadowMapEnabled: boolean;
 	shadowMapType: ShadowMapType;

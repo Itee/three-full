@@ -215,9 +215,9 @@ var RollerCoasterGeometry = function ( curve, divisions ) {
 
 	// console.log( vertices.length );
 
-	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
-	this.addAttribute( 'normal', new BufferAttribute( new Float32Array( normals ), 3 ) );
-	this.addAttribute( 'color', new BufferAttribute( new Float32Array( colors ), 3 ) );
+	this.setAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
+	this.setAttribute( 'normal', new BufferAttribute( new Float32Array( normals ), 3 ) );
+	this.setAttribute( 'color', new BufferAttribute( new Float32Array( colors ), 3 ) );
 
 };
 
@@ -390,8 +390,8 @@ var RollerCoasterLiftersGeometry = function ( curve, divisions ) {
 
 	}
 
-	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
-	this.addAttribute( 'normal', new BufferAttribute( new Float32Array( normals ), 3 ) );
+	this.setAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
+	this.setAttribute( 'normal', new BufferAttribute( new Float32Array( normals ), 3 ) );
 
 };
 
@@ -461,7 +461,7 @@ var RollerCoasterShadowGeometry = function ( curve, divisions ) {
 
 	}
 
-	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
+	this.setAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
 
 };
 
@@ -490,7 +490,7 @@ var SkyGeometry = function () {
 		vertices.push( x - size, y, z + size );
 
 	}
-	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
+	this.setAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
 
 };
 
@@ -543,8 +543,8 @@ var TreesGeometry = function ( landscape ) {
 
 	}
 
-	this.addAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
-	this.addAttribute( 'color', new BufferAttribute( new Float32Array( colors ), 3 ) );
+	this.setAttribute( 'position', new BufferAttribute( new Float32Array( vertices ), 3 ) );
+	this.setAttribute( 'color', new BufferAttribute( new Float32Array( colors ), 3 ) );
 
 };
 

@@ -47,7 +47,7 @@ export class WebGLStencilBuffer {
 
 export class WebGLState {
 
-	constructor( gl: WebGLRenderingContext, extensions: WebGLExtensions, utils: any, capabilities: WebGLCapabilities );
+	constructor( gl: WebGLRenderingContext, extensions: WebGLExtensions, capabilities: WebGLCapabilities );
 
 	buffers: {
 		color: WebGLColorBuffer;
@@ -61,7 +61,6 @@ export class WebGLState {
 	disableUnusedAttributes(): void;
 	enable( id: number ): void;
 	disable( id: number ): void;
-	getCompressedTextureFormats(): number[];
 	useProgram( program: any ): boolean;
 	setBlending(
 		blending: Blending,
@@ -81,6 +80,7 @@ export class WebGLState {
 	setScissorTest( scissorTest: boolean ): void;
 	activeTexture( webglSlot: number ): void;
 	bindTexture( webglType: number, webglTexture: any ): void;
+	unbindTexture(): void;
 	
 	compressedTexImage2D(
 		target: number,

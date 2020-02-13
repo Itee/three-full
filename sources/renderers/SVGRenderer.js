@@ -15,7 +15,6 @@ import { Matrix3 } from '../math/Matrix3.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Camera } from '../cameras/Camera.js'
 import {
-	REVISION,
 	FaceColors,
 	VertexColors
 } from '../constants.js'
@@ -36,8 +35,6 @@ SVGObject.prototype = Object.create( Object3D.prototype );
 SVGObject.prototype.constructor = SVGObject;
 
 var SVGRenderer = function () {
-
-	console.log( 'SVGRenderer', REVISION );
 
 	var _this = this,
 		_renderData, _elements, _lights,
@@ -144,13 +141,13 @@ var SVGRenderer = function () {
 
 	}
 
-	function getSvgColor( color, opacity ) {
+	function getSvgColor( color, opacity, asStroke ) {
 
 		var arg = Math.floor( color.r * 255 ) + ',' + Math.floor( color.g * 255 ) + ',' + Math.floor( color.b * 255 );
 
 		if ( opacity === undefined || opacity === 1 ) return 'rgb(' + arg + ')';
 
-		return 'rgb(' + arg + '); fill-opacity: ' + opacity;
+		return 'rgb(' + arg + ');' + ( asStroke ? 'stroke-opacity' : 'fill-opacity' ) + ':' + opacity;
 
 	}
 
@@ -411,7 +408,7 @@ var SVGRenderer = function () {
 
 		if ( material.isLineBasicMaterial ) {
 
-			var style = 'fill:none;stroke:' + getSvgColor( material.color, material.opacity ) + ';stroke-width:' + material.linewidth + ';stroke-linecap:' + material.linecap;
+			var style = 'fill:none;stroke:' + getSvgColor( material.color, material.opacity, true ) + ';stroke-width:' + material.linewidth + ';stroke-linecap:' + material.linecap;
 
 			if ( material.isLineDashedMaterial ) {
 
@@ -471,7 +468,7 @@ var SVGRenderer = function () {
 
 		if ( material.wireframe ) {
 
-			style = 'fill:none;stroke:' + getSvgColor( _color, material.opacity ) + ';stroke-width:' + material.wireframeLinewidth + ';stroke-linecap:' + material.wireframeLinecap + ';stroke-linejoin:' + material.wireframeLinejoin;
+			style = 'fill:none;stroke:' + getSvgColor( _color, material.opacity, true ) + ';stroke-width:' + material.wireframeLinewidth + ';stroke-linecap:' + material.wireframeLinecap + ';stroke-linejoin:' + material.wireframeLinejoin;
 
 		} else {
 

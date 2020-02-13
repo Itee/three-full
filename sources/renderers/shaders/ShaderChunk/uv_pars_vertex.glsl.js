@@ -4,7 +4,16 @@
 export default `
 #ifdef USE_UV
 
-	varying vec2 vUv;
+	#ifdef UVS_VERTEX_ONLY
+
+		vec2 vUv;
+
+	#else
+
+		varying vec2 vUv;
+
+	#endif
+
 	uniform mat3 uvTransform;
 
 #endif

@@ -87,6 +87,7 @@ export const LinearToneMapping: ToneMapping;
 export const ReinhardToneMapping: ToneMapping;
 export const Uncharted2ToneMapping: ToneMapping;
 export const CineonToneMapping: ToneMapping;
+export const ACESFilmicToneMapping: ToneMapping;
 export enum Mapping {}
 export const UVMapping: Mapping;
 export const CubeReflectionMapping: Mapping;
@@ -208,3 +209,13 @@ export const GreaterStencilFunc: StencilFunc;
 export const NotEqualStencilFunc: StencilFunc;
 export const GreaterEqualStencilFunc: StencilFunc;
 export const AlwaysStencilFunc: StencilFunc;
+export enum Usage {}
+export const StaticDrawUsage: Usage;
+export const DynamicDrawUsage: Usage;
+export const StreamDrawUsage: Usage;
+export const StaticReadUsage: Usage;
+export const DynamicReadUsage: Usage;
+export const StreamReadUsage: Usage;
+export const StaticCopyUsage: Usage;
+export const DynamicCopyUsage: Usage;
+export const StreamCopyUsage: Usage;

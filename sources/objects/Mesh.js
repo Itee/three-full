@@ -171,6 +171,15 @@ Mesh.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 		}
 
+		// check unsupported draw modes
+
+		if ( this.drawMode !== TrianglesDrawMode ) {
+
+			console.warn( 'Mesh: TriangleStripDrawMode and TriangleFanDrawMode are not supported by .raycast().' );
+			return;
+
+		}
+
 		var intersection;
 
 		if ( geometry.isBufferGeometry ) {

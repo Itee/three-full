@@ -2275,7 +2275,7 @@ LWOTreeParser.prototype = {
 
 		if ( ! duplicateUVs ) return;
 
-		geometry.addAttribute( 'uv2', new BufferAttribute( geometry.attributes.uv.array, 2 ) );
+		geometry.setAttribute( 'uv2', new BufferAttribute( geometry.attributes.uv.array, 2 ) );
 
 	},
 
@@ -2776,7 +2776,7 @@ GeometryParser.prototype = {
 
 		var geometry = new BufferGeometry();
 
-		geometry.addAttribute( 'position', new Float32BufferAttribute( geoData.points, 3 ) );
+		geometry.setAttribute( 'position', new Float32BufferAttribute( geoData.points, 3 ) );
 
 		var indices = this.splitIndices( geoData.vertexIndices, geoData.polygonDimensions );
 		geometry.setIndex( indices );
@@ -2989,7 +2989,7 @@ GeometryParser.prototype = {
 
 		}
 
-		geometry.addAttribute( 'uv', new Float32BufferAttribute( remappedUVs, 2 ) );
+		geometry.setAttribute( 'uv', new Float32BufferAttribute( remappedUVs, 2 ) );
 
 	},
 
