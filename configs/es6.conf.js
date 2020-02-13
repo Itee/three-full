@@ -732,9 +732,6 @@ module.exports = {
             imports: [ '!CircleGeometry' ]
         },
         TypedArrayUtils:             {
-            imports:        [
-                '!Node'
-            ],
             outputOverride: 'utils/TypedArrayUtils.js'
         },
         UCSCharacter:                {
