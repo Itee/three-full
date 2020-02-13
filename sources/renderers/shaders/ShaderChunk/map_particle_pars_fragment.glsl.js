@@ -2,10 +2,21 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export default `
-#ifdef USE_MAP
+#if defined( USE_MAP ) || defined( USE_ALPHAMAP )
 
 	uniform mat3 uvTransform;
+
+#endif
+
+#ifdef USE_MAP
+
 	uniform sampler2D map;
+
+#endif
+
+#ifdef USE_ALPHAMAP
+
+	uniform sampler2D alphaMap;
 
 #endif
 `;

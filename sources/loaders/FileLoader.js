@@ -174,8 +174,6 @@ FileLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 				var response = this.response;
 
-				Cache.add( url, response );
-
 				var callbacks = loading[ url ];
 
 				delete loading[ url ];
@@ -186,6 +184,10 @@ FileLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 					// e.g. 'file://' or 'data://'. Handle as success.
 
 					if ( this.status === 0 ) console.warn( 'FileLoader: HTTP Status 0 received.' );
+
+					// Add to cache only on HTTP success, so that we do not cache
+					// error response bodies as proper responses to requests.
+					Cache.add( url, response );
 
 					for ( var i = 0, il = callbacks.length; i < il; i ++ ) {
 

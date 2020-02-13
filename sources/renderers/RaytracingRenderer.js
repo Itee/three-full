@@ -3,7 +3,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { EventDispatcher } from '../core/EventDispatcher.js'
 import { Color } from '../math/Color.js'
-import { REVISION } from '../constants.js'
 
 /**
  * RaytracingRenderer renders by raytracing it's scene. However, it does not
@@ -14,8 +13,6 @@ import { REVISION } from '../constants.js'
  */
 
 var RaytracingRenderer = function ( parameters ) {
-
-	console.log( 'RaytracingRenderer', REVISION );
 
 	parameters = parameters || {};
 

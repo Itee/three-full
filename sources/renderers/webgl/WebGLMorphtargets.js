@@ -51,8 +51,8 @@ function WebGLMorphtargets( gl ) {
 
 			if ( influence[ 1 ] !== 0 ) {
 
-				if ( morphTargets ) geometry.removeAttribute( 'morphTarget' + i );
-				if ( morphNormals ) geometry.removeAttribute( 'morphNormal' + i );
+				if ( morphTargets ) geometry.deleteAttribute( 'morphTarget' + i );
+				if ( morphNormals ) geometry.deleteAttribute( 'morphNormal' + i );
 
 			}
 
@@ -84,8 +84,8 @@ function WebGLMorphtargets( gl ) {
 
 				if ( value ) {
 
-					if ( morphTargets ) geometry.addAttribute( 'morphTarget' + i, morphTargets[ index ] );
-					if ( morphNormals ) geometry.addAttribute( 'morphNormal' + i, morphNormals[ index ] );
+					if ( morphTargets ) geometry.setAttribute( 'morphTarget' + i, morphTargets[ index ] );
+					if ( morphNormals ) geometry.setAttribute( 'morphNormal' + i, morphNormals[ index ] );
 
 					morphInfluences[ i ] = value;
 					continue;

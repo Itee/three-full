@@ -2,6 +2,7 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from './Vector3.js'
+import { Plane } from './Plane.js'
 /**
  * @author bhouston / http://clara.io
  * @author mrdoob / http://mrdoob.com/
@@ -198,7 +199,7 @@ Object.assign( Triangle.prototype, {
 		if ( target === undefined ) {
 
 			console.warn( 'Triangle: .getPlane() target is now required' );
-			target = new Vector3();
+			target = new Plane();
 
 		}
 

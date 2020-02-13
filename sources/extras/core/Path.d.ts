@@ -23,11 +23,11 @@ export class Path extends CurvePath<Vector2> {
 	constructor( points?: Vector2[] );
 
 	currentPoint: Vector2;
-	fromPoints( vectors: Vector2[] ): void;
-	setFromPoints( vectors: Vector2[] ): void;
-	moveTo( x: number, y: number ): void;
-	lineTo( x: number, y: number ): void;
-	quadraticCurveTo( aCPx: number, aCPy: number, aX: number, aY: number ): void;
+	fromPoints( vectors: Vector2[] ): this;
+	setFromPoints( vectors: Vector2[] ): this;
+	moveTo( x: number, y: number ): this;
+	lineTo( x: number, y: number ): this;
+	quadraticCurveTo( aCPx: number, aCPy: number, aX: number, aY: number ): this;
 	bezierCurveTo(
 		aCP1x: number,
 		aCP1y: number,
@@ -35,8 +35,8 @@ export class Path extends CurvePath<Vector2> {
 		aCP2y: number,
 		aX: number,
 		aY: number
-	): void;
-	splineThru( pts: Vector2[] ): void;
+	): this;
+	splineThru( pts: Vector2[] ): this;
 	arc(
 		aX: number,
 		aY: number,
@@ -44,7 +44,7 @@ export class Path extends CurvePath<Vector2> {
 		aStartAngle: number,
 		aEndAngle: number,
 		aClockwise: boolean
-	): void;
+	): this;
 	absarc(
 		aX: number,
 		aY: number,
@@ -52,7 +52,7 @@ export class Path extends CurvePath<Vector2> {
 		aStartAngle: number,
 		aEndAngle: number,
 		aClockwise: boolean
-	): void;
+	): this;
 	ellipse(
 		aX: number,
 		aY: number,
@@ -62,7 +62,7 @@ export class Path extends CurvePath<Vector2> {
 		aEndAngle: number,
 		aClockwise: boolean,
 		aRotation: number
-	): void;
+	): this;
 	absellipse(
 		aX: number,
 		aY: number,
@@ -72,6 +72,6 @@ export class Path extends CurvePath<Vector2> {
 		aEndAngle: number,
 		aClockwise: boolean,
 		aRotation: number
-	): void;
+	): this;
 
 }

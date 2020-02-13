@@ -3,8 +3,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Mapping } from '../constants';
 import { Texture } from '../textures/Texture';
+
 export namespace ImageUtils {
-	
+
+	export function getDataURL(
+		image: any,
+	): string;
 	export let crossOrigin: string;
 	export function loadTexture(
 		url: string,

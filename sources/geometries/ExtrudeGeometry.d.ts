@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Curve } from './../extras/core/Curve';
-import { UVGenerator } from './ExtrudeGeometry';
 import { Vector2 } from './../math/Vector2';
 import { Vector3 } from './../math/Vector3';
 import { Shape } from './../extras/core/Shape';

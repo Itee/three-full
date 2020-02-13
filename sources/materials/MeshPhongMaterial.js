@@ -46,7 +46,7 @@ import { Color } from '../math/Color.js'
  *  alphaMap: new Texture( <Image> ),
  *
  *  envMap: new CubeTexture( [posx, negx, posy, negy, posz, negz] ),
- *  combine: Multiply,
+ *  combine: MultiplyOperation,
  *  reflectivity: <float>,
  *  refractionRatio: <float>,
  *

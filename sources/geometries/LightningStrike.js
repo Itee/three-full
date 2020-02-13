@@ -8,6 +8,7 @@ import {
 	Uint32BufferAttribute,
 	Float32BufferAttribute
 } from '../core/BufferAttribute.js'
+import { DynamicDrawUsage } from '../constants.js'
 import { _Math } from '../math/Math.js'
 
 /**
@@ -431,22 +432,22 @@ LightningStrike.prototype.createMesh = function () {
 	this.setIndex( new Uint32BufferAttribute( this.indices, 1 ) );
 
 	this.positionAttribute = new Float32BufferAttribute( this.vertices, 3 );
-	this.addAttribute( 'position', this.positionAttribute );
+	this.setAttribute( 'position', this.positionAttribute );
 
 	if ( this.generateUVs ) {
 
 		this.uvsAttribute = new Float32BufferAttribute( new Float32Array( this.uvs ), 2 );
-		this.addAttribute( 'uv', this.uvsAttribute );
+		this.setAttribute( 'uv', this.uvsAttribute );
 
 	}
 
 	if ( ! this.isStatic ) {
 
-		this.index.dynamic = true;
-		this.positionAttribute.dynamic = true;
+		this.index.usage = DynamicDrawUsage;
+		this.positionAttribute.usage = DynamicDrawUsage;
 		if ( this.generateUVs ) {
 
-			this.uvsAttribute.dynamic = true;
+			this.uvsAttribute.usage = DynamicDrawUsage;
 
 		}
 

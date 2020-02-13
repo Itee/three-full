@@ -14,6 +14,7 @@ export class WebGLCapabilities {
 		parameters: WebGLCapabilitiesParameters
 	);
 
+	isWebGL2: boolean;
 	precision: any;
 	logarithmicDepthBuffer: any;
 	maxTextures: any;
