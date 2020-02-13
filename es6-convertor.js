@@ -486,11 +486,12 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
                 }
 
-                return
+            } else {
+
+                _exportMap[ exportedElement ] = outputPath
 
             }
 
-            _exportMap[ exportedElement ] = outputPath
 
         } )
 
