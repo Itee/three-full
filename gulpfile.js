@@ -511,6 +511,14 @@ gulp.task( 'build-test-html', ( done ) => {
                         var _isOnError = false
                         window.onerror = function onErrorHandler( error ) {
                             
+                            if(_isOnError) {
+                                var messageElement = document.createElement( 'p' )
+                                messageElement.innerHTML == error
+                                document.getElementById('messages').appendChild( messageElement )
+                                return
+                            }
+                            _isOnError = true
+                            
                             document.body.style.backgroundColor = 'red'
                             document.getElementById('title').innerHTML = 'Error'
                             
@@ -546,7 +554,7 @@ gulp.task( 'build-test-html', ( done ) => {
                             document.getElementById('title').innerHTML = title
                             
                             var messageElement = document.createElement( 'p' )
-                            messageElement.innerHTML == message
+                            messageElement.innerHTML = message
                             document.getElementById('messages').appendChild( messageElement )
                     
                         }
