@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { CurvePath } from './../extras/core/CurvePath';
+import { Curve } from './../extras/core/Curve';
 import { UVGenerator } from './ExtrudeGeometry';
 import { Vector2 } from './../math/Vector2';
 import { Vector3 } from './../math/Vector3';
@@ -18,7 +18,7 @@ export interface ExtrudeGeometryOptions {
 	bevelSize?: number;
 	bevelOffset?: number;
 	bevelSegments?: number;
-	extrudePath?: CurvePath<Vector3>;
+	extrudePath?: Curve<Vector3>;
 	UVGenerator?: UVGenerator;
 }
 

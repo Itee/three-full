@@ -1,8 +1,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-var REVISION = '106';
-var MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2 };
+var REVISION = '107';
+var MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2, ROTATE: 0, DOLLY: 1, PAN: 2 };
+var TOUCH = { ROTATE: 0, PAN: 1, DOLLY_PAN: 2, DOLLY_ROTATE: 3 };
 var CullFaceNone = 0;
 var CullFaceBack = 1;
 var CullFaceFront = 2;
@@ -72,10 +73,14 @@ var RepeatWrapping = 1000;
 var ClampToEdgeWrapping = 1001;
 var MirroredRepeatWrapping = 1002;
 var NearestFilter = 1003;
+var NearestMipmapNearestFilter = 1004;
 var NearestMipMapNearestFilter = 1004;
+var NearestMipmapLinearFilter = 1005;
 var NearestMipMapLinearFilter = 1005;
 var LinearFilter = 1006;
+var LinearMipmapNearestFilter = 1007;
 var LinearMipMapNearestFilter = 1007;
+var LinearMipmapLinearFilter = 1008;
 var LinearMipMapLinearFilter = 1008;
 var UnsignedByteType = 1009;
 var ByteType = 1010;
@@ -146,9 +151,28 @@ var RGBADepthPacking = 3201;
 var TangentSpaceNormalMap = 0;
 var ObjectSpaceNormalMap = 1;
 
+var ZeroStencilOp = 0;
+var KeepStencilOp = 7680;
+var ReplaceStencilOp = 7681;
+var IncrementStencilOp = 7682;
+var DecrementStencilOp = 7683;
+var IncrementWrapStencilOp = 34055;
+var DecrementWrapStencilOp = 34056;
+var InvertStencilOp = 5386;
+
+var NeverStencilFunc = 512;
+var LessStencilFunc = 513;
+var EqualStencilFunc = 514;
+var LessEqualStencilFunc = 515;
+var GreaterStencilFunc = 516;
+var NotEqualStencilFunc = 517;
+var GreaterEqualStencilFunc = 518;
+var AlwaysStencilFunc = 519;
+
 export {
 	REVISION,
 	MOUSE,
+	TOUCH,
 	CullFaceNone,
 	CullFaceBack,
 	CullFaceFront,
@@ -217,10 +241,14 @@ export {
 	ClampToEdgeWrapping,
 	MirroredRepeatWrapping,
 	NearestFilter,
+	NearestMipmapNearestFilter,
 	NearestMipMapNearestFilter,
+	NearestMipmapLinearFilter,
 	NearestMipMapLinearFilter,
 	LinearFilter,
+	LinearMipmapNearestFilter,
 	LinearMipMapNearestFilter,
+	LinearMipmapLinearFilter,
 	LinearMipMapLinearFilter,
 	UnsignedByteType,
 	ByteType,
@@ -289,5 +317,21 @@ export {
 	BasicDepthPacking,
 	RGBADepthPacking,
 	TangentSpaceNormalMap,
-	ObjectSpaceNormalMap
+	ObjectSpaceNormalMap,
+	ZeroStencilOp,
+	KeepStencilOp,
+	ReplaceStencilOp,
+	IncrementStencilOp,
+	DecrementStencilOp,
+	IncrementWrapStencilOp,
+	DecrementWrapStencilOp,
+	InvertStencilOp,
+	NeverStencilFunc,
+	LessStencilFunc,
+	EqualStencilFunc,
+	LessEqualStencilFunc,
+	GreaterStencilFunc,
+	NotEqualStencilFunc,
+	GreaterEqualStencilFunc,
+	AlwaysStencilFunc
 }

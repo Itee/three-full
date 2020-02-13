@@ -11,8 +11,10 @@ export { DragControls } from './controls/DragControls.js'
 export { EditorControls } from './controls/EditorControls.js'
 export { FirstPersonControls } from './controls/FirstPersonControls.js'
 export { FlyControls } from './controls/FlyControls.js'
-export { MapControls } from './controls/MapControls.js'
-export { OrbitControls } from './controls/OrbitControls.js'
+export {
+	OrbitControls,
+	MapControls
+} from './controls/OrbitControls.js'
 export { OrthographicTrackballControls } from './controls/OrthographicTrackballControls.js'
 export { PointerLockControls } from './controls/PointerLockControls.js'
 export { TrackballControls } from './controls/TrackballControls.js'
@@ -106,10 +108,6 @@ export { LWOLoader } from './loaders/LWOLoader.js'
 export { MD2Loader } from './loaders/MD2Loader.js'
 export { MMDLoader } from './loaders/MMDLoader.js'
 export { MTLLoader } from './loaders/MTLLoader.js'
-export {
-	NodeMaterialLoader,
-	NodeMaterialLoaderUtils
-} from './loaders/NodeMaterialLoader.js'
 export { OBJLoader } from './loaders/OBJLoader.js'
 export { PCDLoader } from './loaders/PCDLoader.js'
 export { PDBLoader } from './loaders/PDBLoader.js'
@@ -154,80 +152,6 @@ export { ExplodeModifier } from './modifiers/ExplodeModifier.js'
 export { SimplifyModifier } from './modifiers/SimplifyModifier.js'
 export { SubdivisionModifier } from './modifiers/SubdivisionModifier.js'
 export { TessellateModifier } from './modifiers/TessellateModifier.js'
-export { CameraNode } from './nodes/accessors/CameraNode.js'
-export { ColorsNode } from './nodes/accessors/ColorsNode.js'
-export { LightNode } from './nodes/accessors/LightNode.js'
-export { NormalNode } from './nodes/accessors/NormalNode.js'
-export { PositionNode } from './nodes/accessors/PositionNode.js'
-export { ReflectNode } from './nodes/accessors/ReflectNode.js'
-export { ResolutionNode } from './nodes/accessors/ResolutionNode.js'
-export { ScreenUVNode } from './nodes/accessors/ScreenUVNode.js'
-export { UVNode } from './nodes/accessors/UVNode.js'
-export { BlinnExponentToRoughnessNode } from './nodes/bsdfs/BlinnExponentToRoughnessNode.js'
-export { BlinnShininessExponentNode } from './nodes/bsdfs/BlinnShininessExponentNode.js'
-export { RoughnessToBlinnExponentNode } from './nodes/bsdfs/RoughnessToBlinnExponentNode.js'
-export { AttributeNode } from './nodes/core/AttributeNode.js'
-export { ConstNode } from './nodes/core/ConstNode.js'
-export { ExpressionNode } from './nodes/core/ExpressionNode.js'
-export { FunctionCallNode } from './nodes/core/FunctionCallNode.js'
-export { FunctionNode } from './nodes/core/FunctionNode.js'
-export { InputNode } from './nodes/core/InputNode.js'
-export { Node } from './nodes/core/Node.js'
-export { NodeBuilder } from './nodes/core/NodeBuilder.js'
-export { NodeFrame } from './nodes/core/NodeFrame.js'
-export { NodeLib } from './nodes/core/NodeLib.js'
-export { NodeUniform } from './nodes/core/NodeUniform.js'
-export { NodeUtils } from './nodes/core/NodeUtils.js'
-export { StructNode } from './nodes/core/StructNode.js'
-export { TempNode } from './nodes/core/TempNode.js'
-export { VarNode } from './nodes/core/VarNode.js'
-export { BlurNode } from './nodes/effects/BlurNode.js'
-export { ColorAdjustmentNode } from './nodes/effects/ColorAdjustmentNode.js'
-export { LuminanceNode } from './nodes/effects/LuminanceNode.js'
-export { BoolNode } from './nodes/inputs/BoolNode.js'
-export { ColorNode } from './nodes/inputs/ColorNode.js'
-export { CubeTextureNode } from './nodes/inputs/CubeTextureNode.js'
-export { FloatNode } from './nodes/inputs/FloatNode.js'
-export { IntNode } from './nodes/inputs/IntNode.js'
-export { Matrix3Node } from './nodes/inputs/Matrix3Node.js'
-export { Matrix4Node } from './nodes/inputs/Matrix4Node.js'
-export { PropertyNode } from './nodes/inputs/PropertyNode.js'
-export { ReflectorNode } from './nodes/inputs/ReflectorNode.js'
-export { RTTNode } from './nodes/inputs/RTTNode.js'
-export { ScreenNode } from './nodes/inputs/ScreenNode.js'
-export { TextureNode } from './nodes/inputs/TextureNode.js'
-export { Vector2Node } from './nodes/inputs/Vector2Node.js'
-export { Vector3Node } from './nodes/inputs/Vector3Node.js'
-export { Vector4Node } from './nodes/inputs/Vector4Node.js'
-export { MeshStandardNodeMaterial } from './nodes/materials/MeshStandardNodeMaterial.js'
-export { NodeMaterial } from './nodes/materials/NodeMaterial.js'
-export { MeshStandardNode } from './nodes/materials/nodes/MeshStandardNode.js'
-export { PhongNode } from './nodes/materials/nodes/PhongNode.js'
-export { RawNode } from './nodes/materials/nodes/RawNode.js'
-export { SpriteNode } from './nodes/materials/nodes/SpriteNode.js'
-export { StandardNode } from './nodes/materials/nodes/StandardNode.js'
-export { PhongNodeMaterial } from './nodes/materials/PhongNodeMaterial.js'
-export { SpriteNodeMaterial } from './nodes/materials/SpriteNodeMaterial.js'
-export { StandardNodeMaterial } from './nodes/materials/StandardNodeMaterial.js'
-export { CondNode } from './nodes/math/CondNode.js'
-export { MathNode } from './nodes/math/MathNode.js'
-export { OperatorNode } from './nodes/math/OperatorNode.js'
-export { BumpMapNode } from './nodes/misc/BumpMapNode.js'
-export { NormalMapNode } from './nodes/misc/NormalMapNode.js'
-export { TextureCubeNode } from './nodes/misc/TextureCubeNode.js'
-export { TextureCubeUVNode } from './nodes/misc/TextureCubeUVNode.js'
-export { NodePass } from './nodes/postprocessing/NodePass.js'
-export { NodePostProcessing } from './nodes/postprocessing/NodePostProcessing.js'
-export { CheckerNode } from './nodes/procedural/CheckerNode.js'
-export { NoiseNode } from './nodes/procedural/NoiseNode.js'
-export { BypassNode } from './nodes/utils/BypassNode.js'
-export { ColorSpaceNode } from './nodes/utils/ColorSpaceNode.js'
-export { JoinNode } from './nodes/utils/JoinNode.js'
-export { MaxMIPLevelNode } from './nodes/utils/MaxMIPLevelNode.js'
-export { SwitchNode } from './nodes/utils/SwitchNode.js'
-export { TimerNode } from './nodes/utils/TimerNode.js'
-export { UVTransformNode } from './nodes/utils/UVTransformNode.js'
-export { VelocityNode } from './nodes/utils/VelocityNode.js'
 export { Fire } from './objects/Fire.js'
 export {
 	Lensflare,
@@ -423,6 +347,7 @@ export { StereoCamera } from './cameras/StereoCamera.js'
 export {
 	REVISION,
 	MOUSE,
+	TOUCH,
 	CullFaceNone,
 	CullFaceBack,
 	CullFaceFront,
@@ -491,10 +416,14 @@ export {
 	ClampToEdgeWrapping,
 	MirroredRepeatWrapping,
 	NearestFilter,
+	NearestMipmapNearestFilter,
 	NearestMipMapNearestFilter,
+	NearestMipmapLinearFilter,
 	NearestMipMapLinearFilter,
 	LinearFilter,
+	LinearMipmapNearestFilter,
 	LinearMipMapNearestFilter,
+	LinearMipmapLinearFilter,
 	LinearMipMapLinearFilter,
 	UnsignedByteType,
 	ByteType,
@@ -563,7 +492,23 @@ export {
 	BasicDepthPacking,
 	RGBADepthPacking,
 	TangentSpaceNormalMap,
-	ObjectSpaceNormalMap
+	ObjectSpaceNormalMap,
+	ZeroStencilOp,
+	KeepStencilOp,
+	ReplaceStencilOp,
+	IncrementStencilOp,
+	DecrementStencilOp,
+	IncrementWrapStencilOp,
+	DecrementWrapStencilOp,
+	InvertStencilOp,
+	NeverStencilFunc,
+	LessStencilFunc,
+	EqualStencilFunc,
+	LessEqualStencilFunc,
+	GreaterStencilFunc,
+	NotEqualStencilFunc,
+	GreaterEqualStencilFunc,
+	AlwaysStencilFunc
 } from './constants.js'
 export {
 	Float64BufferAttribute,

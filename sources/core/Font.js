@@ -75,7 +75,13 @@ function createPath( char, scale, offsetX, offsetY, data ) {
 
 	var glyph = data.glyphs[ char ] || data.glyphs[ '?' ];
 
-	if ( ! glyph ) return;
+	if ( ! glyph ) {
+
+		console.error( 'Font: character "' + char + '" does not exists in font family ' + data.familyName + '.' );
+
+		return;
+
+	}
 
 	var path = new ShapePath();
 

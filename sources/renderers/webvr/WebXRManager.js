@@ -13,11 +13,9 @@ import { setProjectionFromUnion } from './WebVRUtils.js'
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-function WebXRManager( renderer ) {
+function WebXRManager( renderer, gl ) {
 
 	var scope = this;
-
-	var gl = renderer.context;
 
 	var session = null;
 

@@ -49,8 +49,20 @@ export class Matrix3 implements Matrix {
 	transpose(): Matrix3;
 	getNormalMatrix( matrix4: Matrix4 ): Matrix3;
 	transposeIntoArray( r: number[] ): number[];
+
+	setUvTransform( tx: number, ty: number, sx: number, sy: number, rotation: number, cx: number, cy: number ): Matrix3;
+
+	scale( sx: number, sy: number ): Matrix3;
+
+	rotate( theta: number ): Matrix3;
+
+	translate( tx: number, ty: number ): Matrix3;
+
+	equals( matrix: Matrix3 ): boolean;
+
 	fromArray( array: number[], offset?: number ): Matrix3;
-	toArray(): number[];
+
+	toArray( array?: number[], offset?: number ): number[];
 	multiply( m: Matrix3 ): Matrix3;
 
 	premultiply( m: Matrix3 ): Matrix3;
