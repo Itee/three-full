@@ -6,6 +6,16 @@ export enum MOUSE {
 	LEFT,
 	MIDDLE,
 	RIGHT,
+	ROTATE,
+	DOLLY,
+	PAN,
+}
+
+export enum TOUCH {
+	ROTATE,
+	PAN,
+	DOLLY_PAN,
+	DOLLY_ROTATE,
 }
 export enum CullFace {}
 export const CullFaceNone: CullFace;
@@ -91,10 +101,14 @@ export const ClampToEdgeWrapping: Wrapping;
 export const MirroredRepeatWrapping: Wrapping;
 export enum TextureFilter {}
 export const NearestFilter: TextureFilter;
+export const NearestMipmapNearestFilter: TextureFilter;
 export const NearestMipMapNearestFilter: TextureFilter;
+export const NearestMipmapLinearFilter: TextureFilter;
 export const NearestMipMapLinearFilter: TextureFilter;
 export const LinearFilter: TextureFilter;
+export const LinearMipmapNearestFilter: TextureFilter;
 export const LinearMipMapNearestFilter: TextureFilter;
+export const LinearMipmapLinearFilter: TextureFilter;
 export const LinearMipMapLinearFilter: TextureFilter;
 export enum TextureDataType {}
 export const UnsignedByteType: TextureDataType;
@@ -175,3 +189,21 @@ export const RGBADepthPacking: DepthPackingStrategies;
 export enum NormalMapTypes {}
 export const TangentSpaceNormalMap: NormalMapTypes;
 export const ObjectSpaceNormalMap: NormalMapTypes;
+export enum StencilOp {}
+export const ZeroStencilOp: StencilOp;
+export const KeepStencilOp: StencilOp;
+export const ReplaceStencilOp: StencilOp;
+export const IncrementStencilOp: StencilOp;
+export const DecrementStencilOp: StencilOp;
+export const IncrementWrapStencilOp: StencilOp;
+export const DecrementWrapStencilOp: StencilOp;
+export const InvertStencilOp: StencilOp;
+export enum StencilFunc {}
+export const NeverStencilFunc: StencilFunc;
+export const LessStencilFunc: StencilFunc;
+export const EqualStencilFunc: StencilFunc;
+export const LessEqualStencilFunc: StencilFunc;
+export const GreaterStencilFunc: StencilFunc;
+export const NotEqualStencilFunc: StencilFunc;
+export const GreaterEqualStencilFunc: StencilFunc;
+export const AlwaysStencilFunc: StencilFunc;

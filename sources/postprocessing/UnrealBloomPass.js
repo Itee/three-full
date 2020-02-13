@@ -209,7 +209,7 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 		renderer.setClearColor( this.clearColor, 0 );
 
-		if ( maskActive ) renderer.context.disable( renderer.context.STENCIL_TEST );
+		if ( maskActive ) renderer.state.buffers.stencil.setTest( false );
 
 		// Render input to screen
 
@@ -274,7 +274,8 @@ UnrealBloomPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		this.fsQuad.material = this.materialCopy;
 		this.copyUniforms[ "tDiffuse" ].value = this.renderTargetsHorizontal[ 0 ].texture;
 
-		if ( maskActive ) renderer.context.enable( renderer.context.STENCIL_TEST );
+		if ( maskActive ) renderer.state.buffers.stencil.setTest( true );
+
 		if ( this.renderToScreen ) {
 
 			renderer.setRenderTarget( null );

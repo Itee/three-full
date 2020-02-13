@@ -125,6 +125,6 @@ export class Object3D extends EventDispatcher {
 	} ): any;
 
 	clone( recursive?: boolean ): this;
-	copy( source: Object3D, recursive?: boolean ): this;
+	copy( source: this, recursive?: boolean ): this;
 
 }

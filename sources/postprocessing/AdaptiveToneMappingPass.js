@@ -11,7 +11,7 @@ import { ToneMapShader } from '../shaders/ToneMapShader.js'
 import {
 	NoBlending,
 	LinearFilter,
-	LinearMipMapLinearFilter,
+	LinearMipmapLinearFilter,
 	RGBAFormat
 } from '../constants.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
@@ -231,7 +231,7 @@ AdaptiveToneMappingPass.prototype = Object.assign( Object.create( Pass.prototype
 		this.previousLuminanceRT.texture.generateMipmaps = false;
 
 		// We only need mipmapping for the current luminosity because we want a down-sampled version to sample in our adaptive shader
-		pars.minFilter = LinearMipMapLinearFilter;
+		pars.minFilter = LinearMipmapLinearFilter;
 		pars.generateMipmaps = true;
 		this.currentLuminanceRT = new WebGLRenderTarget( this.resolution, this.resolution, pars );
 		this.currentLuminanceRT.texture.name = "AdaptiveToneMappingPass.cl";

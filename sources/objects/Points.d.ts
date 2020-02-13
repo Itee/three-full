@@ -14,10 +14,13 @@ export class Points extends Object3D {
 	);
 
 	type: 'Points';
+	morphTargetInfluences?: number[];
+	morphTargetDictionary?: { [key: string]: number };
 	isPoints: true;
 	geometry: Geometry | BufferGeometry;
 	material: Material | Material[];
 
 	raycast( raycaster: Raycaster, intersects: Intersection[] ): void;
+	updateMorphTargets(): void;
 
 }

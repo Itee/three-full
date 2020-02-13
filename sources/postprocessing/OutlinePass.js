@@ -283,7 +283,7 @@ OutlinePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 
 			renderer.autoClear = false;
 
-			if ( maskActive ) renderer.context.disable( renderer.context.STENCIL_TEST );
+			if ( maskActive ) renderer.state.buffers.stencil.setTest( false );
 
 			renderer.setClearColor( 0xffffff, 1 );
 
@@ -383,7 +383,7 @@ OutlinePass.prototype = Object.assign( Object.create( Pass.prototype ), {
 			this.overlayMaterial.uniforms[ "edgeStrength" ].value = this.edgeStrength;
 			this.overlayMaterial.uniforms[ "edgeGlow" ].value = this.edgeGlow;
 			this.overlayMaterial.uniforms[ "usePatternTexture" ].value = this.usePatternTexture;
-			if ( maskActive ) renderer.context.enable( renderer.context.STENCIL_TEST );
+			if ( maskActive ) renderer.state.buffers.stencil.setTest( true );
 
 			renderer.setRenderTarget( readBuffer );
 			this.fsQuad.render( renderer );

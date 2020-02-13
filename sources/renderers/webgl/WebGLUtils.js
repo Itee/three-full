@@ -61,11 +61,11 @@ import {
 	UnsignedShort5551Type,
 	UnsignedShort4444Type,
 	UnsignedByteType,
-	LinearMipMapLinearFilter,
-	LinearMipMapNearestFilter,
+	LinearMipmapLinearFilter,
+	LinearMipmapNearestFilter,
 	LinearFilter,
-	NearestMipMapLinearFilter,
-	NearestMipMapNearestFilter,
+	NearestMipmapLinearFilter,
+	NearestMipmapNearestFilter,
 	NearestFilter,
 	MirroredRepeatWrapping,
 	ClampToEdgeWrapping,
@@ -86,12 +86,12 @@ function WebGLUtils( gl, extensions, capabilities ) {
 		if ( p === MirroredRepeatWrapping ) return gl.MIRRORED_REPEAT;
 
 		if ( p === NearestFilter ) return gl.NEAREST;
-		if ( p === NearestMipMapNearestFilter ) return gl.NEAREST_MIPMAP_NEAREST;
-		if ( p === NearestMipMapLinearFilter ) return gl.NEAREST_MIPMAP_LINEAR;
+		if ( p === NearestMipmapNearestFilter ) return gl.NEAREST_MIPMAP_NEAREST;
+		if ( p === NearestMipmapLinearFilter ) return gl.NEAREST_MIPMAP_LINEAR;
 
 		if ( p === LinearFilter ) return gl.LINEAR;
-		if ( p === LinearMipMapNearestFilter ) return gl.LINEAR_MIPMAP_NEAREST;
-		if ( p === LinearMipMapLinearFilter ) return gl.LINEAR_MIPMAP_LINEAR;
+		if ( p === LinearMipmapNearestFilter ) return gl.LINEAR_MIPMAP_NEAREST;
+		if ( p === LinearMipmapLinearFilter ) return gl.LINEAR_MIPMAP_LINEAR;
 
 		if ( p === UnsignedByteType ) return gl.UNSIGNED_BYTE;
 		if ( p === UnsignedShort4444Type ) return gl.UNSIGNED_SHORT_4_4_4_4;

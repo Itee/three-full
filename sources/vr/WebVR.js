@@ -28,8 +28,17 @@ var WebVR = {
 
 			button.textContent = 'ENTER VR';
 
-			button.onmouseenter = function () { button.style.opacity = '1.0'; };
-			button.onmouseleave = function () { button.style.opacity = '0.5'; };
+			button.onmouseenter = function () {
+
+				button.style.opacity = '1.0';
+
+			};
+
+			button.onmouseleave = function () {
+
+				button.style.opacity = '0.5';
+
+			};
 
 			button.onclick = function () {
 
@@ -41,7 +50,7 @@ var WebVR = {
 
 		}
 
-		function showEnterXR( device ) {
+		function showEnterXR( /*device*/ ) {
 
 			var currentSession = null;
 
@@ -56,7 +65,7 @@ var WebVR = {
 
 			}
 
-			function onSessionEnded( event ) {
+			function onSessionEnded( /*event*/ ) {
 
 				currentSession.removeEventListener( 'end', onSessionEnded );
 
@@ -77,8 +86,17 @@ var WebVR = {
 
 			button.textContent = 'ENTER XR';
 
-			button.onmouseenter = function () { button.style.opacity = '1.0'; };
-			button.onmouseleave = function () { button.style.opacity = '0.5'; };
+			button.onmouseenter = function () {
+
+				button.style.opacity = '1.0';
+
+			};
+
+			button.onmouseleave = function () {
+
+				button.style.opacity = '0.5';
+
+			};
 
 			button.onclick = function () {
 
@@ -170,7 +188,7 @@ var WebVR = {
 
 			}, false );
 
-			window.addEventListener( 'vrdisplaydisconnect', function ( event ) {
+			window.addEventListener( 'vrdisplaydisconnect', function ( /*event*/ ) {
 
 				showVRNotFound();
 
@@ -221,27 +239,6 @@ var WebVR = {
 
 		}
 
-	},
-
-	// DEPRECATED
-
-	checkAvailability: function () {
-		console.warn( 'WEBVR.checkAvailability has been deprecated.' );
-		return new Promise( function () {} );
-	},
-
-	getMessageContainer: function () {
-		console.warn( 'WEBVR.getMessageContainer has been deprecated.' );
-		return document.createElement( 'div' );
-	},
-
-	getButton: function () {
-		console.warn( 'WEBVR.getButton has been deprecated.' );
-		return document.createElement( 'div' );
-	},
-
-	getVRDisplay: function () {
-		console.warn( 'WEBVR.getVRDisplay has been deprecated.' );
 	}
 
 };

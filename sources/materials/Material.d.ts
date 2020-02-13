@@ -13,6 +13,8 @@ import {
 	DepthModes,
 	Side,
 	Colors,
+	StencilFunc,
+	StencilOp
 } from '../constants';
 export let MaterialIdCount: number;
 
@@ -50,6 +52,13 @@ export interface MaterialParameters {
 	vertexColors?: Colors;
 	vertexTangents?: boolean;
 	visible?: boolean;
+	stencilWrite?: boolean;
+	stencilFunc?: StencilFunc;
+	stencilRef?: number;
+	stencilMask?: number;
+	stencilFail?: StencilOp;
+	stencilZFail?: StencilOp;
+	stencilZPass?: StencilOp;
 }
 export class Material extends EventDispatcher {
 
@@ -71,6 +80,13 @@ export class Material extends EventDispatcher {
 	depthWrite: boolean;
 	fog: boolean;
 	id: number;
+	stencilWrite: boolean;
+	stencilFunc: StencilFunc;
+	stencilRef: number;
+	stencilMask: number;
+	stencilFail: StencilOp;
+	stencilZFail: StencilOp;
+	stencilZPass: StencilOp;
 	isMaterial: boolean;
 	lights: boolean;
 	name: string;

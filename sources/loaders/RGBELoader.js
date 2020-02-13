@@ -485,10 +485,18 @@ RGBELoader.prototype._parser = function ( buffer ) {
 
 };
 var HDRLoader = RGBELoader;
-RGBELoader.prototype.setType = function ( value ) {
+RGBELoader.prototype.setDataType = function ( value ) {
 
 	this.type = value;
 	return this;
+
+};
+
+RGBELoader.prototype.setType = function ( value ) {
+
+	console.warn( 'RGBELoader: .setType() has been renamed to .setDataType().' );
+
+	return this.setDataType( value );
 
 };
 

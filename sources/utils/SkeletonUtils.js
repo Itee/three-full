@@ -16,8 +16,6 @@ import { Euler } from '../math/Euler.js'
  * @author sunag / http://www.sunag.com.br
  */
 
-'use strict';
-
 var SkeletonUtils = {
 
 	retarget: function () {

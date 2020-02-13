@@ -154,10 +154,10 @@ export class WebGLRenderer implements Renderer {
 		camera: Camera
 	): void;
 	getActiveCubeFace(): number;
-	getActiveMipMapLevel(): number;
+	getActiveMipmapLevel(): number;
 	getRenderTarget(): RenderTarget | null;
 	getCurrentRenderTarget(): RenderTarget | null;
-	setRenderTarget( renderTarget: RenderTarget | null, activeCubeFace?: number, activeMipMapLevel?: number ): void;
+	setRenderTarget( renderTarget: RenderTarget | null, activeCubeFace?: number, activeMipmapLevel?: number ): void;
 
 	readRenderTargetPixels(
 		renderTarget: RenderTarget,

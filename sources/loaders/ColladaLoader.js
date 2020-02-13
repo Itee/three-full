@@ -32,7 +32,6 @@ import { Scene } from '../scenes/Scene.js'
 import { TextureLoader } from './TextureLoader.js'
 import { TGALoader } from './TGALoader.js'
 import { Euler } from '../math/Euler.js'
-import { Node } from '../nodes/core/Node.js'
 import {
 	DoubleSide,
 	RepeatWrapping,
