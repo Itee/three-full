@@ -106,6 +106,7 @@ export class Material extends EventDispatcher {
 	vertexTangents: boolean;
 	visible: boolean;
 	userData: any;
+	version: number;
 	clone(): this;
 	copy( material: Material ): this;
 	dispose(): void;

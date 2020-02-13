@@ -32,7 +32,7 @@ export default `
 
 	vec2 texture2DDistribution( sampler2D shadow, vec2 uv ) {
 
-		return decodeHalfRGBA( texture2D( shadow, uv ) );
+		return unpack2HalfToRGBA( texture2D( shadow, uv ) );
 
 	}
 

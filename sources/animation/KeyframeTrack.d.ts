@@ -29,7 +29,7 @@ export class KeyframeTrack {
 	InterpolantFactoryMethodLinear( result: any ): LinearInterpolant;
 	InterpolantFactoryMethodSmooth( result: any ): CubicInterpolant;
 
-	setInterpolation( interpolation: InterpolationModes ): void;
+	setInterpolation( interpolation: InterpolationModes ): KeyframeTrack;
 	getInterpolation(): InterpolationModes;
 
 	getValuesize(): number;
@@ -39,8 +39,8 @@ export class KeyframeTrack {
 	trim( startTime: number, endTime: number ): KeyframeTrack;
 	validate(): boolean;
 	optimize(): KeyframeTrack;
+	clone(): KeyframeTrack;
 
-	static parse( json: any ): KeyframeTrack;
 	static toJSON( track: KeyframeTrack ): any;
 
 }

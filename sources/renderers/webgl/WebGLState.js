@@ -557,7 +557,7 @@ function WebGLState( gl, extensions, capabilities ) {
 		if ( extension !== null ) {
 
 			equationToGL[ MinEquation ] = extension.MIN_EXT;
-			equationToGL[ MaxEquation ] = extension.MIN_EXT;
+			equationToGL[ MaxEquation ] = extension.MAX_EXT;
 
 		}
 

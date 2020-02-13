@@ -87,7 +87,7 @@ function Material() {
 
 	this.userData = {};
 
-	this.needsUpdate = true;
+	this.version = 0;
 
 }
 
@@ -430,6 +430,16 @@ Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 	dispose: function () {
 
 		this.dispatchEvent( { type: 'dispose' } );
+
+	}
+
+} );
+
+Object.defineProperty( Material.prototype, 'needsUpdate', {
+
+	set: function ( value ) {
+
+		if ( value === true ) this.version ++;
 
 	}
 

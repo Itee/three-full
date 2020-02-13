@@ -3031,6 +3031,8 @@ GeometryParser.prototype = {
 
 		}
 
+		geometry.morphTargetsRelative = false;
+
 	},
 
 };

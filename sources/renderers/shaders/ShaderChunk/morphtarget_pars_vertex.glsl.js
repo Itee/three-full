@@ -4,6 +4,8 @@
 export default `
 #ifdef USE_MORPHTARGETS
 
+	uniform float morphTargetBaseInfluence;
+
 	#ifndef USE_MORPHNORMALS
 
 	uniform float morphTargetInfluences[ 8 ];

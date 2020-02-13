@@ -20,13 +20,14 @@ export class BufferGeometry extends EventDispatcher {
 	uuid: string;
 	name: string;
 	type: string;
-	index: BufferAttribute;
+	index: BufferAttribute | null;
 	attributes: {
 		[name: string]: BufferAttribute | InterleavedBufferAttribute;
 	};
 	morphAttributes: {
 		[name: string]: ( BufferAttribute | InterleavedBufferAttribute )[];
 	};
+	morphTargetsRelative: boolean;
 	groups: { start: number; count: number; materialIndex?: number }[];
 	boundingBox: Box3;
 	boundingSphere: Sphere;

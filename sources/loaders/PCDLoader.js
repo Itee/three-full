@@ -15,9 +15,6 @@ import { LoaderUtils } from './LoaderUtils.js'
  * @author Mugen87 / https://github.com/Mugen87
  *
  * Description: A THREE loader for PCD ascii and binary files.
- *
- * Limitations: Compressed binary files are not supported.
- *
  */
 
 var PCDLoader = function ( manager ) {

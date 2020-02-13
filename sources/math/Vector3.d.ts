@@ -52,6 +52,8 @@ export class Vector3 implements Vector {
 
 	applyMatrix3( m: Matrix3 ): this;
 
+	applyNormalMatrix( m: Matrix3 ): this;
+
 	applyMatrix4( m: Matrix4 ): this;
 
 	applyQuaternion( q: Quaternion ): this;
