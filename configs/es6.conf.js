@@ -212,10 +212,6 @@ module.exports = {
         FBXLoader:                   {
             imports: [
                 '_Math',
-                '!NormalNode',
-                '!UVNode',
-                '!Node',
-                '!ColorNode',
                 '!Geometry',
                 '!Material',
                 '!Points'
@@ -736,9 +732,6 @@ module.exports = {
             imports: [ '!CircleGeometry' ]
         },
         TypedArrayUtils:             {
-            imports:        [
-                '!Node'
-            ],
             outputOverride: 'utils/TypedArrayUtils.js'
         },
         UCSCharacter:                {
@@ -780,7 +773,7 @@ module.exports = {
         },
         WebGL:                       {
             replacements:    [
-                [ 'WEBGL', 'WebGL' ]
+                [ 'WEBGL', 'var WebGL' ]
             ],
             exportsOverride: [ 'WebGL' ],
             outputOverride:  'helpers/WebGL.js'
@@ -802,7 +795,7 @@ module.exports = {
         },
         WebVR:                       {
             replacements:    [
-                [ 'var WEBVR', 'var WebVR' ]
+                [ 'WEBVR', 'var WebVR' ]
             ],
             exportsOverride: [ 'WebVR' ]
         }
