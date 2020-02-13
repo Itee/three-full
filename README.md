@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 21.0.0 is now available under Three r0.106.2 !!!**
+**The version 22.0.0 is now available under Three r0.107.0 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -214,6 +214,14 @@ All others folders under example file tree will be mapped to their counter-part 
 
 #### Change log ####
 
+
+##### 22.0.0:
+
+* Support of Three r107.0
+* Fix FBXLoader imports
+* Fix TypedArrayUtils imports
+* Fix WebGL declaration
+* Fix WebVR declaration
 
 ##### 21.0.0:
 
