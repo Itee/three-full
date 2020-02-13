@@ -795,7 +795,7 @@ module.exports = {
         },
         WebVR:                       {
             replacements:    [
-                [ 'var WEBVR', 'var WebVR' ]
+                [ 'WEBVR', 'var WebVR' ]
             ],
             exportsOverride: [ 'WebVR' ]
         }
