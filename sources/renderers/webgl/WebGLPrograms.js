@@ -8,7 +8,9 @@ import {
 	CubeUVReflectionMapping,
 	GammaEncoding,
 	LinearEncoding,
-	ObjectSpaceNormalMap
+	ObjectSpaceNormalMap,
+	TangentSpaceNormalMap,
+	NoToneMapping
 } from '../../constants.js'
 import { WebGLProgram } from './WebGLProgram.js'
 
