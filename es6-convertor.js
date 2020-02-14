@@ -5,8 +5,9 @@
  * @license MIT
  */
 
-const fs   = require( 'fs' )
-const path = require( 'path' )
+const fs    = require( 'fs' )
+const path  = require( 'path' )
+const utils = require( './utils' )
 
 ////////////////////////// CONDITIONAL UTILS /////////////////////////////
 
@@ -67,23 +68,6 @@ function isArrayOfString ( values ) {
 
 ///////////////////////// FILES UTILS //////////////////////////////
 
-function _fileExistForPath ( filePath ) {
-
-    return fs.existsSync( filePath )
-
-}
-
-function _getFileForPath ( filePath ) {
-
-    // In case files doesn't exist
-    if ( !fs.existsSync( filePath ) ) {
-        throw new Error( 'Invalid file path "' + filePath + '" file does not exist !' )
-    }
-
-    return fs.readFileSync( filePath, 'utf8' )
-
-}
-
 function _removeCommentsFrom ( file ) {
 
     return file.replace( /\/\*[\s\S]*?\*\//g, '' ) // Multi-lines comment
@@ -94,126 +78,6 @@ function _removeCommentsFrom ( file ) {
 function _removeStringsFrom ( file ) {
 
     return file.replace( /".*"|\'.*\'/g, '' )
-
-}
-
-/**
- * Return all the files paths under filePaths in a recursive way.
- *
- * @param filePaths - An array of string, representing the base path where looking for get all files paths
- * @return {Array.<string>} - An array of files paths
- * @private
- */
-function _getFilesPathsUnder ( filePaths ) {
-
-    let files = []
-
-    if ( Array.isArray( filePaths ) ) {
-
-        let filePath = undefined
-        for ( let pathIndex = 0, numberOfPaths = filePaths.length ; pathIndex < numberOfPaths ; pathIndex++ ) {
-
-            filePath = filePaths[ pathIndex ]
-            checkStateOf( filePath )
-
-        }
-
-    } else {
-
-        checkStateOf( filePaths )
-
-    }
-
-    return files
-
-    function getFilesPathsUnderFolder ( folder ) {
-
-        fs.readdirSync( folder ).forEach( ( name ) => {
-
-            const filePath = path.resolve( folder, name )
-            checkStateOf( filePath )
-
-        } )
-
-    }
-
-    function checkStateOf ( filePath ) {
-
-        if ( !_fileExistForPath( filePath ) ) {
-            console.error( 'ES6Converter: Invalid file path "' + filePath + '"' )
-            return
-        }
-
-        const stats = fs.statSync( filePath )
-        if ( stats.isFile() ) {
-
-            files.push( filePath )
-
-        } else if ( stats.isDirectory() ) {
-
-            Array.prototype.push.apply( files, getFilesPathsUnderFolder( filePath ) )
-
-        } else {
-
-            console.error( 'Invalid stat object !' )
-
-        }
-
-    }
-
-}
-
-/**
- * Will create an array without the strings in filePaths that are matched in excludes paths
- *
- * @param {Array.<string>} filePaths - An array of string to clean
- * @param {Array.<string>} excludes - The paths to remove
- * @return {Array.<string>} The cleaned filePaths of excludes paths
- * @private
- */
-function _excludesFilesPaths ( filePaths, excludes ) {
-
-    let filteredFilesPath = []
-
-    let filePath = undefined
-    for ( let filePathIndex = 0, numberOfFilePaths = filePaths.length ; filePathIndex < numberOfFilePaths ; filePathIndex++ ) {
-        filePath = filePaths[ filePathIndex ]
-
-        if ( isExclude( filePath ) ) {
-            continue
-        }
-
-        filteredFilesPath.push( filePath )
-
-    }
-
-    return filteredFilesPath
-
-    function isExclude ( path ) {
-
-        let isExclude      = false
-        let excludePattern = undefined
-        for ( let i = 0, pathLength = excludes.length ; i < pathLength ; i++ ) {
-
-            excludePattern = excludes[ i ]
-
-            // In case this is a file name it must fully match
-            if ( excludePattern.indexOf( '.' ) > -1 ) {
-
-                const fileName = path.replace( /^.*(\\|\/|\:)/, '' )
-                if ( fileName === excludePattern ) {
-                    isExclude = true
-                }
-
-            } else if ( path.contains( excludePattern ) ) {
-                isExclude = true
-            }
-
-        }
-
-        return isExclude
-
-    }
 
 }
 
@@ -263,57 +127,6 @@ function _getFileType ( file ) {
 
 }
 
-/**
- * Will filter file paths an keep only js files
- *
- * @param {Array.<string>} filePaths - An array of path to filter
- * @return {Array.<string>} The filtered path with only javascript files
- * @private
- */
-function _filterJavascriptFiles ( filePaths ) {
-
-    let filteredFilesPath = []
-
-    let filePath = undefined
-    for ( let filePathIndex = 0, numberOfFilePaths = filePaths.length ; filePathIndex < numberOfFilePaths ; filePathIndex++ ) {
-
-        filePath = filePaths[ filePathIndex ]
-
-        // Not a js file like fonts or shaders
-        const fileExtension = path.extname( filePath )
-        if ( filePath.indexOf( 'glsl' ) > -1 || fileExtension !== '.js' ) {
-            continue
-        }
-
-        filteredFilesPath.push( filePath )
-
-    }
-
-    return filteredFilesPath
-
-}
-
-function _createFoldersTree ( folderPath ) {
-
-    const sep     = path.sep
-    const initDir = path.isAbsolute( folderPath ) ? sep : ''
-
-    folderPath
-        .split( sep )
-        .reduce( ( parentDir, childDir ) => {
-
-            const curDir = path.resolve( parentDir, childDir )
-
-            if ( !fs.existsSync( curDir ) ) {
-                fs.mkdirSync( curDir )
-            }
-
-            return curDir
-
-        }, initDir )
-
-}
-
 function _convertFile ( banner, fileDatas ) {
 
     const outputPath = fileDatas.output
@@ -322,11 +135,9 @@ function _convertFile ( banner, fileDatas ) {
     const formatedFile    = _formatReplacementStatements( fileDatas.file, fileDatas.replacements )
     const formatedExports = _formatExportStatements( outputPath, fileDatas.exports )
     const outputFile      = banner + formatedImports + formatedFile + formatedExports
-    const cleanFile       = _cleanFile( outputFile )
 
-    _createFoldersTree( path.dirname( outputPath ) )
-
-    fs.writeFileSync( outputPath, cleanFile )
+    fs.mkdirSync( path.dirname( outputPath ), { recursive: true } )
+    fs.writeFileSync( outputPath, outputFile )
 
 }
 
@@ -336,8 +147,7 @@ function _copyFile ( banner, fileDatas ) {
     const file       = banner + fileDatas.file
     const cleanFile  = _cleanFile( file )
 
-    _createFoldersTree( path.dirname( outputPath ) )
-
+    fs.mkdirSync( path.dirname( outputPath ), { recursive: true } )
     fs.writeFileSync( outputPath, cleanFile )
 
 }
@@ -407,7 +217,7 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
         fileExtension = path.extname( filePath )
         baseName      = path.basename( filePath, fileExtension )
         edgeCase      = edgeCases[ baseName ] || {}
-        baseFile      = _getFileForPath( filePath )
+        baseFile      = utils.getFileForPath( filePath )
         file          = _removeCommentsFrom( _removeStringsFrom( baseFile ) )
 
         exports = _getExportsFor( file, edgeCase[ 'exports' ], edgeCase[ 'exportsOverride' ] )
@@ -524,7 +334,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
 
         fileExtension = path.extname( filePath )
         baseName      = path.basename( filePath, fileExtension )
-        baseFile      = _getFileForPath( filePath )
+        baseFile      = utils.getFileForPath( filePath )
         file          = _removeCommentsFrom( baseFile )
         isGLSL        = ( baseName.indexOf( 'glsl' ) > -1 )
         isJavascript  = ( !isGLSL && fileExtension === '.js' )
@@ -1452,9 +1262,9 @@ Object.assign( Es6.prototype, {
         const edgeCases = this.edgeCases
         const banner    = this.banner
 
-        const allFilesPaths       = _getFilesPathsUnder( inputs )
-        const availableFilesPaths = _excludesFilesPaths( allFilesPaths, excludes )
-        const jsFiles             = _filterJavascriptFiles( availableFilesPaths )
+        const allFilesPaths       = utils.getFilesPathsUnder( inputs )
+        const availableFilesPaths = utils.excludesFilesPaths( allFilesPaths, excludes )
+        const jsFiles             = utils.filterJavascriptFiles( availableFilesPaths )
 
         _createExportMap( jsFiles, edgeCases, output )
         _createFilesMap( availableFilesPaths, edgeCases, output )
