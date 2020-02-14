@@ -606,12 +606,206 @@ function _getImportsFor ( fileDatas ) {
     Array.prototype.push.apply( statements, _getAllThreeObjectsIn( file, exports ) )
     //    Array.prototype.push.apply( statements, _getAllConstantStatementIn( file ) )
 
-    const s1 = statements.filter( _makeUnique )
-    const s2 = s1.filter( function ( value ) { return !exports.includes( value ) } )
-
     // Special treatment for intermediary exporter file or Class imported using "as" keyword
     // A class can be inherited and dynamicaly create by new in the same file so we need to check uniqueness
-    return s2
+
+    return statements.flatMap( statement => {
+
+                         if ( statement.contains( ' as ' ) ) {
+
+                             const targetImport = statement.split( ' ' )[ 2 ]
+                             if ( targetImport === '_Math' ) {
+
+                                 return [ '_Math' ]
+
+                             } else if ( targetImport === 'Curves' ) {
+
+                                 // Equivalent to ( import * as Curves from 'intermediary exporter file Curves' )
+                                 return [
+                                     'ArcCurve',
+                                     'CatmullRomCurve3',
+                                     'CubicBezierCurve',
+                                     'CubicBezierCurve3',
+                                     'EllipseCurve',
+                                     'LineCurve',
+                                     'LineCurve3',
+                                     'QuadraticBezierCurve',
+                                     'QuadraticBezierCurve3',
+                                     'SplineCurve',
+                                     'GrannyKnot',
+                                     'HeartCurve',
+                                     'VivianiCurve',
+                                     'KnotCurve',
+                                     'HelixCurve',
+                                     'TrefoilKnot',
+                                     'TorusKnot',
+                                     'CinquefoilKnot',
+                                     'TrefoilPolynomialKnot',
+                                     'FigureEightPolynomialKnot',
+                                     'DecoratedTorusKnot4a',
+                                     'DecoratedTorusKnot4b',
+                                     'DecoratedTorusKnot5a',
+                                     'DecoratedTorusKnot5c'
+                                 ]
+
+                             } else if ( targetImport === 'Geometries' ) {
+
+                                 // Equivalent to ( import * as Geometries from 'intermediary exporter file Geometries' )
+                                 return [
+                                     'WireframeGeometry',
+                                     'TetrahedronGeometry',
+                                     'TetrahedronBufferGeometry',
+                                     'OctahedronGeometry',
+                                     'OctahedronBufferGeometry',
+                                     'IcosahedronGeometry',
+                                     'IcosahedronBufferGeometry',
+                                     'DodecahedronGeometry',
+                                     'DodecahedronBufferGeometry',
+                                     'PolyhedronGeometry',
+                                     'PolyhedronBufferGeometry',
+                                     'TubeGeometry',
+                                     'TubeBufferGeometry',
+                                     'TorusKnotGeometry',
+                                     'TorusGeometry',
+                                     'TorusBufferGeometry',
+                                     'TextGeometry',
+                                     'TextBufferGeometry',
+                                     'SphereGeometry',
+                                     'SphereBufferGeometry',
+                                     'RingGeometry',
+                                     'RingBufferGeometry',
+                                     'PlaneGeometry',
+                                     'PlaneBufferGeometry',
+                                     'LatheGeometry',
+                                     'LatheBufferGeometry',
+                                     'ShapeGeometry',
+                                     'ShapeBufferGeometry',
+                                     'ExtrudeGeometry',
+                                     'ExtrudeBufferGeometry',
+                                     'EdgesGeometry',
+                                     'ConeGeometry',
+                                     'ConeBufferGeometry',
+                                     'CylinderGeometry',
+                                     'CylinderBufferGeometry',
+                                     'CircleGeometry',
+                                     'CircleBufferGeometry',
+                                     'BoxGeometry',
+                                     'BoxBufferGeometry'
+                                 ]
+
+                             } else if ( targetImport === 'Materials' ) {
+
+                                 // Equivalent to ( import * as Materials from 'intermediary exporter file Materials' )
+                                 return [
+                                     'LineBasicMaterial',
+                                     'LineDashedMaterial',
+                                     'MeshBasicMaterial',
+                                     'MeshDepthMaterial',
+                                     'MeshDistanceMaterial',
+                                     'MeshLambertMaterial',
+                                     'MeshNormalMaterial',
+                                     'MeshPhongMaterial',
+                                     'MeshPhysicalMaterial',
+                                     'MeshStandardMaterial',
+                                     'MeshToonMaterial',
+                                     'PointsMaterial',
+                                     'RawShaderMaterial',
+                                     'ShaderMaterial',
+                                     'ShadowMaterial',
+                                     'SpriteMaterial'
+                                 ]
+
+                             } else if ( targetImport === 'Nodes' ) {
+
+                                 // Equivalent to ( import * as Nodes from 'intermediary exporter file Nodes' )
+                                 return [
+                                     'Node',
+                                     'TempNode',
+                                     'InputNode',
+                                     'ConstNode',
+                                     'VarNode',
+                                     'StructNode',
+                                     'AttributeNode',
+                                     'FunctionNode',
+                                     'ExpressionNode',
+                                     'FunctionCallNode',
+                                     'NodeLib',
+                                     'NodeUtils',
+                                     'NodeFrame',
+                                     'NodeUniform',
+                                     'NodeBuilder',
+                                     'BoolNode',
+                                     'IntNode',
+                                     'FloatNode',
+                                     'Vector2Node',
+                                     'Vector3Node',
+                                     'Vector4Node',
+                                     'ColorNode',
+                                     'Matrix3Node',
+                                     'Matrix4Node',
+                                     'TextureNode',
+                                     'CubeTextureNode',
+                                     'ScreenNode',
+                                     'ReflectorNode',
+                                     'PropertyNode',
+                                     'RTTNode',
+                                     'UVNode',
+                                     'ColorsNode',
+                                     'PositionNode',
+                                     'NormalNode',
+                                     'CameraNode',
+                                     'LightNode',
+                                     'ReflectNode',
+                                     'ScreenUVNode',
+                                     'ResolutionNode',
+                                     'MathNode',
+                                     'OperatorNode',
+                                     'CondNode',
+                                     'NoiseNode',
+                                     'CheckerNode',
+                                     'TextureCubeUVNode',
+                                     'TextureCubeNode',
+                                     'NormalMapNode',
+                                     'BumpMapNode',
+                                     'BypassNode',
+                                     'JoinNode',
+                                     'SwitchNode',
+                                     'TimerNode',
+                                     'VelocityNode',
+                                     'UVTransformNode',
+                                     'MaxMIPLevelNode',
+                                     'SpecularMIPLevelNode',
+                                     'ColorSpaceNode',
+                                     'SubSlotNode',
+                                     'BlurNode',
+                                     'ColorAdjustmentNode',
+                                     'LuminanceNode',
+                                     'RawNode',
+                                     'SpriteNode',
+                                     'PhongNode',
+                                     'StandardNode',
+                                     'MeshStandardNode',
+                                     'NodeMaterial',
+                                     'SpriteNodeMaterial',
+                                     'PhongNodeMaterial',
+                                     'StandardNodeMaterial',
+                                     'MeshStandardNodeMaterial',
+                                     'NodePostProcessing'
+                                 ]
+
+                             } else {
+
+                                 return []
+
+                             }
+
+                         } else {
+                             return [ statement ]
+                         }
+                     } )
+                     .filter( _makeUnique )
+                     .filter( ( value ) => { return !( value.endsWith( '_vert' ) || value.endsWith( '_vertex' ) || value.endsWith( '_frag' ) || value.endsWith( '_fragment' ) ) } )
+                     .filter( ( value ) => { return !exports.includes( value ) } )
 
 }
 
