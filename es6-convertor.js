@@ -224,7 +224,7 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
         if ( !exports ) {
 
             // Fallback with file name in last resore
-            console.error( 'WARNING: ' + baseName + ' does not contains explicit or implicit export, fallback to file name as export...' )
+            console.error( 'WARNING: ' + baseName + ' from ' + filePath + ' does not contains explicit or implicit export, fallback to file name as default export... If the file name does not corespond to the expected stuff, please update es6.config.edgeCases.' + baseName + '.exports' )
             exports = [ baseName ]
 
         }
@@ -258,54 +258,99 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
             }
 
-            if ( _exportMap[ exportedElement ] ) {
+            // Check about duplicated exports, Keep source path when possible then jsm and finally example
+            const exportPath = _exportMap[ exportedElement ]
+            if ( exportPath ) {
+
+                // Retrieve origin of previous export
+                const baseExportPath = _revertExportMap[ exportedElement ]
 
                 //Todo: Need to setup a precedence over file path to determine which export is the right
+                const sourcePathTarget  = 'sources\\'
+                const srcPathTarget     = 'src\\'
+                const modulePathTarget  = 'jsm\\'
+                const examplePathTarget = 'examples\\js\\'
 
-                // Keep source path when possible
-                const exportPath = _exportMap[ exportedElement ]
-
-                const sourcePathTarget = 'sources\\'
-                const srcPathTarget    = 'src\\'
-
-                if ( exportPath.contains( sourcePathTarget ) ) {
+                if ( baseExportPath.contains( sourcePathTarget ) ) {
 
                     if ( filePath.contains( srcPathTarget ) ) {
 
-                        console.error( 'WARNING: Element "' + exportedElement + '" in source ' + filePath + ' is already exported by source ' + exportPath + '! Unable to determine which source file is the right exporter !!!' )
+                        console.error( 'ERROR: Element "' + exportedElement + '" in source folder ' + filePath + ' is already exported by source ' + baseExportPath + '! Unable to determine which source file is the right exporter !!! Please update es6.config.excludes and add the wrong exporter file.' )
+
+                    } else if ( filePath.contains( modulePathTarget ) ) {
+
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in jsm folder ' + filePath + ' is already exported by source ' + baseExportPath + '. Ignoring the jsm export ! Please update es6.config.excludes and add the wrong exporter file: ' + baseExportPath )
+
+                    } else if ( filePath.contains( examplePathTarget ) ) {
+
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in example folder ' + filePath + ' is already exported by source ' + baseExportPath + '. Ignoring the example export ! Please update es6.config.excludes and add the wrong exporter file: ' + baseExportPath )
 
                     } else {
 
-                        // stay like this
-                        console.warn( 'WARNING: Element "' + exportedElement + '" in example ' + filePath + ' is already exported by source ' + exportPath + '. Ignoring the example export !' )
+                        console.error( 'ERROR: Element "' + exportedElement + '" from ' + filePath + ' is already exported by ' + baseExportPath + '! Unable to determine which file is the right exporter !!! Please update es6.config.excludes and add the wrong exporter file.' )
+
+                    }
+
+                } else if ( baseExportPath.contains( modulePathTarget ) ) {
+
+                    if ( filePath.contains( srcPathTarget ) ) {
+
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in source folder ' + filePath + ' is already exported by jsm ' + baseExportPath + '. Replacing by the source file ! Please update es6.config.excludes and add the wrong exporter file: ' + baseExportPath )
+                        _exportMap[ exportedElement ]       = outputPath
+                        _revertExportMap[ exportedElement ] = filePath
+
+                    } else if ( filePath.contains( modulePathTarget ) ) {
+
+                        console.error( 'ERROR: Element "' + exportedElement + '" in jsm folder ' + filePath + ' is already exported by jsm ' + baseExportPath + '! Unable to determine which jsm file is the right exporter !!! Please update es6.config.excludes and add the wrong exporter file.' )
+
+                    } else if ( filePath.contains( examplePathTarget ) ) {
+
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in example folder ' + filePath + ' is already exported by jsm ' + baseExportPath + '. Ignoring the example export ! Please update es6.config.excludes and add the wrong exporter file: ' + baseExportPath )
+
+                    } else {
+
+                        console.error( 'ERROR: Element "' + exportedElement + '" from ' + filePath + ' is already exported by ' + baseExportPath + '! Unable to determine which file is the right exporter !!! Please update es6.config.excludes and add the wrong exporter file.' )
+
+                    }
+
+                } else if ( baseExportPath.contains( examplePathTarget ) ) {
+
+                    if ( filePath.contains( srcPathTarget ) ) {
+
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in source folder ' + filePath + ' is already exported by example ' + baseExportPath + '. Replacing by the source file ! Please update es6.config.excludes and add the wrong exporter file: ' + baseExportPath )
+                        _exportMap[ exportedElement ]       = outputPath
+                        _revertExportMap[ exportedElement ] = filePath
+
+                    } else if ( filePath.contains( modulePathTarget ) ) {
+
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in jsm folder ' + filePath + ' is already exported by example ' + baseExportPath + '. Replacing by the jsm export ! Please update es6.config.excludes and add the wrong exporter file: ' + baseExportPath )
+                        _exportMap[ exportedElement ]       = outputPath
+                        _revertExportMap[ exportedElement ] = filePath
+
+                    } else if ( filePath.contains( examplePathTarget ) ) {
+
+                        console.error( 'ERROR: Element "' + exportedElement + '" in example folder ' + filePath + ' is already exported by example ' + baseExportPath + '! Unable to determine which example file is the right exporter !!! Please update es6.config.excludes and add the wrong exporter file.' )
+
+                    } else {
+
+                        console.error( 'ERROR: Element "' + exportedElement + '" from ' + filePath + ' is already exported by ' + baseExportPath + '! Unable to determine which file is the right exporter !!! Please update es6.config.excludes and add the wrong exporter file.' )
 
                     }
 
                 } else {
 
-                    if ( filePath.contains( srcPathTarget ) ) {
-
-                        _exportMap[ exportedElement ] = outputPath
-                        console.warn( 'WARNING: Element "' + exportedElement + '" in source ' + filePath + ' is already exported by example ' + exportPath + ' replacing by the source file !' )
-
-                    } else {
-
-                        console.error( 'WARNING: Element "' + exportedElement + '" in example ' + filePath + ' is already exported by example ' + exportPath + '! Unable to determine which example file is the right exporter !!!' )
-
-                    }
+                    console.error( 'ERROR: Element "' + exportedElement + '" from unmanaged file ' + filePath + ' is already exported by unmanaged file ' + baseExportPath + '! Unable to determine which file is the right exporter !!! Please update es6.config.excludes and add the wrong exporter file.' )
 
                 }
 
             } else {
 
-                _exportMap[ exportedElement ] = outputPath
+                _exportMap[ exportedElement ]       = outputPath
+                _revertExportMap[ exportedElement ] = filePath
 
             }
 
-
         } )
-
-        _revertExportMap[ outputPath ] = exports
 
     } )
 
@@ -355,7 +400,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
             if ( !exports ) {
 
                 // Fallback with file name in last resore
-                console.error( 'WARNING: ' + baseName + ' does not contains explicit or implicit export, fallback to file name as export...' )
+                console.error( 'WARNING: ' + baseName + ' from ' + filePath + ' does not contains explicit or implicit export, fallback to file name as default export... If the file name does not corespond to the expected stuff, please update es6.config.edgeCases.' + baseName + '.exports' )
                 exports = [ baseName ]
 
             }
@@ -636,7 +681,7 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
 
         } else {
 
-            console.error( 'WARNING: ' + path.basename( importPath ) + ' does not contains imports, fallback to file name export...' )
+            console.error( 'ERROR: ' + path.basename( importPath ) + ' does not contains imports, fallback to file name export...' )
 
         }
         formatedImports += '} from \'' + importPath + '\''
@@ -985,7 +1030,7 @@ function _formatExportStatements ( filePath, exports ) {
 
     if ( specificExports.length === 0 && regularExports.length === 0 ) {
 
-        console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export... It must be an Es6 file with it own exports !' )
+        console.error( 'WARNING: ' + path.basename( filePath ) + ' from ' + filePath + ' does not contains explicit or implicit export, fallback to file name as default export... If the file name does not corespond to the expected stuff, please update es6.config.edgeCases.' + path.basename( filePath ) + '.exports' )
         return ''
 
     }
