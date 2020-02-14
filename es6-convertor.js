@@ -172,7 +172,6 @@ function _makeUnique ( value, index, array ) {
 
 /////////////////////////// EXPORTS MAPS ////////////////////////////
 
-let _output          = ''
 let _exportMap       = {}
 let _revertExportMap = {}
 let _fileMap         = {}
@@ -1258,7 +1257,8 @@ Object.assign( Es6.prototype, {
 
         const inputs    = this.inputs
         const excludes  = this.excludes
-        const output    = _output = this.output
+        const output    = this.output
+        //        const output    = _output = this.output
         const edgeCases = this.edgeCases
         const banner    = this.banner
 
