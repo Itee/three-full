@@ -142,7 +142,7 @@ function excludesFilesPaths ( filePaths, excludes ) {
                     isExclude = true
                 }
 
-            } else if ( path.includes( excludePattern ) ) {
+            } else if ( path.contains( excludePattern ) ) {
                 isExclude = true
             }
 
