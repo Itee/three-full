@@ -135,9 +135,10 @@ function _convertFile ( banner, fileDatas ) {
     const formatedFile    = _formatReplacementStatements( fileDatas.file, fileDatas.replacements )
     const formatedExports = _formatExportStatements( outputPath, fileDatas.exports )
     const outputFile      = banner + formatedImports + formatedFile + formatedExports
+    const cleanFile       = _cleanFile( outputFile )
 
     fs.mkdirSync( path.dirname( outputPath ), { recursive: true } )
-    fs.writeFileSync( outputPath, outputFile )
+    fs.writeFileSync( outputPath, cleanFile )
 
 }
 
