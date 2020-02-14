@@ -453,7 +453,7 @@ function _getAllImportsStatementIn ( file, exports ) {
         const results = value.replace( 'import', '' )
                              .replace( 'from', '' )
                              .replace( /[{}]/g, '' )
-                             .replace( /\s+/g, '' )
+                             .replace( /(?<!as)\s+(?!as)/g, '' ) // Keep "Foo as _Foo"
                              .split( ',' )
 
         if ( results.length > 0 ) {
