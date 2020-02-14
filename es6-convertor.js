@@ -609,6 +609,7 @@ function _getImportsFor ( fileDatas ) {
     const s1 = statements.filter( _makeUnique )
     const s2 = s1.filter( function ( value ) { return !exports.includes( value ) } )
 
+    // Special treatment for intermediary exporter file or Class imported using "as" keyword
     // A class can be inherited and dynamicaly create by new in the same file so we need to check uniqueness
     return s2
 
@@ -644,6 +645,7 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
             const relativeFilePath           = ( notStartWithDot ) ? './' + path.join( relativePath, exporterBaseName ) : path.join( relativePath, exporterBaseName )
             const relativeFilePathNormalized = relativeFilePath.replace( /\\/g, '/' )
 
+            // That why we use path as key and not the inverse
             if ( !importsMap[ relativeFilePathNormalized ] ) {
                 importsMap[ relativeFilePathNormalized ] = []
             }
