@@ -416,6 +416,11 @@ module.exports = {
         SimplifyModifier:       {
             imports: [ '!Triangle' ]
         },
+        StandardNode:       {
+            replacements: [
+                ['\'float geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );\',','\'float geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );\''] // Fix eslint extra colon
+            ]
+        },
         TransformControls:      {
             imports: [ '!CircleGeometry' ]
         },
