@@ -5,8 +5,9 @@
  * @license MIT
  */
 
-const fs   = require( 'fs' )
-const path = require( 'path' )
+const fs    = require( 'fs' )
+const path  = require( 'path' )
+const utils = require( './utils' )
 
 ////////////////////////// CONDITIONAL UTILS /////////////////////////////
 
@@ -67,23 +68,6 @@ function isArrayOfString ( values ) {
 
 ///////////////////////// FILES UTILS //////////////////////////////
 
-function _fileExistForPath ( filePath ) {
-
-    return fs.existsSync( filePath )
-
-}
-
-function _getFileForPath ( filePath ) {
-
-    // In case files doesn't exist
-    if ( !fs.existsSync( filePath ) ) {
-        throw new Error( 'Invalid file path "' + filePath + '" file does not exist !' )
-    }
-
-    return fs.readFileSync( filePath, 'utf8' )
-
-}
-
 function _removeCommentsFrom ( file ) {
 
     return file.replace( /\/\*[\s\S]*?\*\//g, '' ) // Multi-lines comment
@@ -94,126 +78,6 @@ function _removeCommentsFrom ( file ) {
 function _removeStringsFrom ( file ) {
 
     return file.replace( /".*"|\'.*\'/g, '' )
-
-}
-
-/**
- * Return all the files paths under filePaths in a recursive way.
- *
- * @param filePaths - An array of string, representing the base path where looking for get all files paths
- * @return {Array.<string>} - An array of files paths
- * @private
- */
-function _getFilesPathsUnder ( filePaths ) {
-
-    let files = []
-
-    if ( Array.isArray( filePaths ) ) {
-
-        let filePath = undefined
-        for ( let pathIndex = 0, numberOfPaths = filePaths.length ; pathIndex < numberOfPaths ; pathIndex++ ) {
-
-            filePath = filePaths[ pathIndex ]
-            checkStateOf( filePath )
-
-        }
-
-    } else {
-
-        checkStateOf( filePaths )
-
-    }
-
-    return files
-
-    function getFilesPathsUnderFolder ( folder ) {
-
-        fs.readdirSync( folder ).forEach( ( name ) => {
-
-            const filePath = path.resolve( folder, name )
-            checkStateOf( filePath )
-
-        } )
-
-    }
-
-    function checkStateOf ( filePath ) {
-
-        if ( !_fileExistForPath( filePath ) ) {
-            console.error( 'ES6Converter: Invalid file path "' + filePath + '"' )
-            return
-        }
-
-        const stats = fs.statSync( filePath )
-        if ( stats.isFile() ) {
-
-            files.push( filePath )
-
-        } else if ( stats.isDirectory() ) {
-
-            Array.prototype.push.apply( files, getFilesPathsUnderFolder( filePath ) )
-
-        } else {
-
-            console.error( 'Invalid stat object !' )
-
-        }
-
-    }
-
-}
-
-/**
- * Will create an array without the strings in filePaths that are matched in excludes paths
- *
- * @param {Array.<string>} filePaths - An array of string to clean
- * @param {Array.<string>} excludes - The paths to remove
- * @return {Array.<string>} The cleaned filePaths of excludes paths
- * @private
- */
-function _excludesFilesPaths ( filePaths, excludes ) {
-
-    let filteredFilesPath = []
-
-    let filePath = undefined
-    for ( let filePathIndex = 0, numberOfFilePaths = filePaths.length ; filePathIndex < numberOfFilePaths ; filePathIndex++ ) {
-        filePath = filePaths[ filePathIndex ]
-
-        if ( isExclude( filePath ) ) {
-            continue
-        }
-
-        filteredFilesPath.push( filePath )
-
-    }
-
-    return filteredFilesPath
-
-    function isExclude ( path ) {
-
-        let isExclude      = false
-        let excludePattern = undefined
-        for ( let i = 0, pathLength = excludes.length ; i < pathLength ; i++ ) {
-
-            excludePattern = excludes[ i ]
-
-            // In case this is a file name it must fully match
-            if ( excludePattern.indexOf( '.' ) > -1 ) {
-
-                const fileName = path.replace( /^.*(\\|\/|\:)/, '' )
-                if ( fileName === excludePattern ) {
-                    isExclude = true
-                }
-
-            } else if ( path.contains( excludePattern ) ) {
-                isExclude = true
-            }
-
-        }
-
-        return isExclude
-
-    }
 
 }
 
@@ -263,57 +127,6 @@ function _getFileType ( file ) {
 
 }
 
-/**
- * Will filter file paths an keep only js files
- *
- * @param {Array.<string>} filePaths - An array of path to filter
- * @return {Array.<string>} The filtered path with only javascript files
- * @private
- */
-function _filterJavascriptFiles ( filePaths ) {
-
-    let filteredFilesPath = []
-
-    let filePath = undefined
-    for ( let filePathIndex = 0, numberOfFilePaths = filePaths.length ; filePathIndex < numberOfFilePaths ; filePathIndex++ ) {
-
-        filePath = filePaths[ filePathIndex ]
-
-        // Not a js file like fonts or shaders
-        const fileExtension = path.extname( filePath )
-        if ( filePath.indexOf( 'glsl' ) > -1 || fileExtension !== '.js' ) {
-            continue
-        }
-
-        filteredFilesPath.push( filePath )
-
-    }
-
-    return filteredFilesPath
-
-}
-
-function _createFoldersTree ( folderPath ) {
-
-    const sep     = path.sep
-    const initDir = path.isAbsolute( folderPath ) ? sep : ''
-
-    folderPath
-        .split( sep )
-        .reduce( ( parentDir, childDir ) => {
-
-            const curDir = path.resolve( parentDir, childDir )
-
-            if ( !fs.existsSync( curDir ) ) {
-                fs.mkdirSync( curDir )
-            }
-
-            return curDir
-
-        }, initDir )
-
-}
-
 function _convertFile ( banner, fileDatas ) {
 
     const outputPath = fileDatas.output
@@ -324,8 +137,7 @@ function _convertFile ( banner, fileDatas ) {
     const outputFile      = banner + formatedImports + formatedFile + formatedExports
     const cleanFile       = _cleanFile( outputFile )
 
-    _createFoldersTree( path.dirname( outputPath ) )
-
+    fs.mkdirSync( path.dirname( outputPath ), { recursive: true } )
     fs.writeFileSync( outputPath, cleanFile )
 
 }
@@ -336,8 +148,7 @@ function _copyFile ( banner, fileDatas ) {
     const file       = banner + fileDatas.file
     const cleanFile  = _cleanFile( file )
 
-    _createFoldersTree( path.dirname( outputPath ) )
-
+    fs.mkdirSync( path.dirname( outputPath ), { recursive: true } )
     fs.writeFileSync( outputPath, cleanFile )
 
 }
@@ -362,7 +173,6 @@ function _makeUnique ( value, index, array ) {
 
 /////////////////////////// EXPORTS MAPS ////////////////////////////
 
-let _output          = ''
 let _exportMap       = {}
 let _revertExportMap = {}
 let _fileMap         = {}
@@ -407,14 +217,14 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
         fileExtension = path.extname( filePath )
         baseName      = path.basename( filePath, fileExtension )
         edgeCase      = edgeCases[ baseName ] || {}
-        baseFile      = _getFileForPath( filePath )
+        baseFile      = utils.getFileForPath( filePath )
         file          = _removeCommentsFrom( _removeStringsFrom( baseFile ) )
 
         exports = _getExportsFor( file, edgeCase[ 'exports' ], edgeCase[ 'exportsOverride' ] )
         if ( !exports ) {
 
             // Fallback with file name in last resore
-            console.error( 'WARNING: ' + baseName + ' does not contains explicit or implicit export, fallback to file name as export...' )
+            console.error( 'WARNING: ' + baseName + ' from ' + filePath + ' does not contains explicit or implicit export, fallback to file name as default export... If the file name does not corespond to the expected stuff, please update es6.config.edgeCases.' + baseName + '.exports' )
             exports = [ baseName ]
 
         }
@@ -448,53 +258,99 @@ function _createExportMap ( filesPaths, edgeCases, outputBasePath ) {
 
             }
 
-            if ( _exportMap[ exportedElement ] ) {
+            // Check about duplicated exports, Keep source path when possible then jsm and finally example
+            const exportPath = _exportMap[ exportedElement ]
+            if ( exportPath ) {
+
+                // Retrieve origin of previous export
+                const baseExportPath = _revertExportMap[ exportedElement ]
 
                 //Todo: Need to setup a precedence over file path to determine which export is the right
+                const sourcePathTarget  = 'sources\\'
+                const srcPathTarget     = 'src\\'
+                const modulePathTarget  = 'jsm\\'
+                const examplePathTarget = 'examples\\js\\'
 
-                // Keep source path when possible
-                const exportPath = _exportMap[ exportedElement ]
-
-                const sourcePathTarget = 'sources\\'
-                const srcPathTarget    = 'src\\'
-
-                if ( exportPath.contains( sourcePathTarget ) ) {
+                if ( baseExportPath.contains( sourcePathTarget ) ) {
 
                     if ( filePath.contains( srcPathTarget ) ) {
 
-                        console.error( 'WARNING: Element "' + exportedElement + '" in source ' + filePath + ' is already exported by source ' + exportPath + '! Unable to determine which source file is the right exporter !!!' )
+                        console.error( 'ERROR: Element "' + exportedElement + '" in source folder ' + filePath + ' is already exported by source ' + baseExportPath + '! Unable to determine which source file is the right exporter !!! Please update es6.config.excludes and add the wrong exporter file.' )
+
+                    } else if ( filePath.contains( modulePathTarget ) ) {
+
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in jsm folder ' + filePath + ' is already exported by source ' + baseExportPath + '. Ignoring the jsm export ! Please update es6.config.excludes and add the wrong exporter file: ' + baseExportPath )
+
+                    } else if ( filePath.contains( examplePathTarget ) ) {
+
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in example folder ' + filePath + ' is already exported by source ' + baseExportPath + '. Ignoring the example export ! Please update es6.config.excludes and add the wrong exporter file: ' + baseExportPath )
 
                     } else {
 
-                        // stay like this
-                        console.warn( 'WARNING: Element "' + exportedElement + '" in example ' + filePath + ' is already exported by source ' + exportPath + '. Ignoring the example export !' )
+                        console.error( 'ERROR: Element "' + exportedElement + '" from ' + filePath + ' is already exported by ' + baseExportPath + '! Unable to determine which file is the right exporter !!! Please update es6.config.excludes and add the wrong exporter file.' )
+
+                    }
+
+                } else if ( baseExportPath.contains( modulePathTarget ) ) {
+
+                    if ( filePath.contains( srcPathTarget ) ) {
+
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in source folder ' + filePath + ' is already exported by jsm ' + baseExportPath + '. Replacing by the source file ! Please update es6.config.excludes and add the wrong exporter file: ' + baseExportPath )
+                        _exportMap[ exportedElement ]       = outputPath
+                        _revertExportMap[ exportedElement ] = filePath
+
+                    } else if ( filePath.contains( modulePathTarget ) ) {
+
+                        console.error( 'ERROR: Element "' + exportedElement + '" in jsm folder ' + filePath + ' is already exported by jsm ' + baseExportPath + '! Unable to determine which jsm file is the right exporter !!! Please update es6.config.excludes and add the wrong exporter file.' )
+
+                    } else if ( filePath.contains( examplePathTarget ) ) {
+
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in example folder ' + filePath + ' is already exported by jsm ' + baseExportPath + '. Ignoring the example export ! Please update es6.config.excludes and add the wrong exporter file: ' + baseExportPath )
+
+                    } else {
+
+                        console.error( 'ERROR: Element "' + exportedElement + '" from ' + filePath + ' is already exported by ' + baseExportPath + '! Unable to determine which file is the right exporter !!! Please update es6.config.excludes and add the wrong exporter file.' )
+
+                    }
+
+                } else if ( baseExportPath.contains( examplePathTarget ) ) {
+
+                    if ( filePath.contains( srcPathTarget ) ) {
+
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in source folder ' + filePath + ' is already exported by example ' + baseExportPath + '. Replacing by the source file ! Please update es6.config.excludes and add the wrong exporter file: ' + baseExportPath )
+                        _exportMap[ exportedElement ]       = outputPath
+                        _revertExportMap[ exportedElement ] = filePath
+
+                    } else if ( filePath.contains( modulePathTarget ) ) {
+
+                        console.warn( 'WARNING: Element "' + exportedElement + '" in jsm folder ' + filePath + ' is already exported by example ' + baseExportPath + '. Replacing by the jsm export ! Please update es6.config.excludes and add the wrong exporter file: ' + baseExportPath )
+                        _exportMap[ exportedElement ]       = outputPath
+                        _revertExportMap[ exportedElement ] = filePath
+
+                    } else if ( filePath.contains( examplePathTarget ) ) {
+
+                        console.error( 'ERROR: Element "' + exportedElement + '" in example folder ' + filePath + ' is already exported by example ' + baseExportPath + '! Unable to determine which example file is the right exporter !!! Please update es6.config.excludes and add the wrong exporter file.' )
+
+                    } else {
+
+                        console.error( 'ERROR: Element "' + exportedElement + '" from ' + filePath + ' is already exported by ' + baseExportPath + '! Unable to determine which file is the right exporter !!! Please update es6.config.excludes and add the wrong exporter file.' )
 
                     }
 
                 } else {
 
-                    if ( filePath.contains( srcPathTarget ) ) {
-
-                        _exportMap[ exportedElement ] = outputPath
-                        console.warn( 'WARNING: Element "' + exportedElement + '" in source ' + filePath + ' is already exported by example ' + exportPath + ' replacing by the source file !' )
-
-                    } else {
-
-                        console.error( 'WARNING: Element "' + exportedElement + '" in example ' + filePath + ' is already exported by example ' + exportPath + '! Unable to determine which example file is the right exporter !!!' )
-
-                    }
+                    console.error( 'ERROR: Element "' + exportedElement + '" from unmanaged file ' + filePath + ' is already exported by unmanaged file ' + baseExportPath + '! Unable to determine which file is the right exporter !!! Please update es6.config.excludes and add the wrong exporter file.' )
 
                 }
 
-                return
+            } else {
+
+                _exportMap[ exportedElement ]       = outputPath
+                _revertExportMap[ exportedElement ] = filePath
 
             }
 
-            _exportMap[ exportedElement ] = outputPath
-
         } )
-
-        _revertExportMap[ outputPath ] = exports
 
     } )
 
@@ -523,7 +379,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
 
         fileExtension = path.extname( filePath )
         baseName      = path.basename( filePath, fileExtension )
-        baseFile      = _getFileForPath( filePath )
+        baseFile      = utils.getFileForPath( filePath )
         file          = _removeCommentsFrom( baseFile )
         isGLSL        = ( baseName.indexOf( 'glsl' ) > -1 )
         isJavascript  = ( !isGLSL && fileExtension === '.js' )
@@ -544,7 +400,7 @@ function _createFilesMap ( filesPaths, edgeCases, outputBasePath ) {
             if ( !exports ) {
 
                 // Fallback with file name in last resore
-                console.error( 'WARNING: ' + baseName + ' does not contains explicit or implicit export, fallback to file name as export...' )
+                console.error( 'WARNING: ' + baseName + ' from ' + filePath + ' does not contains explicit or implicit export, fallback to file name as default export... If the file name does not corespond to the expected stuff, please update es6.config.edgeCases.' + baseName + '.exports' )
                 exports = [ baseName ]
 
             }
@@ -597,7 +453,7 @@ function _getAllImportsStatementIn ( file, exports ) {
         const results = value.replace( 'import', '' )
                              .replace( 'from', '' )
                              .replace( /[{}]/g, '' )
-                             .replace( /\s+/g, '' )
+                             .replace( /(?<!as)\s+(?!as)/g, '' ) // Keep "Foo as _Foo"
                              .split( ',' )
 
         if ( results.length > 0 ) {
@@ -750,11 +606,206 @@ function _getImportsFor ( fileDatas ) {
     Array.prototype.push.apply( statements, _getAllThreeObjectsIn( file, exports ) )
     //    Array.prototype.push.apply( statements, _getAllConstantStatementIn( file ) )
 
-    const s1 = statements.filter( _makeUnique )
-    const s2 = s1.filter( function ( value ) { return !exports.includes( value ) } )
-
+    // Special treatment for intermediary exporter file or Class imported using "as" keyword
     // A class can be inherited and dynamicaly create by new in the same file so we need to check uniqueness
-    return s2
+
+    return statements.flatMap( statement => {
+
+                         if ( statement.contains( ' as ' ) ) {
+
+                             const targetImport = statement.split( ' ' )[ 2 ]
+                             if ( targetImport === '_Math' ) {
+
+                                 return [ '_Math' ]
+
+                             } else if ( targetImport === 'Curves' ) {
+
+                                 // Equivalent to ( import * as Curves from 'intermediary exporter file Curves' )
+                                 return [
+                                     'ArcCurve',
+                                     'CatmullRomCurve3',
+                                     'CubicBezierCurve',
+                                     'CubicBezierCurve3',
+                                     'EllipseCurve',
+                                     'LineCurve',
+                                     'LineCurve3',
+                                     'QuadraticBezierCurve',
+                                     'QuadraticBezierCurve3',
+                                     'SplineCurve',
+                                     'GrannyKnot',
+                                     'HeartCurve',
+                                     'VivianiCurve',
+                                     'KnotCurve',
+                                     'HelixCurve',
+                                     'TrefoilKnot',
+                                     'TorusKnot',
+                                     'CinquefoilKnot',
+                                     'TrefoilPolynomialKnot',
+                                     'FigureEightPolynomialKnot',
+                                     'DecoratedTorusKnot4a',
+                                     'DecoratedTorusKnot4b',
+                                     'DecoratedTorusKnot5a',
+                                     'DecoratedTorusKnot5c'
+                                 ]
+
+                             } else if ( targetImport === 'Geometries' ) {
+
+                                 // Equivalent to ( import * as Geometries from 'intermediary exporter file Geometries' )
+                                 return [
+                                     'WireframeGeometry',
+                                     'TetrahedronGeometry',
+                                     'TetrahedronBufferGeometry',
+                                     'OctahedronGeometry',
+                                     'OctahedronBufferGeometry',
+                                     'IcosahedronGeometry',
+                                     'IcosahedronBufferGeometry',
+                                     'DodecahedronGeometry',
+                                     'DodecahedronBufferGeometry',
+                                     'PolyhedronGeometry',
+                                     'PolyhedronBufferGeometry',
+                                     'TubeGeometry',
+                                     'TubeBufferGeometry',
+                                     'TorusKnotGeometry',
+                                     'TorusGeometry',
+                                     'TorusBufferGeometry',
+                                     'TextGeometry',
+                                     'TextBufferGeometry',
+                                     'SphereGeometry',
+                                     'SphereBufferGeometry',
+                                     'RingGeometry',
+                                     'RingBufferGeometry',
+                                     'PlaneGeometry',
+                                     'PlaneBufferGeometry',
+                                     'LatheGeometry',
+                                     'LatheBufferGeometry',
+                                     'ShapeGeometry',
+                                     'ShapeBufferGeometry',
+                                     'ExtrudeGeometry',
+                                     'ExtrudeBufferGeometry',
+                                     'EdgesGeometry',
+                                     'ConeGeometry',
+                                     'ConeBufferGeometry',
+                                     'CylinderGeometry',
+                                     'CylinderBufferGeometry',
+                                     'CircleGeometry',
+                                     'CircleBufferGeometry',
+                                     'BoxGeometry',
+                                     'BoxBufferGeometry'
+                                 ]
+
+                             } else if ( targetImport === 'Materials' ) {
+
+                                 // Equivalent to ( import * as Materials from 'intermediary exporter file Materials' )
+                                 return [
+                                     'LineBasicMaterial',
+                                     'LineDashedMaterial',
+                                     'MeshBasicMaterial',
+                                     'MeshDepthMaterial',
+                                     'MeshDistanceMaterial',
+                                     'MeshLambertMaterial',
+                                     'MeshNormalMaterial',
+                                     'MeshPhongMaterial',
+                                     'MeshPhysicalMaterial',
+                                     'MeshStandardMaterial',
+                                     'MeshToonMaterial',
+                                     'PointsMaterial',
+                                     'RawShaderMaterial',
+                                     'ShaderMaterial',
+                                     'ShadowMaterial',
+                                     'SpriteMaterial'
+                                 ]
+
+                             } else if ( targetImport === 'Nodes' ) {
+
+                                 // Equivalent to ( import * as Nodes from 'intermediary exporter file Nodes' )
+                                 return [
+                                     'Node',
+                                     'TempNode',
+                                     'InputNode',
+                                     'ConstNode',
+                                     'VarNode',
+                                     'StructNode',
+                                     'AttributeNode',
+                                     'FunctionNode',
+                                     'ExpressionNode',
+                                     'FunctionCallNode',
+                                     'NodeLib',
+                                     'NodeUtils',
+                                     'NodeFrame',
+                                     'NodeUniform',
+                                     'NodeBuilder',
+                                     'BoolNode',
+                                     'IntNode',
+                                     'FloatNode',
+                                     'Vector2Node',
+                                     'Vector3Node',
+                                     'Vector4Node',
+                                     'ColorNode',
+                                     'Matrix3Node',
+                                     'Matrix4Node',
+                                     'TextureNode',
+                                     'CubeTextureNode',
+                                     'ScreenNode',
+                                     'ReflectorNode',
+                                     'PropertyNode',
+                                     'RTTNode',
+                                     'UVNode',
+                                     'ColorsNode',
+                                     'PositionNode',
+                                     'NormalNode',
+                                     'CameraNode',
+                                     'LightNode',
+                                     'ReflectNode',
+                                     'ScreenUVNode',
+                                     'ResolutionNode',
+                                     'MathNode',
+                                     'OperatorNode',
+                                     'CondNode',
+                                     'NoiseNode',
+                                     'CheckerNode',
+                                     'TextureCubeUVNode',
+                                     'TextureCubeNode',
+                                     'NormalMapNode',
+                                     'BumpMapNode',
+                                     'BypassNode',
+                                     'JoinNode',
+                                     'SwitchNode',
+                                     'TimerNode',
+                                     'VelocityNode',
+                                     'UVTransformNode',
+                                     'MaxMIPLevelNode',
+                                     'SpecularMIPLevelNode',
+                                     'ColorSpaceNode',
+                                     'SubSlotNode',
+                                     'BlurNode',
+                                     'ColorAdjustmentNode',
+                                     'LuminanceNode',
+                                     'RawNode',
+                                     'SpriteNode',
+                                     'PhongNode',
+                                     'StandardNode',
+                                     'MeshStandardNode',
+                                     'NodeMaterial',
+                                     'SpriteNodeMaterial',
+                                     'PhongNodeMaterial',
+                                     'StandardNodeMaterial',
+                                     'MeshStandardNodeMaterial',
+                                     'NodePostProcessing'
+                                 ]
+
+                             } else {
+
+                                 return []
+
+                             }
+
+                         } else {
+                             return [ statement ]
+                         }
+                     } )
+                     .filter( _makeUnique )
+                     .filter( ( value ) => { return !( value.endsWith( '_vert' ) || value.endsWith( '_vertex' ) || value.endsWith( '_frag' ) || value.endsWith( '_fragment' ) ) } )
+                     .filter( ( value ) => { return !exports.includes( value ) } )
 
 }
 
@@ -788,6 +839,7 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
             const relativeFilePath           = ( notStartWithDot ) ? './' + path.join( relativePath, exporterBaseName ) : path.join( relativePath, exporterBaseName )
             const relativeFilePathNormalized = relativeFilePath.replace( /\\/g, '/' )
 
+            // That why we use path as key and not the inverse
             if ( !importsMap[ relativeFilePathNormalized ] ) {
                 importsMap[ relativeFilePathNormalized ] = []
             }
@@ -825,7 +877,7 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
 
         } else {
 
-            console.error( 'WARNING: ' + path.basename( importPath ) + ' does not contains imports, fallback to file name export...' )
+            console.error( 'ERROR: ' + path.basename( importPath ) + ' does not contains imports, fallback to file name export...' )
 
         }
         formatedImports += '} from \'' + importPath + '\''
@@ -1174,7 +1226,7 @@ function _formatExportStatements ( filePath, exports ) {
 
     if ( specificExports.length === 0 && regularExports.length === 0 ) {
 
-        console.error( 'WARNING: ' + path.basename( filePath ) + ' does not contains explicit or implicit export, fallback to file name export... It must be an Es6 file with it own exports !' )
+        console.error( 'WARNING: ' + path.basename( filePath ) + ' from ' + filePath + ' does not contains explicit or implicit export, fallback to file name as default export... If the file name does not corespond to the expected stuff, please update es6.config.edgeCases.' + path.basename( filePath ) + '.exports' )
         return ''
 
     }
@@ -1246,11 +1298,15 @@ function _getOutputFor ( filePath, outputBasePath, outputOverride = undefined ) 
     function getSpecificPath ( path ) {
 
         const exampleFontsTarget = 'three\\examples\\fonts'
+        const exampleJsmTarget   = 'three\\examples\\jsm'
         const exampleJsTarget    = 'three\\examples\\js'
+        const extraTarget        = 'three\\src\\extras'
         const sourceTarget       = 'three\\src'
 
         let indexOfExampleFontsTarget = path.indexOf( exampleFontsTarget )
+        let indexOfExampleJsmTarget   = path.indexOf( exampleJsmTarget )
         let indexOfExampleJsTarget    = path.indexOf( exampleJsTarget )
+        let indexOfExtraTarget        = path.indexOf( extraTarget )
         let indexOfSourceTarget       = path.indexOf( sourceTarget )
         let specificPath              = undefined
 
@@ -1258,9 +1314,17 @@ function _getOutputFor ( filePath, outputBasePath, outputOverride = undefined ) 
 
             specificPath = 'fonts\\' + path.slice( indexOfExampleFontsTarget + exampleFontsTarget.length )
 
+        } else if ( indexOfExampleJsmTarget > -1 ) {
+
+            specificPath = path.slice( indexOfExampleJsmTarget + exampleJsmTarget.length )
+
         } else if ( indexOfExampleJsTarget > -1 ) {
 
             specificPath = path.slice( indexOfExampleJsTarget + exampleJsTarget.length )
+
+        } else if ( indexOfExtraTarget > -1 ) {
+
+            specificPath = path.slice( indexOfExtraTarget + extraTarget.length )
 
         } else if ( indexOfSourceTarget > -1 ) {
 
@@ -1447,13 +1511,14 @@ Object.assign( Es6.prototype, {
 
         const inputs    = this.inputs
         const excludes  = this.excludes
-        const output    = _output = this.output
+        const output    = this.output
+        //        const output    = _output = this.output
         const edgeCases = this.edgeCases
         const banner    = this.banner
 
-        const allFilesPaths       = _getFilesPathsUnder( inputs )
-        const availableFilesPaths = _excludesFilesPaths( allFilesPaths, excludes )
-        const jsFiles             = _filterJavascriptFiles( availableFilesPaths )
+        const allFilesPaths       = utils.getFilesPathsUnder( inputs )
+        const availableFilesPaths = utils.excludesFilesPaths( allFilesPaths, excludes )
+        const jsFiles             = utils.filterJavascriptFiles( availableFilesPaths )
 
         _createExportMap( jsFiles, edgeCases, output )
         _createFilesMap( availableFilesPaths, edgeCases, output )
