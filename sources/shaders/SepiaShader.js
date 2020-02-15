@@ -8,7 +8,6 @@
  * based on glfx.js sepia shader
  * https://github.com/evanw/glfx.js
  */
-
 var SepiaShader = {
 
 	uniforms: {

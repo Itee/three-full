@@ -1,14 +1,13 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { LineSegmentsGeometry } from './LineSegmentsGeometry.js'
 import { WireframeGeometry } from '../geometries/WireframeGeometry.js'
+import { LineSegmentsGeometry } from './LineSegmentsGeometry.js'
 
 /**
  * @author WestLangley / http://github.com/WestLangley
  *
  */
-
 var WireframeGeometry2 = function ( geometry ) {
 
 	LineSegmentsGeometry.call( this );

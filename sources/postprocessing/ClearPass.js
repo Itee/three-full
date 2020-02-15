@@ -6,7 +6,6 @@ import { Pass } from './Pass.js'
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-
 var ClearPass = function ( clearColor, clearAlpha ) {
 
 	Pass.call( this );

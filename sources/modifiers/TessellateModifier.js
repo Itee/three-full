@@ -9,7 +9,6 @@ import { Face3 } from '../core/Face3.js'
  *
  * @author alteredq / http://alteredqualia.com/
  */
-
 var TessellateModifier = function ( maxEdgeLength ) {
 
 	this.maxEdgeLength = maxEdgeLength;

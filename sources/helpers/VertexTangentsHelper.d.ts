@@ -1,0 +1,23 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import {
+	Object3D,
+	LineSegments
+} from '../../../src/Three';
+
+export class VertexTangentsHelper extends LineSegments {
+
+	constructor(
+		object: Object3D,
+		size?: number,
+		hex?: number,
+		linewidth?: number
+	);
+
+	object: Object3D;
+	size: number;
+
+	update(): void;
+
+}

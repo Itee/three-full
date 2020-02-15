@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Object3D } from '../core/Object3D.js'
-import { Vector3 } from '../math/Vector3.js'
-import { Quaternion } from '../math/Quaternion.js'
 import { AnimationMixer } from './AnimationMixer.js'
+import { Object3D } from '../core/Object3D.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { Vector3 } from '../math/Vector3.js'
 import { CCDIKSolver } from './CCDIKSolver.js'
 import { MMDPhysics } from './MMDPhysics.js'
 
@@ -22,7 +22,6 @@ import { MMDPhysics } from './MMDPhysics.js'
  * TODO
  *  - more precise grant skinning support.
  */
-
 var MMDAnimationHelper = ( function () {
 
 	/**

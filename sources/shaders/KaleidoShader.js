@@ -12,7 +12,6 @@
  * sides: number of reflections
  * angle: initial angle in radians
  */
-
 var KaleidoShader = {
 
 	uniforms: {

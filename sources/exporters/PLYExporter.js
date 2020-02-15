@@ -2,8 +2,8 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { BufferGeometry } from '../core/BufferGeometry.js'
-import { Vector3 } from '../math/Vector3.js'
 import { Matrix3 } from '../math/Matrix3.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author Garrett Johnson / http://gkjohnson.github.io/
@@ -18,7 +18,6 @@ import { Matrix3 } from '../math/Matrix3.js'
  * Format Definition:
  * http://paulbourke.net/dataformats/ply/
  */
-
 var PLYExporter = function () {};
 
 PLYExporter.prototype = {
@@ -149,21 +148,8 @@ PLYExporter.prototype = {
 
 		}
 
-		// get how many bytes will be needed to save out the faces
-		// so we can use a minimal amount of memory / data
-		var indexByteCount = 1;
+		var indexByteCount = 4;
 
-		if ( vertexCount > 256 ) { // 2^8 bits
-
-			indexByteCount = 2;
-
-		}
-
-		if ( vertexCount > 65536 ) { // 2^16 bits
-
-			indexByteCount = 4;
-
-		}
 		var header =
 			'ply\n' +
 			`format ${ options.binary ? 'binary_big_endian' : 'ascii' } 1.0\n` +
@@ -208,7 +194,7 @@ PLYExporter.prototype = {
 			// faces
 			header +=
 				`element face ${faceCount}\n` +
-				`property list uchar uint${ indexByteCount * 8 } vertex_index\n`;
+				`property list uchar int vertex_index\n`;
 
 		}
 
@@ -356,7 +342,7 @@ PLYExporter.prototype = {
 				if ( includeIndices === true ) {
 
 					// Create the face list
-					var faceIndexFunc = `setUint${indexByteCount * 8}`;
+
 					if ( indices !== null ) {
 
 						for ( var i = 0, l = indices.count; i < l; i += 3 ) {
@@ -364,13 +350,13 @@ PLYExporter.prototype = {
 							output.setUint8( fOffset, 3 );
 							fOffset += 1;
 
-							output[ faceIndexFunc ]( fOffset, indices.getX( i + 0 ) + writtenVertices );
+							output.setUint32( fOffset, indices.getX( i + 0 ) + writtenVertices );
 							fOffset += indexByteCount;
 
-							output[ faceIndexFunc ]( fOffset, indices.getX( i + 1 ) + writtenVertices );
+							output.setUint32( fOffset, indices.getX( i + 1 ) + writtenVertices );
 							fOffset += indexByteCount;
 
-							output[ faceIndexFunc ]( fOffset, indices.getX( i + 2 ) + writtenVertices );
+							output.setUint32( fOffset, indices.getX( i + 2 ) + writtenVertices );
 							fOffset += indexByteCount;
 
 						}
@@ -382,13 +368,13 @@ PLYExporter.prototype = {
 							output.setUint8( fOffset, 3 );
 							fOffset += 1;
 
-							output[ faceIndexFunc ]( fOffset, writtenVertices + i );
+							output.setUint32( fOffset, writtenVertices + i );
 							fOffset += indexByteCount;
 
-							output[ faceIndexFunc ]( fOffset, writtenVertices + i + 1 );
+							output.setUint32( fOffset, writtenVertices + i + 1 );
 							fOffset += indexByteCount;
 
-							output[ faceIndexFunc ]( fOffset, writtenVertices + i + 2 );
+							output.setUint32( fOffset, writtenVertices + i + 2 );
 							fOffset += indexByteCount;
 
 						}
@@ -530,7 +516,7 @@ PLYExporter.prototype = {
 
 			} );
 
-			result = `${ header }${vertexList}\n${ includeIndices ? `${faceList}\n` : '' }`;
+			result = `${ header }${vertexList}${ includeIndices ? `${faceList}\n` : '\n' }`;
 
 		}
 

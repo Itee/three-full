@@ -14,7 +14,6 @@ import { Vector2 } from '../math/Vector2.js'
  *	document.body.appendChild( UVsDebug( new SphereBufferGeometry( 10, 10, 10, 10 ) );
  *
  */
-
 var UVsDebug = function ( geometry, size ) {
 
 	// handles wrapping of uv.x > 1 only

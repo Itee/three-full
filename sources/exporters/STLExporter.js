@@ -1,9 +1,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from '../math/Vector3.js'
-import { Matrix3 } from '../math/Matrix3.js'
 import { Geometry } from '../core/Geometry.js'
+import { Matrix3 } from '../math/Matrix3.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author kovacsv / http://kovacsv.hu/
@@ -18,7 +18,6 @@ import { Geometry } from '../core/Geometry.js'
  *  var data = exporter.parse( mesh, { binary: true } );
  *
  */
-
 var STLExporter = function () {};
 
 STLExporter.prototype = {

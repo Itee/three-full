@@ -1,14 +1,13 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Pass } from './Pass.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { Pass } from './Pass.js'
 
 /**
  * @author alteredq / http://alteredqualia.com/
  */
-
 var ShaderPass = function ( shader, textureID ) {
 
 	Pass.call( this );

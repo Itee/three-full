@@ -11,7 +11,6 @@ import { Vector2 } from '../math/Vector2.js'
  * As mentioned in the video the Sobel operator expects a grayscale image as input.
  *
  */
-
 var SobelOperatorShader = {
 
 	uniforms: {

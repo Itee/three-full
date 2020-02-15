@@ -1,14 +1,14 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Matrix4 } from '../math/Matrix4.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Color } from '../math/Color.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { Geometry } from '../core/Geometry.js'
-import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
-import { Mesh } from '../objects/Mesh.js'
 import { DoubleSide } from '../constants.js'
+import { Geometry } from '../core/Geometry.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Mesh } from '../objects/Mesh.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
 
 /**
  * @author Garrett Johnson / http://gkjohnson.github.io/
@@ -22,7 +22,6 @@ import { DoubleSide } from '../constants.js'
  * Format Definition:
  *  https://www.khronos.org/collada/
  */
-
 var ColladaExporter = function () {};
 
 ColladaExporter.prototype = {

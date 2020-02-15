@@ -1,30 +1,29 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Pass } from './Pass.js'
+import {
+	AdditiveBlending,
+	DoubleSide,
+	LinearFilter,
+	NoBlending,
+	RGBADepthPacking,
+	RGBAFormat
+} from '../constants.js'
 import { Color } from '../math/Color.js'
-import { Vector2 } from '../math/Vector2.js'
+import { Matrix4 } from '../math/Matrix4.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { MeshDepthMaterial } from '../materials/MeshDepthMaterial.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { Matrix4 } from '../math/Matrix4.js'
-import { Vector3 } from '../math/Vector3.js'
-import { CopyShader } from '../shaders/CopyShader.js'
-import {
-	DoubleSide,
-	NoBlending,
-	AdditiveBlending,
-	LinearFilter,
-	RGBAFormat,
-	RGBADepthPacking
-} from '../constants.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { Pass } from './Pass.js'
+import { CopyShader } from '../shaders/CopyShader.js'
 
 /**
  * @author spidersharma / http://eduperiment.com/
  */
-
 var OutlinePass = function ( resolution, scene, camera, selectedObjects ) {
 
 	this.renderScene = scene;

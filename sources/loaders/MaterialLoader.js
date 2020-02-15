@@ -29,6 +29,24 @@ import { SpriteMaterial } from '../materials/SpriteMaterial.js'
  * @author mrdoob / http://mrdoob.com/
  */
 
+var Materials = {
+            LineBasicMaterial: LineBasicMaterial,
+            LineDashedMaterial: LineDashedMaterial,
+            MeshBasicMaterial: MeshBasicMaterial,
+            MeshDepthMaterial: MeshDepthMaterial,
+            MeshDistanceMaterial: MeshDistanceMaterial,
+            MeshLambertMaterial: MeshLambertMaterial,
+            MeshNormalMaterial: MeshNormalMaterial,
+            MeshPhongMaterial: MeshPhongMaterial,
+            MeshPhysicalMaterial: MeshPhysicalMaterial,
+            MeshStandardMaterial: MeshStandardMaterial,
+            MeshToonMaterial: MeshToonMaterial,
+            PointsMaterial: PointsMaterial,
+            RawShaderMaterial: RawShaderMaterial,
+            ShaderMaterial: ShaderMaterial,
+            ShadowMaterial: ShadowMaterial,
+            SpriteMaterial: SpriteMaterial
+		}
 function MaterialLoader( manager ) {
 
 	Loader.call( this, manager );
@@ -71,24 +89,6 @@ MaterialLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 		}
 
-		var Materials = {
-            LineBasicMaterial: LineBasicMaterial,
-            LineDashedMaterial: LineDashedMaterial,
-            MeshBasicMaterial: MeshBasicMaterial,
-            MeshDepthMaterial: MeshDepthMaterial,
-            MeshDistanceMaterial: MeshDistanceMaterial,
-            MeshLambertMaterial: MeshLambertMaterial,
-            MeshNormalMaterial: MeshNormalMaterial,
-            MeshPhongMaterial: MeshPhongMaterial,
-            MeshPhysicalMaterial: MeshPhysicalMaterial,
-            MeshStandardMaterial: MeshStandardMaterial,
-            MeshToonMaterial: MeshToonMaterial,
-            PointsMaterial: PointsMaterial,
-            RawShaderMaterial: RawShaderMaterial,
-            ShaderMaterial: ShaderMaterial,
-            ShadowMaterial: ShadowMaterial,
-            SpriteMaterial: SpriteMaterial
-		}
 		var material = new Materials[ json.type ]();
 
 		if ( json.uuid !== undefined ) material.uuid = json.uuid;

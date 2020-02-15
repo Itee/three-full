@@ -1,12 +1,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Matrix3 } from '../math/Matrix3.js'
-import { Vector3 } from '../math/Vector3.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { LineSegments } from '../objects/LineSegments.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
-import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Matrix3 } from '../math/Matrix3.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/

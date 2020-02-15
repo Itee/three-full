@@ -10,7 +10,6 @@ import { Vector2 } from '../math/Vector2.js'
  * @authod arodic / http://aleksandarrodic.com/
  * @authod fonserbc / http://fonserbc.github.io/
 */
-
 var StereoEffect = function ( renderer ) {
 
 	var _stereo = new StereoCamera();

@@ -1,41 +1,40 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Pass } from './Pass.js'
+import {
+	AddEquation,
+	CustomBlending,
+	DstAlphaFactor,
+	DstColorFactor,
+	LinearFilter,
+	NearestFilter,
+	NoBlending,
+	RGBADepthPacking,
+	RGBAFormat,
+	UnsignedShortType,
+	ZeroFactor
+} from '../constants.js'
 import { Color } from '../math/Color.js'
-import { Vector2 } from '../math/Vector2.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { DepthTexture } from '../textures/DepthTexture.js'
 import { MeshDepthMaterial } from '../materials/MeshDepthMaterial.js'
 import { MeshNormalMaterial } from '../materials/MeshNormalMaterial.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { CopyShader } from '../shaders/CopyShader.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { Vector2 } from '../math/Vector2.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { Pass } from './Pass.js'
+import { SAOShader } from '../shaders/SAOShader.js'
 import {
 	DepthLimitedBlurShader,
 	BlurShaderUtils
 } from '../shaders/DepthLimitedBlurShader.js'
-import { SAOShader } from '../shaders/SAOShader.js'
+import { CopyShader } from '../shaders/CopyShader.js'
 import { UnpackDepthRGBAShader } from '../shaders/UnpackDepthRGBAShader.js'
-import {
-	NoBlending,
-	CustomBlending,
-	AddEquation,
-	ZeroFactor,
-	DstAlphaFactor,
-	DstColorFactor,
-	NearestFilter,
-	LinearFilter,
-	UnsignedShortType,
-	RGBAFormat,
-	RGBADepthPacking
-} from '../constants.js'
-import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
 /**
  * @author ludobaka / ludobaka.github.io
  * SAO implementation inspired from bhouston previous SAO work
  */
-
 var SAOPass = function ( scene, camera, depthTexture, useNormals, resolution ) {
 
 	Pass.call( this );

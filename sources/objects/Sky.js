@@ -1,12 +1,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { BackSide } from '../constants.js'
+import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
 import { Mesh } from './Mesh.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
-import { Vector3 } from '../math/Vector3.js'
-import { BackSide } from '../constants.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author zz85 / https://github.com/zz85
@@ -23,7 +23,6 @@ import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
  *
  * Three.js integration by zz85 http://twitter.com/blurspline
 */
-
 var Sky = function () {
 
 	var shader = Sky.SkyShader;

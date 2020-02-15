@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from '../math/Vector3.js'
 import { Euler } from '../math/Euler.js'
-import { Quaternion } from '../math/Quaternion.js'
 import { _Math } from '../math/Math.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author richt / http://richt.me
@@ -12,7 +12,6 @@ import { _Math } from '../math/Math.js'
  *
  * W3C Device Orientation control (http://w3c.github.io/deviceorientation/spec-source-orientation.html)
  */
-
 var DeviceOrientationControls = function ( object ) {
 
 	var scope = this;

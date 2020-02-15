@@ -2,9 +2,9 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Line3 } from '../math/Line3.js'
+import { Mesh } from '../objects/Mesh.js'
 import { Plane } from '../math/Plane.js'
 import { Vector3 } from '../math/Vector3.js'
-import { Mesh } from '../objects/Mesh.js'
 import { ConvexBufferGeometry } from '../geometries/ConvexGeometry.js'
 
 /**
@@ -37,7 +37,6 @@ import { ConvexBufferGeometry } from '../geometries/ConvexGeometry.js'
  * @param {double} smallDelta Max distance to consider that a point belongs to a plane.
  *
 */
-
 var ConvexObjectBreaker = function ( minSizeForBreak, smallDelta ) {
 
 	this.minSizeForBreak = minSizeForBreak || 1.4;

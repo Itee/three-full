@@ -1,0 +1,66 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export class CodeBuilderInstructions {
+
+	constructor( supportsStandardWorker: boolean, supportsJsmWorker: boolean, preferJsmWorker: boolean );
+	supportsStandardWorker: boolean;
+	supportsJsmWorker: boolean;
+	preferJsmWorker: boolean;
+	startCode: string;
+	codeFragments: string[];
+	importStatements: string[];
+	jsmWorkerFile: string;
+	defaultGeometryType: number;
+
+	isSupportsStandardWorker(): boolean;
+	isSupportsJsmWorker(): boolean;
+	isPreferJsmWorker(): boolean;
+	setJsmWorkerFile( jsmWorkerFile: string ): void;
+	addStartCode( startCode: string ): void;
+	addCodeFragment( code: string ): void;
+	addLibraryImport( libraryPath: string ): void;
+	getImportStatements(): string[];
+	getCodeFragments(): string[];
+	getStartCode(): string;
+
+}
+
+export class WorkerExecutionSupport {
+
+	constructor();
+
+	logging: {
+		enabled: boolean;
+		debug: boolean;
+	};
+
+	worker: {
+		native: Worker;
+		jsmWorker: boolean;
+		logging: boolean;
+		workerRunner: {
+			name: string;
+			usesMeshDisassembler: boolean;
+			defaultGeometryType: number;
+		};
+		terminateWorkerOnLoad: boolean;
+		forceWorkerDataCopy: boolean;
+		started: boolean;
+		queuedMessage: object;
+		callbacks: {
+			onAssetAvailable: Function;
+			onLoad: Function;
+			terminate: Function;
+		};
+	};
+
+	setLogging( enabled: boolean, debug: boolean ): this;
+	setForceWorkerDataCopy( forceWorkerDataCopy: boolean ): this;
+	setTerminateWorkerOnLoad( terminateWorkerOnLoad: boolean ): this;
+	updateCallbacks( onAssetAvailable: Function, onLoad: Function ): void;
+	buildWorker( codeBuilderInstructions: CodeBuilderInstructions ): void;
+	isWorkerLoaded( requireJsmWorker: boolean ): boolean;
+	executeParallel( payload:object, transferables?: object[] );
+
+}

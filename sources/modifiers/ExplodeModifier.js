@@ -7,7 +7,6 @@
  *
  * @author alteredq / http://alteredqualia.com/
  */
-
 var ExplodeModifier = function () {
 
 };

@@ -2,18 +2,17 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { EventDispatcher } from '../core/EventDispatcher.js'
+import { Matrix4 } from '../math/Matrix4.js'
 import { Plane } from '../math/Plane.js'
 import { Raycaster } from '../core/Raycaster.js'
 import { Vector2 } from '../math/Vector2.js'
 import { Vector3 } from '../math/Vector3.js'
-import { Matrix4 } from '../math/Matrix4.js'
 
 /**
  * @author zz85 / https://github.com/zz85
  * @author mrdoob / http://mrdoob.com
  * Running this will allow you to drag three.js objects around the screen.
  */
-
 var DragControls = function ( _objects, _camera, _domElement ) {
 
 	var _plane = new Plane();

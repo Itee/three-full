@@ -1,0 +1,19 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import {
+	Camera,
+	Scene,
+	WebGLRenderer
+} from '../../../src/Three';
+
+export class PeppersGhostEffect {
+
+	constructor( renderer: WebGLRenderer );
+	cameraDistance: number;
+	reflectFromAbove: boolean;
+
+	render( scene: Scene, camera: Camera ): void;
+	setSize( width: number, height: number ): void;
+
+}

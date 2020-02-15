@@ -1,19 +1,19 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Matrix3 } from '../math/Matrix3.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { Scene } from '../scenes/Scene.js'
-import { StereoCamera } from '../cameras/StereoCamera.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import {
-	NearestFilter,
 	LinearFilter,
+	NearestFilter,
 	RGBAFormat
 } from '../constants.js'
+import { Matrix3 } from '../math/Matrix3.js'
+import { Mesh } from '../objects/Mesh.js'
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { Scene } from '../scenes/Scene.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { StereoCamera } from '../cameras/StereoCamera.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -21,7 +21,6 @@ import {
  * @author alteredq / http://alteredqualia.com/
  * @author tschw
  */
-
 var AnaglyphEffect = function ( renderer, width, height ) {
 
 	// Matrices generated with angler.js https://github.com/tschw/angler.js/

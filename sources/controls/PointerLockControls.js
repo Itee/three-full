@@ -1,15 +1,14 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { EventDispatcher } from '../core/EventDispatcher.js'
 import { Euler } from '../math/Euler.js'
+import { EventDispatcher } from '../core/EventDispatcher.js'
 import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author Mugen87 / https://github.com/Mugen87
  */
-
 var PointerLockControls = function ( camera, domElement ) {
 
 	if ( domElement === undefined ) {

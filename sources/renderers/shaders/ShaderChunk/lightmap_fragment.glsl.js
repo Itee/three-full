@@ -4,7 +4,8 @@
 export default `
 #ifdef USE_LIGHTMAP
 
-	reflectedLight.indirectDiffuse += PI * texture2D( lightMap, vUv2 ).xyz * lightMapIntensity; 
+	vec4 lightMapTexel= texture2D( lightMap, vUv2 );
+	reflectedLight.indirectDiffuse += PI * lightMapTexelToLinear( lightMapTexel ).rgb * lightMapIntensity; 
 
 #endif
 `;

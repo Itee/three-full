@@ -1,16 +1,15 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
+import { Group } from '../objects/Group.js'
+import { Loader } from './Loader.js'
 import { LoadingManager } from './LoadingManager.js'
 import { ColladaLoader } from './ColladaLoader.js'
-import { Group } from '../objects/Group.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-
 var KMZLoader = function ( manager ) {
 
 	Loader.call( this, manager );

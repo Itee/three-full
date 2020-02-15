@@ -9712,7 +9712,6 @@ DataViewEx.prototype = {
 
 	},
 
-
 	getInt16: function () {
 
 		var value = this.dv.getInt16( this.offset, this.littleEndian );
@@ -10251,7 +10250,6 @@ Parser.prototype.parsePmd = function ( buffer, leftToRight ) {
 			pmd.morphs.push( parseMorph() );
 
 		}
-
 
 	};
 
@@ -11317,7 +11315,6 @@ Parser.prototype.parseVpd = function ( text, leftToRight ) {
 					parseFloat( result[ 4 ] )
 
 				];
-
 
 			}
 

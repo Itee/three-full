@@ -131,16 +131,12 @@ export * from './math/Quaternion';
 export * from './math/Color';
 export * from './math/SphericalHarmonics3';
 export * from './extras/objects/ImmediateRenderObject';
-export * from './helpers/VertexNormalsHelper';
 export * from './helpers/SpotLightHelper';
 export * from './helpers/SkeletonHelper';
 export * from './helpers/PointLightHelper';
-export * from './helpers/RectAreaLightHelper';
 export * from './helpers/HemisphereLightHelper';
 export * from './helpers/GridHelper';
 export * from './helpers/PolarGridHelper';
-export * from './helpers/PositionalAudioHelper';
-export * from './helpers/FaceNormalsHelper';
 export * from './helpers/DirectionalLightHelper';
 export * from './helpers/CameraHelper';
 export * from './helpers/BoxHelper';
@@ -175,8 +171,6 @@ export * from './renderers/webgl/WebGLShadowMap';
 export * from './renderers/webgl/WebGLState';
 export * from './renderers/webgl/WebGLTextures';
 export * from './renderers/webgl/WebGLUniforms';
-
-export * from './renderers/webvr/WebVRManager';
 export * from './constants';
 export * from './Three.Legacy';
 

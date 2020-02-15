@@ -5,7 +5,6 @@
  * @author WestLangley / http://github.com/WestLangley
  * @author thezwap / http://github.com/thezwap
  */
-
 var MathUtils = {
 
 	setQuaternionFromProperEuler: function ( q, a, b, c, order ) {

@@ -1,30 +1,29 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Mesh } from './Mesh.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { Vector3 } from '../math/Vector3.js'
-import { DataTexture } from '../textures/DataTexture.js'
-import { RawShaderMaterial } from '../materials/RawShaderMaterial.js'
-import { Color } from '../math/Color.js'
-import { Vector2 } from '../math/Vector2.js'
-import { Box2 } from '../math/Box2.js'
-import { Vector4 } from '../math/Vector4.js'
-import { BufferGeometry } from '../core/BufferGeometry.js'
-import { InterleavedBuffer } from '../core/InterleavedBuffer.js'
-import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js'
 import {
 	AdditiveBlending,
 	ClampToEdgeWrapping,
 	NearestFilter,
 	RGBFormat
 } from '../constants.js'
+import { Box2 } from '../math/Box2.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Color } from '../math/Color.js'
+import { DataTexture } from '../textures/DataTexture.js'
+import { InterleavedBuffer } from '../core/InterleavedBuffer.js'
+import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js'
+import { Mesh } from './Mesh.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { RawShaderMaterial } from '../materials/RawShaderMaterial.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
+import { Vector4 } from '../math/Vector4.js'
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
  * @author mrdoob / http://mrdoob.com/
  */
-
 var Lensflare = function () {
 
 	Mesh.call( this, Lensflare.Geometry, new MeshBasicMaterial( { opacity: 0, transparent: true } ) );

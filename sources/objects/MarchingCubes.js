@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { ImmediateRenderObject } from './ImmediateRenderObject.js'
-import { Color } from '../math/Color.js'
-import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Color } from '../math/Color.js'
+import { ImmediateRenderObject } from './ImmediateRenderObject.js'
 import { NoColors } from '../constants.js'
 
 /**
@@ -13,7 +13,6 @@ import { NoColors } from '../constants.js'
  * @author chaht01 / http://hyuntak.com
  * Port of http://webglsamples.org/blob/blob.html
  */
-
 var MarchingCubes = function ( resolution, material, enableUvs, enableColors ) {
 
 	ImmediateRenderObject.call( this, material );
@@ -1282,4 +1281,8 @@ var triTable = new Int32Array( [
 	0, 3, 8, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1,
 	- 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1, - 1 ] );
 
-export { MarchingCubes }
+export {
+	MarchingCubes,
+	edgeTable,
+	triTable
+}

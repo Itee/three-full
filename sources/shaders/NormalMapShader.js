@@ -9,7 +9,6 @@ import { Vector2 } from '../math/Vector2.js'
  * Normal map shader
  * - compute normals from heightmap
  */
-
 var NormalMapShader = {
 
 	uniforms: {

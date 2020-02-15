@@ -19,7 +19,6 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
  * @class DRACOExporter
  * @author tentone
  */
-
 /* global DracoEncoderModule */
 
 var DRACOExporter = function () {};

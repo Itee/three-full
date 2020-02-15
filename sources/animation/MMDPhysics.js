@@ -1,18 +1,18 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Object3D } from '../core/Object3D.js'
-import { Vector3 } from '../math/Vector3.js'
-import { Matrix4 } from '../math/Matrix4.js'
-import { Quaternion } from '../math/Quaternion.js'
-import { Euler } from '../math/Euler.js'
 import { Bone } from '../objects/Bone.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { Color } from '../math/Color.js'
-import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
 import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
+import { Color } from '../math/Color.js'
 import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js'
+import { Euler } from '../math/Euler.js'
+import { Matrix4 } from '../math/Matrix4.js'
 import { Mesh } from '../objects/Mesh.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { Object3D } from '../core/Object3D.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author takahiro / https://github.com/takahirox
@@ -26,7 +26,6 @@ import { Mesh } from '../objects/Mesh.js'
  * TODO
  *  - Physics in Worker
  */
-
 /* global Ammo */
 
 var MMDPhysics = ( function () {

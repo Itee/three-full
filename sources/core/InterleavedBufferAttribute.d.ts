@@ -2,6 +2,7 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { InterleavedBuffer } from './InterleavedBuffer';
+import { Matrix4 } from './../math/Matrix4';
 
 export class InterleavedBufferAttribute {
 
@@ -22,6 +23,7 @@ export class InterleavedBufferAttribute {
 
 	isInterleavedBufferAttribute: true;
 
+	applyMatrix4( m: Matrix4 ): this;
 	getX( index: number ): number;
 	setX( index: number, x: number ): InterleavedBufferAttribute;
 	getY( index: number ): number;

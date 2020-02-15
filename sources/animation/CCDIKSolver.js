@@ -1,18 +1,18 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Object3D } from '../core/Object3D.js'
-import { Quaternion } from '../math/Quaternion.js'
-import { Vector3 } from '../math/Vector3.js'
-import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { BufferAttribute } from '../core/BufferAttribute.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Color } from '../math/Color.js'
+import { Line } from '../objects/Line.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Matrix4 } from '../math/Matrix4.js'
-import { BufferGeometry } from '../core/BufferGeometry.js'
-import { BufferAttribute } from '../core/BufferAttribute.js'
 import { Mesh } from '../objects/Mesh.js'
-import { Line } from '../objects/Line.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { Object3D } from '../core/Object3D.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author takahiro / https://github.com/takahirox
@@ -35,7 +35,6 @@ import { Line } from '../objects/Line.js'
  *	maxAngle: 1.0,
  * } ];
  */
-
 var CCDIKSolver = ( function () {
 
 	/**

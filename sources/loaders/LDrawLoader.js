@@ -1,23 +1,23 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { Vector3 } from '../math/Vector3.js'
-import { BufferGeometry } from '../core/BufferGeometry.js'
 import {
-	Float32BufferAttribute,
-	BufferAttribute
+	BufferAttribute,
+	Float32BufferAttribute
 } from '../core/BufferAttribute.js'
-import { LineSegments } from '../objects/LineSegments.js'
-import { Mesh } from '../objects/Mesh.js'
-import { FileLoader } from './FileLoader.js'
-import { Matrix4 } from '../math/Matrix4.js'
-import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Color } from '../math/Color.js'
-import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { FileLoader } from './FileLoader.js'
 import { Group } from '../objects/Group.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { LineSegments } from '../objects/LineSegments.js'
+import { Loader } from './Loader.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Mesh } from '../objects/Mesh.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
+import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -26,7 +26,6 @@ import { Group } from '../objects/Group.js'
  *
  *
  */
-
 var LDrawLoader = ( function () {
 
 	var conditionalLineVertShader = /* glsl */`
@@ -892,7 +891,7 @@ var LDrawLoader = ( function () {
 
 						if ( isNaN( luminance ) ) {
 
-							throw 'LDrawLoader: Invalid luminance value in material definition' + lineParser.getLineNumberString() + ".";
+							throw 'LDrawLoader: Invalid luminance value in material definition' + LineParser.getLineNumberString() + ".";
 
 						}
 

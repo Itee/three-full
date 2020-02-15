@@ -26,7 +26,6 @@ import { Vector2 } from '../math/Vector2.js'
 // -- Rendering Shader
 // [7] ocean_main               -> Vertex and Fragment shader used to create the final render
 */
-
 var OceanShaders = {};
 OceanShaders[ "ocean_sim_vertex" ] = {
 	vertexShader: [

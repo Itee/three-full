@@ -1,0 +1,19 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import {
+	Uniform
+} from '../../../src/Three';
+
+export const LuminosityHighPassShader: {
+	shaderID: string;
+	uniforms: {
+		tDiffuse: Uniform;
+		luminosityThreshold: Uniform;
+		smoothWidth: Uniform;
+		defaultColor: Uniform;
+		defaultOpacity: Uniform;
+	};
+	vertexShader: string;
+	fragmentShader: string;
+};

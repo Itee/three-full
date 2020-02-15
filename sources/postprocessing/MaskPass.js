@@ -6,7 +6,6 @@ import { Pass } from './Pass.js'
 /**
  * @author alteredq / http://alteredqualia.com/
  */
-
 var MaskPass = function ( scene, camera ) {
 
 	Pass.call( this );

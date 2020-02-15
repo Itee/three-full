@@ -12,7 +12,6 @@ import { Vector2 } from '../math/Vector2.js'
  * - WebGL port by @supereggbert
  * http://www.glge.org/demos/fxaa/
  */
-
 var FXAAShader = {
 
 	uniforms: {

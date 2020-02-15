@@ -3,12 +3,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { DataTextureLoader } from './DataTextureLoader.js'
 import {
-	LinearFilter,
 	FloatType,
 	HalfFloatType,
-	RGBFormat,
+	LinearEncoding,
+	LinearFilter,
 	RGBAFormat,
-	LinearEncoding
+	RGBFormat
 } from '../constants.js'
 
 /**
@@ -21,7 +21,6 @@ import {
  * Referred to the original Industrial Light & Magic OpenEXR implementation and the TinyEXR / Syoyo Fujita
  * implementation, so I have preserved their copyright notices.
  */
-
 // /*
 // Copyright (c) 2014 - 2017, Syoyo Fujita
 // All rights reserved.
@@ -1134,7 +1133,7 @@ EXRLoader.prototype = Object.assign( Object.create( DataTextureLoader.prototype 
 
 		function parseValue( dataView, buffer, offset, type, size ) {
 
-			if ( type === 'string' || type === 'iccProfile' ) {
+			if ( type === 'string' || type === 'stringvector' || type === 'iccProfile' ) {
 
 				return parseFixedLengthString( buffer, offset, size );
 

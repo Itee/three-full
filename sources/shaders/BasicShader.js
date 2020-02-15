@@ -6,7 +6,6 @@
  *
  * Simple test shader
  */
-
 var BasicShader = {
 
 	uniforms: {},

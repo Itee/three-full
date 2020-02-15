@@ -1,14 +1,14 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { FileLoader } from './FileLoader.js'
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
-import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-import { LineSegments } from '../objects/LineSegments.js'
-import { Group } from '../objects/Group.js'
 import { Euler } from '../math/Euler.js'
+import { FileLoader } from './FileLoader.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Group } from '../objects/Group.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { LineSegments } from '../objects/LineSegments.js'
+import { Loader } from './Loader.js'
 
 /**
  * GCodeLoader is used to load gcode files usually used for 3D printing or CNC applications.
@@ -20,7 +20,6 @@ import { Euler } from '../math/Euler.js'
  * @author tentone
  * @author joewalnes
  */
-
 var GCodeLoader = function ( manager ) {
 
 	Loader.call( this, manager );

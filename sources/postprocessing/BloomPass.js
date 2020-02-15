@@ -1,23 +1,22 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Pass } from './Pass.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { Vector2 } from '../math/Vector2.js'
-import { ConvolutionShader } from '../shaders/ConvolutionShader.js'
-import { CopyShader } from '../shaders/CopyShader.js'
 import {
 	AdditiveBlending,
 	LinearFilter,
 	RGBAFormat
 } from '../constants.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { Vector2 } from '../math/Vector2.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { Pass } from './Pass.js'
+import { CopyShader } from '../shaders/CopyShader.js'
+import { ConvolutionShader } from '../shaders/ConvolutionShader.js'
 
 /**
  * @author alteredq / http://alteredqualia.com/
  */
-
 var BloomPass = function ( strength, kernelSize, sigma, resolution ) {
 
 	Pass.call( this );

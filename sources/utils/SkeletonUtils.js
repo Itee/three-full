@@ -1,21 +1,20 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from '../math/Vector3.js'
-import { Quaternion } from '../math/Quaternion.js'
-import { Matrix4 } from '../math/Matrix4.js'
-import { AnimationMixer } from '../animation/AnimationMixer.js'
-import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
-import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
 import { AnimationClip } from '../animation/AnimationClip.js'
+import { AnimationMixer } from '../animation/AnimationMixer.js'
+import { Euler } from '../math/Euler.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
 import { SkeletonHelper } from '../helpers/SkeletonHelper.js'
 import { Vector2 } from '../math/Vector2.js'
-import { Euler } from '../math/Euler.js'
+import { Vector3 } from '../math/Vector3.js'
+import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
 
 /**
  * @author sunag / http://www.sunag.com.br
  */
-
 var SkeletonUtils = {
 
 	retarget: function () {
@@ -593,5 +592,7 @@ function parallelTraverse( a, b, callback ) {
 	}
 
 }
+
+;
 
 export { SkeletonUtils }

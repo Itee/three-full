@@ -1,40 +1,40 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { Vector3 } from '../math/Vector3.js'
-import { WebGLRenderer } from './WebGLRenderer.js'
-import { Vector2 } from '../math/Vector2.js'
+import {
+	AdditiveBlending,
+	BackSide,
+	DepthStencilFormat,
+	FloatType,
+	GreaterEqualDepth,
+	LinearFilter,
+	NearestFilter,
+	NoBlending,
+	RGBAFormat,
+	RGBFormat,
+	UnsignedByteType,
+	UnsignedInt248Type
+} from '../constants.js'
+import { Color } from '../math/Color.js'
 import { DepthTexture } from '../textures/DepthTexture.js'
-import { RenderPass } from '../postprocessing/RenderPass.js'
-import { WebGLRenderTarget } from './WebGLRenderTarget.js'
-import { EffectComposer } from '../postprocessing/EffectComposer.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { ShaderPass } from '../postprocessing/ShaderPass.js'
-import { Scene } from '../scenes/Scene.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { Matrix4 } from '../math/Matrix4.js'
 import { Mesh } from '../objects/Mesh.js'
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { Scene } from '../scenes/Scene.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
 import { Uniform } from '../core/Uniform.js'
-import { Matrix4 } from '../math/Matrix4.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
 import { Vector4 } from '../math/Vector4.js'
-import { Color } from '../math/Color.js'
-import { CopyShader } from '../shaders/CopyShader.js'
+import { WebGLRenderTarget } from './WebGLRenderTarget.js'
+import { WebGLRenderer } from './WebGLRenderer.js'
+import { EffectComposer } from '../postprocessing/EffectComposer.js'
+import { ShaderPass } from '../postprocessing/ShaderPass.js'
+import { RenderPass } from '../postprocessing/RenderPass.js'
 import { FXAAShader } from '../shaders/FXAAShader.js'
-import {
-	BackSide,
-	NoBlending,
-	AdditiveBlending,
-	GreaterEqualDepth,
-	NearestFilter,
-	LinearFilter,
-	UnsignedByteType,
-	FloatType,
-	UnsignedInt248Type,
-	RGBFormat,
-	RGBAFormat,
-	DepthStencilFormat
-} from '../constants.js'
+import { CopyShader } from '../shaders/CopyShader.js'
 
 /**
  * @author alteredq / http://alteredqualia.com/
@@ -69,7 +69,6 @@ import {
  *  - wrapAround
  *  - addEffect
  */
-
 var WebGLDeferredRenderer = function ( parameters ) {
 
 	parameters = parameters || {};
@@ -2528,7 +2527,7 @@ var ShaderDeferred = {
 
 export {
 	WebGLDeferredRenderer,
-	ShaderDeferred,
+	DeferredShaderChunk,
 	ShaderDeferredCommon,
-	DeferredShaderChunk
+	ShaderDeferred
 }

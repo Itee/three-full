@@ -7,5 +7,7 @@ export default `
 	attribute vec2 uv2;
 	varying vec2 vUv2;
 
+	uniform mat3 uv2Transform;
+
 #endif
 `;

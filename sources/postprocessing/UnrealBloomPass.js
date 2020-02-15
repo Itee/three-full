@@ -1,29 +1,34 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Pass } from './Pass.js'
-import { Vector2 } from '../math/Vector2.js'
-import { Color } from '../math/Color.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { Vector3 } from '../math/Vector3.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { CopyShader } from '../shaders/CopyShader.js'
-import { LuminosityHighPassShader } from '../shaders/LuminosityHighPassShader.js'
 import {
 	AdditiveBlending,
 	LinearFilter,
 	RGBAFormat
 } from '../constants.js'
+import { Color } from '../math/Color.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { Pass } from './Pass.js'
+import { CopyShader } from '../shaders/CopyShader.js'
+import { LuminosityHighPassShader } from '../shaders/LuminosityHighPassShader.js'
 
 /**
  * @author spidersharma / http://eduperiment.com/
- *
- * Inspired from Unreal Engine
- * https://docs.unrealengine.com/latest/INT/Engine/Rendering/PostProcessEffects/Bloom/
  */
-
+/**
+ * UnrealBloomPass is inspired by the bloom pass of Unreal Engine. It creates a
+ * mip map chain of bloom textures and blurs them with different radii. Because
+ * of the weighted combination of mips, and because larger blurs are done on
+ * higher mips, this effect provides good quality and performance.
+ *
+ * Reference:
+ * - https://docs.unrealengine.com/latest/INT/Engine/Rendering/PostProcessEffects/Bloom/
+ */
 var UnrealBloomPass = function ( resolution, strength, radius, threshold ) {
 
 	Pass.call( this );

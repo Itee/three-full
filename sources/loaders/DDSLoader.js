@@ -4,16 +4,15 @@
 import { CompressedTextureLoader } from './CompressedTextureLoader.js'
 import {
 	RGBAFormat,
-	RGB_S3TC_DXT1_Format,
 	RGBA_S3TC_DXT3_Format,
 	RGBA_S3TC_DXT5_Format,
-	RGB_ETC1_Format
+	RGB_ETC1_Format,
+	RGB_S3TC_DXT1_Format
 } from '../constants.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-
 var DDSLoader = function ( manager ) {
 
 	CompressedTextureLoader.call( this, manager );

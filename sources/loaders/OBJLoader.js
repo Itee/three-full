@@ -1,27 +1,26 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { FileLoader } from './FileLoader.js'
-import { Group } from '../objects/Group.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
+import { FileLoader } from './FileLoader.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Group } from '../objects/Group.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
-import { PointsMaterial } from '../materials/PointsMaterial.js'
-import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { LineSegments } from '../objects/LineSegments.js'
-import { Points } from '../objects/Points.js'
+import { Loader } from './Loader.js'
+import { Material } from '../materials/Material.js'
 import { Mesh } from '../objects/Mesh.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import {
 	NoColors,
 	VertexColors
 } from '../constants.js'
-import { Material } from '../materials/Material.js'
+import { Points } from '../objects/Points.js'
+import { PointsMaterial } from '../materials/PointsMaterial.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-
 var OBJLoader = ( function () {
 
 	// o object_name | g group_name
@@ -642,7 +641,7 @@ var OBJLoader = ( function () {
 					// Handle null terminated files without exception
 					if ( line === '\0' ) continue;
 
-					throw new Error( 'OBJLoader: Unexpected line: "' + line + '"' );
+					console.warn( 'OBJLoader: Unexpected line: "' + line + '"' );
 
 				}
 

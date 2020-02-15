@@ -1,72 +1,72 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { Interpolant } from '../math/Interpolant.js'
-import { FileLoader } from './FileLoader.js'
-import { Color } from '../math/Color.js'
-import { DirectionalLight } from '../lights/DirectionalLight.js'
-import { PointLight } from '../lights/PointLight.js'
-import { SpotLight } from '../lights/SpotLight.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
-import { TextureLoader } from './TextureLoader.js'
-import { InterleavedBuffer } from '../core/InterleavedBuffer.js'
-import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js'
-import { BufferAttribute } from '../core/BufferAttribute.js'
-import { PointsMaterial } from '../materials/PointsMaterial.js'
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
-import { Vector2 } from '../math/Vector2.js'
-import { Box3 } from '../math/Box3.js'
-import { Vector3 } from '../math/Vector3.js'
-import { Sphere } from '../math/Sphere.js'
-import { BufferGeometry } from '../core/BufferGeometry.js'
-import { SkinnedMesh } from '../objects/SkinnedMesh.js'
-import { Mesh } from '../objects/Mesh.js'
-import { LineSegments } from '../objects/LineSegments.js'
-import { Line } from '../objects/Line.js'
-import { LineLoop } from '../objects/LineLoop.js'
-import { Points } from '../objects/Points.js'
-import { Group } from '../objects/Group.js'
-import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { AnimationClip } from '../animation/AnimationClip.js'
 import { Bone } from '../objects/Bone.js'
-import { Object3D } from '../core/Object3D.js'
-import { Matrix4 } from '../math/Matrix4.js'
-import { Skeleton } from '../objects/Skeleton.js'
-import { Scene } from '../scenes/Scene.js'
-import { PropertyBinding } from '../animation/PropertyBinding.js'
-import { NumberKeyframeTrack } from '../animation/tracks/NumberKeyframeTrack.js'
-import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
-import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
+import { Box3 } from '../math/Box3.js'
+import { BufferAttribute } from '../core/BufferAttribute.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
 import {
-	FrontSide,
-	DoubleSide,
-	VertexColors,
-	RepeatWrapping,
 	ClampToEdgeWrapping,
-	MirroredRepeatWrapping,
-	NearestFilter,
-	NearestMipmapNearestFilter,
-	NearestMipmapLinearFilter,
-	LinearFilter,
-	LinearMipmapNearestFilter,
-	LinearMipmapLinearFilter,
-	RGBFormat,
-	RGBAFormat,
+	DoubleSide,
+	FrontSide,
 	InterpolateDiscrete,
 	InterpolateLinear,
-	TriangleStripDrawMode,
+	LinearFilter,
+	LinearMipmapLinearFilter,
+	LinearMipmapNearestFilter,
+	MirroredRepeatWrapping,
+	NearestFilter,
+	NearestMipmapLinearFilter,
+	NearestMipmapNearestFilter,
+	RGBAFormat,
+	RGBFormat,
+	RepeatWrapping,
 	TriangleFanDrawMode,
+	TriangleStripDrawMode,
+	VertexColors,
 	sRGBEncoding
 } from '../constants.js'
+import { Color } from '../math/Color.js'
+import { DirectionalLight } from '../lights/DirectionalLight.js'
+import { FileLoader } from './FileLoader.js'
+import { Group } from '../objects/Group.js'
+import { InterleavedBuffer } from '../core/InterleavedBuffer.js'
+import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js'
+import { Interpolant } from '../math/Interpolant.js'
+import { Line } from '../objects/Line.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { LineLoop } from '../objects/LineLoop.js'
+import { LineSegments } from '../objects/LineSegments.js'
+import { Loader } from './Loader.js'
 import { LoaderUtils } from './LoaderUtils.js'
 import { Material } from '../materials/Material.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
-import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { _Math } from '../math/Math.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Mesh } from '../objects/Mesh.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
+import { NumberKeyframeTrack } from '../animation/tracks/NumberKeyframeTrack.js'
+import { Object3D } from '../core/Object3D.js'
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
+import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
+import { PointLight } from '../lights/PointLight.js'
+import { Points } from '../objects/Points.js'
+import { PointsMaterial } from '../materials/PointsMaterial.js'
+import { PropertyBinding } from '../animation/PropertyBinding.js'
+import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
+import { Scene } from '../scenes/Scene.js'
+import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { Skeleton } from '../objects/Skeleton.js'
+import { SkinnedMesh } from '../objects/SkinnedMesh.js'
+import { Sphere } from '../math/Sphere.js'
+import { SpotLight } from '../lights/SpotLight.js'
+import { TextureLoader } from './TextureLoader.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
+import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
 
 /**
  * @author Rich Tibbett / https://github.com/richtr
@@ -75,7 +75,6 @@ import { _Math } from '../math/Math.js'
  * @author Takahiro / https://github.com/takahirox
  * @author Don McCurdy / https://www.donmccurdy.com
  */
-
 var GLTFLoader = ( function () {
 
 	function GLTFLoader( manager ) {
@@ -560,6 +559,7 @@ var GLTFLoader = ( function () {
 		this.name = EXTENSIONS.KHR_DRACO_MESH_COMPRESSION;
 		this.json = json;
 		this.dracoLoader = dracoLoader;
+		this.dracoLoader.preload();
 
 	}
 
@@ -1272,24 +1272,26 @@ var GLTFLoader = ( function () {
 
 	}
 
-	var defaultMaterial;
-
 	/**
 	 * Specification: https://github.com/KhronosGroup/glTF/blob/master/specification/2.0/README.md#default-material
 	 */
-	function createDefaultMaterial() {
+	function createDefaultMaterial( cache ) {
 
-		defaultMaterial = defaultMaterial || new MeshStandardMaterial( {
-			color: 0xFFFFFF,
-			emissive: 0x000000,
-			metalness: 1,
-			roughness: 1,
-			transparent: false,
-			depthTest: true,
-			side: FrontSide
-		} );
+		if ( cache[ 'DefaultMaterial' ] === undefined ) {
 
-		return defaultMaterial;
+			cache[ 'DefaultMaterial' ] = new MeshStandardMaterial( {
+				color: 0xFFFFFF,
+				emissive: 0x000000,
+				metalness: 1,
+				roughness: 1,
+				transparent: false,
+				depthTest: true,
+				side: FrontSide
+			} );
+
+		}
+
+		return cache[ 'DefaultMaterial' ];
 
 	}
 
@@ -2040,6 +2042,14 @@ var GLTFLoader = ( function () {
 
 			}
 
+			// Materials sample aoMap from UV set 1 and other maps from UV set 0 - this can't be configured
+			// However, we will copy UV set 0 to UV set 1 on demand for aoMap
+			if ( mapDef.texCoord !== undefined && mapDef.texCoord != 0 && ! ( mapName === 'aoMap' && mapDef.texCoord == 1 ) ) {
+
+				console.warn( 'GLTFLoader: Custom UV set ' + mapDef.texCoord + ' for texture ' + mapName + ' not yet supported.' );
+
+			}
+
 			if ( parser.extensions[ EXTENSIONS.KHR_TEXTURE_TRANSFORM ] ) {
 
 				var transform = mapDef.extensions !== undefined ? mapDef.extensions[ EXTENSIONS.KHR_TEXTURE_TRANSFORM ] : undefined;
@@ -2159,7 +2169,6 @@ var GLTFLoader = ( function () {
 
 		if ( material.aoMap && geometry.attributes.uv2 === undefined && geometry.attributes.uv !== undefined ) {
 
-			console.log( 'GLTFLoader: Duplicating UVs to support aoMap.' );
 			geometry.setAttribute( 'uv2', new BufferAttribute( geometry.attributes.uv.array, 2 ) );
 
 		}
@@ -2168,6 +2177,13 @@ var GLTFLoader = ( function () {
 
 			// for GLTFSpecularGlossinessMaterial(ShaderMaterial) uniforms runtime update
 			mesh.onBeforeRender = extensions[ EXTENSIONS.KHR_MATERIALS_PBR_SPECULAR_GLOSSINESS ].refreshUniforms;
+
+		}
+
+		// https://github.com/mrdoob/three.js/issues/11438#issuecomment-507003995
+		if ( material.normalScale && ! useVertexTangents ) {
+
+			material.normalScale.y = - material.normalScale.y;
 
 		}
 
@@ -2351,12 +2367,25 @@ var GLTFLoader = ( function () {
 		if ( attributes.POSITION !== undefined ) {
 
 			var accessor = parser.json.accessors[ attributes.POSITION ];
+
 			var min = accessor.min;
 			var max = accessor.max;
 
-			box.set(
-				new Vector3( min[ 0 ], min[ 1 ], min[ 2 ] ),
-				new Vector3( max[ 0 ], max[ 1 ], max[ 2 ] ) );
+			// glTF requires 'min' and 'max', but VRM (which extends glTF) currently ignores that requirement.
+
+			if ( min !== undefined && max !== undefined ) {
+
+				box.set(
+					new Vector3( min[ 0 ], min[ 1 ], min[ 2 ] ),
+					new Vector3( max[ 0 ], max[ 1 ], max[ 2 ] ) );
+
+			} else {
+
+				console.warn( 'GLTFLoader: Missing min/max properties for accessor POSITION.' );
+
+				return;
+
+			}
 
 		} else {
 
@@ -2380,12 +2409,22 @@ var GLTFLoader = ( function () {
 					var min = accessor.min;
 					var max = accessor.max;
 
-					// we need to get max of absolute components because target weight is [-1,1]
-					vector.setX( Math.max( Math.abs( min[ 0 ] ), Math.abs( max[ 0 ] ) ) );
-					vector.setY( Math.max( Math.abs( min[ 1 ] ), Math.abs( max[ 1 ] ) ) );
-					vector.setZ( Math.max( Math.abs( min[ 2 ] ), Math.abs( max[ 2 ] ) ) );
+					// glTF requires 'min' and 'max', but VRM (which extends glTF) currently ignores that requirement.
 
-					box.expandByVector( vector );
+					if ( min !== undefined && max !== undefined ) {
+
+						// we need to get max of absolute components because target weight is [-1,1]
+						vector.setX( Math.max( Math.abs( min[ 0 ] ), Math.abs( max[ 0 ] ) ) );
+						vector.setY( Math.max( Math.abs( min[ 1 ] ), Math.abs( max[ 1 ] ) ) );
+						vector.setZ( Math.max( Math.abs( min[ 2 ] ), Math.abs( max[ 2 ] ) ) );
+
+						box.expandByVector( vector );
+
+					} else {
+
+						console.warn( 'GLTFLoader: Missing min/max properties for accessor POSITION.' );
+
+					}
 
 				}
 
@@ -2461,6 +2500,98 @@ var GLTFLoader = ( function () {
 				: geometry;
 
 		} );
+
+	}
+
+	/**
+	 * @param {BufferGeometry} geometry
+	 * @param {Number} drawMode
+	 * @return {BufferGeometry}
+	 */
+	function toTrianglesDrawMode( geometry, drawMode ) {
+
+		var index = geometry.getIndex();
+
+		// generate index if not present
+
+		if ( index === null ) {
+
+			var indices = [];
+
+			var position = geometry.getAttribute( 'position' );
+
+			if ( position !== undefined ) {
+
+				for ( var i = 0; i < position.count; i ++ ) {
+
+					indices.push( i );
+
+				}
+
+				geometry.setIndex( indices );
+				index = geometry.getIndex();
+
+			} else {
+
+				console.error( 'GLTFLoader.toTrianglesDrawMode(): Undefined position attribute. Processing not possible.' );
+				return geometry;
+
+			}
+
+		}
+
+		//
+
+		var numberOfTriangles = index.count - 2;
+		var newIndices = [];
+
+		if ( drawMode === TriangleFanDrawMode ) {
+
+			// gl.TRIANGLE_FAN
+
+			for ( var i = 1; i <= numberOfTriangles; i ++ ) {
+
+				newIndices.push( index.getX( 0 ) );
+				newIndices.push( index.getX( i ) );
+				newIndices.push( index.getX( i + 1 ) );
+
+			}
+
+		} else {
+
+			// gl.TRIANGLE_STRIP
+
+			for ( var i = 0; i < numberOfTriangles; i ++ ) {
+
+				if ( i % 2 === 0 ) {
+
+					newIndices.push( index.getX( i ) );
+					newIndices.push( index.getX( i + 1 ) );
+					newIndices.push( index.getX( i + 2 ) );
+				} else {
+
+					newIndices.push( index.getX( i + 2 ) );
+					newIndices.push( index.getX( i + 1 ) );
+					newIndices.push( index.getX( i ) );
+
+				}
+
+			}
+
+		}
+
+		if ( ( newIndices.length / 3 ) !== numberOfTriangles ) {
+
+			console.error( 'GLTFLoader.toTrianglesDrawMode(): Unable to generate correct amount of triangles.' );
+
+		}
+
+		// build final geometry
+
+		var newGeometry = geometry.clone();
+		newGeometry.setIndex( newIndices );
+
+		return newGeometry;
 
 	}
 
@@ -2552,115 +2683,116 @@ var GLTFLoader = ( function () {
 		for ( var i = 0, il = primitives.length; i < il; i ++ ) {
 
 			var material = primitives[ i ].material === undefined
-				? createDefaultMaterial()
+				? createDefaultMaterial( this.cache )
 				: this.getDependency( 'material', primitives[ i ].material );
 
 			pending.push( material );
 
 		}
 
-		return Promise.all( pending ).then( function ( originalMaterials ) {
+		pending.push( parser.loadGeometries( primitives ) );
 
-			return parser.loadGeometries( primitives ).then( function ( geometries ) {
+		return Promise.all( pending ).then( function ( results ) {
 
-				var meshes = [];
+			var materials = results.slice( 0, results.length - 1 );
+			var geometries = results[ results.length - 1 ];
 
-				for ( var i = 0, il = geometries.length; i < il; i ++ ) {
+			var meshes = [];
 
-					var geometry = geometries[ i ];
-					var primitive = primitives[ i ];
+			for ( var i = 0, il = geometries.length; i < il; i ++ ) {
 
-					// 1. create Mesh
+				var geometry = geometries[ i ];
+				var primitive = primitives[ i ];
 
-					var mesh;
+				// 1. create Mesh
 
-					var material = originalMaterials[ i ];
+				var mesh;
 
-					if ( primitive.mode === WEBGL_CONSTANTS.TRIANGLES ||
-						primitive.mode === WEBGL_CONSTANTS.TRIANGLE_STRIP ||
-						primitive.mode === WEBGL_CONSTANTS.TRIANGLE_FAN ||
-						primitive.mode === undefined ) {
+				var material = materials[ i ];
 
-						// .isSkinnedMesh isn't in glTF spec. See .markDefs()
-						mesh = meshDef.isSkinnedMesh === true
-							? new SkinnedMesh( geometry, material )
-							: new Mesh( geometry, material );
+				if ( primitive.mode === WEBGL_CONSTANTS.TRIANGLES ||
+					primitive.mode === WEBGL_CONSTANTS.TRIANGLE_STRIP ||
+					primitive.mode === WEBGL_CONSTANTS.TRIANGLE_FAN ||
+					primitive.mode === undefined ) {
 
-						if ( mesh.isSkinnedMesh === true && ! mesh.geometry.attributes.skinWeight.normalized ) {
+					// .isSkinnedMesh isn't in glTF spec. See .markDefs()
+					mesh = meshDef.isSkinnedMesh === true
+						? new SkinnedMesh( geometry, material )
+						: new Mesh( geometry, material );
 
-							// we normalize floating point skin weight array to fix malformed assets (see #15319)
-							// it's important to skip this for non-float32 data since normalizeSkinWeights assumes non-normalized inputs
-							mesh.normalizeSkinWeights();
+					if ( mesh.isSkinnedMesh === true && ! mesh.geometry.attributes.skinWeight.normalized ) {
 
-						}
-
-						if ( primitive.mode === WEBGL_CONSTANTS.TRIANGLE_STRIP ) {
-
-							mesh.drawMode = TriangleStripDrawMode;
-
-						} else if ( primitive.mode === WEBGL_CONSTANTS.TRIANGLE_FAN ) {
-
-							mesh.drawMode = TriangleFanDrawMode;
-
-						}
-
-					} else if ( primitive.mode === WEBGL_CONSTANTS.LINES ) {
-
-						mesh = new LineSegments( geometry, material );
-
-					} else if ( primitive.mode === WEBGL_CONSTANTS.LINE_STRIP ) {
-
-						mesh = new Line( geometry, material );
-
-					} else if ( primitive.mode === WEBGL_CONSTANTS.LINE_LOOP ) {
-
-						mesh = new LineLoop( geometry, material );
-
-					} else if ( primitive.mode === WEBGL_CONSTANTS.POINTS ) {
-
-						mesh = new Points( geometry, material );
-
-					} else {
-
-						throw new Error( 'GLTFLoader: Primitive mode unsupported: ' + primitive.mode );
+						// we normalize floating point skin weight array to fix malformed assets (see #15319)
+						// it's important to skip this for non-float32 data since normalizeSkinWeights assumes non-normalized inputs
+						mesh.normalizeSkinWeights();
 
 					}
 
-					if ( Object.keys( mesh.geometry.morphAttributes ).length > 0 ) {
+					if ( primitive.mode === WEBGL_CONSTANTS.TRIANGLE_STRIP ) {
 
-						updateMorphTargets( mesh, meshDef );
+						mesh.geometry = toTrianglesDrawMode( mesh.geometry, TriangleStripDrawMode );
+
+					} else if ( primitive.mode === WEBGL_CONSTANTS.TRIANGLE_FAN ) {
+
+						mesh.geometry = toTrianglesDrawMode( mesh.geometry, TriangleFanDrawMode );
 
 					}
 
-					mesh.name = meshDef.name || ( 'mesh_' + meshIndex );
+				} else if ( primitive.mode === WEBGL_CONSTANTS.LINES ) {
 
-					if ( geometries.length > 1 ) mesh.name += '_' + i;
+					mesh = new LineSegments( geometry, material );
 
-					assignExtrasToUserData( mesh, meshDef );
+				} else if ( primitive.mode === WEBGL_CONSTANTS.LINE_STRIP ) {
 
-					parser.assignFinalMaterial( mesh );
+					mesh = new Line( geometry, material );
 
-					meshes.push( mesh );
+				} else if ( primitive.mode === WEBGL_CONSTANTS.LINE_LOOP ) {
 
-				}
+					mesh = new LineLoop( geometry, material );
 
-				if ( meshes.length === 1 ) {
+				} else if ( primitive.mode === WEBGL_CONSTANTS.POINTS ) {
 
-					return meshes[ 0 ];
+					mesh = new Points( geometry, material );
 
-				}
+				} else {
 
-				var group = new Group();
-
-				for ( var i = 0, il = meshes.length; i < il; i ++ ) {
-
-					group.add( meshes[ i ] );
+					throw new Error( 'GLTFLoader: Primitive mode unsupported: ' + primitive.mode );
 
 				}
 
-				return group;
+				if ( Object.keys( mesh.geometry.morphAttributes ).length > 0 ) {
 
-			} );
+					updateMorphTargets( mesh, meshDef );
+
+				}
+
+				mesh.name = meshDef.name || ( 'mesh_' + meshIndex );
+
+				if ( geometries.length > 1 ) mesh.name += '_' + i;
+
+				assignExtrasToUserData( mesh, meshDef );
+
+				parser.assignFinalMaterial( mesh );
+
+				meshes.push( mesh );
+
+			}
+
+			if ( meshes.length === 1 ) {
+
+				return meshes[ 0 ];
+
+			}
+
+			var group = new Group();
+
+			for ( var i = 0, il = meshes.length; i < il; i ++ ) {
+
+				group.add( meshes[ i ] );
+
+			}
+
+			return group;
 
 		} );
 

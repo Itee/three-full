@@ -1,24 +1,24 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Mesh } from './Mesh.js'
-import { Vector3 } from '../math/Vector3.js'
 import { Color } from '../math/Color.js'
-import { Plane } from '../math/Plane.js'
-import { Matrix4 } from '../math/Matrix4.js'
-import { Vector4 } from '../math/Vector4.js'
-import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import {
 	FrontSide,
 	LinearFilter,
 	RGBFormat
 } from '../constants.js'
+import { _Math } from '../math/Math.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Mesh } from './Mesh.js'
+import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
+import { Plane } from '../math/Plane.js'
 import { ShaderChunk } from '../renderers/shaders/ShaderChunk.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
-import { _Math } from '../math/Math.js'
+import { Vector3 } from '../math/Vector3.js'
+import { Vector4 } from '../math/Vector4.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 
 /**
  * @author jbouny / https://github.com/jbouny
@@ -28,7 +28,6 @@ import { _Math } from '../math/Math.js'
  * @author Stemkoski / http://www.adelphi.edu/~stemkoski : An implementation of water shader based on the flat mirror
  * @author Jonas Wagner / http://29a.ch/ && http://29a.ch/slides/2012/webglwater/ : Water shader explanations in WebGL
  */
-
 var Water = function ( geometry, options ) {
 
 	Mesh.call( this, geometry );
@@ -305,12 +304,12 @@ var Water = function ( geometry, options ) {
 
 		var currentRenderTarget = renderer.getRenderTarget();
 
-		var currentVrEnabled = renderer.vr.enabled;
+		var currentXrEnabled = renderer.xr.enabled;
 		var currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
 
 		scope.visible = false;
 
-		renderer.vr.enabled = false; // Avoid camera modification and recursion
+		renderer.xr.enabled = false; // Avoid camera modification and recursion
 		renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
 
 		renderer.setRenderTarget( renderTarget );
@@ -319,7 +318,7 @@ var Water = function ( geometry, options ) {
 
 		scope.visible = true;
 
-		renderer.vr.enabled = currentVrEnabled;
+		renderer.xr.enabled = currentXrEnabled;
 		renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
 
 		renderer.setRenderTarget( currentRenderTarget );

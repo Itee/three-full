@@ -1,31 +1,30 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { Scene } from '../scenes/Scene.js'
-import { Vector3 } from '../math/Vector3.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { Vector2 } from '../math/Vector2.js'
-import { Mesh } from './Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
-import { DataTexture } from '../textures/DataTexture.js'
-import { OceanShaders } from '../shaders/OceanShaders.js'
 import {
-	RepeatWrapping,
 	ClampToEdgeWrapping,
-	NearestFilter,
-	LinearFilter,
 	FloatType,
 	HalfFloatType,
-	RGBAFormat
+	LinearFilter,
+	NearestFilter,
+	RGBAFormat,
+	RepeatWrapping
 } from '../constants.js'
+import { DataTexture } from '../textures/DataTexture.js'
+import { Mesh } from './Mesh.js'
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { Scene } from '../scenes/Scene.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { OceanShaders } from '../shaders/OceanShaders.js'
 
 /*
 	three.js Ocean
 */
-
 var Ocean = function ( renderer, camera, scene, options ) {
 
 	// flag used to trigger parameter changes

@@ -9,7 +9,6 @@
  *
  * 16 April 2012 - @blurspline
  */
-
 var AsciiEffect = function ( renderer, charSet, options ) {
 
 	// its fun to create one your own!

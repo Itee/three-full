@@ -1,19 +1,19 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { Scene } from '../scenes/Scene.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
-import { Mesh } from '../objects/Mesh.js'
-import { Texture } from '../textures/Texture.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { UnpackDepthRGBAShader } from '../shaders/UnpackDepthRGBAShader.js'
 import {
 	DoubleSide,
 	LinearFilter
 } from '../constants.js'
+import { Mesh } from '../objects/Mesh.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { Scene } from '../scenes/Scene.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { Texture } from '../textures/Texture.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { UnpackDepthRGBAShader } from '../shaders/UnpackDepthRGBAShader.js'
 
 /**
  * @author arya-s / https://github.com/arya-s
@@ -43,7 +43,6 @@ import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
  *
  *	6) If you set the position or size members directly, you need to call shadowMapViewer.update();
  */
-
 var ShadowMapViewer = function ( light ) {
 
 	//- Internals

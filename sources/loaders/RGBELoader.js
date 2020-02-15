@@ -3,21 +3,20 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { DataTextureLoader } from './DataTextureLoader.js'
 import {
-	NearestFilter,
-	LinearFilter,
-	UnsignedByteType,
 	FloatType,
 	HalfFloatType,
-	RGBFormat,
-	RGBEFormat,
 	LinearEncoding,
-	RGBEEncoding
+	LinearFilter,
+	NearestFilter,
+	RGBEEncoding,
+	RGBEFormat,
+	RGBFormat,
+	UnsignedByteType
 } from '../constants.js'
 
 /**
  * @author Nikos M. / https://github.com/foo123/
  */
-
 // https://github.com/mrdoob/three.js/issues/5552
 // http://en.wikipedia.org/wiki/RGBE_image_format
 

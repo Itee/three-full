@@ -1,25 +1,24 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { FileLoader } from './FileLoader.js'
 import { CompressedTexture } from '../textures/CompressedTexture.js'
+import { FileLoader } from './FileLoader.js'
 import {
 	LinearFilter,
 	LinearMipmapLinearFilter,
-	UnsignedByteType,
-	RGB_PVRTC_4BPPV1_Format,
+	RGBA_ASTC_4x4_Format,
 	RGBA_PVRTC_4BPPV1_Format,
 	RGB_ETC1_Format,
-	RGBA_ASTC_4x4_Format
+	RGB_PVRTC_4BPPV1_Format,
+	UnsignedByteType
 } from '../constants.js'
+import { Loader } from './Loader.js'
 
 /**
  * @author Don McCurdy / https://www.donmccurdy.com
  * @author Austin Eng / https://github.com/austinEng
  * @author Shrek Shao / https://github.com/shrekshao
  */
-
 /**
  * Loader for Basis Universal GPU Texture Codec.
  *
@@ -135,7 +134,9 @@ BasisTextureLoader.prototype = Object.assign( Object.create( Loader.prototype ),
 		var worker;
 		var taskID;
 
-		var texturePending = this._getWorker()
+		var taskCost = buffer.byteLength;
+
+		var texturePending = this._allocateWorker( taskCost )
 			.then( ( _worker ) => {
 
 				worker = _worker;
@@ -144,8 +145,6 @@ BasisTextureLoader.prototype = Object.assign( Object.create( Loader.prototype ),
 				return new Promise( ( resolve, reject ) => {
 
 					worker._callbacks[ taskID ] = { resolve, reject };
-					worker._taskCosts[ taskID ] = buffer.byteLength;
-					worker._taskLoad += worker._taskCosts[ taskID ];
 
 					worker.postMessage( { type: 'transcode', id: taskID, buffer }, [ buffer ] );
 
@@ -197,9 +196,8 @@ BasisTextureLoader.prototype = Object.assign( Object.create( Loader.prototype ),
 
 				if ( worker && taskID ) {
 
-					worker._taskLoad -= worker._taskCosts[ taskID ];
+					worker._taskLoad -= taskCost;
 					delete worker._callbacks[ taskID ];
-					delete worker._taskCosts[ taskID ];
 
 				}
 
@@ -211,7 +209,7 @@ BasisTextureLoader.prototype = Object.assign( Object.create( Loader.prototype ),
 
 	_initTranscoder: function () {
 
-		if ( ! this.transcoderBinary ) {
+		if ( ! this.transcoderPending ) {
 
 			// Load transcoder wrapper.
 			var jsLoader = new FileLoader( this.manager );
@@ -255,7 +253,7 @@ BasisTextureLoader.prototype = Object.assign( Object.create( Loader.prototype ),
 
 	},
 
-	_getWorker: function () {
+	_allocateWorker: function ( taskCost ) {
 
 		return this._initTranscoder().then( () => {
 
@@ -264,7 +262,6 @@ BasisTextureLoader.prototype = Object.assign( Object.create( Loader.prototype ),
 				var worker = new Worker( this.workerSourceURL );
 
 				worker._callbacks = {};
-				worker._taskCosts = {};
 				worker._taskLoad = 0;
 
 				worker.postMessage( {
@@ -306,7 +303,11 @@ BasisTextureLoader.prototype = Object.assign( Object.create( Loader.prototype ),
 
 			}
 
-			return this.workerPool[ this.workerPool.length - 1 ];
+			var worker = this.workerPool[ this.workerPool.length - 1 ];
+
+			worker._taskLoad += taskCost;
+
+			return worker;
 
 		} );
 

@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { SSAARenderPass } from './SSAARenderPass.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { SSAARenderPass } from './SSAARenderPass.js'
 
 /**
  *
@@ -17,7 +17,6 @@ import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
  * TODO: Add support for motion vector pas so that accumulation of samples across frames can occur on dynamics scenes.
  *
  */
-
 var TAARenderPass = function ( scene, camera, clearColor, clearAlpha ) {
 
 	if ( SSAARenderPass === undefined ) {

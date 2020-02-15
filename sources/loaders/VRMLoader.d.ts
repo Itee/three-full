@@ -1,0 +1,21 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import {
+	Loader,
+	LoadingManager
+} from '../../../src/Three';
+
+import { GLTFLoader, GLTF } from './GLTFLoader';
+import { DRACOLoader } from './DRACOLoader';
+
+export class VRMLoader extends Loader {
+
+	constructor( manager?: LoadingManager );
+	gltfLoader: GLTFLoader;
+
+	load( url: string, onLoad: ( scene: GLTF ) => void, onProgress?: ( event: ProgressEvent ) => void, onError?: ( event: ErrorEvent ) => void ) : void;
+	parse( gltf: GLTF, onLoad: ( scene: GLTF ) => void ): void;
+	setDRACOLoader( dracoLoader: DRACOLoader ): this;
+
+}

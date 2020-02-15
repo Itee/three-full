@@ -2,14 +2,14 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { EventDispatcher } from '../core/EventDispatcher.js'
-import { Vector3 } from '../math/Vector3.js'
-import { Quaternion } from '../math/Quaternion.js'
-import { Spherical } from '../math/Spherical.js'
-import { Vector2 } from '../math/Vector2.js'
 import {
 	MOUSE,
 	TOUCH
 } from '../constants.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { Spherical } from '../math/Spherical.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author qiao / https://github.com/qiao
@@ -19,7 +19,6 @@ import {
  * @author erich666 / http://erichaines.com
  * @author ScieCode / http://github.com/sciecode
  */
-
 // This set of controls performs orbiting, dollying (zooming), and panning.
 // Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
 //

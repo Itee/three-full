@@ -1,16 +1,15 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from '../math/Vector3.js'
-import { Spherical } from '../math/Spherical.js'
 import { _Math } from '../math/Math.js'
+import { Spherical } from '../math/Spherical.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author alteredq / http://alteredqualia.com/
  * @author paulirish / http://paulirish.com/
  */
-
 var FirstPersonControls = function ( object, domElement ) {
 
 	if ( domElement === undefined ) {

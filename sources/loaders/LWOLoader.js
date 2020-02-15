@@ -1,36 +1,36 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { FileLoader } from './FileLoader.js'
-import { TextureLoader } from './TextureLoader.js'
-import { Points } from '../objects/Points.js'
-import { LineSegments } from '../objects/LineSegments.js'
-import { Mesh } from '../objects/Mesh.js'
-import { PointsMaterial } from '../materials/PointsMaterial.js'
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import {
+	AddOperation,
+	BackSide,
+	ClampToEdgeWrapping,
+	DoubleSide,
+	EquirectangularReflectionMapping,
+	EquirectangularRefractionMapping,
+	FrontSide,
+	MirroredRepeatWrapping,
+	RepeatWrapping
+} from '../constants.js'
 import {
 	BufferAttribute,
 	Float32BufferAttribute
 } from '../core/BufferAttribute.js'
-import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
-import { Vector2 } from '../math/Vector2.js'
-import { Color } from '../math/Color.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
-import {
-	FrontSide,
-	BackSide,
-	DoubleSide,
-	AddOperation,
-	EquirectangularReflectionMapping,
-	EquirectangularRefractionMapping,
-	RepeatWrapping,
-	ClampToEdgeWrapping,
-	MirroredRepeatWrapping
-} from '../constants.js'
+import { Color } from '../math/Color.js'
+import { FileLoader } from './FileLoader.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { LineSegments } from '../objects/LineSegments.js'
+import { Loader } from './Loader.js'
 import { LoaderUtils } from './LoaderUtils.js'
+import { Mesh } from '../objects/Mesh.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
 import { MeshPhysicalMaterial } from '../materials/MeshPhysicalMaterial.js'
 import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
+import { Points } from '../objects/Points.js'
+import { PointsMaterial } from '../materials/PointsMaterial.js'
+import { TextureLoader } from './TextureLoader.js'
+import { Vector2 } from '../math/Vector2.js'
 
 /**
  * @version 1.1.1
@@ -50,7 +50,6 @@ import { MeshStandardMaterial } from '../materials/MeshStandardMaterial.js'
  *	https://github.com/threejs/lwoloader
  *
  **/
-
 function LWO2Parser( IFFParser ) {
 
 	this.IFF = IFFParser;
@@ -3047,5 +3046,7 @@ function extractParentUrl( url, dir ) {
 	return url.substr( 0, index );
 
 }
+
+;
 
 export { LWOLoader }

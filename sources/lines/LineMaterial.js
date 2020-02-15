@@ -1,11 +1,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { Vector2 } from '../math/Vector2.js'
 import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { Vector2 } from '../math/Vector2.js'
 
 /**
  * @author WestLangley / http://github.com/WestLangley
@@ -20,7 +20,6 @@ import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
  *  resolution: <Vector2>, // to be set by renderer
  * }
  */
-
 UniformsLib.line = {
 
 	linewidth: { value: 1 },
@@ -383,4 +382,5 @@ LineMaterial.prototype = Object.create( ShaderMaterial.prototype );
 LineMaterial.prototype.constructor = LineMaterial;
 
 LineMaterial.prototype.isLineMaterial = true;
+
 export { LineMaterial }

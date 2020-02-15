@@ -6,7 +6,6 @@ import { Vector2 } from '../math/Vector2.js'
 /**
  * TODO
  */
-
 var DepthLimitedBlurShader = {
 	defines: {
 		"KERNEL_RADIUS": 4,

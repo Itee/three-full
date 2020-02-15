@@ -11,10 +11,9 @@ export class LoadingManager {
 		onProgress?: ( url: string, loaded: number, total: number ) => void,
 		onError?: ( url: string ) => void
 	);
-
 	onStart?: ( url: string, loaded: number, total: number ) => void;
 	onLoad: () => void;
-	onProgress: ( item: any, loaded: number, total: number ) => void;
+	onProgress: ( url: string, loaded: number, total: number ) => void;
 	onError: ( url: string ) => void;
 	setURLModifier( callback?: ( url: string ) => string ): this;
 	resolveURL( url: string ): string;

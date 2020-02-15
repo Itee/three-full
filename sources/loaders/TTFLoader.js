@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
 import { FileLoader } from './FileLoader.js'
+import { Loader } from './Loader.js'
 
 /**
  * @author gero3 / https://github.com/gero3
@@ -13,7 +13,6 @@ import { FileLoader } from './FileLoader.js'
  * Loads TTF files and converts them into typeface JSON that can be used directly
  * to create Font objects.
  */
-
 var TTFLoader = function ( manager ) {
 
 	Loader.call( this, manager );

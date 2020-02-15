@@ -7,7 +7,6 @@
  * Gamma Correction Shader
  * http://en.wikipedia.org/wiki/gamma_correction
  */
-
 var GammaCorrectionShader = {
 
 	uniforms: {

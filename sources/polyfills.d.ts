@@ -6,7 +6,7 @@ export function warn( message?: any, ...optionalParams: any[] ): void;
 export function error( message?: any, ...optionalParams: any[] ): void;
 export function log( message?: any, ...optionalParams: any[] ): void;
 export type TypedArray =
-	| Int8Array
+	Int8Array
 	| Uint8Array
 	| Uint8ClampedArray
 	| Int16Array

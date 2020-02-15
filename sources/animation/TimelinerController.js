@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { AnimationMixer } from './AnimationMixer.js'
 import { AnimationClip } from './AnimationClip.js'
-import { PropertyBinding } from './PropertyBinding.js'
+import { AnimationMixer } from './AnimationMixer.js'
 import { AnimationUtils } from './AnimationUtils.js'
+import { PropertyBinding } from './PropertyBinding.js'
 
 /**
  * Controller class for the Timeliner GUI.
@@ -21,7 +21,6 @@ import { AnimationUtils } from './AnimationUtils.js'
  * @author tschw
  *
  */
-
 var TimelinerController = function TimelinerController( scene, trackInfo, onUpdate ) {
 
 	this._scene = scene;

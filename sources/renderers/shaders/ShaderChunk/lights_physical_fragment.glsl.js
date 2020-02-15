@@ -4,7 +4,13 @@
 export default `
 PhysicalMaterial material;
 material.diffuseColor = diffuseColor.rgb * ( 1.0 - metalnessFactor );
-material.specularRoughness = clamp( roughnessFactor, 0.04, 1.0 );
+
+vec3 dxy = max( abs( dFdx( geometryNormal ) ), abs( dFdy( geometryNormal ) ) );
+float geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );
+
+material.specularRoughness = max( roughnessFactor, 0.0525 );
+material.specularRoughness += geometryRoughness;
+material.specularRoughness = min( material.specularRoughness, 1.0 );
 
 #ifdef REFLECTIVITY
 
@@ -19,7 +25,9 @@ material.specularRoughness = clamp( roughnessFactor, 0.04, 1.0 );
 #ifdef CLEARCOAT
 
 	material.clearcoat = saturate( clearcoat ); 
-	material.clearcoatRoughness = clamp( clearcoatRoughness, 0.04, 1.0 );
+	material.clearcoatRoughness = max( clearcoatRoughness, 0.0525 );
+	material.clearcoatRoughness += geometryRoughness;
+	material.clearcoatRoughness = min( material.clearcoatRoughness, 1.0 );
 
 #endif
 #ifdef USE_SHEEN

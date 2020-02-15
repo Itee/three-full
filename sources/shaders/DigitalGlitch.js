@@ -12,7 +12,6 @@
  * amount: shift distance (1 is width of input)
  * angle: shift angle in radians
  */
-
 var DigitalGlitch = {
 
 	uniforms: {

@@ -1,18 +1,17 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Mesh } from '../objects/Mesh.js'
-import { LineSegmentsGeometry } from './LineSegmentsGeometry.js'
-import { LineMaterial } from './LineMaterial.js'
-import { Vector3 } from '../math/Vector3.js'
 import { InstancedInterleavedBuffer } from '../core/InstancedInterleavedBuffer.js'
 import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js'
+import { Mesh } from '../objects/Mesh.js'
+import { Vector3 } from '../math/Vector3.js'
+import { LineSegmentsGeometry } from './LineSegmentsGeometry.js'
+import { LineMaterial } from './LineMaterial.js'
 
 /**
  * @author WestLangley / http://github.com/WestLangley
  *
  */
-
 var Wireframe = function ( geometry, material ) {
 
 	Mesh.call( this );

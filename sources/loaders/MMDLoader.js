@@ -1,42 +1,42 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { Interpolant } from '../math/Interpolant.js'
-import { FileLoader } from './FileLoader.js'
-import { SkinnedMesh } from '../objects/SkinnedMesh.js'
-import { Skeleton } from '../objects/Skeleton.js'
+import {
+	AddOperation,
+	CustomBlending,
+	DoubleSide,
+	DstAlphaFactor,
+	FrontSide,
+	MultiplyOperation,
+	NearestFilter,
+	OneMinusSrcAlphaFactor,
+	RepeatWrapping,
+	SphericalReflectionMapping,
+	SrcAlphaFactor
+} from '../constants.js'
+import { AnimationClip } from '../animation/AnimationClip.js'
 import { Bone } from '../objects/Bone.js'
-import { Vector3 } from '../math/Vector3.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Color } from '../math/Color.js'
+import { Euler } from '../math/Euler.js'
+import { FileLoader } from './FileLoader.js'
 import {
 	Float32BufferAttribute,
 	Uint16BufferAttribute
 } from '../core/BufferAttribute.js'
-import { BufferGeometry } from '../core/BufferGeometry.js'
-import { TextureLoader } from './TextureLoader.js'
-import { Color } from '../math/Color.js'
+import { Interpolant } from '../math/Interpolant.js'
+import { Loader } from './Loader.js'
+import { LoaderUtils } from './LoaderUtils.js'
 import { MeshToonMaterial } from '../materials/MeshToonMaterial.js'
-import { TGALoader } from './TGALoader.js'
-import { AnimationClip } from '../animation/AnimationClip.js'
 import { NumberKeyframeTrack } from '../animation/tracks/NumberKeyframeTrack.js'
 import { Quaternion } from '../math/Quaternion.js'
-import { Euler } from '../math/Euler.js'
 import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
+import { Skeleton } from '../objects/Skeleton.js'
+import { SkinnedMesh } from '../objects/SkinnedMesh.js'
+import { TextureLoader } from './TextureLoader.js'
+import { Vector3 } from '../math/Vector3.js'
 import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
-import {
-	FrontSide,
-	DoubleSide,
-	CustomBlending,
-	SrcAlphaFactor,
-	OneMinusSrcAlphaFactor,
-	DstAlphaFactor,
-	MultiplyOperation,
-	AddOperation,
-	SphericalReflectionMapping,
-	RepeatWrapping,
-	NearestFilter
-} from '../constants.js'
-import { LoaderUtils } from './LoaderUtils.js'
+import { TGALoader } from './TGALoader.js'
 
 /**
  * @author takahiro / https://github.com/takahirox
@@ -68,7 +68,6 @@ import { LoaderUtils } from './LoaderUtils.js'
  *  - more precise grant skinning support.
  *  - shadow support.
  */
-
 var MMDLoader = ( function () {
 
 	/**

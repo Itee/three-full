@@ -17,8 +17,8 @@ import { WebGLRenderTarget } from './WebGLRenderTarget';
 import { Object3D } from './../core/Object3D';
 import { Material } from './../materials/Material';
 import { Fog } from './../scenes/Fog';
-import { ToneMapping, ShadowMapType, CullFace } from '../constants';
-import { WebVRManager } from '../renderers/webvr/WebVRManager';
+import { ToneMapping, ShadowMapType, CullFace, TextureEncoding } from '../constants';
+import { WebXRManager } from '../renderers/webxr/WebXRManager';
 import { RenderTarget } from './webgl/WebGLRenderLists';
 import { Geometry } from './../core/Geometry';
 import { BufferGeometry } from './../core/BufferGeometry';
@@ -65,8 +65,7 @@ export class WebGLRenderer implements Renderer {
 	localClippingEnabled: boolean;
 
 	extensions: WebGLExtensions;
-	gammaInput: boolean;
-	gammaOutput: boolean;
+	outputEncoding: TextureEncoding;
 
 	physicallyCorrectLights: boolean;
 	toneMapping: ToneMapping;
@@ -87,7 +86,7 @@ export class WebGLRenderer implements Renderer {
 	renderLists: WebGLRenderLists;
 	state: WebGLState;
 
-	vr: WebVRManager;
+	xr: WebXRManager;
 	getContext(): WebGLRenderingContext;
 	getContextAttributes(): any;
 	forceContextLoss(): void;
@@ -110,6 +109,8 @@ export class WebGLRenderer implements Renderer {
 	setScissor( x: Vector4 | number, y?: number, width?: number, height?: number ): void;
 	getScissorTest(): boolean;
 	setScissorTest( enable: boolean ): void;
+	setOpaqueSort( method: Function ): void;
+	setTransparentSort( method: Function ): void;
 	getClearColor(): Color;
 	setClearColor( color: Color, alpha?: number ): void;
 	setClearColor( color: string, alpha?: number ): void;
@@ -173,6 +174,7 @@ export class WebGLRenderer implements Renderer {
 	copyTextureToTexture( position: Vector2, srcTexture: Texture, dstTexture: Texture, level?: number ): void;
 	initTexture( texture: Texture ): void;
 	gammaFactor: number;
+	vr: boolean;
 	shadowMapEnabled: boolean;
 	shadowMapType: ShadowMapType;
 	shadowMapCullFace: CullFace;

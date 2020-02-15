@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from '../math/Vector3.js'
-import { Geometry } from '../core/Geometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Geometry } from '../core/Geometry.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  *	@author zz85 / http://twitter.com/blurspline / http://www.lab4games.net/zz85/blog
@@ -15,7 +15,6 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
  *	  - Progressive Mesh type Polygon Reduction Algorithm
  *    - http://www.melax.com/polychop/
  */
-
 var SimplifyModifier = function () {};
 
 ( function () {

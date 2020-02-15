@@ -1,12 +1,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { NumberKeyframeTrack } from './tracks/NumberKeyframeTrack.js'
 import { AnimationClip } from './AnimationClip.js'
-import { Vector3 } from '../math/Vector3.js'
-import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js'
 import { BooleanKeyframeTrack } from './tracks/BooleanKeyframeTrack.js'
 import { ColorKeyframeTrack } from './tracks/ColorKeyframeTrack.js'
+import { NumberKeyframeTrack } from './tracks/NumberKeyframeTrack.js'
+import { Vector3 } from '../math/Vector3.js'
+import { VectorKeyframeTrack } from './tracks/VectorKeyframeTrack.js'
 
 /**
  *
@@ -15,7 +15,6 @@ import { ColorKeyframeTrack } from './tracks/ColorKeyframeTrack.js'
  * @author Ben Houston / http://clara.io/
  * @author David Sarno / http://lighthaus.us/
  */
-
 var AnimationClipCreator = function () {};
 
 AnimationClipCreator.CreateRotationAnimation = function ( period, axis ) {

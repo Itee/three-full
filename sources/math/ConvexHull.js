@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from './Vector3.js'
 import { Line3 } from './Line3.js'
 import { Plane } from './Plane.js'
 import { Triangle } from './Triangle.js'
+import { Vector3 } from './Vector3.js'
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -12,7 +12,6 @@ import { Triangle } from './Triangle.js'
  * Ported from: https://github.com/maurizzzio/quickhull3d/ by Mauricio Poppe (https://github.com/maurizzzio)
  *
  */
-
 var ConvexHull = ( function () {
 
 	var Visible = 0;

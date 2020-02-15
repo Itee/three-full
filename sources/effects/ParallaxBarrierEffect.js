@@ -1,25 +1,24 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { Scene } from '../scenes/Scene.js'
-import { StereoCamera } from '../cameras/StereoCamera.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import {
-	NearestFilter,
 	LinearFilter,
+	NearestFilter,
 	RGBAFormat
 } from '../constants.js'
+import { Mesh } from '../objects/Mesh.js'
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { Scene } from '../scenes/Scene.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { StereoCamera } from '../cameras/StereoCamera.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author marklundin / http://mark-lundin.com/
  * @author alteredq / http://alteredqualia.com/
  */
-
 var ParallaxBarrierEffect = function ( renderer ) {
 
 	var _camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );

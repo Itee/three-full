@@ -1,19 +1,21 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Object3D } from '../core/Object3D.js'
-import { MD2Loader } from '../loaders/MD2Loader.js'
 import { Box3 } from '../math/Box3.js'
-import { TextureLoader } from '../loaders/TextureLoader.js'
-import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
-import { MorphBlendMesh } from './MorphBlendMesh.js'
-import { UVMapping } from '../constants.js'
 import { _Math } from '../math/Math.js'
+import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
+import { Object3D } from '../core/Object3D.js'
+import { TextureLoader } from '../loaders/TextureLoader.js'
+import {
+	UVMapping,
+	sRGBEncoding
+} from '../constants.js'
+import { MD2Loader } from '../loaders/MD2Loader.js'
+import { MorphBlendMesh } from './MorphBlendMesh.js'
 
 /**
  * @author alteredq / http://alteredqualia.com/
  */
-
 var MD2CharacterComplex = function () {
 
 	var scope = this;
@@ -522,6 +524,7 @@ var MD2CharacterComplex = function () {
 			textures[ i ] = textureLoader.load( baseUrl + textureUrls[ i ], checkLoadingComplete );
 			textures[ i ].mapping = UVMapping;
 			textures[ i ].name = textureUrls[ i ];
+			textures[ i ].encoding = sRGBEncoding;
 
 		}
 

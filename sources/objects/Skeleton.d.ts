@@ -4,6 +4,7 @@
 import { Bone } from './Bone';
 import { Matrix4 } from './../math/Matrix4';
 import { DataTexture } from './../textures/DataTexture';
+
 export class Skeleton {
 
 	constructor( bones: Bone[], boneInverses?: Matrix4[] );

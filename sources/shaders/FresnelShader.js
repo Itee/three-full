@@ -6,7 +6,6 @@
  *
  * Based on Nvidia Cg tutorial
  */
-
 var FresnelShader = {
 
 	uniforms: {
