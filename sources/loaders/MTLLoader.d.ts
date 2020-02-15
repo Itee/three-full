@@ -74,7 +74,7 @@ export namespace MTLLoader {
 		wrap : Wrapping;
 		crossOrigin : string;
 
-		setCrossOrigin( value: string ) : void;
+		setCrossOrigin( value: string ) : this;
 		setManager( value: LoadingManager ) : void;
 		setMaterials( materialsInfo: {[key: string]: MaterialInfo} ) : void;
 		convert( materialsInfo: {[key: string]: MaterialInfo} ) : {[key: string]: MaterialInfo};

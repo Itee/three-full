@@ -11,7 +11,7 @@ import {
 export class BasisTextureLoader extends Loader {
 
 	constructor( manager?: LoadingManager );
-	transcoderBinary: ArrayBuffer | null;
+	transcoderBinary: ArrayBuffer | null;
 	transcoderPath: string;
 	transcoderPending: Promise<void> | null;
 

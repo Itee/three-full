@@ -11,6 +11,7 @@ export class Quaternion {
 	y: number;
 	z: number;
 	w: number;
+	readonly isQuaternion: true;
 	set( x: number, y: number, z: number, w: number ): Quaternion;
 	clone(): this;
 	copy( q: Quaternion ): this;

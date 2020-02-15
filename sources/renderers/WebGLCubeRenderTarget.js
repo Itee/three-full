@@ -17,18 +17,26 @@ import { CubeCamera } from '../cameras/CubeCamera.js'
  * @author WestLangley / http://github.com/WestLangley
  */
 
-function WebGLRenderTargetCube( width, height, options ) {
+function WebGLCubeRenderTarget( size, options, dummy ) {
 
-	WebGLRenderTarget.call( this, width, height, options );
+	if ( Number.isInteger( options ) ) {
+
+		console.warn( 'WebGLCubeRenderTarget: constructor signature is now WebGLCubeRenderTarget( size, options )' );
+
+		options = dummy;
+
+	}
+
+	WebGLRenderTarget.call( this, size, size, options );
 
 }
 
-WebGLRenderTargetCube.prototype = Object.create( WebGLRenderTarget.prototype );
-WebGLRenderTargetCube.prototype.constructor = WebGLRenderTargetCube;
+WebGLCubeRenderTarget.prototype = Object.create( WebGLRenderTarget.prototype );
+WebGLCubeRenderTarget.prototype.constructor = WebGLCubeRenderTarget;
 
-WebGLRenderTargetCube.prototype.isWebGLRenderTargetCube = true;
+WebGLCubeRenderTarget.prototype.isWebGLCubeRenderTarget = true;
 
-WebGLRenderTargetCube.prototype.fromEquirectangularTexture = function ( renderer, texture ) {
+WebGLCubeRenderTarget.prototype.fromEquirectangularTexture = function ( renderer, texture ) {
 
 	this.texture.type = texture.type;
 	this.texture.format = texture.format;
@@ -121,4 +129,4 @@ WebGLRenderTargetCube.prototype.fromEquirectangularTexture = function ( renderer
 
 };
 
-export { WebGLRenderTargetCube }
+export { WebGLCubeRenderTarget }

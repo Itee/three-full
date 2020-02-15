@@ -2,17 +2,23 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import {
+	BufferGeometry,
 	Mesh,
+	Vector3
 } from '../../../src/Three';
 
-import { LineMaterial } from './LineMaterial';
-import { LineSegmentsGeometry } from './LineSegmentsGeometry';
+export class MeshSurfaceSampler {
 
-export class LineSegments2 extends Mesh {
+	distribution: Float32Array | null;
+	geometry: BufferGeometry;
+	positionAttribute: Float32Array;
+	weightAttribute: string | null;
 
-	constructor( geometry?: LineSegmentsGeometry, material?: LineMaterial );
-	readonly isLineSegments2: true;
-
-	computeLineDistances(): this;
+	constructor( mesh: Mesh );
+	binarySearch( x: number ): number;
+	build(): this;
+	sample( targetPosition: Vector3, targetNormal: Vector3 ): this;
+	sampleFace( faceIndex: number, targetPosition: Vector3, targetNormal: Vector3 ): this;
+	setWeightAttribute( name: string | null ): this;
 
 }

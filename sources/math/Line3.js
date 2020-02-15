@@ -2,7 +2,7 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Vector3 } from './Vector3.js'
-import { _Math } from './Math.js'
+import { MathUtils } from './MathUtils.js'
 /**
  * @author bhouston / http://clara.io
  */
@@ -106,7 +106,7 @@ Object.assign( Line3.prototype, {
 
 		if ( clampToLine ) {
 
-			t = _Math.clamp( t, 0, 1 );
+			t = MathUtils.clamp( t, 0, 1 );
 
 		}
 

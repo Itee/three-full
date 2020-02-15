@@ -2,7 +2,6 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Matrix4 } from './Matrix4';
-import { BufferAttribute } from './../core/BufferAttribute';
 import { Vector3 } from './Vector3';
 export interface Matrix {
 	
@@ -35,20 +34,12 @@ export class Matrix3 implements Matrix {
 	clone(): this;
 	copy( m: Matrix3 ): this;
 	setFromMatrix4( m: Matrix4 ): Matrix3;
-	applyToBuffer(
-		buffer: BufferAttribute,
-		offset?: number,
-		length?: number
-	): BufferAttribute;
-
-	applyToBufferAttribute( attribute: BufferAttribute ): BufferAttribute;
-
 	multiplyScalar( s: number ): Matrix3;
 	determinant(): number;
 	getInverse( matrix: Matrix3, throwOnDegenerate?: boolean ): Matrix3;
 	transpose(): Matrix3;
 	getNormalMatrix( matrix4: Matrix4 ): Matrix3;
-	transposeIntoArray( r: number[] ): number[];
+	transposeIntoArray( r: number[] ): Matrix3;
 
 	setUvTransform( tx: number, ty: number, sx: number, sy: number, rotation: number, cx: number, cy: number ): Matrix3;
 

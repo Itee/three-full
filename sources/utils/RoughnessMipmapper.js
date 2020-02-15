@@ -5,7 +5,7 @@ import {
 	LinearMipMapLinearFilter,
 	NoBlending
 } from '../constants.js'
-import { _Math } from '../math/Math.js'
+import { MathUtils } from '../math/MathUtils.js'
 import { Mesh } from '../objects/Mesh.js'
 import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
@@ -55,8 +55,9 @@ var RoughnessMipmapper = ( function () {
 
 			var width = Math.max( roughnessMap.image.width, normalMap.image.width );
 			var height = Math.max( roughnessMap.image.height, normalMap.image.height );
-			if ( ! _Math.isPowerOfTwo( width ) || ! _Math.isPowerOfTwo( height ) ) return;
+			if ( ! MathUtils.isPowerOfTwo( width ) || ! MathUtils.isPowerOfTwo( height ) ) return;
 
+			var oldTarget = _renderer.getRenderTarget();
 			var autoClear = _renderer.autoClear;
 			_renderer.autoClear = false;
 
@@ -65,6 +66,7 @@ var RoughnessMipmapper = ( function () {
 				if ( _tempTarget != null ) _tempTarget.dispose();
 
 				_tempTarget = new WebGLRenderTarget( width, height, { depthBuffer: false, stencilBuffer: false } );
+				_tempTarget.scissorTest = true;
 
 			}
 
@@ -84,11 +86,9 @@ var RoughnessMipmapper = ( function () {
 
 			}
 
-			_renderer.setRenderTarget( _tempTarget );
 			_mipmapMaterial.uniforms.roughnessMap.value = roughnessMap;
 			_mipmapMaterial.uniforms.normalMap.value = normalMap;
 
-			var dpr = _renderer.getPixelRatio();
 			var position = new Vector2( 0, 0 );
 			var texelSize = _mipmapMaterial.uniforms.texelSize.value;
 			for ( var mip = 0; width >= 1 && height >= 1;
@@ -100,7 +100,9 @@ var RoughnessMipmapper = ( function () {
 				texelSize.set( 1.0 / width, 1.0 / height );
 				if ( mip == 0 ) texelSize.set( 0.0, 0.0 );
 
-				_renderer.setViewport( position.x, position.y, width / dpr, height / dpr );
+				_tempTarget.viewport.set( position.x, position.y, width, height );
+				_tempTarget.scissor.set( position.x, position.y, width, height );
+				_renderer.setRenderTarget( _tempTarget );
 				_renderer.render( _scene, _flatCamera );
 				_renderer.copyFramebufferToTexture( position, material.roughnessMap, mip );
 				_mipmapMaterial.uniforms.roughnessMap.value = material.roughnessMap;
@@ -109,10 +111,8 @@ var RoughnessMipmapper = ( function () {
 
 			if ( roughnessMap !== material.roughnessMap ) roughnessMap.dispose();
 
+			_renderer.setRenderTarget( oldTarget );
 			_renderer.autoClear = autoClear;
-			_renderer.setRenderTarget( null );
-			var size = _renderer.getSize( new Vector2() );
-			_renderer.setViewport( 0, 0, size.x, size.y );
 
 		},
 

@@ -20,7 +20,7 @@ export class LensflareElement {
 export class Lensflare extends Mesh {
 
 	constructor();
-	isLensflare: boolean;
+	readonly isLensflare: true;
 
 	addElement( element: LensflareElement ): void;
 	dispose(): void;

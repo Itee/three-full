@@ -2,7 +2,7 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Box3 } from '../math/Box3.js'
-import { _Math } from '../math/Math.js'
+import { MathUtils } from '../math/MathUtils.js'
 import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
 import { Object3D } from '../core/Object3D.js'
 import { TextureLoader } from '../loaders/TextureLoader.js'
@@ -459,8 +459,8 @@ var MD2CharacterComplex = function () {
 
 		this.maxReverseSpeed = - this.maxSpeed;
 
-		if ( controls.moveForward ) this.speed = _Math.clamp( this.speed + delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
-		if ( controls.moveBackward ) this.speed = _Math.clamp( this.speed - delta * this.backAcceleration, this.maxReverseSpeed, this.maxSpeed );
+		if ( controls.moveForward ) this.speed = MathUtils.clamp( this.speed + delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
+		if ( controls.moveBackward ) this.speed = MathUtils.clamp( this.speed - delta * this.backAcceleration, this.maxReverseSpeed, this.maxSpeed );
 
 		// orientation based on controls
 		// (don't just stand while turning)
@@ -470,14 +470,14 @@ var MD2CharacterComplex = function () {
 		if ( controls.moveLeft ) {
 
 			this.bodyOrientation += delta * this.angularSpeed;
-			this.speed = _Math.clamp( this.speed + dir * delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
+			this.speed = MathUtils.clamp( this.speed + dir * delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
 
 		}
 
 		if ( controls.moveRight ) {
 
 			this.bodyOrientation -= delta * this.angularSpeed;
-			this.speed = _Math.clamp( this.speed + dir * delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
+			this.speed = MathUtils.clamp( this.speed + dir * delta * this.frontAcceleration, this.maxReverseSpeed, this.maxSpeed );
 
 		}
 
@@ -488,12 +488,12 @@ var MD2CharacterComplex = function () {
 			if ( this.speed > 0 ) {
 
 				var k = exponentialEaseOut( this.speed / this.maxSpeed );
-				this.speed = _Math.clamp( this.speed - k * delta * this.frontDecceleration, 0, this.maxSpeed );
+				this.speed = MathUtils.clamp( this.speed - k * delta * this.frontDecceleration, 0, this.maxSpeed );
 
 			} else {
 
 				var k = exponentialEaseOut( this.speed / this.maxReverseSpeed );
-				this.speed = _Math.clamp( this.speed + k * delta * this.backAcceleration, this.maxReverseSpeed, 0 );
+				this.speed = MathUtils.clamp( this.speed + k * delta * this.backAcceleration, this.maxReverseSpeed, 0 );
 
 			}
 

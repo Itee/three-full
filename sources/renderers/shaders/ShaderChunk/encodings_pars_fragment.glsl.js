@@ -49,7 +49,7 @@ vec4 RGBDToLinear( in vec4 value, in float maxRange ) {
 vec4 LinearToRGBD( in vec4 value, in float maxRange ) {
 	float maxRGB = max( value.r, max( value.g, value.b ) );
 	float D = max( maxRange / maxRGB, 1.0 );
-	D = min( floor( D ) / 255.0, 1.0 );
+	D = clamp( floor( D ) / 255.0, 0.0, 1.0 );
 	return vec4( value.rgb * ( D * ( 255.0 / maxRange ) ), D );
 }
 const mat3 cLogLuvM = mat3( 0.2209, 0.3390, 0.4184, 0.1138, 0.6780, 0.7319, 0.0102, 0.1130, 0.2969 );

@@ -284,7 +284,7 @@ var AWDLoader = ( function () {
 				mtx = this.parseMatrix4();
 
 			ctr.name = this.readUTF();
-			ctr.applyMatrix( mtx );
+			ctr.applyMatrix4( mtx );
 
 			parent = this._blocks[ par_id ].data || this.trunk;
 			parent.add( ctr );
@@ -354,7 +354,7 @@ var AWDLoader = ( function () {
 
 			}
 
-			mesh.applyMatrix( mtx );
+			mesh.applyMatrix4( mtx );
 			mesh.name = name;
 			parent = this.getBlock( par_id ) || this.trunk;
 			parent.add( mesh );

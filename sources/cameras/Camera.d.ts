@@ -10,7 +10,7 @@ export class Camera extends Object3D {
 	projectionMatrix: Matrix4;
 	projectionMatrixInverse: Matrix4;
 
-	isCamera: true;
+	readonly isCamera: true;
 
 	getWorldDirection( target: Vector3 ): Vector3;
 

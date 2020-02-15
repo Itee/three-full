@@ -2,7 +2,7 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Matrix4 } from '../math/Matrix4.js'
-import { _Math } from '../math/Math.js'
+import { MathUtils } from '../math/MathUtils.js'
 import { PerspectiveCamera } from './PerspectiveCamera.js'
 var _eyeRight = new Matrix4();
 var _eyeLeft = new Matrix4();
@@ -65,7 +65,7 @@ Object.assign( StereoCamera.prototype, {
 			var projectionMatrix = camera.projectionMatrix.clone();
 			var eyeSepHalf = cache.eyeSep / 2;
 			var eyeSepOnProjection = eyeSepHalf * cache.near / cache.focus;
-			var ymax = ( cache.near * Math.tan( _Math.DEG2RAD * cache.fov * 0.5 ) ) / cache.zoom;
+			var ymax = ( cache.near * Math.tan( MathUtils.DEG2RAD * cache.fov * 0.5 ) ) / cache.zoom;
 			var xmin, xmax;
 
 			// translate xOffset

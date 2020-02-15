@@ -16,7 +16,7 @@ export class Vector4 implements Vector {
 	w: number;
 	width: number;
 	height: number;
-	isVector4: true;
+	readonly isVector4: true;
 	set( x: number, y: number, z: number, w: number ): this;
 	setScalar( scalar: number ): this;
 	setX( x: number ): this;

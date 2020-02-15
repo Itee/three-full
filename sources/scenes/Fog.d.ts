@@ -18,6 +18,8 @@ export class Fog implements IFog {
 	near: number;
 	far: number;
 
+	readonly isFog: true;
+
 	clone(): this;
 	toJSON(): any;
 

@@ -14,7 +14,7 @@ import { Vector3 } from '../math/Vector3.js'
  * http://en.wikipedia.org/wiki/Viviani%27s_curve
  * http://mathdl.maa.org/images/upload_library/23/stemkoski/knots/page4.html
  * http://www.mi.sanu.ac.rs/vismath/taylorapril2011/Taylor.pdf
- * http://prideout.net/blog/?p=44
+ * https://prideout.net/blog/old/blog/index.html@p=44.html
  */
 	// GrannyKnot
 

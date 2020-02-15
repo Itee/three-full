@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { _Math } from '../../math/Math.js'
+import { MathUtils } from '../../math/MathUtils.js'
 import { Node } from './Node.js'
 
 /**
@@ -32,7 +32,7 @@ TempNode.prototype.build = function ( builder, output, uuid, ns ) {
 
 		if ( isUnique && this.constructor.uuid === undefined ) {
 
-			this.constructor.uuid = _Math.generateUUID();
+			this.constructor.uuid = MathUtils.generateUUID();
 
 		}
 

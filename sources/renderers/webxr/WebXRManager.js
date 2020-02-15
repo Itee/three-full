@@ -42,6 +42,9 @@ function WebXRManager( renderer, gl ) {
 	cameraVR.layers.enable( 1 );
 	cameraVR.layers.enable( 2 );
 
+	var _currentDepthNear = null;
+	var _currentDepthFar = null;
+
 	//
 
 	this.enabled = false;
@@ -54,15 +57,43 @@ function WebXRManager( renderer, gl ) {
 
 		if ( controller === undefined ) {
 
-			controller = new Group();
-			controller.matrixAutoUpdate = false;
-			controller.visible = false;
-
+			controller = {};
 			controllers[ id ] = controller;
 
 		}
 
-		return controller;
+		if ( controller.targetRay === undefined ) {
+
+			controller.targetRay = new Group();
+			controller.targetRay.matrixAutoUpdate = false;
+			controller.targetRay.visible = false;
+
+		}
+
+		return controller.targetRay;
+
+	};
+
+	this.getControllerGrip = function ( id ) {
+
+		var controller = controllers[ id ];
+
+		if ( controller === undefined ) {
+
+			controller = {};
+			controllers[ id ] = controller;
+
+		}
+
+		if ( controller.grip === undefined ) {
+
+			controller.grip = new Group();
+			controller.grip.matrixAutoUpdate = false;
+			controller.grip.visible = false;
+
+		}
+
+		return controller.grip;
 
 	};
 
@@ -74,7 +105,17 @@ function WebXRManager( renderer, gl ) {
 
 		if ( controller ) {
 
-			controller.dispatchEvent( { type: event.type } );
+			if ( controller.targetRay ) {
+
+				controller.targetRay.dispatchEvent( { type: event.type } );
+
+			}
+
+			if ( controller.grip ) {
+
+				controller.grip.dispatchEvent( { type: event.type } );
+
+			}
 
 		}
 
@@ -84,8 +125,19 @@ function WebXRManager( renderer, gl ) {
 
 		inputSourcesMap.forEach( function ( controller, inputSource ) {
 
-			controller.dispatchEvent( { type: 'disconnected', data: inputSource } );
-			controller.visible = false;
+			if ( controller.targetRay ) {
+
+				controller.targetRay.dispatchEvent( { type: 'disconnected', data: inputSource } );
+				controller.targetRay.visible = false;
+
+			}
+
+			if ( controller.grip ) {
+
+				controller.grip.dispatchEvent( { type: 'disconnected', data: inputSource } );
+				controller.grip.visible = false;
+
+			}
 
 		} );
 
@@ -97,9 +149,9 @@ function WebXRManager( renderer, gl ) {
 		renderer.setRenderTarget( renderer.getRenderTarget() ); // Hack #15830
 		animation.stop();
 
-		scope.dispatchEvent( { type: 'sessionend' } );
-
 		scope.isPresenting = false;
+
+		scope.dispatchEvent( { type: 'sessionend' } );
 
 	}
 
@@ -110,9 +162,9 @@ function WebXRManager( renderer, gl ) {
 		animation.setContext( session );
 		animation.start();
 
-		scope.dispatchEvent( { type: 'sessionstart' } );
-
 		scope.isPresenting = true;
+
+		scope.dispatchEvent( { type: 'sessionstart' } );
 
 	}
 
@@ -199,7 +251,18 @@ function WebXRManager( renderer, gl ) {
 
 			if ( controller ) {
 
-				controller.dispatchEvent( { type: 'disconnected', data: inputSource } );
+				if ( controller.targetRay ) {
+
+					controller.targetRay.dispatchEvent( { type: 'disconnected', data: inputSource } );
+
+				}
+
+				if ( controller.grip ) {
+
+					controller.grip.dispatchEvent( { type: 'disconnected', data: inputSource } );
+
+				}
+
 				inputSourcesMap.delete( inputSource );
 
 			}
@@ -215,7 +278,17 @@ function WebXRManager( renderer, gl ) {
 
 			if ( controller ) {
 
-				controller.dispatchEvent( { type: 'connected', data: inputSource } );
+				if ( controller.targetRay ) {
+
+					controller.targetRay.dispatchEvent( { type: 'connected', data: inputSource } );
+
+				}
+
+				if ( controller.grip ) {
+
+					controller.grip.dispatchEvent( { type: 'connected', data: inputSource } );
+
+				}
 
 			}
 
@@ -303,6 +376,23 @@ function WebXRManager( renderer, gl ) {
 
 	this.getCamera = function ( camera ) {
 
+		cameraVR.near = cameraR.near = cameraL.near = camera.near;
+		cameraVR.far = cameraR.far = cameraL.far = camera.far;
+
+		if ( _currentDepthNear !== cameraVR.near || _currentDepthFar !== cameraVR.far ) {
+
+			// Note that the new renderState won't apply until the next frame. See #18320
+
+			session.updateRenderState( {
+				depthNear: cameraVR.near,
+				depthFar: cameraVR.far
+			} );
+
+			_currentDepthNear = cameraVR.near;
+			_currentDepthFar = cameraVR.far;
+
+		}
+
 		var parent = camera.parent;
 		var cameras = cameraVR.cameras;
 
@@ -351,10 +441,9 @@ function WebXRManager( renderer, gl ) {
 
 				var view = views[ i ];
 				var viewport = baseLayer.getViewport( view );
-				var viewMatrix = view.transform.inverse.matrix;
 
 				var camera = cameraVR.cameras[ i ];
-				camera.matrix.fromArray( viewMatrix ).getInverse( camera.matrix );
+				camera.matrix.fromArray( view.transform.matrix );
 				camera.projectionMatrix.fromArray( view.projectionMatrix );
 				camera.viewport.set( viewport.x, viewport.y, viewport.width, viewport.height );
 
@@ -378,23 +467,50 @@ function WebXRManager( renderer, gl ) {
 
 			var inputSource = inputSources[ i ];
 
+			var inputPose = null;
+			var gripPose = null;
+
 			if ( inputSource ) {
 
-				var inputPose = frame.getPose( inputSource.targetRaySpace, referenceSpace );
+				if ( controller.targetRay ) {
 
-				if ( inputPose !== null ) {
+					inputPose = frame.getPose( inputSource.targetRaySpace, referenceSpace );
 
-					controller.matrix.fromArray( inputPose.transform.matrix );
-					controller.matrix.decompose( controller.position, controller.rotation, controller.scale );
-					controller.visible = true;
+					if ( inputPose !== null ) {
 
-					continue;
+						controller.targetRay.matrix.fromArray( inputPose.transform.matrix );
+						controller.targetRay.matrix.decompose( controller.targetRay.position, controller.targetRay.rotation, controller.targetRay.scale );
+
+					}
+
+				}
+
+				if ( controller.grip && inputSource.gripSpace ) {
+
+					gripPose = frame.getPose( inputSource.gripSpace, referenceSpace );
+
+					if ( gripPose !== null ) {
+
+						controller.grip.matrix.fromArray( gripPose.transform.matrix );
+						controller.grip.matrix.decompose( controller.grip.position, controller.grip.rotation, controller.grip.scale );
+
+					}
 
 				}
 
 			}
 
-			controller.visible = false;
+			if ( controller.targetRay ) {
+
+				controller.targetRay.visible = inputPose !== null;
+
+			}
+
+			if ( controller.grip ) {
+
+				controller.grip.visible = gripPose !== null;
+
+			}
 
 		}
 

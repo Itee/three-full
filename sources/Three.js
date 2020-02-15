@@ -313,17 +313,10 @@ export {
 	RenderableSprite,
 	Projector
 } from './renderers/Projector.js'
-export { RaytracingRenderer } from './renderers/RaytracingRenderer.js'
 export {
 	SVGObject,
 	SVGRenderer
 } from './renderers/SVGRenderer.js'
-export {
-	WebGLDeferredRenderer,
-	DeferredShaderChunk,
-	ShaderDeferredCommon,
-	ShaderDeferred
-} from './renderers/WebGLDeferredRenderer.js'
 export { AfterimageShader } from './shaders/AfterimageShader.js'
 export { BasicShader } from './shaders/BasicShader.js'
 export { BleachBypassShader } from './shaders/BleachBypassShader.js'
@@ -400,8 +393,11 @@ export { VignetteShader } from './shaders/VignetteShader.js'
 export { VolumeRenderShader1 } from './shaders/VolumeShader.js'
 export { WaterRefractionShader } from './shaders/WaterRefractionShader.js'
 export { BufferGeometryUtils } from './utils/BufferGeometryUtils.js'
+export {
+	GeometryCompressionUtils,
+	PackedPhongMaterial
+} from './utils/GeometryCompressionUtils.js'
 export { GeometryUtils } from './utils/GeometryUtils.js'
-export { MathUtils } from './utils/MathUtils.js'
 export { RoughnessMipmapper } from './utils/RoughnessMipmapper.js'
 export { SceneUtils } from './utils/SceneUtils.js'
 export { ShadowMapViewer } from './utils/ShadowMapViewer.js'
@@ -411,6 +407,7 @@ export { UVsDebug } from './utils/UVsDebug.js'
 export { WebGL } from './helpers/WebGL.js'
 export { ARButton } from './webxr/ARButton.js'
 export { VRButton } from './webxr/VRButton.js'
+export { XRControllerModelFactory } from './webxr/XRControllerModelFactory.js'
 export { AnimationAction } from './animation/AnimationAction.js'
 export { AnimationClip } from './animation/AnimationClip.js'
 export { AnimationMixer } from './animation/AnimationMixer.js'
@@ -829,7 +826,7 @@ export { DiscreteInterpolant } from './math/interpolants/DiscreteInterpolant.js'
 export { LinearInterpolant } from './math/interpolants/LinearInterpolant.js'
 export { QuaternionLinearInterpolant } from './math/interpolants/QuaternionLinearInterpolant.js'
 export { Line3 } from './math/Line3.js'
-export { _Math } from './math/Math.js'
+export { MathUtils } from './math/MathUtils.js'
 export { Matrix3 } from './math/Matrix3.js'
 export { Matrix4 } from './math/Matrix4.js'
 export { Plane } from './math/Plane.js'
@@ -887,11 +884,11 @@ export { WebGLState } from './renderers/webgl/WebGLState.js'
 export { WebGLTextures } from './renderers/webgl/WebGLTextures.js'
 export { WebGLUniforms } from './renderers/webgl/WebGLUniforms.js'
 export { WebGLUtils } from './renderers/webgl/WebGLUtils.js'
+export { WebGLCubeRenderTarget } from './renderers/WebGLCubeRenderTarget.js'
 export { WebGLMultisampleRenderTarget } from './renderers/WebGLMultisampleRenderTarget.js'
 export { WebGLMultiviewRenderTarget } from './renderers/WebGLMultiviewRenderTarget.js'
 export { WebGLRenderer } from './renderers/WebGLRenderer.js'
 export { WebGLRenderTarget } from './renderers/WebGLRenderTarget.js'
-export { WebGLRenderTargetCube } from './renderers/WebGLRenderTargetCube.js'
 export { WebXRManager } from './renderers/webxr/WebXRManager.js'
 export { Fog } from './scenes/Fog.js'
 export { FogExp2 } from './scenes/FogExp2.js'

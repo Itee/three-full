@@ -15,7 +15,7 @@ import { DirectGeometry } from './DirectGeometry.js'
 import { Object3D } from './Object3D.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Matrix3 } from '../math/Matrix3.js'
-import { _Math } from '../math/Math.js'
+import { MathUtils } from '../math/MathUtils.js'
 import { arrayMax } from '../utils.js'
 /**
  * @author alteredq / http://alteredqualia.com/
@@ -35,7 +35,7 @@ function BufferGeometry() {
 
 	Object.defineProperty( this, 'id', { value: _bufferGeometryId += 2 } );
 
-	this.uuid = _Math.generateUUID();
+	this.uuid = MathUtils.generateUUID();
 
 	this.name = '';
 	this.type = 'BufferGeometry';
@@ -130,7 +130,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 	},
 
-	applyMatrix: function ( matrix ) {
+	applyMatrix4: function ( matrix ) {
 
 		var position = this.attributes.position;
 
@@ -186,7 +186,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 		_m1.makeRotationX( angle );
 
-		this.applyMatrix( _m1 );
+		this.applyMatrix4( _m1 );
 
 		return this;
 
@@ -198,7 +198,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 		_m1.makeRotationY( angle );
 
-		this.applyMatrix( _m1 );
+		this.applyMatrix4( _m1 );
 
 		return this;
 
@@ -210,7 +210,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 		_m1.makeRotationZ( angle );
 
-		this.applyMatrix( _m1 );
+		this.applyMatrix4( _m1 );
 
 		return this;
 
@@ -222,7 +222,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 		_m1.makeTranslation( x, y, z );
 
-		this.applyMatrix( _m1 );
+		this.applyMatrix4( _m1 );
 
 		return this;
 
@@ -234,7 +234,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 		_m1.makeScale( x, y, z );
 
-		this.applyMatrix( _m1 );
+		this.applyMatrix4( _m1 );
 
 		return this;
 
@@ -246,7 +246,7 @@ BufferGeometry.prototype = Object.assign( Object.create( EventDispatcher.prototy
 
 		_obj.updateMatrix();
 
-		this.applyMatrix( _obj.matrix );
+		this.applyMatrix4( _obj.matrix );
 
 		return this;
 

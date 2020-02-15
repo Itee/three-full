@@ -5,7 +5,7 @@ import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { Line } from '../objects/Line.js'
-import { _Math } from '../math/Math.js'
+import { MathUtils } from '../math/MathUtils.js'
 
 /**
  * @author Mugen87 / http://github.com/Mugen87
@@ -41,8 +41,8 @@ PositionalAudioHelper.prototype.update = function () {
 	var divisionsInnerAngle = this.divisionsInnerAngle;
 	var divisionsOuterAngle = this.divisionsOuterAngle;
 
-	var coneInnerAngle = _Math.degToRad( audio.panner.coneInnerAngle );
-	var coneOuterAngle = _Math.degToRad( audio.panner.coneOuterAngle );
+	var coneInnerAngle = MathUtils.degToRad( audio.panner.coneInnerAngle );
+	var coneOuterAngle = MathUtils.degToRad( audio.panner.coneOuterAngle );
 
 	var halfConeInnerAngle = coneInnerAngle / 2;
 	var halfConeOuterAngle = coneOuterAngle / 2;

@@ -7,11 +7,11 @@ import { Node } from '../core/Node';
 
 export class MathNode extends TempNode {
 
-	constructor( a: Node, bOrMethod: Node | string, cOrMethod?: Node | string, method?: string );
+	constructor( a: Node, bOrMethod: Node | string, cOrMethod?: Node | string, method?: string );
 
 	a: Node;
 	b: Node | string | undefined;
-	c: Node | string | undefined;
+	c: Node | string | undefined;
 	method: string;
 	nodeType: string;
 

@@ -14,7 +14,7 @@ export class OrthographicCamera extends Camera {
 
 	type: 'OrthographicCamera';
 
-	isOrthographicCamera: true;
+	readonly isOrthographicCamera: true;
 
 	zoom: number;
 	view: null | {

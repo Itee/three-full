@@ -24,10 +24,10 @@ function WebGLBackground( renderer, state, objects, premultipliedAlpha ) {
 
 	var planeMesh;
 	var boxMesh;
-	// Store the current background texture and its `version`
-	// so we can recompile the material accordingly.
+
 	var currentBackground = null;
 	var currentBackgroundVersion = 0;
+	var currentTonemapping = null;
 
 	function render( renderList, scene, camera, forceClear ) {
 
@@ -48,15 +48,11 @@ function WebGLBackground( renderer, state, objects, premultipliedAlpha ) {
 		if ( background === null ) {
 
 			setClear( clearColor, clearAlpha );
-			currentBackground = null;
-			currentBackgroundVersion = 0;
 
 		} else if ( background && background.isColor ) {
 
 			setClear( background, 1 );
 			forceClear = true;
-			currentBackground = null;
-			currentBackgroundVersion = 0;
 
 		}
 
@@ -66,7 +62,7 @@ function WebGLBackground( renderer, state, objects, premultipliedAlpha ) {
 
 		}
 
-		if ( background && ( background.isCubeTexture || background.isWebGLRenderTargetCube || background.mapping === CubeUVReflectionMapping ) ) {
+		if ( background && ( background.isCubeTexture || background.isWebGLCubeRenderTarget || background.mapping === CubeUVReflectionMapping ) ) {
 
 			if ( boxMesh === undefined ) {
 
@@ -108,18 +104,20 @@ function WebGLBackground( renderer, state, objects, premultipliedAlpha ) {
 
 			}
 
-			var texture = background.isWebGLRenderTargetCube ? background.texture : background;
+			var texture = background.isWebGLCubeRenderTarget ? background.texture : background;
 
 			boxMesh.material.uniforms.envMap.value = texture;
 			boxMesh.material.uniforms.flipEnvMap.value = texture.isCubeTexture ? - 1 : 1;
 
 			if ( currentBackground !== background ||
-			     currentBackgroundVersion !== texture.version ) {
+				currentBackgroundVersion !== texture.version ||
+				currentTonemapping !== renderer.toneMapping ) {
 
 				boxMesh.material.needsUpdate = true;
 
 				currentBackground = background;
 				currentBackgroundVersion = texture.version;
+				currentTonemapping = renderer.toneMapping;
 
 			}
 
@@ -172,12 +170,14 @@ function WebGLBackground( renderer, state, objects, premultipliedAlpha ) {
 			planeMesh.material.uniforms.uvTransform.value.copy( background.matrix );
 
 			if ( currentBackground !== background ||
-				   currentBackgroundVersion !== background.version ) {
+				currentBackgroundVersion !== background.version ||
+				currentTonemapping !== renderer.toneMapping ) {
 
 				planeMesh.material.needsUpdate = true;
 
 				currentBackground = background;
 				currentBackgroundVersion = background.version;
+				currentTonemapping = renderer.toneMapping;
 
 			}
 			// push to the pre-sorted opaque render list

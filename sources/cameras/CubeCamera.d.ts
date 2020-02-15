@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { WebGLRenderTargetCube } from './../renderers/WebGLRenderTargetCube';
+import { WebGLCubeRenderTarget } from './../renderers/WebGLCubeRenderTarget';
 import { WebGLRenderTargetOptions } from './../renderers/WebGLRenderTarget';
 import { Scene } from './../scenes/Scene';
 import { WebGLRenderer } from './../renderers/WebGLRenderer';
@@ -13,7 +13,7 @@ export class CubeCamera extends Object3D {
 
 	type: 'CubeCamera';
 
-	renderTarget: WebGLRenderTargetCube;
+	renderTarget: WebGLCubeRenderTarget;
 
 	update( renderer: WebGLRenderer, scene: Scene ): void;
 

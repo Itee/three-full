@@ -41,7 +41,7 @@ export class Vector2 implements Vector {
 	y: number;
 	width: number;
 	height: number;
-	isVector2: true;
+	readonly isVector2: true;
 	set( x: number, y: number ): this;
 	setScalar( scalar: number ): this;
 	setX( x: number ): this;

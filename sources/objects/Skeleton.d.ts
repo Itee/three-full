@@ -9,17 +9,15 @@ export class Skeleton {
 
 	constructor( bones: Bone[], boneInverses?: Matrix4[] );
 	useVertexTexture: boolean;
-	identityMatrix: Matrix4;
 	bones: Bone[];
-	boneTextureWidth: number;
-	boneTextureHeight: number;
 	boneMatrices: Float32Array;
-	boneTexture: DataTexture;
+	boneTexture: undefined | DataTexture;
 	boneInverses: Matrix4[];
 
 	calculateInverses( bone: Bone ): void;
 	pose(): void;
 	update(): void;
-	clone(): this;
+	clone(): Skeleton;
+	getBoneByName( name: string ): undefined | Bone;
 
 }

@@ -53,7 +53,7 @@ export class Object3D extends EventDispatcher {
 	userData: { [key: string]: any };
 	customDepthMaterial: Material;
 	customDistanceMaterial: Material;
-	isObject3D: true;
+	readonly isObject3D: true;
 	onBeforeRender: (
 		renderer: WebGLRenderer,
 		scene: Scene,
@@ -73,7 +73,7 @@ export class Object3D extends EventDispatcher {
 
 	static DefaultUp: Vector3;
 	static DefaultMatrixAutoUpdate: boolean;
-	applyMatrix( matrix: Matrix4 ): void;
+	applyMatrix4( matrix: Matrix4 ): void;
 
 	applyQuaternion( quaternion: Quaternion ): this;
 	setRotationFromAxisAngle( axis: Vector3, angle: number ): void;

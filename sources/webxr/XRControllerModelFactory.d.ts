@@ -2,24 +2,25 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import {
-	Texture,
-	WebGLRenderer
-} from '../../../../src/Three';
+	Group,
+	Object3D,
+	Texture
+} from '../../../src/Three';
 
-import { Node } from './Node';
+import { GLTFLoader } from '../loaders/GLTFLoader';
 
-export class NodeFrame {
+export class XRControllerModel extends Object3D {
+	constructor( );
 
-	constructor( time: number );
-	time: number;
-	id: number;
-	delta: number | undefined;
-	renderer: WebGLRenderer | undefined;
-	renderTexture: Texture | undefined;
+	motionController: any;
 
-	update( delta: number ): this;
-	setRenderer( renderer: WebGLRenderer ): this;
-	setRenderTexture( renderTexture: Texture ): this;
-	updateNode( node: Node ): this;
+	setEnvironmentMap( envMap: Texture ): XRControllerModel;
+}
 
+export class XRControllerModelFactory {
+	constructor( gltfLoader?: GLTFLoader );
+	gltfLoader: GLTFLoader | null;
+	path: string;
+
+	createControllerModel( controller: Group ): XRControllerModel;
 }

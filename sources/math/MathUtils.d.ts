@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export namespace _Math {
+import { Quaternion } from './Quaternion';
+export namespace MathUtils {
 	export const DEG2RAD: number;
 	export const RAD2DEG: number;
 
@@ -37,4 +37,6 @@ export namespace _Math {
 	export function floorPowerOfTwo( value: number ): number;
 
 	export function ceilPowerOfTwo( value: number ): number;
+
+	export function setQuaternionFromProperEuler( q: Quaternion, a: number, b: number, c: number, order: string ): void;
 }

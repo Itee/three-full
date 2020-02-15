@@ -33,7 +33,7 @@ export class BufferGeometry extends EventDispatcher {
 	boundingSphere: Sphere;
 	drawRange: { start: number; count: number };
 	userData: {[key: string]: any};
-	isBufferGeometry: boolean;
+	readonly isBufferGeometry: true;
 
 	getIndex(): BufferAttribute | null;
 	setIndex( index: BufferAttribute | number[] | null ): void;
@@ -46,7 +46,7 @@ export class BufferGeometry extends EventDispatcher {
 	clearGroups(): void;
 
 	setDrawRange( start: number, count: number ): void;
-	applyMatrix( matrix: Matrix4 ): BufferGeometry;
+	applyMatrix4( matrix: Matrix4 ): BufferGeometry;
 
 	rotateX( angle: number ): BufferGeometry;
 	rotateY( angle: number ): BufferGeometry;
