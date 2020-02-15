@@ -3,7 +3,7 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 26.0.0 is now available under Three r0.111.0 !!!**
+**The version 27.0.0 is now available under Three r0.112.1 !!!**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -118,25 +118,13 @@ This is the list of unsupported part of example, which cannot/won't be converted
     * **Materials.js**
     * **Nodes.js**
     
-* **Workers** 
-    * **RaytracingWorker.js**
-    * **OffscreenCanvas.js**
-    * **ctm folder**
-    
-* **Folders**
-    * **draco** //*draco_decoder use Eval !*
-    * **sea3d** //*Duplicate export 'SEA3D', namespace not managed yet*
-    * **crossfade** //*Scene has already been declared*
-    * **offscreen** //*Code that should be in HTML file example*
-    * **ldraw**     //*Code that should run under nodejs*
-    * **jsm**     //*Ducplication modules code*
-        
+* **Others**   
+    * **examples\js** //*Good job was done in JSM folder, nice*
+
 * **Specific Files**   
-    * **Cloth.js** //*Use global variable from html example file !*
-    * **Volume.js** //*Use Eval !*
-    * **NRRDLoader.js** //*Import Volume.js*
-    * **VRMLLoader.js** //*Unprocessable chevrotain AMD module style*
-    * **XLoader.js** //*Unprocessable AMD module style*
+    * **examples\js\loaders\VRMLLoader**
+    * **examples\js\loaders\NRRDLoader**
+    * **examples\js\renderers\RaytracingWorker**
 
 #### <a id="miss"></a>Missings Imports ####
 
@@ -150,70 +138,40 @@ This is the list of unsupported part of example, which cannot/won't be converted
 * **TimelinerController** Require Timeliner available at three/examples/js/libs/timeliner_gui.min.js
 
 #### <a id="redirectedFiles"></a>Redirected Files ####
+**All JSM files are mapped to their counter-part under sources folders except**
 
-* AnimationClipCreator ---> 'animation/AnimationClipCreator.js'
-* ArcCurve ---> 'curves/ArcCurve.js'
-* BufferGeometryUtils ---> 'utils/BufferGeometryUtils.js'
-* Car ---> 'objects/Car.js'
-* CatmullRomCurve3 ---> 'curves/CatmullRomCurve3.js'
-* ConvexObjectBreaker ---> 'modifiers/ConvexObjectBreaker.js'
-* CubicBezierCurve ---> 'curves/CubicBezierCurve.js'
-* CubicBezierCurve3 ---> 'curves/CubicBezierCurve3.js'
-* Curve ---> 'curves/Curve.js'
-* CurveExtras ---> 'curves/CurveExtras.js'
-* CurvePath ---> 'core/CurvePath.js'
-* Detector ---> 'helpers/Detector.js'
-* Earcut ---> 'misc/Earcut.js'
-* EllipseCurve ---> 'curves/EllipseCurve.js'
-* Font ---> 'core/Font.js'
-* GPUComputationRenderer ---> 'renderers/GPUComputationRenderer.js'
-* GPUParticleSystem ---> 'objects/GPUParticleSystem.js'
-* Gyroscope ---> 'objects/Gyroscope.js'
-* ImageUtils ---> 'utils/ImageUtils.js'
-* ImmediateRenderObject ---> 'objects/ImmediateRenderObject.js'
-* ImprovedNoise ---> 'misc/ImprovedNoise.js'
-* Interpolation ---> 'core/Interpolation.js'
-* LineCurve ---> 'curves/LineCurve.js'
-* LineCurve3 ---> 'curves/LineCurve3.js'
-* MarchingCubes ---> 'objects/MarchingCubes.js'
-* MD2Character ---> 'objects/MD2Character.js'
-* MD2CharacterComplex ---> 'objects/MD2CharacterComplex.js'
-* MorphAnimMesh ---> 'objects/MorphAnimMesh.js'
-* MorphBlendMesh ---> 'objects/MorphBlendMesh.js'
-* ParametricGeometries ---> 'geometries/ParametricGeometries.js'
-* Ocean ---> 'objects/Ocean.js'
-* Octree ---> 'utils/Octree.js'
-* Path ---> 'core/Path.js'
-* PRNG ---> 'utils/PRNG.js'
-* QuadraticBezierCurve ---> 'curves/QuadraticBezierCurve.js'
-* QuadraticBezierCurve3 ---> 'curves/QuadraticBezierCurve3.js'
-* QuickHull ---> 'utils/QuickHull.js'
-* RollerCoaster ---> 'objects/RollerCoaster.js'
-* ShaderGodRays ---> 'shaders/ShaderGodRays.js'
-* ShaderSkin ---> 'shaders/ShaderSkin.js'
-* ShaderTerrain ---> 'shaders/ShaderTerrain.js'
-* ShaderToon ---> 'shaders/ShaderToon.js'
-* ShaderTranslucent ---> 'shaders/ShaderTranslucent.js'
-* Shape ---> 'core/Shape.js'
-* ShapePath ---> 'core/ShapePath.js'
-* ShapeUtils ---> 'utils/ShapeUtils.js'
-* SimplexNoise ---> 'misc/SimplexNoise.js'
-* SplineCurve ---> 'curves/SplineCurve.js'
-* TimelinerController ---> 'animation/TimelinerController.js'
-* TypedArrayUtils ---> 'utils/TypedArrayUtils.js'
-* UCSCharacter ---> 'objects/UCSCharacter.js'
-* VolumeSlice ---> 'audio/VolumeSlice.js'
-* WebGL ---> 'helpers/WebGL.js'
+| Filename               | New Location                          |
+|------------------------|---------------------------------------|
+| ConvexObjectBreaker    | 'modifiers/ConvexObjectBreaker.js'    |
+| Curve                  | 'curves/Curve.js'                     |
+| Earcut                 | 'misc/Earcut.js'                      |
+| GPUComputationRenderer | 'renderers/GPUComputationRenderer.js' |
+| Gyroscope              | 'objects/Gyroscope.js'                |
+| ImageUtils             | 'utils/ImageUtils.js'                 |
+| MD2Character           | 'objects/MD2Character.js'             |
+| MD2CharacterComplex    | 'objects/MD2CharacterComplex.js'      |
+| MorphAnimMesh          | 'objects/MorphAnimMesh.js'            |
+| MorphBlendMesh         | 'objects/MorphBlendMesh.js'           |
+| Ocean                  | 'objects/Ocean.js'                    |
+| PMREMGenerator         | 'utils/PMREMGenerator.js'             |
+| RollerCoaster          | 'objects/RollerCoaster.js'            |
+| ShapeUtils             | 'utils/ShapeUtils.js'                 |
+| VolumeSlice            | 'audio/VolumeSlice.js'                |
+| WebGL                  | 'helpers/WebGL.js'                    |
 
-All others folders under example file tree will be mapped to their counter-part under sources folders
-
-#### <a id="bug"></a>Bugs ####
-- (Warning - Severity 0 [False positive]) Missing export statement for Math
-- (Warning - Severity 0 [False positive]) Missing export statement for shaders from ShaderChunk
 
 
 #### Change log ####
 
+
+##### 27.0.0:
+
+* Support of Three r112.1
+* Better redirection of TS files
+* Add PMREMGenerator
+* Add ShaderChunk light toon
+* Add ShaderLib mesh toon
+* Move WebXRManager into webxr folder
 
 ##### 26.0.0:
 
