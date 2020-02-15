@@ -32,6 +32,7 @@ module.exports = {
         'Nodes.js',
 
         '\\examples\\jsm\\loaders\\VRMLLoader',
+        '\\examples\\jsm\\controls\\experimental',
 
         // Duplicated files
         '\\examples\\js\\animation',
@@ -415,8 +416,19 @@ module.exports = {
         SimplifyModifier:       {
             imports: [ '!Triangle' ]
         },
+        StandardNode:       {
+            replacements: [
+                ['\'float geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );\',','\'float geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );\''] // Fix eslint extra colon
+            ]
+        },
+        SVGLoader:      {
+            imports: [ '!Color' ]
+        },
         TransformControls:      {
             imports: [ '!CircleGeometry' ]
+        },
+        TypedArrayUtils:      {
+            imports: [ '!Node' ]
         },
         UniformsUtils:          {
             exportsOverride: [
@@ -461,6 +473,8 @@ module.exports = {
                 'ObjectSpaceNormalMap',
                 'TangentSpaceNormalMap',
                 'NoToneMapping',
+                'ShaderLib',
+                'UniformsUtils',
                 'WebGLProgram'
             ]
         }

@@ -9,7 +9,7 @@ const terser = require( 'rollup-plugin-terser' ).terser
 module.exports = function rollupConfigure ( format, onProduction, wantSourceMap ) {
     const _format        = format || 'umd'
     const _onProduction  = onProduction || false
-    const _wantSourceMap = wantSourceMap || false
+    const _wantSourceMap = !_onProduction
 
     const fileName       = 'Three'
     const fileExtension  = ( _onProduction ) ? '.min.js' : '.js'
@@ -17,6 +17,12 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
     const outputFilePath = path.join( __dirname, '..', 'builds/' + fileName + '.' + _format + fileExtension )
 
     let banner = '// Made by Itee (https://github.com/Itee) with ES6 Convertor script\n\n'
+
+    // Add deprecation message
+    if( !_onProduction ) {
+        banner += `console.warn('[ThreeFull]: I am glad to annonce since Three release his examples files under JSM folder, this repository should be avoided. The first goal of this repository was to provided an alternative solution during this migration. From now, please consider to use Three.module.js instead even if i maintain this repository for my personal usage. Thanks for all ! Itee...')`
+    }
+
     if ( _format === 'cjs' ) {
         banner += '' +
             'var DEBUG = (process && process.env && process.env.Debug);\n' +
@@ -109,10 +115,10 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
             // advanced options
             onwarn: function onWarn ( { loc, frame, message } ) {
                 if ( loc ) {
-                    // Ignore eval error from LoaderSupport
-                    if ( loc.file.includes( 'LoaderSupport.js' ) ) {
-                        return
-                    }
+                    // Ignore eval error from LoaderSupport, Volume
+                    if ( loc.file.includes( 'LoaderSupport.js' ) ) { return }
+                    if ( loc.file.includes( 'Volume.js' ) ) { return }
+
                     console.warn( `${loc.file} (${loc.line}:${loc.column}) ${message}` )
                     if ( frame ) {
                         console.warn( frame )
