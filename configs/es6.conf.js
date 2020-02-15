@@ -100,7 +100,6 @@ module.exports = {
                 'DecoratedTorusKnot5a',
                 'DecoratedTorusKnot5c'
             ]
-            //            outputOverride:  'curves/CurveExtras.js'
         },
         CurvePath:              {
             replacements: [
@@ -138,7 +137,6 @@ module.exports = {
                     'function CurvePath() {'
                 ]
             ]
-            //            outputOverride: 'core/CurvePath.js'
         },
         DRACOExporter:          {
             imports: [ '!Mesh' ]
@@ -162,7 +160,6 @@ module.exports = {
             ]
         },
         GPUComputationRenderer: {
-            //            exportsOverride: [ 'GPUComputationRenderer' ],
             outputOverride: 'renderers/GPUComputationRenderer.js'
         },
         Gyroscope:              {
