@@ -32,6 +32,7 @@ module.exports = {
         'Nodes.js',
 
         '\\examples\\jsm\\loaders\\VRMLLoader',
+        '\\examples\\jsm\\controls\\experimental',
 
         // Duplicated files
         '\\examples\\js\\animation',
