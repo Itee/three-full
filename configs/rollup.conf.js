@@ -9,7 +9,7 @@ const terser = require( 'rollup-plugin-terser' ).terser
 module.exports = function rollupConfigure ( format, onProduction, wantSourceMap ) {
     const _format        = format || 'umd'
     const _onProduction  = onProduction || false
-    const _wantSourceMap = wantSourceMap || false
+    const _wantSourceMap = !_onProduction
 
     const fileName       = 'Three'
     const fileExtension  = ( _onProduction ) ? '.min.js' : '.js'
