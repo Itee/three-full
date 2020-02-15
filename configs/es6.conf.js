@@ -31,7 +31,6 @@ module.exports = {
         'Materials.js',
         'Nodes.js',
 
-        
         '\\examples\\jsm\\loaders\\VRMLLoader',
 
         // Duplicated files
@@ -67,58 +66,25 @@ module.exports = {
     ],
     output:    path.join( __dirname, '..', 'sources' ),
     edgeCases: {
-        AnimationClipCreator:        {
-            outputOverride: 'animation/AnimationClipCreator.js'
-        },
-        ArcCurve:                    {
-            outputOverride: 'curves/ArcCurve.js'
-        },
-        BasisTextureLoader:          {
-            exportsOverride: [ 'BasisTextureLoader' ]
-        },
-        BokehShader2:                {
-            importsOverride: [ 'Vector2' ],
+        //        BasisTextureLoader:          {
+        //            exportsOverride: [ 'BasisTextureLoader' ]
+        //        },
+        BokehShader2:           {
+            imports:         [ '!BokehShader' ],
             replacements:    [
-                [ 'BokehShader', 'BokehShader2' ],
-                [ 'BokehShader2 = {', 'var BokehShader2 = {' ]
+                [ 'BokehShader', 'BokehShader2' ]
             ],
             exportsOverride: [ 'BokehShader2', 'BokehDepthShader' ]
         },
-        BufferGeometryUtils:         {
-            outputOverride: 'utils/BufferGeometryUtils.js'
-        },
-        Car:                         {
-            imports:        [
-                '_Math'
-            ],
-            outputOverride: 'objects/Car.js'
-        },
-        CatmullRomCurve3:            {
-            outputOverride: 'curves/CatmullRomCurve3.js'
-        },
-        ColladaLoader:               {
-            imports: [
-                '_Math'
-            ]
-        },
-        ColorConverter:              {
-            imports: [ '_Math' ]
-        },
-        ConvexObjectBreaker:         {
+        ConvexObjectBreaker:    {
             outputOverride: 'modifiers/ConvexObjectBreaker.js'
         },
-        CubicBezierCurve:            {
-            outputOverride: 'curves/CubicBezierCurve.js'
-        },
-        CubicBezierCurve3:           {
-            outputOverride: 'curves/CubicBezierCurve3.js'
-        },
-        Curve:                       {
+        Curve:                  {
             outputOverride: 'curves/Curve.js'
         },
-        CurveExtras:                 {
+        CurveExtras:            {
             replacements:    [
-                [ 'Curves = ( function () {', '' ],
+                [ 'var Curves = ( function () {', '' ],
                 [ /return {([\n].*)*/g, '\n' ]
             ],
             exportsOverride: [
@@ -136,38 +102,11 @@ module.exports = {
                 'DecoratedTorusKnot4b',
                 'DecoratedTorusKnot5a',
                 'DecoratedTorusKnot5c'
-            ],
-            outputOverride:  'curves/CurveExtras.js'
+            ]
+            //            outputOverride:  'curves/CurveExtras.js'
         },
-        CurvePath:                   {
-            // Equivalent to ( import * as Curves from 'intermediary exporter file Curves' )
-            imports:        [
-                'ArcCurve',
-                'CatmullRomCurve3',
-                'CubicBezierCurve',
-                'CubicBezierCurve3',
-                'EllipseCurve',
-                'LineCurve',
-                'LineCurve3',
-                'QuadraticBezierCurve',
-                'QuadraticBezierCurve3',
-                'SplineCurve',
-                'GrannyKnot',
-                'HeartCurve',
-                'VivianiCurve',
-                'KnotCurve',
-                'HelixCurve',
-                'TrefoilKnot',
-                'TorusKnot',
-                'CinquefoilKnot',
-                'TrefoilPolynomialKnot',
-                'FigureEightPolynomialKnot',
-                'DecoratedTorusKnot4a',
-                'DecoratedTorusKnot4b',
-                'DecoratedTorusKnot5a',
-                'DecoratedTorusKnot5c'
-            ],
-            replacements:   [
+        CurvePath:              {
+            replacements: [
                 [
                     'function CurvePath() {',
                     'var Curves = {\n' +
@@ -201,181 +140,62 @@ module.exports = {
                     '}\n' +
                     'function CurvePath() {'
                 ]
-            ],
-            outputOverride: 'core/CurvePath.js'
-        },
-        DeviceOrientationControls:   {
-            imports: [
-                '_Math'
             ]
+            //            outputOverride: 'core/CurvePath.js'
         },
-        DRACOExporter:               {
-            importsOverride: [ 'BufferGeometry' ]
-        },
-        DRACOLoader:                 {
+        DRACOExporter:          {
             imports: [ '!Mesh' ]
         },
-        Earcut:                      {
-            importsOverride: [],
-            outputOverride:  'misc/Earcut.js'
+        DRACOLoader:            {
+            imports: [ '!Mesh' ]
         },
-        EllipseCurve:                {
-            outputOverride: 'curves/EllipseCurve.js'
+        Earcut:                 {
+            imports:        [ '!Node' ],
+            outputOverride: 'misc/Earcut.js'
         },
-        FBXLoader:                   {
+        FBXLoader:              {
             imports: [
-                '_Math',
+                '!NormalNode',
+                '!UVNode',
+                '!Node',
+                '!ColorNode',
                 '!Geometry',
                 '!Material',
                 '!Points'
             ]
         },
-        Fire:                        {
-            imports: [
-                '_Math'
-            ]
+        //        FunctionNode_Implementation: {
+        //            importsOverride: [
+        //                [ 'FunctionNode', 'from', './FunctionNode_Declaration' ],
+        //                'NodeLib'
+        //            ]
+        //        },
+        GPUComputationRenderer: {
+            //            exportsOverride: [ 'GPUComputationRenderer' ],
+            outputOverride: 'renderers/GPUComputationRenderer.js'
         },
-        FirstPersonControls:         {
-            imports: [
-                '_Math'
-            ]
-        },
-        Font:                        {
-            outputOverride: 'core/Font.js'
-        },
-        FunctionNode_Implementation: {
-            importsOverride: [
-                [ 'FunctionNode', 'from', './FunctionNode_Declaration' ],
-                'NodeLib'
-            ]
-        },
-        GlitchPass:                  {
-            imports: [
-                '_Math'
-            ]
-        },
-        GLNode:                      {
-            imports:      [ '_Math' ],
-            replacements: [
-                [ 'this.uuid = Math.generateUUID();', 'this.uuid = _Math.generateUUID();' ]
-            ]
-        },
-        GLTFExporter:                {
-            imports: [
-                '_Math'
-            ]
-        },
-        GLTFLoader:                  {
-            imports:         [
-                '_Math'
-            ],
-            exportsOverride: [
-                'GLTFLoader'
-            ]
-        },
-        GPUComputationRenderer:      {
-            exportsOverride: [ 'GPUComputationRenderer' ],
-            outputOverride:  'renderers/GPUComputationRenderer.js'
-        },
-        GPUParticleSystem:           {
-            imports:        [ '_Math' ],
-            outputOverride: 'objects/GPUParticleSystem.js'
-        },
-        Gyroscope:                   {
+        Gyroscope:              {
             outputOverride: 'objects/Gyroscope.js'
         },
-        hilbert2D:                   {
-            exportsOverride: [ 'hilbert2D' ]
-        },
-        hilbert3D:                   {
-            exportsOverride: [ 'hilbert3D' ]
-        },
-        ImageUtils:                  {
+        ImageUtils:             {
             outputOverride: 'utils/ImageUtils.js'
         },
-        ImmediateRenderObject:       {
-            outputOverride: 'objects/ImmediateRenderObject.js'
-        },
-        ImprovedNoise:               {
-            exportsOverride: [ 'ImprovedNoise' ],
-            outputOverride:  'misc/ImprovedNoise.js'
-        },
-        Interpolations:              {
-            outputOverride: 'core/Interpolations.js'
-        },
-        LDrawLoader:                 {
-            replacements: [
-                [ 'console.warn( \'LDrawLoader: Error parsing material\' + lineParser.getLineNumberString() );', '' ], // Bug fix !!!
-                [ 'LineParser.getLineNumberString()', 'lineParser.getLineNumberString()' ] 							 // Bug fix !!!
-            ]
-        },
-        LegacyGLTFLoader:            {
-            imports:         [
-                '_Math'
-            ],
-            exportsOverride: [ 'LegacyGLTFLoader' ]
-        },
-        Lensflare:                   {
+        Lensflare:              {
             imports: [
                 '!Geometry'
             ]
         },
-        LightningStorm:              {
-            imports: [
-                '_Math'
-            ]
-        },
-        LightningStrike:             {
-            imports: [
-                '_Math'
-            ]
-        },
-        LineCurve:                   {
-            outputOverride: 'curves/LineCurve.js'
-        },
-        LineCurve3:                  {
-            outputOverride: 'curves/LineCurve3.js'
-        },
-        LoaderSupport:               {
-            replacements:    [
-                [ 'if ( var LoaderSupport === undefined ) { var LoaderSupport = {} }', '' ],
-                [ 'LoaderSupport.Validator = {', '\nvar LoaderSupport = {}\nLoaderSupport.Validator = {' ]
-            ],
-            exportsOverride: [ 'LoaderSupport' ]
-        },
-        Lut:                         {
-            exportsOverride: [ 'Lut', 'ColorMapKeywords' ]
-        },
-        MarchingCubes:               {
-            replacements:   [
-                [ 'edgeTable = new Int32Array', 'var edgeTable = new Int32Array' ],
-                [ 'triTable = new Int32Array', 'var triTable = new Int32Array' ]
-            ],
-            outputOverride: 'objects/MarchingCubes.js'
-        },
-        MaterialLoader:              {
-            // Equivalent to ( import * as Materials from 'intermediary exporter file Materials' )
-            imports:      [
-                'LineBasicMaterial',
-                'LineDashedMaterial',
-                'MeshBasicMaterial',
-                'MeshDepthMaterial',
-                'MeshDistanceMaterial',
-                'MeshLambertMaterial',
-                'MeshNormalMaterial',
-                'MeshPhongMaterial',
-                'MeshPhysicalMaterial',
-                'MeshStandardMaterial',
-                'MeshToonMaterial',
-                'PointsMaterial',
-                'RawShaderMaterial',
-                'ShaderMaterial',
-                'ShadowMaterial',
-                'SpriteMaterial'
-            ],
+        //        LoaderSupport:               {
+        //            replacements:    [
+        //                [ 'if ( var LoaderSupport === undefined ) { var LoaderSupport = {} }', '' ],
+        //                [ 'LoaderSupport.Validator = {', '\nvar LoaderSupport = {}\nLoaderSupport.Validator = {' ]
+        //            ],
+        //            exportsOverride: [ 'LoaderSupport' ]
+        //        },
+        MaterialLoader:         {
             replacements: [
                 [
-                    'var material = new Materials[ json.type ]();',
+                    'function MaterialLoader( manager ) {',
                     'var Materials = {\n' +
                     '            LineBasicMaterial: LineBasicMaterial,\n' +
                     '            LineDashedMaterial: LineDashedMaterial,\n' +
@@ -394,109 +214,106 @@ module.exports = {
                     '            ShadowMaterial: ShadowMaterial,\n' +
                     '            SpriteMaterial: SpriteMaterial\n' +
                     '\t\t}\n' +
-                    '\t\tvar material = new Materials[ json.type ]();'
+                    'function MaterialLoader( manager ) {'
                 ]
             ]
         },
-        MD2Character:                {
+        MD2Character:           {
             outputOverride: 'objects/MD2Character.js'
         },
-        MD2CharacterComplex:         {
-            imports:        [
-                '_Math'
-            ],
+        MD2CharacterComplex:    {
             outputOverride: 'objects/MD2CharacterComplex.js'
         },
-        MorphAnimMesh:               {
+        MorphAnimMesh:          {
             outputOverride: 'objects/MorphAnimMesh.js'
         },
-        MorphBlendMesh:              {
-            imports:        [
-                '_Math'
-            ],
+        MorphBlendMesh:         {
             outputOverride: 'objects/MorphBlendMesh.js'
         },
-        Node:                        {
-            imports: [
-                '_Math'
+        NodeMaterialLoader:     {
+            replacements: [
+                [
+                    'var NodeMaterialLoader = function ( manager, library ) {',
+                    'var Nodes = {\n' +
+                    '	Node:Node,\n' +
+                    '	TempNode:TempNode,\n' +
+                    '	InputNode:InputNode,\n' +
+                    '	ConstNode:ConstNode,\n' +
+                    '	VarNode:VarNode,\n' +
+                    '	StructNode:StructNode,\n' +
+                    '	AttributeNode:AttributeNode,\n' +
+                    '	FunctionNode:FunctionNode,\n' +
+                    '	ExpressionNode:ExpressionNode,\n' +
+                    '	FunctionCallNode:FunctionCallNode,\n' +
+                    '	NodeLib:NodeLib,\n' +
+                    '	NodeUtils:NodeUtils,\n' +
+                    '	NodeFrame:NodeFrame,\n' +
+                    '	NodeUniform:NodeUniform,\n' +
+                    '	NodeBuilder:NodeBuilder,\n' +
+                    '	BoolNode:BoolNode,\n' +
+                    '	IntNode:IntNode,\n' +
+                    '	FloatNode:FloatNode,\n' +
+                    '	Vector2Node:Vector2Node,\n' +
+                    '	Vector3Node:Vector3Node,\n' +
+                    '	Vector4Node:Vector4Node,\n' +
+                    '	ColorNode:ColorNode,\n' +
+                    '	Matrix3Node:Matrix3Node,\n' +
+                    '	Matrix4Node:Matrix4Node,\n' +
+                    '	TextureNode:TextureNode,\n' +
+                    '	CubeTextureNode:CubeTextureNode,\n' +
+                    '	ScreenNode:ScreenNode,\n' +
+                    '	ReflectorNode:ReflectorNode,\n' +
+                    '	PropertyNode:PropertyNode,\n' +
+                    '	RTTNode:RTTNode,\n' +
+                    '	UVNode:UVNode,\n' +
+                    '	ColorsNode:ColorsNode,\n' +
+                    '	PositionNode:PositionNode,\n' +
+                    '	NormalNode:NormalNode,\n' +
+                    '	CameraNode:CameraNode,\n' +
+                    '	LightNode:LightNode,\n' +
+                    '	ReflectNode:ReflectNode,\n' +
+                    '	ScreenUVNode:ScreenUVNode,\n' +
+                    '	ResolutionNode:ResolutionNode,\n' +
+                    '	MathNode:MathNode,\n' +
+                    '	OperatorNode:OperatorNode,\n' +
+                    '	CondNode:CondNode,\n' +
+                    '	NoiseNode:NoiseNode,\n' +
+                    '	CheckerNode:CheckerNode,\n' +
+                    '	TextureCubeUVNode:TextureCubeUVNode,\n' +
+                    '	TextureCubeNode:TextureCubeNode,\n' +
+                    '	NormalMapNode:NormalMapNode,\n' +
+                    '	BumpMapNode:BumpMapNode,\n' +
+                    '	BypassNode:BypassNode,\n' +
+                    '	JoinNode:JoinNode,\n' +
+                    '	SwitchNode:SwitchNode,\n' +
+                    '	TimerNode:TimerNode,\n' +
+                    '	VelocityNode:VelocityNode,\n' +
+                    '	UVTransformNode:UVTransformNode,\n' +
+                    '	MaxMIPLevelNode:MaxMIPLevelNode,\n' +
+                    '	SpecularMIPLevelNode:SpecularMIPLevelNode,\n' +
+                    '	ColorSpaceNode:ColorSpaceNode,\n' +
+                    '	SubSlotNode:SubSlotNode,\n' +
+                    '	BlurNode:BlurNode,\n' +
+                    '	ColorAdjustmentNode:ColorAdjustmentNode,\n' +
+                    '	LuminanceNode:LuminanceNode,\n' +
+                    '	RawNode:RawNode,\n' +
+                    '	SpriteNode:SpriteNode,\n' +
+                    '	PhongNode:PhongNode,\n' +
+                    '	StandardNode:StandardNode,\n' +
+                    '	MeshStandardNode:MeshStandardNode,\n' +
+                    '	NodeMaterial:NodeMaterial,\n' +
+                    '	SpriteNodeMaterial:SpriteNodeMaterial,\n' +
+                    '	PhongNodeMaterial:PhongNodeMaterial,\n' +
+                    '	StandardNodeMaterial:StandardNodeMaterial,\n' +
+                    '	MeshStandardNodeMaterial:MeshStandardNodeMaterial,\n' +
+                    '	NodePostProcessing:NodePostProcessing\n' +
+                    '}\n' +
+                    'var NodeMaterialLoader = function ( manager, library ) {'
+                ]
             ]
+
         },
-        NodeMaterialLoader:          {
-            exportsOverride: [ 'NodeMaterialLoader', 'NodeMaterialLoaderUtils' ]
-        },
-        NodePass:                    {
-            imports: [
-                '_Math'
-            ]
-        },
-        ObjectLoader:                {
-            imports:      [
-                // Equivalent to ( import * as Geometries from 'intermediary exporter file Geometries' )
-                'WireframeGeometry',
-                'TetrahedronGeometry',
-                'TetrahedronBufferGeometry',
-                'OctahedronGeometry',
-                'OctahedronBufferGeometry',
-                'IcosahedronGeometry',
-                'IcosahedronBufferGeometry',
-                'DodecahedronGeometry',
-                'DodecahedronBufferGeometry',
-                'PolyhedronGeometry',
-                'PolyhedronBufferGeometry',
-                'TubeGeometry',
-                'TubeBufferGeometry',
-                'TorusKnotGeometry',
-                'TorusGeometry',
-                'TorusBufferGeometry',
-                'TextGeometry',
-                'TextBufferGeometry',
-                'SphereGeometry',
-                'SphereBufferGeometry',
-                'RingGeometry',
-                'RingBufferGeometry',
-                'PlaneGeometry',
-                'PlaneBufferGeometry',
-                'LatheGeometry',
-                'LatheBufferGeometry',
-                'ShapeGeometry',
-                'ShapeBufferGeometry',
-                'ExtrudeGeometry',
-                'ExtrudeBufferGeometry',
-                'EdgesGeometry',
-                'ConeGeometry',
-                'ConeBufferGeometry',
-                'CylinderGeometry',
-                'CylinderBufferGeometry',
-                'CircleGeometry',
-                'CircleBufferGeometry',
-                'BoxGeometry',
-                'BoxBufferGeometry',
-                // Equivalent to ( import * as Curves from 'intermediary exporter file Curves' )
-                'ArcCurve',
-                'CatmullRomCurve3',
-                'CubicBezierCurve',
-                'CubicBezierCurve3',
-                'EllipseCurve',
-                'LineCurve',
-                'LineCurve3',
-                'QuadraticBezierCurve',
-                'QuadraticBezierCurve3',
-                'SplineCurve',
-                'GrannyKnot',
-                'HeartCurve',
-                'VivianiCurve',
-                'KnotCurve',
-                'HelixCurve',
-                'TrefoilKnot',
-                'TorusKnot',
-                'CinquefoilKnot',
-                'TrefoilPolynomialKnot',
-                'FigureEightPolynomialKnot',
-                'DecoratedTorusKnot4a',
-                'DecoratedTorusKnot4b',
-                'DecoratedTorusKnot5a',
-                'DecoratedTorusKnot5c'
-            ],
+        ObjectLoader:           {
             replacements: [
                 [
                     'function ObjectLoader( manager ) {',
@@ -571,187 +388,61 @@ module.exports = {
                 ]
             ]
         },
-        OBJLoader:                   {
-            exportsOverride: [ 'OBJLoader' ]
-        },
-        OBJLoader2:                  {
+        OBJLoader2:             {
             replacements: [
-                [ 'if ( var OBJLoader2 === undefined ) { var OBJLoader2 = {} }', '' ]
+                [ 'for ( let mesh of meshes ) {', '//[ThreeFull] Replace for of loop\n\t\t\tfor ( let i = 0, n = meshes.length ; i < n ; i++) {\n\t\t\t\tconst mesh = meshes[i];' ]
             ]
         },
-        Ocean:                       {
+        OBJLoader2Worker:       {
+            replacements:    [
+                [ 'new WorkerRunner', 'const OBJLoader2Worker = new WorkerRunner' ]
+            ],
+            exportsOverride: [ 'OBJLoader2Worker' ]
+        },
+        Ocean:                  {
             outputOverride: 'objects/Ocean.js'
         },
-        Octree:                      {
-            imports:        [
-                'Raycaster',
-                '_Math'
-            ],
-            replacements:   [
-                [ 'instanceof var OctreeNode', 'instanceof OctreeNode' ]
-            ],
-            outputOverride: 'utils/Octree.js'
-        },
-        OrbitControls:               {
-            replacements: [
-                [ 'ScreenSpacePanning = 0;', 'var ScreenSpacePanning = 0;' ],
-                [ 'HorizontalPanning = 1;', 'var HorizontalPanning = 1;' ]
+        ParametricGeometries:   {
+            imports: [
+                '!PlaneGeometry',
+                '!SphereGeometry',
+                '!TorusKnotGeometry',
+                '!TubeGeometry'
             ]
         },
-        Pass:                        {
-            exportsOverride: [ 'Pass' ]
-        },
-        Path:                        {
-            outputOverride: 'core/Path.js'
-        },
-        PRNG:                        {
-            outputOverride:  'utils/PRNG.js',
-            exportsOverride: [ 'PRNG' ]
-        },
-        ParametricGeometries:        {
-            importsOverride: [
-                'Vector3',
-                'ParametricGeometry',
-                'Geometry',
-                'ArrowHelper',
-                'Curve'
-            ],
-            exportsOverride: [ 'ParametricGeometries' ],
-            outputOverride:  'geometries/ParametricGeometries.js'
-        },
-        QuadraticBezierCurve:        {
-            outputOverride: 'curves/QuadraticBezierCurve.js'
-        },
-        QuadraticBezierCurve3:       {
-            outputOverride: 'curves/QuadraticBezierCurve3.js'
-        },
-        QuickHull:                   {
-            exportsOverride: [ 'QuickHull' ],
-            outputOverride:  'utils/QuickHull.js'
-        },
-        Raycaster:                   {
+        Raycaster:              {
             importsOverride: [ 'Ray' ]
         },
-        Refractor:                   {
-            imports: [
-                '_Math'
-            ]
+        //        RaytracingWorker:            {
+        //            imports: [ '_Math' ]
+        //        },
+        RollerCoaster:          {
+            outputOverride: 'objects/RollerCoaster.js'
         },
-        Reflector:                   {
-            imports: [
-                '_Math'
-            ]
-        },
-        RGBELoader:                  {
-            replacements: [
-                [ 'HDRLoader = RGBELoader', 'var RGBELoader' ],
-                [ /(return null;[\s\n\r]+};)/g, '$1\nvar HDRLoader = RGBELoader;\n\n' ]
-            ]
-
-        },
-        RollerCoaster:               {
-            exportsOverride: [
-                'RollerCoasterGeometry',
-                'RollerCoasterLiftersGeometry',
-                'RollerCoasterShadowGeometry',
-                'SkyGeometry',
-                'TreesGeometry'
-            ],
-            outputOverride:  'objects/RollerCoaster.js'
-        },
-        ShaderGodRays:               {
-            outputOverride: 'shaders/ShaderGodRays.js'
-        },
-        ShaderSkin:                  {
-            outputOverride: 'shaders/ShaderSkin.js'
-        },
-        ShaderTerrain:               {
-            outputOverride: 'shaders/ShaderTerrain.js'
-        },
-        ShaderToon:                  {
-            outputOverride: 'shaders/ShaderToon.js'
-        },
-        ShaderTranslucent:           {
-            outputOverride: 'shaders/ShaderTranslucent.js'
-        },
-        ShaderMaterial:              {
+        ShaderMaterial:         {
             imports: [
                 [ 'default as default_vertex', 'from', '../renderers/shaders/ShaderChunk/default_vertex.glsl.js' ],
                 [ 'default as default_fragment', 'from', '../renderers/shaders/ShaderChunk/default_fragment.glsl.js' ]
             ]
         },
-        Shape:                       {
-            outputOverride: 'core/Shape.js'
-        },
-        ShapePath:                   {
-            outputOverride: 'core/ShapePath.js'
-        },
-        ShapeUtils:                  {
+        ShapeUtils:             {
             outputOverride: 'utils/ShapeUtils.js'
         },
-        SimplexNoise:                {
-            outputOverride:  'misc/SimplexNoise.js',
-            exportsOverride: [ 'SimplexNoise' ]
-        },
-        SimplifyModifier:            {
+        SimplifyModifier:       {
             imports: [ '!Triangle' ]
         },
-        SkeletonUtils:               {
-            replacements: [
-                [ 'new Vector2( targetParentPos.x, targetParentPos.y ),', 'new Vector2( targetParentPos.x, targetParentPos.y )' ],
-                [ 'new Vector2( sourceParentPos.x, sourceParentPos.y ),', 'new Vector2( sourceParentPos.x, sourceParentPos.y )' ]
-            ]
-        },
-        SMAAPass:                    {
-            exportsOverride: [ 'SMAAPass' ]
-        },
-        SMAAShader:                  {
-            exportsOverride: [ 'SMAAEdgesShader', 'SMAAWeightsShader', 'SMAABlendShader' ]
-        },
-        SoftwareRenderer:            {
-            imports: [ '_Math', '!Texture' ]
-        },
-        SplineCurve:                 {
-            outputOverride: 'curves/SplineCurve.js'
-        },
-        SSAOPass:                    {
-            imports: [
-                '_Math'
-            ]
-        },
-        TimelinerController:         {
-            outputOverride: 'animation/TimelinerController.js'
-        },
-        TempNode:                    {
-            imports: [ '_Math' ]
-        },
-        TextureCubeUVNode:           {
-            imports: [
-                '!ReflectNode',
-                '!FloatNode'
-            ]
-        },
-        TransformControls:           {
+        TransformControls:      {
             imports: [ '!CircleGeometry' ]
         },
-        TypedArrayUtils:             {
-            outputOverride: 'utils/TypedArrayUtils.js'
-        },
-        UCSCharacter:                {
-            outputOverride: 'objects/UCSCharacter.js'
-        },
-        UniformsUtils:               {
+        UniformsUtils:          {
             exportsOverride: [
                 'UniformsUtils',
                 'cloneUniforms',
                 'mergeUniforms'
             ]
         },
-        VolumeSlice:                 {
+        VolumeSlice:            {
             outputOverride: 'audio/VolumeSlice.js'
-        },
-        VolumeShader:                {
-            exportsOverride: [ 'VolumeRenderShader1' ]
         },
         //        VRMLLoader:                {
         //            imports: [
@@ -759,50 +450,35 @@ module.exports = {
         ////                [ 'chevrotain', 'from', '../libs/chevrotain.module.min.js' ],
         //            ],
         //        },
-        Water:                       {
-            imports: [
-                '_Math'
-            ]
-        },
-        Water2:                      {
+        Water2:                 {
             imports:         [
                 '!Water'
             ],
             replacements:    [
                 [ /Water/g, 'Water2' ],
-                [ 'Water2 = function (', 'function Water2(' ]
+                [ 'var Water2 = function (', 'function Water2(' ]
             ],
             exportsOverride: [ 'Water2' ]
         },
-        WebGL:                       {
+        WebGL:                  {
             replacements:    [
-                [ 'WEBGL', 'var WebGL' ]
+                [ 'WEBGL', 'WebGL' ]
             ],
             exportsOverride: [ 'WebGL' ],
             outputOverride:  'helpers/WebGL.js'
         },
-        WebGLPrograms:               {
+        WebGLPrograms:          {
             importsOverride: [
                 'BackSide',
                 'DoubleSide',
                 'CubeUVRefractionMapping',
                 'CubeUVReflectionMapping',
-                'GammaEncoding',
                 'LinearEncoding',
                 'ObjectSpaceNormalMap',
                 'TangentSpaceNormalMap',
                 'NoToneMapping',
                 'WebGLProgram'
             ]
-        },
-        WebGLDeferredRenderer:       {
-            exportsOverride: [ 'WebGLDeferredRenderer', 'ShaderDeferred', 'ShaderDeferredCommon', 'DeferredShaderChunk' ]
-        },
-        WebVR:                       {
-            replacements:    [
-                [ 'WEBVR', 'var WebVR' ]
-            ],
-            exportsOverride: [ 'WebVR' ]
         }
     },
     banner:    '//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n' +
