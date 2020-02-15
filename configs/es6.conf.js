@@ -66,9 +66,6 @@ module.exports = {
     ],
     output:    path.join( __dirname, '..', 'sources' ),
     edgeCases: {
-        //        BasisTextureLoader:          {
-        //            exportsOverride: [ 'BasisTextureLoader' ]
-        //        },
         BokehShader2:           {
             imports:         [ '!BokehShader' ],
             replacements:    [
@@ -164,12 +161,6 @@ module.exports = {
                 '!Points'
             ]
         },
-        //        FunctionNode_Implementation: {
-        //            importsOverride: [
-        //                [ 'FunctionNode', 'from', './FunctionNode_Declaration' ],
-        //                'NodeLib'
-        //            ]
-        //        },
         GPUComputationRenderer: {
             //            exportsOverride: [ 'GPUComputationRenderer' ],
             outputOverride: 'renderers/GPUComputationRenderer.js'
@@ -185,13 +176,6 @@ module.exports = {
                 '!Geometry'
             ]
         },
-        //        LoaderSupport:               {
-        //            replacements:    [
-        //                [ 'if ( var LoaderSupport === undefined ) { var LoaderSupport = {} }', '' ],
-        //                [ 'LoaderSupport.Validator = {', '\nvar LoaderSupport = {}\nLoaderSupport.Validator = {' ]
-        //            ],
-        //            exportsOverride: [ 'LoaderSupport' ]
-        //        },
         MaterialLoader:         {
             replacements: [
                 [
@@ -409,6 +393,9 @@ module.exports = {
                 '!TorusKnotGeometry',
                 '!TubeGeometry'
             ]
+        },
+        PMREMGenerator:         {
+            outputOverride: 'utils/PMREMGenerator.js'
         },
         Raycaster:              {
             importsOverride: [ 'Ray' ]
