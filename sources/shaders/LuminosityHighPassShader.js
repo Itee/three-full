@@ -9,7 +9,6 @@ import { Color } from '../math/Color.js'
  * Luminosity
  * http://en.wikipedia.org/wiki/Luminosity
  */
-
 var LuminosityHighPassShader = {
 
 	shaderID: "luminosityHighPass",

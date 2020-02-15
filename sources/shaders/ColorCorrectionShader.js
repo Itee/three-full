@@ -8,7 +8,6 @@ import { Vector3 } from '../math/Vector3.js'
  *
  * Color correction
  */
-
 var ColorCorrectionShader = {
 
 	uniforms: {

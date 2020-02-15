@@ -1,28 +1,27 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Mesh } from './Mesh.js'
 import { Color } from '../math/Color.js'
-import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
-import { Plane } from '../math/Plane.js'
-import { Matrix4 } from '../math/Matrix4.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { Vector3 } from '../math/Vector3.js'
-import { Quaternion } from '../math/Quaternion.js'
-import { Vector4 } from '../math/Vector4.js'
 import {
 	LinearFilter,
 	RGBFormat
 } from '../constants.js'
-import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 import { _Math } from '../math/Math.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Mesh } from './Mesh.js'
+import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
+import { Plane } from '../math/Plane.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { Vector3 } from '../math/Vector3.js'
+import { Vector4 } from '../math/Vector4.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
  *
  */
-
 var Refractor = function ( geometry, options ) {
 
 	Mesh.call( this, geometry );
@@ -209,17 +208,17 @@ var Refractor = function ( geometry, options ) {
 		scope.visible = false;
 
 		var currentRenderTarget = renderer.getRenderTarget();
-		var currentVrEnabled = renderer.vr.enabled;
+		var currentXrEnabled = renderer.xr.enabled;
 		var currentShadowAutoUpdate = renderer.shadowMap.autoUpdate;
 
-		renderer.vr.enabled = false; // avoid camera modification
+		renderer.xr.enabled = false; // avoid camera modification
 		renderer.shadowMap.autoUpdate = false; // avoid re-computing shadows
 
 		renderer.setRenderTarget( renderTarget );
 		renderer.clear();
 		renderer.render( scene, virtualCamera );
 
-		renderer.vr.enabled = currentVrEnabled;
+		renderer.xr.enabled = currentXrEnabled;
 		renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
 		renderer.setRenderTarget( currentRenderTarget );
 

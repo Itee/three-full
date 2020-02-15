@@ -30,7 +30,7 @@ export class Vector3 implements Vector {
 	getComponent( index: number ): number;
 	clone(): this;
 	copy( v: Vector3 ): this;
-	add( a: Vector3, b?: Vector3 ): this;
+	add( v: Vector3, w?: Vector3 ): this;
 
 	addScalar( s: number ): this;
 

@@ -1,15 +1,15 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { DataTexture } from '../textures/DataTexture.js'
 import {
-	UVMapping,
 	ClampToEdgeWrapping,
-	NearestFilter,
-	LinearFilter,
 	FloatType,
-	RGBAFormat
+	LinearFilter,
+	NearestFilter,
+	RGBAFormat,
+	UVMapping
 } from '../constants.js'
+import { DataTexture } from '../textures/DataTexture.js'
 import { ShaderLib } from '../renderers/shaders/ShaderLib.js'
 import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 
@@ -27,7 +27,6 @@ import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
  *
  * TODO: figure out a way to compress the LTC BRDF data
  */
-
 // Real-Time Polygonal-Light Shading with Linearly Transformed Cosines
 // by Eric Heitz, Jonathan Dupuy, Stephen Hill and David Neubelt
 // code: https://github.com/selfshadow/ltc_code/

@@ -1,36 +1,35 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from '../math/Vector3.js'
-import { Color } from '../math/Color.js'
-import { Vector2 } from '../math/Vector2.js'
-import { Vector4 } from '../math/Vector4.js'
-import { Box3 } from '../math/Box3.js'
-import { Matrix4 } from '../math/Matrix4.js'
-import { Matrix3 } from '../math/Matrix3.js'
-import { Frustum } from '../math/Frustum.js'
-import { Light } from '../lights/Light.js'
-import { Mesh } from '../objects/Mesh.js'
-import { Line } from '../objects/Line.js'
-import { Points } from '../objects/Points.js'
-import { Sprite } from '../objects/Sprite.js'
-import { BufferGeometry } from '../core/BufferGeometry.js'
-import { Geometry } from '../core/Geometry.js'
-import { LineSegments } from '../objects/LineSegments.js'
 import {
-	FrontSide,
 	BackSide,
 	DoubleSide,
 	FaceColors,
+	FrontSide,
 	VertexColors
 } from '../constants.js'
+import { Box3 } from '../math/Box3.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Color } from '../math/Color.js'
+import { Frustum } from '../math/Frustum.js'
+import { Geometry } from '../core/Geometry.js'
+import { Light } from '../lights/Light.js'
+import { Line } from '../objects/Line.js'
+import { LineSegments } from '../objects/LineSegments.js'
+import { Matrix3 } from '../math/Matrix3.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Mesh } from '../objects/Mesh.js'
+import { Points } from '../objects/Points.js'
+import { Sprite } from '../objects/Sprite.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
+import { Vector4 } from '../math/Vector4.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author supereggbert / http://www.paulbrunt.co.uk/
  * @author julianwa / https://github.com/julianwa
  */
-
 var RenderableObject = function () {
 
 	this.id = 0;
@@ -184,14 +183,12 @@ var Projector = function () {
 		var uvs = [];
 
 		var object = null;
-		var material = null;
 
 		var normalMatrix = new Matrix3();
 
 		function setObject( value ) {
 
 			object = value;
-			material = object.material;
 
 			normalMatrix.getNormalMatrix( object.matrixWorld );
 

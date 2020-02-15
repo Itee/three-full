@@ -1,18 +1,17 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from '../math/Vector3.js'
-import { Vector2 } from '../math/Vector2.js'
-import { Matrix3 } from '../math/Matrix3.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Geometry } from '../core/Geometry.js'
-import { Mesh } from '../objects/Mesh.js'
 import { Line } from '../objects/Line.js'
+import { Matrix3 } from '../math/Matrix3.js'
+import { Mesh } from '../objects/Mesh.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-
 var OBJExporter = function () {};
 
 OBJExporter.prototype = {

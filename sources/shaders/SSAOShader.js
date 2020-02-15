@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector2 } from '../math/Vector2.js'
 import { Matrix4 } from '../math/Matrix4.js'
+import { Vector2 } from '../math/Vector2.js'
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -12,7 +12,6 @@ import { Matrix4 } from '../math/Matrix4.js'
  * https://learnopengl.com/Advanced-Lighting/SSAO
  * https://github.com/McNopper/OpenGL/blob/master/Example28/shader/ssao.frag.glsl
  */
-
 var SSAOShader = {
 
 	defines: {

@@ -66,6 +66,12 @@ export {
 export { LightningStrike } from './geometries/LightningStrike.js'
 export { ParametricGeometries } from './geometries/ParametricGeometries.js'
 export { TeapotBufferGeometry } from './geometries/TeapotBufferGeometry.js'
+export { FaceNormalsHelper } from './helpers/FaceNormalsHelper.js'
+export { LightProbeHelper } from './helpers/LightProbeHelper.js'
+export { PositionalAudioHelper } from './helpers/PositionalAudioHelper.js'
+export { RectAreaLightHelper } from './helpers/RectAreaLightHelper.js'
+export { VertexNormalsHelper } from './helpers/VertexNormalsHelper.js'
+export { VertexTangentsHelper } from './helpers/VertexTangentsHelper.js'
 export { SelectionBox } from './interactive/SelectionBox.js'
 export { SelectionHelper } from './interactive/SelectionHelper.js'
 export { LightProbeGenerator } from './lights/LightProbeGenerator.js'
@@ -80,6 +86,7 @@ export { WireframeGeometry2 } from './lines/WireframeGeometry2.js'
 export { ThreeMFLoader } from './loaders/3MFLoader.js'
 export { AMFLoader } from './loaders/AMFLoader.js'
 export { AssimpLoader } from './loaders/AssimpLoader.js'
+export { AWDLoader } from './loaders/AWDLoader.js'
 export { BasisTextureLoader } from './loaders/BasisTextureLoader.js'
 export { BVHLoader } from './loaders/BVHLoader.js'
 export { ColladaLoader } from './loaders/ColladaLoader.js'
@@ -97,7 +104,35 @@ export { LWOLoader } from './loaders/LWOLoader.js'
 export { MD2Loader } from './loaders/MD2Loader.js'
 export { MMDLoader } from './loaders/MMDLoader.js'
 export { MTLLoader } from './loaders/MTLLoader.js'
+export {
+	NodeMaterialLoader,
+	NodeMaterialLoaderUtils
+} from './loaders/NodeMaterialLoader.js'
+export { NRRDLoader } from './loaders/NRRDLoader.js'
+export { MtlObjBridge } from './loaders/obj2/bridge/MtlObjBridge.js'
+export { MaterialHandler } from './loaders/obj2/shared/MaterialHandler.js'
+export {
+	MeshReceiver,
+	LoadedMeshUserOverride
+} from './loaders/obj2/shared/MeshReceiver.js'
+export {
+	CodeSerializer,
+	CodeSerializationInstruction
+} from './loaders/obj2/utils/CodeSerializer.js'
+export {
+	CodeBuilderInstructions,
+	WorkerExecutionSupport
+} from './loaders/obj2/worker/main/WorkerExecutionSupport.js'
+export { OBJLoader2Worker } from './loaders/obj2/worker/parallel/jsm/OBJLoader2Worker.js'
+export { OBJLoader2Parser } from './loaders/obj2/worker/parallel/OBJLoader2Parser.js'
+export {
+	WorkerRunner,
+	DefaultWorkerPayloadHandler,
+	ObjectManipulator
+} from './loaders/obj2/worker/parallel/WorkerRunner.js'
 export { OBJLoader } from './loaders/OBJLoader.js'
+export { OBJLoader2 } from './loaders/OBJLoader2.js'
+export { OBJLoader2Parallel } from './loaders/OBJLoader2Parallel.js'
 export { PCDLoader } from './loaders/PCDLoader.js'
 export { PDBLoader } from './loaders/PDBLoader.js'
 export { PLYLoader } from './loaders/PLYLoader.js'
@@ -111,15 +146,16 @@ export { TGALoader } from './loaders/TGALoader.js'
 export { TTFLoader } from './loaders/TTFLoader.js'
 export { VRMLoader } from './loaders/VRMLoader.js'
 export { VTKLoader } from './loaders/VTKLoader.js'
+export { XLoader } from './loaders/XLoader.js'
 export { ColorConverter } from './math/ColorConverter.js'
 export { ConvexHull } from './math/ConvexHull.js'
-export { ImprovedNoise } from './misc/ImprovedNoise.js'
+export { ImprovedNoise } from './math/ImprovedNoise.js'
 export {
 	Lut,
 	ColorMapKeywords
 } from './math/Lut.js'
-export { SimplexNoise } from './misc/SimplexNoise.js'
-export { CarControls } from './misc/CarControls.js'
+export { MeshSurfaceSampler } from './math/MeshSurfaceSampler.js'
+export { SimplexNoise } from './math/SimplexNoise.js'
 export { ConvexObjectBreaker } from './modifiers/ConvexObjectBreaker.js'
 export { GPUComputationRenderer } from './renderers/GPUComputationRenderer.js'
 export { Gyroscope } from './objects/Gyroscope.js'
@@ -135,18 +171,97 @@ export {
 	SkyGeometry,
 	TreesGeometry
 } from './objects/RollerCoaster.js'
+export { TubePainter } from './misc/TubePainter.js'
+export { Volume } from './misc/Volume.js'
 export { VolumeSlice } from './audio/VolumeSlice.js'
 export { ExplodeModifier } from './modifiers/ExplodeModifier.js'
 export { SimplifyModifier } from './modifiers/SimplifyModifier.js'
 export { SubdivisionModifier } from './modifiers/SubdivisionModifier.js'
 export { TessellateModifier } from './modifiers/TessellateModifier.js'
+export { CameraNode } from './nodes/accessors/CameraNode.js'
+export { ColorsNode } from './nodes/accessors/ColorsNode.js'
+export { LightNode } from './nodes/accessors/LightNode.js'
+export { NormalNode } from './nodes/accessors/NormalNode.js'
+export { PositionNode } from './nodes/accessors/PositionNode.js'
+export { ReflectNode } from './nodes/accessors/ReflectNode.js'
+export { ResolutionNode } from './nodes/accessors/ResolutionNode.js'
+export { ScreenUVNode } from './nodes/accessors/ScreenUVNode.js'
+export { UVNode } from './nodes/accessors/UVNode.js'
+export { AttributeNode } from './nodes/core/AttributeNode.js'
+export { ConstNode } from './nodes/core/ConstNode.js'
+export { ExpressionNode } from './nodes/core/ExpressionNode.js'
+export { FunctionCallNode } from './nodes/core/FunctionCallNode.js'
+export { FunctionNode } from './nodes/core/FunctionNode.js'
+export { InputNode } from './nodes/core/InputNode.js'
+export { Node } from './nodes/core/Node.js'
+export { NodeBuilder } from './nodes/core/NodeBuilder.js'
+export { NodeFrame } from './nodes/core/NodeFrame.js'
+export { NodeLib } from './nodes/core/NodeLib.js'
+export { NodeUniform } from './nodes/core/NodeUniform.js'
+export { NodeUtils } from './nodes/core/NodeUtils.js'
+export { StructNode } from './nodes/core/StructNode.js'
+export { TempNode } from './nodes/core/TempNode.js'
+export { VarNode } from './nodes/core/VarNode.js'
+export { BlurNode } from './nodes/effects/BlurNode.js'
+export { ColorAdjustmentNode } from './nodes/effects/ColorAdjustmentNode.js'
+export { LuminanceNode } from './nodes/effects/LuminanceNode.js'
+export { BoolNode } from './nodes/inputs/BoolNode.js'
+export { ColorNode } from './nodes/inputs/ColorNode.js'
+export { CubeTextureNode } from './nodes/inputs/CubeTextureNode.js'
+export { FloatNode } from './nodes/inputs/FloatNode.js'
+export { IntNode } from './nodes/inputs/IntNode.js'
+export { Matrix3Node } from './nodes/inputs/Matrix3Node.js'
+export { Matrix4Node } from './nodes/inputs/Matrix4Node.js'
+export { PropertyNode } from './nodes/inputs/PropertyNode.js'
+export { ReflectorNode } from './nodes/inputs/ReflectorNode.js'
+export { RTTNode } from './nodes/inputs/RTTNode.js'
+export { ScreenNode } from './nodes/inputs/ScreenNode.js'
+export { TextureNode } from './nodes/inputs/TextureNode.js'
+export { Vector2Node } from './nodes/inputs/Vector2Node.js'
+export { Vector3Node } from './nodes/inputs/Vector3Node.js'
+export { Vector4Node } from './nodes/inputs/Vector4Node.js'
+export { MeshStandardNodeMaterial } from './nodes/materials/MeshStandardNodeMaterial.js'
+export { NodeMaterial } from './nodes/materials/NodeMaterial.js'
+export { MeshStandardNode } from './nodes/materials/nodes/MeshStandardNode.js'
+export { PhongNode } from './nodes/materials/nodes/PhongNode.js'
+export { RawNode } from './nodes/materials/nodes/RawNode.js'
+export { SpriteNode } from './nodes/materials/nodes/SpriteNode.js'
+export { StandardNode } from './nodes/materials/nodes/StandardNode.js'
+export { PhongNodeMaterial } from './nodes/materials/PhongNodeMaterial.js'
+export { SpriteNodeMaterial } from './nodes/materials/SpriteNodeMaterial.js'
+export { StandardNodeMaterial } from './nodes/materials/StandardNodeMaterial.js'
+export { CondNode } from './nodes/math/CondNode.js'
+export { MathNode } from './nodes/math/MathNode.js'
+export { OperatorNode } from './nodes/math/OperatorNode.js'
+export { BumpMapNode } from './nodes/misc/BumpMapNode.js'
+export { NormalMapNode } from './nodes/misc/NormalMapNode.js'
+export { TextureCubeNode } from './nodes/misc/TextureCubeNode.js'
+export { TextureCubeUVNode } from './nodes/misc/TextureCubeUVNode.js'
+export { NodePass } from './nodes/postprocessing/NodePass.js'
+export { NodePostProcessing } from './nodes/postprocessing/NodePostProcessing.js'
+export { CheckerNode } from './nodes/procedural/CheckerNode.js'
+export { NoiseNode } from './nodes/procedural/NoiseNode.js'
+export { BypassNode } from './nodes/utils/BypassNode.js'
+export { ColorSpaceNode } from './nodes/utils/ColorSpaceNode.js'
+export { JoinNode } from './nodes/utils/JoinNode.js'
+export { MaxMIPLevelNode } from './nodes/utils/MaxMIPLevelNode.js'
+export { SpecularMIPLevelNode } from './nodes/utils/SpecularMIPLevelNode.js'
+export { SubSlotNode } from './nodes/utils/SubSlotNode.js'
+export { SwitchNode } from './nodes/utils/SwitchNode.js'
+export { TimerNode } from './nodes/utils/TimerNode.js'
+export { UVTransformNode } from './nodes/utils/UVTransformNode.js'
+export { VelocityNode } from './nodes/utils/VelocityNode.js'
 export { Fire } from './objects/Fire.js'
 export {
 	Lensflare,
 	LensflareElement
 } from './objects/Lensflare.js'
 export { LightningStorm } from './objects/LightningStorm.js'
-export { MarchingCubes } from './objects/MarchingCubes.js'
+export {
+	MarchingCubes,
+	edgeTable,
+	triTable
+} from './objects/MarchingCubes.js'
 export { Reflector } from './objects/Reflector.js'
 export { ReflectorRTT } from './objects/ReflectorRTT.js'
 export { Refractor } from './objects/Refractor.js'
@@ -154,8 +269,6 @@ export { ShadowMesh } from './objects/ShadowMesh.js'
 export { Sky } from './objects/Sky.js'
 export { Water } from './objects/Water.js'
 export { Water2 } from './objects/Water2.js'
-export { PMREMCubeUVPacker } from './pmrem/PMREMCubeUVPacker.js'
-export { PMREMGenerator } from './pmrem/PMREMGenerator.js'
 export { AdaptiveToneMappingPass } from './postprocessing/AdaptiveToneMappingPass.js'
 export { AfterimagePass } from './postprocessing/AfterimagePass.js'
 export { BloomPass } from './postprocessing/BloomPass.js'
@@ -207,9 +320,9 @@ export {
 } from './renderers/SVGRenderer.js'
 export {
 	WebGLDeferredRenderer,
-	ShaderDeferred,
+	DeferredShaderChunk,
 	ShaderDeferredCommon,
-	DeferredShaderChunk
+	ShaderDeferred
 } from './renderers/WebGLDeferredRenderer.js'
 export { AfterimageShader } from './shaders/AfterimageShader.js'
 export { BasicShader } from './shaders/BasicShader.js'
@@ -260,11 +373,6 @@ export { RGBShiftShader } from './shaders/RGBShiftShader.js'
 export { SAOShader } from './shaders/SAOShader.js'
 export { SepiaShader } from './shaders/SepiaShader.js'
 export {
-	SkinShaderBasic,
-	SkinShaderAdvanced,
-	SkinShaderBeckmann
-} from './shaders/SkinShader.js'
-export {
 	SMAAEdgesShader,
 	SMAAWeightsShader,
 	SMAABlendShader
@@ -276,7 +384,6 @@ export {
 	SSAOBlurShader
 } from './shaders/SSAOShader.js'
 export { TechnicolorShader } from './shaders/TechnicolorShader.js'
-export { TerrainShader } from './shaders/TerrainShader.js'
 export { ToneMapShader } from './shaders/ToneMapShader.js'
 export {
 	ToonShader1,
@@ -295,13 +402,15 @@ export { WaterRefractionShader } from './shaders/WaterRefractionShader.js'
 export { BufferGeometryUtils } from './utils/BufferGeometryUtils.js'
 export { GeometryUtils } from './utils/GeometryUtils.js'
 export { MathUtils } from './utils/MathUtils.js'
+export { RoughnessMipmapper } from './utils/RoughnessMipmapper.js'
 export { SceneUtils } from './utils/SceneUtils.js'
 export { ShadowMapViewer } from './utils/ShadowMapViewer.js'
 export { SkeletonUtils } from './utils/SkeletonUtils.js'
 export { TypedArrayUtils } from './utils/TypedArrayUtils.js'
 export { UVsDebug } from './utils/UVsDebug.js'
-export { WebVR } from './vr/WebVR.js'
 export { WebGL } from './helpers/WebGL.js'
+export { ARButton } from './webxr/ARButton.js'
+export { VRButton } from './webxr/VRButton.js'
 export { AnimationAction } from './animation/AnimationAction.js'
 export { AnimationClip } from './animation/AnimationClip.js'
 export { AnimationMixer } from './animation/AnimationMixer.js'
@@ -430,6 +539,11 @@ export {
 	DepthFormat,
 	DepthStencilFormat,
 	RedFormat,
+	RedIntegerFormat,
+	RGFormat,
+	RGIntegerFormat,
+	RGBIntegerFormat,
+	RGBAIntegerFormat,
 	RGB_S3TC_DXT1_Format,
 	RGBA_S3TC_DXT1_Format,
 	RGBA_S3TC_DXT3_Format,
@@ -554,6 +668,7 @@ export { SplineCurve } from './curves/SplineCurve.js'
 export { Earcut } from './misc/Earcut.js'
 export { ImageUtils } from './utils/ImageUtils.js'
 export { ImmediateRenderObject } from './objects/ImmediateRenderObject.js'
+export { PMREMGenerator } from './utils/PMREMGenerator.js'
 export { ShapeUtils } from './utils/ShapeUtils.js'
 export {
 	BoxGeometry,
@@ -643,18 +758,13 @@ export { Box3Helper } from './helpers/Box3Helper.js'
 export { BoxHelper } from './helpers/BoxHelper.js'
 export { CameraHelper } from './helpers/CameraHelper.js'
 export { DirectionalLightHelper } from './helpers/DirectionalLightHelper.js'
-export { FaceNormalsHelper } from './helpers/FaceNormalsHelper.js'
 export { GridHelper } from './helpers/GridHelper.js'
 export { HemisphereLightHelper } from './helpers/HemisphereLightHelper.js'
-export { LightProbeHelper } from './helpers/LightProbeHelper.js'
 export { PlaneHelper } from './helpers/PlaneHelper.js'
 export { PointLightHelper } from './helpers/PointLightHelper.js'
 export { PolarGridHelper } from './helpers/PolarGridHelper.js'
-export { PositionalAudioHelper } from './helpers/PositionalAudioHelper.js'
-export { RectAreaLightHelper } from './helpers/RectAreaLightHelper.js'
 export { SkeletonHelper } from './helpers/SkeletonHelper.js'
 export { SpotLightHelper } from './helpers/SpotLightHelper.js'
-export { VertexNormalsHelper } from './helpers/VertexNormalsHelper.js'
 export { AmbientLight } from './lights/AmbientLight.js'
 export { AmbientLightProbe } from './lights/AmbientLightProbe.js'
 export { DirectionalLight } from './lights/DirectionalLight.js'
@@ -782,9 +892,7 @@ export { WebGLMultiviewRenderTarget } from './renderers/WebGLMultiviewRenderTarg
 export { WebGLRenderer } from './renderers/WebGLRenderer.js'
 export { WebGLRenderTarget } from './renderers/WebGLRenderTarget.js'
 export { WebGLRenderTargetCube } from './renderers/WebGLRenderTargetCube.js'
-export { WebVRManager } from './renderers/webvr/WebVRManager.js'
-export { setProjectionFromUnion } from './renderers/webvr/WebVRUtils.js'
-export { WebXRManager } from './renderers/webvr/WebXRManager.js'
+export { WebXRManager } from './renderers/webxr/WebXRManager.js'
 export { Fog } from './scenes/Fog.js'
 export { FogExp2 } from './scenes/FogExp2.js'
 export { Scene } from './scenes/Scene.js'

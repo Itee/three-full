@@ -1,0 +1,16 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import {
+	BufferGeometry,
+	Geometry
+} from '../../../src/Three';
+
+import { LineSegmentsGeometry } from './LineSegmentsGeometry';
+
+export class WireframeGeometry2 extends LineSegmentsGeometry {
+
+	constructor( geometry: Geometry | BufferGeometry );
+	isWireframeGeometry2: boolean;
+
+}

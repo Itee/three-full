@@ -6,7 +6,6 @@ import { Vector2 } from '../math/Vector2.js'
 /**
  * @author HypnosNova / https://www.threejs.org.cn/gallery
  */
-
 var SelectionHelper = ( function () {
 
 	function SelectionHelper( selectionBox, renderer, cssClassName ) {

@@ -4,10 +4,10 @@
 import { Mesh } from '../objects/Mesh.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
+
 /**
  * @author WestLangley / http://github.com/WestLangley
  */
-
 function LightProbeHelper( lightProbe, size ) {
 
 	this.lightProbe = lightProbe;

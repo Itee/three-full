@@ -1,20 +1,19 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { InstancedBufferGeometry } from '../core/InstancedBufferGeometry.js'
+import { Box3 } from '../math/Box3.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { InstancedBufferGeometry } from '../core/InstancedBufferGeometry.js'
 import { InstancedInterleavedBuffer } from '../core/InstancedInterleavedBuffer.js'
 import { InterleavedBufferAttribute } from '../core/InterleavedBufferAttribute.js'
-import { WireframeGeometry } from '../geometries/WireframeGeometry.js'
-import { Box3 } from '../math/Box3.js'
-import { Vector3 } from '../math/Vector3.js'
 import { Sphere } from '../math/Sphere.js'
+import { Vector3 } from '../math/Vector3.js'
+import { WireframeGeometry } from '../geometries/WireframeGeometry.js'
 
 /**
  * @author WestLangley / http://github.com/WestLangley
  *
  */
-
 var LineSegmentsGeometry = function () {
 
 	InstancedBufferGeometry.call( this );
@@ -44,9 +43,9 @@ LineSegmentsGeometry.prototype = Object.assign( Object.create( InstancedBufferGe
 
 		if ( start !== undefined ) {
 
-			matrix.applyToBufferAttribute( start );
+			start.applyMatrix4( matrix );
 
-			matrix.applyToBufferAttribute( end );
+			end.applyMatrix4( matrix );
 
 			start.data.needsUpdate = true;
 

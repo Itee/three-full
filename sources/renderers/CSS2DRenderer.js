@@ -1,14 +1,13 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Matrix4 } from '../math/Matrix4.js'
 import { Object3D } from '../core/Object3D.js'
 import { Vector3 } from '../math/Vector3.js'
-import { Matrix4 } from '../math/Matrix4.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-
 var CSS2DObject = function ( element ) {
 
 	Object3D.call( this );
@@ -169,8 +168,7 @@ var CSS2DRenderer = function () {
 
 	this.render = function ( scene, camera ) {
 
-		scene.updateMatrixWorld();
-
+		if ( scene.autoUpdate === true ) scene.updateMatrixWorld();
 		if ( camera.parent === null ) camera.updateMatrixWorld();
 
 		viewMatrix.copy( camera.matrixWorldInverse );

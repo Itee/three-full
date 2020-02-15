@@ -7,7 +7,6 @@ import { LineSegmentsGeometry } from './LineSegmentsGeometry.js'
  * @author WestLangley / http://github.com/WestLangley
  *
  */
-
 var LineGeometry = function () {
 
 	LineSegmentsGeometry.call( this );

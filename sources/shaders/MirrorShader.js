@@ -9,7 +9,6 @@
  *
  * side: side of input to mirror (0 = left, 1 = right, 2 = top, 3 = bottom)
  */
-
 var MirrorShader = {
 
 	uniforms: {

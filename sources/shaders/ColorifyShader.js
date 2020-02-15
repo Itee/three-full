@@ -8,7 +8,6 @@ import { Color } from '../math/Color.js'
  *
  * Colorify shader
  */
-
 var ColorifyShader = {
 
 	uniforms: {

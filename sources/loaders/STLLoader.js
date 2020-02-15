@@ -1,15 +1,15 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { FileLoader } from './FileLoader.js'
-import { BufferGeometry } from '../core/BufferGeometry.js'
 import {
 	BufferAttribute,
 	Float32BufferAttribute
 } from '../core/BufferAttribute.js'
-import { Vector3 } from '../math/Vector3.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { FileLoader } from './FileLoader.js'
+import { Loader } from './Loader.js'
 import { LoaderUtils } from './LoaderUtils.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author aleeper / http://adamleeper.com/

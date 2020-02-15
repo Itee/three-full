@@ -1,51 +1,51 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { FileLoader } from './FileLoader.js'
-import { Vector3 } from '../math/Vector3.js'
-import { Quaternion } from '../math/Quaternion.js'
-import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
-import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
+import { AmbientLight } from '../lights/AmbientLight.js'
 import { AnimationClip } from '../animation/AnimationClip.js'
-import { Matrix4 } from '../math/Matrix4.js'
-import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
-import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
+import { Bone } from '../objects/Bone.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import {
+	ClampToEdgeWrapping,
+	DoubleSide,
+	RepeatWrapping
+} from '../constants.js'
 import { Color } from '../math/Color.js'
 import { DirectionalLight } from '../lights/DirectionalLight.js'
-import { PointLight } from '../lights/PointLight.js'
-import { SpotLight } from '../lights/SpotLight.js'
-import { AmbientLight } from '../lights/AmbientLight.js'
-import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Euler } from '../math/Euler.js'
+import { FileLoader } from './FileLoader.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-import { Skeleton } from '../objects/Skeleton.js'
-import { Bone } from '../objects/Bone.js'
 import { Group } from '../objects/Group.js'
+import { Line } from '../objects/Line.js'
 import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
 import { LineSegments } from '../objects/LineSegments.js'
-import { Line } from '../objects/Line.js'
-import { SkinnedMesh } from '../objects/SkinnedMesh.js'
-import { Mesh } from '../objects/Mesh.js'
-import { Scene } from '../scenes/Scene.js'
-import { TextureLoader } from './TextureLoader.js'
-import { TGALoader } from './TGALoader.js'
-import { Euler } from '../math/Euler.js'
-import {
-	DoubleSide,
-	RepeatWrapping,
-	ClampToEdgeWrapping
-} from '../constants.js'
+import { Loader } from './Loader.js'
 import { LoaderUtils } from './LoaderUtils.js'
 import { _Math } from '../math/Math.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Mesh } from '../objects/Mesh.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
+import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
+import { PointLight } from '../lights/PointLight.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
+import { Scene } from '../scenes/Scene.js'
+import { Skeleton } from '../objects/Skeleton.js'
+import { SkinnedMesh } from '../objects/SkinnedMesh.js'
+import { SpotLight } from '../lights/SpotLight.js'
+import { TextureLoader } from './TextureLoader.js'
+import { Vector3 } from '../math/Vector3.js'
+import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
+import { TGALoader } from './TGALoader.js'
+import { Node } from '../nodes/core/Node.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author Mugen87 / https://github.com/Mugen87
  */
-
 var ColladaLoader = function ( manager ) {
 
 	Loader.call( this, manager );

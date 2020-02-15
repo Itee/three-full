@@ -1,11 +1,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from '../math/Vector3.js'
-import { ParametricGeometry } from './ParametricGeometry.js'
-import { Geometry } from '../core/Geometry.js'
 import { ArrowHelper } from '../helpers/ArrowHelper.js'
 import { Curve } from '../curves/Curve.js'
+import { Geometry } from '../core/Geometry.js'
+import { Object3D } from '../core/Object3D.js'
+import { ParametricGeometry } from './ParametricGeometry.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author zz85
@@ -13,7 +14,6 @@ import { Curve } from '../curves/Curve.js'
  * Experimenting of primitive geometry creation using Surface Parametric equations
  *
  */
-
 var ParametricGeometries = {
 
 	klein: function ( v, u, target ) {

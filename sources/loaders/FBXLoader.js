@@ -1,54 +1,54 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { FileLoader } from './FileLoader.js'
-import { TextureLoader } from './TextureLoader.js'
-import { Texture } from '../textures/Texture.js'
-import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
-import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
-import { Color } from '../math/Color.js'
-import { Matrix4 } from '../math/Matrix4.js'
-import { Group } from '../objects/Group.js'
-import { Bone } from '../objects/Bone.js'
-import { Object3D } from '../core/Object3D.js'
-import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { PointLight } from '../lights/PointLight.js'
-import { DirectionalLight } from '../lights/DirectionalLight.js'
-import { SpotLight } from '../lights/SpotLight.js'
-import { SkinnedMesh } from '../objects/SkinnedMesh.js'
-import { Mesh } from '../objects/Mesh.js'
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
-import { Line } from '../objects/Line.js'
-import { Vector3 } from '../math/Vector3.js'
-import { Skeleton } from '../objects/Skeleton.js'
 import { AmbientLight } from '../lights/AmbientLight.js'
+import { AnimationClip } from '../animation/AnimationClip.js'
+import { Bone } from '../objects/Bone.js'
+import {
+	BufferAttribute,
+	Float32BufferAttribute,
+	Uint16BufferAttribute
+} from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import {
-	Float32BufferAttribute,
-	Uint16BufferAttribute,
-	BufferAttribute
-} from '../core/BufferAttribute.js'
-import { Matrix3 } from '../math/Matrix3.js'
-import { Vector4 } from '../math/Vector4.js'
-import { NURBSCurve } from '../curves/NURBSCurve.js'
-import { AnimationClip } from '../animation/AnimationClip.js'
-import { Quaternion } from '../math/Quaternion.js'
-import { Euler } from '../math/Euler.js'
-import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
-import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
-import { NumberKeyframeTrack } from '../animation/tracks/NumberKeyframeTrack.js'
-import { PropertyBinding } from '../animation/PropertyBinding.js'
-import {
-	VertexColors,
+	ClampToEdgeWrapping,
 	EquirectangularReflectionMapping,
 	RepeatWrapping,
-	ClampToEdgeWrapping,
+	VertexColors,
 	sRGBEncoding
 } from '../constants.js'
+import { Color } from '../math/Color.js'
+import { DirectionalLight } from '../lights/DirectionalLight.js'
+import { Euler } from '../math/Euler.js'
+import { FileLoader } from './FileLoader.js'
+import { Group } from '../objects/Group.js'
+import { Line } from '../objects/Line.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { Loader } from './Loader.js'
 import { LoaderUtils } from './LoaderUtils.js'
 import { _Math } from '../math/Math.js'
+import { Matrix3 } from '../math/Matrix3.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Mesh } from '../objects/Mesh.js'
+import { MeshLambertMaterial } from '../materials/MeshLambertMaterial.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
+import { NumberKeyframeTrack } from '../animation/tracks/NumberKeyframeTrack.js'
+import { Object3D } from '../core/Object3D.js'
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
+import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
+import { PointLight } from '../lights/PointLight.js'
+import { PropertyBinding } from '../animation/PropertyBinding.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
+import { Skeleton } from '../objects/Skeleton.js'
+import { SkinnedMesh } from '../objects/SkinnedMesh.js'
+import { SpotLight } from '../lights/SpotLight.js'
+import { Texture } from '../textures/Texture.js'
+import { TextureLoader } from './TextureLoader.js'
+import { Vector3 } from '../math/Vector3.js'
+import { Vector4 } from '../math/Vector4.js'
+import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
+import { NURBSCurve } from '../curves/NURBSCurve.js'
 
 /**
  * @author Kyle-Larson https://github.com/Kyle-Larson
@@ -1634,7 +1634,7 @@ var FBXLoader = ( function () {
 
 			var positionAttribute = new Float32BufferAttribute( buffers.vertex, 3 );
 
-			preTransform.applyToBufferAttribute( positionAttribute );
+			positionAttribute.applyMatrix4( preTransform );
 
 			geo.setAttribute( 'position', positionAttribute );
 
@@ -1657,10 +1657,10 @@ var FBXLoader = ( function () {
 
 			if ( buffers.normal.length > 0 ) {
 
-				var normalAttribute = new Float32BufferAttribute( buffers.normal, 3 );
-
 				var normalMatrix = new Matrix3().getNormalMatrix( preTransform );
-				normalMatrix.applyToBufferAttribute( normalAttribute );
+
+				var normalAttribute = new Float32BufferAttribute( buffers.normal, 3 );
+				normalAttribute.applyNormalMatrix( normalMatrix );
 
 				geo.setAttribute( 'normal', normalAttribute );
 
@@ -2160,7 +2160,7 @@ var FBXLoader = ( function () {
 			var positionAttribute = new Float32BufferAttribute( morphBuffers.vertex, 3 );
 			positionAttribute.name = name || morphGeoNode.attrName;
 
-			preTransform.applyToBufferAttribute( positionAttribute );
+			positionAttribute.applyMatrix4( preTransform );
 
 			parentGeo.morphAttributes.position.push( positionAttribute );
 

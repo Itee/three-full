@@ -1,20 +1,20 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Scene } from '../scenes/Scene.js'
 import { Camera } from '../cameras/Camera.js'
-import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { WebGLRenderTarget } from './WebGLRenderTarget.js'
-import { DataTexture } from '../textures/DataTexture.js'
 import {
 	ClampToEdgeWrapping,
-	NearestFilter,
 	FloatType,
 	HalfFloatType,
+	NearestFilter,
 	RGBAFormat
 } from '../constants.js'
+import { DataTexture } from '../textures/DataTexture.js'
+import { Mesh } from '../objects/Mesh.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { Scene } from '../scenes/Scene.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { WebGLRenderTarget } from './WebGLRenderTarget.js'
 
 /**
  * @author yomboprime https://github.com/yomboprime
@@ -114,7 +114,6 @@ import {
  * @param {int} sizeY Computation problem size is always 2d: sizeX * sizeY elements.
  * @param {WebGLRenderer} renderer The renderer
   */
-
 var GPUComputationRenderer = function ( sizeX, sizeY, renderer ) {
 
 	this.variables = [];
@@ -164,8 +163,8 @@ var GPUComputationRenderer = function ( sizeX, sizeY, renderer ) {
 
 	this.init = function () {
 
-		if ( ! renderer.extensions.get( "OES_texture_float" ) &&
-			 ! renderer.capabilities.isWebGL2 ) {
+		if ( ! renderer.capabilities.isWebGL2 &&
+			 ! renderer.extensions.get( "OES_texture_float" ) ) {
 
 			return "No OES_texture_float support for float textures.";
 

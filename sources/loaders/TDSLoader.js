@@ -1,21 +1,21 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { FileLoader } from './FileLoader.js'
-import { Group } from '../objects/Group.js'
-import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
-import { BufferGeometry } from '../core/BufferGeometry.js'
-import { Mesh } from '../objects/Mesh.js'
-import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-import { Matrix4 } from '../math/Matrix4.js'
-import { TextureLoader } from './TextureLoader.js'
-import { Color } from '../math/Color.js'
 import {
-	DoubleSide,
-	AdditiveBlending
+	AdditiveBlending,
+	DoubleSide
 } from '../constants.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Color } from '../math/Color.js'
+import { FileLoader } from './FileLoader.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Group } from '../objects/Group.js'
+import { Loader } from './Loader.js'
 import { LoaderUtils } from './LoaderUtils.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Mesh } from '../objects/Mesh.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
+import { TextureLoader } from './TextureLoader.js'
 
 /**
  * Autodesk 3DS three.js file loader, based on lib3ds.
@@ -27,7 +27,6 @@ import { LoaderUtils } from './LoaderUtils.js'
  * @class TDSLoader
  * @constructor
  */
-
 var TDSLoader = function ( manager ) {
 
 	Loader.call( this, manager );

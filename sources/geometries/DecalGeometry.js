@@ -2,9 +2,9 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { BufferGeometry } from '../core/BufferGeometry.js'
-import { Vector3 } from '../math/Vector3.js'
-import { Matrix4 } from '../math/Matrix4.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -23,7 +23,6 @@ import { Float32BufferAttribute } from '../core/BufferAttribute.js'
  * reference: http://blog.wolfire.com/2009/06/how-to-project-decals/
  *
  */
-
 var DecalGeometry = function ( mesh, position, orientation, size ) {
 
 	BufferGeometry.call( this );

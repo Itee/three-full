@@ -1,8 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Object3D } from './../core/Object3D';
-import { LineSegments } from './../objects/LineSegments';
+import {
+	Object3D,
+	LineSegments
+} from '../../../src/Three';
 
 export class VertexNormalsHelper extends LineSegments {
 
@@ -16,6 +18,6 @@ export class VertexNormalsHelper extends LineSegments {
 	object: Object3D;
 	size: number;
 
-	update( object?: Object3D ): void;
+	update(): void;
 
 }

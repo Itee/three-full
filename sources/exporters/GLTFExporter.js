@@ -1,36 +1,33 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from '../math/Vector3.js'
-import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BufferAttribute } from '../core/BufferAttribute.js'
-import { Scene } from '../scenes/Scene.js'
-import { PropertyBinding } from '../animation/PropertyBinding.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
 import {
-	DoubleSide,
-	RepeatWrapping,
 	ClampToEdgeWrapping,
-	MirroredRepeatWrapping,
-	NearestFilter,
-	NearestMipmapNearestFilter,
-	NearestMipmapLinearFilter,
-	LinearFilter,
-	LinearMipmapNearestFilter,
-	LinearMipmapLinearFilter,
-	RGBAFormat,
+	DoubleSide,
 	InterpolateDiscrete,
 	InterpolateLinear,
-	TriangleStripDrawMode,
-	TriangleFanDrawMode
+	LinearFilter,
+	LinearMipmapLinearFilter,
+	LinearMipmapNearestFilter,
+	MirroredRepeatWrapping,
+	NearestFilter,
+	NearestMipmapLinearFilter,
+	NearestMipmapNearestFilter,
+	RGBAFormat,
+	RepeatWrapping
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
+import { PropertyBinding } from '../animation/PropertyBinding.js'
+import { Scene } from '../scenes/Scene.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author fernandojsg / http://fernandojsg.com
  * @author Don McCurdy / https://www.donmccurdy.com
  * @author Takahiro / https://github.com/takahirox
  */
-
 //------------------------------------------------------------------------------
 // Constants
 //------------------------------------------------------------------------------
@@ -1046,11 +1043,7 @@ GLTFExporter.prototype = {
 
 			}
 
-			if ( material.isMeshBasicMaterial ||
-				material.isLineBasicMaterial ||
-				material.isPointsMaterial ) {
-
-			} else {
+			if ( material.emissive ) {
 
 				// emissiveFactor
 				var emissive = material.emissive.clone().multiplyScalar( material.emissiveIntensity ).toArray();
@@ -1202,20 +1195,7 @@ GLTFExporter.prototype = {
 
 				}
 
-				if ( mesh.drawMode === TriangleFanDrawMode ) {
-
-					console.warn( 'GLTFExporter: TriangleFanDrawMode and wireframe incompatible.' );
-					mode = WEBGL_CONSTANTS.TRIANGLE_FAN;
-
-				} else if ( mesh.drawMode === TriangleStripDrawMode ) {
-
-					mode = mesh.material.wireframe ? WEBGL_CONSTANTS.LINE_STRIP : WEBGL_CONSTANTS.TRIANGLE_STRIP;
-
-				} else {
-
-					mode = mesh.material.wireframe ? WEBGL_CONSTANTS.LINES : WEBGL_CONSTANTS.TRIANGLES;
-
-				}
+				mode = mesh.material.wireframe ? WEBGL_CONSTANTS.LINES : WEBGL_CONSTANTS.TRIANGLES;
 
 			}
 
@@ -1375,7 +1355,7 @@ GLTFExporter.prototype = {
 									attribute.getX( j ) - baseAttribute.getX( j ),
 									attribute.getY( j ) - baseAttribute.getY( j ),
 									attribute.getZ( j ) - baseAttribute.getZ( j )
-									);
+								);
 
 							}
 

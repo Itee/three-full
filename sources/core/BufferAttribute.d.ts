@@ -1,9 +1,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import {
-	Usage
-} from '../constants';
+import { Usage } from '../constants';
+import { Matrix3 } from './../math/Matrix3';
+import { Matrix4 } from './../math/Matrix4';
 export class BufferAttribute {
 
 	constructor( array: ArrayLike<number>, itemSize: number, normalized?: boolean ); 
@@ -42,6 +42,10 @@ export class BufferAttribute {
 	copyVector4sArray(
 		vectors: { x: number; y: number; z: number; w: number }[]
 	): this;
+	applyMatrix3( m: Matrix3 ): this;
+	applyMatrix4( m: Matrix4 ): this;
+	applyNormalMatrix( m: Matrix3 ): this;
+	transformDirection( m: Matrix4 ): this;
 	set(
 		value: ArrayLike<number> | ArrayBufferView,
 		offset?: number

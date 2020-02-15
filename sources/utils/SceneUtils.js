@@ -7,7 +7,6 @@ import { Mesh } from '../objects/Mesh.js'
 /**
  * @author alteredq / http://alteredqualia.com/
  */
-
 var SceneUtils = {
 
 	createMultiMaterialObject: function ( geometry, materials ) {

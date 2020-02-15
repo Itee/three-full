@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Line } from '../objects/Line.js'
-import { Mesh } from '../objects/Mesh.js'
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-import { BufferGeometry } from '../core/BufferGeometry.js'
 import { BackSide } from '../constants.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Line } from '../objects/Line.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { Mesh } from '../objects/Mesh.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 
 /**
  * @author abelnation / http://github.com/abelnation

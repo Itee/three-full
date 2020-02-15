@@ -7,7 +7,6 @@ import { _Math } from './Math.js'
  * @author bhouston / http://exocortex.com/
  * @author zz85 / http://github.com/zz85
  */
-
 var ColorConverter = {
 
 	setHSV: function ( color, h, s, v ) {

@@ -6,7 +6,6 @@ import { Reflector } from './Reflector.js'
 /**
  * RTT version
  */
-
 var ReflectorRTT = function ( geometry, options ) {
 
 	Reflector.call( this, geometry, options );

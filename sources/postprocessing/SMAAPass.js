@@ -1,27 +1,26 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Pass } from './Pass.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { Texture } from '../textures/Texture.js'
+import {
+	LinearFilter,
+	NearestFilter,
+	RGBAFormat,
+	RGBFormat
+} from '../constants.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { Texture } from '../textures/Texture.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { Pass } from './Pass.js'
 import {
 	SMAAEdgesShader,
 	SMAAWeightsShader,
 	SMAABlendShader
 } from '../shaders/SMAAShader.js'
-import {
-	NearestFilter,
-	LinearFilter,
-	RGBFormat,
-	RGBAFormat
-} from '../constants.js'
-import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
 /**
  * @author mpk / http://polko.me/
  */
-
 var SMAAPass = function ( width, height ) {
 
 	Pass.call( this );

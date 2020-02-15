@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { EventDispatcher } from '../core/EventDispatcher.js'
 import { Color } from '../math/Color.js'
+import { EventDispatcher } from '../core/EventDispatcher.js'
 
 /**
  * RaytracingRenderer renders by raytracing it's scene. However, it does not
@@ -11,7 +11,6 @@ import { Color } from '../math/Color.js'
  *
  * @author zz85 / http://github.com/zz85
  */
-
 var RaytracingRenderer = function ( parameters ) {
 
 	parameters = parameters || {};

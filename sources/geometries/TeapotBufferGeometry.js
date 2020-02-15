@@ -1,11 +1,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { BufferAttribute } from '../core/BufferAttribute.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Vector3 } from '../math/Vector3.js'
 import { Vector4 } from '../math/Vector4.js'
-import { BufferAttribute } from '../core/BufferAttribute.js'
 
 /**
  * @author Eric Haines / http://erichaines.com/
@@ -57,7 +57,6 @@ import { BufferAttribute } from '../core/BufferAttribute.js'
  * See https://en.wikipedia.org/wiki/Utah_teapot for the history of the teapot
  *
  */
-
 var TeapotBufferGeometry = function ( size, segments, bottom, lid, body, fitLid, blinn ) {
 
 	// 32 * 4 * 4 Bezier spline patches

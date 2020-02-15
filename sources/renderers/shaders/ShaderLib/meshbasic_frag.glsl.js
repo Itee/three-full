@@ -21,6 +21,7 @@ uniform float opacity;
 #include <lightmap_pars_fragment>
 #include <envmap_common_pars_fragment>
 #include <envmap_pars_fragment>
+#include <cube_uv_reflection_fragment>
 #include <fog_pars_fragment>
 #include <specularmap_pars_fragment>
 #include <logdepthbuf_pars_fragment>
@@ -41,8 +42,9 @@ void main() {
 
 	ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
 	#ifdef USE_LIGHTMAP
-
-		reflectedLight.indirectDiffuse += texture2D( lightMap, vUv2 ).xyz * lightMapIntensity;
+	
+		vec4 lightMapTexel= texture2D( lightMap, vUv2 );
+		reflectedLight.indirectDiffuse += lightMapTexelToLinear( lightMapTexel ).rgb * lightMapIntensity;
 
 	#else
 

@@ -1,25 +1,24 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { FileLoader } from './FileLoader.js'
 import { Color } from '../math/Color.js'
-import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
-import { Vector2 } from '../math/Vector2.js'
-import { TextureLoader } from './TextureLoader.js'
+import { DefaultLoadingManager } from './LoadingManager.js'
+import { FileLoader } from './FileLoader.js'
 import {
 	FrontSide,
 	RepeatWrapping
 } from '../constants.js'
+import { Loader } from './Loader.js'
 import { LoaderUtils } from './LoaderUtils.js'
-import { DefaultLoadingManager } from './LoadingManager.js'
+import { MeshPhongMaterial } from '../materials/MeshPhongMaterial.js'
+import { TextureLoader } from './TextureLoader.js'
+import { Vector2 } from '../math/Vector2.js'
 
 /**
  * Loads a Wavefront .mtl file specifying materials
  *
  * @author angelxuanchang
  */
-
 var MTLLoader = function ( manager ) {
 
 	Loader.call( this, manager );
@@ -139,7 +138,7 @@ MTLLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 } );
 
 /**
- * Create a new THREE-MTLLoader.MaterialCreator
+ * Create a new MTLLoader.MaterialCreator
  * @param baseUrl - Url relative to which textures are loaded
  * @param options - Set of options on how to construct the materials
  *                  side: Which side to apply the material

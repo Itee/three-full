@@ -1,19 +1,22 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector2 } from '../math/Vector2.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderPass } from './ShaderPass.js'
 import { Clock } from '../core/Clock.js'
-import {
-	MaskPass,
-	ClearMaskPass
-} from './MaskPass.js'
-import { CopyShader } from '../shaders/CopyShader.js'
 import {
 	LinearFilter,
 	RGBAFormat
 } from '../constants.js'
+import { Mesh } from '../objects/Mesh.js'
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { Vector2 } from '../math/Vector2.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { CopyShader } from '../shaders/CopyShader.js'
+import { ShaderPass } from './ShaderPass.js'
+import {
+	MaskPass,
+	ClearMaskPass
+} from './MaskPass.js'
 var EffectComposer = function ( renderer, renderTarget ) {
 
 	this.renderer = renderer;
@@ -232,7 +235,7 @@ Object.assign( EffectComposer.prototype, {
 
 } );
 /* START COMMENT
-Pass = function () {
+var Pass = function () {
 
 	// if set to true, the pass is processed by the composer
 	this.enabled = true;
@@ -290,6 +293,12 @@ Pass.FullScreenQuad = ( function () {
 
 	Object.assign( FullScreenQuad.prototype, {
 
+		dispose: function () {
+
+			this._mesh.geometry.dispose();
+
+		},
+
 		render: function ( renderer ) {
 
 			renderer.render( this._mesh, camera );
@@ -302,5 +311,6 @@ Pass.FullScreenQuad = ( function () {
 
 } )();
 END COMMENT */
+;
 
 export { EffectComposer }

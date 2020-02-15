@@ -1,10 +1,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Geometry } from '../core/Geometry.js'
 import { Face3 } from '../core/Face3.js'
-import { Vector3 } from '../math/Vector3.js'
+import { Geometry } from '../core/Geometry.js'
 import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  *	@author zz85 / http://twitter.com/blurspline / http://www.lab4games.net/zz85/blog
@@ -21,7 +21,6 @@ import { Vector2 } from '../math/Vector2.js'
  *	Known Issues:
  *		- currently doesn't handle "Sharp Edges"
  */
-
 var SubdivisionModifier = function ( subdivisions ) {
 
 	this.subdivisions = ( subdivisions === undefined ) ? 1 : subdivisions;
@@ -169,9 +168,19 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 
 		oldVertices = geometry.vertices; // { x, y, z}
 		oldFaces = geometry.faces; // { a: oldVertex1, b: oldVertex2, c: oldVertex3 }
-		oldUvs = geometry.faceVertexUvs[ 0 ];
+		oldUvs = geometry.faceVertexUvs;
 
-		var hasUvs = oldUvs !== undefined && oldUvs.length > 0;
+		var hasUvs = oldUvs[ 0 ] !== undefined && oldUvs[ 0 ].length > 0;
+
+		if ( hasUvs ) {
+
+			for ( var j = 0; j < oldUvs.length; j ++ ) {
+
+				newUVs.push( [] );
+
+			}
+
+		}
 
 		/******************************************************
 		 *
@@ -366,21 +375,25 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 
 			if ( hasUvs ) {
 
-				uv = oldUvs[ i ];
+				for ( var j = 0; j < oldUvs.length; j ++ ) {
 
-				x0 = uv[ 0 ];
-				x1 = uv[ 1 ];
-				x2 = uv[ 2 ];
+					uv = oldUvs[ j ][ i ];
 
-				x3.set( midpoint( x0.x, x1.x ), midpoint( x0.y, x1.y ) );
-				x4.set( midpoint( x1.x, x2.x ), midpoint( x1.y, x2.y ) );
-				x5.set( midpoint( x0.x, x2.x ), midpoint( x0.y, x2.y ) );
+					x0 = uv[ 0 ];
+					x1 = uv[ 1 ];
+					x2 = uv[ 2 ];
 
-				newUv( newUVs, x3, x4, x5 );
-				newUv( newUVs, x0, x3, x5 );
+					x3.set( midpoint( x0.x, x1.x ), midpoint( x0.y, x1.y ) );
+					x4.set( midpoint( x1.x, x2.x ), midpoint( x1.y, x2.y ) );
+					x5.set( midpoint( x0.x, x2.x ), midpoint( x0.y, x2.y ) );
 
-				newUv( newUVs, x1, x4, x3 );
-				newUv( newUVs, x2, x5, x4 );
+					newUv( newUVs[ j ], x3, x4, x5 );
+					newUv( newUVs[ j ], x0, x3, x5 );
+
+					newUv( newUVs[ j ], x1, x4, x3 );
+					newUv( newUVs[ j ], x2, x5, x4 );
+
+				}
 
 			}
 
@@ -389,7 +402,7 @@ SubdivisionModifier.prototype.modify = function ( geometry ) {
 		// Overwrite old arrays
 		geometry.vertices = newVertices;
 		geometry.faces = newFaces;
-		if ( hasUvs ) geometry.faceVertexUvs[ 0 ] = newUVs;
+		if ( hasUvs ) geometry.faceVertexUvs = newUVs;
 
 		// console.log('done');
 

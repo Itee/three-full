@@ -1,20 +1,20 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Pass } from './Pass.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import {
+	LinearFilter,
+	LinearMipmapLinearFilter,
+	NoBlending,
+	RGBAFormat
+} from '../constants.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { Pass } from './Pass.js'
 import { CopyShader } from '../shaders/CopyShader.js'
 import { LuminosityShader } from '../shaders/LuminosityShader.js'
 import { ToneMapShader } from '../shaders/ToneMapShader.js'
-import {
-	NoBlending,
-	LinearFilter,
-	LinearMipmapLinearFilter,
-	RGBAFormat
-} from '../constants.js'
-import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
 /**
  * @author miibond
@@ -24,7 +24,6 @@ import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
  *
  * Full-screen tone-mapping shader based on http://www.graphics.cornell.edu/~jaf/publications/sig02_paper.pdf
  */
-
 var AdaptiveToneMappingPass = function ( adaptive, resolution ) {
 
 	Pass.call( this );

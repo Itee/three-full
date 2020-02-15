@@ -33,6 +33,11 @@ import {
 	RGBAFormat,
 	RGBFormat,
 	AlphaFormat,
+	RedIntegerFormat,
+	RGFormat,
+	RGIntegerFormat,
+	RGBIntegerFormat,
+	RGBAIntegerFormat,
 	HalfFloatType,
 	FloatType,
 	UnsignedIntType,
@@ -96,6 +101,14 @@ function WebGLUtils( gl, extensions, capabilities ) {
 		if ( p === DepthFormat ) return gl.DEPTH_COMPONENT;
 		if ( p === DepthStencilFormat ) return gl.DEPTH_STENCIL;
 		if ( p === RedFormat ) return gl.RED;
+
+		// WebGL2 formats.
+
+		if ( p === RedIntegerFormat ) return gl.RED_INTEGER;
+		if ( p === RGFormat ) return gl.RG;
+		if ( p === RGIntegerFormat ) return gl.RG_INTEGER;
+		if ( p === RGBIntegerFormat ) return gl.RGB_INTEGER;
+		if ( p === RGBAIntegerFormat ) return gl.RGBA_INTEGER;
 
 		if ( p === RGB_S3TC_DXT1_Format || p === RGBA_S3TC_DXT1_Format ||
 			p === RGBA_S3TC_DXT3_Format || p === RGBA_S3TC_DXT5_Format ) {

@@ -1,28 +1,27 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { RGBELoader } from './RGBELoader.js'
 import { CubeTexture } from '../textures/CubeTexture.js'
-import { FileLoader } from './FileLoader.js'
 import { DataTexture } from '../textures/DataTexture.js'
+import { FileLoader } from './FileLoader.js'
 import {
-	NearestFilter,
-	LinearFilter,
-	UnsignedByteType,
 	FloatType,
 	HalfFloatType,
-	RGBFormat,
-	RGBAFormat,
 	LinearEncoding,
-	RGBEEncoding
+	LinearFilter,
+	NearestFilter,
+	RGBAFormat,
+	RGBEEncoding,
+	RGBFormat,
+	UnsignedByteType
 } from '../constants.js'
+import { Loader } from './Loader.js'
+import { RGBELoader } from './RGBELoader.js'
 
 /**
 * @author Prashant Sharma / spidersharma03
 * @author Ben Houston / http://clara.io / bhouston
 */
-
 var HDRCubeTextureLoader = function ( manager ) {
 
 	Loader.call( this, manager );

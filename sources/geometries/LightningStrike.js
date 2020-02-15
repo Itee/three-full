@@ -2,14 +2,14 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { BufferGeometry } from '../core/BufferGeometry.js'
-import { Vector3 } from '../math/Vector3.js'
-import { SimplexNoise } from '../misc/SimplexNoise.js'
-import {
-	Uint32BufferAttribute,
-	Float32BufferAttribute
-} from '../core/BufferAttribute.js'
 import { DynamicDrawUsage } from '../constants.js'
+import {
+	Float32BufferAttribute,
+	Uint32BufferAttribute
+} from '../core/BufferAttribute.js'
 import { _Math } from '../math/Math.js'
+import { Vector3 } from '../math/Vector3.js'
+import { SimplexNoise } from '../math/SimplexNoise.js'
 
 /**
  * @author yomboprime https://github.com/yomboprime
@@ -113,7 +113,6 @@ import { _Math } from '../math/Math.js'
  *
  *
 */
-
 var LightningStrike = function ( rayParameters ) {
 
 	BufferGeometry.call( this );

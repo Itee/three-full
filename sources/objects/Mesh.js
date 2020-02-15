@@ -11,8 +11,7 @@ import { Triangle } from '../math/Triangle.js'
 import { Face3 } from '../core/Face3.js'
 import {
 	DoubleSide,
-	BackSide,
-	TrianglesDrawMode
+	BackSide
 } from '../constants.js'
 import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
@@ -55,8 +54,6 @@ function Mesh( geometry, material ) {
 	this.geometry = geometry !== undefined ? geometry : new BufferGeometry();
 	this.material = material !== undefined ? material : new MeshBasicMaterial( { color: Math.random() * 0xffffff } );
 
-	this.drawMode = TrianglesDrawMode;
-
 	this.updateMorphTargets();
 
 }
@@ -67,17 +64,9 @@ Mesh.prototype = Object.assign( Object.create( Object3D.prototype ), {
 
 	isMesh: true,
 
-	setDrawMode: function ( value ) {
-
-		this.drawMode = value;
-
-	},
-
 	copy: function ( source ) {
 
 		Object3D.prototype.copy.call( this, source );
-
-		this.drawMode = source.drawMode;
 
 		if ( source.morphTargetInfluences !== undefined ) {
 
@@ -168,15 +157,6 @@ Mesh.prototype = Object.assign( Object.create( Object3D.prototype ), {
 		if ( geometry.boundingBox !== null ) {
 
 			if ( _ray.intersectsBox( geometry.boundingBox ) === false ) return;
-
-		}
-
-		// check unsupported draw modes
-
-		if ( this.drawMode !== TrianglesDrawMode ) {
-
-			console.warn( 'Mesh: TriangleStripDrawMode and TriangleFanDrawMode are not supported by .raycast().' );
-			return;
 
 		}
 

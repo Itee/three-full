@@ -1,22 +1,21 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Pass } from './Pass.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { AfterimageShader } from '../shaders/AfterimageShader.js'
 import {
-	NearestFilter,
 	LinearFilter,
+	NearestFilter,
 	RGBAFormat
 } from '../constants.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { Pass } from './Pass.js'
+import { AfterimageShader } from '../shaders/AfterimageShader.js'
 
 /**
  * @author HypnosNova / https://www.threejs.org.cn/gallery/
  */
-
 var AfterimagePass = function ( damp ) {
 
 	Pass.call( this );

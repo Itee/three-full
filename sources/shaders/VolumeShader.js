@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from '../math/Vector3.js'
 import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author Almar Klein / http://almarklein.org
@@ -11,7 +11,6 @@ import { Vector2 } from '../math/Vector2.js'
  * The applied techniques are based on similar implementations in the Visvis and Vispy projects.
  * This is not the only approach, therefore it's marked 1.
  */
-
 var VolumeRenderShader1 = {
 	uniforms: {
 		"u_size": { value: new Vector3( 1, 1, 1 ) },

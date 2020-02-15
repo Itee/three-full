@@ -1,11 +1,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Object3D } from '../core/Object3D.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { LightningStrike } from '../geometries/LightningStrike.js'
-import { Mesh } from './Mesh.js'
 import { _Math } from '../math/Math.js'
+import { Mesh } from './Mesh.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { Object3D } from '../core/Object3D.js'
+import { LightningStrike } from '../geometries/LightningStrike.js'
 
 /**
  * @author yomboprime https://github.com/yomboprime
@@ -54,7 +54,6 @@ import { _Math } from '../math/Math.js'
  *
  *
 */
-
 var LightningStorm = function ( stormParams ) {
 
 	Object3D.call( this );

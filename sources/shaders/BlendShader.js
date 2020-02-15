@@ -6,7 +6,6 @@
  *
  * Blend two textures
  */
-
 var BlendShader = {
 
 	uniforms: {

@@ -1,31 +1,30 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Object3D } from '../core/Object3D.js'
-import { Mesh } from '../objects/Mesh.js'
-import { Raycaster } from '../core/Raycaster.js'
-import { Vector3 } from '../math/Vector3.js'
-import { Quaternion } from '../math/Quaternion.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
-import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js'
 import { BoxBufferGeometry } from '../geometries/BoxGeometry.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Color } from '../math/Color.js'
+import { CylinderBufferGeometry } from '../geometries/CylinderGeometry.js'
+import { DoubleSide } from '../constants.js'
+import { Euler } from '../math/Euler.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Line } from '../objects/Line.js'
+import { LineBasicMaterial } from '../materials/LineBasicMaterial.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Mesh } from '../objects/Mesh.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { Object3D } from '../core/Object3D.js'
 import { OctahedronBufferGeometry } from '../geometries/OctahedronGeometry.js'
 import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
-import { TorusBufferGeometry } from '../geometries/TorusGeometry.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { Raycaster } from '../core/Raycaster.js'
 import { SphereBufferGeometry } from '../geometries/SphereGeometry.js'
-import { Euler } from '../math/Euler.js'
-import { Matrix4 } from '../math/Matrix4.js'
-import { Color } from '../math/Color.js'
-import { DoubleSide } from '../constants.js'
+import { TorusBufferGeometry } from '../geometries/TorusGeometry.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author arodic / https://github.com/arodic
  */
-
 var TransformControls = function ( camera, domElement ) {
 
 	if ( domElement === undefined ) {
@@ -38,6 +37,7 @@ var TransformControls = function ( camera, domElement ) {
 	Object3D.call( this );
 
 	this.visible = false;
+	this.domElement = domElement;
 
 	var _gizmo = new TransformControlsGizmo();
 	this.add( _gizmo );
@@ -58,6 +58,7 @@ var TransformControls = function ( camera, domElement ) {
 	defineProperty( "mode", "translate" );
 	defineProperty( "translationSnap", null );
 	defineProperty( "rotationSnap", null );
+	defineProperty( "scaleSnap", null );
 	defineProperty( "space", "world" );
 	defineProperty( "size", 1 );
 	defineProperty( "dragging", false );
@@ -483,6 +484,28 @@ var TransformControls = function ( camera, domElement ) {
 
 			object.scale.copy( scaleStart ).multiply( _tempVector2 );
 
+			if ( this.scaleSnap ) {
+
+				if ( axis.search( 'X' ) !== - 1 ) {
+
+					object.scale.x = Math.round( object.scale.x / this.scaleSnap ) * this.scaleSnap || this.scaleSnap;
+
+				}
+
+				if ( axis.search( 'Y' ) !== - 1 ) {
+
+					object.scale.y = Math.round( object.scale.y / this.scaleSnap ) * this.scaleSnap || this.scaleSnap;
+
+				}
+
+				if ( axis.search( 'Z' ) !== - 1 ) {
+
+					object.scale.z = Math.round( object.scale.z / this.scaleSnap ) * this.scaleSnap || this.scaleSnap;
+
+				}
+
+			}
+
 		} else if ( mode === 'rotate' ) {
 
 			offset.copy( pointEnd ).sub( pointStart );
@@ -654,6 +677,12 @@ var TransformControls = function ( camera, domElement ) {
 	this.setRotationSnap = function ( rotationSnap ) {
 
 		scope.rotationSnap = rotationSnap;
+
+	};
+
+	this.setScaleSnap = function ( scaleSnap ) {
+
+		scope.scaleSnap = scaleSnap;
 
 	};
 

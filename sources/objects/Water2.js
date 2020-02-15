@@ -1,19 +1,19 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Mesh } from './Mesh.js'
-import { Color } from '../math/Color.js'
-import { Vector2 } from '../math/Vector2.js'
-import { TextureLoader } from '../loaders/TextureLoader.js'
-import { Matrix4 } from '../math/Matrix4.js'
 import { Clock } from '../core/Clock.js'
-import { Reflector } from './Reflector.js'
-import { Refractor } from './Refractor.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { Vector4 } from '../math/Vector4.js'
+import { Color } from '../math/Color.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Mesh } from './Mesh.js'
 import { RepeatWrapping } from '../constants.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { TextureLoader } from '../loaders/TextureLoader.js'
 import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Vector4 } from '../math/Vector4.js'
+import { Reflector } from './Reflector.js'
+import { Refractor } from './Refractor.js'
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
@@ -23,7 +23,6 @@ import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
  * 	http://graphicsrunner.blogspot.de/2010/08/water-using-flow-maps.html
  *
  */
-
 function Water2( geometry, options ) {
 
 	Mesh.call( this, geometry );

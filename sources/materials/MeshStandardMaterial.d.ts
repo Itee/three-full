@@ -44,7 +44,6 @@ export class MeshStandardMaterial extends Material {
 
 	constructor( parameters?: MeshStandardMaterialParameters );
 
-	defines: any;
 	color: Color;
 	roughness: number;
 	metalness: number;

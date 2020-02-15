@@ -1,9 +1,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { BackSide } from '../constants.js'
 import { Color } from '../math/Color.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { BackSide } from '../constants.js'
 import { UniformsLib } from '../renderers/shaders/UniformsLib.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 
@@ -64,7 +64,6 @@ import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
  * 	keepAlive: true
  * };
  */
-
 var OutlineEffect = function ( renderer, parameters ) {
 
 	parameters = parameters || {};

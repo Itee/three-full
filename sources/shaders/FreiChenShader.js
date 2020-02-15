@@ -11,7 +11,6 @@ import { Vector2 } from '../math/Vector2.js'
  *
  * aspect: vec2 of (1/width, 1/height)
  */
-
 var FreiChenShader = {
 
 	uniforms: {

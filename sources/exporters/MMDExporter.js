@@ -1,9 +1,9 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from '../math/Vector3.js'
-import { Quaternion } from '../math/Quaternion.js'
 import { Matrix4 } from '../math/Matrix4.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author takahiro / http://github.com/takahirox
@@ -11,7 +11,6 @@ import { Matrix4 } from '../math/Matrix4.js'
  * Dependencies
  *  - mmd-parser https://github.com/takahirox/mmd-parser
  */
-
 var MMDExporter = function () {
 
 	// Unicode to Shift_JIS table

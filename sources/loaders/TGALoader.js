@@ -1,16 +1,15 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import { FileLoader } from './FileLoader.js'
 import { Loader } from './Loader.js'
 import { Texture } from '../textures/Texture.js'
-import { FileLoader } from './FileLoader.js'
 
 /**
  * @author Daosheng Mu / https://github.com/DaoshengMu/
  * @author mrdoob / http://mrdoob.com/
  * @author takahirox / https://github.com/takahirox/
  */
-
 var TGALoader = function ( manager ) {
 
 	Loader.call( this, manager );

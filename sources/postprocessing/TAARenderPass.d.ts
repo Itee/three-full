@@ -1,0 +1,17 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import {
+	Scene,
+	Camera,
+	Color
+} from '../../../src/Three';
+
+import { SSAARenderPass } from './SSAARenderPass';
+
+export class TAARenderPass extends SSAARenderPass {
+
+	constructor( scene: Scene, camera: Camera, clearColor: Color | string | number, clearAlpha: number );
+	accumulate: boolean;
+
+}

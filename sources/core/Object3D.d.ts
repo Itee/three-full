@@ -30,14 +30,14 @@ export class Object3D extends EventDispatcher {
 	parent: Object3D | null;
 	children: Object3D[];
 	up: Vector3;
-	position: Vector3;
-	rotation: Euler;
-	quaternion: Quaternion;
-	scale: Vector3;
+	readonly position: Vector3;
+	readonly rotation: Euler;
+	readonly quaternion: Quaternion;
+	readonly scale: Vector3;
 
-	modelViewMatrix: Matrix4;
+	readonly modelViewMatrix: Matrix4;
 
-	normalMatrix: Matrix3;
+	readonly normalMatrix: Matrix3;
 	matrix: Matrix4;
 	matrixWorld: Matrix4;
 	matrixAutoUpdate: boolean;

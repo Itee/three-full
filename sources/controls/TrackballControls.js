@@ -2,10 +2,10 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { EventDispatcher } from '../core/EventDispatcher.js'
-import { Vector3 } from '../math/Vector3.js'
-import { Vector2 } from '../math/Vector2.js'
-import { Quaternion } from '../math/Quaternion.js'
 import { MOUSE } from '../constants.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { Vector2 } from '../math/Vector2.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author Eberhard Graether / http://egraether.com/
@@ -13,7 +13,6 @@ import { MOUSE } from '../constants.js'
  * @author Simone Manini / http://daron1337.github.io
  * @author Luca Antiga 	/ http://lantiga.github.io
  */
-
 var TrackballControls = function ( object, domElement ) {
 
 	if ( domElement === undefined ) console.warn( 'TrackballControls: The second parameter "domElement" is now mandatory.' );
@@ -363,7 +362,7 @@ var TrackballControls = function ( object, domElement ) {
 
 			_this.object.lookAt( _this.target );
 
-			if ( lastPosition.distanceToSquared( _this.object.position ) > EPS || lastZoom !== _this.object.zoom ) {
+			if ( lastPosition.distanceToSquared( _this.object.position ) > EPS || lastZoom !== _this.object.zoom ) {
 
 				_this.dispatchEvent( changeEvent );
 

@@ -1,14 +1,14 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { FileLoader } from './FileLoader.js'
 import { BufferGeometry } from '../core/BufferGeometry.js'
+import { FileLoader } from './FileLoader.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
-import { PointsMaterial } from '../materials/PointsMaterial.js'
-import { Points } from '../objects/Points.js'
-import { VertexColors } from '../constants.js'
+import { Loader } from './Loader.js'
 import { LoaderUtils } from './LoaderUtils.js'
+import { Points } from '../objects/Points.js'
+import { PointsMaterial } from '../materials/PointsMaterial.js'
+import { VertexColors } from '../constants.js'
 
 /**
  * @author Filipe Caixeta / http://filipecaixeta.com.br
@@ -16,7 +16,6 @@ import { LoaderUtils } from './LoaderUtils.js'
  *
  * Description: A THREE loader for PCD ascii and binary files.
  */
-
 var PCDLoader = function ( manager ) {
 
 	Loader.call( this, manager );

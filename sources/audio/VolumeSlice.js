@@ -1,15 +1,15 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Texture } from '../textures/Texture.js'
-import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
-import { Mesh } from '../objects/Mesh.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import {
-	DoubleSide,
 	ClampToEdgeWrapping,
+	DoubleSide,
 	LinearFilter
 } from '../constants.js'
+import { Mesh } from '../objects/Mesh.js'
+import { MeshBasicMaterial } from '../materials/MeshBasicMaterial.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { Texture } from '../textures/Texture.js'
 
 /**
  * This class has been made to hold a slice of a volume data

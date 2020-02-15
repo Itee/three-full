@@ -8,8 +8,9 @@ import {
 	Wrapping,
 	TextureFilter,
 	PixelFormat,
+	PixelFormatGPU,
 	TextureDataType,
-	TextureEncoding,
+	TextureEncoding
 } from '../constants';
 export let TextureIdCount: number;
 
@@ -41,6 +42,7 @@ export class Texture extends EventDispatcher {
 	minFilter: TextureFilter;
 	anisotropy: number;
 	format: PixelFormat;
+	internalFormat: PixelFormatGPU | null;
 	type: TextureDataType;
 	offset: Vector2;
 	repeat: Vector2;

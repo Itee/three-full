@@ -1,28 +1,27 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Object3D } from '../core/Object3D.js'
-import {
-	Projector,
-	RenderableSprite,
-	RenderableLine,
-	RenderableFace
-} from './Projector.js'
 import { Box2 } from '../math/Box2.js'
-import { Color } from '../math/Color.js'
-import { Vector3 } from '../math/Vector3.js'
-import { Matrix3 } from '../math/Matrix3.js'
-import { Matrix4 } from '../math/Matrix4.js'
 import { Camera } from '../cameras/Camera.js'
+import { Color } from '../math/Color.js'
 import {
 	FaceColors,
 	VertexColors
 } from '../constants.js'
+import { Matrix3 } from '../math/Matrix3.js'
+import { Matrix4 } from '../math/Matrix4.js'
+import { Object3D } from '../core/Object3D.js'
+import { Vector3 } from '../math/Vector3.js'
+import {
+	Projector,
+	RenderableFace,
+	RenderableLine,
+	RenderableSprite
+} from './Projector.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
  */
-
 var SVGObject = function ( node ) {
 
 	Object3D.call( this );

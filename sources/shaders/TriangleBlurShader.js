@@ -14,7 +14,6 @@ import { Vector2 } from '../math/Vector2.js'
  * pyramid filter. The pyramid filter is separable and is applied as two
  * perpendicular triangle filters.
  */
-
 var TriangleBlurShader = {
 
 	uniforms: {

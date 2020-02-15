@@ -1,23 +1,23 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Mesh } from './Mesh.js'
 import { Clock } from '../core/Clock.js'
 import { Color } from '../math/Color.js'
-import { Vector2 } from '../math/Vector2.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { Scene } from '../scenes/Scene.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { DataTexture } from '../textures/DataTexture.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import {
-	NoToneMapping,
-	NearestFilter,
 	LinearFilter,
+	NearestFilter,
+	NoToneMapping,
 	RGBAFormat
 } from '../constants.js'
 import { _Math } from '../math/Math.js'
+import { Mesh } from './Mesh.js'
+import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
+import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
+import { Scene } from '../scenes/Scene.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { Vector2 } from '../math/Vector2.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 
 /**
  * @author Mike Piecuch / https://github.com/mikepiecuch
@@ -26,7 +26,6 @@ import { _Math } from '../math/Math.js'
  * http://www.dgp.toronto.edu/people/stam/reality/Research/pdf/GDC03.pdf
  *
  */
-
 var Fire = function ( geometry, options ) {
 
 	Mesh.call( this, geometry );
@@ -332,7 +331,7 @@ var Fire = function ( geometry, options ) {
 	this.saveRenderState = function ( renderer ) {
 
 		this.savedRenderTarget = renderer.getRenderTarget();
-		this.savedVrEnabled = renderer.vr.enabled;
+		this.savedXrEnabled = renderer.xr.enabled;
 		this.savedShadowAutoUpdate = renderer.shadowMap.autoUpdate;
 		this.savedAntialias = renderer.antialias;
 		this.savedToneMapping = renderer.toneMapping;
@@ -341,7 +340,7 @@ var Fire = function ( geometry, options ) {
 
 	this.restoreRenderState = function ( renderer ) {
 
-		renderer.vr.enabled = this.savedVrEnabled;
+		renderer.xr.enabled = this.savedXrEnabled;
 		renderer.shadowMap.autoUpdate = this.savedShadowAutoUpdate;
 		renderer.setRenderTarget( this.savedRenderTarget );
 		renderer.antialias = this.savedAntialias;
@@ -458,7 +457,7 @@ var Fire = function ( geometry, options ) {
 
 		this.saveRenderState( renderer );
 
-		renderer.vr.enabled = false; // Avoid camera modification and recursion
+		renderer.xr.enabled = false; // Avoid camera modification and recursion
 		renderer.shadowMap.autoUpdate = false; // Avoid re-computing shadows
 		renderer.antialias = false;
 		renderer.toneMapping = NoToneMapping;

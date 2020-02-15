@@ -1,22 +1,22 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
+import { BufferGeometry } from '../core/BufferGeometry.js'
+import { Color } from '../math/Color.js'
 import { FileLoader } from './FileLoader.js'
+import { Float32BufferAttribute } from '../core/BufferAttribute.js'
+import { Loader } from './Loader.js'
+import { Matrix3 } from '../math/Matrix3.js'
+import { Path } from '../core/Path.js'
 import { ShapePath } from '../core/ShapePath.js'
 import { Vector2 } from '../math/Vector2.js'
-import { Path } from '../core/Path.js'
-import { Matrix3 } from '../math/Matrix3.js'
 import { Vector3 } from '../math/Vector3.js'
-import { BufferGeometry } from '../core/BufferGeometry.js'
-import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author zz85 / http://joshuakoo.com/
  * @author yomboprime / https://yombo.org
  */
-
 var SVGLoader = function ( manager ) {
 
 	Loader.call( this, manager );
@@ -808,7 +808,7 @@ SVGLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 				};
 
 				if ( node.hasAttribute( svgName ) ) style[ jsName ] = adjustFunction( node.getAttribute( svgName ) );
-				if ( node.style[ svgName ] !== '' ) style[ jsName ] = adjustFunction( node.style[ svgName ] );
+				if ( node.style && node.style[ svgName ] !== '' ) style[ jsName ] = adjustFunction( node.style[ svgName ] );
 
 			}
 
@@ -1617,23 +1617,31 @@ SVGLoader.pointsToStrokeWithBuffers = function () {
 
 			if ( joinIsOnLeftSide ) {
 
-				lastInner.toArray( vertices, 0 * 3 );
-				lastInner.toArray( vertices, 3 * 3 );
+				if ( isMiter || initialJoinIsOnLeftSide ) {
 
-				if ( isMiter ) {
+					lastInner.toArray( vertices, 0 * 3 );
+					lastInner.toArray( vertices, 3 * 3 );
 
-					lastOuter.toArray( vertices, 1 * 3 );
+					if ( isMiter ) {
+
+						lastOuter.toArray( vertices, 1 * 3 );
+
+					}
 
 				}
 
 			} else {
 
-				lastInner.toArray( vertices, 1 * 3 );
-				lastInner.toArray( vertices, 3 * 3 );
+				if ( isMiter || ! initialJoinIsOnLeftSide ) {
 
-				if ( isMiter ) {
+					lastInner.toArray( vertices, 1 * 3 );
+					lastInner.toArray( vertices, 3 * 3 );
 
-					lastOuter.toArray( vertices, 0 * 3 );
+					if ( isMiter ) {
+
+						lastOuter.toArray( vertices, 0 * 3 );
+
+					}
 
 				}
 

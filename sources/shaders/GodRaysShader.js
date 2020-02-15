@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector2 } from '../math/Vector2.js'
 import { Color } from '../math/Color.js'
+import { Vector2 } from '../math/Vector2.js'
 
 /**
  * @author huwb / http://huwbowles.com/
@@ -23,7 +23,6 @@ import { Color } from '../math/Color.js'
  *
  * Sousa2008 - Crysis Next Gen Effects, GDC2008, http://www.crytek.com/sites/default/files/GDC08_SousaT_CrysisEffects.ppt
  */
-
 var GodRaysDepthMaskShader = {
 
 	uniforms: {

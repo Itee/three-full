@@ -1,15 +1,15 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Loader } from './Loader.js'
-import { FileLoader } from './FileLoader.js'
-import { Vector3 } from '../math/Vector3.js'
-import { Quaternion } from '../math/Quaternion.js'
-import { Bone } from '../objects/Bone.js'
-import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
-import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
 import { AnimationClip } from '../animation/AnimationClip.js'
+import { Bone } from '../objects/Bone.js'
+import { FileLoader } from './FileLoader.js'
+import { Loader } from './Loader.js'
+import { Quaternion } from '../math/Quaternion.js'
+import { QuaternionKeyframeTrack } from '../animation/tracks/QuaternionKeyframeTrack.js'
 import { Skeleton } from '../objects/Skeleton.js'
+import { Vector3 } from '../math/Vector3.js'
+import { VectorKeyframeTrack } from '../animation/tracks/VectorKeyframeTrack.js'
 
 /**
  * @author herzig / http://github.com/herzig
@@ -20,7 +20,6 @@ import { Skeleton } from '../objects/Skeleton.js'
  * Currently only supports bvh files containing a single root.
  *
  */
-
 var BVHLoader = function ( manager ) {
 
 	Loader.call( this, manager );

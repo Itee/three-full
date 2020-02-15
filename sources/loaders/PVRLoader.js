@@ -3,10 +3,10 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { CompressedTextureLoader } from './CompressedTextureLoader.js'
 import {
-	RGB_PVRTC_4BPPV1_Format,
-	RGB_PVRTC_2BPPV1_Format,
+	RGBA_PVRTC_2BPPV1_Format,
 	RGBA_PVRTC_4BPPV1_Format,
-	RGBA_PVRTC_2BPPV1_Format
+	RGB_PVRTC_2BPPV1_Format,
+	RGB_PVRTC_4BPPV1_Format
 } from '../constants.js'
 
 /*
@@ -18,7 +18,6 @@ import {
  *   TODO : Add Support for PVR v3 format
  *   TODO : implement loadMipmaps option
  */
-
 var PVRLoader = function ( manager ) {
 
 	CompressedTextureLoader.call( this, manager );

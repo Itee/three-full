@@ -1,24 +1,23 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Pass } from './Pass.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { Color } from '../math/Color.js'
+import {
+	LinearFilter,
+	NoBlending,
+	RGBADepthPacking,
+	RGBFormat
+} from '../constants.js'
 import { MeshDepthMaterial } from '../materials/MeshDepthMaterial.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { Color } from '../math/Color.js'
-import { BokehShader } from '../shaders/BokehShader.js'
-import {
-	NoBlending,
-	LinearFilter,
-	RGBFormat,
-	RGBADepthPacking
-} from '../constants.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { Pass } from './Pass.js'
+import { BokehShader } from '../shaders/BokehShader.js'
 
 /**
  * Depth-of-field post-process with bokeh shader
  */
-
 var BokehPass = function ( scene, camera, params ) {
 
 	Pass.call( this );

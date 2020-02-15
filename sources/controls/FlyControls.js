@@ -7,7 +7,6 @@ import { Vector3 } from '../math/Vector3.js'
 /**
  * @author James Baicoianu / http://www.baicoianu.com/
  */
-
 var FlyControls = function ( object, domElement ) {
 
 	if ( domElement === undefined ) {

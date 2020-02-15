@@ -1,42 +1,41 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Pass } from './Pass.js'
-import { DepthTexture } from '../textures/DepthTexture.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { MeshNormalMaterial } from '../materials/MeshNormalMaterial.js'
-import { Color } from '../math/Color.js'
-import { Vector3 } from '../math/Vector3.js'
-import { SimplexNoise } from '../misc/SimplexNoise.js'
-import { DataTexture } from '../textures/DataTexture.js'
-import { CopyShader } from '../shaders/CopyShader.js'
 import {
-	SSAOShader,
-	SSAODepthShader,
-	SSAOBlurShader
-} from '../shaders/SSAOShader.js'
-import {
-	NoBlending,
-	CustomBlending,
 	AddEquation,
-	ZeroFactor,
+	CustomBlending,
 	DstAlphaFactor,
 	DstColorFactor,
-	RepeatWrapping,
-	NearestFilter,
-	LinearFilter,
-	UnsignedShortType,
 	FloatType,
-	RGBAFormat
+	LinearFilter,
+	NearestFilter,
+	NoBlending,
+	RGBAFormat,
+	RepeatWrapping,
+	UnsignedShortType,
+	ZeroFactor
 } from '../constants.js'
-import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { Color } from '../math/Color.js'
+import { DataTexture } from '../textures/DataTexture.js'
+import { DepthTexture } from '../textures/DepthTexture.js'
 import { _Math } from '../math/Math.js'
+import { MeshNormalMaterial } from '../materials/MeshNormalMaterial.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
+import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { Vector3 } from '../math/Vector3.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { Pass } from './Pass.js'
+import { SimplexNoise } from '../math/SimplexNoise.js'
+import {
+	SSAOShader,
+	SSAOBlurShader,
+	SSAODepthShader
+} from '../shaders/SSAOShader.js'
+import { CopyShader } from '../shaders/CopyShader.js'
 
 /**
  * @author Mugen87 / https://github.com/Mugen87
  */
-
 var SSAOPass = function ( scene, camera, width, height ) {
 
 	Pass.call( this );
@@ -188,16 +187,16 @@ SSAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 		this.ssaoRenderTarget.dispose();
 		this.blurRenderTarget.dispose();
 
-		// dispose geometry
-
-		this.quad.geometry.dispose();
-
 		// dispose materials
 
 		this.normalMaterial.dispose();
 		this.blurMaterial.dispose();
 		this.copyMaterial.dispose();
 		this.depthRenderMaterial.dispose();
+
+		// dipsose full screen quad
+
+		this.fsQuad.dispose();
 
 	},
 

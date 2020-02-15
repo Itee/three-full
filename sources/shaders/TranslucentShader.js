@@ -15,7 +15,6 @@ import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
  * https://colinbarrebrisebois.com/2011/03/07/gdc-2011-approximating-translucency-for-a-fast-cheap-and-convincing-subsurface-scattering-look/
  *------------------------------------------------------------------------------------------
  */
-
 var TranslucentShader = {
 
 	uniforms: UniformsUtils.merge( [

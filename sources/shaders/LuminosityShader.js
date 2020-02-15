@@ -7,7 +7,6 @@
  * Luminosity
  * http://en.wikipedia.org/wiki/Luminosity
  */
-
 var LuminosityShader = {
 
 	uniforms: {

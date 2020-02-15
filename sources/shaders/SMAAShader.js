@@ -10,7 +10,6 @@ import { Vector2 } from '../math/Vector2.js'
  * Preset: SMAA 1x Medium (with color edge detection)
  * https://github.com/iryoku/smaa/releases/tag/v2.8
  */
-
 var SMAAEdgesShader = {
 
 	defines: {

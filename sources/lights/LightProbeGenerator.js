@@ -1,19 +1,18 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from '../math/Vector3.js'
 import { Color } from '../math/Color.js'
-import { SphericalHarmonics3 } from '../math/SphericalHarmonics3.js'
 import { LightProbe } from './LightProbe.js'
 import {
 	LinearEncoding,
 	sRGBEncoding
 } from '../constants.js'
+import { SphericalHarmonics3 } from '../math/SphericalHarmonics3.js'
+import { Vector3 } from '../math/Vector3.js'
 
 /**
  * @author WestLangley / http://github.com/WestLangley
  */
-
 var LightProbeGenerator = {
 
 	// https://www.ppsloan.org/publications/StupidSH36.pdf

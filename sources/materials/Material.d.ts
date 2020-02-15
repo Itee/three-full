@@ -31,6 +31,7 @@ export interface MaterialParameters {
 	clippingPlanes?: Plane[];
 	clipShadows?: boolean;
 	colorWrite?: boolean;
+	defines?: any;
 	depthFunc?: DepthModes;
 	depthTest?: boolean;
 	depthWrite?: boolean;
@@ -74,6 +75,7 @@ export class Material extends EventDispatcher {
 	clippingPlanes: any;
 	clipShadows: boolean;
 	colorWrite: boolean;
+	defines: any;
 	depthFunc: DepthModes;
 	depthTest: boolean;
 	depthWrite: boolean;

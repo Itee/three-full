@@ -9,7 +9,6 @@ import { LineMaterial } from './LineMaterial.js'
  * @author WestLangley / http://github.com/WestLangley
  *
  */
-
 var Line2 = function ( geometry, material ) {
 
 	LineSegments2.call( this );

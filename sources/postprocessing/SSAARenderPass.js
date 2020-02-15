@@ -1,16 +1,16 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Pass } from './Pass.js'
-import { ShaderMaterial } from '../materials/ShaderMaterial.js'
-import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
-import { CopyShader } from '../shaders/CopyShader.js'
 import {
 	AdditiveBlending,
 	LinearFilter,
 	RGBAFormat
 } from '../constants.js'
+import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
+import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
+import { Pass } from './Pass.js'
+import { CopyShader } from '../shaders/CopyShader.js'
 
 /**
 *
@@ -23,7 +23,6 @@ import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
 * References: https://en.wikipedia.org/wiki/Supersampling
 *
 */
-
 var SSAARenderPass = function ( scene, camera, clearColor, clearAlpha ) {
 
 	Pass.call( this );

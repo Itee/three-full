@@ -10,7 +10,6 @@ import { Vector2 } from '../math/Vector2.js'
  * based on glfx.js sepia shader
  * https://github.com/evanw/glfx.js
  */
-
 var DotScreenShader = {
 
 	uniforms: {

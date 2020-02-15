@@ -1,0 +1,28 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import {
+	LoadingManager,
+	DataTextureLoader,
+	TextureDataType,
+	PixelFormat
+} from '../../../src/Three';
+
+export interface EXR {
+	header: object;
+	width: number;
+	height: number;
+	data: Float32Array;
+	format: PixelFormat;
+	type: TextureDataType;
+}
+
+export class EXRLoader extends DataTextureLoader {
+
+	constructor( manager?: LoadingManager );
+	type: TextureDataType;
+
+	parse( buffer: ArrayBuffer ) : EXR;
+	setDataType( type: TextureDataType ): this;
+
+}
