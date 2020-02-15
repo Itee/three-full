@@ -1300,11 +1300,13 @@ function _getOutputFor ( filePath, outputBasePath, outputOverride = undefined ) 
         const exampleFontsTarget = 'three\\examples\\fonts'
         const exampleJsmTarget   = 'three\\examples\\jsm'
         const exampleJsTarget    = 'three\\examples\\js'
+        const extraTarget        = 'three\\src\\extras'
         const sourceTarget       = 'three\\src'
 
         let indexOfExampleFontsTarget = path.indexOf( exampleFontsTarget )
         let indexOfExampleJsmTarget   = path.indexOf( exampleJsmTarget )
         let indexOfExampleJsTarget    = path.indexOf( exampleJsTarget )
+        let indexOfExtraTarget        = path.indexOf( extraTarget )
         let indexOfSourceTarget       = path.indexOf( sourceTarget )
         let specificPath              = undefined
 
@@ -1319,6 +1321,10 @@ function _getOutputFor ( filePath, outputBasePath, outputOverride = undefined ) 
         } else if ( indexOfExampleJsTarget > -1 ) {
 
             specificPath = path.slice( indexOfExampleJsTarget + exampleJsTarget.length )
+
+        } else if ( indexOfExtraTarget > -1 ) {
+
+            specificPath = path.slice( indexOfExtraTarget + extraTarget.length )
 
         } else if ( indexOfSourceTarget > -1 ) {
 
