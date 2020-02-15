@@ -421,8 +421,14 @@ module.exports = {
                 ['\'float geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );\',','\'float geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );\''] // Fix eslint extra colon
             ]
         },
+        SVGLoader:      {
+            imports: [ '!Color' ]
+        },
         TransformControls:      {
             imports: [ '!CircleGeometry' ]
+        },
+        TypedArrayUtils:      {
+            imports: [ '!Node' ]
         },
         UniformsUtils:          {
             exportsOverride: [
@@ -467,6 +473,8 @@ module.exports = {
                 'ObjectSpaceNormalMap',
                 'TangentSpaceNormalMap',
                 'NoToneMapping',
+                'ShaderLib',
+                'UniformsUtils',
                 'WebGLProgram'
             ]
         }
