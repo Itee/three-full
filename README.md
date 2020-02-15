@@ -3,7 +3,10 @@ three-full
 
 [![License][license-badge]][license-badge-url]
 
-**The version 27.0.0 is now available under Three r0.112.1 !!!**
+**Deprecation note:**
+> I am glad to annonce since Three release his examples files under JSM folder, this repository should be avoided. The first goal of this repository was to provided an alternative solution during this migration. From now, please consider to use Three.module.js instead even if i maintain this repository for my personal usage. Thanks for all ! Itee...
+
+**The version 28.0.0 is now available under Three r0.113.2**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -120,6 +123,7 @@ This is the list of unsupported part of example, which cannot/won't be converted
     
 * **Others**   
     * **examples\js** //*Good job was done in JSM folder, nice*
+    * **examples\jsm\controls\experimental** //*Duplicate exports*
 
 * **Specific Files**   
     * **examples\js\loaders\VRMLLoader**
@@ -130,10 +134,12 @@ This is the list of unsupported part of example, which cannot/won't be converted
 
 * **Scene** Could use \_\_THREE_DEVTOOLS__
 * **WebGLRenderer** Could use \_\_THREE_DEVTOOLS__
-* **MMDLoader** Require MMDParser available at three/examples/js/libs/mmdparser.min.js
-* **MMDExporter** Require MMDParser available at three/examples/js/libs/mmdparser.min.js
-* **FBXLoader** Require Zlib.Inflate available at three/examples/js/libs/inflate.min.js
-* **VTKLoader** Require Zlib.Inflate available at three/examples/js/libs/inflate.min.js
+* **MMDLoader** Require MMDParser available at three/examples/jsm/libs/mmdparser.module.js
+* **MMDExporter** Require MMDParser available at three/examples/jsm/libs/mmdparser.module.js
+* **FBXLoader** Require Zlib.Inflate available at three/examples/jsm/libs/inflate.module.min.js
+* **EXRLoader** Require Zlib.Inflate available at three/examples/jsm/libs/inflate.module.min.js
+* **NRRDLoader** Require Zlib.Inflate available at three/examples/jsm/libs/inflate.module.min.js
+* **VTKLoader** Require Zlib.Inflate available at three/examples/jsm/libs/inflate.module.min.js
 * **TTFLoader** Require opentype available at three/examples/js/libs/opentype.min.js
 * **TimelinerController** Require Timeliner available at three/examples/js/libs/timeliner_gui.min.js
 
@@ -163,6 +169,15 @@ This is the list of unsupported part of example, which cannot/won't be converted
 
 #### Change log ####
 
+
+##### 28.0.0:
+
+* Support of Three r113.2
+* Ignore experimental jsm folder
+* Add eslint fix about StandardNode
+* Fix SVGLoader imports
+* Fix TypedArrayUtils imports
+* Fix WebGLPrograms imports
 
 ##### 27.0.0:
 
