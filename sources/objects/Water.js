@@ -7,7 +7,7 @@ import {
 	LinearFilter,
 	RGBFormat
 } from '../constants.js'
-import { _Math } from '../math/Math.js'
+import { MathUtils } from '../math/MathUtils.js'
 import { Matrix4 } from '../math/Matrix4.js'
 import { Mesh } from './Mesh.js'
 import { PerspectiveCamera } from '../cameras/PerspectiveCamera.js'
@@ -78,7 +78,7 @@ var Water = function ( geometry, options ) {
 
 	var renderTarget = new WebGLRenderTarget( textureWidth, textureHeight, parameters );
 
-	if ( ! _Math.isPowerOfTwo( textureWidth ) || ! _Math.isPowerOfTwo( textureHeight ) ) {
+	if ( ! MathUtils.isPowerOfTwo( textureWidth ) || ! MathUtils.isPowerOfTwo( textureHeight ) ) {
 
 		renderTarget.texture.generateMipmaps = false;
 
@@ -205,7 +205,6 @@ var Water = function ( geometry, options ) {
 		fragmentShader: mirrorShader.fragmentShader,
 		vertexShader: mirrorShader.vertexShader,
 		uniforms: UniformsUtils.clone( mirrorShader.uniforms ),
-		transparent: true,
 		lights: true,
 		side: side,
 		fog: fog
@@ -322,6 +321,16 @@ var Water = function ( geometry, options ) {
 		renderer.shadowMap.autoUpdate = currentShadowAutoUpdate;
 
 		renderer.setRenderTarget( currentRenderTarget );
+
+		// Restore viewport
+
+		var viewport = camera.viewport;
+
+		if ( viewport !== undefined ) {
+
+			renderer.state.viewport( viewport );
+
+		}
 
 	};
 

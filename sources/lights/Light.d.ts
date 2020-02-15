@@ -10,7 +10,7 @@ export class Light extends Object3D {
 
 	color: Color;
 	intensity: number;
-	isLight: true;
+	readonly isLight: true;
 	receiveShadow: boolean;
 	shadow: LightShadow;
 	

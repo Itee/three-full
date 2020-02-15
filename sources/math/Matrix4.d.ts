@@ -4,7 +4,6 @@
 import { Vector3 } from './Vector3';
 import { Euler } from './Euler';
 import { Quaternion } from './Quaternion';
-import { BufferAttribute } from './../core/BufferAttribute';
 import { Matrix } from './Matrix3';
 
 export class Matrix4 implements Matrix {
@@ -46,13 +45,6 @@ export class Matrix4 implements Matrix {
 	multiplyMatrices( a: Matrix4, b: Matrix4 ): Matrix4;
 	multiplyToArray( a: Matrix4, b: Matrix4, r: number[] ): Matrix4;
 	multiplyScalar( s: number ): Matrix4;
-	applyToBuffer(
-		buffer: BufferAttribute,
-		offset?: number,
-		length?: number
-	): BufferAttribute;
-
-	applyToBufferAttribute( attribute: BufferAttribute ): BufferAttribute;
 	determinant(): number;
 	transpose(): Matrix4;
 	setPosition( v: Vector3 | number, y?: number, z?: number ): Matrix4;
@@ -72,7 +64,7 @@ export class Matrix4 implements Matrix {
 		translation?: Vector3,
 		rotation?: Quaternion,
 		scale?: Vector3
-	): Object[]; 
+	): Matrix4;
 	makePerspective(
 		left: number,
 		right: number,

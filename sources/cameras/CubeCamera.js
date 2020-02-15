@@ -2,7 +2,7 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Object3D } from '../core/Object3D.js'
-import { WebGLRenderTargetCube } from '../renderers/WebGLRenderTargetCube.js'
+import { WebGLCubeRenderTarget } from '../renderers/WebGLCubeRenderTarget.js'
 import {
 	LinearFilter,
 	RGBFormat
@@ -56,7 +56,7 @@ function CubeCamera( near, far, cubeResolution, options ) {
 
 	options = options || { format: RGBFormat, magFilter: LinearFilter, minFilter: LinearFilter };
 
-	this.renderTarget = new WebGLRenderTargetCube( cubeResolution, cubeResolution, options );
+	this.renderTarget = new WebGLCubeRenderTarget( cubeResolution, options );
 	this.renderTarget.texture.name = "CubeCamera";
 
 	this.update = function ( renderer, scene ) {

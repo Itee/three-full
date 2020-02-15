@@ -2,7 +2,7 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { PropertyBinding } from './PropertyBinding.js'
-import { _Math } from '../math/Math.js'
+import { MathUtils } from '../math/MathUtils.js'
 /**
  *
  * A group of objects that receives a shared animation state.
@@ -36,7 +36,7 @@ import { _Math } from '../math/Math.js'
 
 function AnimationObjectGroup() {
 
-	this.uuid = _Math.generateUUID();
+	this.uuid = MathUtils.generateUUID();
 
 	// cached objects followed by the active ones
 	this._objects = Array.prototype.slice.call( arguments );

@@ -18,7 +18,7 @@ import {
 import { Color } from '../math/Color.js'
 import { DataTexture } from '../textures/DataTexture.js'
 import { DepthTexture } from '../textures/DepthTexture.js'
-import { _Math } from '../math/Math.js'
+import { MathUtils } from '../math/MathUtils.js'
 import { MeshNormalMaterial } from '../materials/MeshNormalMaterial.js'
 import { ShaderMaterial } from '../materials/ShaderMaterial.js'
 import { UniformsUtils } from '../renderers/shaders/UniformsUtils.js'
@@ -378,7 +378,7 @@ SSAOPass.prototype = Object.assign( Object.create( Pass.prototype ), {
 			sample.normalize();
 
 			var scale = i / kernelSize;
-			scale = _Math.lerp( 0.1, 1, scale * scale );
+			scale = MathUtils.lerp( 0.1, 1, scale * scale );
 			sample.multiplyScalar( scale );
 
 			kernel.push( sample );

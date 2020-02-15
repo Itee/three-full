@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { _Math } from '../math/Math.js'
+import { MathUtils } from '../math/MathUtils.js'
 import { Spherical } from '../math/Spherical.js'
 import { Vector3 } from '../math/Vector3.js'
 
@@ -235,7 +235,7 @@ var FirstPersonControls = function ( object, domElement ) {
 
 			if ( this.heightSpeed ) {
 
-				var y = _Math.clamp( this.object.position.y, this.heightMin, this.heightMax );
+				var y = MathUtils.clamp( this.object.position.y, this.heightMin, this.heightMax );
 				var heightDelta = y - this.heightMin;
 
 				this.autoSpeedFactor = delta * ( heightDelta * this.heightCoef );
@@ -278,12 +278,12 @@ var FirstPersonControls = function ( object, domElement ) {
 
 			lat = Math.max( - 85, Math.min( 85, lat ) );
 
-			var phi = _Math.degToRad( 90 - lat );
-			var theta = _Math.degToRad( lon );
+			var phi = MathUtils.degToRad( 90 - lat );
+			var theta = MathUtils.degToRad( lon );
 
 			if ( this.constrainVertical ) {
 
-				phi = _Math.mapLinear( phi, 0, Math.PI, this.verticalMin, this.verticalMax );
+				phi = MathUtils.mapLinear( phi, 0, Math.PI, this.verticalMin, this.verticalMax );
 
 			}
 
@@ -346,8 +346,8 @@ var FirstPersonControls = function ( object, domElement ) {
 		lookDirection.set( 0, 0, - 1 ).applyQuaternion( quaternion );
 		spherical.setFromVector3( lookDirection );
 
-		lat = 90 - _Math.radToDeg( spherical.phi );
-		lon = _Math.radToDeg( spherical.theta );
+		lat = 90 - MathUtils.radToDeg( spherical.phi );
+		lon = MathUtils.radToDeg( spherical.theta );
 
 	}
 

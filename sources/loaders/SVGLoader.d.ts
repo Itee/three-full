@@ -26,6 +26,9 @@ export class SVGLoader extends Loader {
 
 	constructor( manager?: LoadingManager );
 
+	defaultDPI: number;
+	defaultUnit: string;
+
 	load( url: string, onLoad: ( data: SVGResult ) => void, onProgress?: ( event: ProgressEvent ) => void, onError?: ( event: ErrorEvent ) => void ) : void;
 	parse( text: string ) : SVGResult;
 

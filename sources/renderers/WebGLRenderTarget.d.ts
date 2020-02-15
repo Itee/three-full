@@ -39,7 +39,7 @@ export class WebGLRenderTarget extends EventDispatcher {
 	depthBuffer: boolean;
 	stencilBuffer: boolean;
 	depthTexture: DepthTexture;
-	
+	readonly isWebGLRenderTarget: true;
 	wrapS: any;
 	
 	wrapT: any;

@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { AnimationAction } from '../../../src/animation/AnimationAction';
 import {
+	AnimationAction,
 	AnimationMixer,
 	BufferGeometry,
 	Geometry,
@@ -12,7 +12,7 @@ import {
 
 export class MorphAnimMesh extends Mesh {
 
-	constructor( geometry: BufferGeometry | Geometry, material: Material );
+	constructor( geometry: BufferGeometry | Geometry, material: Material );
 	mixer: AnimationMixer;
 	activeAction: AnimationAction | null;
 

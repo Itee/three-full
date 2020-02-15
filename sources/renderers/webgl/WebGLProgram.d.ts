@@ -1,29 +1,26 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { WebGLRenderer, WebGLRendererParameters } from './../WebGLRenderer';
-import { ShaderMaterial } from './../../materials/ShaderMaterial';
+import { WebGLRenderer } from './../WebGLRenderer';
 import { WebGLShader } from './WebGLShader';
-import { WebGLExtensions } from './WebGLExtensions';
 import { WebGLUniforms } from './WebGLUniforms';
 
 export class WebGLProgram {
 
 	constructor(
 		renderer: WebGLRenderer,
-		extensions: WebGLExtensions,
 		cacheKey: string,
-		material: ShaderMaterial,
-		shader: WebGLShader,
-		parameters: WebGLRendererParameters
+		parameters: object
 	);
 
+	name: string;
 	id: number;
 	cacheKey: string; 
 	usedTimes: number;
 	program: any;
 	vertexShader: WebGLShader;
 	fragmentShader: WebGLShader;
+	numMultiviewViews: number;
 	
 	uniforms: any;
 	

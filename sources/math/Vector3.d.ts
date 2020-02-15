@@ -18,7 +18,7 @@ export class Vector3 implements Vector {
 	x: number;
 	y: number;
 	z: number;
-	isVector3: true;
+	readonly isVector3: true;
 	set( x: number, y: number, z: number ): this;
 	setScalar( scalar: number ): this;
 	setX( x: number ): Vector3;
@@ -113,6 +113,7 @@ export class Vector3 implements Vector {
 	setFromMatrixPosition( m: Matrix4 ): this;
 	setFromMatrixScale( m: Matrix4 ): this;
 	setFromMatrixColumn( matrix: Matrix4, index: number ): this;
+	setFromMatrix3Column( matrix: Matrix3, index: number ): this;
 	equals( v: Vector3 ): boolean;
 	fromArray( array: number[], offset?: number ): this;
 	fromArray( array: ArrayLike<number>, offset?: number ): this;

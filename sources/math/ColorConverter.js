@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { _Math } from './Math.js'
+import { MathUtils } from './MathUtils.js'
 
 /**
  * @author bhouston / http://exocortex.com/
@@ -13,9 +13,9 @@ var ColorConverter = {
 
 		// https://gist.github.com/xpansive/1337890#file-index-js
 
-		h = _Math.euclideanModulo( h, 1 );
-		s = _Math.clamp( s, 0, 1 );
-		v = _Math.clamp( v, 0, 1 );
+		h = MathUtils.euclideanModulo( h, 1 );
+		s = MathUtils.clamp( s, 0, 1 );
+		v = MathUtils.clamp( v, 0, 1 );
 
 		return color.setHSL( h, ( s * v ) / ( ( h = ( 2 - s ) * v ) < 1 ? h : ( 2 - h ) ), h * 0.5 );
 

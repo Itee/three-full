@@ -8,7 +8,7 @@ export class MultiMaterial extends Material {
 
 	constructor( materials?: Material[] );
 
-	isMultiMaterial: true;
+	readonly isMultiMaterial: true;
 
 	materials: Material[];
 
@@ -18,7 +18,7 @@ export class MultiMaterial extends Material {
 export interface PointsMaterialParameters extends MaterialParameters {
 	color?: Color | string | number;
 	map?: Texture | null;
-	alphaMap?: Texture | null;
+	alphaMap?: Texture | null;
 	size?: number;
 	sizeAttenuation?: boolean;
 }

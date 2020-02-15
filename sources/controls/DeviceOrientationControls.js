@@ -2,7 +2,7 @@
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { Euler } from '../math/Euler.js'
-import { _Math } from '../math/Math.js'
+import { MathUtils } from '../math/MathUtils.js'
 import { Quaternion } from '../math/Quaternion.js'
 import { Vector3 } from '../math/Vector3.js'
 
@@ -115,13 +115,13 @@ var DeviceOrientationControls = function ( object ) {
 
 		if ( device ) {
 
-			var alpha = device.alpha ? _Math.degToRad( device.alpha ) + scope.alphaOffset : 0; // Z
+			var alpha = device.alpha ? MathUtils.degToRad( device.alpha ) + scope.alphaOffset : 0; // Z
 
-			var beta = device.beta ? _Math.degToRad( device.beta ) : 0; // X'
+			var beta = device.beta ? MathUtils.degToRad( device.beta ) : 0; // X'
 
-			var gamma = device.gamma ? _Math.degToRad( device.gamma ) : 0; // Y''
+			var gamma = device.gamma ? MathUtils.degToRad( device.gamma ) : 0; // Y''
 
-			var orient = scope.screenOrientation ? _Math.degToRad( scope.screenOrientation ) : 0; // O
+			var orient = scope.screenOrientation ? MathUtils.degToRad( scope.screenOrientation ) : 0; // O
 
 			setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
 

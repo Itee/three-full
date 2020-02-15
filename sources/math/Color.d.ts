@@ -11,7 +11,7 @@ export class Color {
 	constructor( color?: Color | string | number );
 	constructor( r: number, g: number, b: number );
 
-	isColor: boolean;
+	readonly isColor: true;
 	r: number;
 	g: number;
 	b: number;

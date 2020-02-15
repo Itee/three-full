@@ -16,7 +16,7 @@ export class Points extends Object3D {
 	type: 'Points';
 	morphTargetInfluences?: number[];
 	morphTargetDictionary?: { [key: string]: number };
-	isPoints: true;
+	readonly isPoints: true;
 	geometry: Geometry | BufferGeometry;
 	material: Material | Material[];
 

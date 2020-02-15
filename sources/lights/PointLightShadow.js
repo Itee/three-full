@@ -82,7 +82,7 @@ PointLightShadow.prototype = Object.assign( Object.create( LightShadow.prototype
 		shadowMatrix.makeTranslation( - lightPositionWorld.x, - lightPositionWorld.y, - lightPositionWorld.z );
 
 		projScreenMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
-		this._frustum.setFromMatrix( projScreenMatrix );
+		this._frustum.setFromProjectionMatrix( projScreenMatrix );
 
 	}
 

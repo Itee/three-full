@@ -8,6 +8,7 @@ import { WebGLInfo } from './webgl/WebGLInfo';
 import { WebGLShadowMap } from './webgl/WebGLShadowMap';
 import { WebGLCapabilities } from './webgl/WebGLCapabilities';
 import { WebGLProperties } from './webgl/WebGLProperties';
+import { WebGLProgram } from './webgl/WebGLProgram';
 import { WebGLRenderLists } from './webgl/WebGLRenderLists';
 import { WebGLState } from './webgl/WebGLState';
 import { Vector2 } from './../math/Vector2';
@@ -16,7 +17,6 @@ import { Color } from './../math/Color';
 import { WebGLRenderTarget } from './WebGLRenderTarget';
 import { Object3D } from './../core/Object3D';
 import { Material } from './../materials/Material';
-import { Fog } from './../scenes/Fog';
 import { ToneMapping, ShadowMapType, CullFace, TextureEncoding } from '../constants';
 import { WebXRManager } from '../renderers/webxr/WebXRManager';
 import { RenderTarget } from './webgl/WebGLRenderLists';
@@ -131,15 +131,15 @@ export class WebGLRenderer implements Renderer {
 	): void;
 	resetGLState(): void;
 	dispose(): void;
+
 	renderBufferImmediate(
 		object: Object3D,
-		program: Object,
-		material: Material
+		program: WebGLProgram,
 	): void;
 
 	renderBufferDirect(
 		camera: Camera,
-		fog: Fog,
+		scene: Scene,
 		geometry: Geometry | BufferGeometry,
 		material: Material,
 		object: Object3D,

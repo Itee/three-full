@@ -6,9 +6,6 @@ import {
 	LinearFilter,
 	RGBAFormat
 } from '../constants.js'
-import { Mesh } from '../objects/Mesh.js'
-import { OrthographicCamera } from '../cameras/OrthographicCamera.js'
-import { PlaneBufferGeometry } from '../geometries/PlaneGeometry.js'
 import { Vector2 } from '../math/Vector2.js'
 import { WebGLRenderTarget } from '../renderers/WebGLRenderTarget.js'
 import { CopyShader } from '../shaders/CopyShader.js'
@@ -234,7 +231,7 @@ Object.assign( EffectComposer.prototype, {
 	}
 
 } );
-/* START COMMENT
+/* START_COMMENT
 var Pass = function () {
 
 	// if set to true, the pass is processed by the composer
@@ -310,7 +307,7 @@ Pass.FullScreenQuad = ( function () {
 	return FullScreenQuad;
 
 } )();
-END COMMENT */
+END_COMMENT */
 ;
 
 export { EffectComposer }

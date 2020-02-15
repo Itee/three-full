@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { _Math } from '../../math/Math.js'
+import { MathUtils } from '../../math/MathUtils.js'
 import { ShaderPass } from '../../postprocessing/ShaderPass.js'
 import { NodeMaterial } from '../materials/NodeMaterial.js'
 import { ScreenNode } from '../inputs/ScreenNode.js'
@@ -14,7 +14,7 @@ function NodePass() {
 	ShaderPass.call( this );
 
 	this.name = "";
-	this.uuid = _Math.generateUUID();
+	this.uuid = MathUtils.generateUUID();
 
 	this.userData = {};
 

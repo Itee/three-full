@@ -4,7 +4,7 @@
 import { BufferGeometry } from '../core/BufferGeometry.js'
 import { Float32BufferAttribute } from '../core/BufferAttribute.js'
 import { Geometry } from '../core/Geometry.js'
-import { _Math } from '../math/Math.js'
+import { MathUtils } from '../math/MathUtils.js'
 
 /**
  * @author WestLangley / http://github.com/WestLangley
@@ -28,7 +28,7 @@ function EdgesGeometry( geometry, thresholdAngle ) {
 
 	// helper variables
 
-	var thresholdDot = Math.cos( _Math.DEG2RAD * thresholdAngle );
+	var thresholdDot = Math.cos( MathUtils.DEG2RAD * thresholdAngle );
 	var edge = [ 0, 0 ], edges = {}, edge1, edge2;
 	var key, keys = [ 'a', 'b', 'c' ];
 

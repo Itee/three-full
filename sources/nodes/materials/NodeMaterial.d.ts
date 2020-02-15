@@ -25,7 +25,7 @@ export class NodeMaterial extends ShaderMaterial {
 
 	updaters: object[];
 
-	isNodeMaterial: boolean;
+	readonly isNodeMaterial: true;
 	properties: object;
 
 	updateFrame( frame: NodeFrame ): void;

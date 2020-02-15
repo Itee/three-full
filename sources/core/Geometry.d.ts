@@ -38,7 +38,7 @@ export class Geometry extends EventDispatcher {
 
 	uuid: string;
 
-	isGeometry: boolean;
+	readonly isGeometry: true;
 	name: string;
 
 	type: string;
@@ -60,7 +60,7 @@ export class Geometry extends EventDispatcher {
 	colorsNeedUpdate: boolean;
 	lineDistancesNeedUpdate: boolean;
 	groupsNeedUpdate: boolean;
-	applyMatrix( matrix: Matrix4 ): Geometry;
+	applyMatrix4( matrix: Matrix4 ): Geometry;
 
 	rotateX( angle: number ): Geometry;
 	rotateY( angle: number ): Geometry;

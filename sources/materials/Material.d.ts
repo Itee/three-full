@@ -88,7 +88,7 @@ export class Material extends EventDispatcher {
 	stencilFail: StencilOp;
 	stencilZFail: StencilOp;
 	stencilZPass: StencilOp;
-	isMaterial: boolean;
+	readonly isMaterial: true;
 	name: string;
 	needsUpdate: boolean;
 	opacity: number;
@@ -100,6 +100,7 @@ export class Material extends EventDispatcher {
 	dithering: boolean;
 	flatShading: boolean;
 	side: Side;
+	shadowSide: Side;
 	toneMapped: boolean;
 	transparent: boolean;
 	type: string;

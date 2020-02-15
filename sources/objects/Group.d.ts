@@ -7,6 +7,6 @@ export class Group extends Object3D {
 
 	constructor();
 	type: 'Group';
-	isGroup: true;
+	readonly isGroup: true;
 
 }

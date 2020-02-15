@@ -1,15 +1,12 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // WARNING: This file was auto-generated, any change will be overridden in next release. Please use configs/es6.conf.js then run "npm run convert". //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { Vector3 } from './Vector3.js'
 /**
  * @author alteredq / http://alteredqualia.com/
  * @author WestLangley / http://github.com/WestLangley
  * @author bhouston / http://clara.io
  * @author tschw
  */
-
-var _vector = new Vector3();
 
 function Matrix3() {
 
@@ -91,24 +88,6 @@ Object.assign( Matrix3.prototype, {
 		);
 
 		return this;
-
-	},
-
-	applyToBufferAttribute: function ( attribute ) {
-
-		for ( var i = 0, l = attribute.count; i < l; i ++ ) {
-
-			_vector.x = attribute.getX( i );
-			_vector.y = attribute.getY( i );
-			_vector.z = attribute.getZ( i );
-
-			_vector.applyMatrix3( this );
-
-			attribute.setXYZ( i, _vector.x, _vector.y, _vector.z );
-
-		}
-
-		return attribute;
 
 	},
 

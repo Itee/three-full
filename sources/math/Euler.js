@@ -4,7 +4,7 @@
 import { Quaternion } from './Quaternion.js'
 import { Vector3 } from './Vector3.js'
 import { Matrix4 } from './Matrix4.js'
-import { _Math } from './Math.js'
+import { MathUtils } from './MathUtils.js'
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author WestLangley / http://github.com/WestLangley
@@ -137,7 +137,7 @@ Object.assign( Euler.prototype, {
 
 	setFromRotationMatrix: function ( m, order, update ) {
 
-		var clamp = _Math.clamp;
+		var clamp = MathUtils.clamp;
 
 		// assumes the upper 3x3 of m is a pure rotation matrix (i.e, unscaled)
 

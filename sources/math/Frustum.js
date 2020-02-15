@@ -65,7 +65,7 @@ Object.assign( Frustum.prototype, {
 
 	},
 
-	setFromMatrix: function ( m ) {
+	setFromProjectionMatrix: function ( m ) {
 
 		var planes = this.planes;
 		var me = m.elements;
