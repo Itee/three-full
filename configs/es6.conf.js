@@ -20,9 +20,9 @@ module.exports = {
         'Three.js',
         'Three.Legacy.js',
         'Three.Legacy.d.ts',
-        'polyfills.js',     // Ignore pure function call (include from gulp)
-        'HelioWebXRPolyfill.js',     // Ignore pure function call (include from gulp)
-        '.DS_Store',        // Ignore DS_Store from r90
+        'polyfills.js',             // Ignore pure function call (include from gulp)
+        'HelioWebXRPolyfill.js',    // Ignore pure function call (include from gulp)
+        '.DS_Store',                // Ignore DS_Store from r90
         'README',
 
         // Intermediary exporter files
@@ -30,27 +30,40 @@ module.exports = {
         'Geometries.js',
         'Materials.js',
         'Nodes.js',
-        'THREE.Nodes.js',
 
-        // Worker
-        'RaytracingWorker.js',				// Ignore worker
-        'OffscreenCanvas.js',				// Ignore worker
-        'ctm',                              // Todo: Need to check worker import
+        
+        '\\examples\\jsm\\loaders\\VRMLLoader',
 
-        // Folder
-        'draco',                            // draco_decoder use Eval !
-        'sea3d',                            // Duplicate export 'SEA3D'
-        'crossfade',                        // Scene has already been declared
-        'offscreen',						// Should be in HTML File
-        'ldraw',							// target NodeJs and use require
-        'jsm',								// Contain duplicate exports
+        // Duplicated files
+        '\\examples\\js\\animation',
+        '\\examples\\js\\cameras',
+        '\\examples\\js\\controls',
+        '\\examples\\js\\curves',
+        '\\examples\\js\\effects',
+        '\\examples\\js\\exporters',
+        '\\examples\\js\\geometries',
+        '\\examples\\js\\interactive',
+        '\\examples\\js\\lights',
+        '\\examples\\js\\lines',
+        '\\examples\\js\\loaders',  // Care about VRMLLoader and NRRDLoader that are not in jsm but already ignored... so...
+        '\\examples\\js\\math',
+        '\\examples\\js\\misc',
+        '\\examples\\js\\modifier',
+        '\\examples\\js\\objects',
+        '\\examples\\js\\offscreen',
+        '\\examples\\js\\postprocessing',
+        '\\examples\\js\\renderers\\CSS2DRenderer',
+        '\\examples\\js\\renderers\\CSS3DRenderer',
+        '\\examples\\js\\renderers\\Projector',
+        '\\examples\\js\\renderers\\RaytracingRenderer',
+        '\\examples\\js\\renderers\\RaytracingWorker', // Not Exist in jsm but crash on test
+        '\\examples\\js\\renderers\\SVGRenderer',
+        '\\examples\\js\\renderers\\WebGLDeferredRenderer',
+        '\\examples\\js\\shaders',
+        '\\examples\\js\\utils',
+        '\\examples\\js\\vr', // HelioWebXRPolyfill is managed by gulp as external file
+        '\\examples\\js\\WebGL'
 
-        // Specific file
-        'Cloth.js',							// Use global variable from example html ! Need to be refactored
-        'Volume.js',                        // damned eval
-        'NRRDLoader.js',                    // Import Volume.js
-        'VRMLLoader.js',                    // rely on unbundlable chevrotain amd module using eval...
-        'XLoader.js'                     	// amd module
     ],
     output:    path.join( __dirname, '..', 'sources' ),
     edgeCases: {
