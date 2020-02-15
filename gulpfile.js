@@ -70,8 +70,12 @@ gulp.task( 'fix-effect-composer', () => {
 
     return gulp.src( './node_modules/three/examples/jsm/postprocessing/EffectComposer.js' )
                .pipe( replace( [ [ /\/\*[\s\S]*?\*\//g, '' ] ] ) ) // Clear multiline comment
-               .pipe( replace( [ [ 'var Pass = function () {', '/* START COMMENT\nvar Pass = function () {' ] ] ) ) // Add multiline comment around pass class
-               .pipe( replace( [ [ 'export { EffectComposer, Pass };', 'export { EffectComposer, Pass };\nEND COMMENT */\nexport { EffectComposer };' ] ] ) )
+               .pipe( replace( [ [ 'var Pass = function () {', '/* START_COMMENT\nvar Pass = function () {' ] ] ) ) // Add multiline comment around pass class
+               .pipe( replace( [ [ 'export { EffectComposer, Pass };', 'export { EffectComposer, Pass };\nEND_COMMENT */\nexport { EffectComposer };' ] ] ) )
+               .pipe( replace( [ [ '\/\* START_COMMENT[\s\S]*END_COMMENT \*\/', '' ] ] ) ) // Then remove comment
+               .pipe( replace( [ [ 'Mesh,', '' ] ] ) ) // Then extra imports
+               .pipe( replace( [ [ 'OrthographicCamera,', '' ] ] ) ) // Then extra imports
+               .pipe( replace( [ [ 'PlaneBufferGeometry,', '' ] ] ) ) // Then extra imports
                .pipe( gulp.dest( './node_modules/three/examples/jsm/postprocessing' ) )
 
 } )
