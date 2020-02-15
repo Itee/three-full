@@ -68,121 +68,17 @@ gulp.task( 'help', ( done ) => {
  */
 gulp.task( 'fix-effect-composer', () => {
 
-    return gulp.src( './node_modules/three/examples/js/postprocessing/EffectComposer.js' )
+    return gulp.src( './node_modules/three/examples/jsm/postprocessing/EffectComposer.js' )
                .pipe( replace( [ [ /\/\*[\s\S]*?\*\//g, '' ] ] ) ) // Clear multiline comment
-               .pipe( replace( [ [ 'THREE.Pass = function () {', '/* START COMMENT\nTHREE.Pass = function () {' ] ] ) ) // Add multiline comment around pass class
-               .pipe( replace( [ [ /}\s\)\(\);/g, '} )();\nEND COMMENT */' ] ] ) )
-               .pipe( gulp.dest( './node_modules/three/examples/js/postprocessing' ) )
-
-} )
-
-/**
- * See above
- */
-gulp.task( 'create-pass-file', ( done ) => {
-
-    const stringFile = `
-    THREE.Pass = function () {
-    
-    \t// if set to true, the pass is processed by the composer
-    \tthis.enabled = true;
-    
-    \t// if set to true, the pass indicates to swap read and write buffer after rendering
-    \tthis.needsSwap = true;
-    
-    \t// if set to true, the pass clears its buffer before rendering
-    \tthis.clear = false;
-    
-    \t// if set to true, the result of the pass is rendered to screen. This is set automatically by EffectComposer.
-    \tthis.renderToScreen = false;
-    
-    };
-    
-    Object.assign( THREE.Pass.prototype, {
-    
-    \tsetSize: function ( /* width, height */ ) {},
-    
-    \trender: function ( /* renderer, writeBuffer, readBuffer, deltaTime, maskActive */ ) {
-    
-    \t\tconsole.error( 'THREE.Pass: .render() must be implemented in derived pass.' );
-    
-    \t}
-    
-    } );
-    
-    // Helper for passes that need to fill the viewport with a single quad.
-    THREE.Pass.FullScreenQuad = ( function () {
-    
-    \tvar camera = new THREE.OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-    \tvar geometry = new THREE.PlaneBufferGeometry( 2, 2 );
-    
-    \tvar FullScreenQuad = function ( material ) {
-    
-    \t\tthis._mesh = new THREE.Mesh( geometry, material );
-    
-    \t};
-    
-    \tObject.defineProperty( FullScreenQuad.prototype, 'material', {
-    
-    \t\tget: function () {
-    
-    \t\t\treturn this._mesh.material;
-    
-    \t\t},
-    
-    \t\tset: function ( value ) {
-    
-    \t\t\tthis._mesh.material = value;
-    
-    \t\t}
-    
-    \t} );
-    
-    \tObject.assign( FullScreenQuad.prototype, {
-    
-    \t\trender: function ( renderer ) {
-    
-    \t\t\trenderer.render( this._mesh, camera );
-    
-    \t\t}
-    
-    \t} );
-    
-    \treturn FullScreenQuad;
-    
-    } )();
-    `
-
-    fs.writeFile( './node_modules/three/examples/js/postprocessing/Pass.js', stringFile, ( error ) => {
-
-        if ( error ) {
-            return console.error( error )
-        }
-
-        console.log( 'Pass.js was saved !' )
-        done()
-
-    } )
-
-} )
-
-/**
- * Remove wrong return in top level, in favor of if check
- */
-gulp.task( 'fix-helio-polyfill', () => {
-
-    return gulp.src( './node_modules/three/examples/js/vr/HelioWebXRPolyfill.js' )
-               .pipe( replace( [ [ 'if ( \'isSessionSupported\' in navigator.xr ) return;', '' ] ] ) ) // Clear multiline comment
-               .pipe( replace( [ [ 'if ( /(Helio)/g.test( navigator.userAgent ) && "xr" in navigator ) {', 'if ( /(Helio)/g.test( navigator.userAgent ) && "xr" in navigator && !( \'isSessionSupported\' in navigator.xr ) ) {' ] ] ) )
-               .pipe( gulp.dest( './node_modules/three/examples/js/vr' ) )
+               .pipe( replace( [ [ 'var Pass = function () {', '/* START COMMENT\nvar Pass = function () {' ] ] ) ) // Add multiline comment around pass class
+               .pipe( replace( [ [ 'export { EffectComposer, Pass };', 'export { EffectComposer, Pass };\nEND COMMENT */\nexport { EffectComposer };' ] ] ) )
+               .pipe( gulp.dest( './node_modules/three/examples/jsm/postprocessing' ) )
 
 } )
 
 gulp.task( 'patch-three',
     gulp.parallel(
-        'fix-effect-composer',
-        'create-pass-file',
-        'fix-helio-polyfill'
+        'fix-effect-composer'
     )
 )
 
@@ -276,6 +172,8 @@ gulp.task( 'convert-three', ( done ) => {
     function copyPolyfills () {
 
         fs.writeFileSync( './sources/polyfills.js', fs.readFileSync( './node_modules/three/src/polyfills.js', 'utf8' ) )
+
+        fs.mkdirSync('./sources/vr', { recursive: true })
         fs.writeFileSync( './sources/vr/HelioWebXRPolyfill.js', fs.readFileSync( './node_modules/three/examples/js/vr/HelioWebXRPolyfill.js', 'utf8' ) )
 
     }
@@ -974,6 +872,9 @@ gulp.task( 'release',
         'clean',
         'convert-three',
         'lint-sources',
-        'build-three'
+        'build-three',
+        'build-test',
+        'lint-tests',
+        'test'
     )
 )
