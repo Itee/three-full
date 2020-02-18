@@ -198,6 +198,7 @@ gulp.task( 'convert-three', ( done ) => {
         fs.writeFileSync( './sources/libs/gunzip.module.min.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/gunzip.module.min.js', 'utf8' ) )
         fs.writeFileSync( './sources/libs/inflate.module.min.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/inflate.module.min.js', 'utf8' ) )
         fs.writeFileSync( './sources/libs/mmdparser.module.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/mmdparser.module.js', 'utf8' ) )
+        fs.writeFileSync( './sources/libs/motion-controllers.module.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/motion-controllers.module.js', 'utf8' ) )
         fs.writeFileSync( './sources/libs/stats.module.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/stats.module.js', 'utf8' ) )
         fs.writeFileSync( './sources/libs/tween.module.min.js', fs.readFileSync( './node_modules/three/examples/jsm/libs/tween.module.min.js', 'utf8' ) )
 
