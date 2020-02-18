@@ -20,7 +20,7 @@ module.exports = function rollupConfigure ( format, onProduction, wantSourceMap 
 
     // Add deprecation message
     if( !_onProduction ) {
-        banner += `console.warn('[ThreeFull]: I am glad to annonce since Three release his examples files under JSM folder, this repository should be avoided. The first goal of this repository was to provided an alternative solution during this migration. From now, please consider to use Three.module.js instead even if i maintain this repository for my personal usage. Thanks for all ! Itee...')`
+        banner += `console.warn('[ThreeFull]: I am glad to annonce since Three release his examples files under JSM folder, this repository should be avoided. The first goal of this repository was to provided an alternative solution during this migration. From now, please consider to use Three.module.js instead even if i maintain this repository for my personal usage. Thanks for all ! Itee...');\n`
     }
 
     if ( _format === 'cjs' ) {
