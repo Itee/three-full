@@ -377,7 +377,7 @@ module.exports = {
                 [ 'for ( let mesh of meshes ) {', '//[ThreeFull] Replace for of loop\n\t\t\tfor ( let i = 0, n = meshes.length ; i < n ; i++) {\n\t\t\t\tconst mesh = meshes[i];' ]
             ]
         },
-        OBJLoader2Parallel:       {
+        OBJLoader2Parallel:     {
             replacements: [
                 [ '../examples/loaders/jsm/obj2/worker/parallel/jsm/OBJLoader2Worker.js', '../sources/loaders/obj2/worker/parallel/jsm/OBJLoader2Worker.js' ]
             ]
@@ -417,18 +417,18 @@ module.exports = {
         SimplifyModifier:       {
             imports: [ '!Triangle' ]
         },
-        StandardNode:       {
+        StandardNode:           {
             replacements: [
-                ['\'float geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );\',','\'float geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );\''] // Fix eslint extra colon
+                [ '\'float geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );\',', '\'float geometryRoughness = max( max( dxy.x, dxy.y ), dxy.z );\'' ] // Fix eslint extra colon
             ]
         },
-        SVGLoader:      {
+        SVGLoader:              {
             imports: [ '!Color' ]
         },
         TransformControls:      {
             imports: [ '!CircleGeometry' ]
         },
-        TypedArrayUtils:      {
+        TypedArrayUtils:        {
             imports: [ '!Node' ]
         },
         UniformsUtils:          {
@@ -477,6 +477,12 @@ module.exports = {
                 'ShaderLib',
                 'UniformsUtils',
                 'WebGLProgram'
+            ]
+        },
+        WebGLShadowMap:         {
+            imports: [
+                [ 'vsm_frag', 'from', '../shaders/ShaderLib/vsm_frag.glsl.js' ],
+                [ 'vsm_vert', 'from', '../shaders/ShaderLib/vsm_vert.glsl.js' ]
             ]
         }
     },
