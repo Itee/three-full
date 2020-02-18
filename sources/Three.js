@@ -123,7 +123,6 @@ export {
 	CodeBuilderInstructions,
 	WorkerExecutionSupport
 } from './loaders/obj2/worker/main/WorkerExecutionSupport.js'
-export { OBJLoader2Worker } from './loaders/obj2/worker/parallel/jsm/OBJLoader2Worker.js'
 export { OBJLoader2Parser } from './loaders/obj2/worker/parallel/OBJLoader2Parser.js'
 export {
 	WorkerRunner,
@@ -407,7 +406,6 @@ export { UVsDebug } from './utils/UVsDebug.js'
 export { WebGL } from './helpers/WebGL.js'
 export { ARButton } from './webxr/ARButton.js'
 export { VRButton } from './webxr/VRButton.js'
-export { XRControllerModelFactory } from './webxr/XRControllerModelFactory.js'
 export { AnimationAction } from './animation/AnimationAction.js'
 export { AnimationClip } from './animation/AnimationClip.js'
 export { AnimationMixer } from './animation/AnimationMixer.js'

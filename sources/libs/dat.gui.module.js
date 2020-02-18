@@ -674,6 +674,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 };
 
+
+
+
+
+
+
+
+
+
+
 var classCallCheck = function ( instance, Constructor ) {
 
 	if ( ! ( instance instanceof Constructor ) ) {
@@ -709,6 +719,12 @@ var createClass = function () {
 	};
 
 }();
+
+
+
+
+
+
 
 var get = function get( object, property, receiver ) {
 
@@ -768,6 +784,16 @@ var inherits = function ( subClass, superClass ) {
 	if ( superClass ) Object.setPrototypeOf ? Object.setPrototypeOf( subClass, superClass ) : subClass.__proto__ = superClass;
 
 };
+
+
+
+
+
+
+
+
+
+
 
 var possibleConstructorReturn = function ( self, call ) {
 
