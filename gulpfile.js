@@ -167,6 +167,7 @@ gulp.task( 'convert-three', ( done ) => {
            copyPolyfills()
            copyShaderChunk()
            copyLibs()
+           copyWorkers()
            updateThreeExports()
 
            done()
@@ -227,6 +228,13 @@ gulp.task( 'convert-three', ( done ) => {
         fs.writeFileSync( './sources/libs/draco/gltf/draco_decoder.wasm', fs.readFileSync( './node_modules/three/examples/js/libs/draco/gltf/draco_decoder.wasm', 'utf8' ) )
         fs.writeFileSync( './sources/libs/draco/gltf/draco_encoder.js', fs.readFileSync( './node_modules/three/examples/js/libs/draco/gltf/draco_encoder.js', 'utf8' ) )
         fs.writeFileSync( './sources/libs/draco/gltf/draco_wasm_wrapper.js', fs.readFileSync( './node_modules/three/examples/js/libs/draco/gltf/draco_wasm_wrapper.js', 'utf8' ) )
+
+    }
+
+    function copyWorkers () {
+
+        fs.mkdirSync('./sources/loaders/obj2/worker/parallel/jsm/', { recursive: true })
+        fs.writeFileSync( './sources/loaders/obj2/worker/parallel/jsm/OBJLoader2Worker.js', fs.readFileSync( './node_modules/three/examples/jsm/loaders/obj2/worker/parallel/jsm/OBJLoader2Worker.js', 'utf8' ) )
 
     }
 
