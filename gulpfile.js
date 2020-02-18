@@ -352,9 +352,9 @@ gulp.task( 'build-test-unit', ( done ) => {
                                 should.exist( ${statement} )
                             } )
                             
-                            it( '${value} is instanciable', () => {
-                                should.exist( new ${statement}(${args}) )
-                            } )
+//                            it( '${value} is instanciable', () => {
+//                                should.exist( new ${statement}(${args}) )
+//                            } )
                             `
         
                 } ).join( '\n' )}
