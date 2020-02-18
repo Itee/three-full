@@ -123,7 +123,7 @@ gulp.task( 'clean', gulp.parallel( 'clean-builds', 'clean-sources', 'clean-tests
 gulp.task( 'lint-sources', () => {
 
     const eslintConfig = require( './configs/eslint.conf.js' )
-    const filesToLint  = [ './sources/**/*.js' ]
+    const filesToLint  = [ './sources/**/*.js', '!./sources/libs/**' ]
 
     return gulp.src( filesToLint )
                .pipe( eslint( eslintConfig ) )
