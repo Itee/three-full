@@ -23,6 +23,8 @@ import { Mesh } from '../../objects/Mesh.js'
 import { Vector4 } from '../../math/Vector4.js'
 import { Vector2 } from '../../math/Vector2.js'
 import { Frustum } from '../../math/Frustum.js'
+import { default as vsm_frag } from '../shaders/ShaderLib/vsm_frag.glsl.js'
+import { default as vsm_vert } from '../shaders/ShaderLib/vsm_vert.glsl.js'
 
 /**
  * @author alteredq / http://alteredqualia.com/
