@@ -89,7 +89,7 @@ OBJLoader2Parallel.prototype = Object.assign( Object.create( OBJLoader2.prototyp
 		let codeBuilderInstructions = new CodeBuilderInstructions( true, true, this.preferJsmWorker );
 		if ( codeBuilderInstructions.isSupportsJsmWorker() ) {
 
-			codeBuilderInstructions.setJsmWorkerFile( '../examples/loaders/jsm/obj2/worker/parallel/jsm/OBJLoader2Worker.js' );
+			codeBuilderInstructions.setJsmWorkerFile( '../sources/loaders/obj2/worker/parallel/jsm/OBJLoader2Worker.js' );
 
 		}
 		if ( codeBuilderInstructions.isSupportsStandardWorker() ) {
