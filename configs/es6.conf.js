@@ -32,7 +32,9 @@ module.exports = {
         'Nodes.js',
 
         '\\examples\\jsm\\loaders\\VRMLLoader',
+        '\\examples\\jsm\\loaders\\obj2\\worker\\parallel\\jsm\\OBJLoader2Worker', // Cannot instanciate worker this way
         '\\examples\\jsm\\controls\\experimental',
+        '\\examples\\jsm\\webxr\\XRControllerModelFactory',
 
         // Duplicated files
         '\\examples\\js\\animation',
@@ -375,11 +377,10 @@ module.exports = {
                 [ 'for ( let mesh of meshes ) {', '//[ThreeFull] Replace for of loop\n\t\t\tfor ( let i = 0, n = meshes.length ; i < n ; i++) {\n\t\t\t\tconst mesh = meshes[i];' ]
             ]
         },
-        OBJLoader2Worker:       {
-            replacements:    [
-                [ 'new WorkerRunner', 'const OBJLoader2Worker = new WorkerRunner' ]
-            ],
-            exportsOverride: [ 'OBJLoader2Worker' ]
+        OBJLoader2Parallel:       {
+            replacements: [
+                [ '../examples/loaders/jsm/obj2/worker/parallel/jsm/OBJLoader2Worker.js', '../sources/loaders/obj2/worker/parallel/jsm/OBJLoader2Worker.js' ]
+            ]
         },
         Ocean:                  {
             outputOverride: 'objects/Ocean.js'
