@@ -1,6 +1,7 @@
 // Made by Itee (https://github.com/Itee) with ES6 Convertor script
 
-console.warn('[ThreeFull]: I am glad to annonce since Three release his examples files under JSM folder, this repository should be avoided. The first goal of this repository was to provided an alternative solution during this migration. From now, please consider to use Three.module.js instead. Thanks for all ! Itee...')var DEBUG = (process && process.env && process.env.Debug);
+console.warn('[ThreeFull]: I am glad to annonce since Three release his examples files under JSM folder, this repository should be avoided. The first goal of this repository was to provided an alternative solution during this migration. From now, please consider to use Three.module.js instead even if i maintain this repository for my personal usage. Thanks for all ! Itee...');
+var DEBUG = (process && process.env && process.env.Debug);
 var window = getGlobalWindowObject();
 
 function getGlobalWindowObject() {
@@ -91311,14 +91312,6 @@ WorkerRunner.prototype = {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @author Kai Salmen / https://kaisalmen.de
- * Development repository: https://github.com/kaisalmen/WWOBJLoader
- */
-var OBJLoader2Worker = new WorkerRunner( new DefaultWorkerPayloadHandler( new OBJLoader2Parser() ) );
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
  * @author mrdoob / http://mrdoob.com/
  */
 var OBJLoader = ( function () {
@@ -92558,7 +92551,7 @@ OBJLoader2Parallel.prototype = Object.assign( Object.create( OBJLoader2.prototyp
 		var codeBuilderInstructions = new CodeBuilderInstructions( true, true, this.preferJsmWorker );
 		if ( codeBuilderInstructions.isSupportsJsmWorker() ) {
 
-			codeBuilderInstructions.setJsmWorkerFile( '../examples/loaders/jsm/obj2/worker/parallel/jsm/OBJLoader2Worker.js' );
+			codeBuilderInstructions.setJsmWorkerFile( '../sources/loaders/obj2/worker/parallel/jsm/OBJLoader2Worker.js' );
 
 		}
 		if ( codeBuilderInstructions.isSupportsStandardWorker() ) {
@@ -130626,318 +130619,6 @@ var VRButton = {
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * @author Nell Waliczek / https://github.com/NellWaliczek
- * @author Brandon Jones / https://github.com/toji
- */
-var DEFAULT_PROFILES_PATH = 'https://cdn.jsdelivr.net/npm/@webxr-input-profiles/assets@1.0/dist/profiles';
-var DEFAULT_PROFILE = 'generic-trigger';
-
-function XRControllerModel( ) {
-
-	Object3D.call( this );
-
-	this.motionController = null;
-	this.envMap = null;
-
-}
-
-XRControllerModel.prototype = Object.assign( Object.create( Object3D.prototype ), {
-
-	constructor: XRControllerModel,
-
-	setEnvironmentMap: function ( envMap ) {
-		var this$1 = this;
-
-
-		if ( this.envMap == envMap ) {
-
-			return this;
-
-		}
-
-		this.envMap = envMap;
-		this.traverse(function ( child ) {
-
-			if ( child.isMesh ) {
-
-				child.material.envMap = this$1.envMap;
-				child.material.needsUpdate = true;
-
-			}
-
-		});
-
-		return this;
-
-	},
-
-	/**
-	 * Polls data from the XRInputSource and updates the model's components to match
-	 * the real world data
-	 */
-	updateMatrixWorld: function ( force ) {
-
-		Object3D.prototype.updateMatrixWorld.call( this, force );
-
-		if ( !this.motionController ) { return; }
-
-		// Cause the MotionController to poll the Gamepad for data
-		this.motionController.updateFromGamepad();
-
-		// Update the 3D model to reflect the button, thumbstick, and touchpad state
-		Object.values( this.motionController.components ).forEach(function ( component ) {
-
-			// Update node data based on the visual responses' current states
-			Object.values( component.visualResponses ).forEach(function ( visualResponse ) {
-
-				var valueNode = visualResponse.valueNode;
-				var minNode = visualResponse.minNode;
-				var maxNode = visualResponse.maxNode;
-				var value = visualResponse.value;
-				var valueNodeProperty = visualResponse.valueNodeProperty;
-
-				// Skip if the visual response node is not found. No error is needed,
-				// because it will have been reported at load time.
-				if ( !valueNode ) { return; }
-
-				// Calculate the new properties based on the weight supplied
-				if ( valueNodeProperty === MotionControllerConstants.VisualResponseProperty.VISIBILITY ) {
-
-					valueNode.visible = value;
-
-				} else if ( valueNodeProperty === MotionControllerConstants.VisualResponseProperty.TRANSFORM ) {
-
-					Quaternion.slerp(
-						minNode.quaternion,
-						maxNode.quaternion,
-						valueNode.quaternion,
-						value
-					);
-
-					valueNode.position.lerpVectors(
-						minNode.position,
-						maxNode.position,
-						value
-					);
-
-				}
-
-			});
-
-		});
-
-	}
-
-} );
-
-/**
- * Walks the model's tree to find the nodes needed to animate the components and
- * saves them to the motionContoller components for use in the frame loop. When
- * touchpads are found, attaches a touch dot to them.
- */
-function findNodes( motionController, scene ) {
-
-	// Loop through the components and find the nodes needed for each components' visual responses
-	Object.values( motionController.components ).forEach(function ( component ) {
-
-		var type = component.type;
-		var touchPointNodeName = component.touchPointNodeName;
-		var visualResponses = component.visualResponses;
-
-		if (type === MotionControllerConstants.ComponentType.TOUCHPAD) {
-
-			component.touchPointNode = scene.getObjectByName( touchPointNodeName );
-			if ( component.touchPointNode ) {
-
-				// Attach a touch dot to the touchpad.
-				var sphereGeometry = new SphereGeometry( 0.001 );
-				var material = new MeshBasicMaterial({ color: 0x0000FF });
-				var sphere = new Mesh( sphereGeometry, material );
-				component.touchPointNode.add( sphere );
-
-			} else {
-
-				console.warn(("Could not find touch dot, " + (component.touchPointNodeName) + ", in touchpad component " + componentId));
-
-			}
-
-		}
-
-		// Loop through all the visual responses to be applied to this component
-		Object.values( visualResponses ).forEach(function ( visualResponse ) {
-
-			var valueNodeName = visualResponse.valueNodeName;
-			var minNodeName = visualResponse.minNodeName;
-			var maxNodeName = visualResponse.maxNodeName;
-			var valueNodeProperty = visualResponse.valueNodeProperty;
-
-			// If animating a transform, find the two nodes to be interpolated between.
-			if ( valueNodeProperty === MotionControllerConstants.VisualResponseProperty.TRANSFORM ) {
-
-				visualResponse.minNode = scene.getObjectByName(minNodeName);
-				visualResponse.maxNode = scene.getObjectByName(maxNodeName);
-
-				// If the extents cannot be found, skip this animation
-				if ( !visualResponse.minNode ) {
-
-					console.warn(("Could not find " + minNodeName + " in the model"));
-					return;
-
-				}
-
-				if ( !visualResponse.maxNode ) {
-
-					console.warn(("Could not find " + maxNodeName + " in the model"));
-					return;
-
-				}
-			}
-
-			// If the target node cannot be found, skip this animation
-			visualResponse.valueNode = scene.getObjectByName(valueNodeName);
-			if ( !visualResponse.valueNode ) {
-
-				console.warn(("Could not find " + valueNodeName + " in the model"));
-
-			}
-		});
-	});
-}
-
-function addAssetSceneToControllerModel( controllerModel, scene ) {
-	// Find the nodes needed for animation and cache them on the motionController.
-	findNodes( controllerModel.motionController, scene );
-
-	// Apply any environment map that the mesh already has set.
-	if ( controllerModel.envMap ) {
-
-		scene.traverse(function ( child ) {
-
-			if ( child.isMesh ) {
-
-				child.material.envMap = controllerModel.envMap;
-				child.material.needsUpdate = true;
-
-			}
-
-		});
-
-	}
-
-	// Add the glTF scene to the controllerModel.
-	controllerModel.add( scene );
-}
-
-var XRControllerModelFactory = ( function () {
-
-	function XRControllerModelFactory( gltfLoader ) {
-		if ( gltfLoader === void 0 ) gltfLoader = null;
-
-
-		this.gltfLoader = gltfLoader;
-		this.path = DEFAULT_PROFILES_PATH;
-		this._assetCache = {};
-
-		// If a GLTFLoader wasn't supplied to the constructor create a new one.
-		if ( !this.gltfLoader ) {
-
-			this.gltfLoader = new GLTFLoader();
-
-		}
-
-	}
-
-	XRControllerModelFactory.prototype = {
-
-		constructor: XRControllerModelFactory,
-
-		createControllerModel: function ( controller ) {
-			var this$1 = this;
-
-
-			var controllerModel = new XRControllerModel();
-			var scene = null;
-
-			controller.addEventListener( 'connected', function ( event ) {
-
-				var xrInputSource = event.data;
-
-				if (xrInputSource.targetRayMode !== 'tracked-pointer' || !xrInputSource.gamepad ) { return; }
-
-				fetchProfile( xrInputSource, this$1.path, DEFAULT_PROFILE ).then(function (ref) {
-					var profile = ref.profile;
-					var assetPath = ref.assetPath;
-
-
-					controllerModel.motionController = new MotionController(
-						xrInputSource,
-						profile,
-						assetPath
-					);
-
-					var cachedAsset = this$1._assetCache[controllerModel.motionController.assetUrl];
-					if (cachedAsset) {
-
-						scene = cachedAsset.scene.clone();
-
-						addAssetSceneToControllerModel(controllerModel, scene);
-
-					} else {
-
-						if ( !this$1.gltfLoader ) {
-
-							throw new Error("GLTFLoader not set.");
-
-						}
-
-						this$1.gltfLoader.setPath('');
-						this$1.gltfLoader.load( controllerModel.motionController.assetUrl, function ( asset ) {
-
-							this$1._assetCache[controllerModel.motionController.assetUrl] = asset;
-
-							scene = asset.scene.clone();
-
-							addAssetSceneToControllerModel(controllerModel, scene);
-
-						},
-						null,
-						function () {
-
-							throw new Error(("Asset " + (motionController.assetUrl) + " missing or malformed."));
-
-						});
-
-					}
-
-				}).catch(function (err) {
-
-					console.warn(err);
-
-				});
-
-			});
-
-			controller.addEventListener( 'disconnected', function () {
-
-				controllerModel.motionController = null;
-				controllerModel.remove( scene );
-				scene = null;
-
-			});
-
-			return controllerModel;
-
-		}
-
-	};
-
-	return XRControllerModelFactory;
-
-} )();
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  *
  * A group of objects that receives a shared animation state.
@@ -149987,7 +149668,6 @@ exports.OBJLoader = OBJLoader;
 exports.OBJLoader2 = OBJLoader2;
 exports.OBJLoader2Parallel = OBJLoader2Parallel;
 exports.OBJLoader2Parser = OBJLoader2Parser;
-exports.OBJLoader2Worker = OBJLoader2Worker;
 exports.Object3D = Object3D;
 exports.ObjectLoader = ObjectLoader;
 exports.ObjectManipulator = ObjectManipulator;
@@ -150344,7 +150024,6 @@ exports.WorkerExecutionSupport = WorkerExecutionSupport;
 exports.WorkerRunner = WorkerRunner;
 exports.WrapAroundEnding = WrapAroundEnding;
 exports.XLoader = XLoader;
-exports.XRControllerModelFactory = XRControllerModelFactory;
 exports.ZeroCurvatureEnding = ZeroCurvatureEnding;
 exports.ZeroFactor = ZeroFactor;
 exports.ZeroSlopeEnding = ZeroSlopeEnding;
