@@ -478,6 +478,12 @@ module.exports = {
                 'UniformsUtils',
                 'WebGLProgram'
             ]
+        },
+        WebGLShadowMap: {
+            imports: [
+                ['vsm_frag', 'from', '../shaders/ShaderLib/vsm_frag.glsl.js'],
+                ['vsm_vert', 'from', '../shaders/ShaderLib/vsm_vert.glsl.js']
+            ]
         }
     },
     banner:    '//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////\n' +
