@@ -187,16 +187,13 @@ function glsl () {
 function RollupTestConfigurationBuilder () {
 
     const excludes = [
-        'Three.js',
-        'polyfills.js',
-        'HelioWebXRPolyfill.js',
-        'utils.js',
         'constants.js',
-        'scene.js',
-        'offscreen.js',
-        'jank.js',
-
-        'libs'
+        'polyfills.js',
+        'Three.js',
+        'utils.js',
+        'libs\\',
+        'loaders\\obj2\\worker\\parallel\\jsm\\OBJLoader2Worker',
+        'vr\\HelioWebXRPolyfill'
     ]
 
     const basePath            = path.join( __dirname, '..' )
