@@ -818,8 +818,11 @@ function _formatImportStatements ( importerFilePath, objectNames ) {
 
         if ( Array.isArray( objectName ) ) {
 
-            importsMap[ objectName[ 2 ] ] = []
-            importsMap[ objectName[ 2 ] ].push( objectName[ 0 ] )
+            const exporterFilePath = objectName[ 2 ]
+            if ( !importsMap[ exporterFilePath ] ) {
+                importsMap[ exporterFilePath ] = []
+            }
+            importsMap[ exporterFilePath ].push( objectName[ 0 ] )
 
         } else {
 
