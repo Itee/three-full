@@ -6,7 +6,7 @@ three-full
 **Deprecation note:**
 > I am glad to annonce since Three release his examples files under JSM folder, this repository should be avoided. The first goal of this repository was to provided an alternative solution during this migration. From now, please consider to use Three.module.js instead even if i maintain this repository for my personal usage. Thanks for all ! Itee...
 
-**The version 28.0.0 is now available under Three r0.113.2**
+**The version 28.0.1 is now available under Three r0.113.2**
 
 #### Extended Three JavaScript 3D library ####
 
@@ -169,6 +169,14 @@ This is the list of unsupported part of example, which cannot/won't be converted
 
 #### Change log ####
 
+
+##### 28.0.1:
+
+* Fix banner deprecation warning
+* Fix OBJLoader2Worker management
+* Ignore XRControllerModelFactory
+* Fix missing motion-controllers lib copy
+* Fix multi-imports override from external file
 
 ##### 28.0.0:
 
